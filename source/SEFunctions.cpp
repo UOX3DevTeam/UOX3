@@ -86,7 +86,7 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 //|	Purpose		-	Does a temporary effect (things like protection, night sight, and what not) frm
 //|					src to trg. If iType = 0, then it's a character, otherwise it's an item.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoTempEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoTempEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 7 )
 	{
@@ -163,7 +163,7 @@ void SysBroadcast( const std::string& txt );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Broadcasts specified string to all online players
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_BroadcastMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_BroadcastMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -186,7 +186,7 @@ JSNative SE_BroadcastMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CalcItemFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CalcItemFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -202,19 +202,18 @@ JSNative SE_CalcItemFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), 
-						static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( args.get( 0 ).toInt32(), args.get( 1 ).toInt32(), args.get( 2 ).toInt32(), args.get( 3 ).toInt32() );
 	}
 
 	CItem *newItem	= CalcItemObjFromSer( targSerial );
 	if( newItem != nullptr )
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+    args.rval().setObjectOrNull(myObj);
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+    args.rval().setNull();
 	}
 	return true;
 }
@@ -224,7 +223,7 @@ JSNative SE_CalcItemFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns item object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CalcMultiFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CalcMultiFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -235,22 +234,22 @@ JSNative SE_CalcMultiFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 	SERIAL targSerial;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[0] ));
+		targSerial = args.get( 0 ).toInt32();
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( args.get( 0 ).toInt32(), args.get( 1 ).toInt32(), args.get( 2 ).toInt32(), args.get( 3 ).toInt32() );
 	}
 
 	CItem *newMulti	= CalcMultiFromSer( targSerial );
 	if( newMulti != nullptr )
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+    args.rval().setObjectOrNull(myObj);
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+    args.rval().setNull();
 	}
 	return true;
 }
@@ -260,7 +259,7 @@ JSNative SE_CalcMultiFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates and returns character object based on provided serial
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CalcCharFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CalcCharFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -271,22 +270,22 @@ JSNative SE_CalcCharFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 	SERIAL targSerial = INVALIDSERIAL;
 	if( argc == 1 )
 	{
-		targSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[0] ));
+		targSerial = args.get( 0 ).toInt32();
 	}
 	else
 	{
-		targSerial = CalcSerial( static_cast<UI08>( JSVAL_TO_INT( argv[0] )), static_cast<UI08>( JSVAL_TO_INT( argv[1] )), static_cast<UI08>( JSVAL_TO_INT( argv[2] )), static_cast<UI08>( JSVAL_TO_INT( argv[3] )));
+		targSerial = CalcSerial( args.get( 0 ).toInt32(), args.get( 1 ).toInt32(), args.get( 2 ).toInt32(), args.get( 3 ).toInt32() );
 	}
 
 	CChar *newChar = CalcCharObjFromSer( targSerial );
 	if( newChar != nullptr )
 	{
 		JSObject *myObj	= JSEngine->AcquireObject( IUE_CHAR, newChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-		*rval = OBJECT_TO_JSVAL( myObj );
+    args.rval().setObjectOrNull(myObj);
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+    args.rval().setNull();
 	}
 	return true;
 }
@@ -296,7 +295,7 @@ JSNative SE_CalcCharFromSer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a moving effect from source object to target object or location
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 6 )
 	{
@@ -305,7 +304,7 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args				= JS::CallArgsFromVp(argc, vp);
-	CBaseObject *src	= nullptr;
+  CBaseObject *src = nullptr;
 	CBaseObject *trg	= nullptr;
 	bool srcLocation	= false;
 	bool targLocation	= false;
@@ -322,30 +321,30 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI32 hue			= 0;
 	UI32 renderMode		= 0;
 
-	if( JSVAL_IS_INT( argv[0] ))
+	if( args.get( 0 ).isInt32() )
 	{
 		// 10, 11 or 12 arguments
 		// srcX, srcY, srcZ, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 		srcLocation = true;
 		targLocation = true;
 		targLocation = true;
-		srcX	= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		srcY	= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		srcZ	= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-		targX	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		targY	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		targZ	= static_cast<SI08>( JSVAL_TO_INT( argv[5] ));
-		effect	= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
-		speed	= static_cast<UI08>( JSVAL_TO_INT( argv[7] ));
-		loop	= static_cast<UI08>( JSVAL_TO_INT( argv[8] ));
-		explode	= ( JSVAL_TO_BOOLEAN( argv[9] ) == JS_TRUE );
+		srcX	  = args.get( 0 ).toInt32();
+		srcY	  = args.get( 1 ).toInt32();
+		srcZ	  = args.get( 2 ).toInt32();
+		targX	  = args.get( 3 ).toInt32();
+		targY	  = args.get( 4 ).toInt32();
+		targZ	  = args.get( 5 ).toInt32();
+		effect	= args.get( 6 ).toInt32();
+		speed	  = args.get( 7 ).toInt32();
+		loop	  = args.get( 8 ).toInt32();
+    explode = args.get( 9 ).toBoolean();
 		if( argc >= 11 )
 		{
-			hue = static_cast<UI32>( JSVAL_TO_INT( argv[10] ));
+			hue = args.get( 10 ).toInt32();
 		}
 		if( argc >= 12 )
 		{
-			renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[11] ));
+			renderMode = args.get( 11 ).toInt32();
 		}
 	}
 	else
@@ -358,25 +357,25 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 			return false;
 		}
 
-		if( JSVAL_IS_INT( argv[1] ))
+		if (args.get(1).isInt32() )
 		{
 			// 8, 9 or 10 arguments
 			// srcObj, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
 			targLocation = true;
-			targX	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-			targY	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			targZ	= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
-			effect	= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-			speed	= static_cast<UI08>( JSVAL_TO_INT( argv[5] ));
-			loop	= static_cast<UI08>( JSVAL_TO_INT( argv[6] ));
-			explode	= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+			targX	  = args.get( 1 ).toInt32();
+			targY	  = args.get( 2 ).toInt32();
+			targZ	  = args.get( 3 ).toInt32();
+			effect	= args.get( 4 ).toInt32();
+			speed	  = args.get( 5 ).toInt32();
+			loop	  = args.get( 6 ).toInt32();
+			explode	= args.get( 7 ).toBoolean();
 			if( argc >= 9 )
 			{
-				hue = static_cast<UI32>( JSVAL_TO_INT( argv[8] ));
+				hue = args.get( 8 ).toInt32();
 			}
 			if( argc >= 10 )
 			{
-				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[9] ));
+        renderMode = args.get(9).toInt32();
 			}
 		}
 		else
@@ -397,17 +396,17 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 				return false;
 			}
 
-			effect	= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			speed	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-			loop	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+			effect	= static_cast<UI16>( args.get( 2 ).toInt32());
+			speed	= static_cast<UI08>( args.get( 3 ).toInt32());
+			loop	= static_cast<UI08>( args.get( 4 ).toInt32());
 			explode	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 			if( argc >= 7 )
 			{
-				hue = static_cast<UI32>( JSVAL_TO_INT( argv[6] ));
+				hue = static_cast<UI32>( args.get( 6 ).toInt32());
 			}
 			if( argc >= 8 )
 			{
-				renderMode = static_cast<UI32>( JSVAL_TO_INT( argv[7] ));
+				renderMode = static_cast<UI32>( args.get( 7 ).toInt32());
 			}
 		}
 	}
@@ -432,7 +431,7 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect at a target location
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
@@ -441,12 +440,12 @@ JSNative SE_DoStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args				= JS::CallArgsFromVp(argc, vp);
-	SI16 targX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 targY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 targZ		= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 effectId	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	UI08 speed		= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	UI08 loop		= static_cast<UI08>( JSVAL_TO_INT( argv[5] ));
+	SI16 targX		= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 targY		= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 targZ		= static_cast<SI16>( args.get( 2 ).toInt32());
+	UI16 effectId	= static_cast<UI16>( args.get( 3 ).toInt32());
+	UI08 speed		= static_cast<UI08>( args.get( 4 ).toInt32());
+	UI08 loop		= static_cast<UI08>( args.get( 5 ).toInt32());
 	bool explode	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
 
 	Effects->PlayStaticAnimation( targX, targY, targZ, effectId, speed, loop, explode );
@@ -459,7 +458,7 @@ JSNative SE_DoStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random number between loNum and hiNum
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RandomNumber( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RandomNumber( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -478,7 +477,7 @@ JSNative SE_RandomNumber( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character creates specified item based on entry in CREATE DFNs
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -495,7 +494,7 @@ JSNative SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MakeItem: Invalid character" );
 		return false;
 	}
-	UI16 itemMenu		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI16 itemMenu		= static_cast<UI16>( args.get( 2 ).toInt32());
 	CreateEntry_st *toFind = Skills->FindItem( itemMenu );
 	if( toFind == nullptr )
 	{
@@ -505,7 +504,7 @@ JSNative SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 resourceColour = 0;
 	if( argc == 4 )
 	{
-		resourceColour = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		resourceColour = static_cast<UI16>( args.get( 3 ).toInt32());
 	}
 
 	Skills->MakeItem( *toFind, player, sock, itemMenu, resourceColour );
@@ -518,7 +517,7 @@ JSNative SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the command level required to execute the specified command
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CommandLevelReq( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CommandLevelReq( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -549,7 +548,7 @@ JSNative SE_CommandLevelReq( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specified command exists in command table or not
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CommandExists( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CommandExists( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -572,7 +571,7 @@ JSNative SE_CommandExists( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the first command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_FirstCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_FirstCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	const std::string tVal = Commands->FirstCommand();
@@ -595,7 +594,7 @@ JSNative SE_FirstCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the next command in the table. If nothing, it's a 0 length string.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_NextCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_NextCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	const std::string tVal = Commands->NextCommand();
@@ -618,7 +617,7 @@ JSNative SE_NextCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if there are no more commands left in the table.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_FinishedCommandList( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_FinishedCommandList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	args.rval().setBoolean( Commands->FinishedCommandList() );
@@ -634,7 +633,7 @@ JSNative SE_FinishedCommandList( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					script whose name corresponds with the command name, in the shape of
 //|						function command_CMDNAME( socket, cmdString )
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -643,7 +642,7 @@ JSNative SE_RegisterCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
 	std::string toRegister	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	UI08 execLevel			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 execLevel			= static_cast<UI08>( args.get( 1 ).toInt32());
 	bool isEnabled			= ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE );
 	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
@@ -665,7 +664,7 @@ JSNative SE_RegisterCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					onSpellCast() event in the same script as a global listener for use of the
 //|					specified magic spell.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -673,7 +672,7 @@ JSNative SE_RegisterSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 spellNumber	= JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber	= args.get( 0 ).toInt32();
 	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	Magic->Register( myScript, spellNumber, isEnabled );
@@ -688,7 +687,7 @@ JSNative SE_RegisterSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					script is added under the SKILLUSE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a SkillRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterSkill( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -696,7 +695,7 @@ JSNative SE_RegisterSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 skillNumber	= JSVAL_TO_INT( argv[0] );
+	SI32 skillNumber	= args.get( 0 ).toInt32();
 	bool isEnabled		= ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 	if( scriptId != 0xFFFF )
@@ -740,7 +739,7 @@ JSNative SE_RegisterSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					if script is added under the PACKET_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a PacketRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterPacket( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterPacket( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -748,8 +747,8 @@ JSNative SE_RegisterPacket( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI08 packet			= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI08 subCmd			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 packet			= static_cast<UI08>( args.get( 0 ).toInt32());
+	UI08 subCmd			= static_cast<UI08>( args.get( 1 ).toInt32());
 	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 	if( scriptId != 0xFFFF )
 	{
@@ -769,7 +768,7 @@ JSNative SE_RegisterPacket( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					is added under the CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a ConsoleRegistration() function
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -813,7 +812,7 @@ JSNative SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RegisterConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RegisterConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -840,7 +839,7 @@ JSNative SE_RegisterConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables a specified command on the server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DisableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DisableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -858,7 +857,7 @@ JSNative SE_DisableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DisableKey( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DisableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -866,7 +865,7 @@ JSNative SE_DisableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 toDisable = JSVAL_TO_INT( argv[0] );
+	SI32 toDisable = args.get( 0 ).toInt32();
 	Console.SetKeyStatus( toDisable, false );
 	return true;
 }
@@ -876,7 +875,7 @@ JSNative SE_DisableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DisableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DisableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -894,7 +893,7 @@ JSNative SE_DisableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DisableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DisableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -902,7 +901,7 @@ JSNative SE_DisableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = args.get( 0 ).toInt32();
 	Magic->SetSpellStatus( spellNumber, false );
 	return true;
 }
@@ -912,7 +911,7 @@ JSNative SE_DisableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified command on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_EnableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_EnableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -930,7 +929,7 @@ JSNative SE_EnableCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified spell on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_EnableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_EnableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -938,7 +937,7 @@ JSNative SE_EnableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 spellNumber = JSVAL_TO_INT( argv[0] );
+	SI32 spellNumber = args.get( 0 ).toInt32();
 	Magic->SetSpellStatus( spellNumber, true );
 	return true;
 }
@@ -948,7 +947,7 @@ JSNative SE_EnableSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables specified key in console
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_EnableKey( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_EnableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -956,7 +955,7 @@ JSNative SE_EnableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 toEnable = JSVAL_TO_INT( argv[0] );
+	SI32 toEnable = args.get( 0 ).toInt32();
 	Console.SetKeyStatus( toEnable, true );
 	return true;
 }
@@ -966,7 +965,7 @@ JSNative SE_EnableKey( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_EnableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_EnableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -984,7 +983,7 @@ JSNative SE_EnableConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the hour of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetHour( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetHour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
@@ -1005,7 +1004,7 @@ JSNative SE_GetHour( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the minute of the current UO day
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetMinute( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
@@ -1018,7 +1017,7 @@ JSNative SE_GetMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the day number of the server (UO days since server start)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetDay( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetDay( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
@@ -1031,7 +1030,7 @@ JSNative SE_GetDay( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets the amonut of real life seconds associated with minute in the game
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_SecondsPerUOMinute( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_SecondsPerUOMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 1 )
@@ -1041,7 +1040,7 @@ JSNative SE_SecondsPerUOMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( argc == 1 )
 	{
-		UI16 secondsPerUOMinute = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 secondsPerUOMinute = static_cast<UI16>( args.get( 0 ).toInt32());
 		cwmWorldState->ServerData()->ServerSecondsPerUOMinute( secondsPerUOMinute );
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ServerSecondsPerUOMinute() );
@@ -1053,7 +1052,7 @@ JSNative SE_SecondsPerUOMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for current server clock
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetCurrentClock( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetCurrentClock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
@@ -1066,7 +1065,7 @@ JSNative SE_GetCurrentClock( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets timestamp for server startup time
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetStartTime( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetStartTime( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
@@ -1079,7 +1078,7 @@ JSNative SE_GetStartTime( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a random SOS area from list of such areas loaded from [SOSAREAS] section of regions.dfn
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -1092,8 +1091,8 @@ JSNative SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 instanceId	= 0;
 	if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
 	{
-		worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-		instanceId	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		worldNum	= static_cast<UI08>( args.get( 0 ).toInt32());
+		instanceId	= static_cast<UI16>( args.get( 1 ).toInt32());
 	}
 	else
 	{
@@ -1152,7 +1151,7 @@ JSNative SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns NPC based on definition in NPC DFNs (or an NPCLIST)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 5 || argc > 7 )
 	{
@@ -1163,11 +1162,11 @@ JSNative SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	CChar *cMade		= nullptr;
 	std::string nnpcNum	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	UI16 x				= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 y				= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 z				= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 world			= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : 0 );
+	UI16 x				= static_cast<UI16>( args.get( 1 ).toInt32());
+	UI16 y				= static_cast<UI16>( args.get( 2 ).toInt32());
+	SI08 z				= static_cast<SI08>( args.get( 3 ).toInt32());
+	UI08 world			= static_cast<UI08>( args.get( 4 ).toInt32());
+	UI16 instanceId = ( argc == 6 ? static_cast<SI16>( args.get( 5 ).toInt32()) : 0 );
 	bool useNpcList = ( argc == 7 ? ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE ) : false );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
@@ -1196,7 +1195,7 @@ JSNative SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates item based on definition in item DFNs
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 3 )
 	{
@@ -1229,7 +1228,7 @@ JSNative SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc > 3 )
 	{
-		iAmount	= static_cast<UI16> (JSVAL_TO_INT( argv[3] ));
+		iAmount	= static_cast<UI16> (args.get( 3 ).toInt32());
 	}
 	if( argc > 4 )
 	{
@@ -1242,15 +1241,15 @@ JSNative SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	if( argc > 6 )
 	{
-		iColor = static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor = static_cast<UI16>( args.get( 6 ).toInt32());
 	}
 	if( argc > 7 )
 	{
-		worldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[7] ));
+		worldNumber	= static_cast<UI08>( args.get( 7 ).toInt32());
 	}
 	if( argc > 8 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[8] ));
+		instanceId = static_cast<UI16>( args.get( 8 ).toInt32());
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
@@ -1288,7 +1287,7 @@ JSNative SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Creates a "blank" item with default values from client's tiledata
 //|	Notes		-	Default values can be overridden through harditems.dfn
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
@@ -1311,10 +1310,10 @@ JSNative SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		myChar					= JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
 	}
 
-	SI32 amount				= static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
+	SI32 amount				= static_cast<SI32>( args.get( 2 ).toInt32());
 	std::string itemName	= JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
-	UI16 itemId				= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-	UI16 colour				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	UI16 itemId				= static_cast<UI16>( args.get( 4 ).toInt32());
+	UI16 colour				= static_cast<UI16>( args.get( 5 ).toInt32());
 	std::string objType		= JS_GetStringBytes( JS_ValueToString( cx, argv[6] ));
 	ObjectType itemType		= FindObjTypeFromString( objType );
 	bool inPack				= ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
@@ -1350,7 +1349,7 @@ CMultiObj * BuildHouse( CSocket *s, UI16 houseEntry, bool checkLocation = true, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates multi based on definition in house DFNs
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 4 )
 	{
@@ -1359,10 +1358,10 @@ JSNative SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
 
-	UI16 houseId				= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 houseId				= static_cast<UI16>( args.get( 0 ).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get( 2 ).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get( 3 ).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1370,15 +1369,15 @@ JSNative SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc > 4 )
 	{
-		worldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+		worldNumber	= static_cast<UI08>( args.get( 4 ).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId	= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId	= static_cast<UI16>( args.get( 5 ).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor		= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor		= static_cast<UI16>( args.get( 6 ).toInt32());
 	}
 	if( argc > 7 )
 	{
@@ -1417,7 +1416,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates base multi based on ID from multi file
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 4 )
 	{
@@ -1426,10 +1425,10 @@ JSNative SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 multiId				= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 multiId				= static_cast<UI16>( args.get( 0 ).toInt32());
+	SI16 xLoc					= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 yLoc					= static_cast<SI16>( args.get( 2 ).toInt32());
+	SI08 zLoc					= static_cast<SI08>( args.get( 3 ).toInt32());
 	UI16 iColor					= 0xFFFF;
 	UI08 worldNumber			= 0;
 	UI16 instanceId				= 0;
@@ -1438,15 +1437,15 @@ JSNative SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc > 4 )
 	{
-		worldNumber				= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+		worldNumber				= static_cast<UI08>( args.get( 4 ).toInt32());
 	}
 	if( argc > 5 )
 	{
-		instanceId				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId				= static_cast<UI16>( args.get( 5 ).toInt32());
 	}
 	if( argc > 6 )
 	{
-		iColor					= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+		iColor					= static_cast<UI16>( args.get( 6 ).toInt32());
 	}
 	if( argc > 7 )
 	{
@@ -1484,7 +1483,7 @@ JSNative SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the max amount of kills allowed before a player turns red
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetMurderThreshold( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetMurderThreshold( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->RepMaxKills() );
@@ -1496,7 +1495,7 @@ JSNative SE_GetMurderThreshold( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Rolls a die with specified number of sides, and adds a fixed value
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RollDice( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RollDice( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 3 )
 	{
@@ -1504,9 +1503,9 @@ JSNative SE_RollDice( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI32 numDice = JSVAL_TO_INT( argv[0] );
-	UI32 numFace = JSVAL_TO_INT( argv[1] );
-	UI32 numAdd  = JSVAL_TO_INT( argv[2] );
+	UI32 numDice = args.get( 0 ).toInt32();
+	UI32 numFace = args.get( 1 ).toInt32();
+	UI32 numAdd  = args.get( 2 ).toInt32();
 
 	cDice toRoll( numDice, numFace, numAdd );
 
@@ -1522,15 +1521,15 @@ JSNative SE_RollDice( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					1 to 100 - allies
 //|					-1 to -100 - enemies
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_RaceCompareByRace( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_RaceCompareByRace( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	RACEID r0 = static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	RACEID r1 = static_cast<RACEID>( JSVAL_TO_INT( argv[1] ));
+	RACEID r0 = static_cast<RACEID>( args.get( 0 ).toInt32());
+	RACEID r1 = static_cast<RACEID>( args.get( 1 ).toInt32());
 	*rval = INT_TO_JSVAL( Races->CompareByRace( r0, r1 ));
 
 	return true;
@@ -1541,7 +1540,7 @@ JSNative SE_RaceCompareByRace( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns multi at given coordinates, world and instanceId
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_FindMulti( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_FindMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
@@ -1573,13 +1572,13 @@ JSNative SE_FindMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-		worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+		xLoc		= static_cast<SI16>( args.get( 0 ).toInt32());
+		yLoc		= static_cast<SI16>( args.get( 1 ).toInt32());
+		zLoc		= static_cast<SI08>( args.get( 2 ).toInt32());
+		worldNumber = static_cast<UI08>( args.get( 3 ).toInt32());
 		if( argc == 5 )
 		{
-			instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			instanceId = static_cast<UI16>( args.get( 4 ).toInt32());
 		}
 	}
 	CMultiObj *multi = FindMulti( xLoc, yLoc, zLoc, worldNumber, instanceId );
@@ -1601,7 +1600,7 @@ JSNative SE_FindMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 && argc != 5 )
 	{
@@ -1614,13 +1613,13 @@ JSNative SE_GetItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI08 worldNumber = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	xLoc		= static_cast<SI16>( args.get( 0 ).toInt32());
+	yLoc		= static_cast<SI16>( args.get( 1 ).toInt32());
+	zLoc		= static_cast<SI08>( args.get( 2 ).toInt32());
+	worldNumber = static_cast<UI08>( args.get( 3 ).toInt32());
 	if( argc == 5 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+		instanceId = static_cast<UI16>( args.get( 4 ).toInt32());
 	}
 
 	CItem *item = GetItemAtXYZ( xLoc, yLoc, zLoc, worldNumber, instanceId );
@@ -1642,7 +1641,7 @@ JSNative SE_GetItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns item of given ID that is closest to specified coordinates
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_FindItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_FindItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 && argc != 6 )
 	{
@@ -1656,14 +1655,14 @@ JSNative SE_FindItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 id = 0;
 	UI16 instanceId = 0;
 
-	xLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	yLoc		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	zLoc		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	worldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	id			= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	xLoc		= static_cast<SI16>( args.get( 0 ).toInt32());
+	yLoc		= static_cast<SI16>( args.get( 1 ).toInt32());
+	zLoc		= static_cast<SI08>( args.get( 2 ).toInt32());
+	worldNumber = static_cast<UI08>( args.get( 3 ).toInt32());
+	id			= static_cast<UI16>( args.get( 4 ).toInt32());
 	if( argc == 6 )
 	{
-		instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+		instanceId = static_cast<UI16>( args.get( 5 ).toInt32());
 	}
 
 	CItem *item = FindItemNearXYZ( xLoc, yLoc, zLoc, worldNumber, id, instanceId );
@@ -1690,15 +1689,15 @@ JSNative SE_FindItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					4 - Same
 //|					5 - Count
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CompareGuildByGuild( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CompareGuildByGuild( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	GUILDID toCheck		= static_cast<GUILDID>( JSVAL_TO_INT( argv[0] ));
-	GUILDID toCheck2	= static_cast<GUILDID>( JSVAL_TO_INT( argv[1] ));
+	GUILDID toCheck		= static_cast<GUILDID>( args.get( 0 ).toInt32());
+	GUILDID toCheck2	= static_cast<GUILDID>( args.get( 1 ).toInt32());
 	*rval = INT_TO_JSVAL( GuildSys->Compare( toCheck, toCheck2 ));
 	return true;
 }
@@ -1708,15 +1707,15 @@ JSNative SE_CompareGuildByGuild( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Source town takes control over target town
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_PossessTown( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_PossessTown( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 town	= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 sTown	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 town	= static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 sTown	= static_cast<UI16>( args.get( 1 ).toInt32());
 	cwmWorldState->townRegions[town]->Possess( cwmWorldState->townRegions[sTown] );
 	return true;
 }
@@ -1726,15 +1725,15 @@ JSNative SE_PossessTown( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if character's race is affected by given type of weather
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_IsRaceWeakToWeather( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_IsRaceWeakToWeather( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	RACEID race		= static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	WEATHID toCheck = static_cast<WEATHID>( JSVAL_TO_INT( argv[1] ));
+	RACEID race		= static_cast<RACEID>( args.get( 0 ).toInt32());
+	WEATHID toCheck = static_cast<WEATHID>( args.get( 1 ).toInt32());
 	CRace *tRace	= Races->Race( race );
 	if( tRace == nullptr || toCheck >= WEATHNUM )
 	{
@@ -1749,15 +1748,15 @@ JSNative SE_IsRaceWeakToWeather( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage modifier for specified skill based on race
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetRaceSkillAdjustment( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetRaceSkillAdjustment( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	RACEID race = static_cast<RACEID>( JSVAL_TO_INT( argv[0] ));
-	SI32 skill = JSVAL_TO_INT( argv[1] );
+	RACEID race = static_cast<RACEID>( args.get( 0 ).toInt32());
+	SI32 skill = args.get( 1 ).toInt32();
 	*rval = INT_TO_JSVAL( Races->DamageFromSkill( skill, race ));
 	return true;
 }
@@ -1767,7 +1766,7 @@ JSNative SE_GetRaceSkillAdjustment( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -1898,7 +1897,7 @@ JSNative SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Uses specified item
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -1971,7 +1970,7 @@ JSNative SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Notes		-	Takes at least 2 parameters, which is the script number to trigger and the
 //|					function name to call. Any extra parameters are extra parameters to the JS event
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 )
 	{
@@ -1979,7 +1978,7 @@ JSNative SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 scriptNumberToFire = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptNumberToFire = static_cast<UI16>( args.get( 0 ).toInt32());
 	char *eventToFire		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
@@ -2010,7 +2009,7 @@ JSNative SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Notes		-	Takes 2 parameters, which is the script number to check and the
 //|					event name to check for
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoesEventExist( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoesEventExist( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -2019,7 +2018,7 @@ JSNative SE_DoesEventExist( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( 1 );
-	UI16 scriptNumberToCheck = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptNumberToCheck = static_cast<UI16>( args.get( 0 ).toInt32());
 	char *eventToCheck		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
@@ -2040,7 +2039,7 @@ JSNative SE_DoesEventExist( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns owner of container item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -2049,7 +2048,7 @@ JSNative SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI08 mType		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 mType		= static_cast<UI08>( args.get( 1 ).toInt32());
 	CChar *pOwner	= nullptr;
 
 	if( mType == 0 )	// item
@@ -2060,7 +2059,7 @@ JSNative SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		SI32 mSerItem	= args.get( 0 ).toInt32();
 		pOwner			= FindItemOwner( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( pOwner ))
@@ -2080,7 +2079,7 @@ JSNative SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns root container an item is contained in (if any)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -2089,7 +2088,7 @@ JSNative SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI08 mType		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 mType		= static_cast<UI08>( args.get( 1 ).toInt32());
 	CItem *iRoot	= nullptr;
 
 	if( mType == 0 )	// item
@@ -2100,7 +2099,7 @@ JSNative SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else				// serial
 	{
-		SI32 mSerItem	= JSVAL_TO_INT( argv[0] );
+		SI32 mSerItem	= args.get( 0 ).toInt32();
 		iRoot			= FindRootContainer( CalcItemObjFromSer( mSerItem ));
 	}
 	if( ValidateObject( iRoot ))
@@ -2120,7 +2119,7 @@ JSNative SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted item stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CalcTargetedItem( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CalcTargetedItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2155,7 +2154,7 @@ JSNative SE_CalcTargetedItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns targeted character stored on socket
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CalcTargetedChar( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CalcTargetedChar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2190,7 +2189,7 @@ JSNative SE_CalcTargetedChar( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the map tile ID at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetTileIdAtMapCoord( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetTileIdAtMapCoord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -2199,9 +2198,9 @@ JSNative SE_GetTileIdAtMapCoord( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 xLoc		= static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get( 1 ).toInt32());
+	UI08 wrldNumber	= static_cast<UI08>( args.get( 2 ).toInt32());
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
 	*rval			= INT_TO_JSVAL( mMap.tileId );
 	return true;
@@ -2213,7 +2212,7 @@ JSNative SE_GetTileIdAtMapCoord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static within specified range of given location
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_StaticInRange( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_StaticInRange( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -2222,11 +2221,11 @@ JSNative SE_StaticInRange( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-	UI16 radius		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	UI16 tileId		= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	UI16 xLoc		= static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get( 1 ).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get( 2 ).toInt32());
+	UI16 radius		= static_cast<UI16>( args.get( 3 ).toInt32());
+	UI16 tileId		= static_cast<UI16>( args.get( 4 ).toInt32());
 	bool tileFound	= false;
 
 	for( SI32 i = xLoc - radius; i <= ( xLoc + radius ); ++i )
@@ -2261,7 +2260,7 @@ JSNative SE_StaticInRange( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Checks for static at specified location
 //|	Notes		-	tile argument is optional; if not specified, will match ANY static found at location
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_StaticAt( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_StaticAt( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 && argc != 3 )
 	{
@@ -2270,14 +2269,14 @@ JSNative SE_StaticAt( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 xLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 yLoc		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 wrldNumber = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 xLoc		= static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 yLoc		= static_cast<UI16>( args.get( 1 ).toInt32());
+	UI08 wrldNumber = static_cast<UI08>( args.get( 2 ).toInt32());
 	UI16 tileId		= 0xFFFF;
 	 bool tileMatch	= false;
 	if( argc == 4 )
 	{
-		tileId = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		tileId = static_cast<UI16>( args.get( 3 ).toInt32());
 		tileMatch = true;
 	}
 	bool tileFound = false;
@@ -2298,7 +2297,7 @@ JSNative SE_StaticAt( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts string to number
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_StringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_StringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2319,7 +2318,7 @@ JSNative SE_StringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to string
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_NumToString( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_NumToString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2328,7 +2327,7 @@ JSNative SE_NumToString( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 num = JSVAL_TO_INT( argv[0] );
+	SI32 num = args.get( 0 ).toInt32();
 	auto str = oldstrutil::number( num );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ));
 	return true;
@@ -2340,7 +2339,7 @@ JSNative SE_NumToString( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts number to hex string
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_NumToHexString( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_NumToHexString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2349,7 +2348,7 @@ JSNative SE_NumToHexString( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 num = JSVAL_TO_INT( argv[0] );
+	SI32 num = args.get( 0 ).toInt32();
 	auto str = oldstrutil::number( num, 16 );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ));
@@ -2362,7 +2361,7 @@ JSNative SE_NumToHexString( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of races found in the server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetRaceCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetRaceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -2380,7 +2379,7 @@ JSNative SE_GetRaceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of characters
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2408,7 +2407,7 @@ JSNative SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AreaCharacterFunction: Argument 1 not a valid object" );
 		return false;
 	}
-	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
+	R32 distance = static_cast<R32>( args.get( 2 ).toInt32());
 	if( argc == 4 && argv[3] != JSVAL_NULL )
 	{
 		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
@@ -2463,7 +2462,7 @@ JSNative SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area of items
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2491,7 +2490,7 @@ JSNative SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AreaItemFunction: Argument 1 not a valid object" );
 		return false;
 	}
-	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
+	R32 distance = static_cast<R32>( args.get( 2 ).toInt32());
 	if( argc == 4 && argv[3] != JSVAL_NULL )
 	{
 		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
@@ -2542,7 +2541,7 @@ JSNative SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and convert them to a string.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetDictionaryEntry( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetDictionaryEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 )
 	{
@@ -2551,11 +2550,11 @@ JSNative SE_GetDictionaryEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 dictEntry = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 dictEntry = static_cast<SI32>( args.get( 0 ).toInt32());
 	UnicodeTypes language = ZERO;
 	if( argc == 2 )
 	{
-		language = static_cast<UnicodeTypes>( JSVAL_TO_INT( argv[1] ));
+		language = static_cast<UnicodeTypes>( args.get( 1 ).toInt32());
 	}
 	std::string txt = Dictionary->GetEntry( dictEntry, language );
 	txt = oldstrutil::stringToWstringToString( txt );
@@ -2572,7 +2571,7 @@ JSNative SE_GetDictionaryEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Globally yell a message from JS (Based on Commandlevel)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_Yell( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_Yell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 3 )
 	{
@@ -2585,7 +2584,7 @@ JSNative SE_Yell( JSContext* cx, unsigned argc, JS::Value* vp )
 	CSocket *mySock			= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	CChar *myChar			= mySock->CurrcharObj();
 	std::string textToYell	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
-	UI08 commandLevel		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 commandLevel		= static_cast<UI08>( args.get( 2 ).toInt32());
 
 	std::string yellTo = "";
 	switch( static_cast<CommandLevels>( commandLevel ))
@@ -2656,7 +2655,7 @@ JSNative SE_Yell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads certain server subsystems
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2665,7 +2664,7 @@ JSNative SE_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI32 toLoad = JSVAL_TO_INT( argv[0] );
+	SI32 toLoad = args.get( 0 ).toInt32();
 
 	switch( toLoad )
 	{
@@ -2732,7 +2731,7 @@ JSNative SE_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds an info gump for specified static or map tile
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_SendStaticStats( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_SendStaticStats( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2794,7 +2793,7 @@ JSNative SE_SendStaticStats( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile height of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetTileHeight( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetTileHeight( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2803,7 +2802,7 @@ JSNative SE_GetTileHeight( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 tileNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 tileNum = static_cast<UI16>( args.get( 0 ).toInt32());
 	*rval = INT_TO_JSVAL( Map->TileHeight( tileNum ));
 	return true;
 }
@@ -2821,7 +2820,7 @@ bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all world objects
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_IterateOver( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_IterateOver( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2858,7 +2857,7 @@ bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops over all spawn regions in the world
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_IterateOverSpawnRegions( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_IterateOverSpawnRegions( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI32 b = 0;
@@ -2887,7 +2886,7 @@ JSNative SE_IterateOverSpawnRegions( JSContext* cx, unsigned argc, JS::Value* vp
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world bright level - brightest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_WorldBrightLevel( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_WorldBrightLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 1 )
@@ -2897,7 +2896,7 @@ JSNative SE_WorldBrightLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>( args.get( 0 ).toInt32());
 		cwmWorldState->ServerData()->WorldLightBrightLevel( brightLevel );
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightBrightLevel() );
@@ -2910,7 +2909,7 @@ JSNative SE_WorldBrightLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world dark level - darkest part of the regular day/night cycle
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_WorldDarkLevel( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_WorldDarkLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 1 )
@@ -2920,7 +2919,7 @@ JSNative SE_WorldDarkLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>( args.get( 0 ).toInt32());
 		cwmWorldState->ServerData()->WorldLightDarkLevel( darkLevel );
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->WorldLightDarkLevel() );
@@ -2933,7 +2932,7 @@ JSNative SE_WorldDarkLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets default light level in dungeons
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_WorldDungeonLevel( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_WorldDungeonLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 1 )
@@ -2943,7 +2942,7 @@ JSNative SE_WorldDungeonLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( argc == 1 )
 	{
-		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( JSVAL_TO_INT( argv[0] ));
+		LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>( args.get( 0 ).toInt32());
 		cwmWorldState->ServerData()->DungeonLightLevel( dungeonLevel );
 	}
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->DungeonLightLevel() );
@@ -2955,7 +2954,7 @@ JSNative SE_WorldDungeonLevel( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets enabled state of given spawn region
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 1 )
@@ -2965,7 +2964,7 @@ JSNative SE_GetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* 
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get( 0 ).toInt32());
 		bool spawnRegionFacetStatus = cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( spawnRegionFacet );
 		if( spawnRegionFacetStatus )
 		{
@@ -2984,7 +2983,7 @@ JSNative SE_GetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets enabled state of spawn regions
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_SetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_SetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	if( argc > 2 )
@@ -2994,12 +2993,12 @@ JSNative SE_SetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* 
 	}
 	else if( argc == 1 )
 	{
-		UI32 spawnRegionFacetVal = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 spawnRegionFacetVal = static_cast<UI32>( args.get( 0 ).toInt32());
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacetVal );
 	}
 	else if( argc == 2 )
 	{
-		UI32 spawnRegionFacet = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
+		UI32 spawnRegionFacet = static_cast<UI32>( args.get( 0 ).toInt32());
 		bool spawnRegionFacetStatus = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 		cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus( spawnRegionFacet, spawnRegionFacetStatus );
 	}
@@ -3012,7 +3011,7 @@ JSNative SE_SetSpawnRegionFacetStatus( JSContext* cx, unsigned argc, JS::Value* 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns socket based on provided index, from list of connected clients
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetSocketFromIndex( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetSocketFromIndex( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3020,7 +3019,7 @@ JSNative SE_GetSocketFromIndex( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UOXSOCKET index = static_cast<UOXSOCKET>( JSVAL_TO_INT( argv[0] ));
+	UOXSOCKET index = static_cast<UOXSOCKET>( args.get( 0 ).toInt32());
 
 	CSocket *mSock = Network->GetSockPtr( index );
 	CChar *mChar = nullptr;
@@ -3046,7 +3045,7 @@ JSNative SE_GetSocketFromIndex( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload specified JS file by scriptId
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ReloadJSFile( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ReloadJSFile( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3054,7 +3053,7 @@ JSNative SE_ReloadJSFile( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId == JSMapping->GetScriptId( JS_GetGlobalObject( cx )))
 	{
 		ScriptError( cx, oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ).c_str() );
@@ -3072,7 +3071,7 @@ JSNative SE_ReloadJSFile( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resource areas to split the world into
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ResourceArea( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ResourceArea( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3095,7 +3094,7 @@ JSNative SE_ResourceArea( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resources (logs/ore/fish) in each resource area on the server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ResourceAmount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ResourceAmount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3108,7 +3107,7 @@ JSNative SE_ResourceAmount( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		SI16 newVal = static_cast<SI16>( args.get( 1 ).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogs( newVal );
@@ -3145,7 +3144,7 @@ JSNative SE_ResourceAmount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets respawn timers for ore/log resources on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ResourceTime( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ResourceTime( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3158,7 +3157,7 @@ JSNative SE_ResourceTime( JSContext* cx, unsigned argc, JS::Value* vp )
 	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
 	if( argc == 2 )
 	{
-		UI16 newVal = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI16 newVal = static_cast<UI16>( args.get( 1 ).toInt32());
 		if( resType == "LOGS" )
 		{
 			cwmWorldState->ServerData()->ResLogTime( newVal );
@@ -3195,7 +3194,7 @@ JSNative SE_ResourceTime( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a resource object allowing JS to modify resource data.
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -3203,9 +3202,9 @@ JSNative SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 2 ).toInt32());
 	MapResource_st *mRes = MapRegion->GetResource( x, y, worldNum );
 	if( mRes == nullptr )
 	{
@@ -3228,7 +3227,7 @@ JSNative SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object is a valid and not nullptr or marked for deletion
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ValidateObject( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ValidateObject( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3258,7 +3257,7 @@ JSNative SE_ValidateObject( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage bonuses based on race/weather weakness and character skills
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 6 )
 	{
@@ -3332,7 +3331,7 @@ JSNative SE_ApplyDamageBonuses( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values and elemental damage
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
@@ -3402,7 +3401,7 @@ JSNative SE_ApplyDefenseModifiers( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if hostile action done by one character versus another will result in criminal flag
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_WillResultInCriminal( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_WillResultInCriminal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -3444,7 +3443,7 @@ JSNative SE_WillResultInCriminal( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a party with specified character as the party leader
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CreateParty( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CreateParty( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3495,7 +3494,7 @@ JSNative SE_CreateParty( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets or sets Moon phases on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_Moon( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_Moon( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 2 || argc == 0 )
 	{
@@ -3504,10 +3503,10 @@ JSNative SE_Moon( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 slot = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 slot = static_cast<SI16>( args.get( 0 ).toInt32());
 	if( argc == 2 )
 	{
-		SI16 newVal = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		SI16 newVal = static_cast<SI16>( args.get( 1 ).toInt32());
 		cwmWorldState->ServerData()->ServerMoon( slot, newVal );
 	}
 
@@ -3521,7 +3520,7 @@ JSNative SE_Moon( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified region object
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3530,7 +3529,7 @@ JSNative SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 regNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 regNum = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( cwmWorldState->townRegions.find( regNum ) != cwmWorldState->townRegions.end() )
 	{
 		CTownRegion *townReg = cwmWorldState->townRegions[regNum];
@@ -3557,7 +3556,7 @@ JSNative SE_GetTownRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a specified spawn region object
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -3569,7 +3568,7 @@ JSNative SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argc == 1 )
 	{
 		// Assume spawn region number was provided
-		UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 spawnRegNum = static_cast<UI16>( args.get( 0 ).toInt32());
 		if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 		{
 			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -3591,10 +3590,10 @@ JSNative SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 	else
 	{
 		// Assume coordinates were provided
-		UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-		UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-		UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
-		UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		UI16 x = static_cast<UI16>( args.get( 0 ).toInt32());
+		UI16 y = static_cast<UI16>( args.get( 1 ).toInt32());
+		UI08 worldNum = static_cast<UI08>( args.get( 2 ).toInt32());
+		UI16 instanceID = static_cast<UI16>( args.get( 3 ).toInt32());
 
 		// Iterate over each spawn region to find the right one
 		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval]( std::pair<UI16, CSpawnRegion*> entry )
@@ -3624,7 +3623,7 @@ JSNative SE_GetSpawnRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the total number of spawn regions found in the server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetSpawnRegionCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetSpawnRegionCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3641,7 +3640,7 @@ JSNative SE_GetSpawnRegionCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map elevation at given coordinates
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetMapElevation( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetMapElevation( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -3650,9 +3649,9 @@ JSNative SE_GetMapElevation( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 2 ).toInt32());
 	SI08 mapElevation = Map->MapElevation( x, y, worldNum );
 	*rval = INT_TO_JSVAL( mapElevation );
 	return true;
@@ -3665,7 +3664,7 @@ JSNative SE_GetMapElevation( JSContext* cx, unsigned argc, JS::Value* vp )
 //| Notes		-	First checks if player is in a static building. If false, checks if there's a multi
 //|					at the same location as the player, and assumes they are in the building if true
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_IsInBuilding( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_IsInBuilding( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 6 )
 	{
@@ -3674,11 +3673,11 @@ JSNative SE_IsInBuilding( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI16 instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
+	UI16 instanceId = static_cast<UI16>( args.get( 4 ).toInt32());
 	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool isInBuilding = Map->InBuilding( x, y, z, worldNum, instanceId );
 	if( !isInBuilding )
@@ -3711,7 +3710,7 @@ JSNative SE_IsInBuilding( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CheckStaticFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CheckStaticFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -3720,11 +3719,11 @@ JSNative SE_CheckStaticFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	TileFlags toCheck	= static_cast<TileFlags>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
+	TileFlags toCheck	= static_cast<TileFlags>( args.get( 4 ).toInt32());
 	 UI16 ignoreMe = 0;
 	bool hasStaticFlag = Map->CheckStaticFlag( x, y, z, worldNum, toCheck, ignoreMe, false );
 	*rval = BOOLEAN_TO_JSVAL( hasStaticFlag );
@@ -3736,7 +3735,7 @@ JSNative SE_CheckStaticFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CheckDynamicFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CheckDynamicFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 6 )
 	{
@@ -3745,12 +3744,12 @@ JSNative SE_CheckDynamicFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId = static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
-	TileFlags toCheck = static_cast<TileFlags>( JSVAL_TO_INT( argv[5] ));
+	SI16 x = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y = static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z = static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum = static_cast<UI08>( args.get( 3 ).toInt32());
+	UI08 instanceId = static_cast<UI08>( args.get( 4 ).toInt32());
+	TileFlags toCheck = static_cast<TileFlags>( args.get( 5 ).toInt32());
 	 UI16 ignoreMe = 0;
 	bool hasDynamicFlag = Map->CheckDynamicFlag( x, y, z, worldNum, instanceId, toCheck, ignoreMe );
 	*rval = BOOLEAN_TO_JSVAL( hasDynamicFlag );
@@ -3762,7 +3761,7 @@ JSNative SE_CheckDynamicFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether tile with given ID has a specific flag
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_CheckTileFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_CheckTileFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -3771,8 +3770,8 @@ JSNative SE_CheckTileFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	UI16 itemId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	TileFlags flagToCheck	= static_cast<TileFlags>( JSVAL_TO_INT( argv[1] ));
+	UI16 itemId = static_cast<UI16>( args.get( 0 ).toInt32());
+	TileFlags flagToCheck	= static_cast<TileFlags>( args.get( 1 ).toInt32());
 
 	bool tileHasFlag = Map->CheckTileFlag( itemId, flagToCheck );
 	*rval = BOOLEAN_TO_JSVAL( tileHasFlag );
@@ -3784,7 +3783,7 @@ JSNative SE_CheckTileFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if statics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoesStaticBlock( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoesStaticBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -3793,10 +3792,10 @@ JSNative SE_DoesStaticBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool staticBlocks = Map->DoesStaticBlock( x, y, z, worldNum, checkWater );
 	*rval = BOOLEAN_TO_JSVAL( staticBlocks );
@@ -3808,7 +3807,7 @@ JSNative SE_DoesStaticBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if dynamics at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoesDynamicBlock( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoesDynamicBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 9 )
 	{
@@ -3817,11 +3816,11 @@ JSNative SE_DoesDynamicBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get( 4 ).toInt32());
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
 	bool checkOnlyMultis = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
@@ -3836,7 +3835,7 @@ JSNative SE_DoesDynamicBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if map tile at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoesMapBlock( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoesMapBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
@@ -3844,10 +3843,10 @@ JSNative SE_DoesMapBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
 	bool checkWater = ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool waterWalk = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool checkMultiPlacement = ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
@@ -3862,7 +3861,7 @@ JSNative SE_DoesMapBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if characters at/above given coordinates blocks movement, etc
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DoesCharacterBlock( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DoesCharacterBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -3871,11 +3870,11 @@ JSNative SE_DoesCharacterBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI08 z			= static_cast<SI08>( args.get( 2 ).toInt32());
+	UI08 worldNum	= static_cast<UI08>( args.get( 3 ).toInt32());
+	UI08 instanceId	= static_cast<UI08>( args.get( 4 ).toInt32());
 	bool characterBlocks = Map->DoesCharacterBlock( x, y, z, worldNum, instanceId );
 	*rval = BOOLEAN_TO_JSVAL( characterBlocks );
 	return true;
@@ -3886,7 +3885,7 @@ JSNative SE_DoesCharacterBlock( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a file from the server's harddrive...
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 3 )
 	{
@@ -3956,7 +3955,7 @@ JSNative SE_DeleteFile( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_EraStringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_EraStringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = reinterpret_cast<long>(nullptr);
@@ -3994,7 +3993,7 @@ JSNative SE_EraStringToNum( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of specified server setting
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetServerSetting( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetServerSetting( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = reinterpret_cast<long>(nullptr);
@@ -5115,7 +5114,7 @@ JSNative SE_GetServerSetting( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific client feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetClientFeature( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetClientFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5124,7 +5123,7 @@ JSNative SE_GetClientFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	ClientFeatures clientFeature = static_cast<ClientFeatures>( JSVAL_TO_INT( argv[0] ));
+	ClientFeatures clientFeature = static_cast<ClientFeatures>( args.get( 0 ).toInt32());
 	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetClientFeature( clientFeature ));
 	return true;
 }
@@ -5134,7 +5133,7 @@ JSNative SE_GetClientFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if a specific Server feature is enabled on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetServerFeature( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetServerFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5143,7 +5142,7 @@ JSNative SE_GetServerFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
   auto args		= JS::CallArgsFromVp(argc, vp);
-	ServerFeatures serverFeature = static_cast<ServerFeatures>( JSVAL_TO_INT( argv[0] ));
+	ServerFeatures serverFeature = static_cast<ServerFeatures>( args.get( 0 ).toInt32());
 	*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->GetServerFeature( serverFeature ));
 	return true;
 }
@@ -5153,7 +5152,7 @@ JSNative SE_GetServerFeature( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of accounts on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetAccountCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetAccountCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( Accounts->size() );
@@ -5165,7 +5164,7 @@ JSNative SE_GetAccountCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of players online on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetPlayerCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetPlayerCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() );
@@ -5177,7 +5176,7 @@ JSNative SE_GetPlayerCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of items on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetItemCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetItemCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ));
@@ -5189,7 +5188,7 @@ JSNative SE_GetItemCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of multis on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetMultiCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetMultiCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ));
@@ -5201,7 +5200,7 @@ JSNative SE_GetMultiCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of characters on server
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetCharacterCount( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetCharacterCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	*rval = INT_TO_JSVAL( ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
@@ -5213,7 +5212,7 @@ JSNative SE_GetCharacterCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets server version as a string
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_GetServerVersionString( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_GetServerVersionString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
@@ -5227,7 +5226,7 @@ JSNative SE_GetServerVersionString( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the distance between two locations, or two objects - or a combination of both
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_DistanceBetween( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_DistanceBetween( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 && argc != 3 && argc != 4 && argc != 6 )
 	{
@@ -5262,24 +5261,24 @@ JSNative SE_DistanceBetween( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		UI16 x1 = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-		UI16 y1 = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI16 x1 = static_cast<UI16>( args.get( 0 ).toInt32());
+		UI16 y1 = static_cast<UI16>( args.get( 1 ).toInt32());
 		UI16 x2 = 0;
 		UI16 y2 = 0;
 		if( argc == 4 )
 		{
 			// 4 arguments - find distance in 2D
-			x2		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-			y2		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+			x2		= static_cast<UI16>( args.get( 2 ).toInt32());
+			y2		= static_cast<UI16>( args.get( 3 ).toInt32());
 			*rval	= INT_TO_JSVAL( GetDist( Point3_st( x1, y1, 0 ), Point3_st( x2, y2, 0 )));
 		}
 		else
 		{
 			// 6 arguments - find distance in 3D
-			SI08 z1 = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			x2		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-			y2		= static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
-			SI08 z2 = static_cast<SI08>( JSVAL_TO_INT( argv[5] ));
+			SI08 z1 = static_cast<SI08>( args.get( 2 ).toInt32());
+			x2		= static_cast<UI16>( args.get( 3 ).toInt32());
+			y2		= static_cast<UI16>( args.get( 4 ).toInt32());
+			SI08 z2 = static_cast<SI08>( args.get( 5 ).toInt32());
 			*rval	= INT_TO_JSVAL( GetDist3D( Point3_st( x1, y1, z1 ), Point3_st( x2, y2, z2 )));
 		}
 	}
@@ -5292,7 +5291,7 @@ JSNative SE_DistanceBetween( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the BASEITEMSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_BASEITEMSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_BASEITEMSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, BASEITEMSERIAL, rval );
@@ -5304,7 +5303,7 @@ JSNative SE_BASEITEMSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDSERIAL constant
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_INVALIDSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_INVALIDSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, INVALIDSERIAL, rval );
@@ -5316,7 +5315,7 @@ JSNative SE_INVALIDSERIAL( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDID constant
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_INVALIDID( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_INVALIDID( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, INVALIDID, rval );
@@ -5328,7 +5327,7 @@ JSNative SE_INVALIDID( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the value of the INVALIDCOLOUR constant
 //o------------------------------------------------------------------------------------------------o
-JSNative SE_INVALIDCOLOUR( JSContext* cx, unsigned argc, JS::Value* vp )
+bool SE_INVALIDCOLOUR( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JS_NewNumberValue( cx, INVALIDCOLOUR, rval );

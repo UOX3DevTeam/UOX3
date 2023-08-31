@@ -215,8 +215,8 @@ JSNative CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI08	toWrite		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( args.get( 0 ).toInt32());
+	UI08	toWrite		= static_cast<UI08>( args.get( 1 ).toInt32());
 
 	myPacket->GetPacketStream().WriteByte( position, toWrite );
 
@@ -244,8 +244,8 @@ JSNative CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	UI16	toWrite		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( args.get( 0 ).toInt32());
+	UI16	toWrite		= static_cast<UI16>( args.get( 1 ).toInt32());
 
 	myPacket->GetPacketStream().WriteShort( position, toWrite );
 
@@ -273,8 +273,8 @@ JSNative CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
-	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	size_t	position	= static_cast<size_t>( args.get( 0 ).toInt32());
+	//UI32	toWrite		= static_cast<UI32>( args.get( 1 ).toInt32());
 	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	UI32 toWrite = oldstrutil::value<UI32>( toWriteChar );
 
@@ -304,9 +304,9 @@ JSNative CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t	position	= static_cast<size_t>( args.get( 0 ).toInt32());
 	char *	toWrite		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
-	size_t	len			= static_cast<size_t>( JSVAL_TO_INT( argv[2] ));
+	size_t	len			= static_cast<size_t>( args.get( 2 ).toInt32());
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
 
@@ -334,7 +334,7 @@ JSNative CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t len = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t len = static_cast<size_t>( args.get( 0 ).toInt32());
 
 
 	myPacket->GetPacketStream().ReserveSize( len );
@@ -457,7 +457,7 @@ JSNative CGumpData_GetEdit( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get( 0 ).toInt32();
 
 	if( index < myItem->sEdits.size() )
 	{
@@ -493,7 +493,7 @@ JSNative CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 		*rval = INT_TO_JSVAL( -1 );
 		return true;
 	}
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get( 0 ).toInt32();
 
 	if( index < myItem->nIDs.size() )
 	{
@@ -530,7 +530,7 @@ JSNative CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 		*rval = INT_TO_JSVAL( -1 );
 		return true;
 	}
-	size_t index = JSVAL_TO_INT( argv[0] );
+	size_t index = args.get( 0 ).toInt32();
 	if( index < myItem->nButtons.size() )
 	{
 		*rval = INT_TO_JSVAL( myItem->nButtons[index] );
@@ -566,21 +566,21 @@ JSNative CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 5 )
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL			= static_cast<SI16>( args.get( 0 ).toInt32());
+		tR			= static_cast<SI16>( args.get( 1 ).toInt32());
+		gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
 		gImageChk	= gImage + 1;
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		initState	= static_cast<SI16>( args.get( 3 ).toInt32());
+		relay		= static_cast<SI16>( args.get( 4 ).toInt32());
 	}
 	else
 	{
-		tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk	= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay		= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		tL			= static_cast<SI16>( args.get( 0 ).toInt32());
+		tR			= static_cast<SI16>( args.get( 1 ).toInt32());
+		gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
+		gImageChk	= static_cast<UI16>( args.get( 3 ).toInt32());
+		initState	= static_cast<SI16>( args.get( 4 ).toInt32());
+		relay		= static_cast<SI16>( args.get( 5 ).toInt32());
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -726,7 +726,7 @@ JSNative CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 masterGumpId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 masterGumpId = static_cast<SI32>( args.get( 0 ).toInt32());
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
 
 	if( gList == nullptr )
@@ -755,11 +755,11 @@ JSNative CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 bL = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 bR = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 bL = static_cast<SI16>( args.get( 2 ).toInt32());
+	SI16 bR = static_cast<SI16>( args.get( 3 ).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get( 4 ).toInt32());
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -786,13 +786,13 @@ JSNative CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddButton: Invalid number of arguments (takes 6 or 7)" );
 		return false;
 	}
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 x1 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
-	SI16 x2 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[4] )) : static_cast<SI16>( JSVAL_TO_INT( argv[5] )));
-	SI16 x3 = ( argc == 6 ? static_cast<SI16>( JSVAL_TO_INT( argv[5] )) : static_cast<SI16>( JSVAL_TO_INT( argv[6] )));
+	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
+	UI16 gImage2 = ( argc == 6 ? (gImage + 1) : static_cast<UI16>( args.get( 3 ).toInt32()));
+	SI16 x1 = ( argc == 6 ? static_cast<SI16>( args.get( 3 ).toInt32()) : static_cast<SI16>( args.get( 4 ).toInt32()));
+	SI16 x2 = ( argc == 6 ? static_cast<SI16>( args.get( 4 ).toInt32()) : static_cast<SI16>( args.get( 5 ).toInt32()));
+	SI16 x3 = ( argc == 6 ? static_cast<SI16>( args.get( 5 ).toInt32()) : static_cast<SI16>( args.get( 6 ).toInt32()));
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -820,16 +820,16 @@ JSNative CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddButtonTileArt: Invalid number of arguments (takes 11)" );
 		return false;
 	}
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 tileIdNorm = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 tileIdPush = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 buttonType = static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 pageNum = static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 buttonId = static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
-	SI16 tileId = static_cast<SI16>( JSVAL_TO_INT( argv[7] ));
-	SI16 hue = static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
-	SI16 tileX = static_cast<SI16>( JSVAL_TO_INT( argv[9] ));
+	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 tileIdNorm = static_cast<UI16>( args.get( 2 ).toInt32());
+	UI16 tileIdPush = static_cast<UI16>( args.get( 3 ).toInt32());
+	SI16 buttonType = static_cast<SI16>( args.get( 4 ).toInt32());
+	SI16 pageNum = static_cast<SI16>( args.get( 5 ).toInt32());
+	SI16 buttonId = static_cast<SI16>( args.get( 6 ).toInt32());
+	SI16 tileId = static_cast<SI16>( args.get( 7 ).toInt32());
+	SI16 hue = static_cast<SI16>( args.get( 8 ).toInt32());
+	SI16 tileX = static_cast<SI16>( args.get( 9 ).toInt32());
 	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
 	//SI32 cliloc = 0;
 
@@ -858,11 +858,11 @@ JSNative CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddPageButton: Invalid number of arguments (takes 4 or 5)" );
 		return false;
 	}
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( JSVAL_TO_INT( argv[3] )));
-	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( JSVAL_TO_INT( argv[3] )) : static_cast<SI16>( JSVAL_TO_INT( argv[4] )));
+	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
+	UI16 gImage2 = ( argc == 4 ? ( gImage + 1 ) : static_cast<UI16>( args.get( 3 ).toInt32()));
+	SI16 pageNum = ( argc == 4 ? static_cast<SI16>( args.get( 3 ).toInt32()) : static_cast<SI16>( args.get( 4 ).toInt32()));
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -891,10 +891,10 @@ JSNative CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
+	SI16 x		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width	= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height	= static_cast<SI16>( args.get( 3 ).toInt32()); // height
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -923,11 +923,11 @@ JSNative CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
-	SI16 TextWidth	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // width
-	SI16 TextHeight	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // height
+	SI16 TextX		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( args.get( 2 ).toInt32()); // Hue
+	SI16 TextWidth	= static_cast<SI16>( args.get( 3 ).toInt32()); // width
+	SI16 TextHeight	= static_cast<SI16>( args.get( 4 ).toInt32()); // height
 
 	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[5] ));
 
@@ -975,7 +975,7 @@ JSNative CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "group %d", args.get( 0 ).toInt32()));
 
 	return true;
 }
@@ -1001,7 +1001,7 @@ JSNative CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "endgroup", args.get( 0 ).toInt32()));
 
 	return true;
 }
@@ -1020,13 +1020,13 @@ JSNative CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
 	SI32 rgbColor = 0;
 	if( argc == 4 )
 	{
-		rgbColor = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		rgbColor = static_cast<UI16>( args.get( 3 ).toInt32());
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -1062,10 +1062,10 @@ JSNative CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	SI16 tL			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR			= static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
+	SI32 rgbColour	= static_cast<SI32>( args.get( 3 ).toInt32());	// colour
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1108,7 +1108,7 @@ JSNative CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 tooltip = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+	SI32 tooltip = static_cast<SI32>( args.get( 0 ).toInt32());
 	std::stringstream temp;
 	if( argc > 1 )
 	{
@@ -1149,10 +1149,10 @@ JSNative CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
+	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
 	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 
@@ -1204,7 +1204,7 @@ JSNative CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( oldstrutil::format( "page %d", args.get( 0 ).toInt32()));
 
 	return true;
 }
@@ -1223,9 +1223,9 @@ JSNative CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 tL		= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR		= static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1253,10 +1253,10 @@ JSNative CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-	SI32 rgbColour	= static_cast<SI32>( JSVAL_TO_INT( argv[3] ));	// colour
+	SI16 tL			= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR			= static_cast<SI16>( args.get( 1 ).toInt32());
+	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
+	SI32 rgbColour	= static_cast<SI32>( args.get( 3 ).toInt32());	// colour
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1285,13 +1285,13 @@ JSNative CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // starting x
-	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // starting y
-	UI16 gImage		= static_cast<UI16>( JSVAL_TO_INT( argv[2] )); // GumpId
-	SI16 spriteX	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // spriteX
-	SI16 spriteY	= static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // spriteY
-	SI16 width		= static_cast<SI16>( JSVAL_TO_INT( argv[5] )); // width
-	SI16 height		= static_cast<SI16>( JSVAL_TO_INT( argv[6] )); // height
+	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32()); // starting x
+	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32()); // starting y
+	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32()); // GumpId
+	SI16 spriteX	= static_cast<SI16>( args.get( 3 ).toInt32()); // spriteX
+	SI16 spriteY	= static_cast<SI16>( args.get( 4 ).toInt32()); // spriteY
+	SI16 width		= static_cast<SI16>( args.get( 5 ).toInt32()); // width
+	SI16 height		= static_cast<SI16>( args.get( 6 ).toInt32()); // height
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1369,21 +1369,21 @@ JSNative CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 5 )
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		tL				= static_cast<SI16>( args.get( 0 ).toInt32());
+		tR				= static_cast<SI16>( args.get( 1 ).toInt32());
+		gImage			= static_cast<UI16>( args.get( 2 ).toInt32());
 		gImageChk		= gImage + 1;
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
+		initialState	= static_cast<SI16>( args.get( 3 ).toInt32());
+		relay			= static_cast<SI16>( args.get( 4 ).toInt32());
 	}
 	else
 	{
-		tL				= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		tR				= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		gImage			= static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
-		gImageChk		= static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
-		initialState	= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-		relay			= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
+		tL				= static_cast<SI16>( args.get( 0 ).toInt32());
+		tR				= static_cast<SI16>( args.get( 1 ).toInt32());
+		gImage			= static_cast<UI16>( args.get( 2 ).toInt32());
+		gImageChk		= static_cast<UI16>( args.get( 3 ).toInt32());
+		initialState	= static_cast<SI16>( args.get( 4 ).toInt32());
+		relay			= static_cast<SI16>( args.get( 5 ).toInt32());
 	}
 
 
@@ -1415,9 +1415,9 @@ JSNative CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	UI32 textId;
 
-	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 TextY		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 TextHue	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // Hue
+	SI16 TextX		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 TextY		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 TextHue	= static_cast<SI16>( args.get( 2 ).toInt32()); // Hue
 
 	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
 
@@ -1457,13 +1457,13 @@ JSNative CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
+	SI16 tL					= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR					= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 width				= static_cast<SI16>( args.get( 2 ).toInt32());
+	SI16 height				= static_cast<SI16>( args.get( 3 ).toInt32());
+	SI16 hue				= static_cast<SI16>( args.get( 4 ).toInt32());
+	SI16 relay				= static_cast<SI16>( args.get( 5 ).toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( args.get( 6 ).toInt32());
 	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ));
 
 	if( test == nullptr )
@@ -1499,15 +1499,15 @@ JSNative CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 tR					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 width				= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
-	SI16 height				= static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
-	SI16 hue				= static_cast<SI16>( JSVAL_TO_INT( argv[4] ));
-	SI16 relay				= static_cast<SI16>( JSVAL_TO_INT( argv[5] ));
-	SI16 initialTextIndex	= static_cast<SI16>( JSVAL_TO_INT( argv[6] ));
+	SI16 tL					= static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 tR					= static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 width				= static_cast<SI16>( args.get( 2 ).toInt32());
+	SI16 height				= static_cast<SI16>( args.get( 3 ).toInt32());
+	SI16 hue				= static_cast<SI16>( args.get( 4 ).toInt32());
+	SI16 relay				= static_cast<SI16>( args.get( 5 ).toInt32());
+	SI16 initialTextIndex	= static_cast<SI16>( args.get( 6 ).toInt32());
 	char *test = JS_GetStringBytes( JS_ValueToString( cx, argv[7] ));
-	SI16 textEntrySize		= static_cast<SI16>( JSVAL_TO_INT( argv[8] ));
+	SI16 textEntrySize		= static_cast<SI16>( args.get( 8 ).toInt32());
 
 	if( test == nullptr )
 	{
@@ -1543,11 +1543,11 @@ JSNative CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width	= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height	= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI16 gumpId = static_cast<SI16>( JSVAL_TO_INT( argv[4] )); // gump to tile
+	SI16 x		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width	= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height	= static_cast<SI16>( args.get( 3 ).toInt32()); // height
+	SI16 gumpId = static_cast<SI16>( args.get( 4 ).toInt32()); // gump to tile
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1576,11 +1576,11 @@ JSNative CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
+	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
+	SI32 number			= static_cast<SI32>( args.get( 4 ).toInt32()); // number
 	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
 
@@ -1614,14 +1614,14 @@ JSNative CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[4] )); // number
+	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
+	SI32 number			= static_cast<SI32>( args.get( 4 ).toInt32()); // number
 	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[7] ));	// colour
+	SI32 rgbColour		= static_cast<SI32>( args.get( 7 ).toInt32());	// colour
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
@@ -1652,14 +1652,14 @@ JSNative CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
-	SI16 y				= static_cast<SI16>( JSVAL_TO_INT( argv[1] )); // y
-	SI16 width			= static_cast<SI16>( JSVAL_TO_INT( argv[2] )); // width
-	SI16 height			= static_cast<SI16>( JSVAL_TO_INT( argv[3] )); // height
+	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
+	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
+	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
+	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
 	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
 	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	SI32 rgbColour		= static_cast<SI32>( JSVAL_TO_INT( argv[6] ));	// colour
-	SI32 number			= static_cast<SI32>( JSVAL_TO_INT( argv[7] )); // number
+	SI32 rgbColour		= static_cast<SI32>( args.get( 6 ).toInt32());	// colour
+	SI32 number			= static_cast<SI32>( args.get( 7 ).toInt32()); // number
 
 	char *TextString1	= JS_GetStringBytes( JS_ValueToString( cx, argv[8] )); // ClilocArgument1
 	char *TextString2	= JS_GetStringBytes( JS_ValueToString( cx, argv[9] )); // ClilocArgument2
@@ -1768,13 +1768,13 @@ JSNative CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( args.get( 2 ).toInt32());
 	}
 
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( args.get( 3 ).toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -1784,19 +1784,19 @@ JSNative CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( args.get( 4 ).toInt32());
 	}
 
 	FontType speechFontType = FNT_NULL;
 	if( argc == 6 )
 	{
-		speechFontType = static_cast<FontType>( JSVAL_TO_INT( argv[5] ));
+		speechFontType = static_cast<FontType>( args.get( 5 ).toInt32());
 	}
 
 	SpeechType speechType = UNKNOWN;
 	if( argc == 7 )
 	{
-		speechType = static_cast<SpeechType>( JSVAL_TO_INT( argv[6] ));
+		speechType = static_cast<SpeechType>( args.get( 6 ).toInt32());
 	}
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
@@ -1911,7 +1911,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	SI32 triggerNum = -1;
 	if( argc == 1 )
 	{
-		triggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		triggerNum = static_cast<UI16>( args.get( 0 ).toInt32());
 	}
 
 	SERIAL mySer = myObj->GetSerial();
@@ -1960,8 +1960,8 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get( 1 ).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2012,9 +2012,9 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
+	UI32 expireTime = BuildTimeValue( args.get( 1 ).toInt32() / 1000.0f );
+	UI16 scriptId = static_cast<UI16>( args.get( 2 ).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
@@ -2064,8 +2064,8 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
-	UI16 timerId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
+	UI16 scriptId = static_cast<UI16>( args.get( 1 ).toInt32());
 
 	SERIAL myObjSerial = myObj->GetSerial();
 	CTEffect *removeEffect = nullptr;
@@ -2153,13 +2153,13 @@ JSNative CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI16 x1 = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-	SI16 y1 = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-	SI16 x2 = static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
+	SI16 x1 = static_cast<SI16>( args.get( 0 ).toInt32());
+	SI16 y1 = static_cast<SI16>( args.get( 1 ).toInt32());
+	SI16 x2 = static_cast<SI16>( args.get( 2 ).toInt32());
 	SI16 y2 = 0;
 	if( argc > 3 )
 	{
-		y2 = static_cast<SI16>( JSVAL_TO_INT( argv[3] ));
+		y2 = static_cast<SI16>( args.get( 3 ).toInt32());
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -2245,7 +2245,7 @@ JSNative CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 targAction = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 targAction = static_cast<UI16>( args.get( 0 ).toInt32());
 	SI16 targSubAction = -1;
 	UI16 frameCount = 7;
 	UI16 frameDelay = 0;
@@ -2254,16 +2254,16 @@ JSNative CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		if( argv[1] != JSVAL_NULL )
 		{
-			targSubAction = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+			targSubAction = static_cast<SI16>( args.get( 1 ).toInt32());
 		}
 	}
 	if( argc > 2 )
 	{
-		frameCount = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		frameCount = static_cast<UI16>( args.get( 2 ).toInt32());
 	}
 	if( argc > 3 )
 	{
-		frameDelay = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		frameDelay = static_cast<UI16>( args.get( 3 ).toInt32());
 	}
 	if( argc > 4 )
 	{
@@ -2320,7 +2320,7 @@ JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 txtHue = 0x0000;
 	if( argc >= 3 )
 	{
-		txtHue = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		txtHue = static_cast<UI16>( args.get( 2 ).toInt32());
 	}
 	if( txtHue == 0x0000 )
 	{
@@ -2330,7 +2330,7 @@ JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	SpeechTarget speechTarget = SPTRG_NULL;
 	if( argc >= 4 )
 	{
-		speechTarget = static_cast<SpeechTarget>( JSVAL_TO_INT( argv[3] ));
+		speechTarget = static_cast<SpeechTarget>( args.get( 3 ).toInt32());
 	}
 	if( speechTarget == SPTRG_NULL )
 	{
@@ -2340,7 +2340,7 @@ JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	SERIAL speechTargetSerial = INVALIDSERIAL;
 	if( argc >= 5 )
 	{
-		speechTargetSerial = static_cast<SERIAL>( JSVAL_TO_INT( argv[4] ));
+		speechTargetSerial = static_cast<SERIAL>( args.get( 4 ).toInt32());
 	}
 
 	if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
@@ -2566,7 +2566,7 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 			}
 			else if( JSVAL_IS_INT( argv[0] ))
 			{
-				UI16 placeNum = JSVAL_TO_INT( argv[0] );
+				UI16 placeNum = args.get( 0 ).toInt32();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -2586,8 +2586,8 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 2:
 			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				x = static_cast<SI16>( args.get( 0 ).toInt32());
+				y = static_cast<SI16>( args.get( 1 ).toInt32());
 			}
 			break;
 
@@ -2595,9 +2595,9 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 3:
 			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ))
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+				x = static_cast<SI16>( args.get( 0 ).toInt32());
+				y = static_cast<SI16>( args.get( 1 ).toInt32());
+				z = static_cast<SI08>( args.get( 2 ).toInt32());
 			}
 			break;
 
@@ -2605,10 +2605,10 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 4:
 			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ))
 			{
-				x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+				x		= static_cast<SI16>( args.get( 0 ).toInt32());
+				y		= static_cast<SI16>( args.get( 1 ).toInt32());
+				z		= static_cast<SI08>( args.get( 2 ).toInt32());
+				world	= static_cast<UI08>( args.get( 3 ).toInt32());
 			}
 			break;
 
@@ -2616,11 +2616,11 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 		case 5:
 			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ) && JSVAL_IS_INT( argv[4] ))
 			{
-				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+				x = static_cast<SI16>( args.get( 0 ).toInt32());
+				y = static_cast<SI16>( args.get( 1 ).toInt32());
+				z = static_cast<SI08>( args.get( 2 ).toInt32());
+				world = static_cast<UI08>( args.get( 3 ).toInt32());
+				instanceId = static_cast<UI16>( args.get( 4 ).toInt32());
 			}
 			break;
 
@@ -2714,9 +2714,9 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 JSNative CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	UI16 effectId		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	UI08 speed			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 loop			= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI16 effectId		= static_cast<UI16>( args.get( 0 ).toInt32());
+	UI08 speed			= static_cast<UI08>( args.get( 1 ).toInt32());
+	UI08 loop			= static_cast<UI08>( args.get( 2 ).toInt32());
 
 	JSEncapsulate		myClass( cx, obj );
 	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
@@ -2771,8 +2771,8 @@ JSNative CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MakeMenu: invalid socket" );
 		return false;
 	}
-	SI32 menu		= JSVAL_TO_INT( argv[0] );
-	UI08 skillNum	= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 menu		= args.get( 0 ).toInt32();
+	UI08 skillNum	= static_cast<UI08>( args.get( 1 ).toInt32());
 	Skills->NewMakeMenu( mySock, menu, skillNum );
 	return true;
 }
@@ -2793,11 +2793,11 @@ JSNative CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	JSEncapsulate myClass( cx, obj );
 
-	UI16 soundId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 soundId = static_cast<UI16>( args.get( 0 ).toInt32());
 	SI16 tmpMonsterSound = -1;
 	if( argc == 3 )
 	{
-		tmpMonsterSound = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+		tmpMonsterSound = static_cast<UI08>( args.get( 1 ).toInt32());
 	}
 	bool allHear = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
 
@@ -3015,7 +3015,7 @@ JSNative CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellId = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3080,7 +3080,7 @@ JSNative CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSEncapsulate myClass( cx, obj );
-	UI08 spellId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellId = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
@@ -3729,7 +3729,7 @@ JSNative CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( mySock != nullptr )
 	{
-		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[1] )));
+		CItem *iLayer = myChar->GetItemAtLayer( static_cast<ItemLayers>( args.get( 1 ).toInt32()));
 		if( ValidateObject( iLayer ))
 		{
 			// Keep track of original script that's executing
@@ -3795,8 +3795,8 @@ JSNative CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( args.get( 0 ).toInt32());
+		y = static_cast<SI16>( args.get( 1 ).toInt32());
 	}
 	else
 	{
@@ -3880,8 +3880,8 @@ JSNative CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	else if( argc == 2 )
 	{
 		// x + y
-		x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+		x = static_cast<SI16>( args.get( 0 ).toInt32());
+		y = static_cast<SI16>( args.get( 1 ).toInt32());
 	}
 	else
 	{
@@ -4008,7 +4008,7 @@ JSNative CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 realId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 realId = static_cast<UI16>( args.get( 0 ).toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal = -1;
 	std::string sectionId = "";
@@ -4021,11 +4021,11 @@ JSNative CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 2 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		itemColour = static_cast<SI32>( args.get( 1 ).toInt32());
 	}
 	if( argc >= 3 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[2] ));
+		moreVal = static_cast<SI64>( args.get( 2 ).toInt32());
 	}
 	if( argc >= 4 )
 	{
@@ -4060,8 +4060,8 @@ JSNative CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 amount		= static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI16 realId		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI32 amount		= static_cast<UI32>( args.get( 0 ).toInt32());
+	UI16 realId		= static_cast<UI16>( args.get( 1 ).toInt32());
 	SI32 itemColour = 0;
 	SI64 moreVal	= -1;
 	std::string sectionId = "";
@@ -4075,11 +4075,11 @@ JSNative CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc >= 3 )
 	{
-		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
+		itemColour = static_cast<SI32>( args.get( 2 ).toInt32());
 	}
 	if( argc >= 4 )
 	{
-		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[3] ));
+		moreVal = static_cast<SI64>( args.get( 3 ).toInt32());
 	}
 	if( argc >= 5 )
 	{
@@ -4178,7 +4178,7 @@ JSNative CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 	
 	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	//mySock->TempInt( static_cast<SI64>( JSMapping->GetScript( JS_GetGlobalObject( cx ))));
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
 	std::string toSay;
@@ -4194,7 +4194,7 @@ JSNative CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI08 cursorType = 0;
 	if( argc == 3 )
 	{
-		cursorType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+		cursorType = static_cast<UI08>( args.get( 2 ).toInt32());
 	}
 
 	if( cursorType == 3 )
@@ -4255,7 +4255,7 @@ JSNative CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 tNum = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	std::string toSay;
 	if( argc == 2 )
@@ -4281,7 +4281,7 @@ JSNative CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 distance = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI16 distance = static_cast<UI16>( args.get( 1 ).toInt32());
 
 	CBaseObject *me = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( me ))
@@ -4341,8 +4341,8 @@ JSNative CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// 1. Parameter Delay, 2. Parameter Callback
-	UI32 ExpireTime = BuildTimeValue( JSVAL_TO_INT( argv[0] ) / 1000.0f );
-	UI16 TriggerNum = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	UI32 ExpireTime = BuildTimeValue( args.get( 0 ).toInt32() / 1000.0f );
+	UI16 TriggerNum = static_cast<UI16>( args.get( 1 ).toInt32());
 
 	CTEffect *Effect = new CTEffect;
 
@@ -4361,7 +4361,7 @@ JSNative CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			Effect->More2( static_cast<UI16>( JSVAL_TO_INT( argv[2] )));
+			Effect->More2( static_cast<UI16>( args.get( 2 ).toInt32()));
 		}
 	}
 	else
@@ -4406,9 +4406,9 @@ JSNative CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 skillNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
-	UI16 minSkill = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 maxSkill = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+	UI08 skillNum = static_cast<UI08>( args.get( 0 ).toInt32());
+	UI16 minSkill = static_cast<UI16>( args.get( 1 ).toInt32());
+	UI16 maxSkill = static_cast<UI16>( args.get( 2 ).toInt32());
 	bool isCraftSkill = false;
 	if( argc == 4 )
 	{
@@ -4437,7 +4437,7 @@ JSNative CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( JSVAL_TO_INT( argv[0] )));
+		myItem = myChar->GetItemAtLayer( static_cast<ItemLayers>( args.get( 0 ).toInt32()));
 	}
 	else
 	{
@@ -4479,7 +4479,7 @@ JSNative CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 iType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 iType = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	CItem *myItem = FindItemOfType( myChar, static_cast<ItemTypes>( iType ));
 	if( !ValidateObject( myItem ))
@@ -4574,11 +4574,11 @@ JSNative CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 ) // Just the ID has been passed
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( args.get( 0 ).toInt32());
 	}
 	else if( argc == 2 ) // We got an "affected" item as well
 	{
-		speechId = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+		speechId = static_cast<UI08>( args.get( 0 ).toInt32());
 
 		if( argv[1] != JSVAL_NULL )
 		{
@@ -4638,7 +4638,7 @@ JSNative CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 spellCast = static_cast<SI08>( args.get( 0 ).toInt32());
 
 	if( myChar->IsNpc() )
 	{
@@ -4672,7 +4672,7 @@ JSNative CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 JSNative CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 spellId = static_cast<SI08>( args.get( 0 ).toInt32());
 
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
@@ -4696,7 +4696,7 @@ JSNative CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 JSNative CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 part = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
@@ -4719,7 +4719,7 @@ JSNative CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 JSNative CBase_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 part = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
@@ -4750,7 +4750,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
-	UI08 statType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 statType = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	if( !ValidateObject( myObj ))
 	{
@@ -4815,11 +4815,11 @@ JSNative CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI08 newVal = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
+	SI08 newVal = static_cast<SI08>( args.get( 0 ).toInt32());
 
 	if( newVal > 0 && argc > 1 )
 	{
-		SI32 wearOff = static_cast<SI32>( JSVAL_TO_INT( argv[1] ));
+		SI32 wearOff = static_cast<SI32>( args.get( 1 ).toInt32());
 
 		if( argc == 2 || ( argc == 3 && JSVAL_TO_BOOLEAN( argv[2] )))
 		{
@@ -4861,8 +4861,8 @@ JSNative CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 damage = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
-	UI08 damageType = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI32 damage = static_cast<UI32>( args.get( 1 ).toInt32());
+	UI08 damageType = static_cast<UI08>( args.get( 2 ).toInt32());
 	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 
 	ExplodeItem( myChar->GetSocket(), static_cast<CItem *>( trgObj ), damage, damageType, explodeNearby );
@@ -4885,12 +4885,12 @@ JSNative CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 newVal = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 newVal = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	myChar->SetVisible( static_cast<VisibleTypes>( newVal ));
 	if( argc == 2 )
 	{
-		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+		UI32 TimeOut = static_cast<UI32>( args.get( 1 ).toInt32());
 		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>( TimeOut ) / 1000.0f ));
 	}
 	return true;
@@ -5708,7 +5708,7 @@ JSNative CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= args.get( 0 ).toInt32();
 	*rval		= INT_TO_JSVAL( mySock->GetByte( offset ));
 	return true;
 }
@@ -5733,7 +5733,7 @@ JSNative CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset	= JSVAL_TO_INT( argv[0] );
+	SI32 offset	= args.get( 0 ).toInt32();
 	*rval		= INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset )));
 	return true;
 }
@@ -5758,7 +5758,7 @@ JSNative CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = args.get( 0 ).toInt32();
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ));
 	return true;
 }
@@ -5783,7 +5783,7 @@ JSNative CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = args.get( 0 ).toInt32();
 	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )));
 	return true;
 }
@@ -5808,7 +5808,7 @@ JSNative CSocket_GetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = args.get( 0 ).toInt32();
 	JS_NewNumberValue( cx, mySock->GetDWord( offset ), rval );
 	return true;
 }
@@ -5833,7 +5833,7 @@ JSNative CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSDWord: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = args.get( 0 ).toInt32();
 	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )));
 	return true;
 }
@@ -5861,10 +5861,10 @@ JSNative CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	SI32 length		= -1;
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
+	SI32 offset		= args.get( 0 ).toInt32();
 	if( argc == 2 )
 	{
-		length = JSVAL_TO_INT( argv[1] );
+		length = args.get( 1 ).toInt32();
 	}
 
 	char toReturn[128];
@@ -5905,8 +5905,8 @@ JSNative CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetByte: Invalid socket!" );
 		return false;
 	}
-	SI32 offset = JSVAL_TO_INT( argv[0] );
-	UI08 byteToSet = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset = args.get( 0 ).toInt32();
+	UI08 byteToSet = static_cast<UI08>( args.get( 1 ).toInt32());
 
 	mSock->SetByte( offset, byteToSet );
 	return true;
@@ -5933,8 +5933,8 @@ JSNative CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI16 byteToSet	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+	SI32 offset		= args.get( 0 ).toInt32();
+	UI16 byteToSet	= static_cast<UI16>( args.get( 1 ).toInt32());
 
 	mSock->SetWord( offset, byteToSet );
 	return true;
@@ -5961,8 +5961,8 @@ JSNative CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset		= JSVAL_TO_INT( argv[0] );
-	UI32 byteToSet	= JSVAL_TO_INT( argv[1] );
+	SI32 offset		= args.get( 0 ).toInt32();
+	UI32 byteToSet	= args.get( 1 ).toInt32();
 
 	mSock->SetDWord( offset, byteToSet );
 	return true;
@@ -5989,7 +5989,7 @@ JSNative CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 offset = JSVAL_TO_INT( argv[0] );
+	SI32 offset = args.get( 0 ).toInt32();
 	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	if( trgMessage == nullptr )
 	{
@@ -6023,7 +6023,7 @@ JSNative CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	SI32 bCount		= JSVAL_TO_INT( argv[0] );
+	SI32 bCount		= args.get( 0 ).toInt32();
 	mSock->Receive( bCount );
 	return true;
 }
@@ -6077,7 +6077,7 @@ JSNative CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 music = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 music = static_cast<UI16>( args.get( 0 ).toInt32());
 
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
@@ -6233,7 +6233,7 @@ JSNative CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "You have to pass a valid menu number" );
 	}
 
-	UI16 menuNumber = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 menuNumber = static_cast<UI16>( args.get( 0 ).toInt32());
 	CSocket *mySock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
@@ -6269,8 +6269,8 @@ JSNative CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI32 gumpId = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
-	UI32 buttonId = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
+	UI32 gumpId = static_cast<UI32>( args.get( 0 ).toInt32());
+	UI32 buttonId = static_cast<UI32>( args.get( 1 ).toInt32());
 
 	CPCloseGump gumpToClose( gumpId, buttonId );
 	mySock->Send( &gumpToClose );
@@ -6335,7 +6335,7 @@ JSNative CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal )));
 	return true;
 }
@@ -6361,7 +6361,7 @@ JSNative CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal )));
 	return true;
 }
@@ -6387,7 +6387,7 @@ JSNative CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
+	COLOUR cVal = static_cast<COLOUR>( args.get( 0 ).toInt32());
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal )));
 	return true;
 }
@@ -6462,7 +6462,7 @@ JSNative CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
-	UI08 spellNum	= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 spellNum	= static_cast<UI08>( args.get( 0 ).toInt32());
 	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
 	if( ValidateObject( sBook ))
 	{
@@ -6599,8 +6599,8 @@ JSNative CItem_ApplyRank( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	SI32 rank		= JSVAL_TO_INT( argv[0] );
-	SI32 maxrank	= JSVAL_TO_INT( argv[1] );
+	SI32 rank		= args.get( 0 ).toInt32();
+	SI32 maxrank	= args.get( 1 ).toInt32();
 
 	Skills->ApplyRank( nullptr, myItem, rank, maxrank );
 	return true;
@@ -6690,7 +6690,7 @@ JSNative CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( JSVAL_IS_INT( argv[3] ))
 	{
-		u16Flags = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		u16Flags = static_cast<UI16>( args.get( 3 ).toInt32());
 	}
 	else
 	{
@@ -6742,7 +6742,7 @@ JSNative CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else if( JSVAL_IS_INT( argv[0] ))
 	{
-		UI16 ui16AccountId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 ui16AccountId = static_cast<UI16>( args.get( 0 ).toInt32());
 		if( !Accounts->DelAccount( ui16AccountId ))
 		{
 			ScriptError( cx, " Account.DelAccount(accountID): Unable to remove account specified." );
@@ -6929,7 +6929,7 @@ JSNative CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Read: Error reading file, is not opened or has reached EOF" );
 		return false;
 	}
-	SI32 bytes = JSVAL_TO_INT( argv[0] );
+	SI32 bytes = args.get( 0 ).toInt32();
 	char data[512];
 
 	if( bytes > 512 || bytes < 1 )
@@ -7110,7 +7110,7 @@ JSNative CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+		int newFPos = fseek( mFile->mWrap, args.get( 0 ).toInt32(), SEEK_SET );
 	}
 
 	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
@@ -7309,15 +7309,15 @@ JSNative CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 					ScriptError( cx, "Invalid class of object" );
 					return false;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI08>( args.get( 1 ).toInt32());
 				break;
 			}
 			return false;
 			// 2 Parameters, x + y
 		case 3:
-			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			gx			= static_cast<SI16>( args.get( 0 ).toInt32());
+			gy			= static_cast<SI16>( args.get( 1 ).toInt32());
+			maxSteps	= static_cast<UI08>( args.get( 2 ).toInt32());
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to WalkTo, needs either 2 or 3" );
@@ -7421,16 +7421,16 @@ JSNative CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 					ScriptError( cx, "Invalid class of object" );
 					return false;
 				}
-				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+				maxSteps = static_cast<UI08>( args.get( 1 ).toInt32());
 				break;
 			}
 			return false;
 
 			// 2 Parameters, x + y
 		case 3:
-			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			gy			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			maxSteps	= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+			gx			= static_cast<SI16>( args.get( 0 ).toInt32());
+			gy			= static_cast<SI16>( args.get( 1 ).toInt32());
+			maxSteps	= static_cast<UI08>( args.get( 2 ).toInt32());
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to RunTo, needs either 2 or 3" );
@@ -7783,7 +7783,7 @@ JSNative CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 		else
 		{
-			UI16 placeNum = JSVAL_TO_INT( argv[0] );
+			UI16 placeNum = args.get( 0 ).toInt32();
 			if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 			{
 				GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -7796,13 +7796,13 @@ JSNative CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		destX		= JSVAL_TO_INT( argv[0] );
-		destY		= JSVAL_TO_INT( argv[1] );
-		destZ		= JSVAL_TO_INT( argv[2] );
-		destWorld	= JSVAL_TO_INT( argv[3] );
+		destX		= args.get( 0 ).toInt32();
+		destY		= args.get( 1 ).toInt32();
+		destZ		= args.get( 2 ).toInt32();
+		destWorld	= args.get( 3 ).toInt32();
 		if( argc == 5 )
 		{
-			destInstanceId = JSVAL_TO_INT( argv[4] );
+			destInstanceId = args.get( 4 ).toInt32();
 		}
 	}
 
@@ -7978,7 +7978,7 @@ JSNative CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	std::string skillName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	UI16 value				= JSVAL_TO_INT( argv[1] );
+	UI16 value				= args.get( 1 ).toInt32();
 	CSocket *mSock			= nullptr;
 	if( !mChar->IsNpc() )
 	{
@@ -8214,7 +8214,7 @@ JSNative CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
 	SI32 numSecsToJail = 86400;
 	if( argc == 1 )
 	{
-		numSecsToJail = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
+		numSecsToJail = static_cast<SI32>( args.get( 0 ).toInt32());
 	}
 
 	JailSys->JailPlayer( myChar, numSecsToJail );
@@ -8269,7 +8269,7 @@ JSNative CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI08 pageType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 pageType = static_cast<UI08>( args.get( 0 ).toInt32());
 	switch( pageType )
 	{
 		case 0: // Counselor page - Free Text
@@ -8846,7 +8846,7 @@ JSNative CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 menuNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 menuNum = static_cast<UI16>( args.get( 0 ).toInt32());
 
 	BuildAddMenuGump( mSock, menuNum );
 
@@ -8999,7 +8999,7 @@ JSNative CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	UI08 cornerToFind = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	UI08 cornerToFind = static_cast<UI08>( args.get( 0 ).toInt32());
 	SI16 x1 = 0;
 	SI16 y1 = 0;
 	SI16 x2 = 0;
@@ -9679,9 +9679,9 @@ JSNative CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else	// we've been passed an x, y and z
 	{
-		x	= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-		y	= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-		z	= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+		x	= static_cast<SI16>( args.get( 0 ).toInt32());
+		y	= static_cast<SI16>( args.get( 1 ).toInt32());
+		z	= static_cast<SI08>( args.get( 2 ).toInt32());
 	}
 
 	if( ValidateObject( mChar ))
@@ -9815,7 +9815,7 @@ JSNative CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 	WeatherType element = PHYSICAL;
 	if( argc >= 2 )
 	{
-		element = static_cast<WeatherType>( JSVAL_TO_INT( argv[1] ));
+		element = static_cast<WeatherType>( args.get( 1 ).toInt32());
 	}
 
 	if( argc >= 3 )
@@ -10565,7 +10565,7 @@ JSNative CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which tempVar to get data from
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
+	UI08 moreVarPart		= static_cast<UI08>( args.get( 1 ).toInt32());
 	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	if( moreVarName == "more" )
 	{
@@ -10645,8 +10645,8 @@ JSNative CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	// Fetch data from the function arguments, and figure out which moreVar to set data for
 	UI08 moreVar			= 0;
-	UI08 moreVarPart		= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
-	UI08 moreVarValue		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 moreVarPart		= static_cast<UI08>( args.get( 1 ).toInt32());
+	UI08 moreVarValue		= static_cast<UI08>( args.get( 2 ).toInt32());
 	std::string moreVarName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	if( moreVarName == "more" )
 	{
@@ -10713,7 +10713,7 @@ JSNative CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -10757,7 +10757,7 @@ JSNative CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -10796,7 +10796,7 @@ JSNative CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 && myObj->HasScriptTrigger( scriptId ))
 	{
 		*rval = BOOLEAN_TO_JSVAL( true );
@@ -10832,7 +10832,7 @@ JSNative CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 )
 	{
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -10876,7 +10876,7 @@ JSNative CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* v
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
 
-	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
 	if( scriptId > 0 )
 	{
 		myObj->RemoveScriptTrigger( scriptId );
@@ -10929,7 +10929,7 @@ JSNative CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 	//	UI16 scriptID
 
 	// Fetch region's ore preference details for specified ore type
-	size_t oreType = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	size_t oreType = static_cast<size_t>( args.get( 0 ).toInt32());
 	auto orePrefs = myObj->GetOrePreference( oreType );
 
 	// Prepare some temporary helper variables
