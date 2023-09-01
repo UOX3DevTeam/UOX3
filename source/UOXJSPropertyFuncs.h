@@ -8,7 +8,7 @@
 //o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertyFuncs__
 #define __UOXJSPropertyFuncs__
-
+#include "spidermonkey.h"
 typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;

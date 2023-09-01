@@ -1,11 +1,14 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
-#include "cmdtable.h"
 
 #include <bitset>
+#include <cstdint>
 #include <string>
 #include <vector>
+
+#include "typedefs.h"
+#include "cmdtable.h"
 
 class CChar ;
 class cScript ;

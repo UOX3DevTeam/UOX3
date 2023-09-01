@@ -1,9 +1,9 @@
 #ifndef __Classes_h
 #define __Classes_h
 
+#include <cstdint>
 #include <string>
 
-#include "enums.h"
 #include "GenericList.h"
 #include "typedefs.h"
 

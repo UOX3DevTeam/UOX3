@@ -6,6 +6,7 @@
 #include "network.h"
 #include "cRaces.h"
 #include "classes.h"
+#include "mapstuff.h"
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindPlayersInOldVisrange()

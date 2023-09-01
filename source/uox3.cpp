@@ -44,6 +44,8 @@
 #include <conio.h>
 #endif
 
+#include "mapstuff.h"
+
 #include "uox3.h"
 #include "weight.h"
 #include "books.h"

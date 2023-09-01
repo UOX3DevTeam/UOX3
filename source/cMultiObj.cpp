@@ -22,6 +22,9 @@
 //|						Added CBoatObj as a derived class of CMultiObj to simplify some processes in the cBoat class
 //o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
+
+#include "cChar.h"
+
 #include "mapstuff.h"
 #include "osunique.hpp"
 #include "utility/strutil.hpp"

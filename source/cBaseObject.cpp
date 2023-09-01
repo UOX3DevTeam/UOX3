@@ -19,7 +19,6 @@
 //|							Addition of basic script trigger stuff. Function documentation
 //|							finished for all functions
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "power.h"
 #include "CJSMapping.h"
 #include "cScript.h"

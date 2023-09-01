@@ -1,10 +1,13 @@
 #include "JSEncapsulate.h"
+
+#include <iostream>
 #include <string>
+
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-
+#include "spidermonkey.h"
 #include "jsobj.h"
-#include "jsutil.h"
+//#include "jsutil.h"
 
 void JSEncapsulate::InternalReset( void )
 {

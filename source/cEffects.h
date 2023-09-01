@@ -1,6 +1,9 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
 
+#include <cstdint>
+#include <string>
+
 #include "typedefs.h"
 class CChar ;
 class CItem;

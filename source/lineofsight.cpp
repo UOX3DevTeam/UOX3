@@ -4,6 +4,9 @@
 #include <cmath>
 #include <algorithm>
 
+
+
+#include "mapstuff.h"
 constexpr auto MAX_COLLISIONS = 1024;
 constexpr auto LOSXYMAX = 256; // Maximum items UOX3 can handle on one X/Y square
 

@@ -1,6 +1,20 @@
 #ifndef __TownRegion__
 #define __TownRegion__
 
+#include <bitset>
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CScriptSection;
+class Script;
+class CChar;
+class CSocket;
+class CItem;
+
 struct	MiningData_st;
 
 struct OrePref_st

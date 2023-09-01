@@ -29,6 +29,12 @@
 /* Include all the standard header *after* all the configuration
  settings have been made.
  */
+#include <cstdint>
+#include <string>
+
+
+
+
 #include "UOXStdHeaders.h"
 
 
@@ -103,9 +109,7 @@ class Script;
 class CScriptSection;
 class CSpellInfo;
 
-/** In order to avoid finger-aches :)
- */
-#include "enums.h"
+
 #include "typedefs.h"
 //o------------------------------------------------------------------------------------------------o
 // Class Declarations

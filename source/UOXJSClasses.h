@@ -7,6 +7,9 @@
 
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
+
+#include <cstdint>
+#include <string>
 #include "UOXJSPropertyFuncs.h"
 
 inline JSClass global_class =

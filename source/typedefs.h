@@ -17,6 +17,7 @@
 //o------------------------------------------------------------------------------------------------o
 
 #include <cstdint>
+#include "enums.h"
 #include "useful.h"
 class CSocket ;
 

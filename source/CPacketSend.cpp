@@ -1,3 +1,6 @@
+
+#include <bitset>
+
 #include "uox3.h"
 #include "CPacketSend.h"
 #include "speech.h"

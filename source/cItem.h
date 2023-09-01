@@ -1,9 +1,13 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
 #include <array>
+#include <bitset>
+#include <cstdint>
+#include <string>
+
 
 #include "GenericList.h"
-
+#include "cBaseObject.h"
 
 class CTownRegion ;
 

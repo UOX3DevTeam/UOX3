@@ -1,6 +1,14 @@
 #ifndef __TEFFECT_H__
 #define __TEFFECT_H__
 
+#include <cstdint>
+#include <ostream>
+#include <string>
+
+#include "typedefs.h"
+
+class CBaseObject;
+
 class CTEffect
 {
 private:

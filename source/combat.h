@@ -1,6 +1,16 @@
 #ifndef __COMBAT_H__
 #define __COMBAT_H__
 
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+class CSocket;
+class CChar;
+class CItem;
+class CBaseObject;
+
 enum WeaponTypes
 {
 	DEF_SWORDS = 1,

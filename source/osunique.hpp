@@ -1,8 +1,8 @@
 #ifndef __OSUNIQUE_HPP
 #define __OSUNIQUE_HPP
-#include <time.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 #if !defined(_WIN32)
 using rsize_t = size_t;

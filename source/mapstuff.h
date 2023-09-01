@@ -1,10 +1,20 @@
 #ifndef __MAPSTUFF_H__
 #define __MAPSTUFF_H__
 
-#include "mapclasses.h"
+#include <array>
 #include <climits>
-#include "uox3.h"
-#include "MultiMul.hpp"
+#include <cstdint>
+#include <istream>
+#include <string>
+#include <vector>
+
+
+#include "typedefs.h"
+
+#include "mapclasses.h"
+
+class CItem;
+class CMultiObj;
 
 constexpr auto MAX_Z_STEP = std::uint8_t( 9 );
 constexpr auto MAX_Z_FALL = std::uint8_t( 20 );

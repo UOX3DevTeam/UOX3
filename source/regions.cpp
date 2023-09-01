@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <vector>
 
+#include "mapstuff.h"
+
 #include "uox3.h"
 #include "classes.h"
 #include "StringUtility.hpp"

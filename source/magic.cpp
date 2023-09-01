@@ -1,5 +1,11 @@
-#include "uox3.h"
+
 #include "magic.h"
+
+#include <algorithm>
+
+#include "cItem.h"
+#include "mapstuff.h"
+#include "uox3.h"
 #include "power.h"
 #include "weight.h"
 #include "cGuild.h"
@@ -23,7 +29,6 @@
 #include "utility/strutil.hpp"
 
 #include "ObjectFactory.h"
-#include <algorithm>
 #include "osunique.hpp"
 CMagic *Magic = nullptr;
 

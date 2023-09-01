@@ -1,9 +1,9 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
 
+#include <cstdint>
 #include <string>
 
-#include "enums.h"
 #include "typedefs.h"
 
 class CChar ;

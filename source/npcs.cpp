@@ -1,3 +1,5 @@
+
+
 #include "uox3.h"
 #include "msgboard.h"
 #include "movement.h"
@@ -15,6 +17,7 @@
 #include "cRaces.h"
 #include "townregion.h"
 #include "Dictionary.h"
+#include "mapstuff.h"
 
 #include "ObjectFactory.h"
 #include "utility/strutil.hpp"

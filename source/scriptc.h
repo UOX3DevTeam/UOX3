@@ -1,8 +1,12 @@
 #ifndef __SCRIPTC_H__
 #define __SCRIPTC_H__
 
+#include <cstdint>
+#include <fstream>
+#include <string>
 #include <unordered_map>
 
+#include "typedefs.h"
 typedef std::unordered_map<std::string, CScriptSection *>	SSMAP;
 
 class Script

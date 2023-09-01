@@ -1,6 +1,11 @@
 #ifndef __UOXJSPropertyEnums__
 #define __UOXJSPropertyEnums__
 
+#include <cstdint>
+#include <string>
+
+#include "spidermonkey.h"
+
 const uint8 JSPROP_ENUMANDPERM	= JSPROP_ENUMERATE | JSPROP_PERMANENT;
 const uint8 JSPROP_ENUMPERMRO	= JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY;
 const uint8 JSPROP_ENUMPERMIDX	= JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_INDEX;

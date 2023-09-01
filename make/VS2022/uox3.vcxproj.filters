@@ -302,11 +302,11 @@
     <ClCompile Include="..\..\source\UOPData.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\subsystem\account.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\subsystem\console.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\subsystem\account.cpp">
+      <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -446,9 +446,6 @@
     <ClInclude Include="..\..\source\cmdtable.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ConfigOS.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\CResponse.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -468,9 +465,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\power.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Prerequisites.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\typedefs.h">
@@ -549,9 +543,6 @@
     <ClInclude Include="..\..\source\UOPData.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\subsystem\console.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\ostype.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -560,6 +551,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\spidermonkey.h">
       <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\subsystem\console.hpp">
+      <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

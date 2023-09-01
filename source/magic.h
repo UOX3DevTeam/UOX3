@@ -1,5 +1,13 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+class CSocket;
+class CChar;
+class CItem;
 
 class CMagicMove
 {

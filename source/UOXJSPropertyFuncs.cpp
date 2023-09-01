@@ -30,6 +30,7 @@
 #include "movement.h"
 #include "Dictionary.h"
 #include "cSpawnRegion.h"
+#include "mapstuff.h"
 
 #include "jsobj.h"
 #include "jsutil.h"

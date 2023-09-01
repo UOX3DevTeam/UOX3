@@ -1,7 +1,15 @@
 #ifndef __Races__
 #define __Races__
-#include <unordered_set>
+
 #include <array>
+#include <bitset>
+#include <cstdint>
+#include <string>
+#include <unordered_set>
+#include <vector>
+
+#include "typedefs.h"
+
 class CRace
 {
 private:

@@ -1,6 +1,18 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+#include "GenericList.h"
+
+#include "cItem.h"
+
+
+class CChar;
 
 class CMultiObj : public CItem
 {

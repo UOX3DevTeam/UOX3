@@ -1,6 +1,7 @@
 #ifndef __CJSMAPPING_H__
 #define __CJSMAPPING_H__
 
+#include <cstdint>
 #include <map>
 #include <string>
 
@@ -9,6 +10,7 @@
 struct JSObject ;
 class CEnvoke ;
 class Script;
+class cScript;
 
 enum SCRIPTTYPE
 {

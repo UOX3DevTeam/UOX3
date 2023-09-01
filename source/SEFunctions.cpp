@@ -1,8 +1,11 @@
 // Here are the functions that are exposed to the Script Engine
 #include <filesystem>
+
+#include "SEFunctions.h"
+
+#include "mapstuff.h"
 #include "uox3.h"
 #include "cdice.h"
-#include "SEFunctions.h"
 #include "cGuild.h"
 #include "combat.h"
 #include "movement.h"

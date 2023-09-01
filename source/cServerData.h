@@ -2,6 +2,7 @@
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
 #include <array>
+#include <bitset>
 #include <cstdint>
 #include <map>
 #include <string>

@@ -30,6 +30,11 @@
 //|						1.4		 		17th July, 2004
 //|						Added CSpawnItem to begin breaking CItem into smaller subclasses
 //o------------------------------------------------------------------------------------------------o
+
+#include "cItem.h"
+
+#include <charconv>
+
 #include "uox3.h"
 #include "weight.h"
 #include "CPacketSend.h"
@@ -52,8 +57,9 @@
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
+#include "mapstuff.h"
+
 #include "osunique.hpp"
-#include <charconv>
 
 const UI32 BIT_MAKERSMARK	=	0;
 const UI32 BIT_DOOROPEN		=	1;

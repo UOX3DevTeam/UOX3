@@ -1,6 +1,12 @@
 #ifndef __CPACKETRECEIVE_H__
 #define __CPACKETRECEIVE_H__
 
+
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
 #include "network.h"
 
 class CPIFirstLogin : public CPInputBuffer

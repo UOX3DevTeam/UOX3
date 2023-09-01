@@ -29,6 +29,7 @@
 #include <random>
 
 #include "cChar.h"
+#include "cSocket.h"
 #include "cGuild.h"
 #include "cItem.h"
 #include "CJSMapping.h"

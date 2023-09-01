@@ -6,6 +6,7 @@
 #include <ostream>
 #include <vector>
 
+#include "cBaseObject.h"
 #include "typedefs.h"
 
 class CPIGumpInput;

@@ -1,6 +1,16 @@
 #ifndef __WEIGHT_H__
 #define __WEIGHT_H__
 
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+class CItem;
+class CChar;
+class CBaseObject;
+
+
 const SI32 MAX_WEIGHT = 6553500;	// Max weight (This number / 100, thus max actual weight is 65535.00)
 
 class CWeight

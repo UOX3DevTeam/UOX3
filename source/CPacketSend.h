@@ -1,6 +1,11 @@
 #ifndef __CPACKETSEND_H__
 #define __CPACKETSEND_H__
 
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
 #include "CPacketReceive.h"
 
 class CSpeechEntry ;

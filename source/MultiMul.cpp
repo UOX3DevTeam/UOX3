@@ -3,13 +3,14 @@
 
 #include "MultiMul.hpp"
 
-#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #include <fstream>
 #include <filesystem>
 #include <algorithm>
 #include <unordered_map>
+
+#include "subsystem/console.hpp"
 #include "mapstuff.h"
 
 using namespace std::string_literals;

@@ -38,6 +38,9 @@
 
 #include "uox3.h"
 #include "movement.h"
+
+#include "mapstuff.h"
+
 #include "weight.h"
 #include "combat.h"
 #include "msgboard.h"

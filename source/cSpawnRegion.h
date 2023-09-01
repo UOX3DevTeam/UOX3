@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "cBaseObject.h"
 #include "GenericList.h"
 #include "typedefs.h"
 

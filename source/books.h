@@ -5,7 +5,15 @@
 #ifndef __books_h
 #define __books_h
 
-#include "cChar.h"
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+class CChar;
+class CItem;
+class CSocket;
+
 class CBooks
 {
 public:

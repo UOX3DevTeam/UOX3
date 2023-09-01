@@ -1,6 +1,12 @@
 #ifndef __SPEECH_H__
 #define __SPEECH_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
 enum SpeechTarget
 {
 	SPTRG_NULL = -1,

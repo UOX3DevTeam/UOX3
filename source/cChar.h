@@ -1,6 +1,10 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
+
+#include <bitset>
+#include <cstdint>
 #include <deque>
+#include <string>
 #include <unordered_map>
 
 #include "typedefs.h"

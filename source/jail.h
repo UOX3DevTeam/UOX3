@@ -2,6 +2,14 @@
 #ifndef __JAIL_H__
 #define __JAIL_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CChar;
+
 struct JailOccupant_st
 {
 	SERIAL pSerial;

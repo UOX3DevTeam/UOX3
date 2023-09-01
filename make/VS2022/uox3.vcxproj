@@ -233,7 +233,6 @@
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />
     <ClInclude Include="..\..\source\cmdtable.h" />
-    <ClInclude Include="..\..\source\ConfigOS.h" />
     <ClInclude Include="..\..\source\CResponse.h" />
     <ClInclude Include="..\..\source\cSkillClass.h" />
     <ClInclude Include="..\..\source\other\uoxversion.hpp" />
@@ -241,7 +240,6 @@
     <ClInclude Include="..\..\source\GenericList.h" />
     <ClInclude Include="..\..\source\osunique.hpp" />
     <ClInclude Include="..\..\source\power.h" />
-    <ClInclude Include="..\..\source\Prerequisites.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
     <ClInclude Include="..\..\source\UOXStdHeaders.h" />
     <!-- JS Engine group -->

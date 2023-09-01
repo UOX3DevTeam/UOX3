@@ -17,6 +17,7 @@
 #endif
 
 #include "typedefs.h"
+#include "uoxstruct.h"
 #include "cServerData.h"
 #include "GenericList.h"
 class CSpawnRegion;

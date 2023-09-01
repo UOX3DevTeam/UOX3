@@ -1,4 +1,16 @@
-#include "uox3.h"
+
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+#include "cChar.h"
+#include "cMultiObj.h"
+#include "cSocket.h"
+
+#include "funcdecl.h"
+#include "mapstuff.h"
+
 #include "weight.h"
 #include "CPacketSend.h"
 #include "classes.h"

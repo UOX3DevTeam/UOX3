@@ -1,6 +1,14 @@
 #ifndef __WHOLIST_H__
 #define __WHOLIST_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CSocket;
+
 class CWhoList
 {
 private:

@@ -1,6 +1,15 @@
 #ifndef __MSGBOARD_H__
 #define __MSGBOARD_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CChar;
+class CSocket;
+
 // Different types of user posts
 enum PostTypes
 {

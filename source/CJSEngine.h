@@ -1,6 +1,13 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
 enum IUEEntries
 {
 	IUE_RACE = 0,

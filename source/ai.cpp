@@ -12,17 +12,33 @@
 //|						into several smaller functions. Should simplify the
 //|						process of moving it out to JavaScript in the future.
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "cRaces.h"
+
+
+#include "typedefs.h"
+
+#include "cChar.h"
+#include "combat.h"
 #include "cEffects.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cSocket.h"
+#include "Dictionary.h"
+
+#include "funcdecl.h"
+#include "CJSMapping.h"
+
 #include "regions.h"
 #include "townregion.h"
-#include "combat.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "Dictionary.h"
+
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "subsystem/account.hpp"
+
+#include "mapstuff.h"
+
+using namespace std::string_literals;
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"

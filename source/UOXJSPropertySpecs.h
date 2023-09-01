@@ -8,9 +8,11 @@
 //o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
+#include <cstdint>
+#include <string>
 
 #include "UOXJSPropertyEnums.h"
-#include "enums.h"
+#include "typedefs.h"
 
 
 inline JSPropertySpec CSpellProperties[] =

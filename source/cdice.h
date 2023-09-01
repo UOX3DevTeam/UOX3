@@ -1,11 +1,8 @@
 #ifndef __CDICE__
 #define __CDICE__
-
+#include <cstdint>
 #include <string>
 
-/** In order to avoid finger-aches :)
- */
-#include "enums.h"
 #include "typedefs.h"
 class cDice
 {

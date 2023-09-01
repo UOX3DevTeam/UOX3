@@ -6,6 +6,7 @@
 #ifndef __CBO_H__
 #define __CBO_H__
 #include <bitset>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>

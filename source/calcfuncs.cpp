@@ -3,7 +3,6 @@
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Various functions to calculate objects from serials
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "townregion.h"
 #include "network.h"
 #include "ObjectFactory.h"

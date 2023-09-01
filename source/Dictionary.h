@@ -5,6 +5,9 @@
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
 #include <array>
+#include <cstdint>
+#include <map>
+#include <string>
 
 #include "enums.h"
 

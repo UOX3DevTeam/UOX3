@@ -11,10 +11,11 @@
 
 #ifndef __CMDTABLE_H
 #define __CMDTABLE_H
-#include <map>
-#include <string>
 
-#include "enums.h"
+#include <cstdint>
+#include <string>
+#include <map>
+
 #include "typedefs.h"
 
 // Types of commands

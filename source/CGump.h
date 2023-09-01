@@ -1,6 +1,14 @@
 #ifndef __CGUMP_H__
 #define __CGUMP_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CSocket;
+
 void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 
 class CGump

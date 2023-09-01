@@ -1,3 +1,10 @@
+#include "mapstuff.h"
+
+#include <algorithm>
+#include <array>
+#include <filesystem>
+#include <fstream>
+
 #include "uox3.h"
 #include "regions.h"
 #include "townregion.h"
@@ -7,11 +14,7 @@
 
 #include "utility/strutil.hpp"
 
-#include <filesystem>
 
-#include <algorithm>
-#include <array>
-#include <fstream>
 
 using namespace std::string_literals;
 

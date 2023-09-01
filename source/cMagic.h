@@ -1,6 +1,17 @@
 #ifndef __CMAGIC_H__
 #define __CMAGIC_H__
 
+
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CItem;
+class CSocket;
+class CChar;
+
 struct Reag_st;
 
 class CMagic

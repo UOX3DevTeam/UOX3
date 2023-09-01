@@ -1,20 +1,21 @@
 #ifndef __CNETWORK_H__
 #define __CNETWORK_H__
 
+#include <algorithm>
+#include <array>
+#include <charconv>
+#include <cstdint>
+#include <cstdlib>
+#include <deque>
+#include <list>
 #include <mutex>
 #include <ostream>
-#include <cstdint>
-#include <vector>
-#include <list>
-#include <deque>
-#include <cstdlib>
-#include <type_traits>
-#include <utility>
-#include <algorithm>
 #include <stdexcept>
 #include <string>
-#include <charconv>
-#include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 
 #if !defined(_WIN32)
 #include <sys/socket.h>

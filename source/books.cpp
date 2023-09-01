@@ -21,8 +21,16 @@
 //|					Slimmed down the cBook class making use of packet classes for handling data from the client.
 //|					Added support for the new book header packet removing support for the old book header packet.
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
+
 #include "books.h"
+
+#include <fstream>
+
+#include "cChar.h"
+#include "cSocket.h"
+#include "cItem.h"
+
+#include "funcdecl.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "CPacketSend.h"

@@ -1,7 +1,12 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
-#include "mapclasses.h"
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
+
+//#include "mapclasses.h"
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING

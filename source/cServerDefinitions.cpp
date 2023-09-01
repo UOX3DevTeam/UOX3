@@ -1,13 +1,16 @@
 #include "uox3.h"
 #include "cServerDefinitions.h"
+
+#include <array>
+#include <filesystem>
+#include <memory>
+
+#include "cScript.h"
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
-#include <filesystem>
-#include <memory>
-#include <array>
 
 using namespace std::string_literals;
 

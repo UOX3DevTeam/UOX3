@@ -7,8 +7,10 @@
 #ifndef __CHTMLSYSTEM_H__
 #define __CHTMLSYSTEM_H__
 
-
+#include <cstdint>
 #include <string>
+#include <vector>
+
 #include "typedefs.h"
 
 class CScriptSection ;

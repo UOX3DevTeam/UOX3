@@ -1,6 +1,12 @@
 #ifndef __SKILLS_H__
 #define __SKILLS_H__
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
 
 // create DFN revisions
 struct ResAmountPair_st

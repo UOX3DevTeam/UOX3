@@ -13,7 +13,7 @@
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-
+#include "mapstuff.h"
 using namespace std::string_literals;
 
 cItem *Items = nullptr;

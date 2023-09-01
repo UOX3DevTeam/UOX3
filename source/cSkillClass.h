@@ -2,6 +2,10 @@
 #define __CSKILLCLASS_H__
 
 #include <algorithm>
+#include <cstdint>
+#include <string>
+
+#include "typedefs.h"
 
 class cSkillClass
 {

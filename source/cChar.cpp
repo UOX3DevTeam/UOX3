@@ -34,6 +34,9 @@
 //|						Organized many functions to their respective areas and added documentation for them.
 //|						Changed itemLayers to a map
 //o------------------------------------------------------------------------------------------------o
+
+#include "cChar.h"
+
 #include "uox3.h"
 #include "power.h"
 #include "weight.h"
@@ -58,6 +61,7 @@
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 #include "subsystem/account.hpp"
+#include "mapstuff.h"
 
 #include "cEffects.h"
 #include <algorithm>

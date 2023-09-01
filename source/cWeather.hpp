@@ -1,6 +1,13 @@
 #ifndef __WeatherAb__
 #define __WeatherAb__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+
 class CWeather
 {
 private:

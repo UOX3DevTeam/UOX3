@@ -1,6 +1,14 @@
 #if !defined( __GENERICLIST_H__ )
 #define __GENERICLIST_H__
+#include <algorithm>
+#include <cstdint>
+#include <iostream>
 #include <list>
+#include <string>
+#include <unordered_set>
+
+#include "typedefs.h"
+
 //o------------------------------------------------------------------------------------------------o
 //|	File	-	GenericList.h
 //|	Date	-	2021-05-04
@@ -13,10 +21,6 @@
 //|					1.0		 		2021-05-04
 //|					Initial implementation.
 //o------------------------------------------------------------------------------------------------o
-#include <iostream>
-#include <cstdint>
-#include <unordered_set>
-#include <algorithm>
 //o------------------------------------------------------------------------------------------------o
 // GenericList
 //o------------------------------------------------------------------------------------------------o

@@ -1,6 +1,7 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+#include <bitset>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -13,6 +14,11 @@
 class CPIGumpMenuSelect;
 class CPIGumpInput;
 class CSpawnRegion;
+class CChar;
+class CBaseObject;
+class CItem;
+class CMultiObj;
+
 struct JSScript;
 struct JSContext;
 struct JSObject ;

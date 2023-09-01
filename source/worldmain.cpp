@@ -25,6 +25,7 @@
 #include "cEffects.h"
 #include "network.h"
 #include "regions.h"
+//#include "mapstuff.h"
 #include "jail.h"
 #include "Dictionary.h"
 #include "ObjectFactory.h"

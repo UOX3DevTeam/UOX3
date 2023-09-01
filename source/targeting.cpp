@@ -1,3 +1,5 @@
+#include "mapstuff.h"
+
 #include "uox3.h"
 #include "skills.h"
 #include "cGuild.h"

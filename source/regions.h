@@ -10,8 +10,17 @@
 
 #ifndef __Region_h
 #define __Region_h
+#include <cstdint>
+#include <string>
+#include <vector>
 
-#include "mapstuff.h"
+#include "typedefs.h"
+#include "GenericList.h"
+
+class CItem;
+class CChar;
+class CBaseObject;
+class RegionSerialList;
 
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
