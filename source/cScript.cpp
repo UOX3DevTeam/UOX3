@@ -444,7 +444,8 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 			return false;
 	}
 
-	jsval rval, params[2];
+	JS::RootedValue rval(targContext);
+  JS::RootedObject obj(targObject);
 	UI08 paramType = 0;
 	JSObject *myObj;
 	if( thingCreated->GetObjType() == OT_CHAR )
@@ -456,11 +457,12 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingCreated, runTime );
 	}
-
-	params[0] = OBJECT_TO_JSVAL( myObj );
-	params[1] = INT_TO_JSVAL( paramType );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
-	if( retVal == JS_FALSE )
+  JS::RootedValueArray<2> params( targContext );
+	// Kind of, but won't work
+	params[0].setObjectOrNull( myObj );
+	params[1].setInt32( paramType );
+	bool retVal = JS_CallFunctionName( targContext, obj, functionName.c_str(), params, &rval );
+	if( !retVal )
 	{
 		if( isPlayer )
 		{
@@ -476,7 +478,7 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlaye
 		}
 	}
 
-	return ( retVal == JS_TRUE );
+	return ( retVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
