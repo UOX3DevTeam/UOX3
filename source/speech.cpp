@@ -367,7 +367,7 @@ bool CPITalkRequest::Handle( void )
 			if( cwmWorldState->ServerData()->ServerSpeechLog() && !mChar->IsNpc() ) // Logging
 			{
 				auto temp = util::format( "%s.log", mChar->GetName().c_str() );
-				auto temp2 = util::format( "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
+				auto temp2 = util::format( "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().accountNumber, asciiText );
                 Console::shared().Log( temp, temp2 );
 			}
 

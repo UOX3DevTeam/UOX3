@@ -973,12 +973,12 @@ void AttackTarget( CSocket *s )
 		if( !targOwner->IsNpc() )
 		{
 			auto mPetOwner = mPet->GetOwnerObj();
-			if( ValidateObject( mPetOwner ) && mPetOwner->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+			if( ValidateObject( mPetOwner ) && mPetOwner->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 			{
 				s->SysMessage( 18708 ); // As a Young player, you cannot harm other players, or their followers.
 				return;
 			}
-			else if( targOwner->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+			else if( targOwner->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 			{
 				s->SysMessage( 18709 ); // You cannot harm Young players, or their followers.
 				return;
@@ -1220,12 +1220,12 @@ void TransferTarget( CSocket *s )
 
 	if( cwmWorldState->ServerData()->YoungPlayerSystem() )
 	{
-		if( !mChar->IsNpc() && mChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !targChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		if( !mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && !targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 		{
 			s->SysMessage( 18725 ); // As a young player, you may not transfer pets to older players.
 			return;
 		}
-		else if( !mChar->IsNpc() && !mChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && targChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		else if( !mChar->IsNpc() && !mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 		{
 			s->SysMessage( 18726 ); // As an older player, you may not transfer pets to young players.
 			return;
@@ -1604,12 +1604,12 @@ void FriendTarget( CSocket *s )
 
 	if( cwmWorldState->ServerData()->YoungPlayerSystem() )
 	{
-		if( !mChar->IsNpc() && mChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !targChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		if( !mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && !targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 		{
 			s->SysMessage( 18727 ); // As a young player, you may not friend pets to older players.
 			return;
 		}
-		else if( !mChar->IsNpc() && !mChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && targChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		else if( !mChar->IsNpc() && !mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 		{
 			s->SysMessage( 18728 ); // As an older player, you may not friend pets to young players.
 			return;
@@ -1864,7 +1864,7 @@ void MakeStatusTarget( CSocket *sock )
 	//char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	auto temp = util::format( "account%i.log", mChar->GetAccount().wAccountIndex );
+	auto temp = util::format( "account%i.log", mChar->GetAccount().accountNumber );
 	auto temp2 = util::format( "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
 
     Console::shared().Log( temp2, temp );
@@ -2193,7 +2193,7 @@ bool CPITargetCursor::Handle( void )
 		UI08 a3 = tSock->GetByte( 4 );
 		TargetIds targetId = static_cast<TargetIds>( tSock->GetByte( 5 ));
 		tSock->TargetOK( false );
-		if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().wAccountIndex != 0 )
+		if( mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().accountNumber != 0 )
 		{
 			tSock->SysMessage( 1008 ); // Invalid item!
 			if( mChar->GetSpellCast() != -1 )	// need to stop casting if we don't target right

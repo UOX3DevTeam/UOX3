@@ -67,8 +67,8 @@ class CSocket
 {
 public:
 	// Account Related Member(s)
-	CAccountBlock_st&	GetAccount( void );
-	void			SetAccount( CAccountBlock_st& actbBlock );
+	AccountEntry&	GetAccount( void );
+	void			SetAccount( AccountEntry& actbBlock );
 
 	void			InternalReset( void );
 	Ip4Addr_st		ipaddress;

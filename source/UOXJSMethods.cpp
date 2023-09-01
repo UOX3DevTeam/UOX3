@@ -6707,7 +6707,7 @@ JSBool CAccount_AddAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 		return JS_FALSE;
 
 
-	if( !Accounts->AddAccount( lpszUsername, lpszPassword, lpszComment, u16Flags ))
+	if( !Account::shared().createAccount( lpszUsername, lpszPassword,  u16Flags ,lpszComment))
 	{
 		ScriptError( cx, "Account.AddAccount( user, pass, email, flags ): Account was not added. Duplicate expected." );
 		return JS_FALSE;
@@ -6739,7 +6739,7 @@ JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 	{
 		char *lpszUsername = nullptr;
 		lpszUsername = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-		if( !Accounts->DelAccount( lpszUsername ))
+		if( !Account::shared().delAccount( lpszUsername ))
 		{
 			ScriptError( cx, " Account.DelAccount(username): Unable to remove account specified." );
 			return JS_FALSE;
@@ -6749,7 +6749,7 @@ JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 	else if( JSVAL_IS_INT( argv[0] ))
 	{
 		UI16 ui16AccountId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-		if( !Accounts->DelAccount( ui16AccountId ))
+		if( !Account::shared().delAccount( ui16AccountId ))
 		{
 			ScriptError( cx, " Account.DelAccount(accountID): Unable to remove account specified." );
 			return JS_FALSE;

@@ -9,11 +9,11 @@
 /* Begin PBXBuildFile section */
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
 		56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */; };
+		56D6EEF82AA13174005355FA /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEF42AA13174005355FA /* account.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
 		64A9011D293E3DD4009B54DA /* books.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90078293E3DD4009B54DA /* books.cpp */; };
-		64A9011E293E3DD4009B54DA /* cAccountClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007A293E3DD4009B54DA /* cAccountClass.cpp */; };
 		64A9011F293E3DD4009B54DA /* calcfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007C293E3DD4009B54DA /* calcfuncs.cpp */; };
 		64A90120293E3DD4009B54DA /* cBaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007D293E3DD4009B54DA /* cBaseObject.cpp */; };
 		64A90121293E3DD4009B54DA /* cChar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007F293E3DD4009B54DA /* cChar.cpp */; };
@@ -131,6 +131,8 @@
 		56D6EEC32A9F7707005355FA /* strutil.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strutil.hpp; sourceTree = "<group>"; };
 		56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uoxversion.cpp; sourceTree = "<group>"; };
 		56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxversion.hpp; sourceTree = "<group>"; };
+		56D6EEF42AA13174005355FA /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = account.cpp; sourceTree = "<group>"; };
+		56D6EEF72AA13174005355FA /* account.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = account.hpp; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -365,6 +367,8 @@
 		56D6EEE12AA0AC66005355FA /* expired */ = {
 			isa = PBXGroup;
 			children = (
+				64A9007A293E3DD4009B54DA /* cAccountClass.cpp */,
+				64A9007B293E3DD4009B54DA /* cAccountClass.h */,
 				64A900B4293E3DD4009B54DA /* cVersionClass.cpp */,
 				64A900B5293E3DD4009B54DA /* cVersionClass.h */,
 			);
@@ -374,6 +378,8 @@
 		56D6EEE62AA0B861005355FA /* subsystem */ = {
 			isa = PBXGroup;
 			children = (
+				56D6EEF42AA13174005355FA /* account.cpp */,
+				56D6EEF72AA13174005355FA /* account.hpp */,
 				64A90081293E3DD4009B54DA /* console.cpp */,
 				64A90082293E3DD4009B54DA /* console.hpp */,
 			);
@@ -468,8 +474,6 @@
 				64A900FE293E3DD4009B54DA /* townregion.h */,
 				64A90078293E3DD4009B54DA /* books.cpp */,
 				64A90079293E3DD4009B54DA /* books.h */,
-				64A9007A293E3DD4009B54DA /* cAccountClass.cpp */,
-				64A9007B293E3DD4009B54DA /* cAccountClass.h */,
 				64A90085293E3DD4009B54DA /* cEffects.h */,
 				64A90088293E3DD4009B54DA /* CGump.cpp */,
 				64A900C3293E3DD4009B54DA /* CGump.h */,
@@ -742,6 +746,7 @@
 				64A90123293E3DD4009B54DA /* cDice.cpp in Sources */,
 				64A9012E293E3DD4009B54DA /* CPacketReceive.cpp in Sources */,
 				64A9012A293E3DD4009B54DA /* cmdtable.cpp in Sources */,
+				56D6EEF82AA13174005355FA /* account.cpp in Sources */,
 				64A90120293E3DD4009B54DA /* cBaseObject.cpp in Sources */,
 				64A90135293E3DD4009B54DA /* cServerDefinitions.cpp in Sources */,
 				64A90166293E3DD4009B54DA /* vendor.cpp in Sources */,
@@ -773,7 +778,6 @@
 				64A90129293E3DD4009B54DA /* CJSMapping.cpp in Sources */,
 				64A90132293E3DD4009B54DA /* CResponse.cpp in Sources */,
 				64A90164293E3DD4009B54DA /* UOXJSMethods.cpp in Sources */,
-				64A9011E293E3DD4009B54DA /* cAccountClass.cpp in Sources */,
 				64A90148293E3DD4009B54DA /* magic.cpp in Sources */,
 				64A9011B293E3DD4009B54DA /* archive.cpp in Sources */,
 				64A9015A293E3DD4009B54DA /* sound.cpp in Sources */,

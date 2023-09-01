@@ -562,9 +562,9 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		//	If accounts are to be loaded then they should be loaded
 		//	all the time if using the web interface
-		Accounts->Save();
+		Account::shared().save();
 		// Make sure to import the new accounts so they have access too.
-        Console::shared() << "New accounts processed: " << Accounts->ImportAccounts() << myendl;
+        Console::shared() << "New accounts processed: " << Account::shared().importAccounts() << myendl;
 		SetWorldSaveProgress( SS_JUSTSAVED );
 
 		char saveTimestamp[100];

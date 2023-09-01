@@ -26,6 +26,8 @@
 #include "cBaseObject.h"
 #include "worldmain.h"
 #include "osunique.hpp"
+class CItem ;
+class CTownRegion;
 
 extern CWorldMain   *cwmWorldState;
 extern std::mt19937 generator;

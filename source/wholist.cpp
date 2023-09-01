@@ -365,7 +365,7 @@ void CWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	toSend.addCommand( util::format( "button 20 210 %u %i 1 0 206", butRight, butRight + 1 ));	// Cstats button
 	toSend.addCommand( util::format( "button 20 230 %u %i 1 0 207", butRight, butRight + 1 ));	// Tweak button
 
-	toSend.addText(util::format( "User %u selected (account %u)", buttonPressed, targetChar->GetAccount().wAccountIndex));
+	toSend.addText(util::format( "User %u selected (account %u)", buttonPressed, targetChar->GetAccount().accountNumber));
 	toSend.addText( util::format( "Name: %s", targetChar->GetName().c_str() ));
 	toSend.addText( Dictionary->GetEntry( 1400, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1401, sLang ));
@@ -472,39 +472,35 @@ void CWhoList::Update( void )
 	}
 	else
 	{
-		MAPUSERNAMEID_ITERATOR I;
 		CChar *ourChar = nullptr;
-		for( I = Accounts->Begin(); I != Accounts->End(); ++I )
-		{
-			CAccountBlock_st& actbSearch = I->second;
-			for( i = 0; i < 7; ++i )
-			{
-				ourChar = actbSearch.lpCharacters[i];
-				if( ValidateObject( ourChar ))
-				{
-					if( !IsOnline(( *ourChar )))
-					{
-						if( realCount > 0 && !( realCount % numPerPage ))
-						{
-							position = 40;
-							++pagenum;
+        for (auto &[num,entry]:Account::shared().allAccounts()){
+            for (auto i=0;i<AccountEntry::CHARACTERCOUNT;i++){
+                ourChar = entry[i].pointer;
+                if( ValidateObject( ourChar ))
+                {
+                    if( !IsOnline(( *ourChar )))
+                    {
+                        if( realCount > 0 && !( realCount % numPerPage ))
+                        {
+                            position = 40;
+                            ++pagenum;
 
-							one.push_back( oldstrutil::format( maxsize,"page %u", pagenum ));
-						}
+                            one.push_back( oldstrutil::format( maxsize,"page %u", pagenum ));
+                        }
 
-						one.push_back( oldstrutil::format( maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-						one.push_back( oldstrutil::format( maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ));
-						two.push_back( oldstrutil::format( maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ));
-						AddSerial( ourChar->GetSerial() );
+                        one.push_back( oldstrutil::format( maxsize, "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+                        one.push_back( oldstrutil::format( maxsize,"button 20 %u %u %i %u 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum ));
+                        two.push_back( oldstrutil::format( maxsize," %s (%s)", ourChar->GetName().c_str(), ourChar->GetLastOn().c_str() ));
+                        AddSerial( ourChar->GetSerial() );
 
-						position += 20;
-						++linenum;
-						++buttonnum;
-						++realCount;
-					}
-				}
-			}
-		}
+                        position += 20;
+                        ++linenum;
+                        ++buttonnum;
+                        ++realCount;
+                    }
+                }
+            }
+        }
 
 		two[0] = oldstrutil::format( maxsize, "Wholist [%i offline]", realCount - 1 );
 

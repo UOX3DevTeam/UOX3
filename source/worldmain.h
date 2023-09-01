@@ -9,11 +9,15 @@
 
 #include "cServerData.h"
 #include "GenericList.h"
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 #include <winsock2.h>
 #undef min
 #undef max
 #endif
+class CSpawnRegion;
+class CTownRegion;
+class CTEffect;
+
 enum CWM_TID
 {
 	tWORLD_NEXTFIELDEFFECT = 0,

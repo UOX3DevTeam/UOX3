@@ -158,13 +158,13 @@ CPInputBuffer *WhichPacket( UI08 packetId, CSocket *s )
 	return nullptr;
 }
 
-void CheckBanTimer( CAccountBlock_st &actbTemp )
+void CheckBanTimer( AccountEntry &actbTemp )
 {
 	// Unban player if bantime is up, but don't do anything if bantime is zero - maybe player is permanently banned!
-	if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) && ( actbTemp.wTimeBan > 0 && actbTemp.wTimeBan <= GetMinutesSinceEpoch() ))
+	if( actbTemp.flag.test(AccountEntry::AttributeFlag::BANNED ) && ( actbTemp.timeBan > 0 && actbTemp.timeBan <= GetMinutesSinceEpoch() ))
 	{
-		actbTemp.wTimeBan = 0x0;
-		actbTemp.wFlags.set( AB_FLAGS_BANNED, false );
+		actbTemp.timeBan = 0x0;
+		actbTemp.flag.set( AccountEntry::AttributeFlag::BANNED, false );
 	}
 }
 
@@ -197,13 +197,13 @@ void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 
 bool CPIFirstLogin::Handle( void )
 {
-	tSock->AcctNo( AB_INVALID_ID );
+	tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
 	LoginDenyReason t = LDR_NODENY;
 
 	std::string username = Name();
 
-	CAccountBlock_st * actbTemp = &Accounts->GetAccountByName( username );
-	if( actbTemp->wAccountIndex != AB_INVALID_ID )
+	AccountEntry * actbTemp = &Account::shared()[username ];
+	if( actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT )
 	{
 		tSock->SetAccount(( *actbTemp ));
 	}
@@ -213,28 +213,28 @@ bool CPIFirstLogin::Handle( void )
 	pSplit( pass0, pass1, pass2 );
 
 	// Need auto account creation code here
-	if( tSock->AcctNo() == AB_INVALID_ID )
+	if( tSock->AcctNo() == AccountEntry::INVALID_ACCOUNT )
 	{
 		if( cwmWorldState->ServerData()->InternalAccountStatus() )
 		{
-			Accounts->AddAccount( username, pass1, "" );
-			actbTemp = &Accounts->GetAccountByName( username );
-			if( actbTemp->wAccountIndex != AB_INVALID_ID )	// grab our account number
+			Account::shared().createAccount( username, pass1);
+			actbTemp = &Account::shared()[username ];
+			if( actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT )	// grab our account number
 			{
 				tSock->SetAccount(( *actbTemp ));
 			}
 		}
 	}
-	if( tSock->AcctNo() != AB_INVALID_ID )
+	if( tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 	{
 		// Check if player's bantime is up, and if so, unban player
 		CheckBanTimer( *actbTemp );
 
-		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ))
+		if( actbTemp->flag.test(AccountEntry::AttributeFlag::BANNED ))
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( actbTemp->sPassword != pass1 )
+		else if( actbTemp->password != pass1 )
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -333,7 +333,7 @@ bool CPIFirstLogin::Handle( void )
 		t = LDR_UNKNOWNUSER;
 	}
 
-	if( t == LDR_NODENY && actbTemp->wFlags.test( AB_FLAGS_ONLINE ))
+	if( t == LDR_NODENY && actbTemp->flag.test(AccountEntry::AttributeFlag::ONLINE ))
 	{
 		t = LDR_ACCOUNTINUSE;
 	}
@@ -341,25 +341,25 @@ bool CPIFirstLogin::Handle( void )
 	{
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
-		tSock->AcctNo( AB_INVALID_ID );
+		tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
 		Network->LoginDisconnect( tSock );
 		return true;
 	}
-	if( tSock->AcctNo() != AB_INVALID_ID )
+	if( tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 	{
-		actbTemp->dwLastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+		actbTemp->lastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
 		auto temp = util::format( "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
         Console::shared().Log( temp , "server.log" );
 		messageLoop << temp;
 
-		actbTemp->wFlags.set( AB_FLAGS_ONLINE, true );
+		actbTemp->flag.set( AccountEntry::AttributeFlag::ONLINE, true );
 
 		//Add temp-clientversion info to account here, to be used for second login
-		if( actbTemp->dwLastClientVer == 0 || tSock->ClientType() != CV_DEFAULT )
+		if( actbTemp->lastClientVersion == 0 || tSock->ClientType() != CV_DEFAULT )
 		{
-			actbTemp->dwLastClientVer = tSock->ClientVersion();
-			actbTemp->dwLastClientType = tSock->ClientType();
-			actbTemp->dwLastClientVerShort = tSock->ClientVerShort();
+			actbTemp->lastClientVersion = tSock->ClientVersion();
+			actbTemp->lastClientType = tSock->ClientType();
+			actbTemp->lastClientVersionShort = tSock->ClientVerShort();
 		}
 
 		// change for IP4Address
@@ -572,32 +572,32 @@ const std::string CPISecondLogin::Pass( void )
 bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
-	tSock->AcctNo( AB_INVALID_ID );
-	CAccountBlock_st& actbTemp = Accounts->GetAccountByName( Name() );
-	if( actbTemp.wAccountIndex != AB_INVALID_ID )
+	tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
+	AccountEntry& actbTemp = Account::shared()[ Name() ];
+	if( actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT )
 	{
 		tSock->SetAccount( actbTemp );
 	}
 
 	// Add socket version info from first login, stored in account, to new socket!
-	tSock->ClientVersion( actbTemp.dwLastClientVer );
-	tSock->ClientType( static_cast<ClientTypes>( actbTemp.dwLastClientType ));
-	tSock->ClientVerShort( static_cast<ClientVersions>( actbTemp.dwLastClientVerShort ));
+	tSock->ClientVersion( actbTemp.lastClientVersion );
+	tSock->ClientType( static_cast<ClientTypes>( actbTemp.lastClientType ));
+	tSock->ClientVerShort( static_cast<ClientVersions>( actbTemp.lastClientVersionShort ));
 
 	std::string pass0, pass1, pass2;
 	pass0 = Pass();
 	pSplit( pass0, pass1, pass2 );
 
-	if( tSock->AcctNo() != AB_INVALID_ID )
+	if( tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 	{
 		// Check if player's bantime is up, and if so, unban player
 		CheckBanTimer( actbTemp );
 
-		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ))
+		if( actbTemp.flag.test(AccountEntry::AttributeFlag::BANNED ))
 		{
 			t = LDR_ACCOUNTDISABLED;
 		}
-		else if( pass1 != actbTemp.sPassword )
+		else if( pass1 != actbTemp.password )
 		{
 			t = LDR_BADPASSWORD;
 		}
@@ -609,7 +609,7 @@ bool CPISecondLogin::Handle( void )
 
 	if( t != LDR_NODENY )
 	{
-		tSock->AcctNo( AB_INVALID_ID );
+		tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
 		CPLoginDeny pckDeny( t );
 		tSock->Send( &pckDeny );
 		Network->LoginDisconnect( tSock );
@@ -618,9 +618,9 @@ bool CPISecondLogin::Handle( void )
 	else
 	{
 		// If first login timestamp has not been set, set it here
-		if( actbTemp.wFirstLogin == 0 )
+		if( actbTemp.firstLoginTime == 0 )
 		{
-			actbTemp.wFirstLogin = GetMinutesSinceEpoch();
+			actbTemp.firstLoginTime = GetMinutesSinceEpoch();
 		}
 
 		//Send supported client features before character-list stuff
@@ -630,7 +630,7 @@ bool CPISecondLogin::Handle( void )
 		UI08 charCount = 0;
 		for( UI08 i = 0; i < 7; ++i )
 		{
-			if( actbTemp.dwCharacters[i] != INVALIDSERIAL )
+			if( actbTemp.character[i].serialNumber != AccountCharacter::INVALID_SERIAL )
 			{
 				++charCount;
 			}
@@ -1650,7 +1650,7 @@ bool CPIGodModeToggle::Handle( void )
 	else
 	{
 		tSock->SysMessage( 1641 ); // You don't have the privs needed to run the Godclient on this server!
-        Console::shared() << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Username[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
+        Console::shared() << "Godclient detected - Account[" << ourChar->GetAccount().accountNumber << "] Username[" << ourChar->GetAccount().username << ". Client disconnected!" << myendl;
 		Network->Disconnect( tSock );
 	}
 	return true;
@@ -3313,11 +3313,11 @@ void CPIPlayCharacter::Receive( void )
 	//Reset client-info stored in account, so it's ready for login with a new client
 	//NOTE: We can't do this until after character-selection, in case user
 	//goes back to server-selection instead - in which case the socket's clientversion info is lost!
-	//	tSock->AcctNo( AB_INVALID_ID );
-	CAccountBlock_st& actbTemp = tSock->GetAccount();
-	actbTemp.dwLastClientVer = 0;
-	actbTemp.dwLastClientType = 0;
-	actbTemp.dwLastClientVerShort = 0;
+	//	tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
+	AccountEntry& actbTemp = tSock->GetAccount();
+	actbTemp.lastClientVersion = 0;
+	actbTemp.lastClientType = 0;
+	actbTemp.lastClientVersionShort = 0;
 
 	memcpy( charName, &tSock->Buffer()[5], 30 );
 	memcpy( unknown, &tSock->Buffer()[35], 33 );

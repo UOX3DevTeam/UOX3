@@ -1023,7 +1023,7 @@ auto Console::Process(std::int32_t c) -> void
 			case '!':
 				// Force server to save accounts file
 				messageLoop << "CMD: Saving Accounts... ";
-				Accounts->Save();
+				Account::shared().save();
 				messageLoop << MSG_PRINTDONE;
 				break;
 			case '@':
@@ -1136,7 +1136,7 @@ auto Console::Process(std::int32_t c) -> void
 					messageLoop << "     Server INI... ";
 					// Reload accounts, and update Access.adm if new accounts available.
 					messageLoop << "     Loading Accounts... ";
-					Accounts->Load();
+					Account::shared().load();
 					messageLoop << MSG_PRINTDONE;
 					// Reload Region Files
 					messageLoop << "     Loading Regions... ";
@@ -1385,7 +1385,7 @@ auto Console::DisplaySettings() -> void
 	(*this) << "   -Guilds: " << static_cast<UI32>( GuildSys->NumGuilds() ) << myendl;
 	(*this) << "   -Char count: " << ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) << myendl;
 	(*this) << "   -Item count: " << ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) << myendl;
-	(*this) << "   -Num Accounts: " << Accounts->size() << myendl;
+	(*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size()) << myendl;
 	(*this) << "   Directories: " << myendl;
 	(*this) << "   -Shared:          " << cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) << myendl;
 	(*this) << "   -Archive:         " << cwmWorldState->ServerData()->Directory( CSDDP_BACKUP ) << myendl;

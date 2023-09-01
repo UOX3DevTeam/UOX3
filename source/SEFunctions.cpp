@@ -2645,7 +2645,7 @@ JSBool SE_Reload( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 			cwmWorldState->ServerData()->Load();
 			break;
 		case 9: // Reload Accounts
-			Accounts->Load();
+			Account::shared().load();
 			break;
 		case 10: // Reload Dictionaries
 			Dictionary->LoadDictionaries();
@@ -5046,7 +5046,7 @@ JSBool SE_GetServerFeature( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetAccountCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
-	*rval = INT_TO_JSVAL( Accounts->size() );
+	*rval = INT_TO_JSVAL( Account::shared().size() );
 	return JS_TRUE;
 }
 

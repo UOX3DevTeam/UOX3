@@ -2950,7 +2950,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
 				{
 					auto doPoison = true;
-					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 					{
 						doPoison = false;
 						if( targSock != nullptr )
@@ -2958,7 +2958,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 							targSock->SysMessage( 18735 ); // You would have been poisoned, were you not new to the land of Britannia. Be careful in the future.
 						}
 					}
-					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) )
 					{
 						doPoison = false;
 						if( mSock != nullptr )

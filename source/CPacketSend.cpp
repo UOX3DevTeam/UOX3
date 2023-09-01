@@ -5055,7 +5055,7 @@ CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, [[maybe_unused]] UI08 numCharacters, UI08 numLocations, CSocket *mSock )
+CPCharAndStartLoc::CPCharAndStartLoc( AccountEntry& actbBlock, [[maybe_unused]] UI08 numCharacters, UI08 numLocations, CSocket *mSock )
 {
 	InternalReset();
 
@@ -5103,15 +5103,15 @@ CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, [[maybe_unuse
 	NumberOfLocations( numLocations, mSock );
 }
 
-void CPCharAndStartLoc::CopyData( CAccountBlock_st& toCopy )
+void CPCharAndStartLoc::CopyData( AccountEntry& toCopy )
 {
 	UI16 baseOffset = 0;
 	for( UI08 i = 0; i < pStream.GetByte( 3 ); ++i )
 	{
 		baseOffset = static_cast<UI16>( 4 + ( i * 60 ));
-		if( toCopy.lpCharacters[i] != nullptr )
+		if( toCopy.character[i].pointer != nullptr )
 		{
-			AddCharacter( toCopy.lpCharacters[i], i );
+			AddCharacter( toCopy.character[i].pointer, i );
 		}
 		else
 		{
@@ -5173,7 +5173,7 @@ auto CPCharAndStartLoc::NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 l
 	}
 }
 
-CPCharAndStartLoc& CPCharAndStartLoc::operator = ( CAccountBlock_st& actbBlock )
+CPCharAndStartLoc& CPCharAndStartLoc::operator = ( AccountEntry& actbBlock )
 {
 	CopyData( actbBlock );
 	return ( *this );

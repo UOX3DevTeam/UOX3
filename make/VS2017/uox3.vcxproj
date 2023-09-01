@@ -446,7 +446,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cAccountClass.cpp">
+    <ClCompile Include="..\..\source\subsystem\account.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1383,7 +1383,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\osunique.hpp" />
     <ClInclude Include="..\..\source\books.h" />
-    <ClInclude Include="..\..\source\cAccountClass.h" />
+    <ClInclude Include="..\..\source\subsystem\account.hpp" />
     <ClInclude Include="..\..\source\cBaseObject.h" />
     <ClInclude Include="..\..\source\cChar.h" />
     <ClInclude Include="..\..\source\subsystem\console.hpp" />

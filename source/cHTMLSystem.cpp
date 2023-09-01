@@ -100,7 +100,7 @@ void cHTMLTemplate::Process( void )
 	// Replacing Placeholders
 
 	// Account-Count
-	std::string AccountCount = util::ntos(( Accounts->size() ));
+	std::string AccountCount = util::ntos(( Account::shared().size() ));
 	size_t Pos = ParsedContent.find( "%accounts" );
 	while( Pos != std::string::npos )
 	{
@@ -336,10 +336,10 @@ void cHTMLTemplate::Process( void )
 							sPos = parsedInline.find( "%playeraccount" );
 							while( sPos != std::string::npos )
 							{
-								CAccountBlock_st& toScan = tChar->GetAccount();
-								if( toScan.wAccountIndex != AB_INVALID_ID )
+								AccountEntry& toScan = tChar->GetAccount();
+								if( toScan.accountNumber != AccountEntry::INVALID_ACCOUNT )
 								{
-									( cwmWorldState->GetKeepRun() ) ? parsedInline.replace( sPos, 14, toScan.sUsername) : parsedInline.replace( sPos, 14, "" );
+									( cwmWorldState->GetKeepRun() ) ? parsedInline.replace( sPos, 14, toScan.username) : parsedInline.replace( sPos, 14, "" );
 								}
 								sPos = parsedInline.find( "%playeraccount" );
 							}

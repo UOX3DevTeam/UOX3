@@ -326,20 +326,20 @@ bool CPIPlayCharacter::Handle( void )
 {
 	if( tSock != nullptr )
 	{
-		if( tSock->AcctNo() != AB_INVALID_ID )
+		if( tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 		{
 			bool disconnect = false;
-			CAccountBlock_st&  actbRec	= tSock->GetAccount();
+			AccountEntry&  actbRec	= tSock->GetAccount();
 			CChar *kChar			= nullptr;
 			CChar *ourChar			= nullptr;
-			if( actbRec.wAccountIndex == AB_INVALID_ID )
+			if( actbRec.accountNumber == AccountEntry::INVALID_ACCOUNT )
 			{
 				Network->Disconnect( tSock );
 				disconnect = true;
 			}
 			else
 			{
-				ourChar = actbRec.lpCharacters[slotChosen];
+				ourChar = actbRec[slotChosen].pointer;
 				if( ourChar != nullptr )
 				{
 					if( !ourChar->IsNpc() && !ourChar->IsFree() )
@@ -377,18 +377,18 @@ bool CPIPlayCharacter::Handle( void )
 				{
 					WhoList->FlagUpdate();
 					OffList->FlagUpdate();	// offline list changes too
-					if( actbRec.dwInGame != INVALIDSERIAL )
+					if( actbRec.inGame != INVALIDSERIAL )
 					{
-						actbRec.dwInGame = kChar->GetSerial();
+						actbRec.inGame = kChar->GetSerial();
 					}
 					else
 					{
-						actbRec.dwInGame = INVALIDSERIAL;
+						actbRec.inGame = INVALIDSERIAL;
 					}
 
-					if( actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == kChar->GetSerial() )
+					if( actbRec.inGame == INVALIDSERIAL || actbRec.inGame == kChar->GetSerial() )
 					{
-						actbRec.dwInGame = kChar->GetSerial();
+						actbRec.inGame = kChar->GetSerial();
 						kChar->SetTimer( tPC_LOGOUT, 0 );
 						kChar->SetAccount( actbRec );
 						tSock->CurrcharObj( kChar );
@@ -431,25 +431,26 @@ bool CPIDeleteCharacter::Handle( void )
 	if( tSock != nullptr )
 	{
 		SI08 deleteResult = -1;
-		CAccountBlock_st * actbTemp = &tSock->GetAccount();
+		AccountEntry * actbTemp = &tSock->GetAccount();
 		UI08 slot = tSock->GetByte( 0x22 );
-		if( actbTemp->wAccountIndex != AB_INVALID_ID )
+		if( actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			CChar *ourObj = actbTemp->lpCharacters[slot];
+			CChar *ourObj = (*actbTemp)[slot].pointer;
 			if( ValidateObject( ourObj ))	// we have a char
 			{
-				deleteResult = Accounts->DelCharacter( actbTemp->wAccountIndex, slot );
-				if( deleteResult == CDR_SUCCESS )
+				deleteResult = Account::shared()[actbTemp->accountNumber].delCharacter(slot );
+				if( !deleteResult  )
 				{
 					ourObj->Delete();
 				}
+                Account::shared().save();
 			}
 		}
 		else
 		{
 			// Support for accounts. The current copy of the account isn't correct. So get a new copy to work with.
-			Accounts->Load();
-			actbTemp = &Accounts->GetAccountById( actbTemp->wAccountIndex );
+			Account::shared().load();
+			actbTemp = &Account::shared()[ actbTemp->accountNumber ];
 		}
 
 		// For modern clients (?) we need to send packets 0x85 and 0x86 here!
@@ -464,7 +465,7 @@ bool CPIDeleteCharacter::Handle( void )
 			UI08 charCount = 0;
 			for( UI08 i = 0; i < 7; ++i )
 			{
-				if( ValidateObject( actbTemp->lpCharacters[i] ))
+				if( ValidateObject( (*actbTemp)[i].pointer ))
 				{
 					++charCount;
 				}
@@ -474,9 +475,9 @@ bool CPIDeleteCharacter::Handle( void )
 			CharacterListUpdate pckCharList( charCount );
 			for( UI08 i = 0; i < charCount; ++i )
 			{
-				if( ValidateObject( actbTemp->lpCharacters[i] ))
+				if( ValidateObject( (*actbTemp)[i].pointer ))
 				{
-					pckCharList.AddCharName( i, actbTemp->lpCharacters[i]->GetName() );
+					pckCharList.AddCharName( i, (*actbTemp)[i].pointer->GetName() );
 				}
 				else
 				{
@@ -778,16 +779,19 @@ bool CPICreateCharacter::Handle( void )
 
 			tSock->CurrcharObj( mChar );
 			mChar->SetName( charName );
-			Accounts->AddCharacter( tSock->AcctNo(), mChar );
-			CAccountBlock_st &actbRec	= tSock->GetAccount();
-			if( actbRec.dwInGame != INVALIDSERIAL )
+            auto actCharacter = AccountCharacter(mChar->GetSerial(),mChar->GetName());
+            actCharacter.pointer = mChar ;
+			Account::shared()[tSock->AcctNo()].addCharacter(actCharacter );
+            Account::shared().save();
+			AccountEntry &actbRec	= tSock->GetAccount();
+			if( actbRec.inGame != INVALIDSERIAL )
 			{
-				actbRec.dwInGame = mChar->GetSerial();
+				actbRec.inGame = mChar->GetSerial();
 			}
 
-			if( actbRec.dwInGame == INVALIDSERIAL || actbRec.dwInGame == mChar->GetSerial() )
+			if( actbRec.inGame == INVALIDSERIAL || actbRec.inGame == mChar->GetSerial() )
 			{
-				actbRec.dwInGame = mChar->GetSerial();
+				actbRec.inGame = mChar->GetSerial();
 				mChar->SetAccount( actbRec );
 			}
 
@@ -795,8 +799,8 @@ bool CPICreateCharacter::Handle( void )
 
 			mChar->SetPriv( cwmWorldState->ServerData()->ServerStartPrivs() );
 
-			CAccountBlock_st& actbTemp2 = mChar->GetAccount();
-			if( actbTemp2.wAccountIndex != AB_INVALID_ID && actbTemp2.wFlags.test( AB_FLAGS_GM ))
+			AccountEntry& actbTemp2 = mChar->GetAccount();
+			if( actbTemp2.accountNumber != AccountEntry::INVALID_ACCOUNT && actbTemp2.flag.test(AccountEntry::AttributeFlag::GM))
 			{
 				mChar->SetPriv( 0xFF );
 				mChar->SetCommandLevel( CL_GM );
@@ -811,7 +815,7 @@ bool CPICreateCharacter::Handle( void )
 			size_t serverCount = 0;
 			__STARTLOCATIONDATA__ *toGo = nullptr;
 			auto useYoungLocations = false;
-			if( cwmWorldState->ServerData()->YoungPlayerSystem() && tSock->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+			if( cwmWorldState->ServerData()->YoungPlayerSystem() && tSock->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) )
 			{
 				// Young player! Let's use young player start locations
 				toGo = cwmWorldState->ServerData()->YoungServerLocation( locationNumber );
@@ -1333,10 +1337,10 @@ void StartChar( CSocket *mSock, bool onCreate )
 			CPClientVersion verCheck;
 			mSock->Send( &verCheck );
 
-			CAccountBlock_st& actbTemp = mSock->GetAccount();
-			if( actbTemp.wAccountIndex != AB_INVALID_ID )
+			AccountEntry& actbTemp = mSock->GetAccount();
+			if( actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT )
 			{
-				actbTemp.wFlags.set( AB_FLAGS_ONLINE, true );
+				actbTemp.flag.set( AccountEntry::AttributeFlag::ONLINE, true );
 			}
 
 			mSock->TargetOK( false );
@@ -1622,7 +1626,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 			case IL_PACKITEM:
 			{
 				// Only move player's items from backpack to corpse if young system is disabled OR player is not on a young account
-				if( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+				if( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 				{
 					std::vector<CItem *> moveItems;
 					auto jCont = j->GetContainsList();
@@ -1658,7 +1662,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 			}
 			default:
 				// Move equipped items from character to pack if newbie, or if player is on a Young account
-				if( packIsValid && ( j->IsNewbie() || ( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))))
+				if( packIsValid && ( j->IsNewbie() || ( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))))
 				{
 					j->SetCont( packItem );
 				}
@@ -1820,7 +1824,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			c->SetResist( 1, PHYSICAL );
 		}
 
-		if( mChar->GetAccount().wAccountIndex != AB_INVALID_ID )
+		if( mChar->GetAccount().accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
 			if( pSock != nullptr )
 			{

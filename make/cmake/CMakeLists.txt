@@ -49,8 +49,8 @@ add_executable(uox3
 # Subsystem Group Group
    ../../source/books.cpp
    ../../source/books.h
-   ../../source/cAccountClass.cpp
-   ../../source/cAccountClass.h
+   ../../source/subsystem/account.cpp
+   ../../source/account.hpp
    ../../source/cEffects.h
    ../../source/CGump.cpp
    ../../source/CGump.h

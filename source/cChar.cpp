@@ -57,6 +57,8 @@
 #include "combat.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "subsystem/account.hpp"
+
 #include "cEffects.h"
 #include <algorithm>
 
@@ -136,7 +138,7 @@ const COLOUR		DEFPLAYER_BEARDCOLOUR 		= INVALIDCOLOUR;
 const UI08			DEFPLAYER_SPEECHMODE 		= 0;
 const UI08			DEFPLAYER_SPEECHID 			= 0;
 const SERIAL		DEFPLAYER_ROBE 				= INVALIDSERIAL;
-const UI16			DEFPLAYER_ACCOUNTNUM		= AB_INVALID_ID;
+const UI16			DEFPLAYER_ACCOUNTNUM		= AccountEntry::INVALID_ACCOUNT;
 const UI16			DEFPLAYER_ORIGSKIN			= 0;
 const UI16			DEFPLAYER_ORIGID			= 0x0190;
 const UI08			DEFPLAYER_FIXEDLIGHT 		= 255;
@@ -4937,13 +4939,13 @@ bool CChar::LoadRemnants( void )
 		SetId( GetOrgId() );
 	}
 
-	const UI16 acct = GetAccount().wAccountIndex;
+	const UI16 acct = GetAccount().accountNumber;
 
 	// Max body/anim ID supported in default client is 2048 (or 0x800),
 	// though custom clients like CUO can be modified to bypass this limit
 	if( GetId() > 0x999 )
 	{
-		if( acct == AB_INVALID_ID )
+		if( acct == AccountEntry::INVALID_ACCOUNT )
 		{
 			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
             Console::shared().Warning( util::format( "NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial() ));
@@ -4965,7 +4967,7 @@ bool CChar::LoadRemnants( void )
 		const bool overRight = ( mx > mapWidth );
 		const bool overBottom = ( my > mapHeight );
 
-		if( acct == AB_INVALID_ID && (( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ))
+		if( acct == AccountEntry::INVALID_ACCOUNT && (( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ))
 		{
 			if( IsNpc() )
 			{
@@ -4982,7 +4984,10 @@ bool CChar::LoadRemnants( void )
 		{
 			if( !IsNpc() )
 			{
-				Accounts->AddCharacter( GetAccountNum(), this );	// account ID, and account object.
+                auto entry = AccountCharacter(this->GetSerial(),this->GetName());
+                entry.pointer = this ;
+				Account::shared()[GetAccountNum()].addCharacter(entry);	// account ID, and account object.
+                Account::shared().save();
 			}
 		}
 	}
@@ -5430,14 +5435,16 @@ void CChar::Cleanup( void )
 
 		if( !IsNpc() )
 		{
-			CAccountBlock_st& mAcct = GetAccount();
-			if( mAcct.wAccountIndex != AB_INVALID_ID )
+			AccountEntry& mAcct = GetAccount();
+			if( mAcct.accountNumber != AccountEntry::INVALID_ACCOUNT )
 			{
 				for( UI08 actr = 0; actr < 7; ++actr )
 				{
-					if( mAcct.lpCharacters[actr] != nullptr && mAcct.lpCharacters[actr]->GetSerial() == GetSerial() )
+					if( mAcct[actr].pointer != nullptr && mAcct[actr].pointer->GetSerial() == GetSerial() )
 					{
-						Accounts->DelCharacter( mAcct.wAccountIndex, actr );
+						Account::shared()[mAcct.accountNumber].delCharacter( actr );
+                        // Do you want to save?
+                        Account::shared().save() ;
 						break;
 					}
 				}
@@ -5662,31 +5669,31 @@ void CChar::Delete( void )
 //|					CChar::GetAccount()
 //|	Date		-	1/14/2003 6:17:45 AM
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Sets and Returns the CAccountBlock_st associated with this player
+//|	Purpose		-	Sets and Returns the AccountEntry associated with this player
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetAccount( CAccountBlock_st& actbAccount )
+void CChar::SetAccount( AccountEntry& actbAccount )
 {
 	if( !IsValidPlayer() )
 	{
-		if( actbAccount.wAccountIndex != DEFPLAYER_ACCOUNTNUM )
+		if( actbAccount.accountNumber != DEFPLAYER_ACCOUNTNUM )
 		{
 			CreatePlayer();
 		}
 	}
 	if( IsValidPlayer() )
 	{
-		mPlayer->accountNum = actbAccount.wAccountIndex;
+		mPlayer->accountNum = actbAccount.accountNumber;
 	}
 }
-CAccountBlock_st& CChar::GetAccount( void )
+AccountEntry& CChar::GetAccount( void )
 {
-	UI16 rVal = AB_INVALID_ID;
+	UI16 rVal = AccountEntry::INVALID_ACCOUNT;
 	if( IsValidPlayer() )
 	{
 		rVal = mPlayer->accountNum;
 	}
 
-	return Accounts->GetAccountById( rVal );
+	return Account::shared()[rVal];
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5698,7 +5705,7 @@ CAccountBlock_st& CChar::GetAccount( void )
 //o------------------------------------------------------------------------------------------------o
 UI16 CChar::GetAccountNum( void ) const
 {
-	UI16 rVal = AB_INVALID_ID;
+	UI16 rVal = AccountEntry::INVALID_ACCOUNT;
 	if( IsValidPlayer() )
 	{
 		rVal = mPlayer->accountNum;

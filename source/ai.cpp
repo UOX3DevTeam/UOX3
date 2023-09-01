@@ -67,7 +67,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			{
 				// Young players are not valid targets for NPCs outside of dungeons
-				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
+				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && !cTarget->GetRegion()->IsDungeon() )
 				{
 					if( cTarget->GetSocket() && ( cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
 					{
@@ -255,7 +255,7 @@ void HandleHealerAI( CChar& mChar )
 				}
 			}
 		}
-		else if( realChar->GetHP() < realChar->GetMaxHP() && cwmWorldState->ServerData()->YoungPlayerSystem() && realChar->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
+		else if( realChar->GetHP() < realChar->GetMaxHP() && cwmWorldState->ServerData()->YoungPlayerSystem() && realChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG))
 		{
 			// Heal young players every X minutes
 			if( realChar->GetTimer( tCHAR_YOUNGHEAL ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )

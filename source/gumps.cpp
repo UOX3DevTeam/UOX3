@@ -109,8 +109,8 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 		return;
 
 	CChar *mChar = s->CurrcharObj();
-	CAccountBlock_st& actbTemp = Accounts->GetAccountById( j->GetAccount().wAccountIndex );
-	if( actbTemp.wAccountIndex == AB_INVALID_ID )
+	AccountEntry& actbTemp = Account::shared()[ j->GetAccount().accountNumber ];
+	if( actbTemp.accountNumber == AccountEntry::INVALID_ACCOUNT )
 		return;
 
 	CSocket *targSocket = j->GetSocket();
@@ -124,7 +124,7 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 				{
 					targSocket->SysMessage( 488 ); // You have been banned!
 				}
-				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
+				actbTemp.flag.set( AccountEntry::AttributeFlag::BANNED, true );
 				if( targSocket != nullptr )
 				{
 					Network->Disconnect( targSocket );
@@ -143,8 +143,8 @@ void HandleAccountButton( CSocket *s, UI32 button, CChar *j )
 				{
 					targSocket->SysMessage( 491 ); // You have been banned for 24 hours!
 				}
-				actbTemp.wFlags.set( AB_FLAGS_BANNED, true );
-				actbTemp.wTimeBan = GetMinutesSinceEpoch() + static_cast<UI32>( 1440 );
+				actbTemp.flag.set( AccountEntry::AttributeFlag::BANNED, true );
+				actbTemp.timeBan = GetMinutesSinceEpoch() + static_cast<UI32>( 1440 );
 
 				if( targSocket != nullptr )
 				{
@@ -331,8 +331,8 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		}
 	}
 
-	CAccountBlock_st& actbAccountFind = Accounts->GetAccountByName( username );
-	if( actbAccountFind.wAccountIndex != AB_INVALID_ID )
+	AccountEntry& actbAccountFind = Account::shared()[ username];
+	if( actbAccountFind.accountNumber != AccountEntry::INVALID_ACCOUNT )
 	{
 		s->SysMessage( 555 ); // An account by that name already exists!
 		return;
@@ -1326,7 +1326,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				guiInfo.AddData( "Version", UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s );
 				guiInfo.AddData( "Compiled By", UOXVersion::name );
 				guiInfo.AddData( "Uptime", builtString );
-				guiInfo.AddData( "Accounts", Accounts->size() );
+				guiInfo.AddData( "Accounts", Account::shared().size() );
 				guiInfo.AddData( "Items", ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ));
 				guiInfo.AddData( "Chars", ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
 				guiInfo.AddData( "Players in world", static_cast<UI32>( cwmWorldState->GetPlayersOnline() ));
@@ -1344,7 +1344,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 			else if( cmd == "INFORMATION" )
 			{
 				builtString = GetUptime();
-				s->SysMessage( 1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(), Accounts->size(), ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
+				s->SysMessage( 1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(), Account::shared().size(), ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
 			}
 			break;
 		case 'M':

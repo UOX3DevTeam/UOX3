@@ -12,7 +12,6 @@
 // Allows use of pointers in header files without including individual .h
 // so decreases dependencies between files
 class CBaseTile;
-class cAccountClass;
 class CBaseObject;
 class CBooks;
 class CBoatObj;

@@ -119,7 +119,7 @@
     <ClCompile Include="..\..\source\books.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cAccountClass.cpp">
+    <ClCompile Include="..\..\source\subsystem\account.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\subsystem\console.cpp">
@@ -381,7 +381,7 @@
     <ClInclude Include="..\..\source\books.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cAccountClass.h">
+    <ClInclude Include="..\..\source\subsystem\account.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cEffects.h">

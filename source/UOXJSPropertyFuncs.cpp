@@ -1541,7 +1541,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ACCOUNTNUM:	*vp = INT_TO_JSVAL( gPriv->GetAccountNum() );	break;
 			case CCP_ACCOUNT:
 			{
-				CAccountBlock_st *accountBlock = &gPriv->GetAccount();
+				AccountEntry *accountBlock = &gPriv->GetAccount();
 				if( accountBlock == nullptr )
 				{
 					*vp = JSVAL_NULL;
@@ -3304,7 +3304,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		{
 			case CSOCKP_ACCOUNT:
 			{
-				CAccountBlock_st *accountBlock = &gPriv->GetAccount();
+				AccountEntry *accountBlock = &gPriv->GetAccount();
 				if( accountBlock == nullptr )
 				{
 					*vp = JSVAL_NULL;
@@ -3621,7 +3621,7 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 
 JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
+	AccountEntry *myAccount = static_cast<AccountEntry *>( JS_GetPrivate( cx, obj ));
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
@@ -3630,27 +3630,27 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 		JSString *tString = nullptr;
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->wAccountIndex );		break;
+			case CACCOUNT_ID:	*vp = INT_TO_JSVAL( myAccount->accountNumber );		break;
 			case CACCOUNT_USERNAME:
-				tString = JS_NewStringCopyZ( cx, ( myAccount->sUsername ).c_str() );
+				tString = JS_NewStringCopyZ( cx, ( myAccount->username ).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CACCOUNT_PASSWORD: // NO.
 			case CACCOUNT_PATH:		// Nah.
 				break;
-			case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL(( myAccount->wFlags ).to_ulong() );	break;
+			case CACCOUNT_FLAGS: *vp = INT_TO_JSVAL(( myAccount->flag ).to_ulong() );	break;
 			case CACCOUNT_COMMENT:
-				tString = JS_NewStringCopyZ( cx, ( myAccount->sContact ).c_str() );
+				tString = JS_NewStringCopyZ( cx, ( myAccount->contact ).c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->wTimeBan );				break;
-			case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->wFirstLogin );			break;
-			case CACCOUNT_TOTALPLAYTIME: *vp = INT_TO_JSVAL( myAccount->wTotalPlayTime );	break;
+			case CACCOUNT_TIMEBAN: *vp = INT_TO_JSVAL( myAccount->timeBan );				break;
+			case CACCOUNT_FIRSTLOGIN: *vp = INT_TO_JSVAL( myAccount->firstLoginTime );			break;
+			case CACCOUNT_TOTALPLAYTIME: *vp = INT_TO_JSVAL( myAccount->totalPlayingTime );	break;
 			case CACCOUNT_CHARACTER1:
 			{
-				if( myAccount->dwCharacters[0] != INVALIDSERIAL )
+				if( (*myAccount)[0].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[0];
+					CBaseObject *TempObj = (*myAccount)[0].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3671,9 +3671,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER2:
 			{
-				if( myAccount->dwCharacters[1] != INVALIDSERIAL )
+				if( (*myAccount)[1].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[1];
+                    CBaseObject *TempObj = (*myAccount)[1].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3694,9 +3694,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER3:
 			{
-				if( myAccount->dwCharacters[2] != INVALIDSERIAL )
+				if( (*myAccount)[2].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[2];
+                    CBaseObject *TempObj = (*myAccount)[2].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3717,9 +3717,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER4:
 			{
-				if( myAccount->dwCharacters[3] != INVALIDSERIAL )
+				if( (*myAccount)[3].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[3];
+                    CBaseObject *TempObj = (*myAccount)[3].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3740,9 +3740,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER5:
 			{
-				if( myAccount->dwCharacters[4] != INVALIDSERIAL )
+				if( (*myAccount)[4].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[4];
+                    CBaseObject *TempObj = (*myAccount)[4].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3763,9 +3763,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER6:
 			{
-				if( myAccount->dwCharacters[5] != INVALIDSERIAL )
+				if( (*myAccount)[5].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[5];
+                    CBaseObject *TempObj = (*myAccount)[5].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3786,9 +3786,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CHARACTER7:
 			{
-				if( myAccount->dwCharacters[6] != INVALIDSERIAL )
+				if( (*myAccount)[6].serialNumber != AccountCharacter::INVALID_SERIAL )
 				{
-					CBaseObject *TempObj = myAccount->lpCharacters[6];
+                    CBaseObject *TempObj = (*myAccount)[6].pointer ;
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3809,9 +3809,9 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_CURRENTCHAR:
 			{
-				if( myAccount->dwInGame != INVALIDSERIAL )
+				if( myAccount->inGame != INVALIDSERIAL )
 				{
-					CChar *TempObj = CalcCharObjFromSer( myAccount->dwInGame );
+					CChar *TempObj = CalcCharObjFromSer( myAccount->inGame );
 
 					if( !ValidateObject( TempObj ))
 					{
@@ -3832,30 +3832,30 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_LASTIP:
 			{
-				std::string ipString = util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
-					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
-					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
-					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
+				std::string ipString = util::ntos( static_cast<SI32>(( myAccount->lastIP & 0xFF000000 ) >> 24 ))
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->lastIP & 0x00FF0000 ) >> 16 ))
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->lastIP & 0x0000FF00 ) >> 8 ))
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->lastIP & 0x000000FF ) % 256 ));
 				tString = JS_NewStringCopyZ( cx, ipString.c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			}
-			case CACCOUNT_BANNED:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_BANNED ));		break;
-			case CACCOUNT_SUSPENDED:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SUSPENDED ));	break;
-			case CACCOUNT_PUBLIC:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_PUBLIC ));		break;
-			case CACCOUNT_ONLINE:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_ONLINE ));		break;
-			case CACCOUNT_CHARSLOT1BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER1 ));	break;
-			case CACCOUNT_CHARSLOT2BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER2 ));	break;
-			case CACCOUNT_CHARSLOT3BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER3 ));	break;
-			case CACCOUNT_CHARSLOT4BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER4 ));	break;
-			case CACCOUNT_CHARSLOT5BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER5 ));	break;
-			case CACCOUNT_CHARSLOT6BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER6 ));	break;
-			case CACCOUNT_CHARSLOT7BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_CHARACTER7 ));	break;
-			case CACCOUNT_YOUNG:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_YOUNG ));		break;
-			case CACCOUNT_UNUSED10:			*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_UNUSED10 ));	break;
-			case CACCOUNT_SEER:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_SEER ));		break;
-			case CACCOUNT_COUNSELOR:		*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_COUNSELOR ));	break;
-			case CACCOUNT_GM:				*vp = BOOLEAN_TO_JSVAL( myAccount->wFlags.test( AB_FLAGS_GM ));			break;
+			case CACCOUNT_BANNED:			*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::BANNED ));		break;
+			case CACCOUNT_SUSPENDED:		*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::SUSPENDED ));	break;
+			case CACCOUNT_PUBLIC:			*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::PUBLIC ));		break;
+			case CACCOUNT_ONLINE:			*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::ONLINE ));		break;
+			case CACCOUNT_CHARSLOT1BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER1 ));	break;
+			case CACCOUNT_CHARSLOT2BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER2 ));	break;
+			case CACCOUNT_CHARSLOT3BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER3 ));	break;
+			case CACCOUNT_CHARSLOT4BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER4 ));	break;
+			case CACCOUNT_CHARSLOT5BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER5 ));	break;
+			case CACCOUNT_CHARSLOT6BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER6 ));	break;
+			case CACCOUNT_CHARSLOT7BLOCKED:	*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER7 ));	break;
+			case CACCOUNT_YOUNG:			*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::YOUNG));		break;
+			case CACCOUNT_UNUSED10:			*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::UNUSED ));	break;
+			case CACCOUNT_SEER:				*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::SEER ));		break;
+			case CACCOUNT_COUNSELOR:		*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::COUNSELOR ));	break;
+			case CACCOUNT_GM:				*vp = BOOLEAN_TO_JSVAL( myAccount->flag.test(AccountEntry::AttributeFlag::GM));			break;
 			default:
 				break;
 		}
@@ -3866,7 +3866,7 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
 JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
+	AccountEntry *myAccount = static_cast<AccountEntry *>( JS_GetPrivate( cx, obj ));
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
@@ -3895,13 +3895,13 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			case CACCOUNT_LASTIP:
 			case CACCOUNT_FIRSTLOGIN:
 				break;
-			case CACCOUNT_TOTALPLAYTIME:		myAccount->wTotalPlayTime = static_cast<UI32>( encaps.toInt() );	break;
+			case CACCOUNT_TOTALPLAYTIME:		myAccount->totalPlayingTime = static_cast<UI32>( encaps.toInt() );	break;
 			case CACCOUNT_PASSWORD:
 			{
 				std::string newPass = encaps.toString();
 				if( newPass.length() > 3 )
 				{
-					myAccount->sPassword = newPass;
+					myAccount->password = newPass;
 				}
 				else
 				{
@@ -3910,37 +3910,37 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				break;
 			}
 			case CACCOUNT_COMMENT: 
-				myAccount->sContact = encaps.toString();
+				myAccount->contact = encaps.toString();
 				break;
 			case CACCOUNT_TIMEBAN:
 			{
 				UI32 timeBan = static_cast<UI32>( encaps.toInt() );
 				if( timeBan > 0 )
 				{
-					myAccount->wFlags.set( AB_FLAGS_BANNED, true );
-					myAccount->wTimeBan = GetMinutesSinceEpoch() + timeBan;
+					myAccount->flag.set( AccountEntry::AttributeFlag::BANNED, true );
+					myAccount->timeBan = GetMinutesSinceEpoch() + timeBan;
 				}
 				else
 				{
-					myAccount->wTimeBan = 0;
+					myAccount->timeBan = 0;
 				}
 				break;
 			}
-			case CACCOUNT_BANNED:			myAccount->wFlags.set( AB_FLAGS_BANNED, encaps.toBool() );		break;
-			case CACCOUNT_SUSPENDED:		myAccount->wFlags.set( AB_FLAGS_SUSPENDED, encaps.toBool() );	break;
-			case CACCOUNT_PUBLIC:			myAccount->wFlags.set( AB_FLAGS_PUBLIC, encaps.toBool() );		break;
-			case CACCOUNT_CHARSLOT1BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER1, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT2BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER2, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT3BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER3, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT4BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER4, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT5BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER5, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT6BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER6, encaps.toBool() );	break;
-			case CACCOUNT_CHARSLOT7BLOCKED:	myAccount->wFlags.set( AB_FLAGS_CHARACTER7, encaps.toBool() );	break;
-			case CACCOUNT_YOUNG:			myAccount->wFlags.set( AB_FLAGS_YOUNG, encaps.toBool() );		break;
-			case CACCOUNT_UNUSED10:			myAccount->wFlags.set( AB_FLAGS_UNUSED10, encaps.toBool() );	break;
-			case CACCOUNT_SEER:				myAccount->wFlags.set( AB_FLAGS_SEER, encaps.toBool() );		break;
-			case CACCOUNT_COUNSELOR:		myAccount->wFlags.set( AB_FLAGS_COUNSELOR, encaps.toBool() );	break;
-			case CACCOUNT_GM:				myAccount->wFlags.set( AB_FLAGS_GM, encaps.toBool() );			break;
+			case CACCOUNT_BANNED:			myAccount->flag.set( AccountEntry::AttributeFlag::BANNED, encaps.toBool() );		break;
+			case CACCOUNT_SUSPENDED:		myAccount->flag.set( AccountEntry::AttributeFlag::SUSPENDED, encaps.toBool() );	break;
+			case CACCOUNT_PUBLIC:			myAccount->flag.set( AccountEntry::AttributeFlag::PUBLIC, encaps.toBool() );		break;
+			case CACCOUNT_CHARSLOT1BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER1, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT2BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER2, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT3BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER3, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT4BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER4, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT5BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER5, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT6BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER6, encaps.toBool() );	break;
+			case CACCOUNT_CHARSLOT7BLOCKED:	myAccount->flag.set( AccountEntry::AttributeFlag::CHARACTER7, encaps.toBool() );	break;
+			case CACCOUNT_YOUNG:			myAccount->flag.set( AccountEntry::AttributeFlag::YOUNG, encaps.toBool() );		break;
+			case CACCOUNT_UNUSED10:			myAccount->flag.set( AccountEntry::AttributeFlag::UNUSED, encaps.toBool() );	break;
+			case CACCOUNT_SEER:				myAccount->flag.set( AccountEntry::AttributeFlag::SEER, encaps.toBool() );		break;
+			case CACCOUNT_COUNSELOR:		myAccount->flag.set( AccountEntry::AttributeFlag::COUNSELOR, encaps.toBool() );	break;
+			case CACCOUNT_GM:				myAccount->flag.set( AccountEntry::AttributeFlag::GM, encaps.toBool() );			break;
 			default:
 				break;
 		}

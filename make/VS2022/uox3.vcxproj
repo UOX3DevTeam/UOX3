@@ -114,7 +114,7 @@
    
 <!-- Subsystem group -->    
    <ClCompile Include="..\..\source\books.cpp" />
-   <ClCompile Include="..\..\source\cAccountClass.cpp" />
+   <ClCompile Include="..\..\source\subsystem\account.cpp" />
    <ClCompile Include="..\..\source\CGump.cpp" />
    <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
    <ClCompile Include="..\..\source\subsystem\console.cpp" />
@@ -216,7 +216,7 @@
     <ClInclude Include="..\..\source\uoxstruct.h" />
   <!-- Subsystem group -->    
     <ClInclude Include="..\..\source\books.h" />
-    <ClInclude Include="..\..\source\cAccountClass.h" />
+    <ClInclude Include="..\..\source\subsystem\account.hpp" />
     <ClInclude Include="..\..\source\cEffects.h" />
     <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\subsystem\console.hpp" />

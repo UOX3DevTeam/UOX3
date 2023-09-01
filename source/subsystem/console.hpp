@@ -5,7 +5,9 @@
 // As long as the interface is kept the same, we can display whatever we wish to
 // We store a set of coordinates being the window corner and size, for systems with windowing support, which describes the window we are in
 #include <utility>
-
+#include "typedefs.h"
+class CBaseObject ;
+class CEndL;
 //o------------------------------------------------------------------------------------------------o
 constexpr auto MAX_CONSOLE_BUFF = 512;
 

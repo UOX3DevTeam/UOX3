@@ -18,6 +18,9 @@
 
 #include <unordered_map>
 #include <cstdint>
+
+class CSocket ;
+
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \

@@ -140,7 +140,6 @@ auto aCommands		= CCommands(); // Restart resets commands, maybe no dependency
 auto aMap			= CMulHandler(); // replaced
 auto aNetwork		= CNetworkStuff();  // Maybe dependent, has startup
 auto aMapRegion		= CMapHandler(); // Dependent (Map->) , has startup
-auto aAccounts		= cAccountClass();  // no dpend, use SetPath
  
 
 //o------------------------------------------------------------------------------------------------o
@@ -600,7 +599,7 @@ auto StartInitialize( CServerData &serverdata ) -> void
 	DisplayBanner();
 
     Console::shared() << "Loading Accounts               ";
-	Accounts->Load();
+	Account::shared().load();
     Console::shared().PrintDone();
 
     Console::shared().Log( "-=Server Startup=-\n=======================================================================", "server.log" );
@@ -820,7 +819,7 @@ auto DoMessageLoop() -> void
 					switch( tVal.data[0] )
 					{
 						case '0':	cwmWorldState->ServerData()->Load(); break;	// Reload INI file
-						case '1':	Accounts->Load();	 break;	// Reload accounts
+                        case '1':	Account::shared().load();	 break;	// Reload accounts
 						case '2':	// Reload regions/TeleportLocations
 							UnloadRegions(); 
 							LoadRegions();
@@ -911,10 +910,10 @@ auto IsOnline( CChar& mChar ) -> bool
 	auto rValue = false;
 	if( !mChar.IsNpc() )
 	{
-		CAccountBlock_st& actbTemp = mChar.GetAccount();
-		if( actbTemp.wAccountIndex != AB_INVALID_ID )
+		AccountEntry& actbTemp = mChar.GetAccount();
+		if( actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			if( actbTemp.dwInGame == mChar.GetSerial() )
+			if( actbTemp.inGame == mChar.GetSerial() )
 			{
 				rValue = true;
 			}
@@ -2202,39 +2201,31 @@ auto CWorldMain::CheckAutoTimers() -> void
 	{
 		bool reallyOn = false;
 		// time to flush our account status!
-		MAPUSERNAMEID_ITERATOR I;
-		for( I = Accounts->Begin(); I != Accounts->End(); ++I )
-		{
-			CAccountBlock_st& actbTemp = I->second;
-			if( actbTemp.wAccountIndex == AB_INVALID_ID )
-			{
-				continue;
-			}
+        for (auto &[num,entry]:Account::shared().allAccounts()){
+            if( entry.flag.test(AccountEntry::AttributeFlag::ONLINE )){
+                reallyOn = false;    // to start with, there's no one really on
+                {
+                    for( auto &tSock : Network->connClients )
+                    {
+                        CChar *tChar = tSock->CurrcharObj();
+                        if( !ValidateObject( tChar ))
+                        {
+                            continue;
+                        }
+                        if( tChar->GetAccount().accountNumber == num )
+                        {
+                            reallyOn = true;
+                        }
+                    }
+                }
+                if( !reallyOn )
+                {
+                    // no one's really on, let's set that
+                    entry.flag.reset( AccountEntry::AttributeFlag::ONLINE );
+                }
 
-			if( actbTemp.wFlags.test( AB_FLAGS_ONLINE ))
-			{
-				reallyOn = false;	// to start with, there's no one really on
-				{
-					for( auto &tSock : Network->connClients )
-					{
-						CChar *tChar = tSock->CurrcharObj();
-						if( !ValidateObject( tChar ))
-						{
-							continue;
-						}
-						if( tChar->GetAccount().wAccountIndex == actbTemp.wAccountIndex )
-						{
-							reallyOn = true;
-						}
-					}
-				}
-				if( !reallyOn )
-				{
-					// no one's really on, let's set that
-					actbTemp.wFlags.reset( AB_FLAGS_ONLINE );
-				}
-			}
-		}
+            }
+        }
 		accountFlush = BuildTimeValue( static_cast<R32>( serverData->AccountFlushTimer() ));
 	}
 	//Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
@@ -2323,9 +2314,9 @@ auto CWorldMain::CheckAutoTimers() -> void
 					if( tempTimeBan )
 					{
 						// Give player a 30 minute temp ban
-						CAccountBlock_st& myAccount = Accounts->GetAccountById( tSock->GetAccount().wAccountIndex );
-						myAccount.wFlags.set( AB_FLAGS_BANNED, true );
-						myAccount.wTimeBan = GetMinutesSinceEpoch() + serverData->NetTrafficTimeban();
+						AccountEntry& myAccount = Account::shared()[ tSock->GetAccount().accountNumber];
+						myAccount.flag.set( AccountEntry::AttributeFlag::BANNED, true );
+						myAccount.timeBan = GetMinutesSinceEpoch() + serverData->NetTrafficTimeban();
 						Network->Disconnect( tSock );
 						continue;
 					}
@@ -2538,7 +2529,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 					continue;
 				}
 				UI08 worldNumber = mChar->WorldNumber();
-				if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
+				if( mChar->GetAccount().accountNumber == iSock->AcctNo() && mChar->GetAccount().inGame == mChar->GetSerial() )
 				{
 					GenericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
 					CheckPC( iSock, ( *mChar ));
@@ -2632,10 +2623,10 @@ auto CWorldMain::CheckAutoTimers() -> void
 				}
 				else if( charCheck->GetTimer( tPC_LOGOUT ))
 				{
-					CAccountBlock_st& actbTemp = charCheck->GetAccount();
-					if( actbTemp.wAccountIndex != AB_INVALID_ID )
+					AccountEntry& actbTemp = charCheck->GetAccount();
+					if( actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT )
 					{
-						SERIAL oaiw = actbTemp.dwInGame;
+						SERIAL oaiw = actbTemp.inGame;
 						if( oaiw == INVALIDSERIAL )
 						{
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
@@ -2643,7 +2634,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 						}
 						else if(( oaiw == charCheck->GetSerial() ) && (( charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime() ) || GetOverflow() ))
 						{
-							actbTemp.dwInGame = INVALIDSERIAL;
+							actbTemp.inGame = INVALIDSERIAL;
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
 
 							// End combat, clear targets
@@ -2789,7 +2780,6 @@ auto InitClasses() -> void
 	Books = &aBooks;
 	GMQueue = &aGMQueue;
 	Dictionary = &aDictionary;
-	Accounts = &aAccounts;
 	MapRegion = &aMapRegion;
 	SpeechSys = &aSpeechSys;
 	CounselorQueue = &aCounselorQueue;
@@ -2807,7 +2797,7 @@ auto InitClasses() -> void
 	JSMapping->GetEnvokeById()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
 	aMapRegion.Startup();
-	aAccounts.SetPath( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ));
+	Account::accountDirectory = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ));
 }
 
 auto FindNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance ) -> std::vector<CBaseObject *>;

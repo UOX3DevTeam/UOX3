@@ -210,10 +210,10 @@ void Command_AddAccount( CSocket *s)
 		}
 
 		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		CAccountBlock_st &actbTemp = Accounts->GetAccountByName( newUsername );
-		if( actbTemp.wAccountIndex == AB_INVALID_ID )
+		AccountEntry &actbTemp = Account::shared()[ newUsername];
+		if( actbTemp.accountNumber == AccountEntry::INVALID_ACCOUNT )
 		{
-			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
+			Account::shared().createAccount( newUsername, newPassword,  newFlags,"NA" );
             Console::shared() << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
 			s->SysMessage( 9019, newUsername.c_str(), newPassword.c_str(), newFlags ); // Account Added: %s:%s:%i
 		}

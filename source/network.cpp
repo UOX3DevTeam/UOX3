@@ -301,12 +301,12 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	CChar *currChar = connClients[s]->CurrcharObj();
     Console::shared() << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 
-	if( connClients[s]->AcctNo() != AB_INVALID_ID )
+	if( connClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 	{
-		CAccountBlock_st &actbAccount = connClients[s]->GetAccount();
-		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+		AccountEntry &actbAccount = connClients[s]->GetAccount();
+		if( actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
+			actbAccount.flag.set( AccountEntry::AttributeFlag::ONLINE, false );
 		}
 	}
 	//Instalog
@@ -343,7 +343,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	}
 	try
 	{
-		connClients[s]->AcctNo( AB_INVALID_ID );
+		connClients[s]->AcctNo( AccountEntry::INVALID_ACCOUNT );
 		connClients[s]->IdleTimeout( -1 );
 		connClients[s]->FlushBuffer();
 		connClients[s]->ClearTimers();
@@ -380,8 +380,8 @@ void CNetworkStuff::LogOut( CSocket *s )
 
 	KillTrades( p );
 
-	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().wAccountIndex == 0 
-		|| ( cwmWorldState->ServerData()->YoungPlayerSystem() && p->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR ))
+	if( p->GetCommandLevel() >= CL_CNS || p->GetAccount().accountNumber == 0 
+		|| ( cwmWorldState->ServerData()->YoungPlayerSystem() && p->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) && cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR ))
 	{
 		valid = true;
 	}
@@ -449,27 +449,27 @@ void CNetworkStuff::LogOut( CSocket *s )
 	}
 	s->GetContsOpenedList()->Clear(); // Then clear the socket's list of opened containers
 
-	CAccountBlock_st& actbAccount = s->GetAccount();
+	AccountEntry& actbAccount = s->GetAccount();
 	if( valid && !p->IsCriminal() && !p->HasStolen() && !p->IsAtWar() && !p->IsAggressor( false ))
 	{
-		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+		if( actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			actbAccount.dwInGame = INVALIDSERIAL;
+			actbAccount.inGame = INVALIDSERIAL;
 		}
 		p->SetTimer( tPC_LOGOUT, 0 );
 		s->ClearTimers();
 	}
 	else
 	{
-		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+		if( actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			actbAccount.dwInGame = p->GetSerial();
+			actbAccount.inGame = p->GetSerial();
 		}
 		p->SetTimer( tPC_LOGOUT, BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT )));
 	}
 
 	s->LoginComplete( false );
-	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
+	actbAccount.flag.set( AccountEntry::AttributeFlag::ONLINE, false );
 	p->SetSocket( nullptr );
 }
 
@@ -1290,12 +1290,12 @@ void CNetworkStuff::LoginDisconnect( UOXSOCKET s )
 	loggedInClients[s]->CloseSocket();
 
 	// 9/17/01 : fix for clients disconnecting during login not being able to reconnect.
-	if( loggedInClients[s]->AcctNo() != AB_INVALID_ID )
+	if( loggedInClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT )
 	{
-		CAccountBlock_st& actbAccount = loggedInClients[s]->GetAccount();
-		if( actbAccount.wAccountIndex != AB_INVALID_ID )
+		AccountEntry& actbAccount = loggedInClients[s]->GetAccount();
+		if( actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT )
 		{
-			actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
+			actbAccount.flag.set( AccountEntry::AttributeFlag::ONLINE, false );
 		}
 	}
 

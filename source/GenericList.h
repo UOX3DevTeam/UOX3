@@ -1,5 +1,6 @@
 #if !defined( __GENERICLIST_H__ )
 #define __GENERICLIST_H__
+#include <list>
 //o------------------------------------------------------------------------------------------------o
 //|	File	-	GenericList.h
 //|	Date	-	2021-05-04

@@ -8,6 +8,10 @@
 
 #include "typedefs.h"
 #include "uoxstruct.h"
+class CMultiObj;
+class CSpawnItem;
+class CChar ;
+class CSocket ;
 
 enum TAGMAPOBJECT_TYPE
 {

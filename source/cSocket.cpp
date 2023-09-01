@@ -685,7 +685,7 @@ void CSocket::InternalReset( void )
 	{
 		pcTimers[mTID] = 0;
 	}
-	accountNum = AB_INVALID_ID;
+	accountNum = AccountEntry::INVALID_ACCOUNT;
 	trigWords.resize( 0 );
 	twIter = trigWords.end();
 	postAcked.clear();
@@ -1177,13 +1177,13 @@ void CSocket::CurrcharObj( CChar *newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the socket's account reference
 //o------------------------------------------------------------------------------------------------o
-CAccountBlock_st& CSocket::GetAccount( void )
+AccountEntry& CSocket::GetAccount( void )
 {
-	return Accounts->GetAccountById( accountNum );
+	return Account::shared()[accountNum];
 }
-void CSocket::SetAccount( CAccountBlock_st& actbBlock )
+void CSocket::SetAccount( AccountEntry& actbBlock )
 {
-	accountNum = actbBlock.wAccountIndex;
+	accountNum = actbBlock.accountNumber;
 }
 
 //o------------------------------------------------------------------------------------------------o

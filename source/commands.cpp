@@ -115,11 +115,11 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 			bool plClearance = false;
 			if( checkSocketAccess )
 			{
-				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0 );
 			}
 			else
 			{
-				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().accountNumber == 0 );
 			}
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
@@ -161,11 +161,11 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 		bool plClearance = false;
 		if( checkSocketAccess )
 		{
-			plClearance = ( s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			plClearance = ( s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0 );
 		}
 		else
 		{
-			plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().accountNumber == 0 );
 		}
 		if( !plClearance )
 		{
@@ -263,11 +263,11 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 			bool plClearance = false;
 			if( checkSocketAccess )
 			{
-				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0 );
 			}
 			else
 			{
-				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().accountNumber == 0 );
 			}
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )

@@ -978,7 +978,7 @@ class CPCharAndStartLoc : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void ) override;
-	virtual void	CopyData( CAccountBlock_st& toCopy );
+	virtual void	CopyData( AccountEntry& toCopy );
 	UI16			packetSize;
 	UI08			numCharacters;
 public:
@@ -986,12 +986,12 @@ public:
 	{
 	}
 	CPCharAndStartLoc();
-	CPCharAndStartLoc( CAccountBlock_st& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
+	CPCharAndStartLoc( AccountEntry& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
 	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
 	virtual auto 	AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset  ) -> void;
 	virtual auto	NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) -> void;
-	CPCharAndStartLoc& operator = ( CAccountBlock_st& actbBlock );
+	CPCharAndStartLoc& operator = ( AccountEntry& actbBlock );
 	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 

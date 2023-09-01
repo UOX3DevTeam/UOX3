@@ -1,7 +1,11 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
 #include "cBaseObject.h"
-#include "cAccountClass.h"
+#include <deque>
+#include "GenericList.h"
+#include "account.hpp"
+
+class cScript ;
 enum cNPC_FLAG
 {
 	fNPC_NEUTRAL = 0,
@@ -788,8 +792,8 @@ public:
 
 	// Player Characters
 public:
-	void					SetAccount( CAccountBlock_st& actbAccount );
-	CAccountBlock_st &		GetAccount(void);
+	void					SetAccount( AccountEntry& actbAccount );
+	AccountEntry &		GetAccount(void);
 	UI16					GetAccountNum( void ) const;
 	void					SetAccountNum( UI16 newVal );
 

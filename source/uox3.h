@@ -37,7 +37,6 @@
 // Allows use of pointers in header files without including individual .h
 // so decreases dependencies between files
 class CBaseTile;
-class cAccountClass;
 class CBaseObject;
 class CBooks;
 class CBoatObj;
@@ -119,7 +118,6 @@ class CSpellInfo;
 //o------------------------------------------------------------------------------------------------o
 #include "uoxstruct.h"
 #include "GenericList.h"
-#include "cAccountClass.h"
 #include "cBaseObject.h"
 #include "cChar.h"
 #include "cItem.h"
