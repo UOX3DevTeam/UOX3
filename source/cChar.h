@@ -6,6 +6,9 @@
 #include "subsystem/account.hpp"
 
 class cScript ;
+class CItem ;
+class CTownRegion;
+
 enum cNPC_FLAG
 {
 	fNPC_NEUTRAL = 0,

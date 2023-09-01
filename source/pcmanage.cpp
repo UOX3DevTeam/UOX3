@@ -20,6 +20,7 @@
 
 #include "cServerData.h"
 #include "ObjectFactory.h"
+#include "ostype.h"
 #include <algorithm>
 
 using namespace std::string_literals;

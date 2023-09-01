@@ -11,8 +11,6 @@
 #include "GenericList.h"
 #if defined(_WIN32)
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
 class CSpawnRegion;
 class CTownRegion;

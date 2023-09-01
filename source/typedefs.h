@@ -16,7 +16,6 @@
 //
 //o------------------------------------------------------------------------------------------------o
 
-#include <unordered_map>
 #include <cstdint>
 
 class CSocket ;
@@ -43,6 +42,13 @@ return false;
 typedef void *  va_list;
 #endif
 
+#if !defined(_WIN32)
+#define ioctlsocket( s, b, c ) ioctl( s, b, c )
+#define closesocket( s ) close( s )
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#endif
 //o------------------------------------------------------------------------------------------------o
 // Setting up types used
 //o------------------------------------------------------------------------------------------------o
@@ -93,7 +99,7 @@ constexpr auto INVALIDSERIAL	= SERIAL( 0xFFFFFFFF );
 constexpr auto INVALIDID		= std::uint16_t( 0xFFFF );
 constexpr auto INVALIDCOLOUR	= std::uint16_t( 0xFFFF );
 constexpr auto BASEITEMSERIAL	= SERIAL( 0x40000000 );
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 constexpr auto  MAX_PATH = 268;
 #endif
 

@@ -1,7 +1,15 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+#include <string>
+#include <map>
+#include <ostream>
+#include <vector>
+
+#include "typedefs.h"
+
 class CPIGumpInput;
+class CScriptSection;
 
 enum GuildType
 {

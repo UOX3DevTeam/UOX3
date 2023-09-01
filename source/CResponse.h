@@ -1,7 +1,12 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
 
-enum TargetIds;
+#include <string>
+
+#include "enums.h"
+#include "typedefs.h"
+
+class CChar ;
 
 enum TriggerWords
 {

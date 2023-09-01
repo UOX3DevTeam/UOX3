@@ -1,6 +1,14 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
 
+#include "typedefs.h"
+class CChar ;
+class CItem;
+class CBaseObject ;
+class CSocket ;
+class CTEffect ;
+
+
 class cEffects
 {
 private:

@@ -3,6 +3,8 @@
 
 #include "CPacketReceive.h"
 
+class CSpeechEntry ;
+class PhysicalServer;
 
 // Forward declare
 struct __STARTLOCATIONDATA__;

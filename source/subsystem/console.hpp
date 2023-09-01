@@ -4,8 +4,12 @@
 // In essence, Console is our nice generic class for outputting display
 // As long as the interface is kept the same, we can display whatever we wish to
 // We store a set of coordinates being the window corner and size, for systems with windowing support, which describes the window we are in
+#include <map>
+#include <string>
 #include <utility>
+
 #include "typedefs.h"
+
 class CBaseObject ;
 class CEndL;
 //o------------------------------------------------------------------------------------------------o

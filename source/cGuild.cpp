@@ -11,6 +11,7 @@
 #include "utility/strutil.hpp"
 
 #include "osunique.hpp"
+#include "useful.h"
 #ifndef va_start
 #include <cstdarg>
 #endif
@@ -1556,9 +1557,6 @@ void CGuildCollection::GumpChoice( CSocket *s )
 				case 13:	Menu( s, BasePage + 9, trgGuild );		break;	// refuse candidate seeking membership
 				case 14:	TextEntryGump( s, ser, 100, 3, 15,  162 );	break;	// set guild master's title
 				case 15:	s->SendTargetCursor( 2, 4, 0, 1685 );	break; // Select guild member to grant title to
-#if defined( _MSC_VER )
-#pragma note( "Move guildstone functionality goes here" )
-#endif
 				case 16:	TransportGuildStone( s, trgGuild );		break;	// move guildstone
 				case 17:	Menu( s, BasePage + 1, trgGuild );		break;	// return to main menu
 			}

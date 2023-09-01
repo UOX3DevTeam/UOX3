@@ -1,10 +1,11 @@
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
+#include <array>
+#include <cstdint>
 #include <map>
 #include <string>
-#include <cstdint>
-#include <array>
+#include <vector>
 
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"

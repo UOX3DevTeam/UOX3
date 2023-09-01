@@ -1,9 +1,13 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 
+#include <bitset>
 #include <cstring>
+#include <string>
 
 #include "enums.h"
+#include "typedefs.h"
+
 const UI08 BIT_CANFLY		=	0;
 const UI08 BIT_ANTIBLINK	=	1;
 const UI08 BIT_ANIMAL		=	2;

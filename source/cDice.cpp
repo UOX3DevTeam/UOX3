@@ -1,8 +1,8 @@
 #include "cdice.h"
+
 #include <algorithm>
+#include <cstdlib>
 #include <random>
-#include <stdlib.h>
-#include <string>
 
 #include "funcdecl.h"
 

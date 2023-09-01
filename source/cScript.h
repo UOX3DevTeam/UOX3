@@ -1,9 +1,21 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "spidermonkey.h"
+
+#include "typedefs.h"
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;
+class CSpawnRegion;
+struct JSScript;
+struct JSContext;
+struct JSObject ;
 
 enum ScriptEvent
 {

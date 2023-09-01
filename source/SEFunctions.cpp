@@ -36,6 +36,7 @@
 #include "CPacketSend.h"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
+#include "ostype.h"
 
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );

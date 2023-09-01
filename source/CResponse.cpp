@@ -22,25 +22,28 @@
 //|							We now make use of OSI's trigger words (the few that we actually handle,
 //|								currently), to remove the need to search through the text string
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "CResponse.h"
-#include "regions.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "classes.h"
-#include "cEffects.h"
-#include "Dictionary.h"
-#include "CPacketSend.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "regions.h"
-#include "cGuild.h"
-#include "skills.h"
-#include "StringUtility.hpp"
-#include "utility/strutil.hpp"
 
 #include <algorithm>
 #include <cctype>
+#include <random>
+
+#include "cChar.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "classes.h"
+#include "cMultiObj.h"
+#include "CPacketSend.h"
+#include "cScript.h"
+#include "Dictionary.h"
+
+#include "funcdecl.h"
+#include "msgboard.h"
+#include "regions.h"
+#include "townregion.h"
+
+
 
 bool BuyShop( CSocket *s, CChar *c );
 void CallGuards( CChar *mChar );

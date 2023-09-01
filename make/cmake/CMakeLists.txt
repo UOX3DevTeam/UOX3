@@ -111,7 +111,6 @@ add_executable(uox3
    ../../source/classes.h
    ../../source/cmdtable.cpp
    ../../source/cmdtable.h
-   ../../source/ConfigOS.h
    ../../source/cPlayerAction.cpp
    ../../source/CResponse.cpp
    ../../source/CResponse.h
@@ -129,9 +128,11 @@ add_executable(uox3
    ../../source/osunique.hpp
    ../../source/pcmanage.cpp
    ../../source/power.h
-   ../../source/Prerequisites.h
+   ../../source/ostype.h
+   ../../source/spidermonkey.h
    ../../source/typedefs.h
-	../../source/UOXStdHeaders.h
+   ../../source/UOXStdHeaders.h
+   ../../source/useful.h
 # JS Engine group
    ../../source/CJSEngine.cpp 
    ../../source/CJSEngine.h
@@ -192,8 +193,12 @@ target_compile_definitions(uox3 PRIVATE
 		_CRT_SECURE_NO_DEPRECATE
 		_CRT_NONSTDC_NO_DEPRECATE
 		_CONSOLE
+        NOMINMAX
+        WIN32_LEAN_AND_MEAN
+        P_TIMESTAMP=1
 		$<$<CONFIG:Release>:NDEBUG>
 		$<$<CONFIG:Debug>:_DEBUG>
+        $<$<CONFIG:Debug>:UOX_DEBUG_MODE>
 		$<$<CONFIG:Debug>:_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH>
 	)
 	
@@ -205,7 +210,9 @@ else()
 
 	target_compile_definitions( uox3 PRIVATE
 		EXPORT_JS_API
-		$<$<CONFIG:Debug>:_DEBUG>
+        P_TIMESTAMP=1
+		$<$<CONFIG:Debug>:DEBUG>
+        $<$<CONFIG:Debug>:UOX_DEBUG_MODE>
 	)
 	
 	target_compile_options( uox3 PRIVATE

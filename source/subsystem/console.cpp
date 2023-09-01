@@ -37,18 +37,12 @@
 #include <cctype>
 #include <stdexcept>
 
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 struct termios initial_terminal_state;
 #else
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <conio.h>
-#undef min
-#undef max
 DWORD initial_terminal_state;
 #endif
 using namespace std::string_literals;
@@ -242,7 +236,7 @@ auto Console::DoClearScreen() -> void
 auto Console::operator << ( const char *output ) ->Console&
 {
 	StartOfLineCheck();
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
@@ -549,7 +543,7 @@ auto Console::Start(const std::string& temp) -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnYellow() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -565,7 +559,7 @@ auto Console::TurnYellow() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnRed() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
@@ -581,7 +575,7 @@ auto Console::TurnRed() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnGreen() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -597,7 +591,7 @@ auto Console::TurnGreen() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnBlue() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
@@ -613,7 +607,7 @@ auto Console::TurnBlue() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnNormal() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
@@ -629,7 +623,7 @@ auto Console::TurnNormal() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::TurnBrightWhite() -> void
 {
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
@@ -754,7 +748,7 @@ auto Console::PrintStartOfLine() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o------------------------------------------------------------------------------------------------o
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 auto Console::MoveTo( SI32 x, SI32 y ) -> void
 {
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -867,7 +861,7 @@ auto Console::PrintSpecial( UI08 colour, const std::string& msg ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto Console::cl_getch() -> std::int32_t
 {
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 	char data = 0;
 	auto a = ::read( 0, &data, 1); // This doesn't block on getting a line due to initalization
 	if( a > 0 )

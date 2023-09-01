@@ -5,19 +5,12 @@
 
 // Initial platform/compiler-related stuff to set.
 
-#define WINDOWS		1
-#define LINUX 		2
-#define MACOS		3
 
 // Finds the compiler type and version.
 #if defined( _MSC_VER )
 #define XP_WIN            // JS API Requires we define OS we compile with
 #define XP_PC
 
-//o------------------------------------------------------------------------------------------------o
-// These should be defined on the compilier line, in case windows.h gets defined ahead (resources.h?)
-#define NOMINMAX		// Dont want min/max macros, use <algorithm>
-#define WIN32_LEAN_AND_MEAN  // We NEVER want Winsock1, and the extra windows stuff
 //o------------------------------------------------------------------------------------------------o
 //o------------------------------------------------------------------------------------------------o
 // Ok, windows sets _ITERATOR_DEBUG_LEVEL based on debug/release.
@@ -42,7 +35,6 @@
 
 #endif   //_WIN32
 
-#define PLATFORM WINDOWS
 
 #else       // A unix type system
 
@@ -53,7 +45,6 @@
 
 #ifdef __linux__
 
-#define PLATFORM LINUX
 #define SOCKET int
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -66,7 +57,6 @@
 
 #elif defined(__APPLE__)
 
-#define PLATFORM MACOS
 #define SOCKET int
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1

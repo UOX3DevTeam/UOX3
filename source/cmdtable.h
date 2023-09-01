@@ -11,7 +11,11 @@
 
 #ifndef __CMDTABLE_H
 #define __CMDTABLE_H
+#include <map>
+#include <string>
 
+#include "enums.h"
+#include "typedefs.h"
 
 // Types of commands
 enum commandTypes

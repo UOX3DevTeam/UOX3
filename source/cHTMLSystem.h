@@ -7,11 +7,11 @@
 #ifndef __CHTMLSYSTEM_H__
 #define __CHTMLSYSTEM_H__
 
-#if defined(_MSC_VER)
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-#endif
+
+#include <string>
+#include "typedefs.h"
+
+class CScriptSection ;
 
 enum ETemplateType
 {

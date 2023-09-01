@@ -1,6 +1,15 @@
 #ifndef __CJSMAPPING_H__
 #define __CJSMAPPING_H__
 
+#include <map>
+#include <string>
+
+#include "typedefs.h"
+
+struct JSObject ;
+class CEnvoke ;
+class Script;
+
 enum SCRIPTTYPE
 {
 	SCPT_NORMAL		= 0,

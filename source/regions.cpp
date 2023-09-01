@@ -10,7 +10,7 @@
 #include "utility/strutil.hpp"
 
 #include "ObjectFactory.h"
-
+#include "useful.h"
 using namespace std::string_literals ;
 
 #define DEBUG_REGIONS		0
@@ -136,9 +136,8 @@ void CMapRegion::SaveToDisk( std::ostream& writeDestination )
 		}
 		else
 		{
-#if defined( _MSC_VER )
-#pragma todo( "PlayerHTML Dumping needs to be reimplemented" )
-#endif
+            //todo( "PlayerHTML Dumping needs to be reimplemented" );
+
 			if( charToWrite->ShouldSave() )
 			{
 				charToWrite->Save( writeDestination );

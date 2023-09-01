@@ -1,6 +1,15 @@
 #ifndef __Classes_h
 #define __Classes_h
 
+#include <string>
+
+#include "enums.h"
+#include "GenericList.h"
+#include "typedefs.h"
+
+class CSocket ;
+class CScriptSection;
+
 enum PackTypes
 {
 	PT_UNKNOWN = 0,

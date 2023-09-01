@@ -1,6 +1,14 @@
 #ifndef __SpawnRegion__
 #define __SpawnRegion__
 
+#include <string>
+#include <vector>
+
+#include "GenericList.h"
+#include "typedefs.h"
+
+class CScriptSection;
+
 class CSpawnRegion	//Regionspawns
 {
 private:

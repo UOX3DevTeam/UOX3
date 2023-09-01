@@ -6,6 +6,7 @@
 #define __DICTIONARY_H__
 #include <array>
 
+#include "enums.h"
 
 //o------------------------------------------------------------------------------------------------o
 // CDictionary

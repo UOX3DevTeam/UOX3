@@ -21,7 +21,7 @@
 #include <fstream>
 #include <tuple>
 
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 #  include <fcntl.h>     // open
 #  include <sys/mman.h>  // mmap, mmunmap
 #endif

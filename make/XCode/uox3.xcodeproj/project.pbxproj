@@ -133,6 +133,9 @@
 		56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxversion.hpp; sourceTree = "<group>"; };
 		56D6EEF42AA13174005355FA /* account.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = account.cpp; sourceTree = "<group>"; };
 		56D6EEF72AA13174005355FA /* account.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = account.hpp; sourceTree = "<group>"; };
+		56D6EEFD2AA22593005355FA /* spidermonkey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spidermonkey.h; sourceTree = "<group>"; };
+		56D6EF002AA227B5005355FA /* ostype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ostype.h; path = ../make/XCode/ostype.h; sourceTree = "<group>"; };
+		56D6EF012AA22CB8005355FA /* useful.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = useful.h; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -367,6 +370,8 @@
 		56D6EEE12AA0AC66005355FA /* expired */ = {
 			isa = PBXGroup;
 			children = (
+				64A9009D293E3DD4009B54DA /* ConfigOS.h */,
+				64A900E6293E3DD4009B54DA /* Prerequisites.h */,
 				64A9007A293E3DD4009B54DA /* cAccountClass.cpp */,
 				64A9007B293E3DD4009B54DA /* cAccountClass.h */,
 				64A900B4293E3DD4009B54DA /* cVersionClass.cpp */,
@@ -535,7 +540,6 @@
 				64A90092293E3DD4009B54DA /* classes.h */,
 				64A90095293E3DD4009B54DA /* cmdtable.cpp */,
 				64A90096293E3DD4009B54DA /* cmdtable.h */,
-				64A9009D293E3DD4009B54DA /* ConfigOS.h */,
 				64A900A2293E3DD4009B54DA /* cPlayerAction.cpp */,
 				64A900A5293E3DD4009B54DA /* CResponse.cpp */,
 				64A900A6293E3DD4009B54DA /* CResponse.h */,
@@ -551,9 +555,11 @@
 				64A900E0293E3DD4009B54DA /* osunique.hpp */,
 				64A900E4293E3DD4009B54DA /* pcmanage.cpp */,
 				64A900E5293E3DD4009B54DA /* power.h */,
-				64A900E6293E3DD4009B54DA /* Prerequisites.h */,
 				64A90100293E3DD4009B54DA /* typedefs.h */,
 				64A90111293E3DD4009B54DA /* UOXStdHeaders.h */,
+				56D6EF002AA227B5005355FA /* ostype.h */,
+				56D6EEFD2AA22593005355FA /* spidermonkey.h */,
+				56D6EF012AA22CB8005355FA /* useful.h */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -927,6 +933,11 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"PTIMESTAMP=1",
+					"UOX_DEBUG=1",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
@@ -950,6 +961,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_PREPROCESSOR_DEFINITIONS = "PTIMESTAMP=1";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (

@@ -17,6 +17,7 @@
 #include "Dictionary.h"
 #include "PageVector.h"
 #include "ObjectFactory.h"
+#include "ostype.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"

@@ -15,6 +15,8 @@
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
 
+#include "ostype.h"
+
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate() : updateTimer( 60 ), loaded( false ), type( ETT_INVALIDTEMPLATE ), scheduledUpdate( 0 )

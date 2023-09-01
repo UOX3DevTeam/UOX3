@@ -1,7 +1,12 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
-#include "GenericList.h"
 #include <array>
+
+#include "GenericList.h"
+
+
+class CTownRegion ;
+
 enum CITempVars
 {
 	CITV_MORE	= 0,

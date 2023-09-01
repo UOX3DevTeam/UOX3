@@ -5,6 +5,10 @@
 //o------------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
+#include <bitset>
+#include <string>
+#include <vector>
+#include <map>
 
 #include "typedefs.h"
 #include "uoxstruct.h"

@@ -13,7 +13,8 @@
 //o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
-
+#include "jsutil.h"
+#include "UOXJSMethods.h"
 
 typedef JSBool ( JSMethodFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 

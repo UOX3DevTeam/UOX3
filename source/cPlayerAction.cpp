@@ -22,6 +22,7 @@
 #include "Dictionary.h"
 #include "utility/strutil.hpp"
 
+#include "useful.h"
 using namespace std::string_literals;
 
 void		SendTradeStatus( CItem *cont1, CItem *cont2 );
@@ -3911,9 +3912,7 @@ bool CPISingleClick::Handle( void )
 		}
 	}
 
-#if defined( _MSC_VER )
-#pragma todo( "We need to update this to use GetTileName almost exclusively, for plurality" )
-#endif
+    //todo( "We need to update this to use GetTileName almost exclusively, for plurality" );
 	if( i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK )[0] != '#' )
 	{
 		if( i->GetId() == 0x0ED5 ) //guildstone

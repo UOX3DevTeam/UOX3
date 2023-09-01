@@ -31,13 +31,18 @@
  */
  //o------------------------------------------------------------------------------------------------o
 
+#include <atomic>
 #include <chrono>
-#include <random>
-#include <thread>
 #include <cstdlib>
 #include <filesystem>
-#include <optional>
 #include <numeric>
+#include <optional>
+#include <random>
+#include <thread>
+#if defined(_WIN32)
+#include <process.h>
+#include <conio.h>
+#endif
 
 #include "uox3.h"
 #include "weight.h"
@@ -77,15 +82,11 @@
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 #include "EventTimer.hpp"
-#include <atomic>
 
+#include "ostype.h"
 #include "other/uoxversion.hpp"
 #include "subsystem/console.hpp"
 
-#if PLATFORM == WINDOWS
-#include <process.h>
-#include <conio.h>
-#endif
 
 
 //o------------------------------------------------------------------------------------------------o
@@ -165,7 +166,7 @@ void		CheckAI( CChar& mChar );
 //o------------------------------------------------------------------------------------------------o
 // Internal Pre-Declares
 //o------------------------------------------------------------------------------------------------o
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 BOOL WINAPI exit_handler( DWORD dwCtrlType );
 #else
 void app_stopped(int sig);
@@ -416,7 +417,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	Network->SockClose();
     Console::shared().PrintDone();
 	
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	SetConsoleCtrlHandler( exit_handler, true );
 #endif
 	if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
@@ -429,7 +430,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 		isWorldSaving = false;
 	}
 	cwmWorldState->ServerData()->SaveIni();
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	
@@ -457,7 +458,7 @@ auto AdjustInterval( std::chrono::milliseconds interval, std::chrono::millisecon
 auto InitOperatingSystem() -> std::optional<std::string>
 {
 	// Startup Winsock2(windows) or signal handers (unix)
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
@@ -660,7 +661,7 @@ auto StartInitialize( CServerData &serverdata ) -> void
 //o------------------------------------------------------------------------------------------------o
 // Signal and exit handers
 //o------------------------------------------------------------------------------------------------o
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	exit_handler()
 //|					app_stopped()
@@ -2452,13 +2453,13 @@ auto CWorldMain::CheckAutoTimers() -> void
 
 			SetAutoSaved( false );
 
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 			SetConsoleCtrlHandler( exit_handler, TRUE );
 #endif
 			isWorldSaving = true;
 			SaveNewWorld( false );
 			isWorldSaving = false;
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 			SetConsoleCtrlHandler( exit_handler, false );
 #endif
 		}
@@ -2903,7 +2904,7 @@ auto Shutdown( SI32 retCode ) -> void
 	if( retCode && saveOnShutdown )
 	{
 		//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 		SetConsoleCtrlHandler( exit_handler, true );
 #endif
 		isWorldSaving = true;
@@ -2912,7 +2913,7 @@ auto Shutdown( SI32 retCode ) -> void
 			cwmWorldState->SaveNewWorld( true );
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 		isWorldSaving = false;
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 		SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	}
@@ -2961,7 +2962,7 @@ auto Shutdown( SI32 retCode ) -> void
         Console::shared().TurnRed();
         Console::shared() << "Exiting UOX with errorlevel " << retCode << myendl;
         Console::shared().TurnNormal();
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
         Console::shared() << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline( std::cin, throwAway );

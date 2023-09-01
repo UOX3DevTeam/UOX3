@@ -16,15 +16,13 @@
 #include <charconv>
 #include <array>
 
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #else
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
 
 

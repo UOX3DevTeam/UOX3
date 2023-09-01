@@ -3,6 +3,12 @@
 
 #include "cmdtable.h"
 
+#include <bitset>
+#include <string>
+#include <vector>
+
+class CChar ;
+class cScript ;
 
 const UI32 BIT_STRIPHAIR	= 1;
 const UI32 BIT_STRIPITEMS	= 2;
