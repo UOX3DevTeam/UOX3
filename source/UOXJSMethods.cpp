@@ -164,14 +164,25 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prepares a new packet stream, ready for network shenanigans in JS
 //o------------------------------------------------------------------------------------------------o
-JSNative Packet( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool Packet(JSContext* cx, unsigned argc, JS::Value* vp)
 {
-	CPUOXBuffer *toAdd = new CPUOXBuffer;
+    // Create a new CPUOXBuffer instance.
+    CPUOXBuffer* toAdd = new CPUOXBuffer;
 
-	JS_DefineFunctions( cx, obj, CPacket_Methods );
-	JS::SetReservedSlot( obj, 0, JS::PrivateValue(toAdd) );
-	JS_LockGCThing( cx, obj );
-	return true;
+    // Get the 'this' object from the call stack.
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject obj(cx, &args.thisv().toObject());
+
+    // Define functions on the object using CPacket_Methods.
+    if (!JS_DefineFunctions(cx, obj, CPacket_Methods))
+        return false;
+
+    // Set the first reserved slot of the object to store 'toAdd'.
+    JS::SetReservedSlot(obj, 0, JS::PrivateValue(toAdd));
+
+    // Return 'true' to indicate success.
+    args.rval().setBoolean(true);
+    return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -180,7 +191,7 @@ JSNative Packet( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args = JS::CallArgsFromVp(argc, vp);
   JS::RootedObject obj(cx);
@@ -188,15 +199,13 @@ bool CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
       return false;
   CPUOXBuffer *toDelete = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>(obj, 0);
 
-	if (toDelete == nullptr) {
-    return false;
-  }
-  else
-	{
-    delete toDelete;
-    JS::SetReservedSlot(obj, 0, JS::UndefinedValue());
-  }
-  return true;
+	if (toDelete == nullptr)
+		return false;
+
+	delete toDelete;
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
+
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -205,7 +214,7 @@ bool CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a single byte at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -237,7 +246,7 @@ bool CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes two bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -270,7 +279,7 @@ bool CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes four bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -304,7 +313,7 @@ bool CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes variable number of bytes at specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -338,7 +347,7 @@ bool CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reserves a specific size for the packet stream
 //o------------------------------------------------------------------------------------------------o
-bool CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -369,7 +378,7 @@ bool CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends prepared packet stream to network socket
 //o------------------------------------------------------------------------------------------------o
-bool CSocket_Send( JSContext* cx, unsigned argc, JS::Value* vp )
+JSNative CSocket_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -402,7 +411,7 @@ bool CSocket_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
-JSNative Gump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
@@ -412,7 +421,7 @@ JSNative Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	JS_DefineFunctions( cx, obj, CGump_Methods );
 	JS::SetReservedSlot( obj, 0, JS::PrivateValue(toAdd) );
-	JS_LockGCThing( cx, obj );
+	//JS_LockGCThing( cx, obj );
 	return true;
 }
 
@@ -422,7 +431,7 @@ JSNative Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
     auto args = JS::CallArgsFromVp(argc, vp);
     JS::RootedObject obj(cx);
@@ -438,7 +447,7 @@ JSNative CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 	delete toDelete->two;
 	delete toDelete;
 
-	JS_UnlockGCThing( cx, obj );
+	//JS_UnlockGCThing( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
@@ -450,14 +459,14 @@ JSNative CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump Data object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSNative CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	SEGumpData_st *toDelete = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>(obj, 0);
 
 	if( toDelete == nullptr )
 		return false;
 
-	JS_UnlockGCThing( cx, obj );
+	//JS_UnlockGCThing( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	delete toDelete;
@@ -470,35 +479,42 @@ JSNative CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets data input from TextEntr(y/ies) in JS Gump
 //o------------------------------------------------------------------------------------------------o
-JSNative CGumpData_GetEdit( JSContext* cx, unsigned argc, JS::Value* vp )
+
+static bool CGumpData_GetEdit(JSContext* cx, unsigned argc, JS::Value* vp) {
+    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+
+    if (args.length() == 0) {
+        ScriptError(cx, "(GumpData_getEdit) Invalid number of arguments");
+        args.rval().setString(JS_NewStringCopyN(cx, "", 0));
+        return true;
+    }
+
+	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+
+    if (myItem == nullptr)
+ {
+        ScriptError(cx, "(DataGump-getEdit) Invalid object assigned");
+        args.rval().setString(JS_NewStringCopyN(cx, "", 0));
+        return true;
+    }
+
+    if (args[0].isInt32())
+ {
+        int32_t index = args[0].toInt32();
+        if (index >= 0 && static_cast<size_t>(index) < myItem->sEdits.size())
+ {
+            args.rval().setString(JS_NewStringCopyZ(cx, myItem->sEdits[index].c_str()));
+        } else 
 {
-	if( argc == 0 )
-	{
-		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = STRING_TO_JSVAL( "" );
-		return true;
-	}
+            args.rval().setString(JS_NewStringCopyN(cx, "", 0));
+        }
+    } else 
+{
+        ScriptError(cx, "(DataGump-getEdit) Invalid argument type, expected an integer");
+        args.rval().setString(JS_NewStringCopyN(cx, "", 0));
+    }
 
-	SEGumpData_st *myItem = JS::GetMaybePtrFromReservedSlot<SEGumpData_st>(obj, 0);
-
-	if( myItem == nullptr  )
-	{
-		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
-		*rval = STRING_TO_JSVAL( "" );
-		return true;
-	}
-
-	size_t index = args.get( 0 ).toInt32();
-
-	if( index < myItem->sEdits.size() )
-	{
-		*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, myItem->sEdits[index].c_str() ));
-	}
-	else
-	{
-		*rval = STRING_TO_JSVAL( "" );
-	}
-	return true;
+    return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -507,7 +523,7 @@ JSNative CGumpData_GetEdit( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets nID at specified index in Gump Data
 //o------------------------------------------------------------------------------------------------o
-JSNative CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 )
 	{
@@ -544,7 +560,7 @@ JSNative CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of button at specified index in Gump Data
 //o------------------------------------------------------------------------------------------------o
-JSNative CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 )
 	{
@@ -580,7 +596,7 @@ JSNative CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a checkbox gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 5 || argc > 6 )
 	{
@@ -634,7 +650,7 @@ JSNative CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Adds noclose element to gump stream; specifies that gump cannot be closed by
 //|					clicking the right mouse button
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_NoClose( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_NoClose( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -662,7 +678,7 @@ JSNative CGump_NoClose( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds nomove element to gump stream; specifies that gump cannot be moved
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_NoMove( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_NoMove( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -694,7 +710,7 @@ JSNative CGump_NoMove( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					using the "Close Dialogs" client macro
 //|					No response is sent to server upon closing the Gump in this manner.
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_NoDispose( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_NoDispose( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -722,7 +738,7 @@ JSNative CGump_NoDispose( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds noresize element to gump stream; specifies that gump cannot be resized
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_NoResize( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_NoResize( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -749,7 +765,7 @@ JSNative CGump_NoResize( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Possible that the mastergump command itself only has any effect with client versions between 4.0.4d and 5.0.5b?
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -778,7 +794,7 @@ JSNative CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds background gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -810,7 +826,7 @@ JSNative CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 6 || argc > 7 )
 	{
@@ -844,7 +860,7 @@ JSNative CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump with tileart to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 11 )
 	{
@@ -882,7 +898,7 @@ JSNative CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump for navigating gump pages to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 4 || argc > 5 )
 	{
@@ -914,7 +930,7 @@ JSNative CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds transparent area gump to gump stream, turns underlying elements transparent
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -946,7 +962,7 @@ JSNative CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds text field gump to gump stream, cropped to certain dimensions
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 6 )
 	{
@@ -991,7 +1007,7 @@ JSNative CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds new group element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -1017,7 +1033,7 @@ JSNative CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Ends a previously started group element
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -1043,7 +1059,7 @@ JSNative CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -1085,7 +1101,7 @@ JSNative CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -1124,7 +1140,7 @@ JSNative CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					UOX3 will send the following gump command to add a tooltip element to previous
 //|					gump element: "tooltip 1042971 @My Custom Text@"
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 11 )
 	{
@@ -1172,7 +1188,7 @@ JSNative CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new HTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
@@ -1220,7 +1236,7 @@ JSNative CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new page element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -1246,7 +1262,7 @@ JSNative CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -1276,7 +1292,7 @@ JSNative CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -1308,7 +1324,7 @@ JSNative CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Adds a picinpic gump to the gump stream
 //|	Notes		-	Requires client v7.0.80.0 or above
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
@@ -1346,7 +1362,7 @@ JSNative CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					object serial that was provided as a regular tooltip on cursor. Could be used to
 //|					show item stats for items on a custom paperdoll, for instance.
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddItemProperty( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddItemProperty( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -1383,7 +1399,7 @@ JSNative CGump_AddItemProperty( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a radio button gump to gumps stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 5 || argc > 6 )
 	{
@@ -1436,7 +1452,7 @@ JSNative CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -1480,7 +1496,7 @@ JSNative CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
@@ -1522,7 +1538,7 @@ JSNative CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump with maximum length to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 9 )
 	{
@@ -1566,7 +1582,7 @@ JSNative CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds tiled gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
@@ -1599,7 +1615,7 @@ JSNative CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
@@ -1637,7 +1653,7 @@ JSNative CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
@@ -1675,7 +1691,7 @@ JSNative CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream, with optional cliloc arguments
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 8 )
 	{
@@ -1717,7 +1733,7 @@ JSNative CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump stream to socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -1777,7 +1793,7 @@ JSNative CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 7 )
 	{
@@ -2138,7 +2154,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
@@ -2176,7 +2192,7 @@ JSNative CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Specifies a wander area for an NPC, as either a box or a circle
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2223,7 +2239,7 @@ JSNative CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces NPC to follow specified target
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -2268,7 +2284,7 @@ JSNative CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes character do specified action
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 5 )
 	{
@@ -2330,7 +2346,7 @@ JSNative CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to emote specified text
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 5 )
 	{
@@ -2391,7 +2407,7 @@ JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dismounts character, if mounted
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Dismount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Dismount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -2423,7 +2439,7 @@ JSNative CChar_Dismount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a system message to the player
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 || argc > 11 )
 	{
@@ -2489,7 +2505,7 @@ JSNative CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disconnects specified client
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -2536,7 +2552,7 @@ JSNative CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Teleports object to specified location
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 
@@ -2743,7 +2759,7 @@ JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect for character
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	UI16 effectId		= static_cast<UI16>( args.get( 0 ).toInt32());
 	UI08 speed			= static_cast<UI08>( args.get( 1 ).toInt32());
@@ -2777,7 +2793,7 @@ JSNative CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends specified make menu to player
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -2814,7 +2830,7 @@ JSNative CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a sound effect at object's location
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 3 )
 	{
@@ -2872,7 +2888,7 @@ JSNative CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up the shopkeeper gump for selling to specified vendor NPC
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	*rval = JSVAL_FALSE;
 	if( argc != 1 )
@@ -2953,7 +2969,7 @@ JSNative CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up the shopkeeper gump for buying from specified vendor NPC
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3037,7 +3053,7 @@ JSNative CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for specified spell in first spellbook found in player's inventory
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3102,7 +3118,7 @@ JSNative CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified spell from first spellbook found in player's inventory
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3166,7 +3182,7 @@ JSNative CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for tag with specified name, if tag has been stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetTag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3207,7 +3223,7 @@ JSNative CBase_GetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Stores persistent tag with specified name and value on object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3307,7 +3323,7 @@ JSNative CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for temporary tag with specified name, if tag has been stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3349,7 +3365,7 @@ JSNative CBase_GetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Stores temporary tag with specified name and value on object, does not persist
 //|					across server restart (or character reconnect)
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3449,7 +3465,7 @@ JSNative CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of tags stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3474,7 +3490,7 @@ JSNative CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map of tags stored on object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3556,7 +3572,7 @@ JSNative CBase_GetTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map of temporary tags stored on object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3638,7 +3654,7 @@ JSNative CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens bankbox of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
@@ -3697,7 +3713,7 @@ JSNative CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified container for specified socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
@@ -3743,7 +3759,7 @@ JSNative CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified layer of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
@@ -3793,7 +3809,7 @@ JSNative CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turns character to face object/location
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
@@ -3883,7 +3899,7 @@ JSNative CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets direction from character to target object/location
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
@@ -3935,7 +3951,7 @@ JSNative CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Executes specified command (with cmd params as part of cmdString) for character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3963,7 +3979,7 @@ JSNative CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Accepts specified character as a recruit in the guild
 //o------------------------------------------------------------------------------------------------o
-JSNative CGuild_AcceptRecruit( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGuild_AcceptRecruit( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>(obj, 0);
 
@@ -4001,7 +4017,7 @@ JSNative CGuild_AcceptRecruit( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if guild is at peace, i.e. not at war with any other guilds
 //o------------------------------------------------------------------------------------------------o
-JSNative CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -4029,7 +4045,7 @@ JSNative CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
@@ -4080,7 +4096,7 @@ JSNative CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Removes specified amount of items of given ID, colour and MORE value from
 //|					char's packs, and returns amount deleted
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4142,7 +4158,7 @@ JSNative CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the lightning bolt effect on specified character to all nearby
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( ValidateObject( myChar ))
@@ -4169,7 +4185,7 @@ JSNative CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //|
 //|					Useable with both sockets and characters.
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 
@@ -4247,7 +4263,7 @@ JSNative CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					inclusive. Says toSay, and shows a cursor. Note that this allows access
 //|					potentially to GM functions.
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
@@ -4304,7 +4320,7 @@ JSNative CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the distance to trgObj is less than distance
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -4355,7 +4371,7 @@ JSNative CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 //|						true (calls back to existing script)
 //|						int (scriptId to call back to)
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
@@ -4421,7 +4437,7 @@ JSNative CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					if true, an alternate skill check formula is used that gives player a minimum 50% chance
 //|					if they at least meat the minimum requirements for crafting an item
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -4455,7 +4471,7 @@ JSNative CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item found on specified layer of character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CItem *myItem = nullptr;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
@@ -4495,7 +4511,7 @@ JSNative CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item of specific item type in character's backpack
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -4532,7 +4548,7 @@ JSNative CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item with specific sectionId in character's backpack
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_FindItemSection( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_FindItemSection( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -4570,7 +4586,7 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens plank for item (boat)
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_OpenPlank( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_OpenPlank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -4597,7 +4613,7 @@ JSNative CItem_OpenPlank( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls up the onSpeechInput event using specified ID, with the text the user types
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	// Get our own Script ID
 	UI08 speechId		= 0;
@@ -4653,7 +4669,7 @@ JSNative CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to cast specified spell
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 1 ) && ( argc != 2 ))
 	{
@@ -4701,7 +4717,7 @@ JSNative CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies spell effects of specified spell to character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	SI08 spellId = static_cast<SI08>( args.get( 0 ).toInt32());
 
@@ -4724,7 +4740,7 @@ JSNative CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of a character's serial
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myObj = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	UI08 part = static_cast<UI08>( args.get( 0 ).toInt32());
@@ -4747,7 +4763,7 @@ JSNative CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of an object's serial
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	UI08 part = static_cast<UI08>( args.get( 0 ).toInt32());
@@ -4830,7 +4846,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 3 )
 	{
@@ -4874,7 +4890,7 @@ void ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, bo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes specified item by exploding it, dealing 5-10 dmg to nearby characters
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -4907,7 +4923,7 @@ JSNative CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Sets character to the specified visibility level for the specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 2 )
 	{
@@ -4933,7 +4949,7 @@ JSNative CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets container of item to be the specified object
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	JSObject *tObj = args.get( 0 ).toObjectOrNull();
@@ -4973,7 +4989,7 @@ JSNative CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5001,7 +5017,7 @@ JSNative CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a boat
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5029,7 +5045,7 @@ JSNative CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the object is in the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5064,7 +5080,7 @@ JSNative CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the ban-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5099,7 +5115,7 @@ JSNative CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the friend-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5134,7 +5150,7 @@ JSNative CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the guest-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5169,7 +5185,7 @@ JSNative CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the owner-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5204,7 +5220,7 @@ JSNative CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is the actual owner of the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5239,7 +5255,7 @@ JSNative CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to banlist of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5272,7 +5288,7 @@ JSNative CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the friend-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5308,7 +5324,7 @@ JSNative CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the guest-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5344,7 +5360,7 @@ JSNative CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the owner-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5380,7 +5396,7 @@ JSNative CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the ban-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5416,7 +5432,7 @@ JSNative CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the friend-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5452,7 +5468,7 @@ JSNative CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value* v
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the guest-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5488,7 +5504,7 @@ JSNative CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value* vp
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the owner-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -5524,7 +5540,7 @@ JSNative CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value* vp
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears multi's list of banned players
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5553,7 +5569,7 @@ JSNative CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of friends
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5582,7 +5598,7 @@ JSNative CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of guests
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5611,7 +5627,7 @@ JSNative CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of co-owners
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_ClearOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_ClearOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -5643,7 +5659,7 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CCha
 //|					If second parameter is true, UOX3 will attempt to stack the item with an existing item
 //|					instead.
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -5700,7 +5716,7 @@ JSNative CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified URL in player's browser
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_OpenURL( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_OpenURL( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5725,7 +5741,7 @@ JSNative CSocket_OpenURL( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value of a byte from the socket at offset, assumes 0 to 255 as values
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5750,7 +5766,7 @@ JSNative CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 1 byte of data from socket buffer at offset, assumes -127 to 127 as values
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5775,7 +5791,7 @@ JSNative CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, assumes positive values
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5800,7 +5816,7 @@ JSNative CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, negative values accepted
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5825,7 +5841,7 @@ JSNative CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, positive values assumed
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5850,7 +5866,7 @@ JSNative CSocket_GetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, negative values accepted
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5876,7 +5892,7 @@ JSNative CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Returns data from socket buffer at offset with optional length param, string assumed
 //|					If no length param is provided, reads until next null terminator
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -5923,7 +5939,7 @@ JSNative CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 1 byte at socket stream's offset to equal 8-bit value
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -5949,7 +5965,7 @@ JSNative CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 2 bytes at socket stream's offset to equal 16-bit value
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -5977,7 +5993,7 @@ JSNative CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 4 bytes at socket stream's offset to equal 32-bit value
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -6005,7 +6021,7 @@ JSNative CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets data at socket stream's offset to equal string value
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -6039,7 +6055,7 @@ JSNative CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads specified amount of bytes from socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6066,7 +6082,7 @@ JSNative CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gump populated with all online or offline (if param is false) players
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
@@ -6100,7 +6116,7 @@ JSNative CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to socket to play specified midi/mp3
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6127,7 +6143,7 @@ JSNative CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Yells a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6189,7 +6205,7 @@ JSNative CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Whispers a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6251,7 +6267,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified gumpmenu from dfnata/misc/gumps.dfn for socket
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6284,7 +6300,7 @@ JSNative CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes specified generic gump based on its ID, and provides a button ID response
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -6317,7 +6333,7 @@ JSNative CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if members of race can equip specified item
 //o------------------------------------------------------------------------------------------------o
-JSNative CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6351,7 +6367,7 @@ JSNative CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified hair-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSNative CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6377,7 +6393,7 @@ JSNative CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified skin-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSNative CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6403,7 +6419,7 @@ JSNative CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified beard-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSNative CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6432,7 +6448,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies the values from a DFN section to an Item/Character
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_ApplySection( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_ApplySection( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6484,7 +6500,7 @@ JSNative CBase_ApplySection( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a spell to the first spell book found in character's pack
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6525,7 +6541,7 @@ JSNative CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does the actions associated with spell failure, called after the failure happens
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SpellFail( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SpellFail( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -6555,7 +6571,7 @@ JSNative CChar_SpellFail( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes the item to be refreshed to sockets that can see it
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -6622,7 +6638,7 @@ JSNative CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					values will increase base properties of item, lower will decrease base
 //|					properties). maxRank is the maximum amount of ranks in the rank system (10 by default).
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_ApplyRank( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_ApplyRank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -6644,7 +6660,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is on a specified food list
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 || argc > 7 )
 	{
@@ -6676,7 +6692,7 @@ JSNative CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_GetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_GetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	return false;
 }
@@ -6686,7 +6702,7 @@ JSNative CAccount_GetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_SetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_SetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	return false;
 }
@@ -6701,7 +6717,7 @@ JSNative CAccount_SetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
@@ -6752,7 +6768,7 @@ JSNative CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6792,7 +6808,7 @@ JSNative CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_ModAccount( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_ModAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	return false;
 }
@@ -6802,14 +6818,14 @@ JSNative CAccount_ModAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSNative CAccount_SaveAccounts( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CAccount_SaveAccounts( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	return false;
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
 // UOXCFile constructor !
-JSNative UOXCFile( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool UOXCFile( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
@@ -6828,7 +6844,7 @@ JSNative UOXCFile( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Frees memory allocated by file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -6837,7 +6853,7 @@ JSNative CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 	delete mFile;
-	JS_UnlockGCThing( cx, obj );
+	//JS_UnlockGCThing( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
@@ -6849,7 +6865,7 @@ JSNative CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a file for reading, writing or appending
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 4 )
 	{
@@ -6926,7 +6942,7 @@ JSNative CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes a file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Close( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Close( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -6946,7 +6962,7 @@ JSNative CFile_Close( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a string of length numBytes, reading numBytes from the opened file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -6984,7 +7000,7 @@ JSNative CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads a string until it encounters a newline or the string specified by delimeter.
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_ReadUntil( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_ReadUntil( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7033,7 +7049,7 @@ JSNative CFile_ReadUntil( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a string out to the file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Write( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Write( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7069,7 +7085,7 @@ JSNative CFile_Write( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns if we have read to the end of a file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -7093,7 +7109,7 @@ JSNative CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of the file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Length( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Length( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -7127,7 +7143,7 @@ JSNative CFile_Length( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns or sets the position we are at in the file
 //o------------------------------------------------------------------------------------------------o
-JSNative CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -7156,7 +7172,7 @@ JSNative CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_FirstItem( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_FirstItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -7207,7 +7223,7 @@ JSNative CBase_FirstItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_NextItem( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_NextItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -7258,7 +7274,7 @@ JSNative CBase_NextItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all items in object's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -7295,7 +7311,7 @@ JSNative CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 && argc != 3 )
 	{
@@ -7407,7 +7423,7 @@ JSNative CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 && argc != 3 )
 	{
@@ -7519,7 +7535,7 @@ JSNative CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the specified timer value
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7560,7 +7576,7 @@ JSNative CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the specified timer with the amount of miliseconds until it expires
 //o------------------------------------------------------------------------------------------------o
-JSNative CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -7608,7 +7624,7 @@ JSNative CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the distance to the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7637,7 +7653,7 @@ JSNative CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attaches a light-emitting object to the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSObject *mSock	= args.get( 0 ).toObjectOrNull();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
@@ -7708,7 +7724,7 @@ JSNative CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes light-emitting object from the object
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSObject *mSock	= args.get( 0 ).toObjectOrNull();
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
@@ -7774,7 +7790,7 @@ JSNative CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gate to the location marked on an item, or to a specified set of coords
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
@@ -7853,7 +7869,7 @@ JSNative CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character recalls to the location marked on an item
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7921,7 +7937,7 @@ JSNative CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks item with character's current location
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Mark( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Mark( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7970,7 +7986,7 @@ void SetRandomName( CChar *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a random name from specified namelist to character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -7999,7 +8015,7 @@ JSNative CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Sets the skill specified by name to the value specified (name must be the same
 //|					as in skills.dfn, "ALLSKILLS" is also applicable.
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -8040,7 +8056,7 @@ JSNative CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kills the character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8097,7 +8113,7 @@ JSNative CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resurrects the character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8138,7 +8154,7 @@ JSNative CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a duplicate of the item in character's pack
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8188,7 +8204,7 @@ JSNative CItem_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dupes specified character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8227,7 +8243,7 @@ JSNative CChar_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Jails character, either for ~27 hours or for specified amount of time in seconds
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -8258,7 +8274,7 @@ JSNative CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases character from jail
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Release( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Release( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8285,7 +8301,7 @@ void GMPage( CSocket *s, const std::string& reason );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a page based on provided pageType
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -8334,7 +8350,7 @@ JSNative CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a message in UOX3 console. Message should end with \n
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8353,7 +8369,7 @@ JSNative CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a message either in default log file or in specified file
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -8380,7 +8396,7 @@ JSNative CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs an error-message in default error log file
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_Error( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_Error( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8398,7 +8414,7 @@ JSNative CConsole_Error( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a warning-message in default warnings log file
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8416,7 +8432,7 @@ JSNative CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a section separator in the console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintSectionBegin( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintSectionBegin( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8433,7 +8449,7 @@ JSNative CConsole_PrintSectionBegin( JSContext* cx, unsigned argc, JS::Value* vp
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnYellow( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnYellow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8450,7 +8466,7 @@ JSNative CConsole_TurnYellow( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates yellow text in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnRed( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnRed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8467,7 +8483,7 @@ JSNative CConsole_TurnRed( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates green text in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnGreen( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnGreen( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8484,7 +8500,7 @@ JSNative CConsole_TurnGreen( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates blue text in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnBlue( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnBlue( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8501,7 +8517,7 @@ JSNative CConsole_TurnBlue( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates normal text in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnNormal( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnNormal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8518,7 +8534,7 @@ JSNative CConsole_TurnNormal( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates bright white text in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_TurnBrightWhite( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_TurnBrightWhite( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8536,7 +8552,7 @@ JSNative CConsole_TurnBrightWhite( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [done] message in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -8567,7 +8583,7 @@ JSNative CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [failed] message in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -8597,7 +8613,7 @@ JSNative CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [skipped] message in console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintPassed( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintPassed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8614,7 +8630,7 @@ JSNative CConsole_PrintPassed( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the console
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_ClearScreen( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_ClearScreen( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8631,7 +8647,7 @@ JSNative CConsole_ClearScreen( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints [done] or [failed] based on provided boolean
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8650,7 +8666,7 @@ JSNative CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Moves console cursor position to specified x, y location
 //|	Notes		-	If you want the same line,  y == -1
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -8677,7 +8693,7 @@ JSNative CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					4 - Yellow
 //|					5 - Bright White
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -8696,7 +8712,7 @@ JSNative CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start the UOX3 shutdown sequence
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_BeginShutdown( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_BeginShutdown( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8722,7 +8738,7 @@ JSNative CConsole_BeginShutdown( JSContext* cx, unsigned argc, JS::Value* vp )
 //|						7 Reload JS
 //|						8 Reload HTML
 //o------------------------------------------------------------------------------------------------o
-JSNative CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8747,7 +8763,7 @@ JSNative CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going from the
 //|					character to the target
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SpellMoveEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SpellMoveEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -8786,7 +8802,7 @@ JSNative CChar_SpellMoveEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the STATFX effect of the specified spell in SPELLS.DFN, on the character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_SpellStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_SpellStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8825,7 +8841,7 @@ JSNative CChar_SpellStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Break a caster's concentration. Provide socket as extra argument for player chars
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_BreakConcentration( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_BreakConcentration( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -8862,7 +8878,7 @@ JSNative CChar_BreakConcentration( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the Add-menu to the character
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -8890,7 +8906,7 @@ JSNative CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks item down (sets movable value to 3)
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_LockDown( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_LockDown( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -8916,7 +8932,7 @@ JSNative CItem_LockDown( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Initializes a WanderArea (10x10 box, or 10 radius circle) for the NPC.
 //|					Will only work if they already have a wandermode set to box or circle.
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_InitWanderArea( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_InitWanderArea( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
@@ -8935,7 +8951,7 @@ auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes the character belonging to socket carve up a corpse
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -8983,7 +8999,7 @@ JSNative CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile name of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_GetTileName( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_GetTileName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -9013,7 +9029,7 @@ JSNative CItem_GetTileName( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets coordinates for specified corner ("NW", "NE", "SW" or "SE") of multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9066,7 +9082,7 @@ JSNative CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Secures a container in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9107,7 +9123,7 @@ JSNative CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unsecures a secured container in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9148,7 +9164,7 @@ JSNative CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified item is a secure container in the multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9189,7 +9205,7 @@ JSNative CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9230,7 +9246,7 @@ JSNative CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases a locked down item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9271,7 +9287,7 @@ JSNative CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9312,7 +9328,7 @@ JSNative CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases a locked down item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_RemoveTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_RemoveTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9354,7 +9370,7 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kills all keys in the world associated with the particular multi
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_KillKeys( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_KillKeys( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -9398,7 +9414,7 @@ JSNative CMulti_KillKeys( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first char in the multi's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_FirstChar( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_FirstChar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -9467,7 +9483,7 @@ JSNative CMulti_FirstChar( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next char in the multi's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_NextChar( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_NextChar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -9536,7 +9552,7 @@ JSNative CMulti_NextChar( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all characters in multi's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -9597,7 +9613,7 @@ JSNative CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks Line of Sight from character to target object or location
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 3 )
 	{
@@ -9733,7 +9749,7 @@ JSNative CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified damage value over character's head
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -9772,7 +9788,7 @@ JSNative CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Lets character react to damage taken
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -9826,7 +9842,7 @@ JSNative CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Purpose		-	Deals damage of a specified damageType to a character, with optional parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 4 )
 	{
@@ -9905,7 +9921,7 @@ JSNative CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempts to initiate combat with target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -9954,7 +9970,7 @@ JSNative CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -9996,7 +10012,7 @@ JSNative CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds aggressor flag for character towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_AddAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_AddAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10028,7 +10044,7 @@ JSNative CChar_AddAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character's aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_RemoveAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_RemoveAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10060,7 +10076,7 @@ JSNative CChar_RemoveAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has an aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10092,7 +10108,7 @@ JSNative CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_UpdateAggressorFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_UpdateAggressorFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10124,7 +10140,7 @@ JSNative CChar_UpdateAggressorFlagTimestamp( JSContext* cx, unsigned argc, JS::V
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all the character's aggressor flags towards other characters
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ClearAggressorFlags( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ClearAggressorFlags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -10150,7 +10166,7 @@ JSNative CChar_ClearAggressorFlags( JSContext* cx, unsigned argc, JS::Value* vp 
 //|	Purpose		-	Returns true/false depending on whether character has any active aggressor flags
 //|					Optional parameter supported to check only flags towards players and ignore NPCs
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -10177,7 +10193,7 @@ JSNative CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds aggressor flag for character towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_AddPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_AddPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10209,7 +10225,7 @@ JSNative CChar_AddPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character's permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_RemovePermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_RemovePermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10241,7 +10257,7 @@ JSNative CChar_RemovePermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has an active permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10273,7 +10289,7 @@ JSNative CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_UpdatePermaGreyFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_UpdatePermaGreyFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10305,7 +10321,7 @@ JSNative CChar_UpdatePermaGreyFlagTimestamp( JSContext* cx, unsigned argc, JS::V
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all the character's aggressor flags towards other characters
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ClearPermaGreyFlags( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ClearPermaGreyFlags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -10331,7 +10347,7 @@ JSNative CChar_ClearPermaGreyFlags( JSContext* cx, unsigned argc, JS::Value* vp 
 //|	Purpose		-	Returns true/false depending on whether character has any active permagrey flags
 //|					Optional parameter supported to check only flags towards players and ignore NPCs
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -10359,7 +10375,7 @@ JSNative CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Heals a character, with optional argument to provide character who healed
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -10437,7 +10453,7 @@ JSNative CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 //|						6 - Energy
 //|						7 - Poison
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -10523,7 +10539,7 @@ JSNative CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 //|						5 the neck
 //|						6 the rest
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3)
 	{
@@ -10567,7 +10583,7 @@ JSNative CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 //|	Notes		-	Valid moreVarName values: "more", "more0", "more1", "more2", "morex", "morey", "morez"
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -10647,7 +10663,7 @@ JSNative CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //|					Valid moreVarValue values: 0 - 255
 //o------------------------------------------------------------------------------------------------o
-JSNative CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -10724,7 +10740,7 @@ JSNative CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10768,7 +10784,7 @@ JSNative CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10807,7 +10823,7 @@ JSNative CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object has a specific scriptTrigger in it's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSNative CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10842,7 +10858,7 @@ JSNative CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSNative CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10887,7 +10903,7 @@ JSNative CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSNative CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -10926,7 +10942,7 @@ JSNative CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* v
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get ore preference data for specified ore type
 //o------------------------------------------------------------------------------------------------o
-JSNative CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11012,7 +11028,7 @@ JSNative CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get chance to find ore when mining in townregion
 //o------------------------------------------------------------------------------------------------o
-JSNative CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11037,7 +11053,7 @@ JSNative CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds player to an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11081,7 +11097,7 @@ JSNative CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes player from an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11125,7 +11141,7 @@ JSNative CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_GetFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_GetFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11185,7 +11201,7 @@ JSNative CChar_GetFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11225,7 +11241,7 @@ JSNative CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's owned pets
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_GetPetList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_GetPetList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11291,7 +11307,7 @@ JSNative CChar_GetPetList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether character pChar has previously owned the pet (is on pet owner list)
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11338,7 +11354,7 @@ JSNative CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns chance (in values ranging from 0 to 1000) of pChar (player) successfully controlling mChar (pet)
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11385,7 +11401,7 @@ JSNative CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Value* 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds NPC to player's list of active followers
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11429,7 +11445,7 @@ JSNative CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a follower from player's follower list
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11473,7 +11489,7 @@ JSNative CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's active followers
 //o------------------------------------------------------------------------------------------------o
-JSNative CChar_GetFollowerList( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CChar_GetFollowerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11540,7 +11556,7 @@ JSNative CChar_GetFollowerList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes player from party
 //o------------------------------------------------------------------------------------------------o
-JSNative CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -11577,7 +11593,7 @@ JSNative CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds player to party
 //o------------------------------------------------------------------------------------------------o
-JSNative CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -11668,7 +11684,7 @@ JSNative CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets party member at specified index in list of party members
 //o------------------------------------------------------------------------------------------------o
-JSNative CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
@@ -11717,7 +11733,7 @@ JSNative CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11742,7 +11758,7 @@ JSNative CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -11767,7 +11783,7 @@ JSNative CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all trigger words in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSNative CSocket_FinishedTriggerWords( JSContext* cx, unsigned argc, JS::Value* vp )
+static bool CSocket_FinishedTriggerWords( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
