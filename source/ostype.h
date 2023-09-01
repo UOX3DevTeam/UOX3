@@ -1,9 +1,3 @@
-//
-//  ostype.h
-//  uox3
-//
-//  Created by charles on 9/1/23.
-//
 
 #ifndef ostype_h
 #define ostype_h
