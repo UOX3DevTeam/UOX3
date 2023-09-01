@@ -26,7 +26,6 @@
 #ifndef __UOX3_H
 #define __UOX3_H
 
-#include "Prerequisites.h"
 /* Include all the standard header *after* all the configuration
  settings have been made.
  */

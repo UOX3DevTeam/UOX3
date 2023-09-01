@@ -1,7 +1,6 @@
 #ifndef __PARTYFACTORY_H__
 #define __PARTYFACTORY_H__
 
-#include "Prerequisites.h"
 /* Include all the standard header *after* all the configuration
  settings have been made.
  */
