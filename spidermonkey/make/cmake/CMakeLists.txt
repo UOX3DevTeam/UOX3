@@ -164,6 +164,7 @@ else()
 		-Wno-incompatible-pointer-types
 		-Wno-deprecated-declarations
 		-Wno-format-security
+		-Wno-attributes
 	)
 	if (APPLE)
 		target_compile_options( jscript PRIVATE

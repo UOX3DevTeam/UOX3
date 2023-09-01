@@ -1,5 +1,8 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
+
+#include <cstring>
+
 #include "enums.h"
 const UI08 BIT_CANFLY		=	0;
 const UI08 BIT_ANTIBLINK	=	1;
