@@ -50,7 +50,7 @@ add_executable(uox3
    ../../source/books.cpp
    ../../source/books.h
    ../../source/subsystem/account.cpp
-   ../../source/account.hpp
+   ../../source/subsystem/account.hpp
    ../../source/cEffects.h
    ../../source/CGump.cpp
    ../../source/CGump.h
