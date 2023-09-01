@@ -17,7 +17,7 @@
 //o------------------------------------------------------------------------------------------------o
 
 #include <cstdint>
-
+#include "useful.h"
 class CSocket ;
 
 #if defined( _DEBUG )

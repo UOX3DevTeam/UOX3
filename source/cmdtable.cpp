@@ -10,6 +10,7 @@
 //
 #include "cmdtable.h"
 
+
 #include "cChar.h"
 #include "CGump.h"
 #include "cItem.h"
@@ -34,9 +35,9 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "useful.h"
 #include "wholist.h"
-
-
+#include "worldmain.h"
 void CollectGarbage( void );
 void EndMessage( SI32 x );
 void HandleGumpCommand( CSocket *s, std::string cmd, std::string data );

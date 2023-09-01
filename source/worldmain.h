@@ -7,11 +7,18 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
-#include "cServerData.h"
-#include "GenericList.h"
+#include <cstdint>
+#include <map>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #if defined(_WIN32)
 #include <winsock2.h>
 #endif
+
+#include "typedefs.h"
+#include "cServerData.h"
+#include "GenericList.h"
 class CSpawnRegion;
 class CTownRegion;
 class CTEffect;

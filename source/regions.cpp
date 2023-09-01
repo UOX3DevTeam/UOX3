@@ -776,7 +776,7 @@ void CMapHandler::Save( void )
 		auto [mapWidth, mapHeight] = Map->SizeOfMap( i );
 		onePercent += static_cast<SI32>(( mapWidth / MapColSize ) * ( mapHeight / MapRowSize ));
 	}
-	onePercent /= 100.0f;
+	onePercent = static_cast<std::int32_t>(onePercent / 100.0f);
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
 	const UI32 s_t						= GetClock();

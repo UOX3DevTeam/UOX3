@@ -43,6 +43,7 @@
 #include <sys/ioctl.h>
 struct termios initial_terminal_state;
 #else
+#include <conio.h>
 DWORD initial_terminal_state;
 #endif
 using namespace std::string_literals;

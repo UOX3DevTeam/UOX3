@@ -1222,9 +1222,6 @@ bool CPIUpdateRangeChange::Handle( void )
 			break;
 	}
 	tSock->Send( tSock->Buffer(), 2 );	// we want to echo it back to the client
-#if defined( _MSC_VER )
-#pragma note( "Flush location" )
-#endif
 	tSock->FlushBuffer();
 	tSock->CurrcharObj()->Teleport(); // TODO - Could this be an Update() instead of Teleport?
 	return true;
@@ -1434,9 +1431,6 @@ void CPIKeepAlive::Receive( void )
 bool CPIKeepAlive::Handle( void )
 {
 	tSock->Send( tSock->Buffer(), 2 );
-#if defined( _MSC_VER )
-#pragma note( "Flush location" )
-#endif
 	tSock->FlushBuffer();
 	return true;
 }

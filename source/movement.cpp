@@ -33,6 +33,9 @@
 //| information to help out the future bug fixers. I will try to explain EVERY bit of logic
 //| behind what I've done to make things easier.
 //o------------------------------------------------------------------------------------------------o
+
+#include <cmath>
+
 #include "uox3.h"
 #include "movement.h"
 #include "weight.h"

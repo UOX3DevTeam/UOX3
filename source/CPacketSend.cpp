@@ -328,9 +328,6 @@ void CPacketSpeech::Font( FontType toPut )
 {
 	pStream.WriteShort( 12, toPut );
 }
-#if defined( _MSC_VER )
-#pragma note( "Function Warning: CPacketSpeech::Language(), does nothing" )
-#endif
 void CPacketSpeech::Language( [[maybe_unused]] UnicodeTypes toPut )
 {
 

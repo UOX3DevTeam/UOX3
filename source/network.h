@@ -643,7 +643,7 @@ private:
 
 	std::map<UI16, UI16>		packetOverloads;
 	std::vector<FirewallEntry_st>	slEntries;
-	SI32					a_socket;
+	SOCKET					a_socket;
 
 	struct sockaddr_in		client_addr;
 

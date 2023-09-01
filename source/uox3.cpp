@@ -3189,9 +3189,6 @@ auto GetClock() -> UI32
 //o------------------------------------------------------------------------------------------------o
 auto RoundNumber( R32 toRound)->R32
 {
-#if defined( _MSC_VER )
-#pragma todo( "This function should be replaced by standard functions available in cmath library, like std::round()" )
-#endif
 	R32 flVal = floor( toRound );
 	if( flVal < floor( toRound + 0.5 ))
 	{

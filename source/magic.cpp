@@ -1392,9 +1392,9 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 	}
 
 	//Damage should not exceed basedamage from DFN + 20%
-	if( spellDamage > baseDamage * 1.20 )
+	if( spellDamage > (static_cast<std::int16_t>( static_cast<double>(baseDamage) * 1.20 )))
 	{
-		spellDamage = baseDamage * 1.20;
+		spellDamage = static_cast<std::int16_t>(static_cast<double>(baseDamage) * 1.20);
 	}
 
 	Effects->TempEffect( src, target, 32, spellDamage, 0, 0 );
@@ -3479,11 +3479,11 @@ SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 spellDamage, bool sp
 	UI16 targetResist = target->GetSkill( MAGICRESISTANCE ) / 10;
 	if( targetResist > casterEval )
 	{
-		spellDamage *= ((( casterEval - targetResist ) / 200.0f ) + 1 );
+		spellDamage *= (static_cast<std::int16_t>((( casterEval - targetResist ) / 200.0f )) + 1 );
 	}
 	else
 	{
-		spellDamage *= ((( casterEval - targetResist ) / 500.0f ) + 1 );
+		spellDamage *= (static_cast<std::int16_t>(( casterEval - targetResist ) / 500.0f ) + 1 );
 	}
 
 	// Randomize some more to get broader min/max damage values

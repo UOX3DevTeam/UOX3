@@ -1,7 +1,10 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
-#include "cBaseObject.h"
 #include <deque>
+#include <unordered_map>
+
+#include "typedefs.h"
+#include "cBaseObject.h"
 #include "GenericList.h"
 #include "subsystem/account.hpp"
 

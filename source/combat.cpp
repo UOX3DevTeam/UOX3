@@ -2848,7 +2848,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			case ER_TD: // TD - Third Dawn
 			case ER_LBR: // LBR - Lord Blackthorn's Revenge (Publish 15)
 				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
-				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
+				hitChance = static_cast<float>((( static_cast<double>( attackSkill ) + 500.0 ) / (( static_cast<double>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
 				if( hitChance < 0 )
 				{
 					hitChance = 0;

@@ -880,7 +880,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 	// find new spots, though
 	if( !waterCreature && landPosSize > 0 ) // land creature
 	{
-		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - landPosSize ));
+		maxSpawnAttempts = std::max( static_cast<std::uint8_t>( 25 ), static_cast<std::uint8_t>( maxSpawnAttempts - landPosSize ));
 	}
 	else if(( waterCreature || amphiCreature ) && waterPosSize > 0 )  // water or amphibian creature
 	{
@@ -1065,7 +1065,7 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 	// valid spawn points, and increase the chance of using those valid spots instead!
 	if( landPosSize > 0 )
 	{
-		maxSpawnAttempts = std::max( static_cast<SI16>( 25 ), static_cast<SI16>( maxSpawnAttempts - landPosSize ));
+		maxSpawnAttempts = std::max( static_cast<std::uint8_t>( 25 ), static_cast<std::uint8_t>( maxSpawnAttempts - landPosSize ));
 	}
 
 	for( UI08 a = 0; a < maxSpawnAttempts; ++a )

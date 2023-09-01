@@ -4,7 +4,7 @@
 #include <bitset>
 #include <cstring>
 #include <string>
-
+#include <cmath>
 #include "enums.h"
 #include "typedefs.h"
 

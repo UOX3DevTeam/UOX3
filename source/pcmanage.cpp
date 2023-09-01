@@ -1413,9 +1413,6 @@ void StartChar( CSocket *mSock, bool onCreate )
 				SysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() )); // message upon entering a server
 			}
 			ShowMessageOfTheDay( mSock );
-#if defined( _MSC_VER )
-#pragma note( "HTML Status for Players" )
-#endif
 			if( onCreate )
 			{
 				cScript *onCreateScp = JSMapping->GetScript( static_cast<UI16>( 0 ));	// 0 == global script

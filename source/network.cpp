@@ -570,7 +570,7 @@ void CNetworkStuff::CheckConn( void )
 	if( s > 0 )
 	{
 		SI32 len = sizeof( struct sockaddr_in );
-		SI32 newClient;
+		SOCKET newClient;
 #if defined(_WIN32)
 		newClient = accept( a_socket, ( struct sockaddr * )&client_addr, &len );
 #else
@@ -921,9 +921,6 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							ourChar->SetTimer( tCHAR_TIMEOUT, ourChar->GetTimer( tCHAR_TIMEOUT ) + 1000 );
 						}
 						mSock->Send( buffer, 5 );
-#if defined( _MSC_VER )
-#pragma note( "Flush location" )
-#endif
 						mSock->FlushBuffer();
 						Movement->CombatWalk( ourChar );
 						Effects->DoSocketMusic( mSock );
@@ -1143,9 +1140,6 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 								mj += 2;
 								tempBuffer[2] = static_cast<UI08>( mj );
 								mSock->Send( tempBuffer, static_cast<SI32>( mj ));
-#if defined( _MSC_VER )
-#pragma note( "Flush location" )
-#endif
 								mSock->FlushBuffer();
 							}
 						}
