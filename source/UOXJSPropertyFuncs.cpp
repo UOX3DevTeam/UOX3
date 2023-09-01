@@ -248,7 +248,7 @@ IMPL_GET(  CCreateEntry, avgMaxSkill, CreateEntry_st, setInt32,  AverageMaxSkill
 /*
 JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CreateEntry_st *gPriv = static_cast<CreateEntry_st*>( JS_GetPrivate( cx, obj ));
+	CreateEntry_st *gPriv = JS::GetMaybePtrFromReservedSlot<CreateEntry_st>(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -333,7 +333,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CItem *gPriv = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+	CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
 	SERIAL TempSerial = INVALIDSERIAL;
 
 	if( !ValidateObject( gPriv ))
@@ -972,7 +972,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 
 JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CItem *gPriv = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
+	CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
@@ -1438,7 +1438,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 
 JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
@@ -2053,7 +2053,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 
 JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CChar *gPriv = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
@@ -2534,7 +2534,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 
 JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CTownRegion *gPriv = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+	CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -2631,7 +2631,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 }
 JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CTownRegion *gPriv = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+	CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -2729,7 +2729,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 }
 JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
+	CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
@@ -2812,7 +2812,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 }
 JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CSpawnRegion *gPriv = static_cast<CSpawnRegion *>( JS_GetPrivate( cx, obj ));
+	CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
@@ -2869,7 +2869,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
+	CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -2938,7 +2938,7 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 }
 JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CGuild *gPriv = static_cast<CGuild *>( JS_GetPrivate( cx, obj ));
+	CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -3094,7 +3094,7 @@ bool CRaceProps_setProperty(JSContext *cx, unsigned int argc, JS::Value *vp) {
 
 JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
+	CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -3198,7 +3198,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
+	CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -3503,7 +3503,7 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	SEGumpData_st *gPriv = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
+	SEGumpData_st *gPriv = JS::GetMaybePtrFromReservedSlot<SEGumpData_st >(obj , 0);
 
 	if( gPriv == nullptr )
 		return JS_FALSE;
@@ -3527,7 +3527,7 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 
 JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
+	CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
@@ -3772,7 +3772,7 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 
 JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CAccountBlock_st *myAccount = static_cast<CAccountBlock_st *>( JS_GetPrivate( cx, obj ));
+	CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
@@ -3901,7 +3901,7 @@ JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj,
 
 JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	CScriptSection *gPriv = static_cast<CScriptSection *>( JS_GetPrivate( cx, obj ));
+	CScriptSection *gPriv = JS::GetMaybePtrFromReservedSlot<CScriptSection >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -3935,7 +3935,7 @@ JSBool CScriptSectionProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_
 
 JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	MapResource_st *gPriv = static_cast<MapResource_st*>( JS_GetPrivate( cx, obj ));
+	MapResource_st *gPriv = JS::GetMaybePtrFromReservedSlot<MapResource_st>(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -3996,7 +3996,7 @@ IMPL_GET( CResource, fishTime,   MapResource_st, setPrivateUint32, fishTime )
 
 JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
+	Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
@@ -4055,7 +4055,7 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
 JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
-	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
+	Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
