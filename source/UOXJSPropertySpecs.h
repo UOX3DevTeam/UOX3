@@ -69,6 +69,14 @@ bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {   
 // _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
 //    } \
 
+#define IMPL_SET_NP(main, attr, method, accessor)                                                                \
+bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  accessor(args.get(0).method());                                                                                \
+  return true;                                                                                                   \
+}
+
+
 
 #define DECL_GET_SET( main, attr ) \
 DECL_GET( main, attr ) \
@@ -745,9 +753,9 @@ DECL_GET_SET( CConsole, mode )
 DECL_GET_SET( CConsole, logEcho )
 
 // Script Section Properties
-DECL_GET_SET( CScriptSection, numTags )
-DECL_GET_SET( CScriptSection, atEnd )
-DECL_GET_SET( CScriptSection, atEndTags )
+DECL_GET( CScriptSection, numTags )
+DECL_GET( CScriptSection, atEnd )
+DECL_GET( CScriptSection, atEndTags )
 
 // Resource Properties
 DECL_GET_SET( CResource, logAmount )
@@ -1493,9 +1501,9 @@ inline JSPropertySpec CConsoleProperties[] =
 
 inline JSPropertySpec CScriptSectionProperties[] =
 {
-  JS_PSGS( "numTags",	JSCScriptSection_get_numTags,	   JSCScriptSection_set_numTags,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "atEnd",		JSCScriptSection_get_atEnd,	       JSCScriptSection_set_atEnd,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "atEndTags",	JSCScriptSection_get_atEndTags,	   JSCScriptSection_set_atEndTags,	     JSPROP_ENUMANDPERM ),
+  JS_PSG( "numTags",    JSCScriptSection_get_numTags,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "atEnd",      JSCScriptSection_get_atEnd,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "atEndTags",  JSCScriptSection_get_atEndTags,    JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 

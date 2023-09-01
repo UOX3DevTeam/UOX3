@@ -53,12 +53,6 @@ JSPropertyFunc CFileProps_setProperty;
 JSPropertyFunc CAccountProps_getProperty;
 JSPropertyFunc CAccountProps_setProperty;
 
-JSPropertyFunc CConsoleProps_getProperty;
-JSPropertyFunc CConsoleProps_setProperty;
-
-JSPropertyFunc CScriptSectionProps_getProperty;
-JSPropertyFunc CScriptSectionProps_setProperty;
-
 JSPropertyFunc CScriptProps_getProperty;
 
 JSPropertyFunc CResourceProps_getProperty;

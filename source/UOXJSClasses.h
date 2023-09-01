@@ -237,7 +237,6 @@ inline JSClass UOXConsole_class =
   JSCLASS_HAS_RESERVED_SLOTS(1),
   &defaultClassOps
 };
-//	CConsoleProps_getProperty,
 //	CConsoleProps_setProperty,
 
 inline JSClass UOXResource_class =

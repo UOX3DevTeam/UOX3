@@ -37,7 +37,7 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
-JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	size_t spellId = JSVAL_TO_INT( id );
 
@@ -45,7 +45,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
 		*vp = JSVAL_NULL;
-		return JS_FALSE;
+		return false;
 	}
 
 	CSpellInfo *mySpell = &Magic->spells[spellId];
@@ -53,7 +53,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	{
 		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
 		*vp = JSVAL_NULL;
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsSpell = JS_NewObject( cx, &UOXSpell_class, nullptr, obj );
@@ -61,7 +61,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	JS::SetReservedSlot( jsSpell, 0, JS::PrivateValue(mySpell) );
 
 	*vp = OBJECT_TO_JSVAL( jsSpell );
-	return JS_TRUE;
+	return true;
 }
 
 
@@ -136,7 +136,7 @@ IMPL_GETS( CSpell, strToSay,       CSpellInfo, setString, StringToSay().c_str() 
 
 
 
-JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	size_t skillId = JSVAL_TO_INT( id );
 
@@ -144,7 +144,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	{
 		ScriptError( cx, oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
 		*vp = JSVAL_NULL;
-		return JS_FALSE;
+		return false;
 	}
 
 	CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
@@ -152,7 +152,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	{
 		ScriptError( cx, oldstrutil::format( "Invalid Skill" ).c_str() );
 		*vp = JSVAL_NULL;
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsSkill = JS_NewObject( cx, &UOXGlobalSkill_class, nullptr, obj );
@@ -160,7 +160,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	JS::SetReservedSlot( jsSkill, 0, JS::PrivateValue(mySkill) );
 
 	*vp = OBJECT_TO_JSVAL( jsSkill );
-	return JS_TRUE;
+	return true;
 }
 
 // clang-format off
@@ -211,7 +211,7 @@ IMPL_GET_NP( CTimer, SOCK_TRACKINGDISPLAY, setInt32, tPC_TRACKINGDISPLAY )
 IMPL_GET_NP( CTimer, SOCK_TRAFFICWARDEN,   setInt32, tPC_TRAFFICWARDEN )
 // clang-format on
 
-JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	UI16 createEntryId = static_cast<UI16>( JSVAL_TO_INT( id ));
 
@@ -220,7 +220,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	{
 		ScriptError( cx, oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
 		*vp = JSVAL_NULL;
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsCreateEntry = JS_NewObject( cx, &UOXCreateEntry_class, nullptr, obj );
@@ -228,7 +228,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	JS::SetReservedSlot( jsCreateEntry, 0, JS::PrivateValue(myCreateEntry) );
 
 	*vp = OBJECT_TO_JSVAL( jsCreateEntry );
-	return JS_TRUE;
+	return true;
 }
 
 // clang-format off
@@ -246,11 +246,11 @@ IMPL_GET(  CCreateEntry, avgMaxSkill, CreateEntry_st, setInt32,  AverageMaxSkill
 // clang-format on
 
 /*
-JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CreateEntry_st *gPriv = JS::GetMaybePtrFromReservedSlot<CreateEntry_st>(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -328,16 +328,16 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 		}
 		}
 	}
-	return JS_TRUE;
+	return true;
 }*/
 
-JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
 	SERIAL TempSerial = INVALIDSERIAL;
 
 	if( !ValidateObject( gPriv ))
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -967,14 +967,14 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CItem *gPriv = JS::GetMaybePtrFromReservedSlot<CItem >(obj , 0);
 	if( !ValidateObject( gPriv ))
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -1050,7 +1050,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			}
 			case CIP_WORLDNUMBER:
 				if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), static_cast<UI08>( encaps.toInt() )))
-					return JS_FALSE;
+					return false;
 
 				gPriv->RemoveFromSight();
 				gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), static_cast<UI08>( encaps.toInt() ), gPriv->GetInstanceId() );
@@ -1425,23 +1425,23 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 
 	if( !ValidateObject( gPriv ))
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -2039,23 +2039,23 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		// ... by calling a dummy function in original script!
 		// ... but keep track of the property value we're trying to retrieve, stored in vp!
 		jsval origVp = *vp;
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
 		*vp = origVp;
-		if( retVal == JS_FALSE )
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CChar *gPriv = JS::GetMaybePtrFromReservedSlot<CChar >(obj , 0);
 	if( !ValidateObject( gPriv ))
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -2139,7 +2139,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			}
 			case CCP_WORLDNUMBER:
 				if( !Map->InsideValidWorld( gPriv->GetX(), gPriv->GetY(), static_cast<UI08>( encaps.toInt() )))
-					return JS_FALSE;
+					return false;
 
 				gPriv->RemoveFromSight();
 				gPriv->SetLocation( gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), static_cast<UI08>( encaps.toInt() ), gPriv->GetInstanceId() );
@@ -2521,22 +2521,22 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2627,13 +2627,13 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
-JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CTownRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CTownRegion >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -2717,22 +2717,22 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
-JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
 
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2808,14 +2808,14 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
-JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CSpawnRegion *gPriv = JS::GetMaybePtrFromReservedSlot<CSpawnRegion >(obj , 0);
 
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -2856,22 +2856,22 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2934,13 +2934,13 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
-JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CGuild *gPriv = JS::GetMaybePtrFromReservedSlot<CGuild >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -2996,15 +2996,15 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 // clang-format off
@@ -3089,14 +3089,14 @@ bool CRaceProps_setProperty(JSContext *cx, unsigned int argc, JS::Value *vp) {
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -3185,22 +3185,22 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CSocket *gPriv = JS::GetMaybePtrFromReservedSlot<CSocket >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3330,7 +3330,7 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					if( !ValidateObject( myItem ))
 					{
 						*vp = JSVAL_NULL;
-						return JS_TRUE;
+						return true;
 					}
 
 					JSObject *myObj = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
@@ -3344,30 +3344,30 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					if( !ValidateObject( myChar ))
 					{
 						*vp = JSVAL_NULL;
-						return JS_TRUE;
+						return true;
 					}
 
 					JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 					*vp = OBJECT_TO_JSVAL( myObj );
 				}
 
-				return JS_TRUE;
+				return true;
 			}
 				break;
 			default:
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
 
 	if( !ValidateObject( myChar ))
-		return JS_FALSE;
+		return false;
 
 	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
 
@@ -3388,16 +3388,16 @@ JSBool CSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		*vp = INT_TO_JSVAL( static_cast<UI08>( myChar->GetSkillLock( skillId )));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CChar *myChar = static_cast<CChar*>( myClass.toObject() );
 
 	if( !ValidateObject( myChar ))
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -3490,23 +3490,23 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	SEGumpData_st *gPriv = JS::GetMaybePtrFromReservedSlot<SEGumpData_st >(obj , 0);
 
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3522,14 +3522,14 @@ JSBool CGumpDataProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
 	if( myAccount == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3767,14 +3767,14 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CAccountBlock_st *myAccount = JS::GetMaybePtrFromReservedSlot<CAccountBlock_st >(obj , 0);
 	if( myAccount == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -3811,7 +3811,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				}
 				else
 				{
-					return JS_FALSE;
+					return false;
 				}
 				break;
 			}
@@ -3856,88 +3856,34 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
-{
-	if( JSVAL_IS_INT( id ))
-	{
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
-			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
-}
+// clang-format off
+IMPL_GET_NP( CConsole, mode,    setInt32, Console.CurrentMode() )
+IMPL_GET_NP( CConsole, logEcho, setInt32, Console.LogEcho()     )
+IMPL_SET_NP( CConsole, mode,    toInt32,  Console.CurrentMode )
+IMPL_SET_NP( CConsole, logEcho, toInt32,  Console.CurrentMode )
+// clang-format on
 
-JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
-{
-	JSEncapsulate encaps( cx, vp );
-	if( JSVAL_IS_INT( id ))
-	{
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
-			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
-			default:
-				break;
-		}
-	}
+// clang-format off
+IMPL_GET( CScriptSection, numTags,    CScriptSection,   setInt32, NumEntries() )
+IMPL_GET( CScriptSection, atEnd,      CScriptSection, setBoolean, AtEnd() )
+IMPL_GET( CScriptSection, atEndTags,  CScriptSection, setBoolean, AtEndTags() )
 
-	return JS_TRUE;
-}
-
-JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-	CScriptSection *gPriv = JS::GetMaybePtrFromReservedSlot<CScriptSection >(obj , 0);
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	if( JSVAL_IS_INT( id ))
-	{
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CSS_NUMTAGS:		*vp = INT_TO_JSVAL( gPriv->NumEntries() );			break;
-			case CSS_ATEND:			*vp = BOOLEAN_TO_JSVAL( gPriv->AtEnd() );			break;
-			case CSS_ATENDTAGS:		*vp = BOOLEAN_TO_JSVAL( gPriv->AtEndTags() );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
-}
-
-JSBool CScriptSectionProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
-{
-	/*		JSEncapsulate encaps( cx, vp );
-		if( JSVAL_IS_INT( id ))
-		{
-			switch( JSVAL_TO_INT( id ))
-			{
-			default:
-				break;
-			}
-		}*/
-		return JS_TRUE;
-}
-
-JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	MapResource_st *gPriv = JS::GetMaybePtrFromReservedSlot<MapResource_st>(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -3974,15 +3920,15 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 // clang-format off
@@ -3994,11 +3940,11 @@ IMPL_GET( CResource, fishAmount, MapResource_st, setInt32,         fishAmt  )
 IMPL_GET( CResource, fishTime,   MapResource_st, setPrivateUint32, fishTime )
 // clang-format on
 
-JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	// Keep track of original script that's executing
 	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
@@ -4042,22 +3988,22 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == false )
 		{
 			// Dummy function not found, let shard admin know!
 			Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+bool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	Party *gPriv = JS::GetMaybePtrFromReservedSlot<Party >(obj , 0);
 	if( gPriv == nullptr )
-		return JS_FALSE;
+		return false;
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -4069,7 +4015,7 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				if( !ValidateObject( myChar ))
 				{
 					*vp = JSVAL_NULL;
-					return JS_TRUE;
+					return true;
 				}
 				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, myChar, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 				*vp = OBJECT_TO_JSVAL( myObj );
@@ -4080,10 +4026,10 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			default:																				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+bool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -4096,10 +4042,10 @@ JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 				break;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
-JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+bool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
 	JSEncapsulate srcObj( cx, obj );
 	CSocket *srcSock = static_cast<CSocket *>( srcObj.toObject() );
@@ -4108,27 +4054,27 @@ JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		if( srcObj.ClassName() != trgObj.ClassName() )
 		{
-			*bp = JS_FALSE;
+			*bp = false;
 		}
 		else
 		{
 			CSocket *trgSock = static_cast<CSocket *>( trgObj.toObject() );
-			*bp = ( srcSock == trgSock ) ? JS_TRUE : JS_FALSE;
+			*bp = ( srcSock == trgSock ) ? true : false;
 		}
 	}
 	else
 	{
-		*bp = ( srcSock == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
+		*bp = ( srcSock == nullptr && trgObj.isType( JSOT_NULL )) ? true : false;
 	}
-	return JS_TRUE;
+	return true;
 }
-JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+bool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
 	JSEncapsulate srcObj( cx, obj );
 	CBaseObject *src = static_cast<CBaseObject *>( srcObj.toObject() );
 	if( !ValidateObject( src ))
 	{
-		*bp = JS_FALSE;
+		*bp = false;
 	}
 	else
 	{
@@ -4137,29 +4083,29 @@ JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 		{
 			if( srcObj.ClassName() != trgObj.ClassName() )
 			{
-				*bp = JS_FALSE;
+				*bp = false;
 			}
 			else
 			{
 				CBaseObject *trg = static_cast<CBaseObject *>( trgObj.toObject() );
 				if( !ValidateObject( trg ))
 				{
-					*bp = JS_FALSE;
+					*bp = false;
 				}
 				else	// both valid base objects!  Now, we'll declare equality based on SERIAL, not pointer
 				{
-					*bp = ( src->GetSerial() == trg->GetSerial() ) ? JS_TRUE : JS_FALSE;
+					*bp = ( src->GetSerial() == trg->GetSerial() ) ? true : false;
 				}
 			}
 		}
 		else
 		{
-			*bp = ( src == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
+			*bp = ( src == nullptr && trgObj.isType( JSOT_NULL )) ? true : false;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
-JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
+bool CParty_equality( JSContext *cx, JSObject *obj, jsval v, bool *bp )
 {
 	JSEncapsulate srcObj( cx, obj );
 	Party *srcParty = static_cast<Party *>( srcObj.toObject() );
@@ -4168,30 +4114,18 @@ JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	{
 		if( srcObj.ClassName() != trgObj.ClassName() )
 		{
-			*bp = JS_FALSE;
+			*bp = false;
 		}
 		else
 		{
 			Party *trgParty	= static_cast<Party *>( trgObj.toObject() );
-			*bp = ( srcParty == trgParty ) ? JS_TRUE : JS_FALSE;
+			*bp = ( srcParty == trgParty ) ? true : false;
 		}
 	}
 	else
 	{
-		*bp = ( srcParty == nullptr && trgObj.isType( JSOT_NULL )) ? JS_TRUE : JS_FALSE;
+		*bp = ( srcParty == nullptr && trgObj.isType( JSOT_NULL )) ? true : false;
 	}
-	return JS_TRUE;
+	return true;
 }
 
-template <typename Main, typename Attr, typename Type, auto Method, auto Accessor>
-bool JSMain_get_Attr(JSContext *cx, unsigned int argc, JS::Value *vp) {
-    auto args = JS::CallArgsFromVp(argc, vp);
-    JS::RootedObject thisObj(cx);
-    if (!args.computeThis(cx, &thisObj))
-        return false;
-    auto priv = JS::GetMaybePtrFromReservedSlot<Type>(thisObj, 0);
-    args.rval().Method(priv->Accessor);
-    return true;
-}
-
-JSMain_get_Attr<CSpell, action, CSpellInfo, setInt32, Action()>;
