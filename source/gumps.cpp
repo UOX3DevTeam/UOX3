@@ -1326,7 +1326,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				guiInfo.AddData( "Version", UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s );
 				guiInfo.AddData( "Compiled By", UOXVersion::name );
 				guiInfo.AddData( "Uptime", builtString );
-				guiInfo.AddData( "Accounts", Account::shared().size() );
+				guiInfo.AddData( "Accounts", static_cast<std::uint32_t>(Account::shared().size()) );
 				guiInfo.AddData( "Items", ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ));
 				guiInfo.AddData( "Chars", ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
 				guiInfo.AddData( "Players in world", static_cast<UI32>( cwmWorldState->GetPlayersOnline() ));
