@@ -247,6 +247,12 @@ void ScriptError( JSContext *cx, const char *txt, ... )
 	JS_ReportErrorNumberASCII( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
 }
 
+// Function to display a script error
+void ScriptError(JSContext* cx, const char* message)
+ {
+    JS_ReportErrorUTF8(cx, message);
+}
+
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 TryParseJSVal( JS::Value toParse )
 //o------------------------------------------------------------------------------------------------o
