@@ -169,6 +169,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -214,6 +215,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -248,6 +250,7 @@
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -284,6 +287,7 @@
       <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -324,6 +328,7 @@
       <CompileAs>Default</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
       <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
@@ -366,6 +371,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4244;4305</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -1431,6 +1437,7 @@
     <ClInclude Include="..\..\source\MultiMul.hpp" />
     <ClInclude Include="..\..\source\network.h" />
     <ClInclude Include="..\..\source\ObjectFactory.h" />
+    <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\PageVector.h" />
     <ClInclude Include="..\..\source\PartySystem.h" />
     <ClInclude Include="..\..\source\power.h" />
@@ -1440,20 +1447,20 @@
     <ClInclude Include="..\..\source\SEFunctions.h" />
     <ClInclude Include="..\..\source\skills.h" />
     <ClInclude Include="..\..\source\speech.h" />
+    <ClInclude Include="..\..\source\spidermonkey.h" />
     <ClInclude Include="..\..\source\ssection.h" />
     <ClInclude Include="..\..\source\StringUtility.hpp" />
     <ClInclude Include="..\..\source\utility\strutil.hpp" />
     <ClInclude Include="..\..\source\teffect.h" />
     <ClInclude Include="..\..\source\townregion.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
+    <ClInclude Include="..\..\source\useful.h" />
     <ClInclude Include="..\..\source\UOPData.hpp" />
-    <ClInclude Include="..\..\source\uox3.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />
     <ClInclude Include="..\..\source\UOXJSMethods.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyEnums.h" />
     <ClInclude Include="..\..\source\UOXJSPropertyFuncs.h" />
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h" />
-    <ClInclude Include="..\..\source\UOXStdHeaders.h" />
     <ClInclude Include="..\..\source\uoxstruct.h" />
     <ClInclude Include="..\..\source\weight.h" />
     <ClInclude Include="..\..\source\wholist.h" />

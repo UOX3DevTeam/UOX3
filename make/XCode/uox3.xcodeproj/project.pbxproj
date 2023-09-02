@@ -370,6 +370,8 @@
 		56D6EEE12AA0AC66005355FA /* expired */ = {
 			isa = PBXGroup;
 			children = (
+				64A90111293E3DD4009B54DA /* UOXStdHeaders.h */,
+				64A90104293E3DD4009B54DA /* uox3.h */,
 				64A9009D293E3DD4009B54DA /* ConfigOS.h */,
 				64A900E6293E3DD4009B54DA /* Prerequisites.h */,
 				64A9007A293E3DD4009B54DA /* cAccountClass.cpp */,
@@ -426,7 +428,6 @@
 				64E2F796293FCE8400546A08 /* UOData */,
 				64A90089293E3DD4009B54DA /* Changelog.txt */,
 				64A90103293E3DD4009B54DA /* uox3.cpp */,
-				64A90104293E3DD4009B54DA /* uox3.h */,
 			);
 			name = source;
 			path = ../../source;
@@ -556,7 +557,6 @@
 				64A900E4293E3DD4009B54DA /* pcmanage.cpp */,
 				64A900E5293E3DD4009B54DA /* power.h */,
 				64A90100293E3DD4009B54DA /* typedefs.h */,
-				64A90111293E3DD4009B54DA /* UOXStdHeaders.h */,
 				56D6EF002AA227B5005355FA /* ostype.h */,
 				56D6EEFD2AA22593005355FA /* spidermonkey.h */,
 				56D6EF012AA22CB8005355FA /* useful.h */,
