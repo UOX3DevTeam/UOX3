@@ -4,9 +4,9 @@ project(jscript VERSION 1.8.0 LANGUAGES C)
 if(NOT WIN32)
  execute_process(
  	COMMAND cc -o ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg ${PROJECT_SOURCE_DIR}/../../jscpucfg.c -Wno-format-security -Wno-deprecated-declarations -Os 
- 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg   
+ 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg  
  	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
- 	OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h 
+ 	OUTPUT_FILE ${PROJECT_SOURCE_DIR}/../../jsautocfg.h 
  	
  )
  message("Generating jsautocfg.h")
