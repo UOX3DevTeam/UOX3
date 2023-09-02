@@ -34,7 +34,7 @@ SI32 FileSize( std::string filename )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new character object based on data loaded from worldfiles
 //o------------------------------------------------------------------------------------------------o
-void LoadChar( std::ifstream& readDestination )
+void LoadChar( std::istream& readDestination )
 {
 	CChar *x = static_cast<CChar *>( ObjectFactory::GetSingleton().CreateBlankObject( OT_CHAR ));
 	if( x == nullptr )
@@ -52,7 +52,7 @@ void LoadChar( std::ifstream& readDestination )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new item object based on data loaded from worldfiles
 //o------------------------------------------------------------------------------------------------o
-void LoadItem( std::ifstream& readDestination )
+void LoadItem( std::istream& readDestination )
 {
 	CItem *x = static_cast<CItem *>( ObjectFactory::GetSingleton().CreateBlankObject( OT_ITEM ));
 	if( x == nullptr )
@@ -70,7 +70,7 @@ void LoadItem( std::ifstream& readDestination )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new multi object, like a house, based on data loaded from worldfiles
 //o------------------------------------------------------------------------------------------------o
-void LoadMulti( std::ifstream& readDestination )
+void LoadMulti( std::istream& readDestination )
 {
 	CMultiObj *ourHouse = static_cast<CMultiObj *>( ObjectFactory::GetSingleton().CreateBlankObject( OT_MULTI ));
 	if( !ourHouse->Load( readDestination ))	// if no load, DELETE
@@ -85,7 +85,7 @@ void LoadMulti( std::ifstream& readDestination )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new boat object based on data loaded from worldfiles
 //o------------------------------------------------------------------------------------------------o
-void LoadBoat( std::ifstream& readDestination )
+void LoadBoat( std::istream& readDestination )
 {
 	CBoatObj *ourBoat = static_cast<CBoatObj *>( ObjectFactory::GetSingleton().CreateBlankObject( OT_BOAT ));
 	if( !ourBoat->Load( readDestination )) // if no load, DELETE
@@ -100,7 +100,7 @@ void LoadBoat( std::ifstream& readDestination )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new spawn object based on data loaded from worldfiles
 //o------------------------------------------------------------------------------------------------o
-void LoadSpawnItem( std::ifstream& readDestination )
+void LoadSpawnItem( std::istream& readDestination )
 {
 	CSpawnItem *ourSpawner = static_cast<CSpawnItem *>( ObjectFactory::GetSingleton().CreateBlankObject( OT_SPAWNER ));
 	if( !ourSpawner->Load( readDestination )) // if no load, DELETE
@@ -117,7 +117,7 @@ void LoadSpawnItem( std::ifstream& readDestination )
 //|					to deal with pointer based stuff in region rather than index based stuff in array
 //|					Also saves out all data regardless (in preparation for a simple binary save)
 //o------------------------------------------------------------------------------------------------o
-void CMapRegion::SaveToDisk( std::ofstream& writeDestination )
+void CMapRegion::SaveToDisk( std::ostream& writeDestination )
 {
 	std::vector<CChar *> removeChar;
 	for( const auto &charToWrite : charData.collection() )
@@ -1041,7 +1041,7 @@ void CMapHandler::Load( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in objects from specified file
 //o------------------------------------------------------------------------------------------------o
-void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize )
+void CMapHandler::LoadFromDisk( std::istream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize )
 {
 	char line[1024];
 	R32 basePercent	= static_cast<R32>( baseValue ) / static_cast<R32>( maxSize ) * 100.0f;

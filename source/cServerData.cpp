@@ -6932,7 +6932,7 @@ auto CServerData::SaveTime() -> void
 	timeDestination.close();
 }
 
-auto ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data ) -> void;
+auto ReadWorldTagData( std::istream &inStream, std::string &tag, std::string &data ) -> void;
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::LoadTime()
 //o------------------------------------------------------------------------------------------------o
@@ -6969,7 +6969,7 @@ auto CServerData::LoadTime() -> void
 }
 
 //==============================================================================================
-auto CServerData::LoadTimeTags( std::ifstream &input ) -> void
+auto CServerData::LoadTimeTags( std::istream &input ) -> void
 {
 	std::string UTag, tag, data;
 	while( tag != "o---o" )

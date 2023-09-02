@@ -181,7 +181,7 @@ void CheckBanTimer( CAccountBlock_st &actbTemp )
 //|						BYTE[30] password
 //|						BYTE unknown1 (not usually 0x00 - so not nullptr)
 //o------------------------------------------------------------------------------------------------o
-void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
+void CPIFirstLogin::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -439,7 +439,7 @@ UI08 CPIFirstLogin::Unknown( void )
 //|						BYTE[2] server # chosen
 //|						0x80 Packet
 //o------------------------------------------------------------------------------------------------o
-void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPIServerSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -507,7 +507,7 @@ bool CPIServerSelect::Handle( void )
 //|						BYTE[30] sid
 //|						BYTE[30] password
 //o------------------------------------------------------------------------------------------------o
-void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
+void CPISecondLogin::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -673,7 +673,7 @@ bool CPISecondLogin::Handle( void )
 //|						Normally older client send a 4 byte seed (local ip).
 //|						Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending this packet.
 //o------------------------------------------------------------------------------------------------o
-void CPINewClientVersion::Log( std::ofstream &outStream, bool fullHeader )
+void CPINewClientVersion::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -837,7 +837,7 @@ bool CPINewClientVersion::Handle( void )
 //|						Server version: 0xbd 0x0 0x3 (client replies with client version of this packet)
 //|						Clients sends a client version of this packet ONCE at login (without server request.)
 //o------------------------------------------------------------------------------------------------o
-void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClientVersion::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1171,7 +1171,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 //|						"Greying" has no packet, purely client internal.
 //|						Minimal value:5, maximal: 18
 //o------------------------------------------------------------------------------------------------o
-void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
+void CPIUpdateRangeChange::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1246,7 +1246,7 @@ bool CPIUpdateRangeChange::Handle( void )
 //|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
 //|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 //o------------------------------------------------------------------------------------------------o
-void CPILogoutStatus::Log( std::ofstream &outStream, bool fullHeader )
+void CPILogoutStatus::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1473,7 +1473,7 @@ void CPIStatusRequest::Receive( void )
 	playerId	= tSock->GetDWord( 6 );
 }
 
-void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIStatusRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1683,7 +1683,7 @@ void CPIDblClick::Receive( void )
 	objectId = tSock->GetDWord( 1 );
 }
 
-void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
+void CPIDblClick::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1722,7 +1722,7 @@ void CPISingleClick::Receive( void )
 	objectId = tSock->GetDWord( 1 );
 }
 
-void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
+void CPISingleClick::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1779,7 +1779,7 @@ bool CPIMoveRequest::Handle( void )
 	return true;
 }
 
-void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIMoveRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1934,7 +1934,7 @@ void CPITargetCursor::Receive( void )
 {
 	tSock->Receive( 19, false );
 }
-void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
+void CPITargetCursor::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3184,7 +3184,7 @@ void CPICreateCharacter::Create2DCharacter( void )
 	memcpy( password, &tSock->Buffer()[40], 30 ); // Does this really have anything to do with passwords?
 }
 
-void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
+void CPICreateCharacter::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
 	{
@@ -3322,7 +3322,7 @@ void CPIPlayCharacter::Receive( void )
 	memcpy( unknown, &tSock->Buffer()[35], 33 );
 }
 
-void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPlayCharacter::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3405,7 +3405,7 @@ const std::string CPIGumpInput::Reply( void ) const
 	return reply;
 }
 
-void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
+void CPIGumpInput::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3512,7 +3512,7 @@ void CPIDyeWindow::Receive( void )
 	newValue	= tSock->GetWord( 7 );
 }
 
-void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
+void CPIDyeWindow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3710,7 +3710,7 @@ bool CPIToolTipRequestAoS::Handle( void )
 {
 	return true;
 }
-void CPIToolTipRequestAoS::Log( std::ofstream &outStream, bool fullHeader )
+void CPIToolTipRequestAoS::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3820,7 +3820,7 @@ bool CPIMetrics::Handle()
 	return true;
 }
 
-void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
+void CPIMetrics::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3999,7 +3999,7 @@ bool CPISubcommands::Handle( void )
 	}
 	return retVal;
 }
-void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
+void CPISubcommands::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( subPacket != nullptr )
 	{
@@ -4220,7 +4220,7 @@ bool CPIPartyCommand::Handle( void )
 	}
 	return true;
 }
-void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPartyCommand::Log( std::ostream &outStream, bool fullHeader )
 {
 	UI08 partyCmd = tSock->GetByte( 5 );
 
@@ -4379,7 +4379,7 @@ bool CPITrackingArrow::Handle( void )
 	}
 	return true;
 }
-void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
+void CPITrackingArrow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4423,7 +4423,7 @@ bool CPIClientLanguage::Handle( void )
 	tSock->Language( newLang );
 	return true;
 }
-void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClientLanguage::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4494,7 +4494,7 @@ bool CPIUOTDActions::Handle( void )
 	Effects->PlayCharacterAnimation( ourChar, action, 1 );
 	return true;
 }
-void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
+void CPIUOTDActions::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4546,7 +4546,7 @@ bool CPIToolTipRequest::Handle( void )
 	}
 	return true;
 }
-void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIToolTipRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4604,7 +4604,7 @@ bool CPIPopupMenuRequest::Handle( void )
 	}
 	return true;
 }
-void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPopupMenuRequest::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5103,7 +5103,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 	return true;
 }
-void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPIPopupMenuSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5149,7 +5149,7 @@ bool CPIExtendedStats::Handle( void )
 	ourChar->SetSkillLock( static_cast<SkillLock>( value ), statToSet );
 	return true;
 }
-void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
+void CPIExtendedStats::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5231,7 +5231,7 @@ bool CPIBandageMacro::Handle(void)
 	return false;
 }
 
-void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
+void CPIBandageMacro::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5285,7 +5285,7 @@ bool CPIClosedStatusGump::Handle( void )
 	return false;
 }
 
-void CPIClosedStatusGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPIClosedStatusGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5334,7 +5334,7 @@ bool CPIToggleFlying::Handle(void)
 	return true;
 }
 
-void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
+void CPIToggleFlying::Log(std::ostream &outStream, bool fullHeader)
 {
 	if( fullHeader )
 	{
@@ -5369,7 +5369,7 @@ void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
 //|									settings are enabled, player will get kicked within 30 seconds
 //|									if this packet is not received by the server.
 //o------------------------------------------------------------------------------------------------o
-void CPIKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+void CPIKrriosClientSpecial::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5554,7 +5554,7 @@ bool CPISpellbookSelect::Handle( void )
 	}
 	return true;
 }
-void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
+void CPISpellbookSelect::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -5765,7 +5765,7 @@ bool CPIAOSCommand::Handle( void )
 
 	return false;
 }
-void CPIAOSCommand::Log( std::ofstream &outStream, bool fullHeader )
+void CPIAOSCommand::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{

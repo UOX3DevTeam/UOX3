@@ -1453,7 +1453,7 @@ auto CItem::IsShieldType() const -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save item details to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::Save( std::ofstream &outStream )
+bool CItem::Save( std::ostream &outStream )
 {
 	if( IsFree() )
 		return false;
@@ -1693,7 +1693,7 @@ auto CItem::SetWeatherDamage( WeatherType effectNum, bool value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item header to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpHeader( std::ofstream &outStream ) const
+bool CItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[ITEM]" << '\n';
 	return true;
@@ -1704,7 +1704,7 @@ bool CItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump item tags and values to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CItem::DumpBody( std::ofstream &outStream ) const
+bool CItem::DumpBody( std::ostream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );
 	const char newLine = '\n';
@@ -3313,7 +3313,7 @@ auto CSpawnItem::IsSectionAList( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Header to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
+bool CSpawnItem::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[SPAWNITEM]" << '\n';
 	return true;
@@ -3325,7 +3325,7 @@ bool CSpawnItem::DumpHeader( std::ofstream &outStream ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps Spawn Item to Worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
+bool CSpawnItem::DumpBody( std::ostream &outStream ) const
 {
 	CItem::DumpBody( outStream );
 	outStream << "Interval=" << static_cast<UI16>( GetInterval( 0 )) << "," << static_cast<UI16>( GetInterval( 1 )) << '\n';

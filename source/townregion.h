@@ -102,7 +102,7 @@ public:
 	bool				ViewBudget( CSocket *sock );
 	bool				PeriodicCheck( void );
 	bool				Load( Script *ss );		// entry is the region #, fp is the file to load from
-	bool				Save( std::ofstream &outStream );		// entry is the region #, fp is the file to save in
+	bool				Save( std::ostream &outStream );		// entry is the region #, fp is the file to save in
 	bool				InitFromScript( CScriptSection *toScan );
 	bool				AddAsTownMember( CChar& toAdd );	// toAdd is the character to add
 	bool				RemoveTownMember( CChar& toAdd );	// toAdd is the character to remove

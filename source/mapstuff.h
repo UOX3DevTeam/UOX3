@@ -16,8 +16,8 @@ class TileInfo
 	constexpr static auto hsSize = 3188736;
 	std::vector<CLand> terrainData;
 	std::vector<CTile> artData;
-	auto ProcessTerrain( std::ifstream &input ) -> void;
-	auto ProcessArt( std::ifstream &input ) -> void;
+	auto ProcessTerrain( std::istream &input ) -> void;
+	auto ProcessArt( std::istream &input ) -> void;
 	bool isHsFormat;
 public:
 	TileInfo( const std::string &filename = "" );

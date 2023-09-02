@@ -3058,12 +3058,12 @@ bool CChar::FinishedItems( void )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Dump character data to worldfile
 //o------------------------------------------------------------------------------------------------o
-bool CChar::DumpHeader( std::ofstream &outStream ) const
+bool CChar::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[CHARACTER]" << '\n';
 	return true;
 }
-bool CChar::DumpBody( std::ofstream &outStream ) const
+bool CChar::DumpBody( std::ostream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 
@@ -3171,7 +3171,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	}
 	return true;
 }
-void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
+void CChar::NPCValues_st::DumpBody( std::ostream& outStream )
 {
 	const char newLine = '\n';
 
@@ -3222,7 +3222,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 		}
 	}
 }
-void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
+void CChar::PlayerValues_st::DumpBody( std::ostream& outStream )
 {
 	const char newLine = '\n';
 
@@ -3279,7 +3279,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 //|	Purpose		-	Saves character to worldfile - returns true/false indicating the success
 //|					of the write operation
 //o------------------------------------------------------------------------------------------------o
-bool CChar::Save( std::ofstream &outStream )
+bool CChar::Save( std::ostream &outStream )
 {
 	bool rValue = false;
 	if( !IsFree() )
