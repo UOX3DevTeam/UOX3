@@ -4,14 +4,20 @@
 #include <filesystem>
 #include <vector>
 
+
+
+#include "cChar.h"
+#include "cItem.h"
+#include "classes.h"
+#include "cMultiObj.h"
+#include "subsystem/console.hpp"
+#include "funcdecl.h"
 #include "mapstuff.h"
 
-#include "uox3.h"
-#include "classes.h"
+#include "ObjectFactory.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
-#include "ObjectFactory.h"
 #include "useful.h"
 using namespace std::string_literals ;
 

@@ -12,30 +12,36 @@
 //o------------------------------------------------------------------------------------------------o
 
 // Header
-#include "uox3.h"
-#include "cThreadQueue.h"
-#include "ObjectFactory.h"
-#include "network.h"
-#include "ssection.h"
+#include "console.hpp"
+
+#include <cctype>
+#include <fstream>
+#include <iostream>
+#include <stdexcept>
+
+#include "cChar.h"
+#include "cItem.h"
 #include "CJSMapping.h"
-#include "teffect.h"
-#include "cMagic.h"
-#include "magic.h"
-#include "regions.h"
-#include "commands.h"
-#include "cServerDefinitions.h"
-#include "cHTMLSystem.h"
-#include "cRaces.h"
 #include "cGuild.h"
+#include "cHTMLSystem.h"
+#include "cMagic.h"
+#include "commands.h"
+#include "cRaces.h"
 #include "cScript.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cThreadQueue.h"
+#include "funcdecl.h"
+#include "magic.h"
+#include "network.h"
+#include "ObjectFactory.h"
+#include "regions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 
-#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
+#include "teffect.h"
 
-#include <iostream>
-#include <cctype>
-#include <stdexcept>
 
 #if !defined(_WIN32)
 #include <termios.h>

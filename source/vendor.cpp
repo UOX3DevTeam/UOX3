@@ -1,16 +1,22 @@
-#include "uox3.h"
-#include "commands.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "townregion.h"
-#include "CJSMapping.h"
-#include "cScript.h"
 
-#include "cServerDefinitions.h"
-
-#include "ObjectFactory.h"
 #include <algorithm>
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "classes.h"
+#include "commands.h"
+#include "subsystem/console.hpp"
+#include "CPacketSend.h"
+#include "cScript.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "funcdecl.h"
+#include "ObjectFactory.h"
+#include "townregion.h"
+
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcValue()

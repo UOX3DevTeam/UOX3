@@ -1,8 +1,17 @@
 #include "PartySystem.h"
-#include "uox3.h"
-#include "network.h"
-#include "CPacketSend.h"
+
 #include <mutex>
+
+#include "cChar.h"
+#include "CPacketSend.h"
+#include "cSocket.h"
+
+#include "funcdecl.h"
+
+#include "network.h"
+
+// 
+// 
 // CPartyEntry code goes here
 const size_t BIT_LEADER		= 0;
 const size_t BIT_LOOTABLE	= 1;

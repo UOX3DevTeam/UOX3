@@ -130,6 +130,7 @@ if (WIN32)
 		/wd4146
 		/wd4334
 		/wd4311
+		/wd4090
 		/WX-
 		$<$<CONFIG:Release>:/O2>
 	)

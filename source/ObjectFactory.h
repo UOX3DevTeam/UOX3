@@ -1,10 +1,12 @@
 #ifndef ObjectFactory_hpp
 #define ObjectFactory_hpp
-#include "uox3.h"
 
-#include <unordered_map>
+#include <cstdint>
 #include <functional>
+#include <string>
+#include <unordered_map>
 
+#include "typedefs.h"
 class CBaseObject;
 using factory_collection = std::unordered_map<UI32, CBaseObject*>;
 

@@ -5,8 +5,14 @@
 //| Purpose		-	Implementation (vector based) of the GM and counselor queue class
 //o------------------------------------------------------------------------------------------------o
 
-#include "uox3.h"
+#include <algorithm>
+
+#include "cChar.h"
+#include "funcdecl.h"
 #include "PageVector.h"
+
+
+
 #include "CGump.h"
 
 PageVector *GMQueue;

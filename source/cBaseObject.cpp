@@ -19,17 +19,24 @@
 //|							Addition of basic script trigger stuff. Function documentation
 //|							finished for all functions
 //o------------------------------------------------------------------------------------------------o
-#include "power.h"
+
+#include "cBaseObject.h"
+#include <bitset>
+
+#include "cChar.h"
+#include "cItem.h"
 #include "CJSMapping.h"
+#include "cMultiObj.h"
+#include "cSocket.h"
+#include "subsystem/console.hpp"
 #include "cScript.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "utility/strutil.hpp"
 #include "network.h"
 #include "ObjectFactory.h"
+#include "power.h"
 #include "weight.h"
-#include "Dictionary.h"
-
-#include "utility/strutil.hpp"
-
-#include <bitset>
 
 
 const UI32 BIT_FREE			=	0;

@@ -38,57 +38,70 @@
 #include <numeric>
 #include <optional>
 #include <random>
+#include <set>
+#include <stdexcept>
 #include <thread>
 #if defined(_WIN32)
 #include <process.h>
-#include <conio.h>
+#else
+#include <sys/signal.h>
 #endif
 
-#include "mapstuff.h"
 
-#include "uox3.h"
-#include "weight.h"
+
+
+//=====================================================================================================
+
+#include "subsystem/account.hpp"
 #include "books.h"
+
+#include "cChar.h"
+#include "cEffects.h"
 #include "cGuild.h"
-#include "combat.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cWeather.hpp"
-#include "movement.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "skills.h"
-#include "commands.h"
-#include "cSpawnRegion.h"
-#include "wholist.h"
+#include "CGump.h"
+#include "cHTMLSystem.h"
+#include "cItem.h"
+#include "CJSEngine.h"
+#include "CJSMapping.h"
+#include "classes.h"
 #include "cMagic.h"
+#include "cMultiObj.h"
+#include "combat.h"
+#include "commands.h"
+#include "subsystem/console.hpp"
+#include "CPacketSend.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+#include "cThreadQueue.h"
+#include "cWeather.hpp"
+#include "Dictionary.h"
+#include "EventTimer.hpp"
+#include "funcdecl.h"
+#include "jail.h"
+
+#include "magic.h"
+#include "mapstuff.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "ostype.h"
 #include "PageVector.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "skills.h"
 #include "speech.h"
 #include "ssection.h"
-#include "cHTMLSystem.h"
-#include "CGump.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "teffect.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "cThreadQueue.h"
-#include "regions.h"
-#include "magic.h"
-#include "jail.h"
-#include "Dictionary.h"
-#include "ObjectFactory.h"
-#include "PartySystem.h"
-//#include "worldmain.h"
-#include "CJSEngine.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-#include "EventTimer.hpp"
-
-#include "ostype.h"
+#include "teffect.h"
+#include "townregion.h"
+#include "typedefs.h"
 #include "other/uoxversion.hpp"
-#include "subsystem/console.hpp"
+#include "weight.h"
+#include "wholist.h"
 
 
 

@@ -4,7 +4,7 @@
 #include <bitset>
 #include <cstdint>
 #include <string>
-
+#include <vector>
 
 #include "GenericList.h"
 #include "cBaseObject.h"

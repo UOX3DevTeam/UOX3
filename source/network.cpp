@@ -1,32 +1,38 @@
-#include "uox3.h"
 #include "network.h"
-#include "movement.h"
-#include "wholist.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "cThreadQueue.h"
-#include "CPacketSend.h"
-#include "scriptc.h"
-#include "ssection.h"
-#include "cServerDefinitions.h"
-#include "Dictionary.h"
-#include "mapstuff.h"
+
+#include <cassert>
 #include <cctype>
+#include <iomanip>
+#include <memory>
+#if !defined(_WIN32)
+#include <sys/ioctl.h>
+#endif
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "CJSMapping.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "CPacketSend.h"
+#include "subsystem/console.hpp"
+#include "cServerDefinitions.h"
+#include "cScript.h"
+#include "cSocket.h"
+#include "cThreadQueue.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "scriptc.h"
+#include "skills.h"
+#include "ssection.h"
+#include "mapstuff.h"
+#include "movement.h"
 
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 #include "osunique.hpp"
+#include "wholist.h"
 
-#if !defined(_WIN32)
-#include <sys/ioctl.h>
-#endif
-
-#include <iomanip>
-#include <memory>
 
 using namespace std::string_literals;
 //o------------------------------------------------------------------------------------------------o

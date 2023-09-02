@@ -1,20 +1,26 @@
 // HTML Template
 
 #include "cHTMLSystem.h"
+
+#include "cChar.h"
 #include "cGuild.h"
-#include "townregion.h"
+#include "CGump.h"
+#include "subsystem/console.hpp"
+#include "CPacketSend.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "CGump.h"
-#include "scriptc.h"
-#include "CPacketSend.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
+#include "ostype.h"
 #include "osunique.hpp"
+#include "scriptc.h"
+#include "ssection.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
+
 #include "other/uoxversion.hpp"
 
-#include "ostype.h"
 
 cHTMLTemplates *HTMLTemplates;
 

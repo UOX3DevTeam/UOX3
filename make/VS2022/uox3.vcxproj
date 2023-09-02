@@ -183,7 +183,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
-    <ClInclude Include="..\..\source\uox3.h" />
     <!-- Script group -->
     <ClInclude Include="..\..\source\cServerData.h" />
     <ClInclude Include="..\..\source\cServerDefinitions.h" />
@@ -241,7 +240,6 @@
     <ClInclude Include="..\..\source\osunique.hpp" />
     <ClInclude Include="..\..\source\power.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
-    <ClInclude Include="..\..\source\UOXStdHeaders.h" />
     <!-- JS Engine group -->
     <ClInclude Include="..\..\source\CJSEngine.h" />
     <ClInclude Include="..\..\source\CJSMapping.h" />

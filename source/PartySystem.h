@@ -8,14 +8,6 @@
 #include <vector>
 
 #include "typedefs.h"
-
-/* Include all the standard header *after* all the configuration
- settings have been made.
- */
-//#include "UOXStdHeaders.h"
-
-
-#include "typedefs.h"
 #include "GenericList.h"
 
 class CChar;

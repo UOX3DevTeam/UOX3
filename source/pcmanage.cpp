@@ -1,27 +1,33 @@
-#include "uox3.h"
-#include "cSkillClass.h"
-#include "cServerDefinitions.h"
-#include "wholist.h"
-#include "skills.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "CPacketSend.h"
-#include "PartySystem.h"
-#include "classes.h"
-#include "townregion.h"
-#include "Dictionary.h"
+
+#include <algorithm>
+
+#include "subsystem/account.hpp"
+#include "cChar.h"
 #include "cEffects.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "CPacketSend.h"
 #include "cRaces.h"
-#include "StringUtility.hpp"
-
-#include "utility/strutil.hpp"
-#include "other/uoxversion.hpp"
-
+#include "cScript.h"
 #include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSkillClass.h"
+#include "cSocket.h"
+#include "classes.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
 #include "ostype.h"
-#include <algorithm>
+#include "PartySystem.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+#include "townregion.h"
+
+#include "other/uoxversion.hpp"
+#include "wholist.h"
+
 
 using namespace std::string_literals;
 

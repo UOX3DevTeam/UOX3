@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(uox3
 	../../source/uox3.cpp
-	../../source/uox3.h
+	
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
 # Script Group
 	../../source/cServerData.cpp  
@@ -129,9 +129,9 @@ add_executable(uox3
    ../../source/pcmanage.cpp
    ../../source/power.h
    ../../source/ostype.h
-   ../../source/spidermonkey.h
    ../../source/typedefs.h
-   ../../source/UOXStdHeaders.h
+   ../../source/useful.h
+   
    ../../source/useful.h
 # JS Engine group
    ../../source/CJSEngine.cpp 
@@ -144,6 +144,7 @@ add_executable(uox3
    ../../source/JSEncapsulate.h
    ../../source/SEFunctions.cpp
    ../../source/SEFunctions.h
+   ../../source/spidermonkey.h
    ../../source/UOXJSClasses.h
    ../../source/UOXJSMethods.cpp
    ../../source/UOXJSMethods.h

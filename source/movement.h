@@ -2,11 +2,14 @@
 #define __MOVEMENT_H__
 
 #include <cstdint>
+#include <deque>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "typedefs.h"
 
+class CChar;
 struct Tile_st;
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)

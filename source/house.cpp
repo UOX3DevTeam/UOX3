@@ -1,19 +1,23 @@
 // House code for deed creation
 #include<algorithm>
 
-#include "uox3.h"
-#include "mapstuff.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+#include "cChar.h"
 #include "CPacketSend.h"
 #include "classes.h"
-#include "regions.h"
+#include "cMultiObj.h"
+#include "subsystem/console.hpp"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "ObjectFactory.h"
+#include "regions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
 
-#include "ObjectFactory.h"
 
 using namespace std::string_literals;
 

@@ -7,9 +7,12 @@
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 #include <cstdint>
+
 #include <map>
 #include <string>
 #include <vector>
+
+#include "typedefs.h"
 
 // 04302004 - Added a new tag DFNTAG_ADDMENUITEM to support the auto generation of the addmenu based on items that are contained in the DFN's
 //						We will still use the menu group item and group/subgroup stuff, however we will no longer have a list of items in a dfn that

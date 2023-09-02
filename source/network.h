@@ -17,7 +17,6 @@
 #include <utility>
 #include <vector>
 
-
 #if !defined(_WIN32)
 #include <sys/socket.h>
 #include <netdb.h>
@@ -27,6 +26,7 @@
 #include <winsock2.h>
 #endif
 
+#include "typedefs.h"
 
 //o------------------------------------------------------------------------------------------------o
 // ByteBufferBounds_st

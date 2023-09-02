@@ -1,12 +1,18 @@
-#include "uox3.h"
+
 #include "jail.h"
+
+#include <memory>
+
+#include "cChar.h"
+#include "subsystem/console.hpp"
 #include "cServerDefinitions.h"
-#include "ssection.h"
+#include "subsystem/console.hpp"
+#include "funcdecl.h"
 #include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
-#include <memory>
 using namespace std::string_literals;
 
 

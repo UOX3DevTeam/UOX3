@@ -1,6 +1,10 @@
-#include "uox3.h"
+
+#include "cChar.h"
+#include "cItem.h"
 #include "classes.h"
 #include "CPacketSend.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
 
 

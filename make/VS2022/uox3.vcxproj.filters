@@ -310,9 +310,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\uox3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <!-- Script group -->
     <ClInclude Include="..\..\source\cServerData.h">
       <Filter>Header Files\Script</Filter>
@@ -468,9 +465,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\typedefs.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\UOXStdHeaders.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <!-- JS Engine group -->

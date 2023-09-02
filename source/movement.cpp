@@ -34,32 +34,37 @@
 //| behind what I've done to make things easier.
 //o------------------------------------------------------------------------------------------------o
 
-#include <cmath>
-
-#include "uox3.h"
 #include "movement.h"
 
-#include "mapstuff.h"
+#include <algorithm>
+#include <cmath>
 
-#include "weight.h"
-#include "combat.h"
-#include "msgboard.h"
-#include "cRaces.h"
-#include "cMagic.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "regions.h"
-#include "cServerDefinitions.h"
-#include "cWeather.hpp"
+
 #include "Dictionary.h"
-#include "StringUtility.hpp"
-#include "utility/strutil.hpp"
-
 #include "EventTimer.hpp"
 
-#include <algorithm>
+#include "cChar.h"
+#include "cEffects.h"
+#include "CJSMapping.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "CPacketSend.h"
+#include "cRaces.h"
+#include "cSocket.h"
+#include "cServerDefinitions.h"
+#include "cScript.h"
+#include "combat.h"
+#include "cWeather.hpp"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "msgboard.h"
+#include "regions.h"
+#include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+#include "weight.h"
+
+
 
 CMovement *Movement;
 

@@ -1,25 +1,33 @@
-#include "uox3.h"
-#include "magic.h"
 #include "skills.h"
+
+#include <algorithm>
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "classes.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
 #include "combat.h"
-#include "townregion.h"
+#include "subsystem/console.hpp"
+#include "CPacketSend.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
-#include "cMagic.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "scriptc.h"
 #include "cScript.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
+#include "cSocket.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "magic.h"
 #include "movement.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "townregion.h"
+
 #include "weight.h"
-#include <algorithm>
 
 using namespace std::string_literals;
 

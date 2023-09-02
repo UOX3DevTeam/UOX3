@@ -22,19 +22,25 @@
 //|						Added support for message board file deletion upon deleting the associated world object.
 //|
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "msgboard.h"
-#include "townregion.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
+#include <filesystem>
+#include <fstream>
+
+#include "cChar.h"
 #include "cEffects.h"
+#include "cServerDefinitions.h"
+#include "cItem.h"
+#include "cSocket.h"
 #include "CPacketSend.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "osunique.hpp"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-#include "osunique.hpp"
-#include <filesystem>
+#include "townregion.h"
 
 using namespace std::string_literals;
 //o------------------------------------------------------------------------------------------------o

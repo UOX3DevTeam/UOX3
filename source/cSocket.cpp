@@ -4,6 +4,7 @@
 #include <fstream>
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
+#include <unistd.h>
 #endif
 
 #include "subsystem/account.hpp"

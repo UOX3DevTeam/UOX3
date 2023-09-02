@@ -8,6 +8,10 @@
 
 #include "typedefs.h"
 
+class CChar;
+class CItem;
+class CSocket;
+
 // create DFN revisions
 struct ResAmountPair_st
 {

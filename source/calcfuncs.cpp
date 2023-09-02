@@ -3,9 +3,15 @@
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Various functions to calculate objects from serials
 //o------------------------------------------------------------------------------------------------o
-#include "townregion.h"
+
+#include "cBaseObject.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "funcdecl.h"
 #include "network.h"
 #include "ObjectFactory.h"
+#include "townregion.h"
 
 
 //o------------------------------------------------------------------------------------------------o

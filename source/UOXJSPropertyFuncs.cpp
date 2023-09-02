@@ -6,38 +6,42 @@
 //|							Includes property getters for CItem and CChar, and property
 //|							setters for CChar
 //o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
+
+#include "UOXJSPropertyFuncs.h"
+
+
+#include "CJSEngine.h"
+#include "CJSMapping.h"
+#include "cChar.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "classes.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "combat.h"
+#include "subsystem/console.hpp"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cSpawnRegion.h"
+#include "cSocket.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "JSEncapsulate.h"
+#include "mapstuff.h"
+#include "magic.h"
+#include "movement.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "skills.h"
+#include "spidermonkey.h"
+#include "ssection.h"
+#include "utility/strutil.hpp"
+#include "townregion.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
 #include "UOXJSPropertyEnums.h"
-#include "UOXJSPropertyFuncs.h"
-#include "JSEncapsulate.h"
-#include "CJSEngine.h"
 
-#include "cGuild.h"
-#include "combat.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "skills.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "regions.h"
-#include "magic.h"
-#include "cMagic.h"
-#include "scriptc.h"
-#include "ssection.h"
-#include "classes.h"
-#include "movement.h"
-#include "Dictionary.h"
-#include "cSpawnRegion.h"
-#include "mapstuff.h"
-
-#include "jsobj.h"
-#include "jsutil.h"
-
-#include "PartySystem.h"
-
-#include "utility/strutil.hpp"
 
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );

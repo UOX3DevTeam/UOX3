@@ -1,12 +1,13 @@
-#include "uox3.h"
+#include <algorithm>
+#include <cmath>
+
+#include "cChar.h"
+#include "cItem.h"
+#include "subsystem/console.hpp"
+#include "funcdecl.h"
+#include "mapstuff.h"
 #include "regions.h"
 
-#include <cmath>
-#include <algorithm>
-
-
-
-#include "mapstuff.h"
 constexpr auto MAX_COLLISIONS = 1024;
 constexpr auto LOSXYMAX = 256; // Maximum items UOX3 can handle on one X/Y square
 
@@ -461,7 +462,6 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 //|	Notes		-	Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the target.
 //|					s is for pc's, in case a message needs to be sent.
 //|					the checkfor is what is checked for along the line of sight.
-//|					Look at uox3.h to see options. Works like npc magic.
 //|
 //|					#define TREES_BUSHES 1 // Trees and other large vegetaion in the way
 //|					#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the way

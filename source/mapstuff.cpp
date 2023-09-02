@@ -5,14 +5,17 @@
 #include <filesystem>
 #include <fstream>
 
-#include "uox3.h"
-#include "regions.h"
-#include "townregion.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "subsystem/console.hpp"
 #include "cServerDefinitions.h"
-#include "ssection.h"
+#include "funcdecl.h"
+#include "regions.h"
 #include "scriptc.h"
-
+#include "ssection.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 
 

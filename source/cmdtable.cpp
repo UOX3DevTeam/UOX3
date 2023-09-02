@@ -10,6 +10,7 @@
 //
 #include "cmdtable.h"
 
+#include <fstream>
 
 #include "cChar.h"
 #include "CGump.h"

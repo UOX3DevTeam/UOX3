@@ -6,8 +6,18 @@
 //	Calling Script::find() will then seek to that location directly rather
 //	than having to parse through all of the script
 //
-#include "uox3.h"
+
 #include "ssection.h"
+
+#include <iostream>
+#if !defined(_WIN32)
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/time.h>
+
+#endif 
+
+#include "subsystem/console.hpp"
 #include "scriptc.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"

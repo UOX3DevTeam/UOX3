@@ -35,31 +35,32 @@
 
 #include <charconv>
 
-#include "weight.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
-#include "ObjectFactory.h"
-#include "speech.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cSpawnRegion.h"
-
+#include "books.h"
+#include "cChar.h"
 #include "CJSEngine.h"
 #include "CJSMapping.h"
-#include "Dictionary.h"
-#include "regions.h"
-#include "msgboard.h"
-#include "books.h"
-#include "power.h"
+#include "classes.h"
+#include "cMultiObj.h"
+#include "CPacketSend.h"
+#include "cRaces.h"
 #include "cServerDefinitions.h"
+#include "cSpawnRegion.h"
+#include "cSocket.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "osunique.hpp"
+#include "power.h"
+#include "regions.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "speech.h"
+#include "townregion.h"
 
-#include "mapstuff.h"
-
-#include "osunique.hpp"
+#include "weight.h"
 
 const UI32 BIT_MAKERSMARK	=	0;
 const UI32 BIT_DOOROPEN		=	1;

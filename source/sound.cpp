@@ -1,13 +1,16 @@
-#include "mapstuff.h"
 
-#include "uox3.h"
-#include "townregion.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "CPacketSend.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
+#include "cSocket.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
 #include "regions.h"
+#include "ssection.h"
+#include "townregion.h"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;

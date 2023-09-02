@@ -8,6 +8,14 @@
 #ifndef __PAGEVECTOR_H__
 #define __PAGEVECTOR_H__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+#include "typedefs.h"
+
+class CChar;
+
 class CHelpRequest
 {
 private:
