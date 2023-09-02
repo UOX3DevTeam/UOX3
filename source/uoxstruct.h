@@ -5,7 +5,6 @@
 #include <cstring>
 #include <string>
 #include <cmath>
-#include "enums.h"
 #include "typedefs.h"
 
 const UI08 BIT_CANFLY		=	0;

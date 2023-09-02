@@ -1,11 +1,22 @@
 #ifndef __CSOCKET_H__
 #define __CSOCKET_H__
 
+#include <cstdint>
+#include <string>
+
+
 #include "IP4Address.hpp"
 #include "typedefs.h"
+#include "GenericList.h"
+
 
 class CPInputBuffer ;
 class CPUOXBuffer ;
+class CChar;
+class cScript;
+class CItem;
+class CBaseObject;
+struct AccountEntry;
 
 enum ClientTypes
 {

@@ -37,7 +37,6 @@
 
 #include "cChar.h"
 
-#include "uox3.h"
 #include "power.h"
 #include "weight.h"
 #include "cGuild.h"

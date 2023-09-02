@@ -1,10 +1,18 @@
-#include "uox3.h"
 #include "commands.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
+#include <fstream>
+
+#include "cChar.h"
 #include "CJSMapping.h"
-#include "cScript.h"
 #include "CPacketSend.h"
+#include "cScript.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+
+#include "subsystem/console.hpp"
+
+#include "funcdecl.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 

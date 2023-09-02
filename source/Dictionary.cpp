@@ -2,17 +2,22 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "uox3.h"
 #include "Dictionary.h"
-#include "speech.h"
+
+#include <filesystem>
+#include <fstream>
+#include <memory>
+
+
+#include "subsystem/console.hpp"
+
+#include "funcdecl.h"
 #include "scriptc.h"
+#include "speech.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
-#include <memory>
-#include <filesystem>
-#include <fstream>
 
 using namespace std::string_literals;
 

@@ -9,6 +9,9 @@
 
 #include "network.h"
 
+class CChar;
+class CMultiObj;
+
 class CPIFirstLogin : public CPInputBuffer
 {
 protected:

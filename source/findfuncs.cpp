@@ -1,12 +1,18 @@
 #include <cmath>
+#include <vector>
 
-
-#include "uox3.h"
-#include "regions.h"
-#include "network.h"
-#include "cRaces.h"
+#include "cChar.h"
+#include "cItem.h"
 #include "classes.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cSocket.h"
+
+#include "funcdecl.h"
+
 #include "mapstuff.h"
+#include "network.h"
+#include "regions.h"
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindPlayersInOldVisrange()

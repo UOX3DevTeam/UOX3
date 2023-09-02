@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <deque>
 #include <list>
+#include <map>
 #include <mutex>
 #include <ostream>
 #include <stdexcept>

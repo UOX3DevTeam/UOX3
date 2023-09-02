@@ -1,6 +1,5 @@
 // HTML Template
 
-#include "uox3.h"
 #include "cHTMLSystem.h"
 #include "cGuild.h"
 #include "townregion.h"

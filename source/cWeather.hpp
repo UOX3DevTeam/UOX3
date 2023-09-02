@@ -7,6 +7,9 @@
 
 #include "typedefs.h"
 
+class CBaseObject;
+class CChar;
+class CItem;
 
 class CWeather
 {

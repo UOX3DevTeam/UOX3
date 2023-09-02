@@ -1,12 +1,14 @@
-#include "uox3.h"
 #include "cServerDefinitions.h"
 
 #include <array>
 #include <filesystem>
 #include <memory>
 
+
+#include "subsystem/console.hpp"
 #include "cScript.h"
 #include "ssection.h"
+#include "funcdecl.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"

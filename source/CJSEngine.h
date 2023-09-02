@@ -7,6 +7,9 @@
 #include <vector>
 
 #include "typedefs.h"
+#include "spidermonkey.h"
+
+struct JSObject;
 
 enum IUEEntries
 {

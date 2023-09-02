@@ -11,6 +11,8 @@
 class CItem;
 class CSocket;
 class CChar;
+class CSpellInfo;
+
 
 struct Reag_st;
 

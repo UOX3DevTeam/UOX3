@@ -8,7 +8,12 @@
 #include "typedefs.h"
 
 class CSocket ;
+class CItem;
 class CScriptSection;
+class CChar;
+class CMultiObj;
+class CTownRegion;
+class CSpawnItem;
 
 enum PackTypes
 {

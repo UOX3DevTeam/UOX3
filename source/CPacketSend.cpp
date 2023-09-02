@@ -1,30 +1,41 @@
 
-#include <bitset>
 
-#include "uox3.h"
 #include "CPacketSend.h"
-#include "speech.h"
-#include "combat.h"
-#include "cMagic.h"
-#include "power.h"
-#include "msgboard.h"
-#include "mapstuff.h"
-#include "PartySystem.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "classes.h"
-#include "Dictionary.h"
-#include "cScript.h"
-#include "CJSMapping.h"
-#include "cRaces.h"
-#include <string>
-#include <locale>
+
+#include <bitset>
 #include <codecvt>
-#include "osunique.hpp"
-#include "utility/strutil.hpp"
+#include <locale>
+
 #if defined(_WIN32)
 #include <ws2tcpip.h>
 #endif
+
+#include "cChar.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "classes.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "combat.h"
+#include "cSocket.h"
+
+#include "cRaces.h"
+#include "cScript.h"
+#include "Dictionary.h"
+
+#include "funcdecl.h"
+
+#include "mapstuff.h"
+#include "msgboard.h"
+#include "osunique.hpp"
+
+#include "PartySystem.h"
+#include "power.h"
+#include "speech.h"
+#include "utility/strutil.hpp"
+#include "townregion.h"
+
 
 using namespace std::string_literals;
 // Unknown bytes

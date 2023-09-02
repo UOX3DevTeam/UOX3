@@ -1,23 +1,33 @@
+#include "cSocket.h"
+
 #include <algorithm>
-#include "uox3.h"
-#include "CPacketSend.h"
-#include "speech.h"
-#include "cRaces.h"
-#include "cGuild.h"
-#include "PartySystem.h"
-#include "commands.h"
-#include "combat.h"
-#include "classes.h"
-#include "Dictionary.h"
-#include "CJSEngine.h"
-#include "StringUtility.hpp"
-#include "utility/strutil.hpp"
-
-#include "typedefs.h"
-
+#include <fstream>
 #if !defined(_WIN32)
 #include <sys/ioctl.h>
 #endif
+
+#include "subsystem/account.hpp"
+
+#include "cChar.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "CJSEngine.h"
+#include "classes.h"
+#include "combat.h"
+#include "commands.h"
+#include "CPacketSend.h"
+
+#include "cRaces.h"
+#include "cScript.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "PartySystem.h"
+
+#include "speech.h"
+#include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 
 
 //	1.0		29th November, 2000

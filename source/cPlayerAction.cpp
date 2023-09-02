@@ -1,28 +1,38 @@
-#include "uox3.h"
-#include "weight.h"
-#include "combat.h"
-#include "cRaces.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "CJSMapping.h"
-#include "mapstuff.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
+
 #include "books.h"
-#include "magic.h"
-#include "townregion.h"
+
+#include "cEffects.h"
 #include "CGump.h"
 #include "cGuild.h"
-#include "ssection.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "CJSMapping.h"
+#include "cMultiObj.h"
+#include "cScript.h"
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
+#include "cSocket.h"
+#include "cRaces.h"
+#include "classes.h"
+
+#include "cMagic.h"
+#include "combat.h"
+
+#include "CPacketSend.h"
+
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "magic.h"
+#include "mapstuff.h"
+#include "regions.h"
+#include "skills.h"
+#include "ssection.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 #include "useful.h"
+#include "weight.h"
+
 using namespace std::string_literals;
 
 void		SendTradeStatus( CItem *cont1, CItem *cont2 );

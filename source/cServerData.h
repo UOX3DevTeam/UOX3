@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "typedefs.h"
+
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
 //o------------------------------------------------------------------------------------------------o

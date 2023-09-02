@@ -1,19 +1,30 @@
-#include "uox3.h"
 #include "cScript.h"
-#include "power.h"
-#include "UOXJSClasses.h"
-#include "SEFunctions.h"
-#include "UOXJSMethods.h"
-#include "UOXJSPropertySpecs.h"
+
+
+#include "cChar.h"
+#include "cItem.h"
 #include "CJSMapping.h"
-#include "CPacketReceive.h"
 #include "CJSEngine.h"
-#include "JSEncapsulate.h"
+#include "cMultiObj.h"
+#include "CPacketReceive.h"
 #include "cSpawnRegion.h"
+#include "subsystem/console.hpp"
+
+#include "funcdecl.h"
+
+#include "JSEncapsulate.h"
+
+#include "osunique.hpp"
+#include "power.h"
+#include "SEFunctions.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
 
-#include "osunique.hpp"
+
+#include "UOXJSClasses.h"
+#include "UOXJSMethods.h"
+#include "UOXJSPropertySpecs.h"
+
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp

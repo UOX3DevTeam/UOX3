@@ -1,16 +1,21 @@
-#include "uox3.h"
 #include "cSpawnRegion.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "mapstuff.h"
-#include "classes.h"
-#include "Dictionary.h"
-#include "StringUtility.hpp"
-#include "utility/strutil.hpp"
 
 #include <sstream>
 #include <iostream>
 #include <regex>
+
+#include "cChar.h"
+#include "cItem.h"
+#include "classes.h"
+#include "cServerDefinitions.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 

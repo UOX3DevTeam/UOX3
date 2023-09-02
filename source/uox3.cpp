@@ -80,6 +80,7 @@
 #include "Dictionary.h"
 #include "ObjectFactory.h"
 #include "PartySystem.h"
+//#include "worldmain.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"

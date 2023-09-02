@@ -1,6 +1,7 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+#include <cstdint>
 #include <string>
 #include <map>
 #include <ostream>
@@ -11,6 +12,7 @@
 
 class CPIGumpInput;
 class CScriptSection;
+class CItem;
 
 enum GuildType
 {

@@ -1,13 +1,16 @@
-#include "uox3.h"
+
 #include "CJSMapping.h"
+
+#include <memory>
+
+#include "subsystem/console.hpp"
 #include "cScript.h"
+#include "funcdecl.h"
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-#include "subsystem/console.hpp"
 
-#include <memory>
 
 using namespace std::string_literals;
 

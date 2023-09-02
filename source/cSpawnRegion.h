@@ -9,6 +9,8 @@
 #include "typedefs.h"
 
 class CScriptSection;
+class CChar;
+class CItem;
 
 class CSpawnRegion	//Regionspawns
 {

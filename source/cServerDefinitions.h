@@ -2,14 +2,15 @@
 #define __CSERVERDEFINITIONS__
 
 #include <cstdint>
+#include <map>
 #include <stack>
 #include <string>
 #include <vector>
 
+#include "typedefs.h"
+
 class CScriptSection;
 class Script;
-
-#include "typedefs.h"
 
 typedef std::vector<Script *> VECSCRIPTLIST;
 typedef std::vector<Script *>::iterator VECSCRIPTLIST_ITERATOR;

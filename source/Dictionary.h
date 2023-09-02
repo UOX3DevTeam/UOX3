@@ -9,7 +9,7 @@
 #include <map>
 #include <string>
 
-#include "enums.h"
+#include "typedefs.h"
 
 //o------------------------------------------------------------------------------------------------o
 // CDictionary

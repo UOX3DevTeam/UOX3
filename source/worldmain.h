@@ -23,7 +23,7 @@
 class CSpawnRegion;
 class CTownRegion;
 class CTEffect;
-
+class CBaseObject;
 enum CWM_TID
 {
 	tWORLD_NEXTFIELDEFFECT = 0,

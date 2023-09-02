@@ -35,7 +35,6 @@
 
 #include <charconv>
 
-#include "uox3.h"
 #include "weight.h"
 #include "CPacketSend.h"
 #include "classes.h"
@@ -45,6 +44,7 @@
 #include "townregion.h"
 #include "cRaces.h"
 #include "cSpawnRegion.h"
+
 #include "CJSEngine.h"
 #include "CJSMapping.h"
 #include "Dictionary.h"

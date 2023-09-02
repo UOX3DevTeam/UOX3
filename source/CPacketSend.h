@@ -10,6 +10,12 @@
 
 class CSpeechEntry ;
 class PhysicalServer;
+class CChar;
+class CItem;
+struct AccountEntry;
+class CBaseObject;
+class CMultiObj;
+class CTownRegion;
 
 // Forward declare
 struct __STARTLOCATIONDATA__;
@@ -1095,7 +1101,7 @@ protected:
 	virtual void	InternalReset( void ) override;
 	void			CopyData( CItem& mItem, CChar& mChar );
 	void			CopyItemData( CItem& mItem, CChar& mChar );
-	void			CopyMultiData( CMultiObj& mObj, CChar& mChar );
+	void			CopyMultiData(CMultiObj& mObj, CChar& mChar );
 public:
 	CPNewObjectInfo();
 	CPNewObjectInfo( CItem& mItem, CChar& mChar );

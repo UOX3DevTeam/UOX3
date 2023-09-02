@@ -1,13 +1,25 @@
-#include "uox3.h"
+
 #include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
-#include "classes.h"
-#include "CJSEngine.h"
-#include "power.h"
+
 #include <unordered_set>
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "CJSEngine.h"
+#include "classes.h"
+#include "subsystem/console.hpp"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+
+#include "funcdecl.h"
+
+#include "power.h"
+
+#include "ssection.h"
 #include "utility/strutil.hpp"
+
+#include "worldmain.h"
 
 
 cRaces *Races = nullptr;

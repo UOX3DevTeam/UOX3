@@ -10,6 +10,8 @@
 
 #include "typedefs.h"
 
+class CChar;
+
 class CRace
 {
 private:
