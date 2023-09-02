@@ -5,7 +5,7 @@ if(NOT WIN32)
  execute_process(
  	COMMAND cc -o ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg ${PROJECT_SOURCE_DIR}/../../jscpucfg.c -Wno-format-security -Wno-deprecated-declarations -Os 
  	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg   
- 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+ 	WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
  	OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h 
  	
  )
