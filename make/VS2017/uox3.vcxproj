@@ -1406,7 +1406,6 @@
     <ClInclude Include="..\..\source\cMultiObj.h" />
     <ClInclude Include="..\..\source\combat.h" />
     <ClInclude Include="..\..\source\commands.h" />
-    <ClInclude Include="..\..\source\ConfigOS.h" />
     <ClInclude Include="..\..\source\CPacketReceive.h" />
     <ClInclude Include="..\..\source\CPacketSend.h" />
     <ClInclude Include="..\..\source\cRaces.h" />
@@ -1441,7 +1440,6 @@
     <ClInclude Include="..\..\source\PageVector.h" />
     <ClInclude Include="..\..\source\PartySystem.h" />
     <ClInclude Include="..\..\source\power.h" />
-    <ClInclude Include="..\..\source\Prerequisites.h" />
     <ClInclude Include="..\..\source\regions.h" />
     <ClInclude Include="..\..\source\scriptc.h" />
     <ClInclude Include="..\..\source\SEFunctions.h" />
@@ -1466,7 +1464,10 @@
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
     <ClInclude Include="..\..\source\TimeUtility.hpp" />
-  </ItemGroup>
+    <ClInclude Include="..\..\source\spidermonkey.h" />
+    <ClInclude Include="..\..\source\useful.h" />
+    <ClInclude Include="..\..\source\ostype.h" />
+ </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\assets\uox3.ico" />
   </ItemGroup>
