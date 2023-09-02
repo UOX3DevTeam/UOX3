@@ -1,23 +1,15 @@
 cmake_minimum_required(VERSION 3.18)
 project(jscript VERSION 1.8.0 LANGUAGES C)
 
-add_executable(jscpucfg ../../jscpucfg.c)
-
-if(NOT WIN32)
-		target_compile_options( jscpucfg PRIVATE
-			-Wno-format-security
-			-Wno-deprecated-declarations
-			$<$<CONFIG:Release>:-Os>
-		)
-		
-#if(NOT EXISTS ${PROJECT_SOURCE_DIR}/jsautocfg.h)		
-    add_custom_command(
-        OUTPUT ../../jsautocfg.h
-        COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
-        DEPENDS jscpucfg
-        COMMENT "Generating jsautocfg.h"
-    )
-#endif()
+#if(NOT WIN32)
+ execute_process(
+ 	COMMAND cc -o ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg ${PROJECT_SOURCE_DIR}/../../jscpucfg.c -Wno-format-security -Wno-deprecated-declarations -Os 
+ 	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg   
+ 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+ 	OUTPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h 
+ 	
+ )
+ message("Generating jsautocfg.h")
 endif(NOT WIN32)
 
 add_library(jscript STATIC)
