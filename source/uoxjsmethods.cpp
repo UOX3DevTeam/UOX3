@@ -4,7 +4,7 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
 //|						1.0		20th December, 2001 Initial
-//implementation
+// implementation
 //|								Methods for the javascript objects
 //|
 //|								List of supported Classes:
@@ -15,16 +15,16 @@
 // o------------------------------------------------------------------------------------------------o
 #include "uoxjsmethods.h"
 
-#include <variant>
 #include <filesystem>
+#include <variant>
 
-#include "cjsengine.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
 #include "cgump.h"
-#include "cjsmapping.h"
 #include "citem.h"
+#include "cjsengine.h"
+#include "cjsmapping.h"
 #include "classes.h"
 #include "cmagic.h"
 #include "cmultiobj.h"
@@ -32,8 +32,8 @@
 #include "commands.h"
 #include "cpacketsend.h"
 #include "craces.h"
-#include "cserverdefinitions.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
 #include "csocket.h"
 #include "cthreadqueue.h"
 #include "dictionary.h"
@@ -49,11 +49,11 @@
 #include "sefunctions.h"
 #include "skills.h"
 #include "speech.h"
-#include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
-#include "uoxjspropertyspecs.h"
 #include "uoxjsclasses.h"
+#include "uoxjspropertyspecs.h"
+#include "utility/strutil.hpp"
 #include "wholist.h"
 
 void BuildAddMenuGump(CSocket *s, UI16 m); // Menus for item creation
@@ -67,8 +67,8 @@ void ScriptError(JSContext *cx, const char *txt, ...);
 //|	Function	-	MethodSpeech()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds speech entry of specified type, font, color, etc to the speech
-//queue | Notes		-	Copied that here from sefunctions.cpp. Default paramters weren't
-//working !?
+// queue | Notes		-	Copied that here from sefunctions.cpp. Default paramters
+// weren't working !?
 // o------------------------------------------------------------------------------------------------o
 void MethodSpeech(CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A,
                   FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC,
@@ -276,7 +276,7 @@ JSBool CPacket_WriteLong(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void WriteString( position, stringToWrite, length )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes variable number of bytes at specified position in the packet
-//stream
+// stream
 // o------------------------------------------------------------------------------------------------o
 JSBool CPacket_WriteString(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                            [[maybe_unused]] jsval *rval) {
@@ -515,7 +515,8 @@ JSBool CGumpData_GetButton(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddCheckbox()
-//|	Prototype	-	void AddCheckbox( topHeight, topLeft, checkImage, defaultStatus, unk2
+//|	Prototype	-	void AddCheckbox( topHeight, topLeft, checkImage, defaultStatus,
+//unk2
 //)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a checkbox gump to gump stream
@@ -569,7 +570,7 @@ JSBool CGump_AddCheckbox(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void NoClose()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds noclose element to gump stream; specifies that gump cannot be
-//closed by |					clicking the right mouse button
+// closed by |					clicking the right mouse button
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_NoClose(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                      [[maybe_unused]] jsval *rval) {
@@ -596,7 +597,7 @@ JSBool CGump_NoClose(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 //|	Date		-	9th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds nomove element to gump stream; specifies that gump cannot be
-//moved
+// moved
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_NoMove(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                     [[maybe_unused]] jsval *rval) {
@@ -623,11 +624,11 @@ JSBool CGump_NoMove(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] j
 //|	Date		-	14th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds nodispose element to gump stream; specifies that gump cannot be
-//disposed |					of/closed using the Escape button | Notes
+// disposed |					of/closed using the Escape button | Notes
 //-	It's also possible it is used to prevent gumps from being closed |
-//using the "Close Dialogs" client macro
+// using the "Close Dialogs" client macro
 //|					No response is sent to server upon closing the Gump in this
-//manner.
+// manner.
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_NoDispose(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                        [[maybe_unused]] jsval *rval) {
@@ -654,7 +655,7 @@ JSBool CGump_NoDispose(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //|	Date		-	14th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds noresize element to gump stream; specifies that gump cannot be
-//resized
+// resized
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_NoResize(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                       [[maybe_unused]] jsval *rval) {
@@ -680,7 +681,7 @@ JSBool CGump_NoResize(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 //|	Date		-	24th March, 2012
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Possible that the mastergump command itself only has any effect with
-//client versions between 4.0.4d and 5.0.5b?
+// client versions between 4.0.4d and 5.0.5b?
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_MasterGump(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                         [[maybe_unused]] jsval *rval) {
@@ -706,7 +707,7 @@ JSBool CGump_MasterGump(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddBackground()
 //|	Prototype	-	void AddBackground( topHeight, topLeft, bottomHeight, bottomLeft,
-//backImage )
+// backImage )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds background gump to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -773,8 +774,8 @@ JSBool CGump_AddButton(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddButtonTileArt()
 //|	Prototype	-	void AddButtonTileArt( topHeight, topLeft, buttonImage,
-//|								buttonPressedImage, unk1, unk2, unk3, tileId,
-//hue, tileX, tileY )
+//|								buttonPressedImage, unk1, unk2, unk3,
+//tileId, hue, tileX, tileY )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump with tileart to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -848,7 +849,7 @@ JSBool CGump_AddPageButton(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|	Date		-	14th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds transparent area gump to gump stream, turns underlying elements
-//transparent
+// transparent
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_AddCheckerTrans(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                              [[maybe_unused]] jsval *rval) {
@@ -1038,17 +1039,18 @@ JSBool CGump_AddGumpColor(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void AddToolTip( clilocNum, ... )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds cliloc-based tooltip to previous gump (Gump, Image, Button) in
-//gump stream
+// gump stream
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Additional arguments (up to 10) can be provided if the cliloc in
-//question needs |					them. This could also be used to show custom
-//tooltips in the client, if using a
+// question needs |					them. This could also be used to show custom
+// tooltips in the client, if using a
 //|					cliloc (like 1042971) that only contain an argument and no
-//additional text!
+// additional text!
 //|
-//|					For example, if you use myGump.AddToolTip( 1042971, "My Custom
-//Text" ) in JS |					UOX3 will send the following gump command to
-//add a tooltip element to previous
+//|					For example, if you use myGump.AddToolTip( 1042971, "My
+//Custom
+// Text" ) in JS |					UOX3 will send the following gump command to
+// add a tooltip element to previous
 //|					gump element: "tooltip 1042971 @My Custom Text@"
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_AddToolTip(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
@@ -1089,7 +1091,7 @@ JSBool CGump_AddToolTip(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 // o--------------------------------------------------------------------------------
 // ---------------o |	Function	-	CGump_AddHTMLGump() |	Prototype	-	void
-//AddHTMLGump( topHeight, topLeft, width, height, background, scrollbar, HTMLText) |	Date
+// AddHTMLGump( topHeight, topLeft, width, height, background, scrollbar, HTMLText) |	Date
 //-	16th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new HTML gump to gump stream
@@ -1191,7 +1193,7 @@ JSBool CGump_AddPicture(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void AddPictureColor( topHeight, topLeft, tilePic, hue )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream, with additional parameter for
-//hue
+// hue
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_AddPictureColor(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                              [[maybe_unused]] jsval *rval) {
@@ -1219,7 +1221,7 @@ JSBool CGump_AddPictureColor(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddPicInPic()
 //|	Prototype	-	void AddPicInPic( topLeft, topHeight, gumpImage, spriteX, spriteY,
-//width, height )
+// width, height )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a picinpic gump to the gump stream
 //|	Notes		-	Requires client v7.0.80.0 or above
@@ -1257,12 +1259,12 @@ JSBool CGump_AddPicInPic(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Date		-	6th July, 2020
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attaches item property element to previous element added to JS Gump,
-//which |					causes client to display the known properties of an
-//object based on the
-//|					object serial that was provided as a regular tooltip on cursor.
-//Could be used to
+// which |					causes client to display the known properties of an
+// object based on the
+//|					object serial that was provided as a regular tooltip on
+//cursor. Could be used to
 //|					show item stats for items on a custom paperdoll, for
-//instance.
+// instance.
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_AddItemProperty(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                              [[maybe_unused]] jsval *rval) {
@@ -1385,7 +1387,7 @@ JSBool CGump_AddText(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddTextEntry()
 //|	Prototype	-	void AddTextEntry( topHeight, topLeft, width, height, hue, unk4,
-//textID, defaultText )
+// textID, defaultText )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -1426,7 +1428,7 @@ JSBool CGump_AddTextEntry(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddTextEntryLimited()
 //|	Prototype	-	void AddTextEntryLimited( topHeight, topLeft, width, height, hue,
-//unk4, textID, defaultText, maxLength )
+// unk4, textID, defaultText, maxLength )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump with maximum length to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -1500,7 +1502,7 @@ JSBool CGump_AddTiledGump(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddXMFHTMLGump()
 //|	Prototype	-	void AddXMFHTMLGump( left, top, width, height, number, hasBorder,
-//hasScrollbar ) |	Date		-	16th February, 2003
+// hasScrollbar ) |	Date		-	16th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new XMFHTML gump to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -1537,7 +1539,7 @@ JSBool CGump_AddXMFHTMLGump(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddXMFHTMLGumpColor()
 //|	Prototype	-	void AddXMFHTMLGumpColor( left, top, width, height, number,
-//hasBorder, hasScrollbar, rgbColour ) |	Date		-	16th February, 2003
+// hasBorder, hasScrollbar, rgbColour ) |	Date		-	16th February, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream
 // o------------------------------------------------------------------------------------------------o
@@ -1575,10 +1577,10 @@ JSBool CGump_AddXMFHTMLGumpColor(JSContext *cx, JSObject *obj, uintN argc, jsval
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump_AddXMFHTMLTok()
 //|	Prototype	-	void AddXMFHTMLGumpColor( left, top, width, height, number,
-//hasBorder, hasScrollbar, rgbColour )
+// hasBorder, hasScrollbar, rgbColour )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream, with optional
-//cliloc arguments
+// cliloc arguments
 // o------------------------------------------------------------------------------------------------o
 JSBool CGump_AddXMFHTMLTok(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                            [[maybe_unused]] jsval *rval) {
@@ -1671,8 +1673,8 @@ JSBool CGump_Send(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void TextMessage( message )
 //|					void TextMessage( message, allHear, txtHue )
 //|					void TextMessage( message, allHear, txtHue, speechTarget,
-//speechTargetSerial, speechFontType ); |					void TextMessage(
-//message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType, speechType );
+// speechTargetSerial, speechFontType ); |					void TextMessage(
+// message, allHear, txtHue, speechTarget, speechTargetSerial, speechFontType, speechType );
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 // o------------------------------------------------------------------------------------------------o
@@ -1805,7 +1807,7 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Date		-	04/20/2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill all related timers that have been associated with an item or
-//character
+// character
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_KillTimers(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                         [[maybe_unused]] jsval *rval) {
@@ -1847,7 +1849,7 @@ JSBool CBase_KillTimers(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void GetJSTimer( timerId, scriptId )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get JS timer with specific timerId association with an item or
-//character, and return time left
+// character, and return time left
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_GetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 2) {
@@ -1897,7 +1899,7 @@ JSBool CBase_GetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	void SetJSTimer( timerId, timeInMilliseconds, scriptId )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set expiration time for JS timer with specific timerId association
-//with an item or character
+// with an item or character
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_SetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 3) {
@@ -1952,7 +1954,7 @@ JSBool CBase_SetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	void KillJSTimer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill JS timer on item or character based on specified scriptId and
-//timerId
+// timerId
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_KillJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 2) {
@@ -2824,7 +2826,7 @@ JSBool CMisc_BuyFrom(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	bool HasSpell( spellNum )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for specified spell in first spellbook found in player's
-//inventory
+// inventory
 // o------------------------------------------------------------------------------------------------o
 JSBool CMisc_HasSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -2879,7 +2881,7 @@ JSBool CMisc_HasSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|	Prototype	-	void RemoveSpell( spellNum )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified spell from first spellbook found in player's
-//inventory
+// inventory
 // o------------------------------------------------------------------------------------------------o
 JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -2939,7 +2941,7 @@ JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	tagdata GetTag( "TagName" )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for tag with specified name, if tag has been stored on
-//the object
+// the object
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_GetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -3062,7 +3064,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	tagdata GetTempTag( "TagName" )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for temporary tag with specified name, if tag has been
-//stored on the object
+// stored on the object
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_GetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -3100,7 +3102,8 @@ JSBool CBase_GetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|					void SetTempTag( "TagName", TagBoolValue )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Stores temporary tag with specified name and value on object, does
-//not persist |					across server restart (or character reconnect)
+// not persist |					across server restart (or character
+// reconnect)
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                         [[maybe_unused]] jsval *rval) {
@@ -3642,7 +3645,7 @@ JSBool CChar_DirectionTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Prototype	-	void ExecuteCommand( cmdString )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Executes specified command (with cmd params as part of cmdString)
-//for character
+// for character
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_ExecuteCommand(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                             [[maybe_unused]] jsval *rval) {
@@ -3729,7 +3732,7 @@ JSBool CGuild_IsAtPeace(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //|					int ResourceCount( realId, colour, moreVal, sectionId )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal
-//character has in packs
+// character has in packs
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_ResourceCount(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
@@ -3775,11 +3778,12 @@ JSBool CChar_ResourceCount(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|	Prototype	-	int UseResource( amount, realItemId )
 //|					int UseResource( amount, realItemId, colour )
 //|					int UseResource( amount, realItemId, colour, moreVal )
-//|					int UseResource( amount, realItemId, colour, moreVal, sectionId
+//|					int UseResource( amount, realItemId, colour, moreVal,
+//sectionId
 //)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified amount of items of given ID, colour and MORE value
-//from |					char's packs, and returns amount deleted
+// from |					char's packs, and returns amount deleted
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_UseResource(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     JSEncapsulate myClass(cx, obj);
@@ -3855,16 +3859,16 @@ JSBool CChar_BoltEffect(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 //|					function onCallback{tNum}( tSock, targSerial )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Provides player with a custom target cursor that calls back into a
-//specific |					function in script when a target has been selected.
+// specific |					function in script when a target has been selected.
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Very similar to PopUpTarget. It's a callback situation instead. tNum
-//must be
-//|					between 0 and 255. Says toSay, and shows a cursor. Reenters the
-//script
+// must be
+//|					between 0 and 255. Says toSay, and shows a cursor. Reenters
+//the script
 //|					associated with the socket's player (ie player who gets the
-//cursor).
-//|					Enters function name based on the value of tNum. if tNum is 0, then
-//the |					function would be onCallback0.
+// cursor).
+//|					Enters function name based on the value of tNum. if tNum is 0,
+//then the |					function would be onCallback0.
 //|
 //|					Useable with both sockets and characters.
 // o------------------------------------------------------------------------------------------------o
@@ -3936,9 +3940,9 @@ JSBool CMisc_CustomTarget(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void PopUpTarget( tNum, toSay )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Provides a call to an inbuilt popup target. tNum must be between 0
-//and 255
-//|					inclusive. Says toSay, and shows a cursor. Note that this allows
-//access |					potentially to GM functions.
+// and 255
+//|					inclusive. Says toSay, and shows a cursor. Note that this
+//allows access |					potentially to GM functions.
 // o------------------------------------------------------------------------------------------------o
 JSBool CMisc_PopUpTarget(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -4032,10 +4036,10 @@ JSBool CBase_InRange(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //|	Purpose		-	Starts timer for object that lasts specified amount of milliseconds.
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	timerId must be between 0 and 100. Resulting onTimer event will be
-//triggered.
-//|					Which script it triggers in depends on the (optional, defaults to
-//false) third |					parameter, which can be |
-//false (DEFAULT if not specified, calls back into object's script)
+// triggered.
+//|					Which script it triggers in depends on the (optional, defaults
+//to false) third |					parameter, which can be | false (DEFAULT if
+// not specified, calls back into object's script)
 //|						true (calls back to existing script)
 //|						int (scriptId to call back to)
 // o------------------------------------------------------------------------------------------------o
@@ -4093,15 +4097,15 @@ JSBool CBase_StartTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	bool CheckSkill( skillnum, minskill, maxskill[, isCraftSkill] )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs a skillcheck for character based on specified skill.
-//Returns true
-//|					if result of skillcheck is between provided minimum and maximum
-//values.
-//|					isCraftSkill is a boolean flag to indicate if skill check is done
-//for a craft skill;
-//|					if true, an alternate skill check formula is used that gives player
-//a minimum 50% chance
-//|					if they at least meat the minimum requirements for crafting an
-//item
+// Returns true
+//|					if result of skillcheck is between provided minimum and
+//maximum values.
+//|					isCraftSkill is a boolean flag to indicate if skill check is
+//done for a craft skill;
+//|					if true, an alternate skill check formula is used that gives
+//player a minimum 50% chance
+//|					if they at least meat the minimum requirements for crafting
+//an item
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckSkill(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 3 && argc != 4) {
@@ -4264,7 +4268,7 @@ JSBool CItem_OpenPlank(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //|	Prototype	-	void SpeechInput( speechId )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls up the onSpeechInput event using specified ID, with the text
-//the user types
+// the user types
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpeechInput(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -4425,9 +4429,9 @@ void UpdateStats(CBaseObject *mObj, UI08 x);
 //|	Prototype	-	void UpdateStats( statType )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends update to client with specified stat (health, mana or stamina)
-//for object
+// for object
 //| Notes		-	Can be used with any character, as well as with items/multis with
-//damageable flag enabled
+// damageable flag enabled
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -4485,7 +4489,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void SetPoisoned( poisonLevel, Length )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a specified level of poison to the character for a specified
-//amount of |					time (in milliseconds).
+// amount of |					time (in milliseconds).
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SetPoisoned(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -4525,7 +4529,7 @@ void ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, boo
 //|	Prototype	-	void ExplodeItem( myItem, damage, damageType, explodeNearby )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes specified item by exploding it, dealing 5-10 dmg to nearby
-//characters
+// characters
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_ExplodeItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -4558,7 +4562,7 @@ JSBool CChar_ExplodeItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void SetInvisible( visibility, timeLength )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets character to the specified visibility level for the specified
-//amount of |					time (in milliseconds).
+// amount of |					time (in milliseconds).
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SetInvisible(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                           [[maybe_unused]] jsval *rval) {
@@ -5228,9 +5232,9 @@ UI16 HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CChar
 //|	Prototype	-	void PlaceInPack()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Randomly sets the placement/position of an item inside the container
-//it is in.
-//|					If second parameter is true, UOX3 will attempt to stack the item
-//with an existing item |					instead.
+// it is in.
+//|					If second parameter is true, UOX3 will attempt to stack the
+//item with an existing item |					instead.
 // o------------------------------------------------------------------------------------------------o
 JSBool CItem_PlaceInPack(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc > 1) {
@@ -5307,7 +5311,7 @@ JSBool CSocket_OpenURL(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	unsigned char GetByte( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value of a byte from the socket at offset, assumes 0 to 255
-//as values
+// as values
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetByte(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5331,7 +5335,7 @@ JSBool CSocket_GetByte(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //|	Prototype	-	signed char GetSByte( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 1 byte of data from socket buffer at offset, assumes -127 to
-//127 as values
+// 127 as values
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetSByte(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5355,7 +5359,7 @@ JSBool CSocket_GetSByte(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	unsigned int GetWord( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, assumes
-//positive values
+// positive values
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5379,7 +5383,7 @@ JSBool CSocket_GetWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //|	Prototype	-	signed int GetSWord( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, negative
-//values accepted
+// values accepted
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetSWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5403,7 +5407,7 @@ JSBool CSocket_GetSWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	unsigned int GetDWord( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, positive
-//values assumed
+// values assumed
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetDWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5427,7 +5431,7 @@ JSBool CSocket_GetDWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	signed int GetSDWord( offset )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, negative
-//values accepted
+// values accepted
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetSDWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) // 1 parameters
@@ -5451,8 +5455,8 @@ JSBool CSocket_GetSDWord(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Prototype	-	string GetString( offset [, length] )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns data from socket buffer at offset with optional length
-//param, string assumed |					If no length param is provided,
-//reads until next null terminator
+// param, string assumed |					If no length param is provided,
+// reads until next null terminator
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetString(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1 && argc != 2) {
@@ -5627,7 +5631,7 @@ JSBool CSocket_ReadBytes(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|					void WhoList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gump populated with all online or offline (if param is
-//false) players
+// false) players
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_WhoList(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                        [[maybe_unused]] jsval *rval) {
@@ -5837,7 +5841,7 @@ JSBool CSocket_OpenGump(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	void CloseGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes specified generic gump based on its ID, and provides a button
-//ID response
+// ID response
 // o------------------------------------------------------------------------------------------------o
 JSBool CSocket_CloseGump(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -6059,7 +6063,7 @@ JSBool CChar_AddSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Date		-	23 June, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does the actions associated with spell failure, called after the
-//failure happens
+// failure happens
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpellFail(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                        [[maybe_unused]] jsval *rval) {
@@ -6145,13 +6149,12 @@ JSBool CBase_Refresh(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 //|	Date		-	23 June, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Modifies item properties based on item's rank (could be calculated
-//based on
+// based on
 //|					player's crafting skill, but is always 10 if rank system not
-//enabled. Higher
-//|					values will increase base properties of item, lower will decrease
-//base
-//|					properties). maxRank is the maximum amount of ranks in the rank
-//system (10 by default).
+// enabled. Higher
+//|					values will increase base properties of item, lower will
+//decrease base |					properties). maxRank is the maximum amount
+//of ranks in the rank system (10 by default).
 // o------------------------------------------------------------------------------------------------o
 JSBool CItem_ApplyRank(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                        [[maybe_unused]] jsval *rval) {
@@ -6226,8 +6229,8 @@ JSBool CAccount_SetAccount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //|	Date		-	8/15/2003 10:43:18 PM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add an account through the JS. The calling script will be required
-//to specifiy |					the username, password, flags, and comment/contact
-//information.
+// to specifiy |					the username, password, flags, and
+// comment/contact information.
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 // o------------------------------------------------------------------------------------------------o
@@ -6276,11 +6279,12 @@ JSBool CAccount_AddAccount(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //|	Date		-	8/21/2003 2:39:27 PM
 /// o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove an account from the memory. This is a permanent action that
-//CAN NOT be
+// CAN NOT be
 //|					undone. After a call to this function the account will be
-//immidiatly removed
-//|					from memory, and will not be written out to the accounts.adm file,
-//and will |					have the associated directory tagged and renamed.
+// immidiatly removed
+//|					from memory, and will not be written out to the accounts.adm
+//file, and will |					have the associated directory tagged and
+// renamed.
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 // o------------------------------------------------------------------------------------------------o
@@ -6465,7 +6469,7 @@ JSBool CFile_Close(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 //|	Date		-	23 June, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a string of length numBytes, reading numBytes from the
-//opened file
+// opened file
 // o------------------------------------------------------------------------------------------------o
 JSBool CFile_Read(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -6499,7 +6503,7 @@ JSBool CFile_Read(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 //|	Date		-	23 June, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads a string until it encounters a newline or the string specified
-//by delimeter.
+// by delimeter.
 // o------------------------------------------------------------------------------------------------o
 JSBool CFile_ReadUntil(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -6787,9 +6791,9 @@ JSBool CBase_FinishedItems(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 //|	Date		-	06 Sep 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target
-//location,
-//|					halting if max amount of steps is reached before reaching the
-//location
+// location,
+//|					halting if max amount of steps is reached before reaching
+//the location
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_WalkTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                     [[maybe_unused]] jsval *rval) {
@@ -6893,9 +6897,9 @@ JSBool CChar_WalkTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Date		-	06 Sep 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins pathfinding for a character, making them run to target
-//location,
-//|					halting if max amount of steps is reached before reaching the
-//location
+// location,
+//|					halting if max amount of steps is reached before reaching
+//the location
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_RunTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                    [[maybe_unused]] jsval *rval) {
@@ -7035,7 +7039,7 @@ JSBool CMisc_GetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|	Prototype	-	bool SetTimer( timerId, numMilliSeconds )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the specified timer with the amount of miliseconds until it
-//expires
+// expires
 // o------------------------------------------------------------------------------------------------o
 JSBool CMisc_SetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                       [[maybe_unused]] jsval *rval) {
@@ -7239,7 +7243,7 @@ JSBool CItem_UnGlow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, j
 //|					void Gate( x, y, z, world, instanceID )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gate to the location marked on an item, or to a specified
-//set of coords
+// set of coords
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_Gate(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                   [[maybe_unused]] jsval *rval) {
@@ -7443,7 +7447,8 @@ JSBool CChar_SetRandomName(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|	Prototype	-	bool SetSkillByName( "skillName", value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the skill specified by name to the value specified (name must
-//be the same |					as in skills.dfn, "ALLSKILLS" is also applicable.
+// be the same |					as in skills.dfn, "ALLSKILLS" is also
+// applicable.
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SetSkillByName(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 2) {
@@ -7656,7 +7661,7 @@ JSBool CChar_Dupe(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
 //|					void Jail( numSecsToJail )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Jails character, either for ~27 hours or for specified amount of
-//time in seconds
+// time in seconds
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_Jail(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                   [[maybe_unused]] jsval *rval) {
@@ -8070,8 +8075,8 @@ JSBool CConsole_MoveTo(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //|	Prototype	-	void PrintSpecial( textColour, string )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a special tag in console similar to [done] and [failed], but
-//with custom |					text and colour |	Notes		-
-//Available colours: |					0 - Normal
+// with custom |					text and colour |	Notes		-
+// Available colours: |					0 - Normal
 //|					1 - Blue
 //|					2 - Red
 //|					3 - Green
@@ -8143,7 +8148,7 @@ JSBool CConsole_Reload(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //|	Prototype	-	void SpellMoveEffect( targetChar, mSpell )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going
-//from the |					character to the target
+// from the |					character to the target
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpellMoveEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                              [[maybe_unused]] jsval *rval) {
@@ -8180,7 +8185,7 @@ JSBool CChar_SpellMoveEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //|	Prototype	-	void SpellStaticEffect( mSpell )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the STATFX effect of the specified spell in SPELLS.DFN, on the
-//character
+// character
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_SpellStaticEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                                [[maybe_unused]] jsval *rval) {
@@ -8216,7 +8221,7 @@ JSBool CChar_SpellStaticEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *
 //|					void BreakConcentration( socket )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Break a caster's concentration. Provide socket as extra argument for
-//player chars
+// player chars
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_BreakConcentration(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                                 [[maybe_unused]] jsval *rval) {
@@ -8299,9 +8304,9 @@ JSBool CItem_LockDown(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 //|	Prototype	-	void InitWanderArea()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initializes a WanderArea (10x10 box, or 10 radius circle) for the
-//NPC.
-//|					Will only work if they already have a wandermode set to box or
-//circle.
+// NPC.
+//|					Will only work if they already have a wandermode set to box
+//or circle.
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_InitWanderArea(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
                             [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval) {
@@ -8394,7 +8399,7 @@ JSBool CItem_GetTileName(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 //|	Prototype	-	void GetMultiCorner( cornerId )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets coordinates for specified corner ("NW", "NE", "SW" or "SE") of
-//multi
+// multi
 // o------------------------------------------------------------------------------------------------o
 JSBool CMulti_GetMultiCorner(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -9135,7 +9140,7 @@ JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|					void Damage( amount, damageType, attacker, doRepsys )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deals damage of a specified damageType to a character, with optional
-//parameters to include attacker and
+// parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
@@ -9388,7 +9393,7 @@ JSBool CChar_CheckAggressorFlag(JSContext *cx, JSObject *obj, uintN argc,
 //|	Prototype	-	void UpdateAggressorFlagTimestamp( targetChar )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's aggressor flag towards
-//target character
+// target character
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_UpdateAggressorFlagTimestamp(JSContext *cx, JSObject *obj, uintN argc,
                                           [[maybe_unused]] jsval *argv,
@@ -9444,9 +9449,9 @@ JSBool CChar_ClearAggressorFlags(JSContext *cx, JSObject *obj, uintN argc,
 //|	Prototype	-	void IsAggressor( [bool]checkForPlayerOnly )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true/false depending on whether character has any active
-//aggressor flags
-//|					Optional parameter supported to check only flags towards players
-//and ignore NPCs
+// aggressor flags
+//|					Optional parameter supported to check only flags towards
+//players and ignore NPCs
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_IsAggressor(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -9530,7 +9535,7 @@ JSBool CChar_RemovePermaGreyFlag(JSContext *cx, JSObject *obj, uintN argc,
 //|	Prototype	-	void CheckPermaGreyFlag( targetChar )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has an active permagrey flag towards target
-//character
+// character
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_CheckPermaGreyFlag(JSContext *cx, JSObject *obj, uintN argc,
                                 [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval) {
@@ -9560,7 +9565,7 @@ JSBool CChar_CheckPermaGreyFlag(JSContext *cx, JSObject *obj, uintN argc,
 //|	Prototype	-	void UpdatePermaGreyFlagTimestamp( targetChar )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's permagrey flag towards
-//target character
+// target character
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_UpdatePermaGreyFlagTimestamp(JSContext *cx, JSObject *obj, uintN argc,
                                           [[maybe_unused]] jsval *argv,
@@ -9616,9 +9621,9 @@ JSBool CChar_ClearPermaGreyFlags(JSContext *cx, JSObject *obj, uintN argc,
 //|	Prototype	-	void IsPermaGrey( [bool]checkForPlayerOnly )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true/false depending on whether character has any active
-//permagrey flags
-//|					Optional parameter supported to check only flags towards players
-//and ignore NPCs
+// permagrey flags
+//|					Optional parameter supported to check only flags towards
+//players and ignore NPCs
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_IsPermaGrey(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -9645,7 +9650,7 @@ JSBool CChar_IsPermaGrey(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 //|					void Heal( amount, healer );
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Heals a character, with optional argument to provide character who
-//healed
+// healed
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_Heal(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                   [[maybe_unused]] jsval *rval) {
@@ -9787,7 +9792,7 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //|	Prototype	-	int Defense( hitLoc, damageType, doArmorDamage )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the defense value against damageType of the armor item at
-//the location |					hitLoc and does armor damage if needed
+// the location |					hitLoc and does armor damage if needed
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	hitLoc = the hit location
 //|						0 the whole char
@@ -9904,7 +9909,7 @@ JSBool CItem_GetMoreVar(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Prototype	-	int SetMoreVar( moreVar, moreVarPart, tempVarValue )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the value of the specified moreVar's moreVarPart to
-//moreVarValue
+// moreVarValue
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Valid moreVarName values: "more", "more0", "more1", "more2",
 //"morex", "morey", "morez" |					Valid moreVarPart values: 1, 2, 3, 4
@@ -10053,7 +10058,7 @@ JSBool CBase_RemoveScriptTrigger(JSContext *cx, JSObject *obj, uintN argc, jsval
 //|	Prototype	-	void HasScriptTrigger( scriptTrigger )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object has a specific scriptTrigger in it's list of
-//scriptTriggers
+// scriptTriggers
 // o------------------------------------------------------------------------------------------------o
 JSBool CBase_HasScriptTrigger(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -10497,7 +10502,7 @@ JSBool CChar_GetPetList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //|	Prototype	-	bool HasBeenOwner( pChar )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether character pChar has previously owned the pet (is on
-//pet owner list)
+// pet owner list)
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_HasBeenOwner(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
@@ -10539,7 +10544,7 @@ JSBool CChar_HasBeenOwner(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	int CalculateControlChance( pChar )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns chance (in values ranging from 0 to 1000) of pChar (player)
-//successfully controlling mChar (pet)
+// successfully controlling mChar (pet)
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_CalculateControlChance(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                                     jsval *rval) {

@@ -3,10 +3,10 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Region class  Added 3/6/1999 To lookup items by region
 //|						This should help for now. BTW- my first attempt at
-//C++ |						So forgive any newbie mistakes :) |
-//Side note, I wanted regions to be more generic, but
-//|						now that I have to do this, time doesn't allow for it
-//yet.
+// C++ |						So forgive any newbie mistakes :) |
+// Side note, I wanted regions to be more generic, but
+//|						now that I have to do this, time doesn't allow for
+//it yet.
 // o------------------------------------------------------------------------------------------------o
 
 #ifndef __Region_h
@@ -15,8 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
 #include "genericlist.h"
+#include "typedefs.h"
 
 class CItem;
 class CChar;

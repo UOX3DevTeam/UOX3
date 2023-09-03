@@ -3,40 +3,39 @@
 //|	Date			-	2nd April, 2000
 // o------------------------------------------------------------------------------------------------o
 //| Purpose			-	New class written based upon old UOX item_st.  Number of old
-//members removed
+// members removed
 //|						and a number of members types modified as well
 //|
 //|	Version History -
 //|
 //|						1.0		 		2nd April, 2000
 //|						Initial implementation
-//|						Bools reduced down to a single short with get/set mechanisms
-//for setting/clearings bits
-//|						No documentation currently done, all functions obvious so
-//far
-//|						Note:  individual byte setting within longs/shorts need
-//speeding up
-//|						consider memcpy into correct word, note that this will be
-//endian specific!
+//|						Bools reduced down to a single short with get/set
+//mechanisms for setting/clearings bits |						No
+//documentation currently done, all functions obvious so far
+//|						Note:  individual byte setting within longs/shorts
+//need speeding up
+//|						consider memcpy into correct word, note that this will
+//be endian specific!
 //|
 //|						1.1		 		23rd July, 2000
 //|						Addition of SaveItem routine for text mode only
 //|
 //|						1.2		 		25th July, 2000
-//|						All Accessor funcs plus a few others are now flagged as const
-//functions, meaning that
-//|						those functions GUARENTEE never to alter data, at compile
-//time |						Thoughts about CBaseObject and prelim plans
-//made
+//|						All Accessor funcs plus a few others are now flagged as
+//const functions, meaning that |						those functions
+//GUARENTEE never to alter data, at compile
+// time |						Thoughts about CBaseObject and prelim plans
+// made
 //|
 //|						1.3		 		28th July, 2000
-//|						CBaseObject initial implementation plus rework of CItem to
-//deal with only what it needs to |						Proper constructor
-//written |						Plans for CItem derived classes thought upon
+//|						CBaseObject initial implementation plus rework of CItem
+//to deal with only what it needs to |						Proper constructor
+// written |						Plans for CItem derived classes thought upon
 //|
 //|						1.4		 		17th July, 2004
-//|						Added CSpawnItem to begin breaking CItem into smaller
-//subclasses
+//|						Added CSpawnItem to begin breaking CItem into
+//smaller subclasses
 // o------------------------------------------------------------------------------------------------o
 
 #include "citem.h"
@@ -52,8 +51,8 @@
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cserverdefinitions.h"
-#include "cspawnregion.h"
 #include "csocket.h"
+#include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
@@ -62,11 +61,11 @@
 #include "osunique.hpp"
 #include "power.h"
 #include "regions.h"
+#include "speech.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
-#include "speech.h"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #include "weight.h"
 
@@ -210,7 +209,7 @@ auto CItem::SetTempVar(CITempVars whichVar, UI32 newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets one of the words of the temp value
 //|	Notes		-	Valid values for part are 1->4.  If outside that, behaves as if it
-//were 1
+// were 1
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetTempVar(CITempVars whichVar, UI08 part) const -> UI08 {
     UI08 rVal = 0;
@@ -268,9 +267,10 @@ auto CItem::SetTempVar(CITempVars whichVar, UI08 part, UI08 newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set's the item's container value to newValue
 //|						Takes it out of the old container, and puts in the
-//new |						Copes with being on paperdolls, ground and in
-//containers |						Also copes with removing and adding to a map
-//region
+// new |						Copes with being on paperdolls, ground and
+// in
+// containers |						Also copes with removing and adding to a map
+// region
 //|						Returns false if item needs deleting, true if fine
 // o------------------------------------------------------------------------------------------------o
 auto CItem::SetContSerial(SERIAL newSerial) -> bool {
@@ -501,7 +501,7 @@ void CItem::SetGuarded(bool newValue) {
 //|					CItem::SetSpawnerList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether spawner points to a a NPCLIST/ITEMLIST instead of
-//an NPC/Item
+// an NPC/Item
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IsSpawnerList() const -> bool { return bools.test(BIT_SPAWNERLIST); }
 auto CItem::SetSpawnerList(bool newValue) -> void {
@@ -529,7 +529,7 @@ auto CItem::SetName2(const std::string &value) -> void {
 //|					CItem::SetCreator()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets serial of item's creator - used for crafting and maker's
-//marks
+// marks
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetCreator() const -> SERIAL { return creator; }
 auto CItem::SetCreator(SERIAL newValue) -> void {
@@ -542,7 +542,7 @@ auto CItem::SetCreator(SERIAL newValue) -> void {
 //|					CItem::SetDesc()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's description property - used for playervendors,
-//among other things
+// among other things
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetDesc() const -> std::string { return desc; }
 auto CItem::SetDesc(std::string newValue) -> void {
@@ -555,7 +555,7 @@ auto CItem::SetDesc(std::string newValue) -> void {
 //|					CItem::SetEvent()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's event property - used to attach items to specific
-//events
+// events
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetEvent() const -> std::string { return eventName; }
 auto CItem::SetEvent(std::string newValue) -> void {
@@ -620,7 +620,7 @@ void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ) {
 //|	Function	-	CItem::SetLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets item's new location to match specified coordinates, grid
-//location, world and instance
+// location, world and instance
 // o------------------------------------------------------------------------------------------------o
 void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world,
                         UI16 instance_id) {
@@ -667,7 +667,7 @@ void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world
 //|	Function	-	CItem::SetLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets item's new location to match specified coordinates, world and
-//instance
+// instance
 // o------------------------------------------------------------------------------------------------o
 void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) {
     SetLocation(newX, newY, newZ, GetGridLocation(), world, instanceId);
@@ -747,7 +747,7 @@ auto CItem::SetOffSpell(SI08 newValue) -> void {
 //|					CItem::SetAmount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's amount property, adjusts weight according to new
-//value
+// value
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetAmount() const -> UI16 { return amount; }
 auto CItem::SetAmount(UI32 newValue) -> void {
@@ -836,7 +836,7 @@ auto CItem::SetUsesLeft(UI16 newValue) -> void {
 //|					CItem::SetSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's speed property - used to determine weapon attack
-//speed
+// speed
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetSpeed() const -> UI08 { return spd; }
 auto CItem::SetSpeed(UI08 newValue) -> void {
@@ -849,7 +849,7 @@ auto CItem::SetSpeed(UI08 newValue) -> void {
 //|					CItem::SetMaxRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's maximum range - primarily used by throwing/archery
-//weapons
+// weapons
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetMaxRange() const -> UI08 { return maxRange; }
 auto CItem::SetMaxRange(UI08 newValue) -> void {
@@ -886,7 +886,7 @@ auto CItem::SetMovable(SI08 newValue) -> void {
 //|					CItem::SetTempLastTraded()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets timestamp for when item was last traded using secure trade
-//window (not saved)
+// window (not saved)
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetTempLastTraded() const -> TIMERVAL { return tempLastTraded; }
 auto CItem::SetTempLastTraded(TIMERVAL newValue) -> void { tempLastTraded = newValue; }
@@ -926,7 +926,7 @@ void CItem::SetPriv(UI08 newValue) {
 //|					CItem::SetSellValue()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the item's sell value - determines how much player can
-//sell it for
+// sell it for
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetSellValue() const -> UI32 { return value[1]; }
 auto CItem::SetSellValue(UI32 newValue) -> void {
@@ -939,7 +939,7 @@ auto CItem::SetSellValue(UI32 newValue) -> void {
 //|					CItem::SetBuyValue()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for
-//it
+// it
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetBuyValue() const -> UI32 { return value[0]; }
 auto CItem::SetBuyValue(UI32 newValue) -> void {
@@ -952,7 +952,7 @@ auto CItem::SetBuyValue(UI32 newValue) -> void {
 //|					CItem::SetVendorPrice()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for
-//it
+// it
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetVendorPrice() const -> UI32 { return value[2]; }
 auto CItem::SetVendorPrice(UI32 newValue) -> void {
@@ -1118,7 +1118,7 @@ auto CItem::SetAmmoFXHue(UI16 newValue) -> void {
 //|					CItem::SetAmmoFXRender()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the render mode of projectile FX played when firing ranged
-//weapons
+// weapons
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetAmmoFXRender() const -> UI16 { return ammoFX[2]; }
 auto CItem::SetAmmoFXRender(UI16 newValue) -> void {
@@ -1143,7 +1143,7 @@ auto CItem::SetWeightMax(SI32 newValue) -> void {
 //|					CItem::SetBaseWeight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets base item weight - primarily used to store original
-//container weight
+// container weight
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetBaseWeight() const -> SI32 { return baseWeight; }
 auto CItem::SetBaseWeight(SI32 newValue) -> void {
@@ -1167,7 +1167,7 @@ auto CItem::SetMaxItems(UI16 newValue) -> void {
 //|	Function	-	CItem::IsFieldSpell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether item belongs to a field spell - and if so - which
-//one
+// one
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IsFieldSpell() const -> UI08 {
     switch (id) {
@@ -1335,7 +1335,7 @@ auto CItem::RemoveSelfFromCont() -> void {
 //|	Purpose		-	Make a copy of item and copy all properties from old item to new
 // o------------------------------------------------------------------------------------------------o
 auto CItem::Dupe(ObjectType itemType) -> CItem * {
-    CItem *target = static_cast<CItem *>(ObjectFactory::GetSingleton().CreateObject(itemType));
+    CItem *target = static_cast<CItem *>(ObjectFactory::shared().CreateObject(itemType));
     if (target == nullptr)
         return nullptr;
 
@@ -2051,7 +2051,7 @@ auto CItem::IsContType() const -> bool {
 //|	Function	-	CItem::PostLoadProcessing()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to setup any pointers that may need adjustment following the
-//loading of the world
+// loading of the world
 // o------------------------------------------------------------------------------------------------o
 void CItem::PostLoadProcessing(void) {
     CBaseObject::PostLoadProcessing();
@@ -2159,7 +2159,7 @@ auto CItem::SetDecayable(bool newValue) -> void {
 //|					CItem::SetNewbie()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is marked as a newbie item (doesn't drop on
-//death)
+// death)
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IsNewbie() const -> bool { return priv.test(BIT_NEWBIE); }
 auto CItem::SetNewbie(bool newValue) -> void {
@@ -2172,7 +2172,7 @@ auto CItem::SetNewbie(bool newValue) -> void {
 //|					CItem::SetDispellable()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is dispellable (part of a field spell, for
-//instance)
+// instance)
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IsDispellable() const -> bool { return priv.test(BIT_DISPELLABLE); }
 auto CItem::SetDispellable(bool newValue) -> void {
@@ -2197,7 +2197,7 @@ auto CItem::SetDivineLock(bool newValue) -> void {
 //|					CItem::SetStealable()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets property that determines under which conditions item can
-//be stolen
+// be stolen
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetStealable() const -> UI08 { return stealable; }
 auto CItem::SetStealable(UI08 newValue) -> void {
@@ -2912,9 +2912,9 @@ auto CItem::GetContOpenedByList() -> GenericList<CSocket *> * { return &contOpen
 //|						1.0		 		29th June, 2004
 //|						Original implementation
 //|						First attempt to begin breaking CItem into multiple
-//smaller
-//|						classes, reducing overall memory usage. Currently stores
-//all |						objects spawned by an item.
+// smaller
+//|						classes, reducing overall memory usage. Currently
+//stores all |						objects spawned by an item.
 // o------------------------------------------------------------------------------------------------o
 CSpawnItem::CSpawnItem() : CItem(), isSectionAList(false) {
     objType = OT_SPAWNER;
@@ -3297,11 +3297,11 @@ bool CSpawnItem::CanBeObjType(ObjectType toCompare) const {
 //|	Date		-	7/11/2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new CSpawnItem and copies all of this objects properties
-//to the new one
+// to the new one
 // o------------------------------------------------------------------------------------------------o
 auto CSpawnItem::Dupe() -> CSpawnItem * {
     CSpawnItem *target =
-        static_cast<CSpawnItem *>(ObjectFactory::GetSingleton().CreateObject(OT_SPAWNER));
+        static_cast<CSpawnItem *>(ObjectFactory::shared().CreateObject(OT_SPAWNER));
     if (target == nullptr)
         return nullptr;
 

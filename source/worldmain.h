@@ -16,10 +16,10 @@
 #include <winsock2.h>
 #endif
 
-#include "typedefs.h"
-#include "uoxstruct.h"
 #include "cserverdata.h"
 #include "genericlist.h"
+#include "typedefs.h"
+#include "uoxstruct.h"
 class CSpawnRegion;
 class CTownRegion;
 class CTEffect;

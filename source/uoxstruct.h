@@ -1,11 +1,11 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 
+#include "typedefs.h"
 #include <bitset>
+#include <cmath>
 #include <cstring>
 #include <string>
-#include <cmath>
-#include "typedefs.h"
 
 const UI08 BIT_CANFLY = 0;
 const UI08 BIT_ANTIBLINK = 1;

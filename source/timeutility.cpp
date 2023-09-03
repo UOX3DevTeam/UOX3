@@ -2,14 +2,14 @@
 
 #include "timeutility.hpp"
 
+#include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-#include <chrono>
 // #include <ctime>
-#include <time.h>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <time.h>
 
 namespace timeutil {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -62,7 +62,7 @@ long long Interval_st::Elapsed() {
 //|	Function	-	Interval_st::Stop()
 // o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reset start time and return time elapsed since start time was
-//previously set
+// previously set
 // o-----------------------------------------------------------------------------------------------o
 long long Interval_st::Stop() {
     auto end = std::chrono::steady_clock::now();

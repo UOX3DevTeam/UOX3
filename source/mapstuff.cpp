@@ -8,14 +8,14 @@
 #include "cchar.h"
 #include "citem.h"
 #include "cmultiobj.h"
-#include "subsystem/console.hpp"
 #include "cserverdefinitions.h"
 #include "funcdecl.h"
 #include "regions.h"
 #include "scriptc.h"
 #include "ssection.h"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 
@@ -40,7 +40,7 @@ CMulHandler *Map = nullptr;
 //|	Function	-	CMulHandler::LoadMapsDFN()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads maps.dfn to see which map files to actually load into memory
-//later
+// later
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::LoadMapsDFN(const std::string &uodir) -> std::map<int, MapDfnData_st> {
     auto entrycount = FileLookup->CountOfEntries(maps_def);
@@ -528,7 +528,7 @@ auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_
 //|	Function	-	CMulHandler::DynTile()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns which dynamic tile is present at (x,y) or -1 if no tile
-//exists
+// exists
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
                           std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis)
@@ -606,7 +606,7 @@ auto CMulHandler::DoesStaticBlock(std::int16_t x, std::int16_t y, std::int8_t z,
 //|	Function	-	CMulHandler::DoesDynamicBlock()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if there are any dynamic tiles at given coordinates that
-//block movement
+// block movement
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DoesDynamicBlock(std::int16_t x, std::int16_t y, std::int8_t z,
                                    std::uint8_t worldNumber, std::uint16_t instanceId,
@@ -684,7 +684,7 @@ auto CMulHandler::DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z,
 //|	Function	-	CMulHandler::DoesCharacterBlock()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if there are any characters at given coordinates that block
-//movement
+// movement
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DoesCharacterBlock(UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId)
     -> bool {
@@ -716,7 +716,7 @@ auto CMulHandler::DoesCharacterBlock(UI16 x, UI16 y, SI08 z, UI08 worldNumber, U
 //|	Function	-	CMulHandler::CheckStaticFlag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a
-//specific flag
+// specific flag
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
                                   std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundtileID,
@@ -748,7 +748,7 @@ auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
 //|	Function	-	CMulHandler::CheckDynamicFlag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a
-//specific flag
+// specific flag
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z,
                                    std::uint8_t worldNumber, std::uint16_t instanceId,
@@ -854,7 +854,7 @@ auto CMulHandler::StaticTop(std::int16_t x, std::int16_t y, std::int8_t z, std::
 //|	Function	-	CMulHandler::DynamicElevation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This was fixed to actually return the *elevation* of dynamic items
-//at/above given coordinates
+// at/above given coordinates
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z,
                                    std::uint8_t worldNumber, std::uint16_t instanceId,
@@ -905,7 +905,7 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
 //|	Function	-	CMulHandler::MapElevation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the map elevation at given coordinates, we'll assume since
-//its land |					the height is inherently 0
+// its land |					the height is inherently 0
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::MapElevation(std::int16_t x, std::int16_t y, std::uint8_t worldNumber)
     -> std::int8_t {
@@ -949,7 +949,7 @@ auto CMulHandler::Height(std::int16_t x, std::int16_t y, std::int8_t z, std::uin
 //|	Function	-	CMulHandler::InBuilding()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether give coordinates are inside a building by checking
-//if there is |					a multi or static above them
+// if there is |					a multi or static above them
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::InBuilding(std::int16_t x, std::int16_t y, std::int8_t z,
                              std::uint8_t worldNumber, std::uint16_t instanceId) -> bool {
@@ -1011,7 +1011,7 @@ auto CMulHandler::SeekMulti(std::uint16_t multinum) const -> const CollectionIte
 //|	Function	-	CMulHandler::IsValidTile()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a given tile number falls within the range of tiles loaded
-//in memory
+// in memory
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::IsValidTile(std::uint16_t tileNum) const -> bool {
     bool retVal = true;
@@ -1112,9 +1112,9 @@ auto CMulHandler::SeekMap(std::int16_t x, std::int16_t y, std::uint8_t worldNumb
 //|	Function	-	CMulHandler::ValidSpawnLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if location at given coordinates is considered valid for
-//spawning objects
-//|					Also used to verify teleport location for NPCs teleporting back to
-//bounding box
+// spawning objects
+//|					Also used to verify teleport location for NPCs teleporting back
+//to bounding box
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t z,
                                      std::uint8_t worldNumber, std::uint16_t instanceId,
@@ -1207,7 +1207,7 @@ auto CMulHandler::MapExists(std::uint8_t worldNumber) const -> bool {
 //|	Function	-	CMulHandler::InsideValidWorld()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a given location is within the bounds of the specified
-//world
+// world
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::InsideValidWorld(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) const
     -> bool {
@@ -1513,7 +1513,7 @@ auto ArtBlock::Clear() -> void {
 //|	Function	-	ArtBlock::LoadArtBlock()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load details for all art/statics tiles in a given location from
-//statics files
+// statics files
 // o------------------------------------------------------------------------------------------------o
 auto ArtBlock::LoadArtBlock(int length, std::istream &input, const TileInfo *info) -> void {
     this->Clear();
@@ -1541,7 +1541,7 @@ auto ArtBlock::LoadArtBlock(int length, std::istream &input, const TileInfo *inf
 //|	Function	-	ArtBlock::LoadArtBlock()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieve details for all art/statics tiles in a given location from
-//memory
+// memory
 // o------------------------------------------------------------------------------------------------o
 auto ArtBlock::LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info) -> void {
     this->Clear();

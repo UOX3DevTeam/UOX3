@@ -4,37 +4,36 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Changes		-	Version History
 //|
-//|							1.0		 		15th November,
-//2003
+//|							1.0		 		15th
+//November, 2003
 //|							Initial implementation.  Ripped out 99% of
-//cSpeech::response
-//|							and relocated contents here in individual handler
-//classes
+// cSpeech::response
+//|							and relocated contents here in individual
+//handler classes
 //|
-//|							1.1		 		16th November,
-//2003
+//|							1.1		 		16th
+//November, 2003
 //|							Changed CBaseResponse::Handle() overload to
-//WhichResponse(), and
-//|								locally declared it wherever it was used, also
-//handles different
-//|								languages in WhichResponse() now.
-//|							Added an inline FindString() helper function to clean
-//up WhichResponse().
-//|							Now houses our vendor responses (enabling us to
-//completely remove
+// WhichResponse(), and
+//|								locally declared it wherever it was used,
+//also handles different |								languages in
+//WhichResponse() now.
+//|							Added an inline FindString() helper function to
+//clean up WhichResponse().
+//|							Now houses our vendor responses (enabling us
+//to completely remove
 //|								checkForVendorResponse() and
-//responsevendor().
-//|							Also handles all currently supported house speech using
-//a single
-//|								class, enabling the removal of
-//HouseSpeech().
+// responsevendor().
+//|							Also handles all currently supported house speech
+//using a single |								class, enabling the
+//removal of HouseSpeech().
 //|
-//|							1.2		 		17th November,
-//2003
-//|							We now make use of OSI's trigger words (the few that we
-//actually handle,
-//|								currently), to remove the need to search through
-//the text string
+//|							1.2		 		17th
+//November, 2003
+//|							We now make use of OSI's trigger words (the few that
+//we actually handle,
+//|								currently), to remove the need to search
+//through the text string
 // o------------------------------------------------------------------------------------------------o
 #include "cresponse.h"
 
@@ -43,7 +42,6 @@
 #include <random>
 
 #include "cchar.h"
-#include "csocket.h"
 #include "cguild.h"
 #include "citem.h"
 #include "cjsmapping.h"
@@ -51,6 +49,7 @@
 #include "cmultiobj.h"
 #include "cpacketsend.h"
 #include "cscript.h"
+#include "csocket.h"
 #include "dictionary.h"
 
 #include "funcdecl.h"
@@ -490,7 +489,7 @@ CEscortResponse::CEscortResponse(bool newVal) { findDest = newVal; }
 //|	Function	-	CEscortResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles NPC escort response to player wanting to take on the
-//escorting job
+// escorting job
 // o------------------------------------------------------------------------------------------------o
 void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
     // If the PC is dead then break out, The dead cannot accept quests
@@ -1182,7 +1181,7 @@ CVendorViewResponse::CVendorViewResponse(bool vendVal, const std::string &text)
 //|	Function	-	CVendorViewResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to view the items a vendor has
-//for sale
+// for sale
 // o------------------------------------------------------------------------------------------------o
 bool CVendorViewResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc) {
     if (vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
@@ -1205,7 +1204,7 @@ CVendorGoldResponse::CVendorGoldResponse(bool vendVal, const std::string &text)
 //|	Function	-	CVendorGoldResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to withdraw their earnings from
-//their vendor
+// their vendor
 // o------------------------------------------------------------------------------------------------o
 bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc) {
     if (vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
@@ -1265,7 +1264,7 @@ CVendorStatusResponse::CVendorStatusResponse(bool vendVal, const std::string &te
 //|	Function	-	CVendorStatusResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to see the status of their
-//vendor
+// vendor
 // o------------------------------------------------------------------------------------------------o
 bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar,
                                    CChar *vendorNpc) {

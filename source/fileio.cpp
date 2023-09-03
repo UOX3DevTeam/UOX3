@@ -5,21 +5,21 @@
 #include <filesystem>
 #include <fstream>
 #include <map>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 #include <tuple>
 #include <vector>
 
-#include "subsystem/console.hpp"
-#include "funcdecl.h"
 #include "cserverdefinitions.h"
 #include "cspawnregion.h"
+#include "funcdecl.h"
+#include "subsystem/console.hpp"
 
 #include "scriptc.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #if !defined(_WIN32)
 #include <fcntl.h>    // open

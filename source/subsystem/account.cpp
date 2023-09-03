@@ -10,8 +10,8 @@
 #include "other/uoxversion.hpp"
 #include "subsystem/console.hpp"
 
-#include "funcdecl.h"
 #include "cchar.h"
+#include "funcdecl.h"
 
 using namespace std::string_literals;
 

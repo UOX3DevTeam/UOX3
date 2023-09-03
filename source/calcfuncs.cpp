@@ -19,7 +19,7 @@
 //|	Purpose		-	Calculate the character object based on the calling serial
 // o------------------------------------------------------------------------------------------------o
 CChar *CalcCharObjFromSer(SERIAL targSerial) {
-    CBaseObject *findItem = ObjectFactory::GetSingleton().FindObject(targSerial);
+    CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CChar *toRet = nullptr;
     if (findItem != nullptr) {
         if (findItem->CanBeObjType(OT_CHAR)) {
@@ -35,7 +35,7 @@ CChar *CalcCharObjFromSer(SERIAL targSerial) {
 //|	Purpose		-	Calculate the item object based on the calling serial
 // o------------------------------------------------------------------------------------------------o
 CItem *CalcItemObjFromSer(SERIAL targSerial) {
-    CBaseObject *findItem = ObjectFactory::GetSingleton().FindObject(targSerial);
+    CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CItem *toRet = nullptr;
     if (findItem != nullptr) {
         if (findItem->CanBeObjType(OT_ITEM)) {
@@ -46,7 +46,7 @@ CItem *CalcItemObjFromSer(SERIAL targSerial) {
 }
 
 CMultiObj *CalcMultiFromSer(SERIAL targSerial) {
-    CBaseObject *findMulti = ObjectFactory::GetSingleton().FindObject(targSerial);
+    CBaseObject *findMulti = ObjectFactory::shared().FindObject(targSerial);
     CMultiObj *toRet = nullptr;
     if (findMulti != nullptr) {
         if (findMulti->CanBeObjType(OT_MULTI)) {
@@ -60,7 +60,7 @@ CMultiObj *CalcMultiFromSer(SERIAL targSerial) {
 //|	Function	-	CalcRegionFromXY()
 // o--------------------------------------------------------------------------
 //|	Purpose		-	Find what region x and y are in. This should be done for all items
-//on world load, and when any of the
+// on world load, and when any of the
 //|					item's location and/or container properties change
 // o--------------------------------------------------------------------------
 CTownRegion *CalcRegionFromXY(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId,

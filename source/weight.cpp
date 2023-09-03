@@ -19,86 +19,75 @@
 //|						1.1			23rd February, 2003
 //|						New Weight Design
 //|						Purpose (Goals):
-//|							Basically, the old weight system is entirely screwy, so
-//here's my idea, and how the system will work
+//|							Basically, the old weight system is entirely screwy,
+//so here's my idea, and how the system will work
 //|
 //|							Firstly we need to state some parameters
-//|								All weight is dealt with in the hundreths, so a
-//GetWeight() of 1000 is actually 10.00 stones
-//|								Wieght limits:
-//|									Each Pack needs to have a weight limit,
-//this is currently hardcapped to 400 stones, but should be scriptable and based upon container type
-//|									Characters must also have a total weight
-//limit, for now we will hardcap it at 65535 stones.
-//|								Script-based Weight Settings:
-//|									Every item should have a base weight, this
-//weight will be (100 * actual weight), if there is not one, we will try to grab weight from the MUL
-//files, otherwise assume 0
-//|									NPC's should likewise have a base weight,
-//so if someone was so inclined to make advanced AI that pickup and drop |
-//items, they can also overload themselves.
+//|								All weight is dealt with in the hundreths, so
+//a GetWeight() of 1000 is actually 10.00 stones |
+//Wieght limits:
+//|									Each Pack needs to have a weight
+//limit, this is currently hardcapped to 400 stones, but should be scriptable and based upon
+// container type
+//|									Characters must also have a total
+//weight limit, for now we will hardcap it at 65535 stones. |
+//Script-based Weight Settings: |
+//Every item should have a base weight, this weight will be (100 * actual weight), if there is not
+// one, we will try to grab weight from the MUL files, otherwise assume 0 |
+//NPC's should likewise have a base weight, so if someone was so inclined to make advanced AI that
+// pickup and drop | items, they can also overload themselves.
 //|								Character Base Weight and Weight Per
-//Strength
-//|									All PC's should have a base weight
-//calculated on their bulk (body weight, IE strength)
-//|									Also their ability to hold items (take on
-//more weight) should increase with their strength. |
-//Currently this offset is ((Strength * WEIGHT_PER_STR) + 30), where a Weight value greater than
-//this value overloads them
-//|										We will leave this value alone, for
-//now, until we can find a better method of basing their total ability to hold items on their str
+// Strength
+//|									All PC's should have a base
+//weight calculated on their bulk (body weight, IE strength)
+//|									Also their ability to hold items (take
+//on more weight) should increase with their strength. | Currently this offset is ((Strength *
+// WEIGHT_PER_STR) + 30), where a Weight value greater than this value overloads them |
+//We will leave this value alone, for now, until we can find a better method of basing their total
+// ability to hold items on their str
 //|
-//|							Next lets talk about how we handle weight for our
-//in-game objects |								Items:
-//|									On Item creation, grab its weight from the
-//scripts and store it. |									If
-//the item is a normal item, its weight should never change, unless purposely changed by user |
-//A special case would be pileable items, where the weight should be updated when the amount changes
-//|									If the item is a pack, then we will
-//increase and decrease its weight as items are added/removed
-//|										from the pack. We will accomplish
-//this as much as possible by adding/removing weight in the |
-//CItem::SetCont() function. This information will be stored as the items weight on worldsave, |
-//and we should never need to recalc weight unless it becomes invalid.
-//|									Packs should also display the total weight
-//of themselves and their contents on single-click |
-//Characters:
-//|									Character has a base weight, setup by
-//scripts and whatnot, once again this information is stored for the character. |
-//Just like packs, weight will be added and removed as items enter and leave his person (equipped or
-//in a pack he owns).
-//|									A Characters total weight will be saved in
-//the worldfile and should never need to be recalced unless it becomes invalid. |
-//Special Cases:
-//|									getItem, wearItem, packItem, and dropItem
-//functions, will require special treatment, mostly due to the setting
-//|									of an items container to INVALIDSERIAL apon
-//grabbing it, and the sporadic way in which theese functions have been |
-//organized, hopefully the current implementation works, but special care will need to be taken in
-//theese functions.
+//|							Next lets talk about how we handle weight for
+//our in-game objects |								Items:
+//|									On Item creation, grab its weight from
+//the scripts and store it. |									If
+// the item is a normal item, its weight should never change, unless purposely changed by user |
+// A special case would be pileable items, where the weight should be updated when the amount
+// changes
+//|									If the item is a pack, then we
+//will increase and decrease its weight as items are added/removed |
+//from the pack. We will accomplish this as much as possible by adding/removing weight in the |
+// CItem::SetCont() function. This information will be stored as the items weight on worldsave, |
+// and we should never need to recalc weight unless it becomes invalid.
+//|									Packs should also display the total
+//weight of themselves and their contents on single-click | Characters: |
+//Character has a base weight, setup by scripts and whatnot, once again this information is stored
+// for the character. | Just like packs, weight will be added and removed as items enter and leave
+// his person (equipped or in a pack he owns).
+//|									A Characters total weight will be saved
+//in the worldfile and should never need to be recalced unless it becomes invalid. | Special Cases:
+//|									getItem, wearItem, packItem, and
+//dropItem functions, will require special treatment, mostly due to the setting |
+//of an items container to INVALIDSERIAL apon grabbing it, and the sporadic way in which theese
+// functions have been | organized, hopefully the current implementation works, but special care
+// will need to be taken in theese functions.
 //|
 //|							How we accomplish this:
-//|								CalcWeight() will calc and return the total
-//weight of a pack based upon all items inside, their amounts, etc |
-//CalcCharWeight() will calc and return the total weight of a Character, using CalcWeight() to
-//recurse his packs, and ignoring |
-//items/layers we don't want to add weight for (bank box, etc)
-//|								CalcAddWeight() Calculates the total weight of
-//adding the new item to the container, returns false if it is over the weight limit |
-//CalcSubtractWeight() Calculates the total weight of subtracting the item from the container,
-//returns false if it's over the weight limit
-//|								AddItemWeight() this function will have two
-//overloads, basically it adds the weight of CItem *i to the total weight of CItem *pack or CChar
-//*mChar
-//|								SubtractItemWeight() this function will have two
-//overloads, basically it subtracts the weight of CItem *i to the total weight of CItem *pack or
-//CChar *mChar
-//|								IsOverloaded() returns true if a character can
-//move or false if not (based upon his strength and weight) |
-//CheckPackWeight() returns false if a pack is at its maximum weight or not based upon
-//MAX_PACKWEIGHT
-//|								CheckCharWeight() returns false if a character is
-//at their maximum weight or not based upon MAX_CHARWEIGHT
+//|								CalcWeight() will calc and return the
+//total weight of a pack based upon all items inside, their amounts, etc | CalcCharWeight() will
+// calc and return the total weight of a Character, using CalcWeight() to recurse his packs, and
+// ignoring | items/layers we don't want to add weight for (bank box, etc) |
+//CalcAddWeight() Calculates the total weight of adding the new item to the container, returns false
+// if it is over the weight limit | CalcSubtractWeight() Calculates the total weight of subtracting
+// the item from the container, returns false if it's over the weight limit |
+//AddItemWeight() this function will have two overloads, basically it adds the weight of CItem *i to
+// the total weight of CItem *pack or CChar *mChar |
+//SubtractItemWeight() this function will have two overloads, basically it subtracts the weight of
+// CItem *i to the total weight of CItem *pack or CChar *mChar
+//|								IsOverloaded() returns true if a character
+//can move or false if not (based upon his strength and weight) | CheckPackWeight() returns false if
+// a pack is at its maximum weight or not based upon MAX_PACKWEIGHT |
+//CheckCharWeight() returns false if a character is at their maximum weight or not based upon
+// MAX_CHARWEIGHT
 // o------------------------------------------------------------------------------------------------o
 
 CWeight *Weight = nullptr;
@@ -109,10 +98,10 @@ CWeight *Weight = nullptr;
 //|	Date		-	2/23/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of a pack based upon all items inside,
-//|							their amounts, etc. This function should never need to
-//be called
+//|							their amounts, etc. This function should never need
+//to be called
 //|							but is available for bruteforce weight
-//updating
+// updating
 // o------------------------------------------------------------------------------------------------o
 SI32 CWeight::CalcWeight(CItem *pack) {
     SI32 totalWeight = 0;
@@ -125,8 +114,8 @@ SI32 CWeight::CalcWeight(CItem *pack) {
 
         if (i->IsContType()) // Item is a container
         {
-            /*			// Code grabs weight of container based on tile-weight to get the "real" weight
-             of the container
+            /*			// Code grabs weight of container based on tile-weight to get the "real"
+             weight of the container
              // This only works if the weight gotten from the tiledata is correct, however. If it's
              undefined it defaults to 255 stones!
              // Instead, the code should maybe subtract the weight of all items contained in the
@@ -161,8 +150,8 @@ SI32 CWeight::CalcWeight(CItem *pack) {
 //|	Date		-	2/23/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of a character based upon all items he
-//owns, |							This function should never need to
-//be called but is available for
+// owns, |							This function should never need to
+// be called but is available for
 //|							bruteforce weight updating
 // o------------------------------------------------------------------------------------------------o
 SI32 CWeight::CalcCharWeight(CChar *mChar) {
@@ -205,7 +194,7 @@ SI32 CWeight::CalcCharWeight(CChar *mChar) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of adding an item to a container, returns
 //|							false if the item is over the max weight
-//limit
+// limit
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CalcAddWeight(CItem *item, SI32 &totalWeight) {
     SI32 itemWeight = item->GetWeight();
@@ -235,9 +224,9 @@ bool CWeight::CalcAddWeight(CItem *item, SI32 &totalWeight) {
 //|	Date		-	2/23/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of removing an item from a container,
-//returns
-//|							false if the item is over the max weight limit or less
-//than 0
+// returns
+//|							false if the item is over the max weight limit or
+//less than 0
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CalcSubtractWeight(CItem *item, SI32 &totalWeight) {
     SI32 itemWeight = item->GetWeight();
@@ -445,8 +434,8 @@ bool CWeight::IsOverloaded(CChar *mChar) const {
 //|	Date		-	2/23/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns false if a pack will be overloaded when items weight is
-//added |							or true if not based upon
-//MAX_PACKWEIGHT
+// added |							or true if not based upon
+// MAX_PACKWEIGHT
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
     if (!ValidateObject(pack))
@@ -482,8 +471,8 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
 //|	Date		-	2/23/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns false if a character will be overloaded when items weight is
-//added |							or true if not based upon
-//MAX_CHARWEIGHT
+// added |							or true if not based upon
+// MAX_CHARWEIGHT
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, UI16 amount) {
     if (!ValidateObject(mChar))

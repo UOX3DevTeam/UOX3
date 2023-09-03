@@ -5,7 +5,6 @@
 #include "cchar.h"
 #include "cguild.h"
 #include "cgump.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cserverdefinitions.h"
@@ -16,8 +15,9 @@
 #include "osunique.hpp"
 #include "scriptc.h"
 #include "ssection.h"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #include "other/uoxversion.hpp"
 
@@ -75,8 +75,8 @@ bool CountNPCFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) 
 //|	Purpose		-
 //|
 //|	Changes		-	08062003 -  For the record this is some of the
-//|									most fucked up shit I have EVER SEEN!!
-//Written to truely
+//|									most fucked up shit I have EVER
+//SEEN!! Written to truely
 //|									handle multiple Templates.
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Process(void) {
@@ -117,7 +117,7 @@ void cHTMLTemplate::Process(void) {
         Pos = ParsedContent.find("%version");
     }
     // Character Count
-    std::string CharacterCount = util::ntos(ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+    std::string CharacterCount = util::ntos(ObjectFactory::shared().CountOfObjects(OT_CHAR));
     Pos = ParsedContent.find("%charcount");
     while (Pos != std::string::npos) {
         ParsedContent.replace(Pos, 10, CharacterCount);
@@ -125,7 +125,7 @@ void cHTMLTemplate::Process(void) {
     }
 
     // Item Count
-    std::string ItemCount = util::ntos(ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM));
+    std::string ItemCount = util::ntos(ObjectFactory::shared().CountOfObjects(OT_ITEM));
     Pos = ParsedContent.find("%itemcount");
     while (Pos != std::string::npos) {
         ParsedContent.replace(Pos, 10, ItemCount);
@@ -467,7 +467,7 @@ void cHTMLTemplate::Process(void) {
     // NPCCount
     UI32 npccount = 0;
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_CHAR, b, nullptr, &CountNPCFunctor);
+    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &CountNPCFunctor);
     npccount = b;
 
     std::string npcs = util::ntos(npccount);
@@ -615,8 +615,8 @@ void cHTMLTemplate::Poll(void) {
 //|	Purpose		-	Loads the Template into memory
 //|
 //|	Changes		-	08062003 - Updated this member function to actually handle
-//|									loading the different templates for use
-//later.
+//|									loading the different templates for
+//use later.
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplate::LoadTemplate(void) {
     content = "";
@@ -646,8 +646,8 @@ void cHTMLTemplate::LoadTemplate(void) {
 //|	Purpose		-	Unloads the Template (i.e. for reloading)
 //|
 //|	Changes		-	08062003 - Updated to properly unload a template
-//|								and to unload the correect template, instead of
-//just the |								status template.
+//|								and to unload the correect template, instead
+//of just the |								status template.
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplate::UnloadTemplate(void) {
     content = "";

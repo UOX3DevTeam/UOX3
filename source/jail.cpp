@@ -4,13 +4,12 @@
 #include <memory>
 
 #include "cchar.h"
-#include "subsystem/console.hpp"
 #include "cserverdefinitions.h"
-#include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "scriptc.h"
 #include "ssection.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;
@@ -126,7 +125,7 @@ JailOccupant_st *CJailCell::Occupant(size_t occupantId) {
 //|	Function	-	CJailCell::PeriodicCheck()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Perform period check of each player in jailcell, and release them if
-//time is up
+// time is up
 // o------------------------------------------------------------------------------------------------o
 void CJailCell::PeriodicCheck(void) {
     time_t now;
@@ -177,7 +176,7 @@ void CJailCell::WriteData(std::ostream &outStream, size_t cellNumber) {
 //|	Function	-	CJailSystem::ReadSetup()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load jail-cell setup from regions DFNs, otherwise use default,
-//hardcoded setup
+// hardcoded setup
 // o------------------------------------------------------------------------------------------------o
 auto CJailSystem::ReadSetup() -> void {
     auto Regions = FileLookup->FindEntry("JAILS", regions_def);

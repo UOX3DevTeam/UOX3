@@ -3,7 +3,7 @@
 //| File		-	pagevector.h
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	CHelpRequest and PageVector classes. For use in the GM and Couselor
-//queues
+// queues
 // o------------------------------------------------------------------------------------------------o
 
 #ifndef __PAGEVECTOR_H__

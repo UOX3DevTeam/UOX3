@@ -3,16 +3,16 @@
 //|	Date		-	12/14/2001
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	1.0		14th December, 2001 Initial implementation
-//|							Defines the property specifications for race, region,
-//guild, |							item and chars
+//|							Defines the property specifications for race,
+//region, guild, |							item and chars
 // o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 #include <cstdint>
 #include <string>
 
-#include "uoxjspropertyenums.h"
 #include "typedefs.h"
+#include "uoxjspropertyenums.h"
 
 inline JSPropertySpec CSpellProperties[] = {
     {"id", CSP_ID, JSPROP_ENUMANDPERM, nullptr, nullptr},

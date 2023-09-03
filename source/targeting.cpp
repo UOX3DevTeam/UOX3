@@ -7,27 +7,27 @@
 #include "citem.h"
 #include "cjsmapping.h"
 #include "classes.h"
+#include "cmagic.h"
 #include "cmultiobj.h"
 #include "combat.h"
-#include "cpacketsend.h"
-#include "cserverdefinitions.h"
-#include "csocket.h"
 #include "commands.h"
-#include "cmagic.h"
+#include "cpacketsend.h"
 #include "cresponse.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "mapstuff.h"
 #include "magic.h"
+#include "mapstuff.h"
 #include "objectfactory.h"
 #include "partysystem.h"
 #include "regions.h"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 
@@ -282,9 +282,9 @@ void BuildHouseTarget(CSocket *s) {
 //|	Date		-	17th February, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add NPC at targeted location
-//| Notes		-	Need to return the character we've made, else summon creature at least
-//will fail |					We make the char, but never pass it back up the
-//chain
+//| Notes		-	Need to return the character we've made, else summon creature at
+//least will fail |					We make the char, but never pass it back up
+// the chain
 // o------------------------------------------------------------------------------------------------o
 void AddScriptNpc(CSocket *s) {
     VALIDATESOCKET(s);
@@ -678,7 +678,7 @@ void InfoTarget(CSocket *s) {
 //|	Date		-	01/11/1999
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clicking the corners of tiling calls this function. Will fill up
-//each tile |					of targeted area with specified item
+// each tile |					of targeted area with specified item
 // o------------------------------------------------------------------------------------------------o
 void Tiling(CSocket *s) {
     VALIDATESOCKET(s);
@@ -760,9 +760,9 @@ bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, SI32 dictEn
 //|	Changes		-	unknown   	-	Scriptable carving product added
 //|
 //|	Changes		-	09/22/2002	-	Fixed erroneous names for body parts
-//|									& made all body parts that are carved from
-//human corpse |									lie in same
-//direction.
+//|									& made all body parts that are carved
+//from human corpse |									lie in same
+// direction.
 // o------------------------------------------------------------------------------------------------o
 auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     VALIDATESOCKET_WITH_RETURN(s);
@@ -1317,8 +1317,8 @@ bool BuyShop(CSocket *s, CChar *c) {
 //|	Purpose		-	Resurrects a character
 // o------------------------------------------------------------------------------------------------o
 //|	Changes		-	09/22/2002	-	Made players not appear with full
-//|									health/stamina after being resurrected by
-//NPC Healer
+//|									health/stamina after being resurrected
+//by NPC Healer
 // o------------------------------------------------------------------------------------------------o
 void NpcResurrectTarget(CChar *i) {
     if (!ValidateObject(i))
@@ -1709,7 +1709,7 @@ void MakeTownAlly(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Change privileges of targeted character to specified command level
 //|					as defined in the COMMANDSLEVEL section of
-//dfndata/commands/commands.dfn
+// dfndata/commands/commands.dfn
 // o------------------------------------------------------------------------------------------------o
 void MakeStatusTarget(CSocket *sock) {
     VALIDATESOCKET(sock);
@@ -1899,7 +1899,7 @@ void SmeltTarget(CSocket *s) {
 //|	Function	-	VialTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles targeting of objects after player uses a vial to create
-//necro reagents
+// necro reagents
 // o------------------------------------------------------------------------------------------------o
 void VialTarget(CSocket *mSock) {
     VALIDATESOCKET(mSock);
@@ -2140,10 +2140,10 @@ bool CPITargetCursor::Handle(void) {
                     SmeltTarget(tSock);
                     break;
                 case TARGET_PARTYADD:
-                    PartyFactory::GetSingleton().CreateInvite(tSock);
+                    PartyFactory::shared().CreateInvite(tSock);
                     break;
                 case TARGET_PARTYREMOVE:
-                    PartyFactory::GetSingleton().Kick(tSock);
+                    PartyFactory::shared().Kick(tSock);
                     break;
                 default:
                     break;

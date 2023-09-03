@@ -2,22 +2,22 @@
 #define __StdHeaders_H__
 
 #include <cassert>
+#include <cmath>
+#include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <ctime>
 #include <cstring>
-#include <cstdarg>
-#include <cmath>
+#include <ctime>
 
 // STL containers
-#include <vector>
-#include <map>
-#include <string>
-#include <set>
-#include <list>
-#include <deque>
-#include <queue>
 #include <bitset>
+#include <deque>
+#include <list>
+#include <map>
+#include <queue>
+#include <set>
+#include <string>
+#include <vector>
 
 // STL algorithms & functions
 #include <algorithm>
@@ -26,25 +26,25 @@
 
 // C++ Stream stuff
 #include <fstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 // We use exceptions in a lot of places
 #include <stdexcept>
 
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #if defined(_WIN32)
 #include <sys/timeb.h>
 
 #else
 
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/signal.h>
 #include <errno.h> // for errno
+#include <sys/signal.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 #endif
 

@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
 #include "spidermonkey.h"
+#include "typedefs.h"
 
 struct JSObject;
 

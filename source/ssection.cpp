@@ -6,8 +6,8 @@
 
 #include "ssection.h"
 
-#include "subsystem/console.hpp"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 constexpr auto DFN_STRING = UI08(0);
@@ -545,7 +545,7 @@ CScriptSection::CScriptSection()
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CScriptSection::CScriptSection( std::fstream& input,
-//DEFINITIONCATEGORIES d )
+// DEFINITIONCATEGORIES d )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in

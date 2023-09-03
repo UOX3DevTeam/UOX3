@@ -11,21 +11,21 @@
 //|
 //|					1.0			12/07/1999
 //|					Wrapped everything in a class, added customizable number of
-//max-pages
+// max-pages
 //|
 //|					1.1			12/12/1999
-//|					Nasty bug fixed (item # used as "key" instead of serial #) and a
-//few very small bugfixes
+//|					Nasty bug fixed (item # used as "key" instead of serial #) and
+//a few very small bugfixes
 //|
 //|					2.0			5th November, 2005
 //|					Rewrote much of the original .bok handling to improve
-//performance
-//|					Fixed several issues with the fstream handling to ensure validity
-//of data from .bok files.
-//|					Slimmed down the cBook class making use of packet classes for
-//handling data from the client.
-//|					Added support for the new book header packet removing support for
-//the old book header packet.
+// performance
+//|					Fixed several issues with the fstream handling to ensure
+//validity of data from .bok files.
+//|					Slimmed down the cBook class making use of packet classes
+//for handling data from the client.
+//|					Added support for the new book header packet removing support
+//for the old book header packet.
 // o------------------------------------------------------------------------------------------------o
 
 #include "books.h"
@@ -33,13 +33,13 @@
 #include <fstream>
 
 #include "cchar.h"
-#include "csocket.h"
 #include "citem.h"
+#include "csocket.h"
 
-#include "funcdecl.h"
-#include "cserverdefinitions.h"
-#include "ssection.h"
 #include "cpacketsend.h"
+#include "cserverdefinitions.h"
+#include "funcdecl.h"
+#include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
@@ -392,7 +392,7 @@ void CBooks::DeleteBook(CItem *id) {
 //|	Date		-	11/5/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formats a newly created .bok file, this must be done with any new
-//book file
+// book file
 // o------------------------------------------------------------------------------------------------o
 void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook) {
     char wBuffer[2];

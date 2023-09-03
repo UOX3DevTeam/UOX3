@@ -11,14 +11,14 @@
 // o------------------------------------------------------------------------------------------------o
 //	A note on "using"
 //	Using-declarations can be used to introduce namespace members into other namespaces and
-//block 	scopes, or to introduce base class members into derived class definitions, or to introduce
-//	enumerators into namespaces, block, and class scopes (since C++20).
+// block 	scopes, or to introduce base class members into derived class definitions, or to
+// introduce 	enumerators into namespaces, block, and class scopes (since C++20).
 //
 // o------------------------------------------------------------------------------------------------o
 
-#include <cstdint>
 #include "enums.h"
 #include "useful.h"
+#include <cstdint>
 class CSocket;
 
 #if defined(_DEBUG)

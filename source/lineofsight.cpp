@@ -3,10 +3,10 @@
 
 #include "cchar.h"
 #include "citem.h"
-#include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "regions.h"
+#include "subsystem/console.hpp"
 
 constexpr auto MAX_COLLISIONS = 1024;
 constexpr auto LOSXYMAX = 256; // Maximum items UOX3 can handle on one X/Y square
@@ -264,9 +264,8 @@ bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS
         auto startLocZ = LoS.loc.z;
 
         // Check if LoS intersects with map/mountain walls
-        // if(( mz1 < mz2 && z2Top <= mz2 && z >= mz1 ) ||								//
-        // 1) Collides with a map "wall"
-        // ( mz1 > mz2 && z2Top <= mz1 && z >= mz2 ) ||
+        // if(( mz1 < mz2 && z2Top <= mz2 && z >= mz1 ) ||
+        // // 1) Collides with a map "wall" ( mz1 > mz2 && z2Top <= mz1 && z >= mz2 ) ||
         /*if((( startLocZ > mz1 && ( z < mz1 && z2Top < mz1 )) || ( startLocZ < mz1 && z > mz1 )) ||
                 (( startLocZ > mz2 && ( z < mz2 && z2Top < mz2 )) || ( startLocZ < mz2 && z > mz2 ))
            || ( startLocZ > mz1 && ( z2Top < mz1 )) || ( startLocZ > mz2 && ( z2Top < mz2 )) ||*/
@@ -423,24 +422,23 @@ UI16 DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, SI32 collisioncoun
 //|	Purpose		-	Returns true if there is line of sight between src and trg
 //|
 //|	Notes		-	Char (x1, y1, z1) is the char(pc/npc),  Target (x2, y2, z2) is the
-//target. |					s is for pc's, in case a message needs to be sent.
+// target. |					s is for pc's, in case a message needs to be sent.
 //|					the checkfor is what is checked for along the line of sight.
 //|
-//|					#define TREES_BUSHES 1 // Trees and other large vegetaion in the
-//way
-//|					#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in the
-//way |					#define DOORS 4 // Doors in the way |
-//#define ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically |
-//#define FLOORS_FLAT_ROOFING 16  //  For attacking between floors
-//|					#define LAVA_WATER 32  // Don't know what all to use this for
-//yet
+//|					#define TREES_BUSHES 1 // Trees and other large vegetaion in
+//the way
+//|					#define WALLS_CHIMNEYS 2  // Walls, chimineys, ovens, etc... in
+//the way |					#define DOORS 4 // Doors in the way | #define
+// ROOFING_SLANTED 8  // So can't tele onto slanted roofs, basically | #define FLOORS_FLAT_ROOFING
+// 16  //  For attacking between floors |					#define LAVA_WATER
+//32  // Don't know what all to use this for yet
 //|
-//|					Just or (|) the values for the diff things together to get what to
-//search for. |					So put in place of the paramater checkfor for
-//example
+//|					Just or (|) the values for the diff things together to get what
+//to search for. |					So put in place of the paramater checkfor
+// for example
 //|
-//|					if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS |
-//DOORS | ROOFING_SLANTED ))
+//|					if( line_of_sight( s, x1, y1, z1, x2, y2, z2, WALLS_CHIMNEYS
+//| DOORS | ROOFING_SLANTED ))
 //|
 //|					it WAS based on the P.T., now its based on linear algebra;)
 // o------------------------------------------------------------------------------------------------o

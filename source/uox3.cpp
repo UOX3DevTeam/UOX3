@@ -49,7 +49,6 @@
 
 //=====================================================================================================
 
-#include "subsystem/account.hpp"
 #include "books.h"
 #include "cchar.h"
 #include "ceffects.h"
@@ -64,7 +63,6 @@
 #include "cmultiobj.h"
 #include "combat.h"
 #include "commands.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
@@ -77,6 +75,8 @@
 #include "eventtimer.hpp"
 #include "funcdecl.h"
 #include "jail.h"
+#include "subsystem/account.hpp"
+#include "subsystem/console.hpp"
 
 #include "magic.h"
 #include "mapstuff.h"
@@ -84,6 +84,7 @@
 #include "msgboard.h"
 #include "objectfactory.h"
 #include "ostype.h"
+#include "other/uoxversion.hpp"
 #include "pagevector.h"
 #include "partysystem.h"
 #include "regions.h"
@@ -91,11 +92,10 @@
 #include "speech.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
 #include "typedefs.h"
-#include "other/uoxversion.hpp"
+#include "utility/strutil.hpp"
 #include "weight.h"
 #include "wholist.h"
 
@@ -702,7 +702,7 @@ auto StartInitialize(CServerData &serverdata) -> void {
 //|					app_stopped()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prevent closing of console via CTRL+C/or CTRL+BREAK keys during
-//worldsaves
+// worldsaves
 // o------------------------------------------------------------------------------------------------o
 BOOL WINAPI exit_handler(DWORD dwCtrlType) {
     switch (dwCtrlType) {
@@ -752,7 +752,7 @@ void app_stopped([[maybe_unused]] int sig) {
 //|	Function	-	UnloadSpawnRegions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unload spawn regions on server shutdown or when reloading spawn
-//regions
+// regions
 // o------------------------------------------------------------------------------------------------o
 auto UnloadSpawnRegions() -> void {
     for (auto &[regionnum, spawnregion] : cwmWorldState->spawnRegions) {
@@ -795,7 +795,7 @@ auto UnloadSpawnRegions() -> void {
 //|	Function	-	UnloadRegions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unload town regions on server shutdown or when reloading town
-//regions
+// regions
 // o------------------------------------------------------------------------------------------------o
 auto UnloadRegions() -> void {
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
@@ -1009,7 +1009,7 @@ auto CollectGarbage() -> void {
                               Console::shared().Warning("Invalid object found in Deletion Queue");
                           }
                           else {
-                              ObjectFactory::GetSingleton().DestroyObject(entry.first);
+                              ObjectFactory::shared().DestroyObject(entry.first);
                               ++objectsDeleted;
                           }
                       }
@@ -1147,7 +1147,7 @@ auto EndMessage([[maybe_unused]] SI32 x) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used when a character calls "Guards" Will look for a criminal
 //|					first checking for anyone attacking him. If no one is
-//attacking
+// attacking
 //|					him it will look for any people nearby who are criminal or
 //|					murderers
 // o------------------------------------------------------------------------------------------------o
@@ -1208,7 +1208,7 @@ auto CallGuards(CChar *mChar) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used when a character calls guards on another character, will
 //|					ensure that character is not dead and is either a criminal
-//or |					murderer, and that he is in visual range of the victim, will
+// or |					murderer, and that he is in visual range of the victim, will
 //|					then spawn a guard to take care of the criminal.
 // o------------------------------------------------------------------------------------------------o
 auto CallGuards(CChar *mChar, CChar *targChar) -> void {
@@ -2798,7 +2798,7 @@ auto InMulti(SI16 x, SI16 y, SI08 z, CMultiObj *m) -> bool;
 //|	Function	-	FindMultiFunctor()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for a multi at object's location and assigns any multi found
-//to object
+// to object
 // o------------------------------------------------------------------------------------------------o
 auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData)
     -> bool {
@@ -2847,7 +2847,7 @@ auto InitMultis() -> void {
     Console::shared() << "Initializing multis            ";
 
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_MULTI, b, nullptr, &FindMultiFunctor);
+    ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &FindMultiFunctor);
 
     Console::shared().PrintDone();
 }
@@ -2885,7 +2885,7 @@ auto DisplayBanner() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handled deleting / free() ing of pointers as neccessary
 //|					as well as closing open file handles to avoid file file
-//corruption. |					Exits with proper error code.
+// corruption. |					Exits with proper error code.
 // o------------------------------------------------------------------------------------------------o
 auto Shutdown(SI32 retCode) -> void {
     Console::shared().PrintSectionBegin();
@@ -3552,7 +3552,7 @@ auto GetPoisonDuration(UI08 poisonStrength) -> TIMERVAL {
 //|	Function	-	GetPoisonTickTime()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates the time between each tick of a poison, based on its
-//strength
+// strength
 // o------------------------------------------------------------------------------------------------o
 auto GetPoisonTickTime(UI08 poisonStrength) -> TIMERVAL {
     // Calculate duration of poison, based on the strength of the poison
@@ -3582,9 +3582,8 @@ auto GetPoisonTickTime(UI08 poisonStrength) -> TIMERVAL {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of an items name from tiledata.mul and
 //|					sets itemname to the name.
-//|					The format it accepts is same as UO style - %plural/single% or
-//%plural% |						arrow%s% |
-//loa%ves/f% of bread
+//|					The format it accepts is same as UO style - %plural/single%
+//or %plural% |						arrow%s% | loa%ves/f% of bread
 // o------------------------------------------------------------------------------------------------o
 auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
     std::string temp = mItem.GetName();
@@ -3631,7 +3630,7 @@ auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
 //|	Function	-	GetNpcDictName()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the dictionary name for a given NPC, if their name equals #
-//or a dictionary ID
+// or a dictionary ID
 // o------------------------------------------------------------------------------------------------o
 auto GetNpcDictName(CChar *mChar, CSocket *tSock, UI08 requestSource) -> std::string {
     CChar *tChar = nullptr;
@@ -3672,7 +3671,7 @@ auto GetNpcDictName(CChar *mChar, CSocket *tSock, UI08 requestSource) -> std::st
 //|	Function	-	GetNpcDictTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the dictionary string for the title of a given NPC, if their
-//title |					equals a dictionary ID
+// title |					equals a dictionary ID
 // o------------------------------------------------------------------------------------------------o
 auto GetNpcDictTitle(CChar *mChar, CSocket *tSock) -> std::string {
     std::string dictTitle = mChar->GetTitle();
@@ -3854,7 +3853,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
 //|	Function	-	CheckCharInsideBuilding()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if a character is inside a building before applying weather
-//effects
+// effects
 // o------------------------------------------------------------------------------------------------o
 auto CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff) -> void {
     if (!c->GetMounted() && !c->GetStabled()) {
@@ -3884,7 +3883,7 @@ auto CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff) -> v
 auto WillResultInCriminal(CChar *mChar, CChar *targ) -> bool {
     auto tOwner = targ->GetOwnerObj();
     auto mOwner = mChar->GetOwnerObj();
-    auto mCharParty = PartyFactory::GetSingleton().Get(mChar);
+    auto mCharParty = PartyFactory::shared().Get(mChar);
     auto rValue = false;
     if (ValidateObject(mChar) && ValidateObject(targ) && mChar != targ) {
                 // Make sure they're not racial enemies, or guild members/guild enemies
@@ -4056,7 +4055,7 @@ void SendMapChange(UI08 worldNumber, CSocket *sock, [[maybe_unused]] bool initia
 //|	Function	-	SocketMapChange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if conditions are right to send a map change packet to the
-//client
+// client
 // o------------------------------------------------------------------------------------------------o
 auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
     if (!sock)

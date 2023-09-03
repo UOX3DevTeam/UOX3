@@ -3,15 +3,15 @@
 
 #include "multimul.hpp"
 
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <fstream>
-#include <filesystem>
-#include <algorithm>
 #include <unordered_map>
 
-#include "subsystem/console.hpp"
 #include "mapstuff.h"
+#include "subsystem/console.hpp"
 
 using namespace std::string_literals;
 

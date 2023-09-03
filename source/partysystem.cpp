@@ -39,7 +39,7 @@ bool Party::AddMember(CChar *i) {
     if (ValidateObject(i) && IsOnline(*i)) {
         if (!HasMember(i)) {
             CPartyEntry *toAdd = new CPartyEntry(i);
-            PartyFactory::GetSingleton().AddLookup(this, i);
+            PartyFactory::shared().AddLookup(this, i);
             members.push_back(toAdd);
             SendList(nullptr);
             retVal = true;
@@ -128,7 +128,7 @@ bool Party::RemoveMember(CChar *i) {
         if (toFind != nullptr) {
             delete members[removeSpot];
             members.erase(members.begin() + removeSpot);
-            PartyFactory::GetSingleton().RemoveLookup(i);
+            PartyFactory::shared().RemoveLookup(i);
 
             CPPartyMemberRemove toSend(i);
             for (size_t j = 0; j < members.size(); ++j) {
@@ -222,7 +222,7 @@ void Party::IsNPC(bool value) { isNPC = value; }
  */
 //-------------------------------------------------------------------------------------------------
 
-PartyFactory &PartyFactory::GetSingleton(void) {
+PartyFactory &PartyFactory::shared(void) {
     std::mutex lock;
     std::scoped_lock scope(lock);
     static PartyFactory instance;

@@ -11,25 +11,25 @@
 #include "classes.h"
 #include "cmagic.h"
 #include "commands.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
-#include "cserverdefinitions.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
 #include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
 #include "ostype.h"
 #include "osunique.hpp"
+#include "other/uoxversion.hpp"
 #include "pagevector.h"
-#include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "regions.h"
 #include "skills.h"
 #include "ssection.h"
+#include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 #include "wholist.h"
-#include "other/uoxversion.hpp"
 
 using namespace std::string_literals;
 
@@ -40,7 +40,7 @@ std::string GetUptime(void);
 //|	Function	-	TextEntryGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Open entry gump with specified dictionary message and max value
-//length
+// length
 // o------------------------------------------------------------------------------------------------o
 void TextEntryGump(CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry) {
     if (s == nullptr)
@@ -370,13 +370,14 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
 //|	Function		-	BuildAddMenuGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Menu for item creation based on ITEMMENU entries in the
-//ItemMenu DFNs
+// ItemMenu DFNs
 //|
 //|	Modification	-	04042004 - Added support for the new Auto-AddMenu
-//|									items if they exist. Remember the multimap
-//is groupId based
-//|									so it should order it accordingly we only
-//have to look for |									the entries.
+//|									items if they exist. Remember the
+//multimap is groupId based
+//|									so it should order it accordingly we
+//only have to look for |									the
+// entries.
 // o------------------------------------------------------------------------------------------------o
 void BuildAddMenuGump(CSocket *s, UI16 m) {
     UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
@@ -1331,8 +1332,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             guiInfo.AddData("Compiled By", UOXVersion::name);
             guiInfo.AddData("Uptime", builtString);
             guiInfo.AddData("Accounts", static_cast<std::uint32_t>(Account::shared().size()));
-            guiInfo.AddData("Items", ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM));
-            guiInfo.AddData("Chars", ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+            guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(OT_ITEM));
+            guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(OT_CHAR));
             guiInfo.AddData("Players in world",
                             static_cast<UI32>(cwmWorldState->GetPlayersOnline()));
             guiInfo.Send(0, false, INVALIDSERIAL);
@@ -1350,8 +1351,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             builtString = GetUptime();
             s->SysMessage(1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(),
                           Account::shared().size(),
-                          ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM),
-                          ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+                          ObjectFactory::shared().CountOfObjects(OT_ITEM),
+                          ObjectFactory::shared().CountOfObjects(OT_CHAR));
         }
         break;
     case 'M':
@@ -2138,7 +2139,7 @@ void CGumpDisplay::AddData(std::string toAdd, const std::string &toSet, UI08 typ
 //|	Function	-	CGumpDisplay::CGumpDisplay()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begin CGumpDisplay stuff by setting the target, clearing any
-//existing data, and setting the w / h
+// existing data, and setting the w / h
 // o------------------------------------------------------------------------------------------------o
 CGumpDisplay::CGumpDisplay(CSocket *target) : toSendTo(target) {
     gumpData.resize(0);
@@ -2148,10 +2149,10 @@ CGumpDisplay::CGumpDisplay(CSocket *target) : toSendTo(target) {
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGumpDisplay::CGumpDisplay( CSocket *target, UI16 gumpWidth, UI16
-//gumpHeight )
+// gumpHeight )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begin CGumpDisplay stuff by setting the target, clearing any
-//existing data, and setting the w / h
+// existing data, and setting the w / h
 // o------------------------------------------------------------------------------------------------o
 CGumpDisplay::CGumpDisplay(CSocket *target, UI16 gumpWidth, UI16 gumpHeight)
     : width(gumpWidth), height(gumpHeight), toSendTo(target) {
@@ -2192,7 +2193,7 @@ void CGumpDisplay::SetTitle(const std::string &newTitle) { title = newTitle; }
 //|	Function	-	SendVecsAsGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two
-//is data
+// is data
 // o------------------------------------------------------------------------------------------------o
 void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
                     UI32 type, SERIAL serial) {

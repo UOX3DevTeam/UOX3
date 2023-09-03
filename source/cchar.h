@@ -7,10 +7,10 @@
 #include <string>
 #include <unordered_map>
 
-#include "typedefs.h"
 #include "cbaseobject.h"
 #include "genericlist.h"
 #include "subsystem/account.hpp"
+#include "typedefs.h"
 
 class cScript;
 class CItem;

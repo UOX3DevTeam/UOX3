@@ -33,8 +33,8 @@
 #include "partysystem.h"
 #include "power.h"
 #include "speech.h"
-#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 // Unknown bytes
@@ -67,21 +67,21 @@ using namespace std::string_literals;
 //|						BYTE[7] unknown5
 //|
 //|					Newer, more up to date version of the packet. When did it
-//change? |						BYTE cmd |
-//BYTE[4] player id |						BYTE[4] unknown1 |
-//BYTE[2] bodyType |						BYTE[2] xLoc |
-//BYTE[2] yLoc |						BYTE Unknown (0x0) |
-//BYTE zLoc |						BYTE direction
-//|						BYTE[4] unknown2 (0x0, Described as X in Jerrith's old
-//docs) |						BYTE[4] unknown3 (0x0, Described as Y in
-//Jerrith's old docs) |						BYTE unknown4 (0x0) |
-//BYTE[2] Map Width/Server boundary width (minus eight according to POL) |
-//BYTE[2] Map Height/Server boundary height
+// change? |						BYTE cmd |
+// BYTE[4] player id |						BYTE[4] unknown1 |
+// BYTE[2] bodyType |						BYTE[2] xLoc |
+// BYTE[2] yLoc |						BYTE Unknown (0x0) |
+// BYTE zLoc |						BYTE direction
+//|						BYTE[4] unknown2 (0x0, Described as X in Jerrith's
+//old docs) |						BYTE[4] unknown3 (0x0, Described as Y in
+// Jerrith's old docs) |						BYTE unknown4 (0x0) |
+// BYTE[2] Map Width/Server boundary width (minus eight according to POL) |
+// BYTE[2] Map Height/Server boundary height
 //|						BYTE[2] unknown5 (0x0)
 //|						BYTE[4] unknown6 (0x0)
 //|
-//|						Note: Only send once after login. It’s mandatory to send it
-//once.
+//|						Note: Only send once after login. It’s mandatory to send
+//it once.
 // o------------------------------------------------------------------------------------------------o
 void CPCharLocBody::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
@@ -453,7 +453,7 @@ void CPExtMove::CopyData(CChar &toCopy) {
 //| Function	-	CPAttackOK()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet informing client if it's ok or not to attack
-//target
+// target
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xAA (OK / Not OK To Attack)
 //|					Size: 5 bytes
@@ -462,7 +462,7 @@ void CPExtMove::CopyData(CChar &toCopy) {
 //|						BYTE cmd
 //|						BYTE[4] CharID being attacked
 //|							ID is set to 00 00 00 00 when attack is
-//refused.
+// refused.
 // o------------------------------------------------------------------------------------------------o
 void CPAttackOK::CopyData(CChar &toCopy) { Serial(toCopy.GetSerial()); }
 CPAttackOK::CPAttackOK() {
@@ -512,7 +512,7 @@ CPRemoveItem &CPRemoveItem::operator=(CBaseObject &toCopy) {
 //| Function	-	CPWorldChange()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet telling client to update season visuals of
-//world
+// world
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBC (Seasonal Information)
 //|					Size: 3 bytes
@@ -523,12 +523,12 @@ CPRemoveItem &CPRemoveItem::operator=(CBaseObject &toCopy) {
 //|						BYTE id2
 //|
 //|					Note: Server message
-//|					Note: if id2 = 1, then this is a season change. Although, this
-//could also just
-//|							be a flag to play a sound FX on season change or
-//not...
-//|					Note: if season change, then id1 = (0=spring, 1=summer, 2=fall,
-//3=winter, 4 = desolation)
+//|					Note: if id2 = 1, then this is a season change. Although,
+//this could also just
+//|							be a flag to play a sound FX on season change
+//or not...
+//|					Note: if season change, then id1 = (0=spring, 1=summer,
+//2=fall, 3=winter, 4 = desolation)
 // o------------------------------------------------------------------------------------------------o
 CPWorldChange::CPWorldChange() {
     pStream.ReserveSize(3);
@@ -549,7 +549,7 @@ void CPWorldChange::Cursor(UI08 newCursor) { pStream.WriteByte(2, newCursor); }
 //| Function	-	CPLightLevel()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet updating client with current overall light
-//level
+// level
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x4F (Overall Light Level)
 //|					Size: 2 bytes
@@ -578,7 +578,7 @@ void CPLightLevel::Level(LIGHTLEVEL level) { pStream.WriteByte(1, level); }
 //| Function	-	CPUpdIndSkill()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet updating client with skill values and lock
-//states
+// states
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x3A (Send Skills)
 //|					Size: 13 bytes
@@ -708,10 +708,9 @@ void CPRelay::InternalReset(void) {
 //|
 //|					Notes
 //|						Client + Server packet
-//|						Client will send this packet without 0x01 Byte when the
-//server sends FLAG & 0x02 in the 0xA9 Packet during logon.
-//|						Server responds with same packet, plus the 0x01 Byte,
-//allowing client to finish logging out.
+//|						Client will send this packet without 0x01 Byte when
+//the server sends FLAG & 0x02 in the 0xA9 Packet during logon. |
+//Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 // o------------------------------------------------------------------------------------------------o
 CPLogoutResponse::CPLogoutResponse([[maybe_unused]] UI08 extraByte) { InternalReset(); }
 void CPLogoutResponse::InternalReset(void) {
@@ -724,7 +723,7 @@ void CPLogoutResponse::InternalReset(void) {
 //| Function	-	CPWornItem()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to equip a single item for player and update
-//paperdoll
+// paperdoll
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x2E (Worn Item)
 //|					Size: 15 bytes
@@ -793,15 +792,13 @@ CPWornItem &CPWornItem::operator=(CItem &toCopy) {
 //|							0x0a = stab (underhanded)
 //|							0x0b = swing (attack overhand with sword)
 //|							0x0c = swing (attack with sword over and
-//side) |							0x0d = swing (attack with sword
-//side) |							0x0e = stab with point of sword |
-//0x0f = ready stance |							0x10 = magic (butter churn!)
-//|							0x11 = hands over head (balerina)
-//|							0x12 = bow shot
-//|							0x13 = crossbow
-//|							0x14 = get hit
-//|							0x15 = fall down and die (backwards)
-//|							0x16 = fall down and die (forwards)
+// side) |							0x0d = swing (attack with sword
+// side) |							0x0e = stab with point of sword |
+// 0x0f = ready stance |							0x10 = magic (butter
+// churn!) |							0x11 = hands over head (balerina) |
+//0x12 = bow shot |							0x13 = crossbow |
+//0x14 = get hit |							0x15 = fall down and die
+//(backwards) |							0x16 = fall down and die (forwards)
 //|							0x17 = ride horse (long)
 //|							0x18 = ride horse (medium)
 //|							0x19 = ride horse (short)
@@ -819,11 +816,11 @@ CPWornItem &CPWornItem::operator=(CItem &toCopy) {
 //|						BYTE[1] unknown1 (0x00)
 //|						BYTE[1] Frame Count
 //|						BYTE[2] repeat (1 = once / 2 = twice / 0 = repeat
-//forever) |						BYTE forward/backwards(0x00=forward,
-//0x01=backwards)
+// forever) |						BYTE forward/backwards(0x00=forward,
+// 0x01=backwards)
 //|						BYTE repeat Flag (0 - Don't repeat / 1 repeat)
-//|						BYTE frame Delay (0x00 - fastest / 0xFF - Too slow to
-//watch)
+//|						BYTE frame Delay (0x00 - fastest / 0xFF - Too slow
+//to watch)
 // o------------------------------------------------------------------------------------------------o
 void CPCharacterAnimation::CopyData(CChar &toCopy) {
     Serial(toCopy.GetSerial());
@@ -864,7 +861,7 @@ void CPCharacterAnimation::InternalReset(void) {
 //| Function	-	CPNewCharacterAnimation()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to play specific animation for character in
-//clients 7.0.0.0+
+// clients 7.0.0.0+
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xE2 (New Character Animation)
 //|					Size: 10 bytes
@@ -920,11 +917,11 @@ void CPNewCharacterAnimation::InternalReset(void) {
 //|						BYTE direction
 //|						BYTE zLoc
 //|
-//|						Note: Only used with the character being played by the
-//client. |						Ancient client version Flags: |
-//0x01 = Unknown |							0x02 = CanAlterPaperdoll |
-//0x04 = Posioned |							0x08 = Yellow HealthBar |
-//0x10 = Unknown |							0x20 = Unknown
+//|						Note: Only used with the character being played by
+//the client. |						Ancient client version Flags: | 0x01 =
+// Unknown |							0x02 = CanAlterPaperdoll | 0x04 =
+// Posioned |							0x08 = Yellow HealthBar | 0x10 =
+// Unknown |							0x20 = Unknown
 //|							0x40 = War Mode
 //|							0x80 = Hidden
 //|						Pre 7.0.0.0 Flags:
@@ -1052,11 +1049,11 @@ CPPersonalLightLevel &CPPersonalLightLevel::operator=(CChar &toCopy) {
 //|
 //|					Packet Build
 //|						BYTE cmd
-//|						BYTE mode (0x00=quiet, repeating, 0x01=single normally played
-//sound effect) |						BYTE[2] SoundModel |
-//BYTE[2] unknown3 (speed/volume modifier? Line of sight stuff?) |
-//BYTE[2] xLoc |						BYTE[2] yLoc |
-//BYTE[2] zLoc / Or not z at all? Could be related to sequences when sent after packet 0x7B
+//|						BYTE mode (0x00=quiet, repeating, 0x01=single normally
+//played sound effect) |						BYTE[2] SoundModel | BYTE[2]
+// unknown3 (speed/volume modifier? Line of sight stuff?) | BYTE[2] xLoc |
+// BYTE[2] yLoc | BYTE[2] zLoc / Or not z at all? Could be related to sequences when sent after
+// packet 0x7B
 // o------------------------------------------------------------------------------------------------o
 CPPlaySoundEffect::CPPlaySoundEffect() { InternalReset(); }
 
@@ -1137,25 +1134,26 @@ CPPaperdoll &CPPaperdoll::operator=(CChar &toCopy) {
 //|
 //|					Packet Build
 //|						BYTE cmd
-//|						BYTE type (0x00 – “It starts to rain”, 0x01 – “A fierce storm
-//approaches.”, 0x02 – “It begins to snow”, 0x03 - “A storm is brewing.”, 0xFF – None (turns off
-//sound effects), 0xFE (no effect?? Set temperature?)
+//|						BYTE type (0x00 – “It starts to rain”, 0x01 – “A fierce
+//storm approaches.”, 0x02 – “It begins to snow”, 0x03 - “A storm is brewing.”, 0xFF – None (turns
+// off sound effects), 0xFE (no effect?? Set temperature?)
 //|						BYTE num (number of weather effects on screen)
 //|						BYTE temperature
 //|
 //|					Note: Temperature has no effect at present.
 //|					Note: Maximum number of weather effects on screen is 70.
-//|					Note: If it is raining, you can add snow by setting the num to the
-//num of rain |						currently going, plus the number of snow you
-//want. |					Note: Weather messages are only displayed when
-//weather starts. |					Note: Weather will end automatically after 6
-//minutes without any weather change packets.
-//|					Note: You can totally end weather (to display a new message) by
-//teleporting.
-//|						I think it’s either the 0x78 or 0x20 messages that reset it,
-//though I
-//|						haven’t checked to be sure (other possibilities, 0x4F or
-//0x4E)
+//|					Note: If it is raining, you can add snow by setting the num to
+//the
+// num of rain |						currently going, plus the number of snow
+// you want. |					Note: Weather messages are only displayed when
+// weather starts. |					Note: Weather will end automatically after 6
+// minutes without any weather change packets.
+//|					Note: You can totally end weather (to display a new message)
+//by teleporting.
+//|						I think it’s either the 0x78 or 0x20 messages that reset
+//it, though I
+//|						haven’t checked to be sure (other possibilities, 0x4F
+//or 0x4E)
 // o------------------------------------------------------------------------------------------------o
 void CPWeather::InternalReset(void) {
     pStream.ReserveSize(4);
@@ -1284,8 +1282,8 @@ void CPGraphicalEffect::TargetLocation(SI16 x, SI16 y, SI08 z) {
 //| Function	-	CPUpdateStat()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet(s) to update player's health, mana and
-//stamina |					Also used to update the health of items/multis with
-//damageable flag set
+// stamina |					Also used to update the health of items/multis with
+// damageable flag set
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA1 (Update Current Health)
 //|					Packet: 0xA2 (Update Current Mana)
@@ -1458,9 +1456,9 @@ void CPPlayMusic::MusicId(SI16 musicId) { pStream.WriteShort(1, musicId); }
 //|						BYTE[4] item id
 //|						BYTE[2] model-Gump
 //|							0x003c = backpack
-//|						BYTE[2] container type // added in UO:HS clients, 0x00 for
-//vendors, 0x7D |							for spellbooks and
-//containers
+//|						BYTE[2] container type // added in UO:HS clients, 0x00
+//for vendors, 0x7D |							for spellbooks and
+// containers
 // o------------------------------------------------------------------------------------------------o
 void CPDrawContainer::InternalReset(void) {
     pStream.ReserveSize(7);
@@ -1502,10 +1500,11 @@ void CPDrawContainer::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
 //|						BYTE[length of question] question text
 //|						BYTE # of responses
 //|						Then for each response:
-//|							BYTE[2] model id # of shown item (if grey menu -- then
-//always 0x00 as msb) |							BYTE[2] color of shown item
-//|							BYTE response text length
-//|							BYTE[response text length] response text
+//|							BYTE[2] model id # of shown item (if grey menu --
+//then
+// always 0x00 as msb) |							BYTE[2] color of shown
+// item |							BYTE response text length |
+//BYTE[response text length] response text
 // o------------------------------------------------------------------------------------------------o
 void CPOpenGump::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
@@ -1621,15 +1620,15 @@ void CPOpenGump::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
 //|							1: Harmful
 //|							2: Helpful
 //|							3: Cancel current targetting (server sent)
-//|						The following are always sent but are only valid if sent by
-//client |						BYTE[4] Clicked On ID
+//|						The following are always sent but are only valid if sent
+//by client |						BYTE[4] Clicked On ID
 //|						BYTE[2] click xLoc
 //|						BYTE[2] click yLoc
 //|						BYTE unknown (0x00)
 //|						BYTE click zLoc
-//|						BYTE[2] model # (if a static tile, 0 if a map/landscape
-//tile) |							Note: the model # shouldn’t be
-//trusted.
+//|						BYTE[2] model # (if a static tile, 0 if a
+//map/landscape tile) |							Note: the model # shouldn’t
+// be trusted.
 // o------------------------------------------------------------------------------------------------o
 CPTargetCursor::CPTargetCursor() {
     pStream.ReserveSize(19);
@@ -1656,11 +1655,11 @@ void CPTargetCursor::CursorType(UI08 nType) { pStream.WriteByte(6, nType); }
 //|						BYTE[2] currentHitpoints
 //|						BYTE[2] maxHitpoints
 //|						BYTE name change flag (0x1 = allowed, 0 = not
-//allowed) |						BYTE Status Flag/Supported Features |
-//Status Flag
+// allowed) |						BYTE Status Flag/Supported Features |
+// Status Flag
 //|							0x00: no more data following (end of packet
-//here). |							0x01: T2A Extended Info |
-//0x03: UOR Extended Info
+// here). |							0x01: T2A Extended Info |
+// 0x03: UOR Extended Info
 //|							0x04: AOS Extended Info (4.0+)
 //|							0x05: UOML Extended Info (5.0+)
 //|							0x06: UOKR Extended Info (UOKR+)
@@ -1724,10 +1723,10 @@ void CPTargetCursor::CursorType(UI08 nType) { pStream.WriteByte(6, nType); }
 //|							BYTE[2] Maximum Stamina Increase
 //|							BYTE[2] Maximum Mana Increase
 //|
-//|					Note: For characters other than the player, currentHitpoints and
-//maxHitpoints
-//|					are not the actual values.  MaxHitpoints is a fixed value, and
-//currentHitpoints |					works like a percentage.
+//|					Note: For characters other than the player, currentHitpoints
+//and maxHitpoints
+//|					are not the actual values.  MaxHitpoints is a fixed value,
+//and currentHitpoints |					works like a percentage.
 // o------------------------------------------------------------------------------------------------o
 void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
     CChar *mChar = target.CurrcharObj();
@@ -2083,7 +2082,7 @@ void CPStatWindow::TithingPoints(UI32 value) {
 //| Function	-	CPIdleWarning()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to show idle warning or login rejection
-//message
+// message
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x53 (Idle Warning/Reject Character Logon)
 //|					Size: 2 bytes
@@ -2093,9 +2092,9 @@ void CPStatWindow::TithingPoints(UI32 value) {
 //|						BYTE value
 //|							0x07 idle
 //|							0x05 another character is online
-//|								"Another character from this account is currently
-//online in this world. |								You must
-//either log in as that character or wait for it to time out.”
+//|								"Another character from this account is
+//currently online in this world. |								You
+// must either log in as that character or wait for it to time out.”
 // o------------------------------------------------------------------------------------------------o
 void CPIdleWarning::InternalReset(void) {
     pStream.ReserveSize(2);
@@ -2165,11 +2164,12 @@ CPLoginComplete::CPLoginComplete() {
 //|						BYTE cmd
 //|						BYTE[2] blockSize
 //|						BYTE[2] unknown1
-//|					The client sends two of these independent of the color chosen. It
-//sends two of
-//|						them in quick succession as part of the "same" packet. The
-//unknown1 is |						0x00 0x01 in the first and 0x00 0x02 in the
-//second.
+//|					The client sends two of these independent of the color chosen.
+//It sends two of
+//|						them in quick succession as part of the "same" packet.
+//The
+// unknown1 is |						0x00 0x01 in the first and 0x00 0x02 in
+// the second.
 //|					Note, this message has been removed.  It is no longer used.
 // o------------------------------------------------------------------------------------------------o
 CPTextEmoteColour::CPTextEmoteColour() { BlockSize(5); }
@@ -2184,7 +2184,7 @@ void CPTextEmoteColour::Unknown(SI16 newValue) { pStream.WriteShort(3, newValue)
 //| Function	-	CPWarMode()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to respond to request for war mode/set war
-//mode status
+// mode status
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x72 (Request War Mode Change/Send War Mode status)
 //|					Size: 5 bytes
@@ -2197,7 +2197,7 @@ void CPTextEmoteColour::Unknown(SI16 newValue) { pStream.WriteShort(3, newValue)
 //|						BYTE[3] unknown1 (always 00 32 00 in testing)
 //|
 //|					Server also replies with 0x77 packet to update player after
-//changing war mode
+// changing war mode
 // o------------------------------------------------------------------------------------------------o
 CPWarMode::CPWarMode() { InternalReset(); }
 
@@ -2266,7 +2266,7 @@ bool CPPauseResume::ClientCanReceive(CSocket *mSock) {
 //| Function	-	CPWebLaunch()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to open a specific URL in player's default
-//browser
+// browser
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA5 (Open Web Browser)
 //|					Size: Variable
@@ -2366,7 +2366,7 @@ void CPBounce::Mode(UI08 mode) { pStream.WriteByte(1, mode); }
 //| Function	-	CPDyeVat()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to resond to client request to show dye
-//window
+// window
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x95 (Dye Window)
 //|					Size: 2 bytes
@@ -2375,8 +2375,8 @@ void CPBounce::Mode(UI08 mode) { pStream.WriteByte(1, mode); }
 //|						BYTE cmd
 //|						BYTE[4] itemId of dye target
 //|						BYTE[2] ignored on send, model on return
-//|						BYTE[2] model on send, color on return  (default on server
-//send is 0x0FAB)
+//|						BYTE[2] model on send, color on return  (default on
+//server send is 0x0FAB)
 //|
 //|					NOTE: This packet is sent by both the server and client
 // o------------------------------------------------------------------------------------------------o
@@ -2476,37 +2476,38 @@ CPMultiPlacementView::CPMultiPlacementView(SERIAL toSet) {
 //|						0x02	Enable UOR features
 //|						0x04	Enable TD features
 //|						0x08	Enable LBR features: skills, maps, mp3s, LBR
-//monsters in 2D client |						0x10	Enable AOS update
+// monsters in 2D client |						0x10	Enable AOS update
 //(Necromancer/Paladin skills, malas map/AOS monsters if AOS installation present) |
-//0x20	Enable Sixth Character Slot
-//|						0x40	Enable SE features: Ninja/Samurai, spells, skills,
-//map, housing tiles
-//|						0x80	Enable ML features: elven race, spells, skills,
-//housing tiles |						0x100	Enable the Eight Age splash
-//screen |						0x200	Enable the Ninth Age splash screen
-//and crystal/shadow housing tiles
+// 0x20	Enable Sixth Character Slot
+//|						0x40	Enable SE features: Ninja/Samurai, spells,
+//skills, map, housing tiles
+//|						0x80	Enable ML features: elven race, spells,
+//skills, housing tiles |						0x100	Enable the Eight Age
+// splash screen |						0x200	Enable the Ninth Age splash
+// screen and crystal/shadow housing tiles
 //|						0x400	Enable the Tenth Age
 //|						0x800	Enable increased housing and bank-storage
 //|						0x1000	Enable 7th character slot
 //|						0x2000	Enable KR faces
 //|						0x4000	Enable Trial Account
-//|						0x8000	Live (non-trial) Account. Since client 4.0 this
-//bit has to be set, otherwise bits 3..14 are ignored.
+//|						0x8000	Live (non-trial) Account. Since client 4.0
+//this bit has to be set, otherwise bits 3..14 are ignored.
 //|						0x10000	Enable SA features: gargoyle race, spells,
-//skills, housing tiles |						0x20000	Enable HS features
+// skills, housing tiles |						0x20000	Enable HS features
 //|						0x40000	Enable Gothing housing tiles
 //|						0x80000	Enable Rustic housing tiles
 //|
 //|						Example
-//|						0	neither T2A NOR LBR, equal to not sending it at
-//all, |						1	is T2A, chatbutton, |
-//2	is LBR without chatbutton, |						3	is LBR with
-//chatbutton… |						8013	LBR + chatbutton + AOS enabled
+//|						0	neither T2A NOR LBR, equal to not sending it
+//at all, |						1	is T2A, chatbutton, | 2	is LBR
+// without chatbutton, |						3	is LBR with
+// chatbutton… |						8013	LBR + chatbutton + AOS
+// enabled
 //|
 //|						Note1: this message is send immediately after login.
 //|						Note2: on OSI  servers this controls features OSI
-//enables/disables via “upgrade codes.” |						Note3: a 3
-//doesn’t seem to “hurt” older (NON LBR) clients.
+// enables/disables via “upgrade codes.” |						Note3: a 3
+// doesn’t seem to “hurt” older (NON LBR) clients.
 // o------------------------------------------------------------------------------------------------o
 CPEnableClientFeatures::CPEnableClientFeatures(CSocket *mSock) {
     if (mSock->ClientType() <= CV_KR3D) {
@@ -2612,8 +2613,8 @@ void CPEnableClientFeatures::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPNegotiateAssistantFeatures()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet with feature negotiation request for assistant
-//tools |					like Razor and AssistUO
+//| Purpose		-	Handles outgoing packet with feature negotiation request for
+//assistant tools |					like Razor and AssistUO
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xF0 (Negotiate Assistant Features)
 //|					Size: 12 bytes
@@ -2625,10 +2626,11 @@ void CPEnableClientFeatures::Log(std::ostream &outStream, bool fullHeader) {
 //|						BYTE[8] Feature bits from enum
 //|
 //|					At the same time as this is sent in pcmanage.cpp, a timer is
-//started if
-//|					KICKONASSISTANTSILENCE is enabled in uox.ini. If no valid response
-//is received |					within 30 seconds, player is disconnected from the
-//server.
+// started if
+//|					KICKONASSISTANTSILENCE is enabled in uox.ini. If no valid
+//response
+// is received |					within 30 seconds, player is disconnected from
+// the server.
 // o------------------------------------------------------------------------------------------------o
 CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures([[maybe_unused]] CSocket *mSock) {
     pStream.ReserveSize(12);
@@ -2679,8 +2681,8 @@ void CPNegotiateAssistantFeatures::Log(std::ostream &outStream, bool fullHeader)
 //|						BYTE[4] Container Serial
 //|						BYTE[2] Color
 //|
-//|					NOTE: The backpack grid index exists since 6.0.1.7 2D and 2.45.5.6
-//KR.
+//|					NOTE: The backpack grid index exists since 6.0.1.7 2D
+//and 2.45.5.6 KR.
 // o------------------------------------------------------------------------------------------------o
 void CPAddItemToCont::InternalReset(void) {
     uokrFlag = false;
@@ -2776,7 +2778,7 @@ void CPResurrectMenu::Action(UI08 action) { pStream.WriteByte(1, action); }
 //| Function	-	CPFightOccurring()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet update client about combat taking place
-//nearby
+// nearby
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x2F (Fight Occurring)
 //|					Size: 10 bytes
@@ -2787,8 +2789,8 @@ void CPResurrectMenu::Action(UI08 action) { pStream.WriteByte(1, action); }
 //|						BYTE[4] ID of attacker
 //|						BYTE[4] ID of attacked
 //|
-//|					This packet is sent when there is a fight going on somewhere on
-//screen.
+//|					This packet is sent when there is a fight going on somewhere
+//on screen.
 // o------------------------------------------------------------------------------------------------o
 void CPFightOccurring::InternalReset(void) {
     pStream.ReserveSize(10);
@@ -2821,10 +2823,10 @@ void CPFightOccurring::Defender(CChar &defender) { Defender(defender.GetSerial()
 //|						BYTE Type
 //|							0x00 - Full List of skills,
 //|							0xFF - Single skill update,
-//|							0x02 - Full List of skills with skill cap for each
-//skill |							0xDF - Single skill update with
-//skill cap for skill |						Repeat for each skill: |
-//BYTE[2] Skill ID number
+//|							0x02 - Full List of skills with skill cap for
+//each skill |							0xDF - Single skill update with
+// skill cap for skill |						Repeat for each skill: |
+// BYTE[2] Skill ID number
 //|							BYTE[2] Skill Value * 10
 //|							BYTE[2] Unmodified Value * 10
 //|							BYTE Skill Lock
@@ -2946,10 +2948,11 @@ void CPMapMessage::KeyUsed(UI32 key) { pStream.WriteLong(1, key); }
 //|						BYTE[60] title
 //|						BYTE[30] author
 //|
-//|					NOTE: Client sends a 0x93 message on book close. Update packet for
-//the server
-//|						to handle changes. Write Flag through Page Count are all 0's
-//on client response |					NOTE: Replaced with 0xD4 in newer clients?
+//|					NOTE: Client sends a 0x93 message on book close. Update packet
+//for the server
+//|						to handle changes. Write Flag through Page Count are all
+//0's on client response |					NOTE: Replaced with 0xD4 in newer
+// clients?
 // o------------------------------------------------------------------------------------------------o
 CPBookTitlePage::CPBookTitlePage() {
     pStream.ReserveSize(99);
@@ -3014,12 +3017,12 @@ void CPUltimaMessenger::ID2(SERIAL toSet) { pStream.WriteLong(5, toSet); }
 //|						BYTE buttonId
 //|						BYTE[2] textlen
 //|						BYTE[?] text (text appearing at top of gump)
-//|						BYTE cancel (0=disable, 1=enable - if enabled, client is able
-//to cancel query) |						BYTE style (0=disable, 1=normal,
-//2=numerical)
-//|						BYTE[4] format (if style 1, max text len, if style2, max
-//numeric value) |						BYTE[2] text2 length |
-//BYTE[?] text2 (label above text entry box)
+//|						BYTE cancel (0=disable, 1=enable - if enabled, client is
+//able to cancel query) |						BYTE style (0=disable,
+// 1=normal, 2=numerical)
+//|						BYTE[4] format (if style 1, max text len, if style2,
+//max numeric value) |						BYTE[2] text2 length | BYTE[?] text2
+// (label above text entry box)
 // o------------------------------------------------------------------------------------------------o
 void CPGumpTextEntry::InternalReset(void) {
     BlockSize(3);
@@ -3252,16 +3255,15 @@ void CharacterListUpdate::AddCharName(UI08 charNum, std::string charName) {
 //|
 //|					Notes
 //|						Unverified encryption method of keys is AES in CFB
-//Mode
-//|						As of 08/02/2009, this is the current encryption known for KR
-//clients up to date: |							0xe3, |
-//0x4d00, |							0x03000000, |
-//0x02, 0x01, 0x03, |							0x13000000, |
-//0x02, 0x11, 0x00, 0xfc, 0x2f, 0xe3, 0x81, 0x93, 0xcb, 0xaf, 0x98, 0xdd, 0x83, 0x13, 0xd2, 0x9e,
-//0xea, 0xe4, 0x13, |							0x10000000, |
-//0x78, 0x13, 0xb7, 0x7b, 0xce, 0xA8, 0xd7, 0xbc, 0x52, 0xde, 0x38, 0x30, 0xea, 0xe9, 0x1e, 0xa3, |
-//0x20000000, |							0x10000000, |
-//0x5a, 0xce, 0x3e, 0xe3, 0x97, 0x92, 0xe4, 0x8a, 0xf1, 0x9a, 0xd3, 0x04, 0x41, 0x03, 0xcb, 0x53
+// Mode
+//|						As of 08/02/2009, this is the current encryption known for
+//KR clients up to date: |							0xe3, | 0x4d00, |
+// 0x03000000, | 0x02, 0x01, 0x03, |							0x13000000,
+// | 0x02, 0x11, 0x00, 0xfc, 0x2f, 0xe3, 0x81, 0x93, 0xcb, 0xaf, 0x98, 0xdd, 0x83, 0x13, 0xd2, 0x9e,
+// 0xea, 0xe4, 0x13, |							0x10000000, |
+// 0x78, 0x13, 0xb7, 0x7b, 0xce, 0xA8, 0xd7, 0xbc, 0x52, 0xde, 0x38, 0x30, 0xea, 0xe9, 0x1e, 0xa3, |
+// 0x20000000, |							0x10000000, |
+// 0x5a, 0xce, 0x3e, 0xe3, 0x97, 0x92, 0xe4, 0x8a, 0xf1, 0x9a, 0xd3, 0x04, 0x41, 0x03, 0xcb, 0x53
 // o------------------------------------------------------------------------------------------------o
 CPKREncryptionRequest::CPKREncryptionRequest([[maybe_unused]] CSocket *s) {
     pStream.ReserveSize(77);
@@ -3355,9 +3357,9 @@ CPKREncryptionRequest::CPKREncryptionRequest([[maybe_unused]] CSocket *s) {
 //| Function	-	CPKrriosClientSpecial()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet for krrios client special packet, used by
-//ClassicUO
+// ClassicUO
 //|					for things like updating party/guild member locations in
-//WorldMap
+// WorldMap
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xF0 (KrriosClientSpecial)
 //|					Size: Variable
@@ -3366,26 +3368,25 @@ CPKREncryptionRequest::CPKREncryptionRequest([[maybe_unused]] CSocket *s) {
 //|						Byte cmd
 //|						Byte[2] length
 //|						Byte type
-//|							0x00 // krrios special packet accepted, enable WorldMap
-//updates |							0x01 // custom party info |
-//Loop for each party member online
+//|							0x00 // krrios special packet accepted, enable
+//WorldMap updates |							0x01 // custom party info |
+// Loop for each party member online
 //|									BYTE[4] serial
 //|									BYTE[2] x
 //|									BYTE[2] y
 //|									BYTE world
 //|								BYTE[4] 0x0000
 //|							0x02 // guild track info
-//|								BYTE locations // bool, whether to update
-//locations on map
+//|								BYTE locations // bool, whether to
+//update locations on map
 //|								Loop for each party/guild member
-//online |									BYTE[4] serial |
-//BYTE[2] x |									BYTE[2] y |
-//BYTE world
-//|									BYTE healthpoint percentage of max
-//hp |								BYTE[5] 0x00000 |
-//0x03 // runebook contents |							0x04 // guardline
-//data |							0xf0 // ??? |
-//0xfe // Razor ack sent
+// online |									BYTE[4] serial |
+// BYTE[2] x |									BYTE[2] y |
+// BYTE world
+//|									BYTE healthpoint percentage of
+//max hp |								BYTE[5] 0x00000 | 0x03 //
+// runebook contents |							0x04 // guardline data |
+// 0xf0 // ??? | 0xfe // Razor ack sent
 // o------------------------------------------------------------------------------------------------o
 CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, UI08 type,
                                              bool locations) {
@@ -3398,7 +3399,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, UI08 
     {
         pStream.WriteByte(byteOffset, 0x01);
         byteOffset += 1;
-        Party *myParty = PartyFactory::GetSingleton().Get(mSock->CurrcharObj());
+        Party *myParty = PartyFactory::shared().Get(mSock->CurrcharObj());
         if (myParty != nullptr) {
             std::vector<CPartyEntry *> *mList = myParty->MemberList();
             if (mList != nullptr) {
@@ -3534,8 +3535,8 @@ void CPKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPMapChange()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet to change huge of mouse cursor for Felucca and
-//Trammel |					facets, and/or to change the map in the client
+//| Purpose		-	Handles outgoing packet to change huge of mouse cursor for Felucca
+//and Trammel |					facets, and/or to change the map in the client
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x8 (Set Cursor Hue / Set MAP )
@@ -3548,11 +3549,11 @@ void CPKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
 //|						Subcommand details
 //|							BYTE hue
 //|								0x00 = Felucca, unhued / BRITANNIA
-//map.
-//|								0x01 = Trammel, hued gold / BRITANNIA
-//map |								0x02 = Ilshenar |
-//0x03 = Malas |								0x04 = Tokuno |
-//0x05 = TerMur)
+// map.
+//|								0x01 = Trammel, hued gold /
+//BRITANNIA map |								0x02 = Ilshenar |
+// 0x03 = Malas |								0x04 = Tokuno |
+// 0x05 = TerMur)
 // o------------------------------------------------------------------------------------------------o
 void CPMapChange::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
@@ -3608,8 +3609,8 @@ CPMapChange &CPMapChange::operator=(CBaseObject &moving) {
 //| Function	-	CPCloseGump( UI32 gumpId, UI32 buttonId )
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to close a generic/custom gump with a
-//specified ID, |					while also allowing to specify the button ID
-//response to send after
+// specified ID, |					while also allowing to specify the button ID
+// response to send after
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x4 (Close Generic Gump)
@@ -3620,10 +3621,10 @@ CPMapChange &CPMapChange::operator=(CBaseObject &moving) {
 //|						BYTE[2] Length
 //|						BYTE[2] Subcommand (0x4)
 //|						Subcommand details
-//|							BYTE[4] dialogID // which gump to destroy (second ID in
-//0xB0 packet)
-//|							BYTE[4] buttonId // response buttonId for packet
-//0xB1
+//|							BYTE[4] dialogID // which gump to destroy (second ID
+//in 0xB0 packet)
+//|							BYTE[4] buttonId // response buttonId for
+//packet 0xB1
 // o------------------------------------------------------------------------------------------------o
 CPCloseGump::CPCloseGump(UI32 gumpId, UI32 buttonId) {
     _gumpId = gumpId;
@@ -3833,17 +3834,18 @@ void CPItemsInContainer::Log(std::ostream &outStream, bool fullHeader) {
 //|							BYTE length of text description
 //|							BYTE[text length] item description
 //|
-//|						NOTE: This packet is always preceded by a describe contents
-//packet (0x3c) |							with the container id as the
+//|						NOTE: This packet is always preceded by a describe
+//contents
+// packet (0x3c) |							with the container id as the
 //(vendorId | 0x40000000) and then an open
-//|							container packet (0x24?) with the vendorId only and a
-//model number of
+//|							container packet (0x24?) with the vendorId only and
+//a model number of
 //|							0x0030 (probably the model # for the buy
-//screen)
-//|						NOTE: The client displays items in the buy window from top
-//left to bottom
-//|							right. This means we need to sort the items logically
-//before sending packets.
+// screen)
+//|						NOTE: The client displays items in the buy window from
+//top left to bottom
+//|							right. This means we need to sort the items
+//logically before sending packets.
 // o------------------------------------------------------------------------------------------------o
 void CPOpenBuyWindow::InternalReset(void) {
     pStream.ReserveSize(8); // start big, and work back down
@@ -3988,16 +3990,16 @@ void CPOpenBuyWindow::Log(std::ostream &outStream, bool fullHeader) {
 //|							BYTE[30] character password
 //|						BYTE number of starting locations
 //|						Repeat the following for as many locations as you
-//have |							if client version >= 7.0.13.0 |
-//BYTE locationIndex (0-based)
+// have |							if client version >= 7.0.13.0 |
+// BYTE locationIndex (0-based)
 //|								BYTE[32] city name(general name)
 //|								BYTE[32] area of city or town
 //|								BYTE[4] City X Coordinate
 //|								BYTE[4] City Y Coordinate
 //|								BYTE[4] City Z Coordinate
-//|								BYTE[4] CIty Map ( Probably Map ID same as in mul
-//files have to make sure )
-//|								BYTE[4] Cliloc Description
+//|								BYTE[4] CIty Map ( Probably Map ID same as in
+//mul files have to make sure ) |
+//BYTE[4] Cliloc Description
 //|								BYTE[4] Always 0
 //|							if client version < 7.0.13.0
 //|								BYTE locationIndex (0-based)
@@ -4006,24 +4008,22 @@ void CPOpenBuyWindow::Log(std::ostream &outStream, bool fullHeader) {
 //|						BYTE[4] Flags
 //|							0x01	= unknown
 //|							0x02	= send config/req logout (IGR?)
-//|							0x04	= single character (siege) (alternative seen,
-//Limit Characters)
-//|							0x08	= enable npcpopup/context menus
-//|							0x10	= unknown, (alternative seen, single
-//character)
-//|							0x20	= enable common AOS features (tooltip
-//thing/fight system book, but not AOS monsters/map/skills)
+//|							0x04	= single character (siege) (alternative
+//seen, Limit Characters) |							0x08	= enable
+//npcpopup/context menus |							0x10	= unknown,
+//(alternative seen, single character)
+//|							0x20	= enable common AOS features
+//(tooltip thing/fight system book, but not AOS monsters/map/skills)
 //|							0x40	= Sixth Character Slot?
 //|							8x80	= Samurai Empire?
 //|							0x100	= Elven race
 //|							0x200	= KR support flag1
-//|							0x400	= Send UO3D client type (client will send
-//0xE1 packet) |							0x800	= unknown |
-//0x1000	= 7th character slot, 2D client |
-//0x2000	= unknown (SA?) |							0x4000
-//= new movement packets 0xF0 -> 0xF2
+//|							0x400	= Send UO3D client type (client will
+//send 0xE1 packet) |							0x800	= unknown | 0x1000
+// = 7th character slot, 2D client | 0x2000	= unknown (SA?) |
+// 0x4000 = new movement packets 0xF0 -> 0xF2
 //|							0x8000	= unlock new felucca areas (faction
-//areas)
+// areas)
 // o------------------------------------------------------------------------------------------------o
 void CPCharAndStartLoc::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader)
@@ -4277,7 +4277,7 @@ CPCharAndStartLoc &CPCharAndStartLoc::operator=(AccountEntry &actbBlock) {
 //| Function	-	CPKAccept()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to acknowledge login of custom (Krrios')
-//client
+// client
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xF0 (Custom client packet)
 //|					Size: 5
@@ -4307,8 +4307,8 @@ CPKAccept::CPKAccept(UI08 Response) {
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPUpdScroll()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet to display tips/notice window with message on
-//login
+//| Purpose		-	Handles outgoing packet to display tips/notice window with message
+//on login
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA6 (Tips/Notice window)
 //|					Size: Variable
@@ -4398,13 +4398,13 @@ void CPUpdScroll::SetLength(UI16 len) {
 //|						Rendermode details:
 //|							One 	 Darken
 //|							Two 	 Lighten
-//|							Three 	 Transparent to dark colors to emphasize
-//the bright colors
+//|							Three 	 Transparent to dark colors to
+//emphasize the bright colors
 //|							Four 	 Semi-transparent (high
-//transparency) |							Five 	 Translucent (near
-//the present) |							Six 	 "Negapoji" (???)
-//reversal |							Seven 	 Invert background "Negapoji
-//Keta"(???)
+// transparency) |							Five 	 Translucent (near
+// the present) |							Six 	 "Negapoji" (???)
+// reversal |							Seven 	 Invert background "Negapoji
+// Keta"(???)
 // o------------------------------------------------------------------------------------------------o
 void CPGraphicalEffect2::InternalReset(void) {
     pStream.ReserveSize(36);
@@ -4434,7 +4434,7 @@ void CPGraphicalEffect2::RenderMode(UI32 mode) { pStream.WriteLong(32, mode); }
 //| Function	-	CP3DGraphicalEffect()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to display 3D graphical/particle effect in
-//client
+// client
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xC7 (3D Particle Effect)
 //|					Size: 49 bytes
@@ -4444,14 +4444,14 @@ void CPGraphicalEffect2::RenderMode(UI32 mode) { pStream.WriteLong(32, mode); }
 //|						BYTE[35] ...Preamble .. exactly like 0xC0
 //|						BYTE[2] effect # (tile ID)
 //|						BYTE[2] explode effect # (0 if no explosion)
-//|						BYTE[2] additional effect # that's only used for moving
-//effects, 0 otherwise
-//|						BYTE[4] if target is item (type 2) that's itemId, 0 otherwise
-//(EDIT: Packet logs indiciate this is target serial?)
-//|						BYTE[1] layer (of the character, e.g left hand, right hand,
+//|						BYTE[2] additional effect # that's only used for
+//moving effects, 0 otherwise
+//|						BYTE[4] if target is item (type 2) that's itemId, 0
+//otherwise (EDIT: Packet logs indiciate this is target serial?) |
+//BYTE[1] layer (of the character, e.g left hand, right hand,
 //... 0-4, 0xff: moving effect or target is no char)
-//|						BYTE[2] yet another (unknown) additional effect that's only
-//set for moving effect, 0 otherwise
+//|						BYTE[2] yet another (unknown) additional effect that's
+//only set for moving effect, 0 otherwise
 // o------------------------------------------------------------------------------------------------o
 void CP3DGraphicalEffect::InternalReset(void) {
     pStream.ReserveSize(49);
@@ -4491,7 +4491,7 @@ void CP3DGraphicalEffect::Unknown(UI16 unknown) { pStream.WriteShort(47, unknown
 //| Function	-	CPMapRelated()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet responding to client requests for map
-//actions
+// actions
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x56 (Map Related Actions)
 //|					Size: 11 bytes
@@ -4501,19 +4501,19 @@ void CP3DGraphicalEffect::Unknown(UI16 unknown) { pStream.WriteShort(47, unknown
 //|						BYTE[4] map object serial
 //|						BYTE map action
 //|							1 = add map point,
-//|							2 = add new pin with pin number. (insertion. other pins
-//after the number are pushed back.) |							3 = change
-//pin |							4 = remove pin
+//|							2 = add new pin with pin number. (insertion. other
+//pins after the number are pushed back.) |							3 =
+// change pin |							4 = remove pin
 //|							5 = remove all pins on the map
 //|							6 = toggle the 'editable' state of the map.
-//|							7 = return msg from the server to the request 6 of the
-//client.
-//|						BYTE plotting state (1=on, 0=off, valid only if command
-//7)
-//|						BYTE[2] x location (relative to upper left corner of the map,
-//in pixels, for points)
-//|						BYTE[2] y location (relative to upper left corner of the map,
-//in pixels, for points)
+//|							7 = return msg from the server to the request 6 of
+//the client.
+//|						BYTE plotting state (1=on, 0=off, valid only if
+//command 7)
+//|						BYTE[2] x location (relative to upper left corner of the
+//map, in pixels, for points)
+//|						BYTE[2] y location (relative to upper left corner of the
+//map, in pixels, for points)
 // o------------------------------------------------------------------------------------------------o
 CPMapRelated::CPMapRelated() {
     pStream.ReserveSize(11);
@@ -4531,7 +4531,7 @@ void CPMapRelated::ID(SERIAL key) { pStream.WriteLong(1, key); }
 //| Function	-	CPDrawObject()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with instructions for client to draw an
-//object
+// object
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x78 (Draw object)
 //|					Size: Variable
@@ -4555,10 +4555,10 @@ void CPMapRelated::ID(SERIAL key) { pStream.WriteLong(1, key); }
 //|						if (BYTE[4] == 0x00 0x00 0x00 0x00)
 //|							DONE
 //|						else loop this until above if statement is
-//satisified |							BYTE[4] item serial |
-//BYTE[2] model (item hex # - only 15 lsb) |							BYTE
-//layer |							if (model & 0x8000) |
-//BYTE[2] hue
+// satisified |							BYTE[4] item serial |
+// BYTE[2] model (item hex # - only 15 lsb) |							BYTE
+// layer |							if (model & 0x8000) |
+// BYTE[2] hue
 // o------------------------------------------------------------------------------------------------o
 //|					Notes
 //|						Status Options
@@ -4770,25 +4770,25 @@ auto CPCorpseClothing::CopyData(CItem &toCopy) -> void {
 //|					Packet Build
 //|						Byte cmd
 //|						Byte[2] 0x1 // always 0x1 on OSI
-//|						Byte DataType // 0x00 = Item , 0x01 = Character, 0x02 =
-//Multi |						Byte[4] Serial
-//|						Byte[2] Object ID // for multi its same value as the multi
-//has in multi.mul |						Byte Offset/Facing // 0x00 if Multi
-//|						Byte[2] Amount // 0x1 if Multi
-//|						Byte[2] Amount // 0x1 if Multi , no idea why Amount is sent 2
-//times |						Byte[2] X |
-//Byte[2] Y |						Byte Z
-//|						Byte Layer // 0x00 if Multi / Light Level (TileData.Quality
-//or 0 for Mobiles) |						Byte[2] Color // 0x00 if Multi |
-//Byte Flag // 0x20 = Movable if normally not , 0x80 = Hidden , 0x00 if Multi
+//|						Byte DataType // 0x00 = Item , 0x01 = Character, 0x02
+//= Multi |						Byte[4] Serial
+//|						Byte[2] Object ID // for multi its same value as the
+//multi has in multi.mul |						Byte Offset/Facing // 0x00
+// if Multi |						Byte[2] Amount // 0x1 if Multi |
+//Byte[2] Amount // 0x1 if Multi , no idea why Amount is sent 2 times |
+// Byte[2] X | Byte[2] Y |						Byte Z
+//|						Byte Layer // 0x00 if Multi / Light Level
+//(TileData.Quality
+// or 0 for Mobiles) |						Byte[2] Color // 0x00 if Multi |
+// Byte Flag // 0x20 = Movable if normally not , 0x80 = Hidden , 0x00 if Multi
 //|						IF ITEM
-//|							Byte[2] Access (for items only, 0x01 = Player Item,
-//0x00 = World Item)
+//|							Byte[2] Access (for items only, 0x01 = Player
+//Item, 0x00 = World Item)
 //|
 //|						Notes
 //|						Replaces 0x1A packet for clients 7.0.0.0+
-//|						Required to to display items with IDs over 0x3FFF (old 0x1A
-//packet only works with items up to that ID)
+//|						Required to to display items with IDs over 0x3FFF (old
+//0x1A packet only works with items up to that ID)
 // o------------------------------------------------------------------------------------------------o
 void CPNewObjectInfo::InternalReset(void) {
     pStream.ReserveSize(24);
@@ -4932,7 +4932,7 @@ void CPNewObjectInfo::Objects(CItem &mItem, CChar &mChar) { CopyData(mItem, mCha
 //|							BYTE[2] item count (or model # for corpses)
 //|						if (model & 0x8000)
 //|							BYTE Incr Counter (increment model by this
-//#) |						BYTE[2] xLoc (only use lowest significant 15 bits)
+// #) |						BYTE[2] xLoc (only use lowest significant 15 bits)
 //|						BYTE[2] yLoc
 //|						if (xLoc & 0x8000)
 //|							BYTE direction
@@ -4948,7 +4948,7 @@ void CPNewObjectInfo::Objects(CItem &mItem, CChar &mChar) { CopyData(mItem, mCha
 //|						0x04 - Poisoned
 //|						0x08 - YellowHits // healthbar gets yellow
 //|						0x10 - FactionShip // unsure why client needs to
-//know |						0x20 - Movable if normally not
+// know |						0x20 - Movable if normally not
 //|						0x40 - War mode
 //|						0x80 - Hidden
 // o------------------------------------------------------------------------------------------------o
@@ -5318,7 +5318,7 @@ void CPUnicodeMessage::ID(UI16 toSet) { pStream.WriteShort(7, toSet); }
 //| Function	-	CPGameServerList()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with gameserver list to display in client
-//during login
+// during login
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA8 (Game Server List)
 //|					Size: Variable
@@ -5339,10 +5339,10 @@ void CPUnicodeMessage::ID(UI16 toSet) { pStream.WriteShort(7, toSet); }
 //|							BYTE timezone
 //|							BYTE[4] pingIP
 //|
-//|					Note: System Info Flags: 0xCC - Do not send video card info. 0x64 -
-//Send Video card.
-//|					Note: Server IP has to be sent in reverse order. For example,
-//192.168.0.1 is sent as 0100A8C0.
+//|					Note: System Info Flags: 0xCC - Do not send video card info. 0x64
+//- Send Video card.
+//|					Note: Server IP has to be sent in reverse order. For
+//example, 192.168.0.1 is sent as 0100A8C0.
 // o------------------------------------------------------------------------------------------------o
 void CPGameServerList::InternalReset(void) {
     pStream.ReserveSize(6);
@@ -5386,7 +5386,7 @@ void CPGameServerList::addEntry(const std::string &name, UI32 addressBig) {
 //| Function	-	CPSecureTrading()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with server response to secure trading
-//request
+// request
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x6F (Secure Trading)
 //|					Size: Variable
@@ -5455,14 +5455,14 @@ void CPSecureTrading::Name(const std::string &nameFollowing) {
 //|						If (server-reply)
 //|							BYTE[30] name (0 terminated)
 //|
-//|						NOTE: Only 3D clients (used to) send this packet. Now both 2D
-//and 3D do! |						Server and client packet.
+//|						NOTE: Only 3D clients (used to) send this packet. Now both
+//2D and 3D do! |						Server and client packet.
 //|
 //|						Client asks for name of object with ID x.
 //|						Server has to reply with ID + name
 //|						Client automatically knows names of items.
-//|						Hence it only asks only for NPC/Player names nearby, but
-//shows bars of items plus NPC’s.
+//|						Hence it only asks only for NPC/Player names nearby,
+//but shows bars of items plus NPC’s.
 //|
 //|						Client request has 7 bytes, server-reply 37
 //|						Triggered by Crtl + Shift.
@@ -5490,7 +5490,7 @@ void CPAllNames3D::Object(CBaseObject &obj) { CopyData(obj); }
 //| Function	-	CPBookPage()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with server response to request for book
-//pages
+// pages
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x66 (Books - Page)
 //|					Size: Variable
@@ -5507,11 +5507,11 @@ void CPAllNames3D::Object(CBaseObject &obj) { CopyData(obj); }
 //|								BYTE[var] null terminated line
 //|						Note:
 //|						server side: # of pages equals value given in
-//0x93/0xd4
-//|						EACH page # given. If empty: # lines: 0 + terminator (=3
-//0’s)
-//|						client side:  # of pages always 1. if 2 pages changed, client
-//generates 2 packets.
+// 0x93/0xd4
+//|						EACH page # given. If empty: # lines: 0 + terminator
+//(=3 0’s)
+//|						client side:  # of pages always 1. if 2 pages changed,
+//client generates 2 packets.
 // o------------------------------------------------------------------------------------------------o
 void CPBookPage::IncLength(UI08 amount) {
     bookLength += amount;
@@ -5590,7 +5590,7 @@ void CPBookPage::Serial(SERIAL value) { pStream.WriteLong(3, value); }
 //|						BYTE[?] commands (zero terminated)
 //|						BYTE[2] numTextLines
 //|						BYTE[2] text length (in unicode (2 byte)
-//characters.) |						BYTE[?] text (in unicode)
+// characters.) |						BYTE[?] text (in unicode)
 // o------------------------------------------------------------------------------------------------o
 CPSendGumpMenu::CPSendGumpMenu() {
     pStream.ReserveSize(21);
@@ -5751,7 +5751,7 @@ void CPSendGumpMenu::Log(std::ostream &outStream, bool fullHeader) {
 //|								first bit of first byte = spell #1
 //|								second bit of first byte = spell #2
 //|								first bit of second byte = spell #8,
-//etc
+// etc
 // o------------------------------------------------------------------------------------------------o
 void CPNewSpellBook::InternalReset(void) {
     pStream.ReserveSize(23);
@@ -5801,7 +5801,7 @@ bool CPNewSpellBook::ClientCanReceive(CSocket *mSock) {
 //| Function	-	CPDisplayDamage()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to show damage numbers above head of
-//characters
+// characters
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x22 (Damage)
@@ -5858,7 +5858,7 @@ bool CPDisplayDamage::ClientCanReceive(CSocket *mSock) {
 //| Function	-	CPQueryToolTip()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with response to client request for item
-//tooltip
+// tooltip
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x10 (Display Equipment Info)
@@ -5874,7 +5874,7 @@ bool CPDisplayDamage::ClientCanReceive(CSocket *mSock) {
 //|							BYTE[4] 0xFFFFFFFD (If Owner != null )
 //|							BYTE[2] Owner Name Length (If Owner != null
 //) |							BYTE[30] Owner Name (If Owner != null ) |
-//BYTE[4] 0xFFFFFFFC (If equipment unidentified )
+// BYTE[4] 0xFFFFFFFC (If equipment unidentified )
 //|							loop Attribute
 //|								BYTE[4] Number
 //|								BYTE[2] Charges
@@ -5922,7 +5922,7 @@ bool CPQueryToolTip::ClientCanReceive(CSocket *mSock) {
 //| Function	-	CPToolTip()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet with response to AoS client request for item
-//tooltip
+// tooltip
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD6 (AOS tooltip/Object property list)
 //|					Size: Variable
@@ -5939,9 +5939,9 @@ bool CPQueryToolTip::ClientCanReceive(CSocket *mSock) {
 //|							BYTE[4] cliloc#
 //|							if cliloc# is 0, break loop
 //|							BYTE[2] text length
-//|							BYTE[text length] little endian Unicode text, not 0
-//terminated |						End Loop |
-//BYTE[4] 00000000 - Sent as end of packet/loop
+//|							BYTE[text length] little endian Unicode text, not
+//0 terminated |						End Loop | BYTE[4] 00000000 - Sent
+// as end of packet/loop
 // o------------------------------------------------------------------------------------------------o
 void CPToolTip::InternalReset(void) {
     pStream.ReserveSize(15);
@@ -6726,9 +6726,9 @@ bool CPSellList::CanSellItems(CChar &mChar, CChar &vendor) {
 //|						 BYTE[ len - 4 ] submessage
 //|							Submessage 0 – Display Bulletin Board
 //|							BYTE[4] Board serial
-//|							BYTE[22] board name (default is “bulletin board”, the
-//rest nulls) |							BYTE[4] unknown/ID? |
-//BYTE[4] zero (0)
+//|							BYTE[22] board name (default is “bulletin board”,
+//the rest nulls) |							BYTE[4] unknown/ID? |
+// BYTE[4] zero (0)
 // o------------------------------------------------------------------------------------------------o
 void CPOpenMessageBoard::InternalReset(void) {
     pStream.ReserveSize(38);
@@ -6779,7 +6779,7 @@ CPOpenMessageBoard::CPOpenMessageBoard(CSocket *mSock) {
 //| Function	-	CPOpenMsgBoardPost()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to open a bulletin board msg and/or msg
-//summary
+// summary
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x71 (Bulletin Board Message)
 //|
@@ -6796,11 +6796,11 @@ CPOpenMessageBoard::CPOpenMessageBoard(CSocket *mSock) {
 //|							BYTE[4] ParentId (0 if top level)
 //|							BYTE posterLen
 //|							BYTE[posterLen] poster (null terminated
-//string) |							BYTE subjectLen |
-//BYTE[subjectLen] subject (null terminated string)
+// string) |							BYTE subjectLen |
+// BYTE[subjectLen] subject (null terminated string)
 //|							BYTE timeLen
-//|							BYTE[timeLen] time (null terminated string with time of
-//posting) (“Day 1 @ 11:28”)
+//|							BYTE[timeLen] time (null terminated string with time
+//of posting) (“Day 1 @ 11:28”)
 // o------------------------------------------------------------------------------------------------o
 //|					Subcommand: 0x2 (Message Summary)
 //|					Size: Variable
@@ -6814,16 +6814,14 @@ CPOpenMessageBoard::CPOpenMessageBoard(CSocket *mSock) {
 //|							BYTE[4] MessageID
 //|							BYTE posterLen
 //|							BYTE[posterLen] poster (null terminated
-//string) |							BYTE subjectLen |
-//BYTE[subjectLen] subject (null terminated string)
+// string) |							BYTE subjectLen |
+// BYTE[subjectLen] subject (null terminated string)
 //|							BYTE timeLen
-//|							BYTE[timeLen] time (null terminated string with time of
-//posting) (“Day 1 @ 11:28”)
-//|							BYTE[5] Unknown (01 90 03 F7 00)
-//|							BYTE numlines
-//|							For each line:
-//|								BYTE linelen
-//|								BYTE[linelen] body (null terminated)
+//|							BYTE[timeLen] time (null terminated string with time
+//of posting) (“Day 1 @ 11:28”) |							BYTE[5]
+//Unknown (01 90 03 F7 00) |							BYTE numlines |
+//For each line: |								BYTE linelen |
+//BYTE[linelen] body (null terminated)
 // o------------------------------------------------------------------------------------------------o
 void CPOpenMsgBoardPost::InternalReset(void) {
     pStream.ReserveSize(4);
@@ -6955,7 +6953,7 @@ CPOpenMsgBoardPost::CPOpenMsgBoardPost(CSocket *mSock, const MsgBoardPost_st &mb
 //|						 endloop
 //|
 //|					NOTE: Backpack grid index is only sent for client versions
-//above 6.0.1.7 (2D) |						and 2.45.5.6 (KR)
+// above 6.0.1.7 (2D) |						and 2.45.5.6 (KR)
 // o------------------------------------------------------------------------------------------------o
 void CPSendMsgBoardPosts::InternalReset(void) {
     pStream.ReserveSize(5);
@@ -7016,18 +7014,19 @@ CPSendMsgBoardPosts::CPSendMsgBoardPosts() {
 //|						BYTE[2] Length
 //|						BYTE[2] Subcommand (0x19)
 //|						Subcommand details
-//|							BYTE subsubcommand (0x2 for 2D client, 0x5 for KR
-//client) |							BYTE[4] serial
+//|							BYTE subsubcommand (0x2 for 2D client, 0x5 for
+//KR client) |							BYTE[4] serial
 //|							BYTE unknown // always 0 ?
 //|							BYTE lockBits
 //|								Bits: XXSS DDII
 //|									s=strength, d=dex, i=int
-//|									0 = up, 1 = down, 2 = locked, FF = update
-//mobile status animation (KR only)
+//|									0 = up, 1 = down, 2 = locked, FF =
+//update mobile status animation (KR only)
 //|							if subsubcommand is 0x5
-//|								If Lock flags = 0xFF //Update mobile status
-//animation
-//|									BYTE[1] Status // Unveryfied if lock flags
+//|								If Lock flags = 0xFF //Update mobile
+//status animation
+//|									BYTE[1] Status // Unveryfied if lock
+//flags
 //== FF the locks will be handled here
 //|									BYTE[1] unknown (0x00)
 //|									BYTE[1] Animation
@@ -7074,17 +7073,17 @@ void CPExtendedStats::CopyData(CChar &mChar) {
 //|						BYTE cmd
 //|						BYTE[2] Packet Size
 //|						BYTE[4] Serial
-//|						BYTE[2] Extended (1 if status bar is green or yellow, else
-//0)
-//|						BYTE[2] Status Color (0x01 = Green, 0x02 = Yellow, sends only
-//if extended == 1)
-//|						BYTE Flag (0x00 = Remove Status Color, 0x01 = Enable Status
-//Color, sends only if extended == 1)
+//|						BYTE[2] Extended (1 if status bar is green or yellow,
+//else 0)
+//|						BYTE[2] Status Color (0x01 = Green, 0x02 = Yellow, sends
+//only if extended == 1)
+//|						BYTE Flag (0x00 = Remove Status Color, 0x01 = Enable
+//Status Color, sends only if extended == 1)
 //|						If mobile is poisoned, flag value > 0x00 - poison
-//level.
-//|						Since 4.0.7.0/7.0.7.0, sends to both 2d and 3d but works only
-//in 3d. Server |							sends it as response for
-//0x34 Mobile Status Query.
+// level.
+//|						Since 4.0.7.0/7.0.7.0, sends to both 2d and 3d but works
+//only in 3d. Server |							sends it as response for
+// 0x34 Mobile Status Query.
 // o------------------------------------------------------------------------------------------------o
 //|					Packet: 0x17 (Mobile Health Bar Status Update)
 //|					Size: Variable
@@ -7094,11 +7093,12 @@ void CPExtendedStats::CopyData(CChar &mChar) {
 //|						BYTE[2] Packet Size
 //|						BYTE[4] Mobile Serial
 //|						BYTE[2] 0x01
-//|						BYTE[2] Status Color (0x01 = Green, 0x02 = Yellow, 0x03 =
-//Red)
-//|						BYTE Flag (0x00 = Remove Status Color, 0x01 = Enable Status
-//Color) |						If mobile is poisoned, flag value > 0x00 -
-//poison level
+//|						BYTE[2] Status Color (0x01 = Green, 0x02 = Yellow, 0x03
+//= Red)
+//|						BYTE Flag (0x00 = Remove Status Color, 0x01 = Enable
+//Status
+// Color) |						If mobile is poisoned, flag value > 0x00 -
+// poison level
 // o------------------------------------------------------------------------------------------------o
 CPHealthBarStatus::CPHealthBarStatus() { InternalReset(); }
 
@@ -7193,13 +7193,13 @@ void CPHealthBarStatus::CopyData(CChar &mChar) {
 //|						Subcommand details
 //|							BYTE[4] Number of maps
 //|							For each map
-//|								BYTE[4] Number of map patches in this map (these
-//two lines are in reverse order!)
-//|								BYTE[4] Number of static patches in this
-//map
+//|								BYTE[4] Number of map patches in this map
+//(these two lines are in reverse order!)
+//|								BYTE[4] Number of static patches in
+//this map
 //|
-//|					Note: Only client versions lower than v7.0.8.2 will load diff
-//files
+//|					Note: Only client versions lower than v7.0.8.2 will load
+//diff files
 // o------------------------------------------------------------------------------------------------o
 void CPEnableMapDiffs::InternalReset(void) {
     pStream.ReserveSize(6);
@@ -7231,7 +7231,7 @@ void CPEnableMapDiffs::CopyData(void) {
 //| Function	-	CPNewBookHeader()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to respond to client request to change book
-//title
+// title
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD4 (New Book Header)
 //|					Size: Variable
@@ -7244,28 +7244,29 @@ void CPEnableMapDiffs::CopyData(void) {
 //|						BYTE flag2
 //|						BYTE[2] number of pages
 //|						BYTE[2] length of author string (0 terminator
-//included) |						BYTE[?] author (ASCII, 0 terminated) |
-//BYTE[2] length of title string (0 terminator included) |
-//BYTE[?] title string
+// included) |						BYTE[?] author (ASCII, 0 terminated) |
+// BYTE[2] length of title string (0 terminator included) |
+// BYTE[?] title string
 //|
 //|					Note1:
 //|						server and client packet.
-//|							server side: opening book writeable: flag1+flag2 both
-//1
-//|								(opening readonly book: flag1+flag2 0, unverified
-//though)
+//|							server side: opening book writeable: flag1+flag2
+//both
+// 1
+//|								(opening readonly book: flag1+flag2 0,
+//unverified though)
 //|						client side: flag1+flag2 both 0, number of pages 0.
 //|
 //|					Note2:
 //|						Opening books goes like this:
 //|							open book ->
 //|							server sends 0xd4(title + author)
-//|							server sends 0x66 with all book data "beyond" title +
-//author
+//|							server sends 0x66 with all book data "beyond" title
+//+ author
 //|							if title + author changed: client side 0xd4
-//send
-//|							if other book pages changed: 0x66 client side
-//send.
+// send
+//|							if other book pages changed: 0x66 client
+//side send.
 // o------------------------------------------------------------------------------------------------o
 CPNewBookHeader::CPNewBookHeader() { InternalReset(); }
 
@@ -7327,24 +7328,24 @@ void CPNewBookHeader::Finalize(void) {
 //|							BYTE Number of entries in the popup
 //|							if subsubcommand is 0x01:
 //|								Loop for each entry:
-//|									BYTE[2] Entry Tag (this will be returned by
-//the client on selection)
-//|									BYTE[2] Cliloc ID (file number for
-//intloc#.language e.g intloc6.enu and the index into that) |
-//BYTE[2] Flags 0x00=enabled, 0x01=disabled, 0x02=arrow, 0x20 = color
+//|									BYTE[2] Entry Tag (this will be returned
+//by the client on selection)
+//|									BYTE[2] Cliloc ID (file number
+//for intloc#.language e.g intloc6.enu and the index into that) | BYTE[2] Flags 0x00=enabled,
+// 0x01=disabled, 0x02=arrow, 0x20 = color
 //|									If (Flags &0x20)
 //|										BYTE[2] color
-//|											rgb 1555 color (ex, 0 =
-//transparent, 0x8000 = solid black,
-//|											0x1F = blue, 0x3E0 = green,
-//0x7C00 = red) |							if subsubcommand is 0x02: |
-//Loop for each entry:
+//|											rgb 1555 color (ex, 0
+//= transparent, 0x8000 = solid black,
+//|											0x1F = blue, 0x3E0 =
+//green,
+// 0x7C00 = red) |							if subsubcommand is 0x02: |
+// Loop for each entry:
 //|									BYTE[4] Cliloc ID
-//|									BYTE[2] Index of entry (entry
-//tag)? |									BYTE[2] Flags
-//0x00=enabled, 0x01=disabled, 0x04 = highlighted, 0x20 = color |
-//If (flags &0x20 and 2D client) |
-//BYTE[2] color
+//|									BYTE[2] Index of entry
+//(entry tag)? |									BYTE[2]
+// Flags 0x00=enabled, 0x01=disabled, 0x04 = highlighted, 0x20 = color | If (flags &0x20 and 2D
+// client) | BYTE[2] color
 // o------------------------------------------------------------------------------------------------o
 CPPopupMenu::CPPopupMenu(void) { InternalReset(); }
 
@@ -7415,7 +7416,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
 
     // Open Backpack
     //	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() ==
-    //mChar && !toCopy.CanBeHired() )))
+    // mChar && !toCopy.CanBeHired() )))
     if (toCopy.GetQuestType() != QT_ESCORTQUEST &&
         ((toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() || toCopy.GetId() == 0x0123 ||
           toCopy.GetId() == 0x0124 || toCopy.GetId() == 0x0317) &&
@@ -7983,25 +7984,21 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
 //|						BYTE[2] body/id (0xff for system message)
 //|						BYTE type (6 - lower left, 7 on player)
 //|							Message Type
-//|								0x00 = Regular, 0x01 = System, 0x02 = Emote, 0x06
-//= Label,
-//|								0x07 = Focus, 0x08 = Whisper, 0x09 = Yell, 0x0A =
-//Spell,
-//|								0x0D = Guild, 0x0E = Alliance, 0x0F = GM Request,
-//0x10 = GM Response,
-//|								0x20 = Special, 0xC0 = Encoded
-//|						BYTE[2] hue
-//|						BYTE[2] font
-//|						BYTE[4] Message number
-//|						BYTE[30] - speaker's name
-//|						BYTE[?*2] - arguments // _little-endian_ unicode string, tabs
+//|								0x00 = Regular, 0x01 = System, 0x02 = Emote,
+//0x06 = Label, |								0x07 = Focus, 0x08
+//= Whisper, 0x09 = Yell, 0x0A = Spell, |
+//0x0D = Guild, 0x0E = Alliance, 0x0F = GM Request, 0x10 = GM Response, |
+//0x20 = Special, 0xC0 = Encoded |						BYTE[2] hue |
+//BYTE[2] font |						BYTE[4] Message number |
+//BYTE[30] - speaker's name
+//|						BYTE[?*2] - arguments // _little-endian_ unicode string,
+//tabs
 //('\t') seperate the arguments |							Argument
-//example: |							take number 1042762: |
+// example: |							take number 1042762: |
 //"Only ~1_AMOUNT~ gold could be deposited. A check for ~2_CHECK_AMOUNT~ gold was returned to you."
-//|							the arguments string may have "100 thousand\t25
-//hundred", which in turn would modify the string:
-//|							"Only 100 thousand gold could be deposited. A check for
-//25 hundred gold was returned to you."
+//|							the arguments string may have "100
+//thousand\t25 hundred", which in turn would modify the string: |
+//"Only 100 thousand gold could be deposited. A check for 25 hundred gold was returned to you."
 // o------------------------------------------------------------------------------------------------o
 CPClilocMessage::CPClilocMessage(void) {
     InternalReset();
@@ -8071,8 +8068,8 @@ void CPClilocMessage::ArgumentString(const std::string &arguments) {
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPPartyMemberList()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Handles outgoing packet with response to client request to add someone
-//to party
+//| Purpose		-	Handles outgoing packet with response to client request to add
+//someone to party
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x06 (Party Commands)
@@ -8085,9 +8082,9 @@ void CPClilocMessage::ArgumentString(const std::string &arguments) {
 //|						BYTE[2] Subcommand (0x06)
 //|						Subcommand details
 //|							BYTE subsubcommand (0x01)
-//|							BYTE number of Members (total number of members in the
-//party) |							Then, loop for each member in
-//numMembers: |								BYTE[4] serial
+//|							BYTE number of Members (total number of members in
+//the party) |							Then, loop for each member in
+// numMembers: |								BYTE[4] serial
 // o------------------------------------------------------------------------------------------------o
 CPPartyMemberList::CPPartyMemberList(void) { InternalReset(); }
 
@@ -8253,9 +8250,9 @@ void CPPartyMemberRemove::Log(std::ostream &outStream, bool fullHeader) {
 //|						BYTE[2] Subcommand (0x06)
 //|						Subcommand details
 //|							BYTE subsubcommand (0x03)
-//|							BYTE[4] id (of target, from client, of source, from
-//server) |							BYTE[n][2] Null terminated Unicode
-//message.
+//|							BYTE[4] id (of target, from client, of source,
+//from server) |							BYTE[n][2] Null terminated
+// Unicode message.
 // o------------------------------------------------------------------------------------------------o
 CPPartyTell::CPPartyTell(CPIPartyCommand *removed, CSocket *talker) {
     InternalReset();
@@ -8320,10 +8317,10 @@ void CPPartyTell::Log(std::ostream &outStream, bool fullHeader) {
 //|						BYTE[2] length
 //|
 //|					Notes
-//|						Server version : 0xbd 0x0 0x3 (client replies with client
-//version of this packet)
-//|						Clients sends a client version of this packet ONCE at login
-//(without server request.)
+//|						Server version : 0xbd 0x0 0x3 (client replies with
+//client version of this packet)
+//|						Clients sends a client version of this packet ONCE at
+//login (without server request.)
 // o------------------------------------------------------------------------------------------------o
 void CPClientVersion::InternalReset(void) {
     pStream.ReserveSize(3);
@@ -8345,13 +8342,12 @@ CPClientVersion::CPClientVersion() { InternalReset(); }
 //|
 //|					Notes
 //|						Older 2D Clients this was for Paperdoll
-//ackknowledgement.
-//|						Newest (KR era and 6.0.1.7 and higher) use this also for the
-//regular drop item packet.
-//|							> 6.0.1.7 = Client sends Drop On Paperdoll (0x13),
-//Server Responds with This (0x29)
-//|							< 6.0.1.7 = Client sends Drop On Paperdoll (0x13) or
-//sends Drop Item (0x08), server responds with this (0x29)
+// ackknowledgement.
+//|						Newest (KR era and 6.0.1.7 and higher) use this also for
+//the regular drop item packet. |							> 6.0.1.7 =
+//Client sends Drop On Paperdoll (0x13), Server Responds with This (0x29) |
+//< 6.0.1.7 = Client sends Drop On Paperdoll (0x13) or sends Drop Item (0x08), server responds with
+// this (0x29)
 // o------------------------------------------------------------------------------------------------o
 CPDropItemApproved::CPDropItemApproved() {
     pStream.ReserveSize(1);

@@ -3,23 +3,24 @@
 //|	Date			-	7/26/2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Handles base object stuff shared between characters, items
-//and multis
+// and multis
 //|
 //|	Version History	-
 //|
 //|							1.0		26th July, 2000
-//|							Initial implementation.  Most, if not all, common
-//between
-//|							items and chars is now implemented here	Functions
-//declared |							as const where possible
+//|							Initial implementation.  Most, if not all,
+//common between |							items and chars is now
+//implemented here	Functions
+// declared |							as const where possible
 //|
 //|							1.1		Unknown
-//|							Significant fraction of things moved to CBO to
-//support |							future functionality
+//|							Significant fraction of things moved to CBO
+//to support |							future functionality
 //|
 //|							1.2		August 27th, 2000
-//|							Addition of basic script trigger stuff. Function
-//documentation |							finished for all functions
+//|							Addition of basic script trigger stuff.
+//Function documentation |							finished for all
+// functions
 // o------------------------------------------------------------------------------------------------o
 
 #include "cbaseobject.h"
@@ -29,15 +30,15 @@
 #include "citem.h"
 #include "cjsmapping.h"
 #include "cmultiobj.h"
-#include "csocket.h"
-#include "subsystem/console.hpp"
 #include "cscript.h"
+#include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "utility/strutil.hpp"
 #include "network.h"
 #include "objectfactory.h"
 #include "power.h"
+#include "subsystem/console.hpp"
+#include "utility/strutil.hpp"
 #include "weight.h"
 
 const UI32 BIT_FREE = 0;
@@ -184,9 +185,9 @@ TAGMAPOBJECT CBaseObject::GetTag(std::string tagname) const {
 //|	Purpose		-	Store custom string/int tag in an object's tag map
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	Updated the function to use the internal tagmap object instead of
-//using some
+// using some
 //|					stored jsval in a context that may or may not change when
-//reloaded.
+// reloaded.
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
     TAGMAP2_ITERATOR I = tags.find(tagname);
@@ -243,7 +244,7 @@ void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
 //|	Function	-	CBaseObject::GetTempTag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetch custom, temporary tag with specified name from object's
-//temporary tag map
+// temporary tag map
 // o------------------------------------------------------------------------------------------------o
 TAGMAPOBJECT CBaseObject::GetTempTag(std::string tempTagName) const {
     TAGMAPOBJECT localObject;
@@ -263,7 +264,7 @@ TAGMAPOBJECT CBaseObject::GetTempTag(std::string tempTagName) const {
 //|	Function	-	CBaseObject::SetTempTag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Store custom, temporary string/int tag in an object's temporary tag
-//map
+// map
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal) {
     TAGMAP2_ITERATOR I = tempTags.find(tempTagName);
@@ -544,11 +545,11 @@ void CBaseObject::SetMulti(SERIAL newSerial, bool fireTrigger) {
 SERIAL CBaseObject::GetSerial(void) const { return serial; }
 void CBaseObject::SetSerial(SERIAL newSerial) {
     if (GetSerial() != INVALIDSERIAL) {
-        ObjectFactory::GetSingleton().UnregisterObject(this);
+        ObjectFactory::shared().UnregisterObject(this);
     }
     serial = newSerial;
     if (newSerial != INVALIDSERIAL) {
-        ObjectFactory::GetSingleton().RegisterObject(this, newSerial);
+        ObjectFactory::shared().RegisterObject(this, newSerial);
     }
 }
 
@@ -663,7 +664,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
               << newLine;
 
     //=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next
-    //serverstartup = increasing malis)
+    // serverstartup = increasing malis)
     temp_st2 = st2;
     temp_dx2 = dx2;
     temp_in2 = in2;
@@ -755,7 +756,7 @@ void CBaseObject::SetRace(RACEID newValue) {
 //|	Function	-	CBaseObject::GetNameRequest()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the name of the object, but checks for presence of
-//onNameRequest JS event
+// onNameRequest JS event
 // o------------------------------------------------------------------------------------------------o
 std::string CBaseObject::GetNameRequest(CChar *nameRequester, UI08 requestSource) {
     std::vector<UI16> scriptTriggers = GetScriptTriggers();
@@ -1144,7 +1145,7 @@ UI08 CBaseObject::GetSerial(UI08 part) const {
 //|	Date		-	28 July, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's high damage value (for randomization
-//purposes)
+// purposes)
 // o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetHiDamage(void) const { return hiDamage; }
 void CBaseObject::SetHiDamage(SI16 newValue) {
@@ -1271,7 +1272,7 @@ void CBaseObject::AddScriptTrigger(UI16 newValue) {
 //|	Function	-	CBaseObject::RemoveScriptTrigger()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a specific script trigger to object's list of script
-//triggers
+// triggers
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::RemoveScriptTrigger(UI16 newValue) {
     // Remove all elements containing specified script trigger from vector
@@ -1290,7 +1291,7 @@ void CBaseObject::RemoveScriptTrigger(UI16 newValue) {
 //|	Function	-	CBaseObject::HasScriptTrigger()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object has specified script trigger in list of script
-//triggers
+// triggers
 // o------------------------------------------------------------------------------------------------o
 bool CBaseObject::HasScriptTrigger(UI16 scriptTrigger) {
     if (std::find(scriptTriggers.begin(), scriptTriggers.end(), scriptTrigger) !=
@@ -1323,7 +1324,7 @@ void CBaseObject::ClearScriptTriggers(void) {
 //|	Function	-	CBaseObject::GetLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a Point3_st structure pointing to the object's current
-//location
+// location
 // o------------------------------------------------------------------------------------------------o
 Point3_st CBaseObject::GetLocation(void) const { return Point3_st(x, y, z); }
 
@@ -1332,7 +1333,7 @@ Point3_st CBaseObject::GetLocation(void) const { return Point3_st(x, y, z); }
 //|					CBaseObject::SetStrength2()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second strength var associated with the object. For
-//chars, it's the |					bonuses (via armour and such)
+// chars, it's the |					bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetStrength2(void) const { return st2; }
 void CBaseObject::SetStrength2(SI16 nVal) {
@@ -1348,7 +1349,7 @@ void CBaseObject::SetStrength2(SI16 nVal) {
 //|					CBaseObject::SetDexterity2()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second dexterity var associated with the object. For
-//chars, it's |					the bonuses (via armour and such)
+// chars, it's |					the bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetDexterity2(void) const { return dx2; }
 void CBaseObject::SetDexterity2(SI16 nVal) {
@@ -1364,7 +1365,7 @@ void CBaseObject::SetDexterity2(SI16 nVal) {
 //|					CBaseObject::SetIntelligence2()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the second intelligence var associated with the object.
-//For chars, |					it's the bonuses (via armour and such)
+// For chars, |					it's the bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
 SI16 CBaseObject::GetIntelligence2(void) const { return in2; }
 void CBaseObject::SetIntelligence2(SI16 nVal) {
@@ -1400,7 +1401,7 @@ void CBaseObject::IncIntelligence(SI16 toInc) { SetIntelligence(intelligence + t
 //|	Function	-	CBaseObject::DumpFooter()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out footer information so that a logical break between entries
-//can |					be found without moving file pointers
+// can |					be found without moving file pointers
 //|						Mode 0 - Text
 //|						Mode 1 - Binary
 // o------------------------------------------------------------------------------------------------o
@@ -1436,9 +1437,9 @@ bool CBaseObject::Load(std::istream &inStream) {
 //|	Function	-	CBaseObject::HandleLine()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to handle world lines. Returns true if the tag is known. If
-//known,
-//|					internal information updated and load routine continues to next
-//tag. |					Otherwise, passed up inheritance tree (if any)
+// known,
+//|					internal information updated and load routine continues to
+//next tag. |					Otherwise, passed up inheritance tree (if any)
 // o------------------------------------------------------------------------------------------------o
 bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
     static std::string staticTagName = "";
@@ -2215,7 +2216,7 @@ void CBaseObject::SetDamageable(bool newValue) {
 //|	Function	-	CBaseObject::NameRequestActive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether a name request is in process for an item (to
-//prevent infinite loop)
+// prevent infinite loop)
 // o------------------------------------------------------------------------------------------------o
 bool CBaseObject::NameRequestActive(void) const { return nameRequestActive; }
 void CBaseObject::NameRequestActive(bool newValue) { nameRequestActive = newValue; }

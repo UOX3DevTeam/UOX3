@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "subsystem/console.hpp"
 #include "cscript.h"
 #include "funcdecl.h"
 #include "scriptc.h"
 #include "ssection.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;
@@ -36,7 +36,7 @@ CJSMapping *JSMapping = nullptr;
 //|	Date		-	2/7/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Base global class that holds within it an array of JS Mapping
-//Sections
+// Sections
 // o------------------------------------------------------------------------------------------------o
 /*
 CJSMapping::CJSMapping()
@@ -563,7 +563,7 @@ UI16 CEnvoke::GetScript(UI16 envokeId) const {
 //|	Date		-	2/7/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parses through specific envoke file mapping the scriptId to the
-//envoke type
+// envoke type
 // o------------------------------------------------------------------------------------------------o
 auto CEnvoke::Parse() -> void {
     envokeList.clear();

@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "genericlist.h"
 #include "cbaseobject.h"
+#include "genericlist.h"
 
 class CTownRegion;
 

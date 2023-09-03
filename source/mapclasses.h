@@ -1,15 +1,15 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
-#include <cstdint>
-#include <sstream>
+#include <algorithm>
 #include <array>
 #include <bitset>
-#include <algorithm>
+#include <cstdint>
+#include <sstream>
 
-#include "power.h"
 #include "multimul.hpp"
 #include "osunique.hpp"
+#include "power.h"
 
 // o------------------------------------------------------------------------------------------------o
 

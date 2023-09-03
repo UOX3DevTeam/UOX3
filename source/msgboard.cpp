@@ -12,16 +12,16 @@
 //|						1.1			19th January 2000 - 0.70.02
 //|						Additional features added to messageboard
 //|						Escort quests added / integrated with message board
-//enhancements
+// enhancements
 //|
 //|						2.0			10th August 2005 - 0.98-3.0g
 //|						Complete rewrite of msgboard.cpp
 //|						Modified file i/o to use fstreams for faster file
-//reads/writes. |						Completely re-formatted the message
-//board files to remove the need for two files, and reduce waste. |
-//Made use of packet classes to simplify sending & receiving data from the client. |
-//Added a maintenance function that will automatically clean up the message board files. |
-//Added support for message board file deletion upon deleting the associated world object.
+// reads/writes. |						Completely re-formatted the message
+// board files to remove the need for two files, and reduce waste. |
+// Made use of packet classes to simplify sending & receiving data from the client. |
+// Added a maintenance function that will automatically clean up the message board files. |
+// Added support for message board file deletion upon deleting the associated world object.
 //|
 // o------------------------------------------------------------------------------------------------o
 #include "msgboard.h"
@@ -31,18 +31,18 @@
 
 #include "cchar.h"
 #include "ceffects.h"
-#include "cserverdefinitions.h"
 #include "citem.h"
-#include "csocket.h"
-#include "cpacketsend.h"
 #include "classes.h"
+#include "cpacketsend.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "osunique.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -50,7 +50,7 @@ using namespace std::string_literals;
 //|	Date		-	8/6/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates the proper MessageBoard filename based on the messageType
-//and board Serial
+// and board Serial
 // o------------------------------------------------------------------------------------------------o
 std::string GetMsgBoardFile(const SERIAL msgBoardSer, const UI08 msgType) {
     std::string fileName;
@@ -635,9 +635,9 @@ void MsgBoardOpenPost(CSocket *mSock) {
 //|	Purpose		-	Removes a post from a message board
 //|
 //|						Note: The client should trigger this function, but I
-//have
+// have
 //|						been unable to find a way through the client to send
-//the |						remove post packet.
+// the |						remove post packet.
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardRemovePost(CSocket *mSock) {
     CChar *mChar = mSock->CurrcharObj();
@@ -1140,7 +1140,7 @@ void MsgBoardRemoveFile(const SERIAL msgBoardSer) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds all .bbf files and cleans any deleted posts from them
 //|							It will also remove any empty .bbf files if
-//necessary.
+// necessary.
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardMaintenance(void) {
     std::vector<MsgBoardPost_st> mbMessages;

@@ -1,7 +1,6 @@
 
 #include "wholist.h"
 
-#include "subsystem/account.hpp"
 #include "cchar.h"
 #include "commands.h"
 #include "cpacketsend.h"
@@ -10,6 +9,7 @@
 #include "funcdecl.h"
 #include "jail.h"
 #include "network.h"
+#include "subsystem/account.hpp"
 #include "utility/strutil.hpp"
 
 CWhoList *WhoList;
@@ -62,7 +62,7 @@ void CWhoList::FlagUpdate(void) { needsUpdating = true; }
 void CWhoList::SendSocket(CSocket *toSendTo) {
     GMEnter();
     if (needsUpdating) //&& gmCount <= 1 )	// If we need to update, do it now while we still
-                       //can
+                       // can
     {
         Update();
     }
@@ -374,11 +374,11 @@ void CWhoList::ZeroWho(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If multiple GMs using, doesn't actually update (deferred update)
 //|						Otherwise updates the arrays, and resets the update
-//flag
+// flag
 //|
 //|	Changes		-	1.1 June 29th, 2000
-//|						Written to use SendVecsAsGump, as well as making it flexible
-//enough to show offline players
+//|						Written to use SendVecsAsGump, as well as making it
+//flexible enough to show offline players
 // o------------------------------------------------------------------------------------------------o
 void CWhoList::Update(void) {
     /*if( gmCount > 1 )

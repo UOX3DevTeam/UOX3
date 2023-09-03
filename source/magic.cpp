@@ -8,15 +8,15 @@
 #include "cguild.h"
 #include "citem.h"
 #include "cjsmapping.h"
+#include "classes.h"
 #include "cmagic.h"
 #include "cmultiobj.h"
+#include "combat.h"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
-#include "classes.h"
-#include "combat.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
@@ -26,11 +26,11 @@
 #include "power.h"
 #include "regions.h"
 #include "scriptc.h"
-#include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "skills.h"
 #include "ssection.h"
+#include "stringutility.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 #include "weight.h"
 
 CMagic *Magic = nullptr;
@@ -115,7 +115,7 @@ const MagicTable_st magic_table[] = {{593, (MAGIC_DEFN)&splClumsy},
 //| Date		-	17th September, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and
-//another at trgX / trgY / trgZ
+// another at trgX / trgY / trgZ
 // o------------------------------------------------------------------------------------------------o
 void SpawnGate(CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY,
                SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId) {
@@ -148,7 +148,7 @@ void SpawnGate(CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI
 //|	Function	-	FieldSpell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates rows of items for field spells like firewalls, wall of
-//stone, etc
+// stone, etc
 // o------------------------------------------------------------------------------------------------o
 bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum) {
     SI16 fx[5], fy[5];
@@ -2278,7 +2278,7 @@ bool splResurrection([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unus
 //|	Function	-	splSummonAir()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Air Elemental spell (Summons Air
-//Elemental)
+// Elemental)
 // o------------------------------------------------------------------------------------------------o
 bool splSummonAir(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
@@ -2305,7 +2305,7 @@ bool splSummonDaemon(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpel
 //|	Function	-	splSummonEarth()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Earth Elemental spell (Summons Earth
-//Elemental)
+// Elemental)
 // o------------------------------------------------------------------------------------------------o
 bool splSummonEarth(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
@@ -2319,7 +2319,7 @@ bool splSummonEarth(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell
 //|	Function	-	splSummonFire()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Fire Elemental spell (Summons Fire
-//Elemental)
+// Elemental)
 // o------------------------------------------------------------------------------------------------o
 bool splSummonFire(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
@@ -2333,7 +2333,7 @@ bool splSummonFire(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell)
 //|	Function	-	splSummonWater()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Water Elemental spell (Summons Water
-//Elemental)
+// Elemental)
 // o------------------------------------------------------------------------------------------------o
 bool splSummonWater(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
@@ -2669,7 +2669,7 @@ void CMagic::RemoveSpell(CItem *book, SI32 spellNum) {
 //|	Function	-	CMagic::SpellBook()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the spellbook and displays all spells a character has in his
-//book
+// book
 // o------------------------------------------------------------------------------------------------o
 void CMagic::SpellBook(CSocket *mSock) {
     UI08 spellsList[70];
@@ -3155,7 +3155,7 @@ void CMagic::SubtractHealth(CChar *s, SI32 health, SI32 spellNum) {
 //|	Purpose		-	Check if character is protected by MagicReflect.
 //|						If yes, remove the protection and do visual effect.
 //|						However, don't touch the protection if character is
-//permanently protected
+// permanently protected
 // o------------------------------------------------------------------------------------------------o
 bool CMagic::CheckMagicReflect(CChar *i) {
     if (i->IsTempReflected()) {
@@ -3489,7 +3489,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, UI16 id) {
 //|	Function	-	CMagic::BoxSpell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the spell box effect, depending on character's magery
-//skill
+// skill
 // o------------------------------------------------------------------------------------------------o
 void CMagic::BoxSpell(CSocket *s, CChar *caster, SI16 &x1, SI16 &x2, SI16 &y1, SI16 &y2, SI08 &z1,
                       SI08 &z2) {
@@ -3522,7 +3522,7 @@ void CMagic::BoxSpell(CSocket *s, CChar *caster, SI16 &x1, SI16 &x2, SI16 &y1, S
 //|	Function	-	CMagic::MagicTrap()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the visual effect and apply damage when a player opens a trapped
-//container
+// container
 // o------------------------------------------------------------------------------------------------o
 auto CMagic::MagicTrap(CChar *s, CItem *i) -> void {
     if (ValidateObject(s) && ValidateObject(i)) {
@@ -3737,13 +3737,13 @@ bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
         //	* Check if frozen, if so, can't cast spell
         //	* Check if enabled
         //	* Check if scroll, wand or normal cast (scroll reduce requirements, wand do straight
-        //away)
+        // away)
         //	* Check requirements (min int, dex, str)
         //	* Check for reagants
         //	* Check if can cast in this area
         //	* Determine if the cast "succeeded"
         //	* If so, fire onSpellSuccess, otherwise fire onSpellFailure.  If failed, speak and
-        //return
+        // return
         //	* Set the player as "casting" and freeze
         //	* Create timer for when the spell will be complete
         //	* Wait for timer to elapse
@@ -4953,7 +4953,7 @@ void HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, UI16 gumpIndex
 //|	Function	-	CMagic::PolymorphMenu()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the polymorph menu to allow player to choose which creature to
-//poly into
+// poly into
 // o------------------------------------------------------------------------------------------------o
 void CMagic::PolymorphMenu(CSocket *s, UI16 gmindex) {
     std::string sect = "POLYMORPHMENU " + util::ntos(gmindex);

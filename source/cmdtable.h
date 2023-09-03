@@ -13,8 +13,8 @@
 #define __CMDTABLE_H
 
 #include <cstdint>
-#include <string>
 #include <map>
+#include <string>
 
 #include "typedefs.h"
 

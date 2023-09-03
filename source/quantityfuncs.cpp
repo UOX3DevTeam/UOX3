@@ -182,7 +182,7 @@ UI32 DeleteItemAmount(CChar *s, UI32 amount, UI16 realId, UI16 realColour, UI32 
 //|	Date		-	October 23rd, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Searches through the bank to count the amount of items with a
-//specific ID and colour
+// specific ID and colour
 // o------------------------------------------------------------------------------------------------o
 UI32 GetBankCount(CChar *p, UI16 itemId, UI16 colour, UI32 moreVal) {
     if (!ValidateObject(p))
@@ -204,7 +204,7 @@ UI32 GetBankCount(CChar *p, UI16 itemId, UI16 colour, UI32 moreVal) {
 //|	Date		-	October 23rd, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Searches through the bank to and deletes a certain amount of a
-//certain item |					Returns how many left over
+// certain item |					Returns how many left over
 // o------------------------------------------------------------------------------------------------o
 UI32 DeleteBankItem(CChar *p, UI32 amt, UI16 itemId, UI16 colour, UI32 moreVal) {
     if (!ValidateObject(p))

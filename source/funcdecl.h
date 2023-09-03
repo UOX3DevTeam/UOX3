@@ -5,27 +5,26 @@
 // o------------------------------------------------------------------------------------------------o
 //| Notes		-	Version History
 //|						2.0		10/16/2003
-//|						Many functions removed, overall reorganization and updated to
-//match |						the rest of UOX3.
+//|						Many functions removed, overall reorganization and updated
+//to match |						the rest of UOX3.
 // o------------------------------------------------------------------------------------------------o
 #ifndef __FUNCDECLS_H__
 #define __FUNCDECLS_H__
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <random>
-#include "uoxstruct.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "subsystem/console.hpp"
-#include <iostream>
-#include <type_traits>
+#include "uoxstruct.h"
+#include "utility/strutil.hpp"
 #include <algorithm>
+#include <chrono>
+#include <iostream>
+#include <random>
 #include <sstream>
+#include <thread>
+#include <type_traits>
 
 #include "cbaseobject.h"
-#include "worldmain.h"
 #include "osunique.hpp"
+#include "worldmain.h"
 class CItem;
 class CTownRegion;
 

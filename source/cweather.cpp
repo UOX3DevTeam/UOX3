@@ -4,12 +4,12 @@
 #include "ceffects.h"
 #include "citem.h"
 #include "cjsmapping.h"
+#include "combat.h"
+#include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
-#include "combat.h"
-#include "cpacketsend.h"
 
 #include "funcdecl.h"
 
@@ -106,7 +106,7 @@ void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
 //|	Date		-	11th April, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the current light level of the system and the current
-//temperature of |					 the system. Wind is not currently updated
+// temperature of |					 the system. Wind is not currently updated
 // o------------------------------------------------------------------------------------------------o
 bool CWeather::PeriodicUpdate(void) {
     R32 currTemp;
@@ -173,7 +173,7 @@ bool CWeather::PeriodicUpdate(void) {
 //|	Date		-	11th April, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the system up for a new day. Heat wave, cold snap are
-//calculated
+// calculated
 // o------------------------------------------------------------------------------------------------o
 void CWeather::NewDay(void) {
     bool isHeatWave = false, isColdDay = false;
@@ -864,7 +864,7 @@ R32 cWeatherAb::Value(WEATHID toCheck, UI08 valType, UI08 valOff)
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::Value( WEATHID toCheck, UI08 valType, UI08 valOff, R32
-//value )
+// value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to set the value of a particular weather type
 // o------------------------------------------------------------------------------------------------o
@@ -1212,7 +1212,7 @@ void cWeatherAb::StormActive(WEATHID toCheck, bool value) { weather[toCheck].Sto
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates weather effects for players when light levels change,
 //|					or depending on whether player is inside or outside of
-//buildings
+// buildings
 // o------------------------------------------------------------------------------------------------o
 bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     if (!ValidateObject(p) || p->IsNpc())
@@ -1332,7 +1332,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates weather effects for NPCs when light levels change,
 //|					or depending on whether NPC is inside or outside of
-//buildings
+// buildings
 // o------------------------------------------------------------------------------------------------o
 bool cWeatherAb::DoNPCStuff(CChar *p) {
     if (!ValidateObject(p))
@@ -1496,7 +1496,7 @@ void cWeatherAb::DoPlayerWeather(CSocket *s, UI08 weathType, SI08 currentTemp, W
 {
     //	Byte 1 - 0x65 (Weather)
     //	Byte 2 - Weather Type(  0, rain, 1, fierce storm, 2, snow, 3 a storm is brewing, and 0xFF
-    //none ) 	Byte 3 - Particle count (upper limit of 70) 	Byte 4 - Temperature
+    // none ) 	Byte 3 - Particle count (upper limit of 70) 	Byte 4 - Temperature
 
     if (s == nullptr)
         return;

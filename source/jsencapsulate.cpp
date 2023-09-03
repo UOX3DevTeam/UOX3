@@ -3,10 +3,10 @@
 #include <iostream>
 #include <string>
 
+#include "jsobj.h"
+#include "spidermonkey.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-#include "spidermonkey.h"
-#include "jsobj.h"
 // #include "jsutil.h"
 
 void JSEncapsulate::InternalReset(void) {

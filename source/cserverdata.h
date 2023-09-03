@@ -10,8 +10,8 @@
 
 #include "typedefs.h"
 
-#include "stringutility.hpp"
 #include "ip4address.hpp"
+#include "stringutility.hpp"
 // o------------------------------------------------------------------------------------------------o
 enum ClientFeatures {
     CF_BIT_CHAT = 0, // 0x01
@@ -231,7 +231,7 @@ class CServerData {
 
     std::vector<PhysicalServer> serverList; //	Series of server entries for shard list
     UI08 consoleLogEnabled; //	Various levels of legging 0 == none, 1 == normal, 2 == normal + all
-                            //speech
+                            // speech
     UI16 serverLanguage;    //	Default language used on server
     UI16 port;              //	Port number that the server listens on, for connections
     UI16 jsEngineSize;      // gcMaxBytes limit in MB per JS runtime
@@ -331,31 +331,31 @@ class CServerData {
 
     // Settings
     SI16 ambientSounds;      //	Ambient sounds - values from 1->10 - higher values indicate sounds
-                             //occur less often
+                             // occur less often
     SI16 htmlStatusEnabled;  //	If > 0 then it's enabled - only used at PC char creation - use
-                             //elsewhere? (was # of seconds between updates)
+                             // elsewhere? (was # of seconds between updates)
     SI16 sellMaxItems;       //	Maximum number of items that can be sold to a vendor
     SI16 fishingstaminaloss; //	The amount of stamina lost with each use of fishing skill
     UI08 maxControlSlots;    //	The default max amount of pet/follower control slots for each player
     UI08 maxSafeTeleports;   //	The default max amount of free teleports to safety players get via
-                             //the help menu per day
+                             // the help menu per day
     UI08 maxPetOwners;       //	The default max amount of different owners a pet may have in its
-                             //lifetime
+                             // lifetime
     UI08 maxFollowers;       //	The default max amount of followers a player can have active
     UI16 petOfflineTimeout;  //	Offline time after a player looses all pets
     UI16 maxPlayerPackItems; //	The max amount of items a player's backpack can contain
     UI16 maxPlayerBankItems; //	The max amount of items a player's bankbox can contain
     SI32 maxPlayerPackWeight;     //	The max weight capacity of a player's backpack (including
-                                  //subcontainers)
+                                  // subcontainers)
     SI32 maxPlayerBankWeight;     //	The max weight capacity of a player's bankbox (including
-                                  //subcontainers)
+                                  // subcontainers)
     R32 weightPerSTR;             //	How much weight per point of STR a character can hold.
     bool paperdollGuildButton;    //	Enable Guild-button on paperdoll to access guild-menus
-                                  //without going through guildstone
+                                  // without going through guildstone
     UI16 petLoyaltyGainOnSuccess; //	The default amount of pet loyalty gained on successful use
-                                  //of a pet command
+                                  // of a pet command
     UI16 petLoyaltyLossOnFailure; //	The default amount of pet loyalty lost on a failed attempt
-                                  //to use a pet command
+                                  // to use a pet command
 
     // SpeedUp
     R32 npcWalkingSpeed;        //	Speed at which walking NPCs move
@@ -372,17 +372,17 @@ class CServerData {
     R32 npcSpellcastSpeed; //  For adjusting the overall speed of (or delay between) NPC spell
                            //  casts. Defaults to 1.0
     R32 globalRestockMultiplier; //	Global multiplier applied to restock properties of items
-                                 //when loaded from DFNs
+                                 // when loaded from DFNs
     R32 bodGoldRewardMultiplier; //	Multiplier that adjusts the amount of Gold rewarded by
-                                 //completing Bulk Order Deeds
+                                 // completing Bulk Order Deeds
     R32 bodFameRewardMultiplier; //	Multiplier that adjusts the amount of Fame rewarded by
-                                 //completing Bulk Order Deeds
+                                 // completing Bulk Order Deeds
     R64 checkItems;        //	How often (in seconds) items are checked for decay and other things
     R64 checkBoats;        //	How often (in seconds) boats are checked for motion and so forth
     R64 checkNpcAi;        //	How often (in seconds) NPCs can execute an AI routine
     R64 checkSpawnRegions; //	How often (in seconds) spawn regions are checked for new spawns
     R64 flushTime; //	How often (in minutes) online accounts are checked to see if they really ARE
-                   //online
+                   // online
 
     // MessageBoards
     UI08 msgPostingLevel; //	If not 0, then players can post
@@ -390,16 +390,16 @@ class CServerData {
 
     // WorldLight
     LIGHTLEVEL dungeonLightLevel; //	Default light level for a dungeon, if not subject to a
-                                  //weather system
+                                  // weather system
     LIGHTLEVEL
-        currentLightLevel; //	Default current light level if not subject to a weather system
+    currentLightLevel; //	Default current light level if not subject to a weather system
     LIGHTLEVEL brightnessLightLevel; //	Default brightest light level if not subject to a weather
-                                     //system
+                                     // system
     LIGHTLEVEL
-        darknessLightLevel; //	Default darkest light level if not subject to a weather system
+    darknessLightLevel; //	Default darkest light level if not subject to a weather system
 
-    // WorldTimer								//	days/hours/minutes/seconds to it's own
-    // file?
+    // WorldTimer								//	days/hours/minutes/seconds to it's
+    // own file?
     UI16 secondsPerUoMinute; //	Number of seconds for a UOX minute.
     UI08 seconds;            //	Number of seconds the world has been running (persistent)
     UI08 minutes;            //	Number of minutes the world has been running (persistent)
@@ -419,7 +419,7 @@ class CServerData {
 
     // Resources
     UI08 mineCheck; //	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region
-                    //based (not working)
+                    // based (not working)
     UI16 resourceAreaSize; //	Size of each resource area to split each world into
     UI16 oreRespawnTimer;  //	Time at which ore is respawned (only 1 ore, not all)
     UI16 logsRespawnTimer; //	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
@@ -461,7 +461,7 @@ class CServerData {
     SI16 combatMaxRange;          //	RANGE?  Range at which combat can actually occur
     SI16 combatMaxSpellRange;     //	RANGE?  Range at which spells can be cast
     SI16 combatNpcDamageRate;     //	NPC Damage divisor - PCs sustain less than NPCs.  If a PC,
-                                  //damage is 1/value
+                                  // damage is 1/value
     SI16 combatNpcBaseFleeAt;     //	% of HP where an NPC will flee, if it's not defined for them
     SI16 combatNpcBaseReattackAt; //	% of HP where an NPC will resume attacking
     SI16 combatAttackStamina;     //	Amount of stamina lost when hitting an opponent
@@ -475,7 +475,7 @@ class CServerData {
     // Anything under this comment is left here for symantics
     UI08 skillLevel;   //	Some skill value associated with the rank system
     SI16 buyThreshold; //	Value above which money will be sourced from the bank rather than
-                       //the player
+                       // the player
 
     // Gump stuff
     UI16 titleColour;     //	Default text colour for titles in gumps

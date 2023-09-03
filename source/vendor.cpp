@@ -7,13 +7,13 @@
 #include "cjsmapping.h"
 #include "classes.h"
 #include "commands.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
+#include "subsystem/console.hpp"
 #include "townregion.h"
 
 // o------------------------------------------------------------------------------------------------o
@@ -609,5 +609,5 @@ bool RestockFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) {
 // o------------------------------------------------------------------------------------------------o
 void Restock(bool stockAll) {
     UI32 b = (stockAll ? 1 : 0);
-    ObjectFactory::GetSingleton().IterateOver(OT_CHAR, b, nullptr, &RestockFunctor);
+    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &RestockFunctor);
 }

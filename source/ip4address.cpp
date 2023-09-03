@@ -4,13 +4,13 @@
 #include "ip4address.hpp"
 
 #include <algorithm>
-#include <stdexcept>
 #include <fstream>
+#include <stdexcept>
 #if defined(_WIN32)
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <iphlpapi.h>
 #include <stringapiset.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "IPHLPAPI.lib")
@@ -21,12 +21,12 @@ constexpr auto MAX_TRIES = 3;
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 #else
 
-#include <sys/types.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #include <ifaddrs.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #endif
 using namespace std::string_literals;
 

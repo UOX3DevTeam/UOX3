@@ -2,9 +2,9 @@
 #define __CGUILD__
 
 #include <cstdint>
-#include <string>
 #include <map>
 #include <ostream>
+#include <string>
 #include <vector>
 
 #include "cbaseobject.h"

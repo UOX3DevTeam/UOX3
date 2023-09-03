@@ -112,7 +112,7 @@ auto FindNearbyPlayers(SI16 x, SI16 y, SI08 z, UI16 distance) -> std::vector<CSo
 //|	Function	-	FindNearbyChars()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain
-//distance
+// distance
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyChars(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
     -> std::vector<CChar *> {
@@ -533,7 +533,7 @@ CItem *FindItemNearXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 i
 //|	Function	-	FindNearbyItems( CBaseObject *mObj, distLocs distance )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a
-//given object
+// given object
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem *> {
     std::vector<CItem *> ourItems;
@@ -556,10 +556,10 @@ auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem 
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId,
-//UI16 distance )
+// UI16 distance )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a
-//location
+// location
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyItems(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
     -> std::vector<CItem *> {
@@ -585,7 +585,7 @@ auto FindNearbyItems(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 dis
 //|	Function	-	FindNearbyObjects()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of
-//a location
+// a location
 // o------------------------------------------------------------------------------------------------o
 auto FindNearbyObjects(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
     -> std::vector<CBaseObject *> {

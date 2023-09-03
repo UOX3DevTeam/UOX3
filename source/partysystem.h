@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
 #include "genericlist.h"
+#include "typedefs.h"
 
 class CChar;
 class CPUOXBuffer;
@@ -170,7 +170,7 @@ class PartyFactory {
     bool Load(void);
     bool Save(void);
 
-    static PartyFactory &GetSingleton(void);
+    static PartyFactory &shared(void);
 };
 
 #endif

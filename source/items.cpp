@@ -3,10 +3,9 @@
 #include "ceffects.h"
 #include "citem.h"
 #include "cjsmapping.h"
-#include "cpacketsend.h"
 #include "classes.h"
 #include "cmultiobj.h"
-#include "subsystem/console.hpp"
+#include "cpacketsend.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
@@ -18,8 +17,9 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 
@@ -29,7 +29,7 @@ ItemTypes FindItemTypeFromTag(const std::string &strToFind);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag,
-//const SI32 ndata, const SI32 odata, const std::string &cdata )
+// const SI32 ndata, const SI32 odata, const std::string &cdata )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load item data from script sections and apply to spawner objects
 // o------------------------------------------------------------------------------------------------o
@@ -946,9 +946,9 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 //|	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item and gives it an ID, Colour, and amount, also
-//will
+// will
 //|					automatically look for an entry in harditems.dfn and set its
-//location (be it in |					a pack or on the ground).
+// location (be it in |					a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const UI16 itemId, const UI16 iAmount,
                          const UI16 iColour, const ObjectType itemType, bool inPack,
@@ -1289,7 +1289,7 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const U
 CMultiObj *cItem::CreateMulti(const std::string &cName, const UI16 itemId, const bool isBoat,
                               const UI16 worldNum, const UI16 instanceId, const bool isBaseMulti) {
     CMultiObj *mCreated = static_cast<CMultiObj *>(
-        ObjectFactory::GetSingleton().CreateObject((isBoat) ? OT_BOAT : OT_MULTI));
+        ObjectFactory::shared().CreateObject((isBoat) ? OT_BOAT : OT_MULTI));
     if (mCreated == nullptr)
         return nullptr;
 
@@ -1308,8 +1308,8 @@ CMultiObj *cItem::CreateMulti(const std::string &cName, const UI16 itemId, const
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateBaseItem( const UI08 worldNum, const ObjectType itemType,
-//const UI16 instanceId ) |	Date		-	10/12/2003
+//|	Function	-	CItem *CreateBaseItem( const UI08 worldNum, const ObjectType
+//itemType, const UI16 instanceId ) |	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 // o------------------------------------------------------------------------------------------------o
@@ -1318,7 +1318,7 @@ CItem *cItem::CreateBaseItem(const UI08 worldNum, const ObjectType itemType, con
     if (itemType != OT_ITEM && itemType != OT_SPAWNER)
         return nullptr;
 
-    CItem *iCreated = static_cast<CItem *>(ObjectFactory::GetSingleton().CreateObject(itemType));
+    CItem *iCreated = static_cast<CItem *>(ObjectFactory::shared().CreateObject(itemType));
     if (iCreated == nullptr)
         return nullptr;
 
@@ -1932,7 +1932,7 @@ void cItem::GlowItem(CItem *i) {
 //|	Function	-	cItem::CheckEquipment()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks equipment of character and validates that they have enough
-//strength |					to have each item equipped
+// strength |					to have each item equipped
 // o------------------------------------------------------------------------------------------------o
 void cItem::CheckEquipment(CChar *p) {
     if (ValidateObject(p)) {

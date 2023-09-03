@@ -3,31 +3,30 @@
 //|	Date		-	12/14/2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	1.0		14th December, 2001 Initial implementation
-//|							Includes property getters for CItem and CChar, and
-//property |							setters for CChar
+//|							Includes property getters for CItem and CChar,
+//and property |							setters for CChar
 // o------------------------------------------------------------------------------------------------o
 
 #include "uoxjspropertyfuncs.h"
 
-#include "cjsengine.h"
-#include "cjsmapping.h"
 #include "cchar.h"
 #include "cguild.h"
 #include "citem.h"
+#include "cjsengine.h"
+#include "cjsmapping.h"
 #include "classes.h"
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "combat.h"
-#include "subsystem/console.hpp"
 #include "craces.h"
 #include "cscript.h"
-#include "cspawnregion.h"
 #include "csocket.h"
+#include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "jsencapsulate.h"
-#include "mapstuff.h"
 #include "magic.h"
+#include "mapstuff.h"
 #include "movement.h"
 #include "partysystem.h"
 #include "regions.h"
@@ -35,11 +34,12 @@
 #include "skills.h"
 #include "spidermonkey.h"
 #include "ssection.h"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
 #include "uoxjsclasses.h"
-#include "uoxjspropertyspecs.h"
 #include "uoxjspropertyenums.h"
+#include "uoxjspropertyspecs.h"
+#include "utility/strutil.hpp"
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -2774,7 +2774,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             *vp = BOOLEAN_TO_JSVAL(gPriv->ShouldSave());
             break;
         case CCP_PARTYLOOTABLE: {
-            Party *toGet = PartyFactory::GetSingleton().Get(gPriv);
+            Party *toGet = PartyFactory::shared().Get(gPriv);
             if (toGet == nullptr) {
                 *vp = BOOLEAN_TO_JSVAL(false);
             }
@@ -2791,7 +2791,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         }
         case CCP_PARTY: {
             // Hm Quite funny, same thing as .owner
-            Party *tempParty = PartyFactory::GetSingleton().Get(gPriv);
+            Party *tempParty = PartyFactory::shared().Get(gPriv);
             if (tempParty == nullptr) { // Return a JS_NULL
                 *vp = JSVAL_NULL;
             }
@@ -3497,7 +3497,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->ShouldSave(encaps.toBool());
             break;
         case CCP_PARTYLOOTABLE: {
-            Party *toGet = PartyFactory::GetSingleton().Get(gPriv);
+            Party *toGet = PartyFactory::shared().Get(gPriv);
             if (toGet != nullptr) {
                 CPartyEntry *toScan = toGet->Find(gPriv);
                 if (toScan != nullptr) {

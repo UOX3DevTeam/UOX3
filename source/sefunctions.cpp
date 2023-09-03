@@ -20,31 +20,30 @@
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
 #include "csocket.h"
 #include "cspawnregion.h"
-#include "cserverdefinitions.h"
 #include "cthreadqueue.h"
 #include "cweather.hpp"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "jsencapsulate.h"
-#include "partysystem.h"
 #include "magic.h"
-#include "movement.h"
 #include "mapstuff.h"
+#include "movement.h"
 #include "network.h"
 #include "objectfactory.h"
-#include "objectfactory.h"
 #include "ostype.h"
-#include "ssection.h"
+#include "other/uoxversion.hpp"
+#include "partysystem.h"
+#include "regions.h"
 #include "skills.h"
 #include "speech.h"
-#include "regions.h"
-#include "utility/strutil.hpp"
-#include "other/uoxversion.hpp"
+#include "ssection.h"
 #include "townregion.h"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
+#include "utility/strutil.hpp"
 
 void LoadTeleportLocations(void);
 void LoadSpawnRegions(void);
@@ -71,7 +70,7 @@ void InitStringToObjType(void) {
 //|	Function	-	FindObjTypeFromString()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine object type (ITEM, CHARACTER, MULTI, etc) based on
-//provided string
+// provided string
 // o------------------------------------------------------------------------------------------------o
 ObjectType FindObjTypeFromString(std::string strToFind) {
     if (stringToObjType.empty()) // if we haven't built our array yet
@@ -91,8 +90,8 @@ ObjectType FindObjTypeFromString(std::string strToFind) {
 //|	Function	-	SE_DoTempEffect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does a temporary effect (things like protection, night sight, and
-//what not) frm |					src to trg. If iType = 0, then it's a
-//character, otherwise it's an item.
+// what not) frm |					src to trg. If iType = 0, then it's a
+// character, otherwise it's an item.
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                        [[maybe_unused]] jsval *rval) {
@@ -285,7 +284,7 @@ JSBool SE_CalcCharFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //|	Function	-	SE_DoMovingEffect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a moving effect from source object to target object or
-//location
+// location
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -532,7 +531,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //|	Function	-	SE_FirstCommand()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the first command in the table. If nothing, it's
-//a 0 length string.
+// a 0 length string.
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                        [[maybe_unused]] jsval *argv, jsval *rval) {
@@ -553,7 +552,7 @@ JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_un
 //|	Function	-	SE_NextCommand()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the next command in the table. If nothing, it's
-//a 0 length string.
+// a 0 length string.
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                       [[maybe_unused]] jsval *argv, jsval *rval) {
@@ -586,13 +585,13 @@ JSBool SE_FinishedCommandList([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
 //|	Function	-	SE_RegisterCommand()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If called from within CommandRegistration() function in a script
-//registered
-//|					under the COMMAND_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will
-//register
-//|					the specified command in the command table and call the function in
-//the same
-//|					script whose name corresponds with the command name, in the shape
-//of |						function command_CMDNAME( socket, cmdString )
+// registered
+//|					under the COMMAND_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP,
+//will register |					the specified command in the command table
+//and call the function in the same
+//|					script whose name corresponds with the command name, in the
+//shape of |						function command_CMDNAME( socket, cmdString
+// )
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                           [[maybe_unused]] jsval *rval) {
@@ -618,11 +617,11 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 //|	Function	-	SE_RegisterSpell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If called from within SpellRegistration() function in a script
-//registered under
+// registered under
 //|					the MAGIC_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP, will
-//register the
-//|					onSpellCast() event in the same script as a global listener for use
-//of the |					specified magic spell.
+// register the
+//|					onSpellCast() event in the same script as a global listener for
+//use of the |					specified magic spell.
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSpell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                         [[maybe_unused]] jsval *rval) {
@@ -641,12 +640,11 @@ JSBool SE_RegisterSpell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //|	Function	-	SE_RegisterSkill()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register JS script as a global listener for use of specified skill,
-//and
-//|					triggers onSkill() event in same script when specified skill is
-//used, if
-//|					script is added under the SKILLUSE_SCRIPTS section of
-//JSE_FILEASSOCIATIONS.SCP |					and this function is called from a
-//SkillRegistration() function
+// and
+//|					triggers onSkill() event in same script when specified skill
+//is used, if |					script is added under the SKILLUSE_SCRIPTS section
+//of JSE_FILEASSOCIATIONS.SCP |					and this function is called from a
+// SkillRegistration() function
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                         [[maybe_unused]] jsval *rval) {
@@ -691,12 +689,12 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //|	Function	-	SE_RegisterPacket()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register JS script as a global listener for a specific network
-//packet, and
-//|					triggers onPacketReceive() event in same script when this network
-//packet is sent,
+// packet, and
+//|					triggers onPacketReceive() event in same script when this
+//network packet is sent,
 //|					if script is added under the PACKET_SCRIPTS section of
-//JSE_FILEASSOCIATIONS.SCP |					and this function is called from a
-//PacketRegistration() function
+// JSE_FILEASSOCIATIONS.SCP |					and this function is called from a
+// PacketRegistration() function
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterPacket(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                          [[maybe_unused]] jsval *rval) {
@@ -721,11 +719,11 @@ JSBool SE_RegisterPacket(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //|	Function	-	SE_RegisterKey()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register JS script as a global listener for a specific keypress in
-//UOX3 console, |					and triggers specified function in same
-//script when key is pressed, if script |					is added under the
-//CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
+// UOX3 console, |					and triggers specified function in same
+// script when key is pressed, if script |					is added under the
+// CONSOLE_SCRIPTS section of JSE_FILEASSOCIATIONS.SCP
 //|					and this function is called from a ConsoleRegistration()
-//function
+// function
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_RegisterKey(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                       [[maybe_unused]] jsval *rval) {
@@ -957,7 +955,7 @@ JSBool SE_GetDay([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
 //|	Function	-	SE_SecondsPerUOMinute()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets the amonut of real life seconds associated with minute
-//in the game
+// in the game
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_SecondsPerUOMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                              uintN argc, jsval *argv, jsval *rval) {
@@ -1801,9 +1799,9 @@ JSBool SE_TriggerTrap(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a an event/function in a different JS
 //|	Notes		-	Takes at least 2 parameters, which is the script number to trigger
-//and the
-//|					function name to call. Any extra parameters are extra parameters to
-//the JS event
+// and the
+//|					function name to call. Any extra parameters are extra parameters
+//to the JS event
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_TriggerEvent(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc < 2) {
@@ -2064,7 +2062,7 @@ JSBool SE_StaticInRange([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for static at specified location
 //|	Notes		-	tile argument is optional; if not specified, will match ANY static
-//found at location
+// found at location
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_StaticAt([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                    jsval *argv, jsval *rval) {
@@ -2171,7 +2169,7 @@ JSBool SE_GetRaceCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 //|	Date		-	January 27, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area
-//of characters
+// of characters
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaCharacterFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                                 jsval *argv, jsval *rval) {
@@ -2244,7 +2242,7 @@ JSBool SE_AreaCharacterFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, u
 //|	Date		-	17th August, 2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Using a passed in function name, executes a JS function on an area
-//of items
+// of items
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_AreaItemFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                            jsval *rval) {
@@ -2314,7 +2312,7 @@ JSBool SE_AreaItemFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //|	Date		-	7/17/2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows the JSScripts to pull entries from the dictionaries and
-//convert them to a string.
+// convert them to a string.
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetDictionaryEntry(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                              jsval *rval) {
@@ -2588,7 +2586,7 @@ JSBool SE_IterateOver(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     ObjectType toCheck = FindObjTypeFromString(objType);
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     if (myScript != nullptr) {
-        ObjectFactory::GetSingleton().IterateOver(toCheck, b, myScript, &SE_IterateFunctor);
+        ObjectFactory::shared().IterateOver(toCheck, b, myScript, &SE_IterateFunctor);
     }
 
     JS_MaybeGC(cx);
@@ -2634,7 +2632,7 @@ JSBool SE_IterateOverSpawnRegions(JSContext *cx, [[maybe_unused]] JSObject *obj,
 //|	Date		-	18th July, 2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world bright level - brightest part of the regular
-//day/night cycle
+// day/night cycle
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_WorldBrightLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                            uintN argc, jsval *argv, jsval *rval) {
@@ -2656,7 +2654,7 @@ JSBool SE_WorldBrightLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //|	Date		-	18th July, 2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets and sets world dark level - darkest part of the regular
-//day/night cycle
+// day/night cycle
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_WorldDarkLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                          jsval *argv, jsval *rval) {
@@ -2752,7 +2750,7 @@ JSBool SE_SetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
 //|	Date		-	3rd August, 2004
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns socket based on provided index, from list of connected
-//clients
+// clients
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSocketFromIndex(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                              jsval *rval) {
@@ -2833,7 +2831,7 @@ JSBool SE_ResourceArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //|	Date		-	18th September, 2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of resources (logs/ore/fish) in each resource area
-//on the server
+// on the server
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_ResourceAmount(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                          jsval *rval) {
@@ -2972,7 +2970,7 @@ JSBool SE_ValidateObject(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //|	Date		-	17th March, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns damage bonuses based on race/weather weakness and character
-//skills
+// skills
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                              jsval *rval) {
@@ -3041,7 +3039,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 //|	Date		-	17th March, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns defense modifiers based on shields/parrying, armor values
-//and elemental damage
+// and elemental damage
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                                 jsval *argv, jsval *rval) {
@@ -3104,7 +3102,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
 //|	Function	-	SE_WillResultInCriminal()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if hostile action done by one character versus another will
-//result in criminal flag
+// result in criminal flag
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_WillResultInCriminal(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                                jsval *argv, jsval *rval) {
@@ -3166,11 +3164,11 @@ JSBool SE_CreateParty(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
             leader = leaderSock->CurrcharObj();
         }
 
-        if (PartyFactory::GetSingleton().Get(leader) != nullptr) {
+        if (PartyFactory::shared().Get(leader) != nullptr) {
             *rval = JSVAL_NULL;
         }
         else {
-            Party *tParty = PartyFactory::GetSingleton().Create(leader);
+            Party *tParty = PartyFactory::shared().Create(leader);
             JSObject *myObj = JSEngine->AcquireObject(
                 IUE_PARTY, tParty, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
             *rval = OBJECT_TO_JSVAL(myObj);
@@ -3344,9 +3342,9 @@ JSBool SE_GetMapElevation([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified location is inside a building
 //| Notes		-	First checks if player is in a static building. If false, checks if
-//there's a multi
-//|					at the same location as the player, and assumes they are in the
-//building if true
+// there's a multi
+//|					at the same location as the player, and assumes they are in
+//the building if true
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
                        jsval *argv, jsval *rval) {
@@ -3387,7 +3385,7 @@ JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 //|	Function	-	SE_CheckStaticFlag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a
-//specific flag
+// specific flag
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                           uintN argc, jsval *argv, jsval *rval) {
@@ -3412,7 +3410,7 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //|	Function	-	SE_CheckDynamicFlag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a
-//specific flag
+// specific flag
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                            uintN argc, jsval *argv, jsval *rval) {
@@ -3626,7 +3624,7 @@ JSBool SE_DeleteFile(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
 //|	Function	-	SE_EraStringToNum()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Converts an UO era string to an int value for easier comparison in
-//JavaScripts
+// JavaScripts
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_EraStringToNum(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                          jsval *rval) {
@@ -5016,7 +5014,7 @@ JSBool SE_GetPlayerCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetItemCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                        [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_ITEM));
     return JS_TRUE;
 }
 
@@ -5027,7 +5025,7 @@ JSBool SE_GetItemCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMultiCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                         [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::GetSingleton().CountOfObjects(OT_MULTI));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_MULTI));
     return JS_TRUE;
 }
 
@@ -5039,7 +5037,7 @@ JSBool SE_GetMultiCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 JSBool SE_GetCharacterCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                             [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                             jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_CHAR));
     return JS_TRUE;
 }
 
@@ -5061,7 +5059,7 @@ JSBool SE_GetServerVersionString(JSContext *cx, [[maybe_unused]] JSObject *obj,
 //|	Function	-	SE_DistanceBetween()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the distance between two locations, or two objects - or a
-//combination of both
+// combination of both
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_DistanceBetween(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv,
                           jsval *rval) {

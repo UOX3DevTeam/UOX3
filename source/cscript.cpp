@@ -2,8 +2,8 @@
 
 #include "cchar.h"
 #include "citem.h"
-#include "cjsmapping.h"
 #include "cjsengine.h"
+#include "cjsmapping.h"
 #include "cmultiobj.h"
 #include "cpacketreceive.h"
 #include "cspawnregion.h"
@@ -32,16 +32,15 @@
 //| Changes		-	Version History
 //|					1.0		26th August, 2000
 //|					Initial implementation
-//|					The basic event model is in, along with some fairly simple error
-//handling
-//|					Note that parameters for each event is NOT correct at all, it was
-//just to get the basic layout right
+//|					The basic event model is in, along with some fairly simple
+//error handling |					Note that parameters for each event is NOT
+//correct at all, it was just to get the basic layout right
 //|					Support for CS type stuff with IsFiring(), Firing(), and
-//Stop()
+// Stop()
 //|
 //|					1.1		6th September, 2000
-//|					Each function has params and passes it along into the the script as
-//required
+//|					Each function has params and passes it along into the the script
+//as required
 //|
 //|					1.2		18th September, 2000
 //|					Addition of a number of more events, not all with params
@@ -49,13 +48,14 @@
 //|					Support for dynamic reloading of scripts
 //|
 //|					1.3		2nd November, 2000
-//|					Addition of a number of events.  Caching of function presence
-//added |					All functions assumed present, only failure on a
-//call will flag not present
+//|					Addition of a number of events.  Caching of function
+//presence
+// added |					All functions assumed present, only failure on a
+// call will flag not present
 //|
 //|					1.4		1st July, 2004
-//|					Added private property of SCRIPTTYPE to store which type of script
-//we've got |					Preparation for JS scriptable spells
+//|					Added private property of SCRIPTTYPE to store which type of
+//script we've got |					Preparation for JS scriptable spells
 // o------------------------------------------------------------------------------------------------o
 
 static JSFunctionSpec my_functions[] = {
@@ -224,7 +224,7 @@ std::string g_errorMessage;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Callback for custom JSError
 //| Notes		-	Relies on global variable g_errorMessage to pass in error message
-//from |					MethodError function.
+// from |					MethodError function.
 // o------------------------------------------------------------------------------------------------o
 const JSErrorFormatString *ScriptErrorCallback([[maybe_unused]] void *userRef,
                                                [[maybe_unused]] const char *locale,
@@ -241,9 +241,11 @@ const JSErrorFormatString *ScriptErrorCallback([[maybe_unused]] void *userRef,
 //|	Function	-	ScriptError()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spit out a custom error message related to JS Methods or their
-//parameters
-//| Notes		-	Piggybacks on the internal error reporting mechanism in SpiderMonkey to
-//get |					the filename and relevant line number from associated script
+// parameters
+//| Notes		-	Piggybacks on the internal error reporting mechanism in SpiderMonkey
+//to
+// get |					the filename and relevant line number from associated
+// script
 // o------------------------------------------------------------------------------------------------o
 void ScriptError(JSContext *cx, const char *txt, ...) {
     // Combine error message with any potential additional arguments provided, store in
@@ -388,7 +390,8 @@ bool cScript::OnStop(void) { return false; }
 //|	Function	-	cScript::DoesEventExist()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows scripters to check if a particular JS event (or function)
-//exists in a |					script before attempting to call it via TriggerEvent
+// exists in a |					script before attempting to call it via
+// TriggerEvent
 // o------------------------------------------------------------------------------------------------o
 bool cScript::DoesEventExist(char *eventToFind) {
     jsval Func = JSVAL_NULL;
@@ -404,8 +407,8 @@ bool cScript::DoesEventExist(char *eventToFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is added/created
 //|	Notes		-	Checks for the presence of onCreateDFN by default, but onCreateTile
-//can also |					be used to intercept creation of items directly from
-//tiles/harditems.dfn
+// can also |					be used to intercept creation of items directly from
+// tiles/harditems.dfn
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnCreate(CBaseObject *thingCreated, bool dfnCreated, bool isPlayer) {
     if (!ValidateObject(thingCreated))
@@ -493,7 +496,7 @@ bool cScript::OnDelete(CBaseObject *thingDestroyed) {
 //|	Function	-	cScript::OnSpeech()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when a character talks in range of the character with event
-//attached
+// attached
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 4 possible values
 //|					-1	=> No such function or bad call
@@ -557,11 +560,11 @@ SI08 cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObject *ta
 //|	Function	-	cScript::InRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when an object comes in range of a character with the event
-//attached
+// attached
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	A third parameter is provided to let script know whether object that
-//comes into |					range is a character or an item (Multi not supported
-//yet)
+// comes into |					range is a character or an item (Multi not supported
+// yet)
 // o------------------------------------------------------------------------------------------------o
 bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
     if (!ValidateObject(srcObj) || !ValidateObject(objInRange))
@@ -603,7 +606,7 @@ bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
 //|	Function	-	cScript::OnCollide()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object event is attached to when a character collides
-//with it
+// with it
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith) {
     const SI08 RV_NOFUNC = -1;
@@ -640,7 +643,7 @@ SI08 cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject *objCol
 //|	Function	-	cScript::OnMoveDetect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object event is attached to when movement is detected
-//within 5 tiles
+// within 5 tiles
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar,
                            UI16 oldCharX, UI16 oldCharY) {
@@ -748,12 +751,12 @@ SI08 cScript::OnDispel(CBaseObject *dispelled) {
 //|	Purpose		-	Triggers for object with event attached when using a skill
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	If used WITH RegisterSkill() in a script listed under
-//SKILLUSE_SCRIPTS in
-//|					JSE_FILEASSOCIATIONS.SCP, event will trigger for only the specified
-//skill. |					If used WITHOUT RegisterSkill() in a general purpose
-//script listed under
-//|					SCRIPT_LIST instead, event will be a global listener for ALL skills
-//used
+// SKILLUSE_SCRIPTS in
+//|					JSE_FILEASSOCIATIONS.SCP, event will trigger for only the
+//specified skill. |					If used WITHOUT RegisterSkill() in a general
+// purpose script listed under
+//|					SCRIPT_LIST instead, event will be a global listener for ALL
+//skills used
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnSkill(CBaseObject *skillUse, SI08 skillUsed) {
     if (!ValidateObject(skillUse))
@@ -786,7 +789,7 @@ bool cScript::OnSkill(CBaseObject *skillUse, SI08 skillUsed) {
 //|	Function	-	cScript::OnTooltip()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which server is about to send tooltip to client
-//for
+// for
 // o------------------------------------------------------------------------------------------------o
 std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
     if (!ValidateObject(myObj))
@@ -913,8 +916,8 @@ std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, UI0
 //|	Function	-	cScript::OnAttack()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when attacking someone
-//|					Will also trigger the onDefense event for the character being
-//attacked
+//|					Will also trigger the onDefense event for the character
+//being attacked
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnAttack(CChar *attacker, CChar *defender) {
     if (!ValidateObject(attacker) || !ValidateObject(defender))
@@ -1052,7 +1055,7 @@ bool cScript::OnStatGain(CChar *player, UI32 stat, SI08 skill, UI32 statGainAmou
 //|	Date		-	19/01/2020
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when activating Virtue
-//Gump icon
+// Gump icon
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, UI16 buttonId) {
     const SI08 RV_NOFUNC = -1;
@@ -1084,7 +1087,7 @@ SI08 cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, UI16 buttonId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Quest button in paperdoll
 //|					Return true to prevent additional onQuestGump events from
-//triggering
+// triggering
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnQuestGump(CChar *mChar) {
     const SI08 RV_NOFUNC = -1;
@@ -1113,7 +1116,7 @@ SI08 cScript::OnQuestGump(CChar *mChar) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Help button in paperdoll
 //|					Return false to prevent additional onHelpButton events from
-//triggering
+// triggering
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHelpButton(CChar *mChar) {
     const SI08 RV_NOFUNC = -1;
@@ -1170,7 +1173,7 @@ SI08 cScript::OnWarModeToggle(CChar *mChar) {
 //|	Function	-	cScript::SI08()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate special abilities in combat
-//books etc
+// books etc
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpecialMove(CChar *mChar, UI08 abilityId) {
     const SI08 RV_NOFUNC = -1;
@@ -1228,7 +1231,7 @@ SI08 cScript::OnDrop(CItem *item, CChar *dropper) {
 //|	Function	-	cScript::OnDropItemOnItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropping it on another
-//item, or when |					another item is dropped on said item
+// item, or when |					another item is dropped on said item
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest) {
     const SI08 RV_NOFUNC = -1;
@@ -1454,7 +1457,7 @@ SI08 cScript::OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer) {
 //|	Function	-	cScript::OnEquipAttempt()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when character tries to equip
-//it
+// it
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEquipAttempt(CChar *equipper, CItem *equipping) {
     const SI08 RV_NOFUNC = -1;
@@ -1569,7 +1572,7 @@ SI08 cScript::OnUnequip(CChar *equipper, CItem *equipping) {
 //|	Function	-	cScript::OnUseChecked()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers (after hardcoded checks) for item with event attached, when
-//used
+// used
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 3 possible values
 //|					-1	=> No such function or bad call
@@ -1609,7 +1612,7 @@ SI08 cScript::OnUseChecked(CChar *user, CItem *iUsing) {
 //|	Function	-	cScript::OnUseUnChecked()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers (before hardcoded checks) for item with event attached,
-//when used
+// when used
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 3 possible values
 //|					-1	=> No such function or bad call
@@ -1650,9 +1653,9 @@ SI08 cScript::OnUseUnChecked(CChar *user, CItem *iUsing) {
 //|	Function	-	cScript::OnDropItemOnNpc()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropped on an NPC, and
-//for NPC with
-//|					event attached if item is dropped on it and doesn't bounce in
-//item's script
+// for NPC with
+//|					event attached if item is dropped on it and doesn't bounce
+//in item's script
 // o------------------------------------------------------------------------------------------------o
 //|	Changes		-	V2 -
 //|						Returns
@@ -1728,8 +1731,8 @@ SI08 cScript::OnEntrance(CMultiObj *left, CBaseObject *leaving) {
 //|	Function	-	cScript::OutOfRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when objects go out of
-//range |	Notes		-	A third parameter in the event can be used to determine
-//whether the object |					going out of range is an ITEM or a CHARACTER
+// range |	Notes		-	A third parameter in the event can be used to determine
+// whether the object |					going out of range is an ITEM or a CHARACTER
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OutOfRange(CBaseObject *srcObj, CBaseObject *objVanish) {
     if (!ValidateObject(srcObj) || !ValidateObject(objVanish))
@@ -1797,7 +1800,7 @@ bool cScript::OnLogin(CSocket *sockPlayer, CChar *pPlayer) {
 //|	Date		-	10/06/2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when logging out of
-//server
+// server
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnLogout(CSocket *sockPlayer, CChar *pPlayer) {
     if (!ValidateObject(pPlayer))
@@ -1826,7 +1829,7 @@ bool cScript::OnLogout(CSocket *sockPlayer, CChar *pPlayer) {
 //|	Date		-	10/06/2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when a player single-clicks on
-//it
+// it
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
     const SI08 RV_NOFUNC = -1;
@@ -1861,7 +1864,7 @@ SI08 cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
 //|	Function	-	cScript::OnFall()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when fallDistance is over
-//20
+// 20
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnFall(CChar *pFall, SI08 fallDistance) {
     if (!ValidateObject(pFall))
@@ -2028,7 +2031,7 @@ bool cScript::OnTempChange(CBaseObject *tObject, SI08 temp) {
 //|	Function	-	cScript::OnTimer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached, when custom timers started
-//on said |					object using StartTimer function update
+// on said |					object using StartTimer function update
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnTimer(CBaseObject *tObject, UI16 timerId) {
     if (!ValidateObject(tObject))
@@ -2217,7 +2220,7 @@ SI08 cScript::OnResurrect(CChar *pAlive) {
 //|	Function	-	cScript::OnFlagChange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when the flag status
-//changes
+// changes
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnFlagChange(CChar *pChanging, UI08 newStatus, UI08 oldStatus) {
     const SI08 RV_NOFUNC = -1;
@@ -2300,7 +2303,7 @@ JSObject *cScript::Object(void) const { return targObject; }
 //|	Function	-	cScript::OnLoyaltyChange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPC character with event attached when loyalty level
-//changes
+// changes
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLoyaltyChange(CChar *pChanging, SI08 newStatus) {
     const SI08 RV_NOFUNC = -1;
@@ -2413,7 +2416,7 @@ SI08 cScript::OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen) {
 //|	Function	-	cScript::OnSnooped()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when someone snoops their
-//backpack
+// backpack
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
     const SI08 RV_NOFUNC = -1;
@@ -2444,7 +2447,7 @@ SI08 cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
 //|	Function	-	cScript::OnSnoopAttempt()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached if they attempt to snoop
-//someone's backpack
+// someone's backpack
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper) {
     const SI08 RV_NOFUNC = -1;
@@ -2609,7 +2612,7 @@ void cScript::HandleGumpInput(CPIGumpInput *pressing) {
 //|	Function	-	cScript::OnScrollingGumpPress()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when clicking the old
-//school horizontally scrolling gump |					if ID of this gump is 0
+// school horizontally scrolling gump |					if ID of this gump is 0
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnScrollingGumpPress(CSocket *tSock, UI16 gumpId, UI16 buttonId) {
     const SI08 RV_NOFUNC = -1;
@@ -2686,7 +2689,7 @@ bool cScript::OnLeaveRegion(CChar *leaving, UI16 region) {
 //|	Function	-	cScript::OnFacetChange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when switching to a
-//different facet
+// different facet
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnFacetChange(CChar *mChar, const UI08 oldFacet, const UI08 newFacet) {
     const SI08 RV_NOFUNC = -1;
@@ -2716,7 +2719,7 @@ SI08 cScript::OnFacetChange(CChar *mChar, const UI08 oldFacet, const UI08 newFac
 //|	Function	-	cScript::OnSpellTargetSelect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who targets someone with
-//a spell
+// a spell
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, UI08 spellNum) {
     const SI08 RV_NOFUNC = -1;
@@ -2752,7 +2755,7 @@ SI08 cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, UI08 spell
 //|	Function	-	cScript::OnSpellTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached who is the target of a
-//spell
+// spell
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTarget(CBaseObject *target, CChar *caster, UI08 spellNum) {
     const SI08 RV_NOFUNC = -1;
@@ -2843,7 +2846,7 @@ SI16 cScript::OnSpellCast(CChar *tChar, UI08 SpellId) {
 //|	Function	-	cScript::OnScrollCast()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached casts a spell through a
-//scroll |	Notes		-	Return value table
+// scroll |	Notes		-	Return value table
 //|						-2: use NORMAL non-JS casting
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
@@ -2875,7 +2878,7 @@ SI16 cScript::OnScrollCast(CChar *tChar, UI08 SpellId) {
 //|	Function	-	cScript::OnSpellSuccess()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after character with event attached successfully casts a
-//spell
+// spell
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellSuccess(CChar *tChar, UI08 SpellId) {
     const SI08 RV_NOFUNC = -1;
@@ -2941,8 +2944,8 @@ SI08 cScript::OnTalk(CChar *myChar, const char *mySpeech) {
 //|	Function	-	cScript::OnSpeechInput()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after player with event attached inputs speech after a
-//request for |					speech input has been made. |	Notes		-
-//This function is called out of network.cpp if a speechmode(9) was previously set
+// request for |					speech input has been made. |	Notes
+// - This function is called out of network.cpp if a speechmode(9) was previously set
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnSpeechInput(CChar *myChar, CItem *myItem, const char *mySpeech) {
     if (!ValidateObject(myChar))
@@ -2987,7 +2990,7 @@ bool cScript::OnSpeechInput(CChar *myChar, CItem *myItem, const char *mySpeech) 
 //|	Function	-	cScript::OnSpellGain()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are added to
-//them
+// them
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellGain(CItem *book, const UI08 spellNum) {
     const SI08 RV_NOFUNC = -1;
@@ -3014,7 +3017,7 @@ SI08 cScript::OnSpellGain(CItem *book, const UI08 spellNum) {
 //|	Function	-	cScript::OnSpellLoss()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are removed
-//from them
+// from them
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellLoss(CItem *book, const UI08 spellNum) {
     const SI08 RV_NOFUNC = -1;
@@ -3041,7 +3044,7 @@ SI08 cScript::OnSpellLoss(CItem *book, const UI08 spellNum) {
 //|	Function	-	cScript::OnSkillCheck()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is
-//performed
+// performed
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillCheck(CChar *myChar, const UI08 skill, const UI16 lowSkill,
                            const UI16 highSkill, bool isCraftSkill) {
@@ -3192,7 +3195,7 @@ bool cScript::ExistAndVerify(ScriptEvent eventNum, std::string functionName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a script with the JS engine
 //|	Notes		-	Also requires a <scriptType>Registration() event with a
-//Register<scriptType>()
+// Register<scriptType>()
 //|					function, and an onSkill() event, both in the same script
 // o------------------------------------------------------------------------------------------------o
 bool cScript::ScriptRegistration(std::string scriptType) {
@@ -3238,7 +3241,7 @@ bool cScript::executeCommand(CSocket *s, std::string funcName, std::string execu
 //|	Function	-	cScript::MagicSpellCast()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers before a spellcast attempt for characters with onSpellCast
-//event attached
+// event attached
 // o------------------------------------------------------------------------------------------------o
 bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum) {
     if (!ValidateObject(tChar))
@@ -3270,7 +3273,7 @@ bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, SI32
 //|	Function	-	cScript::OnIterate()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all
-//items or |					characters (as specified) in the game
+// items or |					characters (as specified) in the game
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnIterate(CBaseObject *a, UI32 &b) {
     if (!ValidateObject(a))
@@ -3319,7 +3322,7 @@ bool cScript::OnIterate(CBaseObject *a, UI32 &b) {
 //|	Function	-	cScript::OnIterateSpawnRegions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called after IterateOverSpawnRegions JS function is used, and
-//iterates over |					all spawn regions in game
+// iterates over |					all spawn regions in game
 // o------------------------------------------------------------------------------------------------o
 bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, UI32 &b) {
     if (a == nullptr)
@@ -3352,8 +3355,8 @@ bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, UI32 &b) {
 //|	Function	-	cScript::OnPacketReceive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	"Packet hook" event that allows interception of incoming network
-//packets |	Notes		-	Requires OVERLOADPACKETS ini setting to be enabled, and
-//incoming packet must
+// packets |	Notes		-	Requires OVERLOADPACKETS ini setting to be enabled, and
+// incoming packet must
 //|					be registered in JSE_FILEASSOCIATIONS.SCP under the
 //[PACKET_SCRIPTS] section
 // o------------------------------------------------------------------------------------------------o
@@ -3384,7 +3387,7 @@ bool cScript::OnPacketReceive(CSocket *mSock, UI16 packetNum) {
 //|	Date		-	23rd January, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding events that happen when doubleclicking characters,
-//such as |					open paperdoll, mounting horses, etc
+// such as |					open paperdoll, mounting horses, etc
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
     const SI08 RV_NOFUNC = -1;
@@ -3416,8 +3419,8 @@ SI08 cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
 //|	Date		-	23rd January, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding the client's request to open the default
-//skillgump, and |					instead do something else (like opening a
-//custom skillgump instead).
+// skillgump, and |					instead do something else (like opening a
+// custom skillgump instead).
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillGump(CChar *currChar) {
     const SI08 RV_NOFUNC = -1;
@@ -3446,7 +3449,7 @@ SI08 cScript::OnSkillGump(CChar *currChar) {
 //|	Date		-	12th May, 2020
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Expose bandage macro usage to JS engine so server admins can
-//override the effects
+// override the effects
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageItem) {
     const SI08 RV_NOFUNC = -1;
@@ -3479,10 +3482,10 @@ SI08 cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageI
 //|	Function	-	cScript::OnAICombatTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when selecting a target
-//as part of |					default AI behaviour
+// as part of |					default AI behaviour
 //|	Notes		-	Returning FALSE will deem a target invalid, and it will be skipped
 //|					Returning TRUE will deem a target valid, and it will be
-//selected
+// selected
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
     const SI08 RV_NOFUNC = -1;
@@ -3516,7 +3519,7 @@ SI08 cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
 //|	Purpose		-	Triggers for characters with event attached when initiating combat
 //|	Notes		-	Returning FALSE will also run hard code for this scenario
 //|					Returning TRUE will override code's default handling of this
-//scenario
+// scenario
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatStart(CChar *attacker, CChar *defender) {
     const SI08 RV_NOFUNC = -1;
@@ -3549,7 +3552,7 @@ SI08 cScript::OnCombatStart(CChar *attacker, CChar *defender) {
 //|	Purpose		-	Triggers for characters with event attached when combat ends
 //|	Notes		-	Returning FALSE will also run hard code for this scenario
 //|					Returning TRUE will override code's default handling of this
-//scenario
+// scenario
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
     const SI08 RV_NOFUNC = -1;
@@ -3581,10 +3584,10 @@ SI08 cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
 //|	Date		-	8th February, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when performing a death
-//blow in combat |	Notes		-	Returning FALSE will also run hard code for this
-//scenario
+// blow in combat |	Notes		-	Returning FALSE will also run hard code for this
+// scenario
 //|					Returning TRUE will override code's default handling of this
-//scenario
+// scenario
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
     const SI08 RV_NOFUNC = -1;
@@ -3614,9 +3617,9 @@ SI08 cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
 //|	Date		-	21st March, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached every time combat damage
-//is calculated |	Notes		-	Returning -1 will default to hard code handling of
-//event |					Returning another value will override code's default
-//handling of event
+// is calculated |	Notes		-	Returning -1 will default to hard code handling of
+// event |					Returning another value will override code's default
+// handling of event
 // o------------------------------------------------------------------------------------------------o
 SI16 cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, UI08 getFightSkill,
                                  UI08 hitLoc) {
@@ -3795,9 +3798,9 @@ SI08 cScript::OnSell(CSocket *tSock, CChar *objVendor) {
 //|	Date		-	26th November, 2011
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens when an item is in the process of
-//being bought
-//|					from an NPC vendor. Returning false/0 from the script will halt the
-//purchase
+// being bought
+//|					from an NPC vendor. Returning false/0 from the script will halt
+//the purchase
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought,
                               UI16 numItemsBuying) {
@@ -3838,8 +3841,8 @@ SI08 cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //|	Date		-	26th November, 2011
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens when an item is in the process of
-//being sold to |					an NPC vendor. Returning false/0 from script
-//will halt the sale
+// being sold to |					an NPC vendor. Returning false/0 from script
+// will halt the sale
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold,
                              UI16 numItemsSelling) {
@@ -4025,7 +4028,7 @@ SI08 cScript::OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, UI16 cr
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
 //|	Notes		-	pathfindResult gives a value that represents how the pathfinding
-//ended
+// ended
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPathfindEnd(CChar *npc, SI08 pathfindResult) {
     const SI08 RV_NOFUNC = -1;
@@ -4054,7 +4057,7 @@ SI08 cScript::OnPathfindEnd(CChar *npc, SI08 pathfindResult) {
 //|	Function	-	cScript::OnEnterEvadeState()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs when they enter the evade state after failing to
-//pathfind to |					a target in combat
+// pathfind to |					a target in combat
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
     const SI08 RV_NOFUNC = -1;
@@ -4085,7 +4088,7 @@ SI08 cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
 //|	Function	-	cScript::OnCarveCorpse()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for corpse of character when player attempts to carve said
-//corpse
+// corpse
 // o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCarveCorpse(CChar *player, CItem *corpse) {
     const SI08 RV_NOFUNC = -1;

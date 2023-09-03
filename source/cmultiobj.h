@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
 #include "genericlist.h"
+#include "typedefs.h"
 
 #include "citem.h"
 

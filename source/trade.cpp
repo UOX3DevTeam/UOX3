@@ -12,7 +12,7 @@
 //|	Date		-	February 2, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the status of the secure trade buttons (checked or
-//unchecked) to both clients
+// unchecked) to both clients
 // o------------------------------------------------------------------------------------------------o
 void SendTradeStatus(CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo) {
     CPSecureTrading cpstOne((*tradeWindowOne), (tradeWindowOne->GetTempVar(CITV_MOREZ) % 256),
@@ -171,7 +171,7 @@ bool ClearTradesFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraDat
 // o------------------------------------------------------------------------------------------------o
 void ClearTrades(void) {
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, nullptr, &ClearTradesFunctor);
+    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &ClearTradesFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -363,5 +363,5 @@ bool KillTradesFunctor(CBaseObject *a, UI32 &b, void *extraData) {
 // o------------------------------------------------------------------------------------------------o
 void KillTrades(CChar *i) {
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, i, &KillTradesFunctor);
+    ObjectFactory::shared().IterateOver(OT_ITEM, b, i, &KillTradesFunctor);
 }

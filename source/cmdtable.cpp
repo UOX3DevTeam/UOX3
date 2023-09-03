@@ -13,7 +13,9 @@
 #include <fstream>
 
 #include "cchar.h"
+#include "ceffects.h"
 #include "cgump.h"
+#include "chtmlsystem.h"
 #include "citem.h"
 #include "classes.h"
 #include "commands.h"
@@ -22,10 +24,8 @@
 #include "csocket.h"
 #include "cspawnregion.h"
 #include "cweather.hpp"
-#include "ceffects.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "chtmlsystem.h"
 #include "magic.h"
 #include "msgboard.h"
 #include "objectfactory.h"
@@ -33,10 +33,10 @@
 #include "regions.h"
 #include "speech.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
 #include "useful.h"
+#include "utility/strutil.hpp"
 #include "wholist.h"
 #include "worldmain.h"
 void CollectGarbage(void);
@@ -162,7 +162,7 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] 
 
 void command_fixspawn(void) {
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, nullptr, &FixSpawnFunctor);
+    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &FixSpawnFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -514,7 +514,7 @@ void Command_Shutdown(void) {
 //|	Function	-	Command_Tell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	(d text) Sends an anonymous message to the user logged in under the
-//specified slot.
+// specified slot.
 // o------------------------------------------------------------------------------------------------o
 void Command_Tell(CSocket *s) {
     VALIDATESOCKET(s);
@@ -604,8 +604,8 @@ void Command_Command(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_MemStats(CSocket *s) {
     VALIDATESOCKET(s);
-    size_t charsSize = ObjectFactory::GetSingleton().SizeOfObjects(OT_CHAR);
-    size_t itemsSize = ObjectFactory::GetSingleton().SizeOfObjects(OT_ITEM);
+    size_t charsSize = ObjectFactory::shared().SizeOfObjects(OT_CHAR);
+    size_t itemsSize = ObjectFactory::shared().SizeOfObjects(OT_ITEM);
     size_t spellsSize = 69 * sizeof(CSpellInfo);
     size_t teffectsSize = sizeof(CTEffect) * cwmWorldState->tempEffects.Num();
     size_t regionsSize = sizeof(CTownRegion) * cwmWorldState->townRegions.size();
@@ -615,10 +615,10 @@ void Command_MemStats(CSocket *s) {
     CGumpDisplay cacheStats(s, 350, 345);
     cacheStats.SetTitle("UOX Memory Information (sizes in bytes)");
     cacheStats.AddData("Total Memory Usage: ", static_cast<UI32>(total));
-    cacheStats.AddData(" Characters: ", ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+    cacheStats.AddData(" Characters: ", ObjectFactory::shared().CountOfObjects(OT_CHAR));
     cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(charsSize));
     cacheStats.AddData("  CChar: ", sizeof(CChar));
-    cacheStats.AddData(" Items: ", ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM));
+    cacheStats.AddData(" Items: ", ObjectFactory::shared().CountOfObjects(OT_ITEM));
     cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(itemsSize));
     cacheStats.AddData("  CItem: ", sizeof(CItem));
     cacheStats.AddData(" Spells Size: ", static_cast<UI32>(spellsSize));
@@ -706,7 +706,7 @@ void Command_Respawn(void) {
                   });
 
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, nullptr, &RespawnFunctor);
+    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &RespawnFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -776,7 +776,7 @@ void Command_LoadDefaults(void) { cwmWorldState->ServerData()->ResetDefaults(); 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display the Counselor queue when used with no arguments
 //|					Can trigger other queue-related commands when arguments are
-//provided
+// provided
 // o------------------------------------------------------------------------------------------------o
 void Command_CQ(CSocket *s) {
     VALIDATESOCKET(s);
@@ -829,7 +829,7 @@ void Command_CQ(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display the GM queue when used with no arguments
 //|					Can trigger other queue-related commands when arguments are
-//provided
+// provided
 // o------------------------------------------------------------------------------------------------o
 void Command_GQ(CSocket *s) {
     VALIDATESOCKET(s);
@@ -857,9 +857,9 @@ void Command_GQ(CSocket *s) {
 //|	Function	-	Command_MineCheck()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	(d) Set the server mine check status to determine where mining will
-//work |						0 - allow mining everywhere |
-//1 - mountainsides and cave floors |						2 - mining regions
-//only
+// work |						0 - allow mining everywhere |
+// 1 - mountainsides and cave floors |						2 - mining regions
+// only
 // o------------------------------------------------------------------------------------------------o
 void Command_MineCheck(void) {
     if (Commands->NumArguments() == 2) {
@@ -980,7 +980,7 @@ auto Command_SpawnKill(CSocket *s) -> void {
 //|	Function	-	BuildWhoGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Build and send a gump with a list of players based on provided
-//criteria
+// criteria
 // o------------------------------------------------------------------------------------------------o
 void BuildWhoGump(CSocket *s, UI08 commandLevel, std::string title) {
     UI16 j = 0;
@@ -1119,7 +1119,7 @@ void Command_ValidCmd(CSocket *s) {
 //|	Function	-	Command_HowTo()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a list of commands, with explanations of how to use each
-//specific command
+// specific command
 // o------------------------------------------------------------------------------------------------o
 void Command_HowTo(CSocket *s) {
     VALIDATESOCKET(s);
@@ -1340,8 +1340,8 @@ void CCommands::CommandReset() {
     // S
     TargetMap["SHOWSKILLS"] = TargetMapEntry_st(CL_GM, CMD_TARGETINT, TARGET_SHOWSKILLS, 260);
     // T
-    // TargetMap["TWEAK"]			= TargetMapEntry_st( CL_GM,			CMD_TARGET,		TARGET_TWEAK,
-    // 229);
+    // TargetMap["TWEAK"]			= TargetMapEntry_st( CL_GM,			CMD_TARGET,
+    // TARGET_TWEAK, 229);
     // U
     // V
     // W

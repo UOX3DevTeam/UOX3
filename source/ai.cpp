@@ -7,35 +7,35 @@
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
-//|						1.1			 		30th December,
-//2003 |						Updated to move the majority of AI
-//functionality |						into several smaller functions.
-//Should simplify the
+//|						1.1			 		30th
+//December, 2003 |						Updated to move the majority of AI
+// functionality |						into several smaller functions.
+// Should simplify the
 //|						process of moving it out to JavaScript in the
-//future.
+// future.
 // o------------------------------------------------------------------------------------------------o
 
 #include "typedefs.h"
 
 #include "cchar.h"
-#include "combat.h"
 #include "ceffects.h"
 #include "citem.h"
 #include "cmultiobj.h"
+#include "combat.h"
 #include "craces.h"
 #include "cscript.h"
 #include "csocket.h"
 #include "dictionary.h"
 
-#include "funcdecl.h"
 #include "cjsmapping.h"
+#include "funcdecl.h"
 
 #include "regions.h"
 #include "townregion.h"
 
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
 #include "subsystem/account.hpp"
+#include "utility/strutil.hpp"
 
 #include "mapstuff.h"
 

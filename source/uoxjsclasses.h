@@ -6,9 +6,9 @@
 #ifndef __UOXJSClasses__
 #define __UOXJSClasses__
 
+#include "uoxjspropertyfuncs.h"
 #include <cstdint>
 #include <string>
-#include "uoxjspropertyfuncs.h"
 
 inline JSClass global_class = {"global",
                                JSCLASS_GLOBAL_FLAGS,

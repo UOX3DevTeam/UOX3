@@ -3,9 +3,9 @@
 #ifndef TimeUtility_hpp
 #define TimeUtility_hpp
 
+#include <chrono>
 #include <cstdint>
 #include <string>
-#include <chrono>
 
 namespace timeutil {
 std::string timeNow();

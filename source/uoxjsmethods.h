@@ -3,8 +3,8 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Version History
 //|					1.0		Dark-Storm	20th December, 2001 Initial
-//implementation |							Methods for the javascript
-//objects
+// implementation |							Methods for the javascript
+// objects
 //|
 //|							List of supported Classes:
 //|								- Gumps

@@ -137,7 +137,7 @@ void PageVector::KillQueue(void) {
 //|	Function	-	PageVector::SendAsGump()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a list of help requests in queue to client and displays it in
-//a Gump
+// a Gump
 // o------------------------------------------------------------------------------------------------o
 void PageVector::SendAsGump(CSocket *toSendTo) {
     CGumpDisplay GQueue(toSendTo, 320, 340);
@@ -239,7 +239,7 @@ CHelpRequest *PageVector::Current(void) {
 //|	Function	-	PageVector::AnswerNextCall()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks next help request in queue as handled and sends it to
-//GM/Counselor
+// GM/Counselor
 // o------------------------------------------------------------------------------------------------o
 bool PageVector::AnswerNextCall(CSocket *mSock, CChar *mChar) {
     bool retVal = false;

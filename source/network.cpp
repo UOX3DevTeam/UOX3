@@ -14,23 +14,23 @@
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "cpacketsend.h"
-#include "subsystem/console.hpp"
-#include "cserverdefinitions.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
 #include "csocket.h"
 #include "cthreadqueue.h"
 #include "dictionary.h"
 #include "funcdecl.h"
+#include "mapstuff.h"
+#include "movement.h"
 #include "scriptc.h"
 #include "skills.h"
 #include "ssection.h"
-#include "mapstuff.h"
-#include "movement.h"
+#include "subsystem/console.hpp"
 
 #include "objectfactory.h"
+#include "osunique.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-#include "osunique.hpp"
 #include "wholist.h"
 
 using namespace std::string_literals;
@@ -1191,7 +1191,7 @@ UOXSOCKET CNetworkStuff::FindLoginPtr(CSocket *s) {
 //|	Purpose		-	Transfers from the logged in queue to the in world queue
 //|
 //|	Notes		-	Takes something out of the logging in queue and places it in the in
-//world queue |					REQUIRES THREAD SAFETY
+// world queue |					REQUIRES THREAD SAFETY
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::Transfer(CSocket *mSock) {
     UOXSOCKET s = FindLoginPtr(mSock);

@@ -3,12 +3,12 @@
 #include <filesystem>
 #include <regex>
 
-#include "regions.h"
 #include "osunique.hpp"
+#include "regions.h"
 #include "worldmain.h"
 
-#include "utility/strutil.hpp"
 #include "subsystem/console.hpp"
+#include "utility/strutil.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	BackupFile()

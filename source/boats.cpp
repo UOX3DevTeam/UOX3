@@ -11,15 +11,15 @@
 #include "funcdecl.h"
 #include "mapstuff.h"
 
-#include "weight.h"
-#include "cpacketsend.h"
-#include "classes.h"
-#include "regions.h"
-#include "cresponse.h"
 #include "ceffects.h"
+#include "classes.h"
+#include "cpacketsend.h"
+#include "cresponse.h"
 #include "dictionary.h"
+#include "regions.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "weight.h"
 
 #define XP 0
 #define YP 1
@@ -87,7 +87,7 @@ CBoatObj *GetBoat(CSocket *s) {
 //|	Function	-	LeaveBoat()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Teleport player and their followers off the boat and to a nearby
-//valid location
+// valid location
 // o------------------------------------------------------------------------------------------------o
 auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     CBoatObj *boat = GetBoat(s);
@@ -219,7 +219,7 @@ void OpenPlank(CItem *p) {
 //|	Function	-	BlockBoat()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a boat will be blocked if trying to move/turn in a specific
-//direction
+// direction
 // o------------------------------------------------------------------------------------------------o
 bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat) {
     SI16 cx = b->GetX(), cy = b->GetY();

@@ -7,25 +7,24 @@
 //|						Initial implementation.
 //|
 //|						1.1		March 12, 2003
-//|						Most global variables moved from uox3.h to the CWorldMain
-//class
+//|						Most global variables moved from uox3.h to the
+//CWorldMain class
 //|
 //|						1.2		October 16, 2003
-//|						Added quite a few more vectors to remove them from global
-//scope |						Removed many members that were no longer
-//necesarry and moved |							others to more appropriate
-//locations. |						Added a proper constructor rather than
-//ResetDefaults()
+//|						Added quite a few more vectors to remove them from
+//global scope |						Removed many members that were no
+// longer necesarry and moved |							others to more
+// appropriate
+// locations. |						Added a proper constructor rather than
+// ResetDefaults()
 //|						Grouped timers together in an array using an enum.
 // o------------------------------------------------------------------------------------------------o
 #include "worldmain.h"
 
 #include <fstream>
 
-#include "subsystem/account.hpp"
 #include "ceffects.h"
 #include "cguild.h"
-#include "subsystem/console.hpp"
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
@@ -36,6 +35,8 @@
 #include "regions.h"
 #include "skills.h"
 #include "speech.h"
+#include "subsystem/account.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
 
 CWorldMain *cwmWorldState = nullptr;
@@ -336,7 +337,7 @@ void CWorldMain::SetIPUpdated(bool newVal) { ipUpdated = newVal; }
 //|					CWorldMain::ClassesInitialized()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether base classes been initialized (in case of early
-//shut down)
+// shut down)
 // o------------------------------------------------------------------------------------------------o
 bool CWorldMain::ClassesInitialized(void) const { return classesInitialized; }
 void CWorldMain::ClassesInitialized(bool newVal) { classesInitialized = newVal; }
@@ -378,7 +379,7 @@ void SysBroadcast(const std::string &txt);
 //|	Purpose		-	Saves the UOX world
 //|
 //|	Changes		-	10/21/2002	-	fix for archiving. Now it wont always
-//archive :)
+// archive :)
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld(bool x) {
     static UI32 save_counter = 0;
@@ -486,7 +487,7 @@ auto CWorldMain::ServerProfile() -> CServerProfile * { return &sProfile; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out some useful statistics so that some tools
 //|						such as WorldBuilder can do some memory reserve
-//shortcuts
+// shortcuts
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveStatistics(void) {
     std::string statsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "statistics.wsc";
@@ -496,11 +497,11 @@ void CWorldMain::SaveStatistics(void) {
         return;
     }
     statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
-    statsDestination << "PLAYERCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR)
+    statsDestination << "PLAYERCOUNT=" << ObjectFactory::shared().CountOfObjects(OT_CHAR)
                      << '\n';
-    statsDestination << "ITEMCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM)
+    statsDestination << "ITEMCOUNT=" << ObjectFactory::shared().CountOfObjects(OT_ITEM)
                      << '\n';
-    statsDestination << "MULTICOUNT=" << ObjectFactory::GetSingleton().CountOfObjects(OT_MULTI)
+    statsDestination << "MULTICOUNT=" << ObjectFactory::shared().CountOfObjects(OT_MULTI)
                      << '\n';
     statsDestination << "}" << '\n' << '\n';
 
@@ -516,9 +517,9 @@ void CWorldMain::SaveStatistics(void) {
 //|						1.0		 		2004
 //|						Original implementation
 //|						Moving all profiling variables into their own class
-//managed
+// managed
 //|						by CWorldMain in order to take them out of global
-//scope
+// scope
 // o------------------------------------------------------------------------------------------------o
 CServerProfile::CServerProfile()
     : networkTime(0), timerTime(0), autoTime(0), loopTime(0), networkTimeCount(1000),

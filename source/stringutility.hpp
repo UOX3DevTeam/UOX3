@@ -7,13 +7,13 @@
 #ifndef StringUtility_hpp
 #define StringUtility_hpp
 
-#include <string>
-#include <vector>
-#include <sstream>
-#include <iomanip>
-#include <tuple>
 #include <cstdarg>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <tuple>
 #include <type_traits>
+#include <vector>
 
 namespace oldstrutil {
 std::string format(std::size_t maxsize, const std::string fmtstring, ...);

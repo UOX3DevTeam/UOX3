@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "typedefs.h"
 #include "cmdtable.h"
+#include "typedefs.h"
 
 class CChar;
 class cScript;

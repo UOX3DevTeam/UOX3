@@ -2,10 +2,9 @@
 #include <algorithm>
 
 #include "cchar.h"
-#include "cpacketsend.h"
 #include "classes.h"
 #include "cmultiobj.h"
-#include "subsystem/console.hpp"
+#include "cpacketsend.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "dictionary.h"
@@ -15,6 +14,7 @@
 #include "regions.h"
 #include "ssection.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;
@@ -25,11 +25,11 @@ bool CreateBoat(CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype);
 //|	Function	-	DoHouseTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggered by double clicking a deed-> the deed's moreX is read for
-//the house
-//|					section in house.dfn. Extra items can be added using HOUSE ITEM,
-//(this includes
-//|					all doors!) and locked "LOCK" Space around the house with SPACEX/Y
-//and CHAR |					offset CHARX/Y/Z
+// the house
+//|					section in house.dfn. Extra items can be added using HOUSE
+//ITEM, (this includes
+//|					all doors!) and locked "LOCK" Space around the house with
+//SPACEX/Y and CHAR |					offset CHARX/Y/Z
 // o------------------------------------------------------------------------------------------------o
 auto DoHouseTarget(CSocket *mSock, UI16 houseEntry) -> void {
     UI16 houseId = 0;
@@ -935,7 +935,7 @@ CMultiObj *BuildHouse(CSocket *mSock, UI16 houseEntry, bool checkLocation = true
 //|	Function	-	BuildBaseMulti()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when a script attempts to create a base multi from raw multi
-//ID
+// ID
 // o------------------------------------------------------------------------------------------------o
 CMultiObj *BuildBaseMulti(UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127,
                           UI08 worldNumber = 0, UI16 instanceId = 0) {
@@ -1013,7 +1013,7 @@ CMultiObj *BuildBaseMulti(UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLo
 //|					KillKeys()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when turning a house/boat into a deed, or when transferring
-//to new owner
+// to new owner
 //|
 //|	Notes		-	This function is rather CPU-expensive, but AFAIK there is no
 //|					better way to find all keys than to do it this way.. :/
@@ -1125,7 +1125,7 @@ void KillKeys(SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL) {
         UI32 toPass[1];
         toPass[0] = targSerial;
         UI32 b = 0;
-        ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
+        ObjectFactory::shared().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
     }
     else {
         // if character serial is provided, kill only keys belonging to said character, if key
@@ -1134,6 +1134,6 @@ void KillKeys(SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL) {
         toPass[0] = targSerial;
         toPass[1] = charSerial;
         UI32 b = 0;
-        ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
+        ObjectFactory::shared().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
     }
 }

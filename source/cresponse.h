@@ -170,8 +170,8 @@ class CBasePetResponse : public CBaseResponse {
     virtual ~CBasePetResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
     virtual bool Handle(CSocket *mSock, CChar *mChar, CChar *Npc) = 0;
-    // bool			CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false, bool
-    // checkDifficulty = false );
+    // bool			CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false,
+    // bool checkDifficulty = false );
 };
 
 class CPetMultiResponse : public CBasePetResponse {

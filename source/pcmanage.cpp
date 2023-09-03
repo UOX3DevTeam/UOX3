@@ -1,11 +1,11 @@
 
 #include <algorithm>
 
-#include "subsystem/account.hpp"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
 #include "cjsmapping.h"
+#include "classes.h"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
@@ -13,7 +13,6 @@
 #include "cserverdefinitions.h"
 #include "cskillclass.h"
 #include "csocket.h"
-#include "classes.h"
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
@@ -22,8 +21,9 @@
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
+#include "subsystem/account.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #include "other/uoxversion.hpp"
 #include "wholist.h"
@@ -404,7 +404,7 @@ bool CPIPlayCharacter::Handle(void) {
 //|	Function	-	CPIDeleteCharacter::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a character from the accounts system, due to an account gump
-//button press
+// button press
 // o------------------------------------------------------------------------------------------------o
 bool CPIDeleteCharacter::Handle(void) {
     if (tSock != nullptr) {
@@ -701,7 +701,7 @@ bool CPICreateCharacter::Handle(void) {
     }
 
     if (tSock != nullptr) {
-        CChar *mChar = static_cast<CChar *>(ObjectFactory::GetSingleton().CreateObject(OT_CHAR));
+        CChar *mChar = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
         if (mChar != nullptr) {
             CPClientVersion verCheck;
             tSock->Send(&verCheck);
@@ -965,7 +965,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
          // character
     {
         //	Date Unknown - Modified to fit in with new client, and 80 total starting stats. The
-        //highest any one stat can be is 60, and the lowest is 10.
+        // highest any one stat can be is 60, and the lowest is 10.
         mChar->SetStrength(Capped(str, static_cast<UI08>(10), static_cast<UI08>(60)));
         mChar->SetDexterity(Capped(dex, static_cast<UI08>(10), static_cast<UI08>(60)));
         mChar->SetIntelligence(Capped(intel, static_cast<UI08>(10), static_cast<UI08>(60)));
@@ -1399,7 +1399,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             }
 
             // Re-add player to party, if they are in one!
-            Party *mCharParty = PartyFactory::GetSingleton().Get(mChar);
+            Party *mCharParty = PartyFactory::shared().Get(mChar);
             if (mCharParty != nullptr) {
                 // Player's in a party! Send the details
                 mCharParty->SendList(nullptr);

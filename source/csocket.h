@@ -4,9 +4,9 @@
 #include <cstdint>
 #include <string>
 
+#include "genericlist.h"
 #include "ip4address.hpp"
 #include "typedefs.h"
-#include "genericlist.h"
 
 class CPInputBuffer;
 class CPUOXBuffer;

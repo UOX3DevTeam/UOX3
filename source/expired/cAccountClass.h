@@ -3,13 +3,13 @@
 //|	Date		-	12/6/2002 4:33:44 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Header file for the cAccountClass class. See xRFC0004.txt for more
-//details.
+// details.
 // o------------------------------------------------------------------------------------------------o
 #ifndef __CACCOUNTCLASS_H__
 #define __CACCOUNTCLASS_H__
 
-#include <iosfwd>
 #include "typedefs.h"
+#include <iosfwd>
 
 // Enums
 enum CAccountBlock_Errors { AB_INVALID_ID = 0xFFFF };
@@ -40,22 +40,22 @@ enum CAccountBlock_Flags {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	All the data has been moved to once again stored in the
 //|						accounts.adm file. So changes to this typedef were
-//needed
+// needed
 //|						to reflect the members being moved back, and the
-//inclusion |						of PATH, and FLAGS to cover the storage
-//locations.
+// inclusion |						of PATH, and FLAGS to cover the storage
+// locations.
 //|
 //|						sUsername: username for this account
 //|						sPassword: password for this account
-//|						aPath    : path to where the username.uad file will be
-//stored
-//|						sContact : typically the email address for this
-//account |						wAccountIndex: which block is this accounts.
-//|						wFlags   : flags controlling the allowed accounts
-//functions
-//|						dwLastIP : ip address of the last connection from this
-//account |						dwCharacters[5]: straight ID number for this
-//account |						lpCharacters[5]:
+//|						aPath    : path to where the username.uad file will
+//be stored |						sContact : typically the email address for
+//this account |						wAccountIndex: which block is this
+// accounts. |						wFlags   : flags controlling the allowed
+//accounts functions
+//|						dwLastIP : ip address of the last connection from
+//this
+// account |						dwCharacters[5]: straight ID number for this
+// account |						lpCharacters[5]:
 // o------------------------------------------------------------------------------------------------o
 typedef struct CAccountBlock_st {
 #if _NOACTCOPY_

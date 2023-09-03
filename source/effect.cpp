@@ -14,12 +14,12 @@
 #include "funcdecl.h"
 #include "magic.h"
 #include "mapstuff.h"
-#include "teffect.h"
 #include "regions.h"
 #include "skills.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
+#include "teffect.h"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
@@ -42,7 +42,7 @@ void cEffects::DeathAction(CChar *s, CItem *x, UI08 fallDirection) {
 //|	Function	-	cEffects::SpawnBloodEffect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns a blood effect item and returns the newly created object to
-//caller
+// caller
 // o------------------------------------------------------------------------------------------------o
 CItem *cEffects::SpawnBloodEffect(UI08 worldNum, UI16 instanceId, UI16 bloodColour,
                                   BloodTypes bloodType) {
@@ -92,13 +92,13 @@ CItem *cEffects::SpawnBloodEffect(UI08 worldNum, UI16 instanceId, UI16 bloodColo
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest,
-//UI16 effect,
-//|										UI08 speed, UI08 loop, bool explode,
-//UI32 hue, UI32 renderMode )
+//|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject
+//*dest, UI16 effect,
+//|										UI08 speed, UI08 loop, bool
+//explode, UI32 hue, UI32 renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
-//object to target object
+// object to target object
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed,
                                    UI08 loop, bool explode, UI32 hue, UI32 renderMode,
@@ -151,12 +151,12 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, UI16 
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y,
-//SI08 z, UI16 effect,
-//|										UI08 speed, UI08 loop, bool explode,
-//UI32 hue, UI32 renderMode )
+// SI08 z, UI16 effect,
+//|										UI08 speed, UI08 loop, bool
+//explode, UI32 hue, UI32 renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
-//object to target location
+// object to target location
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation(CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect,
                                    UI08 speed, UI08 loop, bool explode, UI32 hue,
@@ -182,12 +182,12 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, SI16 x, SI16 y, SI08 z, 
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16
-//x, SI16 y, SI08 z, UI16 effect,
-//|										UI08 speed, UI08 loop, bool explode,
-//UI32 hue, UI32 renderMode )
+// x, SI16 y, SI08 z, UI16 effect,
+//|										UI08 speed, UI08 loop, bool
+//explode, UI32 hue, UI32 renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
-//object to target location
+// object to target location
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation(SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z,
                                    UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue,
@@ -213,7 +213,7 @@ void cEffects::PlayMovingAnimation(SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16
 //|	Function	-	cEffects::PlayCharacterAnimation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to make character perform specified
-//action/anim
+// action/anim
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayCharacterAnimation(CChar *mChar, UI16 actionId, UI08 frameDelay, UI08 frameCount,
                                       bool playBackwards) {
@@ -231,7 +231,7 @@ void cEffects::PlayCharacterAnimation(CChar *mChar, UI16 actionId, UI08 frameDel
 //|	Function	-	cEffects::PlayNewCharacterAnimation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to make character perform specified
-//action/anim |					in client versions above 7.0.0.0
+// action/anim |					in client versions above 7.0.0.0
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayNewCharacterAnimation(CChar *mChar, UI16 actionId, UI16 subActionId,
                                          UI08 subSubActionId) {
@@ -323,11 +323,11 @@ void cEffects::PlaySpellCastingAnimation(CChar *mChar, UI16 actionId, bool monst
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08
-//speed, UI08 loop, bool explode )
+//|	Function	-	cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect,
+//UI08 speed, UI08 loop, bool explode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play a static animation effect on an
-//object
+// object
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayStaticAnimation(CBaseObject *target, UI16 effect, UI08 speed, UI08 loop,
                                    bool explode) {
@@ -361,10 +361,10 @@ void cEffects::PlayStaticAnimation(CBaseObject *target, UI16 effect, UI08 speed,
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect,
-//UI08 speed, UI08 loop, bool explode )
+// UI08 speed, UI08 loop, bool explode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play a static animation effect at a
-//location
+// location
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayStaticAnimation(SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop,
                                    bool explode) {
@@ -385,7 +385,7 @@ void cEffects::PlayStaticAnimation(SI16 x, SI16 y, SI08 z, UI16 effect, UI08 spe
 //|	Function	-	cEffects::Bolteffect()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play a lightning bolt effect on a
-//specific player
+// specific player
 // o------------------------------------------------------------------------------------------------o
 void cEffects::Bolteffect(CChar *player) {
     if (!ValidateObject(player))
@@ -404,7 +404,7 @@ void cEffects::Bolteffect(CChar *player) {
 //|	Function	-	ExplodeItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting
-//the item
+// the item
 // o------------------------------------------------------------------------------------------------o
 auto ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage = 0,
                  [[maybe_unused]] UI08 damageType = 0, bool explodeNearby = true) -> void {
@@ -1589,7 +1589,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16
-//more1, UI16 more2, UI16 more3 )
+// more1, UI16 more2, UI16 more3 )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to an item
 // o------------------------------------------------------------------------------------------------o

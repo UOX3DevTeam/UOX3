@@ -7,22 +7,22 @@
 //|						1.0		28th July, 2000
 //|						Very basically fleshed out
 //|						Owner, ban list and object inside support included
-//|						Note that lockdown stuff is NOT persistent yet, needs support
-//later on
-//|						Best place would be world loading, any locked down objects
-//flagged at time added to multi
+//|						Note that lockdown stuff is NOT persistent yet, needs
+//support later on
+//|						Best place would be world loading, any locked down
+//objects flagged at time added to multi
 //|
 //|						1.1		28th August, 2000
 //|						Function declaration headers
 //|						Addition of SetMaxLockDowns
 //|
 //|						1.2		30th November, 2000
-//|						Changed lock downs to a vector, and full vector support
-//added |						Save needs modification
+//|						Changed lock downs to a vector, and full vector
+//support added |						Save needs modification
 //|
 //| 					1.3		25th September 2003
-//|						Added CBoatObj as a derived class of CMultiObj to simplify
-//some processes in the cBoat class
+//|						Added CBoatObj as a derived class of CMultiObj to
+//simplify some processes in the cBoat class
 // o------------------------------------------------------------------------------------------------o
 #include "cmultiobj.h"
 
@@ -273,7 +273,7 @@ bool CMultiObj::IsOnOwnerList(CChar *toFind) const {
 //|	Function	-	CMultiObj::CheckForAccountCoOwnership()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the player has another character on same account
-//that co-owns house
+// that co-owns house
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::CheckForAccountCoOwnership(CChar *mChar) const {
     UI16 accountNum = mChar->GetAccountNum();
@@ -296,7 +296,7 @@ bool CMultiObj::CheckForAccountCoOwnership(CChar *mChar) const {
 //|	Function	-	CMultiObj::IsOwner()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the character is the actual owner of the house, and
-//not a co-owner
+// not a co-owner
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::IsOwner(CChar *toFind) const { return (owner == toFind->GetSerial()); }
 
@@ -578,7 +578,7 @@ void CMultiObj::RemoveVendor(CChar *toRemove) {
 //|	Function	-	CMultiObj::SetPublicStatus()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the public status of the multi - either true (public) or
-//false (private)
+// false (private)
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::GetPublicStatus(void) const { return isPublic; }
 void CMultiObj::SetPublicStatus(bool newBool) { isPublic = newBool; }
@@ -611,7 +611,7 @@ void CMultiObj::SetBuildTimestamp(time_t newTime) {
 //|	Function	-	CMultiObj::SetTradeTimestamp()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the timestamp for when the multi was last traded between
-//players
+// players
 // o------------------------------------------------------------------------------------------------o
 std::string CMultiObj::GetTradeTimestamp(void) const {
     if (tradeTimestamp > 0) {
@@ -1094,7 +1094,7 @@ void CMultiObj::Cleanup(void) {
 //|					void SetDeed( const std::string &newDeed )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item ID of multi's deed item, for converting multi to/from
-//deed
+// deed
 // o------------------------------------------------------------------------------------------------o
 std::string CMultiObj::GetDeed(void) const { return deed; }
 void CMultiObj::SetDeed(const std::string &newDeed) { deed = newDeed; }
@@ -1206,8 +1206,8 @@ GenericList<CItem *> *CMultiObj::GetItemsInMultiList(void) { return &itemInMulti
 //|					1.0		 		25th September, 2003
 //|					Very basic, currently
 //|					Simplifies some processes in cBoat class, eventually should
-//allow |					easy removal of some generic containers in CItem
-//class
+// allow |					easy removal of some generic containers in CItem
+// class
 //|
 //|					1.1		 		28th October, 2003
 //|					Added MoveType() to remove the need for CItem::Type2()

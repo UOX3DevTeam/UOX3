@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <string>
 
-#include "typedefs.h"
 #include "spidermonkey.h"
+#include "typedefs.h"
 
 struct JSContext;
 struct JSObject;

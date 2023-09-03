@@ -12,22 +12,22 @@
 #include <iostream>
 #if !defined(_WIN32)
 #include <sys/stat.h>
-#include <unistd.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #endif
 
-#include "subsystem/console.hpp"
+#include "osunique.hpp"
 #include "scriptc.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
-#include "osunique.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	GetModificationDate()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the file's stats can be found (testing its
-//existence)
+// existence)
 // o------------------------------------------------------------------------------------------------o
 bool GetModificationDate(const std::string &filename, time_t *mod_time) {
     struct stat stat_buf;
@@ -43,9 +43,9 @@ bool GetModificationDate(const std::string &filename, time_t *mod_time) {
 //|	Function		-	Script::Reload()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Reload's the scripts data.  If disp is true, then
-//information is output to
-//|						the console (# of sections). Will not run if the script is in
-//an erroneous state
+// information is output to
+//|						the console (# of sections). Will not run if the script is
+//in an erroneous state
 // o------------------------------------------------------------------------------------------------o
 void Script::Reload(bool disp) {
     if (!errorState) {
@@ -105,7 +105,7 @@ void Script::Reload(bool disp) {
 //|	Function		-	Script::Script()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Builds the script, reading in the information from the
-//script file.
+// script file.
 // o------------------------------------------------------------------------------------------------o
 Script::Script(const std::string &_filename, DEFINITIONCATEGORIES d, bool disp)
     : errorState(false), dfnCat(d) {

@@ -287,7 +287,7 @@ void CSocket::FirstPacket(bool newValue) { firstPacket = newValue; }
 //|	Date		-	March 1st, 2012
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets socket's forceOffline property. Used by client-restriction
-//code to |					mark connections for delayed kicking
+// code to |					mark connections for delayed kicking
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::ForceOffline(void) const { return forceOffline; }
 void CSocket::ForceOffline(bool newValue) { forceOffline = newValue; }
@@ -316,7 +316,7 @@ void CSocket::WasIdleWarned(bool value) { wasIdleWarned = value; }
 //|	Function	-	CSocket::objDelayMsgShown()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether player has been shown message about object use
-//delay
+// delay
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::ObjDelayMsgShown(void) const { return objDelayMsgShown; }
 void CSocket::ObjDelayMsgShown(bool value) { objDelayMsgShown = value; }
@@ -325,7 +325,7 @@ void CSocket::ObjDelayMsgShown(bool value) { objDelayMsgShown = value; }
 //|	Function	-	CSocket::SkillDelayMsgShown()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether player has been shown message about skill use
-//delay
+// delay
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::SkillDelayMsgShown(void) const { return skillDelayMsgShown; }
 void CSocket::SkillDelayMsgShown(bool value) { skillDelayMsgShown = value; }
@@ -334,7 +334,7 @@ void CSocket::SkillDelayMsgShown(bool value) { skillDelayMsgShown = value; }
 //|	Function	-	CSocket::NegotiateTimeout()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time point at which the player gets kicked if
-//assistant tool
+// assistant tool
 //|					has not responded to request to negotiate for features
 // o------------------------------------------------------------------------------------------------o
 SI32 CSocket::NegotiateTimeout(void) const { return negotiateTimeout; }
@@ -344,7 +344,7 @@ void CSocket::NegotiateTimeout(SI32 newValue) { negotiateTimeout = newValue; }
 //|	Function	-	CSocket::NegotiatedWithAssistant()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether player's assistant tool has responded to server's
-//request |					for negotiating features
+// request |					for negotiating features
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::NegotiatedWithAssistant(void) const { return negotiatedWithAssistant; }
 void CSocket::NegotiatedWithAssistant(bool value) { negotiatedWithAssistant = value; }
@@ -378,7 +378,7 @@ void CSocket::WalkSequence(SI16 newValue) { walkSequence = newValue; }
 //|	Function	-	CSocket::AddTrigWord()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds trigger word to list of trigger words detected in player's
-//speech
+// speech
 // o------------------------------------------------------------------------------------------------o
 void CSocket::AddTrigWord(UI16 toAdd) { trigWords.push_back(toAdd); }
 
@@ -386,7 +386,7 @@ void CSocket::AddTrigWord(UI16 toAdd) { trigWords.push_back(toAdd); }
 //|	Function	-	CSocket::FirstTrigWord()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the first of potentially many trigger word detected in
-//player's speech
+// player's speech
 // o------------------------------------------------------------------------------------------------o
 UI16 CSocket::FirstTrigWord(void) {
     UI16 retVal = 0xFFFF;
@@ -401,7 +401,7 @@ UI16 CSocket::FirstTrigWord(void) {
 //|	Function	-	CSocket::NextTrigWord()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the next trigger word in list of such words detected in
-//player's speech
+// player's speech
 // o------------------------------------------------------------------------------------------------o
 UI16 CSocket::NextTrigWord(void) {
     UI16 retVal = 0xFFFF;
@@ -727,7 +727,7 @@ static UI32 bit_table[257][2] = {
 //|	Function	-	DoPack()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Compress outgoing buffer contents and calculate total length of
-//compressed data
+// compressed data
 // o------------------------------------------------------------------------------------------------o
 UI32 DoPack(UI08 *pIn, UI08 *pOut, SI32 len) {
     UI32 packedLength = 0;
@@ -1007,7 +1007,7 @@ void CSocket::ClientIP4(UI08 newValue) { clientip[3] = newValue; }
 //|	Function	-	CSocket::NewClient()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the socket property used to determine if connection is new
-//or old
+// or old
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::NewClient(void) const { return newClient; }
 void CSocket::NewClient(bool newValue) { newClient = newValue; }
@@ -1109,7 +1109,7 @@ void CSocket::ClientIP(UI32 newValue) {
 //|	Function	-	CSocket::TargetOK()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets socket property to indicate whether waiting for client
-//target
+// target
 // o------------------------------------------------------------------------------------------------o
 void CSocket::TargetOK(bool newValue) { targetok = newValue; }
 bool CSocket::TargetOK(void) const { return targetok; }
@@ -1205,7 +1205,7 @@ void CSocket::PostAckCount(size_t newValue) { postAckCount = newValue; }
 //|	Function	-	CSocket::PostClear()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears list of messageboard posts waiting to be acknowledged by the
-//client
+// client
 // o------------------------------------------------------------------------------------------------o
 void CSocket::PostClear(void) { postAcked.clear(); }
 
@@ -1322,7 +1322,7 @@ void CSocket::PickupZ(SI08 z) { pZ = z; }
 //|	Function	-	CSocket::PickupLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the X, Y and Z world coordinates the item was picked up
-//from
+// from
 // o------------------------------------------------------------------------------------------------o
 void CSocket::PickupLocation(SI16 x, SI16 y, SI08 z) {
     pX = x;
@@ -1371,7 +1371,7 @@ void CSocket::ClientVersion(UI32 newVer) { clientVersion = newVer; }
 //|	Function	-	CSocket::ClientVersion()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates serial based on major, minor, sub and letter client
-//version parts
+// version parts
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ClientVersion(UI08 major, UI08 minor, UI08 sub, UI08 letter) {
     ClientVersion(CalcSerial(major, minor, sub, letter));
@@ -1455,7 +1455,7 @@ void CSocket::Range(UI08 value) {
 //|	Function	-	CSocket::SysMessage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified system message in lower left corner of client
-//screen
+// screen
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SysMessage(const std::string txt, ...) {
     va_list argptr;
@@ -1502,7 +1502,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
 //|	Function	-	CSocket::SysMessageJS()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified system message in lower left corner of client
-//screen
+// screen
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SysMessageJS(const std::string &uformat, UI16 txtColor, const std::string &data) {
     CChar *mChar = CurrcharObj();
@@ -1548,7 +1548,7 @@ void CSocket::SysMessageJS(const std::string &uformat, UI16 txtColor, const std:
 //|	Function	-	CSocket::SysMessage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays dictionary-based system message in lower left corner of
-//client screen
+// client screen
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SysMessage(SI32 dictEntry, ...) {
     CChar *mChar = CurrcharObj();
@@ -1598,7 +1598,7 @@ void CSocket::SysMessage(SI32 dictEntry, ...) {
 //|	Date		-	2/11/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for
-//players
+// players
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ObjMessage(SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, UI32 Colour, ...) {
     if (!ValidateObject(getObj))
@@ -1619,7 +1619,7 @@ void CSocket::ObjMessage(SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow, U
 //|	Date		-	2/11/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for
-//players
+// players
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFromNow,
                          UI16 Colour) {
@@ -1944,7 +1944,7 @@ void CSocket::SendTargetCursor(UI08 targType, UI08 targId, const std::string &tx
 //|	Function	-	CSocket::SendTargetCursor()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a dictionary-based
-//system message
+// system message
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SendTargetCursor(UI08 targType, UI08 targId, UI08 cursorType, SI32 dictEntry, ...) {
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
@@ -1964,7 +1964,7 @@ void CSocket::SendTargetCursor(UI08 targType, UI08 targId, UI08 cursorType, SI32
 //|	Function	-	CSocket::mtarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send a "multi" targeting cursor to client, with preview for
-//placement of multi
+// placement of multi
 // o------------------------------------------------------------------------------------------------o
 void CSocket::mtarget(UI16 itemId, SI32 dictEntry) {
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
@@ -1988,7 +1988,7 @@ void CSocket::mtarget(UI16 itemId, SI32 dictEntry) {
 //|	Function	-	CSocket::ReceivedVersion()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server has received a client version from the
-//client already
+// client already
 // o------------------------------------------------------------------------------------------------o
 bool CSocket::ReceivedVersion(void) const { return receivedVersion; }
 void CSocket::ReceivedVersion(bool value) { receivedVersion = value; }
@@ -2013,7 +2013,7 @@ void CSocket::BytesReceived(UI32 newValue) { bytesReceived = newValue; }
 //|	Function	-	CSocket::BytesReceivedWarning()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets warning count for player having exceeded received bytes
-//cap
+// cap
 // o------------------------------------------------------------------------------------------------o
 UI16 CSocket::BytesReceivedWarning(void) const { return bytesRecvWarningCount; }
 void CSocket::BytesReceivedWarning(UI16 newValue) { bytesRecvWarningCount = newValue; }
@@ -2084,7 +2084,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
             return;
 
         // If targObj is a party member, also send their updated mana and stamina!
-        Party *myParty = PartyFactory::GetSingleton().Get(mChar);
+        Party *myParty = PartyFactory::shared().Get(mChar);
         if (myParty != nullptr && IsOnline(*mChar)) {
             // Fetch list of party members
             std::vector<CPartyEntry *> *mList = myParty->MemberList();
@@ -2384,7 +2384,7 @@ auto CSocket::GetContsOpenedList() -> GenericList<CItem *> * { return &contsOpen
 //|	Date		-	September 25, 2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets temporary Timer values associated with character connected
-//to the socket
+// to the socket
 // o------------------------------------------------------------------------------------------------o
 TIMERVAL CSocket::GetTimer(cS_TID timerId) const {
     TIMERVAL rValue = 0;

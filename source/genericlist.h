@@ -14,9 +14,9 @@
 //|	Date	-	2021-05-04
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose	-	Created as a counterpart of CDataList, based on std::list this class will
-//behave
-//|						as expected when removing records in the middle of the
-//array.
+// behave
+//|						as expected when removing records in the middle of
+//the array.
 //|
 //|			-	Version Historyz
 //|

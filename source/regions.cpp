@@ -8,9 +8,9 @@
 #include "citem.h"
 #include "classes.h"
 #include "cmultiobj.h"
-#include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
+#include "subsystem/console.hpp"
 
 #include "objectfactory.h"
 #include "stringutility.hpp"
@@ -45,13 +45,13 @@ SI32 FileSize(std::string filename) {
 //|	Purpose		-	Creates a new character object based on data loaded from worldfiles
 // o------------------------------------------------------------------------------------------------o
 void LoadChar(std::istream &readDestination) {
-    CChar *x = static_cast<CChar *>(ObjectFactory::GetSingleton().CreateBlankObject(OT_CHAR));
+    CChar *x = static_cast<CChar *>(ObjectFactory::shared().CreateBlankObject(OT_CHAR));
     if (x == nullptr)
         return;
 
     if (!x->Load(readDestination)) {
         x->Cleanup();
-        ObjectFactory::GetSingleton().DestroyObject(x);
+        ObjectFactory::shared().DestroyObject(x);
     }
 }
 
@@ -61,13 +61,13 @@ void LoadChar(std::istream &readDestination) {
 //|	Purpose		-	Creates a new item object based on data loaded from worldfiles
 // o------------------------------------------------------------------------------------------------o
 void LoadItem(std::istream &readDestination) {
-    CItem *x = static_cast<CItem *>(ObjectFactory::GetSingleton().CreateBlankObject(OT_ITEM));
+    CItem *x = static_cast<CItem *>(ObjectFactory::shared().CreateBlankObject(OT_ITEM));
     if (x == nullptr)
         return;
 
     if (!x->Load(readDestination)) {
         x->Cleanup();
-        ObjectFactory::GetSingleton().DestroyObject(x);
+        ObjectFactory::shared().DestroyObject(x);
     }
 }
 
@@ -75,15 +75,15 @@ void LoadItem(std::istream &readDestination) {
 //|	Function	-	LoadMulti()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new multi object, like a house, based on data loaded from
-//worldfiles
+// worldfiles
 // o------------------------------------------------------------------------------------------------o
 void LoadMulti(std::istream &readDestination) {
     CMultiObj *ourHouse =
-        static_cast<CMultiObj *>(ObjectFactory::GetSingleton().CreateBlankObject(OT_MULTI));
+        static_cast<CMultiObj *>(ObjectFactory::shared().CreateBlankObject(OT_MULTI));
     if (!ourHouse->Load(readDestination)) // if no load, DELETE
     {
         ourHouse->Cleanup();
-        ObjectFactory::GetSingleton().DestroyObject(ourHouse);
+        ObjectFactory::shared().DestroyObject(ourHouse);
     }
 }
 
@@ -94,11 +94,11 @@ void LoadMulti(std::istream &readDestination) {
 // o------------------------------------------------------------------------------------------------o
 void LoadBoat(std::istream &readDestination) {
     CBoatObj *ourBoat =
-        static_cast<CBoatObj *>(ObjectFactory::GetSingleton().CreateBlankObject(OT_BOAT));
+        static_cast<CBoatObj *>(ObjectFactory::shared().CreateBlankObject(OT_BOAT));
     if (!ourBoat->Load(readDestination)) // if no load, DELETE
     {
         ourBoat->Cleanup();
-        ObjectFactory::GetSingleton().DestroyObject(ourBoat);
+        ObjectFactory::shared().DestroyObject(ourBoat);
     }
 }
 
@@ -109,11 +109,11 @@ void LoadBoat(std::istream &readDestination) {
 // o------------------------------------------------------------------------------------------------o
 void LoadSpawnItem(std::istream &readDestination) {
     CSpawnItem *ourSpawner =
-        static_cast<CSpawnItem *>(ObjectFactory::GetSingleton().CreateBlankObject(OT_SPAWNER));
+        static_cast<CSpawnItem *>(ObjectFactory::shared().CreateBlankObject(OT_SPAWNER));
     if (!ourSpawner->Load(readDestination)) // if no load, DELETE
     {
         ourSpawner->Cleanup();
-        ObjectFactory::GetSingleton().DestroyObject(ourSpawner);
+        ObjectFactory::shared().DestroyObject(ourSpawner);
     }
 }
 
@@ -121,10 +121,10 @@ void LoadSpawnItem(std::istream &readDestination) {
 //|	Functio		-	CMapRegion::SaveToDisk()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save all items and characters inside a subregion reworked SaveChar
-//from WorldMain |					to deal with pointer based stuff in region
-//rather than index based stuff in array
-//|					Also saves out all data regardless (in preparation for a simple
-//binary save)
+// from WorldMain |					to deal with pointer based stuff in region
+// rather than index based stuff in array
+//|					Also saves out all data regardless (in preparation for a
+//simple binary save)
 // o------------------------------------------------------------------------------------------------o
 void CMapRegion::SaveToDisk(std::ostream &writeDestination) {
     std::vector<CChar *> removeChar;
@@ -193,7 +193,7 @@ RegionSerialList *CMapRegion::GetRegionSerialList() { return &regionSerialData; 
 //|	Function	-	CMapRegion::HasRegionChanged()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a flag that says whether the region has seen any updates
-//since last save
+// since last save
 // o------------------------------------------------------------------------------------------------o
 bool CMapRegion::HasRegionChanged(void) { return hasRegionChanged; }
 
@@ -201,7 +201,7 @@ bool CMapRegion::HasRegionChanged(void) { return hasRegionChanged; }
 //|	Function	-	CMapRegion::HasRegionChanged()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets a flag that says whether the region has seen any updates since
-//last save
+// last save
 // o------------------------------------------------------------------------------------------------o
 void CMapRegion::HasRegionChanged(bool newVal) { hasRegionChanged = newVal; }
 
@@ -509,7 +509,7 @@ bool CMapHandler::AddItem(CItem *nItem) {
 //|	Date		-	23 July, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes nItem from it's CURRENT SubRegion. Do this before adjusting
-//the location
+// the location
 // o------------------------------------------------------------------------------------------------o
 bool CMapHandler::RemoveItem(CItem *nItem) {
     if (!ValidateObject(nItem))
@@ -564,7 +564,7 @@ bool CMapHandler::AddChar(CChar *toAdd) {
 //|	Date		-	23 July, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes toRemove from it's CURRENT SubRegion. Do this before
-//adjusting the location
+// adjusting the location
 // o------------------------------------------------------------------------------------------------o
 bool CMapHandler::RemoveChar(CChar *toRemove) {
     if (!ValidateObject(toRemove))
@@ -669,7 +669,7 @@ auto CMapHandler::PopulateList(CBaseObject *mObj) -> std::vector<CMapRegion *> {
 //|	Function	-	CMapHandler::PopulateList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a list of nearby MapRegions based on the coordinates
-//provided
+// provided
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::PopulateList(SI16 x, SI16 y, UI08 worldNumber) -> std::vector<CMapRegion *> {
     std::vector<CMapRegion *> nearbyRegions;
@@ -924,9 +924,9 @@ void CMapHandler::Load(void) {
     LoadFromDisk(houseDestination, -1, -1, -1);
 
     UI32 b = 0;
-    ObjectFactory::GetSingleton().IterateOver(OT_MULTI, b, nullptr, &PostLoadFunctor);
-    ObjectFactory::GetSingleton().IterateOver(OT_ITEM, b, nullptr, &PostLoadFunctor);
-    ObjectFactory::GetSingleton().IterateOver(OT_CHAR, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &PostLoadFunctor);
     houseDestination.close();
 
     UI32 e_t = GetClock();

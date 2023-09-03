@@ -2,18 +2,18 @@
 
 #include "cchar.h"
 #include "citem.h"
-#include "csocket.h"
 #include "classes.h"
 #include "cpacketsend.h"
+#include "csocket.h"
 #include "funcdecl.h"
+#include "scriptc.h"
 #include "speech.h"
 #include "ssection.h"
-#include "scriptc.h"
 
-#include "townregion.h"
-#include "dictionary.h"
 #include "cjsengine.h"
+#include "dictionary.h"
 #include "stringutility.hpp"
+#include "townregion.h"
 #include "utility/strutil.hpp"
 
 #include "osunique.hpp"
@@ -131,7 +131,7 @@ GUILDID CGuild::NextAlly(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if at end of ally list, or false if not
 //|					Must iterate through ally list if not at end of relation
-//list
+// list
 //|					Moves back one if it does find something it's an ally with
 //|					to ensure pointer integrity
 // o------------------------------------------------------------------------------------------------o
@@ -494,7 +494,7 @@ bool CGuild::IsAlly(GUILDID otherGuild) const {
 //|	Function	-	 CGuild::IsAtPeace()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine if this guild is in a state of peace, i.e. NOT at war with
-//anyone
+// anyone
 // o------------------------------------------------------------------------------------------------o
 bool CGuild::IsAtPeace() const {
     for (auto &relation : relationList) {
@@ -531,12 +531,10 @@ void CGuild::Save(std::ostream &toSave, GUILDID gNum) {
     toSave << "WEBPAGE=" << webpage << '\n';
     toSave << "STONE=" << stone << '\n';
     toSave << "MASTER=" << master << '\n';
-    std::for_each(recruits.begin(), recruits.end(), [&toSave](SERIAL entry) {
-        toSave << "RECRUIT=" << entry << '\n';
-    });
-    std::for_each(members.begin(), members.end(), [&toSave](SERIAL entry) {
-        toSave << "MEMBER=" << entry << '\n';
-    });
+    std::for_each(recruits.begin(), recruits.end(),
+                  [&toSave](SERIAL entry) { toSave << "RECRUIT=" << entry << '\n'; });
+    std::for_each(members.begin(), members.end(),
+                  [&toSave](SERIAL entry) { toSave << "MEMBER=" << entry << '\n'; });
     GUILDREL::const_iterator relly = relationList.begin();
     while (relly != relationList.end()) {
         toSave << GRelationNames[relly->second] << " " << relly->first << '\n';
@@ -1254,7 +1252,7 @@ void CGuildCollection::GumpInput(CPIGumpInput *gi) {
 //|	Function	-	CGuildCollection::ToggleAbbreviation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Toggles guild abbreviation on/off - except for order/chaos, which
-//must show
+// must show
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::ToggleAbbreviation(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
@@ -1807,7 +1805,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
 //|	Function	-	CGuildCollection::ResultInCriminal()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets/Gets whether action will result in criminal flag based on guild
-//relation
+// relation
 // o------------------------------------------------------------------------------------------------o
 bool CGuildCollection::ResultInCriminal(GUILDID srcGuild, GUILDID trgGuild) const {
     GUILDRELATION gRel = Compare(srcGuild, trgGuild);

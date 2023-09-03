@@ -8,14 +8,14 @@
 //|					See xRFC0004 for complete specification and implementaion
 //|					information.
 // o------------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "enums.h"
+#include "other/uoxversion.hpp"
+#include "stringutility.hpp"
+#include "subsystem/console.hpp"
+#include "uox3.h"
+#include "utility/strutil.hpp"
 #include <cstdint>
 #include <filesystem>
-#include "stringutility.hpp"
-#include "utility/strutil.hpp"
-#include "other/uoxversion.hpp"
-#include "subsystem/console.hpp"
 
 #include "osunique.hpp"
 #if !defined(_WIN32)
@@ -663,31 +663,30 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
 //|	Date		-	12/12/2002 11:15:20 PM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function creates in memory as well as on disk a new account
-//that will
-//|					allow access to the server from external clients. The basic goal of
-//this
-//|					function is to create a new account record with no characters.
-//Because this
-//|					function may be called from in game a hard copy will be made as
-//well instead of |					waiting for a save to make the changes
-//perminent.
+// that will
+//|					allow access to the server from external clients. The basic goal
+//of this |					function is to create a new account record with no
+//characters. Because this
+//|					function may be called from in game a hard copy will be made
+//as well instead of |					waiting for a save to make the changes
+// perminent.
 //|
 //|						sUsername:   Name of the account
 //|						sPassword:   Password of the account
-//|						sContact:    Historically this is the valid email address for
-//this account
-//|						wAttributes: What attributes should this account start
-//with
+//|						sContact:    Historically this is the valid email address
+//for this account
+//|						wAttributes: What attributes should this account
+//start with
 // o------------------------------------------------------------------------------------------------o
 //|	Returns		-	[UI16] Containing the account number of new accounts or 0
 // o------------------------------------------------------------------------------------------------o
 //|	NOTE		-	This function does NOT add this account to the accounts map. This
-//function ONLY |					creates the directories, and entries
-//required to load these new accounts. The
-//|					idea was not to have to rely on the accounts in memory, so that
-//accounts that |					are added, are added immediatly to the hard
-//copy. |	NOTE		-	For any new accounts to be loaded into the internal accounts
-//map structure, |					accounts must be reloaded!
+// function ONLY |					creates the directories, and entries
+// required to load these new accounts. The
+//|					idea was not to have to rely on the accounts in memory, so
+//that accounts that |					are added, are added immediatly to the hard
+// copy. |	NOTE		-	For any new accounts to be loaded into the internal accounts
+// map structure, |					accounts must be reloaded!
 // o------------------------------------------------------------------------------------------------o
 UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
                                const std::string &sContact, UI16 wAttributes) {
@@ -850,7 +849,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
 //|	Date		-	12/16/2002 12:09:13 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	The only function that this function member servers is to return a
-//response |					based on the existance of the specified username.
+// response |					based on the existance of the specified username.
 // o------------------------------------------------------------------------------------------------o
 bool cAccountClass::IsUser(std::string sUsername) {
     MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
@@ -862,7 +861,7 @@ bool cAccountClass::IsUser(std::string sUsername) {
 //|	Date		-	12/17/2002 3:35:31 PM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the current count of accounts that are currently stored in
-//the account map.
+// the account map.
 // o------------------------------------------------------------------------------------------------o
 UI32 cAccountClass::size() { return static_cast<SI32>(m_mapUsernameMap.size()); }
 
@@ -871,25 +870,25 @@ UI32 cAccountClass::size() { return static_cast<SI32>(m_mapUsernameMap.size()); 
 //|	Date		-	12/17/2002 4:00:47 PM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the internal accounts structure from the accounts.adm
-//|							file. Due to the nature of this function we will empty
-//the
-//|							previous contents of the account map, and reload
-//them.
+//|							file. Due to the nature of this function we will
+//empty the
+//|							previous contents of the account map, and
+//reload them.
 //|
 //|	Changes		-	1/20/2003 - Forgot to put in place the lookup to see if
-//|							accounts need to be updated to the v3 format. Should
-//only
-//|							need to check the first line of the accounts.adm
-//file. |							NOTE: Do not remove this line if you
-//wish to convert
-//|							properly. Without the first line this function will
-//assume
-//|							that the accounts file is a v2 format file(UOX3
-//v0.97.0).
+//|							accounts need to be updated to the v3 format.
+//Should only |							need to check the first line of the
+//accounts.adm
+// file. |							NOTE: Do not remove this line if you
+// wish to convert
+//|							properly. Without the first line this function
+//will assume
+//|							that the accounts file is a v2 format
+//file(UOX3 v0.97.0).
 //|
 //|	Changes		-	1/20/2003 - Added support for the DTL libs, and create a
 //|							general SQL query for MSAccess, MSSQL, and
-//mySQL
+// mySQL
 // o------------------------------------------------------------------------------------------------o
 UI16 cAccountClass::Load(void) {
     // Now we can load the accounts file in and re fill the map.
@@ -1397,9 +1396,9 @@ bool cAccountClass::clear(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove an account from the internal account storage map.
 //|						At this point this function will only remove the
-//account
+// account
 //|						block from the accounts.adm and not the physical
-//files |						on the storage medium.
+// files |						on the storage medium.
 // o------------------------------------------------------------------------------------------------o
 bool cAccountClass::DelAccount(std::string sUsername) {
     // Ok were just going to get the ID number for this account and make the ID function do all the
@@ -1491,7 +1490,7 @@ bool cAccountClass::DelAccount(UI16 wAccountId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set the internal string to contain the path to the accounts
 //|						directory. This path much not contain a filename, As
-//there |						is no checking implemented.
+// there |						is no checking implemented.
 // o------------------------------------------------------------------------------------------------o
 bool cAccountClass::SetPath(const std::string &sPath) {
     try {
@@ -1515,19 +1514,21 @@ std::string cAccountClass::GetPath(void) { return m_sAccountsDirectory; }
 //|	Function	-	cAccountClass::DelCharacter()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a character from the accounts map. Currently this
-//|						character object resource is not freed. The Character
-//ID, |						and CChar object holders will be set to -1, and
-//nullptr
+//|						character object resource is not freed. The
+//Character
+// ID, |						and CChar object holders will be set to -1,
+// and nullptr
 //|						respectivly. As a consolation the characters will be
-//for |						the interim listed in the orphan.adm file. This file
-//will
+// for |						the interim listed in the orphan.adm file. This
+// file will
 //|						contain simply the username, and character ID that
-//was |						removed. For those that are wondering why this might
-//be. |						Until the system itself deletes the character and
-//items |						at least we will have a listing of orphaned
-//character in
+// was |						removed. For those that are wondering why this
+// might be. |						Until the system itself deletes the
+// character and
+// items |						at least we will have a listing of orphaned
+// character in
 //|						game that a GM can use to locate, or even assign to
-//another |						account.
+// another |						account.
 // o------------------------------------------------------------------------------------------------o
 SI08 cAccountClass::DelCharacter(UI16 wAccountId, UI08 nSlot) {
     // Do the simple here, save us some work
@@ -1704,13 +1705,13 @@ CAccountBlock_st &cAccountClass::GetAccountById(UI16 wAccountId) {
 //|	Date		-	12/19/2002 2:45:39 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save the contents of the internal structures out to a flat
-//|							file where it can be loaded later, and archived for
-//later |							use should a crash occur and the
-//userfile is damaged. At
-//|							this stage this function will only write out the
-//accounts.adm
+//|							file where it can be loaded later, and archived
+//for later |							use should a crash occur and the
+// userfile is damaged. At
+//|							this stage this function will only write out
+//the accounts.adm
 //|							file, even though the access.adm will still
-//eventually |							be used for server sharing.
+// eventually |							be used for server sharing.
 // o------------------------------------------------------------------------------------------------o
 UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
     // Ok were not going to mess around. so we open truncate the file and write
@@ -1836,19 +1837,19 @@ UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Scan for a file with the name of "newaccounts.adm" and if
 //|						this file exists then parsed for the new accounts
-//which |						will be added to the internal account maps.
-//If this file
+// which |						will be added to the internal account maps.
+// If this file
 //|						does not exist then no action will take place and
-//will
+// will
 //|						return 0. Otherwise this function will return the
-//total |						count of accounts that were added. Please
-//note that the |						file will be deleted after it is
-//parsed, and duplicates |						will not be allowed.
+// total |						count of accounts that were added. Please
+// note that the |						file will be deleted after it is
+// parsed, and duplicates |						will not be allowed.
 //|
 //|	NOTES       -	Format: user=username,password,flags,emailaddress
 //|
 //|						Where:. Username, Password, Flags, and Email are all
-//selfexplanitory.
+// selfexplanitory.
 //|
 // o------------------------------------------------------------------------------------------------o
 UI16 cAccountClass::ImportAccounts(void) {
@@ -1977,10 +1978,10 @@ UI16 cAccountClass::ImportAccounts(void) {
 //|	Date		-	1/14/2003 5:47:28 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the First iterator in a set. If there is no record
-//|							then END() will be returned. This function will set
-//the
-//|							internal Iterator to the first record or will
-//indicate |							end().
+//|							then END() will be returned. This function will
+//set the
+//|							internal Iterator to the first record or
+//will indicate |							end().
 // o------------------------------------------------------------------------------------------------o
 MAPUSERNAMEID_ITERATOR &cAccountClass::Begin(void) {
     I = m_mapUsernameIdMap.begin();
@@ -1993,7 +1994,7 @@ MAPUSERNAMEID_ITERATOR &cAccountClass::Begin(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Last iterator in a set. This function forces
 //|						the internal iterator to one past the last record.
-//It |						will also return End() as a result.
+// It |						will also return End() as a result.
 // o------------------------------------------------------------------------------------------------o
 MAPUSERNAMEID_ITERATOR &cAccountClass::End(void) {
     I = m_mapUsernameIdMap.end();
@@ -2006,13 +2007,13 @@ MAPUSERNAMEID_ITERATOR &cAccountClass::End(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	For those that need a means to get the last valid record
 //|						in the container, without having to process the
-//Iterator
+// Iterator
 //|						and back it up one record. By default the map will
-//return |						end() when there is no record to return for
-//us.
+// return |						end() when there is no record to return for
+// us.
 //|
 //|						NOTE: This will update the current internal iterator
-//to |						the last record as well.
+// to |						the last record as well.
 // o------------------------------------------------------------------------------------------------o
 MAPUSERNAMEID_ITERATOR &cAccountClass::Last(void) {
     I = m_mapUsernameIdMap.end();
@@ -2027,8 +2028,8 @@ MAPUSERNAMEID_ITERATOR &cAccountClass::Last(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Use this operators to control the internal iterator that
 //|						points into the UsernameID map. This will work only
-//on |						this map. It will be assumed that the UsernameMap
-//will |						be matching this exactally.
+// on |						this map. It will be assumed that the UsernameMap
+// will |						be matching this exactally.
 // o------------------------------------------------------------------------------------------------o
 cAccountClass &cAccountClass::operator++() {
     // just increment I, the rest will be handled internally

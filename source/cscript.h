@@ -112,7 +112,7 @@ enum ScriptEvent {
     seOnSkillGump,       //	**	allows overriding client's request to open default skill gump
     seOnCombatStart,     //	**	allows overriding what happens when combat is initiated
     seOnAICombatTarget,  //	**	allows overriding target selection taking place for regular
-                         //AI behaviours
+                         // AI behaviours
     seOnCombatEnd,       //	**	allows overriding what happens when combat ends
     seOnDeathBlow,
     seOnCombatDamageCalc,
@@ -124,9 +124,9 @@ enum ScriptEvent {
     seOnDropItemOnItem,
     seOnVirtueGumpPress,
     seOnUseBandageMacro, //	**	allows overriding what happens when client uses bandage
-                         //macros
+                         // macros
     seOnHouseCommand,    //	**	allows overriding what happens when player speaks house
-                         //commands
+                         // commands
     seOnMakeItem,
     seOnPathfindEnd,
     seOnEnterEvadeState,
@@ -187,8 +187,8 @@ class cScript {
 
     JSObject *Object(void) const; // returns object pointer
 
-    //|	Modification	-	08162003 - Added these event to handle any script initialization and clean
-    //up as the server starts, and is shut down
+    //|	Modification	-	08162003 - Added these event to handle any script initialization and
+    //clean up as the server starts, and is shut down
     bool OnStart(void);
     bool OnStop(void);
     //

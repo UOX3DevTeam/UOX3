@@ -135,7 +135,7 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
 //|	Function	-	CDictionary::ParseFile()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parse dictionary file for selected language, and load entries into
-//memory
+// memory
 // o------------------------------------------------------------------------------------------------o
 auto CDictionary::ParseFile(const std::string &dictionaryfile) -> bool {
     auto rValue = false;
@@ -219,7 +219,7 @@ CDictionaryContainer::CDictionaryContainer() { defaultLang = ZERO; }
 //|	Function	-	CDictionaryContainer::LoadDictionaries()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loop through all supported dictionary languages and load each
-//dictionary
+// dictionary
 // o------------------------------------------------------------------------------------------------o
 auto CDictionaryContainer::LoadDictionaries(const std::string &filepath) -> SI32 {
     SI32 rValue = 0;

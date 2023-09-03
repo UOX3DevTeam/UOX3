@@ -51,7 +51,7 @@ class ObjectFactory {
     ObjectFactory(const ObjectFactory &&) = delete;                     // remove move constructor
     auto operator=(const ObjectFactory &) -> ObjectFactory & = delete;  // remove assignment
     auto operator=(const ObjectFactory &&) -> ObjectFactory & = delete; // remove move
-    static auto GetSingleton() -> ObjectFactory &;
+    static auto shared() -> ObjectFactory &;
 
     // o--------------------------------------------------------------------------------------------o
     //  The registeration is only setting the serial generation for the object type to the correct

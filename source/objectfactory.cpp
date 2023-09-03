@@ -6,9 +6,9 @@
 #include "citem.h"     // Includes CItem, CSpawnItem
 #include "cmultiobj.h" // Includes CMultiObj, CBoatObj
 
-#include <iostream>
 #include <algorithm>
 #include <climits>
+#include <iostream>
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ObjectFactory::SerialGen_st::SerialGen_st()
@@ -71,11 +71,11 @@ auto ObjectFactory::SerialGen_st::operator=(SI32 value) -> SerialGen_st & {
 ObjectFactory::ObjectFactory() : item_serials(BASEITEMSERIAL), character_serials(1) {}
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::GetSingleton()
+//|	Function	-	ObjectFactory::shared()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates and returns singleton instance for object factory
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::GetSingleton() -> ObjectFactory & {
+auto ObjectFactory::shared() -> ObjectFactory & {
     static ObjectFactory instance;
     return instance;
 }
@@ -84,7 +84,7 @@ auto ObjectFactory::GetSingleton() -> ObjectFactory & {
 //|	Function	-	ObjectFactory::NextSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the next free serial to use when creating an object of a given
-//type
+// type
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::NextSerial(ObjectType type) -> UI32 {
     switch (type) {
@@ -290,7 +290,7 @@ auto ObjectFactory::IterateOver(ObjectType type, UI32 &b, void *extra,
 //|	Function	-	ObjectFactory::DestroyObject()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unregister object and destroy it from memory, either as part of
-//server shutdown, |					or because object has been deleted.
+// server shutdown, |					or because object has been deleted.
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::DestroyObject(CBaseObject *object) -> bool {
     auto rValue = false;
@@ -307,7 +307,7 @@ auto ObjectFactory::DestroyObject(CBaseObject *object) -> bool {
 //|	Function	-	ObjectFactory::CreateObject()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a new object with a serial number, and return it back to the
-//creator |					From DFNs, or a PC, by and large.
+// creator |					From DFNs, or a PC, by and large.
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::CreateObject(ObjectType type) -> CBaseObject * {
     auto object = CreateBlankObject(type);
@@ -321,7 +321,7 @@ auto ObjectFactory::CreateObject(ObjectType type) -> CBaseObject * {
 //|	Function	-	ObjectFactory::CreateBlankObject()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a new blank object without a serial number. Serial will be
-//provided |					when loading object from worldfiles
+// provided |					when loading object from worldfiles
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::CreateBlankObject(ObjectType type) -> CBaseObject * {
     CBaseObject *object = nullptr;
@@ -407,7 +407,7 @@ auto ObjectFactory::SizeOfObjects(ObjectType type) const -> size_t {
 //|	Function	-	ObjectFactory::ValidObject()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	(Unused) Checks if specified object is a valid object of specified
-//type
+// type
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::ValidObject(CBaseObject *object, ObjectType type) -> bool {
     auto findObject = [](CBaseObject *object, factory_collection &collect) {

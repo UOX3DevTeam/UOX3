@@ -7,9 +7,9 @@
 #define __CBO_H__
 #include <bitset>
 #include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "typedefs.h"
 #include "uoxstruct.h"

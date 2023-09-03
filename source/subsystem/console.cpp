@@ -20,10 +20,10 @@
 #include <stdexcept>
 
 #include "cchar.h"
-#include "citem.h"
-#include "cjsmapping.h"
 #include "cguild.h"
 #include "chtmlsystem.h"
+#include "citem.h"
+#include "cjsmapping.h"
 #include "cmagic.h"
 #include "commands.h"
 #include "craces.h"
@@ -39,13 +39,13 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 
-#include "utility/strutil.hpp"
 #include "teffect.h"
+#include "utility/strutil.hpp"
 
 #if !defined(_WIN32)
+#include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
 struct termios initial_terminal_state;
 #else
 #include <conio.h>
@@ -785,20 +785,20 @@ auto Console::PrintSpecial(UI08 colour, const std::string &msg) -> void {
 //|					-1 -> no char available.
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	now cluox is GUI wrapper over uox using stdin and stdout redirection
-//to capture
-//|					the console, if it is active uox can't use kbhit() to determine if
-//there is a |					character aviable, it can only get one directly by
-//getch().
-//|					However the problem arises that uox will get blocked if none is
-//aviable.
-//|					The solution to this problem is that cluox also hands over the
-//second pipe-end
-//|					of stdin so uox can write itself into this stream. To determine if
-//a character is
-//|					now done that way. UOX write's itself a ZERO on the other end of
-//the pipe, and reads
-//|					a charecter, if it is again the same ZERO just putted in nothing
-//was entered. However
+// to capture
+//|					the console, if it is active uox can't use kbhit() to determine
+//if
+// there is a |					character aviable, it can only get one directly by
+// getch().
+//|					However the problem arises that uox will get blocked if none
+//is aviable.
+//|					The solution to this problem is that cluox also hands over
+//the second pipe-end
+//|					of stdin so uox can write itself into this stream. To determine
+//if a character is
+//|					now done that way. UOX write's itself a ZERO on the other end
+//of the pipe, and reads |					a charecter, if it is again the same
+//ZERO just putted in nothing was entered. However
 //|					it is not a zero the user has entered a char.
 // o------------------------------------------------------------------------------------------------o
 auto Console::cl_getch() -> std::int32_t {
@@ -1147,10 +1147,10 @@ auto Console::Process(std::int32_t c) -> void {
                 "performance.log");
 
             Log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)",
-                             ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR),
-                             ObjectFactory::GetSingleton().SizeOfObjects(OT_CHAR),
-                             ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM),
-                             ObjectFactory::GetSingleton().SizeOfObjects(OT_ITEM)),
+                             ObjectFactory::shared().CountOfObjects(OT_CHAR),
+                             ObjectFactory::shared().SizeOfObjects(OT_CHAR),
+                             ObjectFactory::shared().CountOfObjects(OT_ITEM),
+                             ObjectFactory::shared().SizeOfObjects(OT_ITEM)),
                 "performance.log");
             Log(util::format("\tSimulation Cycles: %f per sec",
                              (1000.0 * (1.0 / static_cast<R32>(
@@ -1193,20 +1193,20 @@ auto Console::Process(std::int32_t c) -> void {
             tmp = 0;
             messageLoop << "CMD: UOX Memory Information:";
             UI32 m, n;
-            m = static_cast<std::uint32_t>(ObjectFactory::GetSingleton().SizeOfObjects(OT_CHAR));
+            m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(OT_CHAR));
             total += tmp = m + m * sizeof(CTEffect) + m * sizeof(SI08) + m * sizeof(intptr_t) * 5;
             temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
-                                ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR), m);
+                                ObjectFactory::shared().CountOfObjects(OT_CHAR), m);
             messageLoop << temp;
-            n = static_cast<std::uint32_t>(ObjectFactory::GetSingleton().SizeOfObjects(OT_ITEM));
+            n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(OT_ITEM));
             total += tmp = n + n * sizeof(intptr_t) * 4;
             temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp,
-                                ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM), n);
+                                ObjectFactory::shared().CountOfObjects(OT_ITEM), n);
             messageLoop << temp;
             temp = util::format(
                 "        You save I: %lu & C: %lu bytes!",
-                m * sizeof(CItem) - ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM),
-                m * sizeof(CChar) - ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR));
+                m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(OT_ITEM),
+                m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(OT_CHAR));
             total += tmp = 69 * sizeof(CSpellInfo);
             temp = util::format(temp, "     Spells: %i bytes", tmp);
             messageLoop << "     Sizes:";
@@ -1296,8 +1296,8 @@ auto Console::Process(std::int32_t c) -> void {
 //|					Moved that here because we need it in processkey now
 //|
 //|	Changes		-	10/21/2002 - found the bug in one spot, just
-//|									happened upon this quick fix. for BackUp
-//operation.
+//|									happened upon this quick fix. for
+//BackUp operation.
 // o------------------------------------------------------------------------------------------------o
 auto Console::DisplaySettings() -> void {
     std::map<bool, std::string> activeMap;
@@ -1325,9 +1325,9 @@ auto Console::DisplaySettings() -> void {
 
     (*this) << "   -Races: " << static_cast<UI32>(Races->Count()) << myendl;
     (*this) << "   -Guilds: " << static_cast<UI32>(GuildSys->NumGuilds()) << myendl;
-    (*this) << "   -Char count: " << ObjectFactory::GetSingleton().CountOfObjects(OT_CHAR)
+    (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(OT_CHAR)
             << myendl;
-    (*this) << "   -Item count: " << ObjectFactory::GetSingleton().CountOfObjects(OT_ITEM)
+    (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(OT_ITEM)
             << myendl;
     (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size())
             << myendl;

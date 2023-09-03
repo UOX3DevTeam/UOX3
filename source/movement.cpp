@@ -44,16 +44,16 @@
 
 #include "cchar.h"
 #include "ceffects.h"
-#include "cjsmapping.h"
 #include "citem.h"
+#include "cjsmapping.h"
 #include "cmagic.h"
 #include "cmultiobj.h"
+#include "combat.h"
 #include "cpacketsend.h"
 #include "craces.h"
-#include "csocket.h"
-#include "cserverdefinitions.h"
 #include "cscript.h"
-#include "combat.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
 #include "cweather.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
@@ -98,11 +98,11 @@ inline UI08 TurnCounterClockWise(UI08 dir) {
 //|	Function	-	CalcTileHeight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Out of some strange reason the tile height seems to be an absolute
-//value of a
-//|					two's complement of the last four bit. Don't know if it has a
-//special meaning
-//|					if the tile is height is "negative" (stairs in despise blocking
-//bug)
+// value of a
+//|					two's complement of the last four bit. Don't know if it has
+//a special meaning
+//|					if the tile is height is "negative" (stairs in despise
+//blocking bug)
 //|
 //|	Arguments	-	SI08 h   orignial height as saved in mul file
 //|
@@ -191,32 +191,32 @@ void CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight);
 //|
 //|	Notes		-	This function is called whenever we get a message from the client
 //|					to walk/run somewhere. It is also called by the NPC movement
-//functions in this
-//|					class to make the NPCs move. The arguments are fairly fixed because
-//we don't |					have a lot of control about what the client gives
-//us.
+// functions in this
+//|					class to make the NPCs move. The arguments are fairly fixed
+//because we don't |					have a lot of control about what the client
+// gives us.
 //|
-//|					CChar c - Obviously the character index of the character trying to
-//move.
+//|					CChar c - Obviously the character index of the character trying
+//to move.
 //|
-//|					dir - Which direction the character is trying to move in. The first
-//nibble holds
+//|					dir - Which direction the character is trying to move in. The
+//first nibble holds
 //|					the cardinal direction. If the bit 0x80 is set, it means the
-//character is |					running instead of walking. |
-//0: // North |						1: // Northeast |
-//2: // East |						3: // Southeast |
-//4: // South |						5: // Southwest |
-//6: // West |						7: // Northwest
+// character is |					running instead of walking. |
+// 0: // North |						1: // Northeast |
+// 2: // East |						3: // Southeast |
+// 4: // South |						5: // Southwest |
+// 6: // West |						7: // Northwest
 //|
-//|					sequence - This is what point in the walking sequence we are at,
-//this seems to |					roll over once it hits 256
+//|					sequence - This is what point in the walking sequence we are
+//at, this seems to |					roll over once it hits 256
 //|
-//|					Sometimes the NPC movement code comes up with -1, for example, if
-//we are |					following someone and we are directly on top of
-//them. |					^ That's because chardir returns -1 when direction
-//is the same.  Actually, this
-//|					should only happen when a player walks on top of an NPC and the NPC
-//tries to move.
+//|					Sometimes the NPC movement code comes up with -1, for example,
+//if we are |					following someone and we are directly on top of
+// them. |					^ That's because chardir returns -1 when direction
+// is the same.  Actually, this
+//|					should only happen when a player walks on top of an NPC and the
+//NPC tries to move.
 // o------------------------------------------------------------------------------------------------o
 void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
     if (!IsValidDirection(dir)) {
@@ -493,12 +493,12 @@ bool CMovement::IsValidDirection(UI08 dir) { return (dir == (dir & 0x87)); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a character is frozen or casting a spell
 //|	Notes		-	Because of the way the source uses the frozen flag, I decided to
-//change |					something in how this works. If the character is
-//casting a spell (chars.casting is true) |					OR if they're frozen
+// change |					something in how this works. If the character is
+// casting a spell (chars.casting is true) |					OR if they're frozen
 //(chars.priv2 & FROZEN_BIT) then they can't walk. Why? If a player/npc |
-//has their frozen bit set, and they cast a spell, they will lose their frozen bit at the |
-//end of the spell cast. With this new check, we don't even need to set the frozen bit when |
-//casting a spell!
+// has their frozen bit set, and they cast a spell, they will lose their frozen bit at the |
+// end of the spell cast. With this new check, we don't even need to set the frozen bit when |
+// casting a spell!
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::IsFrozen(CChar *c, CSocket *mSock, SI16 sequence) {
     if (c->IsCasting() && !cwmWorldState->ServerData()->CastSpellsWhileMoving()) {
@@ -532,16 +532,16 @@ bool CMovement::IsFrozen(CChar *c, CSocket *mSock, SI16 sequence) {
 //|	Function	-	CMovement::IsOverloaded()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if character is overloaded with weight, and returns true or
-//false |	Notes		-	CheckForWeight was confusing...
+// false |	Notes		-	CheckForWeight was confusing...
 //|
-//|					Old code called check weight first then checked socket... I changed
-//it the other way.
-//|					Why, well odds are (I may be wrong) if you don't have a socket,
-//you're an NPC and if you
-//|					have one, you're a character. We said in the first line that we
-//didn't want to restrict
-//|					based upon NPC, so if you're an NPC, the socket/checkweight will
-//never be called anyway.
+//|					Old code called check weight first then checked socket... I
+//changed it the other way.
+//|					Why, well odds are (I may be wrong) if you don't have a
+//socket, you're an NPC and if you
+//|					have one, you're a character. We said in the first line that
+//we didn't want to restrict
+//|					based upon NPC, so if you're an NPC, the socket/checkweight
+//will never be called anyway.
 //|
 //|					Rewrote to deny the client... We'll see if it works.
 // o------------------------------------------------------------------------------------------------o
@@ -573,21 +573,21 @@ bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, SI16 sequence) {
 //|	Function	-	CMovement::CheckForCharacterAtXYZ()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Examins a location (cx, cy, cz) to determine if a character is found
-//there.
-//|					If so, return true. If not, return false. Used for the npc stacking
-//problem |	Notes		-	Here's how I'm going to use it for now.  Movement Type may
-//be used for races, that's why |					I put it as an integer. Here
-//are the values I'm going to use:
-//|					BTW, bird doesn't work right now! These values should be scripted,
-//as well, but I want
-//|					to test walking before another var is added to chars struct.
-//|						GM Body  0x01
+// there.
+//|					If so, return true. If not, return false. Used for the npc
+//stacking
+// problem |	Notes		-	Here's how I'm going to use it for now.  Movement Type may
+// be used for races, that's why |					I put it as an integer. Here
+// are the values I'm going to use:
+//|					BTW, bird doesn't work right now! These values should be
+//scripted, as well, but I want |					to test walking before
+//another var is added to chars struct. |						GM Body 0x01
 //|						Player   0x02
-//|						Bird     0x20 (basically, a fish and an NPC, so I could use
-//0xc0, but I don't wanna) |						NPC      0x40 |
-//Fish     0x80 (So they can swim!)
-//|					I left a gap between Player and NPC because someone may want to
-//implement race |					restrictions...
+//|						Bird     0x20 (basically, a fish and an NPC, so I could
+//use 0xc0, but I don't wanna) |						NPC      0x40 | Fish
+// 0x80 (So they can swim!)
+//|					I left a gap between Player and NPC because someone may want
+//to implement race |					restrictions...
 // o------------------------------------------------------------------------------------------------o
 auto CMovement::CheckForCharacterAtXYZ(CChar *c, SI16 cx, SI16 cy, SI08 cz) -> bool {
     CMapRegion *MapArea =
@@ -678,7 +678,7 @@ bool CMovement::CheckForRunning(CChar *c, UI08 dir) {
 //|	Purpose		-	Check to see if character is in stealth mode.
 //|
 //|	Changes		-	09/22/2002	-	Unhide characters who are mounted while
-//trying to stealth.
+// trying to stealth.
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::CheckForStealth(CChar *c) {
     if (c->GetVisible() == VT_TEMPHIDDEN || c->GetVisible() == VT_INVISIBLE) {
@@ -732,11 +732,11 @@ bool CMovement::CheckForHouseBan(CChar *c, [[maybe_unused]] CSocket *mSock) {
 //) |	Date		-	21/09/2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	I already made sure I could move there (even the crazy XY block
-//stuff) so
-//|					this IS a valid move. Just move the directions. Oh, and since I we
-//already
-//|					have the GetX/YfromDir functions (and we need those) why don't we
-//just |					use them here?
+// stuff) so
+//|					this IS a valid move. Just move the directions. Oh, and since I
+//we already
+//|					have the GetX/YfromDir functions (and we need those) why don't
+//we just |					use them here?
 // o------------------------------------------------------------------------------------------------o
 void CMovement::MoveCharForDirection(CChar *c, SI16 newX, SI16 newY, SI08 newZ) {
     if (!c->IsNpc()) {
@@ -859,7 +859,7 @@ auto CMovement::GetBlockingDynamics(SI16 x, SI16 y, std::vector<Tile_st> &xybloc
 //|	Function	-	CMovement::SendWalkToPlayer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Actually send the walk command back to the player and increment the
-//sequence
+// sequence
 // o------------------------------------------------------------------------------------------------o
 void CMovement::SendWalkToPlayer(CChar *c, CSocket *mSock, SI16 sequence) {
     if (mSock != nullptr) {
@@ -1141,7 +1141,7 @@ bool UpdateItemsOnPlane(CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI1
 //|	Function	-	UpdateCharsOnPlane()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update characters that come within range or go out of range of the
-//player
+// player
 // o------------------------------------------------------------------------------------------------o
 bool UpdateCharsOnPlane(CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, UI16 dOld,
                         UI16 visibleRange) {
@@ -1268,9 +1268,9 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 //|	Function	-	CMovement::HandleItemCollision()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle item collisions, make items that appear on the edge of our
-//sight because |					visible, buildings when they get in range,
-//and if the character steps on something |					that might cause
-//damage
+// sight because |					visible, buildings when they get in range,
+// and if the character steps on something |					that might cause
+// damage
 // o------------------------------------------------------------------------------------------------o
 void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI16 oldy) {
     // lets cache these vars in advance
@@ -1496,8 +1496,8 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
 //|	Function	-	CMovement::IsGMBody()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if character's body is to be considered a GM body for the
-//purposes of |					shove messages and walking through doors. |
-//Includes GMs, Counsellors, and Ghosts; Better name may be IsEthereal()
+// purposes of |					shove messages and walking through doors. |
+// Includes GMs, Counsellors, and Ghosts; Better name may be IsEthereal()
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::IsGMBody(CChar *c) {
     if (c->IsGM() || c->GetId() == 0x03DB || c->GetId() == 0x0192 || c->GetId() == 0x0193 ||
@@ -1512,7 +1512,7 @@ bool CMovement::IsGMBody(CChar *c) {
 //|	Function	-	CMovement::CombatWalk()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send combat toggle to nearby players. Only for switching to combat
-//mode
+// mode
 // o------------------------------------------------------------------------------------------------o
 void CMovement::CombatWalk(CChar *i) {
     if (!ValidateObject(i))
@@ -1538,8 +1538,8 @@ bool CheckBoundingCircle(SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI1
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle NPCs walking in boxes and circles
 //|	Notes		-	getWander is npcwalk mode (0 for normal, 1 for follow, 2 for free,
-//3 for box, |					4 for circle, 5 for frozen, 6 for flee, 7 for
-//pathfind
+// 3 for box, |					4 for circle, 5 for frozen, 6 for flee, 7 for
+// pathfind
 // o------------------------------------------------------------------------------------------------o
 void CMovement::NpcWalk(CChar *i, UI08 j, SI08 getWander) {
     const SI16 fx1 = i->GetFx(0);
@@ -1775,34 +1775,34 @@ SI16 CMovement::GetXfromDir(UI08 dir, SI16 x) {
 //|	Purpose		-	Calculate a path from A to B for NPC movement
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Ok, I'm going to babble here, but here's my thinking process...
-//|					Max Heuristic is 5 (for now) and I'm not concerned about walls...
-//I'll add that later
-//|					Easiest way I think would be for recursive call for now... Will
-//change later if need be
-//|					pathfind will call itself with new stuff... as long as the distance
-//get's shorter |					We have to take into consideration if the
-//NPC is going to a point or to a character
-//|					if we don't want NPCs to walk over each other, this has to be
-//known, because the NPC |					that's walking will never reach
-//destination if it's another character.
-//|					We must pass, that way if we get chardist=1 then we're ok.  We are
-//basically searching
-//|					for the shortest path, which is always a diagonal line, followed by
-//lateral to target
-//|					(barring obstacles) On calculation, for the FIRST step, we need to
-//know if a character
-//|					is there or not, then after that no biggie because if so we can
-//just recalc the path if
-//|					something is blocking. If we don't check on that first step, NPCs
-//will get stuck behind horses
-//|					and stuff... Kinda exploitable if I'm on a horse attacking, then
-//step off and behind to hide
+//|					Max Heuristic is 5 (for now) and I'm not concerned about
+//walls... I'll add that later
+//|					Easiest way I think would be for recursive call for now...
+//Will change later if need be
+//|					pathfind will call itself with new stuff... as long as the
+//distance
+// get's shorter |					We have to take into consideration if the
+// NPC is going to a point or to a character
+//|					if we don't want NPCs to walk over each other, this has to
+//be known, because the NPC |					that's walking will never reach
+// destination if it's another character.
+//|					We must pass, that way if we get chardist=1 then we're ok.  We
+//are basically searching
+//|					for the shortest path, which is always a diagonal line, followed
+//by lateral to target
+//|					(barring obstacles) On calculation, for the FIRST step, we need
+//to know if a character |					is there or not, then after that no
+//biggie because if so we can just recalc the path if
+//|					something is blocking. If we don't check on that first step,
+//NPCs will get stuck behind horses
+//|					and stuff... Kinda exploitable if I'm on a horse attacking,
+//then step off and behind to hide
 //|					while I heal. The first thing we need to do when walking is
-//determine if i'm blocked... then
-//|					if I'm an NPC, recalculate my path and step... I'm also gonna take
-//out the path structure
-//|					in chars_st... all we need is to hold the directions, not the x and
-//y... Hopefully this will |					save memory.
+// determine if i'm blocked... then
+//|					if I'm an NPC, recalculate my path and step... I'm also gonna
+//take out the path structure
+//|					in chars_st... all we need is to hold the directions, not the x
+//and y... Hopefully this will |					save memory.
 // o------------------------------------------------------------------------------------------------o
 void CMovement::PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen) {
     // Make sure this is a valid character before proceeding
@@ -2582,7 +2582,7 @@ void CMovement::GetAverageZ(UI08 nm, SI16 x, SI16 y, SI08 &z, SI08 &avg, SI08 &t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks that target location has no blocking tiles within range of
 //|						character's potential new Z and the top of their
-//head
+// head
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] UI16 &xycount,
                      [[maybe_unused]] UI08 world, SI08 ourZ, SI08 ourTop, [[maybe_unused]] SI16 x,
@@ -2686,9 +2686,9 @@ void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y,
 //|	Function	-	CMovement::Direction()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Modified the old CheckWalkable function so that it can be utilized
-//throughout
-//|					the walking code. Ever wonder why NPCs can walk through walls and
-//stuff in |					combat mode? This is the fix, plus more.
+// throughout
+//|					the walking code. Ever wonder why NPCs can walk through walls
+//and stuff in |					combat mode? This is the fix, plus more.
 // o------------------------------------------------------------------------------------------------o
 UI08 CMovement::Direction(CChar *mChar, SI16 x, SI16 y) {
     return Direction(mChar->GetX(), mChar->GetY(), x, y);
@@ -2734,29 +2734,29 @@ UI08 CMovement::Direction(SI16 sx, SI16 sy, SI16 dx, SI16 dy) {
 //|	Function	-	CMovement::CalcWalk()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates new Z height position for a walking character (PC or NPC)
-//and |						checks if movement is blocked
+// and |						checks if movement is blocked
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Rewritten checkwalk-function, it calculates new z-position for a
-//walking
+// walking
 //|					creature( PC or NPC ) walks, and checks if movement is
-//blocked.
+// blocked.
 //|
-//|					This function takes a little more calculation time, than the last
-//one, since it |					walks two times through the static - tile
-//set. However at least this one is( more )
+//|					This function takes a little more calculation time, than the
+//last one, since it |					walks two times through the static - tile
+// set. However at least this one is( more )
 //|					correct, and these VERy guys now hit their noses on the
-//walls.
+// walls.
 //|
 //|					In principle it is the same as the World - kernel in
-//UMelange.
+// UMelange.
 //|
 //|					Parameters:
 //|						CChar *c			Character
 //|						SI16 x, y			new cords.
 //|						SI16 oldx, oldy		old cords.
-//|						bool justask		don't make any changes, the func. is
-//just asked "what if".. |						bool waterWalk
-//Character can swim (true/false)
+//|						bool justask		don't make any changes, the func.
+//is just asked "what if".. |						bool waterWalk Character can
+// swim (true/false)
 //|
 //|					Return code:
 //|						new z - value        if not blocked
@@ -2916,7 +2916,7 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
 //|	Date		-	17.09.2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a character can walk in a specific direction from a given
-//location |				-	This handles the funky diagonal moves.
+// location |				-	This handles the funky diagonal moves.
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir) {
     // NPCs that walk on land
@@ -2972,7 +2972,7 @@ bool CMovement::CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir) {
 //|	Function	-	CMovement::DenyMovement()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deny player movement and send character's previous location back to
-//client
+// client
 // o------------------------------------------------------------------------------------------------o
 void CMovement::DenyMovement(CSocket *mSock, CChar *s, SI16 sequence) {
     CPWalkDeny denPack;
@@ -2999,7 +2999,7 @@ bool operator>(const NodeFCost_st &x, const NodeFCost_st &y) { return (x.fCost >
 //|	Function	-	CMovement:: PFGrabNodes()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate nodes from source to target location for advanced
-//pathfinding
+// pathfinding
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
                             UI32 parentSer, std::map<UI32, PfNode_st> &openList,
@@ -3108,7 +3108,7 @@ bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI1
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle the advanced variant of NPC pathfinding
 //|					Enabled/Disabled throuugh UOX.INI setting -
-//ADVANCEDPATHFINDING=0/1
+// ADVANCEDPATHFINDING=0/1
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool willRun,
                                     UI16 maxSteps) {
@@ -3268,9 +3268,9 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool w
 //|	Function	-	CMovement::IgnoreAndEvadeTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Temporarily adds unreachable targets to NPC's ignore list, and
-//potentially
+// potentially
 //|					takes evasive manoeuvres if target is somehow damaging the
-//NPC
+// NPC
 // o------------------------------------------------------------------------------------------------o
 auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
     auto mTarget = mChar->GetTarg();

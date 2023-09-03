@@ -21,7 +21,7 @@ cEffects *Effects;
 //|	Function	-	cEffects::PlaySound()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect for player, echo's to all players if allHear is
-//true
+// true
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlaySound(CSocket *mSock, UI16 soundId, bool allHear) {
     if (mSock == nullptr)
@@ -46,7 +46,7 @@ void cEffects::PlaySound(CSocket *mSock, UI16 soundId, bool allHear) {
 //|	Function	-	cEffects::PlaySound()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect originating from object for all players
-//nearby(default) or originator only
+// nearby(default) or originator only
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlaySound(CBaseObject *baseObj, UI16 soundId, bool allHear) {
     if (!ValidateObject(baseObj))

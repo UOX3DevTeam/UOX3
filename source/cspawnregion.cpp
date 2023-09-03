@@ -1,8 +1,8 @@
 #include "cspawnregion.h"
 
-#include <sstream>
 #include <iostream>
 #include <regex>
+#include <sstream>
 
 #include "cchar.h"
 #include "citem.h"
@@ -181,7 +181,7 @@ SI08 CSpawnRegion::GetPrefZ(void) const { return prefZ; }
 //|	Date		-	04/22/2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets definitive Z Level of the Spawn Region at which to attempt
-//spawning objects
+// spawning objects
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::SetDefZ(SI08 newVal) { defZ = newVal; }
 SI08 CSpawnRegion::GetDefZ(void) const { return defZ; }
@@ -262,7 +262,7 @@ void CSpawnRegion::IsSpawner(bool newVal) { isSpawner = newVal; }
 //|					CSpawnRegion::SetCall()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets number of objects that should be spawned in each call for
-//a spawnregion
+// a spawnregion
 // o------------------------------------------------------------------------------------------------o
 UI16 CSpawnRegion::GetCall(void) const { return call; }
 void CSpawnRegion::SetCall(UI16 newVal) { call = newVal; }
@@ -384,7 +384,7 @@ void CSpawnRegion::LoadNPCList(const std::string &npcList) {
 //|	Function	-	CSpawnRegion::LoadItemList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads ITEMLIST from DFNs with list of Items to spawn for a
-//spawnregion
+// spawnregion
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::LoadItemList(const std::string &itemList) {
     std::string sect = "ITEMLIST " + itemList;

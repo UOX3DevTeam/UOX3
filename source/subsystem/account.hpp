@@ -5,13 +5,13 @@
 
 #include <array>
 
-#include <cstdint>
 #include <bitset>
+#include <cstdint>
 #include <filesystem>
 #include <iostream>
-#include <ostream>
 #include <limits>
 #include <map>
+#include <ostream>
 #include <string>
 
 class CChar;

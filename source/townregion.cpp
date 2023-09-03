@@ -5,22 +5,22 @@
 #include "cjsengine.h"
 #include "cjsmapping.h"
 #include "classes.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cserverdefinitions.h"
-#include "cspawnregion.h"
 #include "csocket.h"
+#include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
+#include "jail.h"
 #include "mapstuff.h"
 #include "scriptc.h"
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
-#include "jail.h"
 
 // Implementation of town regions
 
@@ -412,7 +412,7 @@ bool CTownRegion::RemoveTownMember(CChar &toAdd) {
 //|	Function	-	CTownRegion::oreSkillComparator()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sorts list of ore preferences for the town region in descending
-//order based on |					minimum skill required to mine said ore
+// order based on |					minimum skill required to mine said ore
 // o------------------------------------------------------------------------------------------------o
 bool oreSkillComparator(OrePref_st o1, OrePref_st o2) {
     if (o1.oreIndex == nullptr)
@@ -760,7 +760,7 @@ void CTownRegion::CanGate(bool value) { priv.set(BIT_GATE, value); }
 //|	Function	-	CTownRegion::CanRecall()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can cast the Recall spell in the
-//townregion
+// townregion
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::CanRecall(void) const { return priv.test(BIT_RECALL); }
 void CTownRegion::CanRecall(bool value) { priv.set(BIT_RECALL, value); }
@@ -769,7 +769,7 @@ void CTownRegion::CanRecall(bool value) { priv.set(BIT_RECALL, value); }
 //|	Function	-	CTownRegion::CanCastAggressive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can cast Aggressive spells in the
-//townregion
+// townregion
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::CanCastAggressive(void) const { return priv.test(BIT_AGGRESSIVE); }
 void CTownRegion::CanCastAggressive(bool value) { priv.set(BIT_AGGRESSIVE, value); }
@@ -786,7 +786,7 @@ void CTownRegion::IsSafeZone(bool value) { priv.set(BIT_SAFEZONE, value); }
 //|	Function	-	CTownRegion::CanTeleport()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the townregion allows use of the Teleport spell or
-//not
+// not
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::CanTeleport(void) const { return priv.test(BIT_TELEPORT); }
 void CTownRegion::CanTeleport(bool value) { priv.set(BIT_TELEPORT, value); }
@@ -819,7 +819,7 @@ void CTownRegion::SetWeather(WEATHID newValue) { weather = newValue; }
 //|	Function	-	CTownRegion::GetGoodSell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the trade system good sell-value at specified index for the
-//townregion
+// townregion
 // o------------------------------------------------------------------------------------------------o
 SI32 CTownRegion::GetGoodSell(UI08 index) const {
     SI32 rVal = 0;
@@ -833,7 +833,7 @@ SI32 CTownRegion::GetGoodSell(UI08 index) const {
 //|	Function	-	CTownRegion::GetGoodBuy()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the trade system good buy-value at specified index for the
-//townregion
+// townregion
 // o------------------------------------------------------------------------------------------------o
 SI32 CTownRegion::GetGoodBuy(UI08 index) const {
     SI32 rVal = 0;
@@ -848,7 +848,7 @@ SI32 CTownRegion::GetGoodBuy(UI08 index) const {
 //|	Function	-	CTownRegion::GetGoodRnd1()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets minimum random value for trade system good at specified index
-//for the townregion
+// for the townregion
 // o------------------------------------------------------------------------------------------------o
 SI32 CTownRegion::GetGoodRnd1(UI08 index) const {
     SI32 rVal = 0;
@@ -863,7 +863,7 @@ SI32 CTownRegion::GetGoodRnd1(UI08 index) const {
 //|	Function	-	CTownRegion::GetGoodRnd2()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets maximum random value for trade system good at specified index
-//for the townregion
+// for the townregion
 // o------------------------------------------------------------------------------------------------o
 SI32 CTownRegion::GetGoodRnd2(UI08 index) const {
     SI32 rVal = 0;
@@ -878,7 +878,7 @@ SI32 CTownRegion::GetGoodRnd2(UI08 index) const {
 //|	Function	-	CTownRegion::GetMusicList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets musicList for the townregion, as originally specified in region
-//DFNs
+// DFNs
 // o------------------------------------------------------------------------------------------------o
 UI16 CTownRegion::GetMusicList(void) const { return musicList; }
 void CTownRegion::SetMusicList(UI16 newValue) { musicList = newValue; }
@@ -1582,7 +1582,7 @@ void CTownRegion::SetHealth(SI16 newValue) { health = newValue; }
 //|	Function	-	CTownRegion::DoDamage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deal damage to townregion's townstone and notify online townregion
-//members
+// members
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::DoDamage(SI16 reduction) {
     health -= reduction;
@@ -1607,7 +1607,7 @@ void CTownRegion::DoDamage(SI16 reduction) {
 //|	Function	-	CTownRegion::IsAlliedTown()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether another townregion is in the list of allies for the
-//townregion
+// townregion
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::IsAlliedTown(UI16 townToCheck) const {
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
@@ -1765,7 +1765,7 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
 //|	Function	-	CTownRegion::Possess()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Another townregion takes possession of the townregion, and clears
-//out old |					memberlist for the possessed townregion
+// out old |					memberlist for the possessed townregion
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::Possess(CTownRegion *possessorTown) {
     possessorTown->SetRace(race);
@@ -1934,7 +1934,7 @@ void CTownRegion::AddScriptTrigger(UI16 newValue) {
 //|	Function	-	CTownRegion::RemoveScriptTrigger()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a specific script trigger to object's list of script
-//triggers
+// triggers
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::RemoveScriptTrigger(UI16 newValue) {
     // Remove all elements containing specified script trigger from vector
@@ -1965,7 +1965,7 @@ void CTownRegion::SetRegionNum(UI16 newVal) { regionNum = newVal; }
 //|	Function	-	CTownRegion::GetNumLocations()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of locations in townregion as defined in region DFNs via
-//X1/Y1, X2/Y2 pairs
+// X1/Y1, X2/Y2 pairs
 // o------------------------------------------------------------------------------------------------o
 size_t CTownRegion::GetNumLocations(void) const { return locations.size(); }
 

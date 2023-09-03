@@ -5,10 +5,10 @@
 #define UOPData_hpp
 
 #include <cstdint>
-#include <string>
-#include <map>
-#include <vector>
 #include <fstream>
+#include <map>
+#include <string>
+#include <vector>
 
 //=======================================================================================================================
 // Everything above can be deleted after migration
@@ -135,10 +135,10 @@
  UOPTable		table[number_entries];
  ******************************************************************************/
 #include <cstdint>
+#include <cstdio>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include <cstdio>
 
 #include <zlib.h>
 

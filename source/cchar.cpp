@@ -3,55 +3,53 @@
 //|	Date			-	29th March, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	New class written based upon old UOX char_st.  Number of old
-//members removed
+// members removed
 //|						and a number of members types modified as well
 //|
 //|	Version History -
 //|
 //|						1.0		 		29th March, 2000
-//|						Initial implementation, all get/set mechanisms written up
-//to
-//|						the end of SetSayColour().  Bools reduced down to a single
-//char
-//|						with get/set mechanisms for setting/clearings bits
-//|						No documentation currently done, all functions obvious so
-//far
-//|						Note:  individual byte setting within longs/chars need
-//speeding up
-//|						consider memcpy into correct word, note that this will be
-//endian specific!
+//|						Initial implementation, all get/set mechanisms written
+//up to |						the end of SetSayColour().  Bools reduced
+//down to a single char |						with get/set mechanisms for
+//setting/clearings bits
+//|						No documentation currently done, all functions obvious
+//so far |						Note:  individual byte setting within
+//longs/chars need speeding up
+//|						consider memcpy into correct word, note that this will
+//be endian specific!
 //|
 //| 					1.1		 		2nd April, 2000
-//|						Finished up the initial implementation on all classes. Fixed
-//a minor bit shift error
-//|						on some of the char variables, all working fine now
+//|						Finished up the initial implementation on all classes.
+//Fixed a minor bit shift error |						on some of the char
+//variables, all working fine now
 //|
 //| 					1.2		 		25 July, 2000
-//|						All Accessor funcs plus a few others are now flagged as const
-//functions, meaning that
-//|						those functions GUARENTEE never to alter data, at compile
-//time |						Thoughts about CBaseObject and prelim plans
-//made
+//|						All Accessor funcs plus a few others are now flagged as
+//const functions, meaning that |						those functions
+//GUARENTEE never to alter data, at compile
+// time |						Thoughts about CBaseObject and prelim plans
+// made
 //|
 //| 					1.3		 		28 July, 2000
-//|						Initial CBaseObject implementation put in.  CChar reworked to
-//deal with only things it has to |						Proper constructor
-//written
-//|						Plans for CChar derived objects thought upon (notably CPC and
-//CNPC)
+//|						Initial CBaseObject implementation put in.  CChar reworked
+//to deal with only things it has to |						Proper constructor
+// written
+//|						Plans for CChar derived objects thought upon (notably CPC
+//and CNPC)
 //|
 //|						1.4		 		27 September, 2005
-//|						Added PlayerValues_st and NPCValues_st to allow saving wasted
-//memory on unnecesarry variables
-//|						Organized many functions to their respective areas and added
-//documentation for them. |						Changed itemLayers to a map
+//|						Added PlayerValues_st and NPCValues_st to allow saving
+//wasted memory on unnecesarry variables
+//|						Organized many functions to their respective areas and
+//added documentation for them. |						Changed itemLayers
+// to a map
 // o------------------------------------------------------------------------------------------------o
 
 #include "cchar.h"
 
 #include <algorithm>
 
-#include "subsystem/account.hpp"
 #include "ceffects.h"
 #include "cguild.h"
 #include "cjsengine.h"
@@ -66,18 +64,19 @@
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "regions.h"
-#include "speech.h"
-#include "skills.h"
-#include "stringutility.hpp"
-#include "utility/strutil.hpp"
-#include "teffect.h"
-#include "townregion.h"
 #include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
 #include "objectfactory.h"
 #include "power.h"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "stringutility.hpp"
+#include "subsystem/account.hpp"
+#include "teffect.h"
+#include "townregion.h"
+#include "utility/strutil.hpp"
 #include "weight.h"
 
 #define DEBUGMOVEMULTIPLIER 1.75
@@ -407,7 +406,7 @@ bool CChar::IsValidPlayer(void) const { return (mPlayer != nullptr); }
 //|					CChar::SetPathFail()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set number of times Pathfinding has failed for an NPC - resets
-//on success
+// on success
 // o------------------------------------------------------------------------------------------------o
 SI08 CChar::GetPathFail(void) const {
     SI08 rVal = DEFNPC_PATHFAIL;
@@ -425,7 +424,7 @@ void CChar::SetPathFail(SI08 newValue) {
 //|					CChar::SetPathResult()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd
-//event
+// event
 // o------------------------------------------------------------------------------------------------o
 SI08 CChar::GetPathResult(void) const {
     SI08 rVal = DEFNPC_PATHFAIL;
@@ -789,7 +788,7 @@ void CChar::DoThirst(CSocket *mSock) {
 //|	Date		-	21. Feb, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if the owner of the was offline for to long and remove him if
-//so.
+// so.
 // o------------------------------------------------------------------------------------------------o
 void CChar::CheckPetOfflineTimeout(void) {
     if (IsTamed() && IsNpc() && GetNpcAiType() != AI_PLAYERVENDOR) {
@@ -931,10 +930,10 @@ void CChar::SetNpc(bool newVal) {
 //|					CChar::SetAwake()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character (NPC) is permanently awake and
-//updating outside
-//|					standard region-checks. If set, these NPCs are not updated as part
-//of the |					regular region update loop, but in a separate loop
-//directly after
+// updating outside
+//|					standard region-checks. If set, these NPCs are not updated as
+//part of the |					regular region update loop, but in a separate loop
+// directly after
 // o------------------------------------------------------------------------------------------------o
 auto CChar::IsAwake(void) const -> bool {
     bool rVal = false;
@@ -1044,9 +1043,9 @@ void CChar::SetWar(bool newValue) {
 //|					CChar::SetPassive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is passive in combat. Primarily
-//used to
-//|					allow players to "tab out" of combat and not hit back even though
-//someone is |					hitting them
+// used to
+//|					allow players to "tab out" of combat and not hit back even
+//though someone is |					hitting them
 // o------------------------------------------------------------------------------------------------o
 bool CChar::IsPassive(void) const { return bools.test(BIT_ISPASSIVE); }
 void CChar::SetPassive(bool newValue) { bools.set(BIT_ISPASSIVE, newValue); }
@@ -1056,7 +1055,7 @@ void CChar::SetPassive(bool newValue) { bools.set(BIT_ISPASSIVE, newValue); }
 //|					CChar::HasStolen()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character has stolen something in the last
-//X minutes |					since their last death
+// X minutes |					since their last death
 // o------------------------------------------------------------------------------------------------o
 auto CChar::HasStolen() -> bool { return bools.test(BIT_HASSTOLEN); }
 auto CChar::HasStolen(bool newValue) -> void { bools.set(BIT_HASSTOLEN, newValue); }
@@ -1251,9 +1250,9 @@ void CChar::SetCasting(bool newValue) { bools.set(BIT_CASTING, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is casting a spell via JS engine
 //|	Notes		-	This is only a temporary measure until ALL code is switched over to
-//JS code
-//|					As it stands, it'll try and auto-direct cast if you set casting and
-//spell timeouts
+// JS code
+//|					As it stands, it'll try and auto-direct cast if you set casting
+//and spell timeouts
 // o------------------------------------------------------------------------------------------------o
 bool CChar::IsJSCasting(void) const { return bools.test(BIT_JSCASTING); }
 void CChar::SetJSCasting(bool newValue) { bools.set(BIT_JSCASTING, newValue); }
@@ -1408,7 +1407,7 @@ void CChar::SetTimer(cC_TID timerId, TIMERVAL value) {
 //|	Date		-	09/23/2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the poison strength of the character - used to poison
-//others in combat
+// others in combat
 // o------------------------------------------------------------------------------------------------o
 UI08 CChar::GetPoisonStrength(void) const { return PoisonStrength; }
 void CChar::SetPoisonStrength(UI08 value) {
@@ -1490,7 +1489,7 @@ void CChar::SetRunning(UI08 newValue) { running = newValue; }
 //|					CChar::SetStep()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the footstep sequence for the character for the purpose of
-//playing |					footstep sounds
+// playing |					footstep sounds
 // o------------------------------------------------------------------------------------------------o
 UI08 CChar::GetStep(void) const { return step; }
 void CChar::SetStep(UI08 newValue) { step = newValue; }
@@ -1542,7 +1541,7 @@ void InitializeWanderArea(CChar *c, SI16 xAway, SI16 yAway);
 //| Function	-	CChar::SetLocation()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets the location of the character to a specific set of
-//coordinates/world/instance
+// coordinates/world/instance
 // o------------------------------------------------------------------------------------------------o
 void CChar::SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) {
     Dirty(UT_LOCATION);
@@ -1620,7 +1619,7 @@ void CChar::SetAttacker(CChar *newValue) { attacker = CalcSerFromObj(newValue); 
 //|					CChar::SetAdvObj()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the "morex" identifier value of the previous advancement
-//used
+// used
 // o------------------------------------------------------------------------------------------------o
 UI16 CChar::GetAdvObj(void) const { return advObj; }
 void CChar::SetAdvObj(UI16 newValue) {
@@ -1754,7 +1753,7 @@ void CChar::SetGM(bool newValue) { priv.set(BIT_GM, newValue); }
 //|					CChar::SetBroadcast()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether the character is allowed to broadcast messages
-//globally
+// globally
 // o------------------------------------------------------------------------------------------------o
 bool CChar::CanBroadcast(void) const { return priv.test(BIT_BROADCAST); }
 void CChar::SetBroadcast(bool newValue) { priv.set(BIT_BROADCAST, newValue); }
@@ -1773,7 +1772,7 @@ void CChar::SetInvulnerable(bool newValue) { priv.set(BIT_INVULNERABLE, newValue
 //|					CChar::SetSingClickSer()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether player is allowed to see serials of objects
-//clicked
+// clicked
 // o------------------------------------------------------------------------------------------------o
 bool CChar::GetSingClickSer(void) const { return priv.test(BIT_SINGCLICKSER); }
 void CChar::SetSingClickSer(bool newValue) { priv.set(BIT_SINGCLICKSER, newValue); }
@@ -1801,7 +1800,7 @@ void CChar::SetGMPageable(bool newValue) { priv.set(BIT_GMPAGEABLE, newValue); }
 //|					CChar::SetSnoop()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether character can snoop in the backpacks of other
-//players and NPCs
+// players and NPCs
 // o------------------------------------------------------------------------------------------------o
 bool CChar::CanSnoop(void) const { return priv.test(BIT_SNOOP); }
 void CChar::SetSnoop(bool newValue) { priv.set(BIT_SNOOP, newValue); }
@@ -1820,7 +1819,7 @@ void CChar::SetCounselor(bool newValue) { priv.set(BIT_COUNSELOR, newValue); }
 //|					CChar::SetAllMove()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets character can move all items freely, regardless of their
-//moveable state
+// moveable state
 // o------------------------------------------------------------------------------------------------o
 bool CChar::AllMove(void) const { return priv.test(BIT_ALLMOVE); }
 void CChar::SetAllMove(bool newValue) {
@@ -1841,8 +1840,8 @@ void CChar::SetFrozen(bool newValue) { priv.set(BIT_FROZEN, newValue); }
 //| Function	-	CChar::ViewHouseAsIcon()
 //|					CChar::SetViewHouseAsIcon()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Checks/Sets whether the character views icons/deeds instead of actual
-//houses
+//| Purpose		-	Checks/Sets whether the character views icons/deeds instead of
+//actual houses
 // o------------------------------------------------------------------------------------------------o
 bool CChar::ViewHouseAsIcon(void) const { return priv.test(BIT_VIEWHOUSEASICON); }
 void CChar::SetViewHouseAsIcon(bool newValue) { priv.set(BIT_VIEWHOUSEASICON, newValue); }
@@ -1853,7 +1852,7 @@ void CChar::SetViewHouseAsIcon(bool newValue) { priv.set(BIT_VIEWHOUSEASICON, ne
 //|					CChar::SetNoNeedMana()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether mana is required for spellcasting for this
-//character
+// character
 // o------------------------------------------------------------------------------------------------o
 bool CChar::NoNeedMana(void) const { return priv.test(BIT_NONEEDMANA); }
 void CChar::SetNoNeedMana(bool newValue) { priv.set(BIT_NONEEDMANA, newValue); }
@@ -1873,7 +1872,7 @@ void CChar::SetDispellable(bool newValue) { priv.set(BIT_DISPELLABLE, newValue);
 //|					CChar::SetTempReflected()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether character is temporarily protected by the magic
-//reflect spell
+// reflect spell
 // o------------------------------------------------------------------------------------------------o
 bool CChar::IsTempReflected(void) const { return priv.test(BIT_TEMPREFLECTED); }
 void CChar::SetTempReflected(bool newValue) { priv.set(BIT_TEMPREFLECTED, newValue); }
@@ -1883,7 +1882,7 @@ void CChar::SetTempReflected(bool newValue) { priv.set(BIT_TEMPREFLECTED, newVal
 //|					CChar::SetPermReflected()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether character is permanently protected by the magic
-//reflect spell
+// reflect spell
 // o------------------------------------------------------------------------------------------------o
 bool CChar::IsPermReflected(void) const { return priv.test(BIT_PERMREFLECTED); }
 void CChar::SetPermReflected(bool newValue) { priv.set(BIT_PERMREFLECTED, newValue); }
@@ -1892,8 +1891,8 @@ void CChar::SetPermReflected(bool newValue) { priv.set(BIT_PERMREFLECTED, newVal
 //| Function	-	CChar::NoNeedReags()
 //|					CChar::SetNoNeedReags()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Checks/Sets whether magical reagents are required for spellcasting for
-//this character
+//| Purpose		-	Checks/Sets whether magical reagents are required for spellcasting
+//for this character
 // o------------------------------------------------------------------------------------------------o
 bool CChar::NoNeedReags(void) const { return priv.test(BIT_NONEEDREAGS); }
 void CChar::SetNoNeedReags(bool newValue) { priv.set(BIT_NONEEDREAGS, newValue); }
@@ -1904,7 +1903,7 @@ void CChar::SetNoNeedReags(bool newValue) { priv.set(BIT_NONEEDREAGS, newValue);
 //| Purpose		-	Duplicate character - used for splitting NPCs when hit in combat
 // o------------------------------------------------------------------------------------------------o
 CChar *CChar::Dupe(void) {
-    CChar *target = static_cast<CChar *>(ObjectFactory::GetSingleton().CreateObject(OT_CHAR));
+    CChar *target = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
     if (target == nullptr)
         return nullptr;
 
@@ -2074,7 +2073,7 @@ void CChar::CopyData(CChar *target) {
 //| Function	-	CChar::FlagColour()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Return character flag, which determines the color the character
-//highlights in
+// highlights in
 // o------------------------------------------------------------------------------------------------o
 FlagColors CChar::FlagColour(CChar *toCompare) {
     FlagColors retVal = FC_INNOCENT;
@@ -2116,7 +2115,7 @@ FlagColors CChar::FlagColour(CChar *toCompare) {
 //|	Date		-	April 7th, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all online chars and removes the character from their
-//sight
+// sight
 // o------------------------------------------------------------------------------------------------o
 void CChar::RemoveFromSight(CSocket *mSock) {
     CPRemoveItem toSend = (*this);
@@ -2139,7 +2138,7 @@ void CChar::RemoveFromSight(CSocket *mSock) {
 //|	Date		-	July 1st, 2020
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through nearby objects and removes them from the player's
-//sight
+// sight
 // o------------------------------------------------------------------------------------------------o
 auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
     if (mSock != nullptr) {
@@ -2287,7 +2286,7 @@ void CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight);
 //|	Function	-	CChar::Teleport()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates teleporting player and sends nearby objects after
-//teleporting
+// teleporting
 // o------------------------------------------------------------------------------------------------o
 auto CChar::Teleport() -> void {
     CSocket *mSock = GetSocket();
@@ -2481,7 +2480,7 @@ bool CChar::WearItem(CItem *toWear) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Takes the item off the character's paperdoll, ensuring that any stat
 //|					adjustments are made. Returns true if successfully
-//unequipped
+// unequipped
 // o------------------------------------------------------------------------------------------------o
 bool CChar::TakeOffItem(ItemLayers Layer) {
     bool rValue = false;
@@ -2780,7 +2779,7 @@ void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
 //|	Date		-	July 21, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves character to worldfile - returns true/false indicating the
-//success |					of the write operation
+// success |					of the write operation
 // o------------------------------------------------------------------------------------------------o
 bool CChar::Save(std::ostream &outStream) {
     bool rValue = false;
@@ -2814,7 +2813,7 @@ bool CChar::Save(std::ostream &outStream) {
 //| Date		-	13 March 2001
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Breaks the concentration of the character sending a message is a
-//socket exists
+// socket exists
 // o------------------------------------------------------------------------------------------------o
 void CChar::BreakConcentration(CSocket *sock) {
     if (IsMeditating()) {
@@ -2829,7 +2828,7 @@ void CChar::BreakConcentration(CSocket *sock) {
 //| Function	-	CChar::GetAggressorFlags()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of characters the player is marked as aggressor
-//towards
+// towards
 // o------------------------------------------------------------------------------------------------o
 auto CChar::GetAggressorFlags() const -> const std::unordered_map<SERIAL, TargetInfo> {
     return aggressorFlags;
@@ -2839,9 +2838,9 @@ auto CChar::GetAggressorFlags() const -> const std::unordered_map<SERIAL, Target
 //| Function	-  CChar::AddAggressorFlag()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Adds character serial to list of serials player is aggressor to, along
-//with timestamp
+// with timestamp
 //|					for when aggressor flag will timeout for that particular
-//serial
+// serial
 // o------------------------------------------------------------------------------------------------o
 auto CChar::AddAggressorFlag(SERIAL toAdd) -> void {
     if (aggressorFlags.count(toAdd) == 0) {
@@ -2873,9 +2872,9 @@ auto CChar::RemoveAggressorFlag(SERIAL toRemove) -> void {
 //|	Function	-	CChar::CheckAggressorFlag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if serial is in character's aggressorToList, and returns true
-//if it is,
-//|					or false if it is not, or if the timestamp has expired (at which
-//point it also |					removes the entry from the list)
+// if it is,
+//|					or false if it is not, or if the timestamp has expired (at
+//which point it also |					removes the entry from the list)
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckAggressorFlag(SERIAL toCheck) -> bool {
     auto it = aggressorFlags.find(toCheck);
@@ -2934,7 +2933,7 @@ auto CChar::UpdateAggressorFlagTimestamp(SERIAL toUpdate) -> void {
 //|	Function	-	CChar::AggressorFlagMaintenance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs maintenance on character's list of aggressor flags and
-//removes expired entries
+// removes expired entries
 // o------------------------------------------------------------------------------------------------o
 auto CChar::AggressorFlagMaintenance() -> void {
     // Loop through list of aggressor flags and add any serials with expired timers to a vector
@@ -2974,8 +2973,8 @@ auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, Target
 //| Function	-  CChar::AddPermaGreyFlag()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Adds character to list of characters player has a permagrey flag towards,
-//along |					with timestamp for when permagrey flag will timeout
-//for that particular serial (if ever)
+// along |					with timestamp for when permagrey flag will timeout
+// for that particular serial (if ever)
 // o------------------------------------------------------------------------------------------------o
 auto CChar::AddPermaGreyFlag(SERIAL toAdd) -> void {
     if (permaGreyFlags.count(toAdd) == 0) {
@@ -3007,9 +3006,9 @@ auto CChar::RemovePermaGreyFlag(SERIAL toRemove) -> void {
 //|	Function	-	CChar::CheckPermaGreyFlags()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if serial is in character's permaGreyFlags, and returns true
-//if it is,
-//|					or false if it is not, or if the timestamp has expired (at which
-//point it also |					removes the entry from the list)
+// if it is,
+//|					or false if it is not, or if the timestamp has expired (at
+//which point it also |					removes the entry from the list)
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckPermaGreyFlag(SERIAL toCheck) -> bool {
     auto it = permaGreyFlags.find(toCheck);
@@ -3068,7 +3067,7 @@ auto CChar::UpdatePermaGreyFlagTimestamp(SERIAL toUpdate) -> void {
 //|	Function	-	CChar::PermaGreyFlagMaintenance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs maintenance on character's list of permagrey flags and
-//removes expired entries
+// removes expired entries
 // o------------------------------------------------------------------------------------------------o
 auto CChar::PermaGreyFlagMaintenance() -> void {
     // Loop through list of permagrey flags and add any serials with expired timers to a vector
@@ -3097,7 +3096,7 @@ auto CChar::ClearPermaGreyFlags() -> void { permaGreyFlags.clear(); }
 //| Date		-	13 March 2001
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of ALL pets the character owns, regardless of where
-//they might be
+// they might be
 // o------------------------------------------------------------------------------------------------o
 GenericList<CChar *> *CChar::GetPetList(void) { return &petsOwned; }
 
@@ -3198,7 +3197,7 @@ auto CChar::RemoveOwnedItem(CItem *toRemove) -> void {
 //|	Date		-	15 February, 2002
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum hitpoints (or fixed maximum hitpoints) of the
-//object
+// object
 // o------------------------------------------------------------------------------------------------o
 UI16 CChar::GetMaxHP(void) {
     if ((maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed())
@@ -3437,7 +3436,7 @@ SI16 CChar::ActualDexterity(void) const { return CBaseObject::GetDexterity(); }
 //| Date		-	13 March 2001
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the effective dexterity (including modifications) of the
-//player
+// player
 // o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetDexterity(void) const {
     auto tempDex = static_cast<SI16>(CBaseObject::GetDexterity() + GetDexterity2());
@@ -4585,7 +4584,7 @@ void CChar::SendWornItems(CSocket *mSock) {
 //|	Function	-	CChar::WalkZ()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update character'z Z coordinate based on movement, and handle
-//falling
+// falling
 // o------------------------------------------------------------------------------------------------o
 void CChar::WalkZ(SI08 newZ) {
     oldLocZ = z;
@@ -5053,7 +5052,7 @@ void CChar::SetLastOnSecs(UI32 newValue) {
 //|					CChar::SetCreatedOn()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was
-//created
+// created
 // o------------------------------------------------------------------------------------------------o
 UI32 CChar::GetCreatedOn(void) const {
     UI32 rVal = 0;
@@ -5074,7 +5073,7 @@ void CChar::SetCreatedOn(UI32 newValue) {
 //|					CChar::SetPlayTime()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets/Updates play time (in minutes) of character since it was
-//created
+// created
 // o------------------------------------------------------------------------------------------------o
 auto CChar::GetPlayTime() const -> UI32 {
     UI32 rVal = 0;
@@ -6203,8 +6202,8 @@ void CChar::SetNPCGuild(UI16 newValue) {
 //| Function	-	CChar::GetNPCGuildJoined()
 //|					CChar::SetNPCGuildJoined()
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined NPC
-//guild
+//| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined
+//NPC guild
 // o------------------------------------------------------------------------------------------------o
 UI32 CChar::GetNPCGuildJoined(void) const {
     UI32 rVal = 0;
@@ -6878,9 +6877,10 @@ auto CChar::RemoveFromCombatIgnore(SERIAL toRemove) -> void { mNPC->combatIgnore
 //|	Function	-	CChar::CheckCombatIgnore()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if serial is in NPC's list of ignored targets in combat, and
-//|					returns true if it is, or false if it is not - or if the timestamp
-//has expired |					(at which point it also removes the entry from the
-//list)
+//|					returns true if it is, or false if it is not - or if the
+//timestamp
+// has expired |					(at which point it also removes the entry from
+// the list)
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckCombatIgnore(SERIAL toCheck) -> bool {
     auto it = mNPC->combatIgnore.find(toCheck);
@@ -6903,7 +6903,7 @@ auto CChar::CheckCombatIgnore(SERIAL toCheck) -> bool {
 //|	Function	-	CChar::CombatIgnoreMaintenance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Performs maintenance on list of character serials being ignored by
-//NPC in combat
+// NPC in combat
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CombatIgnoreMaintenance() -> void {
     // Loop through list of ignored targets in combat and add any serials with expired timers to a
@@ -7073,7 +7073,7 @@ UI08 CChar::GetOwnerCount(void) { return static_cast<UI08>(GetPetOwnerList()->Nu
 //|					CChar::SetControlSlotsUsed()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the total number of control slots used by a player's active
-//pets/followers
+// pets/followers
 // o------------------------------------------------------------------------------------------------o
 UI08 CChar::GetControlSlotsUsed(void) const {
     UI08 rVal = DEFPLAYER_CONTROLSLOTSUSED;
@@ -7684,7 +7684,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
 //| Function	-	CChar::CheckDamageTrack()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Check if char with specified serial dealt damage to character within
-//last X secs
+// last X secs
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckDamageTrack(SERIAL serialToCheck, TIMERVAL lastXSeconds) -> bool {
     TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
@@ -7866,7 +7866,7 @@ auto CChar::CountHousesOwned(bool countCoOwnedHouses) -> UI32 {
         toPass[0] = GetSerial();
         toPass[1] = cwmWorldState->ServerData()->TrackHousesPerAccount();
         toPass[2] = countCoOwnedHouses;
-        ObjectFactory::GetSingleton().IterateOver(OT_MULTI, b, toPass, &CountHousesOwnedFunctor);
+        ObjectFactory::shared().IterateOver(OT_MULTI, b, toPass, &CountHousesOwnedFunctor);
     }
     else {
         std::for_each(ownedItems.begin(), ownedItems.end(), [this, &b](CItem *oItem) {

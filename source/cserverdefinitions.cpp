@@ -4,12 +4,12 @@
 #include <filesystem>
 #include <memory>
 
-#include "subsystem/console.hpp"
 #include "cscript.h"
-#include "ssection.h"
 #include "funcdecl.h"
 #include "scriptc.h"
+#include "ssection.h"
 #include "stringutility.hpp"
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;
@@ -58,8 +58,8 @@ auto CServerDefinitions::Startup() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reload the dfn files.
 //|	Changes		-	04042004 - Added the code to clear out the
-//|									Auto-AddMenu items so there isn't any
-//duplication in the |									multimap
+//|									Auto-AddMenu items so there isn't
+//any duplication in the | multimap
 // o------------------------------------------------------------------------------------------------o
 auto CServerDefinitions::Reload() -> bool {
     // We need to clear out the AddMenuItem Map
@@ -334,7 +334,7 @@ auto CServerDefinitions::BuildPriorityMap(DEFINITIONCATEGORIES category, UI08 &w
     }
 #if defined(UOX_DEBUG_MODE)
     //	Console::shared().Warning( util::format( "Failed to open priority.nfo for reading in %s
-    //DFN", dirNames[category].c_str() ));
+    // DFN", dirNames[category].c_str() ));
 #endif
     wasPrioritized = 2;
 }

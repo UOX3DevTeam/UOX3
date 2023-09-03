@@ -7,17 +7,17 @@
 //| Changes		-	Version History
 //|
 //|					1.0			2/22/2006
-//|					Extracted JSObject handling from cScript and encapsulated it in a
-//global class. |					Moved global JSEngine loading code into the
-//class. |					Created CJSRuntime class to handle multiple runtimes
+//|					Extracted JSObject handling from cScript and encapsulated it in
+//a global class. |					Moved global JSEngine loading code into the
+// class. |					Created CJSRuntime class to handle multiple runtimes
 //(for threading purposes).
 // o------------------------------------------------------------------------------------------------o
 //
 #include "cjsengine.h"
 #include <algorithm>
 
-#include "subsystem/console.hpp"
 #include "funcdecl.h"
+#include "subsystem/console.hpp"
 
 #include "uoxjsclasses.h"
 #include "uoxjsmethods.h"

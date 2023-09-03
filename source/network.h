@@ -18,10 +18,10 @@
 #include <vector>
 
 #if !defined(_WIN32)
-#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
+#include <sys/socket.h>
 #else
 #include <winsock2.h>
 #endif

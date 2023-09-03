@@ -10,11 +10,10 @@
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "combat.h"
-#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
-#include "cserverdefinitions.h"
 #include "cscript.h"
+#include "cserverdefinitions.h"
 #include "csocket.h"
 #include "dictionary.h"
 #include "funcdecl.h"
@@ -24,8 +23,9 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #include "weight.h"
 
@@ -42,7 +42,7 @@ const UI16 CREATE_MENU_OFFSET = 5000; // This is how we differentiate a menu but
 //|	Function	-	CSkills::CalcRankAvg()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate average rank of item based on player's skillpoints in
-//skills |					required to craft item
+// skills |					required to craft item
 // o------------------------------------------------------------------------------------------------o
 SI32 CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
     // If rank system is not enabled, assume perfectly crafted item each time
@@ -172,7 +172,7 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, UI08 rank, UI08 maxrank) {
 //|	Function	-	CSkills::RegenerateOre()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Regenerate Ore in a resource region based on UOX.INI Ore respawn
-//settings
+// settings
 // o------------------------------------------------------------------------------------------------o
 void CSkills::RegenerateOre(SI16 grX, SI16 grY, UI08 worldNum) {
     MapResource_st *orePart = MapRegion->GetResource(grX, grY, worldNum);
@@ -203,12 +203,11 @@ void CSkills::RegenerateOre(SI16 grX, SI16 grY, UI08 worldNum) {
 //| Function	-	CSkills::SmeltOre();
 //| Modified	-	(February 19, 2000)
 // o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Rewritten to use case and structure, you'll find it is easier to make
-//it
-//|					scriptable now. The structure is pretty much all that'd be needed
-//for any
-//|					future ore->ingot conversions. Scripting the ore would probably be
-//even |					simpler, requires less info
+//| Purpose		-	Rewritten to use case and structure, you'll find it is easier to
+//make it
+//|					scriptable now. The structure is pretty much all that'd be
+//needed for any |					future ore->ingot conversions. Scripting the
+//ore would probably be even |					simpler, requires less info
 // o------------------------------------------------------------------------------------------------o
 void CSkills::SmeltOre(CSocket *s) {
     VALIDATESOCKET(s);
@@ -448,7 +447,7 @@ void CSkills::SmeltOre(CSocket *s) {
 //|	Function	-	CSkills::CalculatePetControlChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate a player's chance (returned as value between 0 to 1000) of
-//controlling |					(having commands accepted) a follower
+// controlling |					(having commands accepted) a follower
 // o------------------------------------------------------------------------------------------------o
 UI16 CSkills::CalculatePetControlChance(CChar *mChar, CChar *Npc) {
     SI16 petOrneriness = static_cast<SI16>(Npc->GetOrneriness());
@@ -509,11 +508,11 @@ UI16 CSkills::CalculatePetControlChance(CChar *mChar, CChar *Npc) {
 //|	Function	-	CSkills::CheckSkill()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to check a players skill based on the highskill and lowskill it
-//was called
-//|					with.  If skill is < than lowskill check will fail, but player will
-//gain in the
-//|					skill, if the players skill is > than highskill player will not
-//gain
+// was called
+//|					with.  If skill is < than lowskill check will fail, but player
+//will gain in the
+//|					skill, if the players skill is > than highskill player will
+//not gain
 // o------------------------------------------------------------------------------------------------o
 bool CSkills::CheckSkill(CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill) {
     bool skillCheck = false;
@@ -652,14 +651,14 @@ bool CSkills::CheckSkill(CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool 
 //|	Date		-	Jan 29, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do atrophy for player c:
-//|					find sk in our cronological list of atrophy skills, move it to the
-//front, check
-//|					total aginst skillCap to see if we need to lower a skill, if we do,
-//again search
-//|					skills for a skill that can be lowered, if one is found lower it
-//and increase
+//|					find sk in our cronological list of atrophy skills, move it to
+//the front, check
+//|					total aginst skillCap to see if we need to lower a skill, if we
+//do, again search
+//|					skills for a skill that can be lowered, if one is found lower
+//it and increase
 //|					sk, if we can't find one, do nothing if atrophy is not need,
-//increase sk.
+// increase sk.
 // o------------------------------------------------------------------------------------------------o
 void CSkills::HandleSkillChange(CChar *c, UI08 sk, SI08 skillAdvance, bool success) {
     UI32 totalSkill = 0;
@@ -1046,7 +1045,7 @@ void HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, UI16 gumpIndex
 //|	Function	-	CSkills::TrackingMenu()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up additional tracking menu with options listed in
-//tracking.dfn
+// tracking.dfn
 // o------------------------------------------------------------------------------------------------o
 void CSkills::TrackingMenu(CSocket *s, UI16 gmindex) {
     VALIDATESOCKET(s);
@@ -1090,7 +1089,7 @@ void CSkills::Track(CChar *i) {
 //|	Function	-	CSkills::UpdateSkillLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the skill of this character based on the characters
-//baseskill and stats
+// baseskill and stats
 // o------------------------------------------------------------------------------------------------o
 void CSkills::UpdateSkillLevel(CChar *c, UI08 s) const {
     UI16 sStr = cwmWorldState->skill[s].strength;
@@ -1220,9 +1219,9 @@ void CSkills::Smith(CSocket *s) {
 //|	Function	-	CSkills::AnvilTarget()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for the presence of an anvil when player attempts to use
-//smithing skill,
-//|					then verify that there is enough of the chosen ingot type in their
-//backpack(s)
+// smithing skill,
+//|					then verify that there is enough of the chosen ingot type in
+//their backpack(s)
 // o------------------------------------------------------------------------------------------------o
 void CSkills::AnvilTarget(CSocket *s, CItem &item, MiningData_st *oreType) {
     VALIDATESOCKET(s);
@@ -1703,7 +1702,7 @@ void CSkills::AdvanceStats(CChar *s, UI08 sk, bool skillsuccess) {
             //  it is divided into 2 "dices":
             //  first dice: get the success-skillpoint of the stat out of skills.dfn in dependence
             //				of the racial statCap for this stat... x means stat is x% of
-            //statCap
+            // statCap
             //				=> get skillpoint for x
             //  sec. dice:	get the chance for this stat to increase when the used skill has
             //  been used
@@ -1712,7 +1711,7 @@ void CSkills::AdvanceStats(CChar *s, UI08 sk, bool skillsuccess) {
             //  last make it a integer between 0 and 1000 normally (negative or 0==no chance)
 
             //	special dice 1: the stat wont increase above x% of the racial statCap. x% is
-            //equivalent to dice 2.
+            // equivalent to dice 2.
             //  special dice 2: skill failed: decrease chance by 50%
 
             //  k, first let us calculate both dices
@@ -2327,7 +2326,7 @@ void CallGuards(CChar *mChar, CChar *targChar);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player snoops another PC/NPC's or a tamed animals pack
 //|					Snooping functionality now handled by skill script:
-//js/skill/snooping.js
+// js/skill/snooping.js
 // o------------------------------------------------------------------------------------------------o
 void CSkills::Snooping(CSocket *s, CChar *target, CItem *pack) {
     CChar *mChar = s->CurrcharObj();

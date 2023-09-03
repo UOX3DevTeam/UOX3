@@ -1,7 +1,7 @@
 #ifndef __OSUNIQUE_HPP
 #define __OSUNIQUE_HPP
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 #if !defined(_WIN32)

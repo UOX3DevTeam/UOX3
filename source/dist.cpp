@@ -81,8 +81,8 @@ bool ObjInRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
 //|	Function	-	ObjInRangeSquare()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object's location is within a certain distance of
-//another |					object, but checking using a square instead of a
-//radius
+// another |					object, but checking using a square instead of a
+// radius
 // o------------------------------------------------------------------------------------------------o
 bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance) {
     if (!ValidateObject(a) || !ValidateObject(b))
@@ -115,8 +115,8 @@ bool ObjInOldRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
 //|	Function	-	ObjInOldRangeSquare()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object's old location is within a certain distance of
-//another |					object, but checking using a square instead of a
-//radius
+// another |					object, but checking using a square instead of a
+// radius
 // o------------------------------------------------------------------------------------------------o
 bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance) {
     if (!ValidateObject(a) || !ValidateObject(b))

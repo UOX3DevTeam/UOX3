@@ -20,9 +20,9 @@
 #include "magic.h"
 #include "movement.h"
 
+#include "regions.h"
 #include "skills.h"
 #include "townregion.h"
-#include "regions.h"
 // #include "worldmain.h"
 
 #undef DBGFILE
@@ -1219,9 +1219,9 @@ SI16 CHandleCombat::CalcHighDamage(CChar *p) {
 //|	Date		-	3/03/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks the defense of checkItem vs the defense of currItem and
-//returns
+// returns
 //|							the item with the greater Def and its def
-//value
+// value
 // o------------------------------------------------------------------------------------------------o
 CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, SI32 &currDef,
                                WeatherType resistType) {
@@ -1237,7 +1237,7 @@ CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, SI32 &currDef,
 //|	Date		-	3/03/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR
-//and |							returns it along with its def value
+// and |							returns it along with its def value
 // o------------------------------------------------------------------------------------------------o
 CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal,
                                   WeatherType resistType) {
@@ -1330,7 +1330,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
 //|	Date		-	3/03/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the defense value of a specific location or the entire
-//character based on hitLoc
+// character based on hitLoc
 // o------------------------------------------------------------------------------------------------o
 UI16 CHandleCombat::CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType) {
     if (!ValidateObject(mChar))
@@ -1390,7 +1390,7 @@ UI16 CHandleCombat::CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTyp
 //|	Function	-	CHandleCombat::CombatAnimsNew()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for characters (including gargoyles) in
-//clients v7.0.0.0+
+// clients v7.0.0.0+
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatAnimsNew(CChar *i) {
     if (!ValidateObject(i))
@@ -1483,7 +1483,7 @@ void CHandleCombat::CombatAnimsNew(CChar *i) {
 //|	Function	-	CHandleCombat::CombatOnHorse()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for mounted characters in clients v6.x and
-//below
+// below
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnHorse(CChar *i) {
     if (!ValidateObject(i))
@@ -1534,7 +1534,7 @@ void CHandleCombat::CombatOnHorse(CChar *i) {
 //|	Function	-	CHandleCombat::CombatOnFoot()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for characters on foot in clients v6.x and
-//below
+// below
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnFoot(CChar *i) {
     if (!ValidateObject(i))
@@ -1819,7 +1819,7 @@ SI16 CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon
 //|	Function	-	CHandleCombat::AdjustArmorClassDamage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adjusts the damage dealt to defender based on potential armour class
-//weakness
+// weakness
 // o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CItem *attackerWeapon,
                                            SI16 baseDamage, UI08 hitLoc) {
@@ -2015,7 +2015,7 @@ SI08 CHandleCombat::CalculateHitLoc(void) {
 //|	Function	-	CHandleCombat::ApplyDamageBonuses()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies damage bonuses based on race/weather weakness and character
-//skills
+// skills
 // o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
                                        UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage) {
@@ -2260,7 +2260,7 @@ SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CCh
 //|	Function	-	CHandleCombat::ApplyDefenseModifiers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies defense modifiers based on shields/parrying, armor values
-//and elemental damage
+// and elemental damage
 // o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
                                           UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage,
@@ -2588,7 +2588,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
 //|	Function	-	CHandleCombat::CalcDamage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate damage based on hit location, damage bonuses, defense
-//modifiers
+// modifiers
 // o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc) {
     SI16 damage = -1;
@@ -2789,7 +2789,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             // FORMULA: Hit Chance% = (( [Attacker's Combat Ability + 20] * [100% + Attacker's Hit
             // Chance Increase] ) divided by
             //	 ( [Defender's Combat Ability + 20] * [100% + Defender's Defense Chance Increase] *
-            //2 )) * 100
+            // 2 )) * 100
             // For AoS and higher, always give attacker at least 2% chance to hit
             R32 attHitChanceBonus = 0;
             R32 defDefenseChanceBonus = 0;
@@ -3152,7 +3152,8 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
                     case 2:
                         CastSpell(npcAttack, cDefend, 38);
                         break; // Paralyze
-                               // case 3:		CastSpell( npcAttack, cDefend, 33 );		break;
+                               // case 3:		CastSpell( npcAttack, cDefend, 33 );
+                               // break;
                         // // Blade Spirits
                     }
                     break;

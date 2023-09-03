@@ -1,9 +1,9 @@
 #ifndef __CTHREADQUEUE_H__
 #define __CTHREADQUEUE_H__
 
-#include <string>
-#include <queue>
 #include <mutex>
+#include <queue>
+#include <string>
 
 // o------------------------------------------------------------------------------------------------o
 enum MessageType {

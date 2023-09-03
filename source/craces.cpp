@@ -8,9 +8,9 @@
 #include "citem.h"
 #include "cjsengine.h"
 #include "classes.h"
-#include "subsystem/console.hpp"
 #include "cserverdefinitions.h"
 #include "csocket.h"
+#include "subsystem/console.hpp"
 
 #include "funcdecl.h"
 
@@ -333,7 +333,7 @@ void cRaces::ApplyRace(CChar *s, RACEID x, bool always) {
 //|	Function	-	cRaces::BeardInRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified colour is a valid beard colour for specified
-//race
+// race
 // o------------------------------------------------------------------------------------------------o
 bool cRaces::BeardInRange(COLOUR color, RACEID x) const {
     if (InvalidRace(x))
@@ -555,7 +555,7 @@ SI32 cRaces::DamageFromSkill(SI32 skill, RACEID x) const {
 //|	Function	-	cRaces::FightPercent()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns positive/negative fight damage bonus for race x with skill
-//skill
+// skill
 // o------------------------------------------------------------------------------------------------o
 SI32 cRaces::FightPercent(SI32 skill, RACEID x) const {
     if (InvalidRace(x))
@@ -628,7 +628,7 @@ void cRaces::RacialNeutral(RACEID race, RACEID neutral) {
 //|	Function	-	cRaces::LanguageMin()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets minimum (spirit speak?) skill required to understand
-//race's language
+// race's language
 // o------------------------------------------------------------------------------------------------o
 SKILLVAL cRaces::LanguageMin(RACEID x) const { return races[x]->LanguageMin(); }
 void cRaces::LanguageMin(SKILLVAL toSetTo, RACEID race) {
@@ -1083,7 +1083,7 @@ void CRace::ArmourClassRestriction(ARMORCLASS newValue) { armourRestrict = newVa
 //|	Function	-	cRace::WeatherSeconds()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets interval at which members of a race burn from a given
-//weather type
+// weather type
 // o------------------------------------------------------------------------------------------------o
 SECONDS CRace::WeatherSeconds(WeatherType iNum) const { return weathSecs[iNum]; }
 void CRace::WeatherSeconds(SECONDS newValue, WeatherType iNum) { weathSecs[iNum] = newValue; }
@@ -1092,7 +1092,7 @@ void CRace::WeatherSeconds(SECONDS newValue, WeatherType iNum) { weathSecs[iNum]
 //|	Function	-	cRace::WeatherDamage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how much damage members of race take from a given weather
-//type when they burn
+// type when they burn
 // o------------------------------------------------------------------------------------------------o
 SI08 CRace::WeatherDamage(WeatherType iNum) const { return weathDamage[iNum]; }
 void CRace::WeatherDamage(SI08 newValue, WeatherType iNum) { weathDamage[iNum] = newValue; }
@@ -1101,7 +1101,7 @@ void CRace::WeatherDamage(SI08 newValue, WeatherType iNum) { weathDamage[iNum] =
 //|	Function	-	cRace::LanguageMin()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets minimum language skill (spirit speak?) required to
-//understand race's language
+// understand race's language
 // o------------------------------------------------------------------------------------------------o
 SKILLVAL CRace::LanguageMin(void) const { return languageMin; }
 void CRace::LanguageMin(SKILLVAL newValue) { languageMin = newValue; }
@@ -1118,7 +1118,7 @@ void CRace::VisibilityRange(RANGE newValue) { visDistance = newValue; }
 //|	Function	-	cRace::AffectedBy()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether members of race are affected by a given weather
-//type
+// type
 // o------------------------------------------------------------------------------------------------o
 bool CRace::AffectedBy(WeatherType iNum) const { return weatherAffected.test(iNum); }
 void CRace::AffectedBy(bool value, WeatherType iNum) { weatherAffected.set(iNum, value); }
@@ -1153,7 +1153,7 @@ void CRace::SetHungerDamage(SI16 newValue) { hungerDamage = newValue; }
 //|					cRace::SetThirstDrain
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of stamina drain members of race suffer when
-//thirsty
+// thirsty
 // o------------------------------------------------------------------------------------------------o
 SI16 CRace::GetThirstDrain(void) const { return thirstDrain; }
 void CRace::SetThirstDrain(SI16 newValue) { thirstDrain = newValue; }
@@ -1178,7 +1178,7 @@ void CRace::DoesThirst(bool newValue) { doesThirst = newValue; }
 //|	Function	-	cRaces::CanEquipItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether a given race can equip a given item, based on lists
-//of allowed |					or banned equipment from dfndata/race/races.dfn
+// of allowed |					or banned equipment from dfndata/race/races.dfn
 // o------------------------------------------------------------------------------------------------o
 bool CRace::CanEquipItem(UI16 itemId) const {
     if (allowedEquipment.size() > 0) {

@@ -5,16 +5,16 @@
 //
 
 #include "stringutility.hpp"
-#include <cctype>
-#include <regex>
-#include <locale>
+#include "utility/strutil.hpp"
 #include <algorithm>
+#include <cctype>
+#include <codecvt>
 #include <cstdio>
 #include <cstring>
-#include <stdexcept>
 #include <filesystem>
-#include <codecvt>
-#include "utility/strutil.hpp"
+#include <locale>
+#include <regex>
+#include <stdexcept>
 using namespace std::string_literals;
 
 namespace oldstrutil {

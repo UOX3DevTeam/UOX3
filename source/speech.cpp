@@ -16,16 +16,16 @@
 #include "funcdecl.h"
 #include "movement.h"
 
+#include "other/uoxversion.hpp"
 #include "skills.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-#include "other/uoxversion.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ClilocMessage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system
-//message
+// message
 // o------------------------------------------------------------------------------------------------o
 void ClilocMessage(CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum,
                    const char *types = "", ...) {
@@ -71,7 +71,7 @@ void ClilocMessage(CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, U
 //|	Function	-	ClilocMessage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if
-//said by srcObj
+// said by srcObj
 // o------------------------------------------------------------------------------------------------o
 void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font,
                    UI32 messageNum, bool sendAll, const char *types = "", ...) {
@@ -185,8 +185,8 @@ UnicodeTypes FindLanguage(CSocket *s, UI16 offset) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function was adapted to be used with the new code
 //|						in the console thread that allows text to be entered
-//on |						the console and it be shipped out to all logged in
-//players.
+// on |						the console and it be shipped out to all logged in
+// players.
 //|
 //|	Changes		-	  (February 27, 2000)
 // o------------------------------------------------------------------------------------------------o
@@ -240,7 +240,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
 //|
 //|	Notes		-	Unicode speech format
 //|					byte=char, short=char[2], int=char[4], wchar=char[2]=unicode
-//character
+// character
 //|
 //|					Message Sent By Client:
 //|					0xAD - Unicode Speech Request
@@ -250,21 +250,21 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
 //|					short color 4,5
 //|					short font 6,7
 //|					UI08[4] lang (null terminated, "enu " for US english.)
-//8,9,10,11 |					wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
+// 8,9,10,11 |					wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
 //|
 //|					Message Sent By Server:
 //|					Unicode Speech message(Variable # of bytes)
 //|					·	BYTE cmd
-//0 |					·	BYTE[2] blockSize
-//1-2 |					·	BYTE[4] ID
-//3-6 |					·	BYTE[2] Model
-//7-8 |					·	BYTE Type
-//9 |					·	BYTE[2] Color
-//10-11 |					·	BYTE[2] Font
-//12-13 |					·	BYTE[4] Language
-//14-17 (3 byte unicode language, mirrored from client) |					·
-//BYTE[30] Name										18-47 |
-//·	BYTE[?][2] Msg - Null Terminated (blockSize - 48)	48+?
+// 0 |					·	BYTE[2] blockSize
+// 1-2 |					·	BYTE[4] ID
+// 3-6 |					·	BYTE[2] Model
+// 7-8 |					·	BYTE Type
+// 9 |					·	BYTE[2] Color
+// 10-11 |					·	BYTE[2] Font
+// 12-13 |					·	BYTE[4] Language
+// 14-17 (3 byte unicode language, mirrored from client) |					·
+// BYTE[30] Name										18-47
+// | ·	BYTE[?][2] Msg - Null Terminated (blockSize - 48)	48+?
 // o------------------------------------------------------------------------------------------------o
 bool CPITalkRequest::Handle(void) {
     if (HandleCommon())

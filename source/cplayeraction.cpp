@@ -1,19 +1,19 @@
 
 #include "books.h"
 
-#include "ceffects.h"
-#include "cgump.h"
-#include "cguild.h"
 #include "cchar.h"
+#include "ceffects.h"
+#include "cguild.h"
+#include "cgump.h"
 #include "citem.h"
 #include "cjsmapping.h"
+#include "classes.h"
 #include "cmultiobj.h"
+#include "craces.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "cskillclass.h"
 #include "csocket.h"
-#include "craces.h"
-#include "classes.h"
 
 #include "cmagic.h"
 #include "combat.h"
@@ -27,8 +27,8 @@
 #include "regions.h"
 #include "skills.h"
 #include "ssection.h"
-#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 #include "useful.h"
 #include "weight.h"
@@ -93,7 +93,7 @@ void Bounce(CSocket *bouncer, CItem *bouncing, UI08 mode = 5) {
 //|	Function	-	PickupBounce()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating
-//item.
+// item.
 // o------------------------------------------------------------------------------------------------o
 void PickupBounce(CSocket *bouncer, UI08 mode = 0) {
     if (bouncer == nullptr)
@@ -112,9 +112,9 @@ void PickupBounce(CSocket *bouncer, UI08 mode = 0) {
 //|					dropped into said pack (only if it's pileable), if found
 //|					ensures the amount won't go over 65535 (the limit how large
 //|					an item can stack) then stacks it. If the item is not
-//stackable
+// stackable
 //|					or it cannot stack the item with a pile and have an amount
-//that |					is <= 65355 then it creates a new pile.
+// that |					is <= 65355 then it creates a new pile.
 //|
 //|	Changes		-	09/09/2001 - returns true if item deleted
 //|					09/25/2002 - Weight fixes
@@ -754,8 +754,8 @@ bool CPIEquipItem::Handle(void) {
 //|	Function	-	DropOnPC()
 //|	Changes		-	September 14th, 2001, returns true if item deleted
 //|				-	September 25, 2002, Weight fixes
-//|				-	September 21st, 2003, moved into seperate file and few other minor
-//tweaks
+//|				-	September 21st, 2003, moved into seperate file and few other
+//minor tweaks
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped on a character
 // o------------------------------------------------------------------------------------------------o
@@ -1090,7 +1090,7 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
 //|	Function	-	CheckForValidDropLocation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for a valid drop location at the location where client
-//attempts to drop an item
+// attempts to drop an item
 // o------------------------------------------------------------------------------------------------o
 bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI08 z) {
     bool dropLocationBlocked = false;
@@ -1372,7 +1372,7 @@ void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CIte
 //|	Function	-	ValidateLockdownAccess()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if player has access to a locked down item as an owner,
-//co-owner or friend
+// co-owner or friend
 // o------------------------------------------------------------------------------------------------o
 bool ValidateLockdownAccess(CChar *mChar, CSocket *mSock, CItem *itemToCheck, bool checkFriend) {
     CMultiObj *iMulti = itemToCheck->GetMultiObj();
@@ -1916,7 +1916,7 @@ UI08 BestSkill(CChar *mChar, SKILLVAL &skillLevel) {
 //|	Function	-	GetSkillProwessTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches the characters "prowess" and "skill" title based upon
-//titles.dfn |                 entries and characters best skill
+// titles.dfn |                 entries and characters best skill
 // o------------------------------------------------------------------------------------------------o
 void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
     if (cwmWorldState->prowessTitles.empty())
@@ -3162,7 +3162,7 @@ ItemTypes FindItemTypeFromId(UI16 idToFind) {
 //|	Function	-	FindItemType()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find an item's type, or try to find it's type from its ID if no type
-//is specified
+// is specified
 // o------------------------------------------------------------------------------------------------o
 ItemTypes FindItemType(CItem *i) {
     ItemTypes iType = i->GetType();
@@ -3244,8 +3244,8 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType)
             if (cwmWorldState->ServerData()->LootingIsCrime()) {
                 bool willCrim = false;
                 if (ValidateObject(iChar)) {
-                    // if the corpse is from an innocent player, and is not our own corpse				if(
-                    // otherCheck and if the corpse is not from an enemy/allied guild
+                    // if the corpse is from an innocent player, and is not our own corpse
+                    // if( otherCheck and if the corpse is not from an enemy/allied guild
                     // && guildCheck and if the races are not allied/enemy
                     // && raceCheck )
                     willCrim = WillResultInCriminal(ourChar, iChar);
@@ -3297,9 +3297,9 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Player double clicks on a character or item
 //|	Changes		-	09/22/2002 - Removed piece of code which is not needed. Cooking of
-//raw
-//|						fish shouldn't produce cooked ribs, people can cook the fish
-//after filleting with a knife.
+// raw
+//|						fish shouldn't produce cooked ribs, people can cook the
+//fish after filleting with a knife.
 // o------------------------------------------------------------------------------------------------o
 bool CPIDblClick::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
@@ -3419,9 +3419,9 @@ bool CPIDblClick::Handle(void) {
 //|	Function	-	AppendData()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add data onto the end of the string in singleclick() based on an
-//items type
+// items type
 //|					This is used by legacy singleclick names that don't show
-//tooltips
+// tooltips
 // o------------------------------------------------------------------------------------------------o
 const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     std::string dataToAdd;
@@ -3490,7 +3490,7 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
 //|	Function	-	CPISingleClick::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item or character is single-clicked (also used for
-//AllNames macro)
+// AllNames macro)
 // o------------------------------------------------------------------------------------------------o
 bool CPISingleClick::Handle(void) {
     if (objectId == INVALIDSERIAL) // invalid

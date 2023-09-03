@@ -21,9 +21,9 @@
 #include "regions.h"
 #include "skills.h"
 #include "ssection.h"
-#include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 
@@ -122,7 +122,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         cCreated = CreateRandomNPC(npcCreate->NpcListData());
     }
     else {
-        cCreated = static_cast<CChar *>(ObjectFactory::GetSingleton().CreateObject(OT_CHAR));
+        cCreated = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
         if (cCreated == nullptr)
             return nullptr;
 
@@ -222,9 +222,9 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, UI16
 //|	Function	-	CCharStuff::NpcListLookup()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieves entries from a specified NPCLIST and builds a vector
-//that's provided
-//|					for ChooseNpcToCreate() function to perform a weighted random
-//selection
+// that's provided
+//|					for ChooseNpcToCreate() function to perform a weighted
+//random selection
 // o------------------------------------------------------------------------------------------------o
 auto CCharStuff::NpcListLookup(const std::string &npclist) -> std::string {
     auto sect = "NPCLIST "s + npclist;
@@ -524,20 +524,20 @@ void InitializeWanderArea(CChar *c, SI16 xAway, SI16 yAway) {
 //|	Changes		-	06/26/2020	-	Added support for instanceId
 //|
 //|	Changes		-	04/20/2002	-	(Type 69) xos and yos (X OffSet, Y OffSet)
-//|									are used to find a random number that is
-//then added to the spawner's
-//|									x and y (Using the spawner's z) and then
-//place the NPC anywhere in
-//|									a square around the spawner. This square is
-//random anywhere from -10
-//|									to +10 from the spawner's location (for x
-//and y) If the place chosen
-//|									is not a valid position (the NPC can't walk
-//there) then a new place
-//|									will be chosen, if a valid place cannot be
-//found in a certain # of
-//|									tries (50),the NPC will be placed directly
-//on the spawner and the
+//|									are used to find a random number that
+//is then added to the spawner's
+//|									x and y (Using the spawner's z) and
+//then place the NPC anywhere in
+//|									a square around the spawner. This square
+//is random anywhere from -10
+//|									to +10 from the spawner's location (for
+//x and y) If the place chosen
+//|									is not a valid position (the NPC can't
+//walk there) then a new place
+//|									will be chosen, if a valid place cannot
+//be found in a certain # of
+//|									tries (50),the NPC will be placed
+//directly on the spawner and the
 //|									server op will be warned.
 // o------------------------------------------------------------------------------------------------o
 void CCharStuff::FindSpotForNPC(CChar *cCreated, const SI16 originX, const SI16 originY,
@@ -710,7 +710,7 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
 //|	Function	-	SetRandomName()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets a character with a random name from NPC namelists in
-//namelists.dfn
+// namelists.dfn
 // o------------------------------------------------------------------------------------------------o
 void SetRandomName(CChar *s, const std::string &namelist) {
     std::string sect = std::string("RANDOMNAME ") + namelist;
