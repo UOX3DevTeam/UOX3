@@ -7,10 +7,12 @@
 #include <fstream>
 #include <stdexcept>
 #if defined(_WIN32)
-#include <iphlpapi.h>
-#include <stringapiset.h>
+// clang-format off
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <iphlpapi.h>
+#include <stringapiset.h>
+// clang-format on
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "IPHLPAPI.lib")
