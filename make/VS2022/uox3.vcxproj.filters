@@ -20,39 +20,11 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{5dc0e64e-1161-4bdd-b7a9-08309a58eb14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Script">
-      <UniqueIdentifier>{e69fb852-15bb-499d-a73e-13f7b97c87b5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\UOData">
       <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\UOData">
-      <UniqueIdentifier>{d191cb74-b6ab-4daa-9a7d-23c417c8efa5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Utility">
-      <UniqueIdentifier>{39d50936-dc83-4b6c-b219-2f79d292d75b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Utility">
       <UniqueIdentifier>{6a0862ae-8f52-4d2e-bac1-51e13e865632}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Base Objects">
-      <UniqueIdentifier>{9a0e0d95-1028-413d-916f-c79b93d05203}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\JS Engine">
-      <UniqueIdentifier>{d08079d3-ca4f-47c2-834e-b2982e2cc5d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Network">
-      <UniqueIdentifier>{6120db4f-bb2e-449f-b847-1547b395dee6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Other">
-      <UniqueIdentifier>{b53b55e3-1e33-4ebf-a60f-a7e98258942c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Subsystem">
-      <UniqueIdentifier>{4e9f44ee-ffe6-4241-9ba9-faa06b8bcd9b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
@@ -311,242 +283,243 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
-    <ClInclude Include="..\..\source\cserverdata.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cserverdefinitions.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\dictionary.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\scriptc.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\ssection.h">
-      <Filter>Header Files\Script</Filter>
-    </ClInclude>
     <!-- Base Objects group -->
+    <!-- Subsystem group -->
+    <!-- Other group -->
+    <!-- JS Engine group -->
+    <!-- Network group -->
+    <!-- Utility group -->
+    <!-- UOData group -->
     <ClInclude Include="..\..\source\cbaseobject.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cchar.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cguild.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\citem.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cmultiobj.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\csocket.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cspawnregion.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cthreadqueue.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\funcdecl.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\objectfactory.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\pagevector.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxstruct.h">
-      <Filter>Header Files\Base Objects</Filter>
+      <Filter>Source Files\Base Objects</Filter>
     </ClInclude>
-    <!-- Subsystem group -->
-    <ClInclude Include="..\..\source\books.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\subsystem\account.hpp">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\ceffects.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cGump.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\chtmlsystem.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cmagic.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\combat.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\commands.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\craces.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cweather.hpp">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\jail.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\magic.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\movement.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\msgboard.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\regions.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\skills.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\speech.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\teffect.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\townregion.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\weight.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\wholist.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\worldmain.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\partysystem.h">
-      <Filter>Header Files\Subsystem</Filter>
-    </ClInclude>
-    <!-- Other group -->
-    <ClInclude Include="..\..\source\cdice.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\classes.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cmdtable.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cresponse.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cskillclass.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\other\uoxversion.hpp">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\enums.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\genericlist.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\osunique.hpp">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\power.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\typedefs.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <!-- JS Engine group -->
     <ClInclude Include="..\..\source\cjsengine.h">
-      <Filter>Header Files\JS Engine</Filter>
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cjsmapping.h">
-      <Filter>Header Files\JS Engine</Filter>
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cscript.h">
-      <Filter>Header Files\JS Engine</Filter>
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jsencapsulate.h">
-      <Filter>Header Files\JS Engine</Filter>
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\sefunctions.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uoxjsclasses.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uoxjsmethods.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uoxjspropertyenums.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uoxjspropertyfuncs.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\uoxjspropertyspecs.h">
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\spidermonkey.h">
-        <Filter>Header Files\JS Engine</Filter>
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
-    <!-- Network group -->
+    <ClInclude Include="..\..\source\uoxjsclasses.h">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uoxjsmethods.h">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uoxjspropertyenums.h">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uoxjspropertyfuncs.h">
+      <Filter>Source Files\JS Engine</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cpacketreceive.h">
-      <Filter>Header Files\Network</Filter>
+      <Filter>Source Files\Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpacketsend.h">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\network.h">
-      <Filter>Header Files\Network</Filter>
+      <Filter>Source Files\Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ip4address.hpp">
-      <Filter>Header Files\Network</Filter>
+      <Filter>Source Files\Network</Filter>
     </ClInclude>
-    <!-- Utility group -->
-    <ClInclude Include="..\..\source\stringutility.hpp">
-      <Filter>Header Files\Utility</Filter>
+    <ClInclude Include="..\..\source\network.h">
+      <Filter>Source Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\timeutility.hpp">
-      <Filter>Header Files\Utility</Filter>
+    <ClInclude Include="..\..\source\cserverdata.h">
+      <Filter>Source Files\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\eventtimer.hpp">
-      <Filter>Header Files\Utility</Filter>
+    <ClInclude Include="..\..\source\cserverdefinitions.h">
+      <Filter>Source Files\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\strutil.hpp">
-      <Filter>Header Files\Utility</Filter>
+    <ClInclude Include="..\..\source\dictionary.h">
+      <Filter>Source Files\Script</Filter>
     </ClInclude>
-    <!-- UOData group -->
-    <ClInclude Include="..\..\source\mapstuff.h">
-      <Filter>Header Files\UOData</Filter>
+    <ClInclude Include="..\..\source\scriptc.h">
+      <Filter>Source Files\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\mapclasses.h">
-      <Filter>Header Files\UOData</Filter>
+    <ClInclude Include="..\..\source\ssection.h">
+      <Filter>Source Files\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\multimul.hpp">
-      <Filter>Header Files\UOData</Filter>
+    <ClInclude Include="..\..\source\cdice.h">
+      <Filter>Source Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\uopdata.hpp">
-      <Filter>Header Files\UOData</Filter>
+    <ClInclude Include="..\..\source\classes.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cmdtable.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cresponse.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cskillclass.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\enums.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\genericlist.h">
+      <Filter>Source Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ostype.h">
-      <Filter>Header Files\Other</Filter>
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\osunique.hpp">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\power.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\townregion.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\typedefs.h">
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\other\uoxversion.hpp">
+      <Filter>Source Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\useful.h">
-      <Filter>Header Files\Other</Filter>
+      <Filter>Source Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\subsystem\account.hpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\books.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ceffects.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cgump.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\chtmlsystem.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cmagic.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\combat.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\commands.h">
+      <Filter>Source Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\subsystem\console.hpp">
-      <Filter>Header Files\Subsystem</Filter>
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\craces.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cweather.hpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\jail.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\magic.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\movement.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\msgboard.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\partysystem.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\regions.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\skills.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\speech.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\teffect.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\weight.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\wholist.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\worldmain.h">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mapclasses.h">
+      <Filter>Source Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\mapstuff.h">
+      <Filter>Source Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\multimul.hpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uopdata.hpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\eventtimer.hpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\stringutility.hpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\strutil.hpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\timeutility.hpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uoxjspropertyspecs.h">
+      <Filter>Source Files\JS Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

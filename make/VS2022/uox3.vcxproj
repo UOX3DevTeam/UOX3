@@ -190,7 +190,7 @@
     <ClInclude Include="..\..\source\scriptc.h" />
     <ClInclude Include="..\..\source\ssection.h" />
     <!-- Base Object group -->
-    <ClInclude Include="..\..\source\cBaseobject.h" />
+    <ClInclude Include="..\..\source\cbaseobject.h" />
     <ClInclude Include="..\..\source\cchar.h" />
     <ClInclude Include="..\..\source\cguild.h" />
     <ClInclude Include="..\..\source\citem.h" />
