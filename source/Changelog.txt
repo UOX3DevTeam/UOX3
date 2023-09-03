@@ -1,3 +1,7 @@
+28/08/2023 - punt
+	Replaced all routine calls with a specific type of stream ifstream/ofstream to the generic istream/ostream for flexibility
+	Modernized region resource loading/saving code
+
 24/08/2023 - punt
 	Fixed a memory leak with regions.cpp, related to worldsaves
 

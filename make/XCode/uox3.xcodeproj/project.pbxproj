@@ -121,6 +121,13 @@
 
 /* Begin PBXFileReference section */
 		56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
+		56C9E3D52A9C8FF0004D9F38 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CMakeLists.txt; path = ../cmake/CMakeLists.txt; sourceTree = "<group>"; };
+		56C9E3D82A9C9022004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2022/uox3.sln; sourceTree = "<group>"; };
+		56C9E3D92A9C9022004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2022/uox3.vcxproj; sourceTree = "<group>"; };
+		56C9E3DA2A9C9022004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2022/uox3.vcxproj.filters; sourceTree = "<group>"; };
+		56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
+		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
+		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -305,9 +312,40 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		56C9E3D22A9C8FD5004D9F38 /* makestuff */ = {
+			isa = PBXGroup;
+			children = (
+				56C9E3D52A9C8FF0004D9F38 /* CMakeLists.txt */,
+				56C9E3D72A9C9004004D9F38 /* vs2017 */,
+				56C9E3D62A9C8FF7004D9F38 /* vs2022 */,
+			);
+			name = makestuff;
+			sourceTree = "<group>";
+		};
+		56C9E3D62A9C8FF7004D9F38 /* vs2022 */ = {
+			isa = PBXGroup;
+			children = (
+				56C9E3D82A9C9022004D9F38 /* uox3.sln */,
+				56C9E3D92A9C9022004D9F38 /* uox3.vcxproj */,
+				56C9E3DA2A9C9022004D9F38 /* uox3.vcxproj.filters */,
+			);
+			name = vs2022;
+			sourceTree = "<group>";
+		};
+		56C9E3D72A9C9004004D9F38 /* vs2017 */ = {
+			isa = PBXGroup;
+			children = (
+				56C9E3DD2A9C9035004D9F38 /* uox3.sln */,
+				56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */,
+				56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */,
+			);
+			name = vs2017;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
+				56C9E3D22A9C8FD5004D9F38 /* makestuff */,
 				64A90074293E3DD4009B54DA /* source */,
 				64A9006B293E3DA3009B54DA /* Products */,
 				64A9016B293E3EED009B54DA /* Frameworks */,
