@@ -51,7 +51,6 @@
 
 #include "subsystem/account.hpp"
 #include "books.h"
-
 #include "cChar.h"
 #include "cEffects.h"
 #include "cGuild.h"

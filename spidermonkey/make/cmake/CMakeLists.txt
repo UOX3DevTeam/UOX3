@@ -17,6 +17,17 @@ if(NOT WIN32)
         COMMENT "Generating jsautocfg.h"
     )
 endif(NOT WIN32)
+# What I want it to be, and to remove the add_executable
+#[[
+if (NOT WIN32)
+
+ execute_process(
+     COMMAND cc -o ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg ${CMAKE_CURRENT_SOURCE_DIR}/../../jscpucfg.c -Wno-format-security -Wno-deprecated-declarations -Os 
+     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/jscpucfg  
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+     OUTPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h"
+ )
+]]
 
 add_library(jscript STATIC)
 
