@@ -4,21 +4,21 @@
 
 #include "typedefs.h"
 
-#include "cChar.h"
-#include "cMultiObj.h"
-#include "cSocket.h"
+#include "cchar.h"
+#include "cmultiobj.h"
+#include "csocket.h"
 
 #include "funcdecl.h"
 #include "mapstuff.h"
 
 #include "weight.h"
-#include "CPacketSend.h"
+#include "cpacketsend.h"
 #include "classes.h"
 #include "regions.h"
-#include "CResponse.h"
-#include "cEffects.h"
-#include "Dictionary.h"
-#include "StringUtility.hpp"
+#include "cresponse.h"
+#include "ceffects.h"
+#include "dictionary.h"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 

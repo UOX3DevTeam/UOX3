@@ -1,11 +1,11 @@
 
-#include "cChar.h"
-#include "cItem.h"
+#include "cchar.h"
+#include "citem.h"
 #include "classes.h"
-#include "CPacketSend.h"
-#include "cSocket.h"
+#include "cpacketsend.h"
+#include "csocket.h"
 #include "funcdecl.h"
-#include "ObjectFactory.h"
+#include "objectfactory.h"
 
 
 //o------------------------------------------------------------------------------------------------o

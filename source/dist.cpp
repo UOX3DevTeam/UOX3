@@ -6,10 +6,10 @@
 
 #include "typedefs.h"
 
-#include "cChar.h"
-#include "cItem.h"
-#include "cRaces.h"
-#include "cSocket.h"
+#include "cchar.h"
+#include "citem.h"
+#include "craces.h"
+#include "csocket.h"
 
 #include "funcdecl.h"
 

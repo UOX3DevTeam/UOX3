@@ -1,12 +1,12 @@
 #include <cmath>
 #include <vector>
 
-#include "cChar.h"
-#include "cItem.h"
+#include "cchar.h"
+#include "citem.h"
 #include "classes.h"
-#include "cMultiObj.h"
-#include "cRaces.h"
-#include "cSocket.h"
+#include "cmultiobj.h"
+#include "craces.h"
+#include "csocket.h"
 
 #include "funcdecl.h"
 

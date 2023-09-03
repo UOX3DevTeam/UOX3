@@ -2,22 +2,22 @@
 
 #include <fstream>
 
-#include "cChar.h"
-#include "cEffects.h"
-#include "cItem.h"
-#include "CJSMapping.h"
+#include "cchar.h"
+#include "ceffects.h"
+#include "citem.h"
+#include "cjsmapping.h"
 #include "commands.h"
-#include "CPacketSend.h"
-#include "cRaces.h"
-#include "CResponse.h"
-#include "cScript.h"
-#include "cSocket.h"
-#include "Dictionary.h"
+#include "cpacketsend.h"
+#include "craces.h"
+#include "cresponse.h"
+#include "cscript.h"
+#include "csocket.h"
+#include "dictionary.h"
 #include "funcdecl.h"
 #include "movement.h"
 
 #include "skills.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
 

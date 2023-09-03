@@ -8,18 +8,18 @@
 #include <sys/ioctl.h>
 #endif
 
-#include "cChar.h"
-#include "cEffects.h"
-#include "CJSMapping.h"
-#include "cMagic.h"
-#include "cMultiObj.h"
-#include "CPacketSend.h"
+#include "cchar.h"
+#include "ceffects.h"
+#include "cjsmapping.h"
+#include "cmagic.h"
+#include "cmultiobj.h"
+#include "cpacketsend.h"
 #include "subsystem/console.hpp"
-#include "cServerDefinitions.h"
-#include "cScript.h"
-#include "cSocket.h"
-#include "cThreadQueue.h"
-#include "Dictionary.h"
+#include "cserverdefinitions.h"
+#include "cscript.h"
+#include "csocket.h"
+#include "cthreadqueue.h"
+#include "dictionary.h"
 #include "funcdecl.h"
 #include "scriptc.h"
 #include "skills.h"
@@ -27,8 +27,8 @@
 #include "mapstuff.h"
 #include "movement.h"
 
-#include "ObjectFactory.h"
-#include "StringUtility.hpp"
+#include "objectfactory.h"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "osunique.hpp"
 #include "wholist.h"
@@ -1177,7 +1177,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 					case 0xFB: // Update View Public House Contents
 						mSock->Receive( 2 );
 						break;
-					case 0xF0: // ClassicUO Map Tracker, handled by CPIKrriosClientSpecial in CPacketReceive.cpp
+					case 0xF0: // ClassicUO Map Tracker, handled by CPIKrriosClientSpecial in cpacketreceive.cpp
 						break;
 					default:
 						FD_ZERO( &all );

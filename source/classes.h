@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-#include "GenericList.h"
+#include "genericlist.h"
 #include "typedefs.h"
 
 class CSocket ;

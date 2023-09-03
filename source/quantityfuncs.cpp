@@ -1,6 +1,6 @@
 
-#include "cChar.h"
-#include "cItem.h"
+#include "cchar.h"
+#include "citem.h"
 #include "funcdecl.h"
 
 #include "weight.h"

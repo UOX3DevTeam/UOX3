@@ -19,7 +19,7 @@
 
 #include "subsystem/console.hpp"
 #include "scriptc.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "osunique.hpp"
 

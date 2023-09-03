@@ -26,15 +26,15 @@
 
 #include <fstream>
 
-#include "cChar.h"
-#include "cSocket.h"
-#include "cItem.h"
+#include "cchar.h"
+#include "csocket.h"
+#include "citem.h"
 
 #include "funcdecl.h"
-#include "cServerDefinitions.h"
+#include "cserverdefinitions.h"
 #include "ssection.h"
-#include "CPacketSend.h"
-#include "StringUtility.hpp"
+#include "cpacketsend.h"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 #include "osunique.hpp"

@@ -3,14 +3,14 @@
 
 #include <memory>
 
-#include "cChar.h"
+#include "cchar.h"
 #include "subsystem/console.hpp"
-#include "cServerDefinitions.h"
+#include "cserverdefinitions.h"
 #include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "scriptc.h"
 #include "ssection.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals;

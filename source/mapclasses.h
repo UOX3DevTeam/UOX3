@@ -8,7 +8,7 @@
 #include <algorithm>
 
 #include "power.h"
-#include "MultiMul.hpp"
+#include "multimul.hpp"
 #include "osunique.hpp"
 
 

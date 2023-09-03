@@ -480,7 +480,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cBaseObject.cpp">
+    <ClCompile Include="..\..\source\cbaseobject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -494,7 +494,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cChar.cpp">
+    <ClCompile Include="..\..\source\cchar.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -522,7 +522,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cDice.cpp">
+    <ClCompile Include="..\..\source\cdice.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -536,7 +536,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cGuild.cpp">
+    <ClCompile Include="..\..\source\cguild.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -550,7 +550,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\CGump.cpp">
+    <ClCompile Include="..\..\source\cgump.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -564,7 +564,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cHTMLSystem.cpp">
+    <ClCompile Include="..\..\source\chtmlsystem.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -578,7 +578,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cItem.cpp">
+    <ClCompile Include="..\..\source\citem.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -592,8 +592,8 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\CJSEngine.cpp" />
-    <ClCompile Include="..\..\source\CJSMapping.cpp" />
+    <ClCompile Include="..\..\source\cjsengine.cpp" />
+    <ClCompile Include="..\..\source\cjsmapping.cpp" />
     <ClCompile Include="..\..\source\cmdtable.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -608,7 +608,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cMultiObj.cpp">
+    <ClCompile Include="..\..\source\cmultiobj.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -650,7 +650,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\CPacketReceive.cpp">
+    <ClCompile Include="..\..\source\cpacketreceive.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -664,7 +664,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\CPacketSend.cpp">
+    <ClCompile Include="..\..\source\cpacketsend.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -678,7 +678,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cPlayerAction.cpp">
+    <ClCompile Include="..\..\source\cplayeraction.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -706,7 +706,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\CResponse.cpp">
+    <ClCompile Include="..\..\source\cresponse.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -720,7 +720,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cScript.cpp">
+    <ClCompile Include="..\..\source\cscript.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -734,7 +734,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cServerData.cpp">
+    <ClCompile Include="..\..\source\cserverdata.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -762,7 +762,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cSocket.cpp">
+    <ClCompile Include="..\..\source\csocket.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -776,7 +776,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cSpawnRegion.cpp">
+    <ClCompile Include="..\..\source\cspawnregion.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -790,7 +790,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cThreadQueue.cpp">
+    <ClCompile Include="..\..\source\cthreadqueue.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -818,7 +818,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cWeather.cpp">
+    <ClCompile Include="..\..\source\cweather.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -874,7 +874,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\EventTimer.cpp" />
+    <ClCompile Include="..\..\source\eventtimer.cpp" />
     <ClCompile Include="..\..\source\fileio.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -931,7 +931,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\IP4Address.cpp" />
+    <ClCompile Include="..\..\source\ip4address.cpp" />
     <ClCompile Include="..\..\source\items.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -960,7 +960,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp">
+    <ClCompile Include="..\..\source\jsencapsulate.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1044,7 +1044,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\MultiMul.cpp" />
+    <ClCompile Include="..\..\source\multimul.cpp" />
     <ClCompile Include="..\..\source\network.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1073,7 +1073,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\ObjectFactory.cpp">
+    <ClCompile Include="..\..\source\objectfactory.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1087,7 +1087,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\PartySystem.cpp" />
+    <ClCompile Include="..\..\source\partysystem.cpp" />
     <ClCompile Include="..\..\source\pcmanage.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1158,7 +1158,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\SEFunctions.cpp">
+    <ClCompile Include="..\..\source\sefunctions.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1229,7 +1229,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="..\..\source\osunique.cpp" />
-    <ClCompile Include="..\..\source\StringUtility.cpp" />
+    <ClCompile Include="..\..\source\stringutility.cpp" />
     <ClCompile Include="..\..\source\targeting.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1272,7 +1272,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\UOPData.cpp" />
+    <ClCompile Include="..\..\source\uopdata.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1287,7 +1287,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\UOXJSMethods.cpp">
+    <ClCompile Include="..\..\source\uoxjsmethods.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1301,7 +1301,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
+    <ClCompile Include="..\..\source\uoxjspropertyfuncs.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1371,7 +1371,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\TimeUtility.cpp">
+    <ClCompile Include="..\..\source\timeutility.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1390,80 +1390,80 @@
     <ClInclude Include="..\..\source\osunique.hpp" />
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\subsystem\account.hpp" />
-    <ClInclude Include="..\..\source\cBaseObject.h" />
-    <ClInclude Include="..\..\source\cChar.h" />
+    <ClInclude Include="..\..\source\cbaseobject.h" />
+    <ClInclude Include="..\..\source\cchar.h" />
     <ClInclude Include="..\..\source\subsystem\console.hpp" />
     <ClInclude Include="..\..\source\cdice.h" />
-    <ClInclude Include="..\..\source\cEffects.h" />
-    <ClInclude Include="..\..\source\cGuild.h" />
-    <ClInclude Include="..\..\source\cHTMLSystem.h" />
-    <ClInclude Include="..\..\source\cItem.h" />
-    <ClInclude Include="..\..\source\CJSEngine.h" />
-    <ClInclude Include="..\..\source\CJSMapping.h" />
+    <ClInclude Include="..\..\source\ceffects.h" />
+    <ClInclude Include="..\..\source\cguild.h" />
+    <ClInclude Include="..\..\source\chtmlsystem.h" />
+    <ClInclude Include="..\..\source\citem.h" />
+    <ClInclude Include="..\..\source\cjsengine.h" />
+    <ClInclude Include="..\..\source\cjsmapping.h" />
     <ClInclude Include="..\..\source\classes.h" />
-    <ClInclude Include="..\..\source\cMagic.h" />
+    <ClInclude Include="..\..\source\cmagic.h" />
     <ClInclude Include="..\..\source\cmdtable.h" />
-    <ClInclude Include="..\..\source\cMultiObj.h" />
+    <ClInclude Include="..\..\source\cmultiobj.h" />
     <ClInclude Include="..\..\source\combat.h" />
     <ClInclude Include="..\..\source\commands.h" />
-    <ClInclude Include="..\..\source\CPacketReceive.h" />
-    <ClInclude Include="..\..\source\CPacketSend.h" />
-    <ClInclude Include="..\..\source\cRaces.h" />
-    <ClInclude Include="..\..\source\CResponse.h" />
-    <ClInclude Include="..\..\source\cScript.h" />
-    <ClInclude Include="..\..\source\cServerData.h" />
-    <ClInclude Include="..\..\source\cServerDefinitions.h" />
-    <ClInclude Include="..\..\source\cSkillClass.h" />
-    <ClInclude Include="..\..\source\cSocket.h" />
-    <ClInclude Include="..\..\source\cSpawnRegion.h" />
-    <ClInclude Include="..\..\source\cThreadQueue.h" />
+    <ClInclude Include="..\..\source\cpacketreceive.h" />
+    <ClInclude Include="..\..\source\cpacketsend.h" />
+    <ClInclude Include="..\..\source\craces.h" />
+    <ClInclude Include="..\..\source\cresponse.h" />
+    <ClInclude Include="..\..\source\cscript.h" />
+    <ClInclude Include="..\..\source\cserverdata.h" />
+    <ClInclude Include="..\..\source\cserverdefinitions.h" />
+    <ClInclude Include="..\..\source\cskillclass.h" />
+    <ClInclude Include="..\..\source\csocket.h" />
+    <ClInclude Include="..\..\source\cspawnregion.h" />
+    <ClInclude Include="..\..\source\cthreadqueue.h" />
     <ClInclude Include="..\..\source\other\uoxversion.hpp" />
-    <ClInclude Include="..\..\source\cWeather.hpp" />
-    <ClInclude Include="..\..\source\Dictionary.h" />
+    <ClInclude Include="..\..\source\cweather.hpp" />
+    <ClInclude Include="..\..\source\dictionary.h" />
     <ClInclude Include="..\..\source\enums.h" />
-    <ClInclude Include="..\..\source\EventTimer.hpp" />
+    <ClInclude Include="..\..\source\eventtimer.hpp" />
     <ClInclude Include="..\..\source\funcdecl.h" />
-    <ClInclude Include="..\..\source\GenericList.h" />
-    <ClInclude Include="..\..\source\CGump.h" />
-    <ClInclude Include="..\..\source\IP4Address.hpp" />
+    <ClInclude Include="..\..\source\genericlist.h" />
+    <ClInclude Include="..\..\source\cgump.h" />
+    <ClInclude Include="..\..\source\ip4address.hpp" />
     <ClInclude Include="..\..\source\jail.h" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
+    <ClInclude Include="..\..\source\jsencapsulate.h" />
     <ClInclude Include="..\..\source\magic.h" />
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />
     <ClInclude Include="..\..\source\movement.h" />
     <ClInclude Include="..\..\source\msgboard.h" />
-    <ClInclude Include="..\..\source\MultiMul.hpp" />
+    <ClInclude Include="..\..\source\multimul.hpp" />
     <ClInclude Include="..\..\source\network.h" />
-    <ClInclude Include="..\..\source\ObjectFactory.h" />
+    <ClInclude Include="..\..\source\objectfactory.h" />
     <ClInclude Include="..\..\source\ostype.h" />
-    <ClInclude Include="..\..\source\PageVector.h" />
-    <ClInclude Include="..\..\source\PartySystem.h" />
+    <ClInclude Include="..\..\source\pagevector.h" />
+    <ClInclude Include="..\..\source\partysystem.h" />
     <ClInclude Include="..\..\source\power.h" />
     <ClInclude Include="..\..\source\regions.h" />
     <ClInclude Include="..\..\source\scriptc.h" />
-    <ClInclude Include="..\..\source\SEFunctions.h" />
+    <ClInclude Include="..\..\source\sefunctions.h" />
     <ClInclude Include="..\..\source\skills.h" />
     <ClInclude Include="..\..\source\speech.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <ClInclude Include="..\..\source\ssection.h" />
-    <ClInclude Include="..\..\source\StringUtility.hpp" />
+    <ClInclude Include="..\..\source\stringutility.hpp" />
     <ClInclude Include="..\..\source\utility\strutil.hpp" />
     <ClInclude Include="..\..\source\teffect.h" />
     <ClInclude Include="..\..\source\townregion.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
     <ClInclude Include="..\..\source\useful.h" />
-    <ClInclude Include="..\..\source\UOPData.hpp" />
-    <ClInclude Include="..\..\source\UOXJSClasses.h" />
-    <ClInclude Include="..\..\source\UOXJSMethods.h" />
-    <ClInclude Include="..\..\source\UOXJSPropertyEnums.h" />
-    <ClInclude Include="..\..\source\UOXJSPropertyFuncs.h" />
-    <ClInclude Include="..\..\source\UOXJSPropertySpecs.h" />
+    <ClInclude Include="..\..\source\uopdata.hpp" />
+    <ClInclude Include="..\..\source\uoxjsclasses.h" />
+    <ClInclude Include="..\..\source\uoxjsmethods.h" />
+    <ClInclude Include="..\..\source\uoxjspropertyenums.h" />
+    <ClInclude Include="..\..\source\uoxjspropertyfuncs.h" />
+    <ClInclude Include="..\..\source\uoxjspropertyspecs.h" />
     <ClInclude Include="..\..\source\uoxstruct.h" />
     <ClInclude Include="..\..\source\weight.h" />
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
-    <ClInclude Include="..\..\source\TimeUtility.hpp" />
+    <ClInclude Include="..\..\source\timeutility.hpp" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <ClInclude Include="..\..\source\useful.h" />
     <ClInclude Include="..\..\source\ostype.h" />

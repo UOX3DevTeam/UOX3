@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "cChar.h"
-#include "cItem.h"
+#include "cchar.h"
+#include "citem.h"
 #include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"

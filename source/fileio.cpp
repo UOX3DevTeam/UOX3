@@ -12,12 +12,12 @@
 
 #include "subsystem/console.hpp"
 #include "funcdecl.h"
-#include "cServerDefinitions.h"
-#include "cSpawnRegion.h"
+#include "cserverdefinitions.h"
+#include "cspawnregion.h"
 
 #include "scriptc.h"
 #include "ssection.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
 

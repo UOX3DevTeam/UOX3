@@ -12,7 +12,7 @@
 
 
 #include "funcdecl.h"
-#include "cChar.h"
+#include "cchar.h"
 
 using namespace std::string_literals ;
 

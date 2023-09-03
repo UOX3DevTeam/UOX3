@@ -283,7 +283,7 @@
 05/06/2023 - Xuri
 	Fixed an issue with patrolling-portion of hireling script - was incorrectly using Z coordinate as a parameter of WalkTo - should be maxSteps (js/npc/ai/hireling.js)
 	Added error checking to .WalkTo() and .RunTo() JS Methods that cancels pathfinding attempt if maxSteps provided is zero
-	Swapped around order of arguments in ScriptError() function in cScript.cpp, so the const char used by va_start() is now the last named argument (thanks ldilley!)
+	Swapped around order of arguments in ScriptError() function in cscript.cpp, so the const char used by va_start() is now the last named argument (thanks ldilley!)
 	Fixed a socket error with 'move command alias in js/commands/targeting/tele.js (thanks Dragon Slayer!)
 	Fixed a server crash caused by an attempt to fetch the serial of a nullptr!
 
@@ -809,7 +809,7 @@
 	Expanded the amount of possible house entries in dfndata/house/house.dfn from 255 to 65535
 
 24/10/2022 - ldilley
-	Fixed cPlayerAction.cpp case in source/CMakeLists.txt (was cplayeraction.cpp).
+	Fixed cplayeraction.cpp case in source/CMakeLists.txt (was cplayeraction.cpp).
 	Added FreeBSD build support for SpiderMonkey, zlib, and UOX3.
 	Updated README.md with FreeBSD build instructions.
 	Fixed a compile error due to NULL being defined as nullptr (non-int type) and not 0 (zero)
@@ -2296,7 +2296,7 @@
 	Updated decorate command to support two additional object categories - containers and spawners - and the properties needed by these to function
 	Fixed an issue with appending folder names to paths in File JS Method .Open() and JS File Function DeleteFile()
 	Renamed default UOX3 server name (was too long) to My UOX3 Shard
-	Rewrote server IP handling (new files: IP4Address.hpp/cpp) and did away with the need for the [play server list] section and SERVERLIST entries in uox.ini. UOX3 now automatically accepts and responds to connections on both local and LAN IPs, as well as an optional external/WAN ip defined in uox.ini tag EXTERNALIP, with server name defined by the existing SERVERNAME tag in the ini (punt)
+	Rewrote server IP handling (new files: ip4address.hpp/cpp) and did away with the need for the [play server list] section and SERVERLIST entries in uox.ini. UOX3 now automatically accepts and responds to connections on both local and LAN IPs, as well as an optional external/WAN ip defined in uox.ini tag EXTERNALIP, with server name defined by the existing SERVERNAME tag in the ini (punt)
 
 11/06/2021 - Xuri (0.99.4q)
 	Added entry for a new directory path in uox.ini:
@@ -2398,7 +2398,7 @@
 
 04/06/2021 - Xuri
 	Reverted changes to jsapi.h, which were causing some unwanted behavior
-	Fixed some errors reading in UOP files in UOPData.cpp, and made some tweaks to other related files (punt)
+	Fixed some errors reading in UOP files in uopdata.cpp, and made some tweaks to other related files (punt)
 
 04/06/2021 - Xuri
 	Fixed an issue that could cause player characters created in older versions of UOX3 to end up with backpacks without max item capacity set, thus being unable to add any items to their backpack
@@ -2408,7 +2408,7 @@
 	Cleaned up some warnings caused by 64 bit/32 bit difference between macOS and Windows (punt)
 
 03/06/2021 - Xuri
-	Removed RemoveFromSight() from CItem::Update() in cItem.cpp, to address flickering issues with animated items, and for smoother updates of items on boats when sailing.
+	Removed RemoveFromSight() from CItem::Update() in citem.cpp, to address flickering issues with animated items, and for smoother updates of items on boats when sailing.
 	Added new flag in CBaseObject - damageable - which determines if an Item or Multi should be considered a damageable object.
 	Added new DFN tag for Items and Multis to mark objects as damageable objects
 		DAMAGEABLE=0/1 // If enabled, allows client to display healthbar for object, using object's hp/maxhp values as basis. Note that any changes to a damageable object's health will not be reflected in the client until a stat update has been sent.
@@ -2424,10 +2424,10 @@
 	Updated 'get (js/commands/targeting/get.js) and 'set (js/commands/targeting/set.js) commands to support getting and setting the damageable flag on objects
 	Updated updateStats() in uox3.cpp to work with CBaseObject instead of CChar
 	Updated statwindow() in CSocket.cpp to work with CBaseObject instead of CChar
-	Updated CPUpdateStat in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0xA1 to client for Items/Multis
-	Updated CPStatWindow in CPacketSend.cpp to work with CBaseObject instead of CChar, to support sending packet 0x11 to client for Items/Multis
+	Updated CPUpdateStat in cpacketsend.cpp to work with CBaseObject instead of CChar, to support sending packet 0xA1 to client for Items/Multis
+	Updated CPStatWindow in cpacketsend.cpp to work with CBaseObject instead of CChar, to support sending packet 0x11 to client for Items/Multis
 	Fixed an issue with outgoing packet 0x11 where a character's current HP might sometimes incorrectly be displayed as zero
-	Updated CPNewObjectInfo in CPacketSend.cpp to send object information packet 0xF3 to client with datatype set to 0x03 for Items/Multis marked as damageable objects, to enable the client's ability to display health-bars for these items.
+	Updated CPNewObjectInfo in cpacketsend.cpp to send object information packet 0xF3 to client with datatype set to 0x03 for Items/Multis marked as damageable objects, to enable the client's ability to display health-bars for these items.
 	Fixed an issue with JS Method for Items - .Refresh() - which previously did nothing, but now instead sends an update of item to all sockets in range
 
 01/06/2021 - Xuri
@@ -2444,7 +2444,7 @@
 30/05/2021 - Xuri (0.99.4n)
 	Fixed return value logic for onUseChecked/onUsedUnchecked JS events - was reversed by mistake!
 	Initiated start of revamped mul/uop handling, with some new files added to project: (punt)
-		MultiMul.cpp/hpp, IDXMul.cpp/hpp and UOPData.cpp/hpp
+		multimul.cpp/hpp, IDXMul.cpp/hpp and uopdata.cpp/hpp
 	Updated code for loading and seeking in multis (punt)
 	Added new files to VS project and project filter
 	Added new files to source/CMakeLists.txt
@@ -2464,7 +2464,7 @@
 	Fixed server crash related to using incorrect argument for REGSPAWN command
 	Fixed an issue where characters would not get world changes updated properly in some older (5.x) client versions
 	UOX3 will now attempt to resist being closed if a world-save is in progress, to avoid corruption of worldfile data
-	Added TryParseJSVal() helper function in cScript.cpp, used to parse jsval values returned from script events. Provides results matching 0 (0, false), 1 (1, true) or any specific int value returned from script.
+	Added TryParseJSVal() helper function in cscript.cpp, used to parse jsval values returned from script events. Provides results matching 0 (0, false), 1 (1, true) or any specific int value returned from script.
 	JS events updated to use new TryParseJSVal helper function (no change in behaviour):
 		onDecay, onResurrect, onCommand, onBuyFromVendor, onSellToVendor, onPickup, onCharDoubleClick, onSkillGump, onUseBandageMacro, onCombatStart, onCombatEnd, onDeathBlow, onBuy, onSell
 	JS events with slight change of behaviour after update to use TryParseJSVal:
@@ -2604,29 +2604,29 @@
 	Modified handling of CONT and PACKITEM tags loaded from worldfiles to no longer corrupt pointers (punt)
 
 27/04/2021 - Xuri (0.99.4j)
-	Removed ustring.h and ustring.cpp and references to these from the project as they have now been completely phased out by the move to std::string and the use of StringUtility.cpp/hpp
+	Removed ustring.h and ustring.cpp and references to these from the project as they have now been completely phased out by the move to std::string and the use of stringutility.cpp/hpp
 	Finalized string handling modernization in cRaces.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp, ssection.cpp, ssection.h and targeting.cpp (punt)
 
 27/04/2021 - Xuri
 	Fixed some missing icons in dfndata/creatures/creatures.dfn
 	Updated server status HTML template page (dfndata/html/online.htf) to match other templates
 	Fixed an issue where using JS Method PopUpTarget with ID 12 could crash the server
-	Additional string handling modernization in magic.cpp, JSEncapsulate.cpp, jail.cpp, house.cpp, fileio.cpp, network.cpp, msgboard.cpp, mapstuff.cpp, pcmanage.cpp, scriptc.cpp, SEFunctions.cpp, sound.cpp, speech.cpp (punt)
+	Additional string handling modernization in magic.cpp, jsencapsulate.cpp, jail.cpp, house.cpp, fileio.cpp, network.cpp, msgboard.cpp, mapstuff.cpp, pcmanage.cpp, scriptc.cpp, sefunctions.cpp, sound.cpp, speech.cpp (punt)
 
 26/04/2021 - Xuri
 	Increased default timer for worldsaves from 5 to 10 minutes
 	Fixed an issue where the tile command could spawn items with incorrect ID because tempInt2 wasn't reset properly
-	Additional string handling modernization in cAccountClass.cpp, cHTMLSystem.cpp, CResponse.cpp, cServerData.cpp, cServerData.h, cServerDefinitions.cpp, cSocket.cpp, cSpawnRegion.cpp, cSpawnRegion.h, cWeather.cpp, Dictionary.cpp, effect.cpp and uox3.cpp (punt)
+	Additional string handling modernization in cAccountClass.cpp, chtmlsystem.cpp, cresponse.cpp, cserverdata.cpp, cserverdata.h, cServerDefinitions.cpp, csocket.cpp, cspawnregion.cpp, cspawnregion.h, cweather.cpp, Dictionary.cpp, effect.cpp and uox3.cpp (punt)
 
 26/04/2021 - Xuri
 	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided
 	Fixed an issue where 'set weightmax # would fail because script used an incorrect property name
 	Fixed an issue with check for allowed/banned equipment for races; if a list of allowed equipment existed, it would never check the banned list
-	Additional string handling modernization in cHTMLSystem.cpp, cRaces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
+	Additional string handling modernization in chtmlsystem.cpp, cRaces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
 
 25/04/2021 - Xuri
-	Additional work done to modernize string handling in CPacketReceive.cpp, CPacketReceive.h, CPacketSend.cpp, CPacketSend.h, cScript.cpp, gumps.cpp (punt)
-	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, CJSMapping.cpp, scriptc.cpp and scriptc.h (punt)
+	Additional work done to modernize string handling in cpacketreceive.cpp, cpacketreceive.h, cpacketsend.cpp, cpacketsend.h, cscript.cpp, gumps.cpp (punt)
+	Additional work done to modernize string handling in gumps.cpp, commands.cpp, cmdtable.cpp, commands.h, cjsmapping.cpp, scriptc.cpp and scriptc.h (punt)
 
 24/04/2021 - Xuri
 	More UString instances replaced by std::string and associates (punt)
@@ -2634,7 +2634,7 @@
 23/04/2021 - Xuri (0.99.4i)
 	Fixed an error in tweak command (js/commands/targeting/tweak.js) when attempting to use it on characters with no backpacks
 	Updated a bunch of casts to use UOX3-specific typedefs for consistency
-	Startup performance is now faster by an additional 70% over the previous commit, primarily due to modernization of HandleLine() functions in cBaseobject.cpp, cChar.cpp, cItem.cpp and cMultiObj.cpp (punt)
+	Startup performance is now faster by an additional 70% over the previous commit, primarily due to modernization of HandleLine() functions in cBaseobject.cpp, cchar.cpp, citem.cpp and cmultiobj.cpp (punt)
 
 23/04/2021 - Xuri (0.99.4h)
 	Exposed a (read-only) JS property for characters to fetch their hunger rate. Uses race's hunger rate if defined, otherwise uses HUNGERRATE form uox.ini:
@@ -2717,7 +2717,7 @@
 	Updated AI for AI_HEALER_G and AI_HEALER_E to check for multi-ownership and line of sight before resurrecting dead players
 
 14/04/2021 - Xuri
-	Fixed a casting issue that prevented SEFunctions.cpp from compiling on Linux
+	Fixed a casting issue that prevented sefunctions.cpp from compiling on Linux
 	Added additional Region/Townregion JS properties. These (and other properties) can be viewed and modified using the 'tweak command, but changes are not permanently saved and will only be valid as long as the server stays running:
 		.id 				// Region ID
 		.scripttrigger 		// Script-trigger associated with region
@@ -2997,12 +2997,12 @@
 
 04/11/2020 - Xuri (0.99.4[RC])
 	Updated JS SysMessage function to accept up to 10 extra, optional arguments, which can be used with dictionary messages that require additional parameters like %s or %i
-	Added new type of house privilege in cMultiObj.cpp to keep track of friends of the multi - HOUSEPRIV_FRIEND - which is stored during worldsaves as one or more Friend=<player serial> tags in house.wsc
-	Added new type of house privilege in cMultiObj.cpp to keep track of guests of the multi - HOUSEPRIV_GUEST - which is stored during worldsaves as one or more Guest=<player serial> tags in house.wsc
+	Added new type of house privilege in cmultiobj.cpp to keep track of friends of the multi - HOUSEPRIV_FRIEND - which is stored during worldsaves as one or more Friend=<player serial> tags in house.wsc
+	Added new type of house privilege in cmultiobj.cpp to keep track of guests of the multi - HOUSEPRIV_GUEST - which is stored during worldsaves as one or more Guest=<player serial> tags in house.wsc
 	When items are created for houses upon house placement, a reference to the multi's serial is now stored in the house sign's MORE property to allow easier tracking of which house a particular sign belongs to
-	Added tracking of new, persistent properties for houses via cMultiObj.cpp/h:
+	Added tracking of new, persistent properties for houses via cmultiobj.cpp/h:
 		lockdowns, secure containers, vendors, guests, friends, owners, ban location, public status, number of visits, timestamps
-	Added a multitude of  new methods in cMultiObj.cpp/h to assist in improving the functionality of houses
+	Added a multitude of  new methods in cmultiobj.cpp/h to assist in improving the functionality of houses
 	Added new tags for houses in house.dfn (default values applied if tag not specified):
 		MAXSECURECONTAINERS=4 - Max amount of secure containers allowed in a multi
 		MAXLOCKDOWNS=256 - Max amount of lockdowns allowed in a multi
@@ -3218,7 +3218,7 @@
 
 05/10/2020 - Xuri
 	Updated JS item properties MORE, MOREX, MOREY, MOREZ and SERIAL, and character property SERIAL, to pass values to JS scripts using JS_NewNumberValue() instead of INT_TO_JSVAL if the property value cannot fit inside JSVAL (checked with INT_FITS_IN_JSVAL)
-	Added support in CResponse.cpp for client trigger word for securing containers in houses - TW_HOUSESECURE
+	Added support in cresponse.cpp for client trigger word for securing containers in houses - TW_HOUSESECURE
 	Updated CMulHandler::CheckStaticFlag() to match with statics that cover/extend across the specified Z coordinate, not just ones that have the same base Z level
 	Updated CMulHandler::DoesMapBlock() to not deem map tiles as blocking if they are more than 16 Z (height of a character) higher than the specified Z coordinate to check
 	Exposed method for finding corners of a multi to JS engine:
@@ -3264,7 +3264,7 @@
 	AmbientFootsteps now also play for NPC movement
 	Changed how code handles randomizing between MINTIME and MAXTIME values from region spawners; now multiplies values by 60 (to get seconds) before randomizing, instead of after, to make use of full range of seconds between the values (which are in minutes)
 	Adjusted default global NPC movement speeds in [speedup} section of uox.ini to use less extreme values
-	Added a DEBUGMOVEMULTIPLIER define in cChar.cpp used to multiply NPC movement delays by the specified value (1.75 by default) when running UOX3 in debug mode, due to reduced server performance in debug mode
+	Added a DEBUGMOVEMULTIPLIER define in cchar.cpp used to multiply NPC movement delays by the specified value (1.75 by default) when running UOX3 in debug mode, due to reduced server performance in debug mode
 	Documentation updates:
 		Added section on DFN tags for Character, Item, Region, SpawnRegion and Weather DFNs.
 		Added Feature documentation for Mining and customizable ores
@@ -3287,7 +3287,7 @@
 	Fixed grammar mistake in automake.sh that prevented compiling SpiderMonkey on MacOS (Xuri)
 	Updated readme with extended compiling details in spoiler tags (Xuri)
 	Undid static cast in jsapi.h (Xuri)
-	Fixed issue with two different versions of cPlayerAction.cpp with different case in name causing issues (Xuri)
+	Fixed issue with two different versions of cplayeraction.cpp with different case in name causing issues (Xuri)
 	The UOX3/shared/ directory will now be created automatically on startup if it doesn't already exist (punt)
 	Updated README.md and UOX3 documentation with improved instructions for installing necessary build tools on Linux and how to copy files to working directory after compiling. (Xuri)
 	Moved automake.sh from source directory to project root, and made it copy binary to project root directory after compiling (Xuri)
@@ -3353,7 +3353,7 @@
 	Updated TWEAK, INFO in code and ISTATS, CSTATS in gumps.js to display 4-digit hex-ids for IDs
 		consistently in the format of 0x####
 	Fixed issue that would disconnect ClassicUO users if they used WorldMap feature in the client,
-		via CPIKrriosClientSpecial() handler in CPacketReceive.cpp/h, which will handle all things
+		via CPIKrriosClientSpecial() handler in cpacketreceive.cpp/h, which will handle all things
 		packet 0xF0. As of yet it doesn't respond correctly to the WorldMap-related version of the
 		packet, but at least it no longer disconnects this client from the server.
 
@@ -3439,7 +3439,7 @@
 		Updated and standardized function comment blocks throughout entire codebase
 		Grouped getters and setters together in pairs and documented them as one
 		Removed empty and/or non-useful information from comment blocks
-		Removed unused function from cItem.cpp/h - IncID() - formerly used to change IDs for doors
+		Removed unused function from citem.cpp/h - IncID() - formerly used to change IDs for doors
 	Added new feature - Instances
 		Objects (characters, items, multis, spawnregions) can now make use of a 5th parameter to determine their location in the game world. In addition to the traditional X, Y, Z and WORLDNUMBER parameters, a new one has been added - INSTANCEID - that allows objects to exist at the same coordinates in the same world, but in different "dimensions". Code has been updated in multiple places to support this, and a default instanceID of 0 is assumed if nothing else is specified.
 	Added support for new DFN tag in town regions, spawn regions and locations - INSTANCEID (defaults to 0 if not present)
@@ -3525,7 +3525,7 @@
 	Disabled detailed logging of spells loaded from spells.dfn on startup - was causing unnecessary slowdown
 	Removed void Wiping( CSocket *s ) from cmdtable.cpp - unused and unreferenced function without a definition
 	Removed handling of IT_KEY doubleclicking in code, as this is now handled in JS
-	Removed bool isDoorBlocked( CItem *door ) from cPlayerAction.cpp - unused and unreferenced function without a definition
+	Removed bool isDoorBlocked( CItem *door ) from cplayeraction.cpp - unused and unreferenced function without a definition
 	Removed void CorpseTarget( CSocket *s ) from targeting.cpp - now handled in JS
 	Removed broken cannon loading and spelldamage code - this should be done in JS instead
 	Items that initiate a target cursor on use are now stored in tempObj property of player's socket, and distance to these items are checked again after player targets something
@@ -3761,7 +3761,7 @@
 	Fixed weight showing up incorrectly in item-tooltips for stacks of items
 	Fixed a weight-related issue by clearing the CSocket variable pSpot (pickupspot) after dropping items
 	Fixed a weight-related issue by clearing the CSocket variable pSpot (pickupspot) after bouncing back items on non-valid item-pickup attempts
-	Added new function void PickupBounce() in cPlayerAction.cpp to avoid having to repeat some shared code all over CPIGetItem::Handle()
+	Added new function void PickupBounce() in cplayeraction.cpp to avoid having to repeat some shared code all over CPIGetItem::Handle()
 	Added CSocket::SetCursorItem() and CSocket:GetCursorItem() to be used for storing temporary pointers to items held by players on the mouse-cursor
 	Fixed an issue where items picked up off the ground and held on the mouse-cursor while disconnecting/being disconnected would make said items vanish permanently
 	Fixed MaxWeight-value in status-gump for clients v5+ - will now reflect the actual MaxWeight calculated based on UOX.INI setting WEIGHTPERSTR
@@ -3888,7 +3888,7 @@
 		Changed some "stuff.size() != 0"-checks to "!stuff.empty()"
 		Removed some variables that were initialized but never used
 	Increased world-loading speeds by ~35-40%, and saving by ~30-35% (your mileage may vary, this was tested on Windows 7, on an SSD)
-	Included <climits> in mapstuff.h and <stdlib.h> in cDice.cpp to fix a compiling issue in Linux
+	Included <climits> in mapstuff.h and <stdlib.h> in cdice.cpp to fix a compiling issue in Linux
 	Updated some JS Console Methods in JS/COMMANDS/consoletest.js
 	Made the WIPEABLE bit a member of cBaseObj instead of cItem, so it can be used by both items, spawners, characters and multis - though only works for items and spawners atm
 	Updated the 'WIPE command to not delete non-wipeable items and spawners
@@ -3923,7 +3923,7 @@
 
 14/12/2011 - Xuri (0.98-4.0i)
 	Fixed an issue causing errors when compiling in VS 2008 Express and newer (giwo)
-	Added some exception-handling to cScript::DoCallback() in cScript.cpp (spdddmn)
+	Added some exception-handling to cScript::DoCallback() in cscript.cpp (spdddmn)
 	Added NPCWANDER-type 5 (WT_FROZEN) - which will stop NPCs from moving. Useful for reapers and corpsers and such.
 	Added support for six new JS events:
 		onBuy( socket, objVendor ) - triggers for vendor before tradegump is opened. Can be used to restrict vendor access.
@@ -3932,9 +3932,9 @@
 		onBoughtFromVendor( socket, objVendor, objBought ) - triggers on item after purchase has gone through and item has reached the player's backpack
 		onSellToVendor( socket, objVendor, objSold ) - triggers for item while item is being sold to an NPC vendor; return false in script to block sale, defaults to true
 		onSoldToVendor( socket, objVendor, objSold ) - triggers on item after sale has gone through and item has reached the vendor's boughtpack
-	Included CJSMapping.h and cScript.h in vendor.cpp to support new JS events
+	Included cjsmapping.h and cscript.h in vendor.cpp to support new JS events
 	Added onBoughtFromVendor JS events to pet-statue scripts in JS/NPC/PETS/ to automagically turn statues into live pets immediately after being bought
-	Added a NULL-check in CJSEngine::AquireObject() in CJSEngine.cpp (spdddmn)
+	Added a NULL-check in CJSEngine::AquireObject() in cjsengine.cpp (spdddmn)
 	Added an extra check to CPISellItem to make sure the character trying to sell items still owns those items when accepting trade
 	(Added a temporary workaround for NPC pathfinding with long queues of NPCs trying to reach the same target)
 	Added new DFN tags for ranged weapons, defining ammunition id required (color optional) and missile-effect id played (color/rendermode optional):
@@ -4119,7 +4119,7 @@
 	Added onVirtueGumpPress( pUser, cTarg, buttonNum ) JS Event to handle clicking the Virtue gump icon (and subsequent menus).
 
 1/18/2009 - giwo
-	Moved the magic scroll handling from cPlayerAction.cpp out to JavaScript (items/magicscroll.js)
+	Moved the magic scroll handling from cplayeraction.cpp out to JavaScript (items/magicscroll.js)
 	Fixed a bug with the JS Method Char.CastSpell() where it never returned a value to the calling script.
 
 1/18/2009 - giwo (0.98-4.0a)
@@ -5152,7 +5152,7 @@ Oct 12, 2008 - Maarc
 	on possibly bugged chars.
 
 3/11/2006 - grimson
-	Don't save the weight in cChar.cpp, it's already saved in cBaseobject.cpp.
+	Don't save the weight in cchar.cpp, it's already saved in cBaseobject.cpp.
 	Fixed a bug where items without a layer didn't add to the chars weight.
 	Fixed a bug in CWeight::calcCharWeight() that added the weight of the backpack
 	twice.
@@ -5222,7 +5222,7 @@ Oct 12, 2008 - Maarc
 
 3/04/2006 - grimson
 	Changed cMovement::SendWalkToPlayer() so that the sequenz number fits the description
-	in CPacketReceive.cpp.
+	in cpacketreceive.cpp.
 	Changed CPIResyncReq::Handle() so that it actually does resend everything around
 	the player.
 
@@ -5282,7 +5282,7 @@ Oct 12, 2008 - Maarc
 	Added calc_WaterWalk() function to movement.cpp and changed the calc_move() function so that
 	it uses it for water creatures and amphibians.
 	Added IsStaticWet() and CanSeaMonsterMoveHere() functions to mapstuff.cpp.
-	Added FindCharSpotToSpawn() to cSpawnRegion.cpp and use it when spawning NPCs, renamed
+	Added FindCharSpotToSpawn() to cspawnregion.cpp and use it when spawning NPCs, renamed
 	FindSpotToSpawn() to FindItemSpotToSpawn() and use it when spawning items.
 
 	DFN changes:
@@ -5390,7 +5390,7 @@ Oct 12, 2008 - Maarc
 	Fixed an issue causing boat holds not to be made part of the multi.
 	Updated the INI loading code to make it more verbose.
 	Removed "Golden" health until we know when (if ever) OSI uses it.
-	Created a new class, CJSEngine along with the files CJSEngine.cpp/.h
+	Created a new class, CJSEngine along with the files cjsengine.cpp/.h
 	Created a new class, CJSRuntime to allow multiple runtimes (for threading purposes).
 	Moved JSObject creation and handling into CJSRuntime.
 	Moved global JS Context and Runtimes into CJSRuntime.
@@ -5657,7 +5657,7 @@ Oct 12, 2008 - Maarc
 			STORMSECS - Defines the interval at which the races takes damage from a storm.
 
 16th February, 2006 - Maarc (0.98-3.3i [3.4 BETA])
-	Committed some fixes to giwo's last commit (missed some changes in cScript.cpp that was blocking people from compiling)
+	Committed some fixes to giwo's last commit (missed some changes in cscript.cpp that was blocking people from compiling)
 	Removed a lot of commented stuff.  Dead code that's not used any more and things like that have been reduced
 	Begun damage/healing tracking support.  All places in C++ code should be covered (will need to update JS engine).  Healing
 	 and damage is now tracked per character, so that they can find out who has damaged/healed them the most.  If healing/damage
@@ -6078,7 +6078,7 @@ Oct 12, 2008 - Maarc
 	CPISecondLogin logging claimed to be packet 0x80, when in reality, it's 0x91
 	Unknown byte in CPIFirstLogin now displayed numerically, rather than as a dodgy ASCII char
 	Changed Seed IP of CPRelay to 0xFFFFFFFF
-	Moved pSplit() and PackShort() from CPacketSend.cpp to CPacketReceive.cpp, given that's the only place that it is even used
+	Moved pSplit() and PackShort() from cpacketsend.cpp to cpacketreceive.cpp, given that's the only place that it is even used
 	Removed some unnecessary dead code
 
 1/20/2006 - Xuri
@@ -6496,7 +6496,7 @@ March 4 2005 - Maarc
 
 2/18/2005 - giwo (0.98-2.7d)
 	Changed all the miscellaneous #ifdef DEBUG statements to #if defined( UOX_DEBUG_MODE ) for uniformity.
-	Fixed a few minor issues in cScript.cpp.
+	Fixed a few minor issues in cscript.cpp.
 	Removed cScript::RemoveFromRoot().
 	Fixed some areas where structures were not initializing variables with default values.
 	Fixed an issue with a couple of the JS Scripts:
@@ -6522,7 +6522,7 @@ March 4 2005 - Maarc
 	Added SE Function ReloadJSFile, along with a new command in js, RELOADJSFILE
 
 2/7/2005 - giwo (0.98-2.7)
-	Replaced trigger.cpp/.h with CJSMapping.cpp/.h Fixing several issues with JS Scripts.
+	Replaced trigger.cpp/.h with cjsmapping.cpp/.h Fixing several issues with JS Scripts.
 	Added .desc prop to JS Items
 
 2/6/2005 - giwo
@@ -6615,7 +6615,7 @@ January 15 2005 - Maarc
 	Altered corpses update to send a few less unneeded QueryToolTip packets.
 
 12/31/2004 - giwo
-	More cleanups in CPacketSend.cpp
+	More cleanups in cpacketsend.cpp
 	Renamed doDeathStuff() to HandleDeath() and moved it into pcmanage.cpp.
 	Cleaned up the code a bit in HandleDeath() and its sub-functions.
 	Fixed an issue causing starting skin color to disregard the players selection.
@@ -6647,7 +6647,7 @@ January 15 2005 - Maarc
 	Fixed packet issues causing Dir and Z not to function properly on Items.
 	Fixed a packet issue causing combat targets not to remaing highlighted.
 	Fixed a crash on login casued by FindPlayersInVisrange().
-	Minor cleanups in CPacketSend.cpp
+	Minor cleanups in cpacketsend.cpp
 
 12/27/2004 - evilded
 	Added code for until now unsupported doors, including new SE doors (experimental!).
@@ -6682,7 +6682,7 @@ January 15 2005 - Maarc
 
 8/13/2004 - giwo
 	Converted a few areas of code to using refrences rather than pointers.
-	Consolidated some code in cWeather.cpp and cRaces.cpp.
+	Consolidated some code in cweather.cpp and cRaces.cpp.
 	Fixed a couple areas where an ACCOUNTSBLOCK was being copied and altered, but not set back on the object it was copied from.
 	Implemented a temporary fix for multiple users on one account and other related issues.
 	Modified CChar::petsControlled to make use of CDataList.
@@ -6950,7 +6950,7 @@ July 28 2004 - Maarc
 	Fixed an issue causing item and characters to not be distinguished properly when doing a calcFromSer().
 	Fixed an issue causing client to lag permanently shortly after logging in.
 	Fixed an issue causing UOX to bail out when setting the container of an item in JS.
-	Consolidated some code in cSocket.cpp
+	Consolidated some code in csocket.cpp
 	Began moving commands out to js:
 		ACTION
 		ALLMOVE
@@ -7329,7 +7329,7 @@ July 28 2004 - Maarc
 	As it stands, only 1 spell per file, unlike the JS commands, which I should probably fix up by adding a spell ID to onSpellCast and passing it all in (would make life much easier for area effect versions of single spells)
 
 6/27/2004 - giwo
-	Broke packets.cpp/.h into CPacketSend.cpp/.h and CPacketReceive.cpp/.h
+	Broke packets.cpp/.h into cpacketsend.cpp/.h and cpacketreceive.cpp/.h
 	Implemented some debug code to hopefully clear up some crash issues with region loops.
 	Modified the deltionQueue in order to ensure proper deletion of objects.
 	Fixed an issue causing characters to never switch targets in combat until their target died.
@@ -7445,7 +7445,7 @@ July 28 2004 - Maarc
 	Rewrote our command table to simplify it a bit and remove the need for two structs.
 	Extensive fixes/changes to HTMLTemplates and HTMLTemplate classes.
 	Fixed an issue when using CChar::SetLocation() where Dirty() was not called.
-	Removed Dictionary.h from global scope.
+	Removed dictionary.h from global scope.
 	Moved several structs and typedefs into private members of their only calling class.
 	Made use of UString::replaceSlash() in place of our current PathFix() functions.
 	Removed vtables from a few more functions that had no need of virtual functions.
@@ -7459,7 +7459,7 @@ July 28 2004 - Maarc
 	Simplified a bit of the handling in targeting.cpp, allowing the removal of many functions.
 	Tinkered with lineofsight.cpp a bit allowing the removal of itemids and loscache from cItem class.
 	Moved doorbase[] out of global scope and into door.cpp.
-	Made use of cSkillClass in cPlayerAction.cpp BestSkill().
+	Made use of cSkillClass in cplayeraction.cpp BestSkill().
 
 11/22/2003
 	Fixed bug causing NPC's not to be created.
@@ -7474,7 +7474,7 @@ July 28 2004 - Maarc
 	Made more use of strings and UString.
 
 11/17/2003
-	Added CResponse.cpp & CResponse.h
+	Added cresponse.cpp & cresponse.h
 	Moved the bulk of cSpeech::Response() into CResponse() classes.
 	cSpeech Changes:
 		Changed genericTalking into CPTalkRequest::Handle().
@@ -7512,7 +7512,7 @@ July 28 2004 - Maarc
 Oct 31 2003 - giwo
 	Added struct ProwessTitle to allow more customization when dealing with prowess titles in titles.dfn.
 	Added vector prowessTitles to CWorldMain.
-	Added map idToItemType in cPlayerAction.cpp to remove redundant doubleclick item handling based on both ID and Type.
+	Added map idToItemType in cplayeraction.cpp to remove redundant doubleclick item handling based on both ID and Type.
 	Added scriptability (itemtypes.dfn in /items/ dir) for automatically associating an items ID to an item type.
 	Added cSocket::TempObj() in place of addmitem and overuse of AddID.
 	Changed cSocket AddX() and AddY() to SI16, made more use of TempInt().
@@ -7538,7 +7538,7 @@ Oct 31 2003 - giwo
 		Removed CChar SkillItem() and Trainer().
 		Removed some unused functions.
 		Removed CChar may_levitate, willHunger, casting, and med variables, making use of the bools variable instead.
-		Moved CChar::GetBestSkill() to cPlayerAction.cpp as BestSkill().
+		Moved CChar::GetBestSkill() to cplayeraction.cpp as BestSkill().
 		Changed CChar fx1, fx2, and fy1, fy2, to fx[2], fy[2] to simplify handling.
 		Changed CChar::petguarding to a cBaseObject.
 		Changed CChar::ftarg, targ, trainer, and trackingtarget to a CChar pointer.
@@ -7710,7 +7710,7 @@ Oct 04 2003 - giwo
 		Removed sendItem(), sendPackItem(), and openCorpse()
 		Replaced the aforementioned functions with an improved cItem::Refresh(), cItem::SendToSocket(), and cItem::SendPackItemToSocket().
 		Added cItem::RemoveFromSight() to better handle usage of the CPRemoveItem() packet class
-		Added cPlayerAction.cpp and cPlayerAction.h to move many functions out of global scope.
+		Added cplayeraction.cpp and cPlayerAction.h to move many functions out of global scope.
 		Removed cClick.cpp as the aforementioned file holds its functions now.
 		Moved updateskill() into the cSocket class
 
@@ -8589,13 +8589,13 @@ Changed:
 
 2001-12-21 02:33  darkangelab
 
-	* UOXJSPropertyFuncs.cpp, UOXJSPropertySpecs.h:
+	* uoxjspropertyfuncs.cpp, uoxjspropertyspecs.h:
 	Whitespace updates
 	Added property setter stuff for item objects
 
 2001-12-21 02:18  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp, gumps.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp, gumps.cpp:
 	Removed GetX, GetY, GetZ, GetColour and GetID and their Set
 	versions from the JS engine, as they're now properties
 	Removed some warnings
@@ -8603,15 +8603,15 @@ Changed:
 
 2001-12-20 23:23  darkangelab
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Updated some bad snippets
 
 2001-12-20 22:34  darkangelab
 
-	* SEFunctions.cpp, cBaseObject.h, cBaseobject.cpp, cChar.cpp,
-	cItem.cpp, cScript.cpp, cScript.h, html.cpp, npcs.cpp,
-	pcmanage.cpp, regions.cpp, UOXJSMethods.cpp, UOXJSMethods.h,
-	UOXJSPropertySpecs.h, skills.cpp, targeting.cpp:
+	* sefunctions.cpp, cbaseobject.h, cBaseobject.cpp, cchar.cpp,
+	citem.cpp, cscript.cpp, cscript.h, html.cpp, npcs.cpp,
+	pcmanage.cpp, regions.cpp, uoxjsmethods.cpp, uoxjsmethods.h,
+	uoxjspropertyspecs.h, skills.cpp, targeting.cpp:
 	Added ShouldSave() method to CBaseObject, for more support in spawn
 	regions
 	ShouldSave by default is always true
@@ -8624,7 +8624,7 @@ Changed:
 
 2001-12-20 17:42  darkangelab
 
-	* UOXJSMethods.h:
+	* uoxjsmethods.h:
 	Readability updates
 
 2001-12-20 17:42  dark-storm
@@ -8634,14 +8634,14 @@ Changed:
 
 2001-12-20 17:32  darkangelab
 
-	* UOXJSMethods.cpp, combat.cpp, html.cpp, npcs.cpp:
+	* uoxjsmethods.cpp, combat.cpp, html.cpp, npcs.cpp:
 	Source code cleanups and tidy ups
 	Syntax updates to conform to a single style
 	Performance tweaks to some HTML stuff
 
 2001-12-20 16:53  dark-storm
 
-	* cAccount.cpp, cServerData.cpp, cSocket.cpp:
+	* cAccount.cpp, cserverdata.cpp, csocket.cpp:
 	Newlines once again
 
 2001-12-20 16:36  dark-storm
@@ -8651,10 +8651,10 @@ Changed:
 
 2001-12-20 16:32  dark-storm
 
-	* SEFunctions.cpp, SEFunctions.h, UOXJSClasses.h, UOXJSMethods.cpp,
-	UOXJSMethods.h, UOXJSPropertyEnums.h, UOXJSPropertyFuncs.cpp,
-	UOXJSPropertyFuncs.h, UOXJSPropertySpecs.h, cMultiObj.cpp,
-	cScript.cpp, cSpawnRegion.cpp, cmdtable.cpp, combat.cpp, html.cpp,
+	* sefunctions.cpp, sefunctions.h, uoxjsclasses.h, uoxjsmethods.cpp,
+	uoxjsmethods.h, uoxjspropertyenums.h, uoxjspropertyfuncs.cpp,
+	uoxjspropertyfuncs.h, uoxjspropertyspecs.h, cmultiobj.cpp,
+	cscript.cpp, cspawnregion.cpp, cmdtable.cpp, combat.cpp, html.cpp,
 	necro.cpp, npcs.cpp, quantityfuncs.cpp:
 	Added Update to the PropertySetters for X,Y and Z.
 	Added a few Character Methods (TextMessage,Delete and others) and a
@@ -8671,12 +8671,12 @@ Changed:
 
 	* Makefile.am, Makefile.in:
 	Added the
-	UOXJSMethods.cpp and UOXJSMethods.h
+	uoxjsmethods.cpp and uoxjsmethods.h
 	to the Linux Makefiles
 
 2001-12-20 08:48  dark-storm
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Activated CGump javascript class
 
 2001-12-20 08:44  dark-storm
@@ -8694,11 +8694,11 @@ Changed:
 
 2001-12-20 08:16  dark-storm
 
-	* UOX3_Official.dsp, UOXJSClasses.h, UOXJSMethods.cpp,
-	UOXJSMethods.h, cScript.h:
+	* UOX3_Official.dsp, uoxjsclasses.h, uoxjsmethods.cpp,
+	uoxjsmethods.h, cscript.h:
 	Added CGump , class for JavaScript gumps.
 
-	Added UOXJSMethods.cpp and UOXJSMethods.h to the Project file and
+	Added uoxjsmethods.cpp and uoxjsmethods.h to the Project file and
 	added a filegroup for the JS Engine as	there are a lot of files by
 	now...
 
@@ -8710,8 +8710,8 @@ Changed:
 
 2001-12-20 01:38  darkangelab
 
-	* cScript.cpp, cScript.h, cmdtable.cpp, funcdecl.h, npcs.cpp,
-	SEFunctions.cpp, UOX3_Official.dsp, skills.cpp, sound.cpp,
+	* cscript.cpp, cscript.h, cmdtable.cpp, funcdecl.h, npcs.cpp,
+	sefunctions.cpp, UOX3_Official.dsp, skills.cpp, sound.cpp,
 	uox3.cpp:
 	playMidi now takes 2 parameters, not 3
 	The command to play a midi takes 1 or 2 parameters now
@@ -8727,7 +8727,7 @@ Changed:
 
 2001-12-19 19:37  darkangelab
 
-	* cClick.cpp, cItem.cpp, cItem.h, effect.cpp, funcdecl.h,
+	* cClick.cpp, citem.cpp, citem.h, effect.cpp, funcdecl.h,
 	gumps.cpp, items.cpp, skills.cpp, targeting.cpp, uox3.cpp:
 	Removed SetLayer( 0 ) on items when generating corpse to avoid
 	layer corruption
@@ -8736,12 +8736,12 @@ Changed:
 
 2001-12-19 17:49  darkangelab
 
-	* cScript.cpp:
+	* cscript.cpp:
 	SetIntelligence JS call fix thanks to silver2000
 
 2001-12-18 23:14  darkangelab
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, cSpawnRegion.h,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, cspawnregion.h,
 	classes.h, combat.cpp, house.cpp, targeting.cpp, uox3.cpp:
 	Few cleanups and tidyups
 
@@ -8758,8 +8758,8 @@ Changed:
 
 2001-12-17 20:05  darkangelab
 
-	* ai.cpp, cMagic.h, classes.h, combat.cpp, cWeather.cpp,
-	cWeather.hpp, combat.h, globals.cpp, magic.cpp, movement.cpp,
+	* ai.cpp, cmagic.h, classes.h, combat.cpp, cweather.cpp,
+	cweather.hpp, combat.h, globals.cpp, magic.cpp, movement.cpp,
 	movement.h, pcmanage.cpp, ssection.cpp, uox3.cpp, uox3.h:
 	Functions no longer take a currenttime parameter, instead using the
 	global uiCurrentTime variable
@@ -8770,8 +8770,8 @@ Changed:
 
 2001-12-16 20:20  darkangelab
 
-	* UOXJSClasses.h, UOXJSPropertyEnums.h, UOXJSPropertyFuncs.cpp,
-	UOXJSPropertyFuncs.h, UOXJSPropertySpecs.h, cSocket.cpp, cSocket.h,
+	* uoxjsclasses.h, uoxjspropertyenums.h, uoxjspropertyfuncs.cpp,
+	uoxjspropertyfuncs.h, uoxjspropertyspecs.h, csocket.cpp, csocket.h,
 	enums.h:
 	Added cSocket helper functions to help with JS property stuff
 	Added a CSocket object to the JS system
@@ -8787,13 +8787,13 @@ Changed:
 
 2001-12-15 22:49  darkangelab
 
-	* UOXJSPropertyEnums.h, UOXJSPropertyFuncs.cpp,
-	UOXJSPropertySpecs.h:
+	* uoxjspropertyenums.h, uoxjspropertyfuncs.cpp,
+	uoxjspropertyspecs.h:
 	Updated and worked on Guild properties
 
 2001-12-15 05:57  darkangelab
 
-	* calcfuncs.cpp, cBaseObject.h, cBaseobject.cpp, cChar.cpp,
+	* calcfuncs.cpp, cbaseobject.h, cBaseobject.cpp, cchar.cpp,
 	combat.cpp:
 	Fixed a bug which had calcItemObjFromSer with INVALIDSERIAL as the
 	serial returning a valid object
@@ -8804,8 +8804,8 @@ Changed:
 
 2001-12-14 23:52  darkangelab
 
-	* UOXJSPropertyEnums.h, UOXJSPropertyFuncs.cpp,
-	UOXJSPropertySpecs.h, targeting.cpp, townregion.cpp, townregion.h,
+	* uoxjspropertyenums.h, uoxjspropertyfuncs.cpp,
+	uoxjspropertyspecs.h, targeting.cpp, townregion.cpp, townregion.h,
 	uox3.cpp, weight.cpp:
 	Added more region properties
 	Changed a number of int references to SI32
@@ -8819,20 +8819,20 @@ Changed:
 
 2001-12-13 20:24  darkangelab
 
-	* UOXJSClasses.h, UOXJSPropertyFuncs.cpp:
+	* uoxjsclasses.h, uoxjspropertyfuncs.cpp:
 	Updates to property get/setters
 
 2001-12-13 19:34  darkangelab
 
-	* Makefile.am, Makefile.in, UOX3_Official.dsp, UOXJSClasses.h,
-	UOXJSPropertyEnums.h, UOXJSPropertyFuncs.cpp, UOXJSPropertyFuncs.h,
-	UOXJSPropertySpecs.h, cScript.cpp:
+	* Makefile.am, Makefile.in, UOX3_Official.dsp, uoxjsclasses.h,
+	uoxjspropertyenums.h, uoxjspropertyfuncs.cpp, uoxjspropertyfuncs.h,
+	uoxjspropertyspecs.h, cscript.cpp:
 	Broke out PropertySpecs, PropertyFuncs, PropertyEnums and the JS
 	Classes into their own header and CPP files
 
 2001-12-13 00:22  darkangelab
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Added property enums and specs for Guilds, races and regions
 
 2001-12-12 23:18  thyme
@@ -8847,14 +8847,14 @@ Changed:
 
 2001-12-12 21:35  darkangelab
 
-	* cScript.cpp, globals.cpp, items.cpp, npcs.cpp, uox3.h:
+	* cscript.cpp, globals.cpp, items.cpp, npcs.cpp, uox3.h:
 	Killed some unnecessary global variables
 	Changed some variables for JS Char objects to readonly
 	Implemented more property setters for JS Char objects
 
 2001-12-11 21:02  darkangelab
 
-	* cItem.cpp:
+	* citem.cpp:
 	Fixed a hash item error problem occurring on new item creation, due
 	to redundant code
 
@@ -8872,8 +8872,8 @@ Changed:
 
 2001-12-10 23:22  darkangelab
 
-	* SEFunctions.cpp, cChar.cpp, cItem.cpp, cItem.h, cMultiObj.cpp,
-	cMultiObj.h, charhandle.cpp, classes.h, commands.cpp, globals.cpp,
+	* sefunctions.cpp, cchar.cpp, citem.cpp, citem.h, cmultiobj.cpp,
+	cmultiobj.h, charhandle.cpp, classes.h, commands.cpp, globals.cpp,
 	handlers.h, itemhandler.cpp, items.cpp, regions.cpp, uox3.cpp,
 	uox3.h:
 	Removed the need for InitItem
@@ -8885,7 +8885,7 @@ Changed:
 
 2001-12-10 21:52  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp, uox3.h:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp, uox3.h:
 	Added Get/Set Name2 JS functions
 	Added GetLowDamage and GetHighDamage functions
 	Init'd standard classes for each context/object so things like for
@@ -8898,7 +8898,7 @@ Changed:
 
 2001-12-05 22:46  darkangelab
 
-	* cSocket.cpp:
+	* csocket.cpp:
 	Logging only happens if the logging option is on
 
 2001-12-05 22:25  thyme
@@ -8908,7 +8908,7 @@ Changed:
 
 2001-12-05 19:39  darkangelab
 
-	* cScript.cpp, cScript.h, magic.cpp:
+	* cscript.cpp, cscript.h, magic.cpp:
 	Added an onSpellTarget event
 	onSpellTarget fires for a character/item when it's targeted by a
 	spell
@@ -8922,7 +8922,7 @@ Changed:
 
 2001-11-29 19:23  darkangelab
 
-	* cServerData.cpp, cServerDefinitions.cpp, jail.cpp, scriptc.cpp,
+	* cserverdata.cpp, cServerDefinitions.cpp, jail.cpp, scriptc.cpp,
 	ssection.cpp, townregion.cpp, uox3.cpp:
 	Code changes and updates to turn the DFN support on, in preparation
 	for a package release
@@ -8984,7 +8984,7 @@ Changed:
 
 2001-11-22 17:18  darkangelab
 
-	* cChar.cpp, cChar.h, cItem.cpp, cItem.h, combat.cpp, uox3.cpp:
+	* cchar.cpp, cchar.h, citem.cpp, citem.h, combat.cpp, uox3.cpp:
 	Reduced Poison information for characters and items to SI08 from
 	SI32
 	Changed return value of -1 to 0xFFFF in calcAtt
@@ -9016,7 +9016,7 @@ Changed:
 
 2001-11-20 22:15  darkangelab
 
-	* cServerData.cpp:
+	* cserverdata.cpp:
 	Writes out the ScriptSectionHeader setting
 
 2001-11-20 20:31  darkangelab
@@ -9046,12 +9046,12 @@ Changed:
 
 2001-11-18 20:20  darkangelab
 
-	* boats.cpp, cAccount.cpp, cClick.cpp, cServerData.cpp,
-	cServerData.h, cServerDefinitions.cpp, cSocket.cpp,
-	cSpawnRegion.cpp, cSpawnRegion.h, classes.h, cmdtable.cpp,
+	* boats.cpp, cAccount.cpp, cClick.cpp, cserverdata.cpp,
+	cserverdata.h, cServerDefinitions.cpp, csocket.cpp,
+	cspawnregion.cpp, cspawnregion.h, classes.h, cmdtable.cpp,
 	cmdtable.h, combat.cpp, debug.cpp, effect.cpp, fileio.cpp,
 	funcdecl.h, house.cpp, im.cpp, items.cpp, magic.cpp, magic.h,
-	movement.cpp, necro.cpp, npcs.cpp, SEFunctions.cpp, SEFunctions.h,
+	movement.cpp, necro.cpp, npcs.cpp, sefunctions.cpp, sefunctions.h,
 	regions.cpp, skills.cpp, sound.cpp, speech.cpp, targeting.cpp,
 	targeting.h, trigger.cpp, uox3.cpp:
 	Changed one line comments from /* */ to // in the instances it's
@@ -9098,7 +9098,7 @@ Changed:
 
 2001-11-15 19:30  darkangelab
 
-	* cServerData.cpp:
+	* cserverdata.cpp:
 	V2.0 INI lookup doesn't force data to uppercase, fixes linux path
 	stuff
 
@@ -9111,7 +9111,7 @@ Changed:
 
 2001-11-15 18:40  darkangelab
 
-	* cBaseobject.cpp, cChar.cpp, combat.cpp, network.cpp, queue.cpp,
+	* cBaseobject.cpp, cchar.cpp, combat.cpp, network.cpp, queue.cpp,
 	sound.cpp, uox3.cpp, uox3.h:
 	Syntax cleanups
 	Moved the spline stuff to sound.cpp, only commented out playing,
@@ -9121,7 +9121,7 @@ Changed:
 
 2001-11-15 17:47  bpass
 
-	* cServerData.cpp, cServerData.h, cServerDefinitions.cpp,
+	* cserverdata.cpp, cserverdata.h, cServerDefinitions.cpp,
 	combat.cpp, network.cpp, uox3.cpp, worldmain.cpp:
 	New INI format & fixes...
 	Fixes for combat.
@@ -9139,7 +9139,7 @@ Changed:
 
 2001-11-14 14:34  mrfixit
 
-	* PageVector.h, queue.cpp:
+	* pagevector.h, queue.cpp:
 	Fixed some warnings
 
 2001-11-13 18:26  darkangelab
@@ -9159,8 +9159,8 @@ Changed:
 
 2001-11-13 17:33  darkangelab
 
-	* UOX3_Official.dsp, UOX3_Official.dsw, cBaseobject.cpp, cChar.cpp,
-	cItem.cpp, cMultiObj.cpp, fileio.cpp, pointer.cpp, uox3.h:
+	* UOX3_Official.dsp, UOX3_Official.dsw, cBaseobject.cpp, cchar.cpp,
+	citem.cpp, cmultiobj.cpp, fileio.cpp, pointer.cpp, uox3.h:
 	UOX3 not UOX
 	Removed the sound code Zippy put in entirely, as well as attic'ing
 	pointer.cpp
@@ -9170,12 +9170,12 @@ Changed:
 
 2001-11-13 16:58  bpass
 
-	* cChar.cpp, combat.cpp, uox3.cpp:
+	* cchar.cpp, combat.cpp, uox3.cpp:
 	Crash fixes from "Crash me" irc test shard.
 
 2001-11-13 14:11  bpass
 
-	* cBaseobject.cpp, cChar.cpp, cItem.cpp, uox3.h:
+	* cBaseobject.cpp, cchar.cpp, citem.cpp, uox3.h:
 	Re-added some of the osttringstream stuff to increase save speed
 	even more.
 
@@ -9186,7 +9186,7 @@ Changed:
 
 2001-11-13 09:43  bpass
 
-	* cBaseobject.cpp, cChar.cpp, cItem.cpp, pointer.cpp, uox3.cpp,
+	* cBaseobject.cpp, cchar.cpp, citem.cpp, pointer.cpp, uox3.cpp,
 	uox3.h:
 	I'm not even going to say anything.
 
@@ -9198,12 +9198,12 @@ Changed:
 2001-11-12 23:11  darkangelab
 
 	* Dictionary.cpp, boats.cpp, books.cpp, cAccount.cpp,
-	cBaseobject.cpp, cChar.cpp, cClick.cpp, cItem.cpp, cItem.h,
-	cServerDefinitions.cpp, cWeather.cpp, calcfuncs.cpp,
+	cBaseobject.cpp, cchar.cpp, cClick.cpp, citem.cpp, citem.h,
+	cServerDefinitions.cpp, cweather.cpp, calcfuncs.cpp,
 	charhandle.cpp, cmdtable.cpp, combat.cpp, dist.cpp, fileio.cpp,
 	globals.cpp, gumps.cpp, itemhandler.cpp, items.cpp,
 	lineofsight.cpp, magic.cpp, mapstuff.cpp, movement.cpp,
-	msgboard.cpp, SEFunctions.cpp, network.cpp, newbie.cpp, npcs.cpp,
+	msgboard.cpp, sefunctions.cpp, network.cpp, newbie.cpp, npcs.cpp,
 	pointer.cpp, regions.cpp, skills.cpp, skills.h, sound.cpp,
 	speech.cpp, targeting.cpp, trigger.cpp, uox3.cpp, uox3.h,
 	commands.cpp:
@@ -9219,7 +9219,7 @@ Changed:
 
 2001-11-12 19:29  darkangelab
 
-	* cBaseobject.cpp, cChar.cpp, cItem.cpp, uox3.h:
+	* cBaseobject.cpp, cchar.cpp, citem.cpp, uox3.h:
 	UOX3 not UOX
 	Restored full writing out of data for each object, as it is an
 	explicit design decision critical for future implementations
@@ -9235,7 +9235,7 @@ Changed:
 
 2001-11-12 15:48  bpass
 
-	* cBaseobject.cpp, cChar.cpp, cItem.cpp, hash.cpp, uox3.h:
+	* cBaseobject.cpp, cchar.cpp, citem.cpp, hash.cpp, uox3.h:
 	Removed default tags from Saves/Loads.	Huge speed and save size
 	benifits.
 
@@ -9256,7 +9256,7 @@ Changed:
 
 2001-11-09 20:03  darkangelab
 
-	* SEFunctions.cpp, pointer.cpp:
+	* sefunctions.cpp, pointer.cpp:
 	Fixed a SetDecayable JS bug
 	Updated SE_GetRaceCount documentation and implementation
 	Removed sound playback from pointer.cpp
@@ -9266,7 +9266,7 @@ Changed:
 
 2001-11-09 13:16  mrfixit
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp:
 
 	Added GetRaceCount (By DarkStorm) to the scriptengine.
 
@@ -9322,12 +9322,12 @@ Changed:
 
 2001-11-06 14:56  mrfixit
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Fixed 4 warnigs
 
 2001-11-06 12:18  shadowlord13
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp:
 	Added four new JS functions:
 	void SetDecayable( int item, bool isDecayable)
 	bool IsDecayable( int item )
@@ -9342,8 +9342,8 @@ Changed:
 
 2001-11-05 23:13  darkangelab
 
-	* cBaseobject.cpp, SEFunctions.cpp, cBaseObject.h, cClick.cpp,
-	cItem.cpp, cmdtable.cpp, newbie.cpp, uox3.cpp:
+	* cBaseobject.cpp, sefunctions.cpp, cbaseobject.h, cClick.cpp,
+	citem.cpp, cmdtable.cpp, newbie.cpp, uox3.cpp:
 	Code cleanups / tidy ups
 	Forced consistency of style
 	Changed an int to SI32 in base object
@@ -9362,7 +9362,7 @@ Changed:
 
 2001-11-04 19:02  darkangelab
 
-	* SEFunctions.cpp, ai.cpp, network.cpp, network.h, pointer.cpp,
+	* sefunctions.cpp, ai.cpp, network.cpp, network.h, pointer.cpp,
 	targeting.cpp, uox3.cpp, uox3.h:
 	0.95.07.00 release
 	Fixed application name and release version
@@ -9386,12 +9386,12 @@ Changed:
 
 2001-11-04 15:15  shadowlord13
 
-	* SEFunctions.h:
+	* sefunctions.h:
 	Fixed to compile for linux.
 
 2001-11-04 14:33  shadowlord13
 
-	* SEFunctions.h, cBaseObject.h, cBaseobject.cpp:
+	* sefunctions.h, cbaseobject.h, cBaseobject.cpp:
 	Code for tags on characters and items. JS functions:
 	SetTag(objectID, objectType, tagname, tagval);
 	GetTag(objectID, objectType, tagname);
@@ -9399,7 +9399,7 @@ Changed:
 
 2001-11-04 14:19  shadowlord13
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Code for tags on characters and items. JS functions:
 	SetTag(objectID, objectType, tagname, tagval);
 	GetTag(objectID, objectType, tagname);
@@ -9413,7 +9413,7 @@ Changed:
 
 2001-11-04 12:29  shadowlord13
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Added StringToNum and NumToString to the list of functions usable
 	in JS scripts.
 
@@ -9424,7 +9424,7 @@ Changed:
 
 2001-11-03 21:53  bpass
 
-	* cServerDefinitions.cpp, cSocket.cpp:
+	* cServerDefinitions.cpp, csocket.cpp:
 	Small crash Fixes
 
 2001-11-03 13:00  shadowlord13
@@ -9502,7 +9502,7 @@ Changed:
 
 2001-10-29 18:51  bpass
 
-	* cAccount.cpp, cAccount.h, cBaseobject.cpp, cItem.cpp, uox3.cpp:
+	* cAccount.cpp, cAccount.h, cBaseobject.cpp, citem.cpp, uox3.cpp:
 	*chants* Death to all crash bugs! Aieeeeeee!!
 
 2001-10-29 14:56  bpass
@@ -9512,8 +9512,8 @@ Changed:
 
 2001-10-29 14:16  bpass
 
-	* cAccount.cpp, cBaseobject.cpp, cConsole.cpp, cItem.cpp,
-	cThreadQueue.cpp, house.cpp, network.cpp, npcs.cpp, uox3.cpp:
+	* cAccount.cpp, cBaseobject.cpp, cConsole.cpp, citem.cpp,
+	cthreadqueue.cpp, house.cpp, network.cpp, npcs.cpp, uox3.cpp:
 	Fix for vendors' stuff not being displayed.
 
 2001-10-29 10:41  bpass
@@ -9523,22 +9523,22 @@ Changed:
 
 2001-10-29 10:20  bpass
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Tweak for File i/o
 
 2001-10-29 09:50  bpass
 
-	* cBaseobject.cpp, cItem.cpp, combat.cpp, speech.cpp:
+	* cBaseobject.cpp, citem.cpp, combat.cpp, speech.cpp:
 	Fix for criminal flagging
 
 2001-10-28 21:06  bpass
 
-	* SEFunctions.cpp, uox3.cpp:
+	* sefunctions.cpp, uox3.cpp:
 	Quick linux fix for new SE Functions
 
 2001-10-28 18:25  bpass
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp:
 	FileOpen, FileClose, EnfOfFile, Read, ReadUntil, Write,
 	StringToNum, NumToString JSE functions for File I/O in uox
 	jscripts.  FileOpen does not allow files containing "..""\", or
@@ -9546,7 +9546,7 @@ Changed:
 
 2001-10-28 17:09  darkangelab
 
-	* ai.cpp, boats.cpp, cChar.cpp, cItem.cpp, calcfuncs.cpp,
+	* ai.cpp, boats.cpp, cchar.cpp, citem.cpp, calcfuncs.cpp,
 	cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp, html.cpp,
 	items.cpp, movement.cpp, network.cpp, network.h, npcs.cpp,
 	skills.cpp, sound.cpp, speech.cpp, targeting.cpp, uox3.cpp,
@@ -9556,7 +9556,7 @@ Changed:
 
 2001-10-28 16:09  bpass
 
-	* SEFunctions.cpp, boats.cpp, cmdtable.cpp, commands.cpp,
+	* sefunctions.cpp, boats.cpp, cmdtable.cpp, commands.cpp,
 	msgboard.cpp, network.cpp, npcs.cpp, skills.cpp, trigger.cpp,
 	uox3.cpp:
 	Console output cleanups.
@@ -9573,7 +9573,7 @@ Changed:
 
 2001-10-28 12:03  bpass
 
-	* cItem.cpp, cServerDefinitions.cpp, network.cpp, regions.cpp,
+	* citem.cpp, cServerDefinitions.cpp, network.cpp, regions.cpp,
 	uox3.cpp, worldmain.cpp:
 	Small fix or two
 
@@ -9584,8 +9584,8 @@ Changed:
 
 2001-10-25 21:40  bpass
 
-	* cBaseobject.cpp, cChar.cpp, cItem.cpp, cItem.h, cServerData.cpp,
-	cServerDefinitions.cpp, cSpawnRegion.cpp, calcfuncs.cpp,
+	* cBaseobject.cpp, cchar.cpp, citem.cpp, citem.h, cserverdata.cpp,
+	cServerDefinitions.cpp, cspawnregion.cpp, calcfuncs.cpp,
 	cmdtable.cpp, combat.cpp, commands.cpp, fileio.cpp, html.cpp,
 	items.cpp, magic.cpp, network.cpp, network.h, npcs.cpp, power.h,
 	regions.cpp, speech.cpp, uox3.cpp, worldmain.cpp:
@@ -9594,7 +9594,7 @@ Changed:
 
 2001-10-25 13:26  bpass
 
-	* Dictionary.cpp, Dictionary.h, cClick.cpp, cConsole.cpp,
+	* Dictionary.cpp, dictionary.h, cClick.cpp, cConsole.cpp,
 	combat.cpp, speech.cpp:
 	Misc
 
@@ -9605,7 +9605,7 @@ Changed:
 
 2001-10-24 17:28  bpass
 
-	* cAccount.cpp, cGuild.cpp, commands.cpp, fileio.cpp, magic.cpp,
+	* cAccount.cpp, cguild.cpp, commands.cpp, fileio.cpp, magic.cpp,
 	mapstuff.cpp, network.cpp, regions.cpp, skills.cpp, speech.cpp,
 	uox3.cpp, uox3.h, worldmain.cpp:
 	Lots of crash fixes, a few bug fixes, General console output clean
@@ -9618,29 +9618,29 @@ Changed:
 
 2001-10-23 17:24  bpass
 
-	* cSocket.cpp, cSocket.h, packets.h, uox3.cpp:
+	* csocket.cpp, csocket.h, packets.h, uox3.cpp:
 	More fixes! yay!
 
 2001-10-23 16:09  bpass
 
-	* cChar.cpp, cItem.cpp, cScript.cpp, cmdtable.cpp, npcs.cpp,
+	* cchar.cpp, citem.cpp, cscript.cpp, cmdtable.cpp, npcs.cpp,
 	trigger.cpp, trigger.h, uox3.cpp:
 	More Crash fixes (a few biggies) and a fix for horse mounts
 
 2001-10-23 09:19  bpass
 
-	* cScript.cpp, npcs.cpp, targeting.cpp, trigger.cpp:
+	* cscript.cpp, npcs.cpp, targeting.cpp, trigger.cpp:
 	Crash fix for stupid error.
 
 2001-10-22 20:31  bpass
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Little fix to onSpeech: make text lower case so comparisons can be
 	made.
 
 2001-10-17 13:55  bpass
 
-	* cItem.cpp, cmdtable.cpp:
+	* citem.cpp, cmdtable.cpp:
 	A few fixes.... Is abaddon dead?
 
 2001-10-08 17:41  darkangelab
@@ -9658,13 +9658,13 @@ Changed:
 
 2001-10-02 21:17  darkangelab
 
-	* cSocket.cpp:
+	* csocket.cpp:
 	If the build is a debug build (not release), then it turns socket
 	logging on by default (off in release)
 
 2001-10-02 01:51  darkangelab
 
-	* cChar.cpp, cChar.h, combat.cpp, pcmanage.cpp, skills.cpp,
+	* cchar.cpp, cchar.h, combat.cpp, pcmanage.cpp, skills.cpp,
 	sound.cpp, uox3.cpp, uoxstruct.h:
 	Slight tidy up in PC creation
 	Added some more useful functions to CChar to clean up some code
@@ -9676,12 +9676,12 @@ Changed:
 
 2001-09-27 22:04  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp:
 	Added a GetWorldNumber function for use in scripts
 
 2001-09-27 21:27  darkangelab
 
-	* boats.cpp, cChar.cpp, cClick.cpp, cRaces.cpp, cmdtable.cpp,
+	* boats.cpp, cchar.cpp, cClick.cpp, cRaces.cpp, cmdtable.cpp,
 	commands.cpp, funcdecl.h, packets.cpp, pcmanage.cpp,
 	townregion.cpp, typedefs.h, uox3.cpp, uox3.h, xgm.cpp:
 	Fixed some warnings and did some cleanups
@@ -9697,7 +9697,7 @@ Changed:
 
 2001-09-27 19:11  darkangelab
 
-	* cItem.cpp, cItem.h, cSpawnRegion.cpp, calcfuncs.cpp, classes.h,
+	* citem.cpp, citem.h, cspawnregion.cpp, calcfuncs.cpp, classes.h,
 	effect.cpp, gumps.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp,
 	targeting.cpp, uox3.cpp:
 	Updated item spawn code so that it is properly put into the right
@@ -9715,7 +9715,7 @@ Changed:
 
 2001-09-27 00:33  darkangelab
 
-	* SEFunctions.cpp, cScript.cpp, cSpawnRegion.cpp, classes.h,
+	* sefunctions.cpp, cscript.cpp, cspawnregion.cpp, classes.h,
 	globals.cpp, items.cpp, magic.cpp, necro.cpp, npcs.cpp,
 	targeting.cpp, uox3.cpp, uox3.h, uoxstruct.h:
 	Cleaned up code
@@ -9724,13 +9724,13 @@ Changed:
 
 2001-09-26 19:13  darkangelab
 
-	* ai.cpp, archive.cpp, boats.cpp, cBaseObject.h, cBaseobject.cpp,
-	cChar.cpp, cChar.h, cClick.cpp, cGuild.cpp, cItem.cpp, cRaces.cpp,
-	cScript.cpp, cServerData.cpp, cServerDefinitions.cpp, cSocket.cpp,
-	cSpawnRegion.cpp, cSpawnRegion.h, calcfuncs.cpp, classes.h,
+	* ai.cpp, archive.cpp, boats.cpp, cbaseobject.h, cBaseobject.cpp,
+	cchar.cpp, cchar.h, cClick.cpp, cguild.cpp, citem.cpp, cRaces.cpp,
+	cscript.cpp, cserverdata.cpp, cServerDefinitions.cpp, csocket.cpp,
+	cspawnregion.cpp, cspawnregion.h, calcfuncs.cpp, classes.h,
 	cmdtable.cpp, combat.cpp, dist.cpp, door.cpp, enums.h, fileio.cpp,
 	fileio.h, funcdecl.h, gumps.cpp, house.cpp, items.cpp,
-	SEFunctions.cpp, jail.cpp, lineofsight.cpp, magic.cpp,
+	sefunctions.cpp, jail.cpp, lineofsight.cpp, magic.cpp,
 	mapstuff.cpp, mapstuff.h, movement.cpp, movement.h, msgboard.cpp,
 	network.cpp, npcs.cpp, packets.cpp, packets.h, pcmanage.cpp,
 	queue.cpp, regions.cpp, regions.h, skills.cpp, sound.cpp,
@@ -9749,7 +9749,7 @@ Changed:
 
 2001-09-25 21:05  darkangelab
 
-	* cChar.cpp, mapstuff.cpp, mapstuff.h, msgboard.cpp, network.cpp,
+	* cchar.cpp, mapstuff.cpp, mapstuff.h, msgboard.cpp, network.cpp,
 	regions.h:
 	Code cleanups / tidy ups
 	Slight reorganization in lieu of preparation of Ilshenar support
@@ -9758,10 +9758,10 @@ Changed:
 
 2001-09-25 19:34  darkangelab
 
-	* SEFunctions.cpp, cBaseObject.h, cBaseobject.cpp, cChar.cpp,
-	cGuild.cpp, cGuild.h, cItem.cpp, cMagic.h, cMultiObj.cpp,
-	cMultiObj.h, cRaces.cpp, cServerData.cpp, cServerData.h,
-	cSocket.cpp, cSocket.h, cWeather.cpp, charhandle.cpp, cmdtable.cpp,
+	* sefunctions.cpp, cbaseobject.h, cBaseobject.cpp, cchar.cpp,
+	cguild.cpp, cguild.h, citem.cpp, cmagic.h, cmultiobj.cpp,
+	cmultiobj.h, cRaces.cpp, cserverdata.cpp, cserverdata.h,
+	csocket.cpp, csocket.h, cweather.cpp, charhandle.cpp, cmdtable.cpp,
 	combat.cpp, combat.h, dist.cpp, door.cpp, effect.cpp, fileio.cpp,
 	funcdecl.h, globals.cpp, gumps.cpp, handlers.h, hash.cpp,
 	house.cpp, html.cpp, itemhandler.cpp, magic.cpp, movement.cpp,
@@ -9787,7 +9787,7 @@ Changed:
 
 2001-09-24 23:29  darkangelab
 
-	* SEFunctions.cpp, books.cpp, books.h, cAccount.cpp, cItem.cpp,
+	* sefunctions.cpp, books.cpp, books.h, cAccount.cpp, citem.cpp,
 	effect.cpp, globals.cpp, skills.cpp, uox3.cpp, uox3.h, uoxstruct.h,
 	worldmain.cpp:
 	Fixed a MoreB and More corruption bug when setting just a part of
@@ -9800,7 +9800,7 @@ Changed:
 
 2001-09-24 22:49  darkangelab
 
-	* cAccount.cpp, cAccount.h, cGuild.cpp:
+	* cAccount.cpp, cAccount.h, cguild.cpp:
 	Fixed an auto account creation bug that was causing new characters
 	to be put in the wrong account
 	Updated the account reading code to ensure no duplicate numbers on
@@ -9810,7 +9810,7 @@ Changed:
 
 2001-09-24 18:26  darkangelab
 
-	* SEFunctions.cpp, cServerData.h, cSocket.cpp, cSocket.h,
+	* sefunctions.cpp, cserverdata.h, csocket.cpp, csocket.h,
 	network.cpp, newbie.cpp:
 	Cleaned up some warnings
 	Fixed some variable size issues
@@ -9818,10 +9818,10 @@ Changed:
 
 2001-09-24 16:06  darkangelab
 
-	* PageVector.h, SEFunctions.cpp, archive.cpp, boats.cpp,
-	cBaseobject.cpp, cClick.cpp, cGuild.cpp, cItem.cpp, cItem.h,
-	cMultiObj.cpp, cServerData.cpp, cServerData.h,
-	cServerDefinitions.cpp, cSpawnRegion.cpp, cSpawnRegion.h,
+	* pagevector.h, sefunctions.cpp, archive.cpp, boats.cpp,
+	cBaseobject.cpp, cClick.cpp, cguild.cpp, citem.cpp, citem.h,
+	cmultiobj.cpp, cserverdata.cpp, cserverdata.h,
+	cServerDefinitions.cpp, cspawnregion.cpp, cspawnregion.h,
 	cmdtable.cpp, combat.cpp, commands.cpp, funcdecl.h, house.cpp,
 	itemhandler.cpp, items.cpp, jail.cpp, network.cpp, queue.cpp,
 	regions.cpp, ssection.cpp, townregion.cpp, trigger.cpp, uox3.cpp,
@@ -9842,14 +9842,14 @@ Changed:
 
 2001-09-20 20:24  darkangelab
 
-	* cChar.cpp, cItem.cpp, cItem.h, cRaces.cpp, cRaces.h,
-	cServerData.h, typedefs.h:
+	* cchar.cpp, citem.cpp, citem.h, cRaces.cpp, craces.h,
+	cserverdata.h, typedefs.h:
 	Increased source portability, removing some of the limitations in
 	place preventing gcc 2.95.3 from compiling
 
 2001-09-19 18:38  darkangelab
 
-	* cChar.cpp, cmdtable.cpp, cmdtable.h, magic.cpp, packets.cpp,
+	* cchar.cpp, cmdtable.cpp, cmdtable.h, magic.cpp, packets.cpp,
 	typedefs.h, uoxstruct.h:
 	Removed the useless command 'house
 	Added 2 more consts, INVALIDID and INVALIDCOLOUR
@@ -9858,7 +9858,7 @@ Changed:
 
 2001-09-18 22:30  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp, uox3.h:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp, uox3.h:
 	Updated version to 0.95.04 Build 2
 	Added GetBaseSkill function to the JS engine
 
@@ -9877,10 +9877,10 @@ Changed:
 
 2001-09-17 21:53  toinzane
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, books.cpp, cAccount.cpp,
-	cBaseobject.cpp, cChar.cpp, cChar.h, cClick.cpp, cGuild.cpp,
-	cItem.cpp, cItem.h, cScript.cpp, cScript.h, cServerData.cpp,
-	cSocket.cpp, calcfuncs.cpp, charhandle.cpp, cmdtable.cpp,
+	* sefunctions.cpp, ai.cpp, boats.cpp, books.cpp, cAccount.cpp,
+	cBaseobject.cpp, cchar.cpp, cchar.h, cClick.cpp, cguild.cpp,
+	citem.cpp, citem.h, cscript.cpp, cscript.h, cserverdata.cpp,
+	csocket.cpp, calcfuncs.cpp, charhandle.cpp, cmdtable.cpp,
 	combat.cpp, door.cpp, effect.cpp, findfuncs.cpp, funcdecl.h,
 	globals.cpp, gumps.cpp, hash.cpp, hash.h, house.cpp, html.cpp,
 	itemhandler.cpp, items.cpp, lineofsight.cpp, magic.cpp,
@@ -9897,7 +9897,7 @@ Changed:
 
 2001-09-17 20:07  darkangelab
 
-	* cRaces.cpp, cRaces.h, cWeather.cpp, funcdecl.h, necro.cpp,
+	* cRaces.cpp, craces.h, cweather.cpp, funcdecl.h, necro.cpp,
 	skills.cpp, uox3.cpp:
 	Minor clean ups and tidy ups
 	Converted some funcs to take a single ID rather than the split IDs
@@ -9916,7 +9916,7 @@ Changed:
 
 2001-09-17 19:27  bpass
 
-	* cChar.cpp:
+	* cchar.cpp:
 	FUCK
 
 2001-09-17 18:43  rmcadams
@@ -9926,7 +9926,7 @@ Changed:
 
 2001-09-17 18:37  bpass
 
-	* cChar.cpp:
+	* cchar.cpp:
 	Fixed Login Reconnect and offline death bugs
 
 2001-09-17 18:35  rmcadams
@@ -9946,8 +9946,8 @@ Changed:
 
 2001-09-16 21:03  darkangelab
 
-	* PageVector.h, SEFunctions.cpp, cChar.cpp, cConsole.cpp,
-	cGuild.cpp, cItem.cpp, cRaces.cpp, cScript.cpp, cSocket.cpp,
+	* pagevector.h, sefunctions.cpp, cchar.cpp, cConsole.cpp,
+	cguild.cpp, citem.cpp, cRaces.cpp, cscript.cpp, csocket.cpp,
 	charhandle.cpp, classes.h, cmdtable.cpp, debug.cpp, effect.cpp,
 	globals.cpp, im.cpp, items.cpp, jail.cpp, magic.cpp, queue.cpp,
 	skills.cpp, speech.cpp, targeting.cpp, townregion.cpp, uox3.cpp,
@@ -10024,9 +10024,9 @@ Changed:
 
 2001-09-13 03:36  darkangelab
 
-	* PageVector.h, boats.cpp, cAccount.cpp, cClick.cpp, cConsole.cpp,
-	cConsole.h, cGuild.cpp, cMagic.h, cRaces.cpp, cSocket.cpp,
-	cSocket.h, cSpawnRegion.cpp, classes.h, cmdtable.cpp, cmdtable.h,
+	* pagevector.h, boats.cpp, cAccount.cpp, cClick.cpp, cConsole.cpp,
+	cConsole.h, cguild.cpp, cmagic.h, cRaces.cpp, csocket.cpp,
+	csocket.h, cspawnregion.cpp, classes.h, cmdtable.cpp, cmdtable.h,
 	combat.cpp, commands.cpp, effect.cpp, funcdecl.h, gumps.cpp,
 	house.cpp, items.cpp, magic.cpp, mapstuff.cpp, msgboard.cpp,
 	necro.cpp, network.cpp, pcmanage.cpp, power.h, skills.cpp,
@@ -10040,8 +10040,8 @@ Changed:
 
 2001-09-12 22:19  darkangelab
 
-	* cItem.cpp, cItem.h, cmdtable.cpp, commands.cpp, effect.cpp,
-	funcdecl.h, CGump.h, gumps.cpp, magic.cpp, magic.h, targeting.cpp,
+	* citem.cpp, citem.h, cmdtable.cpp, commands.cpp, effect.cpp,
+	funcdecl.h, cgump.h, gumps.cpp, magic.cpp, magic.h, targeting.cpp,
 	uox3.cpp, uoxstruct.h:
 	create.scp item creation now tracks which entry it was made from
 	CItem now has some more const'd functions (weather related)
@@ -10059,8 +10059,8 @@ Changed:
 
 2001-09-10 20:50  toinzane
 
-	* boats.cpp, cChar.cpp, cSpawnRegion.cpp:
-	Documented cSpawnRegion.cpp
+	* boats.cpp, cchar.cpp, cspawnregion.cpp:
+	Documented cspawnregion.cpp
 	Fixed an error where an Unsigned Char was possibly set with
 	negative values in boats.cpp
 	Fixed petguarding set to -1 in CChar constructor.
@@ -10072,7 +10072,7 @@ Changed:
 
 2001-09-10 20:35  darkangelab
 
-	* PageVector.h, cmdtable.cpp, cmdtable.h, commands.cpp,
+	* pagevector.h, cmdtable.cpp, cmdtable.h, commands.cpp,
 	network.cpp, network.h, queue.cpp, uox3.cpp:
 	Changed the gmpage_st to a HelpRequest class
 	Updated and latered HelpRequest to lay groundwork for reorganized
@@ -10098,7 +10098,7 @@ Changed:
 
 2001-09-09 19:30  darkangelab
 
-	* cServerData.cpp, cServerData.h, funcdecl.h, globals.cpp,
+	* cserverdata.cpp, cserverdata.h, funcdecl.h, globals.cpp,
 	house.cpp, uox3.cpp, uox3.h:
 	Removed hstr2num as it's no longer used
 	Converted last use of hstr2num to makeNum
@@ -10119,7 +10119,7 @@ Changed:
 
 2001-09-07 09:10  toinzane
 
-	* cClick.cpp, cSpawnRegion.cpp, cmdtable.cpp, cmdtable.h,
+	* cClick.cpp, cspawnregion.cpp, cmdtable.cpp, cmdtable.h,
 	funcdecl.h, globals.cpp, pcmanage.cpp, skills.cpp, skills.h,
 	targeting.cpp, typedefs.h, uox3.h, weight.cpp:
 	Minor cleanups / fixes.
@@ -10134,7 +10134,7 @@ Changed:
 
 2001-09-06 18:14  darkangelab
 
-	* cThreadQueue.h, uox3.cpp:
+	* cthreadqueue.h, uox3.cpp:
 	Fixed the console broadcast corruption bug
 
 2001-09-06 17:49  darkangelab
@@ -10146,7 +10146,7 @@ Changed:
 
 2001-09-05 21:33  toinzane
 
-	* boats.cpp, cChar.cpp, cItem.cpp, cmdtable.cpp, items.cpp,
+	* boats.cpp, cchar.cpp, citem.cpp, cmdtable.cpp, items.cpp,
 	npcs.cpp, targeting.cpp, uox3.cpp:
 	More work on mapregion stuff
 	Improved how CItem and CChar destructors clean up after themselves.
@@ -10161,12 +10161,12 @@ Changed:
 
 2001-09-04 18:11  darkangelab
 
-	* cServerData.cpp:
+	* cserverdata.cpp:
 	Fixed a linux path mapping bug
 
 2001-09-03 18:29  toinzane
 
-	* cClick.cpp, cGuild.cpp, cItem.cpp, cRaces.cpp, commands.cpp,
+	* cClick.cpp, cguild.cpp, citem.cpp, cRaces.cpp, commands.cpp,
 	gumps.cpp, items.cpp, magic.cpp, npcs.cpp, skills.cpp,
 	townregion.cpp, uox3.cpp:
 	makeNum() now handles octal, hex, and decimal (thanks seank).
@@ -10190,12 +10190,12 @@ Changed:
 
 2001-09-02 17:56  darkangelab
 
-	* cScript.cpp:
+	* cscript.cpp:
 	Added GetLightLevel to the function table so that it can be called
 
 2001-09-02 15:17  darkangelab
 
-	* SEFunctions.cpp, cBaseobject.cpp, cItem.cpp, skills.cpp:
+	* sefunctions.cpp, cBaseobject.cpp, citem.cpp, skills.cpp:
 	Added harkon's fixes for the SE functions GetPackOwner, FindMulti
 	and SpawnItem
 	Updated CItem::SetLocation so that it updates the multi value
@@ -10204,14 +10204,14 @@ Changed:
 
 2001-08-29 18:31  darkangelab
 
-	* cScript.cpp:
+	* cscript.cpp:
 	harkon fixed a script function lookup problem
 
 2001-08-28 19:31  toinzane
 
-	* books.cpp, cAccount.cpp, cBaseobject.cpp, cChar.cpp, cGuild.cpp,
-	cItem.cpp, cMultiObj.cpp, cRaces.cpp, cServerData.cpp,
-	cServerDefinitions.cpp, cSpawnRegion.cpp, cWeather.cpp,
+	* books.cpp, cAccount.cpp, cBaseobject.cpp, cchar.cpp, cguild.cpp,
+	citem.cpp, cmultiobj.cpp, cRaces.cpp, cserverdata.cpp,
+	cServerDefinitions.cpp, cspawnregion.cpp, cweather.cpp,
 	commands.cpp, funcdecl.h, gumps.cpp, house.cpp, html.cpp,
 	items.cpp, jail.cpp, magic.cpp, msgboard.cpp, necro.cpp,
 	network.cpp, newbie.cpp, npcs.cpp, skills.cpp, targeting.cpp,
@@ -10221,8 +10221,8 @@ Changed:
 
 2001-08-28 17:05  toinzane
 
-	* books.cpp, books.h, cClick.cpp, cServerData.cpp, cServerData.h,
-	cSpawnRegion.cpp, itemhandler.cpp, network.cpp, uox3.cpp:
+	* books.cpp, books.h, cClick.cpp, cserverdata.cpp, cserverdata.h,
+	cspawnregion.cpp, itemhandler.cpp, network.cpp, uox3.cpp:
 	Fixed some issues with books.
 	Possible crash fixes with SpawnRegions
 
@@ -10233,10 +10233,10 @@ Changed:
 
 2001-08-23 22:07  darkangelab
 
-	* SEFunctions.cpp, cAccount.cpp, cAccount.h, cBaseObject.h,
-	cBaseobject.cpp, cChar.cpp, cChar.h, cItem.cpp, cItem.h,
-	cMultiObj.cpp, cServerData.cpp, cServerData.h,
-	cServerDefinitions.cpp, cSocket.cpp, cSocket.h, cWeather.cpp,
+	* sefunctions.cpp, cAccount.cpp, cAccount.h, cbaseobject.h,
+	cBaseobject.cpp, cchar.cpp, cchar.h, citem.cpp, citem.h,
+	cmultiobj.cpp, cserverdata.cpp, cserverdata.h,
+	cServerDefinitions.cpp, csocket.cpp, csocket.h, cweather.cpp,
 	cmdtable.cpp, fileio.cpp, funcdecl.h, hash.cpp, items.cpp,
 	mapstuff.cpp, network.cpp, network.h, npcs.cpp, speech.cpp,
 	teffect.h, trigger.cpp, typedefs.h, uox3.cpp, uox3.h:
@@ -10249,7 +10249,7 @@ Changed:
 2001-08-23 22:06  seank
 
 	* Makefile.am, Makefile.in:
-	added cSpawnRegion.cpp to the makefile
+	added cspawnregion.cpp to the makefile
 
 2001-08-23 19:56  darkangelab
 
@@ -10267,7 +10267,7 @@ Changed:
 
 2001-08-22 21:15  darkangelab
 
-	* cItem.cpp, charhandle.cpp, handlers.h, itemhandler.cpp,
+	* citem.cpp, charhandle.cpp, handlers.h, itemhandler.cpp,
 	items.cpp, uox3.cpp:
 	CItem destructor does meaningful work now (and simplifies
 	DeleItem())
@@ -10277,7 +10277,7 @@ Changed:
 
 2001-08-22 20:21  darkangelab
 
-	* cChar.cpp, cItem.cpp, cMultiObj.cpp, charhandle.cpp,
+	* cchar.cpp, citem.cpp, cmultiobj.cpp, charhandle.cpp,
 	cmdtable.cpp, html.cpp, itemhandler.cpp, items.cpp, npcs.cpp,
 	sound.cpp, targeting.cpp, uox3.cpp:
 	Clean ups / tidy ups to various sections of code
@@ -10288,16 +10288,16 @@ Changed:
 2001-08-22 19:15  toinzane
 
 	* UOX3_Official.dsp:
-	Added cSpawnRegion.cpp and cSpawnRegion.h to the project file.
+	Added cspawnregion.cpp and cspawnregion.h to the project file.
 
 2001-08-22 19:12  toinzane
 
-	* cSpawnRegion.cpp, cSpawnRegion.h:
+	* cspawnregion.cpp, cspawnregion.h:
 	Implemented cSpawnRegion
 
 2001-08-22 19:04  toinzane
 
-	* SEFunctions.cpp, UOX3_Official.dsp, cChar.cpp, classes.h,
+	* sefunctions.cpp, UOX3_Official.dsp, cchar.cpp, classes.h,
 	cmdtable.cpp, commands.cpp, commands.h, funcdecl.h, globals.cpp,
 	items.cpp, necro.cpp, npcs.cpp, regions.cpp, targeting.cpp,
 	townregion.cpp, uox3.cpp, uox3.h, uoxstruct.h:
@@ -10319,7 +10319,7 @@ Changed:
 
 2001-08-21 19:32  darkangelab
 
-	* cGuild.cpp, cGuild.h, items.cpp:
+	* cguild.cpp, cguild.h, items.cpp:
 	gList is now a map< GuildID, CGuild * > instead of vector< CGuild *
 	>
 	This allows for nonsequential guild numbers, and solves a guild
@@ -10331,7 +10331,7 @@ Changed:
 
 2001-08-21 17:24  toinzane
 
-	* cGuild.cpp:
+	* cguild.cpp:
 	Fixed some bad loops in CGuild (Should fix several crash bugs with
 	guildstones)
 
@@ -10342,7 +10342,7 @@ Changed:
 
 2001-08-21 06:44  toinzane
 
-	* cGuild.cpp, gumps.cpp:
+	* cguild.cpp, gumps.cpp:
 	Guildstones are now properly removed when last member resigns.
 	Fixed resign code so players who aren't in a guild can't resign
 	(thus crashing the server).
@@ -10380,8 +10380,8 @@ Changed:
 
 2001-08-20 13:09  toinzane
 
-	* cGuild.cpp, cItem.cpp, cItem.h, cScript.cpp, cmdtable.cpp,
-	commands.cpp, funcdecl.h, CGump.h, gumps.cpp, items.cpp, queue.cpp,
+	* cguild.cpp, citem.cpp, citem.h, cscript.cpp, cmdtable.cpp,
+	commands.cpp, funcdecl.h, cgump.h, gumps.cpp, items.cpp, queue.cpp,
 	skills.cpp, targeting.cpp, townregion.cpp, wholist.cpp:
 	Removed ItemHand() stuff entirely, (This will cause your worldfile
 	to report invalid tags, this is normal, just save and reload the
@@ -10398,7 +10398,7 @@ Changed:
 
 2001-08-19 18:56  darkangelab
 
-	* cServerData.cpp, cServerData.h, globals.cpp, network.cpp, uox3.h:
+	* cserverdata.cpp, cserverdata.h, globals.cpp, network.cpp, uox3.h:
 
 	Updated so that UOX_PORT is no longer required
 	GetServerPort and SetServerPort modify an internal listen port
@@ -10418,7 +10418,7 @@ Changed:
 
 2001-08-17 17:33  toinzane
 
-	* cBaseobject.cpp, cGuild.cpp, packets.cpp:
+	* cBaseobject.cpp, cguild.cpp, packets.cpp:
 	Weblaunch bug fixed.
 	Fixed guild name crash bug (caused by long guild names).
 	Changed Guildmaster Title length to max 15 characters. (was only 3
@@ -10426,7 +10426,7 @@ Changed:
 
 2001-08-17 16:23  toinzane
 
-	* boats.cpp, cServerData.cpp, cServerData.h, movement.cpp,
+	* boats.cpp, cserverdata.cpp, cserverdata.h, movement.cpp,
 	skills.cpp, uox3.cpp:
 	Cleaned up checkauto() and broke it down into more functions to
 	improve speed / readability.
@@ -10488,7 +10488,7 @@ Changed:
 
 2001-08-15 13:08  toinzane
 
-	* cAccount.cpp, cAccount.h, cChar.cpp, funcdecl.h, movement.cpp,
+	* cAccount.cpp, cAccount.h, cchar.cpp, funcdecl.h, movement.cpp,
 	pcmanage.cpp, uox3.cpp, wholist.cpp, xgm.cpp:
 	Fixed the 'footsteps' bug.
 	Fixed a bug when accountflush was set > 0
@@ -10498,7 +10498,7 @@ Changed:
 
 2001-08-14 22:51  darkangelab
 
-	* cSocket.cpp, xgm.cpp, xgm.h:
+	* csocket.cpp, xgm.cpp, xgm.h:
 	Fixed non XGM client login bug
 	Generic clean ups / tidy ups
 
@@ -10511,19 +10511,19 @@ Changed:
 
 2001-08-14 21:39  toinzane
 
-	* cSocket.cpp, network.h, skills.cpp:
+	* csocket.cpp, network.h, skills.cpp:
 	Linux compile fixes (Thanks seank / Kot )
 	GM's can now gain skill.
 
 2001-08-14 21:06  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, UOX3_Official.dsp, cScript.cpp:
+	* sefunctions.cpp, sefunctions.h, UOX3_Official.dsp, cscript.cpp:
 	Added Get/Set More XYZ
 	Moved jail.cpp and jail.h into subsystem folders
 
 2001-08-14 08:55  toinzane
 
-	* cItem.cpp, combat.cpp, items.cpp, typedefs.h, uox3.cpp,
+	* citem.cpp, combat.cpp, items.cpp, typedefs.h, uox3.cpp,
 	vendor.cpp:
 	Added MAX_STACK to determine how large stackables can be set.
 	Moved AutoStacking into its own function.
@@ -10535,13 +10535,13 @@ Changed:
 
 2001-08-13 19:01  darkangelab
 
-	* cItem.cpp:
+	* citem.cpp:
 	Updated SetCont so that items won't disappear oddly (and they will
 	still be saved)
 
 2001-08-13 18:53  toinzane
 
-	* cChar.cpp, items.cpp, targeting.cpp, uox3.cpp:
+	* cchar.cpp, items.cpp, targeting.cpp, uox3.cpp:
 	Fixed some issues with item Layers.
 	Depreciated usage of ITEMHAND in favor of LAYER.
 	Cleaned up wearItem() a bit.
@@ -10549,7 +10549,7 @@ Changed:
 
 2001-08-13 17:48  darkangelab
 
-	* Dictionary.cpp, cSocket.cpp, effect.cpp, enums.h, magic.cpp,
+	* Dictionary.cpp, csocket.cpp, effect.cpp, enums.h, magic.cpp,
 	network.h, speech.cpp, speech.h, uox3.cpp:
 	Cleaned up some dead code / unreachable code / useless code
 	Added distinct language support, collapsing all english flavours
@@ -10584,7 +10584,7 @@ Changed:
 
 2001-08-10 14:48  toinzane
 
-	* cChar.cpp, combat.cpp, effect.cpp, movement.cpp, movement.h:
+	* cchar.cpp, combat.cpp, effect.cpp, movement.cpp, movement.h:
 	Fixed a bug causing bandages not to be used up and spit out an
 	invalid item refrence.
 	Added a check so a player cannot use any fighting skill while
@@ -10617,7 +10617,7 @@ Changed:
 
 2001-08-09 08:06  toinzane
 
-	* SEFunctions.cpp, cChar.cpp, cChar.h, cClick.cpp, cScript.cpp,
+	* sefunctions.cpp, cchar.cpp, cchar.h, cClick.cpp, cscript.cpp,
 	effect.cpp, funcdecl.h, gumps.cpp, house.cpp, mapstuff.cpp,
 	mapstuff.h, pcmanage.cpp, sound.cpp, targeting.cpp:
 	More object conversions done.
@@ -10637,15 +10637,15 @@ Changed:
 
 2001-08-08 14:23  toinzane
 
-	* ai.cpp, books.cpp, books.h, cClick.cpp, cGuild.cpp, cmdtable.cpp,
-	commands.cpp, commands.h, funcdecl.h, CGump.h, gumps.cpp, html.cpp,
+	* ai.cpp, books.cpp, books.h, cClick.cpp, cguild.cpp, cmdtable.cpp,
+	commands.cpp, commands.h, funcdecl.h, cgump.h, gumps.cpp, html.cpp,
 	jail.cpp, necro.cpp, network.cpp, speech.cpp, targeting.cpp,
 	uox3.cpp, vendor.cpp:
 	Many more object conversions.
 
 2001-08-08 09:26  toinzane
 
-	* SEFunctions.cpp, cClick.cpp, cItem.cpp, cMagic.h, calcfuncs.cpp,
+	* sefunctions.cpp, cClick.cpp, citem.cpp, cmagic.h, calcfuncs.cpp,
 	combat.cpp, commands.cpp, commands.h, effect.cpp, findfuncs.cpp,
 	funcdecl.h, gumps.cpp, house.cpp, items.cpp, magic.cpp,
 	movement.cpp, necro.cpp, network.cpp, skills.cpp, targeting.cpp,
@@ -10655,7 +10655,7 @@ Changed:
 
 2001-08-08 08:15  toinzane
 
-	* cItem.cpp, classes.h, npcs.cpp, speech.cpp, targeting.cpp:
+	* citem.cpp, classes.h, npcs.cpp, speech.cpp, targeting.cpp:
 	Cleaned up pet command code.
 	Added new func stopPetGuarding() to simplify some code.
 	Fixed a bug causing a crash on death (was trying to set a long to a
@@ -10664,7 +10664,7 @@ Changed:
 
 2001-08-07 23:23  darkangelab
 
-	* cItem.cpp, funcdecl.h, items.cpp, magic.cpp, quantityfuncs.cpp,
+	* citem.cpp, funcdecl.h, items.cpp, magic.cpp, quantityfuncs.cpp,
 	skills.cpp, targeting.cpp, uox3.cpp:
 	Cleaned up some more code
 	Removed some redundant code
@@ -10679,13 +10679,13 @@ Changed:
 
 2001-08-07 22:16  darkangelab
 
-	* SEFunctions.cpp, speech.cpp, targeting.cpp, targeting.h:
+	* sefunctions.cpp, speech.cpp, targeting.cpp, targeting.h:
 	BuyShop updated to take a CChar *
 	Generic code cleanups
 
 2001-08-07 22:01  darkangelab
 
-	* cMagic.h, magic.cpp, skills.cpp:
+	* cmagic.h, magic.cpp, skills.cpp:
 	CheckStamina(), CheckMana() and CheckHealth() now use CChar *
 	instead of CHARACTER
 	DirectDamage was removed
@@ -10695,7 +10695,7 @@ Changed:
 
 2001-08-07 21:42  darkangelab
 
-	* cMagic.h, magic.cpp:
+	* cmagic.h, magic.cpp:
 	Removed PFireballTarget as it was never used
 	Removed an unnecessary version of CheckResist
 
@@ -10707,7 +10707,7 @@ Changed:
 
 2001-08-07 20:22  darkangelab
 
-	* cChar.cpp, cMagic.h, cWeather.cpp, cWeather.hpp, combat.cpp,
+	* cchar.cpp, cmagic.h, cweather.cpp, cweather.hpp, combat.cpp,
 	commands.cpp, commands.h, effect.cpp, funcdecl.h, magic.cpp,
 	npcs.cpp, pcmanage.cpp, targeting.cpp, townregion.cpp,
 	townregion.h, uox3.cpp:
@@ -10718,7 +10718,7 @@ Changed:
 
 2001-08-07 19:27  darkangelab
 
-	* SEFunctions.cpp, cmdtable.cpp, combat.cpp, commands.cpp,
+	* sefunctions.cpp, cmdtable.cpp, combat.cpp, commands.cpp,
 	effect.cpp, speech.cpp, targeting.cpp, townregion.cpp,
 	townregion.h, trade.cpp, uox3.cpp, vendor.cpp:
 	Fixed a duping bug
@@ -10742,7 +10742,7 @@ Changed:
 
 2001-08-07 17:40  toinzane
 
-	* cGuild.cpp, cmdtable.cpp, commands.cpp, house.cpp, html.cpp,
+	* cguild.cpp, cmdtable.cpp, commands.cpp, house.cpp, html.cpp,
 	im.cpp, msgboard.cpp, network.cpp, speech.cpp, targeting.cpp,
 	uox3.cpp, wholist.cpp:
 	Added crash protection to unsafe CurrcharObj() calls.
@@ -10754,7 +10754,7 @@ Changed:
 
 2001-08-07 17:13  darkangelab
 
-	* SEFunctions.cpp, cRaces.cpp, cRaces.h, cmdtable.cpp, effect.cpp,
+	* sefunctions.cpp, cRaces.cpp, craces.h, cmdtable.cpp, effect.cpp,
 	funcdecl.h, skills.cpp, uox3.cpp:
 	Converted cRaces::gate to use a CChar * instead of a CHARACTER, and
 	bool instead of an int
@@ -10778,7 +10778,7 @@ Changed:
 
 2001-08-07 12:50  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cGuild.cpp, cMagic.h, cWeather.cpp,
+	* sefunctions.cpp, ai.cpp, cguild.cpp, cmagic.h, cweather.cpp,
 	cmdtable.cpp, commands.cpp, gumps.cpp, house.cpp, im.cpp,
 	items.cpp, magic.cpp, msgboard.cpp, necro.cpp, network.cpp,
 	skills.cpp, townregion.cpp, uox3.cpp, wholist.cpp:
@@ -10787,8 +10787,8 @@ Changed:
 
 2001-08-07 11:23  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cChar.cpp, cClick.cpp, cMagic.h,
-	cWeather.cpp, calcfuncs.cpp, classes.h, combat.cpp, door.cpp,
+	* sefunctions.cpp, ai.cpp, cchar.cpp, cClick.cpp, cmagic.h,
+	cweather.cpp, calcfuncs.cpp, classes.h, combat.cpp, door.cpp,
 	funcdecl.h, gumps.cpp, html.cpp, magic.cpp, movement.cpp,
 	network.cpp, newbie.cpp, pcmanage.cpp, skills.cpp, speech.cpp,
 	targeting.cpp, uox3.cpp, vendor.cpp, wholist.cpp:
@@ -10804,7 +10804,7 @@ Changed:
 
 2001-08-07 09:43  toinzane
 
-	* SEFunctions.cpp, cClick.cpp, classes.h, combat.cpp, magic.cpp,
+	* sefunctions.cpp, cClick.cpp, classes.h, combat.cpp, magic.cpp,
 	npcs.cpp:
 	Changed AddRandomNPC() to CreateRandomNpc().
 	Removed some superfluous code.
@@ -10837,14 +10837,14 @@ Changed:
 
 2001-08-06 18:40  darkangelab
 
-	* cScript.cpp, magic.cpp, uox3.cpp:
+	* cscript.cpp, magic.cpp, uox3.cpp:
 	Tidy up / clean up of some script code
 	The JS context scripts execute within are now 8k in size, rather
 	than 4k
 
 2001-08-06 17:39  darkangelab
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, cGuild.cpp, cGuild.h,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, cguild.cpp, cguild.h,
 	funcdecl.h, gumps.cpp, skills.cpp, speech.cpp, targeting.cpp,
 	townregion.cpp, townregion.h, uox3.cpp:
 	Added dictionary friendly versions of cTownRegion::TellMembers,
@@ -10868,7 +10868,7 @@ Changed:
 
 2001-08-06 13:14  toinzane
 
-	* SEFunctions.cpp, cClick.cpp, classes.h, cmdtable.cpp, combat.cpp,
+	* sefunctions.cpp, cClick.cpp, classes.h, cmdtable.cpp, combat.cpp,
 	combat.h, commands.cpp, enums.h, funcdecl.h, items.cpp, magic.cpp,
 	movement.cpp, msgboard.cpp, msgboard.h, necro.cpp, npcs.cpp,
 	regions.cpp, skills.cpp, speech.cpp, uox3.cpp, uox3.h:
@@ -10879,7 +10879,7 @@ Changed:
 
 2001-08-06 08:16  toinzane
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, cClick.cpp, combat.cpp,
+	* sefunctions.cpp, ai.cpp, boats.cpp, cClick.cpp, combat.cpp,
 	combat.h, door.cpp, effect.cpp, funcdecl.h, magic.cpp,
 	msgboard.cpp, necro.cpp, skills.cpp, speech.cpp, targeting.cpp,
 	uox3.cpp, vendor.cpp:
@@ -10894,7 +10894,7 @@ Changed:
 
 2001-08-05 19:49  toinzane
 
-	* cServerData.cpp, combat.cpp, combat.h, magic.cpp, uox3.cpp,
+	* cserverdata.cpp, combat.cpp, combat.h, magic.cpp, uox3.cpp,
 	weight.cpp:
 	MAJOR Overhaul to Combat (When the system is completed I'll write
 	up a Doc on it).
@@ -10908,14 +10908,14 @@ Changed:
 
 2001-08-05 19:30  darkangelab
 
-	* cChar.cpp, uox3.cpp:
+	* cchar.cpp, uox3.cpp:
 	Fixed regen problems with NPCs/PCs
 	Meditation overhaul by Spud allowing for better behaviour / greater
 	complexity
 
 2001-08-04 19:21  darkangelab
 
-	* SEFunctions.cpp, cClick.cpp, cMagic.h, cWeather.cpp,
+	* sefunctions.cpp, cClick.cpp, cmagic.h, cweather.cpp,
 	cmdtable.cpp, combat.cpp, funcdecl.h, jail.cpp, magic.cpp,
 	movement.cpp, npcs.cpp, skills.cpp, sound.cpp, speech.cpp,
 	targeting.cpp, uox3.cpp, wholist.cpp:
@@ -10926,7 +10926,7 @@ Changed:
 
 2001-08-04 12:49  toinzane
 
-	* SEFunctions.cpp, cClick.cpp, combat.cpp, effect.cpp, gumps.cpp,
+	* sefunctions.cpp, cClick.cpp, combat.cpp, effect.cpp, gumps.cpp,
 	skills.cpp, skills.h, uox3.cpp:
 	Fixed a small issue with NPCs in combat.
 	Converted skills.cpp functions to object-based.
@@ -10939,7 +10939,7 @@ Changed:
 
 2001-08-03 21:53  toinzane
 
-	* SEFunctions.cpp, cMagic.h, funcdecl.h, house.cpp, magic.cpp,
+	* sefunctions.cpp, cmagic.h, funcdecl.h, house.cpp, magic.cpp,
 	movement.cpp, movement.h, network.cpp, uox3.cpp:
 	Converted movement.cpp functions to object-based.
 	Further depreciated Currchar().
@@ -10953,7 +10953,7 @@ Changed:
 
 2001-08-03 17:43  toinzane
 
-	* cClick.cpp, cWeather.cpp, combat.cpp, effect.cpp, magic.cpp,
+	* cClick.cpp, cweather.cpp, combat.cpp, effect.cpp, magic.cpp,
 	movement.cpp, npcs.cpp, uox3.cpp:
 	Fixed NPC spawning.
 	Fixed a crash for NPCs spellcasting during combat.
@@ -10963,7 +10963,7 @@ Changed:
 
 2001-08-03 13:30  toinzane
 
-	* cChar.cpp, cGuild.cpp, combat.cpp, commands.cpp, effect.cpp,
+	* cchar.cpp, cguild.cpp, combat.cpp, commands.cpp, effect.cpp,
 	funcdecl.h, gumps.cpp, items.cpp, magic.cpp, msgboard.cpp,
 	necro.cpp, network.cpp, skills.cpp, skills.h, targeting.cpp,
 	uox3.cpp, vendor.cpp:
@@ -10987,7 +10987,7 @@ Changed:
 
 2001-08-02 17:37  darkangelab
 
-	* Dictionary.cpp, cServerDefinitions.cpp, cSocket.cpp,
+	* Dictionary.cpp, cServerDefinitions.cpp, csocket.cpp,
 	cmdtable.cpp, commands.cpp, fileio.cpp, im.cpp, jail.cpp,
 	magic.cpp, mapstuff.cpp, regions.cpp, skills.cpp, speech.cpp,
 	trigger.cpp, uox3.cpp:
@@ -10997,7 +10997,7 @@ Changed:
 
 2001-08-02 16:46  darkangelab
 
-	* ai.cpp, boats.cpp, cChar.cpp, cClick.cpp, classes.h, house.cpp,
+	* ai.cpp, boats.cpp, cchar.cpp, cClick.cpp, classes.h, house.cpp,
 	items.cpp, magic.cpp, pcmanage.cpp, uox3.cpp:
 	Removed some redundant code sequences
 	Changed '\xaa' type code to 0xaa type code (fixed one boat issue
@@ -11011,7 +11011,7 @@ Changed:
 
 2001-08-02 15:22  toinzane
 
-	* SEFunctions.cpp, cItem.cpp, cMultiObj.cpp, calcfuncs.cpp,
+	* sefunctions.cpp, citem.cpp, cmultiobj.cpp, calcfuncs.cpp,
 	funcdecl.h, items.cpp, network.cpp, npcs.cpp, pcmanage.cpp,
 	regions.cpp, speech.cpp, targeting.cpp, uox3.cpp, vendor.cpp:
 	Fixed a VERY nasty bug caused by one of my earlier commits.
@@ -11026,7 +11026,7 @@ Changed:
 
 2001-08-02 08:37  toinzane
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, cItem.cpp, cWeather.cpp,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, citem.cpp, cweather.cpp,
 	classes.h, cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp,
 	funcdecl.h, gumps.cpp, house.cpp, html.cpp, items.cpp, magic.cpp,
 	movement.cpp, necro.cpp, network.cpp, npcs.cpp, pcmanage.cpp,
@@ -11048,7 +11048,7 @@ Changed:
 
 2001-08-01 18:07  darkangelab
 
-	* boats.cpp, cBaseobject.cpp, cChar.cpp, cChar.h, npcs.cpp,
+	* boats.cpp, cBaseobject.cpp, cchar.cpp, cchar.h, npcs.cpp,
 	targeting.cpp:
 	Fixed bug #446633 (boat exiting - mount copied)
 	Slight tidy up / clean ups
@@ -11063,7 +11063,7 @@ Changed:
 
 2001-08-01 15:43  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cClick.cpp, cRaces.cpp, cWeather.cpp,
+	* sefunctions.cpp, ai.cpp, cClick.cpp, cRaces.cpp, cweather.cpp,
 	cmdtable.cpp, combat.cpp, commands.cpp, dist.cpp, door.cpp,
 	effect.cpp, funcdecl.h, gumps.cpp, magic.cpp, movement.cpp,
 	skills.cpp, sound.cpp, speech.cpp, targeting.cpp, uox3.cpp:
@@ -11072,7 +11072,7 @@ Changed:
 
 2001-08-01 11:46  toinzane
 
-	* SEFunctions.cpp, cClick.cpp, door.cpp, effect.cpp, funcdecl.h,
+	* sefunctions.cpp, cClick.cpp, door.cpp, effect.cpp, funcdecl.h,
 	movement.cpp, skills.cpp, sound.cpp, uox3.cpp:
 	More object conversions
 
@@ -11086,16 +11086,16 @@ Changed:
 
 2001-07-30 20:25  darkangelab
 
-	* cAccount.cpp, cWeather.cpp, cWeather.hpp, xgm.cpp:
-	Updated cWeather.hpp to use R32 and UI08 instead of float and
+	* cAccount.cpp, cweather.cpp, cweather.hpp, xgm.cpp:
+	Updated cweather.hpp to use R32 and UI08 instead of float and
 	unsigned char
 	Added Count() to cWeatherAb
-	Documented a number of functions in cWeather.cpp
+	Documented a number of functions in cweather.cpp
 	Added XGM output packet 0x12 / input packet 0x0F implementations
 
 2001-07-30 18:49  toinzane
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, cGuild.cpp, cRaces.cpp,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, cguild.cpp, cRaces.cpp,
 	classes.h, cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp,
 	funcdecl.h, house.cpp, items.cpp, magic.cpp, movement.cpp,
 	necro.cpp, newbie.cpp, npcs.cpp, pcmanage.cpp, skills.cpp,
@@ -11121,7 +11121,7 @@ Changed:
 
 2001-07-25 22:29  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cChar.cpp, combat.cpp, funcdecl.h,
+	* sefunctions.cpp, ai.cpp, cchar.cpp, combat.cpp, funcdecl.h,
 	magic.cpp, npcs.cpp, pcmanage.cpp, skills.cpp, skills.h,
 	targeting.cpp, uox3.cpp:
 	More object conversions.
@@ -11139,7 +11139,7 @@ Changed:
 
 2001-07-25 10:36  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cClick.cpp, cMagic.h, combat.cpp,
+	* sefunctions.cpp, ai.cpp, cClick.cpp, cmagic.h, combat.cpp,
 	commands.cpp, effect.cpp, funcdecl.h, magic.cpp, magic.h,
 	movement.cpp, npcs.cpp, skills.cpp, targeting.cpp, targeting.h,
 	uox3.cpp:
@@ -11158,14 +11158,14 @@ Changed:
 
 2001-07-24 23:16  toinzane
 
-	* SEFunctions.cpp, boats.cpp, boats.h, funcdecl.h, house.cpp,
+	* sefunctions.cpp, boats.cpp, boats.h, funcdecl.h, house.cpp,
 	speech.cpp, uox3.cpp:
 	Removed some superfluous functions.
 	Minor code cleanups.
 
 2001-07-24 22:15  toinzane
 
-	* SEFunctions.cpp, boats.cpp, boats.h, cClick.cpp, cItem.cpp,
+	* sefunctions.cpp, boats.cpp, boats.h, cClick.cpp, citem.cpp,
 	funcdecl.h, house.cpp, items.cpp, magic.cpp, movement.cpp,
 	network.cpp, speech.cpp, targeting.cpp, uox3.cpp:
 	Converted boats.cpp functions to object-based.
@@ -11198,7 +11198,7 @@ Changed:
 
 2001-07-24 19:07  darkangelab
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Fixed SE_CommandDetails()
 	Implemented SE_GetLightLevel() properly
 	Did source cleanup / tidy ups
@@ -11207,7 +11207,7 @@ Changed:
 
 2001-07-24 09:59  toinzane
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, cClick.cpp, combat.cpp,
+	* sefunctions.cpp, ai.cpp, boats.cpp, cClick.cpp, combat.cpp,
 	dist.cpp, effect.cpp, funcdecl.h, items.cpp, magic.cpp,
 	movement.cpp, msgboard.cpp, necro.cpp, pcmanage.cpp, skills.cpp,
 	speech.cpp, targeting.cpp, uox3.cpp, vendor.cpp:
@@ -11218,9 +11218,9 @@ Changed:
 
 2001-07-23 21:25  darkangelab
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, cBaseobject.cpp, cChar.cpp,
-	cClick.cpp, cGuild.cpp, cGuild.h, cItem.cpp, cMultiObj.cpp,
-	cSocket.cpp, commands.cpp, effect.cpp, house.cpp, itemhandler.cpp,
+	* sefunctions.cpp, ai.cpp, boats.cpp, cBaseobject.cpp, cchar.cpp,
+	cClick.cpp, cguild.cpp, cguild.h, citem.cpp, cmultiobj.cpp,
+	csocket.cpp, commands.cpp, effect.cpp, house.cpp, itemhandler.cpp,
 	items.cpp, magic.cpp, movement.cpp, msgboard.cpp, necro.cpp,
 	network.cpp, npcs.cpp, skills.cpp, speech.cpp, speech.h,
 	targeting.cpp, townregion.cpp, uox3.cpp, vendor.cpp:
@@ -11233,14 +11233,14 @@ Changed:
 
 2001-07-23 20:48  darkangelab
 
-	* SEFunctions.cpp, cScript.cpp, npcs.cpp:
+	* sefunctions.cpp, cscript.cpp, npcs.cpp:
 	Updated SE_SpawnNPC function to require less variables
 	Small tidy up
 
 2001-07-23 14:58  toinzane
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, cChar.cpp, cClick.cpp,
-	cItem.cpp, cmdtable.cpp, combat.cpp, dist.cpp, door.cpp,
+	* sefunctions.cpp, ai.cpp, boats.cpp, cchar.cpp, cClick.cpp,
+	citem.cpp, cmdtable.cpp, combat.cpp, dist.cpp, door.cpp,
 	effect.cpp, funcdecl.h, items.cpp, magic.cpp, movement.cpp,
 	necro.cpp, npcs.cpp, skills.cpp, sound.cpp, speech.cpp,
 	targeting.cpp, uox3.cpp:
@@ -11250,7 +11250,7 @@ Changed:
 
 2001-07-23 08:21  toinzane
 
-	* cChar.cpp, cItem.cpp, dist.cpp, items.cpp, magic.cpp,
+	* cchar.cpp, citem.cpp, dist.cpp, items.cpp, magic.cpp,
 	movement.cpp, pcmanage.cpp, skills.cpp, speech.cpp, targeting.cpp,
 	trade.cpp, vendor.cpp, weight.cpp, weight.h:
 	Overhauled weight, is now entirely object-based, also removed some
@@ -11260,7 +11260,7 @@ Changed:
 
 2001-07-22 23:44  darkangelab
 
-	* boats.cpp, cClick.cpp, cItem.cpp, cRaces.cpp, commands.cpp,
+	* boats.cpp, cClick.cpp, citem.cpp, cRaces.cpp, commands.cpp,
 	funcdecl.h, house.cpp, items.cpp, magic.cpp, movement.cpp,
 	npcs.cpp, pcmanage.cpp, pointer.cpp, skills.cpp, targeting.cpp,
 	trade.cpp, uox3.cpp, vendor.cpp:
@@ -11284,8 +11284,8 @@ Changed:
 
 2001-07-22 22:11  darkangelab
 
-	* SEFunctions.cpp, boats.cpp, cChar.cpp, cChar.h, cClick.cpp,
-	cRaces.cpp, cWeather.cpp, cWeather.hpp, cmdtable.cpp, combat.cpp,
+	* sefunctions.cpp, boats.cpp, cchar.cpp, cchar.h, cClick.cpp,
+	cRaces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
 	commands.cpp, effect.cpp, funcdecl.h, gumps.cpp, house.cpp,
 	jail.cpp, magic.cpp, movement.cpp, network.cpp, npcs.cpp,
 	pcmanage.cpp, skills.cpp, speech.cpp, targeting.cpp, uox3.cpp,
@@ -11299,19 +11299,19 @@ Changed:
 
 2001-07-22 19:41  darkangelab
 
-	* cWeather.cpp, lineofsight.cpp, uox3.h:
+	* cweather.cpp, lineofsight.cpp, uox3.h:
 	Converted float to R32
 	Added explicit cast to BuildTimeValue to remove warnings
 
 2001-07-22 19:22  darkangelab
 
-	* cChar.cpp:
+	* cchar.cpp:
 	Sped up FirstItemObj() and NextItemObj()
 
 2001-07-22 19:20  darkangelab
 
-	* SEFunctions.cpp, books.cpp, cChar.cpp, cClick.cpp, cItem.cpp,
-	cWeather.cpp, cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp,
+	* sefunctions.cpp, books.cpp, cchar.cpp, cClick.cpp, citem.cpp,
+	cweather.cpp, cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp,
 	funcdecl.h, globals.cpp, gumps.cpp, items.cpp, magic.cpp,
 	movement.cpp, msgboard.cpp, network.cpp, npcs.cpp, skills.cpp,
 	speech.cpp, targeting.cpp, townregion.cpp, uox3.cpp, uox3.h:
@@ -11325,9 +11325,9 @@ Changed:
 
 2001-07-22 18:24  toinzane
 
-	* SEFunctions.cpp, ai.cpp, boats.cpp, books.cpp, books.h,
-	cBaseobject.cpp, cChar.cpp, cChar.h, cClick.cpp, cGuild.cpp,
-	cItem.cpp, cMagic.h, calcfuncs.cpp, charhandle.cpp, classes.h,
+	* sefunctions.cpp, ai.cpp, boats.cpp, books.cpp, books.h,
+	cBaseobject.cpp, cchar.cpp, cchar.h, cClick.cpp, cguild.cpp,
+	citem.cpp, cmagic.h, calcfuncs.cpp, charhandle.cpp, classes.h,
 	combat.cpp, combat.h, commands.cpp, dist.cpp, door.cpp, effect.cpp,
 	funcdecl.h, gumps.cpp, handlers.h, house.cpp, itemhandler.cpp,
 	items.cpp, magic.cpp, movement.cpp, necro.cpp, network.cpp,
@@ -11344,7 +11344,7 @@ Changed:
 
 2001-07-22 17:21  darkangelab
 
-	* worldconverter/: cChar.cpp, cChar.h, cItem.cpp, globals.cpp,
+	* worldconverter/: cchar.cpp, cchar.h, citem.cpp, globals.cpp,
 	uox3.cpp, uox3.h:
 	Added multiple item on layer support, to alleviate the issue with
 	CONT and LAYER being around the wrong way
@@ -11358,20 +11358,20 @@ Changed:
 
 2001-07-22 13:29  seank
 
-	* ChangeLog, boats.cpp, cBaseobject.cpp, cChar.cpp, cMultiObj.cpp,
-	cRaces.cpp, cWeather.cpp, cWeather.hpp, cmdtable.cpp, combat.cpp,
+	* ChangeLog, boats.cpp, cBaseobject.cpp, cchar.cpp, cmultiobj.cpp,
+	cRaces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
 	dist.cpp, effect.cpp, globals.cpp, itemhandler.cpp:
 	removed a ton of warnings
 
 2001-07-22 11:23  seank
 
-	* cChar.cpp:
+	* cchar.cpp:
 	Removed the ifdefs, now sstream stuff is for windows too..
 	Someone verify that this method works under windows
 
 2001-07-22 10:43  seank
 
-	* cChar.cpp:
+	* cchar.cpp:
 	More linux fixes (sstream instead of scanf)
 
 2001-07-19 19:26  darkangelab
@@ -11393,14 +11393,14 @@ Changed:
 
 2001-07-19 18:08  darkangelab
 
-	* cChar.cpp, magic.cpp, movement.cpp, uox3.cpp:
+	* cchar.cpp, magic.cpp, movement.cpp, uox3.cpp:
 	Optimized Teleport() in CChar a lot, removes a lot of hash table
 	lookups
 	Generic code clean up / slight optimizations
 
 2001-07-19 17:59  darkangelab
 
-	* cChar.cpp, cChar.h, cScript.cpp, movement.cpp:
+	* cchar.cpp, cchar.h, cscript.cpp, movement.cpp:
 	Added OutOfRange and InRange support for characters
 	Added SendToSocket( cSocket *, bool, CChar * ) to CChar
 	Fixed a nasty cScript bug that would prevent events from being
@@ -11408,7 +11408,7 @@ Changed:
 
 2001-07-19 17:26  toinzane
 
-	* cChar.cpp, cChar.h, cClick.cpp, cItem.cpp, cItem.h, classes.h,
+	* cchar.cpp, cchar.h, cClick.cpp, citem.cpp, citem.h, classes.h,
 	cmdtable.cpp, combat.cpp, commands.cpp, commands.h, funcdecl.h,
 	items.cpp, network.cpp, newbie.cpp, npcs.cpp, pcmanage.cpp,
 	pointer.cpp, speech.cpp, targeting.cpp, uox3.cpp:
@@ -11430,7 +11430,7 @@ Changed:
 
 2001-07-18 21:39  darkangelab
 
-	* cChar.cpp, globals.cpp, items.cpp, magic.cpp, necro.cpp,
+	* cchar.cpp, globals.cpp, items.cpp, magic.cpp, necro.cpp,
 	pcmanage.cpp, skills.cpp, uox3.cpp, uox3.h, xgm.cpp:
 	Slight code tidy ups / tweaks
 	Changed hard coded 2 to a global var for GM command level
@@ -11439,18 +11439,18 @@ Changed:
 
 2001-07-18 20:12  seank
 
-	* cChar.cpp:
+	* cchar.cpp:
 	see the start of the strtok/sscanf replacement here (stringstream)
 
 2001-07-18 19:00  seank
 
-	* cChar.cpp:
+	* cchar.cpp:
 	temporary linux fix... strtok and sscanf misbehaving in BaseSkills
 	loader
 
 2001-07-18 15:27  seank
 
-	* cServerData.cpp, cServerDefinitions.cpp, calcfuncs.cpp:
+	* cserverdata.cpp, cServerDefinitions.cpp, calcfuncs.cpp:
 	Fixed the linux directory functions
 
 2001-07-18 14:15  toinzane
@@ -11509,7 +11509,7 @@ Changed:
 
 2001-07-18 02:29  darkangelab
 
-	* cSocket.cpp, cSocket.h, network.cpp, xgm.cpp:
+	* csocket.cpp, csocket.h, network.cpp, xgm.cpp:
 	Laying down basic framework for xGM support
 
 2001-07-17 23:57  darkangelab
@@ -11526,7 +11526,7 @@ Changed:
 
 2001-07-17 22:21  toinzane
 
-	* SEFunctions.cpp, funcdecl.h, items.cpp, quantityfuncs.cpp,
+	* sefunctions.cpp, funcdecl.h, items.cpp, quantityfuncs.cpp,
 	skills.cpp, skills.h:
 	Renamed GetIngotAmt(), GetSubIngotAmt(), DeleIngot(), and
 	DeleSubIngot(), to getItemAmt(), getSubItemAmt(), DeleIngotAmt(),
@@ -11550,7 +11550,7 @@ Changed:
 
 2001-07-17 20:37  darkangelab
 
-	* cConsole.cpp, cSocket.cpp, commands.cpp, magic.cpp, speech.cpp,
+	* cConsole.cpp, csocket.cpp, commands.cpp, magic.cpp, speech.cpp,
 	targeting.cpp:
 	Updated logging code so that all log files are written into the
 	logs subdirectory
@@ -11586,7 +11586,7 @@ Changed:
 
 2001-07-17 17:47  toinzane
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, calcfuncs.cpp, classes.h,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, calcfuncs.cpp, classes.h,
 	cmdtable.cpp, combat.cpp, door.cpp, effect.cpp, funcdecl.h,
 	items.cpp, npcs.cpp, sound.cpp, trade.cpp, uox3.cpp:
 	Now only items inside multis will display [Locked Down] if movable
@@ -11596,7 +11596,7 @@ Changed:
 
 2001-07-17 17:26  seank
 
-	* cServerData.cpp, cSkillClass.h, cmdtable.cpp, enums.h, html.cpp,
+	* cserverdata.cpp, cskillclass.h, cmdtable.cpp, enums.h, html.cpp,
 	im.h, jail.h, npcs.cpp, packets.h, pointer.cpp, queue.cpp,
 	scriptc.cpp, teffect.cpp, townregion.cpp, xgm.cpp:
 	linux compile fixes and some runtime issues fixed
@@ -11633,7 +11633,7 @@ Changed:
 
 2001-07-16 22:33  darkangelab
 
-	* cRaces.h, cScript.h, cServerData.h, cSocket.h, cdice.h, fileio.h,
+	* craces.h, cscript.h, cserverdata.h, csocket.h, cdice.h, fileio.h,
 	handlers.h, hash.h, regions.h, scriptc.h, skills.h, speech.h,
 	threadsafeobject.h, townregion.h, wholist.h:
 	Updated some destructors so that they were flagged virtual (and
@@ -11658,7 +11658,7 @@ Changed:
 
 2001-07-16 21:30  darkangelab
 
-	* cAccount.cpp, cClick.cpp, cSocket.cpp, cmdtable.cpp, html.cpp,
+	* cAccount.cpp, cClick.cpp, csocket.cpp, cmdtable.cpp, html.cpp,
 	mapstuff.cpp, network.cpp, regions.cpp, uox3.cpp:
 	Changed \\ to / to help with Linux compatability
 	Updated cSocket constructors so that bytesReceived and bytesSent
@@ -11669,12 +11669,12 @@ Changed:
 
 2001-07-16 20:13  darkangelab
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	More debugging message updates for the SE functions
 
 2001-07-16 19:45  darkangelab
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Updated more SE functions to drop out debugging information
 	Slight improvements to some existing debugging writes
 	Slight code tidy ups
@@ -11695,7 +11695,7 @@ Changed:
 
 2001-07-16 18:04  darkangelab
 
-	* worldconverter/: cChar.cpp, uox3.cpp:
+	* worldconverter/: cchar.cpp, uox3.cpp:
 	Updates to support new jailing system
 
 2001-07-13 18:52  darkangelab
@@ -11734,7 +11734,7 @@ Changed:
 
 2001-07-12 23:02  darkangelab
 
-	* UOX3_Official.dsp, cChar.cpp, cChar.h, classes.h, funcdecl.h,
+	* UOX3_Official.dsp, cchar.cpp, cchar.h, classes.h, funcdecl.h,
 	globals.cpp, jail.cpp, jail.h, magic.cpp, targeting.cpp,
 	townregion.cpp, uox3.cpp, uox3.h, uoxstruct.h, worldmain.cpp:
 	Rewrote jail system, removing jail_st and writing a wrapper system
@@ -11761,13 +11761,13 @@ Changed:
 
 2001-07-12 20:21  darkangelab
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Updated SE Gump functions to solve some bugs and print out correct
 	debugging information
 
 2001-07-12 20:03  darkangelab
 
-	* SEFunctions.cpp:
+	* sefunctions.cpp:
 	Updated some SE funcs to properly reflect their parameter
 	requirements
 
@@ -11794,7 +11794,7 @@ Changed:
 
 2001-07-11 21:14  darkangelab
 
-	* cChar.cpp, uox3.cpp:
+	* cchar.cpp, uox3.cpp:
 	Updated MountCreature / IsValidMount to reflect UO3D creatures that
 	are now available
 	Note that the NPCs and mounted creatures don't match up quite right
@@ -11814,7 +11814,7 @@ Changed:
 
 2001-07-11 18:53  darkangelab
 
-	* SEFunctions.cpp, effect.cpp, funcdecl.h, skills.cpp, skills.h,
+	* sefunctions.cpp, effect.cpp, funcdecl.h, skills.cpp, skills.h,
 	teffect.h:
 	Adjusted cSkills::MakeItem() to take a 4th parameter (item #)
 	Completed delay support for success so that it uses scriptable
@@ -11844,13 +11844,13 @@ Changed:
 
 2001-07-11 11:44  toinzane
 
-	* ai.cpp, cMagic.h, classes.h, magic.cpp, skills.h:
+	* ai.cpp, cmagic.h, classes.h, magic.cpp, skills.h:
 	Cleaned up magic.cpp
 	Minor cleanups in misc areas of the source.
 
 2001-07-11 10:09  toinzane
 
-	* boats.cpp, boats.h, cItem.cpp, calcfuncs.cpp, dist.cpp,
+	* boats.cpp, boats.h, citem.cpp, calcfuncs.cpp, dist.cpp,
 	effect.cpp, funcdecl.h, house.cpp, magic.cpp, necro.cpp,
 	network.cpp, skills.cpp, sound.cpp, speech.cpp, targeting.cpp,
 	trade.cpp, uox3.cpp:
@@ -11865,7 +11865,7 @@ Changed:
 
 2001-07-10 21:58  darkangelab
 
-	* cChar.cpp, cClick.cpp, classes.h, effect.cpp, house.cpp,
+	* cchar.cpp, cClick.cpp, classes.h, effect.cpp, house.cpp,
 	items.cpp, magic.cpp, skills.cpp, targeting.cpp, uox3.cpp,
 	uoxstruct.h:
 	Updated createEntry to hold a member delay
@@ -11886,7 +11886,7 @@ Changed:
 
 2001-07-10 21:14  seank
 
-	* SEFunctions.h, magic.cpp, skills.h, targeting.h:
+	* sefunctions.h, magic.cpp, skills.h, targeting.h:
 	temporary gcc 3.0 fixes (stupid gcc3 and it's typedef funcdecl
 	problems)
 
@@ -11941,7 +11941,7 @@ Changed:
 
 2001-07-09 19:31  darkangelab
 
-	* cClick.cpp, cItem.cpp, cItem.h, commands.cpp, house.cpp,
+	* cClick.cpp, citem.cpp, citem.h, commands.cpp, house.cpp,
 	items.cpp, magic.cpp, newbie.cpp, npcs.cpp, skills.cpp,
 	targeting.cpp, uox3.cpp:
 	Added Set / is Newbie(), Decayable() and Dispellable() to CItem
@@ -11961,7 +11961,7 @@ Changed:
 
 2001-07-09 18:58  darkangelab
 
-	* classes.h, combat.cpp, SEFunctions.cpp, UOX3_Official.dsp,
+	* classes.h, combat.cpp, sefunctions.cpp, UOX3_Official.dsp,
 	cRaces.cpp, commands.cpp, effect.cpp, funcdecl.h, magic.cpp,
 	network.cpp, npcs.cpp, pcmanage.cpp, quantityfuncs.cpp, skills.cpp,
 	targeting.cpp, uox3.cpp, vendor.cpp:
@@ -11973,7 +11973,7 @@ Changed:
 
 2001-07-09 18:29  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cScript.cpp, cScript.h, uox3.cpp:
+	* sefunctions.cpp, sefunctions.h, cscript.cpp, cscript.h, uox3.cpp:
 
 	Added onEnterRegion and onLeaveRegion events for characters
 	Added GetClientVersion and GetClientType SE functions
@@ -11987,7 +11987,7 @@ Changed:
 
 2001-07-09 18:02  toinzane
 
-	* SEFunctions.cpp, classes.h, items.cpp, necro.cpp, npcs.cpp,
+	* sefunctions.cpp, classes.h, items.cpp, necro.cpp, npcs.cpp,
 	targeting.cpp, uox3.cpp:
 	More cleanups in npcs.cpp
 	Broke AddRespawnNPC() into two functions, AddNPC() is called with a
@@ -12041,7 +12041,7 @@ Changed:
 
 2001-07-08 20:57  seank
 
-	* Makefile.am, Makefile.in, cServerData.h, skills.cpp:
+	* Makefile.am, Makefile.in, cserverdata.h, skills.cpp:
 	gcc 2.95 fixes
 
 2001-07-08 20:14  darkangelab
@@ -12064,8 +12064,8 @@ Changed:
 
 2001-07-08 18:57  darkangelab
 
-	* SEFunctions.cpp, SEFunctions.h, cItem.cpp, cItem.h, cRaces.cpp,
-	cRaces.h, cScript.cpp, network.cpp, packets.cpp, packets.h,
+	* sefunctions.cpp, sefunctions.h, citem.cpp, citem.h, cRaces.cpp,
+	craces.h, cscript.cpp, network.cpp, packets.cpp, packets.h,
 	speech.cpp, speech.h, targeting.cpp, typedefs.h, uox3.cpp:
 	Changed COLOR to COLOUR
 	Changed COLOUR to a UI16 from a UI32
@@ -12093,10 +12093,10 @@ Changed:
 
 2001-07-07 23:24  toinzane
 
-	* PageVector.h, SEFunctions.cpp, boats.cpp, books.cpp, books.h,
-	cChar.cpp, cGuild.cpp, cGuild.h, cMagic.h, cMultiObj.cpp,
-	cMultiObj.h, cRaces.cpp, cRaces.h, cServerData.cpp, cServerData.h,
-	cSocket.cpp, cSocket.h, cWeather.cpp, calcfuncs.cpp,
+	* pagevector.h, sefunctions.cpp, boats.cpp, books.cpp, books.h,
+	cchar.cpp, cguild.cpp, cguild.h, cmagic.h, cmultiobj.cpp,
+	cmultiobj.h, cRaces.cpp, craces.h, cserverdata.cpp, cserverdata.h,
+	csocket.cpp, csocket.h, cweather.cpp, calcfuncs.cpp,
 	charhandle.cpp, cmdtable.cpp, combat.cpp, combat.h, effect.cpp,
 	funcdecl.h, globals.cpp, gumps.cpp, handlers.h, html.cpp, im.cpp,
 	im.h, lineofsight.cpp, magic.cpp, mapclasses.h, movement.cpp,
@@ -12128,7 +12128,7 @@ Changed:
 
 2001-07-06 23:11  toinzane
 
-	* cItem.cpp, cItem.h, skills.cpp, uox3.cpp:
+	* citem.cpp, citem.h, skills.cpp, uox3.cpp:
 	Fixed bug causing items to vanish when dragged onto another player
 	or yourself (note you need to refresh your pack after dragging an
 	item onto yourself)
@@ -12167,7 +12167,7 @@ Changed:
 
 2001-07-06 13:32  toinzane
 
-	* SEFunctions.cpp, classes.h, combat.cpp, combat.h, items.cpp,
+	* sefunctions.cpp, classes.h, combat.cpp, combat.h, items.cpp,
 	newbie.cpp, skills.cpp, uox3.cpp:
 	Minor code cleanups
 	Rewrote StealingTarget() (Still needs some work, but looks/works
@@ -12189,7 +12189,7 @@ Changed:
 
 2001-07-06 01:42  darkangelab
 
-	* cSocket.cpp, cSocket.h, enums.h, network.cpp, packets.cpp,
+	* csocket.cpp, csocket.h, enums.h, network.cpp, packets.cpp,
 	packets.h:
 	Added ClientTypes enumeration (regular, t2a, uo3d, unknown)
 	Added ClientTypes support to socket (defaulting to regular)
@@ -12207,7 +12207,7 @@ Changed:
 
 2001-07-05 23:09  darkangelab
 
-	* cChar.cpp, npcs.cpp, scriptc.cpp, skills.cpp, uox3.cpp:
+	* cchar.cpp, npcs.cpp, scriptc.cpp, skills.cpp, uox3.cpp:
 	Generic tidy ups
 	Fixed a few updateSkillLevel loops iterating too far
 	Added an updateSkillLevel loop to PostLoadProcessing of CChar,
@@ -12222,7 +12222,7 @@ Changed:
 
 2001-07-05 20:46  toinzane
 
-	* SEFunctions.cpp, ai.cpp, cClick.cpp, calcfuncs.cpp, combat.cpp,
+	* sefunctions.cpp, ai.cpp, cClick.cpp, calcfuncs.cpp, combat.cpp,
 	funcdecl.h, magic.cpp, npcs.cpp, skills.cpp, targeting.cpp,
 	uox3.cpp:
 	Code cleanups in npcs.cpp
@@ -12246,7 +12246,7 @@ Changed:
 
 2001-07-05 19:15  darkangelab
 
-	* worldconverter/: cBaseobject.cpp, cChar.cpp, cItem.cpp,
+	* worldconverter/: cBaseobject.cpp, cchar.cpp, citem.cpp,
 	globals.cpp, regions.cpp, uox3.cpp, uox3.h:
 	Remvoed garbage collection / item testing
 	Updated SetCont to deal with nonexistent character/item containers
@@ -12263,7 +12263,7 @@ Changed:
 
 2001-07-05 17:56  darkangelab
 
-	* cGuild.cpp, effect.cpp, funcdecl.h, gumps.cpp, movement.cpp,
+	* cguild.cpp, effect.cpp, funcdecl.h, gumps.cpp, movement.cpp,
 	packets.cpp, packets.h, skills.cpp, uox3.cpp:
 	Other option, heaven forbid, is use ISO scoping, and use more
 	variable names (can eleminate need for count outside loop)
@@ -12283,7 +12283,7 @@ Changed:
 
 2001-07-05 16:47  toinzane
 
-	* SEFunctions.cpp, boats.cpp, cClick.cpp, calcfuncs.cpp, classes.h,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, calcfuncs.cpp, classes.h,
 	combat.cpp, effect.cpp, funcdecl.h, gumps.cpp, house.cpp,
 	items.cpp, movement.cpp, necro.cpp, newbie.cpp, npcs.cpp,
 	skills.cpp, targeting.cpp, uox3.cpp:
@@ -12304,8 +12304,8 @@ Changed:
 
 2001-07-05 03:09  darkangelab
 
-	* SEFunctions.cpp, boats.cpp, books.cpp, cChar.cpp, cClick.cpp,
-	cGuild.cpp, cRaces.cpp, cScript.cpp, cWeather.cpp, calcfuncs.cpp,
+	* sefunctions.cpp, boats.cpp, books.cpp, cchar.cpp, cClick.cpp,
+	cguild.cpp, cRaces.cpp, cscript.cpp, cweather.cpp, calcfuncs.cpp,
 	cmdtable.cpp, cmdtable.h, combat.cpp, commands.cpp, dist.cpp,
 	effect.cpp, funcdecl.h, gumps.cpp, house.cpp, html.cpp, items.cpp,
 	lineofsight.cpp, movement.cpp, msgboard.cpp, npcs.cpp, magic.cpp,
@@ -12342,14 +12342,14 @@ Changed:
 
 2001-07-04 22:56  seank
 
-	* AUTHORS, COPYING, ChangeLog, INSTALL, NEWS, PageVector.h, README,
-	SEFunctions.h, boats.cpp, books.cpp, cAccount.cpp, cBaseObject.h,
-	cChar.h, cClick.cpp, cConsole.cpp, cConsole.h, cGuild.cpp,
-	cGuild.h, cItem.h, cMagic.h, cMultiObj.h, cScript.h, cServerData.h,
-	cServerDefinitions.h, cSocket.cpp, cSocket.h, cThreadQueue.cpp,
-	cThreadQueue.h, calcfuncs.cpp, cdice.h, classes.h, combat.h,
+	* AUTHORS, COPYING, ChangeLog, INSTALL, NEWS, pagevector.h, README,
+	sefunctions.h, boats.cpp, books.cpp, cAccount.cpp, cbaseobject.h,
+	cchar.h, cClick.cpp, cConsole.cpp, cConsole.h, cguild.cpp,
+	cguild.h, citem.h, cmagic.h, cmultiobj.h, cscript.h, cserverdata.h,
+	cserverdefinitions.h, csocket.cpp, csocket.h, cthreadqueue.cpp,
+	cthreadqueue.h, calcfuncs.cpp, cdice.h, classes.h, combat.h,
 	commands.h, configure, configure.in, enums.h, fileio.cpp,
-	funcdecl.h, CGump.h, handlers.h, hash.h, install-sh, magic.cpp,
+	funcdecl.h, cgump.h, handlers.h, hash.h, install-sh, magic.cpp,
 	magic.h, mapclasses.h, mapstuff.cpp, mapstuff.h, missing,
 	mkinstalldirs, movement.h, network.cpp, network.h, packets.h,
 	regions.h, skills.h, speech.h, ssection.h, targeting.cpp,
@@ -12360,7 +12360,7 @@ Changed:
 
 2001-07-04 21:37  darkangelab
 
-	* SEFunctions.cpp, cMagic.h, magic.cpp, skills.cpp, targeting.cpp,
+	* sefunctions.cpp, cmagic.h, magic.cpp, skills.cpp, targeting.cpp,
 	uoxstruct.h:
 	Fixed magery casting bug which had reagent errors
 	Removed extraneous DeleReagents function from magic
@@ -12369,12 +12369,12 @@ Changed:
 
 2001-07-04 21:23  toinzane
 
-	* cServerData.cpp, cServerData.h, skills.cpp:
+	* cserverdata.cpp, cserverdata.h, skills.cpp:
 	Made engrave toggleable with ENGRAVEENABLED in server.scp
 
 2001-07-04 20:35  darkangelab
 
-	* cRaces.cpp, cWeather.cpp, house.cpp, packets.cpp:
+	* cRaces.cpp, cweather.cpp, house.cpp, packets.cpp:
 	Fixed a crash issue doing an 'add which involved invalid skill
 	values calling a race function
 	Fixed multiplacement view packet so houses/boats ghost properly
@@ -12400,7 +12400,7 @@ Changed:
 
 2001-07-04 18:21  darkangelab
 
-	* cItem.cpp, cMagic.h, classes.h, effect.cpp, fileio.cpp,
+	* citem.cpp, cmagic.h, classes.h, effect.cpp, fileio.cpp,
 	funcdecl.h, gumps.cpp, house.cpp, items.cpp, lineofsight.cpp,
 	magic.cpp, npcs.cpp, regions.cpp, sound.cpp, targeting.cpp,
 	uox3.cpp:
@@ -12422,7 +12422,7 @@ Changed:
 
 2001-07-04 16:45  darkangelab
 
-	* cChar.cpp, cChar.h, skills.cpp, speech.cpp:
+	* cchar.cpp, cchar.h, skills.cpp, speech.cpp:
 	Removal of the Get/Set BankBox functions in CChar
 	Removed all references to Get/Set BankBox functions, fixing
 	non-reopening bank box
@@ -12471,7 +12471,7 @@ Changed:
 
 2001-07-03 21:16  uid43025
 
-	* SEFunctions.cpp, cClick.cpp, cSocket.cpp:
+	* sefunctions.cpp, cClick.cpp, csocket.cpp:
 	Fixed an SE InRange issue where items were in a pack
 	Fixed a doubleclick issue that would put an item out of range (if
 	not on ground)
@@ -12485,13 +12485,13 @@ Changed:
 
 2001-07-03 19:26  darkangelab
 
-	* boats.cpp, cChar.cpp, cClick.cpp:
-	Updated boats.cpp, cChar.cpp and cClick.cpp to replace sysmessage
+	* boats.cpp, cchar.cpp, cClick.cpp:
+	Updated boats.cpp, cchar.cpp and cClick.cpp to replace sysmessage
 	calls wtih dictionary friendly sysmessage calls
 
 2001-07-03 18:59  darkangelab
 
-	* cChar.cpp, door.cpp, funcdecl.h, lineofsight.cpp, movement.cpp,
+	* cchar.cpp, door.cpp, funcdecl.h, lineofsight.cpp, movement.cpp,
 	movement.h, sound.cpp, targeting.cpp, trade.cpp, uox3.cpp,
 	vendor.cpp:
 	GM's don't lose stamina when running
@@ -12511,8 +12511,8 @@ Changed:
 
 2001-07-03 03:31  darkangelab
 
-	* SEFunctions.cpp, UOX3_Official.dsp, ai.cpp, boats.cpp,
-	cClick.cpp, cGuild.cpp, cRaces.cpp, cWeather.cpp, cmdtable.cpp,
+	* sefunctions.cpp, UOX3_Official.dsp, ai.cpp, boats.cpp,
+	cClick.cpp, cguild.cpp, cRaces.cpp, cweather.cpp, cmdtable.cpp,
 	combat.cpp, effect.cpp, enums.h, funcdecl.h, globals.cpp,
 	magic.cpp, msgboard.cpp, necro.cpp, network.cpp, network.h,
 	packets.cpp, packets.h, regions.h, skills.cpp, speech.cpp,
@@ -12524,7 +12524,7 @@ Changed:
 	implementing the CPISecondLogin and CPIServerSelect packets
 	Declaration of dictionary based sysmessage
 	Conversion of cmdtable.cpp, cRaces.cpp, wholist.cpp and
-	cWeather.cpp to using new dictionary based sysmessage
+	cweather.cpp to using new dictionary based sysmessage
 	Changed all references to antispam to use booleans rather than char
 	Adjusted speech functions to use a single UI16 for colour rather
 	than 2 UI08s
@@ -12548,7 +12548,7 @@ Changed:
 
 2001-07-02 20:24  darkangelab
 
-	* UOX3_Official.dsp, cServerData.cpp, cServerDefinitions.cpp,
+	* UOX3_Official.dsp, cserverdata.cpp, cServerDefinitions.cpp,
 	magic.cpp, uox3.cpp:
 	Fixed release crash bug when loading spells
 	Adjusted Release part of the project to have the proper defines
@@ -12577,8 +12577,8 @@ Changed:
 2001-07-01 21:55  darkangelab
 
 	* worldconverter/: UOX3WorldConverter.dsp, UOX3WorldConverter.dsw,
-	cBaseObject.h, cBaseobject.cpp, cChar.cpp, cChar.h, cItem.cpp,
-	cItem.h, cMultiObj.cpp, cMultiObj.h, charhandle.cpp, classes.h,
+	cbaseobject.h, cBaseobject.cpp, cchar.cpp, cchar.h, citem.cpp,
+	citem.h, cmultiobj.cpp, cmultiobj.h, charhandle.cpp, classes.h,
 	enums.h, funcdecl.h, globals.cpp, handlers.h, hash.cpp, hash.h,
 	itemhandler.cpp, power.h, regions.cpp, regions.h, resource.h,
 	typedefs.h, uox3.cpp, uox3.h, uox3.ico, uox3.rc, uoxstruct.h:
@@ -12604,16 +12604,16 @@ Changed:
 
 2001-07-01 21:23  darkangelab
 
-	* Dictionary.cpp, Dictionary.h, cSkillClass.h, cSocket.cpp,
-	cSocket.h, cThreadQueue.cpp, cThreadQueue.h, cWeather.cpp,
-	cWeather.hpp, debug.cpp, debug.h, dist.cpp, effect.cpp, enums.h,
-	fileio.cpp, fileio.h, funcdecl.h, globals.cpp, CGump.h, gumps.cpp,
+	* Dictionary.cpp, dictionary.h, cskillclass.h, csocket.cpp,
+	csocket.h, cthreadqueue.cpp, cthreadqueue.h, cweather.cpp,
+	cweather.hpp, debug.cpp, debug.h, dist.cpp, effect.cpp, enums.h,
+	fileio.cpp, fileio.h, funcdecl.h, globals.cpp, cgump.h, gumps.cpp,
 	handlers.h, hash.cpp, hash.h, house.cpp, html.cpp, im.cpp, im.h,
-	itemhandler.cpp, PageVector.h, items.cpp, magic.cpp, magic.h,
+	itemhandler.cpp, pagevector.h, items.cpp, magic.cpp, magic.h,
 	mapclasses.h, mapstuff.cpp, mapstuff.h, movement.cpp, movement.h,
 	msgboard.cpp, msgboard.h, necro.cpp, network.cpp, network.h,
 	newbie.cpp, npcs.cpp, packets.cpp, packets.h, pointer.cpp, power.h,
-	queue.cpp, SEFunctions.cpp, SEFunctions.h, regions.cpp, regions.h,
+	queue.cpp, sefunctions.cpp, sefunctions.h, regions.cpp, regions.h,
 	resource.h, scriptc.cpp, scriptc.h, skills.cpp, skills.h,
 	sound.cpp, speech.cpp, speech.h, ssection.cpp, ssection.h,
 	targeting.cpp, targeting.h, teffect.cpp, teffect.h,
@@ -12624,13 +12624,13 @@ Changed:
 2001-07-01 21:19  darkangelab
 
 	* archive.cpp, boats.cpp, boats.h, books.cpp, books.h,
-	cAccount.cpp, cAccount.h, cBaseObject.h, cBaseobject.cpp,
-	cChar.cpp, cChar.h, cClick.cpp, cConsole.cpp, cConsole.h,
-	cDice.cpp, cGuild.cpp, cGuild.h, cdice.h, charhandle.cpp,
-	cItem.cpp, cItem.h, cMagic.h, cMultiObj.cpp, cMultiObj.h,
+	cAccount.cpp, cAccount.h, cbaseobject.h, cBaseobject.cpp,
+	cchar.cpp, cchar.h, cClick.cpp, cConsole.cpp, cConsole.h,
+	cdice.cpp, cguild.cpp, cguild.h, cdice.h, charhandle.cpp,
+	citem.cpp, citem.h, cmagic.h, cmultiobj.cpp, cmultiobj.h,
 	classes.h, cmdtable.cpp, cmdtable.h, combat.cpp, cRaces.cpp,
-	cRaces.h, cScript.cpp, cScript.h, cServerData.cpp, cServerData.h,
-	cServerDefinitions.cpp, cServerDefinitions.h, combat.h,
+	craces.h, cscript.cpp, cscript.h, cserverdata.cpp, cserverdata.h,
+	cServerDefinitions.cpp, cserverdefinitions.h, combat.h,
 	commands.cpp, commands.h:
 	Initial commit of 0.95 source
 

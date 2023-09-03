@@ -18,8 +18,8 @@
 
 #include "typedefs.h"
 #include "uoxstruct.h"
-#include "cServerData.h"
-#include "GenericList.h"
+#include "cserverdata.h"
+#include "genericlist.h"
 class CSpawnRegion;
 class CTownRegion;
 class CTEffect;

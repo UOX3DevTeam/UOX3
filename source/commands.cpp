@@ -2,18 +2,18 @@
 
 #include <fstream>
 
-#include "cChar.h"
-#include "CJSMapping.h"
-#include "CPacketSend.h"
-#include "cScript.h"
-#include "cServerDefinitions.h"
-#include "cSocket.h"
+#include "cchar.h"
+#include "cjsmapping.h"
+#include "cpacketsend.h"
+#include "cscript.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
 
 #include "subsystem/console.hpp"
 
 #include "funcdecl.h"
 #include "ssection.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 

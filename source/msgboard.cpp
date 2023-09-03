@@ -27,18 +27,18 @@
 #include <filesystem>
 #include <fstream>
 
-#include "cChar.h"
-#include "cEffects.h"
-#include "cServerDefinitions.h"
-#include "cItem.h"
-#include "cSocket.h"
-#include "CPacketSend.h"
+#include "cchar.h"
+#include "ceffects.h"
+#include "cserverdefinitions.h"
+#include "citem.h"
+#include "csocket.h"
+#include "cpacketsend.h"
 #include "classes.h"
-#include "Dictionary.h"
+#include "dictionary.h"
 #include "funcdecl.h"
 #include "osunique.hpp"
 #include "ssection.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
 

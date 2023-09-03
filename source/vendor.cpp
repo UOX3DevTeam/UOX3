@@ -1,19 +1,19 @@
 
 #include <algorithm>
 
-#include "cChar.h"
-#include "cEffects.h"
-#include "cItem.h"
-#include "CJSMapping.h"
+#include "cchar.h"
+#include "ceffects.h"
+#include "citem.h"
+#include "cjsmapping.h"
 #include "classes.h"
 #include "commands.h"
 #include "subsystem/console.hpp"
-#include "CPacketSend.h"
-#include "cScript.h"
-#include "cServerDefinitions.h"
-#include "cSocket.h"
+#include "cpacketsend.h"
+#include "cscript.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
 #include "funcdecl.h"
-#include "ObjectFactory.h"
+#include "objectfactory.h"
 #include "townregion.h"
 
 

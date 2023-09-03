@@ -13,50 +13,50 @@ add_executable(uox3
 	
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
 # Script Group
-	${PROJECT_SOURCE_DIR}/../../source/cServerData.cpp  
-	${PROJECT_SOURCE_DIR}/../../source/cServerData.h
+	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  
+	${PROJECT_SOURCE_DIR}/../../source/cserverdata.h
 	${PROJECT_SOURCE_DIR}/../../source/cServerDefinitions.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cServerDefinitions.h
+	${PROJECT_SOURCE_DIR}/../../source/cserverdefinitions.h
 	${PROJECT_SOURCE_DIR}/../../source/Dictionary.cpp
-	${PROJECT_SOURCE_DIR}/../../source/Dictionary.h
+	${PROJECT_SOURCE_DIR}/../../source/dictionary.h
 	${PROJECT_SOURCE_DIR}/../../source/scriptc.cpp
 	${PROJECT_SOURCE_DIR}/../../source/scriptc.h
 	${PROJECT_SOURCE_DIR}/../../source/ssection.cpp
 	${PROJECT_SOURCE_DIR}/../../source/ssection.h	
 # Base Object Group
 	${PROJECT_SOURCE_DIR}/../../source/boats.cpp   
-	${PROJECT_SOURCE_DIR}/../../source/cBaseObject.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cBaseObject.h
-	${PROJECT_SOURCE_DIR}/../../source/cChar.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cChar.h
-	${PROJECT_SOURCE_DIR}/../../source/cGuild.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cGuild.h
-	${PROJECT_SOURCE_DIR}/../../source/cItem.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cItem.h
-	${PROJECT_SOURCE_DIR}/../../source/cMultiObj.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cMultiObj.h
-	${PROJECT_SOURCE_DIR}/../../source/cSocket.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cSocket.h
-	${PROJECT_SOURCE_DIR}/../../source/cSpawnRegion.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cSpawnRegion.h
-	${PROJECT_SOURCE_DIR}/../../source/cThreadQueue.cpp
-	${PROJECT_SOURCE_DIR}/../../source/cThreadQueue.h
+	${PROJECT_SOURCE_DIR}/../../source/cbaseobject.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cbaseobject.h
+	${PROJECT_SOURCE_DIR}/../../source/cchar.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cchar.h
+	${PROJECT_SOURCE_DIR}/../../source/cguild.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cguild.h
+	${PROJECT_SOURCE_DIR}/../../source/citem.cpp
+	${PROJECT_SOURCE_DIR}/../../source/citem.h
+	${PROJECT_SOURCE_DIR}/../../source/cmultiobj.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cmultiobj.h
+	${PROJECT_SOURCE_DIR}/../../source/csocket.cpp
+	${PROJECT_SOURCE_DIR}/../../source/csocket.h
+	${PROJECT_SOURCE_DIR}/../../source/cspawnregion.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cspawnregion.h
+	${PROJECT_SOURCE_DIR}/../../source/cthreadqueue.cpp
+	${PROJECT_SOURCE_DIR}/../../source/cthreadqueue.h
 	${PROJECT_SOURCE_DIR}/../../source/funcdecl.h
-	${PROJECT_SOURCE_DIR}/../../source/ObjectFactory.cpp
-	${PROJECT_SOURCE_DIR}/../../source/ObjectFactory.h
-	${PROJECT_SOURCE_DIR}/../../source/PageVector.h
+	${PROJECT_SOURCE_DIR}/../../source/objectfactory.cpp
+	${PROJECT_SOURCE_DIR}/../../source/objectfactory.h
+	${PROJECT_SOURCE_DIR}/../../source/pagevector.h
 	${PROJECT_SOURCE_DIR}/../../source/uoxstruct.h
 # Subsystem Group Group
    ${PROJECT_SOURCE_DIR}/../../source/books.cpp
    ${PROJECT_SOURCE_DIR}/../../source/books.h
    ${PROJECT_SOURCE_DIR}/../../source/subsystem/account.cpp
    ${PROJECT_SOURCE_DIR}/../../source/subsystem/account.hpp
-   ${PROJECT_SOURCE_DIR}/../../source/cEffects.h
-   ${PROJECT_SOURCE_DIR}/../../source/CGump.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/CGump.h
-   ${PROJECT_SOURCE_DIR}/../../source/cHTMLSystem.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cHTMLSystem.h  
-   ${PROJECT_SOURCE_DIR}/../../source/cMagic.h
+   ${PROJECT_SOURCE_DIR}/../../source/ceffects.h
+   ${PROJECT_SOURCE_DIR}/../../source/cgump.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cgump.h
+   ${PROJECT_SOURCE_DIR}/../../source/chtmlsystem.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/chtmlsystem.h  
+   ${PROJECT_SOURCE_DIR}/../../source/cmagic.h
 	${PROJECT_SOURCE_DIR}/../../source/subsystem/console.cpp
 	${PROJECT_SOURCE_DIR}/../../source/subsystem/console.hpp
    ${PROJECT_SOURCE_DIR}/../../source/combat.cpp
@@ -64,9 +64,9 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/commands.cpp
    ${PROJECT_SOURCE_DIR}/../../source/commands.h
    ${PROJECT_SOURCE_DIR}/../../source/cRaces.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cRaces.h
-   ${PROJECT_SOURCE_DIR}/../../source/cWeather.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cWeather.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/craces.h
+   ${PROJECT_SOURCE_DIR}/../../source/cweather.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cweather.hpp
    ${PROJECT_SOURCE_DIR}/../../source/gumps.cpp
    ${PROJECT_SOURCE_DIR}/../../source/house.cpp
    ${PROJECT_SOURCE_DIR}/../../source/items.cpp
@@ -79,8 +79,8 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/movement.h
    ${PROJECT_SOURCE_DIR}/../../source/msgboard.cpp
    ${PROJECT_SOURCE_DIR}/../../source/msgboard.h
-   ${PROJECT_SOURCE_DIR}/../../source/PartySystem.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/PartySystem.h
+   ${PROJECT_SOURCE_DIR}/../../source/partysystem.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/partysystem.h
    ${PROJECT_SOURCE_DIR}/../../source/quantityfuncs.cpp
    ${PROJECT_SOURCE_DIR}/../../source/queue.cpp
    ${PROJECT_SOURCE_DIR}/../../source/regions.cpp
@@ -106,15 +106,15 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/ai.cpp 
    ${PROJECT_SOURCE_DIR}/../../source/archive.cpp
    ${PROJECT_SOURCE_DIR}/../../source/calcfuncs.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cDice.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cdice.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cdice.h
    ${PROJECT_SOURCE_DIR}/../../source/classes.h
    ${PROJECT_SOURCE_DIR}/../../source/cmdtable.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cmdtable.h
-   ${PROJECT_SOURCE_DIR}/../../source/cPlayerAction.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/CResponse.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/CResponse.h
-   ${PROJECT_SOURCE_DIR}/../../source/cSkillClass.h
+   ${PROJECT_SOURCE_DIR}/../../source/cplayeraction.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cresponse.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cresponse.h
+   ${PROJECT_SOURCE_DIR}/../../source/cskillclass.h
    ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.cpp
    ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.hpp 
    ${PROJECT_SOURCE_DIR}/../../source/dist.cpp
@@ -122,7 +122,7 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/enums.h
    ${PROJECT_SOURCE_DIR}/../../source/fileio.cpp
    ${PROJECT_SOURCE_DIR}/../../source/findfuncs.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/GenericList.h
+   ${PROJECT_SOURCE_DIR}/../../source/genericlist.h
    ${PROJECT_SOURCE_DIR}/../../source/npcs.cpp
    ${PROJECT_SOURCE_DIR}/../../source/osunique.cpp
    ${PROJECT_SOURCE_DIR}/../../source/osunique.hpp
@@ -133,49 +133,49 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/useful.h   
    ${PROJECT_SOURCE_DIR}/../../source/useful.h
 # JS Engine group
-   ${PROJECT_SOURCE_DIR}/../../source/CJSEngine.cpp 
-   ${PROJECT_SOURCE_DIR}/../../source/CJSEngine.h
-   ${PROJECT_SOURCE_DIR}/../../source/CJSMapping.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/CJSMapping.h
-   ${PROJECT_SOURCE_DIR}/../../source/cScript.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cScript.h
-   ${PROJECT_SOURCE_DIR}/../../source/JSEncapsulate.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/JSEncapsulate.h
-   ${PROJECT_SOURCE_DIR}/../../source/SEFunctions.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/SEFunctions.h
+   ${PROJECT_SOURCE_DIR}/../../source/cjsengine.cpp 
+   ${PROJECT_SOURCE_DIR}/../../source/cjsengine.h
+   ${PROJECT_SOURCE_DIR}/../../source/cjsmapping.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cjsmapping.h
+   ${PROJECT_SOURCE_DIR}/../../source/cscript.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cscript.h
+   ${PROJECT_SOURCE_DIR}/../../source/jsencapsulate.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/jsencapsulate.h
+   ${PROJECT_SOURCE_DIR}/../../source/sefunctions.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/sefunctions.h
    ${PROJECT_SOURCE_DIR}/../../source/spidermonkey.h
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSClasses.h
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSMethods.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSMethods.h
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSPropertyEnums.h
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSPropertyFuncs.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSPropertyFuncs.h
-   ${PROJECT_SOURCE_DIR}/../../source/UOXJSPropertySpecs.h
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjsclasses.h
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjsmethods.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjsmethods.h
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyenums.h
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyfuncs.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyfuncs.h
+   ${PROJECT_SOURCE_DIR}/../../source/uoxjspropertyspecs.h
 # Network group
-   ${PROJECT_SOURCE_DIR}/../../source/CPacketReceive.cpp  
-   ${PROJECT_SOURCE_DIR}/../../source/CPacketReceive.h
-   ${PROJECT_SOURCE_DIR}/../../source/CPacketSend.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/CPacketSend.h
+   ${PROJECT_SOURCE_DIR}/../../source/cpacketreceive.cpp  
+   ${PROJECT_SOURCE_DIR}/../../source/cpacketreceive.h
+   ${PROJECT_SOURCE_DIR}/../../source/cpacketsend.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/cpacketsend.h
    ${PROJECT_SOURCE_DIR}/../../source/network.cpp
    ${PROJECT_SOURCE_DIR}/../../source/network.h
-   ${PROJECT_SOURCE_DIR}/../../source/IP4Address.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/IP4Address.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/ip4address.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/ip4address.hpp
 # Utility group
-   ${PROJECT_SOURCE_DIR}/../../source/StringUtility.cpp  
-   ${PROJECT_SOURCE_DIR}/../../source/StringUtility.hpp
-   ${PROJECT_SOURCE_DIR}/../../source/TimeUtility.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/TimeUtility.hpp
-   ${PROJECT_SOURCE_DIR}/../../source/EventTimer.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/EventTimer.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/stringutility.cpp  
+   ${PROJECT_SOURCE_DIR}/../../source/stringutility.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/timeutility.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/timeutility.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/eventtimer.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/eventtimer.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/strutil.hpp
 # UOData group
     ${PROJECT_SOURCE_DIR}/../../source/mapclasses.h  
     ${PROJECT_SOURCE_DIR}/../../source/mapstuff.cpp
     ${PROJECT_SOURCE_DIR}/../../source/mapstuff.h
-    ${PROJECT_SOURCE_DIR}/../../source/MultiMul.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/MultiMul.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/UOPData.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/UOPData.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/multimul.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/multimul.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/uopdata.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/uopdata.hpp
 )
 
 # *************************************************************************

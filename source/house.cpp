@@ -1,20 +1,20 @@
 // House code for deed creation
 #include<algorithm>
 
-#include "cChar.h"
-#include "CPacketSend.h"
+#include "cchar.h"
+#include "cpacketsend.h"
 #include "classes.h"
-#include "cMultiObj.h"
+#include "cmultiobj.h"
 #include "subsystem/console.hpp"
-#include "cServerDefinitions.h"
-#include "cSocket.h"
-#include "Dictionary.h"
+#include "cserverdefinitions.h"
+#include "csocket.h"
+#include "dictionary.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
-#include "ObjectFactory.h"
+#include "objectfactory.h"
 #include "regions.h"
 #include "ssection.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 

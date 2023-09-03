@@ -15,7 +15,7 @@
 #include <thread>
 #include <random>
 #include "uoxstruct.h"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "subsystem/console.hpp"
 #include <iostream>
@@ -23,7 +23,7 @@
 #include <algorithm>
 #include <sstream>
 
-#include "cBaseObject.h"
+#include "cbaseobject.h"
 #include "worldmain.h"
 #include "osunique.hpp"
 class CItem ;

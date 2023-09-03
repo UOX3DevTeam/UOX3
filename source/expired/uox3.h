@@ -120,13 +120,13 @@ class CSpellInfo;
 // The UOX project includes
 //o------------------------------------------------------------------------------------------------o
 #include "uoxstruct.h"
-#include "GenericList.h"
-#include "cBaseObject.h"
-#include "cChar.h"
-#include "cItem.h"
-#include "cMultiObj.h"
-#include "cSocket.h"
-#include "cServerData.h"
+#include "genericlist.h"
+#include "cbaseobject.h"
+#include "cchar.h"
+#include "citem.h"
+#include "cmultiobj.h"
+#include "csocket.h"
+#include "cserverdata.h"
 #include "worldmain.h"
 #include "funcdecl.h"
 

@@ -16,23 +16,23 @@
 
 #include "typedefs.h"
 
-#include "cChar.h"
+#include "cchar.h"
 #include "combat.h"
-#include "cEffects.h"
-#include "cItem.h"
-#include "cMultiObj.h"
-#include "cRaces.h"
-#include "cScript.h"
-#include "cSocket.h"
-#include "Dictionary.h"
+#include "ceffects.h"
+#include "citem.h"
+#include "cmultiobj.h"
+#include "craces.h"
+#include "cscript.h"
+#include "csocket.h"
+#include "dictionary.h"
 
 #include "funcdecl.h"
-#include "CJSMapping.h"
+#include "cjsmapping.h"
 
 #include "regions.h"
 #include "townregion.h"
 
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "subsystem/account.hpp"
 

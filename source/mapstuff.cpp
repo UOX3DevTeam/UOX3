@@ -5,11 +5,11 @@
 #include <filesystem>
 #include <fstream>
 
-#include "cChar.h"
-#include "cItem.h"
-#include "cMultiObj.h"
+#include "cchar.h"
+#include "citem.h"
+#include "cmultiobj.h"
 #include "subsystem/console.hpp"
-#include "cServerDefinitions.h"
+#include "cserverdefinitions.h"
 #include "funcdecl.h"
 #include "regions.h"
 #include "scriptc.h"

@@ -12,7 +12,7 @@
 #include "enums.h"
 #include <cstdint>
 #include <filesystem>
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
 #include "subsystem/console.hpp"

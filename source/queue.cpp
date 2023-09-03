@@ -7,13 +7,13 @@
 
 #include <algorithm>
 
-#include "cChar.h"
+#include "cchar.h"
 #include "funcdecl.h"
-#include "PageVector.h"
+#include "pagevector.h"
 
 
 
-#include "CGump.h"
+#include "cgump.h"
 
 PageVector *GMQueue;
 PageVector *CounselorQueue;

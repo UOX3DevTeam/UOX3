@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "typedefs.h"
-#include "GenericList.h"
+#include "genericlist.h"
 
 class CItem;
 class CChar;

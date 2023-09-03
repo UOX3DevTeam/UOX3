@@ -4,13 +4,13 @@
 //|	Purpose		-	Various functions to calculate objects from serials
 //o------------------------------------------------------------------------------------------------o
 
-#include "cBaseObject.h"
-#include "cChar.h"
-#include "cItem.h"
-#include "cMultiObj.h"
+#include "cbaseobject.h"
+#include "cchar.h"
+#include "citem.h"
+#include "cmultiobj.h"
 #include "funcdecl.h"
 #include "network.h"
-#include "ObjectFactory.h"
+#include "objectfactory.h"
 #include "townregion.h"
 
 

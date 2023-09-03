@@ -8,7 +8,7 @@
 
 
 #include "subsystem/console.hpp"
-#include "StringUtility.hpp"
+#include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
 constexpr auto DFN_STRING 		= UI08( 0 );
