@@ -10,14 +10,12 @@ if(NOT WIN32)
 			$<$<CONFIG:Release>:-Os>
 		)
 		
-#if(NOT EXISTS ${PROJECT_SOURCE_DIR}/jsautocfg.h)		
     add_custom_command(
         OUTPUT ../../jsautocfg.h
         COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
         DEPENDS jscpucfg
         COMMENT "Generating jsautocfg.h"
     )
-#endif()
 endif(NOT WIN32)
 
 add_library(jscript STATIC)
