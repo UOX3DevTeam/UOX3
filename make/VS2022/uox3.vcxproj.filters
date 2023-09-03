@@ -129,7 +129,7 @@
     <ClCompile Include="..\..\source\commands.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cRaces.cpp">
+    <ClCompile Include="..\..\source\craces.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cweather.cpp">

@@ -118,7 +118,7 @@
     <ClCompile Include="..\..\source\subsystem\console.cpp" />
     <ClCompile Include="..\..\source\combat.cpp" />
     <ClCompile Include="..\..\source\commands.cpp" />
-    <ClCompile Include="..\..\source\cRaces.cpp" />
+    <ClCompile Include="..\..\source\craces.cpp" />
     <ClCompile Include="..\..\source\cweather.cpp" />
     <ClCompile Include="..\..\source\gumps.cpp" />
     <ClCompile Include="..\..\source\house.cpp" />

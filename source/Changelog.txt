@@ -2605,7 +2605,7 @@
 
 27/04/2021 - Xuri (0.99.4j)
 	Removed ustring.h and ustring.cpp and references to these from the project as they have now been completely phased out by the move to std::string and the use of stringutility.cpp/hpp
-	Finalized string handling modernization in cRaces.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp, ssection.cpp, ssection.h and targeting.cpp (punt)
+	Finalized string handling modernization in craces.cpp, house.cpp, items.cpp, npcs.cpp, skills.cpp, ssection.cpp, ssection.h and targeting.cpp (punt)
 
 27/04/2021 - Xuri
 	Fixed some missing icons in dfndata/creatures/creatures.dfn
@@ -2622,7 +2622,7 @@
 	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided
 	Fixed an issue where 'set weightmax # would fail because script used an incorrect property name
 	Fixed an issue with check for allowed/banned equipment for races; if a list of allowed equipment existed, it would never check the banned list
-	Additional string handling modernization in chtmlsystem.cpp, cRaces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
+	Additional string handling modernization in chtmlsystem.cpp, craces.cpp, gumps.cpp, townregion.cpp and uox3.cpp (punt)
 
 25/04/2021 - Xuri
 	Additional work done to modernize string handling in cpacketreceive.cpp, cpacketreceive.h, cpacketsend.cpp, cpacketsend.h, cscript.cpp, gumps.cpp (punt)
@@ -6682,7 +6682,7 @@ January 15 2005 - Maarc
 
 8/13/2004 - giwo
 	Converted a few areas of code to using refrences rather than pointers.
-	Consolidated some code in cweather.cpp and cRaces.cpp.
+	Consolidated some code in cweather.cpp and craces.cpp.
 	Fixed a couple areas where an ACCOUNTSBLOCK was being copied and altered, but not set back on the object it was copied from.
 	Implemented a temporary fix for multiple users on one account and other related issues.
 	Modified CChar::petsControlled to make use of CDataList.
@@ -9681,7 +9681,7 @@ Changed:
 
 2001-09-27 21:27  darkangelab
 
-	* boats.cpp, cchar.cpp, cClick.cpp, cRaces.cpp, cmdtable.cpp,
+	* boats.cpp, cchar.cpp, cClick.cpp, craces.cpp, cmdtable.cpp,
 	commands.cpp, funcdecl.h, packets.cpp, pcmanage.cpp,
 	townregion.cpp, typedefs.h, uox3.cpp, uox3.h, xgm.cpp:
 	Fixed some warnings and did some cleanups
@@ -9725,7 +9725,7 @@ Changed:
 2001-09-26 19:13  darkangelab
 
 	* ai.cpp, archive.cpp, boats.cpp, cbaseobject.h, cBaseobject.cpp,
-	cchar.cpp, cchar.h, cClick.cpp, cguild.cpp, citem.cpp, cRaces.cpp,
+	cchar.cpp, cchar.h, cClick.cpp, cguild.cpp, citem.cpp, craces.cpp,
 	cscript.cpp, cserverdata.cpp, cserverdefinitions.cpp, csocket.cpp,
 	cspawnregion.cpp, cspawnregion.h, calcfuncs.cpp, classes.h,
 	cmdtable.cpp, combat.cpp, dist.cpp, door.cpp, enums.h, fileio.cpp,
@@ -9760,7 +9760,7 @@ Changed:
 
 	* sefunctions.cpp, cbaseobject.h, cBaseobject.cpp, cchar.cpp,
 	cguild.cpp, cguild.h, citem.cpp, cmagic.h, cmultiobj.cpp,
-	cmultiobj.h, cRaces.cpp, cserverdata.cpp, cserverdata.h,
+	cmultiobj.h, craces.cpp, cserverdata.cpp, cserverdata.h,
 	csocket.cpp, csocket.h, cweather.cpp, charhandle.cpp, cmdtable.cpp,
 	combat.cpp, combat.h, dist.cpp, door.cpp, effect.cpp, fileio.cpp,
 	funcdecl.h, globals.cpp, gumps.cpp, handlers.h, hash.cpp,
@@ -9842,7 +9842,7 @@ Changed:
 
 2001-09-20 20:24  darkangelab
 
-	* cchar.cpp, citem.cpp, citem.h, cRaces.cpp, craces.h,
+	* cchar.cpp, citem.cpp, citem.h, craces.cpp, craces.h,
 	cserverdata.h, typedefs.h:
 	Increased source portability, removing some of the limitations in
 	place preventing gcc 2.95.3 from compiling
@@ -9897,7 +9897,7 @@ Changed:
 
 2001-09-17 20:07  darkangelab
 
-	* cRaces.cpp, craces.h, cweather.cpp, funcdecl.h, necro.cpp,
+	* craces.cpp, craces.h, cweather.cpp, funcdecl.h, necro.cpp,
 	skills.cpp, uox3.cpp:
 	Minor clean ups and tidy ups
 	Converted some funcs to take a single ID rather than the split IDs
@@ -9947,7 +9947,7 @@ Changed:
 2001-09-16 21:03  darkangelab
 
 	* pagevector.h, sefunctions.cpp, cchar.cpp, cConsole.cpp,
-	cguild.cpp, citem.cpp, cRaces.cpp, cscript.cpp, csocket.cpp,
+	cguild.cpp, citem.cpp, craces.cpp, cscript.cpp, csocket.cpp,
 	charhandle.cpp, classes.h, cmdtable.cpp, debug.cpp, effect.cpp,
 	globals.cpp, im.cpp, items.cpp, jail.cpp, magic.cpp, queue.cpp,
 	skills.cpp, speech.cpp, targeting.cpp, townregion.cpp, uox3.cpp,
@@ -10025,7 +10025,7 @@ Changed:
 2001-09-13 03:36  darkangelab
 
 	* pagevector.h, boats.cpp, cAccount.cpp, cClick.cpp, cConsole.cpp,
-	cConsole.h, cguild.cpp, cmagic.h, cRaces.cpp, csocket.cpp,
+	cConsole.h, cguild.cpp, cmagic.h, craces.cpp, csocket.cpp,
 	csocket.h, cspawnregion.cpp, classes.h, cmdtable.cpp, cmdtable.h,
 	combat.cpp, commands.cpp, effect.cpp, funcdecl.h, gumps.cpp,
 	house.cpp, items.cpp, magic.cpp, mapstuff.cpp, msgboard.cpp,
@@ -10107,14 +10107,14 @@ Changed:
 
 2001-09-09 18:38  darkangelab
 
-	* cRaces.cpp:
+	* craces.cpp:
 	Reorganized the layout of the code in race transformation
 	Fixed a bug where it would try and colourize a beard object that
 	didn't exist
 
 2001-09-09 18:32  darkangelab
 
-	* cRaces.cpp:
+	* craces.cpp:
 	REQUIREBEARD is off by default
 
 2001-09-07 09:10  toinzane
@@ -10166,7 +10166,7 @@ Changed:
 
 2001-09-03 18:29  toinzane
 
-	* cClick.cpp, cguild.cpp, citem.cpp, cRaces.cpp, commands.cpp,
+	* cClick.cpp, cguild.cpp, citem.cpp, craces.cpp, commands.cpp,
 	gumps.cpp, items.cpp, magic.cpp, npcs.cpp, skills.cpp,
 	townregion.cpp, uox3.cpp:
 	makeNum() now handles octal, hex, and decimal (thanks seank).
@@ -10210,7 +10210,7 @@ Changed:
 2001-08-28 19:31  toinzane
 
 	* books.cpp, cAccount.cpp, cBaseobject.cpp, cchar.cpp, cguild.cpp,
-	citem.cpp, cmultiobj.cpp, cRaces.cpp, cserverdata.cpp,
+	citem.cpp, cmultiobj.cpp, craces.cpp, cserverdata.cpp,
 	cserverdefinitions.cpp, cspawnregion.cpp, cweather.cpp,
 	commands.cpp, funcdecl.h, gumps.cpp, house.cpp, html.cpp,
 	items.cpp, jail.cpp, magic.cpp, msgboard.cpp, necro.cpp,
@@ -10754,7 +10754,7 @@ Changed:
 
 2001-08-07 17:13  darkangelab
 
-	* sefunctions.cpp, cRaces.cpp, craces.h, cmdtable.cpp, effect.cpp,
+	* sefunctions.cpp, craces.cpp, craces.h, cmdtable.cpp, effect.cpp,
 	funcdecl.h, skills.cpp, uox3.cpp:
 	Converted cRaces::gate to use a CChar * instead of a CHARACTER, and
 	bool instead of an int
@@ -11063,7 +11063,7 @@ Changed:
 
 2001-08-01 15:43  toinzane
 
-	* sefunctions.cpp, ai.cpp, cClick.cpp, cRaces.cpp, cweather.cpp,
+	* sefunctions.cpp, ai.cpp, cClick.cpp, craces.cpp, cweather.cpp,
 	cmdtable.cpp, combat.cpp, commands.cpp, dist.cpp, door.cpp,
 	effect.cpp, funcdecl.h, gumps.cpp, magic.cpp, movement.cpp,
 	skills.cpp, sound.cpp, speech.cpp, targeting.cpp, uox3.cpp:
@@ -11095,7 +11095,7 @@ Changed:
 
 2001-07-30 18:49  toinzane
 
-	* sefunctions.cpp, boats.cpp, cClick.cpp, cguild.cpp, cRaces.cpp,
+	* sefunctions.cpp, boats.cpp, cClick.cpp, cguild.cpp, craces.cpp,
 	classes.h, cmdtable.cpp, combat.cpp, commands.cpp, effect.cpp,
 	funcdecl.h, house.cpp, items.cpp, magic.cpp, movement.cpp,
 	necro.cpp, newbie.cpp, npcs.cpp, pcmanage.cpp, skills.cpp,
@@ -11260,7 +11260,7 @@ Changed:
 
 2001-07-22 23:44  darkangelab
 
-	* boats.cpp, cClick.cpp, citem.cpp, cRaces.cpp, commands.cpp,
+	* boats.cpp, cClick.cpp, citem.cpp, craces.cpp, commands.cpp,
 	funcdecl.h, house.cpp, items.cpp, magic.cpp, movement.cpp,
 	npcs.cpp, pcmanage.cpp, pointer.cpp, skills.cpp, targeting.cpp,
 	trade.cpp, uox3.cpp, vendor.cpp:
@@ -11285,7 +11285,7 @@ Changed:
 2001-07-22 22:11  darkangelab
 
 	* sefunctions.cpp, boats.cpp, cchar.cpp, cchar.h, cClick.cpp,
-	cRaces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
+	craces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
 	commands.cpp, effect.cpp, funcdecl.h, gumps.cpp, house.cpp,
 	jail.cpp, magic.cpp, movement.cpp, network.cpp, npcs.cpp,
 	pcmanage.cpp, skills.cpp, speech.cpp, targeting.cpp, uox3.cpp,
@@ -11359,7 +11359,7 @@ Changed:
 2001-07-22 13:29  seank
 
 	* ChangeLog, boats.cpp, cBaseobject.cpp, cchar.cpp, cmultiobj.cpp,
-	cRaces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
+	craces.cpp, cweather.cpp, cweather.hpp, cmdtable.cpp, combat.cpp,
 	dist.cpp, effect.cpp, globals.cpp, itemhandler.cpp:
 	removed a ton of warnings
 
@@ -11614,7 +11614,7 @@ Changed:
 
 2001-07-17 09:31  toinzane
 
-	* books.cpp, cRaces.cpp, commands.cpp, door.cpp, funcdecl.h,
+	* books.cpp, craces.cpp, commands.cpp, door.cpp, funcdecl.h,
 	magic.cpp, npcs.cpp, pcmanage.cpp, pointer.cpp, targeting.cpp,
 	trade.cpp, uox3.cpp:
 	Fixed a int/bool mismatch with fielddir()
@@ -11962,7 +11962,7 @@ Changed:
 2001-07-09 18:58  darkangelab
 
 	* classes.h, combat.cpp, sefunctions.cpp, UOX3_Official.dsp,
-	cRaces.cpp, commands.cpp, effect.cpp, funcdecl.h, magic.cpp,
+	craces.cpp, commands.cpp, effect.cpp, funcdecl.h, magic.cpp,
 	network.cpp, npcs.cpp, pcmanage.cpp, quantityfuncs.cpp, skills.cpp,
 	targeting.cpp, uox3.cpp, vendor.cpp:
 	Deleted redundant search functions from cCharStuff
@@ -12064,7 +12064,7 @@ Changed:
 
 2001-07-08 18:57  darkangelab
 
-	* sefunctions.cpp, sefunctions.h, citem.cpp, citem.h, cRaces.cpp,
+	* sefunctions.cpp, sefunctions.h, citem.cpp, citem.h, craces.cpp,
 	craces.h, cscript.cpp, network.cpp, packets.cpp, packets.h,
 	speech.cpp, speech.h, targeting.cpp, typedefs.h, uox3.cpp:
 	Changed COLOR to COLOUR
@@ -12095,7 +12095,7 @@ Changed:
 
 	* pagevector.h, sefunctions.cpp, boats.cpp, books.cpp, books.h,
 	cchar.cpp, cguild.cpp, cguild.h, cmagic.h, cmultiobj.cpp,
-	cmultiobj.h, cRaces.cpp, craces.h, cserverdata.cpp, cserverdata.h,
+	cmultiobj.h, craces.cpp, craces.h, cserverdata.cpp, cserverdata.h,
 	csocket.cpp, csocket.h, cweather.cpp, calcfuncs.cpp,
 	charhandle.cpp, cmdtable.cpp, combat.cpp, combat.h, effect.cpp,
 	funcdecl.h, globals.cpp, gumps.cpp, handlers.h, html.cpp, im.cpp,
@@ -12179,13 +12179,13 @@ Changed:
 
 2001-07-06 09:08  toinzane
 
-	* cClick.cpp, cRaces.cpp:
+	* cClick.cpp, craces.cpp:
 	Cleaned up cClick.cpp and documented its functions
 	Incorporated some changes from Abaddon to slim down singleclick()
 	and fix some problems.
 	Fixed some problems for GM's seeing items as # instead of the
 	proper name.
-	Fixed a small issue in cRaces.cpp regarding skill counting.
+	Fixed a small issue in craces.cpp regarding skill counting.
 
 2001-07-06 01:42  darkangelab
 
@@ -12305,7 +12305,7 @@ Changed:
 2001-07-05 03:09  darkangelab
 
 	* sefunctions.cpp, boats.cpp, books.cpp, cchar.cpp, cClick.cpp,
-	cguild.cpp, cRaces.cpp, cscript.cpp, cweather.cpp, calcfuncs.cpp,
+	cguild.cpp, craces.cpp, cscript.cpp, cweather.cpp, calcfuncs.cpp,
 	cmdtable.cpp, cmdtable.h, combat.cpp, commands.cpp, dist.cpp,
 	effect.cpp, funcdecl.h, gumps.cpp, house.cpp, html.cpp, items.cpp,
 	lineofsight.cpp, movement.cpp, msgboard.cpp, npcs.cpp, magic.cpp,
@@ -12374,7 +12374,7 @@ Changed:
 
 2001-07-04 20:35  darkangelab
 
-	* cRaces.cpp, cweather.cpp, house.cpp, packets.cpp:
+	* craces.cpp, cweather.cpp, house.cpp, packets.cpp:
 	Fixed a crash issue doing an 'add which involved invalid skill
 	values calling a race function
 	Fixed multiplacement view packet so houses/boats ghost properly
@@ -12512,7 +12512,7 @@ Changed:
 2001-07-03 03:31  darkangelab
 
 	* sefunctions.cpp, UOX3_Official.dsp, ai.cpp, boats.cpp,
-	cClick.cpp, cguild.cpp, cRaces.cpp, cweather.cpp, cmdtable.cpp,
+	cClick.cpp, cguild.cpp, craces.cpp, cweather.cpp, cmdtable.cpp,
 	combat.cpp, effect.cpp, enums.h, funcdecl.h, globals.cpp,
 	magic.cpp, msgboard.cpp, necro.cpp, network.cpp, network.h,
 	packets.cpp, packets.h, regions.h, skills.cpp, speech.cpp,
@@ -12523,7 +12523,7 @@ Changed:
 	Deprecation of cNetworkStuff::CharList and cNetworkStuff::Relay by
 	implementing the CPISecondLogin and CPIServerSelect packets
 	Declaration of dictionary based sysmessage
-	Conversion of cmdtable.cpp, cRaces.cpp, wholist.cpp and
+	Conversion of cmdtable.cpp, craces.cpp, wholist.cpp and
 	cweather.cpp to using new dictionary based sysmessage
 	Changed all references to antispam to use booleans rather than char
 	Adjusted speech functions to use a single UI16 for colour rather
@@ -12628,7 +12628,7 @@ Changed:
 	cchar.cpp, cchar.h, cClick.cpp, cConsole.cpp, cConsole.h,
 	cdice.cpp, cguild.cpp, cguild.h, cdice.h, charhandle.cpp,
 	citem.cpp, citem.h, cmagic.h, cmultiobj.cpp, cmultiobj.h,
-	classes.h, cmdtable.cpp, cmdtable.h, combat.cpp, cRaces.cpp,
+	classes.h, cmdtable.cpp, cmdtable.h, combat.cpp, craces.cpp,
 	craces.h, cscript.cpp, cscript.h, cserverdata.cpp, cserverdata.h,
 	cserverdefinitions.cpp, cserverdefinitions.h, combat.h,
 	commands.cpp, commands.h:

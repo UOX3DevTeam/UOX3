@@ -63,7 +63,7 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/combat.h
    ${PROJECT_SOURCE_DIR}/../../source/commands.cpp
    ${PROJECT_SOURCE_DIR}/../../source/commands.h
-   ${PROJECT_SOURCE_DIR}/../../source/cRaces.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/craces.cpp
    ${PROJECT_SOURCE_DIR}/../../source/craces.h
    ${PROJECT_SOURCE_DIR}/../../source/cweather.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cweather.hpp
