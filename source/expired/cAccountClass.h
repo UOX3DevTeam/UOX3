@@ -69,7 +69,7 @@ typedef struct CAccountBlock_st {
           wTimeBan(0x0000), wFirstLogin(0x0000), dwInGame(INVALIDSERIAL), dwLastIP(0x00000000),
           bChanged(false), dwLastClientVer(0), dwLastClientType(0), dwLastClientVerShort(0),
           wTotalPlayTime(0x00000000) {
-        for (UI08 i = 0; i < 7; ++i) {
+        for (std::uint8_t i = 0; i < 7; ++i) {
             dwCharacters[i] = 0xFFFFFFFF;
             lpCharacters[i] = nullptr;
         }
@@ -86,7 +86,7 @@ typedef struct CAccountBlock_st {
         dwInGame = 0xFFFFFFFF;
         dwLastIP = 0x00000000;
         bChanged = false;
-        for (UI08 i = 0; i < 7; ++i) {
+        for (std::uint8_t i = 0; i < 7; ++i) {
             dwCharacters[i] = 0xFFFFFFFF;
             lpCharacters[i] = nullptr;
         }
@@ -96,28 +96,28 @@ typedef struct CAccountBlock_st {
     std::string sPassword;
     std::string sPath;
     std::string sContact;
-    UI16 wAccountIndex;
+    std::uint16_t wAccountIndex;
     std::bitset<AB_FLAGS_ALL> wFlags;
-    UI32 wTimeBan;
-    UI32 wFirstLogin;
-    UI32 dwInGame;
-    UI32 dwLastIP;
+    std::uint32_t wTimeBan;
+    std::uint32_t wFirstLogin;
+    std::uint32_t dwInGame;
+    std::uint32_t dwLastIP;
     bool bChanged;
-    UI32 dwLastClientVer;
-    UI08 dwLastClientType;
-    UI08 dwLastClientVerShort;
-    UI32 wTotalPlayTime;
-    UI32 dwCharacters[7];
+    std::uint32_t dwLastClientVer;
+    std::uint8_t dwLastClientType;
+    std::uint8_t dwLastClientVerShort;
+    std::uint32_t wTotalPlayTime;
+    std::uint32_t dwCharacters[7];
     CChar *lpCharacters[7];
 } CAccountBlock_st;
 
 // Class typdefs to help simplify the use of map STL
 typedef std::map<std::string, CAccountBlock_st *> MAPUSERNAME;
-typedef std::map<UI16, CAccountBlock_st> MAPUSERNAMEID;
+typedef std::map<std::uint16_t, CAccountBlock_st> MAPUSERNAMEID;
 typedef std::map<std::string, CAccountBlock_st *>::iterator MAPUSERNAME_ITERATOR;
 typedef std::map<std::string, CAccountBlock_st *>::const_iterator MAPUSERNAME_CITERATOR;
-typedef std::map<UI16, CAccountBlock_st>::iterator MAPUSERNAMEID_ITERATOR;
-typedef std::map<UI16, CAccountBlock_st>::const_iterator MAPUSERNAMEID_CITERATOR;
+typedef std::map<std::uint16_t, CAccountBlock_st>::iterator MAPUSERNAMEID_ITERATOR;
+typedef std::map<std::uint16_t, CAccountBlock_st>::const_iterator MAPUSERNAMEID_CITERATOR;
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	class cAccountClass
 //|	Date		-	12/6/2002 5:46:02 AM
@@ -132,27 +132,27 @@ class cAccountClass {
     ~cAccountClass();
     // Operator overloads
     cAccountClass &operator++();
-    cAccountClass &operator--(SI32);
-    UI16 CreateAccountSystem(void);
-    UI16 ImportAccounts(void);
+    cAccountClass &operator--(std::int32_t);
+    std::uint16_t CreateAccountSystem(void);
+    std::uint16_t ImportAccounts(void);
     void WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream &fsOut);
-    UI16 AddAccount(std::string sUsername, std::string sPassword,
-                    const std::string &sContact = "NONE", UI16 wAttributes = 0x0000);
+    std::uint16_t AddAccount(std::string sUsername, std::string sPassword,
+                    const std::string &sContact = "NONE", std::uint16_t wAttributes = 0x0000);
     bool DelAccount(std::string sUsername);
-    bool DelAccount(UI16 wAccountId);
+    bool DelAccount(std::uint16_t wAccountId);
     bool SetPath(const std::string &sPath);
     std::string GetPath(void);
-    UI16 Save(bool bForceLoad = false);
-    UI16 Load(void);
-    UI32 size(void);
+    std::uint16_t Save(bool bForceLoad = false);
+    std::uint16_t Load(void);
+    std::uint32_t size(void);
     bool clear(void);
     bool IsUser(std::string sUsername);
-    bool AddCharacter(UI16 wAccountId, CChar *lpObject);
-    bool AddCharacter(UI16 wAccountId, UI32 dwCharacterId, CChar *lpObject);
-    SI08 DelCharacter(UI16 wAccountId, UI08 nSlot);
-    bool TransCharacter(UI16 wSAccountId, UI16 wSSlot, UI16 wDAccountId);
+    bool AddCharacter(std::uint16_t wAccountId, CChar *lpObject);
+    bool AddCharacter(std::uint16_t wAccountId, std::uint32_t dwCharacterId, CChar *lpObject);
+    std::int8_t DelCharacter(std::uint16_t wAccountId, std::uint8_t nSlot);
+    bool TransCharacter(std::uint16_t wSAccountId, std::uint16_t wSSlot, std::uint16_t wDAccountId);
     CAccountBlock_st &GetAccountByName(std::string sUsername);
-    CAccountBlock_st &GetAccountById(UI16 wAccountId);
+    CAccountBlock_st &GetAccountById(std::uint16_t wAccountId);
     MAPUSERNAMEID_ITERATOR &Begin(void);
     MAPUSERNAMEID_ITERATOR &End(void);
     MAPUSERNAMEID_ITERATOR &Last(void);
@@ -170,7 +170,7 @@ class cAccountClass {
     CAccountBlock_st actbInvalid;
     MAPUSERNAME m_mapUsernameMap;
     MAPUSERNAMEID m_mapUsernameIdMap;
-    UI16 m_wHighestAccount;
+    std::uint16_t m_wHighestAccount;
     std::string m_sAccountsDirectory;
 };
 

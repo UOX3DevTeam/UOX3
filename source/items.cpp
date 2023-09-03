@@ -29,12 +29,12 @@ ItemTypes FindItemTypeFromTag(const std::string &strToFind);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag,
-// const SI32 ndata, const SI32 odata, const std::string &cdata )
+// const std::int32_t ndata, const std::int32_t odata, const std::string &cdata )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load item data from script sections and apply to spawner objects
 // o------------------------------------------------------------------------------------------------o
-bool ApplySpawnItemSection(CSpawnItem *applyTo, const DFNTAGS tag, const SI32 ndata,
-                           const SI32 odata, const std::string &cdata) {
+bool ApplySpawnItemSection(CSpawnItem *applyTo, const DFNTAGS tag, const std::int32_t ndata,
+                           const std::int32_t odata, const std::string &cdata) {
     if (!ValidateObject(applyTo))
         return false;
 
@@ -46,8 +46,8 @@ bool ApplySpawnItemSection(CSpawnItem *applyTo, const DFNTAGS tag, const SI32 nd
         applyTo->SetSpawnSection(cdata);
         return true;
     case DFNTAG_INTERVAL:
-        applyTo->SetInterval(0, static_cast<UI08>(ndata));
-        applyTo->SetInterval(1, static_cast<UI08>(odata));
+        applyTo->SetInterval(0, static_cast<std::uint8_t>(ndata));
+        applyTo->SetInterval(1, static_cast<std::uint8_t>(odata));
         return true;
     default:
         break;
@@ -55,7 +55,7 @@ bool ApplySpawnItemSection(CSpawnItem *applyTo, const DFNTAGS tag, const SI32 nd
     return false;
 }
 
-UI16 AddRandomColor(const std::string &colorlist);
+std::uint16_t AddRandomColor(const std::string &colorlist);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ApplyItemSection()
 // o------------------------------------------------------------------------------------------------o
@@ -66,7 +66,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         return false;
 
     std::string cdata;
-    SI32 ndata = -1, odata = -1;
+    std::int32_t ndata = -1, odata = -1;
     bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
 
     TAGMAPOBJECT customTag;
@@ -87,20 +87,20 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         switch (tag) {
         case DFNTAG_AMMO:
             applyTo->SetAmmoId(
-                static_cast<UI16>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             if (ssecs.size() > 1) {
-                applyTo->SetAmmoHue(static_cast<UI16>(
+                applyTo->SetAmmoHue(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_AMMOFX:
             applyTo->SetAmmoFX(
-                static_cast<UI16>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             if (ssecs.size() > 1) {
-                applyTo->SetAmmoFXHue(static_cast<UI16>(
+                applyTo->SetAmmoFXHue(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 if (ssecs.size() > 2) {
-                    applyTo->SetAmmoFXRender(static_cast<UI16>(
+                    applyTo->SetAmmoFXRender(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 }
             }
@@ -108,7 +108,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_AMOUNT:
             if (ndata > 0) {
                 if (odata && odata > ndata) {
-                    UI16 rndAmount = static_cast<UI16>(RandomNum(ndata, odata));
+                    std::uint16_t rndAmount = static_cast<std::uint16_t>(RandomNum(ndata, odata));
                     applyTo->SetAmount(rndAmount);
                 }
                 else {
@@ -124,12 +124,12 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_ATT:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetLoDamage(static_cast<SI16>(ndata));
-                    applyTo->SetHiDamage(static_cast<SI16>(odata));
+                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                    applyTo->SetHiDamage(static_cast<std::int16_t>(odata));
                 }
                 else {
-                    applyTo->SetLoDamage(static_cast<SI16>(ndata));
-                    applyTo->SetHiDamage(static_cast<SI16>(ndata));
+                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                    applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
                 }
             }
             else {
@@ -139,16 +139,16 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             }
             break;
         case DFNTAG_AC:
-            applyTo->SetArmourClass(static_cast<UI08>(ndata));
+            applyTo->SetArmourClass(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_BASERANGE:
-            applyTo->SetBaseRange(static_cast<UI08>(ndata));
+            applyTo->SetBaseRange(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_CREATOR:
             applyTo->SetCreator(ndata);
             break;
         case DFNTAG_COLOUR:
-            applyTo->SetColour(static_cast<UI16>(ndata));
+            applyTo->SetColour(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_COLOURLIST:
             applyTo->SetColour(AddRandomColor(cdata));
@@ -161,16 +161,16 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             break;
         case DFNTAG_ELEMENTRESIST:
             if (ssecs.size() >= 4) {
-                applyTo->SetResist(static_cast<UI16>(std::stoul(
+                applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssecs[0], "//")), nullptr, 0)),
                                    HEAT);
-                applyTo->SetResist(static_cast<UI16>(std::stoul(
+                applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssecs[1], "//")), nullptr, 0)),
                                    COLD);
-                applyTo->SetResist(static_cast<UI16>(std::stoul(
+                applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssecs[2], "//")), nullptr, 0)),
                                    LIGHTNING);
-                applyTo->SetResist(static_cast<UI16>(std::stoul(
+                applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssecs[3], "//")), nullptr, 0)),
                                    POISON);
             }
@@ -178,19 +178,19 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_ERBONUS:
             if (ssecs.size() >= 4) {
                 applyTo->SetResist(applyTo->GetResist(HEAT) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssecs[0], "//")), nullptr, 0)),
                                    HEAT);
                 applyTo->SetResist(applyTo->GetResist(COLD) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssecs[1], "//")), nullptr, 0)),
                                    COLD);
                 applyTo->SetResist(applyTo->GetResist(LIGHTNING) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssecs[2], "//")), nullptr, 0)),
                                    LIGHTNING);
                 applyTo->SetResist(applyTo->GetResist(POISON) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssecs[3], "//")), nullptr, 0)),
                                    POISON);
             }
@@ -204,7 +204,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_DEF:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), PHYSICAL);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
                 }
                 else {
                     applyTo->SetResist(ndata, PHYSICAL);
@@ -218,11 +218,11 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
                     applyTo->SetResist(applyTo->GetResist(PHYSICAL) +
-                                           static_cast<UI16>(RandomNum(ndata, odata)),
+                                           static_cast<std::uint16_t>(RandomNum(ndata, odata)),
                                        PHYSICAL);
                 }
                 else {
-                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<UI16>(ndata),
+                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata),
                                        PHYSICAL);
                 }
             }
@@ -235,7 +235,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_DEX:
             if (ndata > 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetDexterity(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetDexterity(ndata);
@@ -247,11 +247,11 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             }
             break;
         case DFNTAG_DEXADD:
-            applyTo->SetDexterity2(static_cast<SI16>(ndata));
+            applyTo->SetDexterity2(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_DIR:
             applyTo->SetDir(
-                static_cast<UI08>(std::stoi(util::trim(util::strip(cdata, "//")), nullptr, 0)));
+                static_cast<std::uint8_t>(std::stoi(util::trim(util::strip(cdata, "//")), nullptr, 0)));
             break;
         case DFNTAG_DYE:
             applyTo->SetDye(ndata != 0);
@@ -273,16 +273,16 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_DOORFLAG:
             break;
         case DFNTAG_GOOD:
-            applyTo->SetGood(static_cast<SI16>(ndata));
+            applyTo->SetGood(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_GLOW:
             applyTo->SetGlow(ndata);
             break;
         case DFNTAG_GLOWBC:
-            applyTo->SetGlowColour(static_cast<UI16>(ndata));
+            applyTo->SetGlowColour(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_GLOWTYPE:
-            applyTo->SetGlowEffect(static_cast<UI08>(ndata));
+            applyTo->SetGlowEffect(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_GET: {
             std::string scriptEntry = "";
@@ -290,7 +290,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 scriptEntry = cdata;
             }
             else {
-                UI32 rndEntry = RandomNum(0, static_cast<SI32>(ssecs.size() - 1));
+                std::uint32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
                 scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
             }
 
@@ -394,7 +394,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     scriptEntry = cdata;
                 }
                 else {
-                    UI32 rndEntry = RandomNum(0, static_cast<SI32>(ssecs.size() - 1));
+                    std::uint32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
                     scriptEntry = util::trim(util::strip(ssecs[rndEntry], "//"));
                 }
 
@@ -418,7 +418,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_HP:
             if (ndata > 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetHP(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetHP(ndata);
@@ -430,30 +430,30 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             }
             break;
         case DFNTAG_HIDAMAGE:
-            applyTo->SetHiDamage(static_cast<SI16>(ndata));
+            applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_HEAT:
             applyTo->SetWeatherDamage(HEAT, ndata != 0);
             break;
-        case DFNTAG_ID: // applyTo->SetId( static_cast<UI16>( ndata )); break;
+        case DFNTAG_ID: // applyTo->SetId( static_cast<std::uint16_t>( ndata )); break;
             if (ssecs.size() == 1) {
-                applyTo->SetId(static_cast<UI16>(
+                applyTo->SetId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             else {
-                SI32 rndEntry = RandomNum(0, static_cast<SI32>(ssecs.size() - 1));
-                applyTo->SetId(static_cast<UI16>(
+                std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssecs.size() - 1));
+                applyTo->SetId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssecs[rndEntry], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_INTELLIGENCE:
-            applyTo->SetIntelligence(static_cast<SI16>(ndata));
+            applyTo->SetIntelligence(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_INTADD:
-            applyTo->SetIntelligence2(static_cast<SI16>(ndata));
+            applyTo->SetIntelligence2(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_LODAMAGE:
-            applyTo->SetLoDamage(static_cast<SI16>(ndata));
+            applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_LAYER:
             applyTo->SetLayer(static_cast<ItemLayers>(ndata));
@@ -465,164 +465,164 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetWeatherDamage(LIGHTNING, ndata != 0);
             break;
         case DFNTAG_MAXHP:
-            applyTo->SetMaxHP(static_cast<UI16>(ndata));
+            applyTo->SetMaxHP(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_MAXITEMS:
-            applyTo->SetMaxItems(static_cast<UI16>(ndata));
+            applyTo->SetMaxItems(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_MAXRANGE:
-            applyTo->SetMaxRange(static_cast<UI08>(ndata));
+            applyTo->SetMaxRange(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_MAXUSES:
-            applyTo->SetMaxUses(static_cast<UI16>(ndata));
+            applyTo->SetMaxUses(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_MOVABLE:
-            applyTo->SetMovable(static_cast<SI08>(ndata));
+            applyTo->SetMovable(static_cast<std::int8_t>(ndata));
             break;
         case DFNTAG_MORE:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MORE, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(
-                    CITV_MORE, static_cast<UI32>(std::stoul(util::trim(util::strip(ssecs[0], "//")),
+                    CITV_MORE, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")),
                                                             nullptr, 0)));
             }
             break;
         case DFNTAG_MORE0:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MORE0, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE0, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE0, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE0, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MORE0,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_MORE1:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MORE1, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE1, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE1, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE1, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MORE1,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_MORE2:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MORE2, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE2, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE2, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MORE2, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MORE2,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_MOREX:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MOREX, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREX, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREX, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREX, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MOREX,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_MOREY:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MOREY, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREY, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREY, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREY, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MOREY,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
         case DFNTAG_MOREZ:
             if (ssecs.size() >= 4) {
                 applyTo->SetTempVar(CITV_MOREZ, 1,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREZ, 2,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREZ, 3,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 applyTo->SetTempVar(CITV_MOREZ, 4,
-                                    static_cast<UI08>(std::stoul(
+                                    static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 0)));
             }
             else {
                 applyTo->SetTempVar(CITV_MOREZ,
-                                    static_cast<UI32>(std::stoul(
+                                    static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
             }
             break;
@@ -636,7 +636,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetNewbie(true);
             break;
         case DFNTAG_OFFSPELL:
-            applyTo->SetOffSpell(static_cast<SI08>(ndata));
+            applyTo->SetOffSpell(static_cast<std::int8_t>(ndata));
             break;
         case DFNTAG_ORIGIN:
             applyTo->SetOrigin(
@@ -646,27 +646,27 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetWeatherDamage(POISON, ndata != 0);
             break;
         case DFNTAG_POISONED:
-            applyTo->SetPoisoned(static_cast<UI08>(ndata));
+            applyTo->SetPoisoned(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_PILEABLE:
             applyTo->SetPileable(ndata != 0);
             break;
         case DFNTAG_PRIV:
-            applyTo->SetPriv(static_cast<UI08>(ndata));
+            applyTo->SetPriv(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_RANK:
-            applyTo->SetRank(static_cast<SI08>(ndata));
+            applyTo->SetRank(static_cast<std::int8_t>(ndata));
             if (applyTo->GetRank() <= 0) {
                 applyTo->SetRank(10);
             }
             break;
         case DFNTAG_RACE:
-            applyTo->SetRace(static_cast<UI16>(ndata));
+            applyTo->SetRace(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_RESISTFIRE:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), HEAT);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
                 }
                 else {
                     applyTo->SetResist(ndata, HEAT);
@@ -681,7 +681,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_RESISTCOLD:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), COLD);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
                 }
                 else {
                     applyTo->SetResist(ndata, COLD);
@@ -696,7 +696,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_RESISTLIGHTNING:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), LIGHTNING);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
                 }
                 else {
                     applyTo->SetResist(ndata, LIGHTNING);
@@ -711,7 +711,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
         case DFNTAG_RESISTPOISON:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), POISON);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
                 }
                 else {
                     applyTo->SetResist(ndata, POISON);
@@ -727,7 +727,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             // Apply global restock multiplier from INI to item's restock property
             auto restockMultiplier = cwmWorldState->ServerData()->GlobalRestockMultiplier();
             applyTo->SetRestock(
-                static_cast<UI16>(floor(static_cast<UI16>(ndata) * restockMultiplier)));
+                static_cast<std::uint16_t>(floor(static_cast<std::uint16_t>(ndata) * restockMultiplier)));
             break;
         }
         case DFNTAG_RAIN:
@@ -737,33 +737,33 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetSectionId(cdata);
             break;
         case DFNTAG_SK_MADE:
-            applyTo->SetMadeWith(static_cast<SI08>(ndata));
+            applyTo->SetMadeWith(static_cast<std::int8_t>(ndata));
             break;
         case DFNTAG_SPD:
-            applyTo->SetSpeed(static_cast<UI08>(ndata));
+            applyTo->SetSpeed(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_STRENGTH:
-            applyTo->SetStrength(static_cast<SI16>(ndata));
+            applyTo->SetStrength(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_STRADD:
-            applyTo->SetStrength2(static_cast<SI16>(ndata));
+            applyTo->SetStrength2(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_STEALABLE:
-            applyTo->SetStealable(static_cast<UI08>(ndata));
+            applyTo->SetStealable(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_SNOW:
             applyTo->SetWeatherDamage(SNOW, ndata != 0);
             break;
         case DFNTAG_SCRIPT:
-            applyTo->AddScriptTrigger(static_cast<UI16>(ndata));
+            applyTo->AddScriptTrigger(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_SPELLS:
             if (ssecs.size() == 3) {
-                applyTo->SetSpell(0, static_cast<UI32>(std::stoul(
+                applyTo->SetSpell(0, static_cast<std::uint32_t>(std::stoul(
                                          util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
-                applyTo->SetSpell(1, static_cast<UI32>(std::stoul(
+                applyTo->SetSpell(1, static_cast<std::uint32_t>(std::stoul(
                                          util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
-                applyTo->SetSpell(2, static_cast<UI32>(std::stoul(
+                applyTo->SetSpell(2, static_cast<std::uint32_t>(std::stoul(
                                          util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
             }
             else {
@@ -782,7 +782,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             }
             break;
         case DFNTAG_USESLEFT:
-            applyTo->SetUsesLeft(static_cast<UI16>(ndata));
+            applyTo->SetUsesLeft(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_VISIBLE:
             applyTo->SetVisible(static_cast<VisibleTypes>(ndata));
@@ -838,7 +838,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             if (!customTagName.empty() && !customTagStringValue.empty()) {
                 customTag.m_Destroy = false;
                 customTag.m_StringValue = customTagStringValue;
-                customTag.m_IntValue = static_cast<SI32>(customTag.m_StringValue.size());
+                customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
                 customTag.m_ObjectType = TAGMAP_TYPE_STRING;
                 applyTo->SetTag(customTagName, customTag);
             }
@@ -866,7 +866,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             if (!customTagName.empty() && !customTagStringValue.empty()) {
                 customTag.m_Destroy = false;
                 customTag.m_IntValue =
-                    static_cast<SI32>(std::stoi(customTagStringValue, nullptr, 0));
+                    static_cast<std::int32_t>(std::stoi(customTagStringValue, nullptr, 0));
                 customTag.m_ObjectType = TAGMAP_TYPE_INT;
                 customTag.m_StringValue = "";
                 applyTo->SetTag(customTagName, customTag);
@@ -894,22 +894,22 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             if (!cdata.empty()) {
                 auto csecs = oldstrutil::sections(util::trim(util::strip(cdata, "//")), ",");
                 if (csecs.size() > 1) {
-                    UI16 iAmount = 0;
+                    std::uint16_t iAmount = 0;
                     std::string amountData = util::trim(util::strip(csecs[1], "//"));
                     auto tsects = oldstrutil::sections(amountData, " ");
                     if (tsects.size() > 1) // check if the second part of the tag-data contains two
                                            // sections separated by a space
                     {
-                        auto first = static_cast<UI16>(
+                        auto first = static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                        auto second = static_cast<UI16>(
+                        auto second = static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(tsects[1], "//")), nullptr, 0));
 
                         // Tag contained a minimum and maximum value for amount! Let's randomize!
-                        iAmount = static_cast<UI16>(RandomNum(first, second));
+                        iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
                     }
                     else {
-                        iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+                        iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                     }
                     auto tdata = util::trim(util::strip(csecs[0], "//"));
 
@@ -950,10 +950,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 //|					automatically look for an entry in harditems.dfn and set its
 // location (be it in |					a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const UI16 itemId, const UI16 iAmount,
-                         const UI16 iColour, const ObjectType itemType, bool inPack,
-                         bool shouldSave, UI08 worldNumber, UI16 instanceId, SI16 xLoc, SI16 yLoc,
-                         SI08 zLoc) {
+CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,
+                         const std::uint16_t iColour, const ObjectType itemType, bool inPack,
+                         bool shouldSave, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc,
+                         std::int8_t zLoc) {
     if (ValidateObject(mChar)) {
         worldNumber = mChar->WorldNumber();
         instanceId = mChar->GetInstanceId();
@@ -1004,7 +1004,7 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const UI16 itemId, const 
         iCreated->SetAmount(iAmount);
     }
 
-    std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = iCreated->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1023,8 +1023,8 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const UI16 itemId, const 
 //|					its location (be it in a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,
-                               const UI16 iAmount, const ObjectType itemType, bool inPack,
-                               const UI16 iColor, bool shouldSave) {
+                               const std::uint16_t iAmount, const ObjectType itemType, bool inPack,
+                               const std::uint16_t iColor, bool shouldSave) {
     if (inPack && !ValidateObject(mChar->GetPackItem())) {
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
         Console::shared().Warning(util::format(
@@ -1057,7 +1057,7 @@ CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &
     if (iAmount > 1 && !iCreated->IsPileable()) {
         // Turns out we need to spawn more than one item, let's do that here:
         CItem *iCreated2 = nullptr;
-        for (UI16 i = 1; i < iAmount; i++) {
+        for (std::uint16_t i = 1; i < iAmount; i++) {
             if (inPack) {
                 CItem *mPack = mChar->GetPackItem();
                 iCreated2 = CreateBaseScriptItem(mPack, item, mChar->WorldNumber(), 1,
@@ -1099,11 +1099,11 @@ CItem *cItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) {
         return nullptr;
 
     if (iCreated->GetBuyValue() != 0) {
-        iCreated->SetBuyValue(RandomNum(static_cast<UI32>(1), iCreated->GetBuyValue()));
-        iCreated->SetSellValue(static_cast<UI32>(iCreated->GetBuyValue() / 2));
+        iCreated->SetBuyValue(RandomNum(static_cast<std::uint32_t>(1), iCreated->GetBuyValue()));
+        iCreated->SetSellValue(static_cast<std::uint32_t>(iCreated->GetBuyValue() / 2));
     }
     if (iCreated->GetHP() != 0) {
-        iCreated->SetHP(static_cast<SI16>(RandomNum(static_cast<SI16>(1), iCreated->GetHP())));
+        iCreated->SetHP(static_cast<std::int16_t>(RandomNum(static_cast<std::int16_t>(1), iCreated->GetHP())));
     }
 
     return PlaceItem(mSock, mChar, iCreated, true);
@@ -1115,8 +1115,8 @@ CItem *cItem::CreateRandomItem(CSocket *mSock, const std::string &itemList) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 // o------------------------------------------------------------------------------------------------o
-auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const UI08 worldNum,
-                             const UI16 instanceId, bool shouldSave, bool useLootlist) -> CItem * {
+auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const std::uint8_t worldNum,
+                             const std::uint16_t instanceId, bool shouldSave, bool useLootlist) -> CItem * {
     CItem *iCreated = nullptr;
     std::string sect;
 
@@ -1229,22 +1229,22 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const U
             // Also fetch amount to spawn, if specified
             int amountToSpawn = 1;
             if (csecs.size() > 1) {
-                // UI16 iAmount = 0;
+                // std::uint16_t iAmount = 0;
                 std::string amountData = util::trim(util::strip(csecs[1], "//"));
                 auto tsects = oldstrutil::sections(amountData, " ");
                 if (tsects.size() > 1) // check if the second part of the tag-data contains two
                                        // sections separated by a space
                 {
-                    auto first = static_cast<UI16>(
+                    auto first = static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                    auto second = static_cast<UI16>(
+                    auto second = static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(tsects[1], "//")), nullptr, 0));
 
                     // Tag contained a minimum and maximum value for amount! Let's randomize!
-                    amountToSpawn = static_cast<UI16>(RandomNum(first, second));
+                    amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
                 }
                 else {
-                    amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+                    amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                 }
             }
 
@@ -1286,8 +1286,8 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const U
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a multi, and looks for an entry in harditems.dfn
 // o------------------------------------------------------------------------------------------------o
-CMultiObj *cItem::CreateMulti(const std::string &cName, const UI16 itemId, const bool isBoat,
-                              const UI16 worldNum, const UI16 instanceId, const bool isBaseMulti) {
+CMultiObj *cItem::CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat,
+                              const std::uint16_t worldNum, const std::uint16_t instanceId, const bool isBaseMulti) {
     CMultiObj *mCreated = static_cast<CMultiObj *>(
         ObjectFactory::shared().CreateObject((isBoat) ? OT_BOAT : OT_MULTI));
     if (mCreated == nullptr)
@@ -1308,12 +1308,12 @@ CMultiObj *cItem::CreateMulti(const std::string &cName, const UI16 itemId, const
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *CreateBaseItem( const UI08 worldNum, const ObjectType
-//itemType, const UI16 instanceId ) |	Date		-	10/12/2003
+//|	Function	-	CItem *CreateBaseItem( const std::uint8_t worldNum, const ObjectType
+//itemType, const std::uint16_t instanceId ) |	Date		-	10/12/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateBaseItem(const UI08 worldNum, const ObjectType itemType, const UI16 instanceId,
+CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const ObjectType itemType, const std::uint16_t instanceId,
                              bool shouldSave) {
     if (itemType != OT_ITEM && itemType != OT_SPAWNER)
         return nullptr;
@@ -1336,9 +1336,9 @@ CItem *cItem::CreateBaseItem(const UI08 worldNum, const ObjectType itemType, con
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item from the scripts
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const UI08 worldNum,
-                                   const UI16 iAmount, const UI16 instanceId,
-                                   const ObjectType itemType, const UI16 iColor, bool shouldSave) {
+CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNum,
+                                   const std::uint16_t iAmount, const std::uint16_t instanceId,
+                                   const ObjectType itemType, const std::uint16_t iColor, bool shouldSave) {
     ourItem = util::trim(util::strip(ourItem, "//"));
 
     if (ourItem == "blank") // The lootlist-entry is just a blank filler item
@@ -1379,7 +1379,7 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const UI08
         // item should have!
         if (iCreated->GetMaxUses() > iCreated->GetUsesLeft()) {
             iCreated->SetUsesLeft(
-                static_cast<UI16>(RandomNum(iCreated->GetUsesLeft(), iCreated->GetMaxUses())));
+                static_cast<std::uint16_t>(RandomNum(iCreated->GetUsesLeft(), iCreated->GetMaxUses())));
         }
         else if (!iCreated->GetMaxUses() && iCreated->GetUsesLeft()) {
             // Also, if maxUses has not been defined, but usesLeft HAS, set maxUses to equal
@@ -1388,7 +1388,7 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const UI08
         }
 
         // Check for (and run) onCreateDFN() event for newly created item
-        std::vector<UI16> scriptTriggers = iCreated->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = iCreated->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -1441,7 +1441,7 @@ CItem *AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack);
 //|	Purpose		-	Places an item that was just created
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack,
-                        UI08 worldNumber, UI16 instanceId, SI16 xLoc, SI16 yLoc, SI08 zLoc) {
+                        std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc, std::int8_t zLoc) {
     if (ValidateObject(mChar) && inPack) {
         if (iCreated->IsPileable()) {
             iCreated = AutoStack(mSock, iCreated,
@@ -1476,7 +1476,7 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 // o------------------------------------------------------------------------------------------------o
-auto DecayItem(CItem &toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses) -> bool {
+auto DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t nextDecayItemsInHouses) -> bool {
     if (toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay()) {
         if (toDecay.GetMulti() == INVALIDSERIAL) {
             toDecay.SetDecayTime(nextDecayItems);
@@ -1809,7 +1809,7 @@ PackTypes cItem::GetPackType(CItem *i) {
 //|	Purpose		-	Handles spawning of items from spawn objects/containers
 // o------------------------------------------------------------------------------------------------o
 void cItem::AddRespawnItem(CItem *mCont, const std::string &iString, const bool inCont,
-                           const bool randomItem, const UI16 itemAmount, bool useLootlist) {
+                           const bool randomItem, const std::uint16_t itemAmount, bool useLootlist) {
     if (!ValidateObject(mCont) || iString.empty())
         return;
 
@@ -1832,7 +1832,7 @@ void cItem::AddRespawnItem(CItem *mCont, const std::string &iString, const bool 
     // However, if item is not stackable, spawn each item individually
     if ((itemAmount > 1) && ((!randomItem && !iCreated->IsPileable()) || randomItem)) {
         CItem *iCreated2 = nullptr;
-        for (UI08 i = 1; i < itemAmount; ++i) {
+        for (std::uint8_t i = 1; i < itemAmount; ++i) {
             if (randomItem) {
                 // If amount was specified for a LOOT tag, spawn a random item each time
                 iCreated2 = CreateRandomItem(mCont, iString, mCont->WorldNumber(),
@@ -1941,7 +1941,7 @@ void cItem::CheckEquipment(CChar *p) {
             return;
 
         std::vector<CItem *> itemsToUnequip;
-        const SI16 StrengthToCompare = p->GetStrength();
+        const std::int16_t StrengthToCompare = p->GetStrength();
         for (CItem *i = p->FirstItem(); !p->FinishedItems(); i = p->NextItem()) {
             if (ValidateObject(i)) {
                 if (i->GetStrength() >
@@ -1997,8 +1997,8 @@ void cItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
         }
     }
 
-    const SI32 min = tReg->GetGoodRnd1(static_cast<UI08>(i->GetGood()));
-    const SI32 max = tReg->GetGoodRnd2(static_cast<UI08>(i->GetGood()));
+    const std::int32_t min = tReg->GetGoodRnd1(static_cast<std::uint8_t>(i->GetGood()));
+    const std::int32_t max = tReg->GetGoodRnd2(static_cast<std::uint8_t>(i->GetGood()));
 
     if (max != 0 || min != 0) {
         i->SetRndValueRate(RandomNum(min, max));
@@ -2010,7 +2010,7 @@ void cItem::StoreItemRandomValue(CItem *i, CTownRegion *tReg) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Duplicates selected item
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::DupeItem(CSocket *s, CItem *i, UI32 amount) {
+CItem *cItem::DupeItem(CSocket *s, CItem *i, std::uint32_t amount) {
     CChar *mChar = s->CurrcharObj();
     CBaseObject *iCont = i->GetCont();
     CItem *charPack = mChar->GetPackItem();
@@ -2034,7 +2034,7 @@ CItem *cItem::DupeItem(CSocket *s, CItem *i, UI32 amount) {
     }
     c->SetAmount(amount);
 
-    std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {

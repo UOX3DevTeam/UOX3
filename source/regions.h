@@ -23,19 +23,19 @@ class CChar;
 class CBaseObject;
 class RegionSerialList;
 
-const SI16 MapColSize = 32;
-const SI16 MapRowSize = 128;
+const std::int16_t MapColSize = 32;
+const std::int16_t MapRowSize = 128;
 
-const SI16 UpperX = static_cast<SI16>(7168 / MapColSize);
-const SI16 UpperY = static_cast<SI16>(4096 / MapRowSize);
+const std::int16_t UpperX = static_cast<std::int16_t>(7168 / MapColSize);
+const std::int16_t UpperY = static_cast<std::int16_t>(4096 / MapRowSize);
 
 struct MapResource_st {
-    SI16 oreAmt;
-    UI32 oreTime;
-    SI16 logAmt;
-    UI32 logTime;
-    SI16 fishAmt;
-    UI32 fishTime;
+    std::int16_t oreAmt;
+    std::uint32_t oreTime;
+    std::int16_t logAmt;
+    std::uint32_t logTime;
+    std::int16_t fishAmt;
+    std::uint32_t fishTime;
 
     MapResource_st(std::int16_t defOre = 0, std::int16_t defLog = 0, std::int16_t defFish = 0,
                    std::uint32_t defOreTime = 0, std::uint32_t defLogTIme = 0,
@@ -66,25 +66,25 @@ class CMapRegion {
 
 class CMapWorld {
   private:
-    SI16 upperArrayX;
-    SI16 upperArrayY;
-    UI16 resourceX;
-    UI16 resourceY;
+    std::int16_t upperArrayX;
+    std::int16_t upperArrayY;
+    std::uint16_t resourceX;
+    std::uint16_t resourceY;
     std::vector<CMapRegion> mapRegions;
     std::vector<MapResource_st> mapResources;
 
   public:
     CMapWorld(void);
-    CMapWorld(UI08 worldNum);
+    CMapWorld(std::uint8_t worldNum);
     ~CMapWorld(void);
 
-    CMapRegion *GetMapRegion(SI16 xOffset, SI16 yOffset);
+    CMapRegion *GetMapRegion(std::int16_t xOffset, std::int16_t yOffset);
     std::vector<CMapRegion> *GetMapRegions();
 
-    MapResource_st &GetResource(SI16 x, SI16 y);
+    MapResource_st &GetResource(std::int16_t x, std::int16_t y);
 
-    void LoadResources(UI08 worldNum);
-    void SaveResources(UI08 worldNUm);
+    void LoadResources(std::uint8_t worldNum);
+    void SaveResources(std::uint8_t worldNUm);
 };
 
 class CMapHandler {
@@ -95,7 +95,7 @@ class CMapHandler {
     WORLDLIST mapWorlds;
     CMapRegion overFlow;
 
-    void LoadFromDisk(std::istream &readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize);
+    void LoadFromDisk(std::istream &readDestination, std::int32_t baseValue, std::int32_t fileSize, std::uint32_t maxSize);
 
   public:
     CMapHandler() = default;
@@ -111,21 +111,21 @@ class CMapHandler {
     bool AddChar(CChar *toAdd);
     bool RemoveChar(CChar *toRemove);
 
-    bool ChangeRegion(CItem *nItem, SI16 x, SI16 y, UI08 worldNum);
-    bool ChangeRegion(CChar *nChar, SI16 x, SI16 y, UI08 worldNum);
+    bool ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std::uint8_t worldNum);
+    bool ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std::uint8_t worldNum);
 
     CMapRegion *GetMapRegion(CBaseObject *mObj);
-    CMapRegion *GetMapRegion(SI16 xOffset, SI16 yOffset, UI08 worldNumber);
+    CMapRegion *GetMapRegion(std::int16_t xOffset, std::int16_t yOffset, std::uint8_t worldNumber);
 
-    SI16 GetGridX(SI16 x);
-    SI16 GetGridY(SI16 y);
+    std::int16_t GetGridX(std::int16_t x);
+    std::int16_t GetGridY(std::int16_t y);
 
-    auto PopulateList(SI16 x, SI16 y, UI08 worldNumber) -> std::vector<CMapRegion *>;
+    auto PopulateList(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) -> std::vector<CMapRegion *>;
     auto PopulateList(CBaseObject *mObj) -> std::vector<CMapRegion *>;
 
-    CMapWorld *GetMapWorld(UI08 worldNum);
+    CMapWorld *GetMapWorld(std::uint8_t worldNum);
 
-    MapResource_st *GetResource(SI16 x, SI16 y, UI08 worldNum);
+    MapResource_st *GetResource(std::int16_t x, std::int16_t y, std::uint8_t worldNum);
 };
 
 extern CMapHandler *MapRegion;

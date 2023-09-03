@@ -34,12 +34,12 @@ cHTMLTemplate::cHTMLTemplate()
 cHTMLTemplate::~cHTMLTemplate() {}
 
 std::string GetUptime(void) {
-    UI32 total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
-    UI32 ho = total / 3600;
+    std::uint32_t total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
+    std::uint32_t ho = total / 3600;
     total -= ho * 3600;
-    UI32 mi = total / 60;
+    std::uint32_t mi = total / 60;
     total -= mi * 60;
-    UI32 se = total;
+    std::uint32_t se = total;
     total = 0;
     std::string builtString = "";
     if (ho < 10) {
@@ -57,7 +57,7 @@ std::string GetUptime(void) {
     return builtString;
 }
 
-bool CountNPCFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) {
+bool CountNPCFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
     if (ValidateObject(a)) {
         CChar *j = static_cast<CChar *>(a);
@@ -133,7 +133,7 @@ void cHTMLTemplate::Process(void) {
     }
 
     // Connection Count (GMs, Counselors, Player)
-    UI32 gm = 0, cns = 0, ccount = 0;
+    std::uint32_t gm = 0, cns = 0, ccount = 0;
     CChar *tChar = nullptr;
 
     // Get all Network Connections
@@ -400,7 +400,7 @@ void cHTMLTemplate::Process(void) {
     }
 
     // GuildCount
-    std::string GuildCount = util::ntos(static_cast<SI32>(GuildSys->NumGuilds()));
+    std::string GuildCount = util::ntos(static_cast<std::int32_t>(GuildSys->NumGuilds()));
     Pos = ParsedContent.find("%guildcount");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, GuildCount)
@@ -417,7 +417,7 @@ void cHTMLTemplate::Process(void) {
         std::string myInline = ParsedContent.substr(Pos, SecondPos - Pos + 11);
         std::string GuildList;
 
-        for (SI16 i = 0; i < static_cast<SI16>(GuildSys->NumGuilds()); ++i) {
+        for (std::int16_t i = 0; i < static_cast<std::int16_t>(GuildSys->NumGuilds()); ++i) {
             std::string parsedInline = myInline;
             parsedInline.replace(0, 11, "");
             parsedInline.replace(parsedInline.length() - 11, 11, "");
@@ -465,8 +465,8 @@ void cHTMLTemplate::Process(void) {
     }
 
     // NPCCount
-    UI32 npccount = 0;
-    UI32 b = 0;
+    std::uint32_t npccount = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &CountNPCFunctor);
     npccount = b;
 
@@ -485,10 +485,10 @@ void cHTMLTemplate::Process(void) {
         std::string performance;
         std::ostringstream myStream(performance);
         if (cwmWorldState->GetKeepRun()) {
-            UI32 networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-            UI32 timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-            UI32 autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-            UI32 loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+            std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
+            std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
+            std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
+            std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
             myStream << "Network code: "
                      << static_cast<R32>(
                             static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
@@ -666,7 +666,7 @@ void cHTMLTemplate::Load(CScriptSection *found) {
         auto UTag = util::upper(tag);
 
         if (UTag == "UPDATE") {
-            updateTimer = static_cast<UI32>(std::stoul(data, nullptr, 0));
+            updateTimer = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
         }
         else if (UTag == "TYPE") {
             auto UData = util::upper(data);
@@ -773,22 +773,22 @@ void cHTMLTemplates::TemplateInfoGump(CSocket *mySocket) {
     InfoGump.StartPage();
     // Add an exit button
     InfoGump.AddButton(40, 300, cwmWorldState->ServerData()->ButtonCancel(),
-                       static_cast<UI16>(cwmWorldState->ServerData()->ButtonCancel() + 1), 1, 0, 0);
+                       static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonCancel() + 1), 1, 0, 0);
 
     InfoGump.AddBackground(0, 0, cwmWorldState->ServerData()->BackgroundPic(), 350, 350);
 
     // 10 Max Templates per page
-    UI32 Entries = 0;     // Entries per page
-    UI16 CurrentPage = 0; // Page
+    std::uint32_t Entries = 0;     // Entries per page
+    std::uint16_t CurrentPage = 0; // Page
 
-    for (UI32 i = 0; i < Templates.size(); ++i) {
+    for (std::uint32_t i = 0; i < Templates.size(); ++i) {
         if (Entries == 0) {
             // We should add a next button if we're not starting the first page
             if (CurrentPage != 0) {
                 InfoGump.AddButton(
                     300, 250, cwmWorldState->ServerData()->ButtonRight(),
-                    static_cast<UI16>(cwmWorldState->ServerData()->ButtonRight() + 1), 0,
-                    static_cast<UI16>(CurrentPage + 1), 0);
+                    static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonRight() + 1), 0,
+                    static_cast<std::uint16_t>(CurrentPage + 1), 0);
             }
 
             CurrentPage = InfoGump.StartPage();
@@ -797,15 +797,15 @@ void cHTMLTemplates::TemplateInfoGump(CSocket *mySocket) {
         // If we're not on the first page add the "back" button
         if (CurrentPage > 1) {
             InfoGump.AddButton(30, 250, cwmWorldState->ServerData()->ButtonLeft(),
-                               static_cast<UI16>(cwmWorldState->ServerData()->ButtonLeft() + 1), 0,
-                               static_cast<UI16>(CurrentPage - 1), 0);
+                               static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonLeft() + 1), 0,
+                               static_cast<std::uint16_t>(CurrentPage - 1), 0);
         }
 
         ++Entries;
 
         // ~25 pixel per entry
 
-        InfoGump.AddText(40, static_cast<UI16>(40 + (Entries - 1) * 25),
+        InfoGump.AddText(40, static_cast<std::uint16_t>(40 + (Entries - 1) * 25),
                          cwmWorldState->ServerData()->LeftTextColour(),
                          util::format("%s (%i)", Templates[i]->GetName().c_str(), i));
 
@@ -843,14 +843,14 @@ std::string cHTMLTemplate::GetInput(void) const { return inputFile; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
 // o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetScheduledUpdate(void) const { return scheduledUpdate; }
+std::uint32_t cHTMLTemplate::GetScheduledUpdate(void) const { return scheduledUpdate; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetUpdateTimer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
 // o------------------------------------------------------------------------------------------------o
-UI32 cHTMLTemplate::GetUpdateTimer(void) const { return updateTimer; }
+std::uint32_t cHTMLTemplate::GetUpdateTimer(void) const { return updateTimer; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetTemplateType()

@@ -411,7 +411,7 @@ JSBool CTimerProps_getProperty([[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 }
 
 JSBool CCreateEntriesProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-    UI16 createEntryId = static_cast<UI16>(JSVAL_TO_INT(id));
+    std::uint16_t createEntryId = static_cast<std::uint16_t>(JSVAL_TO_INT(id));
 
     CreateEntry_st *myCreateEntry = Skills->FindItem(createEntryId);
     if (myCreateEntry == nullptr) {
@@ -616,7 +616,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             }
             break;
         case CIP_VISIBLE:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetVisible()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetVisible()));
             break;
         case CIP_SERIAL: {
             if (!INT_FITS_IN_JSVAL(gPriv->GetSerial())) {
@@ -634,8 +634,8 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             // For backwards compatibility, get last scripttrigger from vector
             // For older worldfiles, this will be the only scripttrigger added to the vector after
             // load
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-            UI16 lastScriptTrigger = 0;
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
+            std::uint16_t lastScriptTrigger = 0;
             auto numberOfTriggers = scriptTriggers.size();
             if (numberOfTriggers > 0) {
                 lastScriptTrigger = scriptTriggers[numberOfTriggers - 1];
@@ -648,7 +648,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             jsval scriptId;
             JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, nullptr);
 
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
             for (auto i = 0; i < static_cast<int>(scriptTriggers.size()); i++) {
                 scriptId = INT_TO_JSVAL(scriptTriggers[i]);
                 JS_SetElement(cx, scriptTriggersJS, i, &scriptId);
@@ -705,7 +705,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             }
             break;
         case CIP_TYPE:
-            *vp = INT_TO_JSVAL(static_cast<UI16>(gPriv->GetType()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint16_t>(gPriv->GetType()));
             break;
         case CIP_MORE: {
             if (!INT_FITS_IN_JSVAL(gPriv->GetTempVar(CITV_MORE))) {
@@ -1310,19 +1310,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetName(encaps.toString());
             break;
         case CIP_X:
-            gPriv->SetLocation(static_cast<SI16>(encaps.toInt()), gPriv->GetY(), gPriv->GetZ());
+            gPriv->SetLocation(static_cast<std::int16_t>(encaps.toInt()), gPriv->GetY(), gPriv->GetZ());
             break;
         case CIP_Y:
-            gPriv->SetLocation(gPriv->GetX(), static_cast<SI16>(encaps.toInt()), gPriv->GetZ());
+            gPriv->SetLocation(gPriv->GetX(), static_cast<std::int16_t>(encaps.toInt()), gPriv->GetZ());
             break;
         case CIP_Z:
-            gPriv->SetZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CIP_ID:
-            gPriv->SetId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_COLOUR:
-            gPriv->SetColour(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetColour(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_OWNER:
             if (*vp != JSVAL_NULL) {
@@ -1342,11 +1342,11 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         case CIP_SERIAL:
             break;
         case CIP_HEALTH:
-            gPriv->SetHP(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetHP(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_SCRIPTTRIGGER: {
             // For backwards compatibility; clears out other scripts and assigns a specific script
-            UI16 scriptId = static_cast<UI16>(encaps.toInt());
+            std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
             cScript *toExecute = JSMapping->GetScript(scriptId);
             if (toExecute == nullptr) {
                 ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not "
@@ -1362,7 +1362,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         }
         case CIP_SCRIPTTRIGGERS: {
             if (*vp != JSVAL_NULL) {
-                UI16 scriptId = static_cast<UI16>(encaps.toInt());
+                std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
                 cScript *toExecute = JSMapping->GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) "
@@ -1382,21 +1382,21 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         }
         case CIP_WORLDNUMBER:
             if (!Map->InsideValidWorld(gPriv->GetX(), gPriv->GetY(),
-                                       static_cast<UI08>(encaps.toInt())))
+                                       static_cast<std::uint8_t>(encaps.toInt())))
                 return JS_FALSE;
 
             gPriv->RemoveFromSight();
             gPriv->SetLocation(gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(),
-                               static_cast<UI08>(encaps.toInt()), gPriv->GetInstanceId());
+                               static_cast<std::uint8_t>(encaps.toInt()), gPriv->GetInstanceId());
             break;
         case CIP_INSTANCEID: {
             gPriv->RemoveFromSight();
             gPriv->SetLocation(gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), gPriv->WorldNumber(),
-                               static_cast<UI16>(encaps.toInt()));
+                               static_cast<std::uint16_t>(encaps.toInt()));
             break;
         }
         case CIP_AMOUNT:
-            gPriv->SetAmount(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetAmount(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CIP_CONTAINER:
             if (*vp != JSVAL_NULL) {
@@ -1420,19 +1420,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MORE, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1447,19 +1447,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MORE0, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE0, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE0, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE0, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1474,19 +1474,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MORE1, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE1, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE1, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE1, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1501,19 +1501,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MORE2, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE2, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE2, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MORE2, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1528,19 +1528,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MOREX, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREX, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREX, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREX, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1555,19 +1555,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MOREY, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREY, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREY, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREY, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1582,19 +1582,19 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             if (encapsSections.size() >= 4) {
                 gPriv->SetTempVar(
                     CITV_MOREZ, 1,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[0], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREZ, 2,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[1], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREZ, 3,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[2], "//")), nullptr, 0)));
                 gPriv->SetTempVar(
                     CITV_MOREZ, 4,
-                    static_cast<UI08>(
+                    static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(encapsSections[3], "//")), nullptr, 0)));
             }
             else {
@@ -1603,11 +1603,11 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             break;
         }
         case CIP_MOVABLE:
-            gPriv->SetMovable(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetMovable(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CIP_ATT:
-            gPriv->SetLoDamage(static_cast<SI16>(encaps.toInt()));
-            gPriv->SetHiDamage(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetLoDamage(static_cast<std::int16_t>(encaps.toInt()));
+            gPriv->SetHiDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_LAYER:
             gPriv->SetLayer(static_cast<ItemLayers>(encaps.toInt()));
@@ -1625,37 +1625,37 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetDecayTime(newTime);
             break;
         case CIP_LODAMAGE:
-            gPriv->SetLoDamage(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetLoDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_HIDAMAGE:
-            gPriv->SetHiDamage(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetHiDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_AC:
-            gPriv->SetArmourClass(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetArmourClass(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CIP_DEF:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), PHYSICAL);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), PHYSICAL);
             break;
         case CIP_RESISTCOLD:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), COLD);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), COLD);
             break;
         case CIP_RESISTHEAT:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), HEAT);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), HEAT);
             break;
         case CIP_RESISTLIGHT:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), LIGHT);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), LIGHT);
             break;
         case CIP_RESISTLIGHTNING:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), LIGHTNING);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), LIGHTNING);
             break;
         case CIP_RESISTPOISON:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), POISON);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), POISON);
             break;
         case CIP_RESISTRAIN:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), RAIN);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), RAIN);
             break;
         case CIP_RESISTSNOW:
-            gPriv->SetResist(static_cast<UI16>(encaps.toInt()), SNOW);
+            gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), SNOW);
             break;
         case CIP_DAMAGECOLD:
             gPriv->SetWeatherDamage(COLD, encaps.toBool());
@@ -1679,7 +1679,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetWeatherDamage(SNOW, encaps.toBool());
             break;
         case CIP_SPEED:
-            gPriv->SetSpeed(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetSpeed(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CIP_NAME2:
             gPriv->SetName2(encaps.toString());
@@ -1688,64 +1688,64 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetRace(static_cast<RACEID>(encaps.toInt()));
             break;
         case CIP_MAXHP:
-            gPriv->SetMaxHP(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetMaxHP(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_MAXUSES:
-            gPriv->SetMaxUses(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetMaxUses(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_USESLEFT:
-            gPriv->SetUsesLeft(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetUsesLeft(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_RANK:
-            gPriv->SetRank(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetRank(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CIP_CREATOR:
             gPriv->SetCreator(static_cast<SERIAL>(encaps.toInt()));
             break;
         case CIP_POISON:
-            gPriv->SetPoisoned(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetPoisoned(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CIP_DIR:
-            gPriv->SetDir(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetDir(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_WIPABLE:
             gPriv->SetWipeable(encaps.toBool());
             break;
         case CIP_BUYVALUE:
-            gPriv->SetBuyValue(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetBuyValue(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CIP_SELLVALUE:
-            gPriv->SetSellValue(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetSellValue(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CIP_VENDORPRICE:
-            gPriv->SetVendorPrice(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetVendorPrice(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CIP_RESTOCK:
-            gPriv->SetRestock(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetRestock(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_DIVINELOCK:
             gPriv->SetDivineLock(encaps.toBool());
             break;
         case CIP_WEIGHT:
-            gPriv->SetWeight(static_cast<SI32>(encaps.toInt()));
+            gPriv->SetWeight(static_cast<std::int32_t>(encaps.toInt()));
             break;
         case CIP_WEIGHTMAX:
-            gPriv->SetWeightMax(static_cast<SI32>(encaps.toInt()));
+            gPriv->SetWeightMax(static_cast<std::int32_t>(encaps.toInt()));
             break;
         case CIP_BASEWEIGHT:
-            gPriv->SetBaseWeight(static_cast<SI32>(encaps.toInt()));
+            gPriv->SetBaseWeight(static_cast<std::int32_t>(encaps.toInt()));
             break;
         case CIP_MAXITEMS:
-            gPriv->SetMaxItems(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetMaxItems(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_STRENGTH:
-            gPriv->SetStrength(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetStrength(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_DEXTERITY:
-            gPriv->SetDexterity(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetDexterity(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_INTELLIGENCE:
-            gPriv->SetIntelligence(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetIntelligence(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_CORPSE:
             gPriv->SetCorpse(encaps.toBool());
@@ -1778,10 +1778,10 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetDispellable(encaps.toBool());
             break;
         case CIP_MADEWITH:
-            gPriv->SetMadeWith(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetMadeWith(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CIP_ENTRYMADEFROM:
-            gPriv->EntryMadeFrom(static_cast<UI16>(encaps.toInt()));
+            gPriv->EntryMadeFrom(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_ISPILEABLE:
             gPriv->SetPileable(encaps.toBool());
@@ -1808,28 +1808,28 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetCarve(encaps.toInt());
             break;
         case CIP_AMMOID:
-            gPriv->SetAmmoId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAmmoId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_AMMOHUE:
-            gPriv->SetAmmoHue(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAmmoHue(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_AMMOFX:
-            gPriv->SetAmmoFX(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAmmoFX(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_AMMOFXHUE:
-            gPriv->SetAmmoFXHue(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAmmoFXHue(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_AMMOFXRENDER:
-            gPriv->SetAmmoFXRender(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAmmoFXRender(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_MAXRANGE:
-            gPriv->SetMaxRange(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetMaxRange(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CIP_BASERANGE:
-            gPriv->SetBaseRange(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetBaseRange(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CIP_REGION:
-            gPriv->SetRegion(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetRegion(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CIP_ORIGIN:
             gPriv->SetOrigin(cwmWorldState->ServerData()->EraStringToEnum(encaps.toString()));
@@ -1838,7 +1838,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetHeldOnCursor(encaps.toBool());
             break;
         case CIP_STEALABLE:
-            gPriv->SetStealable(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetStealable(static_cast<std::uint8_t>(encaps.toInt()));
             break;
 
             // The following entries are specifically for CSpawnItem objects
@@ -1855,57 +1855,57 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         case CIP_MININTERVAL:
             if (gPriv->GetObjType() == OT_SPAWNER) {
                 (static_cast<CSpawnItem *>(gPriv))
-                    ->SetInterval(0, static_cast<UI08>(encaps.toInt()));
+                    ->SetInterval(0, static_cast<std::uint8_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXINTERVAL:
             if (gPriv->GetObjType() == OT_SPAWNER) {
                 (static_cast<CSpawnItem *>(gPriv))
-                    ->SetInterval(1, static_cast<UI08>(encaps.toInt()));
+                    ->SetInterval(1, static_cast<std::uint8_t>(encaps.toInt()));
             }
             break;
             // Multis only
         case CIP_MAXLOCKDOWNS:
             if (gPriv->GetObjType() == OT_MULTI) {
                 (static_cast<CMultiObj *>(gPriv))
-                    ->SetMaxLockdowns(static_cast<UI16>(encaps.toInt()));
+                    ->SetMaxLockdowns(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXTRASHCONTAINERS:
             if (gPriv->GetObjType() == OT_MULTI) {
                 (static_cast<CMultiObj *>(gPriv))
-                    ->SetMaxTrashContainers(static_cast<UI16>(encaps.toInt()));
+                    ->SetMaxTrashContainers(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXSECURECONTAINERS:
             if (gPriv->GetObjType() == OT_MULTI) {
                 (static_cast<CMultiObj *>(gPriv))
-                    ->SetMaxSecureContainers(static_cast<UI16>(encaps.toInt()));
+                    ->SetMaxSecureContainers(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXFRIENDS:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetMaxFriends(static_cast<UI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetMaxFriends(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXGUESTS:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetMaxGuests(static_cast<UI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetMaxGuests(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXOWNERS:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetMaxOwners(static_cast<UI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetMaxOwners(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXBANS:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetMaxBans(static_cast<UI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetMaxBans(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_MAXVENDORS:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetMaxVendors(static_cast<UI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetMaxVendors(static_cast<std::uint16_t>(encaps.toInt()));
             }
             break;
         case CIP_DEED:
@@ -1936,12 +1936,12 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         }
         case CIP_BANX:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetBanX(static_cast<SI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetBanX(static_cast<std::int16_t>(encaps.toInt()));
             }
             break;
         case CIP_BANY:
             if (gPriv->GetObjType() == OT_MULTI) {
-                (static_cast<CMultiObj *>(gPriv))->SetBanY(static_cast<SI16>(encaps.toInt()));
+                (static_cast<CMultiObj *>(gPriv))->SetBanY(static_cast<std::int16_t>(encaps.toInt()));
             }
             break;
         default:
@@ -2060,10 +2060,10 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             *vp = INT_TO_JSVAL(gPriv->GetColour());
             break;
         case CCP_CONTROLSLOTS:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetControlSlots()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetControlSlots()));
             break;
         case CCP_CONTROLSLOTSUSED:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetControlSlotsUsed()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetControlSlotsUsed()));
             break;
         case CCP_ORNERINESS:
             *vp = INT_TO_JSVAL(gPriv->GetOrneriness());
@@ -2083,7 +2083,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             }
             break;
         case CCP_VISIBLE:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetVisible()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetVisible()));
             break;
         case CCP_SERIAL: {
             if (!INT_FITS_IN_JSVAL(gPriv->GetSerial())) {
@@ -2101,8 +2101,8 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             // For backwards compatibility, get last scripttrigger from vector
             // For older worldfiles, this will be the only scripttrigger added to the vector after
             // load
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-            UI16 lastScriptTrigger = 0;
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
+            std::uint16_t lastScriptTrigger = 0;
             auto numberOfTriggers = scriptTriggers.size();
             if (numberOfTriggers > 0) {
                 lastScriptTrigger = scriptTriggers[numberOfTriggers - 1];
@@ -2114,7 +2114,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             jsval scriptId;
             JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, nullptr);
 
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
             for (auto i = 0; i < static_cast<int>(scriptTriggers.size()); i++) {
                 scriptId = INT_TO_JSVAL(scriptTriggers[i]);
                 JS_SetElement(cx, scriptTriggersJS, i, &scriptId);
@@ -2226,7 +2226,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             TempRace = Races->Race(gPriv->GetRace());
 
             // Try to fetch hungerRate from character's race
-            UI16 hungerRate = 0;
+            std::uint16_t hungerRate = 0;
             if (TempRace != nullptr) {
                 hungerRate = TempRace->GetHungerRate();
             }
@@ -2247,7 +2247,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             TempRace = Races->Race(gPriv->GetRace());
 
             // Try to fetch thirstRate from character's race
-            UI16 thirstRate = 0;
+            std::uint16_t thirstRate = 0;
             if (TempRace != nullptr) {
                 thirstRate = TempRace->GetThirstRate();
             }
@@ -2369,7 +2369,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             *vp = STRING_TO_JSVAL(tString);
             break;
         case CCP_TOWN: {
-            UI16 tempTownId = 0xFF;
+            std::uint16_t tempTownId = 0xFF;
             tempTownId = gPriv->GetTown();
 
             // We need to decide here whether 0xFF is a valid town (wilderness) or not
@@ -2586,16 +2586,16 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             *vp = INT_TO_JSVAL(gPriv->GetDeaths());
             break;
         case CCP_OWNERCOUNT:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetOwnerCount()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetOwnerCount()));
             break;
         case CCP_NEXTACT:
             *vp = INT_TO_JSVAL(gPriv->GetNextAct());
             break;
         case CCP_PETCOUNT:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetPetList()->Num()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetPetList()->Num()));
             break;
         case CCP_FOLLOWERCOUNT:
-            *vp = INT_TO_JSVAL(static_cast<UI08>(gPriv->GetFollowerList()->Num()));
+            *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(gPriv->GetFollowerList()->Num()));
             break;
         case CCP_OWNEDITEMSCOUNT:
             *vp = INT_TO_JSVAL(gPriv->GetOwnedItems()->size());
@@ -2746,7 +2746,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             *vp = INT_TO_JSVAL(gPriv->GetOrgSkin());
             break;
         case CCP_NPCFLAG:
-            *vp = INT_TO_JSVAL(static_cast<SI32>(gPriv->GetNPCFlag()));
+            *vp = INT_TO_JSVAL(static_cast<std::int32_t>(gPriv->GetNPCFlag()));
             break;
         case CCP_NPCGUILD:
             *vp = INT_TO_JSVAL(gPriv->GetNPCGuild());
@@ -2762,7 +2762,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             break;
         case CCP_LOYALTYRATE: {
             // Use global loyalty rate from UOX.INI
-            UI16 loyaltyRate = 0;
+            std::uint16_t loyaltyRate = 0;
             if (loyaltyRate == 0) {
                 loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
             }
@@ -2861,12 +2861,12 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
     if (JSVAL_IS_INT(id)) {
         switch (JSVAL_TO_INT(id)) {
         case CCP_ACCOUNTNUM:
-            gPriv->SetAccountNum(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetAccountNum(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_CREATEDON:
             break;
         case CCP_PLAYTIME:
-            gPriv->SetPlayTime(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetPlayTime(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CCP_SECTIONID:
             gPriv->SetSectionId(encaps.toString());
@@ -2881,28 +2881,28 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetTitle(encaps.toString());
             break;
         case CCP_X:
-            gPriv->SetLocation(static_cast<SI16>(encaps.toInt()), gPriv->GetY(), gPriv->GetZ());
+            gPriv->SetLocation(static_cast<std::int16_t>(encaps.toInt()), gPriv->GetY(), gPriv->GetZ());
             break;
         case CCP_Y:
-            gPriv->SetLocation(gPriv->GetX(), static_cast<SI16>(encaps.toInt()), gPriv->GetZ());
+            gPriv->SetLocation(gPriv->GetX(), static_cast<std::int16_t>(encaps.toInt()), gPriv->GetZ());
             break;
         case CCP_Z:
-            gPriv->SetZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_ID:
-            gPriv->SetId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_COLOUR:
-            gPriv->SetColour(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetColour(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_CONTROLSLOTS:
-            gPriv->SetControlSlots(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetControlSlots(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_CONTROLSLOTSUSED:
-            gPriv->SetControlSlotsUsed(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetControlSlotsUsed(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_ORNERINESS:
-            gPriv->SetOrneriness(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetOrneriness(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_OWNER:
             if (*vp != JSVAL_NULL) {
@@ -2926,7 +2926,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             break;
         case CCP_SCRIPTTRIGGER: {
             // For backwards compatibility; clears out other scripts and assigns a specific script
-            UI16 scriptId = static_cast<UI16>(encaps.toInt());
+            std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
             cScript *toExecute = JSMapping->GetScript(scriptId);
             if (toExecute == nullptr) {
                 ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not "
@@ -2942,7 +2942,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         }
         case CCP_SCRIPTTRIGGERS: {
             if (*vp != JSVAL_NULL) {
-                UI16 scriptId = static_cast<UI16>(encaps.toInt());
+                std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
                 cScript *toExecute = JSMapping->GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) "
@@ -2962,14 +2962,14 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         }
         case CCP_WORLDNUMBER:
             if (!Map->InsideValidWorld(gPriv->GetX(), gPriv->GetY(),
-                                       static_cast<UI08>(encaps.toInt())))
+                                       static_cast<std::uint8_t>(encaps.toInt())))
                 return JS_FALSE;
 
             gPriv->RemoveFromSight();
             gPriv->SetLocation(gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(),
-                               static_cast<UI08>(encaps.toInt()), gPriv->GetInstanceId());
+                               static_cast<std::uint8_t>(encaps.toInt()), gPriv->GetInstanceId());
             if (!gPriv->IsNpc()) {
-                SendMapChange(static_cast<UI08>(encaps.toInt()), gPriv->GetSocket());
+                SendMapChange(static_cast<std::uint8_t>(encaps.toInt()), gPriv->GetSocket());
             }
             break;
         case CCP_INSTANCEID: {
@@ -2981,7 +2981,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->RemoveAllObjectsFromSight(gPriv->GetSocket());
             }
             gPriv->SetLocation(gPriv->GetX(), gPriv->GetY(), gPriv->GetZ(), gPriv->WorldNumber(),
-                               static_cast<UI16>(encaps.toInt()));
+                               static_cast<std::uint16_t>(encaps.toInt()));
             break;
         }
         case CCP_TARGET:
@@ -3017,25 +3017,25 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         case CCP_CHARPACK:
             break;
         case CCP_FAME:
-            gPriv->SetFame(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetFame(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_KARMA:
-            gPriv->SetKarma(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetKarma(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_HUNGER:
-            gPriv->SetHunger(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetHunger(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_THIRST:
-            gPriv->SetThirst(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetThirst(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_CANATTACK:
             gPriv->SetCanAttack(encaps.toBool());
             break;
         case CCP_FLEEAT:
-            gPriv->SetFleeAt(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetFleeAt(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_REATTACKAT:
-            gPriv->SetReattackAt(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetReattackAt(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_BRKPEACE:
             gPriv->SetBrkPeaceChance(encaps.toInt());
@@ -3047,19 +3047,19 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetFrozen(encaps.toBool());
             break;
         case CCP_COMMANDLEVEL:
-            gPriv->SetCommandLevel(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetCommandLevel(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_RACE:
             Races->ApplyRace(gPriv, static_cast<RACEID>(encaps.toInt()), true);
             break;
         case CCP_MAXHP:
-            gPriv->SetFixedMaxHP(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetFixedMaxHP(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_MAXMANA:
-            gPriv->SetFixedMaxMana(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetFixedMaxMana(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_MAXSTAMINA:
-            gPriv->SetFixedMaxStam(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetFixedMaxStam(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_HASSTOLEN: {
             if (encaps.toBool()) {
@@ -3101,11 +3101,11 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             UpdateFlag(gPriv);
             break;
         case CCP_MURDERCOUNT:
-            gPriv->SetKills(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetKills(static_cast<std::int16_t>(encaps.toInt()));
             UpdateFlag(gPriv);
             break;
         case CCP_GENDER:
-            switch (static_cast<SI16>(encaps.toInt())) {
+            switch (static_cast<std::int16_t>(encaps.toInt())) {
             case 0: // male
                 if (gPriv->IsDead()) {
                     gPriv->SetId(0x0192);
@@ -3165,10 +3165,10 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetAwake(encaps.toBool());
             break;
         case CCP_DIRECTION:
-            gPriv->SetDir(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetDir(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_REGION:
-            gPriv->SetRegion(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetRegion(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_ORIGIN:
             gPriv->SetOrigin(cwmWorldState->ServerData()->EraStringToEnum(encaps.toString()));
@@ -3190,25 +3190,25 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             }
             break;
         case CCP_OLDWANDERTYPE:
-            gPriv->SetOldNpcWander(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetOldNpcWander(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_WANDERTYPE:
-            gPriv->SetNpcWander(static_cast<SI08>(encaps.toInt()), true);
+            gPriv->SetNpcWander(static_cast<std::int8_t>(encaps.toInt()), true);
             break;
         case CCP_FX1:
-            gPriv->SetFx(static_cast<SI16>(encaps.toInt()), 0);
+            gPriv->SetFx(static_cast<std::int16_t>(encaps.toInt()), 0);
             break;
         case CCP_FY1:
-            gPriv->SetFy(static_cast<SI16>(encaps.toInt()), 0);
+            gPriv->SetFy(static_cast<std::int16_t>(encaps.toInt()), 0);
             break;
         case CCP_FX2:
-            gPriv->SetFx(static_cast<SI16>(encaps.toInt()), 1);
+            gPriv->SetFx(static_cast<std::int16_t>(encaps.toInt()), 1);
             break;
         case CCP_FY2:
-            gPriv->SetFy(static_cast<SI16>(encaps.toInt()), 1);
+            gPriv->SetFy(static_cast<std::int16_t>(encaps.toInt()), 1);
             break;
         case CCP_FZ:
-            gPriv->SetFz(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetFz(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_TDEXTERITY:
             gPriv->SetDexterity2(encaps.toInt());
@@ -3220,14 +3220,14 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetStrength2(encaps.toInt());
             break;
         case CCP_LIGHTLEVEL:
-            gPriv->SetFixedLight(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetFixedLight(static_cast<std::uint8_t>(encaps.toInt()));
             if (gPriv->GetSocket() != nullptr) {
-                if (static_cast<UI08>(encaps.toInt()) == 255) {
+                if (static_cast<std::uint8_t>(encaps.toInt()) == 255) {
                     DoLight(gPriv->GetSocket(),
                             cwmWorldState->ServerData()->WorldLightCurrentLevel());
                 }
                 else {
-                    DoLight(gPriv->GetSocket(), static_cast<UI08>(encaps.toInt()));
+                    DoLight(gPriv->GetSocket(), static_cast<std::uint8_t>(encaps.toInt()));
                 }
             }
             break;
@@ -3241,17 +3241,17 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetThirstStatus(encaps.toBool());
             break;
         case CCP_LODAMAGE:
-            gPriv->SetLoDamage(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetLoDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_HIDAMAGE:
-            gPriv->SetHiDamage(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetHiDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_ATWAR:
             gPriv->SetWar(encaps.toBool());
             Movement->CombatWalk(gPriv);
             break;
         case CCP_SPELLCAST:
-            gPriv->SetSpellCast(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetSpellCast(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_ISCASTING: {
             bool isCasting = encaps.toBool();
@@ -3259,28 +3259,28 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetJSCasting(isCasting);
         } break;
         case CCP_PRIV:
-            gPriv->SetPriv(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetPriv(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_TOWNPRIV:
-            gPriv->SetTownpriv(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetTownpriv(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_GUILDTITLE:
             gPriv->SetGuildTitle(encaps.toString());
             break;
         case CCP_HAIRSTYLE:
-            gPriv->SetHairStyle(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetHairStyle(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_HAIRCOLOUR:
-            gPriv->SetHairColour(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetHairColour(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_BEARDSTYLE:
-            gPriv->SetBeardStyle(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetBeardStyle(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_BEARDCOLOUR:
-            gPriv->SetBeardColour(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetBeardColour(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_FONTTYPE:
-            gPriv->SetFontType(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetFontType(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_SAYCOLOUR:
             gPriv->SetSayColour(static_cast<COLOUR>(encaps.toInt()));
@@ -3306,13 +3306,13 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         case CCP_SKILLLOCK:
             break;
         case CCP_DEATHS:
-            gPriv->SetDeaths(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetDeaths(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_NEXTACT:
-            gPriv->SetNextAct(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetNextAct(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_CELL:
-            gPriv->SetCell(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetCell(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_ALLMOVE:
             gPriv->SetAllMove(encaps.toBool());
@@ -3321,19 +3321,19 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetViewHouseAsIcon(encaps.toBool());
             break;
         case CCP_SPATTACK:
-            gPriv->SetSpAttack(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetSpAttack(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_SPDELAY:
-            gPriv->SetSpDelay(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetSpDelay(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_AITYPE:
-            gPriv->SetNPCAiType(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetNPCAiType(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CCP_SPLIT:
-            gPriv->SetSplit(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetSplit(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_SPLITCHANCE:
-            gPriv->SetSplitChance(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetSplitChance(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_HIRELING:
             gPriv->SetCanHire(encaps.toBool());
@@ -3342,10 +3342,10 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetCanTrain(encaps.toBool());
             break;
         case CCP_WEIGHT:
-            gPriv->SetWeight(static_cast<SI32>(encaps.toInt()));
+            gPriv->SetWeight(static_cast<std::int32_t>(encaps.toInt()));
             break;
         case CCP_SQUELCH:
-            gPriv->SetSquelched(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetSquelched(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_MAGICREFLECT:
             gPriv->SetTempReflected(encaps.toBool());
@@ -3357,16 +3357,16 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetTamed(encaps.toBool());
             break;
         case CCP_TAMEDHUNGERRATE:
-            gPriv->SetTamedHungerRate(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetTamedHungerRate(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_TAMEDTHIRSTRATE:
-            gPriv->SetTamedThirstRate(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetTamedThirstRate(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_THIRSTWILDCHANCE:
-            gPriv->SetTamedThirstWildChance(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetTamedThirstWildChance(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_HUNGERWILDCHANCE:
-            gPriv->SetTamedHungerWildChance(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetTamedHungerWildChance(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_FOODLIST:
             gPriv->SetFood(encaps.toString());
@@ -3393,10 +3393,10 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetPeaceing(encaps.toInt());
             break;
         case CCP_POISON:
-            gPriv->SetPoisoned(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetPoisoned(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_POISONSTRENGTH:
-            gPriv->SetPoisonStrength(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetPoisonStrength(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_ISPOLYMORPHED:
             gPriv->IsPolymorphed(encaps.toBool());
@@ -3459,17 +3459,17 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetNoNeedReags(encaps.toBool());
             break;
         case CCP_ORGID:
-            gPriv->SetOrgId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetOrgId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_ORGSKIN:
-            gPriv->SetOrgSkin(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetOrgSkin(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_NPCFLAG:
             gPriv->SetNPCFlag(static_cast<cNPC_FLAG>(encaps.toInt()));
             UpdateFlag(gPriv);
             break;
         case CCP_NPCGUILD:
-            gPriv->SetNPCGuild(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetNPCGuild(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_ISSHOP:
             if (encaps.toBool()) {
@@ -3478,7 +3478,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             else {
                 gPriv->SetShop(false);
                 CItem *tPack = nullptr;
-                for (UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
+                for (std::uint8_t i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
                     tPack = gPriv->GetItemAtLayer(static_cast<ItemLayers>(i));
                     if (ValidateObject(tPack)) {
                         tPack->Delete();
@@ -3488,10 +3488,10 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             }
             break;
         case CCP_MAXLOYALTY:
-            gPriv->SetMaxLoyalty(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetMaxLoyalty(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_LOYALTY:
-            gPriv->SetLoyalty(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetLoyalty(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_SHOULDSAVE:
             gPriv->ShouldSave(encaps.toBool());
@@ -3620,8 +3620,8 @@ JSBool CRegionProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             // For backwards compatibility, get last scripttrigger from vector
             // For older worldfiles, this will be the only scripttrigger added to the vector after
             // load
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-            UI16 lastScriptTrigger = 0;
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
+            std::uint16_t lastScriptTrigger = 0;
             auto numberOfTriggers = scriptTriggers.size();
             if (numberOfTriggers > 0) {
                 lastScriptTrigger = scriptTriggers[numberOfTriggers - 1];
@@ -3634,7 +3634,7 @@ JSBool CRegionProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             jsval scriptId;
             JSObject *scriptTriggersJS = JS_NewArrayObject(cx, 0, nullptr);
 
-            std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = gPriv->GetScriptTriggers();
             for (auto i = 0; i < static_cast<int>(scriptTriggers.size()); i++) {
                 scriptId = INT_TO_JSVAL(scriptTriggers[i]);
                 JS_SetElement(cx, scriptTriggersJS, i, &scriptId);
@@ -3684,16 +3684,16 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->SetName(encaps.toString());
             break;
         case CREGP_MAYOR:
-            gPriv->SetMayorSerial(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetMayorSerial(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CREGP_RACE:
             gPriv->SetRace(static_cast<RACEID>(encaps.toInt()));
             break;
         case CREGP_TAX:
-            gPriv->TaxedAmount(static_cast<SI16>(encaps.toInt()));
+            gPriv->TaxedAmount(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CREGP_TAXRESOURCE:
-            gPriv->SetResourceId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetResourceId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CREGP_CANMARK:
             gPriv->CanMark(encaps.toBool());
@@ -3720,20 +3720,20 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->IsSafeZone(encaps.toBool());
             break;
         case CREGP_HEALTH:
-            gPriv->SetHealth(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetHealth(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CREGP_ISDUNGEON:
             gPriv->IsDungeon(encaps.toBool());
             break;
         case CREGP_CHANCEBIGORE:
-            gPriv->SetChanceBigOre(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetChanceBigOre(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CREGP_NUMGUARDS:
-            gPriv->SetNumGuards(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetNumGuards(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CREGP_SCRIPTTRIGGER: {
             // For backwards compatibility; clears out other scripts and assigns a specific script
-            UI16 scriptId = static_cast<UI16>(encaps.toInt());
+            std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
             cScript *toExecute = JSMapping->GetScript(scriptId);
             if (toExecute == nullptr) {
                 ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) not "
@@ -3749,7 +3749,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         }
         case CREGP_SCRIPTTRIGGERS: {
             if (*vp != JSVAL_NULL) {
-                UI16 scriptId = static_cast<UI16>(encaps.toInt());
+                std::uint16_t scriptId = static_cast<std::uint16_t>(encaps.toInt());
                 cScript *toExecute = JSMapping->GetScript(scriptId);
                 if (toExecute == nullptr) {
                     ScriptError(cx, util::format("Unable to assign script trigger - script ID (%i) "
@@ -3768,25 +3768,25 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             break;
         }
         case CREGP_TAXES:
-            gPriv->SetTaxesLeft(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetTaxesLeft(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CREGP_RESERVES:
-            gPriv->SetReserves(static_cast<UI32>(encaps.toInt()));
+            gPriv->SetReserves(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CREGP_APPEARANCE:
             gPriv->SetAppearance(static_cast<WorldType>(encaps.toInt()));
             break;
         case CREGP_MUSIC:
-            gPriv->SetMusicList(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetMusicList(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CREGP_WEATHER:
             gPriv->SetWeather(static_cast<WEATHID>(encaps.toInt()));
             break;
         case CREGP_WORLDNUMBER:
-            gPriv->WorldNumber(static_cast<UI08>(encaps.toInt()));
+            gPriv->WorldNumber(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CREGP_INSTANCEID:
-            gPriv->SetInstanceId(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetInstanceId(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CREGP_MEMBERS:
             break;
@@ -3947,7 +3947,7 @@ JSBool CSpawnRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsv
             gPriv->SetNPCList(encaps.toString());
             break;
         case CSPAWNREGP_REGIONNUM:
-            gPriv->SetRegionNum(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetRegionNum(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_MAXITEMS:
             gPriv->SetMaxItemSpawn(encaps.toInt());
@@ -3956,10 +3956,10 @@ JSBool CSpawnRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsv
             gPriv->SetMaxCharSpawn(encaps.toInt());
             break;
         case CSPAWNREGP_MINTIME:
-            gPriv->SetMinTime(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetMinTime(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_MAXTIME:
-            gPriv->SetMaxTime(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetMaxTime(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_ONLYOUTSIDE:
             gPriv->SetOnlyOutside(encaps.toBool());
@@ -3968,31 +3968,31 @@ JSBool CSpawnRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsv
             gPriv->IsSpawner(encaps.toBool());
             break;
         case CSPAWNREGP_X1:
-            gPriv->SetX1(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetX1(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_Y1:
-            gPriv->SetY1(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetY1(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_X2:
-            gPriv->SetX2(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetX2(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_Y2:
-            gPriv->SetY2(static_cast<SI16>(encaps.toInt()));
+            gPriv->SetY2(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_DEFZ:
-            gPriv->SetDefZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetDefZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_PREFZ:
-            gPriv->SetPrefZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->SetPrefZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_WORLD:
-            gPriv->WorldNumber(static_cast<UI08>(encaps.toInt()));
+            gPriv->WorldNumber(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_INSTANCEID:
-            gPriv->SetInstanceId(static_cast<UI08>(encaps.toInt()));
+            gPriv->SetInstanceId(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSPAWNREGP_CALL:
-            gPriv->SetCall(static_cast<UI16>(encaps.toInt()));
+            gPriv->SetCall(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         default:
             break;
@@ -4167,7 +4167,7 @@ JSBool CRaceProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 
     if (JSVAL_IS_INT(id)) {
         JSString *tString = nullptr;
-        UI08 TempRace = 0;
+        std::uint8_t TempRace = 0;
         switch (JSVAL_TO_INT(id)) {
         case CRP_ID:
             for (TempRace = 0; TempRace < Races->Count(); ++TempRace) {
@@ -4252,10 +4252,10 @@ JSBool CRaceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->GenderRestriction(static_cast<GENDER>(encaps.toInt()));
             break;
         case CRP_ARMOURCLASS:
-            gPriv->ArmourClassRestriction(static_cast<UI08>(encaps.toInt()));
+            gPriv->ArmourClassRestriction(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CRP_LANGUAGESKILLMIN:
-            gPriv->LanguageMin(static_cast<UI16>(encaps.toInt()));
+            gPriv->LanguageMin(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CRP_SKILLADJUSTMENT:
             break;
@@ -4266,10 +4266,10 @@ JSBool CRaceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->MagicResistance(encaps.toFloat());
             break;
         case CRP_VISIBLEDISTANCE:
-            gPriv->VisibilityRange(static_cast<SI08>(encaps.toInt()));
+            gPriv->VisibilityRange(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CRP_NIGHTVISION:
-            gPriv->NightVision(static_cast<UI08>(encaps.toInt()));
+            gPriv->NightVision(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         default:
             break;
@@ -4346,7 +4346,7 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->XText2(encaps.toString());
             break;
         case CSOCKP_CLICKZ:
-            gPriv->ClickZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->ClickZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSOCKP_ADDID:
             break;
@@ -4362,10 +4362,10 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         case CSOCKP_CLIENTIP:
             break;
         case CSOCKP_WALKSEQUENCE:
-            gPriv->WalkSequence(static_cast<SI16>(encaps.toInt()));
+            gPriv->WalkSequence(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSOCKP_CURRENTSPELLTYPE:
-            gPriv->CurrentSpellType(static_cast<SI08>(encaps.toInt()));
+            gPriv->CurrentSpellType(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSOCKP_LOGGING:
             gPriv->Logging(encaps.toBool());
@@ -4377,19 +4377,19 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->TargetOK(encaps.toBool());
             break;
         case CSOCKP_CLICKX:
-            gPriv->ClickX(static_cast<SI16>(encaps.toInt()));
+            gPriv->ClickX(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSOCKP_CLICKY:
-            gPriv->ClickY(static_cast<SI16>(encaps.toInt()));
+            gPriv->ClickY(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPX:
-            gPriv->PickupX(static_cast<SI16>(encaps.toInt()));
+            gPriv->PickupX(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPY:
-            gPriv->PickupY(static_cast<SI16>(encaps.toInt()));
+            gPriv->PickupY(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPZ:
-            gPriv->PickupZ(static_cast<SI08>(encaps.toInt()));
+            gPriv->PickupZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPSPOT:
             gPriv->PickupSpot(static_cast<PickupLocations>(encaps.toInt()));
@@ -4400,16 +4400,16 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->Language(static_cast<UnicodeTypes>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTMAJORVER:
-            gPriv->ClientVersionMajor(static_cast<UI08>(encaps.toInt()));
+            gPriv->ClientVersionMajor(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTMINORVER:
-            gPriv->ClientVersionMinor(static_cast<UI08>(encaps.toInt()));
+            gPriv->ClientVersionMinor(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTSUBVER:
-            gPriv->ClientVersionSub(static_cast<UI08>(encaps.toInt()));
+            gPriv->ClientVersionSub(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTLETTERVER:
-            gPriv->ClientVersionLetter(static_cast<UI08>(encaps.toInt()));
+            gPriv->ClientVersionLetter(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTTYPE:
             gPriv->ClientType(static_cast<ClientTypes>(encaps.toInt()));
@@ -4642,7 +4642,7 @@ JSBool CSkillsProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     if (!ValidateObject(myChar))
         return JS_FALSE;
 
-    UI08 skillId = static_cast<UI08>(JSVAL_TO_INT(id));
+    std::uint8_t skillId = static_cast<std::uint8_t>(JSVAL_TO_INT(id));
 
     if (myClass.ClassName() == "UOXSkills") {
         *vp = INT_TO_JSVAL(myChar->GetSkill(skillId));
@@ -4654,7 +4654,7 @@ JSBool CSkillsProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
         *vp = BOOLEAN_TO_JSVAL(myChar->SkillUsed(skillId));
     }
     else if (myClass.ClassName() == "UOXSkillsLock") {
-        *vp = INT_TO_JSVAL(static_cast<UI08>(myChar->GetSkillLock(skillId)));
+        *vp = INT_TO_JSVAL(static_cast<std::uint8_t>(myChar->GetSkillLock(skillId)));
     }
 
     return JS_TRUE;
@@ -4672,9 +4672,9 @@ JSBool CSkillsProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
 
     JSEncapsulate encaps(cx, vp);
-    UI08 skillId = static_cast<UI08>(JSVAL_TO_INT(id));
-    SI16 newSkillValue = static_cast<SI16>(encaps.toInt());
-    UI08 i = 0;
+    std::uint8_t skillId = static_cast<std::uint8_t>(JSVAL_TO_INT(id));
+    std::int16_t newSkillValue = static_cast<std::int16_t>(encaps.toInt());
+    std::uint8_t i = 0;
 
     if (myClass.ClassName() == "UOXSkills") {
         if (skillId == ALLSKILLS) {
@@ -4958,10 +4958,10 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
         }
         case CACCOUNT_LASTIP: {
             std::string ipString =
-                util::ntos(static_cast<SI32>((myAccount->lastIP & 0xFF000000) >> 24)) + "." +
-                util::ntos(static_cast<SI32>((myAccount->lastIP & 0x00FF0000) >> 16)) + "." +
-                util::ntos(static_cast<SI32>((myAccount->lastIP & 0x0000FF00) >> 8)) + "." +
-                util::ntos(static_cast<SI32>((myAccount->lastIP & 0x000000FF) % 256));
+                util::ntos(static_cast<std::int32_t>((myAccount->lastIP & 0xFF000000) >> 24)) + "." +
+                util::ntos(static_cast<std::int32_t>((myAccount->lastIP & 0x00FF0000) >> 16)) + "." +
+                util::ntos(static_cast<std::int32_t>((myAccount->lastIP & 0x0000FF00) >> 8)) + "." +
+                util::ntos(static_cast<std::int32_t>((myAccount->lastIP & 0x000000FF) % 256));
             tString = JS_NewStringCopyZ(cx, ipString.c_str());
             *vp = STRING_TO_JSVAL(tString);
             break;
@@ -5051,7 +5051,7 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
         case CACCOUNT_FIRSTLOGIN:
             break;
         case CACCOUNT_TOTALPLAYTIME:
-            myAccount->totalPlayingTime = static_cast<UI32>(encaps.toInt());
+            myAccount->totalPlayingTime = static_cast<std::uint32_t>(encaps.toInt());
             break;
         case CACCOUNT_PASSWORD: {
             std::string newPass = encaps.toString();
@@ -5067,7 +5067,7 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
             myAccount->contact = encaps.toString();
             break;
         case CACCOUNT_TIMEBAN: {
-            UI32 timeBan = static_cast<UI32>(encaps.toInt());
+            std::uint32_t timeBan = static_cast<std::uint32_t>(encaps.toInt());
             if (timeBan > 0) {
                 myAccount->flag.set(AccountEntry::AttributeFlag::BANNED, true);
                 myAccount->timeBan = GetMinutesSinceEpoch() + timeBan;
@@ -5233,7 +5233,7 @@ JSBool CResourceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval 
             gPriv->logAmt = encaps.toInt();
             break;
         case CRESP_LOGTIME: {
-            gPriv->logTime = static_cast<UI32>(encaps.toInt() * 1000);
+            gPriv->logTime = static_cast<std::uint32_t>(encaps.toInt() * 1000);
             break;
             break;
         }
@@ -5242,7 +5242,7 @@ JSBool CResourceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval 
             break;
         case CRESP_ORETIME: // gPriv->oreTime	= encaps.toInt();			break;
         {
-            gPriv->oreTime = static_cast<UI32>(encaps.toInt() * 1000);
+            gPriv->oreTime = static_cast<std::uint32_t>(encaps.toInt() * 1000);
             break;
             break;
         }
@@ -5251,7 +5251,7 @@ JSBool CResourceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval 
             break;
         case CRESP_FISHTIME: // gPriv->fishTime	= encaps.toInt();			break;
         {
-            gPriv->fishTime = static_cast<UI32>(encaps.toInt() * 1000);
+            gPriv->fishTime = static_cast<std::uint32_t>(encaps.toInt() * 1000);
             break;
             break;
         }

@@ -82,7 +82,7 @@ class CBaseTile {
     // This doesnt seem to be used, but I wonder about DFN overloads?
     //
     /*
-     auto Flag( UI08 part ) const  -> std::uint8_t
+     auto Flag( std::uint8_t part ) const  -> std::uint8_t
      {
             auto mFlags = static_cast<std::uint32_t>( flags.to_ulong() );
             auto retVal = std::uint8_t( 0 );

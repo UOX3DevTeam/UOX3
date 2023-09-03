@@ -74,21 +74,21 @@ void CGump::SetNoClose(bool myNoClose) { NoClose = myNoClose; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets Gump's Type
 // o------------------------------------------------------------------------------------------------o
-void CGump::SetType(UI32 newType) { Type = newType; }
+void CGump::SetType(std::uint32_t newType) { Type = newType; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump::SetSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets Gump's Serial
 // o------------------------------------------------------------------------------------------------o
-void CGump::SetSerial(UI32 newSerial) { Serial = newSerial; }
+void CGump::SetSerial(std::uint32_t newSerial) { Serial = newSerial; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGump::AddBackground()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a background picture
 // o------------------------------------------------------------------------------------------------o
-void CGump::AddBackground(UI16 x, UI16 y, UI16 gumpId, UI16 width, UI16 height) {
+void CGump::AddBackground(std::uint16_t x, std::uint16_t y, std::uint16_t gumpId, std::uint16_t width, std::uint16_t height) {
     TagList.push_back(util::format("resizepic %u %u %u %u %u", x, y, gumpId, width, height));
 }
 
@@ -97,7 +97,7 @@ void CGump::AddBackground(UI16 x, UI16 y, UI16 gumpId, UI16 width, UI16 height) 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a gump
 // o------------------------------------------------------------------------------------------------o
-void CGump::AddGump(UI16 x, UI16 y, UI16 gumpId) {
+void CGump::AddGump(std::uint16_t x, std::uint16_t y, std::uint16_t gumpId) {
     TagList.push_back(util::format("gumppic %u %u %u", x, y, gumpId));
 }
 
@@ -106,8 +106,8 @@ void CGump::AddGump(UI16 x, UI16 y, UI16 gumpId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a button
 // o------------------------------------------------------------------------------------------------o
-void CGump::AddButton(UI16 x, UI16 y, UI16 imageUp, UI16 imageDown, UI16 behaviour, UI16 page,
-                      UI32 uniqueId) {
+void CGump::AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t imageUp, std::uint16_t imageDown, std::uint16_t behaviour, std::uint16_t page,
+                      std::uint32_t uniqueId) {
     TagList.push_back(util::format("button %u %u %u %u %u %u %u", x, y, imageUp, imageDown,
                                    behaviour, page, uniqueId));
 }
@@ -117,8 +117,8 @@ void CGump::AddButton(UI16 x, UI16 y, UI16 imageUp, UI16 imageDown, UI16 behavio
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds an "auto-text"
 // o------------------------------------------------------------------------------------------------o
-void CGump::AddText(UI16 x, UI16 y, UI16 hue, std::string text) {
-    UI32 textId = static_cast<UI32>(TextList.size());
+void CGump::AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string text) {
+    std::uint32_t textId = static_cast<std::uint32_t>(TextList.size());
 
     TextList.push_back(text);
     TagList.push_back(util::format("text %u %u %u %u", x, y, hue, textId));
@@ -129,7 +129,7 @@ void CGump::AddText(UI16 x, UI16 y, UI16 hue, std::string text) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Starts a new page and return the new page no.
 // o------------------------------------------------------------------------------------------------o
-UI16 CGump::StartPage(void) {
+std::uint16_t CGump::StartPage(void) {
     TagList.push_back(util::format("page %u", PageCount));
 
     ++PageCount;
@@ -142,7 +142,7 @@ UI16 CGump::StartPage(void) {
 //|	Purpose		-	Callback for gumps.cpp
 // o------------------------------------------------------------------------------------------------o
 void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, SERIAL gumpSerial,
-                       [[maybe_unused]] UI32 button) {
+                       [[maybe_unused]] std::uint32_t button) {
     if (gumpSerial == 0) // Do nothing on close gump
         return;
 

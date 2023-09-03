@@ -21,9 +21,9 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of an item
 // o------------------------------------------------------------------------------------------------o
-UI32 CalcValue(CItem *i, UI32 value) {
+std::uint32_t CalcValue(CItem *i, std::uint32_t value) {
     if (i->GetType() == IT_POTION) {
-        UI32 mod = 10;
+        std::uint32_t mod = 10;
         if (i->GetTempVar(CITV_MOREX) > 500) {
             ++mod;
         }
@@ -40,7 +40,7 @@ UI32 CalcValue(CItem *i, UI32 value) {
     }
 
     if (i->GetRank() > 0 && i->GetRank() < 10 && cwmWorldState->ServerData()->RankSystemStatus()) {
-        value = static_cast<UI32>(i->GetRank() * value) / 10;
+        value = static_cast<std::uint32_t>(i->GetRank() * value) / 10;
     }
     if (value < 1) {
         value = 1;
@@ -50,7 +50,7 @@ UI32 CalcValue(CItem *i, UI32 value) {
         i->SetRndValueRate(0);
     }
     if (i->GetRndValueRate() != 0 && cwmWorldState->ServerData()->TradeSystemStatus()) {
-        value += static_cast<UI32>(value * i->GetRndValueRate()) / 1000;
+        value += static_cast<std::uint32_t>(value * i->GetRndValueRate()) / 1000;
     }
     if (value < 1) {
         value = 1;
@@ -63,25 +63,25 @@ UI32 CalcValue(CItem *i, UI32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the value of a good
 // o------------------------------------------------------------------------------------------------o
-UI32 CalcGoodValue(CTownRegion *tReg, CItem *i, UI32 value, bool isSelling) {
+std::uint32_t CalcGoodValue(CTownRegion *tReg, CItem *i, std::uint32_t value, bool isSelling) {
     if (tReg == nullptr)
         return value;
 
-    SI16 good = i->GetGood();
-    SI32 regvalue = 0;
+    std::int16_t good = i->GetGood();
+    std::int32_t regvalue = 0;
 
     if (good <= -1) {
         return value;
     }
 
     if (isSelling) {
-        regvalue = tReg->GetGoodSell(static_cast<UI08>(i->GetGood()));
+        regvalue = tReg->GetGoodSell(static_cast<std::uint8_t>(i->GetGood()));
     }
     else {
-        regvalue = tReg->GetGoodBuy(static_cast<UI08>(i->GetGood()));
+        regvalue = tReg->GetGoodBuy(static_cast<std::uint8_t>(i->GetGood()));
     }
 
-    UI32 x = static_cast<UI32>(value * abs(regvalue)) / 1000;
+    std::uint32_t x = static_cast<std::uint32_t>(value * abs(regvalue)) / 1000;
 
     if (regvalue < 0) {
         value -= x;
@@ -104,8 +104,8 @@ bool ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 //|	Purpose		-	Called when player buys an item from a vendor
 // o------------------------------------------------------------------------------------------------o
 bool CPIBuyItem::Handle(void) {
-    UI16 i;
-    UI32 totalPlayerGold = 0, totalGoldCost = 0;
+    std::uint16_t i;
+    std::uint32_t totalPlayerGold = 0, totalGoldCost = 0;
     bool soldout = false, clear = false;
     CChar *mChar = tSock->CurrcharObj();
     CItem *p = mChar->GetPackItem();
@@ -113,15 +113,15 @@ bool CPIBuyItem::Handle(void) {
         return true;
 
     std::vector<CItem *> bItems;
-    std::vector<UI08> layer;
-    std::vector<UI16> amount;
+    std::vector<std::uint8_t> layer;
+    std::vector<std::uint16_t> amount;
 
     // vector for storing all objects that actually end up in user backpack
     std::vector<CItem *> boughtItems;
-    std::vector<UI16> boughtItemAmounts;
+    std::vector<std::uint16_t> boughtItemAmounts;
 
     CChar *npc = CalcCharObjFromSer(tSock->GetDWord(3));
-    UI16 itemTotal = static_cast<UI16>((tSock->GetWord(1) - 8) / 7);
+    std::uint16_t itemTotal = static_cast<std::uint16_t>((tSock->GetWord(1) - 8) / 7);
     if (itemTotal > 511)
         return true;
 
@@ -130,7 +130,7 @@ bool CPIBuyItem::Handle(void) {
     bItems.resize(itemTotal);
     amount.resize(itemTotal);
     layer.resize(itemTotal);
-    SI32 baseOffset = 0;
+    std::int32_t baseOffset = 0;
     for (i = 0; i < itemTotal; ++i) {
         baseOffset = 7 * i;
         layer[i] = tSock->GetByte(8 + static_cast<size_t>(baseOffset));
@@ -141,7 +141,7 @@ bool CPIBuyItem::Handle(void) {
 
     bool didUseBank = true;
     bool tryUsingBank =
-        (totalGoldCost >= static_cast<UI32>(cwmWorldState->ServerData()->BuyThreshold()));
+        (totalGoldCost >= static_cast<std::uint32_t>(cwmWorldState->ServerData()->BuyThreshold()));
     if (tryUsingBank) {
         // Count gold in bank if amount is higher than threshold
         totalPlayerGold = GetBankCount(mChar, 0x0EED);
@@ -228,7 +228,7 @@ bool CPIBuyItem::Handle(void) {
             }
             CItem *biTemp;
             CItem *iMade = nullptr;
-            UI16 j;
+            std::uint16_t j;
             for (i = 0; i < itemTotal; ++i) {
                 biTemp = bItems[i];
                 iMade = nullptr;
@@ -249,12 +249,12 @@ bool CPIBuyItem::Handle(void) {
                                 CItem *biTempCont = static_cast<CItem *>(biTemp->GetCont());
                                 if (biTempCont->GetLayer() == 0x1A) {
                                     // Only do this for new items sold from vendor's sell container
-                                    SI16 iMadeHP = iMade->GetHP();
-                                    SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+                                    std::int16_t iMadeHP = iMade->GetHP();
+                                    std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                     if (iMadeMaxHP > iMadeHP) {
                                         // Randomize the item's HP from HP to MaxHP
                                         iMade->SetHP(
-                                            static_cast<SI16>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                            static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
                                     }
                                 }
                                 iMade->SetCont(p);
@@ -284,12 +284,12 @@ bool CPIBuyItem::Handle(void) {
                             for (j = 0; j < amount[i]; ++j) {
                                 iMade = Items->DupeItem(tSock, biTemp, 1);
                                 if (iMade != nullptr) {
-                                    SI16 iMadeHP = iMade->GetHP();
-                                    SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+                                    std::int16_t iMadeHP = iMade->GetHP();
+                                    std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                     if (iMadeMaxHP > iMadeHP) {
                                         // Randomize the item's HP from HP to MaxHP
                                         iMade->SetHP(
-                                            static_cast<SI16>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                            static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
                                     }
                                     iMade->SetCont(p);
                                     iMade->PlaceInPack();
@@ -389,9 +389,9 @@ bool CPISellItem::Handle(void) {
             return true;
 
         CItem *j = nullptr, *k = nullptr, *l = nullptr;
-        UI16 amt = 0, maxsell = 0;
-        UI08 i = 0;
-        UI32 totgold = 0, value = 0;
+        std::uint16_t amt = 0, maxsell = 0;
+        std::uint8_t i = 0;
+        std::uint32_t totgold = 0, value = 0;
         for (i = 0; i < tSock->GetByte(8); ++i) {
             // j = CalcItemObjFromSer( tSock->GetDWord( 9 + (6 * static_cast<size_t>( i ))));
             amt = tSock->GetWord(13 + (6 * static_cast<size_t>(i)));
@@ -421,7 +421,7 @@ bool CPISellItem::Handle(void) {
                 // If present and a value of "false" or 0 was returned from the script, halt the
                 // sale
                 bool saleHalted = false;
-                std::vector<UI16> jScriptTriggers = j->GetScriptTriggers();
+                std::vector<std::uint16_t> jScriptTriggers = j->GetScriptTriggers();
                 for (auto scriptTrig : jScriptTriggers) {
                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute != nullptr) {
@@ -437,7 +437,7 @@ bool CPISellItem::Handle(void) {
                 // require scripts on every item sold Only run this check if the sale was not halted
                 // by a script on the item itself, though
                 if (!saleHalted) {
-                    std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+                    std::vector<std::uint16_t> nScriptTriggers = n->GetScriptTriggers();
                     for (auto scriptTrig : nScriptTriggers) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
@@ -514,7 +514,7 @@ bool CPISellItem::Handle(void) {
                 }
                 if (l) {
                     // Check for onSoldToVendor event on item
-                    std::vector<UI16> lScriptTriggers = l->GetScriptTriggers();
+                    std::vector<std::uint16_t> lScriptTriggers = l->GetScriptTriggers();
                     for (auto scriptTrig : lScriptTriggers) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
@@ -527,7 +527,7 @@ bool CPISellItem::Handle(void) {
                     }
 
                     // Check for onSoldToVendor event on vendor
-                    std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+                    std::vector<std::uint16_t> nScriptTriggers = n->GetScriptTriggers();
                     for (auto scriptTrig : nScriptTriggers) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
@@ -577,8 +577,8 @@ void RestockNPC(CChar &i, bool stockAll) {
                     c->SetRestock(0);
                 }
                 else if (c->GetRestock()) {
-                    UI16 stockAmt =
-                        std::min(c->GetRestock(), static_cast<UI16>((c->GetRestock() / 2) + 1));
+                    std::uint16_t stockAmt =
+                        std::min(c->GetRestock(), static_cast<std::uint16_t>((c->GetRestock() / 2) + 1));
                     c->IncAmount(stockAmt);
                     c->SetRestock(c->GetRestock() - stockAmt);
                 }
@@ -592,7 +592,7 @@ void RestockNPC(CChar &i, bool stockAll) {
     }
 }
 
-bool RestockFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) {
+bool RestockFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
     CChar *c = static_cast<CChar *>(a);
     if (ValidateObject(c)) {
@@ -608,6 +608,6 @@ bool RestockFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) {
 //|	Purpose		-	Restock all NPC Vendors
 // o------------------------------------------------------------------------------------------------o
 void Restock(bool stockAll) {
-    UI32 b = (stockAll ? 1 : 0);
+    std::uint32_t b = (stockAll ? 1 : 0);
     ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &RestockFunctor);
 }

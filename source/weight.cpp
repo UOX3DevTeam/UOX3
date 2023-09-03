@@ -92,7 +92,7 @@
 
 CWeight *Weight = nullptr;
 
-// const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
+// const std::int32_t MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeight::CalcWeight()
 //|	Date		-	2/23/2003
@@ -103,9 +103,9 @@ CWeight *Weight = nullptr;
 //|							but is available for bruteforce weight
 // updating
 // o------------------------------------------------------------------------------------------------o
-SI32 CWeight::CalcWeight(CItem *pack) {
-    SI32 totalWeight = 0;
-    SI32 contWeight = 0;
+std::int32_t CWeight::CalcWeight(CItem *pack) {
+    std::int32_t totalWeight = 0;
+    std::int32_t contWeight = 0;
 
     GenericList<CItem *> *pCont = pack->GetContainsList();
     for (CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next()) {
@@ -127,7 +127,7 @@ SI32 CWeight::CalcWeight(CItem *pack) {
             {
                 CTile &tile = Map->SeekTile(i->GetId());
                 contWeight =
-                    static_cast<SI32>(tile.Weight() * 100); // Add the weight of the container
+                    static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
             }
             contWeight += CalcWeight(i); // Find and add the weight of the items in the container
             i->SetWeight(contWeight, false); // Also update the weight property of the container
@@ -154,9 +154,9 @@ SI32 CWeight::CalcWeight(CItem *pack) {
 // be called but is available for
 //|							bruteforce weight updating
 // o------------------------------------------------------------------------------------------------o
-SI32 CWeight::CalcCharWeight(CChar *mChar) {
-    SI32 totalWeight = 0;
-    SI32 contWeight = 0;
+std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
+    std::int32_t totalWeight = 0;
+    std::int32_t contWeight = 0;
 
     for (CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem()) {
         if (!ValidateObject(i))
@@ -170,7 +170,7 @@ SI32 CWeight::CalcCharWeight(CChar *mChar) {
                 {
                     CTile &tile = Map->SeekTile(i->GetId());
                     contWeight =
-                        static_cast<SI32>(tile.Weight() * 100); // Add the weight of the container
+                        static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
                 }
                 contWeight +=
                     CalcWeight(i); // Find and add the weight of the items in the container
@@ -196,12 +196,12 @@ SI32 CWeight::CalcCharWeight(CChar *mChar) {
 //|							false if the item is over the max weight
 // limit
 // o------------------------------------------------------------------------------------------------o
-bool CWeight::CalcAddWeight(CItem *item, SI32 &totalWeight) {
-    SI32 itemWeight = item->GetWeight();
+bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
+    std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) // If they have no weight find the weight of the tile
     {
         CTile &tile = Map->SeekTile(item->GetId());
-        itemWeight = static_cast<SI32>(tile.Weight() * 100);
+        itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
 
     if (item->GetAmount() > 1) {
@@ -228,12 +228,12 @@ bool CWeight::CalcAddWeight(CItem *item, SI32 &totalWeight) {
 //|							false if the item is over the max weight limit or
 //less than 0
 // o------------------------------------------------------------------------------------------------o
-bool CWeight::CalcSubtractWeight(CItem *item, SI32 &totalWeight) {
-    SI32 itemWeight = item->GetWeight();
+bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
+    std::int32_t itemWeight = item->GetWeight();
     if (itemWeight == 0) // If they have no weight find the weight of the tile
     {
         CTile &tile = Map->SeekTile(item->GetId());
-        itemWeight = static_cast<SI32>(tile.Weight() * 100);
+        itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
 
     if (item->GetAmount() > 1) {
@@ -274,7 +274,7 @@ void CWeight::AddItemWeight(CBaseObject *getObj, CItem *item) {
 //|	Purpose		-	Adds an items weight to the total weight of the character
 // o------------------------------------------------------------------------------------------------o
 void CWeight::AddItemWeight(CChar *mChar, CItem *item) {
-    SI32 totalWeight = mChar->GetWeight();
+    std::int32_t totalWeight = mChar->GetWeight();
 
     if (item->GetCont() != mChar || IsWeightedContainer(item)) {
         if (CalcAddWeight(item, totalWeight)) {
@@ -294,7 +294,7 @@ void CWeight::AddItemWeight(CChar *mChar, CItem *item) {
 //|							the packs container in the process
 // o------------------------------------------------------------------------------------------------o
 void CWeight::AddItemWeight(CItem *pack, CItem *item) {
-    SI32 totalWeight = pack->GetWeight();
+    std::int32_t totalWeight = pack->GetWeight();
 
     if (CalcAddWeight(item, totalWeight)) {
         pack->SetWeight(totalWeight, false); // why false?
@@ -367,7 +367,7 @@ void CWeight::SubtractItemWeight(CBaseObject *getObj, CItem *item) {
 //|	Purpose		-	Subtracts an items weight from the total weight of the character
 // o------------------------------------------------------------------------------------------------o
 void CWeight::SubtractItemWeight(CChar *mChar, CItem *item) {
-    SI32 totalWeight = mChar->GetWeight();
+    std::int32_t totalWeight = mChar->GetWeight();
 
     if (item->GetCont() != mChar || IsWeightedContainer(item)) {
         if (CalcSubtractWeight(item, totalWeight)) {
@@ -387,7 +387,7 @@ void CWeight::SubtractItemWeight(CChar *mChar, CItem *item) {
 //|							the packs container in the process
 // o------------------------------------------------------------------------------------------------o
 void CWeight::SubtractItemWeight(CItem *pack, CItem *item) {
-    SI32 totalWeight = pack->GetWeight();
+    std::int32_t totalWeight = pack->GetWeight();
 
     if (CalcSubtractWeight(item, totalWeight)) {
         pack->SetWeight(totalWeight, false);
@@ -446,9 +446,9 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
                         // have a container weight limit
         return CheckCharWeight(ourChar, static_cast<CChar *>(pack->GetCont()), item);
 
-    const SI32 packWeight = pack->GetWeight();
-    SI32 packWeightMax = pack->GetWeightMax();
-    SI32 itemWeight = item->GetWeight();
+    const std::int32_t packWeight = pack->GetWeight();
+    std::int32_t packWeightMax = pack->GetWeightMax();
+    std::int32_t itemWeight = item->GetWeight();
     if (item->GetAmount() > 1) {
         itemWeight *= item->GetAmount();
     }
@@ -474,11 +474,11 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
 // added |							or true if not based upon
 // MAX_CHARWEIGHT
 // o------------------------------------------------------------------------------------------------o
-bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, UI16 amount) {
+bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, std::uint16_t amount) {
     if (!ValidateObject(mChar))
         return true;
 
-    SI32 MAX_CHARWEIGHT = 0;
+    std::int32_t MAX_CHARWEIGHT = 0;
     if (mChar->IsGM()) {
         MAX_CHARWEIGHT = (MAX_WEIGHT - 1); // Weight on GM maxes only at our logical limit
     }
@@ -486,8 +486,8 @@ bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, UI16 am
         MAX_CHARWEIGHT = 200000; // Normal characters have hardcap of 2,000 stones
     }
 
-    const SI32 charWeight = mChar->GetWeight();
-    SI32 itemWeight = 0;
+    const std::int32_t charWeight = mChar->GetWeight();
+    std::int32_t itemWeight = 0;
     if (ourChar != mChar) // Item weight has already been added to the character if we picked it up
     {
         itemWeight = item->GetWeight();

@@ -9,7 +9,7 @@
 
 class CSocket;
 
-void MultiGumpCallback(CSocket *mySocket, SERIAL GumpSerial, UI32 Button);
+void MultiGumpCallback(CSocket *mySocket, SERIAL GumpSerial, std::uint32_t Button);
 
 class CGump {
   private:
@@ -17,9 +17,9 @@ class CGump {
     std::vector<std::string> TextList;
     bool NoMove;
     bool NoClose;
-    UI32 Serial;
-    UI16 PageCount; // Shouldn't have more than 65535 pages
-    UI32 Type;
+    std::uint32_t Serial;
+    std::uint16_t PageCount; // Shouldn't have more than 65535 pages
+    std::uint32_t Type;
 
   public:
     CGump(bool myNoMove, bool myNoClose);
@@ -29,52 +29,52 @@ class CGump {
     void Send(CSocket *target);
 
     // Common add functions
-    void AddBackground(UI16 x, UI16 y, UI16 GumpId, UI16 width, UI16 height);
-    void AddGump(UI16 x, UI16 y, UI16 GumpId);
-    void AddButton(UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page,
-                   UI32 UniqueId);
-    void AddText(UI16 x, UI16 y, UI16 hue, std::string Text);
-    UI16 StartPage(void);
+    void AddBackground(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId, std::uint16_t width, std::uint16_t height);
+    void AddGump(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId);
+    void AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t ImageUp, std::uint16_t ImageDown, std::uint16_t Behaviour, std::uint16_t Page,
+                   std::uint32_t UniqueId);
+    void AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string Text);
+    std::uint16_t StartPage(void);
 
     void SetNoMove(bool myNoMove);
     void SetNoClose(bool myNoClose);
 
-    void SetType(UI32 newType);
-    void SetSerial(UI32 newSerial);
+    void SetType(std::uint32_t newType);
+    void SetSerial(std::uint32_t newSerial);
 };
 
 class CGumpDisplay {
   private:
     struct GumpInfo_st {
         std::string name;
-        UI32 value;
-        UI08 type;
+        std::uint32_t value;
+        std::uint8_t type;
         std::string stringValue;
         // acceptable type values
-        // 0 -> straight plain UI32
-        // 1 -> hex UI32
-        // 2 -> UI32 separated into 4 parts, decimal
-        // 3 -> UI32 separated into 4 parts, hex
+        // 0 -> straight plain std::uint32_t
+        // 1 -> hex std::uint32_t
+        // 2 -> std::uint32_t separated into 4 parts, decimal
+        // 3 -> std::uint32_t separated into 4 parts, hex
         // 4 -> string
         // 5 -> 2 byte hex display
         // 6 -> 2 byte decimal display
     };
 
     std::vector<GumpInfo_st *> gumpData;
-    UI16 width, height; // gump width / height
+    std::uint16_t width, height; // gump width / height
     CSocket *toSendTo;
     std::vector<std::string> one, two;
     std::string title;
 
   public:
     void AddData(GumpInfo_st *toAdd);
-    void AddData(std::string toAdd, UI32 value, UI08 type = 0);
-    void AddData(std::string toAdd, const std::string &toSet, UI08 type = 4);
+    void AddData(std::string toAdd, std::uint32_t value, std::uint8_t type = 0);
+    void AddData(std::string toAdd, const std::string &toSet, std::uint8_t type = 4);
     CGumpDisplay(CSocket *target);
-    CGumpDisplay(CSocket *target, UI16 gumpWidth, UI16 gumpHeight);
+    CGumpDisplay(CSocket *target, std::uint16_t gumpWidth, std::uint16_t gumpHeight);
     ~CGumpDisplay();
     void SetTitle(const std::string &newTitle);
-    void Send(UI32 gumpNum, bool isMenu, SERIAL serial);
+    void Send(std::uint32_t gumpNum, bool isMenu, SERIAL serial);
     void Delete(void);
 };
 

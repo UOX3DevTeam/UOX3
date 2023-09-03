@@ -22,10 +22,10 @@ using namespace std::string_literals;
 CDictionaryContainer *Dictionary;
 static auto invalid_dictionary_string = std::string();
 
-// const SI32 dictCANTOPEN			= -1;
-// const SI32 dictDUPESECTION		= -2;
-// const SI32 dictDUPEOPENBRACE		= -3;
-// const SI32 dictNOOPENBRACE		= -4;
+// const std::int32_t dictCANTOPEN			= -1;
+// const std::int32_t dictDUPESECTION		= -2;
+// const std::int32_t dictDUPEOPENBRACE		= -3;
+// const std::int32_t dictNOOPENBRACE		= -4;
 
 // o------------------------------------------------------------------------------------------------o
 //|	CDictionary::CDictionary()
@@ -108,7 +108,7 @@ auto CDictionary::ShowList() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load dictionary file for selected language
 // o------------------------------------------------------------------------------------------------o
-auto CDictionary::LoadDictionary(const std::string filepath, const std::string &language) -> SI32 {
+auto CDictionary::LoadDictionary(const std::string filepath, const std::string &language) -> std::int32_t {
     if (!filepath.empty()) {
         pathToDictionary = filepath;
     }
@@ -128,7 +128,7 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
         Console::shared().PrintSpecial(CRED, "failed");
     }
 
-    return static_cast<SI32>(msgdata.size());
+    return static_cast<std::int32_t>(msgdata.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -221,8 +221,8 @@ CDictionaryContainer::CDictionaryContainer() { defaultLang = ZERO; }
 //|	Purpose		-	Loop through all supported dictionary languages and load each
 // dictionary
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::LoadDictionaries(const std::string &filepath) -> SI32 {
-    SI32 rValue = 0;
+auto CDictionaryContainer::LoadDictionaries(const std::string &filepath) -> std::int32_t {
+    std::int32_t rValue = 0;
     for (auto i = static_cast<int>(DL_DEFAULT); i < static_cast<int>(DL_COUNT); i++) {
         auto basepath = filepath;
         auto buildName = std::string();
@@ -253,7 +253,7 @@ auto CDictionaryContainer::operator[](int message_number) -> std::string & {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::GetEntry(const SI32 message_number, const UnicodeTypes toDisp)
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const UnicodeTypes toDisp)
     -> std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
@@ -269,8 +269,8 @@ auto CDictionaryContainer::GetEntry(const SI32 message_number, const UnicodeType
     }
 
     auto typetouse = toDisp;
-    if ((static_cast<SI32>(toDisp) < 0) ||
-        (static_cast<SI32>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
+    if ((static_cast<std::int32_t>(toDisp) < 0) ||
+        (static_cast<std::int32_t>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
         typetouse = ZERO;
     }
     try {
@@ -292,7 +292,7 @@ auto CDictionaryContainer::GetEntry(const SI32 message_number, const UnicodeType
     }
 }
 //==================================================================================================
-auto CDictionaryContainer::GetEntry(const SI32 message_number, const UnicodeTypes toDisp) const
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const UnicodeTypes toDisp) const
     -> const std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
@@ -308,8 +308,8 @@ auto CDictionaryContainer::GetEntry(const SI32 message_number, const UnicodeType
     }
 
     auto typetouse = toDisp;
-    if ((static_cast<SI32>(toDisp) < 0) ||
-        (static_cast<SI32>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
+    if ((static_cast<std::int32_t>(toDisp) < 0) ||
+        (static_cast<std::int32_t>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
         typetouse = ZERO;
     }
     try {

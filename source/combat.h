@@ -36,18 +36,18 @@ class CHandleCombat {
   private:
     bool HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg);
 
-    bool CastSpell(CChar *mChar, CChar *ourTarg, SI08 spellNum);
+    bool CastSpell(CChar *mChar, CChar *ourTarg, std::int8_t spellNum);
 
-    SI16 CalcDamage(CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc);
+    std::int16_t CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc);
 
     void PlaySwingAnimations(CChar *mChar);
     void PlayHitSoundEffect(CChar *mChar, CItem *mWeapon);
     void PlayMissedSoundEffect(CChar *mChar);
 
-    void HandleNPCSpellAttack(CChar *mChar, CChar *ourTarg, UI16 playerDistance);
+    void HandleNPCSpellAttack(CChar *mChar, CChar *ourTarg, std::uint16_t playerDistance);
 
-    CItem *CheckDef(CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType);
-    CItem *GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false,
+    CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, WeatherType resistType);
+    CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false,
                        WeatherType resistType = NONE);
 
   public:
@@ -63,30 +63,30 @@ class CHandleCombat {
     void CombatLoop(CSocket *mSock, CChar &mChar);
     void Kill(CChar *mChar, CChar *ourTarg);
 
-    void DoHitMessage(CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage);
-    SI08 CalculateHitLoc(void);
-    UI16 CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL);
-    SI16 CalcAttackPower(CChar *mChar, bool doDamage = false);
-    SI16 CalcLowDamage(CChar *p);
-    SI16 CalcHighDamage(CChar *p);
-    UI08 GetCombatSkill(CItem *wItem);
-    UI08 GetBowType(CItem *bItem);
-    UI08 GetWeaponType(CItem *i);
+    void DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLoc, std::int16_t damage);
+    std::int8_t CalculateHitLoc(void);
+    std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, WeatherType element = PHYSICAL);
+    std::int16_t CalcAttackPower(CChar *mChar, bool doDamage = false);
+    std::int16_t CalcLowDamage(CChar *p);
+    std::int16_t CalcHighDamage(CChar *p);
+    std::uint8_t GetCombatSkill(CItem *wItem);
+    std::uint8_t GetBowType(CItem *bItem);
+    std::uint8_t GetWeaponType(CItem *i);
 
     CItem *GetShield(CChar *mChar);
     CItem *GetWeapon(CChar *mChar);
 
-    SI16 ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
-                            UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage);
-    SI16 ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
-                               UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage,
+    std::int16_t ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+                            std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
+    std::int16_t ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+                               std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage,
                                bool doArmorDamage);
 
-    SI16 AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc,
-                          UI08 getFightSkill);
-    SI16 AdjustArmorClassDamage(CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage,
-                                UI08 hitLoc);
-    void SpawnGuard(CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z);
+    std::int16_t AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc,
+                          std::uint8_t getFightSkill);
+    std::int16_t AdjustArmorClassDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage,
+                                std::uint8_t hitLoc);
+    void SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, std::int16_t y, std::int8_t z);
 
     // Combat Animations & Sound Effects
     void CombatAnimsNew(CChar *mChar);

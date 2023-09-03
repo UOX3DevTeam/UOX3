@@ -101,11 +101,11 @@ class Party {
      in the party.
      @par
      CChar *find				Character to find the party entry for
-     SI32 *location			A pointer to the storage of the location, if any,
+     std::int32_t *location			A pointer to the storage of the location, if any,
      so that we can index quickly into the members[]
      to find the character again.  Used internally.
      */
-    CPartyEntry *Find(CChar *find, SI32 *location = nullptr);
+    CPartyEntry *Find(CChar *find, std::int32_t *location = nullptr);
     /** Returns whether a member is in the party or not
      @remarks
      This returns true if the character exists in the party

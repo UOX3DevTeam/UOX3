@@ -12,11 +12,11 @@ class CChar;
 
 struct JailOccupant_st {
     SERIAL pSerial;
-    SI16 x;
-    SI16 y;
-    SI08 z;
-    UI08 world;
-    UI16 instanceId;
+    std::int16_t x;
+    std::int16_t y;
+    std::int8_t z;
+    std::uint8_t world;
+    std::uint16_t instanceId;
     time_t releaseTime;
     JailOccupant_st()
         : pSerial(INVALIDSERIAL), x(0), y(0), z(0), world(0), instanceId(0), releaseTime(0) {}
@@ -24,11 +24,11 @@ struct JailOccupant_st {
 
 class CJailCell {
   private:
-    SI16 x;
-    SI16 y;
-    SI08 z;
-    UI08 world;
-    UI16 instanceId;
+    std::int16_t x;
+    std::int16_t y;
+    std::int8_t z;
+    std::uint8_t world;
+    std::uint16_t instanceId;
     std::vector<JailOccupant_st *> playersInJail;
 
   public:
@@ -36,17 +36,17 @@ class CJailCell {
     ~CJailCell();
     bool IsEmpty(void) const;
     size_t JailedPlayers(void) const;
-    SI16 X(void) const;
-    SI16 Y(void) const;
-    SI08 Z(void) const;
-    UI08 World(void) const;
-    UI16 InstanceId(void) const;
-    void X(SI16 nVal);
-    void Y(SI16 nVal);
-    void Z(SI08 nVal);
-    void World(UI08 nVal);
-    void InstanceId(UI16 nVal);
-    void AddOccupant(CChar *pAdd, SI32 secsFromNow);
+    std::int16_t X(void) const;
+    std::int16_t Y(void) const;
+    std::int8_t Z(void) const;
+    std::uint8_t World(void) const;
+    std::uint16_t InstanceId(void) const;
+    void X(std::int16_t nVal);
+    void Y(std::int16_t nVal);
+    void Z(std::int8_t nVal);
+    void World(std::uint8_t nVal);
+    void InstanceId(std::uint16_t nVal);
+    void AddOccupant(CChar *pAdd, std::int32_t secsFromNow);
     void EraseOccupant(size_t occupantId);
     JailOccupant_st *Occupant(size_t occupantId);
     void PeriodicCheck(void);
@@ -65,7 +65,7 @@ class CJailSystem {
     void ReadData(void);
     void WriteData(void);
     void PeriodicCheck(void);
-    bool JailPlayer(CChar *toJail, SI32 numSecsToJail);
+    bool JailPlayer(CChar *toJail, std::int32_t numSecsToJail);
     void ReleasePlayer(CChar *toRelase);
 };
 

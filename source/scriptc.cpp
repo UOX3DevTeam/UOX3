@@ -55,7 +55,7 @@ void Script::Reload(bool disp) {
         input.open(filename.c_str(), std::ios_base::in);
         if (input.is_open()) {
             std::string sLine;
-            SI32 count = 0;
+            std::int32_t count = 0;
             while (!input.eof() && !input.fail()) {
                 input.getline(line, 2047);
                 line[input.gcount()] = 0;

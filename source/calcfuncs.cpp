@@ -63,7 +63,7 @@ CMultiObj *CalcMultiFromSer(SERIAL targSerial) {
 // on world load, and when any of the
 //|					item's location and/or container properties change
 // o--------------------------------------------------------------------------
-CTownRegion *CalcRegionFromXY(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId,
+CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,
                               CBaseObject *mObj) {
     // Reset sub region of character
     if (ValidateObject(mObj)) {

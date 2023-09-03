@@ -68,60 +68,60 @@ enum PackTypes {
 
 class cItem {
   public:
-    CItem *DupeItem(CSocket *s, CItem *i, UI32 amount);
+    CItem *DupeItem(CSocket *s, CItem *i, std::uint32_t amount);
     void GlowItem(CItem *i);
     void AddRespawnItem(CItem *s, const std::string &x, const bool inCont,
-                        const bool randomItem = false, UI16 itemAmount = 1,
+                        const bool randomItem = false, std::uint16_t itemAmount = 1,
                         bool useLootlist = false);
     void CheckEquipment(CChar *p);
     void StoreItemRandomValue(CItem *i, CTownRegion *tReg);
     PackTypes GetPackType(CItem *i);
 
-    CItem *CreateItem(CSocket *mSock, CChar *mChar, const UI16 itemId, const UI16 iAmount,
-                      const UI16 iColour, const ObjectType itemType, bool inPack = false,
-                      bool shouldSave = true, UI08 worldNumber = 0, UI16 instanceId = 0,
-                      SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127);
+    CItem *CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,
+                      const std::uint16_t iColour, const ObjectType itemType, bool inPack = false,
+                      bool shouldSave = true, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0,
+                      std::int16_t xLoc = -1, std::int16_t yLoc = -1, std::int8_t zLoc = 127);
     CItem *CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,
-                            const UI16 iAmount, const ObjectType itemType, bool inPack = false,
-                            const UI16 iColor = 0xFFFF, bool shouldSave = true);
-    CItem *CreateBaseScriptItem(CItem *mCont, std::string ourItem, const UI08 worldNumber,
-                                const UI16 iAmount, const UI16 instanceId = 0,
-                                const ObjectType itemType = OT_ITEM, const UI16 iColor = 0xFFFF,
+                            const std::uint16_t iAmount, const ObjectType itemType, bool inPack = false,
+                            const std::uint16_t iColor = 0xFFFF, bool shouldSave = true);
+    CItem *CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNumber,
+                                const std::uint16_t iAmount, const std::uint16_t instanceId = 0,
+                                const ObjectType itemType = OT_ITEM, const std::uint16_t iColor = 0xFFFF,
                                 bool shouldSave = true);
-    CMultiObj *CreateMulti(const std::string &cName, const UI16 itemId, const bool isBoat,
-                           const UI16 worldNum, const UI16 instanceId, bool isBaseMulti = false);
+    CMultiObj *CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat,
+                           const std::uint16_t worldNum, const std::uint16_t instanceId, bool isBaseMulti = false);
     CItem *CreateRandomItem(CSocket *mSock, const std::string &itemList);
-    CItem *CreateBaseItem(const UI08 worldNumber, const ObjectType itemType = OT_ITEM,
-                          const UI16 instanceId = 0, bool shouldSave = true);
-    CItem *CreateRandomItem(CItem *mCont, const std::string &sItemList, const UI08 worldNumber,
-                            const UI16 instanceId = 0, bool shouldSave = true,
+    CItem *CreateBaseItem(const std::uint8_t worldNumber, const ObjectType itemType = OT_ITEM,
+                          const std::uint16_t instanceId = 0, bool shouldSave = true);
+    CItem *CreateRandomItem(CItem *mCont, const std::string &sItemList, const std::uint8_t worldNumber,
+                            const std::uint16_t instanceId = 0, bool shouldSave = true,
                             bool useLootlist = false);
 
   private:
     void GetScriptItemSettings(CItem *iCreated);
     CItem *PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack,
-                     UI08 worldNumber = 0, UI16 instanceId = 0, SI16 xLoc = -1, SI16 yLoc = -1,
-                     SI08 zLoc = 127);
+                     std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0, std::int16_t xLoc = -1, std::int16_t yLoc = -1,
+                     std::int8_t zLoc = 127);
 };
 
 class CCharStuff {
   private:
-    void FindSpotForNPC(CChar *c, const SI16 originX, const SI16 originY, const SI16 xAway,
-                        const SI16 yAway, const SI08 z, const UI08 worldNumber,
-                        const UI16 instanceId);
+    void FindSpotForNPC(CChar *c, const std::int16_t originX, const std::int16_t originY, const std::int16_t xAway,
+                        const std::int16_t yAway, const std::int8_t z, const std::uint8_t worldNumber,
+                        const std::uint16_t instanceId);
     void LoadShopList(const std::string &list, CChar *c);
     CItem *AddRandomLoot(CItem *s, const std::string &lootlist, bool shouldSave = true);
 
   public:
     CChar *CreateBaseNPC(std::string ourNPC, bool shouldSave = true);
     auto CreateRandomNPC(const std::string &npcList) -> CChar *;
-    auto ChooseNpcToCreate(const std::vector<std::pair<std::string, UI16>> npcListVector)
+    auto ChooseNpcToCreate(const std::vector<std::pair<std::string, std::uint16_t>> npcListVector)
         -> std::string;
     auto NpcListLookup(const std::string &npclist) -> std::string;
 
     CChar *CreateNPC(CSpawnItem *iSpawner, const std::string &npc);
-    CChar *CreateNPCxyz(const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber,
-                        UI16 instanceId, bool useNpcList = false);
+    CChar *CreateNPCxyz(const std::string &npc, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
+                        std::uint16_t instanceId, bool useNpcList = false);
     void PostSpawnUpdate(CChar *cCreated);
     bool ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, std::string sectionId,
                          bool isGate = false);

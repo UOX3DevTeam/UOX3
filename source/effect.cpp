@@ -26,7 +26,7 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a characters death animation and sends it to nearby players
 // o------------------------------------------------------------------------------------------------o
-void cEffects::DeathAction(CChar *s, CItem *x, UI08 fallDirection) {
+void cEffects::DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection) {
     CPDeathAction toSend((*s), (*x));
     toSend.FallDirection(fallDirection);
     for (auto &mSock : FindNearbyPlayers(s)) {
@@ -44,15 +44,15 @@ void cEffects::DeathAction(CChar *s, CItem *x, UI08 fallDirection) {
 //|	Purpose		-	Spawns a blood effect item and returns the newly created object to
 // caller
 // o------------------------------------------------------------------------------------------------o
-CItem *cEffects::SpawnBloodEffect(UI08 worldNum, UI16 instanceId, UI16 bloodColour,
+CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour,
                                   BloodTypes bloodType) {
     // Use default blood decay timer from ini setting
     R32 bloodDecayTimer =
         static_cast<R32>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY));
 
     // Blood effects, sorted by size of effect from small to large
-    std::vector<UI16> bloodIds{0x1645, 0x122C, 0x122E, 0x122B, 0x122D, 0x122A, 0x122F};
-    UI16 bloodEffectId = 0x122c;
+    std::vector<std::uint16_t> bloodIds{0x1645, 0x122C, 0x122E, 0x122B, 0x122D, 0x122A, 0x122F};
+    std::uint16_t bloodEffectId = 0x122c;
 
     switch (bloodType) {
     case BLOOD_DEATH:
@@ -61,15 +61,15 @@ CItem *cEffects::SpawnBloodEffect(UI08 worldNum, UI16 instanceId, UI16 bloodColo
             static_cast<R32>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAYCORPSE));
 
         // Randomize between large blood effects
-        bloodEffectId = bloodIds[RandomNum(static_cast<UI16>(3), static_cast<UI16>(6))];
+        bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(3), static_cast<std::uint16_t>(6))];
         break;
     case BLOOD_BLEED:
         // Randomize between small blood effects
-        bloodEffectId = bloodIds[RandomNum(static_cast<UI16>(0), static_cast<UI16>(3))];
+        bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(3))];
         break;
     case BLOOD_CRITICAL:
         // Randomize between medium to large blood effects
-        bloodEffectId = bloodIds[RandomNum(static_cast<UI16>(2), static_cast<UI16>(5))];
+        bloodEffectId = bloodIds[RandomNum(static_cast<std::uint16_t>(2), static_cast<std::uint16_t>(5))];
 
         // More blood, so increase the time it takes to decay
         bloodDecayTimer *= 1.5;
@@ -93,15 +93,15 @@ CItem *cEffects::SpawnBloodEffect(UI08 worldNum, UI16 instanceId, UI16 bloodColo
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject
-//*dest, UI16 effect,
-//|										UI08 speed, UI08 loop, bool
-//explode, UI32 hue, UI32 renderMode )
+//*dest, std::uint16_t effect,
+//|										std::uint8_t speed, std::uint8_t loop, bool
+//explode, std::uint32_t hue, std::uint32_t renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
 // object to target object
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed,
-                                   UI08 loop, bool explode, UI32 hue, UI32 renderMode,
+void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::uint16_t effect, std::uint8_t speed,
+                                   std::uint8_t loop, bool explode, std::uint32_t hue, std::uint32_t renderMode,
                                    bool playLocalMoveFX) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
     if (!ValidateObject(source) || !ValidateObject(dest))
         return;
@@ -150,17 +150,17 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, UI16 
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y,
-// SI08 z, UI16 effect,
-//|										UI08 speed, UI08 loop, bool
-//explode, UI32 hue, UI32 renderMode )
+//|	Function	-	cEffects::PlayMovingAnimation( CBaseObject *source, std::int16_t x, std::int16_t y,
+// std::int8_t z, std::uint16_t effect,
+//|										std::uint8_t speed, std::uint8_t loop, bool
+//explode, std::uint32_t hue, std::uint32_t renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
 // object to target location
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation(CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect,
-                                   UI08 speed, UI08 loop, bool explode, UI32 hue,
-                                   UI32 renderMode) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
+void cEffects::PlayMovingAnimation(CBaseObject *source, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect,
+                                   std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t hue,
+                                   std::uint32_t renderMode) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
     if (!ValidateObject(source))
         return;
 
@@ -181,17 +181,17 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, SI16 x, SI16 y, SI08 z, 
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16
-// x, SI16 y, SI08 z, UI16 effect,
-//|										UI08 speed, UI08 loop, bool
-//explode, UI32 hue, UI32 renderMode )
+//|	Function	-	cEffects::PlayMovingAnimation( std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::int16_t
+// x, std::int16_t y, std::int8_t z, std::uint16_t effect,
+//|										std::uint8_t speed, std::uint8_t loop, bool
+//explode, std::uint32_t hue, std::uint32_t renderMode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source
 // object to target location
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation(SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z,
-                                   UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue,
-                                   UI32 renderMode) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
+void cEffects::PlayMovingAnimation(std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::int16_t x, std::int16_t y, std::int8_t z,
+                                   std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t hue,
+                                   std::uint32_t renderMode) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
 
     CPGraphicalEffect2 toSend(0);
     toSend.TargetSerial(INVALIDSERIAL);
@@ -215,7 +215,7 @@ void cEffects::PlayMovingAnimation(SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16
 //|	Purpose		-	Sends message to client to make character perform specified
 // action/anim
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayCharacterAnimation(CChar *mChar, UI16 actionId, UI08 frameDelay, UI08 frameCount,
+void cEffects::PlayCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint8_t frameDelay, std::uint8_t frameCount,
                                       bool playBackwards) {
     CPCharacterAnimation toSend = (*mChar);
     toSend.Action(actionId);
@@ -233,8 +233,8 @@ void cEffects::PlayCharacterAnimation(CChar *mChar, UI16 actionId, UI08 frameDel
 //|	Purpose		-	Sends message to client to make character perform specified
 // action/anim |					in client versions above 7.0.0.0
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayNewCharacterAnimation(CChar *mChar, UI16 actionId, UI16 subActionId,
-                                         UI08 subSubActionId) {
+void cEffects::PlayNewCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint16_t subActionId,
+                                         std::uint8_t subSubActionId) {
     CPNewCharacterAnimation toSend = (*mChar);
     toSend.Action(actionId);
     toSend.SubAction(subActionId);
@@ -249,7 +249,7 @@ void cEffects::PlayNewCharacterAnimation(CChar *mChar, UI16 actionId, UI16 subAc
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlaySpellCastingAnimation(CChar *mChar, UI16 actionId, bool monsterCast,
+void cEffects::PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast,
                                          bool monsterAreaCastAnim) {
     if (!monsterCast && (mChar->GetBodyType() == BT_GARGOYLE ||
                          cwmWorldState->ServerData()->ForceNewAnimationPacket())) {
@@ -301,16 +301,16 @@ void cEffects::PlaySpellCastingAnimation(CChar *mChar, UI16 actionId, bool monst
             if (actionId == 0x22)
                 return;
 
-            UI16 castAnim = 0;
-            UI08 castAnimLength = 0;
+            std::uint16_t castAnim = 0;
+            std::uint8_t castAnimLength = 0;
             if (monsterAreaCastAnim) {
                 castAnim =
-                    static_cast<UI16>(cwmWorldState->creatures[mChar->GetId()].CastAnimAreaId());
+                    static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].CastAnimAreaId());
                 castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimAreaLength();
             }
             else {
                 castAnim =
-                    static_cast<UI16>(cwmWorldState->creatures[mChar->GetId()].CastAnimTargetId());
+                    static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].CastAnimTargetId());
                 castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimTargetLength();
             }
 
@@ -323,13 +323,13 @@ void cEffects::PlaySpellCastingAnimation(CChar *mChar, UI16 actionId, bool monst
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect,
-//UI08 speed, UI08 loop, bool explode )
+//|	Function	-	cEffects::PlayStaticAnimation( CBaseObject *target, std::uint16_t effect,
+//std::uint8_t speed, std::uint8_t loop, bool explode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play a static animation effect on an
 // object
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayStaticAnimation(CBaseObject *target, UI16 effect, UI08 speed, UI08 loop,
+void cEffects::PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,
                                    bool explode) {
     if (!ValidateObject(target))
         return;
@@ -360,13 +360,13 @@ void cEffects::PlayStaticAnimation(CBaseObject *target, UI16 effect, UI08 speed,
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect,
-// UI08 speed, UI08 loop, bool explode )
+//|	Function	-	cEffects::PlayStaticAnimation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect,
+// std::uint8_t speed, std::uint8_t loop, bool explode )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play a static animation effect at a
 // location
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayStaticAnimation(SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop,
+void cEffects::PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,
                                    bool explode) {
     CPGraphicalEffect toSend(2);
     toSend.Model(effect);
@@ -406,11 +406,11 @@ void cEffects::Bolteffect(CChar *player) {
 //|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting
 // the item
 // o------------------------------------------------------------------------------------------------o
-auto ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage = 0,
-                 [[maybe_unused]] UI08 damageType = 0, bool explodeNearby = true) -> void {
+auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0,
+                 [[maybe_unused]] std::uint8_t damageType = 0, bool explodeNearby = true) -> void {
     auto c = mSock->CurrcharObj();
 
-    UI32 dx, dy, dz;
+    std::uint32_t dx, dy, dz;
     // - send the effect (visual and sound)
     if (nItem->GetCont()) {
         Effects->PlayStaticAnimation(c, 0x36B0, 0x00, 0x09);
@@ -423,7 +423,7 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage = 0,
         Effects->PlaySound(nItem, 0x0207);
     }
 
-    UI32 len = nItem->GetTempVar(CITV_MOREX) / 250; // 4 square max damage at 100 alchemy
+    std::uint32_t len = nItem->GetTempVar(CITV_MOREX) / 250; // 4 square max damage at 100 alchemy
     if (damage == 0) {
         damage = RandomNum(nItem->GetTempVar(CITV_MOREZ) * 5, nItem->GetTempVar(CITV_MOREZ) * 10);
     }
@@ -454,12 +454,12 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage = 0,
                     if (dx <= len && dy <= len && dz <= len) {
                         if (!tempChar->IsGM() && !tempChar->IsInvulnerable() &&
                             (tempChar->IsNpc() || IsOnline((*tempChar)))) {
-                            // UI08 hitLoc = Combat->CalculateHitLoc();
+                            // std::uint8_t hitLoc = Combat->CalculateHitLoc();
                             damage = Combat->ApplyDefenseModifiers(
                                 HEAT, c, tempChar, ALCHEMY, 0,
-                                (static_cast<SI32>(damage) + (2 - std::min(dx, dy))), true);
+                                (static_cast<std::int32_t>(damage) + (2 - std::min(dx, dy))), true);
                             [[maybe_unused]] bool retVal =
-                                tempChar->Damage(static_cast<SI16>(damage), HEAT, c, true);
+                                tempChar->Damage(static_cast<std::int16_t>(damage), HEAT, c, true);
                         }
                     }
                 }
@@ -492,8 +492,8 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, UI32 damage = 0,
         // Only affect character associated with item
         if (!c->IsGM() && !c->IsInvulnerable() && (c->IsNpc() || IsOnline((*c)))) {
             damage = Combat->ApplyDefenseModifiers(HEAT, c, c, ALCHEMY, 0,
-                                                   static_cast<SI32>(damage), true);
-            [[maybe_unused]] bool retVal = c->Damage(static_cast<SI16>(damage), HEAT, c, true);
+                                                   static_cast<std::int32_t>(damage), true);
+            [[maybe_unused]] bool retVal = c->Damage(static_cast<std::int16_t>(damage), HEAT, c, true);
         }
     }
     nItem->Delete();
@@ -509,27 +509,27 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
         return;
 
     CChar *src = CalcCharObjFromSer(tMake->Source());
-    UI16 iMaking = tMake->More2();
+    std::uint16_t iMaking = tMake->More2();
     CreateEntry_st *toMake = Skills->FindItem(iMaking);
     if (toMake == nullptr)
         return;
 
     CSocket *sock = src->GetSocket();
     std::string addItem = toMake->addItem;
-    UI16 amount = 1;
+    std::uint16_t amount = 1;
     auto csecs = oldstrutil::sections(addItem, ",");
     if (csecs.size() > 1) {
-        amount = util::ston<UI16>(oldstrutil::extractSection(addItem, ",", 1, 1));
+        amount = util::ston<std::uint16_t>(oldstrutil::extractSection(addItem, ",", 1, 1));
         addItem = oldstrutil::extractSection(addItem, ",", 0, 0);
     }
 
-    UI16 iColour = 0;
+    std::uint16_t iColour = 0;
     if (ValidateObject(src)) {
         // Get colour of the resource targeted by player (if any), so it can be applied to the item
         // being made
         TAGMAPOBJECT tempTagObj = src->GetTempTag("craftItemColor");
         if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
-            iColour = static_cast<UI16>(tempTagObj.m_IntValue);
+            iColour = static_cast<std::uint16_t>(tempTagObj.m_IntValue);
         }
     }
 
@@ -546,9 +546,9 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     }
     else {
         // targItem->SetName2( targItem->GetName().c_str() ); // Why was this here?
-        SI32 rank = Skills->CalcRankAvg(src, (*toMake));
-        SI32 maxrank = toMake->maxRank;
-        Skills->ApplyRank(sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank));
+        std::int32_t rank = Skills->CalcRankAvg(src, (*toMake));
+        std::int32_t maxrank = toMake->maxRank;
+        Skills->ApplyRank(sock, targItem, static_cast<std::uint8_t>(rank), static_cast<std::uint8_t>(maxrank));
 
         // if we're not a GameMaster, see if we should store our creator
         if (!src->IsGM() && !toMake->skillReqs.empty()) {
@@ -559,7 +559,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
             targItem->SetMadeWith(toMake->skillReqs[0].skillNumber + 1);
 
             // Set Makers Mark on item if primary skill used to craft item is at 100.0 or higher
-            SI32 primarySkill = src->GetSkill(toMake->skillReqs[0].skillNumber);
+            std::int32_t primarySkill = src->GetSkill(toMake->skillReqs[0].skillNumber);
             if (primarySkill >= 1000) {
                 targItem->SetMakersMark(true);
             }
@@ -585,7 +585,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     }
 
     // Trigger onMakeItem() JS event for character who crafted the item
-    std::vector<UI16> scriptTriggers = src->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = src->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -605,7 +605,7 @@ auto cEffects::CheckTempeffects() -> void {
     CSocket *tSock = nullptr;
     CBaseObject *myObj = nullptr;
 
-    const UI32 j = cwmWorldState->GetUICurrentTime();
+    const std::uint32_t j = cwmWorldState->GetUICurrentTime();
     std::vector<CTEffect *> removeEffects;
     auto collection = cwmWorldState->tempEffects.collection();
     for (auto &Effect : collection) {
@@ -685,7 +685,7 @@ auto cEffects::CheckTempeffects() -> void {
         case 8: // Strength Potion (JS) and Spell (code)
             if (validChar) {
                 s->IncStrength2(-Effect->More1());
-                s->SetHP(std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())));
+                s->SetHP(std::min(s->GetHP(), static_cast<std::int16_t>(s->GetMaxHP())));
                 equipCheckNeeded = true;
             }
             break;
@@ -707,7 +707,7 @@ auto cEffects::CheckTempeffects() -> void {
         case 11: // Bless Spell
             if (validChar) {
                 s->IncStrength2(-Effect->More1());
-                s->SetHP(std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())));
+                s->SetHP(std::min(s->GetHP(), static_cast<std::int16_t>(s->GetMaxHP())));
                 s->IncDexterity2(-Effect->More2());
                 s->SetStamina(std::min(s->GetStamina(), s->GetMaxStam()));
                 s->IncIntelligence2(-Effect->More3());
@@ -776,7 +776,7 @@ auto cEffects::CheckTempeffects() -> void {
             break;
         case 21: // Protection Spell
             if (validChar) {
-                UI16 toDrop;
+                std::uint16_t toDrop;
                 toDrop = Effect->More1();
                 if ((s->GetBaseSkill(PARRYING) - toDrop) < 0) {
                     s->SetBaseSkill(0, PARRYING);
@@ -905,7 +905,7 @@ auto cEffects::CheckTempeffects() -> void {
         case 40: // Used by JS timers
         {
             // Default/Global script ID
-            UI16 scpNum = 0xFFFF;
+            std::uint16_t scpNum = 0xFFFF;
 
             // Get script associated with effect, if any
             cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
@@ -936,9 +936,9 @@ auto cEffects::CheckTempeffects() -> void {
                 // checks ended in the global script.
                 if ((tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL) {
                     if (JSMapping->GetEnvokeByType()->Check(
-                            static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()))) {
+                            static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()))) {
                         scpNum = JSMapping->GetEnvokeByType()->GetScript(
-                            static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()));
+                            static_cast<std::uint16_t>((static_cast<CItem *>(myObj))->GetType()));
                         tScript = JSMapping->GetScript(scpNum);
                     }
                     else if (JSMapping->GetEnvokeById()->Check(myObj->GetId())) {
@@ -949,7 +949,7 @@ auto cEffects::CheckTempeffects() -> void {
 
                 // Callback to onTimer event in script
                 if (tScript) {
-                    tScript->OnTimer(myObj, static_cast<UI16>(Effect->More1()));
+                    tScript->OnTimer(myObj, static_cast<std::uint16_t>(Effect->More1()));
                 }
             }
             break;
@@ -1107,7 +1107,7 @@ void ReverseEffect(CTEffect *Effect) {
             s->IsIncognito(false);
             break;
         case 21: // Protection Spell
-            SI32 toDrop;
+            std::int32_t toDrop;
             toDrop = Effect->More1();
             if ((s->GetBaseSkill(PARRYING) - toDrop) < 0) {
                 s->SetBaseSkill(0, PARRYING);
@@ -1133,7 +1133,7 @@ void ReverseEffect(CTEffect *Effect) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to a character
 // o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3,
+void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2, std::uint16_t more3,
                           [[maybe_unused]] CItem *targItemPtr) {
     // if( !ValidateObject( source ) || !ValidateObject( dest ))
     if (!ValidateObject(dest))
@@ -1203,10 +1203,10 @@ void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16
     }
     case 2: // Nightsight Potion (JS) and Spell (code)
     {
-        SI16 worldbrightlevel;
+        std::int16_t worldbrightlevel;
         worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
-        dest->SetFixedLight(static_cast<UI08>(worldbrightlevel));
-        DoLight(tSock, static_cast<SI08>(worldbrightlevel));
+        dest->SetFixedLight(static_cast<std::uint8_t>(worldbrightlevel));
+        DoLight(tSock, static_cast<std::int8_t>(worldbrightlevel));
 
         R32 effectDuration = 0;
         if (source == nullptr) {
@@ -1293,7 +1293,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16
             more1 = dest->GetStrength();
         }
         dest->IncStrength2(-more1);
-        dest->SetHP(std::min(dest->GetHP(), static_cast<SI16>(dest->GetMaxHP())));
+        dest->SetHP(std::min(dest->GetHP(), static_cast<std::int16_t>(dest->GetMaxHP())));
 
         R32 effectDuration = 0;
         if (source == nullptr) {
@@ -1476,7 +1476,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16
         toAdd->ExpireTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_POLYMORPH));
         toAdd->Dispellable(false);
 
-        UI16 k;
+        std::uint16_t k;
         // Grey flag when polymorphed
         dest->SetTimer(tCHAR_CRIMFLAG,
                        cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_POLYMORPH));
@@ -1588,13 +1588,13 @@ void cEffects::TempEffect(CChar *source, CChar *dest, UI08 num, UI16 more1, UI16
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16
-// more1, UI16 more2, UI16 more3 )
+//|	Function	-	cEffects::TempEffect( CChar *source, CItem *dest, std::uint8_t num, std::uint16_t
+// more1, std::uint16_t more2, std::uint16_t more3 )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to an item
 // o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect(CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2,
-                          [[maybe_unused]] UI16 more3) {
+void cEffects::TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2,
+                          [[maybe_unused]] std::uint16_t more3) {
     if (!ValidateObject(dest))
         return;
 
@@ -1661,7 +1661,7 @@ void cEffects::TempEffect(CChar *source, CItem *dest, UI08 num, UI16 more1, UI16
 void cEffects::SaveEffects(void) {
     std::ofstream effectDestination;
     const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
-    SI32 s_t = GetClock();
+    std::int32_t s_t = GetClock();
 
     Console::shared() << "Saving Effects...   ";
     Console::shared().TurnYellow();
@@ -1684,7 +1684,7 @@ void cEffects::SaveEffects(void) {
     Console::shared() << "\b\b\b\b";
     Console::shared().PrintDone();
 
-    SI32 e_t = GetClock();
+    std::int32_t e_t = GetClock();
     Console::shared().Print(
         util::format("Effects saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
 }
@@ -1728,18 +1728,18 @@ void cEffects::LoadEffects(void) {
                             switch ((UTag.data()[0])) {
                             case 'A':
                                 if (UTag == "ASSOCSCRIPT") {
-                                    toLoad->AssocScript(static_cast<UI16>(std::stoul(
+                                    toLoad->AssocScript(static_cast<std::uint16_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 break;
                             case 'D':
                                 if (UTag == "DEST") {
-                                    toLoad->Destination(static_cast<UI32>(std::stoul(
+                                    toLoad->Destination(static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 if (UTag == "DISPEL") {
                                     toLoad->Dispellable((
-                                        (static_cast<UI16>(std::stoul(
+                                        (static_cast<std::uint16_t>(std::stoul(
                                              util::trim(util::strip(data, "//")), nullptr, 0)) == 0)
                                             ? false
                                             : true));
@@ -1748,14 +1748,14 @@ void cEffects::LoadEffects(void) {
                             case 'E':
                                 if (UTag == "EXPIRE") {
                                     toLoad->ExpireTime(
-                                        static_cast<UI32>(std::stoul(
+                                        static_cast<std::uint32_t>(std::stoul(
                                             util::trim(util::strip(data, "//")), nullptr, 0)) +
                                         cwmWorldState->GetUICurrentTime());
                                 }
                                 break;
                             case 'I':
                                 if (UTag == "ITEMPTR") {
-                                    SERIAL objSer = static_cast<UI32>(std::stoul(
+                                    SERIAL objSer = static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0));
                                     if (objSer != INVALIDSERIAL) {
                                         if (objSer < BASEITEMSERIAL) {
@@ -1772,27 +1772,27 @@ void cEffects::LoadEffects(void) {
                                 break;
                             case 'M':
                                 if (UTag == "MORE1") {
-                                    toLoad->More1(static_cast<UI16>(std::stoul(
+                                    toLoad->More1(static_cast<std::uint16_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 if (UTag == "MORE2") {
-                                    toLoad->More2(static_cast<UI16>(std::stoul(
+                                    toLoad->More2(static_cast<std::uint16_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 if (UTag == "MORE3") {
-                                    toLoad->More3(static_cast<UI16>(std::stoul(
+                                    toLoad->More3(static_cast<std::uint16_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 break;
                             case 'N':
                                 if (UTag == "NUMBER") {
-                                    toLoad->Number(static_cast<UI16>(std::stoul(
+                                    toLoad->Number(static_cast<std::uint16_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 break;
                             case 'O':
                                 if (UTag == "OBJPTR") {
-                                    SERIAL objSer = static_cast<UI32>(std::stoul(
+                                    SERIAL objSer = static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0));
                                     if (objSer != INVALIDSERIAL) {
                                         if (objSer < BASEITEMSERIAL) {
@@ -1809,7 +1809,7 @@ void cEffects::LoadEffects(void) {
                                 break;
                             case 'S':
                                 if (UTag == "SOURCE") {
-                                    toLoad->Source(static_cast<UI32>(std::stoul(
+                                    toLoad->Source(static_cast<std::uint32_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0)));
                                 }
                                 break;

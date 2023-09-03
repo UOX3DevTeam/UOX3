@@ -64,7 +64,7 @@ enum ServerFeatures {
     SF_BIT_COUNT
 };
 
-enum AssistantFeatures : UI64 {
+enum AssistantFeatures : std::uint64_t {
     AF_NONE = 0,
 
     // Razor/RE/AssistUO
@@ -182,12 +182,12 @@ struct __STARTLOCATIONDATA__ {
     std::string oldDescription;
     std::string newTown;
     std::string newDescription;
-    SI16 x;
-    SI16 y;
-    SI16 z;
-    SI16 worldNum;
-    UI16 instanceId;
-    UI32 clilocDesc;
+    std::int16_t x;
+    std::int16_t y;
+    std::int16_t z;
+    std::int16_t worldNum;
+    std::uint16_t instanceId;
+    std::uint32_t clilocDesc;
 };
 // o------------------------------------------------------------------------------------------------o
 //  PhysicalServer
@@ -198,17 +198,17 @@ class PhysicalServer {
     auto SetName(const std::string &newName) -> void;
     auto SetDomain(const std::string &newDomain) -> void;
     auto SetIP(const std::string &newIP) -> void;
-    auto SetPort(UI16 newPort) -> void;
+    auto SetPort(std::uint16_t newPort) -> void;
     auto GetName() const -> const std::string &;
     auto GetDomain() const -> const std::string &;
     auto GetIP() const -> const std::string &;
-    auto GetPort() const -> UI16;
+    auto GetPort() const -> std::uint16_t;
 
   private:
     std::string name;
     std::string domain;
     std::string ip;
-    UI16 port;
+    std::uint16_t port;
 };
 
 class CServerData {
@@ -230,32 +230,32 @@ class CServerData {
     ip4list_t availableIPs;
 
     std::vector<PhysicalServer> serverList; //	Series of server entries for shard list
-    UI08 consoleLogEnabled; //	Various levels of legging 0 == none, 1 == normal, 2 == normal + all
+    std::uint8_t consoleLogEnabled; //	Various levels of legging 0 == none, 1 == normal, 2 == normal + all
                             // speech
-    UI16 serverLanguage;    //	Default language used on server
-    UI16 port;              //	Port number that the server listens on, for connections
-    UI16 jsEngineSize;      // gcMaxBytes limit in MB per JS runtime
-    UI16 apsPerfThreshold; // Performance threshold (simulation cycles) below which APS system kicks
+    std::uint16_t serverLanguage;    //	Default language used on server
+    std::uint16_t port;              //	Port number that the server listens on, for connections
+    std::uint16_t jsEngineSize;      // gcMaxBytes limit in MB per JS runtime
+    std::uint16_t apsPerfThreshold; // Performance threshold (simulation cycles) below which APS system kicks
                            // in - 0 disables system
-    UI16 apsInterval;      // Interval at which APS checks and optionally makes adjustments based on
+    std::uint16_t apsInterval;      // Interval at which APS checks and optionally makes adjustments based on
                            // shard performance
-    UI16 apsDelayStep; // Step value in milliseconds that APS uses to gradually adjust delay for NPC
+    std::uint16_t apsDelayStep; // Step value in milliseconds that APS uses to gradually adjust delay for NPC
                        // AI/movement checks
-    UI16 apsDelayMaxCap; // Max impact in milliseconds APS can have on NPC AI/movement checks
-    UI16 sysMsgColour; // Default text colour for system messages displayed in bottom left corner of
+    std::uint16_t apsDelayMaxCap; // Max impact in milliseconds APS can have on NPC AI/movement checks
+    std::uint16_t sysMsgColour; // Default text colour for system messages displayed in bottom left corner of
                        // screen
-    SI16 backupRatio;  //	Number of saves before a backup occurs
-    UI32 serverSavesTimer; //	Number of seconds between world saves
-    UI32 netRcvTimeout; // 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly
+    std::int16_t backupRatio;  //	Number of saves before a backup occurs
+    std::uint32_t serverSavesTimer; //	Number of seconds between world saves
+    std::uint32_t netRcvTimeout; // 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly
                         // laggy nets this would drop alot of packets, and disconnect people.
-    UI32 netSndTimeout; // 04/03/2004 - Not used at this time.
-    UI32 netRetryCount; // 04/03/2004 - Used to set the number of times a network recieve will be
+    std::uint32_t netSndTimeout; // 04/03/2004 - Not used at this time.
+    std::uint32_t netRetryCount; // 04/03/2004 - Used to set the number of times a network recieve will be
                         // attempted before it throws an error
-    UI32 maxBytesIn;    // Max bytes that can be received from a client in a 10-second window before
+    std::uint32_t maxBytesIn;    // Max bytes that can be received from a client in a 10-second window before
                         // client is warned/kicked for excessive data use
-    UI32 maxBytesOut; // Max bytes that can be sent to a client in a 10-second window before client
+    std::uint32_t maxBytesOut; // Max bytes that can be sent to a client in a 10-second window before client
                       // is warned/kicked for excessive data use
-    UI32 trafficTimeban; // Duration in minutes that player will be banned for if they exceed their
+    std::uint32_t trafficTimeban; // Duration in minutes that player will be banned for if they exceed their
                          // network traffic budget
 
     bool uogEnabled;             // 04/03/2004 - Added to support the UOG Info Request Service
@@ -281,19 +281,19 @@ class CServerData {
     // facet block
     bool useFacetSaves;
     std::vector<std::string> facetNameList;
-    std::vector<UI32> facetAccessFlags;
+    std::vector<std::uint32_t> facetAccessFlags;
 
     // Skills & Stats
-    UI08 skillDelay;    //	Number of seconds after a skill is used before another skill can be used
-    UI16 skillTotalCap; //	A cap on the total of all a PC's skills
-    UI16 skillCap;      //	A cap on each individual PC skill
-    UI16 statCap;       //	A cap on the total of a PC's stats
-    SI16 maxStealthMovement; //	Max number of steps allowed with stealth skill at 100.0
-    SI16 maxStaminaMovement; //	Max number of steps allowed while running before stamina is reduced
+    std::uint8_t skillDelay;    //	Number of seconds after a skill is used before another skill can be used
+    std::uint16_t skillTotalCap; //	A cap on the total of all a PC's skills
+    std::uint16_t skillCap;      //	A cap on each individual PC skill
+    std::uint16_t statCap;       //	A cap on the total of a PC's stats
+    std::int16_t maxStealthMovement; //	Max number of steps allowed with stealth skill at 100.0
+    std::int16_t maxStaminaMovement; //	Max number of steps allowed while running before stamina is reduced
 
     // ServerTimers
     // array
-    UI16 serverTimers[tSERVER_COUNT];
+    std::uint16_t serverTimers[tSERVER_COUNT];
     // Directories
     // array
     std::string serverDirectories[CSDDP_COUNT];
@@ -306,55 +306,55 @@ class CServerData {
     // Expansion
     // 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA,
     // 10 = HS, 11 = ToL
-    UI08 coreShardEra; // Determines core era ruleset for shard (determines which items/npcs are
+    std::uint8_t coreShardEra; // Determines core era ruleset for shard (determines which items/npcs are
                        // loaded, and which rules are applied in combat)
-    UI08 expansionArmorCalculation; // Determines which era ruleset to use for calculating armor and
+    std::uint8_t expansionArmorCalculation; // Determines which era ruleset to use for calculating armor and
                                     // defense
-    UI08 expansionStrengthDamageBonus; // Determines which era ruleset to use for calculating
+    std::uint8_t expansionStrengthDamageBonus; // Determines which era ruleset to use for calculating
                                        // strength damage bonus
-    UI08 expansionTacticsDamageBonus; // Determines which era ruleset to use for calculating tactics
+    std::uint8_t expansionTacticsDamageBonus; // Determines which era ruleset to use for calculating tactics
                                       // damage bonus
-    UI08 expansionAnatomyDamageBonus; // Determines which era ruleset to use for calculating anatomy
+    std::uint8_t expansionAnatomyDamageBonus; // Determines which era ruleset to use for calculating anatomy
                                       // damage bonus
-    UI08 expansionLumberjackDamageBonus; // Determines which era ruleset to use for calculating
+    std::uint8_t expansionLumberjackDamageBonus; // Determines which era ruleset to use for calculating
                                          // lumberjack damage bonus
-    UI08 expansionRacialDamageBonus; // Determines which era ruleset to use for calculating racial
+    std::uint8_t expansionRacialDamageBonus; // Determines which era ruleset to use for calculating racial
                                      // damage bonus
-    UI08 expansionDamageBonusCap;    // Determines which era ruleset to use for calculating damage
+    std::uint8_t expansionDamageBonusCap;    // Determines which era ruleset to use for calculating damage
                                      // bonus cap
-    UI08 expansionShieldParry; // Determines which era ruleset to use for shield parry calculations
-    UI08 expansionWeaponParry; // Determines which era ruleset to use for weapon parry calculations
-    UI08 expansionWrestlingParry;  // Determines which era ruleset to use for wrestling parry
+    std::uint8_t expansionShieldParry; // Determines which era ruleset to use for shield parry calculations
+    std::uint8_t expansionWeaponParry; // Determines which era ruleset to use for weapon parry calculations
+    std::uint8_t expansionWrestlingParry;  // Determines which era ruleset to use for wrestling parry
                                    // calculations
-    UI08 expansionCombatHitChance; // Determines which era ruleset to use for calculating melee hit
+    std::uint8_t expansionCombatHitChance; // Determines which era ruleset to use for calculating melee hit
                                    // chance
 
     // Settings
-    SI16 ambientSounds;      //	Ambient sounds - values from 1->10 - higher values indicate sounds
+    std::int16_t ambientSounds;      //	Ambient sounds - values from 1->10 - higher values indicate sounds
                              // occur less often
-    SI16 htmlStatusEnabled;  //	If > 0 then it's enabled - only used at PC char creation - use
+    std::int16_t htmlStatusEnabled;  //	If > 0 then it's enabled - only used at PC char creation - use
                              // elsewhere? (was # of seconds between updates)
-    SI16 sellMaxItems;       //	Maximum number of items that can be sold to a vendor
-    SI16 fishingstaminaloss; //	The amount of stamina lost with each use of fishing skill
-    UI08 maxControlSlots;    //	The default max amount of pet/follower control slots for each player
-    UI08 maxSafeTeleports;   //	The default max amount of free teleports to safety players get via
+    std::int16_t sellMaxItems;       //	Maximum number of items that can be sold to a vendor
+    std::int16_t fishingstaminaloss; //	The amount of stamina lost with each use of fishing skill
+    std::uint8_t maxControlSlots;    //	The default max amount of pet/follower control slots for each player
+    std::uint8_t maxSafeTeleports;   //	The default max amount of free teleports to safety players get via
                              // the help menu per day
-    UI08 maxPetOwners;       //	The default max amount of different owners a pet may have in its
+    std::uint8_t maxPetOwners;       //	The default max amount of different owners a pet may have in its
                              // lifetime
-    UI08 maxFollowers;       //	The default max amount of followers a player can have active
-    UI16 petOfflineTimeout;  //	Offline time after a player looses all pets
-    UI16 maxPlayerPackItems; //	The max amount of items a player's backpack can contain
-    UI16 maxPlayerBankItems; //	The max amount of items a player's bankbox can contain
-    SI32 maxPlayerPackWeight;     //	The max weight capacity of a player's backpack (including
+    std::uint8_t maxFollowers;       //	The default max amount of followers a player can have active
+    std::uint16_t petOfflineTimeout;  //	Offline time after a player looses all pets
+    std::uint16_t maxPlayerPackItems; //	The max amount of items a player's backpack can contain
+    std::uint16_t maxPlayerBankItems; //	The max amount of items a player's bankbox can contain
+    std::int32_t maxPlayerPackWeight;     //	The max weight capacity of a player's backpack (including
                                   // subcontainers)
-    SI32 maxPlayerBankWeight;     //	The max weight capacity of a player's bankbox (including
+    std::int32_t maxPlayerBankWeight;     //	The max weight capacity of a player's bankbox (including
                                   // subcontainers)
     R32 weightPerSTR;             //	How much weight per point of STR a character can hold.
     bool paperdollGuildButton;    //	Enable Guild-button on paperdoll to access guild-menus
                                   // without going through guildstone
-    UI16 petLoyaltyGainOnSuccess; //	The default amount of pet loyalty gained on successful use
+    std::uint16_t petLoyaltyGainOnSuccess; //	The default amount of pet loyalty gained on successful use
                                   // of a pet command
-    UI16 petLoyaltyLossOnFailure; //	The default amount of pet loyalty lost on a failed attempt
+    std::uint16_t petLoyaltyLossOnFailure; //	The default amount of pet loyalty lost on a failed attempt
                                   // to use a pet command
 
     // SpeedUp
@@ -385,8 +385,8 @@ class CServerData {
                    // online
 
     // MessageBoards
-    UI08 msgPostingLevel; //	If not 0, then players can post
-    UI08 msgRemovalLevel; //	If not 0, then players can remove posts
+    std::uint8_t msgPostingLevel; //	If not 0, then players can post
+    std::uint8_t msgRemovalLevel; //	If not 0, then players can remove posts
 
     // WorldLight
     LIGHTLEVEL dungeonLightLevel; //	Default light level for a dungeon, if not subject to a
@@ -400,109 +400,109 @@ class CServerData {
 
     // WorldTimer								//	days/hours/minutes/seconds to it's
     // own file?
-    UI16 secondsPerUoMinute; //	Number of seconds for a UOX minute.
-    UI08 seconds;            //	Number of seconds the world has been running (persistent)
-    UI08 minutes;            //	Number of minutes the world has been running (persistent)
-    UI08 hours;              //	Number of hours the world has been running (persistent)
-    SI16 days;               //	Number of days the world has been running (persistent)
-    SI16 moon[2];            //	Moon current state
+    std::uint16_t secondsPerUoMinute; //	Number of seconds for a UOX minute.
+    std::uint8_t seconds;            //	Number of seconds the world has been running (persistent)
+    std::uint8_t minutes;            //	Number of minutes the world has been running (persistent)
+    std::uint8_t hours;              //	Number of hours the world has been running (persistent)
+    std::int16_t days;               //	Number of days the world has been running (persistent)
+    std::int16_t moon[2];            //	Moon current state
     bool ampm;               //	Whether our current time is in the morning or afternoon
 
     // Tracking
-    UI08 trackingMaxTargets;        //	Maximum number of targets that can be tracked
-    UI16 trackingBaseRange;         //	Minimum range even a novice can track from
-    UI16 trackingBaseTimer;         //	Tracking timer - maximum time for a GM to track at
-    UI16 trackingMsgRedisplayTimer; //	How often (in seconds) the tracking message is redisplayed
+    std::uint8_t trackingMaxTargets;        //	Maximum number of targets that can be tracked
+    std::uint16_t trackingBaseRange;         //	Minimum range even a novice can track from
+    std::uint16_t trackingBaseTimer;         //	Tracking timer - maximum time for a GM to track at
+    std::uint16_t trackingMsgRedisplayTimer; //	How often (in seconds) the tracking message is redisplayed
 
     // Reputation
-    UI16 maxMurdersAllowed; //	Maximum number of kills before turning red
+    std::uint16_t maxMurdersAllowed; //	Maximum number of kills before turning red
 
     // Resources
-    UI08 mineCheck; //	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region
+    std::uint8_t mineCheck; //	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region
                     // based (not working)
-    UI16 resourceAreaSize; //	Size of each resource area to split each world into
-    UI16 oreRespawnTimer;  //	Time at which ore is respawned (only 1 ore, not all)
-    UI16 logsRespawnTimer; //	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
-    UI16 fishRespawnTimer; //	TIMERVAL? Time at which fish are respawned (only 1 fish, not all)
-    SI16 logsPerArea;      //	Maximum number of logs in a resource area
-    SI16 orePerArea;       //	TIMERVAL? Maximum number of ores in a resource area
-    SI16 fishPerArea;      //	Maximum number of fish in a resource area
+    std::uint16_t resourceAreaSize; //	Size of each resource area to split each world into
+    std::uint16_t oreRespawnTimer;  //	Time at which ore is respawned (only 1 ore, not all)
+    std::uint16_t logsRespawnTimer; //	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
+    std::uint16_t fishRespawnTimer; //	TIMERVAL? Time at which fish are respawned (only 1 fish, not all)
+    std::int16_t logsPerArea;      //	Maximum number of logs in a resource area
+    std::int16_t orePerArea;       //	TIMERVAL? Maximum number of ores in a resource area
+    std::int16_t fishPerArea;      //	Maximum number of fish in a resource area
 
     // Hunger & Food
-    SI16 hungerDamage; //	Amount of damage applied if hungry and below threshold
+    std::int16_t hungerDamage; //	Amount of damage applied if hungry and below threshold
     // Thirst
-    SI16 thirstDrain; //  Amount of stamina drained if thirsty and below threshold
+    std::int16_t thirstDrain; //  Amount of stamina drained if thirsty and below threshold
 
     // Combat
-    UI08 combatAnimalAttackChance; //	Chance of animals being attacked (0-100)
-    UI08 combatWeaponDamageChance; //  Chance of weapons being damaged when attacking in combat
+    std::uint8_t combatAnimalAttackChance; //	Chance of animals being attacked (0-100)
+    std::uint8_t combatWeaponDamageChance; //  Chance of weapons being damaged when attacking in combat
                                    //  (0-100)
-    UI08 combatWeaponDamageMin; //  Minimum amount of hitpoints a weapon can lose when being damaged
+    std::uint8_t combatWeaponDamageMin; //  Minimum amount of hitpoints a weapon can lose when being damaged
                                 //  in combat
-    UI08 combatWeaponDamageMax; //  Maximum amount of hitpoints a weapon can lose when being damaged
+    std::uint8_t combatWeaponDamageMax; //  Maximum amount of hitpoints a weapon can lose when being damaged
                                 //  in combat
-    UI08 combatArmorDamageChance; //  Chance of armor being damaged when defending in combat (0-100)
-    UI08 combatArmorDamageMin; //  Minimum amount of hitpoints an armor can lose when being damaged
+    std::uint8_t combatArmorDamageChance; //  Chance of armor being damaged when defending in combat (0-100)
+    std::uint8_t combatArmorDamageMin; //  Minimum amount of hitpoints an armor can lose when being damaged
                                //  in combat
-    UI08 combatArmorDamageMax; //  Maximum amount of hitpoints an armor can lose when being damaged
+    std::uint8_t combatArmorDamageMax; //  Maximum amount of hitpoints an armor can lose when being damaged
                                //  in combat
-    UI08 combatParryDamageChance; //  Chance of shield being damaged when parrying in combat (0-100)
-    UI08 combatParryDamageMin;    //  Minimum amount of hitpoints a shield/weapon can lose when
+    std::uint8_t combatParryDamageChance; //  Chance of shield being damaged when parrying in combat (0-100)
+    std::uint8_t combatParryDamageMin;    //  Minimum amount of hitpoints a shield/weapon can lose when
                                   //  successfully parrying in combat
-    UI08 combatParryDamageMax;    //  Maximum amount of hitpoints a shield/weapon can lose when
+    std::uint8_t combatParryDamageMax;    //  Maximum amount of hitpoints a shield/weapon can lose when
                                   //  successfully parrying in combat
-    UI08 combatBloodEffectChance; //  Chance of blood splatter effects spawning during combat
-    UI08 alchemyDamageBonusModifier;  //  Modifier used to calculate bonus damage for explosion
+    std::uint8_t combatBloodEffectChance; //  Chance of blood splatter effects spawning during combat
+    std::uint8_t alchemyDamageBonusModifier;  //  Modifier used to calculate bonus damage for explosion
                                       //  potions based on alchemy skill
-    UI08 combatWeaponDamageBonusType; //  Weapon damage bonus type (0 - apply to hidamage, 1 - split
+    std::uint8_t combatWeaponDamageBonusType; //  Weapon damage bonus type (0 - apply to hidamage, 1 - split
                                       //  between lo and hi, 2 - apply equally to lo and hi
-    SI08 combatArcheryHitBonus;   //  Bonus to hit chance for Archery skill in combat, applied after
+    std::int8_t combatArcheryHitBonus;   //  Bonus to hit chance for Archery skill in combat, applied after
                                   //  regular hit chance calculation
-    SI16 combatMaxRange;          //	RANGE?  Range at which combat can actually occur
-    SI16 combatMaxSpellRange;     //	RANGE?  Range at which spells can be cast
-    SI16 combatNpcDamageRate;     //	NPC Damage divisor - PCs sustain less than NPCs.  If a PC,
+    std::int16_t combatMaxRange;          //	RANGE?  Range at which combat can actually occur
+    std::int16_t combatMaxSpellRange;     //	RANGE?  Range at which spells can be cast
+    std::int16_t combatNpcDamageRate;     //	NPC Damage divisor - PCs sustain less than NPCs.  If a PC,
                                   // damage is 1/value
-    SI16 combatNpcBaseFleeAt;     //	% of HP where an NPC will flee, if it's not defined for them
-    SI16 combatNpcBaseReattackAt; //	% of HP where an NPC will resume attacking
-    SI16 combatAttackStamina;     //	Amount of stamina lost when hitting an opponent
+    std::int16_t combatNpcBaseFleeAt;     //	% of HP where an NPC will flee, if it's not defined for them
+    std::int16_t combatNpcBaseReattackAt; //	% of HP where an NPC will resume attacking
+    std::int16_t combatAttackStamina;     //	Amount of stamina lost when hitting an opponent
 
     // Start & Location Settings
     std::vector<__STARTLOCATIONDATA__> startlocations;
     std::vector<__STARTLOCATIONDATA__> youngStartlocations;
-    UI16 startPrivs; //	Starting privileges of characters
-    SI16 startGold;  //	Amount of gold created when a PC is made
+    std::uint16_t startPrivs; //	Starting privileges of characters
+    std::int16_t startGold;  //	Amount of gold created when a PC is made
 
     // Anything under this comment is left here for symantics
-    UI08 skillLevel;   //	Some skill value associated with the rank system
-    SI16 buyThreshold; //	Value above which money will be sourced from the bank rather than
+    std::uint8_t skillLevel;   //	Some skill value associated with the rank system
+    std::int16_t buyThreshold; //	Value above which money will be sourced from the bank rather than
                        // the player
 
     // Gump stuff
-    UI16 titleColour;     //	Default text colour for titles in gumps
-    UI16 leftTextColour;  //	Default text colour for left text in gumps (2 column ones)
-    UI16 rightTextColour; //	Default text colour for right text in gumps
-    UI16 buttonCancel;    //	Default Button ID for cancel button in gumps
-    UI16 buttonLeft;      //	Default Button ID for left button in gumps
-    UI16 buttonRight;     //	Default Button ID for right button in gumps
-    UI16 backgroundPic;   //	Default Gump ID for background gump
+    std::uint16_t titleColour;     //	Default text colour for titles in gumps
+    std::uint16_t leftTextColour;  //	Default text colour for left text in gumps (2 column ones)
+    std::uint16_t rightTextColour; //	Default text colour for right text in gumps
+    std::uint16_t buttonCancel;    //	Default Button ID for cancel button in gumps
+    std::uint16_t buttonLeft;      //	Default Button ID for left button in gumps
+    std::uint16_t buttonRight;     //	Default Button ID for right button in gumps
+    std::uint16_t backgroundPic;   //	Default Gump ID for background gump
 
     // Houses
-    UI16 maxHousesOwnable;   //	Max amount of houses that a player can own
-    UI16 maxHousesCoOwnable; //	Max amount of houses that a player can co-own
+    std::uint16_t maxHousesOwnable;   //	Max amount of houses that a player can own
+    std::uint16_t maxHousesCoOwnable; //	Max amount of houses that a player can co-own
 
     // Townstone stuff
-    UI32 numSecsPollOpen; //	Time (in seconds) for which a town voting poll is open
-    UI32 numSecsAsMayor;  //	Time (in seconds) that a PC would be a mayor
-    UI32 taxPeriod;       //	Time (in seconds) between periods of taxes for PCs
-    UI32 guardPayment;    //	Time (in seconds) between payments for guards
+    std::uint32_t numSecsPollOpen; //	Time (in seconds) for which a town voting poll is open
+    std::uint32_t numSecsAsMayor;  //	Time (in seconds) that a PC would be a mayor
+    std::uint32_t taxPeriod;       //	Time (in seconds) between periods of taxes for PCs
+    std::uint32_t guardPayment;    //	Time (in seconds) between payments for guards
 
     void PostLoadDefaults();
-    static const std::map<std::string, SI32> uox3IniCaseValue;
+    static const std::map<std::string, std::int32_t> uox3IniCaseValue;
 
   public:
-    UI64 DisabledAssistantFeatures;
+    std::uint64_t DisabledAssistantFeatures;
 
-    auto LookupINIValue(const std::string &tag) -> SI32;
+    auto LookupINIValue(const std::string &tag) -> std::int32_t;
 
     auto SetServerFeature(ServerFeatures, bool) -> void;
     auto SetServerFeatures(size_t) -> void;
@@ -510,22 +510,22 @@ class CServerData {
     auto GetServerFeatures() const -> size_t;
 
     auto SetClientFeature(ClientFeatures, bool) -> void;
-    auto SetClientFeatures(UI32) -> void;
+    auto SetClientFeatures(std::uint32_t) -> void;
     auto GetClientFeature(ClientFeatures) const -> bool;
-    UI32 GetClientFeatures() const;
+    std::uint32_t GetClientFeatures() const;
 
     auto SetDisabledAssistantFeature(AssistantFeatures, bool) -> void;
-    auto SetDisabledAssistantFeatures(UI64) -> void;
+    auto SetDisabledAssistantFeatures(std::uint64_t) -> void;
     auto GetDisabledAssistantFeature(AssistantFeatures) const -> bool;
-    UI64 GetDisabledAssistantFeatures() const;
+    std::uint64_t GetDisabledAssistantFeatures() const;
 
     auto SetAssistantNegotiation(bool value) -> void;
     auto GetAssistantNegotiation() const -> bool;
 
-    auto GetSpawnRegionsFacetStatus(UI32 value) const -> bool;
-    auto SetSpawnRegionsFacetStatus(UI32 value, bool status) -> void;
-    UI32 GetSpawnRegionsFacetStatus() const;
-    auto SetSpawnRegionsFacetStatus(UI32 value) -> void;
+    auto GetSpawnRegionsFacetStatus(std::uint32_t value) const -> bool;
+    auto SetSpawnRegionsFacetStatus(std::uint32_t value, bool status) -> void;
+    std::uint32_t GetSpawnRegionsFacetStatus() const;
+    auto SetSpawnRegionsFacetStatus(std::uint32_t value) -> void;
 
     auto SetClassicUOMapTracker(bool value) -> void;
     auto GetClassicUOMapTracker() const -> bool;
@@ -533,21 +533,21 @@ class CServerData {
     auto UseUnicodeMessages(bool value) -> void;
     auto UseUnicodeMessages() const -> bool;
 
-    SI16 ServerMoon(SI16 slot) const;
+    std::int16_t ServerMoon(std::int16_t slot) const;
     LIGHTLEVEL WorldLightDarkLevel() const;
     LIGHTLEVEL WorldLightBrightLevel() const;
     LIGHTLEVEL WorldLightCurrentLevel() const;
     LIGHTLEVEL DungeonLightLevel() const;
-    auto ServerStartPrivs() const -> UI16;
-    SI16 ServerStartGold() const;
+    auto ServerStartPrivs() const -> std::uint16_t;
+    std::int16_t ServerStartGold() const;
 
-    auto ServerMoon(SI16 slot, SI16 value) -> void;
+    auto ServerMoon(std::int16_t slot, std::int16_t value) -> void;
     auto WorldLightDarkLevel(LIGHTLEVEL value) -> void;
     auto WorldLightBrightLevel(LIGHTLEVEL value) -> void;
     auto WorldLightCurrentLevel(LIGHTLEVEL value) -> void;
     auto DungeonLightLevel(LIGHTLEVEL value) -> void;
-    auto ServerStartPrivs(UI16 value) -> void;
-    auto ServerStartGold(SI16 value) -> void;
+    auto ServerStartPrivs(std::uint16_t value) -> void;
+    auto ServerStartGold(std::int16_t value) -> void;
     auto ParseIni(const std::string &filename) -> bool;
     auto HandleLine(const std::string &tag, const std::string &value) -> bool;
 
@@ -574,8 +574,8 @@ class CServerData {
     auto ServerIP() const -> const std::string &;
     auto ExternalIP() const -> const std::string &;
     auto ExternalIP(const std::string &ip) -> void;
-    auto ServerPort(UI16 setport) -> void;
-    auto ServerPort() const -> UI16;
+    auto ServerPort(std::uint16_t setport) -> void;
+    auto ServerPort() const -> std::uint16_t;
     auto ServerConsoleLog(bool setting) -> void;
     auto ServerConsoleLog() const -> bool;
     auto ServerNetworkLog(bool setting) -> void;
@@ -594,27 +594,27 @@ class CServerData {
     auto ServerBackupStatus() const -> bool;
     auto ServerContextMenus(bool setting) -> void;
     auto ServerContextMenus() const -> bool;
-    auto ServerSavesTimer(UI32 timer) -> void;
-    UI32 ServerSavesTimerStatus() const;
-    auto ServerMainThreadTimer(UI32 threadtimer) -> void;
-    UI32 ServerMainThreadTimerStatus() const;
-    auto ServerSkillTotalCap(UI16 cap) -> void;
-    auto ServerSkillTotalCapStatus() const -> UI16;
-    auto ServerSkillCap(UI16 cap) -> void;
-    auto ServerSkillCapStatus() const -> UI16;
-    auto ServerSkillDelay(UI08 skdelay) -> void;
-    UI08 ServerSkillDelayStatus() const;
-    auto ServerStatCap(UI16 cap) -> void;
-    auto ServerStatCapStatus() const -> UI16;
-    auto MaxStealthMovement(SI16 value) -> void;
-    SI16 MaxStealthMovement() const;
-    auto MaxStaminaMovement(SI16 value) -> void;
-    SI16 MaxStaminaMovement() const;
-    auto SystemTimer(cSD_TID timerId, UI16 value) -> void;
-    auto SystemTimer(cSD_TID timerId) const -> UI16;
+    auto ServerSavesTimer(std::uint32_t timer) -> void;
+    std::uint32_t ServerSavesTimerStatus() const;
+    auto ServerMainThreadTimer(std::uint32_t threadtimer) -> void;
+    std::uint32_t ServerMainThreadTimerStatus() const;
+    auto ServerSkillTotalCap(std::uint16_t cap) -> void;
+    auto ServerSkillTotalCapStatus() const -> std::uint16_t;
+    auto ServerSkillCap(std::uint16_t cap) -> void;
+    auto ServerSkillCapStatus() const -> std::uint16_t;
+    auto ServerSkillDelay(std::uint8_t skdelay) -> void;
+    std::uint8_t ServerSkillDelayStatus() const;
+    auto ServerStatCap(std::uint16_t cap) -> void;
+    auto ServerStatCapStatus() const -> std::uint16_t;
+    auto MaxStealthMovement(std::int16_t value) -> void;
+    std::int16_t MaxStealthMovement() const;
+    auto MaxStaminaMovement(std::int16_t value) -> void;
+    std::int16_t MaxStaminaMovement() const;
+    auto SystemTimer(cSD_TID timerId, std::uint16_t value) -> void;
+    auto SystemTimer(cSD_TID timerId) const -> std::uint16_t;
     TIMERVAL BuildSystemTimeValue(cSD_TID timerId) const;
-    auto SysMsgColour(UI16 value) -> void;
-    auto SysMsgColour() const -> UI16;
+    auto SysMsgColour(std::uint16_t value) -> void;
+    auto SysMsgColour() const -> std::uint16_t;
 
     auto ServerUOGEnabled() const -> bool { return uogEnabled; }
     auto ServerUOGEnabled(bool uogValue) -> void { uogEnabled = uogValue; }
@@ -624,12 +624,12 @@ class CServerData {
     auto ServerRandomStartingLocation(bool rndStartLocValue) -> void {
         randomStartingLocation = rndStartLocValue;
     }
-    UI32 ServerNetRetryCount() const { return netRetryCount; }
-    auto ServerNetRetryCount(UI32 retryValue) -> void { netRetryCount = retryValue; }
-    UI32 ServerNetRcvTimeout() const { return netRcvTimeout; }
-    auto ServerNetRcvTimeout(UI32 timeoutValue) -> void { netRcvTimeout = timeoutValue; }
-    UI32 ServerNetSndTimeout() const { return netSndTimeout; }
-    auto ServerNetSndTimeout(UI32 timeoutValue) -> void { netSndTimeout = timeoutValue; }
+    std::uint32_t ServerNetRetryCount() const { return netRetryCount; }
+    auto ServerNetRetryCount(std::uint32_t retryValue) -> void { netRetryCount = retryValue; }
+    std::uint32_t ServerNetRcvTimeout() const { return netRcvTimeout; }
+    auto ServerNetRcvTimeout(std::uint32_t timeoutValue) -> void { netRcvTimeout = timeoutValue; }
+    std::uint32_t ServerNetSndTimeout() const { return netSndTimeout; }
+    auto ServerNetSndTimeout(std::uint32_t timeoutValue) -> void { netSndTimeout = timeoutValue; }
 
     // ClientSupport used to determine login-restrictions
     auto ClientSupport4000() const -> bool { return Clients4000Enabled; }
@@ -680,8 +680,8 @@ class CServerData {
     auto DeathAnimationStatus(bool value) -> void;
     auto DeathAnimationStatus() const -> bool;
 
-    auto WorldAmbientSounds(SI16 value) -> void;
-    SI16 WorldAmbientSounds() const;
+    auto WorldAmbientSounds(std::int16_t value) -> void;
+    std::int16_t WorldAmbientSounds() const;
 
     auto AmbientFootsteps(bool value) -> void;
     auto AmbientFootsteps() const -> bool;
@@ -707,14 +707,14 @@ class CServerData {
     auto PlayerPersecutionStatus(bool value) -> void;
     auto PlayerPersecutionStatus() const -> bool;
 
-    auto HtmlStatsStatus(SI16 value) -> void;
-    SI16 HtmlStatsStatus() const;
+    auto HtmlStatsStatus(std::int16_t value) -> void;
+    std::int16_t HtmlStatsStatus() const;
 
     auto SellByNameStatus(bool value) -> void;
     auto SellByNameStatus() const -> bool;
 
-    auto SellMaxItemsStatus(SI16 value) -> void;
-    SI16 SellMaxItemsStatus() const;
+    auto SellMaxItemsStatus(std::int16_t value) -> void;
+    std::int16_t SellMaxItemsStatus() const;
 
     auto TradeSystemStatus(bool value) -> void;
     auto TradeSystemStatus() const -> bool;
@@ -761,23 +761,23 @@ class CServerData {
     auto BODFameRewardMultiplier(R32 value) -> void;
     R32 BODFameRewardMultiplier() const;
 
-    auto MsgBoardPostingLevel(UI08 value) -> void;
-    UI08 MsgBoardPostingLevel() const;
+    auto MsgBoardPostingLevel(std::uint8_t value) -> void;
+    std::uint8_t MsgBoardPostingLevel() const;
 
-    auto MsgBoardPostRemovalLevel(UI08 value) -> void;
-    UI08 MsgBoardPostRemovalLevel() const;
+    auto MsgBoardPostRemovalLevel(std::uint8_t value) -> void;
+    std::uint8_t MsgBoardPostRemovalLevel() const;
 
-    auto MineCheck(UI08 value) -> void;
-    UI08 MineCheck() const;
+    auto MineCheck(std::uint8_t value) -> void;
+    std::uint8_t MineCheck() const;
 
     auto AlchemyDamageBonusEnabled(bool value) -> void;
     auto AlchemyDamageBonusEnabled() const -> bool;
 
-    auto AlchemyDamageBonusModifier(UI08 value) -> void;
-    UI08 AlchemyDamageBonusModifier() const;
+    auto AlchemyDamageBonusModifier(std::uint8_t value) -> void;
+    std::uint8_t AlchemyDamageBonusModifier() const;
 
-    auto WeaponDamageBonusType(UI08 value) -> void;
-    UI08 WeaponDamageBonusType() const;
+    auto WeaponDamageBonusType(std::uint8_t value) -> void;
+    std::uint8_t WeaponDamageBonusType() const;
 
     auto ItemsInterruptCasting(bool value) -> void;
     auto ItemsInterruptCasting() const -> bool;
@@ -794,17 +794,17 @@ class CServerData {
     auto CombatAttackSpeedFromStamina(bool value) -> void;
     auto CombatAttackSpeedFromStamina() const -> bool;
 
-    auto FishingStaminaLoss(SI16 value) -> void;
-    SI16 FishingStaminaLoss() const;
+    auto FishingStaminaLoss(std::int16_t value) -> void;
+    std::int16_t FishingStaminaLoss() const;
 
-    auto CombatAttackStamina(SI16 value) -> void;
-    SI16 CombatAttackStamina() const;
+    auto CombatAttackStamina(std::int16_t value) -> void;
+    std::int16_t CombatAttackStamina() const;
 
-    auto CombatNpcDamageRate(SI16 value) -> void;
-    SI16 CombatNpcDamageRate() const;
+    auto CombatNpcDamageRate(std::int16_t value) -> void;
+    std::int16_t CombatNpcDamageRate() const;
 
-    UI08 SkillLevel() const;
-    auto SkillLevel(UI08 value) -> void;
+    std::uint8_t SkillLevel() const;
+    auto SkillLevel(std::uint8_t value) -> void;
 
     auto EscortsEnabled(bool value) -> void;
     auto EscortsEnabled() const -> bool;
@@ -818,17 +818,17 @@ class CServerData {
     auto MapDiffsEnabled(bool value) -> void;
     auto MapDiffsEnabled() const -> bool;
 
-    auto MaxPlayerPackItems(UI16 value) -> void;
-    auto MaxPlayerPackItems() const -> UI16;
+    auto MaxPlayerPackItems(std::uint16_t value) -> void;
+    auto MaxPlayerPackItems() const -> std::uint16_t;
 
-    auto MaxPlayerPackWeight(SI32 newVal) -> void;
-    auto MaxPlayerPackWeight() const -> SI32;
+    auto MaxPlayerPackWeight(std::int32_t newVal) -> void;
+    auto MaxPlayerPackWeight() const -> std::int32_t;
 
-    auto MaxPlayerBankItems(UI16 value) -> void;
-    auto MaxPlayerBankItems() const -> UI16;
+    auto MaxPlayerBankItems(std::uint16_t value) -> void;
+    auto MaxPlayerBankItems() const -> std::uint16_t;
 
-    auto MaxPlayerBankWeight(SI32 newVal) -> void;
-    auto MaxPlayerBankWeight() const -> SI32;
+    auto MaxPlayerBankWeight(std::int32_t newVal) -> void;
+    auto MaxPlayerBankWeight() const -> std::int32_t;
 
     auto BasicTooltipsOnly(bool value) -> void;
     auto BasicTooltipsOnly() const -> bool;
@@ -923,11 +923,11 @@ class CServerData {
     auto KeylessGuestAccess(bool value) -> void;
     auto KeylessGuestAccess() const -> bool;
 
-    auto MaxHousesOwnable(UI16 value) -> void;
-    auto MaxHousesOwnable() const -> UI16;
+    auto MaxHousesOwnable(std::uint16_t value) -> void;
+    auto MaxHousesOwnable() const -> std::uint16_t;
 
-    auto MaxHousesCoOwnable(UI16 value) -> void;
-    auto MaxHousesCoOwnable() const -> UI16;
+    auto MaxHousesCoOwnable(std::uint16_t value) -> void;
+    auto MaxHousesCoOwnable() const -> std::uint16_t;
 
     auto PaperdollGuildButton(bool value) -> void;
     auto PaperdollGuildButton() const -> bool;
@@ -935,44 +935,44 @@ class CServerData {
     auto CombatMonstersVsAnimals(bool value) -> void;
     auto CombatMonstersVsAnimals() const -> bool;
 
-    auto CombatAnimalsAttackChance(UI16 value) -> void;
-    auto CombatAnimalsAttackChance() const -> UI16;
+    auto CombatAnimalsAttackChance(std::uint16_t value) -> void;
+    auto CombatAnimalsAttackChance() const -> std::uint16_t;
 
     auto CombatArcheryShootDelay(R32 value) -> void;
     R32 CombatArcheryShootDelay() const;
 
-    auto CombatArcheryHitBonus(SI08 value) -> void;
-    SI08 CombatArcheryHitBonus() const;
+    auto CombatArcheryHitBonus(std::int8_t value) -> void;
+    std::int8_t CombatArcheryHitBonus() const;
 
-    auto CombatWeaponDamageChance(UI08 value) -> void;
-    UI08 CombatWeaponDamageChance() const;
+    auto CombatWeaponDamageChance(std::uint8_t value) -> void;
+    std::uint8_t CombatWeaponDamageChance() const;
 
-    auto CombatWeaponDamageMin(UI08 value) -> void;
-    UI08 CombatWeaponDamageMin(void) const;
+    auto CombatWeaponDamageMin(std::uint8_t value) -> void;
+    std::uint8_t CombatWeaponDamageMin(void) const;
 
-    auto CombatWeaponDamageMax(UI08 value) -> void;
-    UI08 CombatWeaponDamageMax() const;
+    auto CombatWeaponDamageMax(std::uint8_t value) -> void;
+    std::uint8_t CombatWeaponDamageMax() const;
 
-    auto CombatArmorDamageChance(UI08 value) -> void;
-    UI08 CombatArmorDamageChance() const;
+    auto CombatArmorDamageChance(std::uint8_t value) -> void;
+    std::uint8_t CombatArmorDamageChance() const;
 
-    auto CombatArmorDamageMin(UI08 value) -> void;
-    UI08 CombatArmorDamageMin() const;
+    auto CombatArmorDamageMin(std::uint8_t value) -> void;
+    std::uint8_t CombatArmorDamageMin() const;
 
-    auto CombatArmorDamageMax(UI08 value) -> void;
-    UI08 CombatArmorDamageMax() const;
+    auto CombatArmorDamageMax(std::uint8_t value) -> void;
+    std::uint8_t CombatArmorDamageMax() const;
 
-    auto CombatParryDamageChance(UI08 value) -> void;
-    UI08 CombatParryDamageChance() const;
+    auto CombatParryDamageChance(std::uint8_t value) -> void;
+    std::uint8_t CombatParryDamageChance() const;
 
-    auto CombatParryDamageMin(UI08 value) -> void;
-    UI08 CombatParryDamageMin() const;
+    auto CombatParryDamageMin(std::uint8_t value) -> void;
+    std::uint8_t CombatParryDamageMin() const;
 
-    auto CombatParryDamageMax(UI08 value) -> void;
-    UI08 CombatParryDamageMax() const;
+    auto CombatParryDamageMax(std::uint8_t value) -> void;
+    std::uint8_t CombatParryDamageMax() const;
 
-    auto CombatBloodEffectChance(UI08 value) -> void;
-    UI08 CombatBloodEffectChance() const;
+    auto CombatBloodEffectChance(std::uint8_t value) -> void;
+    std::uint8_t CombatBloodEffectChance() const;
 
     auto TravelSpellsFromBoatKeys(bool value) -> void;
     auto TravelSpellsFromBoatKeys() const -> bool;
@@ -1013,23 +1013,23 @@ class CServerData {
     auto BODsFromCraftedItemsOnly(bool value) -> void;
     auto BODsFromCraftedItemsOnly() const -> bool;
 
-    auto MaxControlSlots(UI08 value) -> void;
-    UI08 MaxControlSlots() const;
+    auto MaxControlSlots(std::uint8_t value) -> void;
+    std::uint8_t MaxControlSlots() const;
 
-    auto MaxFollowers(UI08 value) -> void;
-    UI08 MaxFollowers() const;
+    auto MaxFollowers(std::uint8_t value) -> void;
+    std::uint8_t MaxFollowers() const;
 
-    auto MaxPetOwners(UI08 value) -> void;
-    UI08 MaxPetOwners() const;
+    auto MaxPetOwners(std::uint8_t value) -> void;
+    std::uint8_t MaxPetOwners() const;
 
-    auto SetPetLoyaltyGainOnSuccess(UI16 value) -> void;
-    auto GetPetLoyaltyGainOnSuccess() const -> UI16;
+    auto SetPetLoyaltyGainOnSuccess(std::uint16_t value) -> void;
+    auto GetPetLoyaltyGainOnSuccess() const -> std::uint16_t;
 
-    auto SetPetLoyaltyLossOnFailure(UI16 value) -> void;
-    auto GetPetLoyaltyLossOnFailure() const -> UI16;
+    auto SetPetLoyaltyLossOnFailure(std::uint16_t value) -> void;
+    auto GetPetLoyaltyLossOnFailure() const -> std::uint16_t;
 
-    auto MaxSafeTeleportsPerDay(UI08 value) -> void;
-    UI08 MaxSafeTeleportsPerDay() const;
+    auto MaxSafeTeleportsPerDay(std::uint8_t value) -> void;
+    std::uint8_t MaxSafeTeleportsPerDay() const;
 
     auto TeleportToNearestSafeLocation(bool value) -> void;
     auto TeleportToNearestSafeLocation() const -> bool;
@@ -1043,11 +1043,11 @@ class CServerData {
     auto ThirstSystemEnabled(bool value) -> void;
     auto ThirstSystemEnabled() const -> bool;
 
-    auto HungerDamage(SI16 value) -> void;
-    SI16 HungerDamage() const;
+    auto HungerDamage(std::int16_t value) -> void;
+    std::int16_t HungerDamage() const;
 
-    auto ThirstDrain(SI16 value) -> void;
-    SI16 ThirstDrain() const;
+    auto ThirstDrain(std::int16_t value) -> void;
+    std::int16_t ThirstDrain() const;
 
     auto PetHungerOffline(bool value) -> void;
     auto PetHungerOffline() const -> bool;
@@ -1055,65 +1055,65 @@ class CServerData {
     auto PetThirstOffline(bool value) -> void;
     auto PetThirstOffline() const -> bool;
 
-    auto PetOfflineTimeout(UI16 value) -> void;
-    auto PetOfflineTimeout() const -> UI16;
+    auto PetOfflineTimeout(std::uint16_t value) -> void;
+    auto PetOfflineTimeout() const -> std::uint16_t;
 
-    auto BuyThreshold(SI16 value) -> void;
-    SI16 BuyThreshold() const;
+    auto BuyThreshold(std::int16_t value) -> void;
+    std::int16_t BuyThreshold() const;
 
-    auto BackupRatio(SI16 value) -> void;
-    SI16 BackupRatio() const;
+    auto BackupRatio(std::int16_t value) -> void;
+    std::int16_t BackupRatio() const;
 
-    auto CombatMaxRange(SI16 value) -> void;
-    SI16 CombatMaxRange() const;
+    auto CombatMaxRange(std::int16_t value) -> void;
+    std::int16_t CombatMaxRange() const;
 
-    auto CombatMaxSpellRange(SI16 value) -> void;
-    SI16 CombatMaxSpellRange() const;
+    auto CombatMaxSpellRange(std::int16_t value) -> void;
+    std::int16_t CombatMaxSpellRange() const;
 
     auto CombatAnimalsGuarded(bool value) -> void;
     auto CombatAnimalsGuarded() const -> bool;
 
-    auto CombatNPCBaseFleeAt(SI16 value) -> void;
-    SI16 CombatNPCBaseFleeAt() const;
+    auto CombatNPCBaseFleeAt(std::int16_t value) -> void;
+    std::int16_t CombatNPCBaseFleeAt() const;
 
-    void ExpansionCoreShardEra(UI08 value);
-    UI08 ExpansionCoreShardEra(void) const;
+    void ExpansionCoreShardEra(std::uint8_t value);
+    std::uint8_t ExpansionCoreShardEra(void) const;
 
-    void ExpansionArmorCalculation(UI08 value);
-    UI08 ExpansionArmorCalculation() const;
+    void ExpansionArmorCalculation(std::uint8_t value);
+    std::uint8_t ExpansionArmorCalculation() const;
 
-    void ExpansionStrengthDamageBonus(UI08 value);
-    UI08 ExpansionStrengthDamageBonus() const;
+    void ExpansionStrengthDamageBonus(std::uint8_t value);
+    std::uint8_t ExpansionStrengthDamageBonus() const;
 
-    void ExpansionTacticsDamageBonus(UI08 value);
-    UI08 ExpansionTacticsDamageBonus() const;
+    void ExpansionTacticsDamageBonus(std::uint8_t value);
+    std::uint8_t ExpansionTacticsDamageBonus() const;
 
-    void ExpansionAnatomyDamageBonus(UI08 value);
-    UI08 ExpansionAnatomyDamageBonus() const;
+    void ExpansionAnatomyDamageBonus(std::uint8_t value);
+    std::uint8_t ExpansionAnatomyDamageBonus() const;
 
-    void ExpansionLumberjackDamageBonus(UI08 value);
-    UI08 ExpansionLumberjackDamageBonus() const;
+    void ExpansionLumberjackDamageBonus(std::uint8_t value);
+    std::uint8_t ExpansionLumberjackDamageBonus() const;
 
-    void ExpansionRacialDamageBonus(UI08 value);
-    UI08 ExpansionRacialDamageBonus() const;
+    void ExpansionRacialDamageBonus(std::uint8_t value);
+    std::uint8_t ExpansionRacialDamageBonus() const;
 
-    void ExpansionDamageBonusCap(UI08 value);
-    UI08 ExpansionDamageBonusCap() const;
+    void ExpansionDamageBonusCap(std::uint8_t value);
+    std::uint8_t ExpansionDamageBonusCap() const;
 
-    void ExpansionShieldParry(UI08 value);
-    UI08 ExpansionShieldParry() const;
+    void ExpansionShieldParry(std::uint8_t value);
+    std::uint8_t ExpansionShieldParry() const;
 
-    void ExpansionWeaponParry(UI08 value);
-    UI08 ExpansionWeaponParry() const;
+    void ExpansionWeaponParry(std::uint8_t value);
+    std::uint8_t ExpansionWeaponParry() const;
 
-    void ExpansionWrestlingParry(UI08 value);
-    UI08 ExpansionWrestlingParry() const;
+    void ExpansionWrestlingParry(std::uint8_t value);
+    std::uint8_t ExpansionWrestlingParry() const;
 
-    void ExpansionCombatHitChance(UI08 value);
-    UI08 ExpansionCombatHitChance() const;
+    void ExpansionCombatHitChance(std::uint8_t value);
+    std::uint8_t ExpansionCombatHitChance() const;
 
-    auto CombatNPCBaseReattackAt(SI16 value) -> void;
-    SI16 CombatNPCBaseReattackAt() const;
+    auto CombatNPCBaseReattackAt(std::int16_t value) -> void;
+    std::int16_t CombatNPCBaseReattackAt() const;
 
     auto ShootOnAnimalBack(bool setting) -> void;
     auto ShootOnAnimalBack() const -> bool;
@@ -1136,77 +1136,77 @@ class CServerData {
     auto NPCMountedFleeingSpeed(R32 value) -> void;
     R32 NPCMountedFleeingSpeed() const;
 
-    auto TitleColour(UI16 value) -> void;
-    auto TitleColour() const -> UI16;
+    auto TitleColour(std::uint16_t value) -> void;
+    auto TitleColour() const -> std::uint16_t;
 
-    auto LeftTextColour(UI16 value) -> void;
-    auto LeftTextColour() const -> UI16;
+    auto LeftTextColour(std::uint16_t value) -> void;
+    auto LeftTextColour() const -> std::uint16_t;
 
-    auto RightTextColour(UI16 value) -> void;
-    auto RightTextColour() const -> UI16;
+    auto RightTextColour(std::uint16_t value) -> void;
+    auto RightTextColour() const -> std::uint16_t;
 
-    auto ButtonCancel(UI16 value) -> void;
-    auto ButtonCancel() const -> UI16;
+    auto ButtonCancel(std::uint16_t value) -> void;
+    auto ButtonCancel() const -> std::uint16_t;
 
-    auto ButtonLeft(UI16 value) -> void;
-    auto ButtonLeft() const -> UI16;
+    auto ButtonLeft(std::uint16_t value) -> void;
+    auto ButtonLeft() const -> std::uint16_t;
 
-    auto ButtonRight(UI16 value) -> void;
-    auto ButtonRight() const -> UI16;
+    auto ButtonRight(std::uint16_t value) -> void;
+    auto ButtonRight() const -> std::uint16_t;
 
-    auto BackgroundPic(UI16 value) -> void;
-    auto BackgroundPic() const -> UI16;
+    auto BackgroundPic(std::uint16_t value) -> void;
+    auto BackgroundPic() const -> std::uint16_t;
 
-    auto TownNumSecsPollOpen(UI32 value) -> void;
-    UI32 TownNumSecsPollOpen() const;
+    auto TownNumSecsPollOpen(std::uint32_t value) -> void;
+    std::uint32_t TownNumSecsPollOpen() const;
 
-    auto TownNumSecsAsMayor(UI32 value) -> void;
-    UI32 TownNumSecsAsMayor() const;
+    auto TownNumSecsAsMayor(std::uint32_t value) -> void;
+    std::uint32_t TownNumSecsAsMayor() const;
 
-    auto TownTaxPeriod(UI32 value) -> void;
-    UI32 TownTaxPeriod() const;
+    auto TownTaxPeriod(std::uint32_t value) -> void;
+    std::uint32_t TownTaxPeriod() const;
 
-    auto TownGuardPayment(UI32 value) -> void;
-    UI32 TownGuardPayment() const;
+    auto TownGuardPayment(std::uint32_t value) -> void;
+    std::uint32_t TownGuardPayment() const;
 
-    auto RepMaxKills(UI16 value) -> void;
-    auto RepMaxKills() const -> UI16;
+    auto RepMaxKills(std::uint16_t value) -> void;
+    auto RepMaxKills() const -> std::uint16_t;
 
-    auto ResLogs(SI16 value) -> void;
-    SI16 ResLogs() const;
+    auto ResLogs(std::int16_t value) -> void;
+    std::int16_t ResLogs() const;
 
-    auto ResLogTime(UI16 value) -> void;
-    auto ResLogTime() const -> UI16;
+    auto ResLogTime(std::uint16_t value) -> void;
+    auto ResLogTime() const -> std::uint16_t;
 
-    auto ResOre(SI16 value) -> void;
-    SI16 ResOre() const;
+    auto ResOre(std::int16_t value) -> void;
+    std::int16_t ResOre() const;
 
-    auto ResOreTime(UI16 value) -> void;
-    auto ResOreTime() const -> UI16;
+    auto ResOreTime(std::uint16_t value) -> void;
+    auto ResOreTime() const -> std::uint16_t;
 
-    auto ResourceAreaSize(UI16 value) -> void;
-    auto ResourceAreaSize() const -> UI16;
+    auto ResourceAreaSize(std::uint16_t value) -> void;
+    auto ResourceAreaSize() const -> std::uint16_t;
 
-    auto ResFish(SI16 value) -> void;
-    SI16 ResFish() const;
+    auto ResFish(std::int16_t value) -> void;
+    std::int16_t ResFish() const;
 
-    auto ResFishTime(UI16 value) -> void;
-    auto ResFishTime() const -> UI16;
+    auto ResFishTime(std::uint16_t value) -> void;
+    auto ResFishTime() const -> std::uint16_t;
 
     auto AccountFlushTimer(R64 value) -> void;
     R64 AccountFlushTimer() const;
 
-    auto TrackingBaseRange(UI16 value) -> void;
-    auto TrackingBaseRange() const -> UI16;
+    auto TrackingBaseRange(std::uint16_t value) -> void;
+    auto TrackingBaseRange() const -> std::uint16_t;
 
-    auto TrackingMaxTargets(UI08 value) -> void;
-    UI08 TrackingMaxTargets() const;
+    auto TrackingMaxTargets(std::uint8_t value) -> void;
+    std::uint8_t TrackingMaxTargets() const;
 
-    auto TrackingBaseTimer(UI16 value) -> void;
-    auto TrackingBaseTimer() const -> UI16;
+    auto TrackingBaseTimer(std::uint16_t value) -> void;
+    auto TrackingBaseTimer() const -> std::uint16_t;
 
-    auto TrackingRedisplayTime(UI16 value) -> void;
-    auto TrackingRedisplayTime() const -> UI16;
+    auto TrackingRedisplayTime(std::uint16_t value) -> void;
+    auto TrackingRedisplayTime() const -> std::uint16_t;
 
     // Sept 22, 2002 - Support for HideWhileMounted fix.
     auto CharHideWhileMounted(bool value) -> void;
@@ -1240,43 +1240,43 @@ class CServerData {
     auto YoungServerLocation(size_t locNum) -> __STARTLOCATIONDATA__ *;
     auto NumYoungServerLocations() const -> size_t;
 
-    auto ServerSecondsPerUOMinute() const -> UI16;
-    auto ServerSecondsPerUOMinute(UI16 newVal) -> void;
+    auto ServerSecondsPerUOMinute() const -> std::uint16_t;
+    auto ServerSecondsPerUOMinute(std::uint16_t newVal) -> void;
 
-    auto ServerLanguage() const -> UI16;
-    auto ServerLanguage(UI16 newVal) -> void;
+    auto ServerLanguage() const -> std::uint16_t;
+    auto ServerLanguage(std::uint16_t newVal) -> void;
 
-    UI32 MaxClientBytesIn() const;
-    auto MaxClientBytesIn(UI32 newVal) -> void;
+    std::uint32_t MaxClientBytesIn() const;
+    auto MaxClientBytesIn(std::uint32_t newVal) -> void;
 
-    UI32 MaxClientBytesOut() const;
-    auto MaxClientBytesOut(UI32 newVal) -> void;
+    std::uint32_t MaxClientBytesOut() const;
+    auto MaxClientBytesOut(std::uint32_t newVal) -> void;
 
-    UI32 NetTrafficTimeban() const;
-    auto NetTrafficTimeban(UI32 newVal) -> void;
+    std::uint32_t NetTrafficTimeban() const;
+    auto NetTrafficTimeban(std::uint32_t newVal) -> void;
 
-    auto GetJSEngineSize() const -> UI16;
-    auto SetJSEngineSize(UI16 newVal) -> void;
+    auto GetJSEngineSize() const -> std::uint16_t;
+    auto SetJSEngineSize(std::uint16_t newVal) -> void;
 
-    auto APSPerfThreshold() const -> UI16;
-    auto APSPerfThreshold(UI16 newVal) -> void;
-    auto APSInterval() const -> UI16;
-    auto APSInterval(UI16 newVal) -> void;
-    auto APSDelayStep() const -> UI16;
-    auto APSDelayStep(UI16 newVal) -> void;
-    auto APSDelayMaxCap() const -> UI16;
-    auto APSDelayMaxCap(UI16 newVal) -> void;
+    auto APSPerfThreshold() const -> std::uint16_t;
+    auto APSPerfThreshold(std::uint16_t newVal) -> void;
+    auto APSInterval() const -> std::uint16_t;
+    auto APSInterval(std::uint16_t newVal) -> void;
+    auto APSDelayStep() const -> std::uint16_t;
+    auto APSDelayStep(std::uint16_t newVal) -> void;
+    auto APSDelayMaxCap() const -> std::uint16_t;
+    auto APSDelayMaxCap(std::uint16_t newVal) -> void;
 
-    SI16 ServerTimeDay() const;
-    UI08 ServerTimeHours() const;
-    UI08 ServerTimeMinutes() const;
-    UI08 ServerTimeSeconds() const;
+    std::int16_t ServerTimeDay() const;
+    std::uint8_t ServerTimeHours() const;
+    std::uint8_t ServerTimeMinutes() const;
+    std::uint8_t ServerTimeSeconds() const;
     auto ServerTimeAMPM() const -> bool;
 
-    auto ServerTimeDay(SI16 nValue) -> void;
-    auto ServerTimeHours(UI08 nValue) -> void;
-    auto ServerTimeMinutes(UI08 nValue) -> void;
-    auto ServerTimeSeconds(UI08 nValue) -> void;
+    auto ServerTimeDay(std::int16_t nValue) -> void;
+    auto ServerTimeHours(std::uint8_t nValue) -> void;
+    auto ServerTimeMinutes(std::uint8_t nValue) -> void;
+    auto ServerTimeSeconds(std::uint8_t nValue) -> void;
     auto ServerTimeAMPM(bool nValue) -> void;
 
     auto SaveTime() -> void;
@@ -1289,12 +1289,12 @@ class CServerData {
     auto IncHour() -> bool;
     auto IncDay() -> bool;
 
-    auto IncMoon(SI32 mNumber) -> void;
+    auto IncMoon(std::int32_t mNumber) -> void;
 
     auto matchIP(const Ip4Addr_st &ip) const -> Ip4Addr_st;
 
-    PhysicalServer *ServerEntry(UI16 entryNum);
-    auto ServerCount() const -> UI16;
+    PhysicalServer *ServerEntry(std::uint16_t entryNum);
+    auto ServerCount() const -> std::uint16_t;
 
   private:
     bool resettingDefaults;

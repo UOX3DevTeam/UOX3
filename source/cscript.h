@@ -141,13 +141,13 @@ enum ScriptEvent {
 
 struct SEGump_st {
     std::vector<std::string> *one, *two;
-    UI32 textId;
+    std::uint32_t textId;
 };
 
 struct SEGumpData_st {
     std::vector<std::string> sEdits;
-    std::vector<SI32> nButtons;
-    std::vector<SI16> nIDs;
+    std::vector<std::int32_t> nButtons;
+    std::vector<std::int16_t> nIDs;
 };
 
 class cScript {
@@ -157,7 +157,7 @@ class cScript {
     JSObject *targObject;
 
     bool isFiring;
-    UI08 runTime;
+    std::uint8_t runTime;
 
     std::bitset<64> eventPresence[3];
     std::bitset<64> needsChecking[3];
@@ -175,14 +175,14 @@ class cScript {
     void CollectGarbage(void);
 
     size_t NewGumpList(void);
-    SEGump_st *GetGumpList(SI32 index);
-    void RemoveGumpList(SI32 index);
-    void SendGumpList(SI32 index, CSocket *toSendTo);
+    SEGump_st *GetGumpList(std::int32_t index);
+    void RemoveGumpList(std::int32_t index);
+    void SendGumpList(std::int32_t index, CSocket *toSendTo);
 
     void HandleGumpPress(CPIGumpMenuSelect *packet);
     void HandleGumpInput(CPIGumpInput *pressing);
 
-    cScript(std::string targFile, UI08 runTime);
+    cScript(std::string targFile, std::uint8_t runTime);
     ~cScript();
 
     JSObject *Object(void) const; // returns object pointer
@@ -192,128 +192,128 @@ class cScript {
     bool OnStart(void);
     bool OnStop(void);
     //
-    bool OnPacketReceive(CSocket *mSock, UI16 packetNum);
-    bool OnIterate(CBaseObject *a, UI32 &b);
-    bool OnIterateSpawnRegions(CSpawnRegion *a, UI32 &b);
+    bool OnPacketReceive(CSocket *mSock, std::uint16_t packetNum);
+    bool OnIterate(CBaseObject *a, std::uint32_t &b);
+    bool OnIterateSpawnRegions(CSpawnRegion *a, std::uint32_t &b);
     bool OnCreate(CBaseObject *thingCreated, bool dfnCreated, bool isPlayer);
     bool DoesEventExist(char *eventToFind);
-    SI08 OnCommand(CSocket *mSock, std::string command);
+    std::int8_t OnCommand(CSocket *mSock, std::string command);
     bool OnDelete(CBaseObject *thingDestroyed);
-    SI08 OnSpeech(const char *speech, CChar *personTalking, CBaseObject *talkingTo);
+    std::int8_t OnSpeech(const char *speech, CChar *personTalking, CBaseObject *talkingTo);
     bool InRange(CBaseObject *srcObj, CBaseObject *objInRange);
-    SI08 OnCollide(CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith);
-    SI08 OnMoveDetect(CBaseObject *sourceObj, CChar *CharInRange, UI08 rangeToChar, UI16 oldCharX,
-                      UI16 oldCharY);
-    SI08 OnSteal(CChar *thief, CItem *theft, CChar *victim);
-    SI08 OnPathfindEnd(CChar *npc, SI08 pathfindResult);
-    SI08 OnEnterEvadeState(CChar *npc, CChar *enemy);
-    SI08 OnCarveCorpse(CChar *player, CItem *corpse);
-    SI08 OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target);
-    SI08 OnDispel(CBaseObject *dispelled);
-    bool OnSkill(CBaseObject *skillUse, SI08 skillUsed);
+    std::int8_t OnCollide(CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith);
+    std::int8_t OnMoveDetect(CBaseObject *sourceObj, CChar *CharInRange, std::uint8_t rangeToChar, std::uint16_t oldCharX,
+                      std::uint16_t oldCharY);
+    std::int8_t OnSteal(CChar *thief, CItem *theft, CChar *victim);
+    std::int8_t OnPathfindEnd(CChar *npc, std::int8_t pathfindResult);
+    std::int8_t OnEnterEvadeState(CChar *npc, CChar *enemy);
+    std::int8_t OnCarveCorpse(CChar *player, CItem *corpse);
+    std::int8_t OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target);
+    std::int8_t OnDispel(CBaseObject *dispelled);
+    bool OnSkill(CBaseObject *skillUse, std::int8_t skillUsed);
     bool OnStat(void);
     std::string OnTooltip(CBaseObject *myObj, CSocket *pSocket);
-    std::string OnNameRequest(CBaseObject *myObj, CChar *nameRequester, UI08 requestSource);
+    std::string OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std::uint8_t requestSource);
     bool OnAttack(CChar *attacker, CChar *defender);
     bool OnDefense(CChar *attacker, CChar *defender);
-    SI08 OnSkillGain(CChar *player, SI08 skill, UI32 skillAmtGained);
-    SI08 OnSkillLoss(CChar *player, SI08 skill, UI32 skillAmtLost);
-    bool OnSkillChange(CChar *player, SI08 skill, SI32 skillAmtChanged);
-    SI08 OnStatGained(CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount);
-    bool OnStatGain(CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount);
-    SI08 OnStatLoss(CChar *player, UI32 stat, UI32 statLossAmount);
-    bool OnStatChange(CChar *player, UI32 stat, SI32 statChangeAmount);
-    SI08 OnDrop(CItem *item, CChar *dropper);
-    SI08 OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objCont);
+    std::int8_t OnSkillGain(CChar *player, std::int8_t skill, std::uint32_t skillAmtGained);
+    std::int8_t OnSkillLoss(CChar *player, std::int8_t skill, std::uint32_t skillAmtLost);
+    bool OnSkillChange(CChar *player, std::int8_t skill, std::int32_t skillAmtChanged);
+    std::int8_t OnStatGained(CChar *player, std::uint32_t stat, std::int8_t skill, std::uint32_t statGainedAmount);
+    bool OnStatGain(CChar *player, std::uint32_t stat, std::int8_t skill, std::uint32_t statGainAmount);
+    std::int8_t OnStatLoss(CChar *player, std::uint32_t stat, std::uint32_t statLossAmount);
+    bool OnStatChange(CChar *player, std::uint32_t stat, std::int32_t statChangeAmount);
+    std::int8_t OnDrop(CItem *item, CChar *dropper);
+    std::int8_t OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objCont);
     bool OnContRemoveItem(CItem *contItem, CItem *item, CChar *pickerUpper);
-    SI08 OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg);
-    SI08 OnDecay(CItem *decaying);
-    SI08 OnEntrance(CMultiObj *left, CBaseObject *leaving);
-    SI08 OnLeaving(CMultiObj *left, CBaseObject *leaving);
-    SI08 OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer);
-    SI08 OnEquipAttempt(CChar *equipper, CItem *equipping);
-    SI08 OnEquip(CChar *equipper, CItem *equipping);
-    SI08 OnUnequipAttempt(CChar *equipper, CItem *equipping);
-    SI08 OnUnequip(CChar *equipper, CItem *equipping);
-    SI08 OnUseChecked(CChar *user, CItem *iUsing);
-    SI08 OnUseUnChecked(CChar *user, CItem *iUsing);
+    std::int8_t OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg);
+    std::int8_t OnDecay(CItem *decaying);
+    std::int8_t OnEntrance(CMultiObj *left, CBaseObject *leaving);
+    std::int8_t OnLeaving(CMultiObj *left, CBaseObject *leaving);
+    std::int8_t OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer);
+    std::int8_t OnEquipAttempt(CChar *equipper, CItem *equipping);
+    std::int8_t OnEquip(CChar *equipper, CItem *equipping);
+    std::int8_t OnUnequipAttempt(CChar *equipper, CItem *equipping);
+    std::int8_t OnUnequip(CChar *equipper, CItem *equipping);
+    std::int8_t OnUseChecked(CChar *user, CItem *iUsing);
+    std::int8_t OnUseUnChecked(CChar *user, CItem *iUsing);
     bool OutOfRange(CBaseObject *srcObj, CBaseObject *objVanish);
     bool OnLogin(CSocket *sockPlayer, CChar *pPlayer);
     bool OnLogout(CSocket *sockPlayer, CChar *pPlayer);
-    SI08 OnClick(CSocket *sockPlayer, CBaseObject *objClicked);
-    bool OnFall(CChar *pFall, SI08 fallDistance);
-    SI08 OnAISliver(CChar *pSliver);
+    std::int8_t OnClick(CSocket *sockPlayer, CBaseObject *objClicked);
+    bool OnFall(CChar *pFall, std::int8_t fallDistance);
+    std::int8_t OnAISliver(CChar *pSliver);
     bool OnSystemSlice(void);
-    SI08 OnLightChange(CBaseObject *tObject, UI08 lightLevel);
+    std::int8_t OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel);
     bool OnWeatherChange(CBaseObject *tObject, WeatherType element);
-    bool OnTempChange(CBaseObject *tObject, SI08 temp);
-    bool OnTimer(CBaseObject *tObject, UI16 timerId);
-    SI08 OnDeath(CChar *pDead, CItem *iCorpse);
-    SI08 OnResurrect(CChar *pAlive);
-    SI08 OnFlagChange(CChar *pChanging, UI08 newStatus, UI08 oldStatus);
-    SI08 OnLoyaltyChange(CChar *pChanging, SI08 newStatus);
-    SI08 OnHungerChange(CChar *pChanging, SI08 newStatus);
-    bool OnThirstChange(CChar *pChanging, SI08 newStatus);
-    SI08 OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen);
-    SI08 OnSnooped(CChar *snooped, CChar *snooper, bool success);
-    SI08 OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper);
-    bool OnEnterRegion(CChar *entering, UI16 region);
-    bool OnLeaveRegion(CChar *entering, UI16 region);
-    SI08 OnSpellTarget(CBaseObject *target, CChar *caster, UI08 spellNum);
-    SI08 OnSpellTargetSelect(CChar *caster, CBaseObject *target, UI08 spellNum);
-    bool DoCallback(CSocket *tSock, SERIAL targeted, UI08 callNum);
-    SI16 OnSpellCast(CChar *tChar, UI08 SpellId);
-    SI16 OnScrollCast(CChar *tChar, UI08 SpellId);
-    SI08 OnSpellSuccess(CChar *tChar, UI08 SpellId);
-    SI08 OnTalk(CChar *myChar, const char *mySpeech);
+    bool OnTempChange(CBaseObject *tObject, std::int8_t temp);
+    bool OnTimer(CBaseObject *tObject, std::uint16_t timerId);
+    std::int8_t OnDeath(CChar *pDead, CItem *iCorpse);
+    std::int8_t OnResurrect(CChar *pAlive);
+    std::int8_t OnFlagChange(CChar *pChanging, std::uint8_t newStatus, std::uint8_t oldStatus);
+    std::int8_t OnLoyaltyChange(CChar *pChanging, std::int8_t newStatus);
+    std::int8_t OnHungerChange(CChar *pChanging, std::int8_t newStatus);
+    bool OnThirstChange(CChar *pChanging, std::int8_t newStatus);
+    std::int8_t OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen);
+    std::int8_t OnSnooped(CChar *snooped, CChar *snooper, bool success);
+    std::int8_t OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper);
+    bool OnEnterRegion(CChar *entering, std::uint16_t region);
+    bool OnLeaveRegion(CChar *entering, std::uint16_t region);
+    std::int8_t OnSpellTarget(CBaseObject *target, CChar *caster, std::uint8_t spellNum);
+    std::int8_t OnSpellTargetSelect(CChar *caster, CBaseObject *target, std::uint8_t spellNum);
+    bool DoCallback(CSocket *tSock, SERIAL targeted, std::uint8_t callNum);
+    std::int16_t OnSpellCast(CChar *tChar, std::uint8_t SpellId);
+    std::int16_t OnScrollCast(CChar *tChar, std::uint8_t SpellId);
+    std::int8_t OnSpellSuccess(CChar *tChar, std::uint8_t SpellId);
+    std::int8_t OnTalk(CChar *myChar, const char *mySpeech);
     bool OnSpeechInput(CChar *myChar, CItem *myItem, const char *mySpeech);
-    SI08 OnSpellGain(CItem *book, const UI08 spellNum);
-    SI08 OnSpellLoss(CItem *book, const UI08 spellNum);
-    SI08 OnSkillCheck(CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill,
+    std::int8_t OnSpellGain(CItem *book, const std::uint8_t spellNum);
+    std::int8_t OnSpellLoss(CItem *book, const std::uint8_t spellNum);
+    std::int8_t OnSkillCheck(CChar *myChar, const std::uint8_t skill, const std::uint16_t lowSkill, const std::uint16_t highSkill,
                       bool isCraftSkill);
-    SI08 OnDropItemOnNpc(CChar *srcChar, CChar *targChar, CItem *i);
-    SI08 OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest);
-    SI08 OnVirtueGumpPress(CChar *mChar, CChar *tChar, UI16 buttonId);
-    SI08 OnScrollingGumpPress(CSocket *tSock, UI16 gumpId, UI16 buttonId);
-    SI08 OnQuestGump(CChar *mChar);
-    SI08 OnHelpButton(CChar *mChar);
-    SI08 OnWarModeToggle(CChar *mChar);
-    SI08 OnSpecialMove(CChar *mChar, UI08 abilityId);
-    SI08 OnFacetChange(CChar *mChar, const UI08 oldFacet, const UI08 newFacet);
+    std::int8_t OnDropItemOnNpc(CChar *srcChar, CChar *targChar, CItem *i);
+    std::int8_t OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest);
+    std::int8_t OnVirtueGumpPress(CChar *mChar, CChar *tChar, std::uint16_t buttonId);
+    std::int8_t OnScrollingGumpPress(CSocket *tSock, std::uint16_t gumpId, std::uint16_t buttonId);
+    std::int8_t OnQuestGump(CChar *mChar);
+    std::int8_t OnHelpButton(CChar *mChar);
+    std::int8_t OnWarModeToggle(CChar *mChar);
+    std::int8_t OnSpecialMove(CChar *mChar, std::uint8_t abilityId);
+    std::int8_t OnFacetChange(CChar *mChar, const std::uint8_t oldFacet, const std::uint8_t newFacet);
 
     bool AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s);
-    bool CallParticularEvent(const char *eventToCall, jsval *params, SI32 numParams,
+    bool CallParticularEvent(const char *eventToCall, jsval *params, std::int32_t numParams,
                              jsval *eventRetVal);
 
     bool ScriptRegistration(std::string scriptType);
 
     bool executeCommand(CSocket *s, std::string funcName, std::string executedString);
 
-    bool MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum);
-    SI08 OnCharDoubleClick(CChar *currChar, CChar *targChar);
-    SI08 OnSkillGump(CChar *mChar);
-    SI08 OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageItem);
-    SI08 OnAICombatTarget(CChar *attacker, CChar *target);
-    SI08 OnCombatStart(CChar *attacker, CChar *defender);
-    SI08 OnCombatEnd(CChar *attacker, CChar *defender);
+    bool MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, std::int32_t spellNum);
+    std::int8_t OnCharDoubleClick(CChar *currChar, CChar *targChar);
+    std::int8_t OnSkillGump(CChar *mChar);
+    std::int8_t OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageItem);
+    std::int8_t OnAICombatTarget(CChar *attacker, CChar *target);
+    std::int8_t OnCombatStart(CChar *attacker, CChar *defender);
+    std::int8_t OnCombatEnd(CChar *attacker, CChar *defender);
 
-    SI08 OnDeathBlow(CChar *mKilled, CChar *mKiller);
+    std::int8_t OnDeathBlow(CChar *mKilled, CChar *mKiller);
 
-    SI16 OnCombatDamageCalc(CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc);
-    SI08 OnDamage(CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType);
-    SI08 OnDamageDeal(CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType);
-    SI08 OnBuy(CSocket *targSock, CChar *objVendor);
-    SI08 OnBuyFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
-                         UI16 numItemsBuying);
-    SI08 OnSellToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
-                        UI16 numItemsSelling);
-    SI08 OnSell(CSocket *targSock, CChar *objVendor);
-    SI08 OnBoughtFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
-                            UI16 numItemsBought);
-    SI08 OnSoldToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
-                        UI16 numItemsSold);
-    SI08 OnHouseCommand(CSocket *targSock, CMultiObj *multiObj, UI08 targId);
-    SI08 OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId);
+    std::int16_t OnCombatDamageCalc(CChar *attacker, CChar *defender, std::uint8_t getFightSkill, std::uint8_t hitLoc);
+    std::int8_t OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, WeatherType damageType);
+    std::int8_t OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue, WeatherType damageType);
+    std::int8_t OnBuy(CSocket *targSock, CChar *objVendor);
+    std::int8_t OnBuyFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
+                         std::uint16_t numItemsBuying);
+    std::int8_t OnSellToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
+                        std::uint16_t numItemsSelling);
+    std::int8_t OnSell(CSocket *targSock, CChar *objVendor);
+    std::int8_t OnBoughtFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
+                            std::uint16_t numItemsBought);
+    std::int8_t OnSoldToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
+                        std::uint16_t numItemsSold);
+    std::int8_t OnHouseCommand(CSocket *targSock, CMultiObj *multiObj, std::uint8_t targId);
+    std::int8_t OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, std::uint16_t createEntryId);
 
     //	Critical handler type stuff
     bool IsFiring(void);

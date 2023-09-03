@@ -20,7 +20,7 @@ enum GUILDRELATION { GR_NEUTRAL = 0, GR_WAR, GR_ALLY, GR_UNKNOWN, GR_SAME, GR_CO
 
 const std::string GTypeNames[GT_COUNT] = {"Standard", "Order", "Chaos", "Unknown"};
 const std::string GRelationNames[GR_COUNT] = {"Neutral", "War", "Ally", "Unknown", "Same"};
-const SI16 BasePage = 8000;
+const std::int16_t BasePage = 8000;
 
 typedef std::map<GUILDID, GUILDRELATION> GUILDREL;
 typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
@@ -110,7 +110,7 @@ class CGuild {
 
     void CalcMaster();
 
-    void TellMembers(SI32 dictEntry, ...);
+    void TellMembers(std::int32_t dictEntry, ...);
 
     const std::string TypeName();
 
@@ -141,7 +141,7 @@ class CGuildCollection {
     void Load();
     GUILDRELATION Compare(GUILDID srcGuild, GUILDID trgGuild) const;
     GUILDRELATION Compare(CChar *src, CChar *trg) const;
-    void Menu(CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL);
+    void Menu(CSocket *s, std::int16_t menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL);
     void GumpInput(CPIGumpInput *gi);
     void GumpChoice(CSocket *s);
     void PlaceStone(CSocket *s, CItem *deed);

@@ -42,47 +42,47 @@ size_t CJailCell::JailedPlayers(void) const { return playersInJail.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets X coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-SI16 CJailCell::X(void) const { return x; }
-void CJailCell::X(SI16 nVal) { x = nVal; }
+std::int16_t CJailCell::X(void) const { return x; }
+void CJailCell::X(std::int16_t nVal) { x = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::Y()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Y coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-SI16 CJailCell::Y(void) const { return y; }
-void CJailCell::Y(SI16 nVal) { y = nVal; }
+std::int16_t CJailCell::Y(void) const { return y; }
+void CJailCell::Y(std::int16_t nVal) { y = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::Z()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Z coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-SI08 CJailCell::Z(void) const { return z; }
-void CJailCell::Z(SI08 nVal) { z = nVal; }
+std::int8_t CJailCell::Z(void) const { return z; }
+void CJailCell::Z(std::int8_t nVal) { z = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets world number for jailcell
 // o------------------------------------------------------------------------------------------------o
-UI08 CJailCell::World(void) const { return world; }
-void CJailCell::World(UI08 nVal) { world = nVal; }
+std::uint8_t CJailCell::World(void) const { return world; }
+void CJailCell::World(std::uint8_t nVal) { world = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::InstanceId()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets instanceId for jailcell
 // o------------------------------------------------------------------------------------------------o
-UI16 CJailCell::InstanceId(void) const { return instanceId; }
-void CJailCell::InstanceId(UI16 nVal) { instanceId = nVal; }
+std::uint16_t CJailCell::InstanceId(void) const { return instanceId; }
+void CJailCell::InstanceId(std::uint16_t nVal) { instanceId = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::AddOccupant()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add player to jail for a certain amount of time
 // o------------------------------------------------------------------------------------------------o
-void CJailCell::AddOccupant(CChar *pAdd, SI32 secsFromNow) {
+void CJailCell::AddOccupant(CChar *pAdd, std::int32_t secsFromNow) {
     if (!ValidateObject(pAdd))
         return;
 
@@ -163,7 +163,7 @@ void CJailCell::WriteData(std::ostream &outStream, size_t cellNumber) {
             outStream << "SERIAL=" << std::hex << mOccupant->pSerial << '\n';
             outStream << "OLDX=" << std::dec << mOccupant->x << '\n';
             outStream << "OLDY=" << mOccupant->y << '\n';
-            outStream << "OLDZ=" << static_cast<SI16>(mOccupant->z) << '\n';
+            outStream << "OLDZ=" << static_cast<std::int16_t>(mOccupant->z) << '\n';
             outStream << "WORLD=" << mOccupant->world << '\n';
             outStream << "INSTANCEID=" << mOccupant->instanceId << '\n';
             outStream << "RELEASE=" << mOccupant->releaseTime << '\n';
@@ -222,13 +222,13 @@ auto CJailSystem::ReadSetup() -> void {
                 data = util::trim(util::strip(data, "//"));
                 switch ((tag.data()[0])) {
                 case 'X':
-                    toAdd.X(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                    toAdd.X(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                     break;
                 case 'Y':
-                    toAdd.Y(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                    toAdd.Y(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                     break;
                 case 'Z':
-                    toAdd.Z(static_cast<SI08>(std::stoi(data, nullptr, 0)));
+                    toAdd.Z(static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     jails.push_back(toAdd);
                     break;
                 }
@@ -257,7 +257,7 @@ auto CJailSystem::ReadData() -> void {
                 continue;
 
             JailOccupant_st toPush;
-            UI08 cellNumber = 0;
+            std::uint8_t cellNumber = 0;
             for (const auto &sec : prisonerData->collection()) {
                 auto tag = sec->tag;
                 if (!tag.empty()) {
@@ -267,21 +267,21 @@ auto CJailSystem::ReadData() -> void {
                     switch ((UTag.data()[0])) {
                     case 'C':
                         if (UTag == "CELL") {
-                            cellNumber = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                            cellNumber = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                         }
                         break;
                     case 'O':
                         if (UTag == "OLDX") {
-                            toPush.x = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                            toPush.x = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
                         }
                         else if (UTag == "OLDY") {
-                            toPush.y = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                            toPush.y = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
                         }
                         else if (UTag == "OLDZ") {
-                            toPush.z = static_cast<SI08>(std::stoi(data, nullptr, 0));
+                            toPush.z = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
                         }
                         else if (UTag == "WORLD") {
-                            toPush.world = static_cast<SI08>(std::stoi(data, nullptr, 0));
+                            toPush.world = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
                         }
                         break;
                     case 'R':
@@ -291,7 +291,7 @@ auto CJailSystem::ReadData() -> void {
                         break;
                     case 'S':
                         if (UTag == "SERIAL") {
-                            toPush.pSerial = static_cast<UI32>(std::stoul(data, nullptr, 0));
+                            toPush.pSerial = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
                         }
                         break;
                     }
@@ -346,8 +346,8 @@ void CJailSystem::ReleasePlayer(CChar *toRelease) {
     if (!ValidateObject(toRelease))
         return;
 
-    SI08 cellNum = toRelease->GetCell();
-    if (cellNum < 0 || cellNum >= static_cast<SI08>(jails.size()))
+    std::int8_t cellNum = toRelease->GetCell();
+    if (cellNum < 0 || cellNum >= static_cast<std::int8_t>(jails.size()))
         return;
 
     for (size_t iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter) {
@@ -371,7 +371,7 @@ void CJailSystem::ReleasePlayer(CChar *toRelease) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send player to jail for a certain amount of time
 // o------------------------------------------------------------------------------------------------o
-bool CJailSystem::JailPlayer(CChar *toJail, SI32 numSecsToJail) {
+bool CJailSystem::JailPlayer(CChar *toJail, std::int32_t numSecsToJail) {
     if (jails.empty() || toJail == nullptr)
         return false;
 
@@ -387,6 +387,6 @@ bool CJailSystem::JailPlayer(CChar *toJail, SI32 numSecsToJail) {
     }
 
     jails[minCell].AddOccupant(toJail, numSecsToJail);
-    toJail->SetCell(static_cast<SI08>(minCell));
+    toJail->SetCell(static_cast<std::int8_t>(minCell));
     return true;
 }

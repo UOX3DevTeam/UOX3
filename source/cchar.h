@@ -55,7 +55,7 @@ enum cC_TID {
 };
 
 struct TargetInfo {
-    UI32 timestamp;
+    std::uint32_t timestamp;
     bool isNpc;
 };
 
@@ -63,10 +63,10 @@ struct DamageTrackEntry_st {
     DamageTrackEntry_st()
         : damager(INVALIDSERIAL), damageDone(0), lastDamageType(PHYSICAL),
           lastDamageDone(INVALIDSERIAL) {}
-    DamageTrackEntry_st(SERIAL dmgr, SI32 dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn)
+    DamageTrackEntry_st(SERIAL dmgr, std::int32_t dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn)
         : damager(dmgr), damageDone(dmgDn), lastDamageType(dmgType), lastDamageDone(lstDmgDn) {}
     SERIAL damager;             // who did the damage?
-    SI32 damageDone;            // how much damage has been accumulated?
+    std::int32_t damageDone;            // how much damage has been accumulated?
     WeatherType lastDamageType; // what type of damage was dealt most recently?
     TIMERVAL lastDamageDone;    // when was the last time that damage was done?
 };
@@ -83,54 +83,54 @@ class CChar : public CBaseObject {
         NPCValues_st();
         void DumpBody(std::ostream &outStream);
 
-        SI08 wanderMode;    // NPC Wander Mode
-        SI08 oldWanderMode; // Used for fleeing npcs
+        std::int8_t wanderMode;    // NPC Wander Mode
+        std::int8_t oldWanderMode; // Used for fleeing npcs
         SERIAL fTarg;       // NPC Follow Target
-        SI16 fx[2];         // NPC Wander Point x
-        SI16 fy[2];         // NPC Wander Point y
-        SI08 fz;            // NPC Wander Point z
-        SI16 aiType;
-        SI16 spellAttack;
-        SI08 spellDelay; // won't time out for more than 255 seconds!
-        SI16 taming;
-        SI16 fleeAt;       // HP Level to flee at
-        SI16 reAttackAt;   // HP Level to re-Attack at
-        UI08 fleeDistance; // Maximum distance in tiles the NPC can flee in one go
-        UI08 splitNum;
-        UI08 splitChance;
-        UI08 trainingPlayerIn;
-        UI32 goldOnHand;
-        UI08 questType;
-        UI08 questDestRegion;
-        UI08 questOrigRegion;
+        std::int16_t fx[2];         // NPC Wander Point x
+        std::int16_t fy[2];         // NPC Wander Point y
+        std::int8_t fz;            // NPC Wander Point z
+        std::int16_t aiType;
+        std::int16_t spellAttack;
+        std::int8_t spellDelay; // won't time out for more than 255 seconds!
+        std::int16_t taming;
+        std::int16_t fleeAt;       // HP Level to flee at
+        std::int16_t reAttackAt;   // HP Level to re-Attack at
+        std::uint8_t fleeDistance; // Maximum distance in tiles the NPC can flee in one go
+        std::uint8_t splitNum;
+        std::uint8_t splitChance;
+        std::uint8_t trainingPlayerIn;
+        std::uint32_t goldOnHand;
+        std::uint8_t questType;
+        std::uint8_t questDestRegion;
+        std::uint8_t questOrigRegion;
         CBaseObject *petGuarding;
         cNPC_FLAG npcFlag;
         std::bitset<8> boolFlags;
-        SI16 peaceing;
-        SI16 provoing;
+        std::int16_t peaceing;
+        std::int16_t provoing;
 
-        UI16 tamedHungerRate;  // The rate at which hunger decreases when char is tamed
-        UI16 tamedThirstRate;  // The rate at which thirst decreases when char is tamed
-        UI08 hungerWildChance; // The chance that the char goes wild when hungry
-        UI08 thirstWildChance; // The chance that the char goes wild when thirsty
+        std::uint16_t tamedHungerRate;  // The rate at which hunger decreases when char is tamed
+        std::uint16_t tamedThirstRate;  // The rate at which thirst decreases when char is tamed
+        std::uint8_t hungerWildChance; // The chance that the char goes wild when hungry
+        std::uint8_t thirstWildChance; // The chance that the char goes wild when thirsty
         R32 walkingSpeed;
         R32 runningSpeed;
         R32 fleeingSpeed;
-        SI08 pathFail;
-        SI08 pathResult;
-        UI16 pathTargX;
-        UI16 pathTargY;
+        std::int8_t pathFail;
+        std::int8_t pathResult;
+        std::uint16_t pathTargX;
+        std::uint16_t pathTargY;
 
-        std::deque<UI08> pathToFollow; // let's use a queue of directions to follow
+        std::deque<std::uint8_t> pathToFollow; // let's use a queue of directions to follow
 
-        UI08 controlSlots;                 // Amount of control slots taken up by a particular NPC
+        std::uint8_t controlSlots;                 // Amount of control slots taken up by a particular NPC
         std::vector<CChar *> petFriends;   // Temporary list of friends a pet has
         GenericList<CChar *> petOwnerList; // Persistent list of owners a pet has previously had
         std::unordered_map<SERIAL, TargetInfo>
             combatIgnore; // Chars this char ignores as targets in combat, with timestamps
-        UI16 maxLoyalty;  // Pet's maximum loyalty to its master
-        UI16 loyalty;     // Pet's current loyalty to its master
-        UI16 orneriness;  // Difficulty to control pet
+        std::uint16_t maxLoyalty;  // Pet's maximum loyalty to its master
+        std::uint16_t loyalty;     // Pet's current loyalty to its master
+        std::uint16_t orneriness;  // Difficulty to control pet
 
         std::string foodList;
 
@@ -146,24 +146,24 @@ class CChar : public CBaseObject {
         SERIAL callNum;        // Callnum GM or Counsellor is on
         SERIAL playerCallNum;  // Players call number in GM or Counsellor requestQueue
         SERIAL trackingTarget; // Tracking target ID
-        UI08 squelched;        // Squelching
-        UI08 commandLevel;     // 0 = player, 1 = counselor, 2 = GM
-        UI08 postType;
-        UI16 hairStyle;
-        UI16 beardStyle;
+        std::uint8_t squelched;        // Squelching
+        std::uint8_t commandLevel;     // 0 = player, 1 = counselor, 2 = GM
+        std::uint8_t postType;
+        std::uint16_t hairStyle;
+        std::uint16_t beardStyle;
         COLOUR hairColour;
         COLOUR beardColour;
         CItem *speechItem;
-        UI08 speechMode;
-        UI08 speechId;
+        std::uint8_t speechMode;
+        std::uint8_t speechId;
         cScript *speechCallback;
         SERIAL robe;
-        UI16 accountNum;
-        UI16 origSkin;
-        UI16 origId;     // Backup of body type for polymorph
-        UI08 fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the
+        std::uint16_t accountNum;
+        std::uint16_t origSkin;
+        std::uint16_t origId;     // Backup of body type for polymorph
+        std::uint8_t fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the
                          // night)
-        UI16 deaths;
+        std::uint16_t deaths;
         CSocket *socket;
 
         std::vector<CChar *> trackingTargets;
@@ -171,18 +171,18 @@ class CChar : public CBaseObject {
         std::string origName; // original name - for Incognito
 
         std::string lastOn; // Last time a character was on
-        UI32 lastOnSecs;    // Last time a character was on in seconds.
+        std::uint32_t lastOnSecs;    // Last time a character was on in seconds.
 
         SERIAL townVote;
-        SI08 townPriv; // 0=non resident (Other privledges added as more functionality added)
-        UI08 controlSlotsUsed; // The total number of control slots currently taken up by
+        std::int8_t townPriv; // 0=non resident (Other privledges added as more functionality added)
+        std::uint8_t controlSlotsUsed; // The total number of control slots currently taken up by
                                // followers/pets
-        UI32 createdOn;        // Timestamp for when player character was created
-        UI32
+        std::uint32_t createdOn;        // Timestamp for when player character was created
+        std::uint32_t
             npcGuildJoined; // Timestamp for when player character joined NPC guild (0=never joined)
-        UI32 playTime;      // Character's full playtime
+        std::uint32_t playTime;      // Character's full playtime
 
-        UI08 atrophy[INTELLECT + 1];
+        std::uint8_t atrophy[INTELLECT + 1];
         SkillLock lockState[INTELLECT + 1]; // state of the skill locks
 
         // speechMode valid values
@@ -203,39 +203,39 @@ class CChar : public CBaseObject {
     PlayerValues_st *mPlayer;
 
     std::bitset<64> bools; // lots of flags
-    SI08 fontType;         // Speech font to use
-    UI16 maxHP;
-    UI16 maxHP_oldstr;
+    std::int8_t fontType;         // Speech font to use
+    std::uint16_t maxHP;
+    std::uint16_t maxHP_oldstr;
     RACEID oldRace;
-    SI16 maxMana;
-    UI16 maxMana_oldint;
-    SI16 maxStam;
-    UI16 maxStam_olddex;
+    std::int16_t maxMana;
+    std::uint16_t maxMana_oldint;
+    std::int16_t maxStam;
+    std::uint16_t maxStam_olddex;
     COLOUR sayColor;
     COLOUR emoteColor;
-    SI08 cell;       // Reserved for jailing players
+    std::int8_t cell;       // Reserved for jailing players
     CItem *packItem; // Characters backpack
     SERIAL targ;     // Current combat target
     SERIAL attacker; // Character who attacked this character
-    SI08 hunger;     // Level of hungerness, 6 = full, 0 = "empty"
-    SI08 thirst;     // Level of thirstiness, 6 = full, 0 = "empty"
-    UI16 regionNum;
-    UI16 town; // Matches Region number in regions.dfn
+    std::int8_t hunger;     // Level of hungerness, 6 = full, 0 = "empty"
+    std::int8_t thirst;     // Level of thirstiness, 6 = full, 0 = "empty"
+    std::uint16_t regionNum;
+    std::uint16_t town; // Matches Region number in regions.dfn
 
-    UI08 brkPeaceChanceGain;
-    UI08 brkPeaceChance;
-    UI16 advObj;        // Has used advance gate?
+    std::uint8_t brkPeaceChanceGain;
+    std::uint8_t brkPeaceChance;
+    std::uint16_t advObj;        // Has used advance gate?
     SERIAL guildFealty; // Serial of player you are loyal to (default=yourself) (DasRaetsel)
-    SI16 guildNumber;   // Number of guild player is in (0=no guild)     (DasRaetsel)
+    std::int16_t guildNumber;   // Number of guild player is in (0=no guild)     (DasRaetsel)
 
-    UI08 flag; // 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like
+    std::uint8_t flag; // 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like
                // we're trying to do
-    SI08 spellCast;
-    UI08 nextAct;    // time to next spell action..
-    SI08 stealth;    // stealth ( steps already done, -1=not using )
-    UI08 running;    // Stamina Loose while running
+    std::int8_t spellCast;
+    std::uint8_t nextAct;    // time to next spell action..
+    std::int8_t stealth;    // stealth ( steps already done, -1=not using )
+    std::uint8_t running;    // Stamina Loose while running
     RACEID raceGate; // Race gate that has been used
-    UI08 step;       // 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
+    std::uint8_t step;       // 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
     std::bitset<16> priv;
 
@@ -247,10 +247,10 @@ class CChar : public CBaseObject {
     TIMERVAL regen[3];
     TIMERVAL weathDamage[WEATHNUM]; // Light Damage timer
 
-    UI08 PoisonStrength;
+    std::uint8_t PoisonStrength;
     BodyType bodyType;
-    UI32 lastMoveTime; // Timestamp for when character moved last
-    UI16 npcGuild;     // ID of NPC guild character is in (0=no NPC guild)
+    std::uint32_t lastMoveTime; // Timestamp for when character moved last
+    std::uint16_t npcGuild;     // ID of NPC guild character is in (0=no NPC guild)
 
     SKILLVAL baseskill[ALLSKILLS]; // Base skills without stat modifiers
     SKILLVAL skill[INTELLECT + 1]; // List of skills (with stat modifiers)
@@ -287,7 +287,7 @@ class CChar : public CBaseObject {
   public:
     BodyType GetBodyType(void);
 
-    virtual void SetWeight(SI32 newVal, bool doWeightUpdate = true) override;
+    virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) override;
 
     bool GetUpdate(UpdateTypes updateType) const;
     void ClearUpdate(void);
@@ -297,8 +297,8 @@ class CChar : public CBaseObject {
     void UpdateDamageTrack(void);
     auto CheckDamageTrack(SERIAL serialToCheck, TIMERVAL lastXSeconds) -> bool;
 
-    void SetPoisonStrength(UI08 value);
-    UI08 GetPoisonStrength(void) const;
+    void SetPoisonStrength(std::uint8_t value);
+    std::uint8_t GetPoisonStrength(void) const;
 
     GenericList<CChar *> *GetPetList(void);
     GenericList<CChar *> *GetFollowerList(void);
@@ -338,29 +338,29 @@ class CChar : public CBaseObject {
     void DoHunger(CSocket *mSock);
     void DoThirst(CSocket *mSock);
     void CheckPetOfflineTimeout(void);
-    SI08 GetHunger(void) const;
-    SI08 GetThirst(void) const;
-    UI16 GetTamedHungerRate(void) const;
-    UI16 GetTamedThirstRate(void) const;
-    UI08 GetTamedHungerWildChance(void) const;
-    UI08 GetTamedThirstWildChance(void) const;
-    UI16 GetTown(void) const;
+    std::int8_t GetHunger(void) const;
+    std::int8_t GetThirst(void) const;
+    std::uint16_t GetTamedHungerRate(void) const;
+    std::uint16_t GetTamedThirstRate(void) const;
+    std::uint8_t GetTamedHungerWildChance(void) const;
+    std::uint8_t GetTamedThirstWildChance(void) const;
+    std::uint16_t GetTown(void) const;
     std::string GetFood(void) const;
 
-    bool SetHunger(SI08 newValue);
-    bool SetThirst(SI08 newValue);
-    void SetTamedHungerRate(UI16 newValue);
-    void SetTamedThirstRate(UI16 newValue);
-    void SetTamedHungerWildChance(UI08 newValue);
-    void SetTamedThirstWildChance(UI08 newValue);
-    void SetTown(UI16 newValue);
+    bool SetHunger(std::int8_t newValue);
+    bool SetThirst(std::int8_t newValue);
+    void SetTamedHungerRate(std::uint16_t newValue);
+    void SetTamedThirstRate(std::uint16_t newValue);
+    void SetTamedHungerWildChance(std::uint8_t newValue);
+    void SetTamedThirstWildChance(std::uint8_t newValue);
+    void SetTown(std::uint16_t newValue);
     void SetFood(std::string food);
 
-    UI08 GetBrkPeaceChanceGain(void) const;
-    void SetBrkPeaceChanceGain(UI08 newValue);
+    std::uint8_t GetBrkPeaceChanceGain(void) const;
+    void SetBrkPeaceChanceGain(std::uint8_t newValue);
 
-    UI08 GetBrkPeaceChance(void) const;
-    void SetBrkPeaceChance(UI08 newValue);
+    std::uint8_t GetBrkPeaceChance(void) const;
+    void SetBrkPeaceChance(std::uint8_t newValue);
 
     void SetMounted(bool newValue);
     bool GetMounted(void) const;
@@ -379,8 +379,8 @@ class CChar : public CBaseObject {
     void SetMaxStamFixed(bool newValue);
     bool GetMaxStamFixed(void) const;
 
-    bool DecHunger(const SI08 amt = 1);
-    bool DecThirst(const SI08 amt = 1);
+    bool DecHunger(const std::int8_t amt = 1);
+    bool DecThirst(const std::int8_t amt = 1);
 
     bool IsUnicode(void) const;
     bool IsNpc(void) const;
@@ -417,7 +417,7 @@ class CChar : public CBaseObject {
     void SetShop(bool newVal);
     void SetDead(bool newValue);
     void SetCanAttack(bool newValue);
-    void SetPeace(UI32 newValue);
+    void SetPeace(std::uint32_t newValue);
     void SetWar(bool newValue);
     void SetPassive(bool newValue);
     void SetOnHorse(bool newValue);
@@ -438,69 +438,69 @@ class CChar : public CBaseObject {
     void SetJSCasting(bool newValue);
     void SetInBuilding(bool newValue);
 
-    void SetTownVote(UI32 newValue);
-    void SetGuildFealty(UI32 newValue);
+    void SetTownVote(std::uint32_t newValue);
+    void SetGuildFealty(std::uint32_t newValue);
 
-    UI32 GetTownVote(void) const;
-    UI32 GetGuildFealty(void) const;
+    std::uint32_t GetTownVote(void) const;
+    std::uint32_t GetGuildFealty(void) const;
 
     std::string GetGuildTitle(void) const;
     void SetGuildTitle(const std::string &newValue);
 
     TIMERVAL GetTimer(cC_TID timerId) const;
-    TIMERVAL GetRegen(UI08 part) const;
-    TIMERVAL GetWeathDamage(UI08 part) const;
-    UI08 GetNextAct(void) const;
+    TIMERVAL GetRegen(std::uint8_t part) const;
+    TIMERVAL GetWeathDamage(std::uint8_t part) const;
+    std::uint8_t GetNextAct(void) const;
 
     void SetTimer(cC_TID timerId, TIMERVAL value);
-    void SetRegen(TIMERVAL newValue, UI08 part);
-    void SetWeathDamage(TIMERVAL newValue, UI08 part);
-    void SetNextAct(UI08 newVal);
+    void SetRegen(TIMERVAL newValue, std::uint8_t part);
+    void SetWeathDamage(TIMERVAL newValue, std::uint8_t part);
+    void SetNextAct(std::uint8_t newVal);
 
     COLOUR GetEmoteColour(void) const;
     COLOUR GetSayColour(void) const;
-    UI16 GetSkin(void) const;
+    std::uint16_t GetSkin(void) const;
 
-    void SetSkin(UI16 value);
+    void SetSkin(std::uint16_t value);
     void SetEmoteColour(COLOUR newValue);
     void SetSayColour(COLOUR newValue);
 
-    SI08 GetStealth(void) const;
-    SI08 GetCell(void) const;
-    UI08 GetRunning(void) const;
-    UI08 GetStep(void) const;
+    std::int8_t GetStealth(void) const;
+    std::int8_t GetCell(void) const;
+    std::uint8_t GetRunning(void) const;
+    std::uint8_t GetStep(void) const;
     CTownRegion *GetRegion(void) const;
-    UI16 GetRegionNum(void) const;
+    std::uint16_t GetRegionNum(void) const;
 
-    void SetCell(SI08 newVal);
-    void SetStealth(SI08 newValue);
-    void SetRunning(UI08 newValue);
-    void SetStep(UI08 newValue);
-    void SetRegion(UI16 newValue);
-    virtual void SetOldLocation(SI16 newX, SI16 newY, SI08 newZ) override;
-    virtual void SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) override;
-    virtual void SetLocation(SI16 newX, SI16 newY, SI08 newZ) override;
+    void SetCell(std::int8_t newVal);
+    void SetStealth(std::int8_t newValue);
+    void SetRunning(std::uint8_t newValue);
+    void SetStep(std::uint8_t newValue);
+    void SetRegion(std::uint16_t newValue);
+    virtual void SetOldLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) override;
+    virtual void SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::uint8_t world, std::uint16_t instanceId) override;
+    virtual void SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) override;
     virtual void SetLocation(const CBaseObject *toSet) override;
-    void WalkZ(SI08 newZ);
-    void WalkDir(SI08 newDir);
+    void WalkZ(std::int8_t newZ);
+    void WalkDir(std::int8_t newDir);
 
     CItem *GetPackItem(void);
     CChar *GetTarg(void) const;
     CChar *GetAttacker(void) const;
-    UI16 GetAdvObj(void) const;
+    std::uint16_t GetAdvObj(void) const;
     RACEID GetRaceGate(void) const;
 
     void SetPackItem(CItem *newVal);
     void SetTarg(CChar *newTarg);
     void SetAttacker(CChar *newValue);
-    void SetAdvObj(UI16 newValue);
+    void SetAdvObj(std::uint16_t newValue);
     void SetRaceGate(RACEID newValue);
 
-    SI08 GetSpellCast(void) const;
-    void SetSpellCast(SI08 newValue);
+    std::int8_t GetSpellCast(void) const;
+    void SetSpellCast(std::int8_t newValue);
 
-    UI16 GetPriv(void) const;
-    SI08 GetTownPriv(void) const;
+    std::uint16_t GetPriv(void) const;
+    std::int8_t GetTownPriv(void) const;
     bool IsGM(void) const;
     bool CanBroadcast(void) const;
     bool IsInvulnerable(void) const;
@@ -535,27 +535,27 @@ class CChar : public CBaseObject {
     void SetPermReflected(bool newValue);
     void SetNoNeedReags(bool newValue);
 
-    void SetPriv(UI16 newValue);
-    void SetTownpriv(SI08 newValue);
+    void SetPriv(std::uint16_t newValue);
+    void SetTownpriv(std::int8_t newValue);
 
-    UI16 GetBaseSkill(UI08 skillToGet) const;
-    UI16 GetSkill(UI08 skillToGet) const;
+    std::uint16_t GetBaseSkill(std::uint8_t skillToGet) const;
+    std::uint16_t GetSkill(std::uint8_t skillToGet) const;
 
-    void SetBaseSkill(SKILLVAL newSkillValue, UI08 skillToSet);
-    void SetSkill(SKILLVAL newSkillValue, UI08 skillToSet);
+    void SetBaseSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet);
+    void SetSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet);
 
-    UI16 GetDeaths(void) const; // can we die 4 billion times?!
-    SI16 GetGuildNumber(void) const;
-    UI08 GetFlag(void) const;
-    UI08 GetControlSlotsUsed(void) const;
+    std::uint16_t GetDeaths(void) const; // can we die 4 billion times?!
+    std::int16_t GetGuildNumber(void) const;
+    std::uint8_t GetFlag(void) const;
+    std::uint8_t GetControlSlotsUsed(void) const;
 
-    void SetDeaths(UI16 newVal);
-    void SetFlag(UI08 newValue);
-    void SetGuildNumber(SI16 newValue);
-    void SetControlSlotsUsed(UI08 newValue);
+    void SetDeaths(std::uint16_t newVal);
+    void SetFlag(std::uint8_t newValue);
+    void SetGuildNumber(std::int16_t newValue);
+    void SetControlSlotsUsed(std::uint8_t newValue);
 
-    SI08 GetFontType(void) const;
-    void SetFontType(SI08 newType);
+    std::int8_t GetFontType(void) const;
+    void SetFontType(std::int8_t newType);
 
     CSocket *GetSocket(void) const;
     void SetSocket(CSocket *newVal);
@@ -586,18 +586,18 @@ class CChar : public CBaseObject {
     virtual bool Save(std::ostream &outStream) override;
     virtual void PostLoadProcessing(void) override;
 
-    SI16 ActualStrength(void) const;
-    virtual SI16 GetStrength(void) const override;
+    std::int16_t ActualStrength(void) const;
+    virtual std::int16_t GetStrength(void) const override;
 
-    SI16 ActualDexterity(void) const;
-    virtual SI16 GetDexterity(void) const override;
+    std::int16_t ActualDexterity(void) const;
+    virtual std::int16_t GetDexterity(void) const override;
 
-    SI16 ActualIntelligence(void) const;
-    virtual SI16 GetIntelligence(void) const override;
+    std::int16_t ActualIntelligence(void) const;
+    virtual std::int16_t GetIntelligence(void) const override;
 
-    void IncStrength2(SI16 toAdd = 1);
-    void IncDexterity2(SI16 toAdd = 1);
-    void IncIntelligence2(SI16 toAdd = 1);
+    void IncStrength2(std::int16_t toAdd = 1);
+    void IncDexterity2(std::int16_t toAdd = 1);
+    void IncIntelligence2(std::int16_t toAdd = 1);
 
     bool IsMurderer(void) const;
     bool IsCriminal(void) const;
@@ -610,8 +610,8 @@ class CChar : public CBaseObject {
     void SetFlagNeutral(void);
 
     void StopSpell(void);
-    bool SkillUsed(UI08 skillNum) const;
-    void SkillUsed(bool value, UI08 skillNum);
+    bool SkillUsed(std::uint8_t skillNum) const;
+    void SkillUsed(bool value, std::uint8_t skillNum);
 
     bool IsPolymorphed(void) const;
     bool IsIncognito(void) const;
@@ -621,50 +621,50 @@ class CChar : public CBaseObject {
     void IsDisguised(bool newValue);
     bool IsJailed(void) const;
 
-    void SetMaxHP(UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace);
-    void SetFixedMaxHP(SI16 newmaxhp);
-    void SetMaxMana(SI16 newmaxmana, UI16 newoldint, RACEID newoldrace);
-    void SetFixedMaxMana(SI16 newmaxmana);
-    void SetMaxStam(SI16 newmaxstam, UI16 newolddex, RACEID newoldrace);
-    void SetFixedMaxStam(SI16 newmaxstam);
-    virtual UI16 GetMaxHP(void);
-    SI16 GetMaxMana(void);
-    SI16 GetMaxStam(void);
-    UI16 GetMaxLoyalty(void) const;
-    UI16 GetLoyalty(void) const;
-    virtual void SetMana(SI16 newValue) override;
-    virtual void SetHP(SI16 newValue) override;
-    virtual void SetStamina(SI16 newValue) override;
-    virtual void SetStrength(SI16 newValue) override;
-    virtual void SetDexterity(SI16 newValue) override;
-    virtual void SetIntelligence(SI16 newValue) override;
-    virtual void SetStrength2(SI16 newValue) override;
-    virtual void SetDexterity2(SI16 newValue) override;
-    virtual void SetIntelligence2(SI16 newValue) override;
-    void IncStamina(SI16 toInc);
-    void IncMana(SI16 toInc);
-    void SetMaxLoyalty(UI16 newMaxLoyalty);
-    void SetLoyalty(UI16 newLoyalty);
+    void SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, RACEID newoldrace);
+    void SetFixedMaxHP(std::int16_t newmaxhp);
+    void SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, RACEID newoldrace);
+    void SetFixedMaxMana(std::int16_t newmaxmana);
+    void SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, RACEID newoldrace);
+    void SetFixedMaxStam(std::int16_t newmaxstam);
+    virtual std::uint16_t GetMaxHP(void);
+    std::int16_t GetMaxMana(void);
+    std::int16_t GetMaxStam(void);
+    std::uint16_t GetMaxLoyalty(void) const;
+    std::uint16_t GetLoyalty(void) const;
+    virtual void SetMana(std::int16_t newValue) override;
+    virtual void SetHP(std::int16_t newValue) override;
+    virtual void SetStamina(std::int16_t newValue) override;
+    virtual void SetStrength(std::int16_t newValue) override;
+    virtual void SetDexterity(std::int16_t newValue) override;
+    virtual void SetIntelligence(std::int16_t newValue) override;
+    virtual void SetStrength2(std::int16_t newValue) override;
+    virtual void SetDexterity2(std::int16_t newValue) override;
+    virtual void SetIntelligence2(std::int16_t newValue) override;
+    void IncStamina(std::int16_t toInc);
+    void IncMana(std::int16_t toInc);
+    void SetMaxLoyalty(std::uint16_t newMaxLoyalty);
+    void SetLoyalty(std::uint16_t newLoyalty);
 
     void ToggleCombat(void);
 
-    virtual void SetPoisoned(UI08 newValue) override;
+    virtual void SetPoisoned(std::uint8_t newValue) override;
 
     bool InDungeon(void);
     bool InBuilding(void);
 
     void TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer);
-    void TextMessage(CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ...);
+    void TextMessage(CSocket *s, std::int32_t dictEntry, SpeechType msgType, int spamTimer, ...);
 
     virtual void Cleanup(void) override;
     virtual void Delete(void) override;
     virtual bool CanBeObjType(ObjectType toCompare) const override;
 
     FlagColors FlagColour(CChar *toCompare);
-    void Heal(SI16 healValue, CChar *healer = nullptr);
-    bool Damage(SI16 damageValue, WeatherType damageType, CChar *attacker = nullptr,
+    void Heal(std::int16_t healValue, CChar *healer = nullptr);
+    bool Damage(std::int16_t damageValue, WeatherType damageType, CChar *attacker = nullptr,
                 bool doRepsys = false);
-    SI16 GetKarma(void) const;
+    std::int16_t GetKarma(void) const;
     void ReactOnDamage(WeatherType damageType, CChar *attacker = nullptr);
     void Die(CChar *attacker, bool doRepsys);
 
@@ -698,85 +698,85 @@ class CChar : public CBaseObject {
     auto ClearCombatIgnore() -> void;
     auto CombatIgnoreMaintenance() -> void;
 
-    SI16 GetNpcAiType(void) const;
-    UI16 GetNPCGuild(void) const;
-    SI16 GetTaming(void) const;
-    SI16 GetPeaceing(void) const;
-    SI16 GetProvoing(void) const;
-    UI08 GetTrainingPlayerIn(void) const;
-    UI32 GetHoldG(void) const;
-    UI08 GetSplit(void) const;
-    UI08 GetSplitChance(void) const;
-    UI08 GetOwnerCount(void);
-    UI08 GetControlSlots(void) const;
-    UI16 GetOrneriness(void) const;
+    std::int16_t GetNpcAiType(void) const;
+    std::uint16_t GetNPCGuild(void) const;
+    std::int16_t GetTaming(void) const;
+    std::int16_t GetPeaceing(void) const;
+    std::int16_t GetProvoing(void) const;
+    std::uint8_t GetTrainingPlayerIn(void) const;
+    std::uint32_t GetHoldG(void) const;
+    std::uint8_t GetSplit(void) const;
+    std::uint8_t GetSplitChance(void) const;
+    std::uint8_t GetOwnerCount(void);
+    std::uint8_t GetControlSlots(void) const;
+    std::uint16_t GetOrneriness(void) const;
 
-    void SetNPCAiType(SI16 newValue);
-    void SetNPCGuild(UI16 newValue);
-    void SetTaming(SI16 newValue);
-    void SetPeaceing(SI16 newValue);
-    void SetProvoing(SI16 newValue);
-    void SetTrainingPlayerIn(UI08 newValue);
-    void SetHoldG(UI32 newValue);
-    void SetSplit(UI08 newValue);
-    void SetSplitChance(UI08 newValue);
-    void SetControlSlots(UI08 newVal);
-    void SetOrneriness(UI16 newVal);
+    void SetNPCAiType(std::int16_t newValue);
+    void SetNPCGuild(std::uint16_t newValue);
+    void SetTaming(std::int16_t newValue);
+    void SetPeaceing(std::int16_t newValue);
+    void SetProvoing(std::int16_t newValue);
+    void SetTrainingPlayerIn(std::uint8_t newValue);
+    void SetHoldG(std::uint32_t newValue);
+    void SetSplit(std::uint8_t newValue);
+    void SetSplitChance(std::uint8_t newValue);
+    void SetControlSlots(std::uint8_t newVal);
+    void SetOrneriness(std::uint16_t newVal);
 
-    SI08 GetPathFail(void) const;
-    void SetPathFail(SI08 newValue);
+    std::int8_t GetPathFail(void) const;
+    void SetPathFail(std::int8_t newValue);
 
-    SI08 GetPathResult(void) const;
-    void SetPathResult(SI08 newValue);
+    std::int8_t GetPathResult(void) const;
+    void SetPathResult(std::int8_t newValue);
 
-    UI16 GetPathTargX(void) const;
-    void SetPathTargX(UI16 newValue);
-    UI16 GetPathTargY(void) const;
-    void SetPathTargY(UI16 newValue);
+    std::uint16_t GetPathTargX(void) const;
+    void SetPathTargX(std::uint16_t newValue);
+    std::uint16_t GetPathTargY(void) const;
+    void SetPathTargY(std::uint16_t newValue);
 
     void SetGuarding(CBaseObject *newValue);
 
     CBaseObject *GetGuarding(void) const;
 
-    SI16 GetFx(UI08 part) const;
-    SI16 GetFy(UI08 part) const;
-    SI08 GetFz(void) const;
-    SI08 GetNpcWander(void) const;
-    SI08 GetOldNpcWander(void) const;
+    std::int16_t GetFx(std::uint8_t part) const;
+    std::int16_t GetFy(std::uint8_t part) const;
+    std::int8_t GetFz(void) const;
+    std::int8_t GetNpcWander(void) const;
+    std::int8_t GetOldNpcWander(void) const;
 
-    void SetFx(SI16 newVal, UI08 part);
-    void SetFy(SI16 newVal, UI08 part);
-    void SetFz(SI08 newVal);
-    void SetNpcWander(SI08 newValue, bool initArea = false);
-    void SetOldNpcWander(SI08 newValue);
+    void SetFx(std::int16_t newVal, std::uint8_t part);
+    void SetFy(std::int16_t newVal, std::uint8_t part);
+    void SetFz(std::int8_t newVal);
+    void SetNpcWander(std::int8_t newValue, bool initArea = false);
+    void SetOldNpcWander(std::int8_t newValue);
 
     CChar *GetFTarg(void) const;
     void SetFTarg(CChar *newTarg);
 
-    SI16 GetSpAttack(void) const;
-    SI08 GetSpDelay(void) const;
+    std::int16_t GetSpAttack(void) const;
+    std::int8_t GetSpDelay(void) const;
 
-    void SetSpAttack(SI16 newValue);
-    void SetSpDelay(SI08 newValue);
+    void SetSpAttack(std::int16_t newValue);
+    void SetSpDelay(std::int8_t newValue);
 
-    UI08 GetQuestType(void) const;
-    UI08 GetQuestOrigRegion(void) const;
-    UI08 GetQuestDestRegion(void) const;
+    std::uint8_t GetQuestType(void) const;
+    std::uint8_t GetQuestOrigRegion(void) const;
+    std::uint8_t GetQuestDestRegion(void) const;
 
-    void SetQuestDestRegion(UI08 newValue);
-    void SetQuestType(UI08 newValue);
-    void SetQuestOrigRegion(UI08 newValue);
+    void SetQuestDestRegion(std::uint8_t newValue);
+    void SetQuestType(std::uint8_t newValue);
+    void SetQuestOrigRegion(std::uint8_t newValue);
 
-    SI16 GetFleeAt(void) const;
-    SI16 GetReattackAt(void) const;
-    UI08 GetFleeDistance(void) const;
+    std::int16_t GetFleeAt(void) const;
+    std::int16_t GetReattackAt(void) const;
+    std::uint8_t GetFleeDistance(void) const;
 
-    void SetFleeAt(SI16 newValue);
-    void SetReattackAt(SI16 newValue);
-    void SetFleeDistance(UI08 newValue);
+    void SetFleeAt(std::int16_t newValue);
+    void SetReattackAt(std::int16_t newValue);
+    void SetFleeDistance(std::uint8_t newValue);
 
-    UI08 PopDirection(void);
-    void PushDirection(UI08 newDir, bool pushFront = false);
+    std::uint8_t PopDirection(void);
+    void PushDirection(std::uint8_t newDir, bool pushFront = false);
     bool StillGotDirs(void) const;
     void FlushPath(void);
 
@@ -805,23 +805,23 @@ class CChar : public CBaseObject {
   public:
     void SetAccount(AccountEntry &actbAccount);
     AccountEntry &GetAccount(void);
-    UI16 GetAccountNum(void) const;
-    void SetAccountNum(UI16 newVal);
+    std::uint16_t GetAccountNum(void) const;
+    void SetAccountNum(std::uint16_t newVal);
 
     void SetRobe(SERIAL newValue);
     SERIAL GetRobe(void) const;
 
-    UI16 GetOrgId(void) const;
-    void SetOrgSkin(UI16 value);
-    void SetOrgId(UI16 value);
-    UI16 GetOrgSkin(void) const;
+    std::uint16_t GetOrgId(void) const;
+    void SetOrgSkin(std::uint16_t value);
+    void SetOrgId(std::uint16_t value);
+    std::uint16_t GetOrgSkin(void) const;
     std::string GetOrgName(void) const;
     void SetOrgName(std::string newName);
 
-    UI08 GetCommandLevel(void) const;
-    void SetCommandLevel(UI08 newValue);
-    UI08 GetPostType(void) const;
-    void SetPostType(UI08 newValue);
+    std::uint8_t GetCommandLevel(void) const;
+    void SetCommandLevel(std::uint8_t newValue);
+    std::uint8_t GetPostType(void) const;
+    void SetPostType(std::uint8_t newValue);
     void SetPlayerCallNum(SERIAL newValue);
     void SetCallNum(SERIAL newValue);
 
@@ -830,59 +830,59 @@ class CChar : public CBaseObject {
 
     void SetLastOn(std::string newValue);
     std::string GetLastOn(void) const;
-    void SetLastOnSecs(UI32 newValue);
-    UI32 GetLastOnSecs(void) const;
+    void SetLastOnSecs(std::uint32_t newValue);
+    std::uint32_t GetLastOnSecs(void) const;
 
-    auto GetPlayTime() const -> UI32;
-    auto SetPlayTime(UI32 newValue) -> void;
+    auto GetPlayTime() const -> std::uint32_t;
+    auto SetPlayTime(std::uint32_t newValue) -> void;
 
-    void SetCreatedOn(UI32 newValue);
-    UI32 GetCreatedOn(void) const;
+    void SetCreatedOn(std::uint32_t newValue);
+    std::uint32_t GetCreatedOn(void) const;
 
-    void SetNPCGuildJoined(UI32 newValue);
-    UI32 GetNPCGuildJoined(void) const;
+    void SetNPCGuildJoined(std::uint32_t newValue);
+    std::uint32_t GetNPCGuildJoined(void) const;
 
-    UI32 LastMoveTime(void) const;
-    void LastMoveTime(UI32 newValue);
+    std::uint32_t LastMoveTime(void) const;
+    void LastMoveTime(std::uint32_t newValue);
 
     CChar *GetTrackingTarget(void) const;
-    CChar *GetTrackingTargets(UI08 targetNum) const;
+    CChar *GetTrackingTargets(std::uint8_t targetNum) const;
     SERIAL GetTrackingTargetSerial(void) const;
     void SetTrackingTarget(CChar *newValue);
-    void SetTrackingTargets(CChar *newValue, UI08 targetNum);
+    void SetTrackingTargets(CChar *newValue, std::uint8_t targetNum);
 
-    UI08 GetSquelched(void) const;
-    void SetSquelched(UI08 newValue);
+    std::uint8_t GetSquelched(void) const;
+    void SetSquelched(std::uint8_t newValue);
 
     CItem *GetSpeechItem(void) const;
-    UI08 GetSpeechMode(void) const;
-    UI08 GetSpeechId(void) const;
+    std::uint8_t GetSpeechMode(void) const;
+    std::uint8_t GetSpeechId(void) const;
     cScript *GetSpeechCallback(void) const;
 
-    void SetSpeechMode(UI08 newValue);
-    void SetSpeechId(UI08 newValue);
+    void SetSpeechMode(std::uint8_t newValue);
+    void SetSpeechId(std::uint8_t newValue);
     void SetSpeechCallback(cScript *newValue);
     void SetSpeechItem(CItem *newValue);
 
-    UI16 GetHairStyle(void) const;
-    UI16 GetBeardStyle(void) const;
+    std::uint16_t GetHairStyle(void) const;
+    std::uint16_t GetBeardStyle(void) const;
     COLOUR GetHairColour(void) const;
     COLOUR GetBeardColour(void) const;
 
     void SetHairColour(COLOUR value);
     void SetBeardColour(COLOUR value);
-    void SetHairStyle(UI16 value);
-    void SetBeardStyle(UI16 value);
+    void SetHairStyle(std::uint16_t value);
+    void SetBeardStyle(std::uint16_t value);
 
-    UI08 GetFixedLight(void) const;
-    void SetFixedLight(UI08 newVal);
+    std::uint8_t GetFixedLight(void) const;
+    void SetFixedLight(std::uint8_t newVal);
 
-    UI08 GetAtrophy(UI08 skillToGet) const;
-    SkillLock GetSkillLock(UI08 skillToGet) const;
-    void SetAtrophy(UI08 newValue, UI08 skillToSet);
-    void SetSkillLock(SkillLock newValue, UI08 skillToSet);
+    std::uint8_t GetAtrophy(std::uint8_t skillToGet) const;
+    SkillLock GetSkillLock(std::uint8_t skillToGet) const;
+    void SetAtrophy(std::uint8_t newValue, std::uint8_t skillToSet);
+    void SetSkillLock(SkillLock newValue, std::uint8_t skillToSet);
 
-    UI32 CountHousesOwned(bool countCoOwnedHouses);
+    std::uint32_t CountHousesOwned(bool countCoOwnedHouses);
 };
 
 #endif

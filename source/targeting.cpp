@@ -48,7 +48,7 @@ void PlayerVendorBuy(CSocket *s) {
         return;
 
     CChar *mChar = s->CurrcharObj();
-    UI32 goldLeft = GetItemAmount(mChar, 0x0EED);
+    std::uint32_t goldLeft = GetItemAmount(mChar, 0x0EED);
 
     CItem *p = mChar->GetPackItem();
     if (!ValidateObject(p)) {
@@ -93,7 +93,7 @@ void PlayerVendorBuy(CSocket *s) {
     i->SetCont(p);
 }
 
-void TextEntryGump(CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry);
+void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	HandleGuildTarget()
 // o------------------------------------------------------------------------------------------------o
@@ -248,8 +248,8 @@ void HandleGuildTarget(CSocket *s) {
     }
 }
 
-CMultiObj *BuildHouse(CSocket *s, UI16 houseEntry, bool checkLocation = true, SI16 xLoc = -1,
-                      SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0);
+CMultiObj *BuildHouse(CSocket *s, std::uint16_t houseEntry, bool checkLocation = true, std::int16_t xLoc = -1,
+                      std::int16_t yLoc = -1, std::int8_t zLoc = 127, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	BuildHouseTarget()
 // o------------------------------------------------------------------------------------------------o
@@ -272,7 +272,7 @@ void BuildHouseTarget(CSocket *s) {
     }
 
     [[maybe_unused]] CMultiObj *newMulti = BuildHouse(
-        s, static_cast<UI16>(s->AddId())); // If its a valid house, send it to buildhouse!
+        s, static_cast<std::uint16_t>(s->AddId())); // If its a valid house, send it to buildhouse!
 
     s->AddId(0);
 }
@@ -292,9 +292,9 @@ void AddScriptNpc(CSocket *s) {
         return;
 
     CChar *mChar = s->CurrcharObj();
-    const SI16 coreX = s->GetWord(11);
-    const SI16 coreY = s->GetWord(13);
-    const SI08 coreZ = static_cast<SI08>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
+    const std::int16_t coreX = s->GetWord(11);
+    const std::int16_t coreY = s->GetWord(13);
+    const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
     Npcs->CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(),
                        mChar->GetInstanceId());
 }
@@ -319,8 +319,8 @@ void TeleTarget(CSocket *s) {
         mObj = CalcCharObjFromSer(serial);
     }
 
-    SI16 targX, targY;
-    SI08 targZ;
+    std::int16_t targX, targY;
+    std::int8_t targZ;
     if (ValidateObject(mObj)) {
         targX = mObj->GetX();
         targY = mObj->GetY();
@@ -329,7 +329,7 @@ void TeleTarget(CSocket *s) {
     else {
         targX = s->GetWord(11);
         targY = s->GetWord(13);
-        targZ = static_cast<SI08>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
+        targZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
     }
     CChar *mChar = s->CurrcharObj();
 
@@ -397,14 +397,14 @@ void DyeTarget(CSocket *s) {
             if (!ValidateObject(i))
                 return;
 
-            UI16 colour = static_cast<UI16>(((s->AddId1()) << 8) + s->AddId2());
+            std::uint16_t colour = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
             if (!s->DyeAll()) {
                 if (colour < 0x0002 || colour > 0x03E9) {
                     colour = 0x03E9;
                 }
             }
 
-            SI32 b = ((colour & 0x4000) >> 14) + ((colour & 0x8000) >> 15);
+            std::int32_t b = ((colour & 0x4000) >> 14) + ((colour & 0x8000) >> 15);
             if (!b) {
                 i->SetColour(colour);
             }
@@ -415,8 +415,8 @@ void DyeTarget(CSocket *s) {
             if (!ValidateObject(c))
                 return;
 
-            UI16 body = c->GetId();
-            UI16 k = static_cast<UI16>(((s->AddId1()) << 8) + s->AddId2());
+            std::uint16_t body = c->GetId();
+            std::uint16_t k = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
 
             if ((k & 0x4000) == 0x4000 && (body >= 0x0190 && body <= 0x03E1)) {
                 k = 0xF000; // but assigning the only "transparent" value that works, namly
@@ -446,7 +446,7 @@ void WStatsTarget(CSocket *s) {
     CGumpDisplay wStat(s, 300, 300);
     wStat.SetTitle("Walking Stats");
     SERIAL charSerial = i->GetSerial();
-    UI16 charId = i->GetId();
+    std::uint16_t charId = i->GetId();
     wStat.AddData("Serial", charSerial, 3);
     wStat.AddData("Body ID", charId, 5);
 
@@ -534,7 +534,7 @@ void DVatTarget(CSocket *s) {
     }
 
     // Look for onDyeTarget event on dye tub
-    std::vector<UI16> scriptTriggers = tempObj->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = tempObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -585,13 +585,13 @@ void InfoTarget(CSocket *s) {
         return;
     }
 
-    const SI16 x = s->GetWord(11);
-    const SI16 y = s->GetWord(13);
-    const UI16 tileId = s->GetWord(17);
+    const std::int16_t x = s->GetWord(11);
+    const std::int16_t y = s->GetWord(13);
+    const std::uint16_t tileId = s->GetWord(17);
 
     if (tileId == 0) {
         // Map Tile
-        UI08 worldNumber = 0;
+        std::uint8_t worldNumber = 0;
         CChar *mChar = s->CurrcharObj();
         if (ValidateObject(mChar)) {
             worldNumber = mChar->WorldNumber();
@@ -692,9 +692,9 @@ void Tiling(CSocket *s) {
         return;
     }
 
-    SI16 x1 = s->ClickX(), x2 = s->GetWord(11);
-    SI16 y1 = s->ClickY(), y2 = s->GetWord(13);
-    SI16 j;
+    std::int16_t x1 = s->ClickX(), x2 = s->GetWord(11);
+    std::int16_t y1 = s->ClickY(), y2 = s->GetWord(13);
+    std::int16_t j;
 
     s->ClickX(-1);
     s->ClickY(-1);
@@ -710,15 +710,15 @@ void Tiling(CSocket *s) {
         y2 = j;
     }
 
-    UI16 addId = static_cast<UI16>(((s->AddId1()) << 8) + s->AddId2());
-    SI32 rndVal = s->TempInt2();
+    std::uint16_t addId = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
+    std::int32_t rndVal = s->TempInt2();
     s->TempInt2(0);
-    UI16 rndId = 0;
+    std::uint16_t rndId = 0;
 
     CItem *c = nullptr;
-    for (SI16 x = x1; x <= x2; ++x) {
-        for (SI16 y = y1; y <= y2; ++y) {
-            rndId = addId + RandomNum(static_cast<UI16>(0), static_cast<UI16>(rndVal));
+    for (std::int16_t x = x1; x <= x2; ++x) {
+        for (std::int16_t y = y1; y <= y2; ++y) {
+            rndId = addId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
             c = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, OT_ITEM);
             if (!ValidateObject(c))
                 return;
@@ -736,7 +736,7 @@ void Tiling(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create body parts after carving up a corpse
 // o------------------------------------------------------------------------------------------------o
-bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, SI32 dictEntry) {
+bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_t dictEntry) {
     CItem *toCreate = Items->CreateScriptItem(nullptr, mChar, partId, 1, OT_ITEM, false, 0x0);
     if (!ValidateObject(toCreate))
         return false;
@@ -772,7 +772,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
         return false;
 
     // Look for onCarveCorpse event on item
-    std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -785,7 +785,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     }
 
     // Look for onCarveCorpse in global script
-    cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0)); // Global script
+    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // Global script
     if (toExecute != nullptr) {
         if (toExecute->OnCarveCorpse(mChar, i) == 0) // return false
         {
@@ -817,7 +817,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     if (csecs.size() > 1) {
                         if (!CreateBodyPart(
                                 mChar, i, util::trim(util::strip(csecs[0], "//")),
-                                static_cast<UI16>(std::stoul(
+                                static_cast<std::uint16_t>(std::stoul(
                                     util::trim(util::strip(csecs[1], "//")), nullptr, 0)))) {
                             return false;
                         }
@@ -862,7 +862,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     if (csecs.size() > 1) {
                         Items->CreateScriptItem(
                             s, mChar, util::trim(util::strip(csecs[0], "//")),
-                            static_cast<UI16>(
+                            static_cast<std::uint16_t>(
                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
                             OT_ITEM, true);
                     }
@@ -1162,8 +1162,8 @@ void TransferTarget(CSocket *s) {
         return;
     }
 
-    UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
-    UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
+    std::uint8_t maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
+    std::uint8_t maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
     if (maxControlSlots > 0) {
         if (targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots) {
             s->SysMessage(2391); // That would exceed the other player's maximum pet control slots.
@@ -1175,7 +1175,7 @@ void TransferTarget(CSocket *s) {
         }
     }
     else if (maxFollowers > 0 &&
-             static_cast<UI08>(targChar->GetFollowerList()->Num()) >= maxFollowers) {
+             static_cast<std::uint8_t>(targChar->GetFollowerList()->Num()) >= maxFollowers) {
         s->SysMessage(2779); // That would exceed the other player's maximum follower count.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
@@ -1184,7 +1184,7 @@ void TransferTarget(CSocket *s) {
         return;
     }
 
-    UI08 maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
+    std::uint8_t maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
     if (petChar->IsOnPetOwnerList(targChar) && maxPetOwners > 0 &&
         (petChar->GetPetOwnerList()->Num() >= maxPetOwners)) {
         s->SysMessage(2402); // The creature has had too many masters and is not willing to do the
@@ -1263,7 +1263,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     if (!ValidateObject(c))
         return false;
 
-    std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1333,7 +1333,7 @@ void NpcResurrectTarget(CChar *i) {
     // the char is a PC, but not logged in.....
     if (mSock != nullptr) {
         if (i->IsDead()) {
-            std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -1350,8 +1350,8 @@ void NpcResurrectTarget(CChar *i) {
             i->SetDead(false);
 
             // Restore hair
-            UI16 hairStyleId = i->GetHairStyle();
-            UI16 hairStyleColor = i->GetHairColour();
+            std::uint16_t hairStyleId = i->GetHairStyle();
+            std::uint16_t hairStyleColor = i->GetHairColour();
             CItem *hairItem = Items->CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, OT_ITEM);
 
             if (hairItem != nullptr) {
@@ -1361,8 +1361,8 @@ void NpcResurrectTarget(CChar *i) {
             }
 
             // Restore beard
-            UI16 beardStyleId = i->GetBeardStyle();
-            UI16 beardStyleColor = i->GetBeardColour();
+            std::uint16_t beardStyleId = i->GetBeardStyle();
+            std::uint16_t beardStyleColor = i->GetBeardColour();
             CItem *beardItem =
                 Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, OT_ITEM);
 
@@ -1425,12 +1425,12 @@ void ShowSkillTarget(CSocket *s) {
         return;
     }
 
-    SI32 dispType = s->TempInt();
-    UI16 skillVal;
+    std::int32_t dispType = s->TempInt();
+    std::uint16_t skillVal;
 
     CGumpDisplay showSkills(s, 300, 300);
     showSkills.SetTitle("Skills Info");
-    for (UI08 i = 0; i < ALLSKILLS; ++i) {
+    for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         if (dispType == 0 || dispType == 1) {
             skillVal = mChar->GetBaseSkill(i);
         }
@@ -1692,8 +1692,8 @@ void MakeTownAlly(CSocket *s) {
         s->SysMessage(1110); // No such character exists!
         return;
     }
-    UI16 srcTown = mChar->GetTown();
-    UI16 trgTown = targetChar->GetTown();
+    std::uint16_t srcTown = mChar->GetTown();
+    std::uint16_t trgTown = targetChar->GetTown();
 
     if (srcTown == 0 || trgTown == 0) {
         return;
@@ -1722,7 +1722,7 @@ void MakeStatusTarget(CSocket *sock) {
         sock->SysMessage(7509); // Some people just won't let the dead rest in peace.
         return;
     }
-    UI08 origCommand = targetChar->GetCommandLevel();
+    std::uint8_t origCommand = targetChar->GetCommandLevel();
     CommandLevel_st *targLevel = Commands->GetClearance(sock->XText());
     CommandLevel_st *origLevel = Commands->GetClearance(origCommand);
 
@@ -1733,7 +1733,7 @@ void MakeStatusTarget(CSocket *sock) {
     CChar *mChar = sock->CurrcharObj();
     // char temp[1024], temp2[1024];
 
-    UI08 targetCommand = targLevel->commandLevel;
+    std::uint8_t targetCommand = targLevel->commandLevel;
     auto temp = util::format("account%i.log", mChar->GetAccount().accountNumber);
     auto temp2 = util::format("%s has made %s a %s.\n", mChar->GetName().c_str(),
                               targetChar->GetName().c_str(), targLevel->name.c_str());
@@ -1755,7 +1755,7 @@ void MakeStatusTarget(CSocket *sock) {
     targetChar->SetCommandLevel(targetCommand);
 
     if (targLevel->allSkillVals != 0) {
-        for (UI08 j = 0; j < ALLSKILLS; ++j) {
+        for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
             targetChar->SetBaseSkill(targLevel->allSkillVals, j);
             targetChar->SetSkill(targLevel->allSkillVals, j);
         }
@@ -1864,7 +1864,7 @@ void SmeltTarget(CSocket *s) {
         return;
     }
 
-    UI16 iMadeFrom = i->EntryMadeFrom();
+    std::uint16_t iMadeFrom = i->EntryMadeFrom();
 
     CreateEntry_st *ourCreateEntry = Skills->FindItem(iMadeFrom);
     if (iMadeFrom == 0 || ourCreateEntry == nullptr) {
@@ -1879,14 +1879,14 @@ void SmeltTarget(CSocket *s) {
     }
     R32 avgMax = ourCreateEntry->AverageMaxSkill();
 
-    Skills->CheckSkill(mChar, MINING, static_cast<SI16>(avgMin), static_cast<SI16>(avgMax));
+    Skills->CheckSkill(mChar, MINING, static_cast<std::int16_t>(avgMin), static_cast<std::int16_t>(avgMax));
 
-    UI08 sumAmountRestored = 0;
+    std::uint8_t sumAmountRestored = 0;
 
-    for (UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr) {
-        UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
+    for (std::uint32_t skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr) {
+        std::uint16_t amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
         std::string itemId = util::ntos(ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16);
-        UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
+        std::uint16_t itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
         sumAmountRestored += amtToRestore;
         Items->CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, OT_ITEM, true, itemColour);
     }
@@ -2022,9 +2022,9 @@ bool CPITargetCursor::Handle(void) {
                                    // INVALIDSERIAL as 0 could be a valid Serial -
         }
 
-        UI08 a1 = tSock->GetByte(2);
-        UI08 a2 = tSock->GetByte(3);
-        UI08 a3 = tSock->GetByte(4);
+        std::uint8_t a1 = tSock->GetByte(2);
+        std::uint8_t a2 = tSock->GetByte(3);
+        std::uint8_t a3 = tSock->GetByte(4);
         TargetIds targetId = static_cast<TargetIds>(tSock->GetByte(5));
         tSock->TargetOK(false);
         if (mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().accountNumber != 0) {
@@ -2047,7 +2047,7 @@ bool CPITargetCursor::Handle(void) {
                 cScript *tScript = tSock->scriptForCallBack;
                 // cScript *tScript	= reinterpret_cast<cScript *>( tSock->TempInt() );
                 if (tScript != nullptr) {
-                    tScript->DoCallback(tSock, tSock->GetDWord(7), static_cast<UI08>(targetId));
+                    tScript->DoCallback(tSock, tSock->GetDWord(7), static_cast<std::uint8_t>(targetId));
                 }
                 return true;
             }

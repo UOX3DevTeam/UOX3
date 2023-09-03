@@ -18,12 +18,12 @@ class CEndL;
 // o------------------------------------------------------------------------------------------------o
 constexpr auto MAX_CONSOLE_BUFF = 512;
 
-const UI08 CNORMAL = 0;
-const UI08 CBLUE = 1;
-const UI08 CRED = 2;
-const UI08 CGREEN = 3;
-const UI08 CYELLOW = 4;
-const UI08 CBWHITE = 5;
+const std::uint8_t CNORMAL = 0;
+const std::uint8_t CBLUE = 1;
+const std::uint8_t CRED = 2;
+const std::uint8_t CGREEN = 3;
+const std::uint8_t CYELLOW = 4;
+const std::uint8_t CBWHITE = 5;
 
 // o------------------------------------------------------------------------------------------------o
 //  Console
@@ -100,7 +100,7 @@ class Console {
     auto Poll() -> void;
 
     auto RegisterKey(std::int32_t key, std::string cmdName, std::uint16_t scriptId) -> void;
-    auto RegisterFunc(const std::string &key, const std::string &cmdName, UI16 scriptId) -> void;
+    auto RegisterFunc(const std::string &key, const std::string &cmdName, std::uint16_t scriptId) -> void;
     auto SetKeyStatus(std::int32_t key, bool isEnabled) -> void;
     auto SetFuncStatus(const std::string &key, bool isEnabled) -> void;
     auto Registration() -> void;
@@ -119,26 +119,26 @@ class Console {
     auto DisplaySettings() -> void;
 
     struct JSConsoleEntry_st {
-        UI16 scriptId;
+        std::uint16_t scriptId;
         bool isEnabled;
         std::string cmdName;
         JSConsoleEntry_st() : scriptId(0), isEnabled(true), cmdName("") {}
-        JSConsoleEntry_st(UI16 id, const std::string &cName)
+        JSConsoleEntry_st(std::uint16_t id, const std::string &cName)
             : scriptId(id), isEnabled(true), cmdName(cName) {}
     };
 
     typedef std::map<std::string, JSConsoleEntry_st> JSCONSOLEFUNCMAP;
     typedef std::map<std::string, JSConsoleEntry_st>::iterator JSCONSOLEFUNCMAP_ITERATOR;
-    typedef std::map<SI32, JSConsoleEntry_st> JSCONSOLEKEYMAP;
-    typedef std::map<SI32, JSConsoleEntry_st>::iterator JSCONSOLEKEYMAP_ITERATOR;
+    typedef std::map<std::int32_t, JSConsoleEntry_st> JSCONSOLEKEYMAP;
+    typedef std::map<std::int32_t, JSConsoleEntry_st>::iterator JSCONSOLEKEYMAP_ITERATOR;
 
     JSCONSOLEKEYMAP JSKeyHandler;
     JSCONSOLEFUNCMAP JSConsoleFunctions;
-    UI16 width, height; // for differing windows
-    UI16 curLeft, curTop;
+    std::uint16_t width, height; // for differing windows
+    std::uint16_t curLeft, curTop;
     std::bitset<16> filterSettings;
-    UI08 currentMode;
-    UI08 previousColour;
+    std::uint8_t currentMode;
+    std::uint8_t previousColour;
     bool logEcho;
     bool is_initialized;
 

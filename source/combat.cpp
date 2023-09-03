@@ -31,17 +31,17 @@
 
 CHandleCombat *Combat = nullptr;
 
-#define SWINGAT static_cast<UI32>(1.75) * 1000
+#define SWINGAT static_cast<std::uint32_t>(1.75) * 1000
 
-const UI08 BODYPERCENT = 0;
-// const UI08 ARMSPERCENT = 1;
-// const UI08 HEADPERCENT = 2;
-// const UI08 LEGSPERCENT = 3;
-// const UI08 NECKPERCENT = 4;
-// const UI08 OTHERPERCENT = 5;
-const UI08 TOTALTARGETSPOTS = 6; // Wonder if that should be one?
+const std::uint8_t BODYPERCENT = 0;
+// const std::uint8_t ARMSPERCENT = 1;
+// const std::uint8_t HEADPERCENT = 2;
+// const std::uint8_t LEGSPERCENT = 3;
+// const std::uint8_t NECKPERCENT = 4;
+// const std::uint8_t OTHERPERCENT = 5;
+const std::uint8_t TOTALTARGETSPOTS = 6; // Wonder if that should be one?
 
-const UI08 LOCPERCENTAGES[TOTALTARGETSPOTS] = {44, 14, 14, 14, 7, 7};
+const std::uint8_t LOCPERCENTAGES[TOTALTARGETSPOTS] = {44, 14, 14, 14, 7, 7};
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHandleCombat::StartAttack()
@@ -186,7 +186,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
         cAttack->BreakConcentration(cAttack->GetSocket());
     }
     else {
-        UI16 toPlay = cwmWorldState->creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
+        std::uint16_t toPlay = cwmWorldState->creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
         if (toPlay != 0x00 && RandomNum(1, 3)) // 33% chance to play the sound
         {
             Effects->PlaySound(cAttack, toPlay);
@@ -289,9 +289,9 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                             }
                             else {
-                                UI16 castAnim = static_cast<UI16>(
+                                std::uint16_t castAnim = static_cast<std::uint16_t>(
                                     cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                UI08 castAnimLength =
+                                std::uint8_t castAnimLength =
                                     cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
 
                                 // Play cast anim, but fallback to default attack anim (0x04) with
@@ -334,9 +334,9 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                             }
                             else {
-                                UI16 castAnim = static_cast<UI16>(
+                                std::uint16_t castAnim = static_cast<std::uint16_t>(
                                     cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                UI08 castAnimLength =
+                                std::uint8_t castAnimLength =
                                     cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
 
                                 // Play cast anim, but fallback to default attack anim (0x04) with
@@ -378,7 +378,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
     else {
         if (ourChar->GetTarg() != i) // if player is alive
         {
-            std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -395,7 +395,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         if (i->GetTarg() != ourChar) {
             // Also trigger same event for other party in combat, if they're not already engaged in
             // combat with this character
-            std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -539,7 +539,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::AttackTarget(CChar *cAttack, CChar *cTarget) {
     // Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
-    std::vector<UI16> scriptTriggers = cAttack->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = cAttack->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -629,7 +629,7 @@ CItem *CHandleCombat::GetShield(CChar *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find what weapon type a character is holding (based on its ID)
 // o------------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::GetWeaponType(CItem *i) {
+std::uint8_t CHandleCombat::GetWeaponType(CItem *i) {
     if (!ValidateObject(i))
         return WRESTLING;
 
@@ -957,7 +957,7 @@ UI08 CHandleCombat::GetWeaponType(CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find if character is holding a Bow or XBow
 // o------------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::GetBowType(CItem *bItem) {
+std::uint8_t CHandleCombat::GetBowType(CItem *bItem) {
     if (!ValidateObject(bItem))
         return 0;
 
@@ -978,7 +978,7 @@ UI08 CHandleCombat::GetBowType(CItem *bItem) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets your combat skill based on the weapon in your hand (if any)
 // o------------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::GetCombatSkill(CItem *wItem) {
+std::uint8_t CHandleCombat::GetCombatSkill(CItem *wItem) {
     if (!ValidateObject(wItem))
         return WRESTLING;
 
@@ -1017,11 +1017,11 @@ UI08 CHandleCombat::GetCombatSkill(CItem *wItem) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total attack power and do damage to the weapon
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
+std::int16_t CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
     if (!ValidateObject(p))
         return 0;
 
-    SI16 getDamage = 0;
+    std::int16_t getDamage = 0;
 
     CItem *weapon = GetWeapon(p);
     if (ValidateObject(weapon)) {
@@ -1037,16 +1037,16 @@ SI16 CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
             // Chance to apply damage to (player's) weapon based on ini setting
             if (doDamage && !p->IsNpc() &&
                 (cwmWorldState->ServerData()->CombatWeaponDamageChance() >= RandomNum(1, 100))) {
-                SI08 weaponDamage = 0;
-                UI08 weaponDamageMin = 0;
-                UI08 weaponDamageMax = 0;
+                std::int8_t weaponDamage = 0;
+                std::uint8_t weaponDamageMin = 0;
+                std::uint8_t weaponDamageMax = 0;
 
                 // Fetch minimum and maximum weapon damage from ini
                 weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
                 weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
 
-                weaponDamage -= static_cast<UI08>(RandomNum(static_cast<UI16>(weaponDamageMin),
-                                                            static_cast<UI16>(weaponDamageMax)));
+                weaponDamage -= static_cast<std::uint8_t>(RandomNum(static_cast<std::uint16_t>(weaponDamageMin),
+                                                            static_cast<std::uint16_t>(weaponDamageMax)));
                 weapon->IncHP(weaponDamage);
 
                 // If weapon hp has reached 0, destroy it
@@ -1071,7 +1071,7 @@ SI16 CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
         }
     }
     else {
-        UI16 getWrestSkill = (p->GetSkill(WRESTLING) / 65);
+        std::uint16_t getWrestSkill = (p->GetSkill(WRESTLING) / 65);
         if (getWrestSkill > 0) {
             getDamage = HalfRandomNum(getWrestSkill);
         }
@@ -1091,11 +1091,11 @@ SI16 CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate low damage value of the char
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::CalcLowDamage(CChar *p) {
+std::int16_t CHandleCombat::CalcLowDamage(CChar *p) {
     if (!ValidateObject(p))
         return 0;
 
-    SI16 getDamage = 0;
+    std::int16_t getDamage = 0;
 
     CItem *weapon = GetWeapon(p);
     if (ValidateObject(weapon)) {
@@ -1117,7 +1117,7 @@ SI16 CHandleCombat::CalcLowDamage(CChar *p) {
         }
     }
     else {
-        UI16 getWrestSkill = (p->GetSkill(WRESTLING) / 65);
+        std::uint16_t getWrestSkill = (p->GetSkill(WRESTLING) / 65);
         if (getWrestSkill > 0) {
             getDamage = (getWrestSkill / 2);
         }
@@ -1137,11 +1137,11 @@ SI16 CHandleCombat::CalcLowDamage(CChar *p) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate high damage value of the char
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::CalcHighDamage(CChar *p) {
+std::int16_t CHandleCombat::CalcHighDamage(CChar *p) {
     if (!ValidateObject(p))
         return 0;
 
-    SI16 getDamage = 0;
+    std::int16_t getDamage = 0;
 
     CItem *weapon = GetWeapon(p);
     if (ValidateObject(weapon)) {
@@ -1163,7 +1163,7 @@ SI16 CHandleCombat::CalcHighDamage(CChar *p) {
         }
     }
     else {
-        UI16 getWrestSkill = (p->GetSkill(WRESTLING) / 65);
+        std::uint16_t getWrestSkill = (p->GetSkill(WRESTLING) / 65);
         if (getWrestSkill > 0) {
             getDamage = getWrestSkill;
         }
@@ -1203,9 +1203,9 @@ SI16 CHandleCombat::CalcHighDamage(CChar *p) {
                         Hands (hitLoc 6):	AR / 14.5
 
                 Functions:
-                        CheckDef( CItem *checkItem, CItem& currItem, SI32 &currDef )
-                        GetArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
-                        CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
+                        CheckDef( CItem *checkItem, CItem& currItem, std::int32_t &currDef )
+                        GetArmorDef( CChar *mChar, CItem& defItem, std::uint8_t bodyLoc, bool findTotal )
+                        CalcDef( CChar *mChar, std::uint8_t hitLoc, bool doDamage )
 
         All information on armor defence values, divisors, and combat calculations gleaned from
    uo.stratics.com http://uo.stratics.com/content/arms-armor/armor.shtml
@@ -1223,7 +1223,7 @@ SI16 CHandleCombat::CalcHighDamage(CChar *p) {
 //|							the item with the greater Def and its def
 // value
 // o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, SI32 &currDef,
+CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef,
                                WeatherType resistType) {
     if (ValidateObject(checkItem) && checkItem->GetResist(resistType) > currDef) {
         currDef = checkItem->GetResist(resistType);
@@ -1239,9 +1239,9 @@ CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, SI32 &currDef,
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR
 // and |							returns it along with its def value
 // o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal,
+CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal,
                                   WeatherType resistType) {
-    SI32 armorDef = 0;
+    std::int32_t armorDef = 0;
     CItem *currItem = nullptr;
     switch (bodyLoc) {
     case 1: // Torso
@@ -1257,7 +1257,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
                             resistType); // Torso (Outer - Robe)
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 2.8));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 2.8));
             }
         }
         break;
@@ -1265,7 +1265,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
         currItem = CheckDef(mChar->GetItemAtLayer(IL_ARMS), currItem, armorDef, resistType); // Arms
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 6.8));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 6.8));
             }
         }
         break;
@@ -1273,7 +1273,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
         currItem = CheckDef(mChar->GetItemAtLayer(IL_HELM), currItem, armorDef, resistType); // Head
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 7.3));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 7.3));
             }
         }
         break;
@@ -1290,7 +1290,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
                             resistType); // Legs (Inner - Leg Armor)
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 4.5));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 4.5));
             }
         }
         break;
@@ -1298,7 +1298,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
         currItem = CheckDef(mChar->GetItemAtLayer(IL_NECK), currItem, armorDef, resistType); // Neck
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 14.5));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 14.5));
             }
         }
         break;
@@ -1307,7 +1307,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
             CheckDef(mChar->GetItemAtLayer(IL_GLOVES), currItem, armorDef, resistType); // Gloves
         if (findTotal) {
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
-                armorDef = static_cast<SI32>(100 * static_cast<R32>(armorDef / 14.5));
+                armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 14.5));
             }
         }
         break;
@@ -1332,18 +1332,18 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bo
 //|	Purpose		-	Finds the defense value of a specific location or the entire
 // character based on hitLoc
 // o------------------------------------------------------------------------------------------------o
-UI16 CHandleCombat::CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType) {
+std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage, WeatherType resistType) {
     if (!ValidateObject(mChar))
         return 0;
 
-    SI32 total = mChar->GetResist(resistType);
+    std::int32_t total = mChar->GetResist(resistType);
 
     if (!mChar->IsNpc() || cwmWorldState->creatures[mChar->GetId()]
                                .IsHuman()) // Polymorphed Characters and GM's can still wear armor
     {
         CItem *defendItem = nullptr;
         if (hitLoc == 0) {
-            for (UI08 getLoc = 1; getLoc < 7; ++getLoc) {
+            for (std::uint8_t getLoc = 1; getLoc < 7; ++getLoc) {
                 GetArmorDef(mChar, total, getLoc, true, resistType);
             }
             if (cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS) {
@@ -1357,16 +1357,16 @@ UI16 CHandleCombat::CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTyp
         // Deal damage to armor on hit, if enabled
         if (total > 0 && doDamage && ValidateObject(defendItem) && !mChar->IsNpc() &&
             (cwmWorldState->ServerData()->CombatArmorDamageChance() >= RandomNum(1, 100))) {
-            SI08 armorDamage =
+            std::int8_t armorDamage =
                 0; // Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
-            UI08 armorDamageMin = 0;
-            UI08 armorDamageMax = 0;
+            std::uint8_t armorDamageMin = 0;
+            std::uint8_t armorDamageMax = 0;
 
             armorDamageMin = cwmWorldState->ServerData()->CombatArmorDamageMin();
             armorDamageMax = cwmWorldState->ServerData()->CombatArmorDamageMax();
 
-            armorDamage -= static_cast<UI08>(
-                RandomNum(static_cast<UI16>(armorDamageMin), static_cast<UI16>(armorDamageMax)));
+            armorDamage -= static_cast<std::uint8_t>(
+                RandomNum(static_cast<std::uint16_t>(armorDamageMin), static_cast<std::uint16_t>(armorDamageMax)));
             defendItem->IncHP(armorDamage);
 
             if (defendItem->GetHP() <= 0) {
@@ -1383,7 +1383,7 @@ UI16 CHandleCombat::CalcDef(CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTyp
 
     // if( total < 2 && hitLoc != 0 )
     //	total = 2;
-    return static_cast<UI16>(total);
+    return static_cast<std::uint16_t>(total);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1396,8 +1396,8 @@ void CHandleCombat::CombatAnimsNew(CChar *i) {
     if (!ValidateObject(i))
         return;
 
-    UI16 animToPlay = N_ACT_ATT;        // 0x00
-    UI16 subAnimToPlay = S_ACT_WRESTLE; // 0x00
+    std::uint16_t animToPlay = N_ACT_ATT;        // 0x00
+    std::uint16_t subAnimToPlay = S_ACT_WRESTLE; // 0x00
     CItem *j = GetWeapon(i);
 
     if (i->IsFlying() || i->IsOnHorse()) {
@@ -1489,9 +1489,9 @@ void CHandleCombat::CombatOnHorse(CChar *i) {
     if (!ValidateObject(i))
         return;
 
-    UI16 animToPlay = ACT_MOUNT_ATT_1H; // 0x1A;
+    std::uint16_t animToPlay = ACT_MOUNT_ATT_1H; // 0x1A;
     CItem *j = GetWeapon(i);
-    UI08 frameCount = 5;
+    std::uint8_t frameCount = 5;
 
     // Normal mounted characters
     switch (GetWeaponType(j)) {
@@ -1540,7 +1540,7 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
     if (!ValidateObject(i))
         return;
 
-    UI16 animToPlay = 0x00;
+    std::uint16_t animToPlay = 0x00;
     CItem *j = GetWeapon(i);
     switch (GetWeaponType(j)) {
     case BOWS:
@@ -1598,21 +1598,21 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
 //|	Purpose		-	Plays the attack/swing-animation for specified character
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
-    UI16 charId = mChar->GetId();
+    std::uint16_t charId = mChar->GetId();
     if (!cwmWorldState->creatures[charId].IsHuman()) {
-        UI08 attackAnim = 0;
-        UI08 attackAnimLength = 0;
+        std::uint8_t attackAnim = 0;
+        std::uint8_t attackAnimLength = 0;
 
         // Get available attack animations for creature
-        UI16 attackAnim1 =
-            static_cast<UI16>(cwmWorldState->creatures[mChar->GetId()].AttackAnim1Id());
-        UI16 attackAnim2 =
-            static_cast<UI16>(cwmWorldState->creatures[mChar->GetId()].AttackAnim2Id());
-        UI16 attackAnim3 =
-            static_cast<UI16>(cwmWorldState->creatures[mChar->GetId()].AttackAnim3Id());
-        UI08 attackAnim1Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim1Length();
-        UI08 attackAnim2Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim2Length();
-        UI08 attackAnim3Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim3Length();
+        std::uint16_t attackAnim1 =
+            static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim1Id());
+        std::uint16_t attackAnim2 =
+            static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim2Id());
+        std::uint16_t attackAnim3 =
+            static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim3Id());
+        std::uint8_t attackAnim1Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim1Length();
+        std::uint8_t attackAnim2Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim2Length();
+        std::uint8_t attackAnim3Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim3Length();
 
         if (charId == 0x2d8) // Special case for Medusa, which has 1 ranged attack anim and 1 melee
         {
@@ -1672,7 +1672,7 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
         // Play attack sound effect
         if (RandomNum(0, 4)) // 20% chance of playing SFX when attacking
         {
-            UI16 toPlay = cwmWorldState->creatures[charId].GetSound(SND_ATTACK);
+            std::uint16_t toPlay = cwmWorldState->creatures[charId].GetSound(SND_ATTACK);
             if (toPlay != 0x00) {
                 Effects->PlaySound(mChar, toPlay);
             }
@@ -1792,9 +1792,9 @@ void CHandleCombat::PlayHitSoundEffect(CChar *p, CItem *weapon) {
 //|	Purpose		-	Adjusts the damage dealt to defend by weapon based on
 //|						race and weather weaknesses
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage,
-                                     UI08 hitLoc, UI08 getFightSkill) {
-    SI16 amount = 0;
+std::int16_t CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage,
+                                     std::uint8_t hitLoc, std::uint8_t getFightSkill) {
+    std::int16_t amount = 0;
 
     if (!ValidateObject(defend) || !ValidateObject(weapon))
         return bDamage;
@@ -1804,7 +1804,7 @@ SI16 CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon
     }
     CRace *rPtr = Races->Race(defend->GetRace());
     if (rPtr != nullptr) {
-        for (SI32 i = LIGHT; i < WEATHNUM; ++i) {
+        for (std::int32_t i = LIGHT; i < WEATHNUM; ++i) {
             if (weapon->GetWeatherDamage(static_cast<WeatherType>(i)) &&
                 rPtr->AffectedBy(static_cast<WeatherType>(i))) {
                 amount += ApplyDefenseModifiers(static_cast<WeatherType>(i), attack, defend,
@@ -1821,9 +1821,9 @@ SI16 CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon
 //|	Purpose		-	Adjusts the damage dealt to defender based on potential armour class
 // weakness
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CItem *attackerWeapon,
-                                           SI16 baseDamage, UI08 hitLoc) {
-    SI32 bonusDamage = 0;
+std::int16_t CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CItem *attackerWeapon,
+                                           std::int16_t baseDamage, std::uint8_t hitLoc) {
+    std::int32_t bonusDamage = 0;
 
     if (!ValidateObject(defender) || !ValidateObject(attackerWeapon))
         return baseDamage;
@@ -1841,8 +1841,8 @@ SI16 CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CIt
     }
     else {
         // Hit location system not enabled. Rely on average AC/physical resist instead
-        SI32 bonusPotential = 0;
-        for (UI08 getLoc = 1; getLoc < 7; ++getLoc) {
+        std::int32_t bonusPotential = 0;
+        for (std::uint8_t getLoc = 1; getLoc < 7; ++getLoc) {
             defenderItem = GetArmorDef(attacker, bonusPotential, getLoc, false, PHYSICAL);
 
             if (ValidateObject(defenderItem) &&
@@ -1859,7 +1859,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CIt
         }
     }
 
-    return (baseDamage + static_cast<SI16>(bonusDamage));
+    return (baseDamage + static_cast<std::int16_t>(bonusDamage));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1868,7 +1868,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defender, CIt
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints out the hit message, if enabled
 // o------------------------------------------------------------------------------------------------o
-void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage) {
+void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLoc, std::int16_t damage) {
     if (!ValidateObject(ourTarg) || !ValidateObject(mChar) || ourTarg->IsNpc())
         return;
 
@@ -1881,7 +1881,7 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16
         if (damage < 5)
             return;
 
-        UI08 randHit = RandomNum(0, 2);
+        std::uint8_t randHit = RandomNum(0, 2);
         switch (hitLoc) {
         case 1: // Body
             switch (randHit) {
@@ -1999,9 +1999,9 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	calculates where on the body the person was hit and returns that
 // o------------------------------------------------------------------------------------------------o
-SI08 CHandleCombat::CalculateHitLoc(void) {
-    SI08 hitLoc = RandomNum(0, 99); // Determine area of Body Hit
-    for (UI08 t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t) {
+std::int8_t CHandleCombat::CalculateHitLoc(void) {
+    std::int8_t hitLoc = RandomNum(0, 99); // Determine area of Body Hit
+    for (std::uint8_t t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t) {
         hitLoc -= LOCPERCENTAGES[t];
         if (hitLoc < 0) {
             hitLoc = t + 1;
@@ -2017,14 +2017,14 @@ SI08 CHandleCombat::CalculateHitLoc(void) {
 //|	Purpose		-	Applies damage bonuses based on race/weather weakness and character
 // skills
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
-                                       UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage) {
+std::int16_t CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+                                       std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage) {
     if (!ValidateObject(ourTarg) || !ValidateObject(mChar))
         return baseDamage;
 
     R32 multiplier = 1;
     R32 damage = 0;
-    SI32 RaceDamage = 0;
+    std::int32_t RaceDamage = 0;
     CItem *mWeapon = GetWeapon(mChar);
     CRace *rPtr = Races->Race(ourTarg->GetRace());
     auto serverData = cwmWorldState->ServerData();
@@ -2037,7 +2037,7 @@ SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CCh
         // Race Dmg Modification: Bonus percentage.
         RaceDamage = Races->DamageFromSkill(getFightSkill, mChar->GetRace());
         if (RaceDamage != 0) {
-            baseDamage += static_cast<SI16>(static_cast<R32>(baseDamage) *
+            baseDamage += static_cast<std::int16_t>(static_cast<R32>(baseDamage) *
                                             (static_cast<R32>(RaceDamage) / 1000));
         }
 
@@ -2112,7 +2112,7 @@ SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CCh
             // Pre-publish 13 (T2A, UOR, early TD)
             // Capped at 200 strength
             auto strBonusPercent = 20;
-            multiplier = static_cast<R32>(((std::min(mChar->GetStrength(), static_cast<SI16>(200)) *
+            multiplier = static_cast<R32>(((std::min(mChar->GetStrength(), static_cast<std::int16_t>(200)) *
                                             strBonusPercent) /
                                            100) /
                                           100) +
@@ -2253,7 +2253,7 @@ SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CCh
         damage = std::min(damage, static_cast<R32>(baseDamage * 4));
     }
 
-    return static_cast<SI16>(RoundNumber(damage));
+    return static_cast<std::int16_t>(RoundNumber(damage));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2262,13 +2262,13 @@ SI16 CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CCh
 //|	Purpose		-	Applies defense modifiers based on shields/parrying, armor values
 // and elemental damage
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
-                                          UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage,
+std::int16_t CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+                                          std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage,
                                           bool doArmorDamage) {
     if (!ValidateObject(ourTarg))
         return baseDamage;
 
-    UI16 getDef = 0, attSkill = 1000;
+    std::uint16_t getDef = 0, attSkill = 1000;
     R32 damageModifier = 0;
     R32 damage = static_cast<R32>(baseDamage);
 
@@ -2292,7 +2292,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
             Skills->CheckSkill(ourTarg, PARRYING, 0, 1000);
 
             // Get parry skill value
-            UI16 defendParry = ourTarg->GetSkill(PARRYING);
+            std::uint16_t defendParry = ourTarg->GetSkill(PARRYING);
 
             if (serverData->ExpansionShieldParry() <= ER_T2A) {
                 // T2A parry formula: parryChance = parrySkill / 2
@@ -2319,7 +2319,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
             }
             else if (serverData->ExpansionShieldParry() >= ER_AOS) {
                 // Post-AoS Parrying with Shield
-                UI16 defendBushido = ourTarg->GetSkill(BUSHIDO);
+                std::uint16_t defendBushido = ourTarg->GetSkill(BUSHIDO);
 
                 // % Chance = (Parrying - Bushido) / 4 (If less than 0, the chance is 0)
                 R32 parryChance = ((defendParry - defendBushido) / 4) / 10;
@@ -2351,8 +2351,8 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
 
                 auto loShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMin();
                 auto hiShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMax();
-                SI16 shieldDamage = -(RandomNum(static_cast<SI16>(loShieldDamage),
-                                                static_cast<SI16>(hiShieldDamage)));
+                std::int16_t shieldDamage = -(RandomNum(static_cast<std::int16_t>(loShieldDamage),
+                                                static_cast<std::int16_t>(hiShieldDamage)));
 
                 if (cwmWorldState->ServerData()->CombatDisplayHitMessage()) {
                     if (targSock != nullptr) {
@@ -2458,8 +2458,8 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
                 Skills->CheckSkill(ourTarg, BUSHIDO, 0, 1000);
 
                 // Fetch relevant skill values
-                UI16 defendParry = ourTarg->GetSkill(PARRYING);
-                UI16 defendBushido = ourTarg->GetSkill(BUSHIDO);
+                std::uint16_t defendParry = ourTarg->GetSkill(PARRYING);
+                std::uint16_t defendBushido = ourTarg->GetSkill(BUSHIDO);
                 R32 parryChance = 0;
                 R32 dividerValue = 48000; // default for 1H weapon
 
@@ -2543,7 +2543,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
                 // In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were
                 // given a chance to parry attacks https://www.uoguide.com/Publish_97
                 R32 parryChance = 0;
-                UI16 defendWrestling = ourTarg->GetSkill(WRESTLING);
+                std::uint16_t defendWrestling = ourTarg->GetSkill(WRESTLING);
 
                 if (defendWrestling >= 1000) {
                     // ~12.5% chance for a NPC creature with GM Wrestling to parry an attack
@@ -2569,7 +2569,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
     }
     case POISON: //	POISON Damage
         damageModifier = (CalcDef(ourTarg, hitLoc, doArmorDamage, damageType) / 100);
-        damage = static_cast<SI16>(RoundNumber(
+        damage = static_cast<std::int16_t>(RoundNumber(
             (static_cast<R32>(baseDamage) - (static_cast<R32>(baseDamage) * damageModifier))));
         break;
     default: //	Elemental damage
@@ -2581,7 +2581,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
         damage -= static_cast<R32>((static_cast<R32>(getDef) * static_cast<R32>(attSkill)) / 750);
     }
 
-    return static_cast<SI16>(RoundNumber(damage));
+    return static_cast<std::int16_t>(RoundNumber(damage));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2590,10 +2590,10 @@ SI16 CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, 
 //|	Purpose		-	Calculate damage based on hit location, damage bonuses, defense
 // modifiers
 // o------------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc) {
-    SI16 damage = -1;
+std::int16_t CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc) {
+    std::int16_t damage = -1;
 
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2610,7 +2610,7 @@ SI16 CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, UI08 getFightSkill,
         damage = 0;
     }
 
-    const SI16 baseDamage = CalcAttackPower(mChar, true);
+    const std::int16_t baseDamage = CalcAttackPower(mChar, true);
 
     if (baseDamage == -1) // No damage if weapon breaks
         return 0;
@@ -2645,21 +2645,21 @@ SI16 CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, UI08 getFightSkill,
 //|	Purpose		-	Handles combat related stuff during combat loop
 // o------------------------------------------------------------------------------------------------o
 bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
-    const UI16 ourDist = GetDist(&mChar, ourTarg);
+    const std::uint16_t ourDist = GetDist(&mChar, ourTarg);
     // Attacker Skill values
     CItem *mWeapon = GetWeapon(&mChar);
-    const UI08 getFightSkill = GetCombatSkill(mWeapon);
-    const UI16 attackSkill = std::min(1000, static_cast<SI32>(mChar.GetSkill(getFightSkill)));
+    const std::uint8_t getFightSkill = GetCombatSkill(mWeapon);
+    const std::uint16_t attackSkill = std::min(1000, static_cast<std::int32_t>(mChar.GetSkill(getFightSkill)));
 
     // Defender Skill values
     CItem *defWeapon = GetWeapon(ourTarg);
-    const UI08 getTargetSkill = GetCombatSkill(defWeapon);
-    const UI16 defendSkill = std::min(1000, static_cast<SI32>(ourTarg->GetSkill(getTargetSkill)));
+    const std::uint8_t getTargetSkill = GetCombatSkill(defWeapon);
+    const std::uint16_t defendSkill = std::min(1000, static_cast<std::int32_t>(ourTarg->GetSkill(getTargetSkill)));
 
     bool checkDist = (ourDist <= 1 && abs(mChar.GetZ() - ourTarg->GetZ()) <= 15);
 
     // Trigger onSwing for scripts attached to attacker
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2671,7 +2671,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
 
     // Trigger onSwing for scripts attached to attacker's weapon
     if (mWeapon != nullptr) {
-        std::vector<UI16> weaponScriptTriggers = mWeapon->GetScriptTriggers();
+        std::vector<std::uint16_t> weaponScriptTriggers = mWeapon->GetScriptTriggers();
         for (auto scriptTrig : weaponScriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -2701,7 +2701,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
 
         if (mChar.IsNpc()) {
             if (mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED) {
-                UI08 charDir = Movement->Direction(&mChar, ourTarg->GetX(), ourTarg->GetY());
+                std::uint8_t charDir = Movement->Direction(&mChar, ourTarg->GetX(), ourTarg->GetY());
                 if (mChar.GetDir() != charDir && charDir < 8) {
                     mChar.SetDir(charDir);
                 }
@@ -2712,24 +2712,24 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             // If amount of time since character last moved is less than the minimum delay for
             // shooting after coming to a halt, return
             if ((cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime()) <
-                static_cast<UI32>(cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000))
+                static_cast<std::uint32_t>(cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000))
                 return false;
 
-            UI16 ammoId = mWeapon->GetAmmoId();
-            UI16 ammoHue = mWeapon->GetAmmoHue();
-            UI16 ammoFX = mWeapon->GetAmmoFX();
-            UI16 ammoFXHue = mWeapon->GetAmmoFXHue();
-            UI16 ammoFXRender = mWeapon->GetAmmoFXRender();
+            std::uint16_t ammoId = mWeapon->GetAmmoId();
+            std::uint16_t ammoHue = mWeapon->GetAmmoHue();
+            std::uint16_t ammoFX = mWeapon->GetAmmoFX();
+            std::uint16_t ammoFXHue = mWeapon->GetAmmoFXHue();
+            std::uint16_t ammoFXRender = mWeapon->GetAmmoFXRender();
 
             if (mChar.IsNpc() ||
                 (ammoId != 0 && DeleteItemAmount(&mChar, 1, ammoId, ammoHue) == 1)) {
                 PlaySwingAnimations(&mChar);
                 // Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00,
-                // static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
+                // static_cast<std::uint32_t>( ammoFXHue ), static_cast<std::uint32_t>( ammoFXRender ));
                 Effects->PlayMovingAnimation(mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5,
                                              ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(),
-                                             ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>(ammoFXHue),
-                                             static_cast<UI32>(ammoFXRender));
+                                             ammoFX, 0x08, 0x00, 0x00, static_cast<std::uint32_t>(ammoFXHue),
+                                             static_cast<std::uint32_t>(ammoFXRender));
             }
             else {
                 if (mSock != nullptr) {
@@ -2743,17 +2743,17 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             PlaySwingAnimations(&mChar);
         }
 
-        SI16 staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
+        std::int16_t staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
         if (staminaToLose && (!mChar.IsGM() && !mChar.IsCounselor())) {
             mChar.IncStamina(staminaToLose);
         }
 
-        const UI16 getDefTactics = ourTarg->GetSkill(TACTICS);
+        const std::uint16_t getDefTactics = ourTarg->GetSkill(TACTICS);
         bool skillPassed = false;
 
         // Do a skill check so the fight skill is increased
         Skills->CheckSkill(&mChar, getFightSkill, 0,
-                           std::min(1000, static_cast<SI32>((getDefTactics * 1.25) + 100)));
+                           std::min(1000, static_cast<std::int32_t>((getDefTactics * 1.25) + 100)));
 
         // Calculate Hit Chance
         R32 hitChance = 0;
@@ -2828,8 +2828,8 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
         if (!skillPassed) {
             // It's a miss!
             if (getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !RandomNum(0, 2)) {
-                UI16 ammoId = mWeapon->GetAmmoId();
-                UI16 ammoHue = mWeapon->GetAmmoHue();
+                std::uint16_t ammoId = mWeapon->GetAmmoId();
+                std::uint16_t ammoHue = mWeapon->GetAmmoHue();
                 Items->CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, OT_ITEM, false);
             }
 
@@ -2854,7 +2854,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 Effects->PlaySound(ourTarg, RandomNum(0x0155, 0x0158));
                 break;
             default: {
-                UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
+                std::uint16_t toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
                 if (toPlay != 0x00) {
                     Effects->PlaySound(ourTarg, toPlay);
                 }
@@ -2862,7 +2862,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             }
             }
 
-            UI08 poisonStrength = mChar.GetPoisonStrength();
+            std::uint8_t poisonStrength = mChar.GetPoisonStrength();
             if (poisonStrength && ourTarg->GetPoisoned() < poisonStrength) {
                 if (((getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP) &&
                      !RandomNum(0, 2)) ||
@@ -2913,8 +2913,8 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             }
 
             // Calculate damage
-            const UI08 hitLoc = CalculateHitLoc();
-            UI16 ourDamage = CalcDamage(&mChar, ourTarg, getFightSkill, hitLoc);
+            const std::uint8_t hitLoc = CalculateHitLoc();
+            std::uint16_t ourDamage = CalcDamage(&mChar, ourTarg, getFightSkill, hitLoc);
             if (ourDamage > 0) {
                 // Show hit messages, if enabled
                 DoHitMessage(&mChar, ourTarg, hitLoc, ourDamage);
@@ -2929,8 +2929,8 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 }
                 // Reactive Armor
                 if (ourTarg->GetReactiveArmour()) {
-                    SI32 retDamage =
-                        static_cast<SI32>(ourDamage * (ourTarg->GetSkill(MAGERY) / 2000.0));
+                    std::int32_t retDamage =
+                        static_cast<std::int32_t>(ourDamage * (ourTarg->GetSkill(MAGERY) / 2000.0));
                     if (ourTarg->Damage(ourDamage - retDamage, PHYSICAL, &mChar)) {
                         if (ourTarg->IsNpc() && !mChar.IsNpc()) {
                             // Divide reactive damage dealt by NPCs to players by NPCDAMAGERATE
@@ -2957,7 +2957,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 }
             }
 
-            std::vector<UI16> defScriptTriggers = ourTarg->GetScriptTriggers();
+            std::vector<std::uint16_t> defScriptTriggers = ourTarg->GetScriptTriggers();
             for (auto scriptTrig : defScriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -2980,7 +2980,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows beneficial spells to be cast on self during combat
 // o------------------------------------------------------------------------------------------------o
-inline void QuickSwitch(CChar *mChar, CChar *ourTarg, SI08 spellNum) {
+inline void QuickSwitch(CChar *mChar, CChar *ourTarg, std::int8_t spellNum) {
     if (!ValidateObject(mChar) || !ValidateObject(ourTarg) || mChar == ourTarg)
         return;
 
@@ -2996,7 +2996,7 @@ inline void QuickSwitch(CChar *mChar, CChar *ourTarg, SI08 spellNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting during combat
 // o------------------------------------------------------------------------------------------------o
-bool CHandleCombat::CastSpell(CChar *mChar, CChar *ourTarg, SI08 spellNum) {
+bool CHandleCombat::CastSpell(CChar *mChar, CChar *ourTarg, std::int8_t spellNum) {
     if (!ValidateObject(mChar) || !ValidateObject(ourTarg) || mChar == ourTarg)
         return false;
 
@@ -3070,13 +3070,13 @@ bool CHandleCombat::CastSpell(CChar *mChar, CChar *ourTarg, SI08 spellNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the casting of spells by NPCs during combat
 // o------------------------------------------------------------------------------------------------o
-void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 playerDistance) {
+void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::uint16_t playerDistance) {
     if (!npcAttack->GetCanAttack() || npcAttack->IsEvading())
         return;
 
     if (npcAttack->GetTimer(tNPC_SPATIMER) <= cwmWorldState->GetUICurrentTime()) {
         if (playerDistance <= cwmWorldState->ServerData()->CombatMaxSpellRange()) {
-            SI16 spattacks = npcAttack->GetSpAttack();
+            std::int16_t spattacks = npcAttack->GetSpAttack();
             if (spattacks <= 0)
                 return;
 
@@ -3086,16 +3086,16 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
 
             npcAttack->StopSpell();
 
-            UI16 offensiveWeight = 0;
+            std::uint16_t offensiveWeight = 0;
 
             // Establish a simple baseline for letting NPC determine whether to cast offensive or
             // defensive spells The higher the NPC's current health percentage, the more likely they
             // will be to cast offensive spells The lower their health percentage, the more likely
             // they will be to cast defensive spells
             offensiveWeight =
-                static_cast<UI16>(std::round((npcAttack->GetHP() * 100) / npcAttack->GetMaxHP()));
+                static_cast<std::uint16_t>(std::round((npcAttack->GetHP() * 100) / npcAttack->GetMaxHP()));
 
-            UI16 rndNum = RandomNum(1, 100);
+            std::uint16_t rndNum = RandomNum(1, 100);
 
             // Cut weighting towards offensive spells in half if NPC is poisoned; we want him to
             // cast cures!
@@ -3111,7 +3111,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
             bool monsterAreaCastAnim = false;
             if (offensiveWeight > rndNum) {
                 // Cast offensive spells
-                switch ((RandomNum(static_cast<SI16>(0), spattacks) + 1)) {
+                switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
                 case 1: // Spell Circle 1 - Offensive Spells
                     switch (RandomNum(1, 4)) {
                     case 1:
@@ -3213,7 +3213,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
                 // If situation not too bad yet, let's go for some buffs/debuffs
                 if (offensiveWeight > rndNum / 1.5) {
                     // Cast buffs/debuffs
-                    switch ((RandomNum(static_cast<SI16>(0), spattacks) + 1)) {
+                    switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
                     case 1:
                         [[fallthrough]];
                     case 2:
@@ -3273,7 +3273,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
                 }
                 else {
                     // Critical health levels! Let's focus on heals and cures
-                    switch ((RandomNum(static_cast<SI16>(0), spattacks) + 1)) {
+                    switch ((RandomNum(static_cast<std::int16_t>(0), spattacks) + 1)) {
                     case 1:
                         if ((spattacks + 1 >= 2) &&
                             !CastSpell(npcAttack, cDefend,
@@ -3328,7 +3328,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
             }
 
             // Adjust spellDelay based on UOX.INI setting:
-            SI08 spellDelay = floor(
+            std::int8_t spellDelay = floor(
                 (npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed()) + 0.5);
 
             npcAttack->SetTimer(tNPC_SPATIMER, BuildTimeValue(spellDelay));
@@ -3342,7 +3342,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, UI16 
 //|	Purpose		-	Calculate delay between attacks in combat
 // o------------------------------------------------------------------------------------------------o
 R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
-    SI16 statOffset = 0;
+    std::int16_t statOffset = 0;
     if (cwmWorldState->ServerData()->CombatAttackSpeedFromStamina()) {
         statOffset = mChar->GetStamina();
     }
@@ -3354,15 +3354,15 @@ R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
     if (mChar->IsNpc()) // Allow NPCs more speed based off of available stamina than players
     {
         getDelay =
-            static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<SI16>(300))) + 100);
+            static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<std::int16_t>(300))) + 100);
     }
     else {
         getDelay =
-            static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<SI16>(100))) + 100);
+            static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<std::int16_t>(100))) + 100);
     }
 
-    SI32 getOffset = 0;
-    SI32 baseValue = 15000;
+    std::int32_t getOffset = 0;
+    std::int32_t baseValue = 15000;
 
     CChar *ourTarg = mChar->GetTarg();
 
@@ -3375,7 +3375,7 @@ R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
     }
     else {
         if (mChar->GetSkill(WRESTLING) < 800) {
-            getOffset = ((static_cast<SI32>(mChar->GetSkill(WRESTLING) / 200)) * 5) + 30;
+            getOffset = ((static_cast<std::int32_t>(mChar->GetSkill(WRESTLING) / 200)) * 5) + 30;
         }
         else {
             getOffset = 50;
@@ -3405,7 +3405,7 @@ void CHandleCombat::InvalidateAttacker(CChar *mChar) {
     CChar *ourTarg = mChar->GetTarg();
 
     // Check if OnCombatEnd event exists.
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -3629,7 +3629,7 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
 //|	Purpose		-	Handle spawning a guard in guarded areas
 //|					NEED TO REWORK FOR REGIONAL GUARD STUFF
 // o------------------------------------------------------------------------------------------------o
-auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z) -> void {
+auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, std::int16_t y, std::int8_t z) -> void {
     if (!ValidateObject(mChar) || !ValidateObject(targChar))
         return;
 

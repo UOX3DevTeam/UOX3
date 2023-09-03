@@ -7,12 +7,12 @@
 #include <cstring>
 #include <string>
 
-const UI08 BIT_CANFLY = 0;
-const UI08 BIT_ANTIBLINK = 1;
-const UI08 BIT_ANIMAL = 2;
-const UI08 BIT_WATER = 3;
-const UI08 BIT_AMPHI = 4;
-const UI08 BIT_HUMAN = 5;
+const std::uint8_t BIT_CANFLY = 0;
+const std::uint8_t BIT_ANTIBLINK = 1;
+const std::uint8_t BIT_ANIMAL = 2;
+const std::uint8_t BIT_WATER = 3;
+const std::uint8_t BIT_AMPHI = 4;
+const std::uint8_t BIT_HUMAN = 5;
 
 class CCreatures {
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,14 +34,14 @@ class CCreatures {
     // icon: used for tracking, to set the appropriate icon
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
   private:
-    UI16 creatureId;
-    UI16 soundList[SND_COUNT];
+    std::uint16_t creatureId;
+    std::uint16_t soundList[SND_COUNT];
     std::bitset<6> who_am_i;
-    UI16 icon;
-    UI16 mountId;
+    std::uint16_t icon;
+    std::uint16_t mountId;
     struct CreatureAnim_st {
-        UI08 animId;
-        UI08 animLength;
+        std::uint8_t animId;
+        std::uint8_t animLength;
         CreatureAnim_st() : animId(0), animLength(0) {}
     };
 
@@ -57,68 +57,68 @@ class CCreatures {
         who_am_i.reset();
         memset(soundList, 0x00, SND_COUNT * sizeof(soundList[0]));
     }
-    UI16 GetSound(monsterSound soundType) const { return soundList[static_cast<UI08>(soundType)]; }
-    void SetSound(monsterSound soundType, UI16 newVal) {
-        soundList[static_cast<UI08>(soundType)] = newVal;
+    std::uint16_t GetSound(monsterSound soundType) const { return soundList[static_cast<std::uint8_t>(soundType)]; }
+    void SetSound(monsterSound soundType, std::uint16_t newVal) {
+        soundList[static_cast<std::uint8_t>(soundType)] = newVal;
     }
-    UI16 Icon(void) const { return icon; }
-    UI08 WhoAmI(void) const { return static_cast<UI08>(who_am_i.to_ulong()); }
+    std::uint16_t Icon(void) const { return icon; }
+    std::uint8_t WhoAmI(void) const { return static_cast<std::uint8_t>(who_am_i.to_ulong()); }
 
-    void Icon(UI16 value) { icon = value; }
+    void Icon(std::uint16_t value) { icon = value; }
 
-    UI16 MountId(void) const { return mountId; }
-    void MountId(UI16 value) { mountId = value; }
+    std::uint16_t MountId(void) const { return mountId; }
+    void MountId(std::uint16_t value) { mountId = value; }
 
     // Cast Animation (Area-based)
-    UI08 CastAnimAreaId(void) const { return castAnimArea.animId; }
-    UI08 CastAnimAreaLength(void) const { return castAnimArea.animLength; }
-    void CastAnimArea(UI08 value, UI08 length) {
+    std::uint8_t CastAnimAreaId(void) const { return castAnimArea.animId; }
+    std::uint8_t CastAnimAreaLength(void) const { return castAnimArea.animLength; }
+    void CastAnimArea(std::uint8_t value, std::uint8_t length) {
         castAnimArea.animId = value;
         castAnimArea.animLength = length;
     }
 
     // Cast Animation (Target-based)
-    UI08 CastAnimTargetId(void) const { return castAnimTarget.animId; }
-    UI08 CastAnimTargetLength(void) const { return castAnimTarget.animLength; }
-    void CastAnimTarget(UI08 value, UI08 length) {
+    std::uint8_t CastAnimTargetId(void) const { return castAnimTarget.animId; }
+    std::uint8_t CastAnimTargetLength(void) const { return castAnimTarget.animLength; }
+    void CastAnimTarget(std::uint8_t value, std::uint8_t length) {
         castAnimTarget.animId = value;
         castAnimTarget.animLength = length;
     }
 
     // Cast Animation #3
-    UI08 CastAnim3Id(void) const { return castAnim3.animId; }
-    UI08 CastAnim3Length(void) const { return castAnim3.animLength; }
-    void CastAnim3(UI08 value, UI08 length) {
+    std::uint8_t CastAnim3Id(void) const { return castAnim3.animId; }
+    std::uint8_t CastAnim3Length(void) const { return castAnim3.animLength; }
+    void CastAnim3(std::uint8_t value, std::uint8_t length) {
         castAnim3.animId = value;
         castAnim3.animLength = length;
     }
 
     // Attack Animation #1
-    UI08 AttackAnim1Id(void) const { return attackAnim1.animId; }
-    UI08 AttackAnim1Length(void) const { return attackAnim1.animLength; }
-    void AttackAnim1(UI08 value, UI08 length) {
+    std::uint8_t AttackAnim1Id(void) const { return attackAnim1.animId; }
+    std::uint8_t AttackAnim1Length(void) const { return attackAnim1.animLength; }
+    void AttackAnim1(std::uint8_t value, std::uint8_t length) {
         attackAnim1.animId = value;
         attackAnim1.animLength = length;
     }
 
     // Attack Animation #2
-    UI08 AttackAnim2Id(void) const { return attackAnim2.animId; }
-    UI08 AttackAnim2Length(void) const { return attackAnim2.animLength; }
-    void AttackAnim2(UI08 value, UI08 length) {
+    std::uint8_t AttackAnim2Id(void) const { return attackAnim2.animId; }
+    std::uint8_t AttackAnim2Length(void) const { return attackAnim2.animLength; }
+    void AttackAnim2(std::uint8_t value, std::uint8_t length) {
         attackAnim2.animId = value;
         attackAnim2.animLength = length;
     }
 
     // Attack Animation #3
-    UI08 AttackAnim3Id(void) const { return attackAnim3.animId; }
-    UI08 AttackAnim3Length(void) const { return attackAnim3.animLength; }
-    void AttackAnim3(UI08 value, UI08 length) {
+    std::uint8_t AttackAnim3Id(void) const { return attackAnim3.animId; }
+    std::uint8_t AttackAnim3Length(void) const { return attackAnim3.animLength; }
+    void AttackAnim3(std::uint8_t value, std::uint8_t length) {
         attackAnim3.animId = value;
         attackAnim3.animLength = length;
     }
 
-    UI16 CreatureId(void) const { return creatureId; }
-    void CreatureId(UI16 value) { creatureId = value; }
+    std::uint16_t CreatureId(void) const { return creatureId; }
+    void CreatureId(std::uint16_t value) { creatureId = value; }
 
     bool IsAnimal(void) const { return who_am_i.test(BIT_ANIMAL); }
     bool IsHuman(void) const { return who_am_i.test(BIT_HUMAN); }
@@ -137,9 +137,9 @@ class CCreatures {
 struct Point3_st {
     R32 x, y, z;
     Point3_st() : x(0), y(0), z(0) {}
-    Point3_st(UI16 X, UI16 Y, SI08 Z) : x(X), y(Y), z(Z) {}
+    Point3_st(std::uint16_t X, std::uint16_t Y, std::int8_t Z) : x(X), y(Y), z(Z) {}
     Point3_st(R32 X, R32 Y, R32 Z) : x(X), y(Y), z(Z) {}
-    void Assign(UI16 X, UI16 Y, SI08 Z);
+    void Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z);
     void Assign(R32 X, R32 Y, R32 Z);
     R64 Mag(void) const;
     R32 MagSquared(void) const;
@@ -168,7 +168,7 @@ inline Point3_st operator/(Point3_st const &a, R32 const &b) {
     R32 inv = 1.f / b;
     return Point3_st(a.x * inv, a.y * inv, a.z * inv);
 }
-inline void Point3_st::Assign(UI16 X, UI16 Y, SI08 Z) {
+inline void Point3_st::Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z) {
     x = X;
     y = Y;
     z = Z;
@@ -196,11 +196,11 @@ struct UOXFileWrapper_st {
 };
 
 struct GoPlaces_st {
-    SI16 x;
-    SI16 y;
-    SI08 z;
-    UI08 worldNum;
-    UI16 instanceId;
+    std::int16_t x;
+    std::int16_t y;
+    std::int8_t z;
+    std::uint8_t worldNum;
+    std::uint16_t instanceId;
     GoPlaces_st() : x(-1), y(-1), z(-1), worldNum(0), instanceId(0) {}
 };
 
@@ -208,9 +208,9 @@ struct GoPlaces_st {
 class CTeleLocationEntry {
   private:
     Point3_st src;
-    UI08 srcWorld;
+    std::uint8_t srcWorld;
     Point3_st trg;
-    UI08 trgWorld;
+    std::uint8_t trgWorld;
 
   public:
     CTeleLocationEntry() : srcWorld(0xFF), trgWorld(0) {
@@ -218,47 +218,47 @@ class CTeleLocationEntry {
         trg.Assign(0, 0, ILLEGAL_Z);
     }
     Point3_st SourceLocation(void) const { return src; }
-    void SourceLocation(UI16 x, UI16 y, SI08 z) { src.Assign(x, y, z); }
-    UI08 SourceWorld(void) const { return srcWorld; }
-    void SourceWorld(UI08 newVal) { srcWorld = newVal; }
+    void SourceLocation(std::uint16_t x, std::uint16_t y, std::int8_t z) { src.Assign(x, y, z); }
+    std::uint8_t SourceWorld(void) const { return srcWorld; }
+    void SourceWorld(std::uint8_t newVal) { srcWorld = newVal; }
     Point3_st TargetLocation(void) const { return trg; }
-    void TargetLocation(UI16 x, UI16 y, SI08 z) { trg.Assign(x, y, z); }
-    UI08 TargetWorld(void) const { return trgWorld; }
-    void TargetWorld(UI08 newVal) { trgWorld = newVal; }
+    void TargetLocation(std::uint16_t x, std::uint16_t y, std::int8_t z) { trg.Assign(x, y, z); }
+    std::uint8_t TargetWorld(void) const { return trgWorld; }
+    void TargetWorld(std::uint8_t newVal) { trgWorld = newVal; }
 };
 
 // Instalog Locations
 struct LogoutLocationEntry_st {
-    SI16 x1 = 0;
-    SI16 y1 = 0;
-    SI16 x2 = 0;
-    SI16 y2 = 0;
-    UI08 worldNum = 0;
-    UI16 instanceId = 0;
+    std::int16_t x1 = 0;
+    std::int16_t y1 = 0;
+    std::int16_t x2 = 0;
+    std::int16_t y2 = 0;
+    std::uint8_t worldNum = 0;
+    std::uint16_t instanceId = 0;
 };
 
 // SOS Locations
 struct SOSLocationEntry_st {
-    SI16 x1 = 0;
-    SI16 y1 = 0;
-    SI16 x2 = 0;
-    SI16 y2 = 0;
-    UI08 worldNum = 0;
-    UI16 instanceId = 0;
+    std::int16_t x1 = 0;
+    std::int16_t y1 = 0;
+    std::int16_t x2 = 0;
+    std::int16_t y2 = 0;
+    std::uint8_t worldNum = 0;
+    std::uint16_t instanceId = 0;
 };
 
 struct Advance_st {
-    UI16 base;
-    UI08 success;
-    UI08 failure;
-    UI08 amtToGain;
+    std::uint16_t base;
+    std::uint8_t success;
+    std::uint8_t failure;
+    std::uint8_t amtToGain;
     Advance_st() : base(0), success(0), failure(0), amtToGain(1) {}
 };
 
 struct TitlePair_st {
-    SI16 lowBound;
+    std::int16_t lowBound;
     std::string toDisplay;
     TitlePair_st() : lowBound(0), toDisplay("") {}
-    TitlePair_st(SI16 lB, const std::string &toDisp) : lowBound(lB) { toDisplay = toDisp; }
+    TitlePair_st(std::int16_t lB, const std::string &toDisp) : lowBound(lB) { toDisplay = toDisp; }
 };
 #endif

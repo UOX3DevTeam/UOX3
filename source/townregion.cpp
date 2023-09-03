@@ -24,49 +24,49 @@
 
 // Implementation of town regions
 
-const SI08 MAYOR = 0x01;
-// const SI08 ENEMY = 0x02;
-// const SI08 JOINER = 0x03;
+const std::int8_t MAYOR = 0x01;
+// const std::int8_t ENEMY = 0x02;
+// const std::int8_t JOINER = 0x03;
 
-const UI32 BIT_GUARDED = 0;
-const UI32 BIT_MARK = 1;
-const UI32 BIT_GATE = 2;
-const UI32 BIT_RECALL = 3;
-const UI32 BIT_AGGRESSIVE = 6;
-const UI32 BIT_DUNGEON = 7;
-const UI32 BIT_SAFEZONE = 8;
-const UI32 BIT_TELEPORT = 9;
-const UI32 BIT_HOUSING = 10;
-const UI32 BIT_SUBREGION = 11;
+const std::uint32_t BIT_GUARDED = 0;
+const std::uint32_t BIT_MARK = 1;
+const std::uint32_t BIT_GATE = 2;
+const std::uint32_t BIT_RECALL = 3;
+const std::uint32_t BIT_AGGRESSIVE = 6;
+const std::uint32_t BIT_DUNGEON = 7;
+const std::uint32_t BIT_SAFEZONE = 8;
+const std::uint32_t BIT_TELEPORT = 9;
+const std::uint32_t BIT_HOUSING = 10;
+const std::uint32_t BIT_SUBREGION = 11;
 
 const RACEID DEFTOWN_RACE = 0;
 const WEATHID DEFTOWN_WEATHER = 255;
-const SI32 DEFTOWN_MUSICLIST = 0;
+const std::int32_t DEFTOWN_MUSICLIST = 0;
 const SERIAL DEFTOWN_MAYOR = INVALIDSERIAL;
-const UI16 DEFTOWN_TAXEDRESOURCE = 0x0EED;
-const UI16 DEFTOWN_TAXEDAMOUNT = 0;
-const SI32 DEFTOWN_GOLDRESERVED = 0;
-const SI16 DEFTOWN_GUARDSPURCHASED = 0;
-const UI32 DEFTOWN_RESOURCECOLLECTED = 0;
+const std::uint16_t DEFTOWN_TAXEDRESOURCE = 0x0EED;
+const std::uint16_t DEFTOWN_TAXEDAMOUNT = 0;
+const std::int32_t DEFTOWN_GOLDRESERVED = 0;
+const std::int16_t DEFTOWN_GUARDSPURCHASED = 0;
+const std::uint32_t DEFTOWN_RESOURCECOLLECTED = 0;
 const WorldType DEFTOWN_VISUALAPPEARANCE = WRLD_SPRING;
-const SI16 DEFTOWN_HEALTH = 30000;
-const UI32 DEFTOWN_ELECTIONCLOSE = 0;
-const UI32 DEFTOWN_NEXTPOLL = 0;
-const UI32 DEFTOWN_GUARDSPAID = 0;
-const UI32 DEFTOWN_TAXEDMEMBERS = 0;
-const UI08 DEFTOWN_WORLDNUMBER = 0;
-const UI16 DEFTOWN_INSTANCEID = 0;
-const UI16 DEFTOWN_JSSCRIPT = 0xFFFF;
-const UI08 DEFTOWN_FINDBIGORE = 0;
-const UI16 DEFTOWN_NUMGUARDS = 10;
-const UI16 DEFTOWN_PARENTREGION = 0;
+const std::int16_t DEFTOWN_HEALTH = 30000;
+const std::uint32_t DEFTOWN_ELECTIONCLOSE = 0;
+const std::uint32_t DEFTOWN_NEXTPOLL = 0;
+const std::uint32_t DEFTOWN_GUARDSPAID = 0;
+const std::uint32_t DEFTOWN_TAXEDMEMBERS = 0;
+const std::uint8_t DEFTOWN_WORLDNUMBER = 0;
+const std::uint16_t DEFTOWN_INSTANCEID = 0;
+const std::uint16_t DEFTOWN_JSSCRIPT = 0xFFFF;
+const std::uint8_t DEFTOWN_FINDBIGORE = 0;
+const std::uint16_t DEFTOWN_NUMGUARDS = 10;
+const std::uint16_t DEFTOWN_PARENTREGION = 0;
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion( UI16 region )
+//|	Function	-	CTownRegion( std::uint16_t region )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for CTownRegion class
 // o------------------------------------------------------------------------------------------------o
-CTownRegion::CTownRegion(UI16 region)
+CTownRegion::CTownRegion(std::uint16_t region)
     : regionNum(region), numGuards(DEFTOWN_NUMGUARDS), parentRegion(DEFTOWN_PARENTREGION),
       musicList(DEFTOWN_MUSICLIST), worldNumber(DEFTOWN_WORLDNUMBER),
       instanceId(DEFTOWN_INSTANCEID), mayorSerial(DEFTOWN_MAYOR), race(DEFTOWN_RACE),
@@ -125,21 +125,21 @@ bool CTownRegion::Load(Script *ss) {
         tag = sec->tag;
         data = sec->data;
         UTag = util::upper(tag);
-        UI32 duint;
+        std::uint32_t duint;
         try {
-            duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
+            duint = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
         } catch (...) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
         case 'A':
             if (UTag == "ALLYTOWN") {
-                alliedTowns.push_back(static_cast<UI08>(duint));
+                alliedTowns.push_back(static_cast<std::uint8_t>(duint));
             }
             break;
         case 'E':
             if (UTag == "ELECTIONTIME") {
-                timeToElectionClose = static_cast<SI32>(duint);
+                timeToElectionClose = static_cast<std::int32_t>(duint);
             }
             break;
         case 'G':
@@ -152,12 +152,12 @@ bool CTownRegion::Load(Script *ss) {
             }
             else if (UTag == "GUARDSBOUGHT") // num guards bought
             {
-                guardsPurchased = static_cast<SI16>(duint);
+                guardsPurchased = static_cast<std::int16_t>(duint);
             }
             break;
         case 'H':
             if (UTag == "HEALTH") {
-                health = static_cast<SI16>(duint);
+                health = static_cast<std::int16_t>(duint);
             }
             break;
         case 'M':
@@ -176,13 +176,13 @@ bool CTownRegion::Load(Script *ss) {
                 name = data.substr(0, 49);
             }
             else if (UTag == "NUMGUARDS") {
-                numGuards = static_cast<UI16>(duint);
+                numGuards = static_cast<std::uint16_t>(duint);
             }
             break;
         case 'P':
             if (UTag == "PARENTREGION") {
                 if (parentRegion > 0) {
-                    parentRegion = static_cast<UI16>(duint);
+                    parentRegion = static_cast<std::uint16_t>(duint);
                     IsSubRegion(true);
                 }
             }
@@ -193,32 +193,32 @@ bool CTownRegion::Load(Script *ss) {
                 // priv = std::bitset<10>( data.toUShort() );
             }
             else if (UTag == "POLLTIME") {
-                timeToNextPoll = static_cast<SI32>(duint);
+                timeToNextPoll = static_cast<std::int32_t>(duint);
             }
             break;
         case 'R':
             if (UTag == "RACE") {
-                race = static_cast<UI16>(duint);
+                race = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "RESOURCEAMOUNT") {
-                goldReserved = static_cast<SI32>(duint);
+                goldReserved = static_cast<std::int32_t>(duint);
             }
             else if (UTag == "RESOURCECOLLECTED") {
-                resourceCollected = static_cast<SI32>(duint);
+                resourceCollected = static_cast<std::int32_t>(duint);
             }
             break;
         case 'T':
             if (UTag == "TAXEDID") {
-                taxedResource = static_cast<UI16>(duint);
+                taxedResource = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "TAXEDAMOUNT") {
-                taxedAmount = static_cast<UI16>(duint);
+                taxedAmount = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "TIMET") {
-                timeSinceTaxedMembers = static_cast<SI32>(duint);
+                timeSinceTaxedMembers = static_cast<std::int32_t>(duint);
             }
             else if (UTag == "TIMEG") {
-                timeSinceGuardsPaid = static_cast<SI32>(duint);
+                timeSinceGuardsPaid = static_cast<std::int32_t>(duint);
             }
             break;
         case 'V':
@@ -264,9 +264,9 @@ bool CTownRegion::Save(std::ostream &outStream) {
         outStream << "MEMBER=0x" << std::hex << (*mIter).townMember << std::dec << newLine;
         outStream << "VOTE=0x" << std::hex << (*mIter).targVote << std::dec << newLine;
     }
-    std::vector<UI16>::const_iterator aIter;
+    std::vector<std::uint16_t>::const_iterator aIter;
     for (aIter = alliedTowns.begin(); aIter != alliedTowns.end(); ++aIter) {
-        outStream << "ALLYTOWN=" << static_cast<UI16>((*aIter)) << newLine;
+        outStream << "ALLYTOWN=" << static_cast<std::uint16_t>((*aIter)) << newLine;
     }
     outStream << "}\n\n";
     return true;
@@ -283,7 +283,7 @@ void CTownRegion::CalcNewMayor(void) {
         return;
 
     // if there are no members, there are no new mayors
-    std::vector<SI32> votes;
+    std::vector<std::int32_t> votes;
     votes.resize(townMember.size());
     for (size_t counter = 0; counter < votes.size(); ++counter) {
         votes[counter] = 0; // init the count before adding
@@ -374,7 +374,7 @@ bool CTownRegion::AddAsTownMember(CChar &toAdd) {
     if (Races->CompareByRace(toAdd.GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false; // we can't have a racial enemy in the town!
 
-    for (UI32 counter = 0; counter < townMember.size(); ++counter) // exhaustive error checking
+    for (std::uint32_t counter = 0; counter < townMember.size(); ++counter) // exhaustive error checking
     {
         if (townMember[counter].townMember == toAdd.GetSerial())
             return false; // already exists in our town!
@@ -433,7 +433,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
     std::string tag;
     std::string data;
     std::string UTag;
-    SI32 actgood = -1;
+    std::int32_t actgood = -1;
     bool orePrefLoaded = false;
 
     // Some default values
@@ -447,16 +447,16 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
         tag = sec->tag;
         data = sec->data;
         UTag = util::upper(tag);
-        UI32 duint;
+        std::uint32_t duint;
         try {
-            duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
+            duint = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
         } catch (...) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
         case 'A':
             if (UTag == "ABWEATH") {
-                weather = static_cast<UI08>(duint);
+                weather = static_cast<std::uint8_t>(duint);
             }
             else if (UTag == "APPEARANCE") {
                 visualAppearance = WRLD_COUNT;
@@ -475,7 +475,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
         case 'B':
             if (UTag == "BUYABLE") {
                 if (actgood > -1) {
-                    goodList[actgood].buyVal = static_cast<SI32>(duint);
+                    goodList[actgood].buyVal = static_cast<std::int32_t>(duint);
                 }
                 else {
                     Console::shared().Error(
@@ -485,7 +485,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             break;
         case 'C':
             if (UTag == "CHANCEFORBIGORE") {
-                chanceFindBigOre = static_cast<UI08>(duint);
+                chanceFindBigOre = static_cast<std::uint8_t>(duint);
             }
             break;
         case 'D':
@@ -528,12 +528,12 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             break;
         case 'I':
             if (UTag == "INSTANCEID") {
-                instanceId = static_cast<UI16>(duint);
+                instanceId = static_cast<std::uint16_t>(duint);
             }
             break;
         case 'M':
             if (UTag == "MUSICLIST" || UTag == "MIDILIST") {
-                musicList = static_cast<UI16>(duint);
+                musicList = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "MAGICDAMAGE") {
                 CanCastAggressive((duint == 1));
@@ -560,7 +560,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
                         // Use chance specified in orepref
-                        toPush.percentChance = static_cast<UI16>(
+                        toPush.percentChance = static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                     }
                     else if (toPush.oreIndex->oreChance > 0) {
@@ -569,7 +569,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     }
                     else {
                         // Fallback for older skills.dfn setups
-                        toPush.percentChance = 1000 / static_cast<UI16>(Skills->GetNumberOfOres());
+                        toPush.percentChance = 1000 / static_cast<std::uint16_t>(Skills->GetNumberOfOres());
                     }
 
                     orePreferences.push_back(toPush);
@@ -584,7 +584,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
         case 'P':
             if (UTag == "PARENTREGION") {
                 // Region has a parent region! Store reference to parent region...
-                parentRegion = static_cast<UI16>(duint);
+                parentRegion = static_cast<std::uint16_t>(duint);
 
                 // ...and mark this region as a subregion
                 IsSubRegion(true);
@@ -604,7 +604,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                             std::stoi(util::trim(util::strip(ssecs[1], "//")), nullptr, 0);
                     }
                     else {
-                        goodList[actgood].rand1 = static_cast<SI32>(duint);
+                        goodList[actgood].rand1 = static_cast<std::int32_t>(duint);
                         goodList[actgood].rand2 = goodList[actgood].rand1;
                     }
                     if (goodList[actgood].rand2 < goodList[actgood].rand1) {
@@ -621,7 +621,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                 }
             }
             else if (UTag == "RACE") {
-                race = static_cast<UI16>(duint);
+                race = static_cast<std::uint16_t>(duint);
             }
             break;
         case 'S':
@@ -630,7 +630,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             }
             else if (UTag == "SELLABLE") {
                 if (actgood > -1) {
-                    goodList[actgood].sellVal = static_cast<SI32>(duint);
+                    goodList[actgood].sellVal = static_cast<std::int32_t>(duint);
                 }
                 else {
                     Console::shared().Error(
@@ -646,7 +646,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         data.c_str()));
                 }
                 else {
-                    for (UI16 i = 0xFFFF; i > 0; --i) {
+                    for (std::uint16_t i = 0xFFFF; i > 0; --i) {
                         if (cwmWorldState->spawnRegions.find(i) !=
                             cwmWorldState->spawnRegions.end()) {
                             CSpawnRegion *spawnReg = new CSpawnRegion(i);
@@ -664,7 +664,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                 }
             }
             else if (UTag == "SCRIPT") {
-                UI16 scriptId = static_cast<UI16>(duint);
+                std::uint16_t scriptId = static_cast<std::uint16_t>(duint);
                 if (scriptId != 0) {
                     cScript *toExecute = JSMapping->GetScript(scriptId);
                     if (toExecute == nullptr) {
@@ -686,23 +686,23 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             break;
         case 'W':
             if (UTag == "WORLD") {
-                worldNumber = static_cast<UI08>(duint);
+                worldNumber = static_cast<std::uint8_t>(duint);
             }
             break;
         case 'X':
             if (UTag == "X1") {
-                ourLoc.x1 = static_cast<UI16>(duint);
+                ourLoc.x1 = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "X2") {
-                ourLoc.x2 = static_cast<UI16>(duint);
+                ourLoc.x2 = static_cast<std::uint16_t>(duint);
             }
             break;
         case 'Y':
             if (UTag == "Y1") {
-                ourLoc.y1 = static_cast<UI16>(duint);
+                ourLoc.y1 = static_cast<std::uint16_t>(duint);
             }
             else if (UTag == "Y2") {
-                ourLoc.y2 = static_cast<UI16>(duint);
+                ourLoc.y2 = static_cast<std::uint16_t>(duint);
                 locations.push_back(ourLoc);
             }
             break;
@@ -821,9 +821,9 @@ void CTownRegion::SetWeather(WEATHID newValue) { weather = newValue; }
 //|	Purpose		-	Gets the trade system good sell-value at specified index for the
 // townregion
 // o------------------------------------------------------------------------------------------------o
-SI32 CTownRegion::GetGoodSell(UI08 index) const {
-    SI32 rVal = 0;
-    std::map<SI32, GoodData_st>::const_iterator gIter = goodList.find(index);
+std::int32_t CTownRegion::GetGoodSell(std::uint8_t index) const {
+    std::int32_t rVal = 0;
+    std::map<std::int32_t, GoodData_st>::const_iterator gIter = goodList.find(index);
     if (gIter != goodList.end()) {
         rVal = gIter->second.sellVal;
     }
@@ -835,9 +835,9 @@ SI32 CTownRegion::GetGoodSell(UI08 index) const {
 //|	Purpose		-	Gets the trade system good buy-value at specified index for the
 // townregion
 // o------------------------------------------------------------------------------------------------o
-SI32 CTownRegion::GetGoodBuy(UI08 index) const {
-    SI32 rVal = 0;
-    std::map<SI32, GoodData_st>::const_iterator gIter = goodList.find(index);
+std::int32_t CTownRegion::GetGoodBuy(std::uint8_t index) const {
+    std::int32_t rVal = 0;
+    std::map<std::int32_t, GoodData_st>::const_iterator gIter = goodList.find(index);
     if (gIter != goodList.end()) {
         rVal = gIter->second.buyVal;
     }
@@ -850,9 +850,9 @@ SI32 CTownRegion::GetGoodBuy(UI08 index) const {
 //|	Purpose		-	Gets minimum random value for trade system good at specified index
 // for the townregion
 // o------------------------------------------------------------------------------------------------o
-SI32 CTownRegion::GetGoodRnd1(UI08 index) const {
-    SI32 rVal = 0;
-    std::map<SI32, GoodData_st>::const_iterator gIter = goodList.find(index);
+std::int32_t CTownRegion::GetGoodRnd1(std::uint8_t index) const {
+    std::int32_t rVal = 0;
+    std::map<std::int32_t, GoodData_st>::const_iterator gIter = goodList.find(index);
     if (gIter != goodList.end()) {
         rVal = gIter->second.rand1;
     }
@@ -865,9 +865,9 @@ SI32 CTownRegion::GetGoodRnd1(UI08 index) const {
 //|	Purpose		-	Gets maximum random value for trade system good at specified index
 // for the townregion
 // o------------------------------------------------------------------------------------------------o
-SI32 CTownRegion::GetGoodRnd2(UI08 index) const {
-    SI32 rVal = 0;
-    std::map<SI32, GoodData_st>::const_iterator gIter = goodList.find(index);
+std::int32_t CTownRegion::GetGoodRnd2(std::uint8_t index) const {
+    std::int32_t rVal = 0;
+    std::map<std::int32_t, GoodData_st>::const_iterator gIter = goodList.find(index);
     if (gIter != goodList.end()) {
         rVal = gIter->second.rand2;
     }
@@ -880,8 +880,8 @@ SI32 CTownRegion::GetGoodRnd2(UI08 index) const {
 //|	Purpose		-	Gets musicList for the townregion, as originally specified in region
 // DFNs
 // o------------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetMusicList(void) const { return musicList; }
-void CTownRegion::SetMusicList(UI16 newValue) { musicList = newValue; }
+std::uint16_t CTownRegion::GetMusicList(void) const { return musicList; }
+void CTownRegion::SetMusicList(std::uint16_t newValue) { musicList = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetRandomGuard()
@@ -899,7 +899,7 @@ CChar *CTownRegion::GetRandomGuard(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays town menu for townstone used by the player
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, SI08 flag) {
+bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) {
     if (flag == MAYOR) {
         SendMayorGump(sock);
         return true;
@@ -1375,15 +1375,15 @@ SERIAL CTownRegion::FindPositionOf(CChar &toAdd) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ID of resource taxed in townregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetResourceId(void) const { return taxedResource; }
-void CTownRegion::SetResourceId(UI16 resId) { taxedResource = resId; }
+std::uint16_t CTownRegion::GetResourceId(void) const { return taxedResource; }
+void CTownRegion::SetResourceId(std::uint16_t resId) { taxedResource = resId; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::DonateResource()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register player's resource donation for townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::DonateResource(CSocket *s, SI32 amount) {
+bool CTownRegion::DonateResource(CSocket *s, std::int32_t amount) {
     goldReserved += amount;
     CChar *tChar = s->CurrcharObj();
     if (amount > 1000) {
@@ -1412,7 +1412,7 @@ bool CTownRegion::DonateResource(CSocket *s, SI32 amount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Purchase a new town guard for the townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::PurchaseGuard(CSocket *sock, UI08 number) {
+bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
     if (number * 10000 < goldReserved) // if we don't have the cash
     {
         sock->SysMessage(1160); // You cannot afford that many guards!
@@ -1420,7 +1420,7 @@ bool CTownRegion::PurchaseGuard(CSocket *sock, UI08 number) {
     }
 
     goldReserved -= (number * 10000);
-    for (UI08 counter = 0; counter < number; ++counter) {
+    for (std::uint8_t counter = 0; counter < number; ++counter) {
         ++numGuards;
     }
     return true;
@@ -1455,11 +1455,11 @@ bool CTownRegion::PeriodicCheck(void) {
         for (size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter) {
             CChar *townMem = CalcCharObjFromSer(townMember[memberCounter].townMember);
             if (ValidateObject(townMem)) {
-                UI16 resourceId = GetResourceId();
-                UI32 numResources = GetItemAmount(townMem, resourceId);
+                std::uint16_t resourceId = GetResourceId();
+                std::uint32_t numResources = GetItemAmount(townMem, resourceId);
 
                 if (taxedAmount > numResources) {
-                    UI32 bankAmount = GetBankCount(townMem, resourceId, 0, 0);
+                    std::uint32_t bankAmount = GetBankCount(townMem, resourceId, 0, 0);
                     if (taxedAmount > (numResources + bankAmount)) {
                         JailSys->JailPlayer(townMem, 900);
                     }
@@ -1474,21 +1474,21 @@ bool CTownRegion::PeriodicCheck(void) {
                 }
             }
         }
-        timeSinceTaxedMembers = static_cast<SI32>(now);
+        timeSinceTaxedMembers = static_cast<std::int32_t>(now);
     }
     if (difftime(now, timeSinceGuardsPaid) >=
         cwmWorldState->ServerData()->TownGuardPayment()) // init to 1000 seconds
     {
-        if (goldReserved < static_cast<SI32>((20 * numGuards))) {
+        if (goldReserved < static_cast<std::int32_t>((20 * numGuards))) {
             // insufficient resources
             bool enoughGuards = false;
             while (!enoughGuards) {
                 --numGuards;
-                enoughGuards = (goldReserved >= static_cast<SI32>((20 * numGuards)));
+                enoughGuards = (goldReserved >= static_cast<std::int32_t>((20 * numGuards)));
             }
         }
         goldReserved -= 20 * numGuards;
-        timeSinceGuardsPaid = static_cast<SI32>(now);
+        timeSinceGuardsPaid = static_cast<std::int32_t>(now);
     }
 
     if (now > timeToNextPoll && !townMember.empty()) {
@@ -1498,7 +1498,7 @@ bool CTownRegion::PeriodicCheck(void) {
             townMember[counter].targVote = INVALIDSERIAL;
         }
         timeToElectionClose =
-            static_cast<SI32>(now) +
+            static_cast<std::int32_t>(now) +
             cwmWorldState->ServerData()->TownNumSecsPollOpen(); // 2 days polls are open
         timeToNextPoll =
             timeToElectionClose +
@@ -1575,8 +1575,8 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the health of townstone in this townregion
 // o------------------------------------------------------------------------------------------------o
-SI16 CTownRegion::GetHealth(void) const { return health; }
-void CTownRegion::SetHealth(SI16 newValue) { health = newValue; }
+std::int16_t CTownRegion::GetHealth(void) const { return health; }
+void CTownRegion::SetHealth(std::int16_t newValue) { health = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::DoDamage()
@@ -1584,7 +1584,7 @@ void CTownRegion::SetHealth(SI16 newValue) { health = newValue; }
 //|	Purpose		-	Deal damage to townregion's townstone and notify online townregion
 // members
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::DoDamage(SI16 reduction) {
+void CTownRegion::DoDamage(std::int16_t reduction) {
     health -= reduction;
     if (health < 0) {
         health = 0;
@@ -1609,7 +1609,7 @@ void CTownRegion::DoDamage(SI16 reduction) {
 //|	Purpose		-	Checks whether another townregion is in the list of allies for the
 // townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::IsAlliedTown(UI16 townToCheck) const {
+bool CTownRegion::IsAlliedTown(std::uint16_t townToCheck) const {
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
         if (alliedTowns[counter] == townToCheck)
             return true;
@@ -1622,7 +1622,7 @@ bool CTownRegion::IsAlliedTown(UI16 townToCheck) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds specified townregion to townregion's list of allied townregions
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::MakeAlliedTown(UI16 townToMake) {
+bool CTownRegion::MakeAlliedTown(std::uint16_t townToMake) {
     if (regionNum == townToMake)
         return false;
 
@@ -1650,7 +1650,7 @@ bool CTownRegion::MakeAlliedTown(UI16 townToMake) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a client system message to all online members of townregion
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::TellMembers(SI32 dictEntry, ...) {
+void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
     for (size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter) {
         CChar *targetChar = CalcCharObjFromSer(townMember[memberCounter].townMember);
         if (!ValidateObject(targetChar))
@@ -1728,7 +1728,7 @@ void CTownRegion::ForceEarlyElection(void) {
     time_t now;
     time(&now);
     CChar *mayor = GetMayor();
-    timeToNextPoll = static_cast<SI32>(now); // time to open poll
+    timeToNextPoll = static_cast<std::int32_t>(now); // time to open poll
     TellMembers(1174); // An early election has been forced, please proceed to all polling booths.
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         townMember[counter].targVote = INVALIDSERIAL;
@@ -1746,9 +1746,9 @@ void CTownRegion::ForceEarlyElection(void) {
 auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
     auto Enemy = CGumpDisplay(sock, 300, 300);
 
-    UI08 enemyCount = 0;
+    std::uint8_t enemyCount = 0;
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                  [this, &enemyCount, &Enemy](const std::pair<UI16, CTownRegion *> &entry) {
+                  [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
                       if ((entry.first != regionNum) &&
                           (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
                           ++enemyCount;
@@ -1796,8 +1796,8 @@ void CTownRegion::Possess(CTownRegion *possessorTown) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected resource reserves for townregion
 // o------------------------------------------------------------------------------------------------o
-UI32 CTownRegion::GetReserves(void) const { return resourceCollected; }
-void CTownRegion::SetReserves(UI32 newValue) { resourceCollected = newValue; }
+std::uint32_t CTownRegion::GetReserves(void) const { return resourceCollected; }
+void CTownRegion::SetReserves(std::uint32_t newValue) { resourceCollected = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetTaxes()
@@ -1805,8 +1805,8 @@ void CTownRegion::SetReserves(UI32 newValue) { resourceCollected = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected gold reserves for townregion
 // o------------------------------------------------------------------------------------------------o
-UI32 CTownRegion::GetTaxes(void) const { return goldReserved; }
-void CTownRegion::SetTaxesLeft(UI32 newValue) { goldReserved = newValue; }
+std::uint32_t CTownRegion::GetTaxes(void) const { return goldReserved; }
+void CTownRegion::SetTaxesLeft(std::uint32_t newValue) { goldReserved = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetChanceBigOre()
@@ -1814,8 +1814,8 @@ void CTownRegion::SetTaxesLeft(UI32 newValue) { goldReserved = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets chance to find big ore in the townregion
 // o------------------------------------------------------------------------------------------------o
-UI08 CTownRegion::GetChanceBigOre(void) const { return chanceFindBigOre; }
-void CTownRegion::SetChanceBigOre(UI08 newValue) { chanceFindBigOre = newValue; }
+std::uint8_t CTownRegion::GetChanceBigOre(void) const { return chanceFindBigOre; }
+void CTownRegion::SetChanceBigOre(std::uint8_t newValue) { chanceFindBigOre = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::RemoveCharacter()
@@ -1851,8 +1851,8 @@ const OrePref_st *CTownRegion::GetOrePreference(size_t targValue) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the chance to find ore when mining in the townregion
 // o------------------------------------------------------------------------------------------------o
-SI32 CTownRegion::GetOreChance(void) const {
-    SI32 sumReturn = 0;
+std::int32_t CTownRegion::GetOreChance(void) const {
+    std::int32_t sumReturn = 0;
     std::vector<OrePref_st>::const_iterator oIter;
     for (oIter = orePreferences.begin(); oIter != orePreferences.end(); ++oIter) {
         sumReturn += (*oIter).percentChance;
@@ -1881,46 +1881,46 @@ void CTownRegion::IsSubRegion(bool value) { priv.set(BIT_SUBREGION, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the number of guards in the townregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CTownRegion::NumGuards(void) const { return numGuards; }
-void CTownRegion::SetNumGuards(UI16 newValue) { numGuards = newValue; }
+std::uint16_t CTownRegion::NumGuards(void) const { return numGuards; }
+void CTownRegion::SetNumGuards(std::uint16_t newValue) { numGuards = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::WorldNumber()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the worldnumber of the townregion
 // o------------------------------------------------------------------------------------------------o
-UI08 CTownRegion::WorldNumber(void) const { return worldNumber; }
-void CTownRegion::WorldNumber(UI08 newValue) { worldNumber = newValue; }
+std::uint8_t CTownRegion::WorldNumber(void) const { return worldNumber; }
+void CTownRegion::WorldNumber(std::uint8_t newValue) { worldNumber = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetInstanceId()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the worldnumber of the townregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetInstanceId(void) const { return instanceId; }
-void CTownRegion::SetInstanceId(UI16 newValue) { instanceId = newValue; }
+std::uint16_t CTownRegion::GetInstanceId(void) const { return instanceId; }
+void CTownRegion::SetInstanceId(std::uint16_t newValue) { instanceId = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::TaxedAmount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount of gold taxed from townregion members
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::TaxedAmount(UI16 amount) { taxedAmount = amount; }
-UI16 CTownRegion::TaxedAmount(void) const { return taxedAmount; }
+void CTownRegion::TaxedAmount(std::uint16_t amount) { taxedAmount = amount; }
+std::uint16_t CTownRegion::TaxedAmount(void) const { return taxedAmount; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetScriptTriggers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of script triggers on object
 // o------------------------------------------------------------------------------------------------o
-std::vector<UI16> CTownRegion::GetScriptTriggers(void) { return scriptTriggers; }
+std::vector<std::uint16_t> CTownRegion::GetScriptTriggers(void) { return scriptTriggers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::AddScriptTrigger()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a script trigger to object's list of script triggers
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::AddScriptTrigger(UI16 newValue) {
+void CTownRegion::AddScriptTrigger(std::uint16_t newValue) {
     if (std::find(scriptTriggers.begin(), scriptTriggers.end(), newValue) == scriptTriggers.end()) {
         // Add scriptId to scriptTriggers if not already present
         scriptTriggers.push_back(newValue);
@@ -1936,7 +1936,7 @@ void CTownRegion::AddScriptTrigger(UI16 newValue) {
 //|	Purpose		-	Removes a specific script trigger to object's list of script
 // triggers
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::RemoveScriptTrigger(UI16 newValue) {
+void CTownRegion::RemoveScriptTrigger(std::uint16_t newValue) {
     // Remove all elements containing specified script trigger from vector
     scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue),
                          scriptTriggers.end());
@@ -1958,8 +1958,8 @@ void CTownRegion::ClearScriptTriggers(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets region number (from region DFNs) for the townregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CTownRegion::GetRegionNum(void) const { return regionNum; }
-void CTownRegion::SetRegionNum(UI16 newVal) { regionNum = newVal; }
+std::uint16_t CTownRegion::GetRegionNum(void) const { return regionNum; }
+void CTownRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetNumLocations()

@@ -34,35 +34,35 @@ extern std::mt19937 generator;
 // o------------------------------------------------------------------------------------------------o
 //  Range check functions
 // o------------------------------------------------------------------------------------------------o
-bool ObjInRange(CSocket *mSock, CBaseObject *obj, UI16 distance);
-bool ObjInRange(CBaseObject *a, CBaseObject *b, UI16 distance);
-bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance);
-bool ObjInOldRange(CBaseObject *a, CBaseObject *b, UI16 distance);
-bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance);
+bool ObjInRange(CSocket *mSock, CBaseObject *obj, std::uint16_t distance);
+bool ObjInRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
+bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
+bool ObjInOldRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
+bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
 bool CharInRange(CChar *a, CChar *b);
-UI16 GetDist(CBaseObject *a, CBaseObject *b);
-UI16 GetDist(Point3_st a, Point3_st b);
-UI16 GetOldDist(CBaseObject *a, CBaseObject *b);
-UI16 GetDist3D(CBaseObject *a, CBaseObject *b);
-UI16 GetDist3D(Point3_st a, Point3_st b);
+std::uint16_t GetDist(CBaseObject *a, CBaseObject *b);
+std::uint16_t GetDist(Point3_st a, Point3_st b);
+std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b);
+std::uint16_t GetDist3D(CBaseObject *a, CBaseObject *b);
+std::uint16_t GetDist3D(Point3_st a, Point3_st b);
 auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *>;
 auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *>;
-auto FindNearbyPlayers(SI16 x, SI16 y, SI08 z, UI16 distance) -> std::vector<CSocket *>;
-auto FindNearbyPlayers(CBaseObject *myObj, UI16 distance) -> std::vector<CSocket *>;
+auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t distance) -> std::vector<CSocket *>;
+auto FindNearbyPlayers(CBaseObject *myObj, std::uint16_t distance) -> std::vector<CSocket *>;
 auto FindNearbyPlayers(CBaseObject *myObj) -> std::vector<CSocket *>;
 auto FindNearbyPlayers(CChar *mChar) -> std::vector<CSocket *>;
 
 // o------------------------------------------------------------------------------------------------o
 //  Multi functions
 // o------------------------------------------------------------------------------------------------o
-CMultiObj *FindMulti(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId);
+CMultiObj *FindMulti(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId);
 CMultiObj *FindMulti(CBaseObject *i);
 
 // o------------------------------------------------------------------------------------------------o
 //  Item functions
 // o------------------------------------------------------------------------------------------------o
-CItem *GetItemAtXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId);
-CItem *FindItemNearXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId);
+CItem *GetItemAtXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId);
+CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t id, std::uint16_t instanceId);
 
 // o------------------------------------------------------------------------------------------------o
 //  Calculation functions (socket, char, item and so forth)
@@ -70,7 +70,7 @@ CItem *FindItemNearXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 i
 CItem *CalcItemObjFromSer(SERIAL targSerial);
 CChar *CalcCharObjFromSer(SERIAL targSerial);
 CMultiObj *CalcMultiFromSer(SERIAL targSerial);
-inline UI32 CalcSerial(UI08 a1, UI08 a2, UI08 a3, UI08 a4) {
+inline std::uint32_t CalcSerial(std::uint8_t a1, std::uint8_t a2, std::uint8_t a3, std::uint8_t a4) {
     return ((a1 << 24) + (a2 << 16) + (a3 << 8) + a4);
 }
 
@@ -78,43 +78,43 @@ inline UI32 CalcSerial(UI08 a1, UI08 a2, UI08 a3, UI08 a4) {
 //  Socket stuff
 // o------------------------------------------------------------------------------------------------o
 auto SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    UI32 type, SERIAL serial) -> void;
-void SendMapChange(UI08 worldNumber, CSocket *sock, bool initialLogin = false);
+                    std::uint32_t type, SERIAL serial) -> void;
+void SendMapChange(std::uint8_t worldNumber, CSocket *sock, bool initialLogin = false);
 bool IsOnline(CChar &mChar);
 
 // o------------------------------------------------------------------------------------------------o
 //  Light related functions
 // o------------------------------------------------------------------------------------------------o
-void DoLight(CSocket *s, UI08 level);
-void DoLight(CChar *mChar, UI08 level);
-void DoLight(CItem *mItem, UI08 level);
+void DoLight(CSocket *s, std::uint8_t level);
+void DoLight(CChar *mChar, std::uint8_t level);
+void DoLight(CItem *mItem, std::uint8_t level);
 
 // o------------------------------------------------------------------------------------------------o
 //  Poison related functions
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL GetPoisonDuration(UI08 poisonStrength);
-TIMERVAL GetPoisonTickTime(UI08 poisonStrength);
+TIMERVAL GetPoisonDuration(std::uint8_t poisonStrength);
+TIMERVAL GetPoisonTickTime(std::uint8_t poisonStrength);
 
 // o------------------------------------------------------------------------------------------------o
 //  Amount related
 // o------------------------------------------------------------------------------------------------o
-UI32 GetItemAmount(CChar *s, UI16 realId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0,
+std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0,
                    bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
-UI32 GetTotalItemCount(CItem *objCont);
-UI32 DeleteItemAmount(CChar *s, UI32 amount, UI16 realId, UI16 realColour = 0x0000,
-                      UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
+std::uint32_t GetTotalItemCount(CItem *objCont);
+std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
+                      std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
                       std::string sectionId = "");
-UI32 DeleteSubItemAmount(CItem *p, UI32 amount, UI16 realId, UI16 realColour = 0x0000,
-                         UI32 realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
+std::uint32_t DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
+                         std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
                          std::string sectionId = "");
-UI32 GetBankCount(CChar *p, UI16 itemId, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0);
-UI32 DeleteBankItem(CChar *p, UI32 amt, UI16 itemId, UI16 realColour = 0x0000,
-                    UI32 realMoreVal = 0x0);
+std::uint32_t GetBankCount(CChar *p, std::uint16_t itemId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0);
+std::uint32_t DeleteBankItem(CChar *p, std::uint32_t amt, std::uint16_t itemId, std::uint16_t realColour = 0x0000,
+                    std::uint32_t realMoreVal = 0x0);
 
 // o------------------------------------------------------------------------------------------------o
 //  Region related
 // o------------------------------------------------------------------------------------------------o
-CTownRegion *CalcRegionFromXY(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId,
+CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,
                               CBaseObject *mObj = nullptr);
 void CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff);
 
@@ -126,13 +126,13 @@ CBaseObject *FindItemOwner(CItem *i, ObjectType &objType);
 CItem *FindRootContainer(CItem *i);
 CItem *FindItemOfType(CChar *toFind, ItemTypes type);
 CItem *FindItemOfSectionId(CChar *toFind, std::string sectionId);
-CItem *FindItem(CChar *toFind, UI16 itemId);
+CItem *FindItem(CChar *toFind, std::uint16_t itemId);
 
 // o------------------------------------------------------------------------------------------------o
 //  Reputation Stuff
 // o------------------------------------------------------------------------------------------------o
-void Karma(CChar *nCharId, CChar *nKilledId, const SI16 nKarma);
-void Fame(CChar *nCharId, const SI16 nFame);
+void Karma(CChar *nCharId, CChar *nKilledId, const std::int16_t nKarma);
+void Fame(CChar *nCharId, const std::int16_t nFame);
 void UpdateFlag(CChar *mChar);
 
 // o------------------------------------------------------------------------------------------------o
@@ -152,7 +152,7 @@ inline TIMERVAL BuildTimeValue(R32 timeFromNow) {
                                  (static_cast<R32>(1000) * timeFromNow));
 }
 
-UI32 GetClock(void);
+std::uint32_t GetClock(void);
 inline char *RealTime(char *time_str) {
     auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     struct tm curtime;
@@ -199,24 +199,24 @@ inline std::string TimeStamp(void) {
 #else
 inline std::string TimeStamp(void) { return ""; }
 #endif
-inline void StartMilliTimer(UI32 &Seconds, UI32 &Milliseconds) {
+inline void StartMilliTimer(std::uint32_t &Seconds, std::uint32_t &Milliseconds) {
     auto timenow = std::chrono::system_clock::now().time_since_epoch();
     auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count();
     auto milli =
         std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
-    Seconds = static_cast<UI32>(sec);
-    Milliseconds = static_cast<UI32>(milli);
+    Seconds = static_cast<std::uint32_t>(sec);
+    Milliseconds = static_cast<std::uint32_t>(milli);
 }
-inline UI32 CheckMilliTimer(UI32 &Seconds, UI32 &Milliseconds) {
+inline std::uint32_t CheckMilliTimer(std::uint32_t &Seconds, std::uint32_t &Milliseconds) {
     auto timenow = std::chrono::system_clock::now().time_since_epoch();
     auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count();
     auto milli =
         std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
-    return static_cast<UI32>((1000 * (sec - Seconds)) + (milli - Milliseconds));
+    return static_cast<std::uint32_t>((1000 * (sec - Seconds)) + (milli - Milliseconds));
 }
 
-inline UI32 GetMinutesSinceEpoch() {
-    return static_cast<UI32>(std::chrono::duration_cast<std::chrono::minutes>(
+inline std::uint32_t GetMinutesSinceEpoch() {
+    return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(
                                  std::chrono::system_clock::now().time_since_epoch())
                                  .count());
 }
@@ -229,12 +229,12 @@ bool IsNumber(const std::string &str);
 bool FileExists(const std::string &filepath);
 void DismountCreature(CChar *s);
 size_t GetTileName(CItem &mItem, std::string &itemname);
-std::string GetNpcDictName(CChar *mChar, CSocket *tSock = nullptr, UI08 requestSource = 0);
+std::string GetNpcDictName(CChar *mChar, CSocket *tSock = nullptr, std::uint8_t requestSource = 0);
 std::string GetNpcDictTitle(CChar *mChar, CSocket *tSock = nullptr);
-bool LineOfSight(CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor,
-                 bool useSurfaceZ, SI08 z2Top = 0, bool checkDistance = true);
+bool LineOfSight(CSocket *s, CChar *mChar, std::int16_t x2, std::int16_t y2, std::int8_t z2, std::uint8_t checkfor,
+                 bool useSurfaceZ, std::int8_t z2Top = 0, bool checkDistance = true);
 bool CheckItemLineOfSight(CChar *mChar, CItem *i);
-void Shutdown(SI32 retCode);
+void Shutdown(std::int32_t retCode);
 void HandleDeath(CChar *mChar, CChar *attacker);
 void NpcResurrectTarget(CChar *s);
 
@@ -249,7 +249,7 @@ inline bool ValidateObject(const CBaseObject *toValidate) {
         }
     } catch (...) {
         rValue = false;
-        Console::shared().Error(util::format("Invalid Object found: 0x%X", (UI64)toValidate));
+        Console::shared().Error(util::format("Invalid Object found: 0x%X", (std::uint64_t)toValidate));
     }
     return rValue;
 }

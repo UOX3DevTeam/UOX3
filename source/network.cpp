@@ -241,7 +241,7 @@ void CNetworkStuff::SetLastOn(CSocket *s) {
 
     if (s->CurrcharObj() != nullptr) {
         s->CurrcharObj()->SetLastOn(t);
-        s->CurrcharObj()->SetLastOnSecs(static_cast<UI32>(ltime));
+        s->CurrcharObj()->SetLastOnSecs(static_cast<std::uint32_t>(ltime));
     }
 }
 
@@ -253,8 +253,8 @@ void CNetworkStuff::SetLastOn(CSocket *s) {
 void CNetworkStuff::Disconnect(UOXSOCKET s) {
     SetLastOn(connClients[s]);
     CChar *currChar = connClients[s]->CurrcharObj();
-    Console::shared() << "Client " << static_cast<UI32>(s) << " disconnected. [Total:"
-                      << static_cast<SI32>(cwmWorldState->GetPlayersOnline() - 1) << "]" << myendl;
+    Console::shared() << "Client " << static_cast<std::uint32_t>(s) << " disconnected. [Total:"
+                      << static_cast<std::int32_t>(cwmWorldState->GetPlayersOnline() - 1) << "]" << myendl;
 
     if (connClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
         AccountEntry &actbAccount = connClients[s]->GetAccount();
@@ -267,7 +267,7 @@ void CNetworkStuff::Disconnect(UOXSOCKET s) {
         if (!currChar->IsFree() && connClients[s] != nullptr) {
             // October 6, 2002 - Support for the onLogout event.
             bool returnState = false;
-            std::vector<UI16> scriptTriggers = currChar->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = currChar->GetScriptTriggers();
             for (auto i : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(i);
                 if (toExecute != nullptr) {
@@ -279,7 +279,7 @@ void CNetworkStuff::Disconnect(UOXSOCKET s) {
 
             if (!returnState) {
                 // No individual scripts handling OnLogout were found - let's check global script!
-                cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute != nullptr) {
                     toExecute->OnLogout(connClients[s], currChar);
                 }
@@ -315,9 +315,9 @@ void CNetworkStuff::LogOut(CSocket *s) {
     // This would probably be a good place to do the disconnect
     CChar *p = s->CurrcharObj();
     bool valid = false;
-    SI16 x = p->GetX(), y = p->GetY();
-    UI08 world = p->WorldNumber();
-    UI08 instanceId = p->GetInstanceId();
+    std::int16_t x = p->GetX(), y = p->GetY();
+    std::uint8_t world = p->WorldNumber();
+    std::uint8_t instanceId = p->GetInstanceId();
 
     KillTrades(p);
 
@@ -349,7 +349,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
         if (ValidateObject(multi)) {
             // Check house script for onMultiLogout handling. If it returns true, instant logout is
             // allowed
-            std::vector<UI16> scriptTriggers = multi->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = multi->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -408,13 +408,13 @@ void CNetworkStuff::LogOut(CSocket *s) {
 //|	Purpose		-	Initializes and binds sockets during startup
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::sockInit(void) {
-    SI32 bcode;
+    std::int32_t bcode;
 
     cwmWorldState->SetKeepRun(true);
     cwmWorldState->SetError(false);
 
 #if !defined(_WIN32)
-    SI32 on = 1;
+    std::int32_t on = 1;
 #endif
 
     a_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -434,7 +434,7 @@ void CNetworkStuff::sockInit(void) {
     [[maybe_unused]] int result = setsockopt(a_socket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 #endif
 
-    UI32 len_connection_addr = sizeof(struct sockaddr_in);
+    std::uint32_t len_connection_addr = sizeof(struct sockaddr_in);
     sockaddr_in connection;
     memset((char *)&connection, 0, len_connection_addr);
     connection.sin_family = AF_INET;
@@ -487,10 +487,10 @@ void CNetworkStuff::SockClose(void) {
 void CNetworkStuff::CheckConn(void) {
     FD_ZERO(&conn);
     FD_SET(a_socket, &conn);
-    SI32 nfds = a_socket + 1;
-    SI32 s = select(nfds, &conn, nullptr, nullptr, &cwmWorldState->uoxTimeout);
+    std::int32_t nfds = a_socket + 1;
+    std::int32_t s = select(nfds, &conn, nullptr, nullptr, &cwmWorldState->uoxTimeout);
     if (s > 0) {
-        SI32 len = sizeof(struct sockaddr_in);
+        std::int32_t len = sizeof(struct sockaddr_in);
         SOCKET newClient;
 #if defined(_WIN32)
         newClient = accept(a_socket, (struct sockaddr *)&client_addr, &len);
@@ -508,10 +508,10 @@ void CNetworkStuff::CheckConn(void) {
 
         if (newClient < 0) {
 #if defined(_WIN32)
-            SI32 errorCode = WSAGetLastError();
+            std::int32_t errorCode = WSAGetLastError();
             if (errorCode == WSAEWOULDBLOCK)
 #else
-            SI32 errorCode = errno;
+            std::int32_t errorCode = errno;
             if (errorCode == EWOULDBLOCK)
 #endif
             {
@@ -531,11 +531,11 @@ void CNetworkStuff::CheckConn(void) {
         //	a shard that they can easily create new accounts automatically on.
         //	ListFormat: x.x.x.x --> * means any for that domain class
         //   _  _  _
-        UI08 part[4];
-        part[0] = static_cast<UI08>(client_addr.sin_addr.s_addr & 0xFF);
-        part[1] = static_cast<UI08>((client_addr.sin_addr.s_addr & 0xFF00) >> 8);
-        part[2] = static_cast<UI08>((client_addr.sin_addr.s_addr & 0xFF0000) >> 16);
-        part[3] = static_cast<UI08>((client_addr.sin_addr.s_addr & 0xFF000000) >> 24);
+        std::uint8_t part[4];
+        part[0] = static_cast<std::uint8_t>(client_addr.sin_addr.s_addr & 0xFF);
+        part[1] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF00) >> 8);
+        part[2] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF0000) >> 16);
+        part[3] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF000000) >> 24);
 
         if (IsFirewallBlocked(part)) {
             messageLoop << util::format("FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!",
@@ -567,10 +567,10 @@ void CNetworkStuff::CheckConn(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if IP of connecting client is blocked by firewall
 // o------------------------------------------------------------------------------------------------o
-bool CNetworkStuff::IsFirewallBlocked(UI08 part[4]) {
+bool CNetworkStuff::IsFirewallBlocked(std::uint8_t part[4]) {
     bool match[4];
     for (size_t i = 0; i < slEntries.size(); ++i) {
-        for (UI08 k = 0; k < 4; ++k) {
+        for (std::uint8_t k = 0; k < 4; ++k) {
             if (slEntries[i].b[k] == -1) {
                 match[k] = true;
             }
@@ -614,7 +614,7 @@ CNetworkStuff::~CNetworkStuff() {
 void CNetworkStuff::CheckMessage(void) {
     FD_ZERO(&all);
     FD_ZERO(&errsock);
-    SI32 nfds = 0;
+    std::int32_t nfds = 0;
     for (auto &tSock : connClients) {
         auto clientSock = static_cast<UOXSOCKET>(tSock->CliSocket());
         FD_SET(clientSock, &all);
@@ -623,7 +623,7 @@ void CNetworkStuff::CheckMessage(void) {
             nfds = clientSock + 1;
         }
     }
-    SI32 s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
+    std::int32_t s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
     if (s > 0) {
         size_t oldnow = cwmWorldState->GetPlayersOnline();
         for (size_t i = 0; i < cwmWorldState->GetPlayersOnline(); ++i) {
@@ -643,7 +643,7 @@ void CNetworkStuff::CheckMessage(void) {
                     }
                     else if (blah.ErrorNumber() != -1) {
                         Console::shared()
-                            << "Socket error: " << static_cast<SI32>(blah.ErrorNumber()) << myendl;
+                            << "Socket error: " << static_cast<std::int32_t>(blah.ErrorNumber()) << myendl;
                     }
 #endif
                     Disconnect(static_cast<UOXSOCKET>(i)); // abnormal error
@@ -670,8 +670,8 @@ CSocket *CNetworkStuff::GetSockPtr(UOXSOCKET s) {
     return connClients[s];
 }
 
-CPInputBuffer *WhichPacket(UI08 packetId, CSocket *s);
-CPInputBuffer *WhichLoginPacket(UI08 packetId, CSocket *s);
+CPInputBuffer *WhichPacket(std::uint8_t packetId, CSocket *s);
+CPInputBuffer *WhichLoginPacket(std::uint8_t packetId, CSocket *s);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::GetMsg()
 // o------------------------------------------------------------------------------------------------o
@@ -687,10 +687,10 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
         return;
 
     if (mSock->NewClient()) {
-        SI32 count = mSock->Receive(4);
+        std::int32_t count = mSock->Receive(4);
         if (mSock->Buffer()[0] == 0x21 && count < 4) // UOMon
         {
-            SI32 ho, mi, se, total;
+            std::int32_t ho, mi, se, total;
             total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
             ho = total / 3600;
             total -= ho * 3600;
@@ -700,7 +700,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
 
             auto uoxmonitor =
                 util::format("UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se);
-            mSock->Send(uoxmonitor.c_str(), static_cast<SI32>(uoxmonitor.size()));
+            mSock->Send(uoxmonitor.c_str(), static_cast<std::int32_t>(uoxmonitor.size()));
             mSock->NewClient(false);
         }
         else {
@@ -714,27 +714,27 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
     else {
         mSock->InLength(0);
         CChar *ourChar = mSock->CurrcharObj();
-        UI08 *buffer = mSock->Buffer();
+        std::uint8_t *buffer = mSock->Buffer();
         if (mSock->Receive(1, false) > 0) {
-            SI32 book;
-            UI08 packetId = buffer[0];
+            std::int32_t book;
+            std::uint8_t packetId = buffer[0];
             if (mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91) {
                 // April 5, 2004 - There is a great chance that alot of the times this will be UOG2
                 // connecting to get information from the server
                 if (cwmWorldState->ServerData()->ServerUOGEnabled()) {
                     Console::shared() << "UOG Stats request completed. Disconnecting client. ["
-                                      << static_cast<SI32>(mSock->ClientIP4()) << "."
-                                      << static_cast<SI32>(mSock->ClientIP3()) << "."
-                                      << static_cast<SI32>(mSock->ClientIP2()) << "."
-                                      << static_cast<SI32>(mSock->ClientIP1()) << "]" << myendl;
+                                      << static_cast<std::int32_t>(mSock->ClientIP4()) << "."
+                                      << static_cast<std::int32_t>(mSock->ClientIP3()) << "."
+                                      << static_cast<std::int32_t>(mSock->ClientIP2()) << "."
+                                      << static_cast<std::int32_t>(mSock->ClientIP1()) << "]" << myendl;
                 }
                 else {
                     Console::shared()
                         << "Encrypted client attempting to cut in, disconnecting them: IP "
-                        << static_cast<SI32>(mSock->ClientIP1()) << "."
-                        << static_cast<SI32>(mSock->ClientIP2()) << "."
-                        << static_cast<SI32>(mSock->ClientIP3()) << "."
-                        << static_cast<SI32>(mSock->ClientIP4()) << myendl;
+                        << static_cast<std::int32_t>(mSock->ClientIP1()) << "."
+                        << static_cast<std::int32_t>(mSock->ClientIP2()) << "."
+                        << static_cast<std::int32_t>(mSock->ClientIP3()) << "."
+                        << static_cast<std::int32_t>(mSock->ClientIP4()) << myendl;
                 }
                 Disconnect(s);
                 return;
@@ -753,7 +753,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
 
             bool doSwitch = true;
             if (cwmWorldState->ServerData()->ServerOverloadPackets()) {
-                std::map<UI16, UI16>::const_iterator pFind = packetOverloads.find(packetId);
+                std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
                 if (pFind != packetOverloads.end()) {
                     cScript *pScript = JSMapping->GetScript(pFind->second);
                     if (pScript != nullptr) {
@@ -781,7 +781,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                 {
                     mSock->Receive(5);
 
-                    std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+                    std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
                     for (auto scriptTrig : scriptTriggers) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
@@ -793,7 +793,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
 
                     // No individual scripts handling OnWarModeToggle returned true - let's check
                     // global script!
-                    cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                     if (toExecute != nullptr) {
                         if (toExecute->OnWarModeToggle(ourChar) == 0) {
                             return;
@@ -884,7 +884,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                         }
                         buffer[j] = 0;
                         Skills->SkillUse(
-                            mSock, static_cast<UI08>(std::stoul(std::string((char *)&buffer[4]))));
+                            mSock, static_cast<std::uint8_t>(std::stoul(std::string((char *)&buffer[4]))));
                         break;
                     }
                     else if (buffer[3] == 0x27 || buffer[3] == 0x56) // Spell
@@ -991,7 +991,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                             //	BYTE[?][2] profile (in unicode, can be edited)
                             //	BYTE[2] (0x0000) (profile terminator)
 
-                            UI08 tempBuffer[1024];
+                            std::uint8_t tempBuffer[1024];
                             std::string ourMessage;
                             memset(tempBuffer, 0, sizeof(tempBuffer[0]) * 1024); // zero it out
                             tempBuffer[0] = 0xB8;
@@ -1017,8 +1017,8 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                                 tempBuffer[mj++] = ourMessage[j];
                             }
                             mj += 2;
-                            tempBuffer[2] = static_cast<UI08>(mj);
-                            mSock->Send(tempBuffer, static_cast<SI32>(mj));
+                            tempBuffer[2] = static_cast<std::uint8_t>(mj);
+                            mSock->Send(tempBuffer, static_cast<std::int32_t>(mj));
                             mSock->FlushBuffer();
                         }
                     }
@@ -1034,10 +1034,10 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                 case 0x3A: // skills management packet
                     mSock->Receive(
                         6); // it's always 6 so Westy tells me... let's not be intelligent =)
-                    UI16 skillNum;
+                    std::uint16_t skillNum;
                     skillNum = mSock->GetWord(3);
                     ourChar->SetSkillLock(static_cast<SkillLock>(buffer[5]),
-                                          static_cast<UI08>(skillNum));
+                                          static_cast<std::uint8_t>(skillNum));
                     break;
                 case 0x56:
                     Console::shared() << "'Plot Course' button on a map clicked." << myendl;
@@ -1058,7 +1058,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                 default:
                     FD_ZERO(&all);
                     FD_SET(mSock->CliSocket(), &all);
-                    SI32 nfds;
+                    std::int32_t nfds;
                     nfds = static_cast<int>(mSock->CliSocket()) + 1;
                     if (select(nfds, &all, nullptr, nullptr, &cwmWorldState->uoxTimeout) > 0) {
                         mSock->Receive(MAXBUFFER);
@@ -1095,7 +1095,7 @@ void CNetworkStuff::CheckLoginMessage(void) {
     FD_ZERO(&all);
     FD_ZERO(&errsock);
 
-    SI32 nfds = 0;
+    std::int32_t nfds = 0;
     for (auto &tSock : loggedInClients) {
         auto clientSock = static_cast<UOXSOCKET>(tSock->CliSocket());
         FD_SET(clientSock, &all);
@@ -1105,7 +1105,7 @@ void CNetworkStuff::CheckLoginMessage(void) {
         }
     }
 
-    SI32 s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
+    std::int32_t s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
     if (s > 0) {
         size_t oldnow = loggedInClients.size();
         for (i = 0; i < loggedInClients.size(); ++i) {
@@ -1135,9 +1135,9 @@ void CNetworkStuff::CheckLoginMessage(void) {
     }
     else if (s == -1) {
 #if defined(_WIN32)
-        SI32 errorCode = WSAGetLastError();
+        std::int32_t errorCode = WSAGetLastError();
         if (errorCode != 10022) {
-            Console::shared() << static_cast<SI32>(errorCode) << myendl;
+            Console::shared() << static_cast<std::int32_t>(errorCode) << myendl;
         }
 #endif
     }
@@ -1219,13 +1219,13 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
         return;
 
     if (mSock->NewClient()) {
-        [[maybe_unused]] SI32 count;
+        [[maybe_unused]] std::int32_t count;
         count = mSock->Receive(4);
         auto packetId = mSock->Buffer()[0];
 
         if (cwmWorldState->ServerData()->ServerOverloadPackets()) {
             // Allow overloading initial connection packets
-            std::map<UI16, UI16>::const_iterator pFind = packetOverloads.find(packetId);
+            std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
             if (pFind != packetOverloads.end()) {
                 cScript *pScript = JSMapping->GetScript(pFind->second);
                 if (pScript != nullptr) {
@@ -1247,9 +1247,9 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
     }
     else {
         mSock->InLength(0);
-        UI08 *buffer = mSock->Buffer();
+        std::uint8_t *buffer = mSock->Buffer();
         if (mSock->Receive(1, false) > 0) {
-            UI08 packetId = buffer[0];
+            std::uint8_t packetId = buffer[0];
             if (mSock->FirstPacket() && packetId != 0x80 && packetId != 0x91 && packetId != 0xE4 &&
                 packetId != 0xF1) {
                 // April 5, 2004 - Hmmm there are two of these ?
@@ -1276,7 +1276,7 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
             }
             bool doSwitch = true;
             if (cwmWorldState->ServerData()->ServerOverloadPackets()) {
-                std::map<UI16, UI16>::const_iterator pFind = packetOverloads.find(packetId);
+                std::map<std::uint16_t, std::uint16_t>::const_iterator pFind = packetOverloads.find(packetId);
                 if (pFind != packetOverloads.end()) {
                     cScript *pScript = JSMapping->GetScript(pFind->second);
                     if (pScript != nullptr) {
@@ -1332,7 +1332,7 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
                     mSock->Receive(mSock->GetWord(1));
                     break;
                 default:
-                    SI32 nfds;
+                    std::int32_t nfds;
                     fd_set all;
                     FD_ZERO(&all);
                     FD_SET(mSock->CliSocket(), &all);
@@ -1380,7 +1380,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void {
     if (!fileToUse.empty()) {
         auto firewallData = std::make_unique<Script>(fileToUse, NUM_DEFS, false);
         if (firewallData) {
-            SI16 p[4];
+            std::int16_t p[4];
             for (const auto &[secName, firewallSect] : firewallData->collection()) {
                 if (firewallSect) {
                     for (const auto &sec : firewallSect->collection()) {
@@ -1392,13 +1392,13 @@ auto CNetworkStuff::LoadFirewallEntries() -> void {
                                 auto psecs = oldstrutil::sections(data, ".");
                                 if (psecs.size() == 4) // Wellformed IP address
                                 {
-                                    for (UI08 i = 0; i < 4; ++i) {
+                                    for (std::uint8_t i = 0; i < 4; ++i) {
                                         token = psecs[i];
                                         if (token == "*") {
                                             p[i] = -1;
                                         }
                                         else {
-                                            p[i] = static_cast<SI16>(std::stoi(token, nullptr, 0));
+                                            p[i] = static_cast<std::int16_t>(std::stoi(token, nullptr, 0));
                                         }
                                     }
                                     slEntries.push_back(FirewallEntry_st(p[0], p[1], p[2], p[3]));
@@ -1417,10 +1417,10 @@ auto CNetworkStuff::LoadFirewallEntries() -> void {
     }
 }
 
-void CNetworkStuff::RegisterPacket(UI08 packet, [[maybe_unused]] UI08 subCmd, UI16 scriptId) {
-    // UI16 packetId = static_cast<UI16>(( subCmd << 8 ) + packet ); // Registration of subCmd
+void CNetworkStuff::RegisterPacket(std::uint8_t packet, [[maybe_unused]] std::uint8_t subCmd, std::uint16_t scriptId) {
+    // std::uint16_t packetId = static_cast<std::uint16_t>(( subCmd << 8 ) + packet ); // Registration of subCmd
     // disabled until it can be fully implemented
-    UI16 packetId = static_cast<UI16>(packet);
+    std::uint16_t packetId = static_cast<std::uint16_t>(packet);
     packetOverloads[packetId] = scriptId;
 }
 

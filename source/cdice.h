@@ -6,22 +6,22 @@
 #include "typedefs.h"
 class cDice {
   private:
-    SI32 dice;
-    SI32 sides;
-    SI32 addition;
+    std::int32_t dice;
+    std::int32_t sides;
+    std::int32_t addition;
 
     bool convStringToDice(std::string dieString);
 
   public:
     cDice();
     cDice(const std::string &dieString);
-    cDice(SI32 d, SI32 s, SI32 a);
+    cDice(std::int32_t d, std::int32_t s, std::int32_t a);
     ~cDice();
 
-    SI32 RollDice(void);
-    void SetDice(SI32 newDice);
-    void SetSides(SI32 newSides);
-    void SetAddition(SI32 newAddition);
+    std::int32_t RollDice(void);
+    void SetDice(std::int32_t newDice);
+    void SetSides(std::int32_t newSides);
+    void SetAddition(std::int32_t newAddition);
 };
 
 #endif

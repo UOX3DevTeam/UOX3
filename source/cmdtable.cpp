@@ -40,11 +40,11 @@
 #include "wholist.h"
 #include "worldmain.h"
 void CollectGarbage(void);
-void EndMessage(SI32 x);
+void EndMessage(std::int32_t x);
 void HandleGumpCommand(CSocket *s, std::string cmd, std::string data);
 void Restock(bool stockAll);
 void SysBroadcast(const std::string &txt);
-void HandleHowTo(CSocket *sock, SI32 cmdNumber);
+void HandleHowTo(CSocket *sock, std::int32_t cmdNumber);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CloseCall()
@@ -54,7 +54,7 @@ void HandleHowTo(CSocket *sock, SI32 cmdNumber);
 void CloseCall(CSocket *s, bool isGM) {
     CChar *mChar = s->CurrcharObj();
     if (mChar->GetCallNum() != 0) {
-        UI16 sysMessage = 1285; // Call removed from the GM queue.
+        std::uint16_t sysMessage = 1285; // Call removed from the GM queue.
         PageVector *tmpVector = nullptr;
         if (isGM) {
             tmpVector = GMQueue;
@@ -137,7 +137,7 @@ void NextCall(CSocket *s, bool isGM) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Replaces legacy spawner objects that have incorrect item type
 // o------------------------------------------------------------------------------------------------o
-bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData) {
+bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
     if (ValidateObject(a)) {
         CItem *i = static_cast<CItem *>(a);
@@ -148,8 +148,8 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] 
             if (i->GetObjType() != OT_SPAWNER) {
                 CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i->Dupe(OT_SPAWNER));
                 if (ValidateObject(spawnItem)) {
-                    spawnItem->SetInterval(0, static_cast<UI08>(i->GetTempVar(CITV_MOREY)));
-                    spawnItem->SetInterval(1, static_cast<UI08>(i->GetTempVar(CITV_MOREX)));
+                    spawnItem->SetInterval(0, static_cast<std::uint8_t>(i->GetTempVar(CITV_MOREY)));
+                    spawnItem->SetInterval(1, static_cast<std::uint8_t>(i->GetTempVar(CITV_MOREX)));
                     spawnItem->SetSpawnSection(i->GetDesc());
                     spawnItem->IsSectionAList(i->IsSpawnerList());
                 }
@@ -161,7 +161,7 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] 
 }
 
 void command_fixspawn(void) {
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &FixSpawnFunctor);
 }
 
@@ -175,10 +175,10 @@ void Command_AddAccount(CSocket *s) {
     if (Commands->NumArguments() > 1) {
         std::string newUsername = Commands->CommandString(2, 2);
         std::string newPassword = Commands->CommandString(3, 3);
-        UI16 newFlags = 0x0000;
+        std::uint16_t newFlags = 0x0000;
 
         if (Commands->NumArguments() > 2) {
-            newFlags = util::ston<UI16>(Commands->CommandString(4, 4));
+            newFlags = util::ston<std::uint16_t>(Commands->CommandString(4, 4));
         }
 
         if (newUsername == "" || newPassword == "") {
@@ -220,7 +220,7 @@ void Command_GetLight(CSocket *s) {
         return;
 
     CTownRegion *tRegion = mChar->GetRegion();
-    UI16 weatherId = tRegion->GetWeather();
+    std::uint16_t weatherId = tRegion->GetWeather();
     CWeather *sys = Weather->Weather(weatherId);
     if (sys != nullptr) {
         const R32 lightMin = sys->LightMin();
@@ -278,7 +278,7 @@ void Command_SetPost(CSocket *s) {
         type = PT_LOCAL;
     }
 
-    mChar->SetPostType(static_cast<UI08>(type));
+    mChar->SetPostType(static_cast<std::uint8_t>(type));
 
     switch (type) {
     case PT_LOCAL:
@@ -360,12 +360,12 @@ void Command_Tile(CSocket *s) {
     if (Commands->NumArguments() == 0)
         return;
 
-    UI16 targId = 0;
+    std::uint16_t targId = 0;
     if (util::upper(Commands->CommandString(2, 2)) == "STATIC") {
-        targId = static_cast<UI16>(Commands->Argument(2));
+        targId = static_cast<std::uint16_t>(Commands->Argument(2));
     }
     else {
-        targId = static_cast<UI16>(Commands->Argument(1));
+        targId = static_cast<std::uint16_t>(Commands->Argument(1));
     }
 
     // Reset tempint2 on socket
@@ -373,23 +373,23 @@ void Command_Tile(CSocket *s) {
 
     if (Commands->NumArguments() == 7 || Commands->NumArguments() == 8) {
         // tile itemId x1 y1 x2 y2 z rndVal
-        SI32 rndVal = 0;
-        UI16 rndId = 0;
+        std::int32_t rndVal = 0;
+        std::uint16_t rndId = 0;
 
         if (Commands->NumArguments() == 8) {
-            rndVal = static_cast<SI32>(Commands->Argument(7));
+            rndVal = static_cast<std::int32_t>(Commands->Argument(7));
         }
 
         // tile itemId x1 y1 x2 y2 z
-        SI16 x1 = static_cast<SI16>(Commands->Argument(2));
-        SI16 x2 = static_cast<SI16>(Commands->Argument(3));
-        SI16 y1 = static_cast<SI16>(Commands->Argument(4));
-        SI16 y2 = static_cast<SI16>(Commands->Argument(5));
-        SI08 z = static_cast<SI08>(Commands->Argument(6));
+        std::int16_t x1 = static_cast<std::int16_t>(Commands->Argument(2));
+        std::int16_t x2 = static_cast<std::int16_t>(Commands->Argument(3));
+        std::int16_t y1 = static_cast<std::int16_t>(Commands->Argument(4));
+        std::int16_t y2 = static_cast<std::int16_t>(Commands->Argument(5));
+        std::int8_t z = static_cast<std::int8_t>(Commands->Argument(6));
 
-        for (SI16 x = x1; x <= x2; ++x) {
-            for (SI16 y = y1; y <= y2; ++y) {
-                rndId = targId + RandomNum(static_cast<UI16>(0), static_cast<UI16>(rndVal));
+        for (std::int16_t x = x1; x <= x2; ++x) {
+            for (std::int16_t y = y1; y <= y2; ++y) {
+                rndId = targId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
                 CItem *a = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, OT_ITEM);
                 if (ValidateObject(a)) // crash prevention
                 {
@@ -403,10 +403,10 @@ void Command_Tile(CSocket *s) {
         // tile static itemId rndVal
         s->ClickX(-1);
         s->ClickY(-1);
-        s->TempInt2(static_cast<SI32>(Commands->Argument(3)));
+        s->TempInt2(static_cast<std::int32_t>(Commands->Argument(3)));
 
-        s->AddId1(static_cast<UI08>(targId >> 8));
-        s->AddId2(static_cast<UI08>(targId % 256));
+        s->AddId1(static_cast<std::uint8_t>(targId >> 8));
+        s->AddId2(static_cast<std::uint8_t>(targId % 256));
         s->SendTargetCursor(0, TARGET_TILING, 0, 24);
     }
     else if (Commands->NumArguments() == 3) {
@@ -415,11 +415,11 @@ void Command_Tile(CSocket *s) {
         s->ClickX(-1);
         s->ClickY(-1);
         if (util::upper(Commands->CommandString(2, 2)) != "STATIC") {
-            s->TempInt2(static_cast<SI32>(Commands->Argument(2)));
+            s->TempInt2(static_cast<std::int32_t>(Commands->Argument(2)));
         }
 
-        s->AddId1(static_cast<UI08>(targId >> 8));
-        s->AddId2(static_cast<UI08>(targId % 256));
+        s->AddId1(static_cast<std::uint8_t>(targId >> 8));
+        s->AddId2(static_cast<std::uint8_t>(targId % 256));
         s->SendTargetCursor(0, TARGET_TILING, 0, 24);
     }
     else if (Commands->NumArguments() == 2) {
@@ -427,8 +427,8 @@ void Command_Tile(CSocket *s) {
         s->ClickX(-1);
         s->ClickY(-1);
 
-        s->AddId1(static_cast<UI08>(targId >> 8));
-        s->AddId2(static_cast<UI08>(targId % 256));
+        s->AddId1(static_cast<std::uint8_t>(targId >> 8));
+        s->AddId2(static_cast<std::uint8_t>(targId % 256));
         s->SendTargetCursor(0, TARGET_TILING, 0, 24);
     }
 }
@@ -454,13 +454,13 @@ void Command_Dye(CSocket *s) {
     VALIDATESOCKET(s);
     s->DyeAll(1);
     if (Commands->NumArguments() == 2) {
-        UI16 tNum = static_cast<SI16>(Commands->Argument(1));
-        s->AddId1(static_cast<UI08>(tNum >> 8));
-        s->AddId2(static_cast<UI08>(tNum % 256));
+        std::uint16_t tNum = static_cast<std::int16_t>(Commands->Argument(1));
+        s->AddId1(static_cast<std::uint8_t>(tNum >> 8));
+        s->AddId2(static_cast<std::uint8_t>(tNum % 256));
     }
     else if (Commands->NumArguments() == 3) {
-        s->AddId1(static_cast<UI08>(Commands->Argument(1)));
-        s->AddId2(static_cast<UI08>(Commands->Argument(2)));
+        s->AddId1(static_cast<std::uint8_t>(Commands->Argument(1)));
+        s->AddId2(static_cast<std::uint8_t>(Commands->Argument(2)));
     }
     else {
         s->AddId1(0xFF);
@@ -476,12 +476,12 @@ void Command_Dye(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_SetTime(void) {
     if (Commands->NumArguments() == 3) {
-        UI08 newhours = static_cast<UI08>(Commands->Argument(1));
-        UI08 newminutes = static_cast<UI08>(Commands->Argument(2));
+        std::uint8_t newhours = static_cast<std::uint8_t>(Commands->Argument(1));
+        std::uint8_t newminutes = static_cast<std::uint8_t>(Commands->Argument(2));
         if ((newhours < 25) && (newhours > 0) && (newminutes < 60)) {
             cwmWorldState->ServerData()->ServerTimeAMPM((newhours > 12));
             if (newhours > 12) {
-                cwmWorldState->ServerData()->ServerTimeHours(static_cast<UI08>(newhours - 12));
+                cwmWorldState->ServerData()->ServerTimeHours(static_cast<std::uint8_t>(newhours - 12));
             }
             else {
                 cwmWorldState->ServerData()->ServerTimeHours(newhours);
@@ -579,7 +579,7 @@ void Command_Tell(CSocket *s) {
 void Command_GmMenu(CSocket *s) {
     VALIDATESOCKET(s);
     if (Commands->NumArguments() == 2) {
-        CPIHelpRequest toHandle(s, static_cast<UI16>(Commands->Argument(1)));
+        CPIHelpRequest toHandle(s, static_cast<std::uint16_t>(Commands->Argument(1)));
         toHandle.Handle();
     }
 }
@@ -614,22 +614,22 @@ void Command_MemStats(CSocket *s) {
         charsSize + itemsSize + spellsSize + regionsSize + spawnregionsSize + teffectsSize;
     CGumpDisplay cacheStats(s, 350, 345);
     cacheStats.SetTitle("UOX Memory Information (sizes in bytes)");
-    cacheStats.AddData("Total Memory Usage: ", static_cast<UI32>(total));
+    cacheStats.AddData("Total Memory Usage: ", static_cast<std::uint32_t>(total));
     cacheStats.AddData(" Characters: ", ObjectFactory::shared().CountOfObjects(OT_CHAR));
-    cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(charsSize));
+    cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(charsSize));
     cacheStats.AddData("  CChar: ", sizeof(CChar));
     cacheStats.AddData(" Items: ", ObjectFactory::shared().CountOfObjects(OT_ITEM));
-    cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(itemsSize));
+    cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(itemsSize));
     cacheStats.AddData("  CItem: ", sizeof(CItem));
-    cacheStats.AddData(" Spells Size: ", static_cast<UI32>(spellsSize));
-    cacheStats.AddData(" TEffects: ", static_cast<UI32>(cwmWorldState->tempEffects.Num()));
-    cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(teffectsSize));
+    cacheStats.AddData(" Spells Size: ", static_cast<std::uint32_t>(spellsSize));
+    cacheStats.AddData(" TEffects: ", static_cast<std::uint32_t>(cwmWorldState->tempEffects.Num()));
+    cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(teffectsSize));
     cacheStats.AddData("  TEffect: ", sizeof(CTEffect));
-    cacheStats.AddData(" Regions Size: ", static_cast<UI32>(cwmWorldState->townRegions.size()));
-    cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(regionsSize));
+    cacheStats.AddData(" Regions Size: ", static_cast<std::uint32_t>(cwmWorldState->townRegions.size()));
+    cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(regionsSize));
     cacheStats.AddData("  CTownRegion: ", sizeof(CTownRegion));
-    cacheStats.AddData(" SpawnRegions ", static_cast<UI32>(cwmWorldState->spawnRegions.size()));
-    cacheStats.AddData("  Allocated Memory: ", static_cast<UI32>(spawnregionsSize));
+    cacheStats.AddData(" SpawnRegions ", static_cast<std::uint32_t>(cwmWorldState->spawnRegions.size()));
+    cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(spawnregionsSize));
     cacheStats.AddData("  CSpawnRegion: ", sizeof(CSpawnRegion));
     cacheStats.Send(0, false, INVALIDSERIAL);
 }
@@ -660,14 +660,14 @@ void Command_SetShopRestockRate(CSocket *s) {
     VALIDATESOCKET(s);
     if (Commands->NumArguments() == 2) {
         cwmWorldState->ServerData()->SystemTimer(tSERVER_SHOPSPAWN,
-                                                 static_cast<UI16>(Commands->Argument(1)));
+                                                 static_cast<std::uint16_t>(Commands->Argument(1)));
         s->SysMessage(56); // NPC shop restock rate changed.
     }
     else
         s->SysMessage(57); // Invalid number of parameters.
 }
 
-bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData) {
+bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
     if (ValidateObject(a)) {
         CItem *i = static_cast<CItem *>(a);
@@ -696,16 +696,16 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] v
 //|	Purpose		-	Forces a respawn of all spawn regions
 // o------------------------------------------------------------------------------------------------o
 void Command_Respawn(void) {
-    UI32 spawnedItems = 0;
-    UI32 spawnedNpcs = 0;
+    std::uint32_t spawnedItems = 0;
+    std::uint32_t spawnedNpcs = 0;
     std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-                  [&spawnedItems, &spawnedNpcs](std::pair<UI16, CSpawnRegion *> entry) {
+                  [&spawnedItems, &spawnedNpcs](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                       if (entry.second) {
                           entry.second->DoRegionSpawn(spawnedItems, spawnedNpcs);
                       }
                   });
 
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &RespawnFunctor);
 }
 
@@ -719,12 +719,12 @@ void Command_RegSpawn(CSocket *s) {
     VALIDATESOCKET(s);
 
     if (Commands->NumArguments() == 2) {
-        UI32 itemsSpawned = 0;
-        UI32 npcsSpawned = 0;
+        std::uint32_t itemsSpawned = 0;
+        std::uint32_t npcsSpawned = 0;
 
         if (util::upper(Commands->CommandString(2, 2)) == "ALL") {
             std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-                          [&itemsSpawned, &npcsSpawned](std::pair<UI16, CSpawnRegion *> entry) {
+                          [&itemsSpawned, &npcsSpawned](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                               if (entry.second) {
                                   entry.second->DoRegionSpawn(itemsSpawned, npcsSpawned);
                               }
@@ -741,7 +741,7 @@ void Command_RegSpawn(CSocket *s) {
             }
         }
         else {
-            UI16 spawnRegNum = static_cast<UI16>(Commands->Argument(1));
+            std::uint16_t spawnRegNum = static_cast<std::uint16_t>(Commands->Argument(1));
             if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
                 cwmWorldState->spawnRegions.end()) {
                 CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -863,7 +863,7 @@ void Command_GQ(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_MineCheck(void) {
     if (Commands->NumArguments() == 2) {
-        cwmWorldState->ServerData()->MineCheck(static_cast<UI08>(Commands->Argument(1)));
+        cwmWorldState->ServerData()->MineCheck(static_cast<std::uint8_t>(Commands->Argument(1)));
     }
 }
 
@@ -906,10 +906,10 @@ void Command_Announce(void) {
 // o------------------------------------------------------------------------------------------------o
 void Command_PDump(CSocket *s) {
     VALIDATESOCKET(s);
-    UI32 networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-    UI32 timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-    UI32 autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-    UI32 loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+    std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
+    std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
+    std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
+    std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
 
     s->SysMessage("Performance Dump:");
     s->SysMessage("Network code: %fmsec [%i]",
@@ -942,11 +942,11 @@ void Command_PDump(CSocket *s) {
 auto Command_SpawnKill(CSocket *s) -> void {
     VALIDATESOCKET(s);
     if (Commands->NumArguments() == 2) {
-        UI16 regNum = static_cast<UI16>(Commands->Argument(1));
+        std::uint16_t regNum = static_cast<std::uint16_t>(Commands->Argument(1));
         if (cwmWorldState->spawnRegions.find(regNum) != cwmWorldState->spawnRegions.end()) {
             auto spawnReg = cwmWorldState->spawnRegions[regNum];
             if (spawnReg) {
-                SI32 killed = 0;
+                std::int32_t killed = 0;
 
                 s->SysMessage(349); // Killing spawn, this may cause lag...
                 std::vector<CChar *> spCharsToDelete;
@@ -982,8 +982,8 @@ auto Command_SpawnKill(CSocket *s) -> void {
 //|	Purpose		-	Build and send a gump with a list of players based on provided
 // criteria
 // o------------------------------------------------------------------------------------------------o
-void BuildWhoGump(CSocket *s, UI08 commandLevel, std::string title) {
-    UI16 j = 0;
+void BuildWhoGump(CSocket *s, std::uint8_t commandLevel, std::string title) {
+    std::uint16_t j = 0;
 
     CGumpDisplay Who(s, 400, 300);
     Who.SetTitle(title);
@@ -1089,7 +1089,7 @@ void Command_ForceWho(CSocket *s) {
 void Command_ValidCmd(CSocket *s) {
     VALIDATESOCKET(s);
     CChar *mChar = s->CurrcharObj();
-    UI08 targetCommand = mChar->GetCommandLevel();
+    std::uint8_t targetCommand = mChar->GetCommandLevel();
     CGumpDisplay targetCmds(s, 300, 300);
     targetCmds.SetTitle("Valid Commands");
 
@@ -1129,11 +1129,11 @@ void Command_HowTo(CSocket *s) {
         if (!ValidateObject(mChar))
             return;
 
-        SI32 iCmd = 2;
-        SI32 numAdded = 0;
-        UI08 pagenum = 1;
-        UI16 position = 40;
-        UI16 linenum = 1;
+        std::int32_t iCmd = 2;
+        std::int32_t numAdded = 0;
+        std::uint8_t pagenum = 1;
+        std::uint16_t position = 40;
+        std::uint16_t linenum = 1;
 
         CPSendGumpMenu toSend;
         toSend.UserId(INVALIDSERIAL);
@@ -1148,7 +1148,7 @@ void Command_HowTo(CSocket *s) {
                                        cwmWorldState->ServerData()->ButtonCancel(),
                                        cwmWorldState->ServerData()->ButtonCancel() + 1));
 
-        UI08 currentLevel = mChar->GetCommandLevel();
+        std::uint8_t currentLevel = mChar->GetCommandLevel();
         COMMANDMAP_ITERATOR gAdd = CommandMap.begin();
         TARGETMAP_ITERATOR tAdd = TargetMap.begin();
         JSCOMMANDMAP_ITERATOR jAdd = JSCommandMap.begin();
@@ -1229,7 +1229,7 @@ void Command_HowTo(CSocket *s) {
             ++jAdd;
         }
         pagenum = 1;
-        for (SI32 i = 0; i < numAdded; i += 10) {
+        for (std::int32_t i = 0; i < numAdded; i += 10) {
             toSend.addCommand(util::format("page %u", pagenum));
             if (i >= 10) {
                 toSend.addCommand(util::format(
@@ -1247,7 +1247,7 @@ void Command_HowTo(CSocket *s) {
         s->Send(&toSend);
     }
     else {
-        SI32 i = 0;
+        std::int32_t i = 0;
         COMMANDMAP_ITERATOR toFind;
         for (toFind = CommandMap.begin(); toFind != CommandMap.end(); ++toFind) {
             if (commandStart == toFind->first) {
@@ -1450,7 +1450,7 @@ void CCommands::UnRegister(const std::string &cmdName, [[maybe_unused]] cScript 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resgisters a new command in JS command table
 // o------------------------------------------------------------------------------------------------o
-void CCommands::Register(const std::string &cmdName, UI16 scriptId, UI08 cmdLevel, bool isEnabled) {
+void CCommands::Register(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled) {
 #if defined(UOX_DEBUG_MODE)
     Console::shared().Print(" ");
     Console::shared().MoveTo(15);

@@ -31,7 +31,7 @@ class JSEncapsulate {
     JSEncapsulate();
     void SetContext(JSContext *jsCX, jsval *jsVP);
     bool isType(JSEncapsObjectType toCheck);
-    SI32 toInt(void);
+    std::int32_t toInt(void);
     bool toBool(void);
     R32 toFloat(void);
     std::string toString(void);
@@ -45,7 +45,7 @@ class JSEncapsulate {
     bool beenParsed[JSOT_COUNT + 1];
     JSEncapsObjectType nativeType;
 
-    SI32 intVal;
+    std::int32_t intVal;
     R32 floatVal;
     bool boolVal;
     std::string stringVal;

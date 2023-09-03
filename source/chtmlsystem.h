@@ -27,14 +27,14 @@ enum ETemplateType {
 
 class cHTMLTemplate {
   private:
-    UI32 updateTimer;
+    std::uint32_t updateTimer;
     std::string inputFile;
     bool loaded;
     ETemplateType type;
     std::string content;
     std::string outputFile;
     std::string name;
-    UI32 scheduledUpdate;
+    std::uint32_t scheduledUpdate;
 
   public:
     cHTMLTemplate();
@@ -50,8 +50,8 @@ class cHTMLTemplate {
     std::string GetOutput(void) const;
     std::string GetInput(void) const;
     ETemplateType GetTemplateType(void) const;
-    UI32 GetScheduledUpdate(void) const;
-    UI32 GetUpdateTimer(void) const;
+    std::uint32_t GetScheduledUpdate(void) const;
+    std::uint32_t GetUpdateTimer(void) const;
 };
 
 class cHTMLTemplates {

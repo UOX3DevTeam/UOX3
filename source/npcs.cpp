@@ -56,15 +56,15 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
             auto tcsecs = oldstrutil::sections(util::trim(util::strip(tag, "//")), ",");
 
             if (!tag.empty()) {
-                UI16 iAmount = 0;
+                std::uint16_t iAmount = 0;
 
                 if (util::upper(tag) == "LOOTLIST") {
                     if (csecs.size() > 1) // Amount specified behind lootlist entry?
                     {
-                        iAmount = static_cast<UI16>(
+                        iAmount = static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                         [[maybe_unused]] CItem *retItemNested = nullptr;
-                        for (UI16 iCount = 0; iCount < iAmount; ++iCount) {
+                        for (std::uint16_t iCount = 0; iCount < iAmount; ++iCount) {
                             retItemNested = AddRandomLoot(
                                 s, util::trim(util::strip(csecs[0], "//")), shouldSave);
                         }
@@ -76,7 +76,7 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
                 else {
                     if (tcsecs.size() > 1) // Amount specified behind lootlist entry?
                     {
-                        iAmount = static_cast<UI16>(
+                        iAmount = static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(tcsecs[1], "//")), nullptr, 0));
                         retItem = Items->CreateBaseScriptItem(
                             s, util::trim(util::strip(tcsecs[0], "//")), s->WorldNumber(), iAmount,
@@ -142,7 +142,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
             Console::shared().Error("Trying to apply an npc section failed");
         }
 
-        std::vector<UI16> scriptTriggers = cCreated->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = cCreated->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -159,7 +159,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
 //|	Purpose		-	Selects a random weighted entry from a vector with key-value pair
 //(section and weight)
 // o------------------------------------------------------------------------------------------------o
-auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, UI16>> npcListVector)
+auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std::uint16_t>> npcListVector)
     -> std::string {
     auto npcListSize = npcListVector.size();
     if (npcListSize <= 0)
@@ -168,7 +168,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, UI16
     int sum_of_weight = 0;
     for (const auto &it : npcListVector) {
         // const std::string& sectionName = it.first;
-        const UI16 &sectionWeight = it.second;
+        const std::uint16_t &sectionWeight = it.second;
         sum_of_weight += sectionWeight;
     }
 
@@ -180,7 +180,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, UI16
     int weightOfChosenNpc = 0;
     for (size_t i = 0; i < npcListVector.size(); ++i) {
         // const std::string &sectionName = npcList[i].first;
-        const UI16 &sectionWeight = npcListVector[i].second;
+        const std::uint16_t &sectionWeight = npcListVector[i].second;
 
         // Ok, section has a weight, let's compare that weight to our chosen random number
         if (rndChoice < sectionWeight) {
@@ -239,15 +239,15 @@ auto CCharStuff::NpcListLookup(const std::string &npclist) -> std::string {
         return "";
 
     // Stuff each entry from the npcList into a vector
-    std::vector<std::pair<std::string, UI16>> npcListVector;
+    std::vector<std::pair<std::string, std::uint16_t>> npcListVector;
     for (size_t i = 0; i < npcListSize; i++) {
         // Split string for entry into a stringlist based on | as separator
         auto csecs = oldstrutil::sections(util::trim(util::strip(npcList->MoveTo(i), "//")), "|");
 
-        UI16 sectionWeight = 1;
+        std::uint16_t sectionWeight = 1;
         if (csecs.size() > 1) {
             sectionWeight =
-                static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
         }
 
         auto npcSection = (csecs.size() > 1 ? csecs[1] : csecs[0]);
@@ -286,15 +286,15 @@ auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
         return nullptr;
 
     // Stuff each entry from the npcList into a vector
-    std::vector<std::pair<std::string, UI16>> npcListVector;
+    std::vector<std::pair<std::string, std::uint16_t>> npcListVector;
     for (size_t i = 0; i < npcListSize; i++) {
         // Split string for entry into a stringlist based on | as separator
         auto csecs = oldstrutil::sections(util::trim(util::strip(npcList->MoveTo(i), "//")), "|");
 
-        UI16 sectionWeight = 1;
+        std::uint16_t sectionWeight = 1;
         if (csecs.size() > 1) {
             sectionWeight =
-                static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
         }
 
         auto npcSection = (csecs.size() > 1 ? csecs[1] : csecs[0]);
@@ -342,7 +342,7 @@ CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
         return nullptr;
 
     cCreated->SetSpawn(iSpawner->GetSerial());
-    SI16 awayX = 0, awayY = 0;
+    std::int16_t awayX = 0, awayY = 0;
     if ((iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) &&
         iSpawner->GetCont() == nullptr) {
         awayX = iSpawner->GetTempVar(CITV_MORE, 3);
@@ -368,8 +368,8 @@ CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an npc at location xyz
 // o------------------------------------------------------------------------------------------------o
-CChar *CCharStuff::CreateNPCxyz(const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber,
-                                UI16 instanceId, bool useNpcList) {
+CChar *CCharStuff::CreateNPCxyz(const std::string &npc, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
+                                std::uint16_t instanceId, bool useNpcList) {
     CChar *cCreated = nullptr;
     if (useNpcList) {
         cCreated = CreateRandomNPC(npc);
@@ -399,7 +399,7 @@ void CCharStuff::PostSpawnUpdate(CChar *cCreated) {
                          cCreated->GetInstanceId(), cCreated);
     cCreated->SetRegion(tReg->GetRegionNum());
 
-    for (UI08 z = 0; z < ALLSKILLS; ++z) {
+    for (std::uint8_t z = 0; z < ALLSKILLS; ++z) {
         Skills->UpdateSkillLevel(cCreated, z);
     }
 
@@ -416,7 +416,7 @@ void CCharStuff::PostSpawnUpdate(CChar *cCreated) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generate a sensible radius given the values from the NPC DFNs
 // o------------------------------------------------------------------------------------------------o
-SI16 GetRadius(CChar *c) {
+std::int16_t GetRadius(CChar *c) {
     // see if they supplied a 'radius'
     if (c->GetFx(1) > 0) {
         // if they were supplying a bounding area, use the radius from that
@@ -436,9 +436,9 @@ SI16 GetRadius(CChar *c) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding box
 // o------------------------------------------------------------------------------------------------o
-bool CheckBoundingBox(const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1,
-                      const SI08 fz1, const SI16 fx2, const SI16 fy2, const UI08 worldNumber,
-                      const UI16 instanceId) {
+bool CheckBoundingBox(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1,
+                      const std::int8_t fz1, const std::int16_t fx2, const std::int16_t fy2, const std::uint8_t worldNumber,
+                      const std::uint16_t instanceId) {
     if (xPos >= ((fx1 < fx2) ? fx1 : fx2) && xPos <= ((fx1 < fx2) ? fx2 : fx1)) {
         if (yPos >= ((fy1 < fy2) ? fy1 : fy2) && yPos <= ((fy1 < fy2) ? fy2 : fy1)) {
             if (fz1 == -1 || abs(fz1 - Map->Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
@@ -453,9 +453,9 @@ bool CheckBoundingBox(const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check bounding circle
 // o------------------------------------------------------------------------------------------------o
-bool CheckBoundingCircle(const SI16 xPos, const SI16 yPos, const SI16 fx1, const SI16 fy1,
-                         const SI08 fz1, const SI16 radius, const UI08 worldNumber,
-                         const UI16 instanceId) {
+bool CheckBoundingCircle(const std::int16_t xPos, const std::int16_t yPos, const std::int16_t fx1, const std::int16_t fy1,
+                         const std::int8_t fz1, const std::int16_t radius, const std::uint8_t worldNumber,
+                         const std::uint16_t instanceId) {
     if ((xPos - fx1) * (xPos - fx1) + (yPos - fy1) * (yPos - fy1) <= radius * radius) {
         if (fz1 == -1 || abs(fz1 - Map->Height(xPos, yPos, fz1, worldNumber, instanceId)) <= 5)
             return true;
@@ -468,7 +468,7 @@ bool CheckBoundingCircle(const SI16 xPos, const SI16 yPos, const SI16 fx1, const
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Setup the wander area if the npcwander is rect or circle
 // o------------------------------------------------------------------------------------------------o
-void InitializeWanderArea(CChar *c, SI16 xAway, SI16 yAway) {
+void InitializeWanderArea(CChar *c, std::int16_t xAway, std::int16_t yAway) {
     // compute the rectangular bounding area
     if (WT_BOX == c->GetNpcWander()) {
         // if they provided a legal rectangle and
@@ -540,9 +540,9 @@ void InitializeWanderArea(CChar *c, SI16 xAway, SI16 yAway) {
 //directly on the spawner and the
 //|									server op will be warned.
 // o------------------------------------------------------------------------------------------------o
-void CCharStuff::FindSpotForNPC(CChar *cCreated, const SI16 originX, const SI16 originY,
-                                const SI16 xAway, const SI16 yAway, const SI08 z,
-                                const UI08 worldNumber, const UI16 instanceId) {
+void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, const std::int16_t originY,
+                                const std::int16_t xAway, const std::int16_t yAway, const std::int8_t z,
+                                const std::uint8_t worldNumber, const std::uint16_t instanceId) {
 
 #ifdef DEBUG_SPAWN
     Console::shared().Print(util::format("Going to spawn at (%d,%d) within %d by %d\n", originX,
@@ -552,9 +552,9 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const SI16 originX, const SI16 
     if (!ValidateObject(cCreated))
         return;
 
-    SI32 k = xAway * yAway / 2;
-    SI16 xos = 0, yos = 0;
-    SI08 targZ = 0;
+    std::int32_t k = xAway * yAway / 2;
+    std::int16_t xos = 0, yos = 0;
+    std::int8_t targZ = 0;
     bool foundSpot = false;
     if (k > 50) {
         k = 50;
@@ -574,8 +574,8 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const SI16 originX, const SI16 
             break;
         }
 
-        xos = originX + RandomNum(static_cast<SI16>(-xAway), xAway);
-        yos = originY + RandomNum(static_cast<SI16>(-yAway), yAway);
+        xos = originX + RandomNum(static_cast<std::int16_t>(-xAway), xAway);
+        yos = originY + RandomNum(static_cast<std::int16_t>(-yAway), yAway);
 
         if (xos >= 1 && yos >= 1) {
             targZ = Map->Height(xos, yos, z, worldNumber, instanceId);
@@ -613,8 +613,8 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
 
     bool shouldSave = c->ShouldSave();
     std::string cdata;
-    SI32 ndata = -1;
-    [[maybe_unused]] SI32 odata = -1;
+    std::int32_t ndata = -1;
+    [[maybe_unused]] std::int32_t odata = -1;
     CItem *retItem = nullptr;
     for (const auto &sec : ShoppingList->collection2()) {
         auto tag = sec->tag;
@@ -689,9 +689,9 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
                 if (!cdata.empty()) {
                     auto ssecs = oldstrutil::sections(cdata, " ");
                     if (ssecs.size() > 1) {
-                        retItem->SetBuyValue(static_cast<UI32>(
+                        retItem->SetBuyValue(static_cast<std::uint32_t>(
                             std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
-                        retItem->SetSellValue(static_cast<UI32>(
+                        retItem->SetSellValue(static_cast<std::uint32_t>(
                             std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
                         break;
                     }
@@ -725,7 +725,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
         size_t i = RandomName->NumEntries();
         if (i > 0) {
             i = RandomNum(static_cast<size_t>(0), i - 1);
-            tempName = RandomName->MoveTo(static_cast<SI16>(i));
+            tempName = RandomName->MoveTo(static_cast<std::int16_t>(i));
         }
     }
     s->SetName(tempName);
@@ -736,7 +736,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Randomly colors character
 // o------------------------------------------------------------------------------------------------o
-UI16 AddRandomColor(const std::string &colorlist) {
+std::uint16_t AddRandomColor(const std::string &colorlist) {
     std::string sect = std::string("RANDOMCOLOR ") + colorlist;
     sect = util::trim(util::strip(sect, "//"));
     CScriptSection *RandomColours = FileLookup->FindEntry(sect, colors_def);
@@ -747,8 +747,8 @@ UI16 AddRandomColor(const std::string &colorlist) {
     size_t i = RandomColours->NumEntries();
     if (i > 0) {
         i = RandomNum(static_cast<size_t>(0), i - 1);
-        std::string tag = RandomColours->MoveTo(static_cast<SI16>(i));
-        return static_cast<UI16>(std::stoul(util::trim(util::strip(tag, "//")), nullptr, 0));
+        std::string tag = RandomColours->MoveTo(static_cast<std::int16_t>(i));
+        return static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tag, "//")), nullptr, 0));
     }
     return 0;
 }
@@ -764,7 +764,7 @@ void MakeShop(CChar *c) {
 
     c->SetShop(true);
     CItem *tPack = nullptr;
-    for (UI08 i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
+    for (std::uint8_t i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
         tPack = c->GetItemAtLayer(static_cast<ItemLayers>(i));
         if (!ValidateObject(tPack)) {
             bool shouldSave = c->ShouldSave();
@@ -795,13 +795,13 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
     if (NpcCreation == nullptr || !ValidateObject(applyTo))
         return false;
 
-    UI16 haircolor = INVALIDCOLOUR;
+    std::uint16_t haircolor = INVALIDCOLOUR;
     CItem *buyPack = nullptr, *boughtPack = nullptr, *sellPack = nullptr;
     CItem *retitem = nullptr, *mypack = nullptr;
 
     std::string cdata;
-    SI32 ndata = -1, odata = -1;
-    UI08 skillToSet = 0xFF;
+    std::int32_t ndata = -1, odata = -1;
+    std::uint8_t skillToSet = 0xFF;
 
     TAGMAPOBJECT customTag;
     std::string customTagName;
@@ -834,12 +834,12 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_ATT:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetLoDamage(static_cast<SI16>(ndata));
-                    applyTo->SetHiDamage(static_cast<SI16>(odata));
+                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                    applyTo->SetHiDamage(static_cast<std::int16_t>(odata));
                 }
                 else {
-                    applyTo->SetLoDamage(static_cast<SI16>(ndata));
-                    applyTo->SetHiDamage(static_cast<SI16>(ndata));
+                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                    applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
                 }
             }
             else {
@@ -907,7 +907,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_CARVE:
             if (!isGate) {
-                applyTo->SetCarve(static_cast<SI16>(ndata));
+                applyTo->SetCarve(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_CHIVALRY:
@@ -918,7 +918,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_COLOUR:
             if (retitem != nullptr) {
-                retitem->SetColour(static_cast<UI16>(ndata));
+                retitem->SetColour(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_COLOURLIST:
@@ -928,18 +928,18 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_COLOURMATCHHAIR:
             if (retitem != nullptr) {
-                retitem->SetColour(static_cast<UI16>(haircolor));
+                retitem->SetColour(static_cast<std::uint16_t>(haircolor));
             }
             break;
         case DFNTAG_CONTROLSLOTS:
             if (!isGate) {
-                applyTo->SetControlSlots(static_cast<UI16>(ndata));
+                applyTo->SetControlSlots(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_DEX:
             if (ndata > 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetDexterity(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetDexterity(ndata);
@@ -957,10 +957,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_DEF:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), PHYSICAL);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
                 }
                 else {
-                    applyTo->SetResist(static_cast<UI16>(ndata), PHYSICAL);
+                    applyTo->SetResist(static_cast<std::uint16_t>(ndata), PHYSICAL);
                 }
             }
             else {
@@ -972,11 +972,11 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
                     applyTo->SetResist(applyTo->GetResist(PHYSICAL) +
-                                           static_cast<UI16>(RandomNum(ndata, odata)),
+                                           static_cast<std::uint16_t>(RandomNum(ndata, odata)),
                                        PHYSICAL);
                 }
                 else {
-                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<UI16>(ndata),
+                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata),
                                        PHYSICAL);
                 }
             }
@@ -1014,7 +1014,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     applyTo->SetDir(NORTH);
                 }
                 else if (cupper == "RND") {
-                    UI08 rndDir = RandomNum(0, 7);
+                    std::uint8_t rndDir = RandomNum(0, 7);
                     switch (rndDir) {
                     case 0:
                         applyTo->SetDir(NORTHEAST);
@@ -1046,16 +1046,16 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_ELEMENTRESIST:
             if (ssects.size() >= 4) {
-                applyTo->SetResist((static_cast<UI16>(std::stoul(
+                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssects[0], "//")), nullptr, 0))),
                                    HEAT);
-                applyTo->SetResist((static_cast<UI16>(std::stoul(
+                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssects[1], "//")), nullptr, 0))),
                                    COLD);
-                applyTo->SetResist((static_cast<UI16>(std::stoul(
+                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssects[2], "//")), nullptr, 0))),
                                    LIGHTNING);
-                applyTo->SetResist((static_cast<UI16>(std::stoul(
+                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
                                        util::trim(util::strip(ssects[3], "//")), nullptr, 0))),
                                    POISON);
             }
@@ -1063,26 +1063,26 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_ERBONUS:
             if (ssects.size() >= 4) {
                 applyTo->SetResist(applyTo->GetResist(HEAT) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssects[0], "//")), nullptr, 0)),
                                    HEAT);
                 applyTo->SetResist(applyTo->GetResist(COLD) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssects[1], "//")), nullptr, 0)),
                                    COLD);
                 applyTo->SetResist(applyTo->GetResist(LIGHTNING) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssects[2], "//")), nullptr, 0)),
                                    LIGHTNING);
                 applyTo->SetResist(applyTo->GetResist(POISON) +
-                                       static_cast<UI16>(std::stoul(
+                                       static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(ssects[3], "//")), nullptr, 0)),
                                    POISON);
             }
             break;
         case DFNTAG_EMOTECOLOUR:
             if (!isGate) {
-                applyTo->SetEmoteColour(static_cast<UI16>(ndata));
+                applyTo->SetEmoteColour(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_ENTICEMENT:
@@ -1117,7 +1117,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             skillToSet = EVALUATINGINTEL;
             break;
         case DFNTAG_FAME:
-            applyTo->SetFame(static_cast<SI16>(ndata));
+            applyTo->SetFame(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_FENCING:
             skillToSet = FENCING;
@@ -1127,7 +1127,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_FLEEAT:
             if (!isGate) {
-                applyTo->SetFleeAt(static_cast<SI16>(ndata));
+                applyTo->SetFleeAt(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_FLEEINGSPEED:
@@ -1160,27 +1160,27 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_FX1:
             if (!isGate) {
-                applyTo->SetFx(static_cast<SI16>(ndata), 0);
+                applyTo->SetFx(static_cast<std::int16_t>(ndata), 0);
             }
             break;
         case DFNTAG_FX2:
             if (!isGate) {
-                applyTo->SetFx(static_cast<SI16>(ndata), 1);
+                applyTo->SetFx(static_cast<std::int16_t>(ndata), 1);
             }
             break;
         case DFNTAG_FY1:
             if (!isGate) {
-                applyTo->SetFy(static_cast<SI16>(ndata), 0);
+                applyTo->SetFy(static_cast<std::int16_t>(ndata), 0);
             }
             break;
         case DFNTAG_FY2:
             if (!isGate) {
-                applyTo->SetFy(static_cast<SI16>(ndata), 1);
+                applyTo->SetFy(static_cast<std::int16_t>(ndata), 1);
             }
             break;
         case DFNTAG_FZ1:
             if (!isGate) {
-                applyTo->SetFz(static_cast<SI08>(ndata));
+                applyTo->SetFz(static_cast<std::int8_t>(ndata));
             }
             break;
         case DFNTAG_FOOD:
@@ -1192,7 +1192,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 scriptEntry = cdata;
             }
             else {
-                SI32 rndEntry = RandomNum(0, static_cast<SI32>(ssects.size() - 1));
+                std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
                 scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
             }
 
@@ -1303,7 +1303,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     scriptEntry = cdata;
                 }
                 else {
-                    SI32 rndEntry = RandomNum(0, static_cast<SI32>(ssects.size() - 1));
+                    std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
                     scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                 }
 
@@ -1336,7 +1336,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                         if (odata && odata > ndata) {
                             retitem =
                                 Items->CreateScriptItem(nullptr, applyTo, "0x0EED",
-                                                        static_cast<UI16>(RandomNum(ndata, odata)),
+                                                        static_cast<std::uint16_t>(RandomNum(ndata, odata)),
                                                         OT_ITEM, true, 0xFFFF, shouldSave);
                         }
                         else {
@@ -1373,7 +1373,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             skillToSet = HIDING;
             break;
         case DFNTAG_HIDAMAGE:
-            applyTo->SetHiDamage(static_cast<SI16>(ndata));
+            applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_HIRELING:
             if (!isGate) {
@@ -1383,7 +1383,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_HP:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetHP(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetHP(ndata);
@@ -1397,7 +1397,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_HPMAX:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxHP(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetFixedMaxHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetFixedMaxHP(ndata);
@@ -1412,21 +1412,21 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             }
             break;
         case DFNTAG_ID:
-            /*applyTo->SetId( static_cast<UI16>( ndata ));
-            applyTo->SetOrgId( static_cast<UI16>( ndata ));
+            /*applyTo->SetId( static_cast<std::uint16_t>( ndata ));
+            applyTo->SetOrgId( static_cast<std::uint16_t>( ndata ));
             break;*/
 
             if (ssects.size() == 1) {
-                applyTo->SetId(static_cast<UI16>(
+                applyTo->SetId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
-                applyTo->SetOrgId(static_cast<UI16>(
+                applyTo->SetOrgId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
             }
             else {
-                SI32 rndEntry = RandomNum(0, static_cast<SI32>(ssects.size() - 1));
-                applyTo->SetId(static_cast<UI16>(
+                std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                applyTo->SetId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
-                applyTo->SetOrgId(static_cast<UI16>(
+                applyTo->SetOrgId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
             }
             break;
@@ -1439,7 +1439,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_INTELLIGENCE:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetIntelligence(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetIntelligence(ndata);
@@ -1456,7 +1456,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             skillToSet = ITEMID;
             break;
         case DFNTAG_KARMA:
-            applyTo->SetKarma(static_cast<SI16>(ndata));
+            applyTo->SetKarma(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_PACKITEM:
             [[fallthrough]];
@@ -1470,23 +1470,23 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                         auto csecs =
                             oldstrutil::sections(util::trim(util::strip(cdata, "//")), ",");
                         if (csecs.size() > 1) {
-                            UI16 iAmount = 0;
+                            std::uint16_t iAmount = 0;
                             std::string amountData = util::trim(util::strip(csecs[1], "//"));
                             auto tsects = oldstrutil::sections(amountData, " ");
                             if (tsects.size() > 1) // check if the second part of the tag-data
                                                    // contains two sections separated by a space
                             {
-                                auto first = static_cast<UI16>(std::stoul(
+                                auto first = static_cast<std::uint16_t>(std::stoul(
                                     util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                auto second = static_cast<UI16>(std::stoul(
+                                auto second = static_cast<std::uint16_t>(std::stoul(
                                     util::trim(util::strip(tsects[1], "//")), nullptr, 0));
 
                                 // Tag contained a minimum and maximum value for amount! Let's
                                 // randomize!
-                                iAmount = static_cast<UI16>(RandomNum(first, second));
+                                iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
                             }
                             else {
-                                iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+                                iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                             }
                             auto tdata = util::trim(util::strip(csecs[0], "//"));
 
@@ -1518,13 +1518,13 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             skillToSet = LOCKPICKING;
             break;
         case DFNTAG_LODAMAGE:
-            applyTo->SetLoDamage(static_cast<SI16>(ndata));
+            applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_LUMBERJACKING:
             skillToSet = LUMBERJACKING;
             break;
         case DFNTAG_LOYALTY:
-            applyTo->SetLoyalty(static_cast<UI16>(ndata));
+            applyTo->SetLoyalty(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_MACEFIGHTING:
             skillToSet = MACEFIGHTING;
@@ -1538,7 +1538,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_MANA:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetMana(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetMana(ndata);
@@ -1552,7 +1552,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_MANAMAX:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxMana(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetFixedMaxMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetFixedMaxMana(ndata);
@@ -1567,7 +1567,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             }
             break;
         case DFNTAG_MAXLOYALTY:
-            applyTo->SetMaxLoyalty(static_cast<UI16>(ndata));
+            applyTo->SetMaxLoyalty(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_MEDITATION:
             skillToSet = MEDITATION;
@@ -1595,17 +1595,17 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_NPCWANDER:
             if (!isGate) {
-                applyTo->SetNpcWander(static_cast<SI08>(ndata));
+                applyTo->SetNpcWander(static_cast<std::int8_t>(ndata));
             }
             break;
         case DFNTAG_NPCAI:
             if (!isGate) {
-                applyTo->SetNPCAiType(static_cast<SI16>(ndata));
+                applyTo->SetNPCAiType(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_NPCGUILD:
             if (!isGate) {
-                applyTo->SetNPCGuild(static_cast<UI16>(ndata));
+                applyTo->SetNPCGuild(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_NOHIRELING:
@@ -1623,11 +1623,11 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 static_cast<ExpansionRuleset>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
             break;
         case DFNTAG_POISONSTRENGTH:
-            applyTo->SetPoisonStrength(static_cast<UI08>(ndata));
+            applyTo->SetPoisonStrength(static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_PRIV:
             if (!isGate) {
-                applyTo->SetPriv(static_cast<UI16>(ndata));
+                applyTo->SetPriv(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_PARRYING:
@@ -1645,7 +1645,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_RESISTFIRE:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), HEAT);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
                 }
                 else {
                     applyTo->SetResist(ndata, HEAT);
@@ -1660,7 +1660,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_RESISTCOLD:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), COLD);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
                 }
                 else {
                     applyTo->SetResist(ndata, COLD);
@@ -1675,7 +1675,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_RESISTLIGHTNING:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), LIGHTNING);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
                 }
                 else {
                     applyTo->SetResist(ndata, LIGHTNING);
@@ -1690,7 +1690,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_RESISTPOISON:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<UI16>(RandomNum(ndata, odata)), POISON);
+                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
                 }
                 else {
                     applyTo->SetResist(ndata, POISON);
@@ -1727,14 +1727,14 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_REATTACKAT:
             if (!isGate) {
-                applyTo->SetReattackAt(static_cast<SI16>(ndata));
+                applyTo->SetReattackAt(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_REMOVETRAP:
             skillToSet = REMOVETRAP;
             break;
         case DFNTAG_RACE:
-            applyTo->SetRace(static_cast<UI16>(ndata));
+            applyTo->SetRace(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_RUNS:
             if (!isGate) {
@@ -1751,7 +1751,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             applyTo->SetSectionId(cdata);
             break;
         case DFNTAG_SKIN:
-            applyTo->SetSkin(static_cast<UI16>(ndata));
+            applyTo->SetSkin(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_SHOPKEEPER:
             if (!isGate) {
@@ -1815,17 +1815,17 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_SAYCOLOUR:
             if (!isGate) {
-                applyTo->SetSayColour(static_cast<UI16>(ndata));
+                applyTo->SetSayColour(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_SPATTACK:
             if (!isGate) {
-                applyTo->SetSpAttack(static_cast<SI16>(ndata));
+                applyTo->SetSpAttack(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_SPADELAY:
             if (!isGate) {
-                applyTo->SetSpDelay(static_cast<SI08>(ndata));
+                applyTo->SetSpDelay(static_cast<std::int8_t>(ndata));
             }
             break;
         case DFNTAG_SPELLWEAVING:
@@ -1833,12 +1833,12 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_SPLIT:
             if (!isGate) {
-                applyTo->SetSplit(static_cast<UI08>(ndata));
+                applyTo->SetSplit(static_cast<std::uint8_t>(ndata));
             }
             break;
         case DFNTAG_SPLITCHANCE:
             if (!isGate) {
-                applyTo->SetSplitChance(static_cast<UI08>(ndata));
+                applyTo->SetSplitChance(static_cast<std::uint8_t>(ndata));
             }
             break;
         case DFNTAG_SNOOPING:
@@ -1853,7 +1853,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_STRENGTH:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetStrength(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetStrength(ndata);
@@ -1872,7 +1872,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_STAMINA:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetStamina(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetStamina(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetStamina(ndata);
@@ -1886,7 +1886,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         case DFNTAG_STAMINAMAX:
             if (ndata >= 0) {
                 if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxStam(static_cast<SI16>(RandomNum(ndata, odata)));
+                    applyTo->SetFixedMaxStam(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                 }
                 else {
                     applyTo->SetFixedMaxStam(ndata);
@@ -1907,11 +1907,11 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             applyTo->SetSkin(AddRandomColor(cdata));
             break;
         case DFNTAG_SKILL:
-            applyTo->SetBaseSkill(static_cast<UI16>(odata), static_cast<UI08>(ndata));
+            applyTo->SetBaseSkill(static_cast<std::uint16_t>(odata), static_cast<std::uint8_t>(ndata));
             break;
         case DFNTAG_SCRIPT:
             if (!isGate) {
-                applyTo->AddScriptTrigger(static_cast<UI16>(ndata));
+                applyTo->AddScriptTrigger(static_cast<std::uint16_t>(ndata));
             }
             break;
         case DFNTAG_THROWING:
@@ -1922,32 +1922,32 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_TOTAME:
             if (!isGate) {
-                applyTo->SetTaming(static_cast<SI16>(ndata));
-                applyTo->SetOrneriness(static_cast<UI16>(
+                applyTo->SetTaming(static_cast<std::int16_t>(ndata));
+                applyTo->SetOrneriness(static_cast<std::uint16_t>(
                     ndata)); // Set default difficulty to control equal to skill required to tame
             }
             break;
         case DFNTAG_TOPROV:
             if (!isGate) {
-                applyTo->SetProvoing(static_cast<SI16>(ndata));
+                applyTo->SetProvoing(static_cast<std::int16_t>(ndata));
             }
             break;
         case DFNTAG_TOPEACE:
             if (!isGate) {
-                applyTo->SetPeaceing(static_cast<SI16>(ndata));
+                applyTo->SetPeaceing(static_cast<std::int16_t>(ndata));
             }
-            applyTo->SetBrkPeaceChanceGain(static_cast<SI16>(odata));
+            applyTo->SetBrkPeaceChanceGain(static_cast<std::int16_t>(odata));
             break;
         case DFNTAG_TAMEDHUNGER:
             if (!isGate) {
-                applyTo->SetTamedHungerRate(static_cast<UI16>(ndata));
-                applyTo->SetTamedHungerWildChance(static_cast<UI08>(odata));
+                applyTo->SetTamedHungerRate(static_cast<std::uint16_t>(ndata));
+                applyTo->SetTamedHungerWildChance(static_cast<std::uint8_t>(odata));
             }
             break;
         case DFNTAG_TAMEDTHIRST:
             if (!isGate) {
-                applyTo->SetTamedThirstRate(static_cast<UI16>(ndata));
-                applyTo->SetTamedThirstWildChance(static_cast<UI08>(odata));
+                applyTo->SetTamedThirstRate(static_cast<std::uint16_t>(ndata));
+                applyTo->SetTamedThirstWildChance(static_cast<std::uint8_t>(odata));
             }
             break;
         case DFNTAG_WILLHUNGER:
@@ -2010,7 +2010,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             if (!customTagName.empty() && !customTagStringValue.empty()) {
                 customTag.m_Destroy = false;
                 customTag.m_StringValue = customTagStringValue;
-                customTag.m_IntValue = static_cast<SI32>(customTag.m_StringValue.size());
+                customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
                 customTag.m_ObjectType = TAGMAP_TYPE_STRING;
                 applyTo->SetTag(customTagName, customTag);
             }
@@ -2057,12 +2057,12 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         }
         default:
-            Console::shared() << "Unknown tag in ApplyNpcSection(): " << static_cast<SI32>(tag)
+            Console::shared() << "Unknown tag in ApplyNpcSection(): " << static_cast<std::int32_t>(tag)
                               << myendl;
             break;
         }
         if (skillToSet != 0xFF) {
-            applyTo->SetBaseSkill(static_cast<UI16>(RandomNum(ndata, odata)), skillToSet);
+            applyTo->SetBaseSkill(static_cast<std::uint16_t>(RandomNum(ndata, odata)), skillToSet);
             skillToSet = 0xFF;
         }
     }
@@ -2080,9 +2080,9 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
         if (checkDifficulty && Npc->IsTamed() &&
             cwmWorldState->ServerData()->CheckPetControlDifficulty()) {
             // Let's base this on how difficult it is to control the pet, as well
-            UI16 chanceToControl = Skills->CalculatePetControlChance(mChar, Npc);
-            UI16 loyaltyGainOnSuccess = cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess();
-            UI16 loyaltyLossOnFailure = cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure();
+            std::uint16_t chanceToControl = Skills->CalculatePetControlChance(mChar, Npc);
+            std::uint16_t loyaltyGainOnSuccess = cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess();
+            std::uint16_t loyaltyLossOnFailure = cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure();
 
             // Easy to control pets/summoned creatures don't gain/lose loyalty from commands
             if (chanceToControl == 1000)
@@ -2099,7 +2099,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
                 // Failed to control pet
                 if (!ignoreLoyaltyChanges) {
                     Npc->SetLoyalty(std::max(0, Npc->GetLoyalty() - loyaltyLossOnFailure));
-                    UI16 soundToPlay =
+                    std::uint16_t soundToPlay =
                         cwmWorldState->creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
                     Effects->PlaySound(Npc, soundToPlay);
 
@@ -2327,7 +2327,7 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
 
     Npcs->ApplyNpcSection(s, Monster, scriptEntry, true);
     // Now find real 'skill' based on 'baseskill' (stat modifiers)
-    for (UI08 j = 0; j < ALLSKILLS; ++j) {
+    for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
         Skills->UpdateSkillLevel(s, j);
     }
     s->Update();
@@ -2341,10 +2341,10 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
 //|	Purpose		-	Handle karma addition/subtraction when character kills
 //|					another Character / NPC
 // o------------------------------------------------------------------------------------------------o
-void Karma(CChar *nCharId, CChar *nKilledId, const SI16 nKarma) {
-    SI16 nChange = 0;
+void Karma(CChar *nCharId, CChar *nKilledId, const std::int16_t nKarma) {
+    std::int16_t nChange = 0;
     bool nEffect = false;
-    SI16 nCurKarma = nCharId->GetKarma();
+    std::int16_t nCurKarma = nCharId->GetKarma();
     if (nCurKarma > 10000) {
         nCharId->SetKarma(10000);
         nCurKarma = 10000;
@@ -2356,12 +2356,12 @@ void Karma(CChar *nCharId, CChar *nKilledId, const SI16 nKarma) {
 
     if (nCurKarma < nKarma && nKarma > 0) {
         nChange = ((nKarma - nCurKarma) / 75);
-        nCharId->SetKarma(static_cast<SI16>(nCurKarma + nChange));
+        nCharId->SetKarma(static_cast<std::int16_t>(nCurKarma + nChange));
         nEffect = true;
     }
     if (nCurKarma > nKarma && (!ValidateObject(nKilledId) || nKilledId->GetKarma() > 0)) {
         nChange = ((nCurKarma - nKarma) / 50);
-        nCharId->SetKarma(static_cast<SI16>(nCurKarma - nChange));
+        nCharId->SetKarma(static_cast<std::int16_t>(nCurKarma - nChange));
         nEffect = false;
     }
     if (nChange == 0) // NPCs CAN gain/lose karma
@@ -2405,24 +2405,24 @@ void Karma(CChar *nCharId, CChar *nKilledId, const SI16 nKarma) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle fame addition when character kills another Character / NPC
 // o------------------------------------------------------------------------------------------------o
-void Fame(CChar *nCharId, const SI16 nFame) {
-    SI16 nChange = 0;
+void Fame(CChar *nCharId, const std::int16_t nFame) {
+    std::int16_t nChange = 0;
     bool nEffect = false;
-    const SI16 nCurFame = nCharId->GetFame();
+    const std::int16_t nCurFame = nCharId->GetFame();
     if (nCharId->IsDead()) {
         if (nCurFame <= 0) {
             nCharId->SetFame(0);
         }
         else {
             nChange = (nCurFame - 0) / 25;
-            nCharId->SetFame(static_cast<SI16>(nCurFame - nChange));
+            nCharId->SetFame(static_cast<std::int16_t>(nCurFame - nChange));
         }
-        nCharId->SetDeaths(static_cast<UI16>(nCharId->GetDeaths() + 1));
+        nCharId->SetDeaths(static_cast<std::uint16_t>(nCharId->GetDeaths() + 1));
         nEffect = false;
     }
     else if (nCurFame <= nFame) {
         nChange = (nFame - nCurFame) / 75;
-        nCharId->SetFame(static_cast<SI16>(nCurFame + nChange));
+        nCharId->SetFame(static_cast<std::int16_t>(nCurFame + nChange));
         nEffect = true;
         if (nCharId->GetFame() > 10000) {
             nCharId->SetFame(10000);

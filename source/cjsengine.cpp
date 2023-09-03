@@ -35,16 +35,16 @@ CJSEngine *JSEngine = nullptr;
 //==================================================================================================
 auto CJSEngine::Startup() -> void {
     runtimeList.resize(0);
-    const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
+    const std::uint32_t maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
     // 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
     auto maxBytesSize =
-        std::max(static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize()); // from INI
+        std::max(static_cast<std::uint16_t>(16), cwmWorldState->ServerData()->GetJSEngineSize()); // from INI
 
     // Use minimum of INI-provided value and hard-defined maximum
     // maxBytes definition: "Maximum nominal heap before last ditch GC"
-    UI32 engineMaxBytes =
-        std::min(static_cast<UI32>(static_cast<UI32>(maxBytesSize) * 1024 * 1024), maxEngineSize);
+    std::uint32_t engineMaxBytes =
+        std::min(static_cast<std::uint32_t>(static_cast<std::uint32_t>(maxBytesSize) * 1024 * 1024), maxEngineSize);
 
     Console::shared().PrintSectionBegin();
     Console::shared() << "Starting JavaScript Engine...." << myendl;
@@ -84,21 +84,21 @@ void CJSEngine::CollectGarbage(void) {
     }
 }
 
-JSRuntime *CJSEngine::GetRuntime(UI08 runTime) const {
+JSRuntime *CJSEngine::GetRuntime(std::uint8_t runTime) const {
     if (runTime >= runtimeList.size()) {
         runTime = 0;
     }
 
     return runtimeList[runTime]->GetRuntime();
 }
-JSContext *CJSEngine::GetContext(UI08 runTime) const {
+JSContext *CJSEngine::GetContext(std::uint8_t runTime) const {
     if (runTime >= runtimeList.size()) {
         runTime = 0;
     }
 
     return runtimeList[runTime]->GetContext();
 }
-JSObject *CJSEngine::GetObject(UI08 runTime) const {
+JSObject *CJSEngine::GetObject(std::uint8_t runTime) const {
     if (runTime >= runtimeList.size()) {
         runTime = 0;
     }
@@ -106,17 +106,17 @@ JSObject *CJSEngine::GetObject(UI08 runTime) const {
     return runtimeList[runTime]->GetObject();
 }
 
-UI08 CJSEngine::FindActiveRuntime(JSRuntime *rT) const {
+std::uint8_t CJSEngine::FindActiveRuntime(JSRuntime *rT) const {
     for (RUNTIMELIST_CITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter) {
         if ((*rIter) != nullptr) {
             if (rT == (*rIter)->GetRuntime())
-                return static_cast<UI08>(rIter - runtimeList.begin());
+                return static_cast<std::uint8_t>(rIter - runtimeList.begin());
         }
     }
     return 0;
 }
 
-JSObject *CJSEngine::GetPrototype(UI08 runTime, JSPrototypes protoNum) const {
+JSObject *CJSEngine::GetPrototype(std::uint8_t runTime, JSPrototypes protoNum) const {
     JSObject *retVal = nullptr;
     if (runTime < runtimeList.size()) {
         retVal = runtimeList[runTime]->GetPrototype(protoNum);
@@ -125,7 +125,7 @@ JSObject *CJSEngine::GetPrototype(UI08 runTime, JSPrototypes protoNum) const {
     return retVal;
 }
 
-JSObject *CJSEngine::AcquireObject(IUEEntries iType, void *index, UI08 runTime) {
+JSObject *CJSEngine::AcquireObject(IUEEntries iType, void *index, std::uint8_t runTime) {
     JSObject *retVal = nullptr;
     if (index != nullptr && runTime < runtimeList.size()) {
         retVal = runtimeList[runTime]->AcquireObject(iType, index);
@@ -144,7 +144,7 @@ void CJSEngine::ReleaseObject(IUEEntries iType, void *index) {
 //========================================================================================================
 // CJSRuntime
 //======================================================================================================
-CJSRuntime::CJSRuntime(UI32 engineSize) {
+CJSRuntime::CJSRuntime(std::uint32_t engineSize) {
     jsRuntime = JS_NewRuntime(engineSize);
     if (jsRuntime == nullptr) {
         Shutdown(FATAL_UOX3_JAVASCRIPT);

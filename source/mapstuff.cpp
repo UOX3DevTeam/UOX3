@@ -21,7 +21,7 @@ using namespace std::string_literals;
 
 CMulHandler *Map = nullptr;
 
-// const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
+// const std::uint16_t LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 /*!
  ** New rewrite plans, its way confusing having every function in here using 'Height' to mean
@@ -179,22 +179,22 @@ auto CMulHandler::LoadDFNOverrides() -> void {
                         auto data = util::trim(util::strip(sec->data, "//"));
                         // CTile properties
                         if (UTag == "WEIGHT") {
-                            tile->Weight(static_cast<UI08>(std::stoul(data, nullptr, 0)));
+                            tile->Weight(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
                         }
                         else if (UTag == "HEIGHT") {
-                            tile->Height(static_cast<SI08>(std::stoi(data, nullptr, 0)));
+                            tile->Height(static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                         }
                         else if (UTag == "LAYER") {
-                            tile->Layer(static_cast<SI08>(std::stoi(data, nullptr, 0)));
+                            tile->Layer(static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                         }
                         else if (UTag == "HUE") {
-                            tile->Hue(static_cast<UI08>(std::stoul(data, nullptr, 0)));
+                            tile->Hue(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
                         }
                         else if (UTag == "QUANTITY") {
-                            tile->Quantity(static_cast<UI08>(std::stoul(data, nullptr, 0)));
+                            tile->Quantity(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
                         }
                         else if (UTag == "ANIMATION") {
-                            tile->Animation(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                            tile->Animation(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                         }
                         else if (UTag == "NAME") {
                             tile->Name(data);
@@ -440,29 +440,29 @@ auto CMulHandler::DiffCountForMap(std::uint8_t worldNumber) const -> std::pair<i
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::MultiHeight(CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ,
                               std::int8_t maxZ, bool checkHeight) -> std::int8_t {
-    UI16 multiId = static_cast<UI16>(i->GetId() - 0x4000);
+    std::uint16_t multiId = static_cast<std::uint16_t>(i->GetId() - 0x4000);
 
-    SI08 mHeight = ILLEGAL_Z;
-    SI08 tmpTop = ILLEGAL_Z;
+    std::int8_t mHeight = ILLEGAL_Z;
+    std::int8_t tmpTop = ILLEGAL_Z;
 
     if (!MultiExists(multiId))
         return mHeight;
 
-    const SI16 baseX = i->GetX();
-    const SI16 baseY = i->GetY();
-    const SI08 baseZ = i->GetZ();
+    const std::int16_t baseX = i->GetX();
+    const std::int16_t baseY = i->GetY();
+    const std::int8_t baseZ = i->GetZ();
     for (auto &multi : SeekMulti(multiId).items) {
         if ((checkHeight || multi.flag) && (baseX + multi.offsetX) == x &&
             (baseY + multi.offsetY) == y) {
             if (checkHeight) {
                 // Returns height of highest point of multi
-                tmpTop = static_cast<SI08>(baseZ + multi.altitude);
+                tmpTop = static_cast<std::int8_t>(baseZ + multi.altitude);
                 if ((tmpTop <= oldZ + maxZ) && tmpTop > oldZ && tmpTop > mHeight) {
                     mHeight = tmpTop;
                 }
             }
             else {
-                tmpTop = static_cast<SI08>(baseZ + multi.altitude);
+                tmpTop = static_cast<std::int8_t>(baseZ + multi.altitude);
                 if (std::abs(tmpTop - oldZ) <= maxZ) {
                     mHeight = tmpTop + multi.info->ClimbHeight(true);
                     if (mHeight == oldZ) // We found a surface at the suggested height
@@ -486,8 +486,8 @@ auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_
     if (!i->CanBeObjType(OT_MULTI))
         return 0;
 
-    UI16 multiId = static_cast<UI16>(i->GetId() - 0x4000);
-    [[maybe_unused]] SI32 length = 0;
+    std::uint16_t multiId = static_cast<std::uint16_t>(i->GetId() - 0x4000);
+    [[maybe_unused]] std::int32_t length = 0;
 
     if (!MultiExists(multiId)) {
         Console::shared() << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall."
@@ -583,7 +583,7 @@ auto CMulHandler::DoesStaticBlock(std::int16_t x, std::int16_t y, std::int8_t z,
     auto &artTiles = Map->ArtAt(x, y, worldNumber);
     auto rValue = false;
     for (auto &tile : artTiles) {
-        auto elev = static_cast<SI08>(tile.altitude + tile.artInfo->ClimbHeight());
+        auto elev = static_cast<std::int8_t>(tile.altitude + tile.artInfo->ClimbHeight());
         if (checkWater) {
             if (elev >= z && tile.altitude <= z &&
                 (tile.CheckFlag(TF_BLOCKING) || tile.CheckFlag(TF_WET))) {
@@ -625,7 +625,7 @@ auto CMulHandler::DoesDynamicBlock(std::int16_t x, std::int16_t y, std::int8_t z
             return false;
 
         rValue = false;
-        const UI16 dt = dtItem->GetId();
+        const std::uint16_t dt = dtItem->GetId();
         if (IsValidTile(dt) && dt != 0) {
             auto tile = SeekTile(dt);
             if (waterWalk) {
@@ -686,7 +686,7 @@ auto CMulHandler::DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z,
 //|	Purpose		-	Checks if there are any characters at given coordinates that block
 // movement
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::DoesCharacterBlock(UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId)
+auto CMulHandler::DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId)
     -> bool {
     for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
         if (cellResponse == nullptr)
@@ -719,12 +719,12 @@ auto CMulHandler::DoesCharacterBlock(UI16 x, UI16 y, SI08 z, UI08 worldNumber, U
 // specific flag
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
-                                  std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundtileID,
+                                  std::uint8_t worldNumber, TileFlags toCheck, std::uint16_t &foundtileID,
                                   bool checkSpawnSurface) -> bool {
     auto rValue = checkSpawnSurface;
     for (const auto &tile : Map->ArtAt(x, y, worldNumber)) {
-        const SI08 elev = static_cast<SI08>(tile.altitude);
-        const SI08 tileHeight = static_cast<SI08>(tile.artInfo->ClimbHeight());
+        const std::int8_t elev = static_cast<std::int8_t>(tile.altitude);
+        const std::int8_t tileHeight = static_cast<std::int8_t>(tile.artInfo->ClimbHeight());
         if (checkSpawnSurface) {
             // Special case used when checking for spawn surfaces
             if ((z >= elev && z <= (elev + tileHeight)) && !tile.CheckFlag(toCheck)) {
@@ -752,12 +752,12 @@ auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z,
                                    std::uint8_t worldNumber, std::uint16_t instanceId,
-                                   TileFlags toCheck, UI16 &foundTileId) -> bool {
+                                   TileFlags toCheck, std::uint16_t &foundTileId) -> bool {
     // Special case for handling multis that cross over between multiple map regions because of size
     CMultiObj *tempMulti = FindMulti(x, y, z, worldNumber, instanceId);
     if (ValidateObject(tempMulti)) {
         // Look for a multi item at specific location
-        auto multiId = static_cast<UI16>(tempMulti->GetId() - 0x4000);
+        auto multiId = static_cast<std::uint16_t>(tempMulti->GetId() - 0x4000);
         for (auto &multiItem : SeekMulti(multiId).items) {
             if (multiItem.flag > 0 && (abs(tempMulti->GetZ() + multiItem.altitude - z) <= 1)) {
                 if ((tempMulti->GetX() + multiItem.offsetX == x) &&
@@ -785,7 +785,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
                     ((item->GetObjType() == OT_MULTI) || (item->CanBeObjType(OT_MULTI)))) {
                     // Found a multi
                     // Look for a multi item at specific location
-                    auto multiId = static_cast<UI16>(item->GetId() - 0x4000);
+                    auto multiId = static_cast<std::uint16_t>(item->GetId() - 0x4000);
                     for (auto &multiItem : SeekMulti(multiId).items) {
                         if (multiItem.flag > 0 &&
                             (abs(item->GetZ() + multiItem.altitude - z) <= 1)) {
@@ -803,7 +803,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
                     // item is not a multi
                     if ((item->GetX() == x) && (item->GetY() == y) && (item->GetZ() == z)) {
                         auto itemZ = item->GetZ();
-                        const SI08 tileHeight = static_cast<SI08>(TileHeight(item->GetId()));
+                        const std::int8_t tileHeight = static_cast<std::int8_t>(TileHeight(item->GetId()));
                         if ((itemZ == z && itemZ + tileHeight > z) ||
                             (itemZ < z && itemZ + tileHeight >= z)) {
                             if (SeekTile(item->GetId()).CheckFlag(toCheck)) {
@@ -869,8 +869,8 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
         // Also check dynamic items inside the multi
         for (const auto &tempMultiItem : tempMulti->GetItemsInMultiList()->collection()) {
             if (tempMultiItem->GetX() == x && tempMultiItem->GetY() == y) {
-                SI08 zTemp =
-                    static_cast<SI08>(tempMultiItem->GetZ() + TileHeight(tempMultiItem->GetId()));
+                std::int8_t zTemp =
+                    static_cast<std::int8_t>(tempMultiItem->GetZ() + TileHeight(tempMultiItem->GetId()));
                 if ((zTemp <= z + maxZ) && (zTemp > dynZ || (dynZ >= z + maxZ))) {
                     dynZ = zTemp;
                 }
@@ -888,8 +888,8 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
                         dynZ = MultiHeight(tempItem, x, y, z, maxZ);
                     }
                     else if (tempItem->GetX() == x && tempItem->GetY() == y) {
-                        SI08 zTemp =
-                            static_cast<SI08>(tempItem->GetZ() + TileHeight(tempItem->GetId()));
+                        std::int8_t zTemp =
+                            static_cast<std::int8_t>(tempItem->GetZ() + TileHeight(tempItem->GetId()));
                         if ((zTemp <= z + maxZ) && zTemp > dynZ) {
                             dynZ = zTemp;
                         }
@@ -959,7 +959,7 @@ auto CMulHandler::InBuilding(std::int16_t x, std::int16_t y, std::int8_t z,
         return true;
     }
     else {
-        const SI08 staticZ = Map->StaticTop(x, y, z, worldNumber, static_cast<std::int8_t>(127));
+        const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, static_cast<std::int8_t>(127));
         if (staticZ > (z + 10)) {
             return true;
         }
@@ -975,16 +975,16 @@ auto CMulHandler::InBuilding(std::int16_t x, std::int16_t y, std::int8_t z,
 auto CMulHandler::MultiArea(CMultiObj *i, std::int16_t &x1, std::int16_t &y1, std::int16_t &x2,
                             std::int16_t &y2) -> void {
     if (ValidateObject(i)) {
-        const SI16 xAdd = i->GetX();
-        const SI16 yAdd = i->GetY();
+        const std::int16_t xAdd = i->GetX();
+        const std::int16_t yAdd = i->GetY();
 
-        const UI16 multiNum = static_cast<UI16>(i->GetId() - 0x4000);
+        const std::uint16_t multiNum = static_cast<std::uint16_t>(i->GetId() - 0x4000);
         if (MultiExists(multiNum)) {
             auto structure = SeekMulti(multiNum);
-            x1 = static_cast<SI16>(structure.minX + xAdd);
-            x2 = static_cast<SI16>(structure.maxX + xAdd);
-            y1 = static_cast<SI16>(structure.minY + yAdd);
-            y2 = static_cast<SI16>(structure.maxY + yAdd);
+            x1 = static_cast<std::int16_t>(structure.minX + xAdd);
+            x2 = static_cast<std::int16_t>(structure.maxX + xAdd);
+            y1 = static_cast<std::int16_t>(structure.minY + yAdd);
+            y2 = static_cast<std::int16_t>(structure.maxY + yAdd);
         }
     }
 }
@@ -1131,7 +1131,7 @@ auto CMulHandler::ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t
         return false;
 
     // if the static isn't a surface return false
-    [[maybe_unused]] UI16 ignoreMe = 0;
+    [[maybe_unused]] std::uint16_t ignoreMe = 0;
     if (!CheckStaticFlag(x, y, z, worldNumber, (checkWater ? TF_SURFACE : TF_WET), ignoreMe, true))
         return false;
 
@@ -1153,7 +1153,7 @@ auto CMulHandler::ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t
     if (!InsideValidWorld(x, y, worldNumber))
         return 0;
 
-    const SI08 elev = Height(x, y, z, worldNumber, instanceId);
+    const std::int8_t elev = Height(x, y, z, worldNumber, instanceId);
     if (ILLEGAL_Z == elev)
         return 0;
 

@@ -33,13 +33,13 @@ CCommands::~CCommands() {
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCommands::NumArguments()
 //|	Date		-	3/12/2003
-//|	Changes		-	4/2/2003 - Reduced to a UI08
+//|	Changes		-	4/2/2003 - Reduced to a std::uint8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Number of arguments in a command
 // o------------------------------------------------------------------------------------------------o
-UI08 CCommands::NumArguments(void) {
+std::uint8_t CCommands::NumArguments(void) {
     auto secs = oldstrutil::sections(commandString, " ");
-    return static_cast<UI08>(secs.size());
+    return static_cast<std::uint8_t>(secs.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -47,8 +47,8 @@ UI08 CCommands::NumArguments(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs argument argNum and converts it to an integer
 // o------------------------------------------------------------------------------------------------o
-SI32 CCommands::Argument(UI08 argNum) {
-    SI32 retVal = 0;
+std::int32_t CCommands::Argument(std::uint8_t argNum) {
+    std::int32_t retVal = 0;
     std::string tempString = CommandString(argNum + 1, argNum + 1);
     if (!tempString.empty()) {
         try {
@@ -69,7 +69,7 @@ SI32 CCommands::Argument(UI08 argNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
 // o------------------------------------------------------------------------------------------------o
-std::string CCommands::CommandString(UI08 section, UI08 end) {
+std::string CCommands::CommandString(std::uint8_t section, std::uint8_t end) {
     std::string retString;
     if (end != 0) {
         retString = oldstrutil::extractSection(commandString, " ", section - 1, end - 1);
@@ -172,9 +172,9 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             break;
         case CMD_TARGETXYZ:
             if (NumArguments() == 4) {
-                s->ClickX(static_cast<SI16>(Argument(1)));
-                s->ClickY(static_cast<SI16>(Argument(2)));
-                s->ClickZ(static_cast<SI08>(Argument(3)));
+                s->ClickX(static_cast<std::int16_t>(Argument(1)));
+                s->ClickY(static_cast<std::int16_t>(Argument(2)));
+                s->ClickZ(static_cast<std::int8_t>(Argument(3)));
                 s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
             }
             else {
@@ -205,7 +205,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         COMMANDMAP_ITERATOR toFind = CommandMap.find(command);
         if (toFind == CommandMap.end()) {
             bool cmdHandled = false;
-            std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -272,7 +272,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
 //|	Purpose		-	Load the command table
 // o------------------------------------------------------------------------------------------------o
 void CCommands::Load(void) {
-    SI16 commandCount = 0;
+    std::int16_t commandCount = 0;
     CScriptSection *commands = FileLookup->FindEntry("COMMAND_OVERRIDE", command_def);
     if (commands == nullptr) {
         InitClearance();
@@ -294,10 +294,10 @@ void CCommands::Load(void) {
         else {
             ++commandCount;
             if (toFind != CommandMap.end()) {
-                toFind->second.cmdLevelReq = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                toFind->second.cmdLevelReq = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
             else if (findTarg != TargetMap.end()) {
-                findTarg->second.cmdLevelReq = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                findTarg->second.cmdLevelReq = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
         }
         // check for commands here
@@ -327,7 +327,7 @@ void CCommands::Load(void) {
             clearance.push_back(new CommandLevel_st);
             clearance[currentWorking]->name = tag;
             clearance[currentWorking]->commandLevel =
-                static_cast<UI08>(std::stoul(data, nullptr, 0));
+                static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
         }
         std::vector<CommandLevel_st *>::const_iterator cIter;
         for (cIter = clearance.begin(); cIter != clearance.end(); ++cIter) {
@@ -340,23 +340,23 @@ void CCommands::Load(void) {
                         data = sec->data;
                         UTag = util::upper(tag);
                         if (UTag == "NICKCOLOUR") {
-                            ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                            ourClear->nickColour = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "TITLE") {
                             ourClear->title = data;
                         }
                         else if (UTag == "DEFAULTPRIV") {
-                            ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                            ourClear->defaultPriv = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "BODYID") {
-                            ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                            ourClear->targBody = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "ALLSKILL") {
                             ourClear->allSkillVals =
-                                static_cast<UI16>(std::stoul(data, nullptr, 0));
+                                static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "BODYCOLOUR") {
-                            ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                            ourClear->bodyColour = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "STRIPHAIR") {
                             ourClear->stripOff.set(BIT_STRIPHAIR, true);
@@ -440,7 +440,7 @@ CommandLevel_st *CCommands::GetClearance(std::string clearName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a players nick color based on his command level
 // o------------------------------------------------------------------------------------------------o
-UI16 CCommands::GetColourByLevel(UI08 commandLevel) {
+std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return 0x005A;
@@ -520,7 +520,7 @@ void CCommands::InitClearance(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Geta characters command level
 // o------------------------------------------------------------------------------------------------o
-CommandLevel_st *CCommands::GetClearance(UI08 commandLevel) {
+CommandLevel_st *CCommands::GetClearance(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return nullptr;

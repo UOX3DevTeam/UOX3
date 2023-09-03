@@ -32,22 +32,22 @@
 #include "osunique.hpp"
 #include "utility/strutil.hpp"
 
-const UI16 DEFMULTI_MAXLOCKDOWNS = 256;
-const UI16 DEFMULTI_MAXSECURECONTAINERS = 4;
-const UI16 DEFMULTI_MAXFRIENDS = 50;
-const UI16 DEFMULTI_MAXGUESTS = 50;
-const UI16 DEFMULTI_MAXOWNERS = 8;
-const UI16 DEFMULTI_MAXBANS = 50;
-const UI16 DEFMULTI_MAXVENDORS = 10;
-const UI16 DEFMULTI_MAXTRASHCONTAINERS = 1;
-const UI16 DEFMULTI_BANX = 0;
-const UI16 DEFMULTI_BANY = 0;
+const std::uint16_t DEFMULTI_MAXLOCKDOWNS = 256;
+const std::uint16_t DEFMULTI_MAXSECURECONTAINERS = 4;
+const std::uint16_t DEFMULTI_MAXFRIENDS = 50;
+const std::uint16_t DEFMULTI_MAXGUESTS = 50;
+const std::uint16_t DEFMULTI_MAXOWNERS = 8;
+const std::uint16_t DEFMULTI_MAXBANS = 50;
+const std::uint16_t DEFMULTI_MAXVENDORS = 10;
+const std::uint16_t DEFMULTI_MAXTRASHCONTAINERS = 1;
+const std::uint16_t DEFMULTI_BANX = 0;
+const std::uint16_t DEFMULTI_BANY = 0;
 const time_t DEFMULTI_TRADETIMESTAMP = static_cast<time_t>(-1);
 
-const UI08 HOUSEPRIV_OWNER = 0;
-const UI08 HOUSEPRIV_BANNED = 1;
-const UI08 HOUSEPRIV_FRIEND = 2;
-const UI08 HOUSEPRIV_GUEST = 3;
+const std::uint8_t HOUSEPRIV_OWNER = 0;
+const std::uint8_t HOUSEPRIV_BANNED = 1;
+const std::uint8_t HOUSEPRIV_FRIEND = 2;
+const std::uint8_t HOUSEPRIV_GUEST = 3;
 
 CMultiObj::CMultiObj()
     : CItem(), deed(""), maxLockdowns(DEFMULTI_MAXLOCKDOWNS),
@@ -80,7 +80,7 @@ void CMultiObj::AddToBanList(CChar *toBan) {
 //|	Purpose		-	Removes a character from a ban list
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveFromBanList(CChar *toRemove) {
-    std::map<CChar *, UI08>::iterator rIter = housePrivList.find(toRemove);
+    std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.find(toRemove);
     if (rIter != housePrivList.end()) {
         if (rIter->second == HOUSEPRIV_BANNED) {
             housePrivList.erase(rIter);
@@ -117,7 +117,7 @@ void CMultiObj::AddAsOwner(CChar *newOwner) { housePrivList[newOwner] = HOUSEPRI
 //|	Purpose		-	Removes a character from the owner's list
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveAsOwner(CChar *toRemove) {
-    std::map<CChar *, UI08>::iterator rIter = housePrivList.find(toRemove);
+    std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.find(toRemove);
     if (rIter != housePrivList.end()) {
         if (rIter->second == HOUSEPRIV_OWNER) {
             housePrivList.erase(rIter);
@@ -155,7 +155,7 @@ void CMultiObj::AddAsFriend(CChar *newFriend) { housePrivList[newFriend] = HOUSE
 //|	Purpose		-	Removes a character from the friend list
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveAsFriend(CChar *toRemove) {
-    std::map<CChar *, UI08>::iterator rIter = housePrivList.find(toRemove);
+    std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.find(toRemove);
     if (rIter != housePrivList.end()) {
         if (rIter->second == HOUSEPRIV_FRIEND) {
             housePrivList.erase(rIter);
@@ -190,7 +190,7 @@ void CMultiObj::AddAsGuest(CChar *newGuest) { housePrivList[newGuest] = HOUSEPRI
 //|	Purpose		-	Removes a character from the guest list
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveAsGuest(CChar *toRemove) {
-    std::map<CChar *, UI08>::iterator rIter = housePrivList.find(toRemove);
+    std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.find(toRemove);
     if (rIter != housePrivList.end()) {
         if (rIter->second == HOUSEPRIV_GUEST) {
             housePrivList.erase(rIter);
@@ -219,7 +219,7 @@ void CMultiObj::ClearGuestList(void) {
 //|	Purpose		-	Returns true if a character is on the ban list
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::IsOnBanList(CChar *toBan) const {
-    std::map<CChar *, UI08>::const_iterator bIter = housePrivList.find(toBan);
+    std::map<CChar *, std::uint8_t>::const_iterator bIter = housePrivList.find(toBan);
     if (bIter != housePrivList.end()) {
         if (bIter->second == HOUSEPRIV_BANNED)
             return true;
@@ -233,7 +233,7 @@ bool CMultiObj::IsOnBanList(CChar *toBan) const {
 //|	Purpose		-	Returns true if a character is on the friend list
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::IsOnFriendList(CChar *toCheck) const {
-    std::map<CChar *, UI08>::const_iterator bIter = housePrivList.find(toCheck);
+    std::map<CChar *, std::uint8_t>::const_iterator bIter = housePrivList.find(toCheck);
     if (bIter != housePrivList.end()) {
         if (bIter->second == HOUSEPRIV_FRIEND)
             return true;
@@ -247,7 +247,7 @@ bool CMultiObj::IsOnFriendList(CChar *toCheck) const {
 //|	Purpose		-	Returns true if a character is on the guest list
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::IsOnGuestList(CChar *toCheck) const {
-    std::map<CChar *, UI08>::const_iterator bIter = housePrivList.find(toCheck);
+    std::map<CChar *, std::uint8_t>::const_iterator bIter = housePrivList.find(toCheck);
     if (bIter != housePrivList.end()) {
         if (bIter->second == HOUSEPRIV_GUEST)
             return true;
@@ -261,7 +261,7 @@ bool CMultiObj::IsOnGuestList(CChar *toCheck) const {
 //|	Purpose		-	Returns true if the character is the owner or a co-owner
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::IsOnOwnerList(CChar *toFind) const {
-    std::map<CChar *, UI08>::const_iterator oIter = housePrivList.find(toFind);
+    std::map<CChar *, std::uint8_t>::const_iterator oIter = housePrivList.find(toFind);
     if (oIter != housePrivList.end()) {
         if (oIter->second == HOUSEPRIV_OWNER)
             return true;
@@ -276,8 +276,8 @@ bool CMultiObj::IsOnOwnerList(CChar *toFind) const {
 // that co-owns house
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::CheckForAccountCoOwnership(CChar *mChar) const {
-    UI16 accountNum = mChar->GetAccountNum();
-    std::map<CChar *, UI08>::const_iterator oIter;
+    std::uint16_t accountNum = mChar->GetAccountNum();
+    std::map<CChar *, std::uint8_t>::const_iterator oIter;
     for (oIter = housePrivList.begin(); oIter != housePrivList.end(); ++oIter) {
         if (ValidateObject(oIter->first)) {
             // Check if account number of character in list matches our player's account number, and
@@ -353,7 +353,7 @@ size_t CMultiObj::GetLockdownCount(void) const { return lockedList.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible lockdowns
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxLockdowns(void) const { return maxLockdowns; }
+std::uint16_t CMultiObj::GetMaxLockdowns(void) const { return maxLockdowns; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetTrashContainerCount()
@@ -367,7 +367,7 @@ size_t CMultiObj::GetTrashContainerCount(void) const { return trashContainerList
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible trash containers
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxTrashContainers(void) const { return maxTrashContainers; }
+std::uint16_t CMultiObj::GetMaxTrashContainers(void) const { return maxTrashContainers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetVendorCount()
@@ -381,16 +381,16 @@ size_t CMultiObj::GetVendorCount(void) const { return vendorList.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a player vendor from the multi
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxVendors(void) const { return maxVendors; }
+std::uint16_t CMultiObj::GetMaxVendors(void) const { return maxVendors; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetFriendCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of friends of multi
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetFriendCount(void) {
-    UI16 friendCount = 0;
-    for (std::map<CChar *, UI08>::iterator rIter = housePrivList.begin();
+std::uint16_t CMultiObj::GetFriendCount(void) {
+    std::uint16_t friendCount = 0;
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_FRIEND) {
             friendCount++;
@@ -404,16 +404,16 @@ UI16 CMultiObj::GetFriendCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of friends multi can have
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxFriends(void) const { return maxFriends; }
+std::uint16_t CMultiObj::GetMaxFriends(void) const { return maxFriends; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetGuestCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of guests of multi
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetGuestCount(void) {
-    UI16 guestCount = 0;
-    for (std::map<CChar *, UI08>::iterator rIter = housePrivList.begin();
+std::uint16_t CMultiObj::GetGuestCount(void) {
+    std::uint16_t guestCount = 0;
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_GUEST) {
             guestCount++;
@@ -427,16 +427,16 @@ UI16 CMultiObj::GetGuestCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of guests multi can have
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxGuests(void) const { return maxGuests; }
+std::uint16_t CMultiObj::GetMaxGuests(void) const { return maxGuests; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetBanCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of banned players of multi
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetBanCount(void) {
-    UI16 banCount = 0;
-    for (std::map<CChar *, UI08>::iterator rIter = housePrivList.begin();
+std::uint16_t CMultiObj::GetBanCount(void) {
+    std::uint16_t banCount = 0;
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_BANNED) {
             banCount++;
@@ -450,16 +450,16 @@ UI16 CMultiObj::GetBanCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of banned players multi can have
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxBans(void) const { return maxBans; }
+std::uint16_t CMultiObj::GetMaxBans(void) const { return maxBans; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetOwnerCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of co-owners of multi
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetOwnerCount(void) {
-    UI16 ownerCount = 0;
-    for (std::map<CChar *, UI08>::iterator rIter = housePrivList.begin();
+std::uint16_t CMultiObj::GetOwnerCount(void) {
+    std::uint16_t ownerCount = 0;
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_OWNER) {
             // Don't count primary house owner as co-owner
@@ -476,7 +476,7 @@ UI16 CMultiObj::GetOwnerCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of co-owners multi can have
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxOwners(void) const { return maxOwners; }
+std::uint16_t CMultiObj::GetMaxOwners(void) const { return maxOwners; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::LockDownItem()
@@ -638,7 +638,7 @@ size_t CMultiObj::GetSecureContainerCount(void) const { return secureContainerLi
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible secure containers for a house
 // o------------------------------------------------------------------------------------------------o
-UI16 CMultiObj::GetMaxSecureContainers(void) const { return maxSecureContainers; }
+std::uint16_t CMultiObj::GetMaxSecureContainers(void) const { return maxSecureContainers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::IsSecureContainer()
@@ -737,56 +737,56 @@ bool CMultiObj::LoadRemnants(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of lockdowns possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxLockdowns(UI16 newValue) { maxLockdowns = newValue; }
+void CMultiObj::SetMaxLockdowns(std::uint16_t newValue) { maxLockdowns = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxTrashContainers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of trash containers possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxTrashContainers(UI16 newValue) { maxTrashContainers = newValue; }
+void CMultiObj::SetMaxTrashContainers(std::uint16_t newValue) { maxTrashContainers = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxVendors()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of player vendors possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxVendors(UI16 newValue) { maxVendors = newValue; }
+void CMultiObj::SetMaxVendors(std::uint16_t newValue) { maxVendors = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxSecureContainers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of secure containers possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxSecureContainers(UI16 newValue) { maxSecureContainers = newValue; }
+void CMultiObj::SetMaxSecureContainers(std::uint16_t newValue) { maxSecureContainers = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxBans()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of banned players possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxBans(UI16 newValue) { maxBans = newValue; }
+void CMultiObj::SetMaxBans(std::uint16_t newValue) { maxBans = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxFriends()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of friends possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxFriends(UI16 newValue) { maxFriends = newValue; }
+void CMultiObj::SetMaxFriends(std::uint16_t newValue) { maxFriends = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxGuests()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of guests possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxGuests(UI16 newValue) { maxGuests = newValue; }
+void CMultiObj::SetMaxGuests(std::uint16_t newValue) { maxGuests = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::SetMaxOwners()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the maximum number of co-owners possible
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::SetMaxOwners(UI16 newValue) { maxOwners = newValue; }
+void CMultiObj::SetMaxOwners(std::uint16_t newValue) { maxOwners = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::DumpHeader()
@@ -814,7 +814,7 @@ bool CMultiObj::DumpBody(std::ostream &outStream) const {
 
     // Decimal / String Values
     outStream << std::dec;
-    std::map<CChar *, UI08>::const_iterator oIter;
+    std::map<CChar *, std::uint8_t>::const_iterator oIter;
     for (oIter = housePrivList.begin(); oIter != housePrivList.end(); ++oIter) {
         if (ValidateObject(oIter->first)) {
             if (oIter->second == HOUSEPRIV_OWNER) {
@@ -888,7 +888,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'B':
             if (UTag == "BANNED") {
                 CChar *bList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(bList)) {
                     AddToBanList(bList);
                 }
@@ -896,7 +896,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "BUILDTIME") {
                 time_t buildTime =
-                    static_cast<UI64>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint64_t>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
                 if (buildTime > 0) {
                     SetBuildTimestamp(buildTime);
                 }
@@ -907,7 +907,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
             if (UTag == "COOWNER") // Legacy tag for loading older data
             {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddAsOwner(cList);
                 }
@@ -923,7 +923,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'F':
             if (UTag == "FRIEND") {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddAsFriend(cList);
                 }
@@ -933,7 +933,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'G':
             if (UTag == "GUEST") {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddAsGuest(cList);
                 }
@@ -942,7 +942,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
             break;
         case 'I':
             if (UTag == "ISPUBLIC") {
-                SetPublicStatus(static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")),
+                SetPublicStatus(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
                                                              nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -950,7 +950,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'L':
             if (UTag == "LOCKEDITEM") {
                 CItem *iList = CalcItemObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(iList)) {
                     LockDownItem(iList);
                 }
@@ -960,44 +960,44 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'M':
             if (UTag == "MAXBANS") {
                 maxBans =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXFRIENDS") {
                 maxFriends =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXGUESTS") {
                 maxGuests =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXLOCKDOWNS" || UTag == "MAXLOCKEDDOWN") {
                 maxLockdowns =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXOWNERS") {
                 maxOwners =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXSECURECONTAINERS") {
                 maxSecureContainers =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "MAXVENDORS") {
                 maxVendors =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             break;
         case 'O':
             if (UTag == "OWNER") {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddAsOwner(cList);
                 }
@@ -1007,7 +1007,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'S':
             if (UTag == "SECURECONTAINER") {
                 CItem *iList = CalcItemObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(iList)) {
                     SecureContainer(iList);
                 }
@@ -1017,7 +1017,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'T':
             if (UTag == "TRADETIME") {
                 time_t tradeTime =
-                    static_cast<UI64>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint64_t>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
                 if (tradeTime > 0) {
                     SetTradeTimestamp(tradeTime);
                 }
@@ -1027,7 +1027,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         case 'V':
             if (UTag == "VENDOR") {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddVendor(cList);
                 }
@@ -1121,16 +1121,16 @@ bool CMultiObj::CanBeObjType(ObjectType toCompare) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the X offset for multi's ban location
 // o------------------------------------------------------------------------------------------------o
-SI16 CMultiObj::GetBanX(void) const { return banX; }
-void CMultiObj::SetBanX(SI16 newValue) { banX = newValue; }
+std::int16_t CMultiObj::GetBanX(void) const { return banX; }
+void CMultiObj::SetBanX(std::int16_t newValue) { banX = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetBanY()
 //|					CMultiObj::SetBanY()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Y offset for multi's ban location
 // o------------------------------------------------------------------------------------------------o
-SI16 CMultiObj::GetBanY(void) const { return banY; }
-void CMultiObj::SetBanY(SI16 newValue) { banY = newValue; }
+std::int16_t CMultiObj::GetBanY(void) const { return banY; }
+void CMultiObj::SetBanY(std::int16_t newValue) { banY = newValue; }
 
 GenericList<CChar *> *CMultiObj::GetOwnersOfMultiList(bool clearList) {
     if (clearList) {
@@ -1217,7 +1217,7 @@ GenericList<CItem *> *CMultiObj::GetItemsInMultiList(void) { return &itemInMulti
 
 const SERIAL DEFBOAT_TILLER = INVALIDSERIAL;
 const SERIAL DEFBOAT_HOLD = INVALIDSERIAL;
-const SI08 DEFBOAT_MOVETYPE = 0;
+const std::int8_t DEFBOAT_MOVETYPE = 0;
 const TIMERVAL DEFBOAT_MOVETIME = 0;
 
 CBoatObj::CBoatObj()
@@ -1281,22 +1281,22 @@ bool CBoatObj::HandleLine(std::string &UTag, std::string &data) {
         case 'H':
             if (UTag == "HOLD") {
                 SetHold(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'P':
             if (UTag == "PLANKS") {
-                SetPlank(0, static_cast<UI32>(
+                SetPlank(0, static_cast<std::uint32_t>(
                                 std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetPlank(1, static_cast<UI32>(
+                SetPlank(1, static_cast<std::uint32_t>(
                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'T':
             if (UTag == "TILLER") {
-                SetTiller(util::ston<UI32>(data));
+                SetTiller(util::ston<std::uint32_t>(data));
                 rValue = true;
             }
             break;
@@ -1322,14 +1322,14 @@ void CBoatObj::SetTiller(SERIAL newVal) { tiller = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Plank item reference
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBoatObj::GetPlank(UI08 plankNum) const {
+SERIAL CBoatObj::GetPlank(std::uint8_t plankNum) const {
     SERIAL rValue = INVALIDSERIAL;
     if (plankNum < 2) {
         rValue = planks[plankNum];
     }
     return rValue;
 }
-void CBoatObj::SetPlank(UI08 plankNum, SERIAL newVal) {
+void CBoatObj::SetPlank(std::uint8_t plankNum, SERIAL newVal) {
     if (plankNum < 2) {
         planks[plankNum] = newVal;
     }
@@ -1352,8 +1352,8 @@ void CBoatObj::SetHold(SERIAL newVal) { hold = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's movement type. See BoatMoveType enum for full list
 // o------------------------------------------------------------------------------------------------o
-SI08 CBoatObj::GetMoveType(void) const { return moveType; }
-void CBoatObj::SetMoveType(SI08 newVal) { moveType = newVal; }
+std::int8_t CBoatObj::GetMoveType(void) const { return moveType; }
+void CBoatObj::SetMoveType(std::int8_t newVal) { moveType = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::GetMoveTime()

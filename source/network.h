@@ -483,21 +483,21 @@ class ByteBuffer_t {
 
 class socket_error : public std::runtime_error {
   private:
-    UI32 errorNum;
+    std::uint32_t errorNum;
 
   public:
     socket_error(const std::string &what_arg);
-    socket_error(const UI32 errorNumber);
+    socket_error(const std::uint32_t errorNumber);
     socket_error(void);
-    UI32 ErrorNumber(void) const;
+    std::uint32_t ErrorNumber(void) const;
     const char *what(void) const throw();
 };
 
 class CPUOXBuffer {
   private:
-    std::vector<UI08> packedBuffer;
+    std::vector<std::uint8_t> packedBuffer;
     bool isPacked;
-    UI32 packedLength;
+    std::uint32_t packedLength;
 
   protected:
     ByteBuffer_t pStream;
@@ -510,12 +510,12 @@ class CPUOXBuffer {
     CPUOXBuffer(CPUOXBuffer *initBuffer);
     CPUOXBuffer &operator=(CPUOXBuffer &copyFrom);
 
-    UI32 Pack(void);
+    std::uint32_t Pack(void);
     virtual bool ClientCanReceive(CSocket *mSock);
     ByteBuffer_t &GetPacketStream(void);
 
-    UI32 PackedLength(void) const;
-    const UI08 *PackedPointer(void) const;
+    std::uint32_t PackedLength(void) const;
+    const std::uint8_t *PackedPointer(void) const;
 
     virtual void Log(std::ostream &outStream, bool fullHeader = true);
 };
@@ -563,7 +563,7 @@ class CNetworkStuff {
     void LoginDisconnect(UOXSOCKET s);
     void LoginDisconnect(CSocket *s);
 
-    void RegisterPacket(UI08 packet, UI08 subCmd, UI16 scriptId);
+    void RegisterPacket(std::uint8_t packet, std::uint8_t subCmd, std::uint16_t scriptId);
 
     // We don't want to do this, but given we have outside classes
     // we can either friend a lot of things, or just put it out here
@@ -572,8 +572,8 @@ class CNetworkStuff {
 
   private:
     struct FirewallEntry_st {
-        SI16 b[4];
-        FirewallEntry_st(SI16 p1, SI16 p2, SI16 p3, SI16 p4) {
+        std::int16_t b[4];
+        FirewallEntry_st(std::int16_t p1, std::int16_t p2, std::int16_t p3, std::int16_t p4) {
             b[0] = p1;
             b[1] = p2;
             b[2] = p3;
@@ -581,7 +581,7 @@ class CNetworkStuff {
         }
     };
 
-    std::map<UI16, UI16> packetOverloads;
+    std::map<std::uint16_t, std::uint16_t> packetOverloads;
     std::vector<FirewallEntry_st> slEntries;
     SOCKET a_socket;
 
@@ -598,7 +598,7 @@ class CNetworkStuff {
     void CheckConn(void);
     void LogOut(CSocket *s);
 
-    bool IsFirewallBlocked(UI08 part[4]);
+    bool IsFirewallBlocked(std::uint8_t part[4]);
 };
 
 extern CNetworkStuff *Network;

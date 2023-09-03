@@ -10,18 +10,18 @@ cDice::cDice() : dice(1), sides(1), addition(0) {}
 
 cDice::cDice(const std::string &dieString) { convStringToDice(dieString); }
 
-cDice::cDice(SI32 d, SI32 s, SI32 a) : dice(d), sides(s), addition(a) {}
+cDice::cDice(std::int32_t d, std::int32_t s, std::int32_t a) : dice(d), sides(s), addition(a) {}
 
 cDice::~cDice() {}
 
-void cDice::SetDice(SI32 newDice) { dice = newDice; }
+void cDice::SetDice(std::int32_t newDice) { dice = newDice; }
 
-void cDice::SetSides(SI32 newSides) { sides = newSides; }
+void cDice::SetSides(std::int32_t newSides) { sides = newSides; }
 
-void cDice::SetAddition(SI32 newAddition) { addition = newAddition; }
-SI32 cDice::RollDice(void) {
-    SI32 sum = 0;
-    for (SI32 rolls = 0; rolls < dice; ++rolls) {
+void cDice::SetAddition(std::int32_t newAddition) { addition = newAddition; }
+std::int32_t cDice::RollDice(void) {
+    std::int32_t sum = 0;
+    for (std::int32_t rolls = 0; rolls < dice; ++rolls) {
         sum += RandomNum(1, sides);
     }
     sum += addition;
@@ -48,7 +48,7 @@ bool cDice::convStringToDice(std::string dieString) {
         return false;
     }
 
-    auto const parsed_value = [&](SI32 position, SI32 count, SI32 value = 0) -> SI32 {
+    auto const parsed_value = [&](std::int32_t position, std::int32_t count, std::int32_t value = 0) -> std::int32_t {
         try {
             return std::stoi(dieString.substr(position, count));
         } catch (...) {
@@ -61,7 +61,7 @@ bool cDice::convStringToDice(std::string dieString) {
     if (is_to_parse_size) {
         auto const position = std::size_t{0};
         auto const count = d_position;
-        dice = parsed_value(position, static_cast<SI32>(count), 1);
+        dice = parsed_value(position, static_cast<std::int32_t>(count), 1);
     }
 
     auto const is_to_parse_sides = bool{plus_position > d_position + 1};
@@ -69,7 +69,7 @@ bool cDice::convStringToDice(std::string dieString) {
     if (is_to_parse_sides) {
         auto const position = d_position + 1;
         auto const count = plus_position - position;
-        sides = parsed_value(static_cast<SI32>(position), static_cast<SI32>(count), 1);
+        sides = parsed_value(static_cast<std::int32_t>(position), static_cast<std::int32_t>(count), 1);
     }
 
     auto const is_to_parse_plus = bool{dieString.size() > plus_position + 1};
@@ -77,7 +77,7 @@ bool cDice::convStringToDice(std::string dieString) {
     if (is_to_parse_plus) {
         auto const position = plus_position + 1;
         auto const count = dieString.size() - position;
-        addition = parsed_value(static_cast<SI32>(position), static_cast<SI32>(count));
+        addition = parsed_value(static_cast<std::int32_t>(position), static_cast<std::int32_t>(count));
     }
 
     return true;

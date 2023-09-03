@@ -117,8 +117,8 @@ const MagicTable_st magic_table[] = {{593, (MAGIC_DEFN)&splClumsy},
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and
 // another at trgX / trgY / trgZ
 // o------------------------------------------------------------------------------------------------o
-void SpawnGate(CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY,
-               SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId) {
+void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY,
+               std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId) {
     CItem *g1 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, OT_ITEM);
     if (ValidateObject(g1)) {
         g1->SetDecayable(true);
@@ -150,8 +150,8 @@ void SpawnGate(CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI
 //|	Purpose		-	Creates rows of items for field spells like firewalls, wall of
 // stone, etc
 // o------------------------------------------------------------------------------------------------o
-bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum) {
-    SI16 fx[5], fy[5];
+bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t fieldDir, std::int8_t spellNum) {
+    std::int16_t fx[5], fy[5];
     if (fieldDir) {
         fx[0] = fx[1] = fx[2] = fx[3] = fx[4] = x;
         fy[0] = y - 1;
@@ -169,9 +169,9 @@ bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, S
         fx[4] = x;
     }
     CItem *i = nullptr;
-    UI08 worldNumber = caster->WorldNumber();
-    UI16 instanceId = caster->GetInstanceId();
-    for (UI08 j = 0; j < 5; ++j) // how about we make this 5, huh?  missing part of the field
+    std::uint8_t worldNumber = caster->WorldNumber();
+    std::uint16_t instanceId = caster->GetInstanceId();
+    for (std::uint8_t j = 0; j < 5; ++j) // how about we make this 5, huh?  missing part of the field
     {
         if (id != 0x0080 ||
             (id == 0x0080 && !Movement->CheckForCharacterAtXYZ(caster, fx[j], fy[j], z))) {
@@ -186,7 +186,7 @@ bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, S
                 // If Poison Field, use average of caster's Magery and Poisoning skills
                 if (spellNum == 39) // Poison Field
                 {
-                    i->SetTempVar(CITV_MOREX, static_cast<UI16>((caster->GetSkill(MAGERY) +
+                    i->SetTempVar(CITV_MOREX, static_cast<std::uint16_t>((caster->GetSkill(MAGERY) +
                                                                  caster->GetSkill(POISONING)) /
                                                                 2));
                 }
@@ -216,27 +216,27 @@ bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, S
 }
 
 bool splClumsy([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-               [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     // This spell is now handled in JS/MAGIC/level1targ.js
     return false;
 }
 bool splCreateFood([[maybe_unused]] CSocket *sock, [[maybe_unused]] CChar *caster,
-                   [[maybe_unused]] SI08 curSpell) {
+                   [[maybe_unused]] std::int8_t curSpell) {
     // This spell is now handled in JS/MAGIC/createfood.js
     return false;
 }
 bool splFeeblemind([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-                   [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+                   [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     // This spell is now handled in JS/MAGIC/level1targ.js
     return false;
 }
 bool splHeal([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-             [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+             [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     // This spell is now handled in JS/MAGIC/level1targ.js
     return false;
 }
 bool splMagicArrow([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-                   [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+                   [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     // This spell is now handled in JS/MAGIC/level1targ.js
     return false;
 }
@@ -246,7 +246,7 @@ bool splMagicArrow([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *targe
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Night Sight spell
 // o------------------------------------------------------------------------------------------------o
-bool splNightSight(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splNightSight(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 2, 0, 0, 0);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -259,7 +259,7 @@ bool splNightSight(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Reactive Armor spell
 // o------------------------------------------------------------------------------------------------o
-bool splReactiveArmor(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splReactiveArmor(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 15, caster->GetSkill(MAGERY) / 100, 0, 0);
     target->SetReactiveArmour(true);
     return true;
@@ -270,7 +270,7 @@ bool splReactiveArmor(CChar *caster, CChar *target, CChar *src, [[maybe_unused]]
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Weaken spell
 // o------------------------------------------------------------------------------------------------o
-bool splWeaken(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splWeaken(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 5, caster->GetSkill(MAGERY) / 100, 0, 0);
     return true;
 }
@@ -280,7 +280,7 @@ bool splWeaken(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 c
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Agility spell
 // o------------------------------------------------------------------------------------------------o
-bool splAgility(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splAgility(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 6, caster->GetSkill(MAGERY) / 100, 0, 0);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -293,7 +293,7 @@ bool splAgility(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Cunning spell
 // o------------------------------------------------------------------------------------------------o
-bool splCunning(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splCunning(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 7, caster->GetSkill(MAGERY) / 100, 0, 0);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -307,7 +307,7 @@ bool splCunning(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 
 //|	Purpose		-	Applies effects of Cure spell
 // o------------------------------------------------------------------------------------------------o
 bool splCure(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-             [[maybe_unused]] SI08 curSpell) {
+             [[maybe_unused]] std::int8_t curSpell) {
     target->SetPoisoned(0);
     target->SetTimer(tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime());
     if (target->IsMurderer()) {
@@ -321,8 +321,8 @@ bool splCure(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Harm spell
 // o------------------------------------------------------------------------------------------------o
-bool splHarm(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splHarm(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -337,7 +337,7 @@ bool splHarm(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Trap spell
 // o------------------------------------------------------------------------------------------------o
-bool splMagicTrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell) {
+bool splMagicTrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsContType() && target->GetId() != 0x0E75) {
         target->SetTempVar(CITV_MOREZ, CalcSerial(1, caster->GetSkill(MAGERY) / 200,
                                                   caster->GetSkill(MAGERY) / 100, 0));
@@ -361,7 +361,7 @@ bool splMagicTrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Untrap spell
 // o------------------------------------------------------------------------------------------------o
-bool splMagicUntrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell) {
+bool splMagicUntrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsContType()) {
         if (target->GetTempVar(CITV_MOREZ, 1) == 1) {
             if (RandomNum(1, 100) <=
@@ -396,7 +396,7 @@ bool splMagicUntrap(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Protection spell
 // o------------------------------------------------------------------------------------------------o
-bool splProtection(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splProtection(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 21, caster->GetSkill(MAGERY) / 10, 0, 0);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -409,7 +409,7 @@ bool splProtection(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Strength spell
 // o------------------------------------------------------------------------------------------------o
-bool splStrength(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
+bool splStrength(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     Effects->TempEffect(src, target, 8, caster->GetSkill(MAGERY) / 100, 0, 0);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -422,8 +422,8 @@ bool splStrength(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Bless spell
 // o------------------------------------------------------------------------------------------------o
-bool splBless(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell) {
-    SI32 j = caster->GetSkill(MAGERY) / 100;
+bool splBless(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::int8_t curSpell) {
+    std::int32_t j = caster->GetSkill(MAGERY) / 100;
     Effects->TempEffect(src, target, 11, j, j, j);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -436,8 +436,8 @@ bool splBless(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 cu
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Fireball spell
 // o------------------------------------------------------------------------------------------------o
-bool splFireball(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splFireball(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -452,7 +452,7 @@ bool splFireball(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Lock spell
 // o------------------------------------------------------------------------------------------------o
-bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell) {
+bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     ItemTypes type = target->GetType();
     if ((type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT) &&
         (target->GetId(1) != 0x0E || target->GetId(2) != 0x75)) {
@@ -479,11 +479,11 @@ bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
         }
 
         // Mark lock as magically locked
-        target->SetTempVar(CITV_MOREY, 2, static_cast<UI08>(0x01));
+        target->SetTempVar(CITV_MOREY, 2, static_cast<std::uint8_t>(0x01));
 
         // Store min/max skill to unlock with magery based on player's magery skill
-        target->SetTempVar(CITV_MOREY, 3, static_cast<UI08>((caster->GetSkill(MAGERY) / 10) / 2));
-        target->SetTempVar(CITV_MOREY, 4, static_cast<UI08>(caster->GetSkill(MAGERY) / 10));
+        target->SetTempVar(CITV_MOREY, 3, static_cast<std::uint8_t>((caster->GetSkill(MAGERY) / 10) / 2));
+        target->SetTempVar(CITV_MOREY, 4, static_cast<std::uint8_t>(caster->GetSkill(MAGERY) / 10));
 
         target->RemoveFromSight();
         target->Update();
@@ -507,7 +507,7 @@ bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
 
         // Make it an effect that expires in between 7 to 50 seconds, depending on caster's Magery
         // skill
-        auto magicLockDuration = static_cast<UI16>(floor(caster->GetSkill(MAGERY) / 100) +
+        auto magicLockDuration = static_cast<std::uint16_t>(floor(caster->GetSkill(MAGERY) / 100) +
                                                    floor(caster->GetSkill(MAGERY) / 25));
         Effects->TempEffect(caster, target, 50, magicLockDuration, 0, 0);
     }
@@ -522,17 +522,17 @@ bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate strength of magic poison based on caster and target
 // o------------------------------------------------------------------------------------------------o
-UI08 CalculateMagicPoisonStrength(CChar *caster, CChar *target, UI16 skillVal, bool checkDistance,
-                                  UI08 spellCircle) {
+std::uint8_t CalculateMagicPoisonStrength(CChar *caster, CChar *target, std::uint16_t skillVal, bool checkDistance,
+                                  std::uint8_t spellCircle) {
     // Default to Lesser Poison if caster is further than 2 tiles away from target
-    UI08 poisonStrength = 1;
+    std::uint8_t poisonStrength = 1;
 
     // Check if caster is within 2 tiles of target
     if (!checkDistance || GetDist(caster, target) <= 2) {
         // Calculate poison strength based on average of caster's Magery and Poisoning skills
         if (skillVal == 0) {
             skillVal =
-                static_cast<UI16>((caster->GetSkill(MAGERY) + caster->GetSkill(POISONING)) / 2);
+                static_cast<std::uint16_t>((caster->GetSkill(MAGERY) + caster->GetSkill(POISONING)) / 2);
         }
         if (skillVal >= 1000) // GM in both skills
         {
@@ -569,10 +569,10 @@ UI08 CalculateMagicPoisonStrength(CChar *caster, CChar *target, UI16 skillVal, b
 //|	Purpose		-	Applies effects of Poison spell
 // o------------------------------------------------------------------------------------------------o
 bool splPoison(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-               [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] std::int8_t curSpell) {
     // Calculate poison strength of spell based on caster's skills, range to target and whether
     // target resists
-    UI08 poisonStrength = CalculateMagicPoisonStrength(caster, target, 0, true, 3);
+    std::uint8_t poisonStrength = CalculateMagicPoisonStrength(caster, target, 0, true, 3);
 
     // Apply poison on target
     target->SetPoisoned(poisonStrength);
@@ -596,7 +596,7 @@ bool splPoison(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Telekinesis spell
 // o------------------------------------------------------------------------------------------------o
-bool splTelekinesis(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell) {
+bool splTelekinesis(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsContType()) {
         if (target->GetTempVar(CITV_MOREZ, 1) == 1) {
             target->SetTempVar(CITV_MOREZ, 1, 0);
@@ -627,8 +627,8 @@ bool splTelekinesis(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Teleport spell
 // o------------------------------------------------------------------------------------------------o
-bool splTeleport(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
-                 [[maybe_unused]] SI08 curSpell) {
+bool splTeleport(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std::int8_t z,
+                 [[maybe_unused]] std::int8_t curSpell) {
     CMultiObj *m = FindMulti(x, y, z, caster->WorldNumber(), caster->GetInstanceId());
     if (ValidateObject(m) && m->GetOwnerObj() != caster && !caster->IsNpc()) {
         sock->SysMessage(670); // You can't teleport here!
@@ -648,7 +648,7 @@ bool splTeleport(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
     }
     if (Weight->IsOverloaded(caster)) {
         if (caster->GetMana() >= 20) {
-            caster->SetMana(static_cast<SI16>(caster->GetMana() - 20));
+            caster->SetMana(static_cast<std::int16_t>(caster->GetMana() - 20));
         }
         else {
             sock->SysMessage(1386); // You are overloaded! You can't hold all this weight.
@@ -670,7 +670,7 @@ bool splTeleport(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Unlock spell
 // o------------------------------------------------------------------------------------------------o
-bool splUnlock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell) {
+bool splUnlock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsDivineLocked()) {
         sock->SysMessage(
             673); // This item has been protected with divine magic.  You cannot unlock this item.
@@ -794,8 +794,8 @@ bool splUnlock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI0
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Wall of Stone spell
 // o------------------------------------------------------------------------------------------------o
-bool splWallOfStone([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y,
-                    SI08 z, SI08 curSpell) {
+bool splWallOfStone([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fieldDir, std::int16_t x, std::int16_t y,
+                    std::int8_t z, std::int8_t curSpell) {
     return FieldSpell(caster, 0x0080, x, y, z, fieldDir, curSpell);
 }
 
@@ -804,8 +804,8 @@ bool splWallOfStone([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Arch Cure spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void ArchCureStub([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
-                  [[maybe_unused]] SI08 targCount) {
+void ArchCureStub([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] std::int8_t curSpell,
+                  [[maybe_unused]] std::int8_t targCount) {
     target->SetPoisoned(0);
     target->SetTimer(tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime());
 }
@@ -816,7 +816,7 @@ void ArchCureStub([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]
 //|	Purpose		-	Casts Arch Cure as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splArchCure(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                 [[maybe_unused]] CChar *src, SI08 curSpell) {
+                 [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &ArchCureStub, curSpell);
     return true;
 }
@@ -826,8 +826,8 @@ bool splArchCure(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Arch Protection spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void ArchProtectionStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
-                        [[maybe_unused]] SI08 targCount) {
+void ArchProtectionStub(CChar *caster, CChar *target, [[maybe_unused]] std::int8_t curSpell,
+                        [[maybe_unused]] std::int8_t targCount) {
     Magic->PlaySound(target, 26);
     Magic->DoStaticEffect(target, 15); // protection
     Effects->TempEffect(caster, target, 21, caster->GetSkill(MAGERY) / 10, 0, 0);
@@ -839,7 +839,7 @@ void ArchProtectionStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curS
 //|	Purpose		-	Casts Arch Protection as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splArchProtection(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                       [[maybe_unused]] CChar *src, SI08 curSpell) {
+                       [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &ArchProtectionStub, curSpell);
     return true;
 }
@@ -850,8 +850,8 @@ bool splArchProtection(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *tar
 //|	Purpose		-	Applies effects of Curse spell
 // o------------------------------------------------------------------------------------------------o
 bool splCurse(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-              [[maybe_unused]] SI08 curSpell) {
-    SI32 j = caster->GetSkill(MAGERY) / 100;
+              [[maybe_unused]] std::int8_t curSpell) {
+    std::int32_t j = caster->GetSkill(MAGERY) / 100;
     Effects->TempEffect(caster, target, 12, j, j, j);
     return true;
 }
@@ -861,8 +861,8 @@ bool splCurse(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Fire Field as a field spell
 // o------------------------------------------------------------------------------------------------o
-bool splFireField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y,
-                  SI08 z, SI08 curSpell) {
+bool splFireField([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fieldDir, std::int16_t x, std::int16_t y,
+                  std::int8_t z, std::int8_t curSpell) {
     if (fieldDir == 0) {
         return FieldSpell(caster, 0x398C, x, y, z, fieldDir, curSpell);
     }
@@ -876,13 +876,13 @@ bool splFireField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Greater Heal spell
 // o------------------------------------------------------------------------------------------------o
-bool splGreaterHeal(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell) {
-    SI32 srcHealth = target->GetHP();
-    SI32 baseHealing = Magic->spells[curSpell].BaseDmg();
-    SI32 j = caster->GetSkill(MAGERY) / 30 + HalfRandomNum(baseHealing);
+bool splGreaterHeal(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, std::int8_t curSpell) {
+    std::int32_t srcHealth = target->GetHP();
+    std::int32_t baseHealing = Magic->spells[curSpell].BaseDmg();
+    std::int32_t j = caster->GetSkill(MAGERY) / 30 + HalfRandomNum(baseHealing);
 
     target->Heal(j, caster);
-    Magic->SubtractHealth(caster, std::min(target->GetStrength(), static_cast<SI16>(srcHealth + j)),
+    Magic->SubtractHealth(caster, std::min(target->GetStrength(), static_cast<std::int16_t>(srcHealth + j)),
                           29);
     if (target->IsMurderer()) {
         MakeCriminal(caster);
@@ -895,8 +895,8 @@ bool splGreaterHeal(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, S
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Lightning spell
 // o------------------------------------------------------------------------------------------------o
-bool splLightning(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splLightning(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -912,7 +912,7 @@ bool splLightning(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 //|	Purpose		-	Applies effects of Mana Drain spell
 // o------------------------------------------------------------------------------------------------o
 bool splManaDrain(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-                  [[maybe_unused]] SI08 curSpell) {
+                  [[maybe_unused]] std::int8_t curSpell) {
     if (!Magic->CheckResist(caster, target, 4)) {
         target->SetMana(target->GetMana() - caster->GetSkill(MAGERY) / 35);
         if (target->GetMana() < 0) {
@@ -927,7 +927,7 @@ bool splManaDrain(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Recall spell
 // o------------------------------------------------------------------------------------------------o
-auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell) -> bool {
+auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_t curSpell) -> bool {
     // No recall if too heavy, GMs excempt
     if (Weight->IsOverloaded(caster) &&
         !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() &&
@@ -1042,15 +1042,15 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cur
             return false;
         }
         else {
-            UI08 worldNum = static_cast<UI08>(i->GetTempVar(CITV_MORE));
+            std::uint8_t worldNum = static_cast<std::uint8_t>(i->GetTempVar(CITV_MORE));
             if (!Map->MapExists(worldNum)) {
                 worldNum = caster->WorldNumber();
             }
 
-            SI16 targLocX = static_cast<SI16>(i->GetTempVar(CITV_MOREX));
-            SI16 targLocY = static_cast<SI16>(i->GetTempVar(CITV_MOREY));
-            SI08 targLocZ = static_cast<SI08>(i->GetTempVar(CITV_MOREZ));
-            UI16 instanceId = static_cast<UI16>(i->GetTempVar(CITV_MORE0));
+            std::int16_t targLocX = static_cast<std::int16_t>(i->GetTempVar(CITV_MOREX));
+            std::int16_t targLocY = static_cast<std::int16_t>(i->GetTempVar(CITV_MOREY));
+            std::int8_t targLocZ = static_cast<std::int8_t>(i->GetTempVar(CITV_MOREZ));
+            std::uint16_t instanceId = static_cast<std::uint16_t>(i->GetTempVar(CITV_MORE0));
             if (worldNum != caster->WorldNumber()) {
                 if (cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()) {
                     if (worldNum == 0 && caster->WorldNumber() != 0 &&
@@ -1114,8 +1114,8 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cur
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Blade Spirits spell (summons a Blade Spirit)
 // o------------------------------------------------------------------------------------------------o
-auto splBladeSpirits(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
-                     [[maybe_unused]] SI08 curSpell) -> bool {
+auto splBladeSpirits(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std::int8_t z,
+                     [[maybe_unused]] std::int8_t curSpell) -> bool {
     Magic->SummonMonster(sock, caster, 6, x, y, z);
     return true;
 }
@@ -1125,14 +1125,14 @@ auto splBladeSpirits(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Dispel Field spell
 // o------------------------------------------------------------------------------------------------o
-bool splDispelField(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splDispelField(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     CItem *i = CalcItemObjFromSer(sock->GetDWord(7));
     if (ValidateObject(i)) {
         if (LineOfSight(sock, caster, i->GetX(), i->GetY(), (i->GetZ() + 15),
                         WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false) ||
             caster->IsGM()) {
             if (i->IsDecayable() && i->IsDispellable()) {
-                std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+                std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
                 for (auto scriptTrig : scriptTriggers) {
                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute != nullptr) {
@@ -1158,7 +1158,7 @@ void SetRandomName(CChar *s, const std::string &namelist);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Incognito spell
 // o------------------------------------------------------------------------------------------------o
-bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->IsIncognito()) {
         sock->SysMessage(1636); // You cannot go incognito while already incognito
         return false;
@@ -1178,7 +1178,7 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
     }
     // ------ SEX ------
     caster->SetOrgId(caster->GetId());
-    UI08 randomGender = RandomNum(0, 3);
+    std::uint8_t randomGender = RandomNum(0, 3);
     switch (randomGender) {
     case 0:
         caster->SetId(0x0190);
@@ -1211,12 +1211,12 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
         break; // get a name from elf female list
     }
 
-    SI32 color = RandomNum(0x044E, 0x047D);
+    std::int32_t color = RandomNum(0x044E, 0x047D);
     CItem *j = caster->GetItemAtLayer(IL_HAIR);
     if (ValidateObject(j)) {
         caster->SetHairColour(j->GetColour());
         caster->SetHairStyle(j->GetId());
-        SI32 rNum = RandomNum(0, 9);
+        std::int32_t rNum = RandomNum(0, 9);
         switch (rNum) {
         case 0:
         case 1:
@@ -1242,7 +1242,7 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
         if (randomGender == 0 || randomGender == 2) {
             caster->SetBeardColour(j->GetColour());
             caster->SetBeardStyle(j->GetId());
-            SI32 rNum2 = RandomNum(0, 6);
+            std::int32_t rNum2 = RandomNum(0, 6);
             switch (rNum2) {
             case 0:
             case 1:
@@ -1278,7 +1278,7 @@ bool splIncognito(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
 //|	Purpose		-	Applies effects of Magic Reflection spell
 // o------------------------------------------------------------------------------------------------o
 bool splMagicReflection([[maybe_unused]] CSocket *sock, CChar *caster,
-                        [[maybe_unused]] SI08 curSpell) {
+                        [[maybe_unused]] std::int8_t curSpell) {
     caster->SetTempReflected(true);
     return true;
 }
@@ -1288,12 +1288,12 @@ bool splMagicReflection([[maybe_unused]] CSocket *sock, CChar *caster,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mind Blast spell
 // o------------------------------------------------------------------------------------------------o
-bool splMindBlast(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
-    SI16 baseDamage = 0;
+bool splMindBlast(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
+    std::int16_t baseDamage = 0;
 
-    SI16 targetStats = target->GetIntelligence() + target->GetStrength() + target->GetDexterity();
-    SI16 casterStats = caster->GetIntelligence() + caster->GetStrength() + caster->GetDexterity();
+    std::int16_t targetStats = target->GetIntelligence() + target->GetStrength() + target->GetDexterity();
+    std::int16_t casterStats = caster->GetIntelligence() + caster->GetStrength() + caster->GetDexterity();
 
     // If target's int makes out a larger percentage of the total stats than the caster's, backfire
     // spell onto caster
@@ -1310,7 +1310,7 @@ bool splMindBlast(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 
     // Damage should not exceed 60% of target maxHp
     if (spellDamage > (target->GetMaxHP() * 0.6)) {
-        spellDamage = static_cast<SI16>(RoundNumber(target->GetMaxHP() * 0.6));
+        spellDamage = static_cast<std::int16_t>(RoundNumber(target->GetMaxHP() * 0.6));
     }
 
     // Damage should not exceed basedamage from DFN + 20%
@@ -1328,7 +1328,7 @@ bool splMindBlast(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 //|	Purpose		-	Applies effects of Paralyze spell
 // o------------------------------------------------------------------------------------------------o
 bool splParalyze(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-                 [[maybe_unused]] SI08 curSpell) {
+                 [[maybe_unused]] std::int8_t curSpell) {
     if (!Magic->CheckResist(caster, target, 7)) {
         Effects->TempEffect(caster, target, 1, 0, 0, 0);
     }
@@ -1340,8 +1340,8 @@ bool splParalyze(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Poison Field as a field spell
 // o------------------------------------------------------------------------------------------------o
-bool splPoisonField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y,
-                    SI08 z, SI08 curSpell) {
+bool splPoisonField([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fieldDir, std::int16_t x, std::int16_t y,
+                    std::int8_t z, std::int8_t curSpell) {
     if (fieldDir == 0) {
         return FieldSpell(caster, 0x3915, x, y, z, fieldDir, curSpell);
     }
@@ -1355,8 +1355,8 @@ bool splPoisonField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Creature spell (summons a creature)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonCreature(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
-                       [[maybe_unused]] SI08 curSpell) {
+bool splSummonCreature(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std::int8_t z,
+                       [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 380) {
         return false;
     }
@@ -1372,12 +1372,12 @@ bool splSummonCreature(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
 //|	Purpose		-	Applies effects of Dispel spell
 // o------------------------------------------------------------------------------------------------o
 bool splDispel(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-               [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsDispellable() && !target->IsGM()) {
         // Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics
         // here?
         if (target->IsNpc()) {
-            std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = target->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -1389,8 +1389,8 @@ bool splDispel(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 
             // Base chance of dispelling on Dispel caster's Magery skill vs summoner's
             // magicresistance
-            UI16 casterMagery = caster->GetSkill(MAGERY);
-            UI16 targetResist = 0;
+            std::uint16_t casterMagery = caster->GetSkill(MAGERY);
+            std::uint16_t targetResist = 0;
             targetResist = target->GetSkill(MAGICRESISTANCE);
 
             // If creature was summoned, use highest of creature's resist and summoner's resist
@@ -1399,9 +1399,9 @@ bool splDispel(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
                     std::max(targetResist, target->GetOwnerObj()->GetSkill(MAGICRESISTANCE));
             }
 
-            UI16 dispelChance = std::max(
-                static_cast<UI16>(950),
-                (static_cast<UI16>(std::max(
+            std::uint16_t dispelChance = std::max(
+                static_cast<std::uint16_t>(950),
+                (static_cast<std::uint16_t>(std::max(
                     0.0, static_cast<double>(std::ceil(
                              static_cast<double>(500 - (targetResist - casterMagery)) / 1.5))))));
             if (dispelChance > RandomNum(0, 1000)) {
@@ -1437,8 +1437,8 @@ bool splDispel(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Energy Bolt spell
 // o------------------------------------------------------------------------------------------------o
-bool splEnergyBolt(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splEnergyBolt(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -1453,8 +1453,8 @@ bool splEnergyBolt(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Explosion spell. Delay configurable in UOX.INI
 // o------------------------------------------------------------------------------------------------o
-bool splExplosion(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splExplosion(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -1470,7 +1470,7 @@ bool splExplosion(CChar *caster, CChar *target, CChar *src, SI08 curSpell) {
 //|	Purpose		-	Applies effects of Invisibility spell
 // o------------------------------------------------------------------------------------------------o
 bool splInvisibility(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-                     [[maybe_unused]] SI08 curSpell) {
+                     [[maybe_unused]] std::int8_t curSpell) {
     target->SetVisible(VT_INVISIBLE);
     target->SetTimer(tCHAR_INVIS,
                      cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_INVISIBILITY));
@@ -1494,7 +1494,7 @@ bool splInvisibility(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 //|	Changes		-	09/22/2002	-	Fixed marking of locked down runes..
 //|									(shouldn't be possible)
 // o------------------------------------------------------------------------------------------------o
-bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell) {
+bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_t curSpell) {
     if (i->IsLockedDown()) {
         sock->SysMessage(774); // That is locked down and you cannot use it.
         return false;
@@ -1522,7 +1522,7 @@ bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSp
             TAGMAPOBJECT tagObject;
             tagObject.m_Destroy = false;
             tagObject.m_StringValue = std::to_string(mSerial);
-            tagObject.m_IntValue = static_cast<SI32>(tagObject.m_StringValue.size());
+            tagObject.m_IntValue = static_cast<std::int32_t>(tagObject.m_StringValue.size());
             tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
             i->SetTag("multiSerial", tagObject);
             markedInMulti = true;
@@ -1568,8 +1568,8 @@ bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSp
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mass Curse spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void MassCurseStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
-                   [[maybe_unused]] SI08 targCount) {
+void MassCurseStub(CChar *caster, CChar *target, [[maybe_unused]] std::int8_t curSpell,
+                   [[maybe_unused]] std::int8_t targCount) {
     if (target->IsNpc() && target->GetNpcAiType() == AI_PLAYERVENDOR)
         return; // Player Vendors can't be killed
 
@@ -1603,7 +1603,7 @@ void MassCurseStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
         }
     }
 
-    SI32 j;
+    std::int32_t j;
     if (target->IsNpc()) {
         Combat->AttackTarget(caster, target);
     }
@@ -1624,7 +1624,7 @@ void MassCurseStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
 //|	Purpose		-	Casts Mass Curse as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splMassCurse(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                  [[maybe_unused]] CChar *src, SI08 curSpell) {
+                  [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &MassCurseStub, curSpell);
     return true;
 }
@@ -1634,8 +1634,8 @@ bool splMassCurse(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Paralyze Field as a field spell
 // o------------------------------------------------------------------------------------------------o
-bool splParalyzeField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y,
-                      SI08 z, SI08 curSpell) {
+bool splParalyzeField([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fieldDir, std::int16_t x, std::int16_t y,
+                      std::int8_t z, std::int8_t curSpell) {
     if (fieldDir == 0) {
         return FieldSpell(caster, 0x3967, x, y, z, fieldDir, curSpell);
     }
@@ -1649,13 +1649,13 @@ bool splParalyzeField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldD
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Reveal spell
 // o------------------------------------------------------------------------------------------------o
-auto splReveal(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell)
+auto splReveal(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std::int8_t z, [[maybe_unused]] std::int8_t curSpell)
     -> bool {
     if (LineOfSight(sock, caster, x, y, (z + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING,
                     false) ||
         caster->IsGM()) {
-        UI16 j = caster->GetSkill(MAGERY);
-        SI32 revealRange = (((j - 261) * (15)) / 739) + 5;
+        std::uint16_t j = caster->GetSkill(MAGERY);
+        std::int32_t revealRange = (((j - 261) * (15)) / 739) + 5;
         // If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), revealRange  radius is
         // 5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), revealRange is 20
 
@@ -1700,7 +1700,7 @@ auto splReveal(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unu
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Chain Lightning spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void ChainLightningStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCount) {
+void ChainLightningStub(CChar *caster, CChar *target, std::int8_t curSpell, std::int8_t targCount) {
     if (target->IsNpc() && target->GetNpcAiType() == AI_PLAYERVENDOR)
         return; // Player Vendors can't be killed
 
@@ -1746,7 +1746,7 @@ void ChainLightningStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCo
         def = target;
     }
 
-    SI16 spellDamage = 0;
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -1766,7 +1766,7 @@ void ChainLightningStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCo
 //|	Purpose		-	Casts Chain Lightning as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splChainLightning(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                       [[maybe_unused]] CChar *src, SI08 curSpell) {
+                       [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &ChainLightningStub, curSpell);
     return true;
 }
@@ -1776,8 +1776,8 @@ bool splChainLightning(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *tar
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Energy Field spell as a field spell
 // o------------------------------------------------------------------------------------------------o
-bool splEnergyField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y,
-                    SI08 z, SI08 curSpell) {
+bool splEnergyField([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t fieldDir, std::int16_t x, std::int16_t y,
+                    std::int8_t z, std::int8_t curSpell) {
     if (fieldDir == 0) {
         return FieldSpell(caster, 0x3946, x, y, z, fieldDir, curSpell);
     }
@@ -1791,8 +1791,8 @@ bool splEnergyField([[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Flame Strike spell on target
 // o------------------------------------------------------------------------------------------------o
-bool splFlameStrike(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell) {
-    SI16 spellDamage = 0;
+bool splFlameStrike(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, std::int8_t curSpell) {
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -1807,7 +1807,7 @@ bool splFlameStrike(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, S
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Gate Travel spell (opens gate from recall rune)
 // o------------------------------------------------------------------------------------------------o
-bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell) {
+bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_t curSpell) {
     // No recall if too heavy, GM's excempt
     if (Weight->IsOverloaded(caster) &&
         !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() &&
@@ -1860,7 +1860,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08
             return false;
         }
         else {
-            UI08 worldNum = static_cast<UI08>(i->GetTempVar(CITV_MORE));
+            std::uint8_t worldNum = static_cast<std::uint8_t>(i->GetTempVar(CITV_MORE));
             if (!Map->MapExists(worldNum)) {
                 worldNum = caster->WorldNumber();
             }
@@ -1879,10 +1879,10 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08
                 return false;
             }
 
-            SI16 targLocX = static_cast<SI16>(i->GetTempVar(CITV_MOREX));
-            SI16 targLocY = static_cast<SI16>(i->GetTempVar(CITV_MOREY));
-            SI08 targLocZ = static_cast<SI08>(i->GetTempVar(CITV_MOREZ));
-            UI16 instanceId = static_cast<UI16>(i->GetTempVar(CITV_MORE0));
+            std::int16_t targLocX = static_cast<std::int16_t>(i->GetTempVar(CITV_MOREX));
+            std::int16_t targLocY = static_cast<std::int16_t>(i->GetTempVar(CITV_MOREY));
+            std::int8_t targLocZ = static_cast<std::int8_t>(i->GetTempVar(CITV_MOREZ));
+            std::uint16_t instanceId = static_cast<std::uint16_t>(i->GetTempVar(CITV_MORE0));
             SpawnGate(caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(),
                       caster->WorldNumber(), targLocX, targLocY, targLocZ, worldNum, instanceId);
             return true;
@@ -1896,7 +1896,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08
 //|	Purpose		-	Applies effects of Mana Vampire spell to target
 // o------------------------------------------------------------------------------------------------o
 bool splManaVampire(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-                    [[maybe_unused]] SI08 curSpell) {
+                    [[maybe_unused]] std::int8_t curSpell) {
     if (!Magic->CheckResist(caster, target, 7)) {
         if (target->GetMana() < 40) {
             caster->SetMana(caster->GetMana() + target->GetMana());
@@ -1915,13 +1915,13 @@ bool splManaVampire(CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mass Dispel spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell,
-                    [[maybe_unused]] SI08 targCount) {
+void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] std::int8_t curSpell,
+                    [[maybe_unused]] std::int8_t targCount) {
     if (target->IsDispellable()) {
         // Effects->PlayStaticAnimation( target, 0x372A, 0x09, 0x06 );		// why the specifics
         // here?
         if (target->IsNpc()) {
-            std::vector<UI16> scriptTriggers = target->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = target->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -1933,8 +1933,8 @@ void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell
 
             // Base chance of dispelling on Dispel caster's Magery skill vs summoner's
             // magicresistance
-            UI16 casterMagery = caster->GetSkill(MAGERY);
-            UI16 targetResist = 0;
+            std::uint16_t casterMagery = caster->GetSkill(MAGERY);
+            std::uint16_t targetResist = 0;
             targetResist = target->GetSkill(MAGICRESISTANCE);
 
             // If creature was summoned, use highest of creature's resist and summoner's resist
@@ -1943,9 +1943,9 @@ void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell
                     std::max(targetResist, target->GetOwnerObj()->GetSkill(MAGICRESISTANCE));
             }
 
-            UI16 dispelChance = static_cast<UI16>(std::max(
-                static_cast<UI16>(950),
-                static_cast<UI16>(std::ceil((500 - (targetResist - casterMagery)) / 1.5))));
+            std::uint16_t dispelChance = static_cast<std::uint16_t>(std::max(
+                static_cast<std::uint16_t>(950),
+                static_cast<std::uint16_t>(std::ceil((500 - (targetResist - casterMagery)) / 1.5))));
             if (dispelChance > RandomNum(0, 1000)) {
                 // Dispel succeeded!
                 if (Magic->spells[41].Effect() != INVALIDID) {
@@ -1979,7 +1979,7 @@ void MassDispelStub(CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell
 //|	Purpose		-	Casts Mass Dispel spell as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splMassDispel(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                   [[maybe_unused]] CChar *src, SI08 curSpell) {
+                   [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &MassDispelStub, curSpell);
     return true;
 }
@@ -1989,7 +1989,7 @@ bool splMassDispel(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Meteor Swarm spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void MeteorSwarmStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCount) {
+void MeteorSwarmStub(CChar *caster, CChar *target, std::int8_t curSpell, std::int8_t targCount) {
     if (target->IsNpc() && target->GetNpcAiType() == AI_PLAYERVENDOR)
         return; // Player Vendors can't be killed
 
@@ -2027,7 +2027,7 @@ void MeteorSwarmStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
         Combat->AttackTarget(target, caster);
     }
 
-    SI16 spellDamage = 0;
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -2047,12 +2047,12 @@ void MeteorSwarmStub(CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 //|	Purpose		-	Provides shared functionality for all area affect spells
 // o------------------------------------------------------------------------------------------------o
 auto AreaAffectSpell(CSocket *sock, CChar *caster, void (*trgFunc)(MAGIC_AREA_STUB_LIST),
-                     SI08 curSpell) -> bool {
-    SI16 x1, x2, y1, y2;
-    SI08 z1, z2;
+                     std::int8_t curSpell) -> bool {
+    std::int16_t x1, x2, y1, y2;
+    std::int8_t z1, z2;
     x1 = x2 = y1 = y2 = z1 = z2 = 0;
-    SI08 targCount = 0;
-    UI16 i;
+    std::int8_t targCount = 0;
+    std::uint16_t i;
     std::vector<CChar *> targetList;
 
     Magic->BoxSpell(sock, caster, x1, x2, y1, y2, z1, z2);
@@ -2086,7 +2086,7 @@ auto AreaAffectSpell(CSocket *sock, CChar *caster, void (*trgFunc)(MAGIC_AREA_ST
     }
 
     // Iterate through list of valid targets, do damage
-    targCount = static_cast<SI08>(targetList.size());
+    targCount = static_cast<std::int8_t>(targetList.size());
     for (i = 0; i < targetList.size(); ++i) {
         trgFunc(caster, targetList[i], curSpell, targCount);
     }
@@ -2100,7 +2100,7 @@ auto AreaAffectSpell(CSocket *sock, CChar *caster, void (*trgFunc)(MAGIC_AREA_ST
 //|	Purpose		-	Casts Meteor Swarm spell as an area affect spell
 // o------------------------------------------------------------------------------------------------o
 bool splMeteorSwarm(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target,
-                    [[maybe_unused]] CChar *src, SI08 curSpell) {
+                    [[maybe_unused]] CChar *src, std::int8_t curSpell) {
     AreaAffectSpell(sock, caster, &MeteorSwarmStub, curSpell);
     return true;
 }
@@ -2110,7 +2110,7 @@ bool splMeteorSwarm(CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Polymorph spell
 // o------------------------------------------------------------------------------------------------o
-bool splPolymorph(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splPolymorph(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->IsPolymorphed()) {
         sock->SysMessage(1637); // You cannot polymorph while already in another form
     }
@@ -2137,7 +2137,7 @@ bool splPolymorph(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Earthquake spell to an individual target
 // o------------------------------------------------------------------------------------------------o
-void EarthquakeStub(CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused]] SI08 targCount) {
+void EarthquakeStub(CChar *caster, CChar *target, std::int8_t curSpell, [[maybe_unused]] std::int8_t targCount) {
     // Check if target is in a safe zone, or invulnerable
     if (target->GetRegion()->IsSafeZone() || target->IsInvulnerable()) {
         // Target is in a safe zone, or invulnerable ignore spell effect
@@ -2171,12 +2171,12 @@ void EarthquakeStub(CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused]
         }
     }
 
-    SI32 distx = abs(target->GetX() - caster->GetX());
-    SI32 disty = abs(target->GetY() - caster->GetY());
-    SI32 dmgmod = std::min(distx, disty);
+    std::int32_t distx = abs(target->GetX() - caster->GetX());
+    std::int32_t disty = abs(target->GetY() - caster->GetY());
+    std::int32_t dmgmod = std::min(distx, disty);
     dmgmod = -(dmgmod - 7);
 
-    SI16 spellDamage = 0;
+    std::int16_t spellDamage = 0;
     bool spellResisted = Magic->CheckResist(caster, target, Magic->spells[curSpell].Circle());
 
     spellDamage = Magic->spells[curSpell].BaseDmg();
@@ -2235,7 +2235,7 @@ void EarthquakeStub(CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused]
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Earthquake spell as an area affect spell
 // o------------------------------------------------------------------------------------------------o
-bool splEarthquake(CSocket *sock, CChar *caster, SI08 curSpell) {
+bool splEarthquake(CSocket *sock, CChar *caster, std::int8_t curSpell) {
     MakeCriminal(caster);
     if (sock != nullptr) {
         sock->SetWord(11, caster->GetX());
@@ -2251,8 +2251,8 @@ bool splEarthquake(CSocket *sock, CChar *caster, SI08 curSpell) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Energy Vortex spell (summons an Energy Vortex)
 // o------------------------------------------------------------------------------------------------o
-bool splEnergyVortex(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
-                     [[maybe_unused]] SI08 curSpell) {
+bool splEnergyVortex(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std::int8_t z,
+                     [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2266,7 +2266,7 @@ bool splEnergyVortex(CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z,
 //|	Purpose		-	Applies effects of Resurrection spell to a target
 // o------------------------------------------------------------------------------------------------o
 bool splResurrection([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] CChar *src,
-                     [[maybe_unused]] SI08 curSpell) {
+                     [[maybe_unused]] std::int8_t curSpell) {
     if (target->IsDead()) {
         NpcResurrectTarget(target);
         return true;
@@ -2280,7 +2280,7 @@ bool splResurrection([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unus
 //|	Purpose		-	Applies effects of Summon Air Elemental spell (Summons Air
 // Elemental)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonAir(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splSummonAir(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2293,7 +2293,7 @@ bool splSummonAir(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Daemon spell (Summons Daemon)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonDaemon(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splSummonDaemon(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2307,7 +2307,7 @@ bool splSummonDaemon(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpel
 //|	Purpose		-	Applies effects of Summon Earth Elemental spell (Summons Earth
 // Elemental)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonEarth(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splSummonEarth(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2321,7 +2321,7 @@ bool splSummonEarth(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell
 //|	Purpose		-	Applies effects of Summon Fire Elemental spell (Summons Fire
 // Elemental)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonFire(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splSummonFire(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2335,7 +2335,7 @@ bool splSummonFire(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell)
 //|	Purpose		-	Applies effects of Summon Water Elemental spell (Summons Water
 // Elemental)
 // o------------------------------------------------------------------------------------------------o
-bool splSummonWater(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splSummonWater(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2348,7 +2348,7 @@ bool splSummonWater(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Monster spell (Summons random monster)
 // o------------------------------------------------------------------------------------------------o
-bool splRandom(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splRandom(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     if (caster->GetSkill(MAGERY) <= 800)
         return false;
 
@@ -2362,7 +2362,7 @@ bool splRandom(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
 bool splNecro1([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-               [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     return true;
 }
 
@@ -2371,7 +2371,7 @@ bool splNecro1([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effect of Necromantic summon spell (summons monster)
 // o------------------------------------------------------------------------------------------------o
-bool splNecro2(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
+bool splNecro2(CSocket *sock, CChar *caster, [[maybe_unused]] std::int8_t curSpell) {
     Magic->SummonMonster(sock, caster, 9, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ());
     return true;
 }
@@ -2382,7 +2382,7 @@ bool splNecro2(CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell) {
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
 bool splNecro3([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-               [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     return true;
 }
 
@@ -2392,7 +2392,7 @@ bool splNecro3([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
 bool splNecro4([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-               [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     return true;
 }
 
@@ -2402,7 +2402,7 @@ bool splNecro4([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
 bool splNecro5([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
-               [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell) {
+               [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     return true;
 }
 
@@ -2411,12 +2411,12 @@ bool splNecro5([[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a diamond
 // o------------------------------------------------------------------------------------------------o
-bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
-                  UI08 length) {
-    SI32 j;
-    SI16 fx[5], fy[5];
-    SI16 yOffset = length;
-    SI16 xOffset = length;
+bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z,
+                  std::uint8_t length) {
+    std::int32_t j;
+    std::int16_t fx[5], fy[5];
+    std::int16_t yOffset = length;
+    std::int16_t xOffset = length;
 
     fx[0] = -xOffset;
     fy[0] = 0;
@@ -2428,8 +2428,8 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x
     fy[3] = 0;
 
     CItem *i = nullptr;
-    UI08 worldNumber = caster->WorldNumber();
-    UI16 instanceId = caster->GetInstanceId();
+    std::uint8_t worldNumber = caster->WorldNumber();
+    std::uint16_t instanceId = caster->GetInstanceId();
     for (j = 0; j < 4; ++j) // Draw the corners of our diamond
     {
         i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
@@ -2447,8 +2447,8 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x
         }
     }
     for (j = -1; j < 2; j = j + 2) {
-        for (SI08 counter2 = -1; counter2 < 2; counter2 += 2) {
-            for (SI32 counter3 = 1; counter3 < yOffset; ++counter3) {
+        for (std::int8_t counter2 = -1; counter2 < 2; counter2 += 2) {
+            for (std::int32_t counter3 = 1; counter3 < yOffset; ++counter3) {
                 i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
                 if (i != nullptr) {
                     i->SetDispellable(true);
@@ -2459,8 +2459,8 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x
                         CITV_MOREX,
                         caster->GetSkill(MAGERY)); // remember casters magery skill for damage
                     i->SetTempVar(CITV_MOREY, caster->GetSerial());
-                    const SI16 newX = x + counter2 * counter3;
-                    const SI16 newY = y + j * (yOffset - counter3);
+                    const std::int16_t newX = x + counter2 * counter3;
+                    const std::int16_t newY = y + j * (yOffset - counter3);
                     i->SetLocation(newX, newY, Map->Height(newX, newY, z, worldNumber, instanceId));
                     i->SetDir(29);
                     i->SetMovable(2);
@@ -2476,11 +2476,11 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a square
 // o------------------------------------------------------------------------------------------------o
-bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
-                 UI08 length) {
-    SI16 fx[5], fy[5];
-    SI16 yOffset = length;
-    SI16 xOffset = length;
+bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z,
+                 std::uint8_t length) {
+    std::int16_t fx[5], fy[5];
+    std::int16_t yOffset = length;
+    std::int16_t xOffset = length;
 
     fx[0] = -xOffset;
     fy[0] = xOffset;
@@ -2492,11 +2492,11 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x,
     fy[3] = yOffset;
 
     CItem *i = nullptr;
-    UI08 worldNumber = caster->WorldNumber();
-    UI16 instanceId = caster->GetInstanceId();
-    for (UI08 j = 0; j < 4; ++j) // Draw the corners of our diamond
+    std::uint8_t worldNumber = caster->WorldNumber();
+    std::uint16_t instanceId = caster->GetInstanceId();
+    for (std::uint8_t j = 0; j < 4; ++j) // Draw the corners of our diamond
     {
-        for (SI32 counter = fx[j]; counter < fy[j]; ++counter) {
+        for (std::int32_t counter = fx[j]; counter < fy[j]; ++counter) {
             i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
@@ -2532,20 +2532,20 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a filled square
 // o------------------------------------------------------------------------------------------------o
-bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
-                UI08 length) {
-    SI16 yOffset = length;
-    SI16 xOffset = length;
+bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z,
+                std::uint8_t length) {
+    std::int16_t yOffset = length;
+    std::int16_t xOffset = length;
 
-    SI16 maxX = x + xOffset;
-    SI16 maxY = y + yOffset;
-    SI16 minX = x - xOffset;
-    SI16 minY = y - yOffset;
+    std::int16_t maxX = x + xOffset;
+    std::int16_t maxY = y + yOffset;
+    std::int16_t minX = x - xOffset;
+    std::int16_t minY = y - yOffset;
 
-    UI08 worldNumber = caster->WorldNumber();
-    UI16 instanceId = caster->GetInstanceId();
-    for (SI32 counter1 = minX; counter1 <= maxX; ++counter1) {
-        for (SI32 counter2 = minY; counter2 <= maxY; ++counter2) {
+    std::uint8_t worldNumber = caster->WorldNumber();
+    std::uint16_t instanceId = caster->GetInstanceId();
+    for (std::int32_t counter1 = minX; counter1 <= maxX; ++counter1) {
+        for (std::int32_t counter2 = minY; counter2 <= maxY; ++counter2) {
             CItem *i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
@@ -2589,16 +2589,16 @@ CMagic::~CMagic() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if given spellbook contains specific spell
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::HasSpell(CItem *book, SI32 spellNum) {
+bool CMagic::HasSpell(CItem *book, std::int32_t spellNum) {
     if (!ValidateObject(book))
         return false;
 
-    UI32 wordNum = spellNum / 32;
-    UI32 bitNum = (spellNum % 32);
-    UI32 flagToCheck = power(2, bitNum);
-    UI32 sourceAmount = 0;
+    std::uint32_t wordNum = spellNum / 32;
+    std::uint32_t bitNum = (spellNum % 32);
+    std::uint32_t flagToCheck = power(2, bitNum);
+    std::uint32_t sourceAmount = 0;
     if (wordNum < 3) {
-        sourceAmount = book->GetSpell(static_cast<UI08>(wordNum));
+        sourceAmount = book->GetSpell(static_cast<std::uint8_t>(wordNum));
     }
     return ((sourceAmount & flagToCheck) == flagToCheck);
 }
@@ -2608,8 +2608,8 @@ bool CMagic::HasSpell(CItem *book, SI32 spellNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds specific spell to given spellbook
 // o------------------------------------------------------------------------------------------------o
-void CMagic::AddSpell(CItem *book, SI32 spellNum) {
-    std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+void CMagic::AddSpell(CItem *book, std::int32_t spellNum) {
+    std::vector<std::uint16_t> scriptTriggers = book->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2623,13 +2623,13 @@ void CMagic::AddSpell(CItem *book, SI32 spellNum) {
     if (!ValidateObject(book))
         return;
 
-    UI32 wordNum = spellNum / 32;
+    std::uint32_t wordNum = spellNum / 32;
     if (wordNum < 3) {
-        UI32 bitNum = (spellNum % 32);
-        UI32 flagToSet = power(2, bitNum);
-        UI32 targAmount;
-        targAmount = (book->GetSpell(static_cast<UI08>(wordNum)) | flagToSet);
-        book->SetSpell(static_cast<UI08>(wordNum), targAmount);
+        std::uint32_t bitNum = (spellNum % 32);
+        std::uint32_t flagToSet = power(2, bitNum);
+        std::uint32_t targAmount;
+        targAmount = (book->GetSpell(static_cast<std::uint8_t>(wordNum)) | flagToSet);
+        book->SetSpell(static_cast<std::uint8_t>(wordNum), targAmount);
     }
 }
 
@@ -2638,8 +2638,8 @@ void CMagic::AddSpell(CItem *book, SI32 spellNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specific spell from given spellbook
 // o------------------------------------------------------------------------------------------------o
-void CMagic::RemoveSpell(CItem *book, SI32 spellNum) {
-    std::vector<UI16> scriptTriggers = book->GetScriptTriggers();
+void CMagic::RemoveSpell(CItem *book, std::int32_t spellNum) {
+    std::vector<std::uint16_t> scriptTriggers = book->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2653,15 +2653,15 @@ void CMagic::RemoveSpell(CItem *book, SI32 spellNum) {
     if (!ValidateObject(book))
         return;
 
-    UI32 wordNum = spellNum / 32;
+    std::uint32_t wordNum = spellNum / 32;
     if (wordNum < 3) {
-        UI32 bitNum = (spellNum % 32);
-        UI32 flagToSet = power(2, bitNum);
-        UI32 flagMask = 0xFFFFFFFF;
-        UI32 targAmount;
+        std::uint32_t bitNum = (spellNum % 32);
+        std::uint32_t flagToSet = power(2, bitNum);
+        std::uint32_t flagMask = 0xFFFFFFFF;
+        std::uint32_t targAmount;
         flagMask ^= flagToSet;
-        targAmount = (book->GetSpell(static_cast<UI08>(wordNum)) & flagMask);
-        book->SetSpell(static_cast<UI08>(wordNum), targAmount);
+        targAmount = (book->GetSpell(static_cast<std::uint8_t>(wordNum)) & flagMask);
+        book->SetSpell(static_cast<std::uint8_t>(wordNum), targAmount);
     }
 }
 
@@ -2672,7 +2672,7 @@ void CMagic::RemoveSpell(CItem *book, SI32 spellNum) {
 // book
 // o------------------------------------------------------------------------------------------------o
 void CMagic::SpellBook(CSocket *mSock) {
-    UI08 spellsList[70];
+    std::uint8_t spellsList[70];
 
     SERIAL serial = (mSock->GetDWord(1) & 0x7FFFFFFF);
     CChar *mChar = mSock->CurrcharObj();
@@ -2713,13 +2713,13 @@ void CMagic::SpellBook(CSocket *mSock) {
         return;
     }
     else {
-        memset(spellsList, 0, sizeof(UI08) * 70);
-        for (UI08 j = 0; j < 65; ++j) {
+        memset(spellsList, 0, sizeof(std::uint8_t) * 70);
+        for (std::uint8_t j = 0; j < 65; ++j) {
             if (HasSpell(spellBook, j)) {
                 spellsList[j] = 1;
             }
         }
-        UI08 i;
+        std::uint8_t i;
         i = spellsList[0];
         spellsList[0] = spellsList[1];
         spellsList[1] = spellsList[2];
@@ -2738,7 +2738,7 @@ void CMagic::SpellBook(CSocket *mSock) {
         spellsList[64] = spellsList[65];
         spellsList[65] = 0;
 
-        UI08 scount = 0;
+        std::uint8_t scount = 0;
         for (i = 0; i < 65; ++i) {
             if (spellsList[i]) {
                 ++scount;
@@ -2750,7 +2750,7 @@ void CMagic::SpellBook(CSocket *mSock) {
                 mItems.UOKRFlag(true);
             }
             mItems.NumberOfItems(scount);
-            UI16 runningCounter = 0;
+            std::uint16_t runningCounter = 0;
             const SERIAL CONTSER = spellBook->GetSerial();
             for (i = 0; i < 65; ++i) {
                 if (spellsList[i]) {
@@ -2774,7 +2774,7 @@ auto CMagic::GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemT
         if (!mChar->IsNpc()) {
             auto otherGate = CalcItemObjFromSer(itemCheck->GetTempVar(CITV_MOREX));
             if (ValidateObject(otherGate)) {
-                SI08 dirOffset = 0;
+                std::int8_t dirOffset = 0;
                 if (mChar->GetDir() < SOUTH) {
                     dirOffset = 1;
                 }
@@ -2818,7 +2818,7 @@ auto CMagic::GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemT
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Summon a monster (dispellable with DISPEL).
 // o------------------------------------------------------------------------------------------------o
-void CMagic::SummonMonster(CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z) {
+void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z) {
     bool validSocket = (s != nullptr);
     if (validSocket) {
         caster = s->CurrcharObj();
@@ -2830,10 +2830,10 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, S
         }
     }
 
-    UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
-    UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
-    UI08 controlSlotsUsed = caster->GetControlSlotsUsed();
-    UI08 followerCount = static_cast<UI08>(caster->GetFollowerList()->Num());
+    std::uint8_t maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
+    std::uint8_t maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
+    std::uint8_t controlSlotsUsed = caster->GetControlSlotsUsed();
+    std::uint8_t followerCount = static_cast<std::uint8_t>(caster->GetFollowerList()->Num());
 
     CChar *newChar = nullptr;
 
@@ -3011,8 +3011,8 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, S
 //|	Purpose		-	Check if the spell is memorized into the spellbook.
 // o------------------------------------------------------------------------------------------------o
 
-bool CMagic::CheckBook(SI32 circle, SI32 spell, CItem *i) {
-    SI32 spellnum = spell + (circle - 1) * 8;
+bool CMagic::CheckBook(std::int32_t circle, std::int32_t spell, CItem *i) {
+    std::int32_t spellnum = spell + (circle - 1) * 8;
     return HasSpell(i, spellnum);
 }
 
@@ -3022,7 +3022,7 @@ bool CMagic::CheckBook(SI32 circle, SI32 spell, CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough mana to cast spell
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckMana(CChar *s, SI32 num) {
+bool CMagic::CheckMana(CChar *s, std::int32_t num) {
     if (!ValidateObject(s))
         return true;
 
@@ -3046,7 +3046,7 @@ bool CMagic::CheckMana(CChar *s, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough stamina to cast spell
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckStamina(CChar *s, SI32 num) {
+bool CMagic::CheckStamina(CChar *s, std::int32_t num) {
     if (!ValidateObject(s))
         return true;
 
@@ -3070,7 +3070,7 @@ bool CMagic::CheckStamina(CChar *s, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has enough health to cast spell
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckHealth(CChar *s, SI32 num) {
+bool CMagic::CheckHealth(CChar *s, std::int32_t num) {
     if (!ValidateObject(s))
         return true;
 
@@ -3099,7 +3099,7 @@ bool CMagic::CheckHealth(CChar *s, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required mana from character's mana reserve
 // o------------------------------------------------------------------------------------------------o
-void CMagic::SubtractMana(CChar *s, SI32 mana) {
+void CMagic::SubtractMana(CChar *s, std::int32_t mana) {
     if (s->NoNeedMana())
         return;
 
@@ -3114,7 +3114,7 @@ void CMagic::SubtractMana(CChar *s, SI32 mana) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required stmina from character's stamina reserve
 // o------------------------------------------------------------------------------------------------o
-void CMagic::SubtractStamina(CChar *s, SI32 stamina) {
+void CMagic::SubtractStamina(CChar *s, std::int32_t stamina) {
     if (s->NoNeedMana())
         return;
 
@@ -3129,7 +3129,7 @@ void CMagic::SubtractStamina(CChar *s, SI32 stamina) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtract the required health from character's stamina reserve
 // o------------------------------------------------------------------------------------------------o
-void CMagic::SubtractHealth(CChar *s, SI32 health, SI32 spellNum) {
+void CMagic::SubtractHealth(CChar *s, std::int32_t health, std::int32_t spellNum) {
     if (s->NoNeedMana() || spells[spellNum].Health() == 0)
         return;
 
@@ -3178,15 +3178,15 @@ bool CMagic::CheckMagicReflect(CChar *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check character's magic resistance.
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckResist(CChar *attacker, CChar *defender, SI32 circle) {
+bool CMagic::CheckResist(CChar *attacker, CChar *defender, std::int32_t circle) {
     bool i = Skills->CheckSkill(defender, MAGICRESISTANCE, 80 * circle, 800 + (80 * circle));
     CSocket *s = nullptr;
     if (ValidateObject(attacker)) {
         // Check what is higher between user's normal resistchance and a fallback value
         // To ensure user always has a chance of resisting, however small (except at resist-skill 0
         // )
-        SI16 defaultChance = defender->GetSkill(MAGICRESISTANCE) / 5;
-        SI16 resistChance = defender->GetSkill(MAGICRESISTANCE) -
+        std::int16_t defaultChance = defender->GetSkill(MAGICRESISTANCE) / 5;
+        std::int16_t resistChance = defender->GetSkill(MAGICRESISTANCE) -
                             (((attacker->GetSkill(MAGERY) - 20) / 5) + (circle * 5));
         if (defaultChance > resistChance) {
             resistChance = defaultChance;
@@ -3220,14 +3220,14 @@ bool CMagic::CheckResist(CChar *attacker, CChar *defender, SI32 circle) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check character's magic resistance.
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::CheckResist(SI16 resistDifficulty, CChar *defender, SI32 circle) {
+bool CMagic::CheckResist(std::int16_t resistDifficulty, CChar *defender, std::int32_t circle) {
     bool i = Skills->CheckSkill(defender, MAGICRESISTANCE, 80 * circle, 800 + (80 * circle));
     CSocket *s = nullptr;
 
     // Calculate chance of resisting the magic effect based on defender's magic resistance vs the
     // resistDifficulty
-    SI16 defaultChance = defender->GetSkill(MAGICRESISTANCE) / 5;
-    SI16 resistChance =
+    std::int16_t defaultChance = defender->GetSkill(MAGICRESISTANCE) / 5;
+    std::int16_t resistChance =
         defender->GetSkill(MAGICRESISTANCE) - (((resistDifficulty - 20) / 5) + (circle * 5));
 
     if (defaultChance > resistChance) {
@@ -3254,18 +3254,18 @@ bool CMagic::CheckResist(SI16 resistDifficulty, CChar *defender, SI32 circle) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate Spell Damage after skill-modifiers
 // o------------------------------------------------------------------------------------------------o
-SI16 CalcSpellDamageMod(CChar *caster, CChar *target, SI16 spellDamage, bool spellResisted) {
+std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spellDamage, bool spellResisted) {
     // Randomize in upper-half of damage range for some variety
     spellDamage = HalfRandomNum(spellDamage);
 
     // If spell was resisted, halve damage
     if (spellResisted) {
-        spellDamage = static_cast<SI16>(RoundNumber(spellDamage / 2));
+        spellDamage = static_cast<std::int16_t>(RoundNumber(spellDamage / 2));
     }
 
     // Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
-    UI16 casterEval = caster->GetSkill(EVALUATINGINTEL) / 10;
-    UI16 targetResist = target->GetSkill(MAGICRESISTANCE) / 10;
+    std::uint16_t casterEval = caster->GetSkill(EVALUATINGINTEL) / 10;
+    std::uint16_t targetResist = target->GetSkill(MAGICRESISTANCE) / 10;
     if (targetResist > casterEval) {
         spellDamage *= (static_cast<std::int16_t>(((casterEval - targetResist) / 200.0f)) + 1);
     }
@@ -3274,10 +3274,10 @@ SI16 CalcSpellDamageMod(CChar *caster, CChar *target, SI16 spellDamage, bool spe
     }
 
     // Randomize some more to get broader min/max damage values
-    SI32 i = RandomNum(0, 4);
+    std::int32_t i = RandomNum(0, 4);
     if (i <= 2) {
         spellDamage =
-            RoundNumber(RandomNum(static_cast<SI16>(HalfRandomNum(spellDamage) / 2), spellDamage));
+            RoundNumber(RandomNum(static_cast<std::int16_t>(HalfRandomNum(spellDamage) / 2), spellDamage));
     }
     else if (i == 3) {
         spellDamage = RoundNumber(HalfRandomNum(spellDamage));
@@ -3295,7 +3295,7 @@ SI16 CalcSpellDamageMod(CChar *caster, CChar *target, SI16 spellDamage, bool spe
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate and inflict magic damage.
 // o------------------------------------------------------------------------------------------------o
-void CMagic::MagicDamage(CChar *p, SI16 amount, CChar *attacker, WeatherType element) {
+void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, WeatherType element) {
     if (!ValidateObject(p))
         return;
 
@@ -3315,8 +3315,8 @@ void CMagic::MagicDamage(CChar *p, SI16 amount, CChar *attacker, WeatherType ele
     // Allow damage if target is not invulnerable or in a zone safe from aggressive magic
     if (!p->IsInvulnerable() && !p->GetRegion()->IsSafeZone() &&
         p->GetRegion()->CanCastAggressive()) {
-        UI08 hitLoc = Combat->CalculateHitLoc();
-        SI16 damage = Combat->ApplyDamageBonuses(element, attacker, p, MAGERY, hitLoc, amount);
+        std::uint8_t hitLoc = Combat->CalculateHitLoc();
+        std::int16_t damage = Combat->ApplyDamageBonuses(element, attacker, p, MAGERY, hitLoc, amount);
         damage = Combat->ApplyDefenseModifiers(element, attacker, p, MAGERY, hitLoc, damage, true);
         if (damage <= 0) {
             damage = 1;
@@ -3332,7 +3332,7 @@ void CMagic::MagicDamage(CChar *p, SI16 amount, CChar *attacker, WeatherType ele
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Apply the poison to the character.
 // o------------------------------------------------------------------------------------------------o
-void CMagic::PoisonDamage(CChar *p, SI32 poison) {
+void CMagic::PoisonDamage(CChar *p, std::int32_t poison) {
     if (p->IsFrozen()) {
         p->SetFrozen(false);
         CSocket *s = p->GetSocket();
@@ -3384,7 +3384,7 @@ auto CMagic::CheckFieldEffects(CChar &mChar) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle the effects of characters entering field spells
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, UI16 id) {
+bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id) {
     CChar *caster;
     if (id >= 0x398C && id <= 0x399F) // fire field
     {
@@ -3429,10 +3429,10 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, UI16 id) {
                             BuildTimeValue(static_cast<R32>(Magic->spells[39].DamageDelay())));
 
             // Calculate strength of poison, but disregard range check
-            UI08 poisonStrength = 1;
+            std::uint8_t poisonStrength = 1;
 
             // Fetch average skill value of poison field caster's Magery and Poisoning skills
-            UI16 skillVal = fieldItem->GetTempVar(CITV_MOREX);
+            std::uint16_t skillVal = fieldItem->GetTempVar(CITV_MOREX);
 
             // Calculate strength of poison
             poisonStrength = CalculateMagicPoisonStrength(caster, mChar, skillVal, false, 5);
@@ -3491,11 +3491,11 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, UI16 id) {
 //|	Purpose		-	Calculate the spell box effect, depending on character's magery
 // skill
 // o------------------------------------------------------------------------------------------------o
-void CMagic::BoxSpell(CSocket *s, CChar *caster, SI16 &x1, SI16 &x2, SI16 &y1, SI16 &y2, SI08 &z1,
-                      SI08 &z2) {
-    SI16 x, y;
-    SI08 z;
-    SI16 length;
+void CMagic::BoxSpell(CSocket *s, CChar *caster, std::int16_t &x1, std::int16_t &x2, std::int16_t &y1, std::int16_t &y2, std::int8_t &z1,
+                      std::int8_t &z2) {
+    std::int16_t x, y;
+    std::int8_t z;
+    std::int16_t length;
 
     if (s != nullptr) {
         x = s->GetWord(11);
@@ -3716,14 +3716,14 @@ void CMagic::SpellFail(CSocket *s) {
 //|					Perma cached
 //|					Added JS handling
 // o------------------------------------------------------------------------------------------------o
-bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
+bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     if (num < 1) {
         Console::shared().Error(
             "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!");
         return false;
     }
 
-    /*SI16 lowSkill = 0, highSkill = 0;*/
+    /*std::int16_t lowSkill = 0, highSkill = 0;*/
     CChar *mChar = mSock->CurrcharObj();
 
     cScript *jsScript = JSMapping->GetScript(spells[num].JSScript());
@@ -3771,7 +3771,7 @@ bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
         return false;
     }
 
-    SI32 type = mSock->CurrentSpellType();
+    std::int32_t type = mSock->CurrentSpellType();
     CSpellInfo curSpellCasting = spells[num];
 
     // Spell recovery time active? This timer stars as soon as targeting cursor is ready, and
@@ -3797,8 +3797,8 @@ bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
         }
     }
 
-    mChar->SetSpellCast(static_cast<SI08>(num));
-    if (num > 63 && num <= static_cast<SI32>(spellCount) && spellCount <= 70) {
+    mChar->SetSpellCast(static_cast<std::int8_t>(num));
+    if (num > 63 && num <= static_cast<std::int32_t>(spellCount) && spellCount <= 70) {
         LogSpell(Dictionary->GetEntry(magic_table[num].spell_name), mChar, nullptr, "(Attempted)");
     }
     if (mChar->IsJailed() && !mChar->IsGM()) {
@@ -3869,11 +3869,11 @@ bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
 
     //			- Delay measurement
 
-    SI16 castDelay = -2;
+    std::int16_t castDelay = -2;
 
     // If more than one script contains the onSpellCast/onScrollCast events, whichever script runs
     // last will determine the final delay value
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -3971,8 +3971,8 @@ bool CMagic::SelectSpell(CSocket *mSock, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets field direction
 // o------------------------------------------------------------------------------------------------o
-UI08 CMagic::GetFieldDir(CChar *s, SI16 x, SI16 y) {
-    UI08 fieldDir = 0;
+std::uint8_t CMagic::GetFieldDir(CChar *s, std::int16_t x, std::int16_t y) {
+    std::uint8_t fieldDir = 0;
     switch (Movement->Direction(s, x, y)) {
     case NORTH:
     case SOUTH:
@@ -4019,7 +4019,7 @@ UI08 CMagic::GetFieldDir(CChar *s, SI16 x, SI16 y) {
 // o------------------------------------------------------------------------------------------------o
 void CMagic::CastSpell(CSocket *s, CChar *caster) {
     // for LocationTarget spell like ArchCure, ArchProtection etc...
-    SI08 curSpell;
+    std::int8_t curSpell;
 
     curSpell = caster->GetSpellCast();
 
@@ -4039,7 +4039,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
 
     caster->StopSpell();
 
-    std::vector<UI16> scriptTriggers = caster->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = caster->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -4138,7 +4138,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
     }
 
     // Cut the casting requirement on scrolls
-    SI16 lowSkill = 0, highSkill = 0;
+    std::int16_t lowSkill = 0, highSkill = 0;
     if (validSocket && s->CurrentSpellType() == 1 &&
         cwmWorldState->ServerData()->CutScrollRequirementStatus()) // only if enabled
     {
@@ -4160,7 +4160,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
         return;
     }
 
-    if (curSpell > 63 && static_cast<UI32>(curSpell) <= spellCount && spellCount <= 70) {
+    if (curSpell > 63 && static_cast<std::uint32_t>(curSpell) <= spellCount && spellCount <= 70) {
         LogSpell(Dictionary->GetEntry(magic_table[curSpell].spell_name), caster, nullptr,
                  "(Succeeded)");
     }
@@ -4461,9 +4461,9 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             }
         }
         else if (spells[curSpell].RequireLocTarget()) {
-            SI16 x = 0;
-            SI16 y = 0;
-            SI08 z = 0;
+            std::int16_t x = 0;
+            std::int16_t y = 0;
+            std::int8_t z = 0;
             CBaseObject *getTarg = nullptr;
             if (!caster->IsNpc()) {
                 if (s->GetDWord(7) != INVALIDSERIAL) {
@@ -4519,10 +4519,10 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             }
 
             // Check distance to target location vs CombatMaxSpellRange
-            UI16 targDist;
+            std::uint16_t targDist;
             Point3_st targLocation = Point3_st(x, y, z);
             Point3_st difference = caster->GetLocation() - targLocation;
-            targDist = static_cast<UI16>(difference.Mag());
+            targDist = static_cast<std::uint16_t>(difference.Mag());
             if (targDist > cwmWorldState->ServerData()->CombatMaxSpellRange()) {
                 if (validSocket) {
                     s->SysMessage(393); // That is too far away.
@@ -4533,7 +4533,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             if (LineOfSight(s, caster, x, y, (z + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING,
                             false)) {
                 if (spells[curSpell].FieldSpell()) {
-                    UI08 j = GetFieldDir(caster, x, y);
+                    std::uint8_t j = GetFieldDir(caster, x, y);
                     PlaySound(src, curSpell);
                     DoStaticEffect(src, curSpell);
                     (*((MAGIC_FIELDFUNC)magic_table[curSpell - 1].mag_extra))(s, caster, j, x, y, z,
@@ -4672,7 +4672,7 @@ void CMagic::LoadScript(void) {
 
     std::string spEntry;
     std::string tag, data, UTag;
-    UI08 i = 0;
+    std::uint8_t i = 0;
     for (auto &spellScp : FileLookup->ScriptListings[spells_def]) {
         if (spellScp == nullptr)
             continue;
@@ -4683,7 +4683,7 @@ void CMagic::LoadScript(void) {
 
             auto ssecs = oldstrutil::sections(spEntry, " ");
             if (ssecs[0] == "SPELL") {
-                i = static_cast<UI08>(
+                i = static_cast<std::uint8_t>(
                     std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 if (i <= SPELL_MAX) {
                     ++spellCount;
@@ -4702,20 +4702,20 @@ void CMagic::LoadScript(void) {
                         switch ((UTag.data()[0])) {
                         case 'A':
                             if (UTag == "ACTION") {
-                                spells[i].Action(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                                spells[i].Action(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                             }
                             else if (UTag == "ASH") {
-                                mRegs->ash = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->ash = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             break;
                         case 'B':
                             if (UTag == "BASEDMG") {
-                                spells[i].BaseDmg(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].BaseDmg(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             break;
                         case 'C':
                             if (UTag == "CIRCLE") {
-                                spells[i].Circle(static_cast<UI08>(std::stoul(data, nullptr, 0)));
+                                spells[i].Circle(static_cast<std::uint8_t>(std::stoul(data, nullptr, 0)));
                             }
                             break;
                         case 'D':
@@ -4726,7 +4726,7 @@ void CMagic::LoadScript(void) {
                                 spells[i].Delay(static_cast<R32>(std::stof(data)));
                             }
                             else if (UTag == "DRAKE") {
-                                mRegs->drake = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->drake = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             break;
                         case 'E':
@@ -4742,70 +4742,70 @@ void CMagic::LoadScript(void) {
                                     // This is used to load flags from old-style spells.dfn, where
                                     // flags are written as FLAGS=## ## instead of FLAGS=0x####
                                     spells[i].Flags(
-                                        ((static_cast<UI08>(std::stoul(
+                                        ((static_cast<std::uint8_t>(std::stoul(
                                              util::trim(util::strip(ssecs[0], "//")), nullptr, 16)))
                                          << 8) |
-                                        static_cast<UI08>(std::stoul(
+                                        static_cast<std::uint8_t>(std::stoul(
                                             util::trim(util::strip(ssecs[1], "//")), nullptr, 16)));
                                 }
                                 else {
                                     spells[i].Flags(
-                                        static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                                        static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                                 }
                             }
                             break;
                         case 'G':
                             if (UTag == "GARLIC") {
-                                mRegs->garlic = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->garlic = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "GINSENG") {
-                                mRegs->ginseng = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->ginseng = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             break;
                         case 'H':
                             if (UTag == "HISKILL") {
-                                spells[i].HighSkill(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].HighSkill(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             else if (UTag == "HEALTH") {
-                                spells[i].Health(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].Health(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             break;
                         case 'L':
                             if (UTag == "LOSKILL") {
-                                spells[i].LowSkill(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].LowSkill(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             break;
                         case 'M':
                             if (UTag == "MANA") {
-                                spells[i].Mana(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].Mana(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             else if (UTag == "MANTRA") {
                                 spells[i].Mantra(data);
                             }
                             else if (UTag == "MOSS") {
-                                mRegs->moss = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->moss = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "MOVEFX") {
                                 auto ssecs = oldstrutil::sections(data, " ");
                                 if (ssecs.size() > 1) {
                                     CMagicMove *mv = spells[i].MoveEffectPtr();
                                     mv->Effect(
-                                        static_cast<UI08>(std::stoul(
+                                        static_cast<std::uint8_t>(std::stoul(
                                             util::trim(util::strip(ssecs[0], "//")), nullptr, 16)),
-                                        static_cast<UI08>(std::stoul(
+                                        static_cast<std::uint8_t>(std::stoul(
                                             util::trim(util::strip(ssecs[1], "//")), nullptr, 16)));
-                                    mv->Speed(static_cast<UI08>(std::stoul(
+                                    mv->Speed(static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 16)));
-                                    mv->Loop(static_cast<UI08>(std::stoul(
+                                    mv->Loop(static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 16)));
-                                    mv->Explode(static_cast<UI08>(std::stoul(
+                                    mv->Explode(static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[4], "//")), nullptr, 16)));
                                 }
                             }
                             break;
                         case 'P':
                             if (UTag == "PEARL") {
-                                mRegs->pearl = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->pearl = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             break;
                         case 'R':
@@ -4815,10 +4815,10 @@ void CMagic::LoadScript(void) {
                             break;
                         case 'S':
                             if (UTag == "SHADE") {
-                                mRegs->shade = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->shade = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "SILK") {
-                                mRegs->silk = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                                mRegs->silk = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "SOUNDFX") {
                                 auto ssecs = oldstrutil::sections(data, " ");
@@ -4827,16 +4827,16 @@ void CMagic::LoadScript(void) {
                                     // soundfx are written as SOUNDFX=## ## instead of
                                     // SOUNDFX=0x####
                                     spells[i].Effect(
-                                        ((static_cast<UI08>(std::stoul(
+                                        ((static_cast<std::uint8_t>(std::stoul(
                                               util::trim(util::strip(ssecs[0], "//")), nullptr, 16))
                                           << 8) |
-                                         static_cast<UI08>(
+                                         static_cast<std::uint8_t>(
                                              std::stoul(util::trim(util::strip(ssecs[1], "//")),
                                                         nullptr, 16))));
                                 }
                                 else {
                                     spells[i].Effect(
-                                        static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                                        static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                                 }
                             }
                             else if (UTag == "STATFX") {
@@ -4845,25 +4845,25 @@ void CMagic::LoadScript(void) {
                                     CMagicStat *stat = spells[i].StaticEffectPtr();
 
                                     stat->Effect(
-                                        static_cast<UI08>(std::stoul(
+                                        static_cast<std::uint8_t>(std::stoul(
                                             util::trim(util::strip(ssecs[0], "//")), nullptr, 16)),
-                                        static_cast<UI08>(std::stoul(
+                                        static_cast<std::uint8_t>(std::stoul(
                                             util::trim(util::strip(ssecs[1], "//")), nullptr, 16)));
-                                    stat->Speed(static_cast<UI08>(std::stoul(
+                                    stat->Speed(static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[2], "//")), nullptr, 16)));
-                                    stat->Loop(static_cast<UI08>(std::stoul(
+                                    stat->Loop(static_cast<std::uint8_t>(std::stoul(
                                         util::trim(util::strip(ssecs[3], "//")), nullptr, 16)));
                                 }
                             }
                             else if (UTag == "SCLO") {
-                                spells[i].ScrollLow(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].ScrollLow(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             else if (UTag == "SCHI") {
                                 spells[i].ScrollHigh(
-                                    static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                    static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             else if (UTag == "STAMINA") {
-                                spells[i].Stamina(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                                spells[i].Stamina(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
                             }
                             break;
                         case 'T':
@@ -4916,7 +4916,7 @@ void CMagic::DelReagents(CChar *s, Reag_st reags) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the SFX associated with a spell that is being cast
 // o------------------------------------------------------------------------------------------------o
-void CMagic::PlaySound(CChar *source, SI32 num) {
+void CMagic::PlaySound(CChar *source, std::int32_t num) {
     if (spells[num].Effect() != INVALIDID) {
         Effects->PlaySound(source, spells[num].Effect());
     }
@@ -4927,7 +4927,7 @@ void CMagic::PlaySound(CChar *source, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the static FX associated with a spell that is being cast
 // o------------------------------------------------------------------------------------------------o
-void CMagic::DoStaticEffect(CChar *source, SI32 num) {
+void CMagic::DoStaticEffect(CChar *source, std::int32_t num) {
     CMagicStat temp = spells[num].StaticEffect();
     if (temp.Effect() != INVALIDID) {
         Effects->PlayStaticAnimation(source, temp.Effect(), temp.Speed(), temp.Loop());
@@ -4939,7 +4939,7 @@ void CMagic::DoStaticEffect(CChar *source, SI32 num) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the moving FX associated with a spell that is being cast
 // o------------------------------------------------------------------------------------------------o
-void CMagic::DoMoveEffect(SI32 num, CBaseObject *target, CChar *source) {
+void CMagic::DoMoveEffect(std::int32_t num, CBaseObject *target, CChar *source) {
     CMagicMove temp = spells[num].MoveEffect();
 
     if (temp.Effect() != INVALIDID) {
@@ -4948,14 +4948,14 @@ void CMagic::DoMoveEffect(SI32 num, CBaseObject *target, CChar *source) {
     }
 }
 
-void HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, UI16 gumpIndex);
+void HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, std::uint16_t gumpIndex);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMagic::PolymorphMenu()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the polymorph menu to allow player to choose which creature to
 // poly into
 // o------------------------------------------------------------------------------------------------o
-void CMagic::PolymorphMenu(CSocket *s, UI16 gmindex) {
+void CMagic::PolymorphMenu(CSocket *s, std::uint16_t gmindex) {
     std::string sect = "POLYMORPHMENU " + util::ntos(gmindex);
     CScriptSection *polyStuff = FileLookup->FindEntry(sect, menus_def);
     if (polyStuff == nullptr)
@@ -4969,9 +4969,9 @@ void CMagic::PolymorphMenu(CSocket *s, UI16 gmindex) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Polymorph spell to caster
 // o------------------------------------------------------------------------------------------------o
-void CMagic::Polymorph(CSocket *s, UI16 polyId) {
-    UI08 id1 = static_cast<UI08>(polyId >> 8);
-    UI08 id2 = static_cast<UI08>(polyId % 256);
+void CMagic::Polymorph(CSocket *s, std::uint16_t polyId) {
+    std::uint8_t id1 = static_cast<std::uint8_t>(polyId >> 8);
+    std::uint8_t id2 = static_cast<std::uint8_t>(polyId % 256);
     CChar *mChar = s->CurrcharObj();
 
     // store our original ID
@@ -5021,7 +5021,7 @@ void CMagic::LogSpell(std::string spell, CChar *player1, CChar *player2,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a spell in the JS Engine
 // o------------------------------------------------------------------------------------------------o
-void CMagic::Register(cScript *toRegister, SI32 spellNumber, bool isEnabled) {
+void CMagic::Register(cScript *toRegister, std::int32_t spellNumber, bool isEnabled) {
 #if defined(UOX_DEBUG_MODE)
     Console::shared().Print(util::format("Registering spell number %i\n", spellNumber));
 #endif
@@ -5040,7 +5040,7 @@ void CMagic::Register(cScript *toRegister, SI32 spellNumber, bool isEnabled) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the enabled state of a given spell
 // o------------------------------------------------------------------------------------------------o
-void CMagic::SetSpellStatus(SI32 spellNumber, bool isEnabled) {
+void CMagic::SetSpellStatus(std::int32_t spellNumber, bool isEnabled) {
     if (spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size())
         return;
 

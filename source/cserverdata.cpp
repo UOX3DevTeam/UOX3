@@ -27,7 +27,7 @@ using namespace std::string_literals;
 // constant data
 //==================================================================================================
 //==================================================================================================
-const std::map<std::string, SI32> CServerData::uox3IniCaseValue{
+const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     // these numbers dont have to be in order, and can skip aound
     // they just CANT be repeated (now we could add some protection
     // but they dont change that much, and there are a lot, so if you delete one
@@ -379,109 +379,109 @@ constexpr auto SKILLTOTALCAP = 7000;
 constexpr auto SKILLCAP = 1000;
 constexpr auto STATCAP = 225;
 
-constexpr auto BIT_ANNOUNCESAVES = UI32(0);
-constexpr auto BIT_ANNOUNCEJOINPART = UI32(1);
-constexpr auto BIT_SERVERBACKUP = UI32(2);
-constexpr auto BIT_SHOOTONANIMALBACK = UI32(3);
-constexpr auto BIT_NPCTRAINING = UI32(4);
-constexpr auto BIT_LOOTDECAYSONCORPSE = UI32(5);
-constexpr auto BIT_GUARDSENABLED = UI32(6);
-constexpr auto BIT_PLAYDEATHANIMATION = UI32(7);
-constexpr auto BIT_AMBIENTFOOTSTEPS = UI32(8);
-constexpr auto BIT_INTERNALACCOUNTS = UI32(9);
-constexpr auto BIT_SHOWOFFLINEPCS = UI32(10);
-constexpr auto BIT_ROGUESTATUS = UI32(11);
-constexpr auto BIT_SNOOPISCRIME = UI32(12);
-constexpr auto BIT_PERSECUTIONSTATUS = UI32(13);
-constexpr auto BIT_SELLBYNAME = UI32(14);
-constexpr auto BIT_TRADESYSSTATUS = UI32(15);
-constexpr auto BIT_RANKSYSSTATUS = UI32(16);
-constexpr auto BIT_CUTSCROLLREQ = UI32(17);
-constexpr auto BIT_SHOWHITMESSAGE = UI32(18);
-constexpr auto BIT_ESCORTSTATUS = UI32(19);
-constexpr auto BIT_MONSTERSVSANIMALS = UI32(20);
-constexpr auto BIT_PETHUNGEROFFLINE = UI32(21);
-constexpr auto BIT_HIDEWHILEMOUNTED = UI32(22);
-constexpr auto BIT_OVERLOADPACKETS = UI32(23);
-constexpr auto BIT_ARMORAFFECTMANAREGEN = UI32(24);
-constexpr auto BIT_ANIMALSGUARDED = UI32(25);
-constexpr auto BIT_ADVANCEDPATHFIND = UI32(26);
-constexpr auto BIT_LOOTINGISCRIME = UI32(27);
-constexpr auto BIT_BASICTOOLTIPSONLY = UI32(28);
-constexpr auto BIT_GLOBALITEMDECAY = UI32(29);
-constexpr auto BIT_SCRIPTITEMSDECAYABLE = UI32(30);
-constexpr auto BIT_BASEITEMSDECAYABLE = UI32(31);
-constexpr auto BIT_ITEMDECAYINHOUSES = UI32(32);
-constexpr auto BIT_PAPERDOLLGUILDBUTTON = UI32(33);
-constexpr auto BIT_ATTSPEEDFROMSTAMINA = UI32(34);
-constexpr auto BIT_SHOWDAMAGENUMBERS = UI32(35);
+constexpr auto BIT_ANNOUNCESAVES = std::uint32_t(0);
+constexpr auto BIT_ANNOUNCEJOINPART = std::uint32_t(1);
+constexpr auto BIT_SERVERBACKUP = std::uint32_t(2);
+constexpr auto BIT_SHOOTONANIMALBACK = std::uint32_t(3);
+constexpr auto BIT_NPCTRAINING = std::uint32_t(4);
+constexpr auto BIT_LOOTDECAYSONCORPSE = std::uint32_t(5);
+constexpr auto BIT_GUARDSENABLED = std::uint32_t(6);
+constexpr auto BIT_PLAYDEATHANIMATION = std::uint32_t(7);
+constexpr auto BIT_AMBIENTFOOTSTEPS = std::uint32_t(8);
+constexpr auto BIT_INTERNALACCOUNTS = std::uint32_t(9);
+constexpr auto BIT_SHOWOFFLINEPCS = std::uint32_t(10);
+constexpr auto BIT_ROGUESTATUS = std::uint32_t(11);
+constexpr auto BIT_SNOOPISCRIME = std::uint32_t(12);
+constexpr auto BIT_PERSECUTIONSTATUS = std::uint32_t(13);
+constexpr auto BIT_SELLBYNAME = std::uint32_t(14);
+constexpr auto BIT_TRADESYSSTATUS = std::uint32_t(15);
+constexpr auto BIT_RANKSYSSTATUS = std::uint32_t(16);
+constexpr auto BIT_CUTSCROLLREQ = std::uint32_t(17);
+constexpr auto BIT_SHOWHITMESSAGE = std::uint32_t(18);
+constexpr auto BIT_ESCORTSTATUS = std::uint32_t(19);
+constexpr auto BIT_MONSTERSVSANIMALS = std::uint32_t(20);
+constexpr auto BIT_PETHUNGEROFFLINE = std::uint32_t(21);
+constexpr auto BIT_HIDEWHILEMOUNTED = std::uint32_t(22);
+constexpr auto BIT_OVERLOADPACKETS = std::uint32_t(23);
+constexpr auto BIT_ARMORAFFECTMANAREGEN = std::uint32_t(24);
+constexpr auto BIT_ANIMALSGUARDED = std::uint32_t(25);
+constexpr auto BIT_ADVANCEDPATHFIND = std::uint32_t(26);
+constexpr auto BIT_LOOTINGISCRIME = std::uint32_t(27);
+constexpr auto BIT_BASICTOOLTIPSONLY = std::uint32_t(28);
+constexpr auto BIT_GLOBALITEMDECAY = std::uint32_t(29);
+constexpr auto BIT_SCRIPTITEMSDECAYABLE = std::uint32_t(30);
+constexpr auto BIT_BASEITEMSDECAYABLE = std::uint32_t(31);
+constexpr auto BIT_ITEMDECAYINHOUSES = std::uint32_t(32);
+constexpr auto BIT_PAPERDOLLGUILDBUTTON = std::uint32_t(33);
+constexpr auto BIT_ATTSPEEDFROMSTAMINA = std::uint32_t(34);
+constexpr auto BIT_SHOWDAMAGENUMBERS = std::uint32_t(35);
 // 37 free!
-constexpr auto BIT_EXTENDEDSTARTINGSTATS = UI32(38);
-constexpr auto BIT_EXTENDEDSTARTINGSKILLS = UI32(39);
-constexpr auto BIT_ASSISTANTNEGOTIATION = UI32(40);
-constexpr auto BIT_KICKONASSISTANTSILENCE = UI32(41);
-constexpr auto BIT_CLASSICUOMAPTRACKER = UI32(42);
-constexpr auto BIT_PROTECTPRIVATEHOUSES = UI32(43);
-constexpr auto BIT_TRACKHOUSESPERACCOUNT = UI32(44);
-constexpr auto BIT_CANOWNANDCOOWNHOUSES = UI32(45);
-constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT = UI32(46);
-constexpr auto BIT_ITEMSDETECTSPEECH = UI32(47);
-constexpr auto BIT_FORCENEWANIMATIONPACKET = UI32(48);
-constexpr auto BIT_MAPDIFFSENABLED = UI32(49);
-constexpr auto BIT_ARMORCLASSDAMAGEBONUS = UI32(50);
-constexpr auto BIT_FREESHARDSERVERPOLL = UI32(51);
-constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED = UI32(52);
-constexpr auto BIT_PETTHIRSTOFFLINE = UI32(53);
-constexpr auto BIT_USEUNICODEMESSAGES = UI32(54);
-constexpr auto BIT_HUNGERSYSTEMENABLED = UI32(55);
-constexpr auto BIT_THIRSTSYSTEMENABLED = UI32(56);
-constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS = UI32(57);
-constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT = UI32(58);
-constexpr auto BIT_MARKRUNESINMULTIS = UI32(59);
-constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS = UI32(60);
-constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR = UI32(61);
-[[maybe_unused]] constexpr auto BIT_CONSOLELOG = UI32(62);
-constexpr auto BIT_NETWORKLOG = UI32(63);
-constexpr auto BIT_SPEECHLOG = UI32(64);
-constexpr auto BIT_CONTEXTMENUS = UI32(65);
-constexpr auto BIT_CHECKPETCONTROLDIFFICULTY = UI32(66);
-constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS = UI32(67);
-constexpr auto BIT_ITEMSINTERRUPTCASTING = UI32(68);
-constexpr auto BIT_STATSAFFECTSKILLCHECKS = UI32(69);
-constexpr auto BIT_TOOLUSELIMIT = UI32(70);
-constexpr auto BIT_TOOLUSEBREAK = UI32(71);
-constexpr auto BIT_ITEMREPAIRDURABILITYLOSS = UI32(72);
-constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS = UI32(73);
-constexpr auto BIT_CRAFTCOLOUREDWEAPONS = UI32(74);
-constexpr auto BIT_TELEPORTTONEARESTSAFELOC = UI32(75);
-constexpr auto BIT_ALLOWAWAKENPCS = UI32(76);
-constexpr auto BIT_DISPLAYMAKERSMARK = UI32(77);
-constexpr auto BIT_SHOWNPCTITLESOVERHEAD = UI32(78);
-constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD = UI32(79);
-constexpr auto BIT_PETCOMBATTRAINING = UI32(80);
-constexpr auto BIT_HIRELINGCOMBATTRAINING = UI32(81);
-constexpr auto BIT_NPCCOMBATTRAINING = UI32(82);
-constexpr auto BIT_SHOWITEMRESISTSTATS = UI32(83);
-constexpr auto BIT_SHOWWEAPONDAMAGETYPES = UI32(84);
-constexpr auto BIT_SHOWRACEWITHNAME = UI32(85);
-constexpr auto BIT_SHOWRACEINPAPERDOLL = UI32(86);
-constexpr auto BIT_CASTSPELLSWHILEMOVING = UI32(87);
-constexpr auto BIT_SHOWREPTITLEINTOOLTIP = UI32(88);
-constexpr auto BIT_SHOWGUILDINFOINTOOLTIP = UI32(89);
-constexpr auto BIT_SAFECOOWNERLOGOUT = UI32(90);
-constexpr auto BIT_SAFEFRIENDLOGOUT = UI32(91);
-constexpr auto BIT_SAFEGUESTLOGOUT = UI32(92);
-constexpr auto BIT_KEYLESSOWNERACCESS = UI32(93);
-constexpr auto BIT_KEYLESSCOOWNERACCESS = UI32(94);
-constexpr auto BIT_KEYLESSFRIENDACCESS = UI32(95);
-constexpr auto BIT_KEYLESSGUESTACCESS = UI32(96);
-constexpr auto BIT_OFFERBODSFROMITEMSALES = UI32(97);
-constexpr auto BIT_OFFERBODSFROMCONTEXTMENU = UI32(98);
-constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY = UI32(99);
-constexpr auto BIT_ENABLENPCGUILDDISCOUNTS = UI32(100);
-constexpr auto BIT_ENABLENPCGUILDPREMIUMS = UI32(101);
-constexpr auto BIT_SNOOPAWARENESS = UI32(102);
-constexpr auto BIT_YOUNGPLAYERSYSTEM = UI32(103);
+constexpr auto BIT_EXTENDEDSTARTINGSTATS = std::uint32_t(38);
+constexpr auto BIT_EXTENDEDSTARTINGSKILLS = std::uint32_t(39);
+constexpr auto BIT_ASSISTANTNEGOTIATION = std::uint32_t(40);
+constexpr auto BIT_KICKONASSISTANTSILENCE = std::uint32_t(41);
+constexpr auto BIT_CLASSICUOMAPTRACKER = std::uint32_t(42);
+constexpr auto BIT_PROTECTPRIVATEHOUSES = std::uint32_t(43);
+constexpr auto BIT_TRACKHOUSESPERACCOUNT = std::uint32_t(44);
+constexpr auto BIT_CANOWNANDCOOWNHOUSES = std::uint32_t(45);
+constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT = std::uint32_t(46);
+constexpr auto BIT_ITEMSDETECTSPEECH = std::uint32_t(47);
+constexpr auto BIT_FORCENEWANIMATIONPACKET = std::uint32_t(48);
+constexpr auto BIT_MAPDIFFSENABLED = std::uint32_t(49);
+constexpr auto BIT_ARMORCLASSDAMAGEBONUS = std::uint32_t(50);
+constexpr auto BIT_FREESHARDSERVERPOLL = std::uint32_t(51);
+constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED = std::uint32_t(52);
+constexpr auto BIT_PETTHIRSTOFFLINE = std::uint32_t(53);
+constexpr auto BIT_USEUNICODEMESSAGES = std::uint32_t(54);
+constexpr auto BIT_HUNGERSYSTEMENABLED = std::uint32_t(55);
+constexpr auto BIT_THIRSTSYSTEMENABLED = std::uint32_t(56);
+constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS = std::uint32_t(57);
+constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT = std::uint32_t(58);
+constexpr auto BIT_MARKRUNESINMULTIS = std::uint32_t(59);
+constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS = std::uint32_t(60);
+constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR = std::uint32_t(61);
+[[maybe_unused]] constexpr auto BIT_CONSOLELOG = std::uint32_t(62);
+constexpr auto BIT_NETWORKLOG = std::uint32_t(63);
+constexpr auto BIT_SPEECHLOG = std::uint32_t(64);
+constexpr auto BIT_CONTEXTMENUS = std::uint32_t(65);
+constexpr auto BIT_CHECKPETCONTROLDIFFICULTY = std::uint32_t(66);
+constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS = std::uint32_t(67);
+constexpr auto BIT_ITEMSINTERRUPTCASTING = std::uint32_t(68);
+constexpr auto BIT_STATSAFFECTSKILLCHECKS = std::uint32_t(69);
+constexpr auto BIT_TOOLUSELIMIT = std::uint32_t(70);
+constexpr auto BIT_TOOLUSEBREAK = std::uint32_t(71);
+constexpr auto BIT_ITEMREPAIRDURABILITYLOSS = std::uint32_t(72);
+constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS = std::uint32_t(73);
+constexpr auto BIT_CRAFTCOLOUREDWEAPONS = std::uint32_t(74);
+constexpr auto BIT_TELEPORTTONEARESTSAFELOC = std::uint32_t(75);
+constexpr auto BIT_ALLOWAWAKENPCS = std::uint32_t(76);
+constexpr auto BIT_DISPLAYMAKERSMARK = std::uint32_t(77);
+constexpr auto BIT_SHOWNPCTITLESOVERHEAD = std::uint32_t(78);
+constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD = std::uint32_t(79);
+constexpr auto BIT_PETCOMBATTRAINING = std::uint32_t(80);
+constexpr auto BIT_HIRELINGCOMBATTRAINING = std::uint32_t(81);
+constexpr auto BIT_NPCCOMBATTRAINING = std::uint32_t(82);
+constexpr auto BIT_SHOWITEMRESISTSTATS = std::uint32_t(83);
+constexpr auto BIT_SHOWWEAPONDAMAGETYPES = std::uint32_t(84);
+constexpr auto BIT_SHOWRACEWITHNAME = std::uint32_t(85);
+constexpr auto BIT_SHOWRACEINPAPERDOLL = std::uint32_t(86);
+constexpr auto BIT_CASTSPELLSWHILEMOVING = std::uint32_t(87);
+constexpr auto BIT_SHOWREPTITLEINTOOLTIP = std::uint32_t(88);
+constexpr auto BIT_SHOWGUILDINFOINTOOLTIP = std::uint32_t(89);
+constexpr auto BIT_SAFECOOWNERLOGOUT = std::uint32_t(90);
+constexpr auto BIT_SAFEFRIENDLOGOUT = std::uint32_t(91);
+constexpr auto BIT_SAFEGUESTLOGOUT = std::uint32_t(92);
+constexpr auto BIT_KEYLESSOWNERACCESS = std::uint32_t(93);
+constexpr auto BIT_KEYLESSCOOWNERACCESS = std::uint32_t(94);
+constexpr auto BIT_KEYLESSFRIENDACCESS = std::uint32_t(95);
+constexpr auto BIT_KEYLESSGUESTACCESS = std::uint32_t(96);
+constexpr auto BIT_OFFERBODSFROMITEMSALES = std::uint32_t(97);
+constexpr auto BIT_OFFERBODSFROMCONTEXTMENU = std::uint32_t(98);
+constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY = std::uint32_t(99);
+constexpr auto BIT_ENABLENPCGUILDDISCOUNTS = std::uint32_t(100);
+constexpr auto BIT_ENABLENPCGUILDPREMIUMS = std::uint32_t(101);
+constexpr auto BIT_SNOOPAWARENESS = std::uint32_t(102);
+constexpr auto BIT_YOUNGPLAYERSYSTEM = std::uint32_t(103);
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -592,12 +592,12 @@ constexpr auto BIT_YOUNGPLAYERSYSTEM = UI32(103);
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 
 //+++++++++++++++++++++++++++++++++++++++++++++++
-auto CServerData::LookupINIValue(const std::string &tag) -> SI32 {
+auto CServerData::LookupINIValue(const std::string &tag) -> std::int32_t {
     auto iter = uox3IniCaseValue.find(tag);
     if (iter != uox3IniCaseValue.end()) {
         return iter->second;
     }
-    return std::numeric_limits<SI32>::max();
+    return std::numeric_limits<std::int32_t>::max();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1106,8 +1106,8 @@ auto CServerData::matchIP(const Ip4Addr_st &ip) const -> Ip4Addr_st {
 //|	Purpose		-	Gets/Set server port to specified value, or to default port if no
 // value specified
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerPort() const -> UI16 { return port; }
-auto CServerData::ServerPort(UI16 setport) -> void {
+auto CServerData::ServerPort() const -> std::uint16_t { return port; }
+auto CServerData::ServerPort(std::uint16_t setport) -> void {
     if (setport == 0) {
         port = 2593;
     }
@@ -1201,8 +1201,8 @@ auto CServerData::ServerContextMenus(bool newVal) -> void {
 //|	Purpose		-	Gets/Sets the default text colour for system messages displayed in
 // bottom left
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::SysMsgColour() const -> UI16 { return sysMsgColour; }
-auto CServerData::SysMsgColour(UI16 value) -> void { sysMsgColour = value; }
+auto CServerData::SysMsgColour() const -> std::uint16_t { return sysMsgColour; }
+auto CServerData::SysMsgColour(std::uint16_t value) -> void { sysMsgColour = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerSavesTimerStatus()
@@ -1210,8 +1210,8 @@ auto CServerData::SysMsgColour(UI16 value) -> void { sysMsgColour = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server world save timer
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSavesTimerStatus() const -> UI32 { return serverSavesTimer; }
-auto CServerData::ServerSavesTimer(UI32 timer) -> void {
+auto CServerData::ServerSavesTimerStatus() const -> std::uint32_t { return serverSavesTimer; }
+auto CServerData::ServerSavesTimer(std::uint32_t timer) -> void {
     serverSavesTimer = timer;
     if (timer < 180) // 3 minutes is the lowest value you can set saves for
     {
@@ -1225,8 +1225,8 @@ auto CServerData::ServerSavesTimer(UI32 timer) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets cap for individual skills
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillCapStatus() const -> UI16 { return skillCap; }
-auto CServerData::ServerSkillCap(UI16 cap) -> void {
+auto CServerData::ServerSkillCapStatus() const -> std::uint16_t { return skillCap; }
+auto CServerData::ServerSkillCap(std::uint16_t cap) -> void {
     skillCap = cap;
     if (cap < 1) // Default is on second loop sleeping
     {
@@ -1240,8 +1240,8 @@ auto CServerData::ServerSkillCap(UI16 cap) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total cap for all skills
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillTotalCapStatus() const -> UI16 { return skillTotalCap; }
-auto CServerData::ServerSkillTotalCap(UI16 cap) -> void {
+auto CServerData::ServerSkillTotalCapStatus() const -> std::uint16_t { return skillTotalCap; }
+auto CServerData::ServerSkillTotalCap(std::uint16_t cap) -> void {
     skillTotalCap = cap;
     if (cap < 1) // Default is on second loop sleeping
     {
@@ -1255,8 +1255,8 @@ auto CServerData::ServerSkillTotalCap(UI16 cap) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global delay for skill usage
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillDelayStatus() const -> UI08 { return skillDelay; }
-auto CServerData::ServerSkillDelay(UI08 skdelay) -> void { skillDelay = skdelay; }
+auto CServerData::ServerSkillDelayStatus() const -> std::uint8_t { return skillDelay; }
+auto CServerData::ServerSkillDelay(std::uint8_t skdelay) -> void { skillDelay = skdelay; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerStatCapStatus()
@@ -1264,8 +1264,8 @@ auto CServerData::ServerSkillDelay(UI08 skdelay) -> void { skillDelay = skdelay;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the total stat cap
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStatCapStatus() const -> UI16 { return statCap; }
-auto CServerData::ServerStatCap(UI16 cap) -> void {
+auto CServerData::ServerStatCapStatus() const -> std::uint16_t { return statCap; }
+auto CServerData::ServerStatCap(std::uint16_t cap) -> void {
     statCap = cap;
     if (cap < 1) // Default is on second loop sleeping
     {
@@ -1278,8 +1278,8 @@ auto CServerData::ServerStatCap(UI16 cap) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max number of steps allowed to take while stealthed
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxStealthMovement() const -> SI16 { return maxStealthMovement; }
-auto CServerData::MaxStealthMovement(SI16 value) -> void { maxStealthMovement = value; }
+auto CServerData::MaxStealthMovement() const -> std::int16_t { return maxStealthMovement; }
+auto CServerData::MaxStealthMovement(std::int16_t value) -> void { maxStealthMovement = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxStaminaMovement()
@@ -1287,8 +1287,8 @@ auto CServerData::MaxStealthMovement(SI16 value) -> void { maxStealthMovement = 
 //|	Purpose		-	Gets/Sets the max number of steps allowed while running before
 // stamina is reduced
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxStaminaMovement() const -> SI16 { return maxStaminaMovement; }
-auto CServerData::MaxStaminaMovement(SI16 value) -> void { maxStaminaMovement = value; }
+auto CServerData::MaxStaminaMovement() const -> std::int16_t { return maxStaminaMovement; }
+auto CServerData::MaxStaminaMovement(std::int16_t value) -> void { maxStaminaMovement = value; }
 
 auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> TIMERVAL {
     return BuildTimeValue(static_cast<R32>(SystemTimer(timerId)));
@@ -1299,8 +1299,8 @@ auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> TIMERVAL {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific server timer
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::SystemTimer(cSD_TID timerid) const -> UI16 { return serverTimers[timerid]; }
-auto CServerData::SystemTimer(cSD_TID timerid, UI16 value) -> void {
+auto CServerData::SystemTimer(cSD_TID timerid) const -> std::uint16_t { return serverTimers[timerid]; }
+auto CServerData::SystemTimer(cSD_TID timerid, std::uint16_t value) -> void {
     serverTimers[timerid] = value;
 }
 
@@ -1435,8 +1435,8 @@ auto CServerData::Directory(CSDDirectoryPaths dp, std::string value) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCoreShardEra(void) const -> UI08 { return coreShardEra; }
-auto CServerData::ExpansionCoreShardEra(UI08 setting) -> void {
+auto CServerData::ExpansionCoreShardEra(void) const -> std::uint8_t { return coreShardEra; }
+auto CServerData::ExpansionCoreShardEra(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1460,14 +1460,14 @@ auto CServerData::ExpansionCoreShardEra(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionArmorCalculation() const -> UI08 {
+auto CServerData::ExpansionArmorCalculation() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionArmorCalculation) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionArmorCalculation;
 }
-auto CServerData::ExpansionArmorCalculation(UI08 setting) -> void {
+auto CServerData::ExpansionArmorCalculation(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1494,14 +1494,14 @@ auto CServerData::ExpansionArmorCalculation(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionStrengthDamageBonus() const -> UI08 {
+auto CServerData::ExpansionStrengthDamageBonus() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionStrengthDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionStrengthDamageBonus;
 }
-auto CServerData::ExpansionStrengthDamageBonus(UI08 setting) -> void {
+auto CServerData::ExpansionStrengthDamageBonus(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1525,14 +1525,14 @@ auto CServerData::ExpansionStrengthDamageBonus(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionTacticsDamageBonus() const -> UI08 {
+auto CServerData::ExpansionTacticsDamageBonus() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionTacticsDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionTacticsDamageBonus;
 }
-auto CServerData::ExpansionTacticsDamageBonus(UI08 setting) -> void {
+auto CServerData::ExpansionTacticsDamageBonus(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1556,14 +1556,14 @@ auto CServerData::ExpansionTacticsDamageBonus(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionAnatomyDamageBonus() const -> UI08 {
+auto CServerData::ExpansionAnatomyDamageBonus() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionAnatomyDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionAnatomyDamageBonus;
 }
-auto CServerData::ExpansionAnatomyDamageBonus(UI08 setting) -> void {
+auto CServerData::ExpansionAnatomyDamageBonus(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1587,14 +1587,14 @@ auto CServerData::ExpansionAnatomyDamageBonus(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionLumberjackDamageBonus() const -> UI08 {
+auto CServerData::ExpansionLumberjackDamageBonus() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionLumberjackDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionLumberjackDamageBonus;
 }
-auto CServerData::ExpansionLumberjackDamageBonus(UI08 setting) -> void {
+auto CServerData::ExpansionLumberjackDamageBonus(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1618,14 +1618,14 @@ auto CServerData::ExpansionLumberjackDamageBonus(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionRacialDamageBonus() const -> UI08 {
+auto CServerData::ExpansionRacialDamageBonus() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionRacialDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionRacialDamageBonus;
 }
-auto CServerData::ExpansionRacialDamageBonus(UI08 setting) -> void {
+auto CServerData::ExpansionRacialDamageBonus(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1649,14 +1649,14 @@ auto CServerData::ExpansionRacialDamageBonus(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionDamageBonusCap() const -> UI08 {
+auto CServerData::ExpansionDamageBonusCap() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionDamageBonusCap) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionDamageBonusCap;
 }
-auto CServerData::ExpansionDamageBonusCap(UI08 setting) -> void {
+auto CServerData::ExpansionDamageBonusCap(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1680,14 +1680,14 @@ auto CServerData::ExpansionDamageBonusCap(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionShieldParry() const -> UI08 {
+auto CServerData::ExpansionShieldParry() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionShieldParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionShieldParry;
 }
-auto CServerData::ExpansionShieldParry(UI08 setting) -> void {
+auto CServerData::ExpansionShieldParry(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1711,14 +1711,14 @@ auto CServerData::ExpansionShieldParry(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWeaponParry() const -> UI08 {
+auto CServerData::ExpansionWeaponParry() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionWeaponParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionWeaponParry;
 }
-auto CServerData::ExpansionWeaponParry(UI08 setting) -> void {
+auto CServerData::ExpansionWeaponParry(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1742,14 +1742,14 @@ auto CServerData::ExpansionWeaponParry(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWrestlingParry() const -> UI08 {
+auto CServerData::ExpansionWrestlingParry() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionWrestlingParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionWrestlingParry;
 }
-auto CServerData::ExpansionWrestlingParry(UI08 setting) -> void {
+auto CServerData::ExpansionWrestlingParry(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1773,14 +1773,14 @@ auto CServerData::ExpansionWrestlingParry(UI08 setting) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCombatHitChance() const -> UI08 {
+auto CServerData::ExpansionCombatHitChance() const -> std::uint8_t {
     if (static_cast<ExpansionRuleset>(expansionCombatHitChance) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
     return expansionCombatHitChance;
 }
-auto CServerData::ExpansionCombatHitChance(UI08 setting) -> void {
+auto CServerData::ExpansionCombatHitChance(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
@@ -1870,8 +1870,8 @@ auto CServerData::DeathAnimationStatus(bool newVal) -> void {
 //|	Purpose		-	Gets/Sets intensity of ambient world sounds, bird chirps, animal
 // sounds, etc
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldAmbientSounds() const -> SI16 { return ambientSounds; }
-auto CServerData::WorldAmbientSounds(SI16 value) -> void {
+auto CServerData::WorldAmbientSounds() const -> std::int16_t { return ambientSounds; }
+auto CServerData::WorldAmbientSounds(std::int16_t value) -> void {
     if (value < 0) {
         ambientSounds = 0;
     }
@@ -2005,8 +2005,8 @@ auto CServerData::PlayerPersecutionStatus(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether html stats are enabled or disabled
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::HtmlStatsStatus() const -> SI16 { return htmlStatusEnabled; }
-auto CServerData::HtmlStatsStatus(SI16 value) -> void { htmlStatusEnabled = value; }
+auto CServerData::HtmlStatsStatus() const -> std::int16_t { return htmlStatusEnabled; }
+auto CServerData::HtmlStatsStatus(std::int16_t value) -> void { htmlStatusEnabled = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GlobalRestockMultiplier()
@@ -2049,8 +2049,8 @@ auto CServerData::SellByNameStatus(bool newVal) -> void { boolVals.set(BIT_SELLB
 //|	Purpose		-	Gets/Sets the maximum amount of items that can be sold in one go to
 // a vendor
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::SellMaxItemsStatus() const -> SI16 { return sellMaxItems; }
-auto CServerData::SellMaxItemsStatus(SI16 value) -> void { sellMaxItems = value; }
+auto CServerData::SellMaxItemsStatus() const -> std::int16_t { return sellMaxItems; }
+auto CServerData::SellMaxItemsStatus(std::int16_t value) -> void { sellMaxItems = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TradeSystemStatus()
@@ -2181,8 +2181,8 @@ auto CServerData::CheckSpawnRegionSpeed(R64 value) -> void {
 //|	Purpose		-	Gets/Sets the posting level for bulletin boards
 //|					UNUSED?
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MsgBoardPostingLevel() const -> UI08 { return msgPostingLevel; }
-auto CServerData::MsgBoardPostingLevel(UI08 value) -> void { msgPostingLevel = value; }
+auto CServerData::MsgBoardPostingLevel() const -> std::uint8_t { return msgPostingLevel; }
+auto CServerData::MsgBoardPostingLevel(std::uint8_t value) -> void { msgPostingLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MsgBoardPostRemovalLevel()
@@ -2190,8 +2190,8 @@ auto CServerData::MsgBoardPostingLevel(UI08 value) -> void { msgPostingLevel = v
 //|	Purpose		-	Gets/Sets the post removal level for bulleting boards
 //|					UNUSED?
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MsgBoardPostRemovalLevel() const -> UI08 { return msgRemovalLevel; }
-auto CServerData::MsgBoardPostRemovalLevel(UI08 value) -> void { msgRemovalLevel = value; }
+auto CServerData::MsgBoardPostRemovalLevel() const -> std::uint8_t { return msgRemovalLevel; }
+auto CServerData::MsgBoardPostRemovalLevel(std::uint8_t value) -> void { msgRemovalLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MineCheck()
@@ -2201,8 +2201,8 @@ auto CServerData::MsgBoardPostRemovalLevel(UI08 value) -> void { msgRemovalLevel
 // 1 = mine mountainsides/cavefloors only |						2 = mine in
 // mining regions only (not working?)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MineCheck() const -> UI08 { return mineCheck; }
-auto CServerData::MineCheck(UI08 value) -> void { mineCheck = value; }
+auto CServerData::MineCheck() const -> std::uint8_t { return mineCheck; }
+auto CServerData::MineCheck(std::uint8_t value) -> void { mineCheck = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::FreeshardServerPoll()
@@ -2302,8 +2302,8 @@ auto CServerData::NPCSpellCastSpeed(R32 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the stamina loss for using the fishing skill
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::FishingStaminaLoss() const -> SI16 { return fishingstaminaloss; }
-auto CServerData::FishingStaminaLoss(SI16 value) -> void { fishingstaminaloss = value; }
+auto CServerData::FishingStaminaLoss() const -> std::int16_t { return fishingstaminaloss; }
+auto CServerData::FishingStaminaLoss(std::int16_t value) -> void { fishingstaminaloss = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatNpcDamageRate()
@@ -2311,8 +2311,8 @@ auto CServerData::FishingStaminaLoss(SI16 value) -> void { fishingstaminaloss = 
 //|	Purpose		-	Gets/Sets the NPC damage divisor. If character is a player, damage
 // from NPCs is |					divided by this value.
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNpcDamageRate() const -> SI16 { return combatNpcDamageRate; }
-auto CServerData::CombatNpcDamageRate(SI16 value) -> void { combatNpcDamageRate = value; }
+auto CServerData::CombatNpcDamageRate() const -> std::int16_t { return combatNpcDamageRate; }
+auto CServerData::CombatNpcDamageRate(std::int16_t value) -> void { combatNpcDamageRate = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::AlchemyDamageBonusEnabled()
@@ -2333,8 +2333,8 @@ auto CServerData::AlchemyDamageBonusEnabled(bool newVal) -> void {
 // damage to |					explosion potions based on this formula: |
 // bonusDamage = attackerAlchemySkill / alchemyDamageBonusModifier
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::AlchemyDamageBonusModifier() const -> UI08 { return alchemyDamageBonusModifier; }
-auto CServerData::AlchemyDamageBonusModifier(UI08 value) -> void {
+auto CServerData::AlchemyDamageBonusModifier() const -> std::uint8_t { return alchemyDamageBonusModifier; }
+auto CServerData::AlchemyDamageBonusModifier(std::uint8_t value) -> void {
     alchemyDamageBonusModifier = value;
 }
 
@@ -2349,8 +2349,8 @@ auto CServerData::AlchemyDamageBonusModifier(UI08 value) -> void {
 //|						2 - Apply flat weapon damage bonus to BOTH .lodamage
 //and .hidamage (Default)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WeaponDamageBonusType() const -> UI08 { return combatWeaponDamageBonusType; }
-auto CServerData::WeaponDamageBonusType(UI08 value) -> void { combatWeaponDamageBonusType = value; }
+auto CServerData::WeaponDamageBonusType() const -> std::uint8_t { return combatWeaponDamageBonusType; }
+auto CServerData::WeaponDamageBonusType(std::uint8_t value) -> void { combatWeaponDamageBonusType = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ItemsInterruptCasting()
@@ -2369,8 +2369,8 @@ auto CServerData::ItemsInterruptCasting(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount of stamina lost by swinging weapon in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAttackStamina() const -> SI16 { return combatAttackStamina; }
-auto CServerData::CombatAttackStamina(SI16 value) -> void { combatAttackStamina = value; }
+auto CServerData::CombatAttackStamina() const -> std::int16_t { return combatAttackStamina; }
+auto CServerData::CombatAttackStamina(std::int16_t value) -> void { combatAttackStamina = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SkillLevel()
@@ -2378,8 +2378,8 @@ auto CServerData::CombatAttackStamina(SI16 value) -> void { combatAttackStamina 
 //|	Purpose		-	Gets/Sets the global difficulty level for crafting items
 //|					1 = easy, 5 = default, 10 = difficult
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::SkillLevel() const -> UI08 { return skillLevel; }
-auto CServerData::SkillLevel(UI08 value) -> void { skillLevel = value; }
+auto CServerData::SkillLevel() const -> std::uint8_t { return skillLevel; }
+auto CServerData::SkillLevel(std::uint8_t value) -> void { skillLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::EscortsEnabled()
@@ -2435,32 +2435,32 @@ auto CServerData::MapDiffsEnabled(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player (and NPC) backpacks
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerPackItems() const -> UI16 { return maxPlayerPackItems; }
-auto CServerData::MaxPlayerPackItems(UI16 newVal) -> void { maxPlayerPackItems = newVal; }
+auto CServerData::MaxPlayerPackItems() const -> std::uint16_t { return maxPlayerPackItems; }
+auto CServerData::MaxPlayerPackItems(std::uint16_t newVal) -> void { maxPlayerPackItems = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxPlayerPackWeight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max weight capacity for player (and NPC) backpacks
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerPackWeight() const -> SI32 { return maxPlayerPackWeight; }
-auto CServerData::MaxPlayerPackWeight(SI32 newVal) -> void { maxPlayerPackWeight = newVal; }
+auto CServerData::MaxPlayerPackWeight() const -> std::int32_t { return maxPlayerPackWeight; }
+auto CServerData::MaxPlayerPackWeight(std::int32_t newVal) -> void { maxPlayerPackWeight = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxPlayerBankItems()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player bankboxes
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerBankItems() const -> UI16 { return maxPlayerBankItems; }
-auto CServerData::MaxPlayerBankItems(UI16 newVal) -> void { maxPlayerBankItems = newVal; }
+auto CServerData::MaxPlayerBankItems() const -> std::uint16_t { return maxPlayerBankItems; }
+auto CServerData::MaxPlayerBankItems(std::uint16_t newVal) -> void { maxPlayerBankItems = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxPlayerBankWeight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max weight capacity for player (and NPC) bankboxes
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerBankWeight() const -> SI32 { return maxPlayerBankWeight; }
-auto CServerData::MaxPlayerBankWeight(SI32 newVal) -> void { maxPlayerBankWeight = newVal; }
+auto CServerData::MaxPlayerBankWeight() const -> std::int32_t { return maxPlayerBankWeight; }
+auto CServerData::MaxPlayerBankWeight(std::int32_t newVal) -> void { maxPlayerBankWeight = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::BasicTooltipsOnly()
@@ -2914,24 +2914,24 @@ auto CServerData::BODsFromCraftedItemsOnly(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can own
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxHousesOwnable() const -> UI16 { return maxHousesOwnable; }
-auto CServerData::MaxHousesOwnable(UI16 value) -> void { maxHousesOwnable = value; }
+auto CServerData::MaxHousesOwnable() const -> std::uint16_t { return maxHousesOwnable; }
+auto CServerData::MaxHousesOwnable(std::uint16_t value) -> void { maxHousesOwnable = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxHousesCoOwnable()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can co-own
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxHousesCoOwnable() const -> UI16 { return maxHousesCoOwnable; }
-auto CServerData::MaxHousesCoOwnable(UI16 value) -> void { maxHousesCoOwnable = value; }
+auto CServerData::MaxHousesCoOwnable() const -> std::uint16_t { return maxHousesCoOwnable; }
+auto CServerData::MaxHousesCoOwnable(std::uint16_t value) -> void { maxHousesCoOwnable = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAnimalsAttackChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of monsters attacking animals
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAnimalsAttackChance() const -> UI16 { return combatAnimalAttackChance; }
-auto CServerData::CombatAnimalsAttackChance(UI16 value) -> void {
+auto CServerData::CombatAnimalsAttackChance() const -> std::uint16_t { return combatAnimalAttackChance; }
+auto CServerData::CombatAnimalsAttackChance(std::uint16_t value) -> void {
     if (value > 1000) {
         value = 1000;
     }
@@ -2946,8 +2946,8 @@ auto CServerData::CombatAnimalsAttackChance(UI16 value) -> void {
 //|					This bonus was mentioned in official patch notes for Publish 5
 //(UOR patch).
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArcheryHitBonus() const -> SI08 { return combatArcheryHitBonus; }
-auto CServerData::CombatArcheryHitBonus(SI08 value) -> void {
+auto CServerData::CombatArcheryHitBonus() const -> std::int8_t { return combatArcheryHitBonus; }
+auto CServerData::CombatArcheryHitBonus(std::int8_t value) -> void {
     if (value > 100) {
         value = 100;
     }
@@ -2975,8 +2975,8 @@ auto CServerData::CombatArcheryShootDelay(R32 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets chance for weapons to take damage in combat (on hit)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageChance() const -> UI08 { return combatWeaponDamageChance; }
-auto CServerData::CombatWeaponDamageChance(UI08 value) -> void {
+auto CServerData::CombatWeaponDamageChance() const -> std::uint8_t { return combatWeaponDamageChance; }
+auto CServerData::CombatWeaponDamageChance(std::uint8_t value) -> void {
     if (value > 100) {
         value = 100;
     }
@@ -2989,8 +2989,8 @@ auto CServerData::CombatWeaponDamageChance(UI08 value) -> void {
 //|	Purpose		-	Gets/Sets the min amount of damage (in hitpoints) weapons will take
 // from combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageMin() const -> UI08 { return combatWeaponDamageMin; }
-auto CServerData::CombatWeaponDamageMin(UI08 value) -> void { combatWeaponDamageMin = value; }
+auto CServerData::CombatWeaponDamageMin() const -> std::uint8_t { return combatWeaponDamageMin; }
+auto CServerData::CombatWeaponDamageMin(std::uint8_t value) -> void { combatWeaponDamageMin = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatWeaponDamageMax()
@@ -2998,16 +2998,16 @@ auto CServerData::CombatWeaponDamageMin(UI08 value) -> void { combatWeaponDamage
 //|	Purpose		-	Gets/Sets the max amount of damage (in hitpoints) weapons will take
 // from combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageMax() const -> UI08 { return combatWeaponDamageMax; }
-auto CServerData::CombatWeaponDamageMax(UI08 value) -> void { combatWeaponDamageMax = value; }
+auto CServerData::CombatWeaponDamageMax() const -> std::uint8_t { return combatWeaponDamageMax; }
+auto CServerData::CombatWeaponDamageMax(std::uint8_t value) -> void { combatWeaponDamageMax = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatArmorDamageChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage armor in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageChance() const -> UI08 { return combatArmorDamageChance; }
-auto CServerData::CombatArmorDamageChance(UI08 value) -> void {
+auto CServerData::CombatArmorDamageChance() const -> std::uint8_t { return combatArmorDamageChance; }
+auto CServerData::CombatArmorDamageChance(std::uint8_t value) -> void {
     if (value > 100) {
         value = 100;
     }
@@ -3019,24 +3019,24 @@ auto CServerData::CombatArmorDamageChance(UI08 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to armor in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageMin() const -> UI08 { return combatArmorDamageMin; }
-auto CServerData::CombatArmorDamageMin(UI08 value) -> void { combatArmorDamageMin = value; }
+auto CServerData::CombatArmorDamageMin() const -> std::uint8_t { return combatArmorDamageMin; }
+auto CServerData::CombatArmorDamageMin(std::uint8_t value) -> void { combatArmorDamageMin = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatArmorDamageMax()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to armor in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageMax() const -> UI08 { return combatArmorDamageMax; }
-auto CServerData::CombatArmorDamageMax(UI08 value) -> void { combatArmorDamageMax = value; }
+auto CServerData::CombatArmorDamageMax() const -> std::uint8_t { return combatArmorDamageMax; }
+auto CServerData::CombatArmorDamageMax(std::uint8_t value) -> void { combatArmorDamageMax = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatParryDamageChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage items used to parry in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageChance() const -> UI08 { return combatParryDamageChance; }
-auto CServerData::CombatParryDamageChance(UI08 value) -> void {
+auto CServerData::CombatParryDamageChance() const -> std::uint8_t { return combatParryDamageChance; }
+auto CServerData::CombatParryDamageChance(std::uint8_t value) -> void {
     if (value > 100) {
         value = 100;
     }
@@ -3048,24 +3048,24 @@ auto CServerData::CombatParryDamageChance(UI08 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to items used to parry in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageMin() const -> UI08 { return combatParryDamageMin; }
-auto CServerData::CombatParryDamageMin(UI08 value) -> void { combatParryDamageMin = value; }
+auto CServerData::CombatParryDamageMin() const -> std::uint8_t { return combatParryDamageMin; }
+auto CServerData::CombatParryDamageMin(std::uint8_t value) -> void { combatParryDamageMin = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatParryDamageMax()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to items used to parry in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageMax() const -> UI08 { return combatParryDamageMax; }
-auto CServerData::CombatParryDamageMax(UI08 value) -> void { combatParryDamageMax = value; }
+auto CServerData::CombatParryDamageMax() const -> std::uint8_t { return combatParryDamageMax; }
+auto CServerData::CombatParryDamageMax(std::uint8_t value) -> void { combatParryDamageMax = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatBloodEffectChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to spawn blood splatter effects during combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatBloodEffectChance() const -> UI08 { return combatBloodEffectChance; }
-auto CServerData::CombatBloodEffectChance(UI08 value) -> void {
+auto CServerData::CombatBloodEffectChance() const -> std::uint8_t { return combatBloodEffectChance; }
+auto CServerData::CombatBloodEffectChance(std::uint8_t value) -> void {
     if (value > 100) {
         value = 100;
     }
@@ -3101,16 +3101,16 @@ auto CServerData::ThirstSystemEnabled(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the damage taken from players being hungry
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::HungerDamage() const -> SI16 { return hungerDamage; }
-auto CServerData::HungerDamage(SI16 value) -> void { hungerDamage = value; }
+auto CServerData::HungerDamage() const -> std::int16_t { return hungerDamage; }
+auto CServerData::HungerDamage(std::int16_t value) -> void { hungerDamage = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::ThirstDrain()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the stamina drain from players being thirsty
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ThirstDrain() const -> SI16 { return thirstDrain; }
-auto CServerData::ThirstDrain(SI16 value) -> void { thirstDrain = value; }
+auto CServerData::ThirstDrain() const -> std::int16_t { return thirstDrain; }
+auto CServerData::ThirstDrain(std::int16_t value) -> void { thirstDrain = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PetOfflineTimeout()
@@ -3118,8 +3118,8 @@ auto CServerData::ThirstDrain(SI16 value) -> void { thirstDrain = value; }
 //|	Purpose		-	Gets/Sets the interval in seconds between checks for the player
 // offline time
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::PetOfflineTimeout() const -> UI16 { return petOfflineTimeout; }
-auto CServerData::PetOfflineTimeout(UI16 value) -> void { petOfflineTimeout = value; }
+auto CServerData::PetOfflineTimeout() const -> std::uint16_t { return petOfflineTimeout; }
+auto CServerData::PetOfflineTimeout(std::uint16_t value) -> void { petOfflineTimeout = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PetHungerOffline()
@@ -3150,8 +3150,8 @@ auto CServerData::PetThirstOffline(bool newVal) -> void {
 //|					when buying something from a vendor instead of from their
 // backpack
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::BuyThreshold() const -> SI16 { return buyThreshold; }
-auto CServerData::BuyThreshold(SI16 value) -> void { buyThreshold = value; }
+auto CServerData::BuyThreshold() const -> std::int16_t { return buyThreshold; }
+auto CServerData::BuyThreshold(std::int16_t value) -> void { buyThreshold = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CharHideWhileMounted()
@@ -3288,8 +3288,8 @@ auto CServerData::TravelSpellsWhileAggressor(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxControlSlots() const -> UI08 { return maxControlSlots; }
-auto CServerData::MaxControlSlots(UI08 newVal) -> void { maxControlSlots = newVal; }
+auto CServerData::MaxControlSlots() const -> std::uint8_t { return maxControlSlots; }
+auto CServerData::MaxControlSlots(std::uint8_t newVal) -> void { maxControlSlots = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::MaxFollowers()
@@ -3297,24 +3297,24 @@ auto CServerData::MaxControlSlots(UI08 newVal) -> void { maxControlSlots = newVa
 //| Purpose     -   Gets/Sets the max amount of active followers/pets a player can have (0 for
 // disable)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxFollowers() const -> UI08 { return maxFollowers; }
-auto CServerData::MaxFollowers(UI08 newVal) -> void { maxFollowers = newVal; }
+auto CServerData::MaxFollowers() const -> std::uint8_t { return maxFollowers; }
+auto CServerData::MaxFollowers(std::uint8_t newVal) -> void { maxFollowers = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -  CServerData::MaxPetOwners()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of different owners a pet can have in its lifetime
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPetOwners() const -> UI08 { return maxPetOwners; }
-auto CServerData::MaxPetOwners(UI08 newVal) -> void { maxPetOwners = newVal; }
+auto CServerData::MaxPetOwners() const -> std::uint8_t { return maxPetOwners; }
+auto CServerData::MaxPetOwners(std::uint8_t newVal) -> void { maxPetOwners = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::GetPetLoyaltyGainOnSuccess()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty gained on successful use of pet command
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetPetLoyaltyGainOnSuccess() const -> UI16 { return petLoyaltyGainOnSuccess; }
-auto CServerData::SetPetLoyaltyGainOnSuccess(UI16 newVal) -> void {
+auto CServerData::GetPetLoyaltyGainOnSuccess() const -> std::uint16_t { return petLoyaltyGainOnSuccess; }
+auto CServerData::SetPetLoyaltyGainOnSuccess(std::uint16_t newVal) -> void {
     petLoyaltyGainOnSuccess = newVal;
 }
 
@@ -3323,8 +3323,8 @@ auto CServerData::SetPetLoyaltyGainOnSuccess(UI16 newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty loss for failed use of pet command
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetPetLoyaltyLossOnFailure() const -> UI16 { return petLoyaltyLossOnFailure; }
-auto CServerData::SetPetLoyaltyLossOnFailure(UI16 newVal) -> void {
+auto CServerData::GetPetLoyaltyLossOnFailure() const -> std::uint16_t { return petLoyaltyLossOnFailure; }
+auto CServerData::SetPetLoyaltyLossOnFailure(std::uint16_t newVal) -> void {
     petLoyaltyLossOnFailure = newVal;
 }
 
@@ -3334,8 +3334,8 @@ auto CServerData::SetPetLoyaltyLossOnFailure(UI16 newVal) -> void {
 //| Purpose     -   Gets/Sets the max amount of teleports to safety players get per day via help
 // menu when stuck
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxSafeTeleportsPerDay() const -> UI08 { return maxSafeTeleports; }
-auto CServerData::MaxSafeTeleportsPerDay(UI08 newVal) -> void { maxSafeTeleports = newVal; }
+auto CServerData::MaxSafeTeleportsPerDay() const -> std::uint8_t { return maxSafeTeleports; }
+auto CServerData::MaxSafeTeleportsPerDay(std::uint8_t newVal) -> void { maxSafeTeleports = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TeleportToNearestSafeLocation()
@@ -3419,24 +3419,24 @@ auto CServerData::CraftColouredWeapons(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the ratio of worldsaves that get backed up
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::BackupRatio() const -> SI16 { return backupRatio; }
-auto CServerData::BackupRatio(SI16 value) -> void { backupRatio = value; }
+auto CServerData::BackupRatio() const -> std::int16_t { return backupRatio; }
+auto CServerData::BackupRatio(std::int16_t value) -> void { backupRatio = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatMaxRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which combat can be engaged
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatMaxRange() const -> SI16 { return combatMaxRange; }
-auto CServerData::CombatMaxRange(SI16 value) -> void { combatMaxRange = value; }
+auto CServerData::CombatMaxRange() const -> std::int16_t { return combatMaxRange; }
+auto CServerData::CombatMaxRange(std::int16_t value) -> void { combatMaxRange = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatMaxSpellRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which spells can be cast in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatMaxSpellRange() const -> SI16 { return combatMaxSpellRange; }
-auto CServerData::CombatMaxSpellRange(SI16 value) -> void { combatMaxSpellRange = value; }
+auto CServerData::CombatMaxSpellRange() const -> std::int16_t { return combatMaxSpellRange; }
+auto CServerData::CombatMaxSpellRange(std::int16_t value) -> void { combatMaxSpellRange = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAnimalsGuarded()
@@ -3455,8 +3455,8 @@ auto CServerData::CombatAnimalsGuarded(bool newVal) -> void {
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs start fleeing in
 // combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNPCBaseFleeAt() const -> SI16 { return combatNpcBaseFleeAt; }
-auto CServerData::CombatNPCBaseFleeAt(SI16 value) -> void { combatNpcBaseFleeAt = value; }
+auto CServerData::CombatNPCBaseFleeAt() const -> std::int16_t { return combatNpcBaseFleeAt; }
+auto CServerData::CombatNPCBaseFleeAt(std::int16_t value) -> void { combatNpcBaseFleeAt = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatNPCBaseReattackAt()
@@ -3464,8 +3464,8 @@ auto CServerData::CombatNPCBaseFleeAt(SI16 value) -> void { combatNpcBaseFleeAt 
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs reattack after
 // fleeing in combat
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNPCBaseReattackAt() const -> SI16 { return combatNpcBaseReattackAt; }
-auto CServerData::CombatNPCBaseReattackAt(SI16 value) -> void { combatNpcBaseReattackAt = value; }
+auto CServerData::CombatNPCBaseReattackAt() const -> std::int16_t { return combatNpcBaseReattackAt; }
+auto CServerData::CombatNPCBaseReattackAt(std::int16_t value) -> void { combatNpcBaseReattackAt = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::NPCWalkingSpeed()
@@ -3521,8 +3521,8 @@ auto CServerData::NPCMountedFleeingSpeed(R32 value) -> void { npcMountedFleeingS
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for titles in gumps
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TitleColour() const -> UI16 { return titleColour; }
-auto CServerData::TitleColour(UI16 value) -> void { titleColour = value; }
+auto CServerData::TitleColour() const -> std::uint16_t { return titleColour; }
+auto CServerData::TitleColour(std::uint16_t value) -> void { titleColour = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::LeftTextColour()
@@ -3530,8 +3530,8 @@ auto CServerData::TitleColour(UI16 value) -> void { titleColour = value; }
 //|	Purpose		-	Gets/Sets the default text colour for left text in gumps (2 column
 // ones)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::LeftTextColour() const -> UI16 { return leftTextColour; }
-auto CServerData::LeftTextColour(UI16 value) -> void { leftTextColour = value; }
+auto CServerData::LeftTextColour() const -> std::uint16_t { return leftTextColour; }
+auto CServerData::LeftTextColour(std::uint16_t value) -> void { leftTextColour = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::RightTextColour()
@@ -3539,16 +3539,16 @@ auto CServerData::LeftTextColour(UI16 value) -> void { leftTextColour = value; }
 //|	Purpose		-	Gets/Sets the default text colour for right text in gumps (2 column
 // ones)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::RightTextColour() const -> UI16 { return rightTextColour; }
-auto CServerData::RightTextColour(UI16 value) -> void { rightTextColour = value; }
+auto CServerData::RightTextColour() const -> std::uint16_t { return rightTextColour; }
+auto CServerData::RightTextColour(std::uint16_t value) -> void { rightTextColour = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ButtonCancel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for cancel button in gumps
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonCancel() const -> UI16 { return buttonCancel; }
-auto CServerData::ButtonCancel(UI16 value) -> void { buttonCancel = value; }
+auto CServerData::ButtonCancel() const -> std::uint16_t { return buttonCancel; }
+auto CServerData::ButtonCancel(std::uint16_t value) -> void { buttonCancel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ButtonLeft()
@@ -3556,8 +3556,8 @@ auto CServerData::ButtonCancel(UI16 value) -> void { buttonCancel = value; }
 //|	Purpose		-	Gets/Sets the default Button ID for left button (navigation) in
 // gumps
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonLeft() const -> UI16 { return buttonLeft; }
-auto CServerData::ButtonLeft(UI16 value) -> void { buttonLeft = value; }
+auto CServerData::ButtonLeft() const -> std::uint16_t { return buttonLeft; }
+auto CServerData::ButtonLeft(std::uint16_t value) -> void { buttonLeft = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ButtonRight()
@@ -3565,48 +3565,48 @@ auto CServerData::ButtonLeft(UI16 value) -> void { buttonLeft = value; }
 //|	Purpose		-	Gets/Sets the default Button ID for right button (navigation) in
 // gumps
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonRight() const -> UI16 { return buttonRight; }
-auto CServerData::ButtonRight(UI16 value) -> void { buttonRight = value; }
+auto CServerData::ButtonRight() const -> std::uint16_t { return buttonRight; }
+auto CServerData::ButtonRight(std::uint16_t value) -> void { buttonRight = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::BackgroundPic()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Gump ID for background gump
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::BackgroundPic() const -> UI16 { return backgroundPic; }
-auto CServerData::BackgroundPic(UI16 value) -> void { backgroundPic = value; }
+auto CServerData::BackgroundPic() const -> std::uint16_t { return backgroundPic; }
+auto CServerData::BackgroundPic(std::uint16_t value) -> void { backgroundPic = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TownNumSecsPollOpen()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) for which a town voting poll is open
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TownNumSecsPollOpen() const -> UI32 { return numSecsPollOpen; }
-auto CServerData::TownNumSecsPollOpen(UI32 value) -> void { numSecsPollOpen = value; }
+auto CServerData::TownNumSecsPollOpen() const -> std::uint32_t { return numSecsPollOpen; }
+auto CServerData::TownNumSecsPollOpen(std::uint32_t value) -> void { numSecsPollOpen = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TownNumSecsAsMayor()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) that a PC would be a mayor
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TownNumSecsAsMayor() const -> UI32 { return numSecsAsMayor; }
-auto CServerData::TownNumSecsAsMayor(UI32 value) -> void { numSecsAsMayor = value; }
+auto CServerData::TownNumSecsAsMayor() const -> std::uint32_t { return numSecsAsMayor; }
+auto CServerData::TownNumSecsAsMayor(std::uint32_t value) -> void { numSecsAsMayor = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TownTaxPeriod()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between periods of taxes for PCs
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TownTaxPeriod() const -> UI32 { return taxPeriod; }
-auto CServerData::TownTaxPeriod(UI32 value) -> void { taxPeriod = value; }
+auto CServerData::TownTaxPeriod() const -> std::uint32_t { return taxPeriod; }
+auto CServerData::TownTaxPeriod(std::uint32_t value) -> void { taxPeriod = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TownGuardPayment()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between payments for guards
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TownGuardPayment() const -> UI32 { return guardPayment; }
-auto CServerData::TownGuardPayment(UI32 value) -> void { guardPayment = value; }
+auto CServerData::TownGuardPayment() const -> std::uint32_t { return guardPayment; }
+auto CServerData::TownGuardPayment(std::uint32_t value) -> void { guardPayment = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::RepMaxKills()
@@ -3614,16 +3614,16 @@ auto CServerData::TownGuardPayment(UI32 value) -> void { guardPayment = value; }
 //|	Purpose		-	Gets/Sets the threshold in player kills before a player turns red
 //(murderer)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::RepMaxKills() const -> UI16 { return maxMurdersAllowed; }
-auto CServerData::RepMaxKills(UI16 value) -> void { maxMurdersAllowed = value; }
+auto CServerData::RepMaxKills() const -> std::uint16_t { return maxMurdersAllowed; }
+auto CServerData::RepMaxKills(std::uint16_t value) -> void { maxMurdersAllowed = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResLogs()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of logs in a given resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResLogs() const -> SI16 { return logsPerArea; }
-auto CServerData::ResLogs(SI16 value) -> void { logsPerArea = value; }
+auto CServerData::ResLogs() const -> std::int16_t { return logsPerArea; }
+auto CServerData::ResLogs(std::int16_t value) -> void { logsPerArea = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResLogTime()
@@ -3631,16 +3631,16 @@ auto CServerData::ResLogs(SI16 value) -> void { logsPerArea = value; }
 //|	Purpose		-	Gets/Sets the time it takes for 1 single log to respawn in a
 // resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResLogTime() const -> UI16 { return logsRespawnTimer; }
-auto CServerData::ResLogTime(UI16 value) -> void { logsRespawnTimer = value; }
+auto CServerData::ResLogTime() const -> std::uint16_t { return logsRespawnTimer; }
+auto CServerData::ResLogTime(std::uint16_t value) -> void { logsRespawnTimer = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResOre()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of ore in a given resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResOre() const -> SI16 { return orePerArea; }
-auto CServerData::ResOre(SI16 value) -> void { orePerArea = value; }
+auto CServerData::ResOre() const -> std::int16_t { return orePerArea; }
+auto CServerData::ResOre(std::int16_t value) -> void { orePerArea = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResOreTime()
@@ -3648,8 +3648,8 @@ auto CServerData::ResOre(SI16 value) -> void { orePerArea = value; }
 //|	Purpose		-	Gets/Sets the time it takes for 1 single ore to respawn in a
 // resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResOreTime() const -> UI16 { return oreRespawnTimer; }
-auto CServerData::ResOreTime(UI16 value) -> void { oreRespawnTimer = value; }
+auto CServerData::ResOreTime() const -> std::uint16_t { return oreRespawnTimer; }
+auto CServerData::ResOreTime(std::uint16_t value) -> void { oreRespawnTimer = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResourceAreaSize()
@@ -3657,8 +3657,8 @@ auto CServerData::ResOreTime(UI16 value) -> void { oreRespawnTimer = value; }
 //|	Purpose		-	Gets/Sets the size of each resource area to split the world into
 //(min 8x8)
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResourceAreaSize() const -> UI16 { return resourceAreaSize; }
-auto CServerData::ResourceAreaSize(UI16 value) -> void {
+auto CServerData::ResourceAreaSize() const -> std::uint16_t { return resourceAreaSize; }
+auto CServerData::ResourceAreaSize(std::uint16_t value) -> void {
     if (value < 8) {
         value = 8;
     }
@@ -3670,8 +3670,8 @@ auto CServerData::ResourceAreaSize(UI16 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of fish in a given resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResFish() const -> SI16 { return fishPerArea; }
-auto CServerData::ResFish(SI16 value) -> void { fishPerArea = value; }
+auto CServerData::ResFish() const -> std::int16_t { return fishPerArea; }
+auto CServerData::ResFish(std::int16_t value) -> void { fishPerArea = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ResFishTime()
@@ -3679,8 +3679,8 @@ auto CServerData::ResFish(SI16 value) -> void { fishPerArea = value; }
 //|	Purpose		-	Gets/Sets the time it takes for 1 single fish to respawn in a
 // resource area
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ResFishTime() const -> UI16 { return fishRespawnTimer; }
-auto CServerData::ResFishTime(UI16 value) -> void { fishRespawnTimer = value; }
+auto CServerData::ResFishTime() const -> std::uint16_t { return fishRespawnTimer; }
+auto CServerData::ResFishTime(std::uint16_t value) -> void { fishRespawnTimer = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::AccountFlushTimer()
@@ -3712,10 +3712,10 @@ auto CServerData::SetClientFeature(ClientFeatures bitNum, bool nVal) -> void {
 //|	Purpose		-	Gets/Sets which client side features to enable for connecting
 // clients |	Notes		-	See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClientFeatures() const -> UI32 {
-    return static_cast<UI32>(clientFeatures.to_ulong());
+auto CServerData::GetClientFeatures() const -> std::uint32_t {
+    return static_cast<std::uint32_t>(clientFeatures.to_ulong());
 }
-auto CServerData::SetClientFeatures(UI32 nVal) -> void { clientFeatures = nVal; }
+auto CServerData::SetClientFeatures(std::uint32_t nVal) -> void { clientFeatures = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetServerFeature()
@@ -3747,16 +3747,16 @@ auto CServerData::SetServerFeatures(size_t nVal) -> void { serverFeatures = nVal
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets active status of spawn regions per facet
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetSpawnRegionsFacetStatus(UI32 value) const -> bool {
+auto CServerData::GetSpawnRegionsFacetStatus(std::uint32_t value) const -> bool {
     return spawnRegionsFacets.test(value);
 }
-auto CServerData::SetSpawnRegionsFacetStatus(UI32 nVal, bool status) -> void {
+auto CServerData::SetSpawnRegionsFacetStatus(std::uint32_t nVal, bool status) -> void {
     spawnRegionsFacets.set(nVal, status);
 }
-auto CServerData::GetSpawnRegionsFacetStatus() const -> UI32 {
-    return static_cast<UI32>(spawnRegionsFacets.to_ulong());
+auto CServerData::GetSpawnRegionsFacetStatus() const -> std::uint32_t {
+    return static_cast<std::uint32_t>(spawnRegionsFacets.to_ulong());
 }
-auto CServerData::SetSpawnRegionsFacetStatus(UI32 nVal) -> void { spawnRegionsFacets = nVal; }
+auto CServerData::SetSpawnRegionsFacetStatus(std::uint32_t nVal) -> void { spawnRegionsFacets = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetAssistantNegotiation()
@@ -3827,10 +3827,10 @@ auto CServerData::SetDisabledAssistantFeature(AssistantFeatures bitNum, bool nVa
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetDisabledAssistantFeatures() const -> UI64 {
+auto CServerData::GetDisabledAssistantFeatures() const -> std::uint64_t {
     return CServerData::DisabledAssistantFeatures;
 }
-auto CServerData::SetDisabledAssistantFeatures(UI64 nVal) -> void {
+auto CServerData::SetDisabledAssistantFeatures(std::uint64_t nVal) -> void {
     CServerData::DisabledAssistantFeatures = nVal;
 }
 
@@ -3971,7 +3971,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
     auto ofsOutput = std::ofstream(filename);
     if (ofsOutput.is_open()) {
         ofsOutput << "// UOX Initialization File. V";
-        ofsOutput << (static_cast<UI16>(1) << 8 | static_cast<UI16>(2)) << '\n'
+        ofsOutput << (static_cast<std::uint16_t>(1) << 8 | static_cast<std::uint16_t>(2)) << '\n'
                   << "//================================" << '\n'
                   << '\n';
         ofsOutput << "[system]" << '\n' << "{" << '\n';
@@ -4000,17 +4000,17 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation() ? 1 : 0) << '\n';
         ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence() ? 1 : 0) << '\n';
         ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker() ? 1 : 0) << '\n';
-        ofsOutput << "JSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
+        ofsOutput << "JSENGINESIZE=" << static_cast<std::uint16_t>(GetJSEngineSize()) << '\n';
         ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages() ? 1 : 0) << '\n';
         ofsOutput << "CONTEXTMENUS=" << (ServerContextMenus() ? 1 : 0) << '\n';
         ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
-        ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>(MaxClientBytesIn()) << '\n';
-        ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>(MaxClientBytesOut()) << '\n';
-        ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>(NetTrafficTimeban()) << '\n';
-        ofsOutput << "APSPERFTHRESHOLD=" << static_cast<UI16>(APSPerfThreshold()) << '\n';
-        ofsOutput << "APSINTERVAL=" << static_cast<UI16>(APSInterval()) << '\n';
-        ofsOutput << "APSDELAYSTEP=" << static_cast<UI16>(APSDelayStep()) << '\n';
-        ofsOutput << "APSDELAYMAXCAP=" << static_cast<UI16>(APSDelayMaxCap()) << '\n';
+        ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<std::uint32_t>(MaxClientBytesIn()) << '\n';
+        ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<std::uint32_t>(MaxClientBytesOut()) << '\n';
+        ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<std::uint32_t>(NetTrafficTimeban()) << '\n';
+        ofsOutput << "APSPERFTHRESHOLD=" << static_cast<std::uint16_t>(APSPerfThreshold()) << '\n';
+        ofsOutput << "APSINTERVAL=" << static_cast<std::uint16_t>(APSInterval()) << '\n';
+        ofsOutput << "APSDELAYSTEP=" << static_cast<std::uint16_t>(APSDelayStep()) << '\n';
+        ofsOutput << "APSDELAYMAXCAP=" << static_cast<std::uint16_t>(APSDelayMaxCap()) << '\n';
         ofsOutput << "}" << '\n' << '\n';
 
         ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -4046,9 +4046,9 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
-        ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
+        ofsOutput << "SKILLLEVEL=" << static_cast<std::uint16_t>(SkillLevel()) << '\n';
         ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
-        ofsOutput << "SKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
+        ofsOutput << "SKILLDELAY=" << static_cast<std::uint16_t>(ServerSkillDelayStatus()) << '\n';
         ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
         ofsOutput << "STATSAFFECTSKILLCHECKS=" << (StatsAffectSkillChecks() ? 1 : 0) << '\n';
         ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats() ? 1 : 0) << '\n';
@@ -4184,7 +4184,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
         ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
         ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
-        ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<UI16>(MaxSafeTeleportsPerDay())
+        ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<std::uint16_t>(MaxSafeTeleportsPerDay())
                   << '\n';
         ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation() ? 1 : 0)
                   << '\n';
@@ -4195,13 +4195,13 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
-        ofsOutput << "MAXCONTROLSLOTS=" << static_cast<UI16>(MaxControlSlots()) << '\n';
-        ofsOutput << "MAXFOLLOWERS=" << static_cast<UI16>(MaxFollowers()) << '\n';
-        ofsOutput << "MAXPETOWNERS=" << static_cast<UI16>(MaxPetOwners()) << '\n';
+        ofsOutput << "MAXCONTROLSLOTS=" << static_cast<std::uint16_t>(MaxControlSlots()) << '\n';
+        ofsOutput << "MAXFOLLOWERS=" << static_cast<std::uint16_t>(MaxFollowers()) << '\n';
+        ofsOutput << "MAXPETOWNERS=" << static_cast<std::uint16_t>(MaxPetOwners()) << '\n';
         ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << (CheckPetControlDifficulty() ? 1 : 0) << '\n';
-        ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>(GetPetLoyaltyGainOnSuccess())
+        ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<std::uint16_t>(GetPetLoyaltyGainOnSuccess())
                   << '\n';
-        ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>(GetPetLoyaltyLossOnFailure())
+        ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<std::uint16_t>(GetPetLoyaltyLossOnFailure())
                   << '\n';
         ofsOutput << "PETLOYALTYRATE=" << SystemTimer(tSERVER_LOYALTYRATE) << '\n';
         ofsOutput << "}" << '\n';
@@ -4222,8 +4222,8 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
-        ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
-        ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
+        ofsOutput << "POSTINGLEVEL=" << static_cast<std::uint16_t>(MsgBoardPostingLevel()) << '\n';
+        ofsOutput << "REMOVALLEVEL=" << static_cast<std::uint16_t>(MsgBoardPostRemovalLevel()) << '\n';
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
@@ -4234,16 +4234,16 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
-        ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
-        ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
-        ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
+        ofsOutput << "DUNGEONLEVEL=" << static_cast<std::uint16_t>(DungeonLightLevel()) << '\n';
+        ofsOutput << "BRIGHTLEVEL=" << static_cast<std::uint16_t>(WorldLightBrightLevel()) << '\n';
+        ofsOutput << "DARKLEVEL=" << static_cast<std::uint16_t>(WorldLightDarkLevel()) << '\n';
         ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
         ofsOutput << "}" << '\n';
 
         ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
         ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
         ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
-        ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
+        ofsOutput << "MAXTARGETS=" << static_cast<std::uint16_t>(TrackingMaxTargets()) << '\n';
         ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
         ofsOutput << "}" << '\n';
 
@@ -4258,7 +4258,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
 
         ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
         ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
-        ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
+        ofsOutput << "MINECHECK=" << static_cast<std::uint16_t>(MineCheck()) << '\n';
         ofsOutput << "OREPERAREA=" << ResOre() << '\n';
         ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
         ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
@@ -4288,7 +4288,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage() ? 1 : 0) << '\n';
         ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers() ? 1 : 0) << '\n';
         ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals() ? 1 : 0) << '\n';
-        ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance())
+        ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<std::uint16_t>(CombatAnimalsAttackChance())
                   << '\n';
         ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded() ? 1 : 0) << '\n';
         ofsOutput << "NPCDAMAGERATE=" << CombatNpcDamageRate() << '\n';
@@ -4296,30 +4296,30 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
         ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
         ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina() ? 1 : 0) << '\n';
-        ofsOutput << "ARCHERYHITBONUS=" << static_cast<SI16>(CombatArcheryHitBonus()) << '\n';
+        ofsOutput << "ARCHERYHITBONUS=" << static_cast<std::int16_t>(CombatArcheryHitBonus()) << '\n';
         ofsOutput << "ARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
         ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack() ? 1 : 0) << '\n';
-        ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
-        ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
-        ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<UI16>(CombatWeaponDamageMax()) << '\n';
-        ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
-        ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
-        ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
-        ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<UI16>(CombatParryDamageChance()) << '\n';
-        ofsOutput << "PARRYDAMAGEMIN=" << static_cast<UI16>(CombatParryDamageMin()) << '\n';
-        ofsOutput << "PARRYDAMAGEMAX=" << static_cast<UI16>(CombatParryDamageMax()) << '\n';
+        ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<std::uint16_t>(CombatWeaponDamageChance()) << '\n';
+        ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<std::uint16_t>(CombatWeaponDamageMin()) << '\n';
+        ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<std::uint16_t>(CombatWeaponDamageMax()) << '\n';
+        ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<std::uint16_t>(CombatArmorDamageChance()) << '\n';
+        ofsOutput << "ARMORDAMAGEMIN=" << static_cast<std::uint16_t>(CombatArmorDamageMin()) << '\n';
+        ofsOutput << "ARMORDAMAGEMAX=" << static_cast<std::uint16_t>(CombatArmorDamageMax()) << '\n';
+        ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<std::uint16_t>(CombatParryDamageChance()) << '\n';
+        ofsOutput << "PARRYDAMAGEMIN=" << static_cast<std::uint16_t>(CombatParryDamageMin()) << '\n';
+        ofsOutput << "PARRYDAMAGEMAX=" << static_cast<std::uint16_t>(CombatParryDamageMax()) << '\n';
         ofsOutput << "ARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus() ? 1 : 0) << '\n';
         ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled() ? 1 : 0) << '\n';
-        ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier())
+        ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<std::uint16_t>(AlchemyDamageBonusModifier())
                   << '\n';
-        ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>(CombatBloodEffectChance()) << '\n';
+        ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<std::uint16_t>(CombatBloodEffectChance()) << '\n';
         ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting() ? 1 : 0) << '\n';
         ofsOutput << "PETCOMBATTRAINING=" << (PetCombatTraining() ? 1 : 0) << '\n';
         ofsOutput << "HIRELINGCOMBATTRAINING=" << (HirelingCombatTraining() ? 1 : 0) << '\n';
         ofsOutput << "NPCCOMBATTRAINING=" << (NpcCombatTraining() ? 1 : 0) << '\n';
         ofsOutput << "SHOWITEMRESISTSTATS=" << (ShowItemResistStats() ? 1 : 0) << '\n';
         ofsOutput << "SHOWWEAPONDAMAGETYPES=" << (ShowWeaponDamageTypes() ? 1 : 0) << '\n';
-        ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>(WeaponDamageBonusType()) << '\n';
+        ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<std::uint16_t>(WeaponDamageBonusType()) << '\n';
 
         ofsOutput << "}" << '\n';
 
@@ -4493,8 +4493,8 @@ auto CServerData::Load(const std::string &filename) -> bool {
 //|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track
 // at
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingBaseRange() const -> UI16 { return trackingBaseRange; }
-auto CServerData::TrackingBaseRange(UI16 value) -> void { trackingBaseRange = value; }
+auto CServerData::TrackingBaseRange() const -> std::uint16_t { return trackingBaseRange; }
+auto CServerData::TrackingBaseRange(std::uint16_t value) -> void { trackingBaseRange = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TrackingMaxTargets()
@@ -4502,8 +4502,8 @@ auto CServerData::TrackingBaseRange(UI16 value) -> void { trackingBaseRange = va
 //|	Purpose		-	Gets/Sets the max amount of targets someone can see in the tracking
 // window
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingMaxTargets() const -> UI08 { return trackingMaxTargets; }
-auto CServerData::TrackingMaxTargets(UI08 value) -> void {
+auto CServerData::TrackingMaxTargets() const -> std::uint8_t { return trackingMaxTargets; }
+auto CServerData::TrackingMaxTargets(std::uint8_t value) -> void {
     if (value >= MAX_TRACKINGTARGETS) {
         trackingMaxTargets = MAX_TRACKINGTARGETS;
     }
@@ -4518,8 +4518,8 @@ auto CServerData::TrackingMaxTargets(UI08 value) -> void {
 //|	Purpose		-	Gets/Sets the max amount of time a grandmaster tracker can track
 // someone
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingBaseTimer() const -> UI16 { return trackingBaseTimer; }
-auto CServerData::TrackingBaseTimer(UI16 value) -> void { trackingBaseTimer = value; }
+auto CServerData::TrackingBaseTimer() const -> std::uint16_t { return trackingBaseTimer; }
+auto CServerData::TrackingBaseTimer(std::uint16_t value) -> void { trackingBaseTimer = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::TrackingRedisplayTime()
@@ -4527,8 +4527,8 @@ auto CServerData::TrackingBaseTimer(UI16 value) -> void { trackingBaseTimer = va
 //|	Purpose		-	Gets/Sets how often in seconds the tracking message is updated and
 // displayed
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingRedisplayTime() const -> UI16 { return trackingMsgRedisplayTimer; }
-auto CServerData::TrackingRedisplayTime(UI16 value) -> void { trackingMsgRedisplayTimer = value; }
+auto CServerData::TrackingRedisplayTime() const -> std::uint16_t { return trackingMsgRedisplayTimer; }
+auto CServerData::TrackingRedisplayTime(std::uint16_t value) -> void { trackingMsgRedisplayTimer = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ParseIni()
@@ -4657,96 +4657,96 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         ServerName(value);
         break;
     case 2: // CONSOLELOG
-        ServerConsoleLog((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ServerConsoleLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 3: // COMMANDPREFIX
         ServerCommandPrefix(
             (value.data()[0])); // return the first character of the return string only
         break;
     case 4: // ANNOUNCEWORLDSAVES
-        ServerAnnounceSaves((static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
+        ServerAnnounceSaves((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
         break;
     case 26: // JOINPARTMSGS
         ServerJoinPartAnnouncements(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
         break;
     case 5: // BACKUPSENABLED
-        ServerBackups((static_cast<UI16>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
+        ServerBackups((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
         break;
     case 6: // SAVESTIMER
-        ServerSavesTimer(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        ServerSavesTimer(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 7: // SKILLCAP
-        ServerSkillTotalCap(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerSkillTotalCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 8: // SKILLDELAY
-        ServerSkillDelay(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        ServerSkillDelay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 9: // STATCAP
-        ServerStatCap(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerStatCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 10: // MAXSTEALTHMOVEMENTS
-        MaxStealthMovement(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        MaxStealthMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 11: // MAXSTAMINAMOVEMENTS
-        MaxStaminaMovement(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        MaxStaminaMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 12: // ARMORAFFECTMANAREGEN
-        ArmorAffectManaRegen((static_cast<UI08>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
+        ArmorAffectManaRegen((static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
         break;
     case 13: // CORPSEDECAYTIMER
-        SystemTimer(tSERVER_CORPSEDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_CORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 14: // WEATHERTIMER
-        SystemTimer(tSERVER_WEATHER, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_WEATHER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 15: // SHOPSPAWNTIMER
-        SystemTimer(tSERVER_SHOPSPAWN, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_SHOPSPAWN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 16: // DECAYTIMER
-        SystemTimer(tSERVER_DECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_DECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 17: // INVISIBILITYTIMER
-        SystemTimer(tSERVER_INVISIBILITY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_INVISIBILITY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 18: // OBJECTUSETIMER
-        SystemTimer(tSERVER_OBJECTUSAGE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_OBJECTUSAGE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 19: // GATETIMER
-        SystemTimer(tSERVER_GATE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_GATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 20: // POISONTIMER
-        SystemTimer(tSERVER_POISON, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_POISON, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 21: // LOGINTIMEOUT
-        SystemTimer(tSERVER_LOGINTIMEOUT, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_LOGINTIMEOUT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 22: // HITPOINTREGENTIMER
-        SystemTimer(tSERVER_HITPOINTREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_HITPOINTREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 23: // STAMINAREGENTIMER
-        SystemTimer(tSERVER_STAMINAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_STAMINAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 24: // BASEFISHINGTIMER
-        SystemTimer(tSERVER_FISHINGBASE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_FISHINGBASE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 34: // MAXPETOWNERS
-        MaxPetOwners(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MaxPetOwners(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 35: // MAXFOLLOWERS
-        MaxFollowers(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MaxFollowers(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 36: // MAXCONTROLSLOTS
-        MaxControlSlots(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MaxControlSlots(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 37: // MANAREGENTIMER
-        SystemTimer(tSERVER_MANAREGEN, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_MANAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 38: // RANDOMFISHINGTIMER
-        SystemTimer(tSERVER_FISHINGRANDOM, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_FISHINGRANDOM, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 39: // SPIRITSPEAKTIMER
-        SystemTimer(tSERVER_SPIRITSPEAK, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_SPIRITSPEAK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 40: // DIRECTORY
     {
@@ -4789,52 +4789,52 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         break;
     }
     case 47: // LOOTDECAYSWITHCORPSE
-        CorpseLootDecay(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        CorpseLootDecay(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 49: // GUARDSACTIVE
-        GuardStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        GuardStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 27: // DEATHANIMATION
-        DeathAnimationStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        DeathAnimationStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 50: // AMBIENTSOUNDS
-        WorldAmbientSounds(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        WorldAmbientSounds(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 51: // AMBIENTFOOTSTEPS
-        AmbientFootsteps(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        AmbientFootsteps(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 52: // INTERNALACCOUNTCREATION
-        InternalAccountStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        InternalAccountStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 53: // SHOWOFFLINEPCS
-        ShowOfflinePCs(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        ShowOfflinePCs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 54: // ROGUESENABLED
-        RogueStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        RogueStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 55: // PLAYERPERSECUTION
-        PlayerPersecutionStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        PlayerPersecutionStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 56: // ACCOUNTFLUSH
         AccountFlushTimer(std::stod(value));
         break;
     case 57: // HTMLSTATUSENABLED
-        HtmlStatsStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        HtmlStatsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 58: // SELLBYNAME
-        SellByNameStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        SellByNameStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 59: // SELLMAXITEMS
-        SellMaxItemsStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SellMaxItemsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 60: // TRADESYSTEM
-        TradeSystemStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        TradeSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 61: // RANKSYSTEM
-        RankSystemStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        RankSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 62: // CUTSCROLLREQUIREMENTS
-        CutScrollRequirementStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        CutScrollRequirementStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 63: // CHECKITEMS
         CheckItemsSpeed(std::stod(value));
@@ -4849,25 +4849,25 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         CheckSpawnRegionSpeed(std::stod(value));
         break;
     case 67: // POSTINGLEVEL
-        MsgBoardPostingLevel(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MsgBoardPostingLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 68: // REMOVALLEVEL
-        MsgBoardPostRemovalLevel(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MsgBoardPostRemovalLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 69: // ESCORTENABLED
-        EscortsEnabled(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        EscortsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 70: // ESCORTINITEXPIRE
-        SystemTimer(tSERVER_ESCORTWAIT, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_ESCORTWAIT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 71: // ESCORTACTIVEEXPIRE
-        SystemTimer(tSERVER_ESCORTACTIVE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_ESCORTACTIVE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 72: // MOON1
-        ServerMoon(0, static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ServerMoon(0, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 73: // MOON2
-        ServerMoon(1, static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ServerMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 74: // DUNGEONLEVEL
         DungeonLightLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
@@ -4879,151 +4879,151 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         WorldLightBrightLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
         break;
     case 77: // BASERANGE
-        TrackingBaseRange(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        TrackingBaseRange(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 78: // BASETIMER
-        TrackingBaseTimer(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        TrackingBaseTimer(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 79: // MAXTARGETS
-        TrackingMaxTargets(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        TrackingMaxTargets(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 80: // MSGREDISPLAYTIME
-        TrackingRedisplayTime(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        TrackingRedisplayTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 81: // MURDERDECAYTIMER
-        SystemTimer(tSERVER_MURDERDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_MURDERDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 82: // MAXKILLS
-        RepMaxKills(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        RepMaxKills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 83: // CRIMINALTIMER
-        SystemTimer(tSERVER_CRIMINAL, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_CRIMINAL, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 84: // MINECHECK
-        MineCheck(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MineCheck(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 85: // OREPERAREA
-        ResOre(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ResOre(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 86: // ORERESPAWNTIMER
-        ResOreTime(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ResOreTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 87: // RESOURCEAREASIZE
-        ResourceAreaSize(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ResourceAreaSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 88: // LOGSPERAREA
-        ResLogs(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ResLogs(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 89: // LOGSRESPAWNTIMER
-        ResLogTime(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ResLogTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 90: // STATSAFFECTSKILLCHECKS
-        StatsAffectSkillChecks(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        StatsAffectSkillChecks(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 91: // HUNGERRATE
-        SystemTimer(tSERVER_HUNGERRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_HUNGERRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 92: // HUNGERDMGVAL
-        HungerDamage(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        HungerDamage(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 93: // MAXRANGE
-        CombatMaxRange(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatMaxRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 94: // SPELLMAXRANGE
-        CombatMaxSpellRange(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatMaxSpellRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 95: // DISPLAYHITMSG
-        CombatDisplayHitMessage(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CombatDisplayHitMessage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 96: // MONSTERSVSANIMALS
-        CombatMonstersVsAnimals(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CombatMonstersVsAnimals(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 97: // ANIMALATTACKCHANCE
-        CombatAnimalsAttackChance(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        CombatAnimalsAttackChance(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 98: // ANIMALSGUARDED
-        CombatAnimalsGuarded(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CombatAnimalsGuarded(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 99: // NPCDAMAGERATE
-        CombatNpcDamageRate(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatNpcDamageRate(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 100: // NPCBASEFLEEAT
-        CombatNPCBaseFleeAt(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatNPCBaseFleeAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 101: // NPCBASEREATTACKAT
-        CombatNPCBaseReattackAt(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatNPCBaseReattackAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 102: // ATTACKSTAMINA
-        CombatAttackStamina(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatAttackStamina(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 103: // LOCATION
         ServerLocation(value);
         break;
     case 104: // STARTGOLD
-        ServerStartGold(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ServerStartGold(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 105: // STARTPRIVS
-        ServerStartPrivs(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerStartPrivs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 106: // ESCORTDONEEXPIRE
-        SystemTimer(tSERVER_ESCORTDONE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_ESCORTDONE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 107: // DARKLEVEL
         WorldLightDarkLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
         break;
     case 108: // TITLECOLOUR
-        TitleColour(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        TitleColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 109: // LEFTTEXTCOLOUR
-        LeftTextColour(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        LeftTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 110: // RIGHTTEXTCOLOUR
-        RightTextColour(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        RightTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 111: // BUTTONCANCEL
-        ButtonCancel(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ButtonCancel(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 112: // BUTTONLEFT
-        ButtonLeft(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ButtonLeft(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 113: // BUTTONRIGHT
-        ButtonRight(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ButtonRight(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 114: // BACKGROUNDPIC
-        BackgroundPic(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        BackgroundPic(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 115: // POLLTIME
-        TownNumSecsPollOpen(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        TownNumSecsPollOpen(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 116: // MAYORTIME
-        TownNumSecsAsMayor(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        TownNumSecsAsMayor(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 117: // TAXPERIOD
-        TownTaxPeriod(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        TownTaxPeriod(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 118: // GUARDSPAID
-        TownGuardPayment(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        TownGuardPayment(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 119: // DAY
-        ServerTimeDay(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ServerTimeDay(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 120: // HOURS
-        ServerTimeHours(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        ServerTimeHours(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 121: // MINUTES
-        ServerTimeMinutes(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        ServerTimeMinutes(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 122: // SECONDS
-        ServerTimeSeconds(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        ServerTimeSeconds(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 123: // AMPM
-        ServerTimeAMPM(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        ServerTimeAMPM(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 124: // SKILLLEVEL
-        SkillLevel(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        SkillLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 125: // SNOOPISCRIME
-        SnoopIsCrime(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        SnoopIsCrime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 126: // BOOKSDIRECTORY
         Directory(CSDDP_BOOKS, value);
@@ -5031,7 +5031,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
     case 127: // SERVERLIST
         break;
     case 128: // PORT
-        ServerPort(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerPort(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 129: // ACCESSDIRECTORY
         Directory(CSDDP_ACCESS, value);
@@ -5045,68 +5045,68 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         Directory(CSDDP_HTML, value);
         break;
     case 133: // SHOOTONANIMALBACK
-        ShootOnAnimalBack(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ShootOnAnimalBack(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 134: // NPCTRAININGENABLED
-        NPCTrainingStatus(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        NPCTrainingStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 135: // DICTIONARYDIRECTORY
         Directory(CSDDP_DICTIONARIES, value);
         break;
     case 136: // BACKUPSAVERATIO
-        BackupRatio(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        BackupRatio(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 137: // HIDEWHILEMOUNTED
-        CharHideWhileMounted(static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+        CharHideWhileMounted(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 138: // SECONDSPERUOMINUTE
-        ServerSecondsPerUOMinute(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerSecondsPerUOMinute(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 139: // WEIGHTPERSTR
         // WeightPerStr( value.toUByte() );
         WeightPerStr(std::stof(value));
         break;
     case 140: // POLYDURATION
-        SystemTimer(tSERVER_POLYMORPH, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_POLYMORPH, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 141: // UOGENABLED
-        ServerUOGEnabled(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ServerUOGEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 142: // NETRCVTIMEOUT
-        ServerNetRcvTimeout(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        ServerNetRcvTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 143: // NETSNDTIMEOUT
-        ServerNetSndTimeout(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        ServerNetSndTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 144: // NETRETRYCOUNT
-        ServerNetRetryCount(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        ServerNetRetryCount(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 145: // CLIENTFEATURES
-        SetClientFeatures(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        SetClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 146: // PACKETOVERLOADS
-        ServerOverloadPackets((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 147: // NPCMOVEMENTSPEED
         NPCWalkingSpeed(std::stof(value));
         break;
     case 148: // PETHUNGEROFFLINE
-        PetHungerOffline((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        PetHungerOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 149: // PETOFFLINETIMEOUT
-        PetOfflineTimeout(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        PetOfflineTimeout(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 150: // PETOFFLINECHECKTIMER
-        SystemTimer(tSERVER_PETOFFLINECHECK, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_PETOFFLINECHECK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 152: // ADVANCEDPATHFINDING
-        AdvancedPathfinding((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 153: // SERVERFEATURES
-        SetServerFeatures(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        SetServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 154: // LOOTINGISCRIME
-        LootingIsCrime((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 155: // NPCRUNNINGSPEED
         NPCRunningSpeed(std::stof(value));
@@ -5115,91 +5115,91 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         NPCFleeingSpeed(std::stof(value));
         break;
     case 157: // BASICTOOLTIPSONLY
-        BasicTooltipsOnly((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        BasicTooltipsOnly((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 158: // GLOBALITEMDECAY
-        GlobalItemDecay((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        GlobalItemDecay((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 159: // SCRIPTITEMSDECAYABLE
-        ScriptItemsDecayable((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ScriptItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 160: // BASEITEMSDECAYABLE
-        BaseItemsDecayable((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        BaseItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 161: // ITEMDECAYINHOUSES
-        ItemDecayInHouses((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ItemDecayInHouses((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 162: // SPAWNREGIONSFACETS
-        SetSpawnRegionsFacetStatus(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        SetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 163: // PAPERDOLLGUILDBUTTON
-        PaperdollGuildButton(static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+        PaperdollGuildButton(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 164: // ATTACKSPEEDFROMSTAMINA
-        CombatAttackSpeedFromStamina(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CombatAttackSpeedFromStamina(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 169: // DISPLAYDAMAGENUMBERS
-        CombatDisplayDamageNumbers(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 170: // CLIENTSUPPORT4000
-        ClientSupport4000(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 171: // CLIENTSUPPORT5000
-        ClientSupport5000(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 172: // CLIENTSUPPORT6000
-        ClientSupport6000(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 173: // CLIENTSUPPORT6050
-        ClientSupport6050(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 174: // CLIENTSUPPORT7000
-        ClientSupport7000(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 175: // CLIENTSUPPORT7090
-        ClientSupport7090(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 176: // CLIENTSUPPORT70160
-        ClientSupport70160(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 177: // CLIENTSUPPORT70240
-        ClientSupport70240(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 178: // CLIENTSUPPORT70300
-        ClientSupport70300(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 179: // CLIENTSUPPORT70331
-        ClientSupport70331(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 180: // CLIENTSUPPORT704565
-        ClientSupport704565(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 181: // CLIENTSUPPORT70610
-        ClientSupport70610(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ClientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 182: // EXTENDEDSTARTINGSTATS
-        ExtendedStartingStats(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 183: // EXTENDEDSTARTINGSKILLS
-        ExtendedStartingSkills(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ExtendedStartingSkills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 184: // WEAPONDAMAGECHANCE
-        CombatWeaponDamageChance(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatWeaponDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 185: // ARMORDAMAGECHANCE
-        CombatArmorDamageChance(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatArmorDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 186: // WEAPONDAMAGEMIN
-        CombatWeaponDamageMin(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatWeaponDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 187: // WEAPONDAMAGEMAX
-        CombatWeaponDamageMax(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatWeaponDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 188: // ARMORDAMAGEMIN
-        CombatArmorDamageMin(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatArmorDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 189: // ARMORDAMAGEMAX
-        CombatArmorDamageMax(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatArmorDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 190: // GLOBALATTACKSPEED
         GlobalAttackSpeed(std::stof(value));
@@ -5211,136 +5211,136 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         FishingStaminaLoss(std::stof(value));
         break;
     case 193: // RANDOMSTARTINGLOCATION
-        ServerRandomStartingLocation(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 194: // ASSISTANTNEGOTIATION
-        SetAssistantNegotiation((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        SetAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 195: // KICKONASSISTANTSILENCE
-        KickOnAssistantSilence((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 196: // AF_FILTERWEATHER
         SetDisabledAssistantFeature(AF_FILTERWEATHER,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 197: // AF_FILTERLIGHT
         SetDisabledAssistantFeature(AF_FILTERLIGHT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 198: // AF_SMARTTARGET
         SetDisabledAssistantFeature(AF_SMARTTARGET,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 199: // AF_RANGEDTARGET
         SetDisabledAssistantFeature(AF_RANGEDTARGET,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 200: // AF_AUTOOPENDOORS
         SetDisabledAssistantFeature(AF_AUTOOPENDOORS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 201: // AF_DEQUIPONCAST
         SetDisabledAssistantFeature(AF_DEQUIPONCAST,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 202: // AF_AUTOPOTIONEQUIP
         SetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 203: // AF_POISONEDCHECKS
         SetDisabledAssistantFeature(AF_POISONEDCHECKS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 204: // AF_LOOPEDMACROS
         SetDisabledAssistantFeature(AF_LOOPEDMACROS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 205: // AF_USEONCEAGENT
         SetDisabledAssistantFeature(AF_USEONCEAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 206: // AF_RESTOCKAGENT
         SetDisabledAssistantFeature(AF_RESTOCKAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 207: // AF_SELLAGENT
         SetDisabledAssistantFeature(AF_SELLAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 208: // AF_BUYAGENT
         SetDisabledAssistantFeature(AF_BUYAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 209: // AF_POTIONHOTKEYS
         SetDisabledAssistantFeature(AF_POTIONHOTKEYS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 210: // AF_RANDOMTARGETS
         SetDisabledAssistantFeature(AF_RANDOMTARGETS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 211: // AF_CLOSESTTARGETS
         SetDisabledAssistantFeature(AF_CLOSESTTARGETS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 212: // AF_OVERHEADHEALTH
         SetDisabledAssistantFeature(AF_OVERHEADHEALTH,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 213: // AF_AUTOLOOTAGENT
         SetDisabledAssistantFeature(AF_AUTOLOOTAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 214: // AF_BONECUTTERAGENT
         SetDisabledAssistantFeature(AF_BONECUTTERAGENT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 215: // AF_JSCRIPTMACROS
         SetDisabledAssistantFeature(AF_JSCRIPTMACROS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 216: // AF_AUTOREMOUNT
         SetDisabledAssistantFeature(AF_AUTOREMOUNT,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 218: // CLASSICUOMAPTRACKER
-        SetClassicUOMapTracker((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        SetClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 219: // DECAYTIMERINHOUSE
-        SystemTimer(tSERVER_DECAYINHOUSE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 220: // PROTECTPRIVATEHOUSES
-        ProtectPrivateHouses(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ProtectPrivateHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 221: // TRACKHOUSESPERACCOUNT
-        TrackHousesPerAccount(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        TrackHousesPerAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 222: // MAXHOUSESOWNABLE
-        MaxHousesOwnable(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        MaxHousesOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 223: // MAXHOUSESCOOWNABLE
-        MaxHousesCoOwnable(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        MaxHousesCoOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 224: // CANOWNANDCOOWNHOUSES
-        CanOwnAndCoOwnHouses(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CanOwnAndCoOwnHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 225: // COOWNHOUSESONSAMEACCOUNT
-        CoOwnHousesOnSameAccount(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        CoOwnHousesOnSameAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 226: // ITEMSDETECTSPEECH
-        ItemsDetectSpeech(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ItemsDetectSpeech(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 227: // MAXPLAYERPACKITEMS
-        MaxPlayerPackItems(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        MaxPlayerPackItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 228: // MAXPLAYERBANKITEMS
-        MaxPlayerBankItems(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        MaxPlayerBankItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 229: // FORCENEWANIMATIONPACKET
-        ForceNewAnimationPacket(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        ForceNewAnimationPacket(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 230: // MAPDIFFSENABLED
-        MapDiffsEnabled(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        MapDiffsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 231: // CORESHARDERA
         ExpansionCoreShardEra(EraStringToEnum(util::trim(value)));
@@ -5370,34 +5370,34 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         ExpansionShieldParry(EraStringToEnum(util::trim(value)));
         break;
     case 240: // PARRYDAMAGECHANCE
-        CombatParryDamageChance(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatParryDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 241: // PARRYDAMAGEMIN
-        CombatParryDamageMin(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatParryDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 242: // PARRYDAMAGEMAX
-        CombatParryDamageMax(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatParryDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 243: // ARMORCLASSDAMAGEBONUS
-        CombatArmorClassDamageBonus(static_cast<SI08>(std::stoi(value, nullptr, 0)) == 1);
+        CombatArmorClassDamageBonus(static_cast<std::int8_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 244: // FREESHARDSERVERPOLL
-        FreeshardServerPoll((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        FreeshardServerPoll((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 245: // ALCHEMYBONUSENABLED
-        AlchemyDamageBonusEnabled(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        AlchemyDamageBonusEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 246: // ALCHEMYBONUSMODIFIER
-        AlchemyDamageBonusModifier(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        AlchemyDamageBonusModifier(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 247: // NPCFLAGUPDATETIMER
-        SystemTimer(tSERVER_NPCFLAGUPDATETIMER, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_NPCFLAGUPDATETIMER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 248: // JSENGINESIZE
-        SetJSEngineSize(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SetJSEngineSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 249: // USEUNICODEMESSAGES
-        UseUnicodeMessages(static_cast<UI16>(std::stoul(value, nullptr, 0)) == 1);
+        UseUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
         break;
     case 250: // SCRIPTDATADIRECTORY
     {
@@ -5405,58 +5405,58 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         break;
     }
     case 251: // THIRSTRATE
-        SystemTimer(tSERVER_THIRSTRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_THIRSTRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 252: // THIRSTDRAINVAL
-        ThirstDrain(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ThirstDrain(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 253: // PETTHIRSTOFFLINE
-        PetThirstOffline((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        PetThirstOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 254: // ExternalIP
         ExternalIP(value);
         break;
     case 255: // BLOODDECAYTIMER
-        SystemTimer(tSERVER_BLOODDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_BLOODDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 256: // BLOODDECAYCORPSETIMER
-        SystemTimer(tSERVER_BLOODDECAYCORPSE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_BLOODDECAYCORPSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 257: // BLOODEFFECTCHANCE
-        CombatBloodEffectChance(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        CombatBloodEffectChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 258: // NPCCORPSEDECAYTIMER
-        SystemTimer(tSERVER_NPCCORPSEDECAY, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_NPCCORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 259: // HUNGERENABLED
-        HungerSystemEnabled((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        HungerSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 260: // THIRSTENABLED
-        ThirstSystemEnabled((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ThirstSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 261: // TRAVELSPELLSFROMBOATKEYS
-        TravelSpellsFromBoatKeys((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        TravelSpellsFromBoatKeys((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 262: // TRAVELSPELLSWHILEOVERWEIGHT
-        TravelSpellsWhileOverweight((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        TravelSpellsWhileOverweight((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 263: // MARKRUNESINMULTIS
-        MarkRunesInMultis((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        MarkRunesInMultis((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 264: // TRAVELSPELLSBETWEENWORLD
-        TravelSpellsBetweenWorlds((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        TravelSpellsBetweenWorlds((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 265: // TRAVELSPELLSWHILEAGGRESSOR
-        TravelSpellsWhileAggressor((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        TravelSpellsWhileAggressor((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 266: // BUYBANKTHRESHOLD
-        BuyThreshold(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        BuyThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 267: // NETWORKLOG
-        ServerNetworkLog((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ServerNetworkLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 268: // SPEECHLOG
-        ServerSpeechLog((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ServerSpeechLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 269: // NPCMOUNTEDWALKINGSPEED
         NPCMountedWalkingSpeed(std::stof(value));
@@ -5468,139 +5468,139 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         NPCMountedFleeingSpeed(std::stof(value));
         break;
     case 272: // CONTEXTMENUS
-        ServerContextMenus((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ServerContextMenus((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 273: // SERVERLANGUAGE
-        ServerLanguage(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ServerLanguage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 274: // CHECKPETCONTROLDIFFICULTY
         CheckPetControlDifficulty(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 275: // PETLOYALTYGAINONSUCCESS
-        SetPetLoyaltyGainOnSuccess(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SetPetLoyaltyGainOnSuccess(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 276: // PETLOYALTYLOSSONFAILURE
-        SetPetLoyaltyLossOnFailure(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SetPetLoyaltyLossOnFailure(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 277: // LOYALTYRATE
-        SystemTimer(tSERVER_LOYALTYRATE, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_LOYALTYRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 278: // SHOWNPCTITLESINTOOLTIPS
         ShowNpcTitlesInTooltips(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 279: // FISHPERAREA
-        ResFish(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        ResFish(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 280: // FISHRESPAWNTIMER
-        ResFishTime(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        ResFishTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 281: // ARCHERYHITBONUS
-        CombatArcheryHitBonus(static_cast<SI16>(std::stoi(value, nullptr, 0)));
+        CombatArcheryHitBonus(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 282: // ITEMSINTERRUPTCASTING
-        ItemsInterruptCasting((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ItemsInterruptCasting((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 283: // SYSMESSAGECOLOUR
-        SysMsgColour(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 284: // AF_AUTOBANDAGE
         SetDisabledAssistantFeature(AF_AUTOBANDAGE,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 285: // AF_ENEMYTARGETSHARE
         SetDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 286: // AF_FILTERSEASON
         SetDisabledAssistantFeature(AF_FILTERSEASON,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 287: // AF_SPELLTARGETSHARE
         SetDisabledAssistantFeature(AF_SPELLTARGETSHARE,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 288: // AF_HUMANOIDHEALTHCHECKS
         SetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 289: // AF_SPEECHJOURNALCHECKS
         SetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
-                                    static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1);
+                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
         break;
     case 290: // ARCHERYSHOOTDELAY
         CombatArcheryShootDelay(std::stof(value));
         break;
     case 291: // MAXCLIENTBYTESIN
-        MaxClientBytesIn(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        MaxClientBytesIn(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 292: // MAXCLIENTBYTESOUT
-        MaxClientBytesOut(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        MaxClientBytesOut(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 293: // NETTRAFFICTIMEBAN
-        NetTrafficTimeban(static_cast<UI32>(std::stoul(value, nullptr, 0)));
+        NetTrafficTimeban(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
         break;
     case 294: // TOOLUSELIMIT
-        ToolUseLimit((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ToolUseLimit((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 295: // TOOLUSEBREAK
-        ToolUseBreak((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ToolUseBreak((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 296: // ITEMREPAIRDURABILITYLOSS
-        ItemRepairDurabilityLoss((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        ItemRepairDurabilityLoss((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 297: // HIDESTATSFORUNKNOWNMAGICITEMS
-        HideStatsForUnknownMagicItems((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        HideStatsForUnknownMagicItems((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 298: // CRAFTCOLOUREDWEAPONS
-        CraftColouredWeapons((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        CraftColouredWeapons((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 299: // MAXSAFETELEPORTSPERDAY
-        MaxSafeTeleportsPerDay(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        MaxSafeTeleportsPerDay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 300: // TELEPORTONEARESTSAFELOCATION
-        TeleportToNearestSafeLocation((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        TeleportToNearestSafeLocation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 301: // ALLOWAWAKENPCS
-        AllowAwakeNPCs((static_cast<SI16>(std::stoi(value, nullptr, 0)) == 1));
+        AllowAwakeNPCs((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
         break;
     case 302: // DISPLAYMAKERSMARK
-        DisplayMakersMark(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        DisplayMakersMark(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 303: // SHOWNPCTITLESOVERHEAD
         ShowNpcTitlesOverhead(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 304: // SHOWINVULNERABLETAGOVERHEAD
         ShowInvulnerableTagOverhead(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 305: // PETCOMBATTRAINING
-        PetCombatTraining((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        PetCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 306: // HIRELINGCOMBATTRAINING
         HirelingCombatTraining(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 307: // NPCCOMBATTRAINING
-        NpcCombatTraining((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        NpcCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 308: // GLOBALRESTOCKMULTIPLIER
         GlobalRestockMultiplier(std::stof(value));
         break;
     case 309: // SHOWITEMRESISTSTATS
-        ShowItemResistStats((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ShowItemResistStats((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 310: // SHOWWEAPONDAMAGETYPES
         ShowWeaponDamageTypes(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 311: // SHOWRACEWITHNAME
-        ShowRaceWithName((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ShowRaceWithName((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 312: // SHOWRACEINPAPERDOLL
-        ShowRaceInPaperdoll((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        ShowRaceInPaperdoll((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 313: // WEAPONPARRY
         ExpansionWeaponParry(EraStringToEnum(util::trim(value)));
@@ -5613,58 +5613,58 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         break;
     case 316: // CASTSPELLSWHILEMOVING
         CastSpellsWhileMoving(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 317: // SHOWREPUTATIONTITLEINTOOLTIP
         ShowReputationTitleInTooltip(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 318: // SHOWGUILDINFOINTOOLTIP
         ShowGuildInfoInTooltip(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 319: // MAXPLAYERPACKWEIGHT
-        MaxPlayerPackWeight(static_cast<SI32>(std::stoi(value, nullptr, 0)));
+        MaxPlayerPackWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
         break;
     case 320: // MAXPLAYERBANKWEIGHT
-        MaxPlayerBankWeight(static_cast<SI32>(std::stoi(value, nullptr, 0)));
+        MaxPlayerBankWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
         break;
     case 321: // SAFECOOWNERLOGOUT
-        SafeCoOwnerLogout((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        SafeCoOwnerLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 322: // SAFEFRIENDLOGOUT
-        SafeFriendLogout((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        SafeFriendLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 323: // SAFEGUESTLOGOUT
-        SafeGuestLogout((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        SafeGuestLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 324: // KEYLESSOWNERACCESS
-        KeylessOwnerAccess((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        KeylessOwnerAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 325: // KEYLESSCOOWNERACCESS
         KeylessCoOwnerAccess(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 326: // KEYLESSFRIENDACCESS
-        KeylessFriendAccess((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        KeylessFriendAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 327: // KEYLESSGUESTACCESS
-        KeylessGuestAccess((static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+        KeylessGuestAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 328: // WEAPONDAMAGEBONUSTYPE
-        WeaponDamageBonusType(static_cast<UI08>(std::stoul(value, nullptr, 0)));
+        WeaponDamageBonusType(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
         break;
     case 329: // OFFERBODSFROMITEMSALES
         OfferBODsFromItemSales(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 330: // OFFERBODSFROMCONTEXTMENU
         OfferBODsFromContextMenu(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 331: // BODSFROMCRAFTEDITEMSONLY
         BODsFromCraftedItemsOnly(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 332: // BODGOLDREWARDMULTIPLIER
         BODGoldRewardMultiplier(std::stof(value));
@@ -5674,38 +5674,38 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         break;
     case 334: // ENABLENPCGUILDDISCOUNTS
         EnableNPCGuildDiscounts(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 335: // ENABLENPCGUILDPREMIUMS
         EnableNPCGuildPremiums(
-            (static_cast<UI16>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
         break;
     case 336: // AGGRESSORFLAGTIMER
-        SystemTimer(tSERVER_AGGRESSORFLAG, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_AGGRESSORFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 337: // PERMAGREYFLAGTIMER
-        SystemTimer(tSERVER_PERMAGREYFLAG, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_PERMAGREYFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 338: // STEALINGFLAGTIMER
-        SystemTimer(tSERVER_STEALINGFLAG, static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        SystemTimer(tSERVER_STEALINGFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 339: // SNOOPAWARENESS
-        SnoopAwareness(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        SnoopAwareness(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 340: // APSPERFTHRESHOLD
-        APSPerfThreshold(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        APSPerfThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 341: // APSINTERVAL
-        APSInterval(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        APSInterval(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 342: // APSDELAYSTEP
-        APSDelayStep(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        APSDelayStep(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 343: // APSDELAYMAXCAP
-        APSDelayMaxCap(static_cast<UI16>(std::stoul(value, nullptr, 0)));
+        APSDelayMaxCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 344: // YOUNGPLAYERSYSTEM
-        YoungPlayerSystem(static_cast<UI16>(std::stoul(value, nullptr, 0)) != 0);
+        YoungPlayerSystem(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
         break;
     case 345: // YOUNGLOCATION
         YoungServerLocation(value);
@@ -5725,8 +5725,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default amount of starting gold for new characters
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStartGold() const -> SI16 { return startGold; }
-auto CServerData::ServerStartGold(SI16 value) -> void {
+auto CServerData::ServerStartGold() const -> std::int16_t { return startGold; }
+auto CServerData::ServerStartGold(std::int16_t value) -> void {
     if (value >= 0) {
         startGold = value;
     }
@@ -5737,22 +5737,22 @@ auto CServerData::ServerStartGold(SI16 value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default starting privs for new characters
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStartPrivs() const -> UI16 { return startPrivs; }
-auto CServerData::ServerStartPrivs(UI16 value) -> void { startPrivs = value; }
+auto CServerData::ServerStartPrivs() const -> std::uint16_t { return startPrivs; }
+auto CServerData::ServerStartPrivs(std::uint16_t value) -> void { startPrivs = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerMoon()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the phase of one of the game's two moons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerMoon(SI16 slot) const -> SI16 {
-    SI16 rValue = -1;
+auto CServerData::ServerMoon(std::int16_t slot) const -> std::int16_t {
+    std::int16_t rValue = -1;
     if (slot >= 0 && slot <= 1) {
         rValue = moon[slot];
     }
     return rValue;
 }
-auto CServerData::ServerMoon(SI16 slot, SI16 value) -> void {
+auto CServerData::ServerMoon(std::int16_t slot, std::int16_t value) -> void {
     if (slot >= 0 && slot <= 1 && value >= 0) {
         moon[slot] = value;
     }
@@ -5851,20 +5851,20 @@ auto CServerData::ServerLocation(std::string toSet) -> void {
         toAdd.newTown = toAdd.oldTown;
         toAdd.newDescription = toAdd.oldDescription;
 
-        toAdd.x = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-        toAdd.y = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-        toAdd.z = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+        toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+        toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+        toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
         toAdd.worldNum =
-            static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
+            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
         if (csecs.size() == 7) {
             toAdd.clilocDesc =
-                static_cast<UI32>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
         }
         else {
             toAdd.instanceId =
-                static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
             toAdd.clilocDesc =
-                static_cast<UI32>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
+                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
         }
         startlocations.push_back(toAdd);
     }
@@ -5900,20 +5900,20 @@ auto CServerData::YoungServerLocation(std::string toSet) -> void {
         toAdd.newTown = toAdd.oldTown;
         toAdd.newDescription = toAdd.oldDescription;
 
-        toAdd.x = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-        toAdd.y = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-        toAdd.z = static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+        toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+        toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+        toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
         toAdd.worldNum =
-            static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
+            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
         if (csecs.size() == 7) {
             toAdd.clilocDesc =
-                static_cast<UI32>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
         }
         else {
             toAdd.instanceId =
-                static_cast<SI16>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
             toAdd.clilocDesc =
-                static_cast<UI32>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
+                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
         }
         youngStartlocations.push_back(toAdd);
     }
@@ -5929,16 +5929,16 @@ auto CServerData::NumYoungServerLocations() const -> size_t { return youngStartl
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the number of real life seconds per UO minute
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSecondsPerUOMinute() const -> UI16 { return secondsPerUoMinute; }
-auto CServerData::ServerSecondsPerUOMinute(UI16 newVal) -> void { secondsPerUoMinute = newVal; }
+auto CServerData::ServerSecondsPerUOMinute() const -> std::uint16_t { return secondsPerUoMinute; }
+auto CServerData::ServerSecondsPerUOMinute(std::uint16_t newVal) -> void { secondsPerUoMinute = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerLanguage()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default (if any) language used for the server
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerLanguage() const -> UI16 { return serverLanguage; }
-auto CServerData::ServerLanguage(UI16 newVal) -> void {
+auto CServerData::ServerLanguage() const -> std::uint16_t { return serverLanguage; }
+auto CServerData::ServerLanguage(std::uint16_t newVal) -> void {
     if (newVal < DL_COUNT) {
         serverLanguage = newVal;
     }
@@ -5954,8 +5954,8 @@ auto CServerData::ServerLanguage(UI16 newVal) -> void {
 // second period |					If amount exceeds this cap, client might
 // receive a warning/get kicked
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxClientBytesIn() const -> UI32 { return maxBytesIn; }
-auto CServerData::MaxClientBytesIn(UI32 newVal) -> void { maxBytesIn = newVal; }
+auto CServerData::MaxClientBytesIn() const -> std::uint32_t { return maxBytesIn; }
+auto CServerData::MaxClientBytesIn(std::uint32_t newVal) -> void { maxBytesIn = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxClientBytesOut()
@@ -5964,8 +5964,8 @@ auto CServerData::MaxClientBytesIn(UI32 newVal) -> void { maxBytesIn = newVal; }
 // period |					If amount exceeds this cap, client might receive a
 // warning/get kicked
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxClientBytesOut() const -> UI32 { return maxBytesOut; }
-auto CServerData::MaxClientBytesOut(UI32 newVal) -> void { maxBytesOut = newVal; }
+auto CServerData::MaxClientBytesOut() const -> std::uint32_t { return maxBytesOut; }
+auto CServerData::MaxClientBytesOut(std::uint32_t newVal) -> void { maxBytesOut = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::NetTrafficTimeban()
@@ -5973,8 +5973,8 @@ auto CServerData::MaxClientBytesOut(UI32 newVal) -> void { maxBytesOut = newVal;
 //|	Purpose		-	Gets/Sets max amount of time a player will be temporarily banned for
 // if they |					exceed their alotted network traffic budget
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::NetTrafficTimeban() const -> UI32 { return trafficTimeban; }
-auto CServerData::NetTrafficTimeban(UI32 newVal) -> void { trafficTimeban = newVal; }
+auto CServerData::NetTrafficTimeban() const -> std::uint32_t { return trafficTimeban; }
+auto CServerData::NetTrafficTimeban(std::uint32_t newVal) -> void { trafficTimeban = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GetJSEngineSize()
@@ -5983,8 +5983,8 @@ auto CServerData::NetTrafficTimeban(UI32 newVal) -> void { trafficTimeban = newV
 //|	Purpose		-	Gets/Sets jsEngineSize (in MB), used to define max bytes per
 // JSRuntime |					before a last ditch GC effort is made
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetJSEngineSize() const -> UI16 { return jsEngineSize; }
-auto CServerData::SetJSEngineSize(UI16 newVal) -> void { jsEngineSize = newVal; }
+auto CServerData::GetJSEngineSize() const -> std::uint16_t { return jsEngineSize; }
+auto CServerData::SetJSEngineSize(std::uint16_t newVal) -> void { jsEngineSize = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::APSPerfThreshold()
@@ -5994,8 +5994,8 @@ auto CServerData::SetJSEngineSize(UI16 newVal) -> void { jsEngineSize = newVal; 
 //|					APS - Adaptive Performance System - kicks in. A value of 0
 //disables the system
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::APSPerfThreshold() const -> UI16 { return apsPerfThreshold; }
-auto CServerData::APSPerfThreshold(UI16 newVal) -> void { apsPerfThreshold = newVal; }
+auto CServerData::APSPerfThreshold() const -> std::uint16_t { return apsPerfThreshold; }
+auto CServerData::APSPerfThreshold(std::uint16_t newVal) -> void { apsPerfThreshold = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::APSInterval()
@@ -6003,8 +6003,8 @@ auto CServerData::APSPerfThreshold(UI16 newVal) -> void { apsPerfThreshold = new
 //|	Purpose		-	Gets/Sets the interval at which APS will check shard performance and
 // make |					adjustments if necessary
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::APSInterval() const -> UI16 { return apsInterval; }
-auto CServerData::APSInterval(UI16 newVal) -> void { apsInterval = newVal; }
+auto CServerData::APSInterval() const -> std::uint16_t { return apsInterval; }
+auto CServerData::APSInterval(std::uint16_t newVal) -> void { apsInterval = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::APSDelayStep()
@@ -6013,8 +6013,8 @@ auto CServerData::APSInterval(UI16 newVal) -> void { apsInterval = newVal; }
 //|					gradually increase/decrease the delay effect for checking
 //NPC AI/movement stuff
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::APSDelayStep() const -> UI16 { return apsDelayStep; }
-auto CServerData::APSDelayStep(UI16 newVal) -> void { apsDelayStep = newVal; }
+auto CServerData::APSDelayStep() const -> std::uint16_t { return apsDelayStep; }
+auto CServerData::APSDelayStep(std::uint16_t newVal) -> void { apsDelayStep = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::APSDelayMaxCap()
@@ -6023,8 +6023,8 @@ auto CServerData::APSDelayStep(UI16 newVal) -> void { apsDelayStep = newVal; }
 // AI/movement stuff can |					be delayed by APS in an effort to
 // restore shard performance to above threshold levels
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::APSDelayMaxCap() const -> UI16 { return apsDelayMaxCap; }
-auto CServerData::APSDelayMaxCap(UI16 newVal) -> void { apsDelayMaxCap = newVal; }
+auto CServerData::APSDelayMaxCap() const -> std::uint16_t { return apsDelayMaxCap; }
+auto CServerData::APSDelayMaxCap(std::uint16_t newVal) -> void { apsDelayMaxCap = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveTime()
@@ -6042,10 +6042,10 @@ auto CServerData::SaveTime() -> void {
     }
 
     timeDestination << "[TIME]" << '\n' << "{" << '\n';
-    timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << '\n';
+    timeDestination << "CURRENTLIGHT=" << static_cast<std::uint16_t>(WorldLightCurrentLevel()) << '\n';
     timeDestination << "DAY=" << ServerTimeDay() << '\n';
-    timeDestination << "HOUR=" << static_cast<UI16>(ServerTimeHours()) << '\n';
-    timeDestination << "MINUTE=" << static_cast<UI16>(ServerTimeMinutes()) << '\n';
+    timeDestination << "HOUR=" << static_cast<std::uint16_t>(ServerTimeHours()) << '\n';
+    timeDestination << "MINUTE=" << static_cast<std::uint16_t>(ServerTimeMinutes()) << '\n';
     timeDestination << "AMPM=" << (ServerTimeAMPM() ? 1 : 0) << '\n';
     timeDestination << "MOON=" << ServerMoon(0) << "," << ServerMoon(1) << '\n';
     timeDestination << "}" << '\n' << '\n';
@@ -6096,23 +6096,23 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
                 ServerTimeAMPM((std::stoi(data, nullptr, 0) == 1));
             }
             else if (UTag == "CURRENTLIGHT") {
-                WorldLightCurrentLevel(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                WorldLightCurrentLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else if (UTag == "DAY") {
-                ServerTimeDay(static_cast<SI16>(std::stoi(data, nullptr, 0)));
+                ServerTimeDay(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
             }
             else if (UTag == "HOUR") {
-                ServerTimeHours(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                ServerTimeHours(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else if (UTag == "MINUTE") {
-                ServerTimeMinutes(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                ServerTimeMinutes(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else if (UTag == "MOON") {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
-                    ServerMoon(0, static_cast<SI16>(std::stoi(
+                    ServerMoon(0, static_cast<std::int16_t>(std::stoi(
                                       util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    ServerMoon(1, static_cast<SI16>(std::stoi(
+                    ServerMoon(1, static_cast<std::int16_t>(std::stoi(
                                       util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
             }
@@ -6122,22 +6122,22 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
 }
 
 //==============================================================================================
-auto CServerData::ServerTimeDay() const -> SI16 { return days; }
+auto CServerData::ServerTimeDay() const -> std::int16_t { return days; }
 //==============================================================================================
-auto CServerData::ServerTimeDay(SI16 nValue) -> void { days = nValue; }
+auto CServerData::ServerTimeDay(std::int16_t nValue) -> void { days = nValue; }
 //==============================================================================================
-auto CServerData::ServerTimeHours() const -> UI08 { return hours; }
+auto CServerData::ServerTimeHours() const -> std::uint8_t { return hours; }
 //==============================================================================================
-auto CServerData::ServerTimeHours(UI08 nValue) -> void { hours = nValue; }
+auto CServerData::ServerTimeHours(std::uint8_t nValue) -> void { hours = nValue; }
 //==============================================================================================
-auto CServerData::ServerTimeMinutes() const -> UI08 { return minutes; }
+auto CServerData::ServerTimeMinutes() const -> std::uint8_t { return minutes; }
 
 //==============================================================================================
-auto CServerData::ServerTimeMinutes(UI08 nValue) -> void { minutes = nValue; }
+auto CServerData::ServerTimeMinutes(std::uint8_t nValue) -> void { minutes = nValue; }
 //==============================================================================================
-auto CServerData::ServerTimeSeconds() const -> UI08 { return seconds; }
+auto CServerData::ServerTimeSeconds() const -> std::uint8_t { return seconds; }
 //==============================================================================================
-auto CServerData::ServerTimeSeconds(UI08 nValue) -> void { seconds = nValue; }
+auto CServerData::ServerTimeSeconds(std::uint8_t nValue) -> void { seconds = nValue; }
 //==============================================================================================
 auto CServerData::ServerTimeAMPM() const -> bool { return ampm; }
 //==============================================================================================
@@ -6155,8 +6155,8 @@ auto CServerData::IncSecond() -> bool {
 }
 
 //==============================================================================================
-auto CServerData::IncMoon(SI32 mNumber) -> void {
-    moon[mNumber] = static_cast<SI16>((moon[mNumber] + 1) % 8);
+auto CServerData::IncMoon(std::int32_t mNumber) -> void {
+    moon[mNumber] = static_cast<std::int16_t>((moon[mNumber] + 1) % 8);
 }
 
 //==============================================================================================
@@ -6198,7 +6198,7 @@ auto CServerData::IncDay() -> bool {
 }
 
 //==============================================================================================
-auto CServerData::ServerEntry(UI16 entryNum) -> PhysicalServer * {
+auto CServerData::ServerEntry(std::uint16_t entryNum) -> PhysicalServer * {
     PhysicalServer *rValue = nullptr;
     if (entryNum < serverList.size()) {
         rValue = &serverList[entryNum];
@@ -6206,7 +6206,7 @@ auto CServerData::ServerEntry(UI16 entryNum) -> PhysicalServer * {
     return rValue;
 }
 //==============================================================================================
-auto CServerData::ServerCount() const -> UI16 { return static_cast<UI16>(serverList.size()); }
+auto CServerData::ServerCount() const -> std::uint16_t { return static_cast<std::uint16_t>(serverList.size()); }
 //==============================================================================================
 // PhysicalServer
 //==============================================================================================
@@ -6218,7 +6218,7 @@ auto PhysicalServer::SetDomain(const std::string &newDomain) -> void { domain = 
 //==============================================================================================
 auto PhysicalServer::SetIP(const std::string &newIP) -> void { ip = newIP; }
 //==============================================================================================
-auto PhysicalServer::SetPort(UI16 newPort) -> void { port = newPort; }
+auto PhysicalServer::SetPort(std::uint16_t newPort) -> void { port = newPort; }
 //==============================================================================================
 auto PhysicalServer::GetName() const -> const std::string & { return name; }
 //==============================================================================================
@@ -6226,4 +6226,4 @@ auto PhysicalServer::GetDomain() const -> const std::string & { return domain; }
 //==============================================================================================
 auto PhysicalServer::GetIP() const -> const std::string & { return ip; }
 //==============================================================================================
-auto PhysicalServer::GetPort() const -> UI16 { return port; }
+auto PhysicalServer::GetPort() const -> std::uint16_t { return port; }

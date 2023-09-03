@@ -151,7 +151,7 @@ void PageVector::SendAsGump(CSocket *toSendTo) {
         if (!(*qIter)->IsHandled()) {
             CChar *mChar = CalcCharObjFromSer((*qIter)->WhoPaging());
             if (ValidateObject(mChar)) {
-                GQueue.AddData(mChar->GetName(), static_cast<UI32>((*qIter)->TimeOfPage()));
+                GQueue.AddData(mChar->GetName(), static_cast<std::uint32_t>((*qIter)->TimeOfPage()));
             }
         }
     }
@@ -181,8 +181,8 @@ PageVector::PageVector(const std::string &newTitle) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets queue position to specified value
 // o------------------------------------------------------------------------------------------------o
-bool PageVector::GotoPos(SI32 pos) {
-    if (pos < 0 || static_cast<UI32>(pos) >= requestQueue.size())
+bool PageVector::GotoPos(std::int32_t pos) {
+    if (pos < 0 || static_cast<std::uint32_t>(pos) >= requestQueue.size())
         return false;
 
     currentPos = (requestQueue.begin() + pos);
@@ -194,8 +194,8 @@ bool PageVector::GotoPos(SI32 pos) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets current queue position
 // o------------------------------------------------------------------------------------------------o
-SI32 PageVector::CurrentPos(void) const {
-    return static_cast<SI32>((currentPos - requestQueue.begin()));
+std::int32_t PageVector::CurrentPos(void) const {
+    return static_cast<std::int32_t>((currentPos - requestQueue.begin()));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -215,10 +215,10 @@ SERIAL PageVector::GetCallNum(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets position of page with specified call number/help request ID
 // o------------------------------------------------------------------------------------------------o
-SI32 PageVector::FindCallNum(SERIAL callNum) {
+std::int32_t PageVector::FindCallNum(SERIAL callNum) {
     for (size_t counter = 0; counter < requestQueue.size(); ++counter) {
         if (requestQueue[counter]->RequestId() == callNum)
-            return static_cast<SI32>(counter);
+            return static_cast<std::int32_t>(counter);
     }
     return -1;
 }
@@ -252,7 +252,7 @@ bool PageVector::AnswerNextCall(CSocket *mSock, CChar *mChar) {
                 QNext.AddData("Pager: ", isPaging->GetName());
                 QNext.AddData("Problem: ", tempPage->Reason());
                 QNext.AddData("Serial number ", tempPage->WhoPaging(), 3);
-                QNext.AddData("Paged at: ", static_cast<UI32>(tempPage->TimeOfPage()));
+                QNext.AddData("Paged at: ", static_cast<std::uint32_t>(tempPage->TimeOfPage()));
                 QNext.Send(4, false, INVALIDSERIAL);
                 tempPage->IsHandled(true);
                 if (mChar->WorldNumber() != isPaging->WorldNumber()) {
@@ -262,7 +262,7 @@ bool PageVector::AnswerNextCall(CSocket *mSock, CChar *mChar) {
                 else {
                     mChar->SetLocation(isPaging);
                 }
-                mChar->SetCallNum(static_cast<SI16>(tempPage->RequestId()));
+                mChar->SetCallNum(static_cast<std::int16_t>(tempPage->RequestId()));
                 retVal = true;
                 break;
             }
@@ -304,8 +304,8 @@ void CHelpRequest::WhoHandling(SERIAL pHandling) { playerHandling = pHandling; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the priority of the request
 // o------------------------------------------------------------------------------------------------o
-SI08 CHelpRequest::Priority(void) const { return priority; }
-void CHelpRequest::Priority(SI08 pPriority) { priority = pPriority; }
+std::int8_t CHelpRequest::Priority(void) const { return priority; }
+void CHelpRequest::Priority(std::int8_t pPriority) { priority = pPriority; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHelpRequest::IsHandled()

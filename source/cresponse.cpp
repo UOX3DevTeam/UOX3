@@ -98,7 +98,7 @@ auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if nearby NPCs run scripts that react to speech
 // o------------------------------------------------------------------------------------------------o
-UI08 DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::string &text) {
+std::uint8_t DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::string &text) {
     for (auto &nearbyNpc : FindNearbyNPCs(mChar, DIST_CMDRANGE)) {
         if (!ValidateObject(nearbyNpc))
             continue;
@@ -108,7 +108,7 @@ UI08 DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::stri
         if (std::abs(mChar->GetZ() - nearbyNpc->GetZ()) > 9)
             continue;
 
-        std::vector<UI16> scriptTriggers = nearbyNpc->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = nearbyNpc->GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -116,7 +116,7 @@ UI08 DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::stri
                 //|				0	=> Let other NPCs and PCs see it
                 //|				1	=> Let other PCs see it
                 //|				2	=> Let no one else see it
-                SI08 rVal = -1;
+                std::int8_t rVal = -1;
                 if (nearbyNpc->IsDisabled()) {
                     nearbyNpc->TextMessage(nullptr, 1291, TALK, false);
                 }
@@ -148,11 +148,11 @@ UI08 DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::stri
             if (std::abs(mChar->GetZ() - nearbyItem->GetZ()) > 9)
                 continue;
 
-            std::vector<UI16> scriptTriggers = nearbyItem->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = nearbyItem->GetScriptTriggers();
             for (auto i : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(i);
                 if (toExecute != nullptr) {
-                    SI08 rVal = -1;
+                    std::int8_t rVal = -1;
                     if (nearbyItem->IsDisabled()) {
                         nearbyItem->TextMessage(nullptr, 1291, TALK, false);
                     }
@@ -182,7 +182,7 @@ UI08 DoJSResponse([[maybe_unused]] CSocket *mSock, CChar *mChar, const std::stri
 //|	Purpose		-	Handle responses to keywords in player speech
 // o------------------------------------------------------------------------------------------------o
 bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr) {
-    UI08 jsResponse = DoJSResponse(mSock, mChar, text);
+    std::uint8_t jsResponse = DoJSResponse(mSock, mChar, text);
     if (jsResponse == 1)
         return true;
 
@@ -191,7 +191,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
 
     CBaseResponse *tResp = nullptr;
 
-    for (UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords();
+    for (std::uint16_t trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords();
          trigWord = mSock->NextTrigWord()) {
         switch (trigWord) {
         case TW_COUNT:
@@ -575,7 +575,7 @@ CKillsResponse::CKillsResponse(void) {}
 // o------------------------------------------------------------------------------------------------o
 void CKillsResponse::Handle(CSocket *mSock, CChar *mChar) {
     if (!mChar->IsDead() && mSock != nullptr) {
-        SI16 i = mChar->GetKills();
+        std::int16_t i = mChar->GetKills();
         if (i == 0) {
             mSock->SysMessage(1288); // You are an upstanding Citizen... no kills.
         }
@@ -588,7 +588,7 @@ void CKillsResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-CTrainingResponse::CTrainingResponse(UI16 trigWord, CChar *tChar) {
+CTrainingResponse::CTrainingResponse(std::uint16_t trigWord, CChar *tChar) {
     trigChar = tChar;
     ourTrigWord = trigWord;
 }
@@ -620,7 +620,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                 nearbyNpc->SetTimer(tNPC_MOVETIME, BuildTimeValue(60));
                 mSock->TempObj(nullptr); // this is to prevent errors when a player says "train
                                          // <skill>" then doesn't pay the npc
-                SI16 skill = -1;
+                std::int16_t skill = -1;
 
                 // Language independent implementation of training keywords
                 switch (ourTrigWord) {
@@ -796,9 +796,9 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         255); // Like above, this is to prevent  errors when a player says "train
                               // <skill>" then doesn't pay the npc
                     temp = Dictionary->GetEntry(1303); // I can teach thee the following skills:
-                    UI08 skillsToTrainIn = 0;
-                    UI08 lastCommaPos = 0;
-                    for (UI08 j = 0; j < ALLSKILLS; ++j) {
+                    std::uint8_t skillsToTrainIn = 0;
+                    std::uint8_t lastCommaPos = 0;
+                    for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
                         if (nearbyNpc->GetBaseSkill(j) > 10) {
                             temp2 = util::lower(cwmWorldState->skill[j].name);
                             if (!skillsToTrainIn) {
@@ -809,7 +809,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                             }
                             else if (skillsToTrainIn <= 10) {
                                 // Additional skills
-                                lastCommaPos = static_cast<UI08>(temp.size()) + 1;
+                                lastCommaPos = static_cast<std::uint8_t>(temp.size()) + 1;
                                 temp += (", " + temp2);
                             }
                             else if (skillsToTrainIn >
@@ -844,36 +844,36 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                             false); // I am sorry, but I have nothing to teach thee.
                         continue;
                     }
-                    if (nearbyNpc->GetBaseSkill(static_cast<UI08>(skill)) > 10) {
+                    if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) > 10) {
                         temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),
                                                   util::lower(cwmWorldState->skill[skill].name)
                                                       .c_str()); // Thou wishest to learn of  %s?
-                        if (mChar->GetBaseSkill(static_cast<UI08>(skill)) >= 250) {
+                        if (mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)) >= 250) {
                             temp += Dictionary->GetEntry(
                                 1305); // I can teach thee no more than thou already knowest!
                         }
                         else {
-                            if (nearbyNpc->GetBaseSkill(static_cast<UI08>(skill)) <= 250) {
+                            if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) <= 250) {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
                                 temp2 = oldstrutil::format(
                                     maxsize, Dictionary->GetEntry(1306),
-                                    static_cast<SI32>(
-                                        nearbyNpc->GetBaseSkill(static_cast<UI08>(skill)) / 2 / 10),
-                                    static_cast<SI32>(
-                                        nearbyNpc->GetBaseSkill(static_cast<UI08>(skill)) / 2) -
-                                        mChar->GetBaseSkill(static_cast<UI08>(skill)));
+                                    static_cast<std::int32_t>(
+                                        nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2 / 10),
+                                    static_cast<std::int32_t>(
+                                        nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2) -
+                                        mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             else {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
                                 temp2 = oldstrutil::format(
                                     maxsize, Dictionary->GetEntry(1306), 25,
-                                    250 - mChar->GetBaseSkill(static_cast<UI08>(skill)));
+                                    250 - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             temp += " " + temp2;
                             mSock->TempObj(nearbyNpc);
-                            nearbyNpc->SetTrainingPlayerIn(static_cast<UI08>(skill));
+                            nearbyNpc->SetTrainingPlayerIn(static_cast<std::uint8_t>(skill));
                         }
                         nearbyNpc->TextMessage(mSock, temp, TALK, false);
                     }
@@ -914,7 +914,7 @@ void CBasePetResponse::Handle(CSocket *mSock, CChar *mChar) {
 }
 
 CPetMultiResponse::CPetMultiResponse(const std::string &text, bool restrictVal, TargetIds targVal,
-                                     SI32 dictVal, bool saidAll, bool checkControlDifficulty)
+                                     std::int32_t dictVal, bool saidAll, bool checkControlDifficulty)
     : CBasePetResponse(text) {
     isRestricted = restrictVal;
     targId = targVal;
@@ -927,7 +927,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
         for (auto &nearbyNpc : FindNearbyNPCs(mChar, DIST_CMDRANGE)) {
             if (ValidateObject(nearbyNpc) && nearbyNpc->GetOwnerObj() == mChar) {
                 if (Npcs->CanControlPet(mChar, nearbyNpc, isRestricted, checkDifficulty)) {
-                    UI08 cursorType = 0;
+                    std::uint8_t cursorType = 0;
                     if (targId == 25) // Guard
                     {
                         cursorType = 2; // helpful
@@ -951,7 +951,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
         if (FindString(ourText, util::upper(npcName))) {
             if (Npcs->CanControlPet(mChar, petNpc, isRestricted, checkDifficulty)) {
                 mSock->TempObj(petNpc);
-                UI08 cursorType = 0;
+                std::uint8_t cursorType = 0;
                 if (targId == 25) // Guard
                 {
                     cursorType = 2; // helpful
@@ -1148,7 +1148,7 @@ CVendorSellResponse::CVendorSellResponse(bool vendVal, const std::string &text)
 // o------------------------------------------------------------------------------------------------o
 bool CVendorSellResponse::Handle(CSocket *mSock, CChar *mChar, CChar *vendorNpc) {
     // Check if vendor has onSell script running
-    std::vector<UI16> scriptTriggers = vendorNpc->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = vendorNpc->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1210,7 +1210,7 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
     if (vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
         CChar *mChar = mSock->CurrcharObj();
         if (mChar == vendorNpc->GetOwnerObj()) {
-            UI32 pay = 0;
+            std::uint32_t pay = 0;
             auto give = vendorNpc->GetHoldG();
             auto earned = vendorNpc->GetHoldG();
 
@@ -1220,7 +1220,7 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
             }
             else if (vendorNpc->GetHoldG() > 0 && vendorNpc->GetHoldG() <= MAX_STACK) {
                 if (vendorNpc->GetHoldG() > 9) {
-                    pay = static_cast<SI32>(vendorNpc->GetHoldG() / 10);
+                    pay = static_cast<std::int32_t>(vendorNpc->GetHoldG() / 10);
                     give = vendorNpc->GetHoldG() - pay;
                 }
                 else {
@@ -1230,7 +1230,7 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
                 vendorNpc->SetHoldG(0);
             }
             else {
-                UI32 t =
+                std::uint32_t t =
                     vendorNpc->GetHoldG() - MAX_STACK; // yank of 65 grand, then do calculations
                 vendorNpc->SetHoldG(t);
                 pay = 6554;
@@ -1275,9 +1275,9 @@ bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar
                 vendorNpc->TextMessage(mSock, 1326, TALK, false); // I have no gold waiting for you.
             }
             else {
-                UI32 pay = 0;
+                std::uint32_t pay = 0;
                 if (vendorNpc->GetHoldG() > 9) {
-                    pay = static_cast<SI32>(vendorNpc->GetHoldG() / 10);
+                    pay = static_cast<std::int32_t>(vendorNpc->GetHoldG() / 10);
                 }
                 else {
                     pay = vendorNpc->GetHoldG();
@@ -1321,7 +1321,7 @@ bool CVendorDismissResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mCha
     return true;
 }
 
-CHouseMultiResponse::CHouseMultiResponse(TargetIds targVal, SI32 dictVal) {
+CHouseMultiResponse::CHouseMultiResponse(TargetIds targVal, std::int32_t dictVal) {
     targId = targVal;
     dictEntry = dictVal;
 }
@@ -1334,7 +1334,7 @@ void CHouseMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
     CMultiObj *realHouse = FindMulti(mChar);
     if (ValidateObject(realHouse) && !realHouse->CanBeObjType(OT_BOAT)) {
         if (realHouse->CanBeObjType(OT_MULTI)) {
-            std::vector<UI16> scriptTriggers = realHouse->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = realHouse->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -1357,7 +1357,7 @@ void CHouseMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-CBoatResponse::CBoatResponse(const std::string &text, UI16 tW) {
+CBoatResponse::CBoatResponse(const std::string &text, std::uint16_t tW) {
     ourText = text;
     trigWord = tW;
 }

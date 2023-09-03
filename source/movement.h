@@ -21,78 +21,78 @@ constexpr auto P_PF_MFD = 15;
 constexpr auto P_PF_MAXFD = 50;
 
 struct PfNode_st {
-    UI16 hCost;
-    UI08 gCost;
+    std::uint16_t hCost;
+    std::uint8_t gCost;
     size_t parent;
-    SI08 z;
+    std::int8_t z;
     PfNode_st() : hCost(0), gCost(0), parent(0), z(0) {}
-    PfNode_st(UI16 nHC, UI08 nGC, UI32 nPS, SI08 nZ) : hCost(nHC), gCost(nGC), parent(nPS), z(nZ) {}
+    PfNode_st(std::uint16_t nHC, std::uint8_t nGC, std::uint32_t nPS, std::int8_t nZ) : hCost(nHC), gCost(nGC), parent(nPS), z(nZ) {}
 };
 
 struct NodeFCost_st {
-    UI32 xySer;
-    UI16 fCost;
+    std::uint32_t xySer;
+    std::uint16_t fCost;
     NodeFCost_st() : xySer(0), fCost(0) {}
-    NodeFCost_st(UI16 nFC, UI32 nS) : xySer(nS), fCost(nFC) {}
+    NodeFCost_st(std::uint16_t nFC, std::uint32_t nS) : xySer(nS), fCost(nFC) {}
 };
 
 class CMovement {
     // Function declarations
   public:
-    bool AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool willRun = false,
-                             UI16 maxSteps = 0);
+    bool AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint16_t targY, bool willRun = false,
+                             std::uint16_t maxSteps = 0);
     auto IgnoreAndEvadeTarget(CChar *mChar) -> void;
-    void Walking(CSocket *mSock, CChar *s, UI08 dir, SI16 sequence);
+    void Walking(CSocket *mSock, CChar *s, std::uint8_t dir, std::int16_t sequence);
     void CombatWalk(CChar *i);
     void NpcMovement(CChar &mChar);
-    void PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun = false, UI08 pathLen = P_PF_MRV);
-    UI08 Direction(CChar *c, SI16 x, SI16 y);
-    bool CheckForCharacterAtXYZ(CChar *c, SI16 cx, SI16 cy, SI08 cz);
-    SI08 CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask,
+    void PathFind(CChar *c, std::int16_t gx, std::int16_t gy, bool willRun = false, std::uint8_t pathLen = P_PF_MRV);
+    std::uint8_t Direction(CChar *c, std::int16_t x, std::int16_t y);
+    bool CheckForCharacterAtXYZ(CChar *c, std::int16_t cx, std::int16_t cy, std::int8_t cz);
+    std::int8_t CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::int16_t oldx, std::int16_t oldy, std::int8_t oldz, bool justask,
                   bool waterWalk = false);
 
   private:
-    bool PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
-                     UI32 parentSer, std::map<UI32, PfNode_st> &openList,
-                     std::map<UI32, UI32> &closedList, std::deque<NodeFCost_st> &fCostList);
-    bool CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir);
+    bool PFGrabNodes(CChar *mChar, std::uint16_t targX, std::uint16_t targY, std::uint16_t curX, std::uint16_t curY, std::int8_t curZ,
+                     std::uint32_t parentSer, std::map<std::uint32_t, PfNode_st> &openList,
+                     std::map<std::uint32_t, std::uint32_t> &closedList, std::deque<NodeFCost_st> &fCostList);
+    bool CalcMove(CChar *c, std::int16_t x, std::int16_t y, std::int8_t &z, std::uint8_t dir);
 
     bool HandleNPCWander(CChar &mChar);
-    bool IsValidDirection(UI08 dir);
-    bool IsFrozen(CChar *c, CSocket *mSock, SI16 sequence);
-    bool IsOverloaded(CChar *c, CSocket *mSock, SI16 sequence);
+    bool IsValidDirection(std::uint8_t dir);
+    bool IsFrozen(CChar *c, CSocket *mSock, std::int16_t sequence);
+    bool IsOverloaded(CChar *c, CSocket *mSock, std::int16_t sequence);
 
-    bool IsOk(std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop,
-              SI16 x, SI16 y, UI16 instanceId, bool ignoreDoor, bool waterWalk);
-    void GetAverageZ(UI08 nm, SI16 x, SI16 y, SI08 &z, SI08 &avg, SI08 &top);
-    void GetStartZ(UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08 &zlow, SI08 &ztop,
-                   UI16 instanceId, bool waterWalk);
+    bool IsOk(std::vector<Tile_st> &xyblock, std::uint16_t &xycount, std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop,
+              std::int16_t x, std::int16_t y, std::uint16_t instanceId, bool ignoreDoor, bool waterWalk);
+    void GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std::int8_t &z, std::int8_t &avg, std::int8_t &top);
+    void GetStartZ(std::uint8_t world, CChar *c, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t &zlow, std::int8_t &ztop,
+                   std::uint16_t instanceId, bool waterWalk);
 
-    void GetBlockingStatics(SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount,
-                            UI08 worldNumber);
-    void GetBlockingDynamics(SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount,
-                             UI08 worldNumber, UI16 instanceId);
+    void GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount,
+                            std::uint8_t worldNumber);
+    void GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount,
+                             std::uint8_t worldNumber, std::uint16_t instanceId);
 
-    UI08 Direction(SI16 sx, SI16 sy, SI16 dx, SI16 dy);
+    std::uint8_t Direction(std::int16_t sx, std::int16_t sy, std::int16_t dx, std::int16_t dy);
 
-    void NpcWalk(CChar *i, UI08 j, SI08 getWander);
-    SI16 GetXfromDir(UI08 dir, SI16 x);
-    SI16 GetYfromDir(UI08 dir, SI16 y);
+    void NpcWalk(CChar *i, std::uint8_t j, std::int8_t getWander);
+    std::int16_t GetXfromDir(std::uint8_t dir, std::int16_t x);
+    std::int16_t GetYfromDir(std::uint8_t dir, std::int16_t y);
 
-    void BoundingBoxTeleport(CChar *c, UI16 fx2Actual, UI16 fy2Actual, SI16 newz, SI16 newy);
+    void BoundingBoxTeleport(CChar *c, std::uint16_t fx2Actual, std::uint16_t fy2Actual, std::int16_t newz, std::int16_t newy);
 
-    bool VerifySequence(CChar *c, CSocket *mSock, SI16 sequence);
-    bool CheckForRunning(CChar *c, UI08 dir);
+    bool VerifySequence(CChar *c, CSocket *mSock, std::int16_t sequence);
+    bool CheckForRunning(CChar *c, std::uint8_t dir);
     bool CheckForStealth(CChar *c);
     bool CheckForHouseBan(CChar *c, CSocket *mSock);
-    void MoveCharForDirection(CChar *c, SI16 newX, SI16 newY, SI08 newZ);
-    void SendWalkToPlayer(CChar *c, CSocket *mSock, SI16 sequence);
-    void SendWalkToOtherPlayers(CChar *c, UI08 dir, SI16 oldx, SI16 oldy);
+    void MoveCharForDirection(CChar *c, std::int16_t newX, std::int16_t newY, std::int8_t newZ);
+    void SendWalkToPlayer(CChar *c, CSocket *mSock, std::int16_t sequence);
+    void SendWalkToOtherPlayers(CChar *c, std::uint8_t dir, std::int16_t oldx, std::int16_t oldy);
     void OutputShoveMessage(CChar *c, CSocket *mSock);
-    void HandleItemCollision(CChar *c, CSocket *mSock, SI16 oldx, SI16 oldy);
+    void HandleItemCollision(CChar *c, CSocket *mSock, std::int16_t oldx, std::int16_t oldy);
     bool IsGMBody(CChar *c);
 
-    void DenyMovement(CSocket *mSock, CChar *s, SI16 sequence);
+    void DenyMovement(CSocket *mSock, CChar *s, std::int16_t sequence);
 };
 
 extern CMovement *Movement;

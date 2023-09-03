@@ -24,7 +24,7 @@
 
 cAccountClass *Accounts;
 
-const UI08 CHARACTERCOUNT = 7;
+const std::uint8_t CHARACTERCOUNT = 7;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	Class Construction and Desctruction
@@ -72,7 +72,7 @@ cAccountClass::~cAccountClass() {}
 //|					unable to locate the respective character ID number when
 //|					converting the world.
 // o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::CreateAccountSystem(void) {
+std::uint16_t cAccountClass::CreateAccountSystem(void) {
     // Get the system account path. Should have been set at construction.
     std::string sActPath = m_sAccountsDirectory;
     // Check account path to make sure that its at least got data in it.
@@ -121,10 +121,10 @@ UI16 cAccountClass::CreateAccountSystem(void) {
     bool bBraces[3] = {false, false, false};
     bool bBraces2[3] = {false, false, false};
     CAccountBlock_st actb;
-    UI16 wAccountId = 0x0000;
-    [[maybe_unused]] UI16 wAccessId = 0x0000;
-    UI16 wAccountCount = 0x0000;
-    UI08 nLockCount = 0x00;
+    std::uint16_t wAccountId = 0x0000;
+    [[maybe_unused]] std::uint16_t wAccessId = 0x0000;
+    std::uint16_t wAccountCount = 0x0000;
+    std::uint8_t nLockCount = 0x00;
     bool bSkipUAD = false;
     actb.reset();
     sLine = util::trim(util::strip(sLine, "//"));
@@ -146,7 +146,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
         // these has been read
         if (sLine.substr(0, 15) == "SECTION ACCOUNT") {
             // Ok the section block was found, Tokenize the string to get the account #
-            auto accountIdFromFile = util::ston<SI32>(oldstrutil::extractSection(sLine, " ", 2, 2));
+            auto accountIdFromFile = util::ston<std::int32_t>(oldstrutil::extractSection(sLine, " ", 2, 2));
             if (accountIdFromFile == 0 && wAccountCount > 0) {
                 actb.wAccountIndex = wAccountCount;
                 wAccountId = wAccountCount;
@@ -253,7 +253,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
                             // Ok the section block was found, Tokenize the string to get the
                             // account #
                             wAccessId =
-                                util::ston<SI32>(oldstrutil::extractSection(sLine2, " ", 2));
+                                util::ston<std::int32_t>(oldstrutil::extractSection(sLine2, " ", 2));
                             // Ok, we have parsed out the account ID, Set bBraces[2] to true to
                             // allow block reading
                             bBraces2[0] = false;
@@ -312,7 +312,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
                                 if (!r2.empty() && r2.length() != 0) {
                                     // Ok strip the flags and store it. We need to make it all the
                                     // same case for comparisons
-                                    actb.wFlags = static_cast<UI16>(std::stoul(
+                                    actb.wFlags = static_cast<std::uint16_t>(std::stoul(
                                         r2, nullptr, 0)); //  -- Uses internal conversion code
                                     if (actb.wAccountIndex == 0) {
                                         actb.wFlags.set(AB_FLAGS_GM, true);
@@ -351,13 +351,13 @@ UI16 cAccountClass::CreateAccountSystem(void) {
                     }
                     WriteUADHeader(fsUADFile, actb);
                     // Need to write out the charcters
-                    for (UI08 ii = 1; ii < CHARACTERCOUNT + 1; ++ii) {
-                        fsUADFile << "CHARACTER-" << std::dec << static_cast<SI32>(ii)
+                    for (std::uint8_t ii = 1; ii < CHARACTERCOUNT + 1; ++ii) {
+                        fsUADFile << "CHARACTER-" << std::dec << static_cast<std::int32_t>(ii)
                                   << " 0xffffffff [UNKNOWN]" << std::endl;
                     }
                     fsUADFile.close();
                     // Flood fill the actb class for accounts
-                    for (UI08 i = 0; i < CHARACTERCOUNT; i++) {
+                    for (std::uint8_t i = 0; i < CHARACTERCOUNT; i++) {
                         actb.dwCharacters[i] = INVALIDSERIAL;
                         actb.lpCharacters[i] = nullptr;
                     }
@@ -385,8 +385,8 @@ UI16 cAccountClass::CreateAccountSystem(void) {
         else if (l == "LASTIP") {
             auto psecs = oldstrutil::sections(r, ".");
             if (!r.empty() && r.length() != 0 && psecs.size() == 4) {
-                actb.dwLastIP = CalcSerial(util::ston<SI08>(psecs[0]), util::ston<SI08>(psecs[1]),
-                                           util::ston<SI08>(psecs[2]), util::ston<SI08>(psecs[3]));
+                actb.dwLastIP = CalcSerial(util::ston<std::int8_t>(psecs[0]), util::ston<std::int8_t>(psecs[1]),
+                                           util::ston<std::int8_t>(psecs[2]), util::ston<std::int8_t>(psecs[3]));
             }
             else {
                 actb.dwLastIP = 0x00000000;
@@ -409,7 +409,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
         }
         else if (l == "TIMEBAN") {
             if (!r.empty() && r.length() != 0) {
-                actb.wTimeBan = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wTimeBan = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wTimeBan = 0;
@@ -420,7 +420,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
         }
         else if (l == "FIRSTLOGIN") {
             if (!r.empty() && r.length() != 0) {
-                actb.wFirstLogin = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wFirstLogin = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wFirstLogin = 0;
@@ -431,7 +431,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
         }
         else if (l == "TOTALPLAYTIME") {
             if (!r.empty() && r.length() != 0) {
-                actb.wTotalPlayTime = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wTotalPlayTime = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wTotalPlayTime = 0;
@@ -464,7 +464,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
             continue;
         }
         else if (l.substr(0, 10) == "CHARACTER-") {
-            SI32 charNum = std::stoi(l.substr(10), nullptr, 0);
+            std::int32_t charNum = std::stoi(l.substr(10), nullptr, 0);
             if (charNum < 1 || charNum > CHARACTERCOUNT) {
                 Console::shared().Error("Invalid character found in accounts");
             }
@@ -475,7 +475,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
                         util::ston<std::int64_t>(r); // int64_t used for promotion from 32-bit int
                     if ((temp > 0) && (temp < static_cast<std::int64_t>(INVALIDSERIAL))) {
                         actb.dwCharacters[charNum - 1] =
-                            static_cast<UI32>(std::stoul(r, nullptr, 0));
+                            static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
                         actb.lpCharacters[charNum - 1] =
                             CalcCharObjFromSer(actb.dwCharacters[charNum - 1]);
                     }
@@ -546,7 +546,7 @@ UI16 cAccountClass::CreateAccountSystem(void) {
                 // Ok we have to write the new username.uad file in the directory
                 WriteUADHeader(fsOut, actbTemp);
                 // Ok write out the characters and the charcter names if we know them
-                for (SI32 i = 0; i < CHARACTERCOUNT; ++i) {
+                for (std::int32_t i = 0; i < CHARACTERCOUNT; ++i) {
                     fsOut << "CHARACTER-" << (i + 1) << " 0x" << std::hex
                           << (actbTemp.dwCharacters[i] != INVALIDSERIAL
                                   ? actbTemp.lpCharacters[i]->GetSerial()
@@ -599,11 +599,11 @@ UI16 cAccountClass::CreateAccountSystem(void) {
     sBUAccess += ".bu";
     [[maybe_unused]] int renameResult = rename(sAccessAdm.c_str(), sBUAccess.c_str());
     //
-    SI32 kk = 0;
+    std::int32_t kk = 0;
     std::string szltoa2;
     std::string sBUPath(sAccountsAdm);
     sBUPath += ".bu";
-    SI32 nResp = rename(sAccountsAdm.c_str(), sBUPath.c_str());
+    std::int32_t nResp = rename(sAccountsAdm.c_str(), sBUPath.c_str());
     std::string sNewPath = sBUPath;
     while (nResp == -1) {
         // Loop through 255 numbers, these will be added to the end of the bu in case a bu exists.
@@ -640,12 +640,12 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
     fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
     fsOut << "FIRSTLOGIN 0x" << std::hex << actbTemp.wFirstLogin << std::dec << std::endl;
     fsOut << "TOTALPLAYTIME 0x" << std::hex << actbTemp.wTotalPlayTime << std::dec << std::endl;
-    fsOut << "LASTIP " << static_cast<SI32>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
+    fsOut << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
     fsOut << "CONTACT " << (actbTemp.sContact.length() ? actbTemp.sContact : "NA") << std::endl;
-    for (UI08 ii = 0; ii < CHARACTERCOUNT; ++ii) {
+    for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
         SERIAL charSer = INVALIDSERIAL;
         std::string charName = "UNKNOWN";
         if (actbTemp.lpCharacters[ii] != nullptr && actbTemp.dwCharacters[ii] != INVALIDSERIAL) {
@@ -678,7 +678,7 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
 //|						wAttributes: What attributes should this account
 //start with
 // o------------------------------------------------------------------------------------------------o
-//|	Returns		-	[UI16] Containing the account number of new accounts or 0
+//|	Returns		-	[std::uint16_t] Containing the account number of new accounts or 0
 // o------------------------------------------------------------------------------------------------o
 //|	NOTE		-	This function does NOT add this account to the accounts map. This
 // function ONLY |					creates the directories, and entries
@@ -688,8 +688,8 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
 // copy. |	NOTE		-	For any new accounts to be loaded into the internal accounts
 // map structure, |					accounts must be reloaded!
 // o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
-                               const std::string &sContact, UI16 wAttributes) {
+std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
+                               const std::string &sContact, std::uint16_t wAttributes) {
     // First were going to make sure that the needed fields are sent in with at least data
     if (sUsername.length() < 4 || sPassword.length() < 5) {
         // Username and password must be 4 and 5 characters or more in length, respectively
@@ -718,7 +718,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
     actbTemp.wFirstLogin = 0;
     actbTemp.wTotalPlayTime = 0;
     actbTemp.dwLastIP = 0;
-    for (UI08 ii = 0; ii < CHARACTERCOUNT; ++ii) {
+    for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
         actbTemp.lpCharacters[ii] = nullptr;
         actbTemp.dwCharacters[ii] = INVALIDSERIAL;
     }
@@ -799,15 +799,15 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
     fsAccountsUAD << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << "\n";
     fsAccountsUAD << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec
                   << "\n";
-    fsAccountsUAD << "LASTIP " << static_cast<SI32>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-                  << static_cast<SI32>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-                  << static_cast<SI32>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-                  << static_cast<SI32>((actbTemp.dwLastIP & 0x000000FF) % 256) << "\n";
+    fsAccountsUAD << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
+                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << "\n";
     fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
     fsAccountsUAD
         << "//------------------------------------------------------------------------------\n";
     // Ok write out the characters and the charcter names if we know them
-    for (UI08 i = 0; i < CHARACTERCOUNT; ++i) {
+    for (std::uint8_t i = 0; i < CHARACTERCOUNT; ++i) {
         fsAccountsUAD << "CHARACTER-" << (i + 1) << " 0x" << std::hex
                       << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]
                                                                     : INVALIDSERIAL)
@@ -841,7 +841,7 @@ UI16 cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
     m_mapUsernameMap[actbTemp.sUsername] = &m_mapUsernameIdMap[actbTemp.wAccountIndex];
     m_wHighestAccount = actbTemp.wAccountIndex;
     // Return to the calling function
-    return static_cast<UI16>(m_mapUsernameIdMap.size());
+    return static_cast<std::uint16_t>(m_mapUsernameIdMap.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -863,7 +863,7 @@ bool cAccountClass::IsUser(std::string sUsername) {
 //|	Purpose		-	Returns the current count of accounts that are currently stored in
 // the account map.
 // o------------------------------------------------------------------------------------------------o
-UI32 cAccountClass::size() { return static_cast<SI32>(m_mapUsernameMap.size()); }
+std::uint32_t cAccountClass::size() { return static_cast<std::int32_t>(m_mapUsernameMap.size()); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cAccountClass::Load()
@@ -890,7 +890,7 @@ UI32 cAccountClass::size() { return static_cast<SI32>(m_mapUsernameMap.size()); 
 //|							general SQL query for MSAccess, MSSQL, and
 // mySQL
 // o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::Load(void) {
+std::uint16_t cAccountClass::Load(void) {
     // Now we can load the accounts file in and re fill the map.
     std::string sAccountsADM(m_sAccountsDirectory);
     sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
@@ -912,7 +912,7 @@ UI16 cAccountClass::Load(void) {
         // file isntance before calling
         fsAccountsADMTest.close();
         Console::shared() << myendl << "  o Processing legacy UOX3 accounts.adm file";
-        UI16 wResponse = CreateAccountSystem();
+        std::uint16_t wResponse = CreateAccountSystem();
         Console::shared().PrintDone();
         Console::shared() << "    - Processed " << wResponse << " account blocks." << myendl;
         // Nope, not a v3 file.. so we should attempt a convert
@@ -937,9 +937,9 @@ UI16 cAccountClass::Load(void) {
     bool bBraces[3] = {false, false, false};
     [[maybe_unused]] bool bBraces2[3] = {false, false, false};
     CAccountBlock_st actb;
-    UI16 wAccountId = 0x0000;
-    UI16 wAccountCount = 0x0000;
-    UI32 dwChars[CHARACTERCOUNT] = {INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL,
+    std::uint16_t wAccountId = 0x0000;
+    std::uint16_t wAccountCount = 0x0000;
+    std::uint32_t dwChars[CHARACTERCOUNT] = {INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL,
                                     INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL};
     actb.reset();
     m_wHighestAccount = 0x0000;
@@ -958,7 +958,7 @@ UI16 cAccountClass::Load(void) {
             // Increment the account acount
             ++wAccountCount;
             actb.wAccountIndex = wAccountId =
-                util::ston<SI32>(oldstrutil::extractSection(sLine, " ", 2));
+                util::ston<std::int32_t>(oldstrutil::extractSection(sLine, " ", 2));
 
             // Scan for hiegest account. Needed for additional accounts.
             if (actb.wAccountIndex > m_wHighestAccount) {
@@ -1003,7 +1003,7 @@ UI16 cAccountClass::Load(void) {
                 actbTemp = I->second;
                 J = m_mapUsernameMap.find(actbTemp.sUsername);
                 actbTempName = (*J->second);
-                for (UI08 ii = 0; ii < CHARACTERCOUNT; ++ii) {
+                for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
                     // Doesn't matter, at all times the accounts.adm file will be valid over memory
                     if (actbTemp.dwCharacters[ii] != INVALIDSERIAL) {
                         actbTemp.dwCharacters[ii] = actbTempName.dwCharacters[ii] = dwChars[ii];
@@ -1021,7 +1021,7 @@ UI16 cAccountClass::Load(void) {
                 // OK well since its not in memory then its safe to assume that we need to add this
                 // one
                 actbTemp = actbTempName = actb;
-                for (UI08 jj = 0; jj < CHARACTERCOUNT; ++jj) {
+                for (std::uint8_t jj = 0; jj < CHARACTERCOUNT; ++jj) {
                     actbTemp.dwCharacters[jj] = actbTempName.dwCharacters[jj] = dwChars[jj];
                     actbTemp.lpCharacters[jj] = actbTempName.lpCharacters[jj] =
                         CalcCharObjFromSer(dwChars[jj]);
@@ -1045,7 +1045,7 @@ UI16 cAccountClass::Load(void) {
             bBraces[2] = false;
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
-            for (UI08 kk = 0; kk < CHARACTERCOUNT; ++kk) {
+            for (std::uint8_t kk = 0; kk < CHARACTERCOUNT; ++kk) {
                 dwChars[kk] = INVALIDSERIAL;
             }
             continue;
@@ -1087,7 +1087,7 @@ UI16 cAccountClass::Load(void) {
         }
         else if (l == "FLAGS") {
             if (!r.empty() && r.length() != 0) {
-                actb.wFlags = static_cast<UI16>(std::stoul(r, nullptr, 0));
+                actb.wFlags = static_cast<std::uint16_t>(std::stoul(r, nullptr, 0));
                 if (actb.wAccountIndex == 0) {
                     actb.wFlags.set(AB_FLAGS_GM, true);
                 }
@@ -1115,7 +1115,7 @@ UI16 cAccountClass::Load(void) {
         }
         else if (l == "TIMEBAN") {
             if (!r.empty() && r.length() != 0) {
-                actb.wTimeBan = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wTimeBan = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wTimeBan = 0;
@@ -1127,7 +1127,7 @@ UI16 cAccountClass::Load(void) {
         }
         else if (l == "FIRSTLOGIN") {
             if (!r.empty() && r.length() != 0) {
-                actb.wFirstLogin = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wFirstLogin = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wFirstLogin = 0;
@@ -1139,7 +1139,7 @@ UI16 cAccountClass::Load(void) {
         }
         else if (l == "TOTALPLAYTIME") {
             if (!r.empty() && r.length() != 0) {
-                actb.wTotalPlayTime = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                actb.wTotalPlayTime = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
             }
             else {
                 actb.wTotalPlayTime = 0;
@@ -1165,8 +1165,8 @@ UI16 cAccountClass::Load(void) {
         else if (l == "LASTIP") {
             auto psecs = oldstrutil::sections(r, ".");
             if (!r.empty() && r.length() != 0 && psecs.size() == 4) {
-                actb.dwLastIP = CalcSerial(util::ston<SI08>(psecs[0]), util::ston<SI08>(psecs[1]),
-                                           util::ston<SI08>(psecs[2]), util::ston<SI08>(psecs[3]));
+                actb.dwLastIP = CalcSerial(util::ston<std::int8_t>(psecs[0]), util::ston<std::int8_t>(psecs[1]),
+                                           util::ston<std::int8_t>(psecs[2]), util::ston<std::int8_t>(psecs[3]));
             }
             else {
                 actb.dwLastIP = 0x00000000;
@@ -1178,7 +1178,7 @@ UI16 cAccountClass::Load(void) {
         }
         else if (l.substr(0, 10) == "CHARACTER-") // It's a character
         {
-            auto charNum = static_cast<UI08>(std::stoul(l.substr(10), nullptr, 0));
+            auto charNum = static_cast<std::uint8_t>(std::stoul(l.substr(10), nullptr, 0));
             if (charNum < 1 || charNum > CHARACTERCOUNT) {
                 Console::shared().Error("Invalid character found in accounts");
             }
@@ -1186,7 +1186,7 @@ UI16 cAccountClass::Load(void) {
                 if (!r.empty() && r.length() != 0) {
                     // Ok strip the name and store it. We need to make it all the same case for
                     // comparisons
-                    dwChars[charNum - 1] = static_cast<UI32>(std::stoul(r, nullptr, 0));
+                    dwChars[charNum - 1] = static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
                     std::getline(fsAccountsADM, sLine);
                     continue;
                 }
@@ -1203,10 +1203,10 @@ UI16 cAccountClass::Load(void) {
         actb.reset();
     }
     // We need to see if there are any new accounts to come.
-    [[maybe_unused]] UI16 wImportCount = 0x0000;
+    [[maybe_unused]] std::uint16_t wImportCount = 0x0000;
     wImportCount = ImportAccounts();
     // Return the number of accounts loaded
-    return static_cast<UI16>(m_mapUsernameMap.size());
+    return static_cast<std::uint16_t>(m_mapUsernameMap.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1216,7 +1216,7 @@ UI16 cAccountClass::Load(void) {
 //|	Purpose		-	Transfer a character from a known slot on a specified
 //|							account, to a new account and slot.
 // o------------------------------------------------------------------------------------------------o
-bool cAccountClass::TransCharacter(UI16 wSAccountId, UI16 wSSlot, UI16 wDAccountId) {
+bool cAccountClass::TransCharacter(std::uint16_t wSAccountId, std::uint16_t wSSlot, std::uint16_t wDAccountId) {
     //   please leave these declarations alone. When we do this VC autocompetion doesn't work cause
     //   this isn't shoved on the stack with type info
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wSAccountId);
@@ -1257,7 +1257,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountId, UI16 wSSlot, UI16 wDAccount
     // ok at this point I/II = SourceID, and DestID and J/JJ SourceName/DestName
     if (AddCharacter(wDAccountId, actbId.dwCharacters[wSSlot], actbId.lpCharacters[wSSlot])) {
         // OK the character was added, need to remove it from the source.
-        DelCharacter(wSAccountId, static_cast<SI32>(wSSlot));
+        DelCharacter(wSAccountId, static_cast<std::int32_t>(wSSlot));
         Save(false);
         return true;
     }
@@ -1270,7 +1270,7 @@ bool cAccountClass::TransCharacter(UI16 wSAccountId, UI16 wSSlot, UI16 wDAccount
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add a character object to the in memory storage.
 // o------------------------------------------------------------------------------------------------o
-bool cAccountClass::AddCharacter(UI16 wAccountId, CChar *lpObject) {
+bool cAccountClass::AddCharacter(std::uint16_t wAccountId, CChar *lpObject) {
     // Make sure that the lpObject pointer is valid
     if (lpObject == nullptr)
         return false;
@@ -1294,7 +1294,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountId, CChar *lpObject) {
     // ok now that we have both of our account blocks we can update them. We will use teh first
     // empty slot for this character
     bool bExit = false;
-    for (UI08 i = 0; i < CHARACTERCOUNT; ++i) {
+    for (std::uint8_t i = 0; i < CHARACTERCOUNT; ++i) {
         if (actbId.dwCharacters[i] != lpObject->GetSerial() &&
             actbName.dwCharacters[i] != lpObject->GetSerial() &&
             actbId.dwCharacters[i] == INVALIDSERIAL && actbName.dwCharacters[i] == INVALIDSERIAL) {
@@ -1317,7 +1317,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountId, CChar *lpObject) {
     return false;
 }
 //
-bool cAccountClass::AddCharacter(UI16 wAccountId, UI32 dwCharacterId, CChar *lpObject) {
+bool cAccountClass::AddCharacter(std::uint16_t wAccountId, std::uint32_t dwCharacterId, CChar *lpObject) {
     // Make sure that the lpObject pointer is valid
     if (lpObject == nullptr)
         return false;
@@ -1342,7 +1342,7 @@ bool cAccountClass::AddCharacter(UI16 wAccountId, UI32 dwCharacterId, CChar *lpO
     // ok now that we have both of our account blocks we can update them. We will use teh first
     // empty slot for this character
     bool bExit = false;
-    for (UI08 i = 0; i < CHARACTERCOUNT; ++i) {
+    for (std::uint8_t i = 0; i < CHARACTERCOUNT; ++i) {
         if (actbId.dwCharacters[i] != lpObject->GetSerial() &&
             actbName.dwCharacters[i] != lpObject->GetSerial() &&
             actbId.dwCharacters[i] == INVALIDSERIAL && actbName.dwCharacters[i] == INVALIDSERIAL) {
@@ -1391,7 +1391,7 @@ bool cAccountClass::clear(void) {
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cAccountClass::DelAccount( std::string sUsername )
-//|					cAccountClass::DelAccount( UI16 wAccountId )
+//|					cAccountClass::DelAccount( std::uint16_t wAccountId )
 //|	Date		-	12/18/2002 2:56:34 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove an account from the internal account storage map.
@@ -1412,7 +1412,7 @@ bool cAccountClass::DelAccount(std::string sUsername) {
     return DelAccount(actbTemp.wAccountIndex);
 }
 // o------------------------------------------------------------------------------------------------o
-bool cAccountClass::DelAccount(UI16 wAccountId) {
+bool cAccountClass::DelAccount(std::uint16_t wAccountId) {
     // Ok we need to get the ID block again as it wasn't passed in
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wAccountId);
     if (I == m_mapUsernameIdMap.end())
@@ -1450,7 +1450,7 @@ bool cAccountClass::DelAccount(UI16 wAccountId) {
         WriteOrphanHeader(fsOrphansADM);
     }
     // Spin the characters here
-    for (UI08 jj = 0; jj < CHARACTERCOUNT; ++jj) {
+    for (std::uint8_t jj = 0; jj < CHARACTERCOUNT; ++jj) {
         // If this slot is 0xffffffff or (-1) then we dont need to put it into the orphans.adm
         if (actbId.dwCharacters[jj] !=
             INVALIDSERIAL) // Ok build then write what we need to the file
@@ -1458,7 +1458,7 @@ bool cAccountClass::DelAccount(UI16 wAccountId) {
             fsOrphansADM << "," << actbId.lpCharacters[jj]->GetName() << ","
                          << actbId.lpCharacters[jj]->GetX() << ","
                          << actbId.lpCharacters[jj]->GetY() << ","
-                         << static_cast<SI32>(actbId.lpCharacters[jj]->GetZ()) << std::endl;
+                         << static_cast<std::int32_t>(actbId.lpCharacters[jj]->GetZ()) << std::endl;
         }
     }
     fsOrphansADM.close();
@@ -1468,8 +1468,8 @@ bool cAccountClass::DelAccount(UI16 wAccountId) {
     // Just a means to show that an accounts has been removed when looking at the directories
     char szDirName[40];
     char szDirPath[MAX_PATH];
-    memset(szDirName, 0x00, sizeof(SI08) * 40);
-    memset(szDirPath, 0x00, sizeof(SI08) * MAX_PATH);
+    memset(szDirName, 0x00, sizeof(std::int8_t) * 40);
+    memset(szDirPath, 0x00, sizeof(std::int8_t) * MAX_PATH);
     // Ok copy only the username portion to this so we can build a correct rename path
     strcopy(szDirName, 40, &actbId.sPath[actbId.sPath.length() - actbId.sUsername.length() - 1]);
     // strcpy(szDirName,&actbId.sPath[actbId.sPath.length()-actbId.sUsername.length()-1]);
@@ -1530,7 +1530,7 @@ std::string cAccountClass::GetPath(void) { return m_sAccountsDirectory; }
 //|						game that a GM can use to locate, or even assign to
 // another |						account.
 // o------------------------------------------------------------------------------------------------o
-SI08 cAccountClass::DelCharacter(UI16 wAccountId, UI08 nSlot) {
+std::int8_t cAccountClass::DelCharacter(std::uint16_t wAccountId, std::uint8_t nSlot) {
     // Do the simple here, save us some work
     if (nSlot >= CHARACTERCOUNT) {
         return CDR_BADREQUEST;
@@ -1601,8 +1601,8 @@ SI08 cAccountClass::DelCharacter(UI16 wAccountId, UI08 nSlot) {
                  << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetY() : 0)
                  << "," << std::dec
                  << (actbId.lpCharacters[nSlot] != nullptr
-                         ? static_cast<SI32>(actbId.lpCharacters[nSlot]->GetZ())
-                         : static_cast<SI32>(0))
+                         ? static_cast<std::int32_t>(actbId.lpCharacters[nSlot]->GetZ())
+                         : static_cast<std::int32_t>(0))
                  << std::endl;
     fsOrphansADM.close();
 
@@ -1615,11 +1615,11 @@ SI08 cAccountClass::DelCharacter(UI16 wAccountId, UI08 nSlot) {
     CAccountBlock_st actbScratch;
     actbScratch.reset();
     actbScratch = actbId;
-    SI32 kk = 0;
+    std::int32_t kk = 0;
 
     // Dont mind this loop, becuase we needed a copy of the data too we need to invalidate
     // actbScracthes pointers, and indexs
-    for (UI08 ll = 0; ll < CHARACTERCOUNT; ++ll) {
+    for (std::uint8_t ll = 0; ll < CHARACTERCOUNT; ++ll) {
         if (actbId.dwCharacters[ll] != INVALIDSERIAL && actbId.lpCharacters[ll] != nullptr) {
             // OK we keep this entry
             actbScratch.dwCharacters[kk] = actbId.dwCharacters[ll];
@@ -1629,7 +1629,7 @@ SI08 cAccountClass::DelCharacter(UI16 wAccountId, UI08 nSlot) {
     }
 
     // Fill the rest with standard empty values.
-    UI08 jj = 0;
+    std::uint8_t jj = 0;
     for (jj = kk; jj < CHARACTERCOUNT; ++jj) {
         actbScratch.dwCharacters[jj] = INVALIDSERIAL;
         actbScratch.lpCharacters[jj] = nullptr;
@@ -1683,7 +1683,7 @@ CAccountBlock_st &cAccountClass::GetAccountByName(std::string sUsername) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search the map for an account but the username that was specified.
 // o------------------------------------------------------------------------------------------------o
-CAccountBlock_st &cAccountClass::GetAccountById(UI16 wAccountId) {
+CAccountBlock_st &cAccountClass::GetAccountById(std::uint16_t wAccountId) {
     // Ok now we need to get the map blocks for this account.
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wAccountId);
     if (I != m_mapUsernameIdMap.end()) {
@@ -1713,7 +1713,7 @@ CAccountBlock_st &cAccountClass::GetAccountById(UI16 wAccountId) {
 //|							file, even though the access.adm will still
 // eventually |							be used for server sharing.
 // o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
+std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
     // Ok were not going to mess around. so we open truncate the file and write
     std::string sTemp(m_sAccountsDirectory);
     if (sTemp[sTemp.length() - 1] == '\\' || sTemp[sTemp.length() - 1] == '/') {
@@ -1813,7 +1813,7 @@ UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         // Ok we have to write the new username.uad file in the directory
         WriteUADHeader(fsAccountsUad, actbId);
         // Ok write out the characters and the charcter names if we know them
-        for (UI08 ii = 0; ii < CHARACTERCOUNT; ++ii) {
+        for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
             fsAccountsUad << "CHARACTER-" << (ii + 1) << " 0x" << std::hex
                           << (actbId.dwCharacters[ii] != INVALIDSERIAL ? actbId.dwCharacters[ii]
                                                                        : INVALIDSERIAL)
@@ -1828,7 +1828,7 @@ UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
     }
     // Ok were done looping so we can close the file and return the count of accounts
     fsAccountsAdm.close();
-    return static_cast<UI16>(m_mapUsernameIdMap.size());
+    return static_cast<std::uint16_t>(m_mapUsernameIdMap.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1852,7 +1852,7 @@ UI16 cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
 // selfexplanitory.
 //|
 // o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::ImportAccounts(void) {
+std::uint16_t cAccountClass::ImportAccounts(void) {
     // Prepare to load in the newaccounts.adm file. This file if it exists will contain new accounts
     // to be added to the server.
     std::string sImportAccounts(m_sAccountsDirectory);
@@ -1871,8 +1871,8 @@ UI16 cAccountClass::ImportAccounts(void) {
     // Now that we have a file, we want to read it, and add these accounts to the system
     std::getline(fsInputAccountsTest, sLine);
     sLine = util::trim(util::strip(sLine, "//"));
-    UI16 wAccountCount = 0x0000;
-    UI16 wCurrentFlags = 0x0004;
+    std::uint16_t wAccountCount = 0x0000;
+    std::uint16_t wCurrentFlags = 0x0004;
     while (!fsInputAccountsTest.eof() && !fsInputAccountsTest.fail()) {
         // Process each Line read in from the accounts.adm file. Handle Comments first
         if (sLine.empty() || sLine.length() == 0) {
@@ -1912,7 +1912,7 @@ UI16 cAccountClass::ImportAccounts(void) {
                 wCurrentFlags = 0x0000;
             }
             else {
-                wCurrentFlags = static_cast<UI16>(std::stoul(flags, nullptr, 0));
+                wCurrentFlags = static_cast<std::uint16_t>(std::stoul(flags, nullptr, 0));
             }
 
             std::string email;
@@ -2037,7 +2037,7 @@ cAccountClass &cAccountClass::operator++() {
     return (*this);
 }
 //
-cAccountClass &cAccountClass::operator--(SI32) {
+cAccountClass &cAccountClass::operator--(std::int32_t) {
     I--;
     return (*this);
 }
@@ -2210,10 +2210,10 @@ void cAccountClass::WriteUADHeader(std::fstream &fsOut, CAccountBlock_st &actbTe
     fsOut << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << std::endl;
     fsOut << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec
           << std::endl;
-    fsOut << "LASTIP " << static_cast<SI32>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-          << static_cast<SI32>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
+    fsOut << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
     fsOut << "CONTACT " << actbTemp.sContact << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
           << std::endl;

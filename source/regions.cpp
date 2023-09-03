@@ -27,11 +27,11 @@ CMapHandler *MapRegion;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the filesize of a given file
 // o------------------------------------------------------------------------------------------------o
-SI32 FileSize(std::string filename) {
-    SI32 retVal = 0;
+std::int32_t FileSize(std::string filename) {
+    std::int32_t retVal = 0;
 
     try {
-        retVal = static_cast<SI32>(std::filesystem::file_size(filename));
+        retVal = static_cast<std::int32_t>(std::filesystem::file_size(filename));
     } catch (...) {
         retVal = 0;
     }
@@ -221,12 +221,12 @@ CMapWorld::CMapWorld() : upperArrayX(0), upperArrayY(0), resourceX(0), resourceY
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initializes resource regions for the given world
 // o------------------------------------------------------------------------------------------------o
-CMapWorld::CMapWorld(UI08 worldNum) {
+CMapWorld::CMapWorld(std::uint8_t worldNum) {
     auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNum);
-    upperArrayX = static_cast<SI16>(mapWidth / MapColSize);
-    upperArrayY = static_cast<SI16>(mapHeight / MapRowSize);
-    resourceX = static_cast<UI16>(mapWidth / cwmWorldState->ServerData()->ResourceAreaSize());
-    resourceY = static_cast<UI16>(mapHeight / cwmWorldState->ServerData()->ResourceAreaSize());
+    upperArrayX = static_cast<std::int16_t>(mapWidth / MapColSize);
+    upperArrayY = static_cast<std::int16_t>(mapHeight / MapRowSize);
+    resourceX = static_cast<std::uint16_t>(mapWidth / cwmWorldState->ServerData()->ResourceAreaSize());
+    resourceY = static_cast<std::uint16_t>(mapHeight / cwmWorldState->ServerData()->ResourceAreaSize());
 
     size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
     if (resourceSize < 1) // ALWAYS initialize at least one resource region.
@@ -249,7 +249,7 @@ CMapWorld::~CMapWorld() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the MapRegion based on its x and y offsets
 // o------------------------------------------------------------------------------------------------o
-CMapRegion *CMapWorld::GetMapRegion(SI16 xOffset, SI16 yOffset) {
+CMapRegion *CMapWorld::GetMapRegion(std::int16_t xOffset, std::int16_t yOffset) {
     CMapRegion *mRegion = nullptr;
     const size_t regionIndex = (static_cast<size_t>(xOffset) * static_cast<size_t>(upperArrayY) +
                                 static_cast<size_t>(yOffset));
@@ -271,9 +271,9 @@ std::vector<CMapRegion> *CMapWorld::GetMapRegions() { return &mapRegions; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Resource region x and y is.
 // o------------------------------------------------------------------------------------------------o
-MapResource_st &CMapWorld::GetResource(SI16 x, SI16 y) {
-    const UI16 gridX = (x / cwmWorldState->ServerData()->ResourceAreaSize());
-    const UI16 gridY = (y / cwmWorldState->ServerData()->ResourceAreaSize());
+MapResource_st &CMapWorld::GetResource(std::int16_t x, std::int16_t y) {
+    const std::uint16_t gridX = (x / cwmWorldState->ServerData()->ResourceAreaSize());
+    const std::uint16_t gridY = (y / cwmWorldState->ServerData()->ResourceAreaSize());
 
     size_t resIndex = ((static_cast<size_t>(gridX) * static_cast<size_t>(resourceY)) +
                        static_cast<size_t>(gridY));
@@ -291,7 +291,7 @@ MapResource_st &CMapWorld::GetResource(SI16 x, SI16 y) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the Resource data to disk
 // o------------------------------------------------------------------------------------------------o
-void CMapWorld::SaveResources(UI08 worldNum) {
+void CMapWorld::SaveResources(std::uint8_t worldNum) {
     auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory(CSDDP_SHARED) +
                                               "resource["s + std::to_string(worldNum) + "].bin"s);
     auto output = std::ofstream(resourceFile.string(), std::ios::binary);
@@ -324,7 +324,7 @@ void CMapWorld::SaveResources(UI08 worldNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the Resource data from the disk
 // o------------------------------------------------------------------------------------------------o
-void CMapWorld::LoadResources(UI08 worldNum) {
+void CMapWorld::LoadResources(std::uint8_t worldNum) {
     mapResources = std::vector<MapResource_st>(
         mapResources.size(),
         MapResource_st(
@@ -372,10 +372,10 @@ void CMapWorld::LoadResources(UI08 worldNum) {
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 // o------------------------------------------------------------------------------------------------o
 auto CMapHandler::Startup() -> void {
-    UI08 numWorlds = Map->MapCount();
+    std::uint8_t numWorlds = Map->MapCount();
 
     mapWorlds.reserve(numWorlds);
-    for (UI08 i = 0; i < numWorlds; ++i) {
+    for (std::uint8_t i = 0; i < numWorlds; ++i) {
         mapWorlds.push_back(new CMapWorld(i));
     }
 }
@@ -395,7 +395,7 @@ CMapHandler::~CMapHandler() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Changes an items region ONLY if he has changed regions.
 // o------------------------------------------------------------------------------------------------o
-bool CMapHandler::ChangeRegion(CItem *nItem, SI16 x, SI16 y, UI08 worldNum) {
+bool CMapHandler::ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std::uint8_t worldNum) {
     if (!ValidateObject(nItem))
         return false;
 
@@ -439,7 +439,7 @@ bool CMapHandler::ChangeRegion(CItem *nItem, SI16 x, SI16 y, UI08 worldNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Changes a characters region ONLY if he has changed regions.
 // o------------------------------------------------------------------------------------------------o
-bool CMapHandler::ChangeRegion(CChar *nChar, SI16 x, SI16 y, UI08 worldNum) {
+bool CMapHandler::ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std::uint8_t worldNum) {
     if (!ValidateObject(nChar))
         return false;
 
@@ -593,7 +593,7 @@ bool CMapHandler::RemoveChar(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find the Column of SubRegion we want based on location
 // o------------------------------------------------------------------------------------------------o
-SI16 CMapHandler::GetGridX(SI16 x) { return static_cast<SI16>(x / MapColSize); }
+std::int16_t CMapHandler::GetGridX(std::int16_t x) { return static_cast<std::int16_t>(x / MapColSize); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapHandler::GetGridY()
@@ -601,7 +601,7 @@ SI16 CMapHandler::GetGridX(SI16 x) { return static_cast<SI16>(x / MapColSize); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the Row of SubRegion we want based on location
 // o------------------------------------------------------------------------------------------------o
-SI16 CMapHandler::GetGridY(SI16 y) { return static_cast<SI16>(y / MapRowSize); }
+std::int16_t CMapHandler::GetGridY(std::int16_t y) { return static_cast<std::int16_t>(y / MapRowSize); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapHandler::GetMapRegion()
@@ -609,7 +609,7 @@ SI16 CMapHandler::GetGridY(SI16 y) { return static_cast<SI16>(y / MapRowSize); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the MapRegion based on the offsets
 // o------------------------------------------------------------------------------------------------o
-CMapRegion *CMapHandler::GetMapRegion(SI16 xOffset, SI16 yOffset, UI08 worldNumber) {
+CMapRegion *CMapHandler::GetMapRegion(std::int16_t xOffset, std::int16_t yOffset, std::uint8_t worldNumber) {
     CMapRegion *mRegion = mapWorlds[worldNumber]->GetMapRegion(xOffset, yOffset);
     if (mRegion == nullptr) {
         mRegion = &overFlow;
@@ -634,7 +634,7 @@ CMapRegion *CMapHandler::GetMapRegion(CBaseObject *mObj) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the MapWorld object associated with the worldNumber
 // o------------------------------------------------------------------------------------------------o
-CMapWorld *CMapHandler::GetMapWorld(UI08 worldNum) {
+CMapWorld *CMapHandler::GetMapWorld(std::uint8_t worldNum) {
     CMapWorld *mWorld = nullptr;
     if (worldNum > mapWorlds.size()) {
         mWorld = mapWorlds[worldNum];
@@ -648,7 +648,7 @@ CMapWorld *CMapHandler::GetMapWorld(UI08 worldNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the MapWorld object associated with the worldNumber
 // o------------------------------------------------------------------------------------------------o
-MapResource_st *CMapHandler::GetResource(SI16 x, SI16 y, UI08 worldNum) {
+MapResource_st *CMapHandler::GetResource(std::int16_t x, std::int16_t y, std::uint8_t worldNum) {
     MapResource_st *resData = nullptr;
     if (worldNum < mapWorlds.size()) {
         resData = &mapWorlds[worldNum]->GetResource(x, y);
@@ -671,12 +671,12 @@ auto CMapHandler::PopulateList(CBaseObject *mObj) -> std::vector<CMapRegion *> {
 //|	Purpose		-	Creates a list of nearby MapRegions based on the coordinates
 // provided
 // o------------------------------------------------------------------------------------------------o
-auto CMapHandler::PopulateList(SI16 x, SI16 y, UI08 worldNumber) -> std::vector<CMapRegion *> {
+auto CMapHandler::PopulateList(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) -> std::vector<CMapRegion *> {
     std::vector<CMapRegion *> nearbyRegions;
-    const SI16 xOffset = MapRegion->GetGridX(x);
-    const SI16 yOffset = MapRegion->GetGridY(y);
-    for (SI08 counter1 = -1; counter1 <= 1; ++counter1) {
-        for (SI08 counter2 = -1; counter2 <= 1; ++counter2) {
+    const std::int16_t xOffset = MapRegion->GetGridX(x);
+    const std::int16_t yOffset = MapRegion->GetGridY(y);
+    for (std::int8_t counter1 = -1; counter1 <= 1; ++counter1) {
+        for (std::int8_t counter2 = -1; counter2 <= 1; ++counter2) {
             CMapRegion *MapArea = GetMapRegion(xOffset + counter1, yOffset + counter2, worldNumber);
             if (MapArea == nullptr)
                 continue;
@@ -697,19 +697,19 @@ constexpr size_t BUFFERSIZE = 1024 * 1024;
 static auto streamBuffer = std::vector<char>(BUFFERSIZE, 0);
 
 void CMapHandler::Save(void) {
-    const SI16 AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
-    const SI16 AreaY = UpperY / 8;
+    const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
+    const std::int16_t AreaY = UpperY / 8;
     std::ofstream writeDestination, houseDestination;
-    SI32 onePercent = 0;
-    UI08 i = 0;
+    std::int32_t onePercent = 0;
+    std::uint8_t i = 0;
     for (i = 0; i < Map->MapCount(); ++i) {
         auto [mapWidth, mapHeight] = Map->SizeOfMap(i);
-        onePercent += static_cast<SI32>((mapWidth / MapColSize) * (mapHeight / MapRowSize));
+        onePercent += static_cast<std::int32_t>((mapWidth / MapColSize) * (mapHeight / MapRowSize));
     }
     onePercent = static_cast<std::int32_t>(onePercent / 100.0f);
     const char blockDiscriminator[] = "\n\n---REGION---\n\n";
-    UI32 count = 0;
-    const UI32 s_t = GetClock();
+    std::uint32_t count = 0;
+    const std::uint32_t s_t = GetClock();
 
     Console::shared() << "Saving Character and Item Map Region data...   ";
     Console::shared().TurnYellow();
@@ -723,20 +723,20 @@ void CMapHandler::Save(void) {
     std::filesystem::remove(houseFilePath);
 
     std::string filename = "";
-    for (SI16 counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
+    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
     {
-        const SI32 baseX = counter1 * 8;
-        for (SI16 counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
+        const std::int32_t baseX = counter1 * 8;
+        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
         {
-            const SI32 baseY = counter2 * 8; // calculate x grid offset
+            const std::int32_t baseY = counter2 * 8; // calculate x grid offset
             filename = basePath + util::ntos(counter1) + std::string(".") + util::ntos(counter2) +
                        std::string(".wsc"); // let's name our file
 
             bool changesDetected = false;
-            for (UI08 xCnt = 0; !changesDetected && xCnt < 8;
+            for (std::uint8_t xCnt = 0; !changesDetected && xCnt < 8;
                  ++xCnt) // walk through each part of the 8x8 grid, left->right
             {
-                for (UI08 yCnt = 0; !changesDetected && yCnt < 8; ++yCnt) // walk the row
+                for (std::uint8_t yCnt = 0; !changesDetected && yCnt < 8; ++yCnt) // walk the row
                 {
                     for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end();
                          ++mIter) {
@@ -767,10 +767,10 @@ void CMapHandler::Save(void) {
 
             writeDestination.rdbuf()->pubsetbuf(streamBuffer.data(), BUFFERSIZE);
 
-            for (UI08 xCnt = 0; xCnt < 8;
+            for (std::uint8_t xCnt = 0; xCnt < 8;
                  ++xCnt) // walk through each part of the 8x8 grid, left->right
             {
-                for (UI08 yCnt = 0; yCnt < 8; ++yCnt) // walk the row
+                for (std::uint8_t yCnt = 0; yCnt < 8; ++yCnt) // walk the row
                 {
                     for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end();
                          ++mIter) {
@@ -803,7 +803,7 @@ void CMapHandler::Save(void) {
             writeDestination.close();
         }
     }
-    Console::shared() << "\b\b\b\b" << static_cast<UI32>(100) << "%";
+    Console::shared() << "\b\b\b\b" << static_cast<std::uint32_t>(100) << "%";
 
     filename = basePath + "overflow.wsc";
     writeDestination.open(filename.c_str());
@@ -820,7 +820,7 @@ void CMapHandler::Save(void) {
     Console::shared() << "\b\b\b\b";
     Console::shared().PrintDone();
 
-    const UI32 e_t = GetClock();
+    const std::uint32_t e_t = GetClock();
     Console::shared().Print(
         util::format("World saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
 
@@ -831,7 +831,7 @@ void CMapHandler::Save(void) {
     }
 }
 
-bool PostLoadFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData) {
+bool PostLoadFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_unused]] void *extraData) {
     if (ValidateObject(a)) {
         if (!a->IsFree()) {
             a->PostLoadProcessing();
@@ -847,20 +847,20 @@ bool PostLoadFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] 
 //|	Purpose		-	Loads in worldfile data to MapRegions
 // o------------------------------------------------------------------------------------------------o
 void CMapHandler::Load(void) {
-    const SI16 AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
-    const SI16 AreaY = UpperY / 8;
-    UI32 count = 0;
+    const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
+    const std::int16_t AreaY = UpperY / 8;
+    std::uint32_t count = 0;
     std::ifstream readDestination;
     Console::shared().TurnYellow();
     Console::shared() << "0%";
-    UI32 s_t = GetClock();
+    std::uint32_t s_t = GetClock();
     std::string basePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
     std::string filename;
 
-    UI32 runningCount = 0;
-    SI32 fileSizes[AreaX][AreaY];
-    for (SI16 cx = 0; cx < AreaX; ++cx) {
-        for (SI16 cy = 0; cy < AreaY; ++cy) {
+    std::uint32_t runningCount = 0;
+    std::int32_t fileSizes[AreaX][AreaY];
+    for (std::int16_t cx = 0; cx < AreaX; ++cx) {
+        for (std::int16_t cy = 0; cy < AreaY; ++cy) {
             filename = basePath + util::ntos(cx) + std::string(".") + util::ntos(cy) +
                        std::string(".wsc"); // let's name our file
             fileSizes[cx][cy] = FileSize(filename);
@@ -872,10 +872,10 @@ void CMapHandler::Load(void) {
         runningCount = 1;
     }
 
-    SI32 runningDone = 0;
-    for (SI16 counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
+    std::int32_t runningDone = 0;
+    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
     {
-        for (SI16 counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
+        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
         {
             filename = basePath + util::ntos(counter1) + std::string(".") + util::ntos(counter2) +
                        std::string(".wsc");         // let's name our file
@@ -894,10 +894,10 @@ void CMapHandler::Load(void) {
             runningDone += fileSizes[counter1][counter2];
             float tempVal = static_cast<R32>(runningDone) / static_cast<R32>(runningCount) * 100.0f;
             if (tempVal <= 10) {
-                Console::shared() << "\b\b" << static_cast<UI32>(tempVal) << "%";
+                Console::shared() << "\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
             }
             else if (tempVal <= 100) {
-                Console::shared() << "\b\b\b" << static_cast<UI32>(tempVal) << "%";
+                Console::shared() << "\b\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
             }
 
             readDestination.close();
@@ -907,7 +907,7 @@ void CMapHandler::Load(void) {
 
     // If runningDone is still 0, there was nothing to load! 100% it
     if (runningDone == 0) {
-        Console::shared() << "\b\b" << static_cast<UI32>(100) << "%";
+        Console::shared() << "\b\b" << static_cast<std::uint32_t>(100) << "%";
     }
 
     Console::shared().TurnNormal();
@@ -923,17 +923,17 @@ void CMapHandler::Load(void) {
     std::ifstream houseDestination(filename.c_str());
     LoadFromDisk(houseDestination, -1, -1, -1);
 
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &PostLoadFunctor);
     ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &PostLoadFunctor);
     ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &PostLoadFunctor);
     houseDestination.close();
 
-    UI32 e_t = GetClock();
+    std::uint32_t e_t = GetClock();
     Console::shared().Print(
         util::format("ASCII world loaded in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
 
-    UI08 i = 0;
+    std::uint8_t i = 0;
     for (WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter) {
         (*wIter)->LoadResources(i);
         ++i;
@@ -946,14 +946,14 @@ void CMapHandler::Load(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in objects from specified file
 // o------------------------------------------------------------------------------------------------o
-void CMapHandler::LoadFromDisk(std::istream &readDestination, SI32 baseValue, SI32 fileSize,
-                               UI32 maxSize) {
+void CMapHandler::LoadFromDisk(std::istream &readDestination, std::int32_t baseValue, std::int32_t fileSize,
+                               std::uint32_t maxSize) {
     char line[1024];
     R32 basePercent = static_cast<R32>(baseValue) / static_cast<R32>(maxSize) * 100.0f;
     R32 targPercent = static_cast<R32>(baseValue + fileSize) / static_cast<R32>(maxSize) * 100.0f;
     R32 diffValue = targPercent - basePercent;
 
-    SI32 updateCount = 0;
+    std::int32_t updateCount = 0;
     while (!readDestination.eof() && !readDestination.fail()) {
         readDestination.getline(line, 1023);
         line[readDestination.gcount()] = 0;
@@ -984,10 +984,10 @@ void CMapHandler::LoadFromDisk(std::istream &readDestination, SI32 baseValue, SI
                 R32 curPos = readDestination.tellg();
                 R32 tempVal = basePercent + (curPos / fileSize * diffValue);
                 if (tempVal <= 10) {
-                    Console::shared() << "\b\b" << static_cast<UI32>(tempVal) << "%";
+                    Console::shared() << "\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
                 }
                 else {
-                    Console::shared() << "\b\b\b" << static_cast<UI32>(tempVal) << "%";
+                    Console::shared() << "\b\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
                 }
             }
         }

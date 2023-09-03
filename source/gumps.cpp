@@ -42,7 +42,7 @@ std::string GetUptime(void);
 //|	Purpose		-	Open entry gump with specified dictionary message and max value
 // length
 // o------------------------------------------------------------------------------------------------o
-void TextEntryGump(CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry) {
+void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry) {
     if (s == nullptr)
         return;
 
@@ -68,7 +68,7 @@ void TextEntryGump(CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Pull gump info from misc.dfn
 // o------------------------------------------------------------------------------------------------o
-void BuildGumpFromScripts(CSocket *s, UI16 m) {
+void BuildGumpFromScripts(CSocket *s, std::uint16_t m) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
 
@@ -77,10 +77,10 @@ void BuildGumpFromScripts(CSocket *s, UI16 m) {
     if (gump == nullptr)
         return;
 
-    UI08 targType = 0x12;
+    std::uint8_t targType = 0x12;
     std::string tag = gump->First();
     if (util::upper(oldstrutil::extractSection(tag, " ", 0, 0)) == "TYPE") {
-        targType = util::ston<UI08>(oldstrutil::extractSection(tag, " ", 1, 1));
+        targType = util::ston<std::uint8_t>(oldstrutil::extractSection(tag, " ", 1, 1));
         tag = gump->Next();
     }
     for (; !gump->AtEnd(); tag = gump->Next()) {
@@ -105,7 +105,7 @@ void BuildGumpFromScripts(CSocket *s, UI16 m) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the accounts gump button
 // o------------------------------------------------------------------------------------------------o
-void HandleAccountButton(CSocket *s, UI32 button, CChar *j) {
+void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
     if (!ValidateObject(j))
         return;
 
@@ -138,7 +138,7 @@ void HandleAccountButton(CSocket *s, UI32 button, CChar *j) {
                 targSocket->SysMessage(491); // You have been banned for 24 hours!
             }
             actbTemp.flag.set(AccountEntry::AttributeFlag::BANNED, true);
-            actbTemp.timeBan = GetMinutesSinceEpoch() + static_cast<UI32>(1440);
+            actbTemp.timeBan = GetMinutesSinceEpoch() + static_cast<std::uint32_t>(1440);
 
             if (targSocket != nullptr) {
                 Network->Disconnect(targSocket);
@@ -202,7 +202,7 @@ void HandleTownstoneButton(CSocket *s, SERIAL button, SERIAL ser, SERIAL type) {
         s->SendTargetCursor(0, TARGET_VOTEFORMAYOR, 0, 542);
         break; // vote for town mayor
     case 6:
-        TextEntryGump(s, ser, static_cast<UI08>(type), static_cast<UI08>(button), 6, 543);
+        TextEntryGump(s, ser, static_cast<std::uint8_t>(type), static_cast<std::uint8_t>(button), 6, 543);
         break; // gold donation
     case 7:
         ourRegion->ViewBudget(s);
@@ -252,9 +252,9 @@ void HandleTownstoneButton(CSocket *s, SERIAL button, SERIAL ser, SERIAL type) {
             targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
                                             mChar->GetInstanceId());
             if (targetRegion != nullptr) {
-                SI32 chanceToSteal = RandomNum(0, targetRegion->GetHealth() / 2);
-                SI32 fudgedStealing = RandomNum(mChar->GetSkill(STEALING),
-                                                static_cast<UI16>(mChar->GetSkill(STEALING) * 2));
+                std::int32_t chanceToSteal = RandomNum(0, targetRegion->GetHealth() / 2);
+                std::int32_t fudgedStealing = RandomNum(mChar->GetSkill(STEALING),
+                                                static_cast<std::uint16_t>(mChar->GetSkill(STEALING) * 2));
                 if (fudgedStealing >= chanceToSteal) {
                     // redo stealing code here
                     s->SysMessage(549,
@@ -312,7 +312,7 @@ void HandleTownstoneButton(CSocket *s, SERIAL button, SERIAL ser, SERIAL type) {
     case 62: // attack townstone
         targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
                                         mChar->GetInstanceId());
-        for (UI08 counter = 0; counter < RandomNum(5, 10); ++counter) {
+        for (std::uint8_t counter = 0; counter < RandomNum(5, 10); ++counter) {
             Effects->PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6),
                                          mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4,
                                          17, 0, (RandomNum(0, 1) == 1));
@@ -338,8 +338,8 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
     std::string password = "";
     std::string emailAddy = "";
 
-    for (UI32 i = 0; i < packet->TextCount(); ++i) {
-        UI16 textId = packet->GetTextId(i);
+    for (std::uint32_t i = 0; i < packet->TextCount(); ++i) {
+        std::uint16_t textId = packet->GetTextId(i);
         switch (textId) {
         case 1000:
             username = packet->GetTextString(i);
@@ -379,9 +379,9 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
 //only have to look for |									the
 // entries.
 // o------------------------------------------------------------------------------------------------o
-void BuildAddMenuGump(CSocket *s, UI16 m) {
-    UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
-    UI08 i = 0;
+void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
+    std::uint32_t pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+    std::uint8_t i = 0;
     CChar *mChar = s->CurrcharObj();
 
     if (!mChar->IsGM() && m > 990 && m < 999) // 990 - 999 reserved for online help system
@@ -412,10 +412,10 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
 
     // Need more control over this aspect of uox3 from outside some how.. first step to get the
     // variables more flexible. later we will emporer them to a template, or a script or something
-    UI16 xStart = 0, xWidth = 680;
-    UI16 yStart = 0, yWidth = 420;
+    std::uint16_t xStart = 0, xWidth = 680;
+    std::uint16_t yStart = 0, yWidth = 420;
 
-    UI32 bgImage = cwmWorldState->ServerData()->BackgroundPic();
+    std::uint32_t bgImage = cwmWorldState->ServerData()->BackgroundPic();
 
     // Set and resize the gumps background image.
     toSend.addCommand(
@@ -476,7 +476,7 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
     // and Accounts tabs to start. These are default tabs
     toSend.addCommand(
         util::format("resizepic %u %u %u %u %u", xStart + 10, yStart + 62, 5054, 190, 340));
-    UI32 tabNumber = 1;
+    std::uint32_t tabNumber = 1;
 
     // Do the shard tab
     toSend.addCommand(
@@ -503,8 +503,8 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
     toSend.addText("Home");
 
     // Ok here we have some conditions that we need to filter. First being the menu called.
-    UI32 xOffset;
-    UI32 yOffset;
+    std::uint32_t xOffset;
+    std::uint32_t yOffset;
 #define SXOFFSET 210
 #define SYOFFSET 44
 #define YOFFSET 110
@@ -566,7 +566,7 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
             util::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
 
         // here we hunt tags to make sure that we get them all from the itemmenus etc.
-        UI08 numCounter = 0;
+        std::uint8_t numCounter = 0;
         position = 80;
         xOffset = SXOFFSET;
         yOffset = SYOFFSET;
@@ -616,7 +616,7 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
 
             tag = ItemMenu->Next();
         }
-        UI32 currentPage = 1;
+        std::uint32_t currentPage = 1;
 
         for (i = 0; i < numCounter; i += 12) {
             toSend.addCommand(util::format("page %i", currentPage));
@@ -642,7 +642,7 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
         toSend.addCommand(util::format("text %u %u %u %u", 42, yStart + 46, 39, linenum++));
         toSend.addText(szBuffer);
         // here we hunt tags to make sure that we get them all from the itemmenus etc.
-        UI08 numCounter = 0;
+        std::uint8_t numCounter = 0;
         position = 80;
         xOffset = SXOFFSET;
         yOffset = SYOFFSET;
@@ -746,7 +746,7 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
             tag = ItemMenu->Next();
         }
 
-        UI32 currentPage = 1;
+        std::uint32_t currentPage = 1;
         for (i = 0; i < numCounter; i += 12) {
             toSend.addCommand(util::format("page %i", currentPage));
             if (i >= 10) {
@@ -970,10 +970,10 @@ void BuildAddMenuGump(CSocket *s, UI16 m) {
 //|	Purpose		-	Opens the "Help" Menu from the paperdoll
 // o------------------------------------------------------------------------------------------------o
 bool CPIHelpRequest::Handle(void) {
-    UI16 gmnumber = 0;
+    std::uint16_t gmnumber = 0;
     CChar *mChar = tSock->CurrcharObj();
 
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -984,7 +984,7 @@ bool CPIHelpRequest::Handle(void) {
     }
 
     // No individual scripts handling OnHelpButton returned true - let's check global script!
-    cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+    cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
         if (toExecute->OnHelpButton(mChar) == 0) {
             return true;
@@ -1021,10 +1021,10 @@ bool CPIHelpRequest::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 void CPage(CSocket *s, const std::string &reason) {
     CChar *mChar = s->CurrcharObj();
-    UI08 a1 = mChar->GetSerial(1);
-    UI08 a2 = mChar->GetSerial(2);
-    UI08 a3 = mChar->GetSerial(3);
-    UI08 a4 = mChar->GetSerial(4);
+    std::uint8_t a1 = mChar->GetSerial(1);
+    std::uint8_t a2 = mChar->GetSerial(2);
+    std::uint8_t a3 = mChar->GetSerial(3);
+    std::uint8_t a4 = mChar->GetSerial(4);
 
     CHelpRequest pageToAdd;
     pageToAdd.Reason(reason);
@@ -1072,10 +1072,10 @@ void CPage(CSocket *s, const std::string &reason) {
 // o------------------------------------------------------------------------------------------------o
 void GMPage(CSocket *s, const std::string &reason) {
     CChar *mChar = s->CurrcharObj();
-    UI08 a1 = mChar->GetSerial(1);
-    UI08 a2 = mChar->GetSerial(2);
-    UI08 a3 = mChar->GetSerial(3);
-    UI08 a4 = mChar->GetSerial(4);
+    std::uint8_t a1 = mChar->GetSerial(1);
+    std::uint8_t a2 = mChar->GetSerial(2);
+    std::uint8_t a3 = mChar->GetSerial(3);
+    std::uint8_t a4 = mChar->GetSerial(4);
 
     CHelpRequest pageToAdd;
     pageToAdd.Reason(reason);
@@ -1154,7 +1154,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 auto secs = oldstrutil::sections(data, ",");
                 if (secs.size() > 1) {
                     std::string tmp = util::trim(util::strip(secs[0], "//"));
-                    UI16 num = util::ston<UI16>(util::trim(util::strip(secs[1], "//")));
+                    std::uint16_t num = util::ston<std::uint16_t>(util::trim(util::strip(secs[1], "//")));
 
                     if (addAtLoc.m_IntValue == 1) {
                         std::string addCmd = "";
@@ -1283,7 +1283,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 return;
 
             CPIHelpRequest toHandle(
-                s, static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
             toHandle.Handle();
         }
         else if (cmd == "GMPAGE") {
@@ -1299,8 +1299,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             if (data.empty())
                 return;
 
-            UI16 placeNum =
-                static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+            std::uint16_t placeNum =
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
             if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
                 GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
 
@@ -1335,7 +1335,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(OT_ITEM));
             guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(OT_CHAR));
             guiInfo.AddData("Players in world",
-                            static_cast<UI32>(cwmWorldState->GetPlayersOnline()));
+                            static_cast<std::uint32_t>(cwmWorldState->GetPlayersOnline()));
             guiInfo.Send(0, false, INVALIDSERIAL);
         }
         break;
@@ -1345,7 +1345,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 return;
 
             BuildAddMenuGump(
-                s, static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
         }
         else if (cmd == "INFORMATION") {
             builtString = GetUptime();
@@ -1361,7 +1361,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 return;
 
             Skills->NewMakeMenu(s, std::stoi(util::trim(util::strip(data, "//")), nullptr, 0),
-                                static_cast<UI08>(s->AddId()));
+                                static_cast<std::uint8_t>(s->AddId()));
         }
         break;
     case 'N':
@@ -1389,7 +1389,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             if (data.empty())
                 return;
 
-            UI16 newBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
+            std::uint16_t newBody = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
             mChar->SetId(newBody);
             mChar->SetOrgId(newBody);
         }
@@ -1405,7 +1405,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             if (data.empty())
                 return;
 
-            COLOUR newSkin = static_cast<UI16>(std::stoul(data, nullptr, 0));
+            COLOUR newSkin = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
             mChar->SetSkin(newSkin);
             mChar->SetOrgSkin(newSkin);
         }
@@ -1433,8 +1433,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in add menu gump
 // o------------------------------------------------------------------------------------------------o
-void HandleAddMenuButton(CSocket *s, UI32 button) {
-    SI32 addMenuLoc = s->TempInt();
+void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
+    std::int32_t addMenuLoc = s->TempInt();
     std::string sect = std::string("ITEMMENU ") + util::ntos(addMenuLoc);
     CChar *mChar = s->CurrcharObj();
 
@@ -1448,7 +1448,7 @@ void HandleAddMenuButton(CSocket *s, UI32 button) {
         TAGMAPOBJECT forceMovableOff = mChar->GetTag("forceMovableOff");
 
         std::string tagName = "";
-        SI32 tagVal = 0;
+        std::int32_t tagVal = 0;
         TAGMAPOBJECT customTag;
         std::map<std::string, TAGMAPOBJECT> customTagMap;
         if (button == 50000) // Add item at specific location
@@ -1648,14 +1648,14 @@ void HandleAddMenuButton(CSocket *s, UI32 button) {
     // add
     std::pair<ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR> pairRange =
         g_mmapAddMenuMap.equal_range(addMenuLoc);
-    UI32 autoAddMenuItemCount = 0;
+    std::uint32_t autoAddMenuItemCount = 0;
     for (ADDMENUMAP_CITERATOR CI = pairRange.first; CI != pairRange.second; ++CI) {
         autoAddMenuItemCount += 2; // Need to inicrement by 2 because each entry is measured in the
                                    // dfn' as two lines. Used in teh calculation below.
     }
     // let's skip over the name, and get straight to where we should be headed
     size_t entryNum = ((static_cast<size_t>(button) - 6) * 2);
-    autoAddMenuItemCount += static_cast<UI32>(ItemMenu->NumEntries());
+    autoAddMenuItemCount += static_cast<std::uint32_t>(ItemMenu->NumEntries());
     if (autoAddMenuItemCount >= entryNum) {
         std::string tag = ItemMenu->MoveTo(entryNum);
         std::string data = ItemMenu->GrabData();
@@ -1668,13 +1668,13 @@ void HandleAddMenuButton(CSocket *s, UI32 button) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response when player enters HOWTO command
 // o------------------------------------------------------------------------------------------------o
-void HandleHowTo(CSocket *sock, SI32 cmdNumber) {
+void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     if (cmdNumber == -2)
         return;
 
-    SI32 iCounter = 0;
-    UI08 cmdLevelReq = 0xFF;
-    UI08 cmdType = 0xFF;
+    std::int32_t iCounter = 0;
+    std::uint8_t cmdLevelReq = 0xFF;
+    std::uint8_t cmdType = 0xFF;
     std::string cmdName = "";
     bool found = false;
     for (auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr) {
@@ -1765,7 +1765,7 @@ void HandleHowTo(CSocket *sock, SI32 cmdNumber) {
     }
 }
 
-void HandleHowToButton(CSocket *s, UI32 button) { HandleHowTo(s, button - 2); }
+void HandleHowToButton(CSocket *s, std::uint32_t button) { HandleHowTo(s, button - 2); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPIGumpMenuSelect::Handle()
@@ -1799,7 +1799,7 @@ bool CPIGumpMenuSelect::Handle(void) {
         }
 
         cScript *toExecute = nullptr;
-        std::vector<UI16> scriptTriggers = tSock->CurrcharObj()->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = tSock->CurrcharObj()->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -1809,7 +1809,7 @@ bool CPIGumpMenuSelect::Handle(void) {
             }
         }
 
-        toExecute = JSMapping->GetScript(static_cast<UI16>(0)); // Global script
+        toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // Global script
         if (toExecute != nullptr) {
             toExecute->OnVirtueGumpPress(tSock->CurrcharObj(), targChar, buttonId);
         }
@@ -1828,7 +1828,7 @@ bool CPIGumpMenuSelect::Handle(void) {
     BuildTextLocations();
 
     if (buttonId > 10000 && buttonId < 20000) {
-        BuildGumpFromScripts(tSock, static_cast<UI16>(buttonId - 10000));
+        BuildGumpFromScripts(tSock, static_cast<std::uint16_t>(buttonId - 10000));
         return true;
     }
     if (gumpId >= 8000 && gumpId <= 8020) {
@@ -1885,7 +1885,7 @@ bool CPIGumpMenuSelect::Handle(void) {
         HandleTownstoneButton(tSock, buttonId, id, gumpId);
         break; // Townstones
     case 4:
-        WhoList->ButtonSelect(tSock, static_cast<UI16>(buttonId), static_cast<UI08>(gumpId));
+        WhoList->ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
         break; // Wholist
     case 7:    // Accounts
         CChar *c;
@@ -1901,10 +1901,10 @@ bool CPIGumpMenuSelect::Handle(void) {
         HandleAddMenuButton(tSock, buttonId);
         break; // Add Menu
     case 11:
-        OffList->ButtonSelect(tSock, static_cast<UI16>(buttonId), static_cast<UI08>(gumpId));
+        OffList->ButtonSelect(tSock, static_cast<std::uint16_t>(buttonId), static_cast<std::uint8_t>(gumpId));
         break; // Who's Offline
     case 12:
-        Skills->HandleMakeMenu(tSock, buttonId, static_cast<SI32>(tSock->AddId()));
+        Skills->HandleMakeMenu(tSock, buttonId, static_cast<std::int32_t>(tSock->AddId()));
         break; // New Make Menu
     case 13:
         HandleHowToButton(tSock, buttonId);
@@ -1920,21 +1920,21 @@ bool CPIGumpMenuSelect::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles new values for townstones
 // o------------------------------------------------------------------------------------------------o
-void CPIGumpInput::HandleTownstoneText(UI08 index) {
+void CPIGumpInput::HandleTownstoneText(std::uint8_t index) {
     CChar *mChar = tSock->CurrcharObj();
-    UI16 resourceId;
-    UI32 amountToDonate;
+    std::uint16_t resourceId;
+    std::uint32_t amountToDonate;
     switch (index) {
     case 6: // it's our donate resource button
     {
         CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
-        amountToDonate = static_cast<UI32>(std::stoul(reply, nullptr, 0));
+        amountToDonate = static_cast<std::uint32_t>(std::stoul(reply, nullptr, 0));
         if (amountToDonate == 0) {
             tSock->SysMessage(562); // You are donating nothing!
             return;
         }
         resourceId = ourRegion->GetResourceId();
-        UI32 numResources = GetItemAmount(mChar, resourceId);
+        std::uint32_t numResources = GetItemAmount(mChar, resourceId);
 
         if (amountToDonate > numResources) {
             tSock->SysMessage(563, numResources); // You have insufficient resources to donate that
@@ -1964,7 +1964,7 @@ bool CPIGumpInput::Handle(void) {
         if (ValidateObject(mChar)) {
             CSocket *mSock = mChar->GetSocket();
             if (mSock != nullptr) {
-                UI32 scriptNo = mSock->AddId();
+                std::uint32_t scriptNo = mSock->AddId();
                 if (scriptNo >= 0xFFFF) {
                     cScript *toExecute = JSMapping->GetScript((scriptNo - 0xFFFF));
                     if (toExecute != nullptr) {
@@ -2007,14 +2007,14 @@ bool CPIGumpChoice::Handle(void) {
     std::string sect;
     std::string tag;
     std::string data;
-    UI16 main = tSock->GetWord(5);
-    UI16 sub = tSock->GetWord(7);
+    std::uint16_t main = tSock->GetWord(5);
+    std::uint16_t sub = tSock->GetWord(7);
     CChar *mChar = tSock->CurrcharObj();
 
     if (main >= JSGUMPMENUOFFSET) // Between 0x4000 and 0xFFFF
     {
         // Handle button presses via global JS script
-        cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             if (toExecute->OnScrollingGumpPress(tSock, main, sub) == 0) {
                 return true;
@@ -2026,7 +2026,7 @@ bool CPIGumpChoice::Handle(void) {
         data = GrabMenuData(sect, (static_cast<size_t>(sub) * 2), tag);
         if (!data.empty()) {
             if (main == POLYMORPHMENUOFFSET) {
-                Magic->PolymorphMenu(tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                Magic->PolymorphMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else {
                 if (mChar->IsOnHorse()) {
@@ -2035,7 +2035,7 @@ bool CPIGumpChoice::Handle(void) {
                 else if (mChar->IsFlying()) {
                     mChar->ToggleFlying();
                 }
-                Magic->Polymorph(tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                Magic->Polymorph(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
         }
     }
@@ -2044,7 +2044,7 @@ bool CPIGumpChoice::Handle(void) {
             sect = std::string("TRACKINGMENU ") + util::ntos(main);
             data = GrabMenuData(sect, (static_cast<size_t>(sub) * 2), tag);
             if (!data.empty() && tag != "What") {
-                Skills->CreateTrackingMenu(tSock, static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                Skills->CreateTrackingMenu(tSock, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
         }
         else {
@@ -2052,7 +2052,7 @@ bool CPIGumpChoice::Handle(void) {
                 tSock->SysMessage(575); // You fail your attempt at tracking.
                 return true;
             }
-            Skills->Tracking(tSock, static_cast<SI32>(sub - 1));
+            Skills->Tracking(tSock, static_cast<std::int32_t>(sub - 1));
         }
     }
     else if (main < ITEMMENUOFFSET) // GM Menus
@@ -2067,11 +2067,11 @@ bool CPIGumpChoice::Handle(void) {
 }
 
 //============================================================================================
-auto HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, UI16 gumpIndex) -> void {
+auto HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, std::uint16_t gumpIndex) -> void {
     auto mChar = mSock->CurrcharObj();
     std::string line;
-    UI16 modelId = 0;
-    UI16 modelColour = 0;
+    std::uint16_t modelId = 0;
+    std::uint16_t modelColour = 0;
     std::string tag = gumpScript->First();
     std::string data = gumpScript->GrabData();
     line = tag + " "s + data;
@@ -2080,7 +2080,7 @@ auto HandleCommonGump(CSocket *mSock, CScriptSection *gumpScript, UI16 gumpIndex
     toSend.Question(line);
     for (tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next()) {
         data = gumpScript->GrabData();
-        modelId = static_cast<UI16>(stoul(tag, nullptr, 0));
+        modelId = static_cast<std::uint16_t>(stoul(tag, nullptr, 0));
         toSend.AddResponse(modelId, modelColour, data);
         tag = gumpScript->Next();
     }
@@ -2107,7 +2107,7 @@ void CGumpDisplay::AddData(GumpInfo_st *toAdd) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds the data to the gump to send
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::AddData(std::string toAdd, UI32 value, UI08 type) {
+void CGumpDisplay::AddData(std::string toAdd, std::uint32_t value, std::uint8_t type) {
     if (toAdd.empty())
         return;
 
@@ -2124,7 +2124,7 @@ void CGumpDisplay::AddData(std::string toAdd, UI32 value, UI08 type) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds the data to the gump to send
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::AddData(std::string toAdd, const std::string &toSet, UI08 type) {
+void CGumpDisplay::AddData(std::string toAdd, const std::string &toSet, std::uint8_t type) {
     if (toAdd.empty() && type != 7)
         return;
 
@@ -2148,13 +2148,13 @@ CGumpDisplay::CGumpDisplay(CSocket *target) : toSendTo(target) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGumpDisplay::CGumpDisplay( CSocket *target, UI16 gumpWidth, UI16
+//|	Function	-	CGumpDisplay::CGumpDisplay( CSocket *target, std::uint16_t gumpWidth, std::uint16_t
 // gumpHeight )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begin CGumpDisplay stuff by setting the target, clearing any
 // existing data, and setting the w / h
 // o------------------------------------------------------------------------------------------------o
-CGumpDisplay::CGumpDisplay(CSocket *target, UI16 gumpWidth, UI16 gumpHeight)
+CGumpDisplay::CGumpDisplay(CSocket *target, std::uint16_t gumpWidth, std::uint16_t gumpHeight)
     : width(gumpWidth), height(gumpHeight), toSendTo(target) {
     gumpData.resize(0);
 }
@@ -2196,7 +2196,7 @@ void CGumpDisplay::SetTitle(const std::string &newTitle) { title = newTitle; }
 // is data
 // o------------------------------------------------------------------------------------------------o
 void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    UI32 type, SERIAL serial) {
+                    std::uint32_t type, SERIAL serial) {
     CPSendGumpMenu toSend;
     toSend.GumpId(type);
     toSend.UserId(serial);
@@ -2219,18 +2219,18 @@ void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<st
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump data to the socket
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
+void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, SERIAL serial) {
     constexpr auto maxsize = 512;
     std::string temp;
     size_t i;
-    UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
-    UI08 numToPage = 10, stringWidth = 10;
+    std::uint32_t pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+    std::uint8_t numToPage = 10, stringWidth = 10;
 
     if (!one.empty() && !two.empty()) {
         SendVecsAsGump(toSendTo, one, two, gumpNum, serial);
         return;
     }
-    UI08 ser1, ser2, ser3, ser4;
+    std::uint8_t ser1, ser2, ser3, ser4;
     //--static pages
     one.push_back("page 0");
     temp = oldstrutil::format(maxsize, "resizepic 0 0 %i %i %i",
@@ -2255,9 +2255,9 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
     }
     two.push_back(temp);
 
-    numToPage = static_cast<UI08>(((height - 30) / 20) - 2);
-    stringWidth = static_cast<UI08>((width / 2) / 10);
-    UI32 lineForButton;
+    numToPage = static_cast<std::uint8_t>(((height - 30) / 20) - 2);
+    stringWidth = static_cast<std::uint8_t>((width / 2) / 10);
+    std::uint32_t lineForButton;
     for (i = 0, lineForButton = 0; i < gumpData.size(); ++i, ++lineForButton) {
         if (lineForButton > 0 && (!(lineForButton % numToPage))) {
             position = 40;
@@ -2287,26 +2287,26 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
             one.push_back(temp);
         }
 
-        UI32 value = gumpData[i]->value;
+        std::uint32_t value = gumpData[i]->value;
         switch (gumpData[i]->type) {
         case 0: // all numbers of sorts
             temp = std::to_string(value);
             break;
         case 1:
-            temp = util::format("%x", static_cast<UI32>(value));
+            temp = util::format("%x", static_cast<std::uint32_t>(value));
             break;
         case 2:
-            ser1 = static_cast<UI08>(value >> 24);
-            ser2 = static_cast<UI08>(value >> 16);
-            ser3 = static_cast<UI08>(value >> 8);
-            ser4 = static_cast<UI08>(value % 256);
+            ser1 = static_cast<std::uint8_t>(value >> 24);
+            ser2 = static_cast<std::uint8_t>(value >> 16);
+            ser3 = static_cast<std::uint8_t>(value >> 8);
+            ser4 = static_cast<std::uint8_t>(value % 256);
             temp = util::format("%i %i %i %i", ser1, ser2, ser3, ser4);
             break;
         case 3:
-            ser1 = static_cast<UI08>(value >> 24);
-            ser2 = static_cast<UI08>(value >> 16);
-            ser3 = static_cast<UI08>(value >> 8);
-            ser4 = static_cast<UI08>(value % 256);
+            ser1 = static_cast<std::uint8_t>(value >> 24);
+            ser2 = static_cast<std::uint8_t>(value >> 16);
+            ser3 = static_cast<std::uint8_t>(value >> 8);
+            ser4 = static_cast<std::uint8_t>(value % 256);
             temp = util::format("%x %x %x %x", ser1, ser2, ser3, ser4);
             break;
         case 4:
@@ -2325,7 +2325,7 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
                 temp2 = temp.substr(0, stringWidth);
 
                 two.push_back(temp2);
-                for (UI32 tempCounter = 0;
+                for (std::uint32_t tempCounter = 0;
                      tempCounter < tempWidth / (static_cast<size_t>(stringWidth) * 2) + 1;
                      ++tempCounter) {
                     // LOOKATME
@@ -2352,13 +2352,13 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
             }
             break;
         case 5:
-            ser1 = static_cast<UI08>(value >> 8);
-            ser2 = static_cast<UI08>(value % 256);
+            ser1 = static_cast<std::uint8_t>(value >> 8);
+            ser2 = static_cast<std::uint8_t>(value % 256);
             temp = util::format("0x%02x%02x", ser1, ser2);
             break;
         case 6:
-            ser1 = static_cast<UI08>(value >> 8);
-            ser2 = static_cast<UI08>(value % 256);
+            ser1 = static_cast<std::uint8_t>(value >> 8);
+            ser2 = static_cast<std::uint8_t>(value % 256);
             temp = util::format("%i %i", ser1, ser2);
             break;
         case 7:
@@ -2368,7 +2368,7 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
             else {
                 temp = gumpData[i]->stringValue;
             }
-            SI32 sWidth;
+            std::int32_t sWidth;
             sWidth = stringWidth * 2;
             if (temp.size() > static_cast<size_t>(sWidth)) // too wide for one line, CRAP!
             {
@@ -2378,7 +2378,7 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
                 temp2 = temp.substr(0, sWidth);
 
                 two.push_back(temp2);
-                for (UI32 tempCounter = 0; tempCounter < tempWidth / sWidth + 1; ++tempCounter) {
+                for (std::uint32_t tempCounter = 0; tempCounter < tempWidth / sWidth + 1; ++tempCounter) {
                     position += 20;
                     ++lineForButton;
                     temp3 = oldstrutil::format(512, "text %i %u %i %u", 30, position,
@@ -2423,7 +2423,7 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
     }
 
     pagenum = 1;
-    for (i = 0; static_cast<UI32>(i) <= lineForButton; i += numToPage) {
+    for (i = 0; static_cast<std::uint32_t>(i) <= lineForButton; i += numToPage) {
         temp = "page " + std::to_string(pagenum);
         one.push_back(temp);
         if (i >= 10) {
@@ -2432,7 +2432,7 @@ void CGumpDisplay::Send(UI32 gumpNum, bool isMenu, SERIAL serial) {
                 cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1); // back button
             one.push_back(temp);
         }
-        if (lineForButton > numToPage && static_cast<UI32>((i + numToPage)) < lineForButton) {
+        if (lineForButton > numToPage && static_cast<std::uint32_t>((i + numToPage)) < lineForButton) {
             temp = util::format("button %i %i %i %i 0 %u", width - 40, height - 40,
                                 cwmWorldState->ServerData()->ButtonRight(),
                                 cwmWorldState->ServerData()->ButtonRight() + 1,

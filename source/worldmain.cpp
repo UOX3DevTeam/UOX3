@@ -49,15 +49,15 @@ const bool DEFWORLD_ERROR = false;
 const bool DEFWORLD_SECURE = true;
 
 const bool DEFWORLD_LOADED = false;
-const UI32 DEFWORLD_UICURRENTTIME = 0;
-const UI32 DEFWORLD_UOTICKCOUNT = 1;
+const std::uint32_t DEFWORLD_UICURRENTTIME = 0;
+const std::uint32_t DEFWORLD_UOTICKCOUNT = 1;
 const bool DEFWORLD_OVERFLOW = false;
-const UI32 DEFWORLD_STARTTIME = 0;
-const UI32 DEFWORLD_ENDTIME = 0;
-const UI32 DEFWORLD_LCLOCK = 0;
+const std::uint32_t DEFWORLD_STARTTIME = 0;
+const std::uint32_t DEFWORLD_ENDTIME = 0;
+const std::uint32_t DEFWORLD_LCLOCK = 0;
 const size_t DEFWORLD_PLAYERSONLINE = 0;
-const UI32 DEFWORLD_NEWTIME = 0;
-const UI32 DEFWORLD_OLDTIME = 0;
+const std::uint32_t DEFWORLD_NEWTIME = 0;
+const std::uint32_t DEFWORLD_OLDTIME = 0;
 const bool DEFWORLD_AUTOSAVED = false;
 const SaveStatus DEFWORLD_SAVEPROGRESS = SS_NOTSAVING;
 const bool DEFWORLD_RELOADINGSCRIPTS = false;
@@ -73,8 +73,8 @@ CWorldMain::CWorldMain()
       classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
     sData = nullptr;
 
-    for (SI32 mTID = static_cast<SI32>(tWORLD_NEXTFIELDEFFECT);
-         mTID < static_cast<SI32>(tWORLD_COUNT); ++mTID) {
+    for (std::int32_t mTID = static_cast<std::int32_t>(tWORLD_NEXTFIELDEFFECT);
+         mTID < static_cast<std::int32_t>(tWORLD_COUNT); ++mTID) {
         worldTimers[mTID] = 0;
     }
     creatures.clear();
@@ -164,8 +164,8 @@ void CWorldMain::SetLoaded(bool newVal) { hasLoaded = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current time
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUICurrentTime(void) const { return uiCurrentTime; }
-void CWorldMain::SetUICurrentTime(UI32 newVal) { uiCurrentTime = newVal; }
+std::uint32_t CWorldMain::GetUICurrentTime(void) const { return uiCurrentTime; }
+void CWorldMain::SetUICurrentTime(std::uint32_t newVal) { uiCurrentTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetUOTickCount()
@@ -174,8 +174,8 @@ void CWorldMain::SetUICurrentTime(UI32 newVal) { uiCurrentTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets UO Minutes
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetUOTickCount(void) const { return uoTickCount; }
-void CWorldMain::SetUOTickCount(UI32 newVal) { uoTickCount = newVal; }
+std::uint32_t CWorldMain::GetUOTickCount(void) const { return uoTickCount; }
+void CWorldMain::SetUOTickCount(std::uint32_t newVal) { uoTickCount = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetOverflow()
@@ -194,8 +194,8 @@ void CWorldMain::SetOverflow(bool newVal) { overflow = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server started up
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetStartTime(void) const { return startTime; }
-void CWorldMain::SetStartTime(UI32 newVal) { startTime = newVal; }
+std::uint32_t CWorldMain::GetStartTime(void) const { return startTime; }
+void CWorldMain::SetStartTime(std::uint32_t newVal) { startTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetEndTime()
@@ -204,8 +204,8 @@ void CWorldMain::SetStartTime(UI32 newVal) { startTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server will shutdown
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetEndTime(void) const { return endTime; }
-void CWorldMain::SetEndTime(UI32 newVal) { endTime = newVal; }
+std::uint32_t CWorldMain::GetEndTime(void) const { return endTime; }
+void CWorldMain::SetEndTime(std::uint32_t newVal) { endTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetLClock()
@@ -214,8 +214,8 @@ void CWorldMain::SetEndTime(UI32 newVal) { endTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets end time
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetLClock(void) const { return lClock; }
-void CWorldMain::SetLClock(UI32 newVal) { lClock = newVal; }
+std::uint32_t CWorldMain::GetLClock(void) const { return lClock; }
+void CWorldMain::SetLClock(std::uint32_t newVal) { lClock = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetNewTime()
@@ -224,8 +224,8 @@ void CWorldMain::SetLClock(UI32 newVal) { lClock = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto worldsave
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewTime(void) const { return newTime; }
-void CWorldMain::SetNewTime(UI32 newVal) { newTime = newVal; }
+std::uint32_t CWorldMain::GetNewTime(void) const { return newTime; }
+void CWorldMain::SetNewTime(std::uint32_t newVal) { newTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetOldTime()
@@ -234,8 +234,8 @@ void CWorldMain::SetNewTime(UI32 newVal) { newTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto worldsave
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldTime(void) const { return oldTime; }
-void CWorldMain::SetOldTime(UI32 newVal) { oldTime = newVal; }
+std::uint32_t CWorldMain::GetOldTime(void) const { return oldTime; }
+void CWorldMain::SetOldTime(std::uint32_t newVal) { oldTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetAutoSaved()
@@ -311,8 +311,8 @@ void CWorldMain::CheckTimers(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto IP update
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetNewIPTime(void) const { return newIPtime; }
-void CWorldMain::SetNewIPTime(UI32 newVal) { newIPtime = newVal; }
+std::uint32_t CWorldMain::GetNewIPTime(void) const { return newIPtime; }
+void CWorldMain::SetNewIPTime(std::uint32_t newVal) { newIPtime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetOldIPTime()
@@ -320,8 +320,8 @@ void CWorldMain::SetNewIPTime(UI32 newVal) { newIPtime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto IP update
 // o------------------------------------------------------------------------------------------------o
-UI32 CWorldMain::GetOldIPTime(void) const { return oldIPtime; }
-void CWorldMain::SetOldIPTime(UI32 newVal) { oldIPtime = newVal; }
+std::uint32_t CWorldMain::GetOldIPTime(void) const { return oldIPtime; }
+void CWorldMain::SetOldIPTime(std::uint32_t newVal) { oldIPtime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetIPUpdated()
@@ -348,11 +348,11 @@ void CWorldMain::ClassesInitialized(bool newVal) { classesInitialized = newVal; 
 //|	Purpose		-	Set world light level based on time of day and script settings
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::DoWorldLight(void) {
-    UI08 worlddarklevel = ServerData()->WorldLightDarkLevel();
-    UI08 worldbrightlevel = ServerData()->WorldLightBrightLevel();
+    std::uint8_t worlddarklevel = ServerData()->WorldLightDarkLevel();
+    std::uint8_t worldbrightlevel = ServerData()->WorldLightBrightLevel();
     bool ampm = ServerData()->ServerTimeAMPM();
-    UI08 currentHour = ServerData()->ServerTimeHours();
-    UI08 currentMinute = ServerData()->ServerTimeMinutes();
+    std::uint8_t currentHour = ServerData()->ServerTimeHours();
+    std::uint8_t currentMinute = ServerData()->ServerTimeMinutes();
 
     R32 currentTime = R32(currentHour + (currentMinute / 60.0f));
     R32 hourIncrement = R32(fabs((worlddarklevel - worldbrightlevel) /
@@ -361,11 +361,11 @@ void CWorldMain::DoWorldLight(void) {
 
     if (ampm) {
         ServerData()->WorldLightCurrentLevel(
-            static_cast<UI08>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
+            static_cast<std::uint8_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
     }
     else {
         ServerData()->WorldLightCurrentLevel(
-            static_cast<UI08>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
+            static_cast<std::uint8_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
     }
 }
 
@@ -382,10 +382,10 @@ void SysBroadcast(const std::string &txt);
 // archive :)
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld(bool x) {
-    static UI32 save_counter = 0;
+    static std::uint32_t save_counter = 0;
 
     std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-                  [](std::pair<UI16, CSpawnRegion *> entry) {
+                  [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                       if (entry.second) {
                           entry.second->CheckSpawned();
                       }
@@ -467,7 +467,7 @@ void CWorldMain::RegionSave() {
         return;
     }
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                  [&regionsDestination](const std::pair<UI16, CTownRegion *> &town) {
+                  [&regionsDestination](const std::pair<std::uint16_t, CTownRegion *> &town) {
                       if (town.second) {
                           town.second->Save(regionsDestination);
                       }
@@ -532,9 +532,9 @@ CServerProfile::CServerProfile()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments networkTime
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::NetworkTime(void) const { return networkTime; }
-void CServerProfile::NetworkTime(UI32 newVal) { networkTime = newVal; }
-void CServerProfile::IncNetworkTime(UI32 toInc) { networkTime += toInc; }
+std::uint32_t CServerProfile::NetworkTime(void) const { return networkTime; }
+void CServerProfile::NetworkTime(std::uint32_t newVal) { networkTime = newVal; }
+void CServerProfile::IncNetworkTime(std::uint32_t toInc) { networkTime += toInc; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerProfile::TimerTime()
@@ -542,9 +542,9 @@ void CServerProfile::IncNetworkTime(UI32 toInc) { networkTime += toInc; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments timerTime
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::TimerTime(void) const { return timerTime; }
-void CServerProfile::TimerTime(UI32 newVal) { timerTime = newVal; }
-void CServerProfile::IncTimerTime(UI32 toInc) { timerTime += toInc; }
+std::uint32_t CServerProfile::TimerTime(void) const { return timerTime; }
+void CServerProfile::TimerTime(std::uint32_t newVal) { timerTime = newVal; }
+void CServerProfile::IncTimerTime(std::uint32_t toInc) { timerTime += toInc; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerProfile::AutoTime()
@@ -552,9 +552,9 @@ void CServerProfile::IncTimerTime(UI32 toInc) { timerTime += toInc; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments autoTime
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::AutoTime(void) const { return autoTime; }
-void CServerProfile::AutoTime(UI32 newVal) { autoTime = newVal; }
-void CServerProfile::IncAutoTime(UI32 toInc) { autoTime += toInc; }
+std::uint32_t CServerProfile::AutoTime(void) const { return autoTime; }
+void CServerProfile::AutoTime(std::uint32_t newVal) { autoTime = newVal; }
+void CServerProfile::IncAutoTime(std::uint32_t toInc) { autoTime += toInc; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerProfile::LoopTime()
@@ -562,9 +562,9 @@ void CServerProfile::IncAutoTime(UI32 toInc) { autoTime += toInc; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments loopTime
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::LoopTime(void) const { return loopTime; }
-void CServerProfile::LoopTime(UI32 newVal) { loopTime = newVal; }
-void CServerProfile::IncLoopTime(UI32 toInc) { loopTime += toInc; }
+std::uint32_t CServerProfile::LoopTime(void) const { return loopTime; }
+void CServerProfile::LoopTime(std::uint32_t newVal) { loopTime = newVal; }
+void CServerProfile::IncLoopTime(std::uint32_t toInc) { loopTime += toInc; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerProfile::NetworkTimeCount()
@@ -572,8 +572,8 @@ void CServerProfile::IncLoopTime(UI32 toInc) { loopTime += toInc; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments networkTimeCount
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::NetworkTimeCount(void) const { return networkTimeCount; }
-void CServerProfile::NetworkTimeCount(UI32 newVal) { networkTimeCount = newVal; }
+std::uint32_t CServerProfile::NetworkTimeCount(void) const { return networkTimeCount; }
+void CServerProfile::NetworkTimeCount(std::uint32_t newVal) { networkTimeCount = newVal; }
 void CServerProfile::IncNetworkTimeCount(void) { ++networkTimeCount; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -582,8 +582,8 @@ void CServerProfile::IncNetworkTimeCount(void) { ++networkTimeCount; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments timerTimeCount
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::TimerTimeCount(void) const { return timerTimeCount; }
-void CServerProfile::TimerTimeCount(UI32 newVal) { timerTimeCount = newVal; }
+std::uint32_t CServerProfile::TimerTimeCount(void) const { return timerTimeCount; }
+void CServerProfile::TimerTimeCount(std::uint32_t newVal) { timerTimeCount = newVal; }
 void CServerProfile::IncTimerTimeCount(void) { ++timerTimeCount; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -592,8 +592,8 @@ void CServerProfile::IncTimerTimeCount(void) { ++timerTimeCount; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments autoTimeCount
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::AutoTimeCount(void) const { return autoTimeCount; }
-void CServerProfile::AutoTimeCount(UI32 newVal) { autoTimeCount = newVal; }
+std::uint32_t CServerProfile::AutoTimeCount(void) const { return autoTimeCount; }
+void CServerProfile::AutoTimeCount(std::uint32_t newVal) { autoTimeCount = newVal; }
 void CServerProfile::IncAutoTimeCount(void) { ++autoTimeCount; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -602,8 +602,8 @@ void CServerProfile::IncAutoTimeCount(void) { ++autoTimeCount; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments amount of simulation cycles
 // o------------------------------------------------------------------------------------------------o
-UI32 CServerProfile::LoopTimeCount(void) const { return loopTimeCount; }
-void CServerProfile::LoopTimeCount(UI32 newVal) { loopTimeCount = newVal; }
+std::uint32_t CServerProfile::LoopTimeCount(void) const { return loopTimeCount; }
+void CServerProfile::LoopTimeCount(std::uint32_t newVal) { loopTimeCount = newVal; }
 void CServerProfile::IncLoopTimeCount(void) { ++loopTimeCount; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -612,8 +612,8 @@ void CServerProfile::IncLoopTimeCount(void) { ++loopTimeCount; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total amount of bytes received by server
 // o------------------------------------------------------------------------------------------------o
-SI32 CServerProfile::GlobalReceived(void) const { return globalRecv; }
-void CServerProfile::GlobalReceived(SI32 newVal) { globalRecv = newVal; }
+std::int32_t CServerProfile::GlobalReceived(void) const { return globalRecv; }
+void CServerProfile::GlobalReceived(std::int32_t newVal) { globalRecv = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerProfile::GlobalSent()
@@ -621,5 +621,5 @@ void CServerProfile::GlobalReceived(SI32 newVal) { globalRecv = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total amount of bytes sent by server
 // o------------------------------------------------------------------------------------------------o
-SI32 CServerProfile::GlobalSent(void) const { return globalSent; }
-void CServerProfile::GlobalSent(SI32 newVal) { globalSent = newVal; }
+std::int32_t CServerProfile::GlobalSent(void) const { return globalSent; }
+void CServerProfile::GlobalSent(std::int32_t newVal) { globalSent = newVal; }

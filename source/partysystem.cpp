@@ -28,7 +28,7 @@ CPartyEntry::CPartyEntry(CChar *m, bool isLeader, bool isLootable) : member(m) {
     settings.set(BIT_LOOTABLE, isLootable);
 }
 
-void UpdateStats(CBaseObject *mObj, UI08 x);
+void UpdateStats(CBaseObject *mObj, std::uint8_t x);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	Party::AddMember()
 // o------------------------------------------------------------------------------------------------o
@@ -99,7 +99,7 @@ bool Party::AddMember(CChar *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character is a member of party
 // o------------------------------------------------------------------------------------------------o
-CPartyEntry *Party::Find(CChar *i, SI32 *location) {
+CPartyEntry *Party::Find(CChar *i, std::int32_t *location) {
     if (ValidateObject(i)) {
         for (size_t j = 0; j < members.size(); ++j) {
             CPartyEntry *toFind = members[j];
@@ -123,7 +123,7 @@ bool Party::HasMember(CChar *find) { return (Find(find) != nullptr); }
 bool Party::RemoveMember(CChar *i) {
     bool retVal = false;
     if (ValidateObject(i)) {
-        SI32 removeSpot;
+        std::int32_t removeSpot;
         CPartyEntry *toFind = Find(i, &removeSpot);
         if (toFind != nullptr) {
             delete members[removeSpot];
@@ -157,11 +157,11 @@ bool Party::RemoveMember(CChar *i) {
 //|	Purpose		-	Set a party member as party leader
 // o------------------------------------------------------------------------------------------------o
 void Party::Leader(CChar *member) {
-    SI32 newLeaderPos;
+    std::int32_t newLeaderPos;
     CPartyEntry *newLeader = Find(member, &newLeaderPos);
     if (newLeader != nullptr) {
         if (leader != nullptr) {
-            SI32 oldLeaderPos;
+            std::int32_t oldLeaderPos;
             CPartyEntry *mFind = Find(leader, &oldLeaderPos);
             if (mFind != nullptr) {
                 mFind->IsLeader(false);

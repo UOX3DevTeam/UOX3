@@ -121,7 +121,7 @@ void CWhoList::AddSerial(SERIAL toAdd) { whoMenuData.push_back(toAdd); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does action based upon button selected
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::ButtonSelect(CSocket *toSendTo, UI16 buttonPressed, UI08 type) {
+void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std::uint8_t type) {
     CChar *sourceChar = toSendTo->CurrcharObj();
 
     if (buttonPressed < 200) {
@@ -288,7 +288,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, UI16 buttonPressed, UI08 type) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds the WhoList gump and sends it to the player
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::Command(CSocket *toSendTo, UI08 type, UI16 buttonPressed) {
+void CWhoList::Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed) {
     SERIAL serial = whoMenuData[buttonPressed];
     CChar *targetChar = CalcCharObjFromSer(serial); // find selected char ...
 
@@ -302,9 +302,9 @@ void CWhoList::Command(CSocket *toSendTo, UI08 type, UI16 buttonPressed) {
     toSend.GumpId(type);
 
     UnicodeTypes sLang = toSendTo->Language();
-    UI16 lColour = cwmWorldState->ServerData()->LeftTextColour();
-    UI16 tColour = cwmWorldState->ServerData()->TitleColour();
-    UI16 butRight = cwmWorldState->ServerData()->ButtonRight();
+    std::uint16_t lColour = cwmWorldState->ServerData()->LeftTextColour();
+    std::uint16_t tColour = cwmWorldState->ServerData()->TitleColour();
+    std::uint16_t butRight = cwmWorldState->ServerData()->ButtonRight();
     //--static pages
     toSend.addCommand("page 0");
     toSend.addCommand(
@@ -387,14 +387,14 @@ void CWhoList::Update(void) {
     }*/
 
     Delete();
-    constexpr UI16 maxsize = 512;
+    constexpr std::uint16_t maxsize = 512;
 
     size_t i = 0;
-    const UI32 numPerPage = 13;
-    UI32 pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
+    const std::uint32_t numPerPage = 13;
+    std::uint32_t pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
 
     size_t k = cwmWorldState->GetPlayersOnline();
-    SI32 realCount = 1;
+    std::int32_t realCount = 1;
 
     //--static pages
     one.push_back("page 0");
@@ -411,7 +411,7 @@ void CWhoList::Update(void) {
     //--Start User List
     if (online) {
         for (i = 0; i < k; ++i) {
-            CSocket *tSock = Network->GetSockPtr(static_cast<UI32>(i));
+            CSocket *tSock = Network->GetSockPtr(static_cast<std::uint32_t>(i));
             CChar *tChar = tSock->CurrcharObj();
             if (!ValidateObject(tChar))
                 continue;

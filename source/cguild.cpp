@@ -568,7 +568,7 @@ void CGuild::Load(CScriptSection *toRead) {
                 Abbreviation(data.c_str());
             }
             else if (UTag == "ALLY") {
-                SetGuildRelation(static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_ALLY);
+                SetGuildRelation(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)), GR_ALLY);
             }
             break;
         case 'C':
@@ -578,10 +578,10 @@ void CGuild::Load(CScriptSection *toRead) {
             break;
         case 'M':
             if (UTag == "MASTER") {
-                Master(static_cast<UI32>(std::stoul(data, nullptr, 0)));
+                Master(static_cast<std::uint32_t>(std::stoul(data, nullptr, 0)));
             }
             else if (UTag == "MEMBER") {
-                NewMember(static_cast<UI32>(std::stoul(data, nullptr, 0)));
+                NewMember(static_cast<std::uint32_t>(std::stoul(data, nullptr, 0)));
             }
             break;
         case 'N':
@@ -589,17 +589,17 @@ void CGuild::Load(CScriptSection *toRead) {
                 Name(data);
             }
             else if (UTag == "NEUTRAL") {
-                SetGuildRelation(static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_NEUTRAL);
+                SetGuildRelation(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)), GR_NEUTRAL);
             }
             break;
         case 'R':
             if (UTag == "RECRUIT") {
-                NewRecruit(static_cast<UI32>(std::stoul(data, nullptr, 0)));
+                NewRecruit(static_cast<std::uint32_t>(std::stoul(data, nullptr, 0)));
             }
             break;
         case 'S':
             if (UTag == "STONE") {
-                Stone(static_cast<UI32>(std::stoul(data, nullptr, 0)));
+                Stone(static_cast<std::uint32_t>(std::stoul(data, nullptr, 0)));
             }
             break;
         case 'T':
@@ -615,7 +615,7 @@ void CGuild::Load(CScriptSection *toRead) {
             break;
         case 'U':
             if (UTag == "UNKNOWN") {
-                SetGuildRelation(static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_UNKNOWN);
+                SetGuildRelation(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)), GR_UNKNOWN);
             }
             break;
         case 'W':
@@ -623,7 +623,7 @@ void CGuild::Load(CScriptSection *toRead) {
                 Webpage(data);
             }
             else if (UTag == "WAR") {
-                SetGuildRelation(static_cast<SI16>(std::stoi(data, nullptr, 0)), GR_WAR);
+                SetGuildRelation(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)), GR_WAR);
             }
             break;
         }
@@ -654,9 +654,9 @@ void CGuild::CalcMaster(void) {
         Master(INVALIDSERIAL);
         return;
     }
-    std::vector<SI32> votes;
+    std::vector<std::int32_t> votes;
     votes.resize(members.size());
-    UI32 maxIndex = 0;
+    std::uint32_t maxIndex = 0;
 
     for (size_t counter = 0; counter < votes.size(); ++counter) {
         votes[counter] = 0; // init the count before adding
@@ -667,7 +667,7 @@ void CGuild::CalcMaster(void) {
             }
         }
         if (votes[counter] > votes[maxIndex]) {
-            maxIndex = static_cast<UI32>(counter);
+            maxIndex = static_cast<std::uint32_t>(counter);
         }
     }
 
@@ -679,7 +679,7 @@ void CGuild::CalcMaster(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Tell all guild members a message
 // o------------------------------------------------------------------------------------------------o
-void CGuild::TellMembers(SI32 dictEntry, ...) {
+void CGuild::TellMembers(std::int32_t dictEntry, ...) {
     for (auto &member : members) {
         CChar *targetChar = CalcCharObjFromSer(member);
         CSocket *targetSock = targetChar->GetSocket();
@@ -826,7 +826,7 @@ void CGuildCollection::Load(void) {
              testSect = newScript.NextEntry()) {
             std::string text = newScript.EntryName();
             text = text.substr(6);
-            guildNum = static_cast<SI16>(std::stoi(text, nullptr, 0));
+            guildNum = static_cast<std::int16_t>(std::stoi(text, nullptr, 0));
             if (gList[guildNum] != nullptr) {
                 delete gList[guildNum];
             }
@@ -880,10 +880,10 @@ GUILDRELATION CGuildCollection::Compare(CChar *src, CChar *trg) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send guild menu to player
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId) {
+void CGuildCollection::Menu(CSocket *s, std::int16_t menu, GUILDID trgGuild, SERIAL plId) {
     if (s == nullptr)
         return;
-    if (trgGuild >= static_cast<SI32>(NumGuilds()))
+    if (trgGuild >= static_cast<std::int32_t>(NumGuilds()))
         return;
 
     CPSendGumpMenu toSend;
@@ -902,7 +902,7 @@ void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId
     SERIAL gMaster = gList[trgGuild]->Master();
     CChar *mChar = s->CurrcharObj();
     CChar *gMstr = CalcCharObjFromSer(gMaster);
-    UI16 numButtons = 0, numText = 0, numColumns = 1;
+    std::uint16_t numButtons = 0, numText = 0, numColumns = 1;
 
     auto guildFealty = "yourself"s;
     if (mChar->GetGuildFealty() != mChar->GetSerial() && mChar->GetGuildFealty() != INVALIDSERIAL) {
@@ -935,14 +935,14 @@ void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId
     }
 
     std::string gName = gList[trgGuild]->Name();
-    UI16 tCtr = 0;
+    std::uint16_t tCtr = 0;
     SERIAL tChar = 0;
     GUILDREL::iterator toCheck;
     GUILDREL *ourList;
     s->TempInt(trgGuild);
     UnicodeTypes sLang = s->Language();
 
-    UI32 tCounter = 0;
+    std::uint32_t tCounter = 0;
 
     switch (menu) {
     case -1:
@@ -1178,7 +1178,7 @@ void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId
         break;
     }
 
-    for (UI16 iCtr = 0; iCtr < numButtons; ++iCtr) {
+    for (std::uint16_t iCtr = 0; iCtr < numButtons; ++iCtr) {
         toSend.addCommand(util::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr,
                                        cwmWorldState->ServerData()->ButtonRight(),
                                        cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2));
@@ -1186,7 +1186,7 @@ void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId
                                        cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1));
     }
     if (numText != 0) {
-        for (UI16 iCtr = 0; iCtr < numText; ++iCtr) {
+        for (std::uint16_t iCtr = 0; iCtr < numText; ++iCtr) {
             if (numColumns == 1) {
                 toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * (iCtr + numButtons),
                                                cwmWorldState->ServerData()->LeftTextColour(),
@@ -1204,8 +1204,8 @@ void CGuildCollection::Menu(CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plId
     s->Send(&toSend);
 }
 void CGuildCollection::GumpInput(CPIGumpInput *gi) {
-    UI08 type = gi->Type();
-    UI08 index = gi->Index();
+    std::uint8_t type = gi->Type();
+    std::uint8_t index = gi->Index();
     std::string text = gi->Reply();
     CSocket *s = gi->GetSocket();
 
@@ -1306,15 +1306,15 @@ void CGuildCollection::TransportGuildStone(CSocket *s, GUILDID guildId) {
     }
 }
 
-void TextEntryGump(CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry);
+void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::GumpChoice()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button presses in guild menus
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::GumpChoice(CSocket *s) {
-    UI32 realType = s->GetDWord(7);
-    UI32 button = s->GetDWord(11);
+    std::uint32_t realType = s->GetDWord(7);
+    std::uint32_t button = s->GetDWord(11);
     GUILDID trgGuild = static_cast<GUILDID>(s->TempInt());
     if (button == 1) // hit cancel
         return;
@@ -1324,7 +1324,7 @@ void CGuildCollection::GumpChoice(CSocket *s) {
         return;
 
     SERIAL ser = mChar->GetSerial();
-    UI16 tCtr = 0;
+    std::uint16_t tCtr = 0;
     GUILDREL::iterator toCheck;
     GUILDREL *ourList;
     size_t offCounter;
@@ -1621,7 +1621,7 @@ void CGuildCollection::GumpChoice(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::Resign(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
-    SI16 guildNumber = mChar->GetGuildNumber();
+    std::int16_t guildNumber = mChar->GetGuildNumber();
     if (guildNumber == -1)
         return;
 

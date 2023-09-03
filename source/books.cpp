@@ -134,7 +134,7 @@ auto CBooks::OpenPreDefBook(CSocket *mSock, CItem *i) -> void {
                 auto data = sec->data;
                 if (UTag == "PAGES") {
                     part1 = true;
-                    toSend.Pages(static_cast<UI16>(std::stoul(data, nullptr, 0)));
+                    toSend.Pages(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                 }
                 else if (UTag == "TITLE") {
                     part2 = true;
@@ -168,7 +168,7 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         CPNewBookHeader bInfo;
         bInfo.Serial(mBook->GetSerial());
 
-        UI16 numPages = 0;
+        std::uint16_t numPages = 0;
 
         std::string bookTitle, bookAuthor;
         const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
@@ -191,14 +191,14 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
                 bookAuthor = tempString;
 
                 file.read(rBuffer, 2);
-                numPages = static_cast<UI16>((rBuffer[0] << 8) + rBuffer[1]);
+                numPages = static_cast<std::uint16_t>((rBuffer[0] << 8) + rBuffer[1]);
 
                 cpbpToSend.Serial(mBook->GetSerial());
-                for (UI16 pageNum = 0; pageNum < numPages; ++pageNum) {
-                    UI08 blankLineCtr = 0;
+                for (std::uint16_t pageNum = 0; pageNum < numPages; ++pageNum) {
+                    std::uint8_t blankLineCtr = 0;
                     std::vector<std::string> tempLines;
                     tempLines.resize(0);
-                    for (UI08 lineNum = 0; lineNum < 8; ++lineNum) {
+                    for (std::uint8_t lineNum = 0; lineNum < 8; ++lineNum) {
                         file.read(tempString, 34);
                         tempLines.push_back(tempString);
                         if (tempString[0] == 0x00) {
@@ -220,7 +220,7 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
             file.close();
         }
         else {
-            numPages = static_cast<UI16>(
+            numPages = static_cast<std::uint16_t>(
                 mBook->GetTempVar(CITV_MOREY)); // if new book get number of maxpages ...
             if (numPages < 1 || numPages > 255) {
                 numPages = 16;
@@ -267,12 +267,12 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends pager number "p" of a Pre-defined Book to the socket
 // o------------------------------------------------------------------------------------------------o
-auto CBooks::ReadPreDefBook(CSocket *mSock, CItem *i, UI16 p) -> void {
+auto CBooks::ReadPreDefBook(CSocket *mSock, CItem *i, std::uint16_t p) -> void {
     if (mSock) {
         auto temp = "BOOK "s + util::ntos(i->GetTempVar(CITV_MORE));
         CScriptSection *book = FileLookup->FindEntry(temp, misc_def);
         if (book) {
-            UI16 curPage = p;
+            std::uint16_t curPage = p;
             for (const auto &sec : book->collection()) {
                 auto tag = sec->tag;
                 if (tag == "PAGE") {
@@ -311,7 +311,7 @@ bool CPIBookPage::Handle(void) {
         if (!ValidateObject(mBook))
             return true;
 
-        const UI16 pageNum = tSock->GetWord(9);
+        const std::uint16_t pageNum = tSock->GetWord(9);
 
         if (mBook->GetTempVar(CITV_MOREX) != 666) // Just incase, make sure it is a writable book
         {
@@ -323,7 +323,7 @@ bool CPIBookPage::Handle(void) {
 
         const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
                                      util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
-        UI16 totalLines = tSock->GetWord(11);
+        std::uint16_t totalLines = tSock->GetWord(11);
 
         // Cap amount of lines sent in one go at 8 per page
         if (totalLines > 8) {
@@ -333,11 +333,11 @@ bool CPIBookPage::Handle(void) {
         // Each page has 8 lines of 34 bytes for each line
         char tempLines[8][34];
 
-        UI16 bufferCount = 0;
-        for (UI08 lineNum = 0; lineNum < totalLines; ++lineNum) {
+        std::uint16_t bufferCount = 0;
+        for (std::uint8_t lineNum = 0; lineNum < totalLines; ++lineNum) {
             memset(tempLines[lineNum], 0x00, 34);
 
-            UI08 i = 0;
+            std::uint8_t i = 0;
             for (i = 0; i < 34; ++i) {
                 tempLines[lineNum][i] = tSock->Buffer()[13 + bufferCount];
                 ++bufferCount;
@@ -357,7 +357,7 @@ bool CPIBookPage::Handle(void) {
         if (file.is_open()) {
             file.seekp((((static_cast<size_t>(pageNum) - 1) * 272) + 32 + 62 + 2), std::ios::beg);
             if (!file.fail()) {
-                for (UI08 j = 0; j < totalLines; ++j) {
+                for (std::uint8_t j = 0; j < totalLines; ++j) {
                     file.write((const char *)&tempLines[j], 34);
                 }
             }
@@ -400,7 +400,7 @@ void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook)
     char titleBuff[62];
     char authBuff[32];
 
-    UI16 maxpages = static_cast<UI16>(mBook->GetTempVar(CITV_MOREY));
+    std::uint16_t maxpages = static_cast<std::uint16_t>(mBook->GetTempVar(CITV_MOREY));
     if (maxpages < 1 || maxpages > 255) {
         maxpages = 16;
     }
@@ -422,12 +422,12 @@ void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook)
     file.write(titleBuff, 62);
     file.write(authBuff, 32);
 
-    wBuffer[0] = static_cast<SI08>(maxpages >> 8);
-    wBuffer[1] = static_cast<SI08>(maxpages % 256);
+    wBuffer[0] = static_cast<std::int8_t>(maxpages >> 8);
+    wBuffer[1] = static_cast<std::int8_t>(maxpages % 256);
     file.write((const char *)&wBuffer, 2);
 
-    for (UI16 i = 0; i < maxpages; ++i) {
-        for (UI08 lineNum = 0; lineNum < 8; ++lineNum) {
+    for (std::uint16_t i = 0; i < maxpages; ++i) {
+        for (std::uint8_t lineNum = 0; lineNum < 8; ++lineNum) {
             file.write((const char *)&line, 34);
         }
     }

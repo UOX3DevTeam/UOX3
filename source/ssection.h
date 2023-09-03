@@ -272,21 +272,21 @@ enum DFNTAGS {
 };
 
 typedef struct __ADDMENUITEM__ {
-    UI32 itemIndex;
+    std::uint32_t itemIndex;
     std::string itemName;
-    UI32 groupId;
-    UI32 tileId;
-    UI32 weightPosition;
-    UI32 objectFlags;
+    std::uint32_t groupId;
+    std::uint32_t tileId;
+    std::uint32_t weightPosition;
+    std::uint32_t objectFlags;
     std::string objectId;
     __ADDMENUITEM__()
         : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0),
           objectId("") {}
 } ADDMENUITEM, *LPADDMENUITEM;
 
-extern std::multimap<UI32, ADDMENUITEM> g_mmapAddMenuMap;
-typedef std::multimap<UI32, ADDMENUITEM>::iterator ADDMENUMAP_ITERATOR;
-typedef std::multimap<UI32, ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
+extern std::multimap<std::uint32_t, ADDMENUITEM> g_mmapAddMenuMap;
+typedef std::multimap<std::uint32_t, ADDMENUITEM>::iterator ADDMENUMAP_ITERATOR;
+typedef std::multimap<std::uint32_t, ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
 
 class CScriptSection {
     friend class Script;
@@ -300,8 +300,8 @@ class CScriptSection {
     struct SectDataV2_st {
         DFNTAGS tag;
         std::string cdata;
-        SI32 ndata;
-        SI32 odata;
+        std::int32_t ndata;
+        std::int32_t odata;
         SectDataV2_st() : tag(DFNTAG_COUNTOFTAGS), cdata(""), ndata(-1), odata(-1) {}
     };
 
@@ -335,7 +335,7 @@ class CScriptSection {
     auto PrevTag() -> DFNTAGS;
     auto AtEndTags() -> bool;
     auto GrabData() -> std::string;
-    auto GrabData(SI32 &ndata, SI32 &odata) -> std::string;
+    auto GrabData(std::int32_t &ndata, std::int32_t &odata) -> std::string;
     auto FlushData() -> bool;
     auto NumEntries() const -> size_t;
     auto MoveTo(size_t position) -> std::string;

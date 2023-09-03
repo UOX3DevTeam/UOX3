@@ -50,9 +50,9 @@ void pSplit(const std::string pass0, std::string &pass1, std::string &pass2) {
     }
 }
 
-void PackShort(UI08 *toPack, SI32 offset, UI16 value) {
-    toPack[offset + 0] = static_cast<UI08>((value & 0xFF00) >> 8);
-    toPack[offset + 1] = static_cast<UI08>((value & 0x00FF) % 256);
+void PackShort(std::uint8_t *toPack, std::int32_t offset, std::uint16_t value) {
+    toPack[offset + 0] = static_cast<std::uint8_t>((value & 0xFF00) >> 8);
+    toPack[offset + 1] = static_cast<std::uint8_t>((value & 0x00FF) % 256);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -60,7 +60,7 @@ void PackShort(UI08 *toPack, SI32 offset, UI16 value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles login packets from client
 // o------------------------------------------------------------------------------------------------o
-CPInputBuffer *WhichLoginPacket(UI08 packetId, CSocket *s) {
+CPInputBuffer *WhichLoginPacket(std::uint8_t packetId, CSocket *s) {
     switch (packetId) {
     case 0x00:
         return (new CPICreateCharacter(s)); // Character Create
@@ -116,7 +116,7 @@ CPInputBuffer *WhichLoginPacket(UI08 packetId, CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles packets received from client
 // o------------------------------------------------------------------------------------------------o
-CPInputBuffer *WhichPacket(UI08 packetId, CSocket *s) {
+CPInputBuffer *WhichPacket(std::uint8_t packetId, CSocket *s) {
     switch (packetId) {
     case 0x00:
         return (new CPICreateCharacter(s));
@@ -274,7 +274,7 @@ void CPIFirstLogin::Log(std::ostream &outStream, bool fullHeader) {
     }
     outStream << "UserId         : " << Name() << std::endl;
     outStream << "Password       : " << Pass() << std::endl;
-    outStream << "Unknown        : " << static_cast<SI16>(Unknown()) << std::endl;
+    outStream << "Unknown        : " << static_cast<std::int16_t>(Unknown()) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
@@ -484,7 +484,7 @@ void CPIFirstLogin::InternalReset(void) {
 
 const std::string CPIFirstLogin::Name(void) { return userId; }
 const std::string CPIFirstLogin::Pass(void) { return password; }
-UI08 CPIFirstLogin::Unknown(void) { return unknown; }
+std::uint8_t CPIFirstLogin::Unknown(void) { return unknown; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIServerSelect()
@@ -516,11 +516,11 @@ CPIServerSelect::CPIServerSelect(CSocket *s) : CPInputBuffer(s) {
     Receive();
 }
 void CPIServerSelect::Receive(void) { tSock->Receive(3, false); }
-SI16 CPIServerSelect::ServerNum(void) {
+std::int16_t CPIServerSelect::ServerNum(void) {
     // Sept 19, 2002
     // Someone said that there was an issue with False logins that request server 0. Default to
     // server 1.
-    SI16 temp = tSock->GetWord(1);
+    std::int16_t temp = tSock->GetWord(1);
     if (temp == 0) {
         return 1;
     }
@@ -595,7 +595,7 @@ void CPISecondLogin::Receive(void) {
 
     // Done with our buffer, we can clear it out now
 }
-UI32 CPISecondLogin::Account(void) { return keyUsed; }
+std::uint32_t CPISecondLogin::Account(void) { return keyUsed; }
 const std::string CPISecondLogin::Name(void) { return sid; }
 const std::string CPISecondLogin::Pass(void) { return password; }
 
@@ -648,21 +648,21 @@ bool CPISecondLogin::Handle(void) {
         CPEnableClientFeatures ii(tSock);
         tSock->Send(&ii);
 
-        UI08 charCount = 0;
-        for (UI08 i = 0; i < 7; ++i) {
+        std::uint8_t charCount = 0;
+        for (std::uint8_t i = 0; i < 7; ++i) {
             if (actbTemp.character[i].serialNumber != AccountCharacter::INVALID_SERIAL) {
                 ++charCount;
             }
         }
         CServerData *sd = cwmWorldState->ServerData();
         size_t serverCount = sd->NumServerLocations();
-        CPCharAndStartLoc toSend(actbTemp, charCount, static_cast<UI08>(serverCount), tSock);
+        CPCharAndStartLoc toSend(actbTemp, charCount, static_cast<std::uint8_t>(serverCount), tSock);
         for (size_t j = 0; j < serverCount; ++j) {
             if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13) {
-                toSend.NewAddStartLocation(sd->ServerLocation(j), static_cast<UI08>(j));
+                toSend.NewAddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
             }
             else {
-                toSend.AddStartLocation(sd->ServerLocation(j), static_cast<UI08>(j));
+                toSend.AddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
             }
         }
         tSock->Send(&toSend);
@@ -858,14 +858,14 @@ void CPIClientVersion::Receive(void) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra)
+//|	Function	-	std::uint8_t ShiftValue( std::uint8_t toShift, std::uint8_t base, std::uint8_t upper, bool extra)
 //|	Date		-	21st November, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If the value is between base and upper (inclusive)
 //|					it shifts the data down by base (if extra) or base - 1 (if
 //not extra)
 // o------------------------------------------------------------------------------------------------o
-UI08 ShiftValue(UI08 toShift, UI08 base, UI08 upper, bool extra) {
+std::uint8_t ShiftValue(std::uint8_t toShift, std::uint8_t base, std::uint8_t upper, bool extra) {
     if (extra) {
         if (toShift >= base && toShift <= upper) {
             toShift -= base;
@@ -886,11 +886,11 @@ bool CPIClientVersion::Handle(void) {
     // Only need this bit for clients prior to 6.0.5.0 (6.0.0.0 to 6.0.4.x are classified as CV_T2A
     // up until this point) Version already received in packet 0xEF for 6.0.5.0+
     if (tSock->ClientType() < CV_KR2D) {
-        UI08 major, minor, sub, letter;
+        std::uint8_t major, minor, sub, letter;
         std::string s(verString);
         std::string us = std::string(s);
         auto dsecs = oldstrutil::sections(s, ".");
-        UI08 secCount = static_cast<UI08>(dsecs.size() - 1);
+        std::uint8_t secCount = static_cast<std::uint8_t>(dsecs.size() - 1);
 
         std::istringstream ss(s);
         char period;
@@ -901,7 +901,7 @@ bool CPIClientVersion::Handle(void) {
             ss >> letter;
         }
         else {
-            UI08 temp;
+            std::uint8_t temp;
             ss >> sub;
             ss >> temp;
             if (isalpha(temp)) {
@@ -915,7 +915,7 @@ bool CPIClientVersion::Handle(void) {
                 tempHackSS.str("");
                 tempHackSS.clear();
                 tempHackSS << (tempSubString += temp);
-                SI32 tempSubInt;
+                std::int32_t tempSubInt;
                 tempHackSS >> tempSubInt;
                 sub = tempSubInt;
                 ss >> letter;
@@ -951,11 +951,11 @@ bool CPIClientVersion::Handle(void) {
 }
 
 void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verString) {
-    UI08 CliVerMajor = tSock->ClientVersionMajor();
-    // UI08 CliVerMinor = tSock->ClientVersionMinor(); //uncomment if needed
-    UI08 CliVerSub = tSock->ClientVersionSub();
-    UI08 CliVerLetter = tSock->ClientVersionLetter();
-    UI32 CliVer = tSock->ClientVersion();
+    std::uint8_t CliVerMajor = tSock->ClientVersionMajor();
+    // std::uint8_t CliVerMinor = tSock->ClientVersionMinor(); //uncomment if needed
+    std::uint8_t CliVerSub = tSock->ClientVersionSub();
+    std::uint8_t CliVerLetter = tSock->ClientVersionLetter();
+    std::uint32_t CliVer = tSock->ClientVersion();
 
     if (CliVer < 100663559) {
         if (CliVerMajor == 4) {
@@ -1126,7 +1126,7 @@ void CPIUpdateRangeChange::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: 2 " << std::endl;
     }
-    outStream << "Range			 : " << static_cast<SI32>(tSock->GetByte(1)) << std::endl;
+    outStream << "Range			 : " << static_cast<std::int32_t>(tSock->GetByte(1)) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
@@ -1231,12 +1231,12 @@ void CPITips::Receive(void) { tSock->Receive(4, false); }
 auto CPITips::Handle() -> bool {
     auto tips = FileLookup->FindEntry("TIPS", misc_def);
     if (tips) {
-        auto i = static_cast<UI16>(tSock->GetWord(1) + 1);
+        auto i = static_cast<std::uint16_t>(tSock->GetWord(1) + 1);
         if (i == 0) {
             i = 1;
         }
 
-        SI32 x = i;
+        std::int32_t x = i;
         std::string tag, data, sect;
 
         for (tag = tips->First(); !tips->AtEnd(); tag = tips->Next()) {
@@ -1260,7 +1260,7 @@ auto CPITips::Handle() -> bool {
                 tipData += tips->GrabData() + " ";
             }
 
-            CPUpdScroll toSend(0, static_cast<UI08>(i));
+            CPUpdScroll toSend(0, static_cast<std::uint8_t>(i));
             toSend.AddString(tipData.c_str());
             toSend.Finalize();
             tSock->Send(&toSend);
@@ -1356,7 +1356,7 @@ void CPIStatusRequest::Log(std::ostream &outStream, bool fullHeader) {
                   << std::endl;
     }
     outStream << "Pattern        : " << pattern << std::endl;
-    outStream << "Request Type   : " << static_cast<SI32>(getType) << std::endl;
+    outStream << "Request Type   : " << static_cast<std::int32_t>(getType) << std::endl;
     outStream << "PlayerID       : " << std::hex << "0x" << playerId << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
@@ -1374,11 +1374,11 @@ bool CPIStatusRequest::Handle(void) {
     if (getType == 5) {
         // Check if onSkillGump event exists
         CChar *myChar = tSock->CurrcharObj();
-        std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = myChar->GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
-                UI08 retStatus = toExecute->OnSkillGump(myChar);
+                std::uint8_t retStatus = toExecute->OnSkillGump(myChar);
                 if (retStatus == 0) // if it exists and we don't want hard code, return
                     return true;
             }
@@ -1645,7 +1645,7 @@ CPIResMenuChoice::CPIResMenuChoice() {}
 CPIResMenuChoice::CPIResMenuChoice(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPIResMenuChoice::Receive(void) { tSock->Receive(2, false); }
 bool CPIResMenuChoice::Handle(void) {
-    UI08 cmd = tSock->GetByte(1);
+    std::uint8_t cmd = tSock->GetByte(1);
     if (cmd == 0x02) {
         tSock->SysMessage(766); // You are now a ghost.
     }
@@ -1715,15 +1715,15 @@ void CPITargetCursor::Log(std::ostream &outStream, bool fullHeader) {
         outStream << "[RECV]Packet   : CPITargetCursor 0x6C --> Length: 19" << TimeStamp()
                   << std::endl;
     }
-    outStream << "Type         : " << static_cast<UI16>(tSock->GetByte(1)) << std::endl;
+    outStream << "Type         : " << static_cast<std::uint16_t>(tSock->GetByte(1)) << std::endl;
     outStream << "CursorID     : " << tSock->GetDWord(2) << std::endl;
-    outStream << "Cursor Type  : " << static_cast<UI16>(tSock->GetByte(6)) << std::endl;
+    outStream << "Cursor Type  : " << static_cast<std::uint16_t>(tSock->GetByte(6)) << std::endl;
     outStream << "Target ID    : "
               << "0x" << std::hex << tSock->GetDWord(7) << std::endl;
     outStream << "Target X     : " << std::dec << tSock->GetWord(11) << std::endl;
     outStream << "Target Y     : " << tSock->GetWord(13) << std::endl;
-    outStream << "Unknown      : " << static_cast<UI16>(tSock->GetByte(15)) << std::endl;
-    outStream << "Target Z     : " << static_cast<SI16>(tSock->GetByte(16)) << std::endl;
+    outStream << "Unknown      : " << static_cast<std::uint16_t>(tSock->GetByte(15)) << std::endl;
+    outStream << "Target Z     : " << static_cast<std::int16_t>(tSock->GetByte(16)) << std::endl;
     outStream << "Model #      : "
               << "0x" << std::hex << tSock->GetWord(17) << std::endl;
     outStream << "  Raw dump     :" << std::dec << std::endl;
@@ -1865,10 +1865,10 @@ void CPIGumpMenuSelect::Receive(void) {
 SERIAL CPIGumpMenuSelect::ButtonId(void) const { return buttonId; }
 SERIAL CPIGumpMenuSelect::GumpId(void) const { return gumpId; }
 SERIAL CPIGumpMenuSelect::ID(void) const { return id; }
-UI32 CPIGumpMenuSelect::SwitchCount(void) const { return switchCount; }
-UI32 CPIGumpMenuSelect::TextCount(void) const { return textCount; }
+std::uint32_t CPIGumpMenuSelect::SwitchCount(void) const { return switchCount; }
+std::uint32_t CPIGumpMenuSelect::TextCount(void) const { return textCount; }
 
-UI32 CPIGumpMenuSelect::SwitchValue(UI32 index) const {
+std::uint32_t CPIGumpMenuSelect::SwitchValue(std::uint32_t index) const {
     if (index >= switchCount)
         return INVALIDSERIAL;
 
@@ -1876,26 +1876,26 @@ UI32 CPIGumpMenuSelect::SwitchValue(UI32 index) const {
     return tSock->GetDWord(19 + 4 * static_cast<size_t>(index));
 }
 
-UI16 CPIGumpMenuSelect::GetTextId(UI08 number) const {
+std::uint16_t CPIGumpMenuSelect::GetTextId(std::uint8_t number) const {
     if (number >= textCount)
         return 0xFFFF;
 
     return tSock->GetWord(textLocationOffsets[number]);
 }
-UI16 CPIGumpMenuSelect::GetTextLength(UI08 number) const {
+std::uint16_t CPIGumpMenuSelect::GetTextLength(std::uint8_t number) const {
     if (number >= textCount)
         return 0xFFFF;
 
     return tSock->GetWord(static_cast<size_t>(textLocationOffsets[number]) + 2);
 }
 
-std::string CPIGumpMenuSelect::GetTextString(UI08 number) const {
+std::string CPIGumpMenuSelect::GetTextString(std::uint8_t number) const {
     if (number >= textCount)
         return "";
 
     std::string toReturn = "";
-    UI16 offset = textLocationOffsets[number] + 4;
-    for (UI16 counter = 0; counter < GetTextLength(number); ++counter) {
+    std::uint16_t offset = textLocationOffsets[number] + 4;
+    for (std::uint16_t counter = 0; counter < GetTextLength(number); ++counter) {
         toReturn +=
             tSock->GetByte(static_cast<size_t>(offset) + static_cast<size_t>(counter) * 2 + 1);
     }
@@ -1909,7 +1909,7 @@ void CPIGumpMenuSelect::BuildTextLocations(void) {
         for (size_t j = 0; j < textCount; ++j) {
             textLocationOffsets[j] = static_cast<wchar_t>(i);
             i += 2; // skip the text ID
-            UI16 textLen = tSock->GetWord(i);
+            std::uint16_t textLen = tSock->GetWord(i);
             i += (2 * static_cast<size_t>(textLen) +
                   2); // we need to add the + 2 for the text len field
         }
@@ -1960,8 +1960,8 @@ void CPITalkRequest::InternalReset(void) {
 }
 
 COLOUR CPITalkRequest::TextColour(void) const { return textColour; }
-UI16 CPITalkRequest::Length(void) const { return strLen; }
-UI16 CPITalkRequest::Font(void) const { return fontUsed; }
+std::uint16_t CPITalkRequest::Length(void) const { return strLen; }
+std::uint16_t CPITalkRequest::Font(void) const { return fontUsed; }
 
 SpeechType CPITalkRequest::Type(void) const { return typeUsed; }
 
@@ -1976,7 +1976,7 @@ bool CPITalkRequest::HandleCommon(void) {
     ourChar->SetUnicode(false);
     CItem *speechItem = ourChar->GetSpeechItem();
 
-    UI32 j = 0;
+    std::uint32_t j = 0;
 
     switch (ourChar->GetSpeechMode()) {
     case 3: // Player vendor item pricing
@@ -1991,7 +1991,7 @@ bool CPITalkRequest::HandleCommon(void) {
             return false;
 
         try {
-            j = static_cast<UI32>(std::stoul(std::string(Text()), nullptr, 0));
+            j = static_cast<std::uint32_t>(std::stoul(std::string(Text()), nullptr, 0));
             if (j > 0) {
                 // If the price set is higher than 0, allow it
                 speechItem->SetVendorPrice(j);
@@ -2070,7 +2070,7 @@ bool CPITalkRequest::HandleCommon(void) {
                     tSock->SysMessage(
                         9181,
                         speechItem->GetBuyValue()); // The item has been marked as 'not for sale'
-                    speechItem->SetVendorPrice(static_cast<UI32>(0));
+                    speechItem->SetVendorPrice(static_cast<std::uint32_t>(0));
                 }
                 else {
                     // Item cannot be marked as 'Not for Sale' - default buy price set instead
@@ -2083,7 +2083,7 @@ bool CPITalkRequest::HandleCommon(void) {
                     }
                     else {
                         // No default buy value set on item, setting vendor price to 500 instead
-                        speechItem->SetVendorPrice(static_cast<UI32>(500));
+                        speechItem->SetVendorPrice(static_cast<std::uint32_t>(500));
                     }
                 }
             }
@@ -2097,7 +2097,7 @@ bool CPITalkRequest::HandleCommon(void) {
             }
             else {
                 // No default buy value set on item, setting vendor price to 500 instead
-                speechItem->SetVendorPrice(static_cast<UI32>(500));
+                speechItem->SetVendorPrice(static_cast<std::uint32_t>(500));
             }
         }
 
@@ -2148,7 +2148,7 @@ bool CPITalkRequest::HandleCommon(void) {
         break;
     }
     case 1: // GM Page
-        UI08 a1, a2, a3, a4;
+        std::uint8_t a1, a2, a3, a4;
         if (GMQueue->GotoPos(GMQueue->FindCallNum(ourChar->GetPlayerCallNum()))) {
             CHelpRequest *tempPage = nullptr;
             tempPage = GMQueue->Current();
@@ -2249,7 +2249,7 @@ CPITalkRequestAscii::CPITalkRequestAscii() : CPITalkRequest() {}
 CPITalkRequestAscii::CPITalkRequestAscii(CSocket *s) : CPITalkRequest(s) { Receive(); }
 void CPITalkRequestAscii::Receive(void) {
     tSock->Receive(3, false);
-    UI16 blockLen = tSock->GetWord(1);
+    std::uint16_t blockLen = tSock->GetWord(1);
     tSock->Receive(blockLen, false);
 
     strLen = blockLen - 8;
@@ -2260,7 +2260,7 @@ void CPITalkRequestAscii::Receive(void) {
     strcopy(txtSaid, 4096, (char *)&(tSock->Buffer()[8]));
 }
 
-UnicodeTypes FindLanguage(CSocket *s, UI16 offset);
+UnicodeTypes FindLanguage(CSocket *s, std::uint16_t offset);
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITalkRequestUnicode()
 // o------------------------------------------------------------------------------------------------o
@@ -2329,7 +2329,7 @@ CPITalkRequestUnicode::CPITalkRequestUnicode(CSocket *s) : CPITalkRequest(s) {
 }
 void CPITalkRequestUnicode::Receive(void) {
     tSock->Receive(3, false);
-    UI16 blockLen = tSock->GetWord(1);
+    std::uint16_t blockLen = tSock->GetWord(1);
     tSock->Receive(blockLen, false);
     tSock->ClearTrigWords();
 
@@ -2345,8 +2345,8 @@ void CPITalkRequestUnicode::Receive(void) {
     mChar->SetUnicode(true);
 
     // Check for command word versions of this packet
-    UI08 *buffer = tSock->Buffer();
-    UI16 j = 0;
+    std::uint8_t *buffer = tSock->Buffer();
+    std::uint16_t j = 0;
 
     for (j = 8; j <= 10; ++j) {
         langCode[j - 8] = tSock->GetByte(j);
@@ -2355,8 +2355,8 @@ void CPITalkRequestUnicode::Receive(void) {
     langCode[3] = 0;
 
     if ((typeUsed & 0xC0) == 0xC0) {
-        SI32 myoffset = 13;
-        SI32 myj = 12;
+        std::int32_t myoffset = 13;
+        std::int32_t myj = 12;
         size_t numTrigWords = 0;
 
         // Let's keep track of trigger words we've already added, so we don't add same one twice
@@ -2389,14 +2389,14 @@ void CPITalkRequestUnicode::Receive(void) {
         myoffset = 15;
         if ((numTrigWords % 2) == 1) // odd number ?
         {
-            myoffset += (static_cast<SI32>(numTrigWords) / 2) * 3;
+            myoffset += (static_cast<std::int32_t>(numTrigWords) / 2) * 3;
         }
         else {
-            myoffset += ((static_cast<SI32>(numTrigWords) / 2) * 3) - 1;
+            myoffset += ((static_cast<std::int32_t>(numTrigWords) / 2) * 3) - 1;
         }
 
         myj = 12;
-        SI32 mysize = blockLen - myoffset;
+        std::int32_t mysize = blockLen - myoffset;
         for (j = 0; j < mysize; ++j) {
             unicodeTxt[j] = buffer[j + myoffset];
         }
@@ -2686,7 +2686,7 @@ void CPICreateCharacter::Create3DCharacter(void) {
     skillValue[1] = tSock->GetByte(91); // Byte[1]
     skill[2] = tSock->GetByte(92);      // Byte[1]
     skillValue[2] = tSock->GetByte(93); // Byte[1]
-    UI08 byteNum = 94;
+    std::uint8_t byteNum = 94;
     if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16) {
         skill[3] = tSock->GetByte(94);      // Byte[1]
         skillValue[3] = tSock->GetByte(95); // Byte[1]
@@ -2793,7 +2793,7 @@ void CPICreateCharacter::Create2DCharacter(void) {
     skillValue[1] = tSock->GetByte(77);
     skill[2] = tSock->GetByte(78);
     skillValue[2] = tSock->GetByte(79);
-    UI08 byteNum = 80;
+    std::uint8_t byteNum = 80;
     if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16) {
         skill[3] = tSock->GetByte(80);
         skillValue[3] = tSock->GetByte(81);
@@ -2824,42 +2824,42 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
                       << std::endl;
         }
         outStream << "Pattern1       : " << pattern1 << std::endl;
-        outStream << "Slot           : " << static_cast<SI32>(slot) << std::endl;
+        outStream << "Slot           : " << static_cast<std::int32_t>(slot) << std::endl;
         outStream << "Character Name : " << charName << std::endl;
         outStream << "Password       : " << password << std::endl;
-        outStream << "Profession     : " << static_cast<SI32>(profession) << std::endl;
-        outStream << "Client Flags   : " << static_cast<SI32>(clientFlags) << std::endl;
-        outStream << "Sex            : " << static_cast<SI32>(sex) << std::endl;
-        outStream << "Race           : " << static_cast<SI32>(race) << std::endl;
-        outStream << "Strength       : " << static_cast<SI32>(str) << std::endl;
-        outStream << "Dexterity      : " << static_cast<SI32>(dex) << std::endl;
-        outStream << "Intelligence   : " << static_cast<SI32>(intel) << std::endl;
+        outStream << "Profession     : " << static_cast<std::int32_t>(profession) << std::endl;
+        outStream << "Client Flags   : " << static_cast<std::int32_t>(clientFlags) << std::endl;
+        outStream << "Sex            : " << static_cast<std::int32_t>(sex) << std::endl;
+        outStream << "Race           : " << static_cast<std::int32_t>(race) << std::endl;
+        outStream << "Strength       : " << static_cast<std::int32_t>(str) << std::endl;
+        outStream << "Dexterity      : " << static_cast<std::int32_t>(dex) << std::endl;
+        outStream << "Intelligence   : " << static_cast<std::int32_t>(intel) << std::endl;
         outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
-        outStream << "Unknown1       : " << static_cast<SI32>(unknown1) << std::endl;
-        outStream << "Unknown2       : " << static_cast<SI32>(unknown2) << std::endl;
-        outStream << "Skills         : " << static_cast<SI32>(skill[0]) << " "
-                  << static_cast<SI32>(skill[1]) << " " << static_cast<SI32>(skill[2]) << " "
-                  << static_cast<SI32>(skill[3]) << std::endl;
-        outStream << "Skills Values  : " << static_cast<SI32>(skillValue[0]) << " "
-                  << static_cast<SI32>(skillValue[1]) << " " << static_cast<SI32>(skillValue[2])
-                  << " " << static_cast<SI32>(skillValue[3]) << std::endl;
-        SI32 temp1;
+        outStream << "Unknown1       : " << static_cast<std::int32_t>(unknown1) << std::endl;
+        outStream << "Unknown2       : " << static_cast<std::int32_t>(unknown2) << std::endl;
+        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " "
+                  << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << " "
+                  << static_cast<std::int32_t>(skill[3]) << std::endl;
+        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " "
+                  << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2])
+                  << " " << static_cast<std::int32_t>(skillValue[3]) << std::endl;
+        std::int32_t temp1;
         for (temp1 = 0; temp1 < 25; temp1++) {
             outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex
-                      << static_cast<UI32>(unknown3[temp1]) << std::endl;
+                      << static_cast<std::uint32_t>(unknown3[temp1]) << std::endl;
         }
-        outStream << "Unknown4       : " << static_cast<SI32>(unknown4) << std::endl;
+        outStream << "Unknown4       : " << static_cast<std::int32_t>(unknown4) << std::endl;
         outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
         outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
-        outStream << "Unknown5       : " << static_cast<SI32>(unknown5) << std::endl;
-        outStream << "Unknown6       : " << static_cast<SI32>(unknown6) << std::endl;
-        outStream << "Unknown7       : " << static_cast<SI32>(unknown7) << std::endl;
+        outStream << "Unknown5       : " << static_cast<std::int32_t>(unknown5) << std::endl;
+        outStream << "Unknown6       : " << static_cast<std::int32_t>(unknown6) << std::endl;
+        outStream << "Unknown7       : " << static_cast<std::int32_t>(unknown7) << std::endl;
         outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
         outStream << "Shirt ID       : " << std::hex << shirtId << std::dec << std::endl;
-        outStream << "Unknown8       : " << static_cast<SI32>(unknown8) << std::endl;
+        outStream << "Unknown8       : " << static_cast<std::int32_t>(unknown8) << std::endl;
         outStream << "Face Colour    : " << std::hex << faceColour << std::dec << std::endl;
         outStream << "Face ID		 : " << std::hex << faceId << std::dec << std::endl;
-        outStream << "Unknown9       : " << static_cast<SI32>(unknown9) << std::endl;
+        outStream << "Unknown9       : " << static_cast<std::int32_t>(unknown9) << std::endl;
         outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
         outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec
                   << std::endl;
@@ -2879,17 +2879,17 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
         }
         outStream << "Pattern1       : " << pattern1 << std::endl;
         outStream << "Pattern2       : " << pattern2 << std::endl;
-        outStream << "Pattern3       : " << static_cast<SI32>(pattern3) << std::endl;
+        outStream << "Pattern3       : " << static_cast<std::int32_t>(pattern3) << std::endl;
         outStream << "Character Name : " << charName << std::endl;
         outStream << "Password       : " << password << std::endl;
-        outStream << "Sex            : " << static_cast<SI32>(sex) << std::endl;
-        outStream << "Strength       : " << static_cast<SI32>(str) << std::endl;
-        outStream << "Dexterity      : " << static_cast<SI32>(dex) << std::endl;
-        outStream << "Intelligence   : " << static_cast<SI32>(intel) << std::endl;
-        outStream << "Skills         : " << static_cast<SI32>(skill[0]) << " "
-                  << static_cast<SI32>(skill[1]) << " " << static_cast<SI32>(skill[2]) << std::endl;
-        outStream << "Skills Values  : " << static_cast<SI32>(skillValue[0]) << " "
-                  << static_cast<SI32>(skillValue[1]) << " " << static_cast<SI32>(skillValue[2])
+        outStream << "Sex            : " << static_cast<std::int32_t>(sex) << std::endl;
+        outStream << "Strength       : " << static_cast<std::int32_t>(str) << std::endl;
+        outStream << "Dexterity      : " << static_cast<std::int32_t>(dex) << std::endl;
+        outStream << "Intelligence   : " << static_cast<std::int32_t>(intel) << std::endl;
+        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " "
+                  << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << std::endl;
+        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " "
+                  << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2])
                   << std::endl;
         outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
         outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
@@ -2899,7 +2899,7 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
                   << std::endl;
         outStream << "Location Number: " << locationNumber << std::endl;
         outStream << "Unknown        : " << unknown << std::endl;
-        outStream << "Slot           : " << static_cast<SI32>(slot) << std::endl;
+        outStream << "Slot           : " << static_cast<std::int32_t>(slot) << std::endl;
         outStream << "IP Address     : " << ipAddress << std::endl;
         outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
         outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
@@ -2962,7 +2962,7 @@ void CPIPlayCharacter::Log(std::ostream &outStream, bool fullHeader) {
     }
     outStream << "Pattern1       : " << pattern << std::endl;
     outStream << "Char name      : " << charName << std::endl;
-    outStream << "Slot chosen    : " << static_cast<SI32>(slotChosen) << std::endl;
+    outStream << "Slot chosen    : " << static_cast<std::int32_t>(slotChosen) << std::endl;
     outStream << "Client IP      : " << ipAddress << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
@@ -2991,7 +2991,7 @@ CPIGumpInput::CPIGumpInput() {}
 CPIGumpInput::CPIGumpInput(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPIGumpInput::Receive(void) {
     tSock->Receive(3, false);
-    UI16 length = tSock->GetWord(1);
+    std::uint16_t length = tSock->GetWord(1);
     tSock->Receive(length, false);
 
     id = tSock->GetDWord(3);
@@ -3008,10 +3008,10 @@ void CPIGumpInput::Receive(void) {
     }
 }
 
-UI32 CPIGumpInput::ID(void) const { return id; }
-UI08 CPIGumpInput::Type(void) const { return type; }
-UI08 CPIGumpInput::Index(void) const { return index; }
-UI08 CPIGumpInput::Unk(SI32 offset) const {
+std::uint32_t CPIGumpInput::ID(void) const { return id; }
+std::uint8_t CPIGumpInput::Type(void) const { return type; }
+std::uint8_t CPIGumpInput::Index(void) const { return index; }
+std::uint8_t CPIGumpInput::Unk(std::int32_t offset) const {
     assert(offset >= 0 && offset <= 2);
     return unk[offset];
 }
@@ -3023,10 +3023,10 @@ void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
                   << TimeStamp() << std::endl;
     }
     outStream << "ID             : " << id << std::endl;
-    outStream << "Type           : " << static_cast<SI32>(type) << std::endl;
-    outStream << "Index          : " << static_cast<SI32>(index) << std::endl;
-    outStream << "Unknown        : " << static_cast<SI32>(unk[0]) << " "
-              << static_cast<SI32>(unk[1]) << " " << static_cast<SI32>(unk[2]) << std::endl;
+    outStream << "Type           : " << static_cast<std::int32_t>(type) << std::endl;
+    outStream << "Index          : " << static_cast<std::int32_t>(index) << std::endl;
+    outStream << "Unknown        : " << static_cast<std::int32_t>(unk[0]) << " "
+              << static_cast<std::int32_t>(unk[1]) << " " << static_cast<std::int32_t>(unk[2]) << std::endl;
     outStream << "Reply          : " << reply << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
@@ -3046,7 +3046,7 @@ void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
 //|
 //|					void CPIHelpRequest::Handle() implimented in gumps.cpp
 // o------------------------------------------------------------------------------------------------o
-CPIHelpRequest::CPIHelpRequest(CSocket *s, UI16 menuVal) : CPInputBuffer(s) { menuNum = menuVal; }
+CPIHelpRequest::CPIHelpRequest(CSocket *s, std::uint16_t menuVal) : CPInputBuffer(s) { menuNum = menuVal; }
 CPIHelpRequest::CPIHelpRequest(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPIHelpRequest::Receive(void) {
     tSock->Receive(0x102, false);
@@ -3136,8 +3136,8 @@ bool CPIDyeWindow::Handle(void) {
             if (!mChar->IsGM())
                 return true;
 
-            UI16 body = c->GetId();
-            SI32 b = newValue & 0x4000;
+            std::uint16_t body = c->GetId();
+            std::int32_t b = newValue & 0x4000;
 
             if (((newValue >> 8) < 0x80) &&
                 ((body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ||
@@ -3256,15 +3256,15 @@ CPIToolTipRequestAoS::CPIToolTipRequestAoS(CSocket *s) : CPInputBuffer(s), getSe
 void CPIToolTipRequestAoS::Receive(void) {
     tSock->Receive(3, false);
 
-    UI16 blockLen = tSock->GetWord(1);
+    std::uint16_t blockLen = tSock->GetWord(1);
     if (blockLen == 0 || (blockLen - 3) % 4 != 0)
         return;
 
     tSock->Receive(blockLen, false);
 
-    UI16 objCount = (blockLen - 3) / 4;
+    std::uint16_t objCount = (blockLen - 3) / 4;
     size_t offset = 3;
-    for (UI16 i = 0; i < objCount; i++) {
+    for (std::uint16_t i = 0; i < objCount; i++) {
         getSer = tSock->GetDWord(offset + (i * 4));
         // Only send tooltip if server feature for tooltips is enabled
         if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
@@ -3378,8 +3378,8 @@ void CPIMetrics::Log(std::ostream &outStream, bool fullHeader) {
     CPInputBuffer::Log(outStream, false);
 }
 
-//	UI16			subCmd;
-//	UI08			subSubCmd;
+//	std::uint16_t			subCmd;
+//	std::uint8_t			subSubCmd;
 
 void PaperDoll(CSocket *s, CChar *pdoll);
 bool BuyShop(CSocket *s, CChar *c);
@@ -3652,17 +3652,17 @@ CPIPartyCommand::CPIPartyCommand(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
 void CPIPartyCommand::Receive(void) {}
 bool CPIPartyCommand::Handle(void) {
-    UI08 partyCmd = tSock->GetByte(5);
+    std::uint8_t partyCmd = tSock->GetByte(5);
 
-    const SI32 PARTY_ADD = 1;
-    const SI32 PARTY_REMOVE = 2;
-    const SI32 PARTY_TELLINDIV = 3;
-    const SI32 PARTY_TELLALL = 4;
-    const SI32 PARTY_LOOT = 6;
-    const SI32 PARTY_INVITE = 7;
-    const SI32 PARTY_ACCEPT = 8;
-    const SI32 PARTY_DECLINE = 9;
-    const SI32 BASE_OFFSET = 6;
+    const std::int32_t PARTY_ADD = 1;
+    const std::int32_t PARTY_REMOVE = 2;
+    const std::int32_t PARTY_TELLINDIV = 3;
+    const std::int32_t PARTY_TELLALL = 4;
+    const std::int32_t PARTY_LOOT = 6;
+    const std::int32_t PARTY_INVITE = 7;
+    const std::int32_t PARTY_ACCEPT = 8;
+    const std::int32_t PARTY_DECLINE = 9;
+    const std::int32_t BASE_OFFSET = 6;
     switch (partyCmd) {
     case PARTY_ADD: {
         SERIAL charToAdd = tSock->GetDWord(BASE_OFFSET);
@@ -3771,17 +3771,17 @@ bool CPIPartyCommand::Handle(void) {
     return true;
 }
 void CPIPartyCommand::Log(std::ostream &outStream, bool fullHeader) {
-    UI08 partyCmd = tSock->GetByte(5);
+    std::uint8_t partyCmd = tSock->GetByte(5);
 
-    const SI32 PARTY_ADD = 1;
-    const SI32 PARTY_REMOVE = 2;
-    const SI32 PARTY_TELLINDIV = 3;
-    const SI32 PARTY_TELLALL = 4;
-    const SI32 PARTY_LOOT = 6;
-    const SI32 PARTY_ACCEPT = 8;
-    const SI32 PARTY_DECLINE = 9;
+    const std::int32_t PARTY_ADD = 1;
+    const std::int32_t PARTY_REMOVE = 2;
+    const std::int32_t PARTY_TELLINDIV = 3;
+    const std::int32_t PARTY_TELLALL = 4;
+    const std::int32_t PARTY_LOOT = 6;
+    const std::int32_t PARTY_ACCEPT = 8;
+    const std::int32_t PARTY_DECLINE = 9;
 
-    const SI32 BASE_OFFSET = 6;
+    const std::int32_t BASE_OFFSET = 6;
     switch (partyCmd) {
     case PARTY_ADD: {
         //	Subcommand 1		Add a party member
@@ -4633,7 +4633,7 @@ bool CPIBandageMacro::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
     if (ValidateObject(ourChar)) {
         // Check if onUseBandageMacro event exists
-        std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -4898,7 +4898,7 @@ bool CPISpellbookSelect::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
     CItem *sBook = FindItemOfType(ourChar, IT_SPELLBOOK);
     CItem *p = ourChar->GetPackItem();
-    UI08 *buffer = tSock->Buffer();
+    std::uint8_t *buffer = tSock->Buffer();
     if (ValidateObject(sBook)) {
         bool validLoc = false;
         if (sBook->GetCont() == ourChar) {
@@ -4909,7 +4909,7 @@ bool CPISpellbookSelect::Handle(void) {
         }
 
         if (validLoc) {
-            SI32 book = (buffer[7] << 8) + (buffer[8]);
+            std::int32_t book = (buffer[7] << 8) + (buffer[8]);
             if (Magic->CheckBook(((book - 1) / 8) + 1, (book - 1) % 8, sBook)) {
                 if (ourChar->IsFrozen()) {
                     if (ourChar->IsCasting()) {
@@ -5052,7 +5052,7 @@ CPIAOSCommand::CPIAOSCommand(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
 void CPIAOSCommand::Receive(void) {
     tSock->Receive(3, false);
-    UI16 len = tSock->GetWord(1);
+    std::uint16_t len = tSock->GetWord(1);
     tSock->Receive(len, false);
 }
 bool CPIAOSCommand::Handle(void) {
@@ -5070,12 +5070,12 @@ bool CPIAOSCommand::Handle(void) {
          case 0x0012:	break;	//House Customisation :: Switch Floors*/
     case 0x0019: // Special Moves :: Activate / Deactivate
     {
-        // UI32 unknown = tSock->GetDWord( 9 );
-        UI08 abilityId = tSock->GetByte(13);
-        // UI08 unknown2 = tSock->GetByte( 15 );
+        // std::uint32_t unknown = tSock->GetDWord( 9 );
+        std::uint8_t abilityId = tSock->GetByte(13);
+        // std::uint8_t unknown2 = tSock->GetByte( 15 );
 
         CChar *myChar = tSock->CurrcharObj();
-        std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = myChar->GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -5086,7 +5086,7 @@ bool CPIAOSCommand::Handle(void) {
         }
 
         // No individual scripts handling OnSpecialMove return true - let's check global script!
-        cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             toExecute->OnSpecialMove(myChar, abilityId);
         }
@@ -5108,7 +5108,7 @@ bool CPIAOSCommand::Handle(void) {
     case 0x0032: // Quests :: Unknown
     {
         CChar *myChar = tSock->CurrcharObj();
-        std::vector<UI16> scriptTriggers = myChar->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = myChar->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -5119,7 +5119,7 @@ bool CPIAOSCommand::Handle(void) {
         }
 
         // No individual scripts handling OnQuestGump returned true - let's check global script!
-        cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             toExecute->OnQuestGump(myChar);
         }

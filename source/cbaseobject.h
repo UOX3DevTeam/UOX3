@@ -21,8 +21,8 @@ class CSocket;
 enum TAGMAPOBJECT_TYPE { TAGMAP_TYPE_INT = 0, TAGMAP_TYPE_STRING, TAGMAP_TYPE_BOOL };
 
 typedef struct __TAGMAP_STRUCT__ {
-    UI08 m_ObjectType;
-    SI32 m_IntValue;
+    std::uint8_t m_ObjectType;
+    std::int32_t m_IntValue;
     bool m_Destroy;
     std::string m_StringValue;
 } TAGMAPOBJECT, *LPTAGMAPOBJECT;
@@ -54,61 +54,61 @@ class CBaseObject {
     std::string title;
     ObjectType objType;
     RACEID race;
-    SI16 x;
-    SI16 y;
-    SI08 z;
-    UI16 id;
-    UI16 colour;
-    UI08 dir;
+    std::int16_t x;
+    std::int16_t y;
+    std::int8_t z;
+    std::uint16_t id;
+    std::uint16_t colour;
+    std::uint8_t dir;
     SERIAL serial;
     CMultiObj *multis;
     SERIAL spawnSerial;
     SERIAL owner;
-    UI08 worldNumber;
-    UI16 instanceId;
-    SI16 strength;
-    SI16 dexterity;
-    SI16 intelligence;
-    SI16 hitpoints;
+    std::uint8_t worldNumber;
+    std::uint16_t instanceId;
+    std::int16_t strength;
+    std::int16_t dexterity;
+    std::int16_t intelligence;
+    std::int16_t hitpoints;
     VisibleTypes visible;
-    SI16 hiDamage;
-    SI16 loDamage;
-    SI32 weight;
-    SI16 mana;
-    SI16 stamina;
-    UI16 scriptTrig;
-    SI16 st2;
-    SI16 dx2;
-    SI16 in2;
-    mutable SI32 FilePosition;
+    std::int16_t hiDamage;
+    std::int16_t loDamage;
+    std::int32_t weight;
+    std::int16_t mana;
+    std::int16_t stamina;
+    std::uint16_t scriptTrig;
+    std::int16_t st2;
+    std::int16_t dx2;
+    std::int16_t in2;
+    mutable std::int32_t FilePosition;
     SERIAL tempMulti;
     std::string name;
     std::string sectionId;
-    std::vector<UI16> scriptTriggers;
-    UI08 poisoned;
-    SI16 carve; // Carve.dfn entry
-    SI16 oldLocX;
-    SI16 oldLocY;
-    SI08 oldLocZ;
-    SI16 oldTargLocX;
-    SI16 oldTargLocY;
-    SI16 fame;
-    SI16 karma;
-    SI16 kills;
-    UI16 subRegion;
+    std::vector<std::uint16_t> scriptTriggers;
+    std::uint8_t poisoned;
+    std::int16_t carve; // Carve.dfn entry
+    std::int16_t oldLocX;
+    std::int16_t oldLocY;
+    std::int8_t oldLocZ;
+    std::int16_t oldTargLocX;
+    std::int16_t oldTargLocY;
+    std::int16_t fame;
+    std::int16_t karma;
+    std::int16_t kills;
+    std::uint16_t subRegion;
 
     void RemoveFromMulti(bool fireTrigger = true);
     void AddToMulti(bool fireTrigger = true);
 
     std::bitset<8> objSettings;
 
-    UI16 resistances[WEATHNUM];
+    std::uint16_t resistances[WEATHNUM];
 
     SERIAL tempContainerSerial;
 
     bool nameRequestActive;
     // std::string	origin;	// Stores expansion item originates from
-    UI08 origin; // Stores expansion item originates from
+    std::uint8_t origin; // Stores expansion item originates from
 
     void CopyData(CBaseObject *target);
 
@@ -125,8 +125,8 @@ class CBaseObject {
     TAGMAPOBJECT GetTempTag(std::string tempTagName) const;
     void SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal);
 
-    void SetResist(UI16 newValue, WeatherType damage);
-    UI16 GetResist(WeatherType damage) const;
+    void SetResist(std::uint16_t newValue, WeatherType damage);
+    std::uint16_t GetResist(WeatherType damage) const;
 
     void SetTitle(std::string newtitle);
     std::string GetTitle(void) const;
@@ -134,48 +134,48 @@ class CBaseObject {
     // void					SetOrigin( std::string newOrigin );
     // std::string				GetOrigin( void ) const;
 
-    void SetOrigin(UI08 value);
-    UI08 GetOrigin() const;
+    void SetOrigin(std::uint8_t value);
+    std::uint8_t GetOrigin() const;
 
-    virtual void SetMana(SI16 mn);
-    SI16 GetMana(void) const;
-    virtual void SetStamina(SI16 stam);
-    SI16 GetStamina(void) const;
-    SI32 GetFilePosition(void) const;
-    SI32 SetFilePosition(SI32 filepos);
+    virtual void SetMana(std::int16_t mn);
+    std::int16_t GetMana(void) const;
+    virtual void SetStamina(std::int16_t stam);
+    std::int16_t GetStamina(void) const;
+    std::int32_t GetFilePosition(void) const;
+    std::int32_t SetFilePosition(std::int32_t filepos);
 
     virtual ~CBaseObject();
     CBaseObject(void);
 
-    SI16 GetOldTargLocX(void) const;
-    SI16 GetOldTargLocY(void) const;
-    SI16 GetX(void) const;
-    SI16 GetY(void) const;
-    SI08 GetZ(void) const;
+    std::int16_t GetOldTargLocX(void) const;
+    std::int16_t GetOldTargLocY(void) const;
+    std::int16_t GetX(void) const;
+    std::int16_t GetY(void) const;
+    std::int8_t GetZ(void) const;
     Point3_st GetLocation(void) const;
 
-    void SetOldTargLocX(SI16 newvalue);
-    void SetOldTargLocY(SI16 newvalue);
-    void SetX(SI16 newValue);
-    void SetY(SI16 newValue);
-    void SetZ(SI08 newValue);
-    void WalkXY(SI16 newX, SI16 newY);
-    virtual void SetOldLocation(SI16 newX, SI16 newY, SI08 newZ) = 0;
-    virtual void SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) = 0;
-    virtual void SetLocation(SI16 newX, SI16 newY, SI08 newZ) = 0;
+    void SetOldTargLocX(std::int16_t newvalue);
+    void SetOldTargLocY(std::int16_t newvalue);
+    void SetX(std::int16_t newValue);
+    void SetY(std::int16_t newValue);
+    void SetZ(std::int8_t newValue);
+    void WalkXY(std::int16_t newX, std::int16_t newY);
+    virtual void SetOldLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) = 0;
+    virtual void SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::uint8_t world, std::uint16_t instanceId) = 0;
+    virtual void SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) = 0;
     virtual void SetLocation(const CBaseObject *toSet) = 0;
 
-    UI16 GetId(void) const;
-    UI16 GetColour(void) const;
-    UI08 GetId(UI08 part) const;
-    UI08 GetColour(UI08 part) const;
+    std::uint16_t GetId(void) const;
+    std::uint16_t GetColour(void) const;
+    std::uint8_t GetId(std::uint8_t part) const;
+    std::uint8_t GetColour(std::uint8_t part) const;
 
-    void SetId(UI16 newValue);
-    void SetColour(UI16 newValue);
-    void SetId(UI08 newValue, UI08 part);
+    void SetId(std::uint16_t newValue);
+    void SetColour(std::uint16_t newValue);
+    void SetId(std::uint8_t newValue, std::uint8_t part);
 
-    SI32 GetWeight(void) const;
-    virtual void SetWeight(SI32 newVal, bool doWeightUpdate = true) = 0;
+    std::int32_t GetWeight(void) const;
+    virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) = 0;
 
     SERIAL GetSerial(void) const;
     SERIAL GetSpawn(void) const;
@@ -185,8 +185,8 @@ class CBaseObject {
     CSpawnItem *GetSpawnObj(void) const;
     CChar *GetOwnerObj(void) const;
 
-    UI08 GetSerial(UI08 part) const;
-    UI08 GetSpawn(UI08 part) const;
+    std::uint8_t GetSerial(std::uint8_t part) const;
+    std::uint8_t GetSpawn(std::uint8_t part) const;
 
     void SetMulti(SERIAL newSerial, bool fireTrigger = true);
     void SetMulti(CMultiObj *newMulti, bool fireTrigger = true);
@@ -205,26 +205,26 @@ class CBaseObject {
     RACEID GetRace(void) const;
     void SetRace(RACEID newValue);
 
-    std::string GetNameRequest(CChar *nameRequester, UI08 requestSource);
+    std::string GetNameRequest(CChar *nameRequester, std::uint8_t requestSource);
     std::string GetName(void) const;
     void SetName(std::string newName);
 
     std::string GetSectionId(void) const;
     void SetSectionId(std::string newSectionID);
 
-    virtual SI16 GetStrength(void) const;
-    virtual SI16 GetDexterity(void) const;
-    virtual SI16 GetIntelligence(void) const;
-    SI16 GetHP(void) const;
+    virtual std::int16_t GetStrength(void) const;
+    virtual std::int16_t GetDexterity(void) const;
+    virtual std::int16_t GetIntelligence(void) const;
+    std::int16_t GetHP(void) const;
 
-    virtual void SetStrength(SI16 newValue);
-    virtual void SetDexterity(SI16 newValue);
-    virtual void SetIntelligence(SI16 newValue);
-    virtual void SetHP(SI16 newValue);
-    void IncHP(SI16 amtToChange);
+    virtual void SetStrength(std::int16_t newValue);
+    virtual void SetDexterity(std::int16_t newValue);
+    virtual void SetIntelligence(std::int16_t newValue);
+    virtual void SetHP(std::int16_t newValue);
+    void IncHP(std::int16_t amtToChange);
 
-    void SetDir(UI08 newDir, bool sendUpdate = true);
-    UI08 GetDir(void) const;
+    void SetDir(std::uint8_t newDir, bool sendUpdate = true);
+    std::uint8_t GetDir(void) const;
 
     void SetVisible(VisibleTypes newValue);
     VisibleTypes GetVisible(void) const;
@@ -232,47 +232,47 @@ class CBaseObject {
     ObjectType GetObjType(void) const;
     virtual bool CanBeObjType(ObjectType toCompare) const;
 
-    SI16 GetHiDamage(void) const;
-    SI16 GetLoDamage(void) const;
+    std::int16_t GetHiDamage(void) const;
+    std::int16_t GetLoDamage(void) const;
 
-    void SetHiDamage(SI16 newValue);
-    void SetLoDamage(SI16 newValue);
+    void SetHiDamage(std::int16_t newValue);
+    void SetLoDamage(std::int16_t newValue);
 
-    std::vector<UI16> GetScriptTriggers(void);
-    void AddScriptTrigger(UI16 newValue);
-    bool HasScriptTrigger(UI16 newValue);
-    void RemoveScriptTrigger(UI16 newValue);
+    std::vector<std::uint16_t> GetScriptTriggers(void);
+    void AddScriptTrigger(std::uint16_t newValue);
+    bool HasScriptTrigger(std::uint16_t newValue);
+    void RemoveScriptTrigger(std::uint16_t newValue);
     void ClearScriptTriggers(void);
 
-    SI16 GetStrength2(void) const;
-    SI16 GetDexterity2(void) const;
-    SI16 GetIntelligence2(void) const;
+    std::int16_t GetStrength2(void) const;
+    std::int16_t GetDexterity2(void) const;
+    std::int16_t GetIntelligence2(void) const;
 
-    virtual void SetStrength2(SI16 nVal);
-    virtual void SetDexterity2(SI16 nVal);
-    virtual void SetIntelligence2(SI16 nVal);
+    virtual void SetStrength2(std::int16_t nVal);
+    virtual void SetDexterity2(std::int16_t nVal);
+    virtual void SetIntelligence2(std::int16_t nVal);
 
-    void IncStrength(SI16 toInc = 1);
-    void IncDexterity(SI16 toInc = 1);
-    void IncIntelligence(SI16 toInc = 1);
+    void IncStrength(std::int16_t toInc = 1);
+    void IncDexterity(std::int16_t toInc = 1);
+    void IncIntelligence(std::int16_t toInc = 1);
 
     virtual void PostLoadProcessing(void);
     virtual bool LoadRemnants(void) = 0;
 
-    UI08 WorldNumber(void) const;
-    void WorldNumber(UI08 value);
+    std::uint8_t WorldNumber(void) const;
+    void WorldNumber(std::uint8_t value);
 
-    UI16 GetInstanceId(void) const;
-    void SetInstanceId(UI16 value);
+    std::uint16_t GetInstanceId(void) const;
+    void SetInstanceId(std::uint16_t value);
 
-    UI16 GetSubRegion(void) const;
-    void SetSubRegion(UI16 value);
+    std::uint16_t GetSubRegion(void) const;
+    void SetSubRegion(std::uint16_t value);
 
-    UI08 GetPoisoned(void) const;
-    virtual void SetPoisoned(UI08 newValue);
+    std::uint8_t GetPoisoned(void) const;
+    virtual void SetPoisoned(std::uint8_t newValue);
 
-    SI16 GetCarve(void) const;
-    void SetCarve(SI16 newValue);
+    std::int16_t GetCarve(void) const;
+    void SetCarve(std::int16_t newValue);
 
     virtual void Update(CSocket *mSock = nullptr, bool drawGamePlayer = false,
                         bool sendToSelf = true) = 0;
@@ -306,12 +306,12 @@ class CBaseObject {
     void SetDamageable(bool newValue);
     void NameRequestActive(bool newValue);
 
-    SI16 GetFame(void) const;
-    void SetFame(SI16 value);
-    void SetKarma(SI16 value);
-    SI16 GetKarma(void) const;
-    void SetKills(SI16 value);
-    SI16 GetKills(void) const;
+    std::int16_t GetFame(void) const;
+    void SetFame(std::int16_t value);
+    void SetKarma(std::int16_t value);
+    std::int16_t GetKarma(void) const;
+    void SetKills(std::int16_t value);
+    std::int16_t GetKills(void) const;
 };
 
 #endif

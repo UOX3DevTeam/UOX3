@@ -17,31 +17,31 @@ class CMultiObj : public CItem {
   protected:
     std::string deed;
 
-    std::map<CChar *, UI08> housePrivList;
+    std::map<CChar *, std::uint8_t> housePrivList;
 
     std::vector<CItem *> lockedList;
-    UI16 maxLockdowns;
+    std::uint16_t maxLockdowns;
 
     std::vector<CItem *> secureContainerList;
-    UI16 maxSecureContainers;
+    std::uint16_t maxSecureContainers;
 
-    UI16 maxFriends;
-    UI16 maxGuests;
-    UI16 maxOwners;
-    UI16 maxBans;
+    std::uint16_t maxFriends;
+    std::uint16_t maxGuests;
+    std::uint16_t maxOwners;
+    std::uint16_t maxBans;
 
-    UI16 maxVendors;
+    std::uint16_t maxVendors;
 
     std::vector<CItem *> trashContainerList;
-    UI16 maxTrashContainers;
+    std::uint16_t maxTrashContainers;
 
     std::vector<CChar *> vendorList;
 
-    SI16 banX;
-    SI16 banY;
+    std::int16_t banX;
+    std::int16_t banY;
 
     bool isPublic;
-    UI16 numberOfVisits;
+    std::uint16_t numberOfVisits;
 
     time_t buildTimestamp;
     time_t tradeTimestamp;
@@ -63,60 +63,60 @@ class CMultiObj : public CItem {
     void AddToBanList(CChar *toBan);
     void RemoveFromBanList(CChar *toRemove);
     void ClearBanList(void);
-    UI16 GetBanCount(void);
-    UI16 GetMaxBans(void) const;
-    void SetMaxBans(UI16 newValue);
+    std::uint16_t GetBanCount(void);
+    std::uint16_t GetMaxBans(void) const;
+    void SetMaxBans(std::uint16_t newValue);
 
     // Owner/CoOwnerlist
     void AddAsOwner(CChar *newOwner);
     void RemoveAsOwner(CChar *toRemove);
     void ClearOwnerList(void);
-    UI16 GetOwnerCount(void);
-    UI16 GetMaxOwners(void) const;
-    void SetMaxOwners(UI16 newValue);
+    std::uint16_t GetOwnerCount(void);
+    std::uint16_t GetMaxOwners(void) const;
+    void SetMaxOwners(std::uint16_t newValue);
 
     // Friendlist
     void AddAsFriend(CChar *newFriend);
     void RemoveAsFriend(CChar *toRemove);
     void ClearFriendList(void);
-    UI16 GetFriendCount(void);
-    UI16 GetMaxFriends(void) const;
-    void SetMaxFriends(UI16 newValue);
+    std::uint16_t GetFriendCount(void);
+    std::uint16_t GetMaxFriends(void) const;
+    void SetMaxFriends(std::uint16_t newValue);
 
     // Guestlist (not saved)
     void AddAsGuest(CChar *newGuest);
     void RemoveAsGuest(CChar *toRemove);
     void ClearGuestList(void);
-    UI16 GetGuestCount(void);
-    UI16 GetMaxGuests(void) const;
-    void SetMaxGuests(UI16 newValue);
+    std::uint16_t GetGuestCount(void);
+    std::uint16_t GetMaxGuests(void) const;
+    void SetMaxGuests(std::uint16_t newValue);
 
     // Lockdowns
     size_t GetLockdownCount(void) const;
-    UI16 GetMaxLockdowns(void) const;
-    void SetMaxLockdowns(UI16 newValue);
+    std::uint16_t GetMaxLockdowns(void) const;
+    void SetMaxLockdowns(std::uint16_t newValue);
     void LockDownItem(CItem *toLock);
     void ReleaseItem(CItem *toRemove);
 
     // Secure Containers
     size_t GetSecureContainerCount(void) const;
-    UI16 GetMaxSecureContainers(void) const;
-    void SetMaxSecureContainers(UI16 newValue);
+    std::uint16_t GetMaxSecureContainers(void) const;
+    void SetMaxSecureContainers(std::uint16_t newValue);
     bool IsSecureContainer(CItem *toCheck);
     void SecureContainer(CItem *toSecure);
     void UnsecureContainer(CItem *toUnsecure);
 
     // Trash Containers
     size_t GetTrashContainerCount(void) const;
-    UI16 GetMaxTrashContainers(void) const;
-    void SetMaxTrashContainers(UI16 newValue);
+    std::uint16_t GetMaxTrashContainers(void) const;
+    void SetMaxTrashContainers(std::uint16_t newValue);
     void AddTrashContainer(CItem *toAdd);
     void RemoveTrashContainer(CItem *toRemove);
 
     // Player Vendor list
     size_t GetVendorCount(void) const;
-    UI16 GetMaxVendors(void) const;
-    void SetMaxVendors(UI16 newValue);
+    std::uint16_t GetMaxVendors(void) const;
+    void SetMaxVendors(std::uint16_t newValue);
     void AddVendor(CChar *toAdd);
     void RemoveVendor(CChar *toRemove);
 
@@ -133,10 +133,10 @@ class CMultiObj : public CItem {
     bool GetPublicStatus(void) const;
     void SetPublicStatus(const bool newBool);
 
-    SI16 GetBanX(void) const;
-    void SetBanX(const SI16 newVal);
-    SI16 GetBanY(void) const;
-    void SetBanY(const SI16 newVal);
+    std::int16_t GetBanX(void) const;
+    void SetBanX(const std::int16_t newVal);
+    std::int16_t GetBanY(void) const;
+    void SetBanY(const std::int16_t newVal);
 
     std::string GetBuildTimestamp(void) const;
     void SetBuildTimestamp(time_t newTime);
@@ -170,7 +170,7 @@ class CBoatObj : public CMultiObj {
     SERIAL tiller;
     SERIAL planks[2];
     SERIAL hold;
-    SI08 moveType;
+    std::int8_t moveType;
 
     TIMERVAL nextMoveTime;
 
@@ -185,14 +185,14 @@ class CBoatObj : public CMultiObj {
     virtual ~CBoatObj();
 
     SERIAL GetTiller(void) const;
-    SERIAL GetPlank(UI08 plankNum) const;
+    SERIAL GetPlank(std::uint8_t plankNum) const;
     SERIAL GetHold(void) const;
-    SI08 GetMoveType(void) const;
+    std::int8_t GetMoveType(void) const;
 
-    void SetPlank(UI08 plankNum, SERIAL newVal);
+    void SetPlank(std::uint8_t plankNum, SERIAL newVal);
     void SetTiller(SERIAL newVal);
     void SetHold(SERIAL newVal);
-    void SetMoveType(SI08 newVal);
+    void SetMoveType(std::int8_t newVal);
 
     TIMERVAL GetMoveTime(void) const;
     void SetMoveTime(TIMERVAL newVal);

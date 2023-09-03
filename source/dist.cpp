@@ -63,7 +63,7 @@ bool CheckItemRange(CChar *mChar, CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if BaseObject obj is within a certain distance
 // o------------------------------------------------------------------------------------------------o
-bool ObjInRange(CSocket *mSock, CBaseObject *obj, UI16 distance) {
+bool ObjInRange(CSocket *mSock, CBaseObject *obj, std::uint16_t distance) {
     CChar *mChar = mSock->CurrcharObj();
     return ObjInRange(mChar, obj, distance);
 }
@@ -73,7 +73,7 @@ bool ObjInRange(CSocket *mSock, CBaseObject *obj, UI16 distance) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another object
 // o------------------------------------------------------------------------------------------------o
-bool ObjInRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
+bool ObjInRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
     return (GetDist(a, b) <= distance);
 }
 
@@ -84,7 +84,7 @@ bool ObjInRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
 // another |					object, but checking using a square instead of a
 // radius
 // o------------------------------------------------------------------------------------------------o
-bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance) {
+bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
     if (!ValidateObject(a) || !ValidateObject(b))
         return false;
 
@@ -107,7 +107,7 @@ bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an object is within a certain distance of another object
 // o------------------------------------------------------------------------------------------------o
-bool ObjInOldRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
+bool ObjInOldRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
     return (GetOldDist(a, b) <= distance);
 }
 
@@ -118,7 +118,7 @@ bool ObjInOldRange(CBaseObject *a, CBaseObject *b, UI16 distance) {
 // another |					object, but checking using a square instead of a
 // radius
 // o------------------------------------------------------------------------------------------------o
-bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, UI16 distance) {
+bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
     if (!ValidateObject(a) || !ValidateObject(b))
         return false;
 
@@ -146,14 +146,14 @@ bool CharInRange(CChar *a, CChar *b) {
     if (!ValidateObject(a))
         return false;
 
-    SI16 visRange = MAX_VISRANGE;
+    std::int16_t visRange = MAX_VISRANGE;
     if (a->GetSocket() != nullptr) {
         visRange = a->GetSocket()->Range() + Races->VisRange(a->GetRace());
     }
     else {
         visRange += Races->VisRange(a->GetRace());
     }
-    return ObjInRangeSquare(a, b, static_cast<UI16>(visRange));
+    return ObjInRangeSquare(a, b, static_cast<std::uint16_t>(visRange));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -161,7 +161,7 @@ bool CharInRange(CChar *a, CChar *b) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the distance between two objects
 // o------------------------------------------------------------------------------------------------o
-UI16 GetDist(CBaseObject *a, CBaseObject *b) {
+std::uint16_t GetDist(CBaseObject *a, CBaseObject *b) {
     if (!ValidateObject(a) || !ValidateObject(b))
         return DIST_OUTOFRANGE;
 
@@ -174,17 +174,17 @@ UI16 GetDist(CBaseObject *a, CBaseObject *b) {
     return GetDist(a->GetLocation(), b->GetLocation());
 }
 
-UI16 GetDist(Point3_st a, Point3_st b) {
+std::uint16_t GetDist(Point3_st a, Point3_st b) {
     Point3_st difference = a - b;
-    return static_cast<UI16>(difference.Mag());
+    return static_cast<std::uint16_t>(difference.Mag());
 }
 
-UI16 GetDist3D(Point3_st a, Point3_st b) {
+std::uint16_t GetDist3D(Point3_st a, Point3_st b) {
     Point3_st difference = a - b;
-    return static_cast<UI16>(difference.Mag3D());
+    return static_cast<std::uint16_t>(difference.Mag3D());
 }
 
-UI16 GetOldDist(CBaseObject *a, CBaseObject *b) {
+std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b) {
     if (!ValidateObject(a) || !ValidateObject(b))
         return DIST_OUTOFRANGE;
 
@@ -199,10 +199,10 @@ UI16 GetOldDist(CBaseObject *a, CBaseObject *b) {
     distA = a->GetOldLocation();
     distB = b->GetLocation();
     Point3_st difference = distA - distB;
-    return static_cast<UI16>(difference.Mag());
+    return static_cast<std::uint16_t>(difference.Mag());
 }
 
-UI16 GetDist3D(CBaseObject *a, CBaseObject *b) {
+std::uint16_t GetDist3D(CBaseObject *a, CBaseObject *b) {
     if (!ValidateObject(a) || !ValidateObject(b))
         return DIST_OUTOFRANGE;
 
@@ -213,5 +213,5 @@ UI16 GetDist3D(CBaseObject *a, CBaseObject *b) {
         return DIST_OUTOFRANGE;
 
     Point3_st difference = a->GetLocation() - b->GetLocation();
-    return static_cast<UI16>(difference.Mag3D());
+    return static_cast<std::uint16_t>(difference.Mag3D());
 }

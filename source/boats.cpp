@@ -41,20 +41,20 @@ enum ShipItems {
 //[4]=direction of ship
 //[4]=Which Item (PT Plank, SB Plank, Hatch, TMan)
 //[2]=Coord (x,y) offsets
-const SI16 iSmallShipOffsets[4][4][2] =
+const std::int16_t iSmallShipOffsets[4][4][2] =
     //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
     {{{-2, 0}, {2, 0}, {0, -4}, {1, 4}}, // Dir
      {{0, -2}, {0, 2}, {4, 0}, {-4, 0}},
      {{2, 0}, {-2, 0}, {0, 4}, {0, -4}},
      {{0, 2}, {0, -2}, {-4, 0}, {4, 0}}};
 //  P1    P2   Hold  Tiller
-const SI16 iMediumShipOffsets[4][4][2] =
+const std::int16_t iMediumShipOffsets[4][4][2] =
     //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
     {{{-2, 0}, {2, 0}, {0, -4}, {1, 5}},
      {{0, -2}, {0, 2}, {4, 0}, {-5, 0}},
      {{2, 0}, {-2, 0}, {0, 4}, {0, -5}},
      {{0, 2}, {0, -2}, {-4, 0}, {5, 0}}};
-const SI16 iLargeShipOffsets[4][4][2] =
+const std::int16_t iLargeShipOffsets[4][4][2] =
     //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
     {{{-2, -1}, {2, -1}, {0, -5}, {1, 5}},
      {{1, -2}, {1, 2}, {5, 0}, {-5, 0}},
@@ -63,7 +63,7 @@ const SI16 iLargeShipOffsets[4][4][2] =
 // Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
-const UI08 cShipItems[4][6] = {{0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
+const std::uint8_t cShipItems[4][6] = {{0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
                                {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
                                {0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
                                {0x85, 0x84, 0x8A, 0x89, 0x93, 0x50}};
@@ -94,14 +94,14 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     if (!ValidateObject(boat))
         return false;
 
-    const SI16 x2 = p->GetX();
-    const SI16 y2 = p->GetY();
+    const std::int16_t x2 = p->GetX();
+    const std::int16_t y2 = p->GetY();
     CChar *mChar = s->CurrcharObj();
-    UI08 worldNumber = mChar->WorldNumber();
-    UI16 instanceId = mChar->GetInstanceId();
-    for (SI16 x = x2 - 3; x <= x2 + 4; ++x) {
-        for (SI16 y = y2 - 3; y <= y2 + 4; ++y) {
-            SI08 z = Map->Height(x, y, mChar->GetZ(), worldNumber, instanceId);
+    std::uint8_t worldNumber = mChar->WorldNumber();
+    std::uint16_t instanceId = mChar->GetInstanceId();
+    for (std::int16_t x = x2 - 3; x <= x2 + 4; ++x) {
+        for (std::int16_t y = y2 - 3; y <= y2 + 4; ++y) {
+            std::int8_t z = Map->Height(x, y, mChar->GetZ(), worldNumber, instanceId);
             if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) &&
                 !FindMulti(x, y, z, worldNumber, instanceId)) {
                 mChar->SetLocation(x, y, z, worldNumber, instanceId);
@@ -221,11 +221,11 @@ void OpenPlank(CItem *p) {
 //|	Purpose		-	Check if a boat will be blocked if trying to move/turn in a specific
 // direction
 // o------------------------------------------------------------------------------------------------o
-bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat) {
-    SI16 cx = b->GetX(), cy = b->GetY();
-    const SI08 cz = b->GetZ();
-    SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-    UI08 type = 0;
+bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t moveDir, std::uint8_t boatDir, bool turnBoat) {
+    std::int16_t cx = b->GetX(), cy = b->GetY();
+    const std::int8_t cz = b->GetZ();
+    std::int16_t x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+    std::uint8_t type = 0;
 
     cx += xmove;
     cy += ymove;
@@ -416,11 +416,11 @@ bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, 
         return true;
     }
 
-    UI08 worldNumber = b->WorldNumber();
-    UI16 instanceId = b->GetInstanceId();
-    SI08 boatZ = b->GetZ();
-    for (SI16 x = x1; x < x2; ++x) {
-        for (SI16 y = y1; y < y2; ++y) {
+    std::uint8_t worldNumber = b->WorldNumber();
+    std::uint16_t instanceId = b->GetInstanceId();
+    std::int8_t boatZ = b->GetZ();
+    for (std::int16_t x = x1; x < x2; ++x) {
+        for (std::int16_t y = y1; y < y2; ++y) {
             // Look for other boats
             CMultiObj *tempBoat = FindMulti(x, y, boatZ, worldNumber, instanceId);
             if (ValidateObject(tempBoat) && tempBoat->GetSerial() != b->GetSerial())
@@ -438,7 +438,7 @@ bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, 
                 }
             }
 
-            SI08 sz = Map->StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
+            std::int8_t sz = Map->StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
 
             if (sz == ILLEGAL_Z) // map tile
             {
@@ -450,7 +450,7 @@ bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, 
             else {
                 auto artwork = Map->ArtAt(x, y, worldNumber);
                 for (auto &tile : artwork) {
-                    SI08 zt = tile.altitude + tile.height();
+                    std::int8_t zt = tile.altitude + tile.height();
                     if (!tile.CheckFlag(TF_WET) && zt >= cz && zt <= (cz + 20) &&
                         (tile.name() != "water"))
                         return true;
@@ -466,7 +466,7 @@ bool BlockBoat(CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a boat
 // o------------------------------------------------------------------------------------------------o
-bool CreateBoat(CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype) {
+bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype) {
     if (!ValidateObject(b)) {
         if (s != nullptr) {
             s->SysMessage(5); // There was an error creating that boat.
@@ -490,26 +490,26 @@ bool CreateBoat(CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype) {
     }
 
     const SERIAL serial = b->GetSerial();
-    const UI08 worldNumber = b->WorldNumber();
-    const UI16 instanceId = b->GetInstanceId();
-    SI32 maxWeight = b->GetWeightMax();
+    const std::uint8_t worldNumber = b->WorldNumber();
+    const std::uint16_t instanceId = b->GetInstanceId();
+    std::int32_t maxWeight = b->GetWeightMax();
     if (maxWeight == 0) {
         maxWeight = 40000; // 400 stones default, if nothing else is defined
     }
-    UI16 maxItems = b->GetMaxItems();
+    std::uint16_t maxItems = b->GetMaxItems();
     if (maxItems == 0) {
         maxItems = 125; // Default if nothing else is defined
     }
 
-    const SI16 x = b->GetX(), y = b->GetY();
-    SI08 z = Map->MapElevation(x, y, worldNumber);
+    const std::int16_t x = b->GetX(), y = b->GetY();
+    std::int8_t z = Map->MapElevation(x, y, worldNumber);
 
-    const SI08 dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, 20);
+    const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, 20);
     if (ILLEGAL_Z != dynz) {
         z = dynz;
     }
     else {
-        const SI08 staticz = Map->StaticTop(x, y, z, worldNumber, 20);
+        const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, 20);
         if (ILLEGAL_Z != staticz) {
             z = staticz;
         }
@@ -622,7 +622,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype) {
     return true;
 }
 
-void CheckDirection(UI08 dir, SI16 &tx, SI16 &ty) {
+void CheckDirection(std::uint8_t dir, std::int16_t &tx, std::int16_t &ty) {
     switch (dir) {
     case NORTH:
         --ty;
@@ -662,7 +662,7 @@ void CheckDirection(UI08 dir, SI16 &tx, SI16 &ty) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Move the boat and everything on it 1 tile in its current direction
 // o------------------------------------------------------------------------------------------------o
-void MoveBoat(UI08 dir, CBoatObj *boat) {
+void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
     CItem *p1 = CalcItemObjFromSer(boat->GetPlank(0));
     CItem *p2 = CalcItemObjFromSer(boat->GetPlank(1));
@@ -681,10 +681,10 @@ void MoveBoat(UI08 dir, CBoatObj *boat) {
         tSock->Send(&prSend);
     }
 
-    SI16 tx = 0, ty = 0;
+    std::int16_t tx = 0, ty = 0;
     CheckDirection(dir & 0x0F, tx, ty);
 
-    SI16 x = boat->GetX(), y = boat->GetY();
+    std::int16_t x = boat->GetX(), y = boat->GetY();
 
     auto worldNumber = boat->WorldNumber();
     bool teleportBoat = false;
@@ -785,15 +785,15 @@ void TurnStuff(CBoatObj *b, CBaseObject *i, bool rightTurn) {
     if (!ValidateObject(b))
         return;
 
-    SI16 dx = static_cast<SI16>(i->GetX() - b->GetX()); // get their distance x
-    SI16 dy = static_cast<SI16>(i->GetY() - b->GetY()); // and distance Y
+    std::int16_t dx = static_cast<std::int16_t>(i->GetX() - b->GetX()); // get their distance x
+    std::int16_t dy = static_cast<std::int16_t>(i->GetY() - b->GetY()); // and distance Y
 
     if (rightTurn) {
-        i->SetLocation(static_cast<SI16>(b->GetX() - dy), static_cast<SI16>(b->GetY() + dx),
+        i->SetLocation(static_cast<std::int16_t>(b->GetX() - dy), static_cast<std::int16_t>(b->GetY() + dx),
                        i->GetZ());
     }
     else {
-        i->SetLocation(static_cast<SI16>(b->GetX() + dy), static_cast<SI16>(b->GetY() - dx),
+        i->SetLocation(static_cast<std::int16_t>(b->GetX() + dy), static_cast<std::int16_t>(b->GetY() - dx),
                        i->GetZ());
     }
 }
@@ -807,8 +807,8 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     if (!ValidateObject(b))
         return;
 
-    SI16 id2 = b->GetId(2);
-    UI08 olddir = b->GetDir();
+    std::int16_t id2 = b->GetId(2);
+    std::uint8_t olddir = b->GetDir();
 
     CPPauseResume prSend(0);
     auto nearbyChars = FindNearbyPlayers(b, DIST_BUILDRANGE);
@@ -859,7 +859,7 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
         }
     }
 
-    b->SetId(static_cast<UI08>(id2), 2); // set the id
+    b->SetId(static_cast<std::uint8_t>(id2), 2); // set the id
 
     if (b->GetId(2) == b->GetTempVar(CITV_MOREZ, 1)) {
         b->SetDir(NORTH); // extra DIR error checking
@@ -881,7 +881,7 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
         }
     }
 
-    UI08 dir = (b->GetDir() & 0x0F) / 2;
+    std::uint8_t dir = (b->GetDir() & 0x0F) / 2;
 
     p1->SetLocation(b);
     p1->SetId(cShipItems[dir][PORT_P_C], 2); // change the ID
@@ -935,8 +935,8 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     }
 }
 
-void TurnBoat(CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn) {
-    SI16 tx = 0, ty = 0;
+void TurnBoat(CSocket *mSock, CBoatObj *myBoat, CItem *tiller, std::uint8_t dir, bool rightTurn) {
+    std::int16_t tx = 0, ty = 0;
     CheckDirection(dir & 0x0F, tx, ty);
 
     if (!BlockBoat(myBoat, tx, ty, dir, myBoat->GetDir(), true)) {
@@ -961,7 +961,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
     if (!ValidateObject(boat))
         return;
 
-    UI08 dir = boat->GetDir() & 0x0F;
+    std::uint8_t dir = boat->GetDir() & 0x0F;
 
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
 

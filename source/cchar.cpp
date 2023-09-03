@@ -83,89 +83,89 @@
 
 // Bitmask bits
 // Character Privs
-const UI32 BIT_GM = 0;               // 0x1
-const UI32 BIT_BROADCAST = 1;        // 0x2
-const UI32 BIT_INVULNERABLE = 2;     // 0x4
-const UI32 BIT_SINGCLICKSER = 3;     // 0x8
-const UI32 BIT_SKILLTITLES = 4;      // 0x10
-const UI32 BIT_GMPAGEABLE = 5;       // 0x20
-const UI32 BIT_SNOOP = 6;            // 0x40
-const UI32 BIT_COUNSELOR = 7;        // 0x80
-const UI32 BIT_ALLMOVE = 8;          // 0x100
-const UI32 BIT_FROZEN = 9;           // 0x200
-const UI32 BIT_VIEWHOUSEASICON = 10; // 0x400
-const UI32 BIT_NONEEDMANA = 11;      // 0x800
-const UI32 BIT_DISPELLABLE = 12;     // 0x1000
-const UI32 BIT_TEMPREFLECTED = 13;   // 0x2000
-const UI32 BIT_NONEEDREAGS = 14;     // 0x4000
-const UI32 BIT_PERMREFLECTED = 15;   // 0x8000
+const std::uint32_t BIT_GM = 0;               // 0x1
+const std::uint32_t BIT_BROADCAST = 1;        // 0x2
+const std::uint32_t BIT_INVULNERABLE = 2;     // 0x4
+const std::uint32_t BIT_SINGCLICKSER = 3;     // 0x8
+const std::uint32_t BIT_SKILLTITLES = 4;      // 0x10
+const std::uint32_t BIT_GMPAGEABLE = 5;       // 0x20
+const std::uint32_t BIT_SNOOP = 6;            // 0x40
+const std::uint32_t BIT_COUNSELOR = 7;        // 0x80
+const std::uint32_t BIT_ALLMOVE = 8;          // 0x100
+const std::uint32_t BIT_FROZEN = 9;           // 0x200
+const std::uint32_t BIT_VIEWHOUSEASICON = 10; // 0x400
+const std::uint32_t BIT_NONEEDMANA = 11;      // 0x800
+const std::uint32_t BIT_DISPELLABLE = 12;     // 0x1000
+const std::uint32_t BIT_TEMPREFLECTED = 13;   // 0x2000
+const std::uint32_t BIT_NONEEDREAGS = 14;     // 0x4000
+const std::uint32_t BIT_PERMREFLECTED = 15;   // 0x8000
 
 // Character Bools
-const UI32 BIT_UNICODE = 1;
-const UI32 BIT_NPC = 2;
-const UI32 BIT_SHOP = 3;
-const UI32 BIT_DEAD = 4;
-const UI32 BIT_ATWAR = 5;
-const UI32 BIT_DISGUISED = 6;
-const UI32 BIT_ONHORSE = 7;
-const UI32 BIT_TOWNTITLE = 8;
-const UI32 BIT_REACTIVEARMOUR = 9;
-const UI32 BIT_TRAIN = 10;
-const UI32 BIT_GUILDTOGGLE = 11;
-const UI32 BIT_TAMED = 12;
-const UI32 BIT_GUARDED = 13;
-const UI32 BIT_RUN = 14;
-const UI32 BIT_POLYMORPHED = 15;
-const UI32 BIT_INCOGNITO = 16;
-const UI32 BIT_USINGPOTION = 17;
-const UI32 BIT_MAYLEVITATE = 18;
-const UI32 BIT_WILLHUNGER = 19;
-const UI32 BIT_MEDITATING = 20;
-const UI32 BIT_CASTING = 21;
-const UI32 BIT_JSCASTING = 22;
-const UI32 BIT_MAXHPFIXED = 23;
-const UI32 BIT_MAXMANAFIXED = 24;
-const UI32 BIT_MAXSTAMFIXED = 25;
-const UI32 BIT_CANATTACK = 26;
-const UI32 BIT_INBUILDING = 27;
-const UI32 BIT_INPARTY = 28; // This property is not saved
-const UI32 BIT_EVADE = 29;   // This property is not saved
-const UI32 BIT_FLYING = 30;  // This property is not saved
-const UI32 BIT_WILLTHIRST = 31;
-const UI32 BIT_HIRELING = 32;
-const UI32 BIT_ISPASSIVE = 33;
-const UI32 BIT_HASSTOLEN = 34;
+const std::uint32_t BIT_UNICODE = 1;
+const std::uint32_t BIT_NPC = 2;
+const std::uint32_t BIT_SHOP = 3;
+const std::uint32_t BIT_DEAD = 4;
+const std::uint32_t BIT_ATWAR = 5;
+const std::uint32_t BIT_DISGUISED = 6;
+const std::uint32_t BIT_ONHORSE = 7;
+const std::uint32_t BIT_TOWNTITLE = 8;
+const std::uint32_t BIT_REACTIVEARMOUR = 9;
+const std::uint32_t BIT_TRAIN = 10;
+const std::uint32_t BIT_GUILDTOGGLE = 11;
+const std::uint32_t BIT_TAMED = 12;
+const std::uint32_t BIT_GUARDED = 13;
+const std::uint32_t BIT_RUN = 14;
+const std::uint32_t BIT_POLYMORPHED = 15;
+const std::uint32_t BIT_INCOGNITO = 16;
+const std::uint32_t BIT_USINGPOTION = 17;
+const std::uint32_t BIT_MAYLEVITATE = 18;
+const std::uint32_t BIT_WILLHUNGER = 19;
+const std::uint32_t BIT_MEDITATING = 20;
+const std::uint32_t BIT_CASTING = 21;
+const std::uint32_t BIT_JSCASTING = 22;
+const std::uint32_t BIT_MAXHPFIXED = 23;
+const std::uint32_t BIT_MAXMANAFIXED = 24;
+const std::uint32_t BIT_MAXSTAMFIXED = 25;
+const std::uint32_t BIT_CANATTACK = 26;
+const std::uint32_t BIT_INBUILDING = 27;
+const std::uint32_t BIT_INPARTY = 28; // This property is not saved
+const std::uint32_t BIT_EVADE = 29;   // This property is not saved
+const std::uint32_t BIT_FLYING = 30;  // This property is not saved
+const std::uint32_t BIT_WILLTHIRST = 31;
+const std::uint32_t BIT_HIRELING = 32;
+const std::uint32_t BIT_ISPASSIVE = 33;
+const std::uint32_t BIT_HASSTOLEN = 34;
 
-const UI32 BIT_MOUNTED = 0;
-const UI32 BIT_STABLED = 1;
-const UI32 BIT_AWAKE = 2;
+const std::uint32_t BIT_MOUNTED = 0;
+const std::uint32_t BIT_STABLED = 1;
+const std::uint32_t BIT_AWAKE = 2;
 
 // Player defaults
 
-const SI16 DEFPLAYER_CALLNUM = -1;
-const SI16 DEFPLAYER_PLAYERCALLNUM = -1;
+const std::int16_t DEFPLAYER_CALLNUM = -1;
+const std::int16_t DEFPLAYER_PLAYERCALLNUM = -1;
 const SERIAL DEFPLAYER_TRACKINGTARGET = INVALIDSERIAL;
-const UI08 DEFPLAYER_SQUELCHED = 0;
-const UI08 DEFPLAYER_COMMANDLEVEL = CL_PLAYER;
-const UI08 DEFPLAYER_POSTTYPE = PT_LOCAL;
-const UI16 DEFPLAYER_HAIRSTYLE = INVALIDID;
-const UI16 DEFPLAYER_BEARDSTYLE = INVALIDID;
+const std::uint8_t DEFPLAYER_SQUELCHED = 0;
+const std::uint8_t DEFPLAYER_COMMANDLEVEL = CL_PLAYER;
+const std::uint8_t DEFPLAYER_POSTTYPE = PT_LOCAL;
+const std::uint16_t DEFPLAYER_HAIRSTYLE = INVALIDID;
+const std::uint16_t DEFPLAYER_BEARDSTYLE = INVALIDID;
 const COLOUR DEFPLAYER_HAIRCOLOUR = INVALIDCOLOUR;
 const COLOUR DEFPLAYER_BEARDCOLOUR = INVALIDCOLOUR;
-const UI08 DEFPLAYER_SPEECHMODE = 0;
-const UI08 DEFPLAYER_SPEECHID = 0;
+const std::uint8_t DEFPLAYER_SPEECHMODE = 0;
+const std::uint8_t DEFPLAYER_SPEECHID = 0;
 const SERIAL DEFPLAYER_ROBE = INVALIDSERIAL;
-const UI16 DEFPLAYER_ACCOUNTNUM = AccountEntry::INVALID_ACCOUNT;
-const UI16 DEFPLAYER_ORIGSKIN = 0;
-const UI16 DEFPLAYER_ORIGID = 0x0190;
-const UI08 DEFPLAYER_FIXEDLIGHT = 255;
-const UI16 DEFPLAYER_DEATHS = 0;
+const std::uint16_t DEFPLAYER_ACCOUNTNUM = AccountEntry::INVALID_ACCOUNT;
+const std::uint16_t DEFPLAYER_ORIGSKIN = 0;
+const std::uint16_t DEFPLAYER_ORIGID = 0x0190;
+const std::uint8_t DEFPLAYER_FIXEDLIGHT = 255;
+const std::uint16_t DEFPLAYER_DEATHS = 0;
 const SERIAL DEFPLAYER_TOWNVOTE = INVALIDSERIAL;
-const SI08 DEFPLAYER_TOWNPRIV = 0;
-const UI16 DEFPLAYER_CONTROLSLOTSUSED = 0;
-const UI32 DEFPLAYER_CREATEDON = 0;
-const UI32 DEFPLAYER_NPCGUILDJOINED = 0;
-const UI32 DEFPLAYER_PLAYTIME = 0;
+const std::int8_t DEFPLAYER_TOWNPRIV = 0;
+const std::uint16_t DEFPLAYER_CONTROLSLOTSUSED = 0;
+const std::uint32_t DEFPLAYER_CREATEDON = 0;
+const std::uint32_t DEFPLAYER_NPCGUILDJOINED = 0;
+const std::uint32_t DEFPLAYER_PLAYTIME = 0;
 
 CChar::PlayerValues_st::PlayerValues_st()
     : callNum(DEFPLAYER_CALLNUM), playerCallNum(DEFPLAYER_PLAYERCALLNUM),
@@ -179,12 +179,12 @@ CChar::PlayerValues_st::PlayerValues_st()
       socket(nullptr), townVote(DEFPLAYER_TOWNVOTE), townPriv(DEFPLAYER_TOWNPRIV),
       controlSlotsUsed(DEFPLAYER_CONTROLSLOTSUSED), createdOn(DEFPLAYER_CREATEDON),
       npcGuildJoined(DEFPLAYER_NPCGUILDJOINED), playTime(DEFPLAYER_PLAYTIME) {
-    // memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
+    // memset( &lockState[0],		0, sizeof( std::uint8_t )		* (INTELLECT+1) );
     //  Changed to the following, as only the 15?16? first lockStates would get initialized or
     //  whanot
     memset(&lockState[0], 0, sizeof(lockState));
 
-    for (UI08 j = 0; j <= INTELLECT; ++j) {
+    for (std::uint8_t j = 0; j <= INTELLECT; ++j) {
         atrophy[j] = j;
     }
 
@@ -193,42 +193,42 @@ CChar::PlayerValues_st::PlayerValues_st()
     }
 }
 
-const SI08 DEFNPC_WANDER = 0;
-const SI08 DEFNPC_OLDWANDER = 0;
+const std::int8_t DEFNPC_WANDER = 0;
+const std::int8_t DEFNPC_OLDWANDER = 0;
 const SERIAL DEFNPC_FTARG = INVALIDSERIAL;
-const SI08 DEFNPC_FZ1 = -1;
-const SI16 DEFNPC_AITYPE = 0;
-const SI16 DEFNPC_SPATTACK = 0;
-const SI08 DEFNPC_SPADELAY = 0;
-const SI16 DEFNPC_TAMING = 0x7FFF;
-const SI16 DEFNPC_PEACEING = 0x7FFF;
-const SI16 DEFNPC_PROVOING = 0x7FFF;
-const SI16 DEFNPC_FLEEAT = 0;
-const SI16 DEFNPC_REATTACKAT = 0;
-const UI08 DEFNPC_FLEEDISTANCE = 0;
-const UI08 DEFNPC_SPLIT = 0;
-const UI08 DEFNPC_SPLITCHANCE = 0;
-const UI08 DEFNPC_TRAININGPLAYERIN = 0;
-const UI32 DEFNPC_HOLDG = 0;
-const UI08 DEFNPC_QUESTTYPE = 0;
-const UI08 DEFNPC_QUESTDESTREGION = 0;
-const UI08 DEFNPC_QUESTORIGREGION = 0;
-const SI16 DEFNPC_WANDERAREA = -1;
+const std::int8_t DEFNPC_FZ1 = -1;
+const std::int16_t DEFNPC_AITYPE = 0;
+const std::int16_t DEFNPC_SPATTACK = 0;
+const std::int8_t DEFNPC_SPADELAY = 0;
+const std::int16_t DEFNPC_TAMING = 0x7FFF;
+const std::int16_t DEFNPC_PEACEING = 0x7FFF;
+const std::int16_t DEFNPC_PROVOING = 0x7FFF;
+const std::int16_t DEFNPC_FLEEAT = 0;
+const std::int16_t DEFNPC_REATTACKAT = 0;
+const std::uint8_t DEFNPC_FLEEDISTANCE = 0;
+const std::uint8_t DEFNPC_SPLIT = 0;
+const std::uint8_t DEFNPC_SPLITCHANCE = 0;
+const std::uint8_t DEFNPC_TRAININGPLAYERIN = 0;
+const std::uint32_t DEFNPC_HOLDG = 0;
+const std::uint8_t DEFNPC_QUESTTYPE = 0;
+const std::uint8_t DEFNPC_QUESTDESTREGION = 0;
+const std::uint8_t DEFNPC_QUESTORIGREGION = 0;
+const std::int16_t DEFNPC_WANDERAREA = -1;
 const cNPC_FLAG DEFNPC_NPCFLAG = fNPC_NEUTRAL;
-const UI16 DEFNPC_BOOLFLAG = 0;
-const UI16 DEFNPC_TAMEDHUNGERRATE = 0;
-const UI16 DEFNPC_TAMEDTHIRSTRATE = 0;
-const UI08 DEFNPC_HUNGERWILDCHANCE = 0;
-const UI08 DEFNPC_THIRSTWILDCHANCE = 0;
+const std::uint16_t DEFNPC_BOOLFLAG = 0;
+const std::uint16_t DEFNPC_TAMEDHUNGERRATE = 0;
+const std::uint16_t DEFNPC_TAMEDTHIRSTRATE = 0;
+const std::uint8_t DEFNPC_HUNGERWILDCHANCE = 0;
+const std::uint8_t DEFNPC_THIRSTWILDCHANCE = 0;
 const R32 DEFNPC_MOVEMENTSPEED = -1;
-const SI08 DEFNPC_PATHFAIL = -1;
-const UI16 DEFNPC_CONTROLSLOTS = 0;
-const UI16 DEFNPC_MAXLOYALTY = 100;
-const UI16 DEFNPC_LOYALTY = 25;
-const UI16 DEFNPC_ORNERINESS = 0;
-const SI08 DEFNPC_PATHRESULT = 0;
-const UI16 DEFNPC_PATHTARGX = 0;
-const UI16 DEFNPC_PATHTARGY = 0;
+const std::int8_t DEFNPC_PATHFAIL = -1;
+const std::uint16_t DEFNPC_CONTROLSLOTS = 0;
+const std::uint16_t DEFNPC_MAXLOYALTY = 100;
+const std::uint16_t DEFNPC_LOYALTY = 25;
+const std::uint16_t DEFNPC_ORNERINESS = 0;
+const std::int8_t DEFNPC_PATHRESULT = 0;
+const std::uint16_t DEFNPC_PATHTARGX = 0;
+const std::uint16_t DEFNPC_PATHTARGY = 0;
 
 CChar::NPCValues_st::NPCValues_st()
     : wanderMode(DEFNPC_WANDER), oldWanderMode(DEFNPC_OLDWANDER), fTarg(DEFNPC_FTARG),
@@ -257,42 +257,42 @@ CChar::NPCValues_st::NPCValues_st()
     boolFlags.set(BIT_AWAKE, false);
 }
 
-const UI32 DEFCHAR_BOOLS = 0;
-// const SI08			DEFCHAR_DISPZ 				= 0;
-const SI08 DEFCHAR_FONTTYPE = 3;
+const std::uint32_t DEFCHAR_BOOLS = 0;
+// const std::int8_t			DEFCHAR_DISPZ 				= 0;
+const std::int8_t DEFCHAR_FONTTYPE = 3;
 const RACEID DEFCHAR_OLDRACE = 0;
-const UI16 DEFCHAR_MAXHP = 0;
-const UI16 DEFCHAR_MAXHP_OLDSTR = 0;
-const UI16 DEFCHAR_MAXMANA = 0;
-const UI16 DEFCHAR_MAXMANA_OLDINT = 0;
-const UI16 DEFCHAR_MAXSTAM = 0;
-const UI16 DEFCHAR_MAXSTAM_OLDDEX = 0;
+const std::uint16_t DEFCHAR_MAXHP = 0;
+const std::uint16_t DEFCHAR_MAXHP_OLDSTR = 0;
+const std::uint16_t DEFCHAR_MAXMANA = 0;
+const std::uint16_t DEFCHAR_MAXMANA_OLDINT = 0;
+const std::uint16_t DEFCHAR_MAXSTAM = 0;
+const std::uint16_t DEFCHAR_MAXSTAM_OLDDEX = 0;
 const COLOUR DEFCHAR_SAYCOLOUR = 0x0058;
 const COLOUR DEFCHAR_EMOTECOLOUR = 0x0023;
-const SI08 DEFCHAR_CELL = -1;
+const std::int8_t DEFCHAR_CELL = -1;
 const SERIAL DEFCHAR_TARG = INVALIDSERIAL;
 const SERIAL DEFCHAR_ATTACKER = INVALIDSERIAL;
-const SI08 DEFCHAR_HUNGER = 6;
-const SI08 DEFCHAR_THIRST = 6;
-const UI16 DEFCHAR_REGIONNUM = 255;
-const UI16 DEFCHAR_TOWN = 0;
-const UI16 DEFCHAR_ADVOBJ = 0;
+const std::int8_t DEFCHAR_HUNGER = 6;
+const std::int8_t DEFCHAR_THIRST = 6;
+const std::uint16_t DEFCHAR_REGIONNUM = 255;
+const std::uint16_t DEFCHAR_TOWN = 0;
+const std::uint16_t DEFCHAR_ADVOBJ = 0;
 const SERIAL DEFCHAR_GUILDFEALTY = INVALIDSERIAL;
-const SI16 DEFCHAR_GUILDNUMBER = -1;
-const UI08 DEFCHAR_FLAG = 0x04;
-const SI08 DEFCHAR_SPELLCAST = -1;
-const UI08 DEFCHAR_NEXTACTION = 0;
-const SI08 DEFCHAR_STEALTH = -1;
-const UI08 DEFCHAR_RUNNING = 0;
+const std::int16_t DEFCHAR_GUILDNUMBER = -1;
+const std::uint8_t DEFCHAR_FLAG = 0x04;
+const std::int8_t DEFCHAR_SPELLCAST = -1;
+const std::uint8_t DEFCHAR_NEXTACTION = 0;
+const std::int8_t DEFCHAR_STEALTH = -1;
+const std::uint8_t DEFCHAR_RUNNING = 0;
 const RACEID DEFCHAR_RACEGATE = INVALIDID;
-const UI08 DEFCHAR_STEP = 1;
-const UI16 DEFCHAR_PRIV = 0;
-const UI32 DEFCHAR_LASTMOVETIME = 0;
-// const UI16			DEFCHAR_NOMOVE 				= 0;
-// const UI16			DEFCHAR_POISONCHANCE 		= 0;
-const UI08 DEFCHAR_POISONSTRENGTH = 0;
+const std::uint8_t DEFCHAR_STEP = 1;
+const std::uint16_t DEFCHAR_PRIV = 0;
+const std::uint32_t DEFCHAR_LASTMOVETIME = 0;
+// const std::uint16_t			DEFCHAR_NOMOVE 				= 0;
+// const std::uint16_t			DEFCHAR_POISONCHANCE 		= 0;
+const std::uint8_t DEFCHAR_POISONSTRENGTH = 0;
 const BodyType DEFCHAR_BODYTYPE = BT_OTHER;
-const UI16 DEFCHAR_NPCGUILD = 0;
+const std::uint16_t DEFCHAR_NPCGUILD = 0;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::CChar() constructor
@@ -408,12 +408,12 @@ bool CChar::IsValidPlayer(void) const { return (mPlayer != nullptr); }
 //|	Purpose		-	Get/Set number of times Pathfinding has failed for an NPC - resets
 // on success
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetPathFail(void) const {
-    SI08 rVal = DEFNPC_PATHFAIL;
+std::int8_t CChar::GetPathFail(void) const {
+    std::int8_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathFail;
     return rVal;
 }
-void CChar::SetPathFail(SI08 newValue) {
+void CChar::SetPathFail(std::int8_t newValue) {
     if (IsValidNPC()) {
         mNPC->pathFail = newValue;
     }
@@ -426,12 +426,12 @@ void CChar::SetPathFail(SI08 newValue) {
 //|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd
 // event
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetPathResult(void) const {
-    SI08 rVal = DEFNPC_PATHFAIL;
+std::int8_t CChar::GetPathResult(void) const {
+    std::int8_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathResult;
     return rVal;
 }
-void CChar::SetPathResult(SI08 newValue) {
+void CChar::SetPathResult(std::int8_t newValue) {
     if (IsValidNPC()) {
         mNPC->pathResult = newValue;
     }
@@ -443,12 +443,12 @@ void CChar::SetPathResult(SI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the final target X location NPC is pathfinding towards
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPathTargX(void) const {
-    UI16 rVal = DEFNPC_PATHFAIL;
+std::uint16_t CChar::GetPathTargX(void) const {
+    std::uint16_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathTargX;
     return rVal;
 }
-void CChar::SetPathTargX(UI16 newValue) {
+void CChar::SetPathTargX(std::uint16_t newValue) {
     if (IsValidNPC()) {
         mNPC->pathTargX = newValue;
     }
@@ -460,12 +460,12 @@ void CChar::SetPathTargX(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the final target Y location NPC is pathfinding towards
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPathTargY(void) const {
-    UI16 rVal = DEFNPC_PATHFAIL;
+std::uint16_t CChar::GetPathTargY(void) const {
+    std::uint16_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathTargY;
     return rVal;
 }
-void CChar::SetPathTargY(UI16 newValue) {
+void CChar::SetPathTargY(std::uint16_t newValue) {
     if (IsValidNPC()) {
         mNPC->pathTargY = newValue;
     }
@@ -477,9 +477,9 @@ void CChar::SetPathTargY(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set hunger level of the character
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetHunger(void) const { return hunger; }
-bool CChar::SetHunger(SI08 newValue) {
-    std::vector<UI16> scriptTriggers = GetScriptTriggers();
+std::int8_t CChar::GetHunger(void) const { return hunger; }
+bool CChar::SetHunger(std::int8_t newValue) {
+    std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
@@ -510,8 +510,8 @@ void CChar::DoHunger(CSocket *mSock) {
 
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
     {
-        UI16 hungerRate;
-        SI16 hungerDamage;
+        std::uint16_t hungerRate;
+        std::int16_t hungerDamage;
         if (!IsNpc() && mSock != nullptr) // Do Hunger for player chars
         {
             if (WillHunger() && GetCommandLevel() == CL_PLAYER) {
@@ -612,7 +612,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     DecHunger();
                 }
                 else if (GetLoyalty() == 0 &&
-                         static_cast<UI08>(RandomNum(0, 100)) <= GetTamedHungerWildChance()) {
+                         static_cast<std::uint8_t>(RandomNum(0, 100)) <= GetTamedHungerWildChance()) {
                     // Make pet go wild from hunger, but only if loyalty is zero
                     CChar *owner = GetOwnerObj();
                     if (ValidateObject(owner)) {
@@ -643,10 +643,10 @@ void CChar::DoHunger(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Get/Set Thirst level of the character
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetThirst(void) const { return thirst; }
+std::int8_t CChar::GetThirst(void) const { return thirst; }
 
-bool CChar::SetThirst(SI08 newValue) {
-    std::vector<UI16> scriptTriggers = GetScriptTriggers();
+bool CChar::SetThirst(std::int8_t newValue) {
+    std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
@@ -677,8 +677,8 @@ void CChar::DoThirst(CSocket *mSock) {
 
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
     {
-        UI16 thirstRate;
-        SI16 thirstDrain;
+        std::uint16_t thirstRate;
+        std::int16_t thirstDrain;
         if (!IsNpc() && mSock != nullptr) // Do Thirst for player chars
         {
             if (WillThirst() && GetCommandLevel() == CL_PLAYER) {
@@ -726,8 +726,8 @@ void CChar::DoThirst(CSocket *mSock) {
                     }
                     else if (GetStamina() > 1 && thirstDrain > 0) {
                         mSock->SysMessage(2051); // You are severely dehydrated!
-                        SetStamina(std::max(static_cast<SI16>(1),
-                                            static_cast<SI16>(GetStamina() - thirstDrain)));
+                        SetStamina(std::max(static_cast<std::int16_t>(1),
+                                            static_cast<std::int16_t>(GetStamina() - thirstDrain)));
                         if (GetStamina() <= 1) {
                             mSock->SysMessage(2052); // You have no stamina because of dehydration.
                         }
@@ -747,8 +747,8 @@ void CChar::DoThirst(CSocket *mSock) {
                         DecThirst();
                     }
                     else if (GetStamina() > 1 && thirstDrain > 0) {
-                        SetStamina(std::max(static_cast<SI16>(1),
-                                            static_cast<SI16>(GetStamina() - thirstDrain)));
+                        SetStamina(std::max(static_cast<std::int16_t>(1),
+                                            static_cast<std::int16_t>(GetStamina() - thirstDrain)));
                     }
                     SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
                 }
@@ -772,7 +772,7 @@ void CChar::DoThirst(CSocket *mSock) {
                     if (GetThirst() > 0) {
                         DecThirst();
                     }
-                    else if (static_cast<UI08>(RandomNum(1, 100)) <= GetTamedThirstWildChance()) {
+                    else if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= GetTamedThirstWildChance()) {
                         SetOwner(nullptr);
                         SetThirst(6);
                     }
@@ -804,8 +804,8 @@ void CChar::CheckPetOfflineTimeout(void) {
                 return; // The owner is still online, so leave it alone
 
             time_t currTime, lastOnTime;
-            const UI32 offlineTimeout =
-                static_cast<UI32>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
+            const std::uint32_t offlineTimeout =
+                static_cast<std::uint32_t>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
 
             time(&currTime);
             lastOnTime = static_cast<time_t>(GetLastOnSecs());
@@ -826,8 +826,8 @@ void CChar::CheckPetOfflineTimeout(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	The town the character belongs to
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetTown(void) const { return town; }
-void CChar::SetTown(UI16 newValue) {
+std::uint16_t CChar::GetTown(void) const { return town; }
+void CChar::SetTown(std::uint16_t newValue) {
     town = newValue;
     UpdateRegion();
 }
@@ -878,15 +878,15 @@ BodyType CChar::GetBodyType(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance gain to break peace
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetBrkPeaceChanceGain(void) const {
+std::uint8_t CChar::GetBrkPeaceChanceGain(void) const {
     if (IsNpc()) {
         return brkPeaceChanceGain;
     }
     else {
-        return static_cast<UI08>(GetBaseSkill(PEACEMAKING) / 10);
+        return static_cast<std::uint8_t>(GetBaseSkill(PEACEMAKING) / 10);
     }
 }
-void CChar::SetBrkPeaceChanceGain(UI08 newValue) {
+void CChar::SetBrkPeaceChanceGain(std::uint8_t newValue) {
     brkPeaceChanceGain = newValue;
     UpdateRegion();
 }
@@ -898,8 +898,8 @@ void CChar::SetBrkPeaceChanceGain(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the current chance to break peace
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetBrkPeaceChance(void) const { return brkPeaceChance; }
-void CChar::SetBrkPeaceChance(UI08 newValue) {
+std::uint8_t CChar::GetBrkPeaceChance(void) const { return brkPeaceChance; }
+void CChar::SetBrkPeaceChance(std::uint8_t newValue) {
     brkPeaceChance = newValue;
     UpdateRegion();
 }
@@ -1272,7 +1272,7 @@ void CChar::SetInBuilding(bool newValue) { bools.set(BIT_INBUILDING, newValue); 
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Takes character out of combat state
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetPeace(UI32 newValue) {
+void CChar::SetPeace(std::uint32_t newValue) {
     if (newValue > 0) {
         SetCanAttack(false);
         if (IsAtWar()) {
@@ -1333,8 +1333,8 @@ void CChar::AddSelfToOwner(void) {
 //| Purpose		-	Gets/Sets a player's guild fealty - essentially, who the player
 //|					votes for as the next guild master
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetGuildFealty(void) const { return guildFealty; }
-void CChar::SetGuildFealty(UI32 newValue) {
+std::uint32_t CChar::GetGuildFealty(void) const { return guildFealty; }
+void CChar::SetGuildFealty(std::uint32_t newValue) {
     guildFealty = newValue;
     UpdateRegion();
 }
@@ -1357,8 +1357,8 @@ void CChar::SetGuildTitle(const std::string &newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets regeneration timers for player's health, mana and stamina
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CChar::GetRegen(UI08 part) const { return regen[part]; }
-void CChar::SetRegen(TIMERVAL newValue, UI08 part) { regen[part] = newValue; }
+TIMERVAL CChar::GetRegen(std::uint8_t part) const { return regen[part]; }
+void CChar::SetRegen(TIMERVAL newValue, std::uint8_t part) { regen[part] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetWeathDamage()
@@ -1366,8 +1366,8 @@ void CChar::SetRegen(TIMERVAL newValue, UI08 part) { regen[part] = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timers for weather damage effects on character
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CChar::GetWeathDamage(UI08 part) const { return weathDamage[part]; }
-void CChar::SetWeathDamage(TIMERVAL newValue, UI08 part) { weathDamage[part] = newValue; }
+TIMERVAL CChar::GetWeathDamage(std::uint8_t part) const { return weathDamage[part]; }
+void CChar::SetWeathDamage(TIMERVAL newValue, std::uint8_t part) { weathDamage[part] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetNextAct()
@@ -1375,8 +1375,8 @@ void CChar::SetWeathDamage(TIMERVAL newValue, UI08 part) { weathDamage[part] = n
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's next spellcasting action
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetNextAct(void) const { return nextAct; }
-void CChar::SetNextAct(UI08 newVal) { nextAct = newVal; }
+std::uint8_t CChar::GetNextAct(void) const { return nextAct; }
+void CChar::SetNextAct(std::uint8_t newVal) { nextAct = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::GetTimer()
@@ -1409,8 +1409,8 @@ void CChar::SetTimer(cC_TID timerId, TIMERVAL value) {
 //|	Purpose		-	Gets/Sets the poison strength of the character - used to poison
 // others in combat
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetPoisonStrength(void) const { return PoisonStrength; }
-void CChar::SetPoisonStrength(UI08 value) {
+std::uint8_t CChar::GetPoisonStrength(void) const { return PoisonStrength; }
+void CChar::SetPoisonStrength(std::uint8_t value) {
     PoisonStrength = value;
     UpdateRegion();
 }
@@ -1445,8 +1445,8 @@ void CChar::SetSayColour(COLOUR newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's skin colour
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetSkin(void) const { return GetColour(); }
-void CChar::SetSkin(UI16 value) {
+std::uint16_t CChar::GetSkin(void) const { return GetColour(); }
+void CChar::SetSkin(std::uint16_t value) {
     SetColour(value);
     UpdateRegion();
 }
@@ -1457,8 +1457,8 @@ void CChar::SetSkin(UI16 value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's stealth walk counter
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetStealth(void) const { return stealth; }
-void CChar::SetStealth(SI08 newValue) {
+std::int8_t CChar::GetStealth(void) const { return stealth; }
+void CChar::SetStealth(std::int8_t newValue) {
     stealth = newValue;
     UpdateRegion();
 }
@@ -1469,8 +1469,8 @@ void CChar::SetStealth(SI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the cell in which a character is jailed
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetCell(void) const { return cell; }
-void CChar::SetCell(SI08 newVal) {
+std::int8_t CChar::GetCell(void) const { return cell; }
+void CChar::SetCell(std::int8_t newVal) {
     cell = newVal;
     UpdateRegion();
 }
@@ -1481,8 +1481,8 @@ void CChar::SetCell(SI08 newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets whether the character is running
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetRunning(void) const { return running; }
-void CChar::SetRunning(UI08 newValue) { running = newValue; }
+std::uint8_t CChar::GetRunning(void) const { return running; }
+void CChar::SetRunning(std::uint8_t newValue) { running = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetStep()
@@ -1491,8 +1491,8 @@ void CChar::SetRunning(UI08 newValue) { running = newValue; }
 //| Purpose		-	Gets/Sets the footstep sequence for the character for the purpose of
 // playing |					footstep sounds
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetStep(void) const { return step; }
-void CChar::SetStep(UI08 newValue) { step = newValue; }
+std::uint8_t CChar::GetStep(void) const { return step; }
+void CChar::SetStep(std::uint8_t newValue) { step = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetRegion()
@@ -1507,18 +1507,18 @@ CTownRegion *CChar::GetRegion(void) const {
     }
     return cwmWorldState->townRegions[regionNum];
 }
-void CChar::SetRegion(UI16 newValue) {
+void CChar::SetRegion(std::uint16_t newValue) {
     regionNum = newValue;
     UpdateRegion();
 }
-UI16 CChar::GetRegionNum(void) const { return regionNum; }
+std::uint16_t CChar::GetRegionNum(void) const { return regionNum; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetOldLocation()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets the old/previous location of the character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetOldLocation(SI16 newX, SI16 newY, SI08 newZ) {
+void CChar::SetOldLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) {
     oldLocX = newX;
     oldLocY = newY;
     oldLocZ = newZ;
@@ -1536,14 +1536,14 @@ void CChar::SetLocation(const CBaseObject *toSet) {
     }
 }
 
-void InitializeWanderArea(CChar *c, SI16 xAway, SI16 yAway);
+void InitializeWanderArea(CChar *c, std::int16_t xAway, std::int16_t yAway);
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetLocation()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets the location of the character to a specific set of
 // coordinates/world/instance
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) {
+void CChar::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::uint8_t world, std::uint16_t instanceId) {
     Dirty(UT_LOCATION);
     MapRegion->ChangeRegion(this, newX, newY, world);
     oldLocX = x;
@@ -1562,7 +1562,7 @@ void CChar::SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instan
         InitializeWanderArea(this, 10, 10);
     }
 }
-void CChar::SetLocation(SI16 newX, SI16 newY, SI08 newZ) {
+void CChar::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) {
     SetLocation(newX, newY, newZ, WorldNumber(), GetInstanceId());
 }
 
@@ -1621,8 +1621,8 @@ void CChar::SetAttacker(CChar *newValue) { attacker = CalcSerFromObj(newValue); 
 //| Purpose		-	Gets/Sets the "morex" identifier value of the previous advancement
 // used
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetAdvObj(void) const { return advObj; }
-void CChar::SetAdvObj(UI16 newValue) {
+std::uint16_t CChar::GetAdvObj(void) const { return advObj; }
+void CChar::SetAdvObj(std::uint16_t newValue) {
     advObj = newValue;
     UpdateRegion();
 }
@@ -1645,8 +1645,8 @@ void CChar::SetRaceGate(RACEID newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the spell ID of the next spell an NPC will be casting
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetSpellCast(void) const { return spellCast; }
-void CChar::SetSpellCast(SI08 newValue) { spellCast = newValue; }
+std::int8_t CChar::GetSpellCast(void) const { return spellCast; }
+void CChar::SetSpellCast(std::int8_t newValue) { spellCast = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetPriv()
@@ -1654,8 +1654,8 @@ void CChar::SetSpellCast(SI08 newValue) { spellCast = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's special privileges
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetPriv(void) const { return static_cast<UI16>(priv.to_ulong()); }
-void CChar::SetPriv(UI16 newValue) {
+std::uint16_t CChar::GetPriv(void) const { return static_cast<std::uint16_t>(priv.to_ulong()); }
+void CChar::SetPriv(std::uint16_t newValue) {
     priv = newValue;
     UpdateRegion();
 }
@@ -1666,14 +1666,14 @@ void CChar::SetPriv(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets a character's specified baseskill (without modifiers)
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CChar::GetBaseSkill(UI08 skillToGet) const {
+SKILLVAL CChar::GetBaseSkill(std::uint8_t skillToGet) const {
     SKILLVAL rVal = 0;
     if (skillToGet < ALLSKILLS) {
         rVal = baseskill[skillToGet];
     }
     return rVal;
 }
-void CChar::SetBaseSkill(SKILLVAL newSkillValue, UI08 skillToSet) {
+void CChar::SetBaseSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet) {
     if (skillToSet < ALLSKILLS) {
         baseskill[skillToSet] = newSkillValue;
         UpdateRegion();
@@ -1686,11 +1686,11 @@ void CChar::SetBaseSkill(SKILLVAL newSkillValue, UI08 skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets a character's specified skill (with modifiers)
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CChar::GetSkill(UI08 skillToGet) const {
+SKILLVAL CChar::GetSkill(std::uint8_t skillToGet) const {
     SKILLVAL rVal = 0;
     if (skillToGet <= INTELLECT) {
         rVal = skill[skillToGet];
-        SI32 modifier = Races->DamageFromSkill(skillToGet, race);
+        std::int32_t modifier = Races->DamageFromSkill(skillToGet, race);
         if (modifier != 0) {
             SKILLVAL toAdd =
                 static_cast<SKILLVAL>(static_cast<R32>(skill[skillToGet]) *
@@ -1700,7 +1700,7 @@ SKILLVAL CChar::GetSkill(UI08 skillToGet) const {
     }
     return rVal;
 }
-void CChar::SetSkill(SKILLVAL newSkillValue, UI08 skillToSet) {
+void CChar::SetSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet) {
     if (skillToSet <= INTELLECT) {
         skill[skillToSet] = newSkillValue;
     }
@@ -1712,8 +1712,8 @@ void CChar::SetSkill(SKILLVAL newSkillValue, UI08 skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets ID of guild character belongs to
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetGuildNumber(void) const { return guildNumber; }
-void CChar::SetGuildNumber(SI16 newValue) {
+std::int16_t CChar::GetGuildNumber(void) const { return guildNumber; }
+void CChar::SetGuildNumber(std::int16_t newValue) {
     guildNumber = newValue;
     UpdateRegion();
 }
@@ -1724,8 +1724,8 @@ void CChar::SetGuildNumber(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets flag for character (criminal, innocent, murderer, etc)
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetFlag(void) const { return flag; }
-void CChar::SetFlag(UI08 newValue) { flag = newValue; }
+std::uint8_t CChar::GetFlag(void) const { return flag; }
+void CChar::SetFlag(std::uint8_t newValue) { flag = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetFontType()
@@ -1733,8 +1733,8 @@ void CChar::SetFlag(UI08 newValue) { flag = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the font type used by the character for speech
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetFontType(void) const { return fontType; }
-void CChar::SetFontType(SI08 newType) {
+std::int8_t CChar::GetFontType(void) const { return fontType; }
+void CChar::SetFontType(std::int8_t newType) {
     fontType = newType;
     UpdateRegion();
 }
@@ -1949,7 +1949,7 @@ void CChar::CopyData(CChar *target) {
     target->SetHiDamage(hiDamage);
     target->SetLoDamage(loDamage);
 
-    for (UI08 i = 0; i < ALLSKILLS; ++i) {
+    for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         target->SetBaseSkill(baseskill[i], i);
         target->SetSkill(skill[i], i);
     }
@@ -1965,7 +1965,7 @@ void CChar::CopyData(CChar *target) {
     target->SetAttacker(GetAttacker());
     target->SetVisible(GetVisible());
 
-    for (SI32 mTID = static_cast<SI32>(tCHAR_TIMEOUT); mTID < static_cast<SI32>(tCHAR_COUNT);
+    for (std::int32_t mTID = static_cast<std::int32_t>(tCHAR_TIMEOUT); mTID < static_cast<std::int32_t>(tCHAR_COUNT);
          ++mTID) {
         target->SetTimer(static_cast<cC_TID>(mTID), GetTimer(static_cast<cC_TID>(mTID)));
     }
@@ -1999,7 +1999,7 @@ void CChar::CopyData(CChar *target) {
     target->SetCarve(carve);
     target->SetNPCGuild(npcGuild);
     target->SetNPCGuildJoined(npcGuild);
-    for (UI08 counter2 = 0; counter2 < WEATHNUM; ++counter2) {
+    for (std::uint8_t counter2 = 0; counter2 < WEATHNUM; ++counter2) {
         target->SetWeathDamage(weathDamage[counter2], counter2);
     }
     if (IsValidNPC()) {
@@ -2055,10 +2055,10 @@ void CChar::CopyData(CChar *target) {
         target->SetCommandLevel(GetCommandLevel());
         target->SetPostType(GetPostType());
         target->SetTrackingTarget(GetTrackingTarget());
-        for (UI08 counter = 0; counter < mPlayer->trackingTargets.size(); ++counter) {
+        for (std::uint8_t counter = 0; counter < mPlayer->trackingTargets.size(); ++counter) {
             target->SetTrackingTargets(mPlayer->trackingTargets[counter], counter);
         }
-        for (UI08 j = STRENGTH; j <= INTELLECT; ++j) {
+        for (std::uint8_t j = STRENGTH; j <= INTELLECT; ++j) {
             target->SetAtrophy(mPlayer->atrophy[j], j);
             target->SetSkillLock(mPlayer->lockState[j], j);
         }
@@ -2146,9 +2146,9 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
         // mSock->CurrcharObj();
 
         // Calculate player's visibility range so we can use it to find nearby objects
-        UI16 visRange = mSock->Range() + Races->VisRange(GetRace());
-        UI16 mCharX = this->GetX();
-        UI16 mCharY = this->GetY();
+        std::uint16_t visRange = mSock->Range() + Races->VisRange(GetRace());
+        std::uint16_t mCharX = this->GetX();
+        std::uint16_t mCharY = this->GetY();
         auto minX = mCharX - visRange;
         auto minY = mCharY - visRange;
         auto maxX = mCharX + visRange;
@@ -2252,7 +2252,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
 
         CPDrawObject toSend((*this));
 
-        toSend.SetRepFlag(static_cast<UI08>(FlagColour(mCharObj)));
+        toSend.SetRepFlag(static_cast<std::uint8_t>(FlagColour(mCharObj)));
 
         for (LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter) {
             if (ValidateObject(lIter->second)) {
@@ -2293,12 +2293,12 @@ auto CChar::Teleport() -> void {
     RemoveFromSight();
     Update(nullptr, true);
     if (mSock != nullptr) {
-        UI16 visrange = mSock->Range() + Races->VisRange(GetRace());
+        std::uint16_t visrange = mSock->Range() + Races->VisRange(GetRace());
         mSock->StatWindow(this);
         mSock->WalkSequence(-1);
 
-        UI16 mCharX = this->GetX();
-        UI16 mCharY = this->GetY();
+        std::uint16_t mCharX = this->GetX();
+        std::uint16_t mCharY = this->GetY();
         auto minX = mCharX - visrange;
         auto minY = mCharY - visrange;
         auto maxX = mCharX + visrange;
@@ -2419,7 +2419,7 @@ CItem *CChar::GetItemAtLayer(ItemLayers Layer) {
 // o------------------------------------------------------------------------------------------------o
 bool CChar::WearItem(CItem *toWear) {
     // Run event prior to equipping item, allowing script to prevent equip
-    std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = toWear->GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *tScript = JSMapping->GetScript(i);
         if (tScript != nullptr) {
@@ -2458,7 +2458,7 @@ bool CChar::WearItem(CItem *toWear) {
                                 itemLayers[tLayer]->GetPoisoned()); // should be +, not -
                 }
 
-                std::vector<UI16> scriptTriggers = toWear->GetScriptTriggers();
+                std::vector<std::uint16_t> scriptTriggers = toWear->GetScriptTriggers();
                 for (auto i : scriptTriggers) {
                     cScript *tScript = JSMapping->GetScript(i);
                     if (tScript != nullptr) {
@@ -2486,7 +2486,7 @@ bool CChar::TakeOffItem(ItemLayers Layer) {
     bool rValue = false;
     if (ValidateObject(GetItemAtLayer(Layer))) {
         // Run event prior to equipping item, allowing script to prevent equip
-        std::vector<UI16> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = itemLayers[Layer]->GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *tScript = JSMapping->GetScript(i);
             if (tScript != nullptr) {
@@ -2625,7 +2625,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     // Write out the BaseSkills and the SkillLocks here
     // Format: BaseSkills=[0,34]-[1,255]-[END]
     outStream << "BaseSkills=";
-    for (UI08 bsc = 0; bsc < ALLSKILLS; ++bsc) {
+    for (std::uint8_t bsc = 0; bsc < ALLSKILLS; ++bsc) {
         outStream << "[" + std::to_string(bsc) + "," + std::to_string(GetBaseSkill(bsc)) + "]-";
     }
     outStream << "[END]" << newLine;
@@ -2756,14 +2756,14 @@ void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
     outStream << "TownPrivileges=" + std::to_string(townPriv) + newLine;
     outStream << "Atrophy=";
 
-    for (UI08 atc = 0; atc <= INTELLECT; ++atc) {
+    for (std::uint8_t atc = 0; atc <= INTELLECT; ++atc) {
         outStream << std::to_string(atrophy[atc]) + ",";
     }
     outStream << "[END]" << newLine;
 
     // Format: SkillLocks=[0,34]-[1,255]-[END]
     outStream << "SkillLocks=";
-    for (UI08 slc = 0; slc <= INTELLECT; ++slc) {
+    for (std::uint8_t slc = 0; slc <= INTELLECT; ++slc) {
         if (lockState[slc] <= 2) {
             outStream << "[" + std::to_string(slc) + "," + std::to_string(lockState[slc]) + "]-";
         }
@@ -2784,8 +2784,8 @@ void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
 bool CChar::Save(std::ostream &outStream) {
     bool rValue = false;
     if (!IsFree()) {
-        SI16 mX = GetX();
-        SI16 mY = GetY();
+        std::int16_t mX = GetX();
+        std::int16_t mY = GetY();
         auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
         if (mX >= 0 && (mX < mapWidth || mX >= 7000)) {
             if (mY >= 0 && (mY < mapHeight || mY >= 7000)) {
@@ -3199,7 +3199,7 @@ auto CChar::RemoveOwnedItem(CItem *toRemove) -> void {
 //|	Purpose		-	Gets/Sets maximum hitpoints (or fixed maximum hitpoints) of the
 // object
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetMaxHP(void) {
+std::uint16_t CChar::GetMaxHP(void) {
     if ((maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed())
     // if str/race changed since last calculation, recalculate maxHp
     {
@@ -3210,8 +3210,8 @@ UI16 CChar::GetMaxHP(void) {
             pRace = Races->Race(0);
         }
 
-        maxHP = static_cast<UI16>(GetStrength() +
-                                  static_cast<UI16>((static_cast<R32>(GetStrength())) *
+        maxHP = static_cast<std::uint16_t>(GetStrength() +
+                                  static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
                                                     (static_cast<R32>(pRace->HPModifier())) / 100));
         // set max. hitpoints to strength + hpmodifier% of strength
 
@@ -3220,12 +3220,12 @@ UI16 CChar::GetMaxHP(void) {
     }
     return maxHP;
 }
-void CChar::SetMaxHP(UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace) {
+void CChar::SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, RACEID newoldrace) {
     maxHP = newmaxhp;
     maxHP_oldstr = newoldstr;
     oldRace = newoldrace;
 }
-void CChar::SetFixedMaxHP(SI16 newmaxhp) {
+void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
     if (newmaxhp > 0) {
         SetMaxHPFixed(true);
         maxHP = newmaxhp;
@@ -3238,8 +3238,8 @@ void CChar::SetFixedMaxHP(SI16 newmaxhp) {
             pRace = Races->Race(0);
         }
 
-        maxHP = static_cast<UI16>(GetStrength() +
-                                  static_cast<UI16>((static_cast<R32>(GetStrength())) *
+        maxHP = static_cast<std::uint16_t>(GetStrength() +
+                                  static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
                                                     (static_cast<R32>(pRace->HPModifier())) / 100));
 
         maxHP_oldstr = GetStrength();
@@ -3255,7 +3255,7 @@ void CChar::SetFixedMaxHP(SI16 newmaxhp) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum mana (or fixed maximum mana) of the object
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetMaxMana(void) {
+std::int16_t CChar::GetMaxMana(void) {
     if ((maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !GetMaxManaFixed())
     // if int/race changed since last calculation, recalculate maxHp
     {
@@ -3266,8 +3266,8 @@ SI16 CChar::GetMaxMana(void) {
             pRace = Races->Race(0);
         }
 
-        maxMana = static_cast<SI16>(
-            GetIntelligence() + static_cast<SI16>((static_cast<R32>(GetIntelligence())) *
+        maxMana = static_cast<std::int16_t>(
+            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
                                                   (static_cast<R32>(pRace->ManaModifier())) / 100));
         // set max. mana to int + manamodifier% of int
 
@@ -3276,12 +3276,12 @@ SI16 CChar::GetMaxMana(void) {
     }
     return maxMana;
 }
-void CChar::SetMaxMana(SI16 newmaxmana, UI16 newoldint, RACEID newoldrace) {
+void CChar::SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, RACEID newoldrace) {
     maxMana = newmaxmana;
     maxMana_oldint = newoldint;
     oldRace = newoldrace;
 }
-void CChar::SetFixedMaxMana(SI16 newmaxmana) {
+void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
     if (newmaxmana > 0) {
         SetMaxManaFixed(true);
         maxMana = newmaxmana;
@@ -3294,8 +3294,8 @@ void CChar::SetFixedMaxMana(SI16 newmaxmana) {
             pRace = Races->Race(0);
         }
 
-        maxMana = static_cast<SI16>(
-            GetIntelligence() + static_cast<SI16>((static_cast<R32>(GetIntelligence())) *
+        maxMana = static_cast<std::int16_t>(
+            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
                                                   (static_cast<R32>(pRace->ManaModifier())) / 100));
 
         maxMana_oldint = GetIntelligence();
@@ -3311,7 +3311,7 @@ void CChar::SetFixedMaxMana(SI16 newmaxmana) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum stamina (or fixed maximum stamina) of the object
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetMaxStam(void) {
+std::int16_t CChar::GetMaxStam(void) {
     // If dex/race changed since last calculation, recalculate maxHp
     if ((maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !GetMaxStamFixed()) {
         CRace *pRace = Races->Race(GetRace());
@@ -3322,8 +3322,8 @@ SI16 CChar::GetMaxStam(void) {
         }
 
         // Set max. stamina to dex + stammodifier% of dex
-        maxStam = static_cast<SI16>(
-            GetDexterity() + static_cast<SI16>((static_cast<R32>(GetDexterity())) *
+        maxStam = static_cast<std::int16_t>(
+            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
                                                (static_cast<R32>(pRace->StamModifier())) / 100));
 
         maxStam_olddex = GetDexterity();
@@ -3331,12 +3331,12 @@ SI16 CChar::GetMaxStam(void) {
     }
     return maxStam;
 }
-void CChar::SetMaxStam(SI16 newmaxstam, UI16 newolddex, RACEID newoldrace) {
+void CChar::SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, RACEID newoldrace) {
     maxStam = newmaxstam;
     maxStam_olddex = newolddex;
     oldRace = newoldrace;
 }
-void CChar::SetFixedMaxStam(SI16 newmaxstam) {
+void CChar::SetFixedMaxStam(std::int16_t newmaxstam) {
     if (newmaxstam > 0) {
         SetMaxStamFixed(true);
         maxStam = newmaxstam;
@@ -3349,8 +3349,8 @@ void CChar::SetFixedMaxStam(SI16 newmaxstam) {
             pRace = Races->Race(0);
         }
 
-        maxStam = static_cast<SI16>(
-            GetDexterity() + static_cast<SI16>((static_cast<R32>(GetDexterity())) *
+        maxStam = static_cast<std::int16_t>(
+            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
                                                (static_cast<R32>(pRace->StamModifier())) / 100));
 
         maxStam_olddex = GetDexterity();
@@ -3364,7 +3364,7 @@ void CChar::SetFixedMaxStam(SI16 newmaxstam) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual strength (minus mods) of the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::ActualStrength(void) const { return CBaseObject::GetStrength(); }
+std::int16_t CChar::ActualStrength(void) const { return CBaseObject::GetStrength(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetStrength()
@@ -3373,14 +3373,14 @@ SI16 CChar::ActualStrength(void) const { return CBaseObject::GetStrength(); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the strength (incl mods) of the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetStrength(void) const {
-    auto tempStr = static_cast<SI16>(CBaseObject::GetStrength() + GetStrength2());
+std::int16_t CChar::GetStrength(void) const {
+    auto tempStr = static_cast<std::int16_t>(CBaseObject::GetStrength() + GetStrength2());
     if (tempStr < 1) {
         tempStr = 1;
     }
     return tempStr;
 }
-void CChar::SetStrength(SI16 newValue) {
+void CChar::SetStrength(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
@@ -3396,7 +3396,7 @@ void CChar::SetStrength(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual intelligence (minus mods) of the char
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::ActualIntelligence(void) const { return CBaseObject::GetIntelligence(); }
+std::int16_t CChar::ActualIntelligence(void) const { return CBaseObject::GetIntelligence(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetIntelligence()
@@ -3405,14 +3405,14 @@ SI16 CChar::ActualIntelligence(void) const { return CBaseObject::GetIntelligence
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Gets/Sets the intelligence (incl mods) of the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetIntelligence(void) const {
-    auto tempInt = static_cast<SI16>(CBaseObject::GetIntelligence() + GetIntelligence2());
+std::int16_t CChar::GetIntelligence(void) const {
+    auto tempInt = static_cast<std::int16_t>(CBaseObject::GetIntelligence() + GetIntelligence2());
     if (tempInt < 1) {
         tempInt = 1;
     }
     return tempInt;
 }
-void CChar::SetIntelligence(SI16 newValue) {
+void CChar::SetIntelligence(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
@@ -3428,7 +3428,7 @@ void CChar::SetIntelligence(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual (minus mods) dexterity of the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::ActualDexterity(void) const { return CBaseObject::GetDexterity(); }
+std::int16_t CChar::ActualDexterity(void) const { return CBaseObject::GetDexterity(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetDexterity()
@@ -3438,14 +3438,14 @@ SI16 CChar::ActualDexterity(void) const { return CBaseObject::GetDexterity(); }
 //| Purpose		-	Gets/Sets the effective dexterity (including modifications) of the
 // player
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetDexterity(void) const {
-    auto tempDex = static_cast<SI16>(CBaseObject::GetDexterity() + GetDexterity2());
+std::int16_t CChar::GetDexterity(void) const {
+    auto tempDex = static_cast<std::int16_t>(CBaseObject::GetDexterity() + GetDexterity2());
     if (tempDex < 1) {
         tempDex = 1;
     }
     return tempDex;
 }
-void CChar::SetDexterity(SI16 newValue) {
+void CChar::SetDexterity(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
@@ -3461,7 +3461,7 @@ void CChar::SetDexterity(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increments strength2 (modifications) by toAdd
 // o------------------------------------------------------------------------------------------------o
-void CChar::IncStrength2(SI16 toAdd) { SetStrength2(static_cast<SI16>(GetStrength2() + toAdd)); }
+void CChar::IncStrength2(std::int16_t toAdd) { SetStrength2(static_cast<std::int16_t>(GetStrength2() + toAdd)); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IncDexterity2()
@@ -3469,7 +3469,7 @@ void CChar::IncStrength2(SI16 toAdd) { SetStrength2(static_cast<SI16>(GetStrengt
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increments dexterity2 (modifications) by toAdd
 // o------------------------------------------------------------------------------------------------o
-void CChar::IncDexterity2(SI16 toAdd) { SetDexterity2(static_cast<SI16>(GetDexterity2() + toAdd)); }
+void CChar::IncDexterity2(std::int16_t toAdd) { SetDexterity2(static_cast<std::int16_t>(GetDexterity2() + toAdd)); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IncIntelligence2()
@@ -3477,8 +3477,8 @@ void CChar::IncDexterity2(SI16 toAdd) { SetDexterity2(static_cast<SI16>(GetDexte
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increments intelligence2 (modifications) by toAdd
 // o------------------------------------------------------------------------------------------------o
-void CChar::IncIntelligence2(SI16 toAdd) {
-    SetIntelligence2(static_cast<SI16>(GetIntelligence2() + toAdd));
+void CChar::IncIntelligence2(std::int16_t toAdd) {
+    SetIntelligence2(static_cast<std::int16_t>(GetIntelligence2() + toAdd));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3551,7 +3551,7 @@ void CChar::SetFlagNeutral(void) { flag = 0x08; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Decrements the character's hunger
 // o------------------------------------------------------------------------------------------------o
-bool CChar::DecHunger(const SI08 amt) { return SetHunger(static_cast<SI08>(GetHunger() - amt)); }
+bool CChar::DecHunger(const std::int8_t amt) { return SetHunger(static_cast<std::int8_t>(GetHunger() - amt)); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -   CChar::DecThirst()
@@ -3559,7 +3559,7 @@ bool CChar::DecHunger(const SI08 amt) { return SetHunger(static_cast<SI08>(GetHu
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Decrements the character's thirst
 // o------------------------------------------------------------------------------------------------o
-bool CChar::DecThirst(const SI08 amt) { return SetThirst(static_cast<SI08>(GetThirst() - amt)); }
+bool CChar::DecThirst(const std::int8_t amt) { return SetThirst(static_cast<std::int8_t>(GetThirst() - amt)); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::StopSpell()
@@ -3586,7 +3586,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'A':
             if (UTag == "ACCOUNT") {
                 SetAccountNum(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ATROPHY") {
@@ -3599,28 +3599,28 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     if (value.empty()) {
                         break;
                     }
-                    SetAtrophy(static_cast<UI08>(std::stoul(value, nullptr, 0)), count);
+                    SetAtrophy(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)), count);
                     count = count + 1;
                 }
                 rValue = true;
             }
             else if (UTag == "ADVANCEOBJECT") {
                 SetAdvObj(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ADVRACEOBJECT") {
                 SetRaceGate(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ALLMOVE") {
-                SetAllMove(static_cast<UI16>(
+                SetAllMove(static_cast<std::uint16_t>(
                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "AWAKE") {
-                SetAwake(static_cast<UI16>(
+                SetAwake(static_cast<std::uint16_t>(
                              std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -3628,12 +3628,12 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'B':
             if (UTag == "BEARDSTYLE") {
                 SetBeardStyle(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "BEARDCOLOUR") {
                 SetBeardColour(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "BASESKILLS") {
@@ -3648,80 +3648,80 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     }
                     auto skillNum =
                         static_cast<SkillLock>(std::stoul(secs[0].substr(1), nullptr, 0));
-                    auto skillValue = static_cast<UI16>(
+                    auto skillValue = static_cast<std::uint16_t>(
                         std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
                     SetBaseSkill(skillValue, skillNum);
                 }
                 rValue = true;
             }
             else if (UTag == "BEARD") {
-                SetBeardStyle(static_cast<UI16>(
+                SetBeardStyle(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetBeardColour(static_cast<UI16>(
+                SetBeardColour(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "BRKPEACECHANCEGAIN") {
                 SetBrkPeaceChanceGain(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "BRKPEACECHANCE") {
                 SetBrkPeaceChance(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'C':
             if (UTag == "COMMANDLEVEL") {
                 SetCommandLevel(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "CANRUN") {
-                SetRun(static_cast<UI08>(
+                SetRun(static_cast<std::uint8_t>(
                            std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "CANATTACK") {
-                SetCanAttack(static_cast<UI08>(
+                SetCanAttack(static_cast<std::uint8_t>(
                                  std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "CANTRAIN") {
-                SetCanTrain(static_cast<UI08>(
+                SetCanTrain(static_cast<std::uint8_t>(
                                 std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "CANBEHIRED") {
-                SetCanHire(static_cast<UI08>(
+                SetCanHire(static_cast<std::uint8_t>(
                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "CONTROLSLOTS") {
                 SetControlSlots(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "CONTROLSLOTSUSED") {
                 SetControlSlotsUsed(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "CREATEDON") {
                 SetCreatedOn(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'D':
             if (UTag == "DEATHS") {
                 SetDeaths(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "DEAD") {
-                SetDead((static_cast<UI16>(
+                SetDead((static_cast<std::uint16_t>(
                              std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                 rValue = true;
             }
@@ -3729,49 +3729,49 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'E':
             if (UTag == "EMOTION") {
                 SetEmoteColour(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'F':
             if (UTag == "FIXEDLIGHT") {
                 SetFixedLight(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "FX1") {
-                SetFx(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
                       0);
                 rValue = true;
             }
             else if (UTag == "FX2") {
-                SetFx(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
                       1);
                 rValue = true;
             }
             else if (UTag == "FY1") {
-                SetFy(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
                       0);
                 rValue = true;
             }
             else if (UTag == "FY2") {
-                SetFy(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
                       1);
                 rValue = true;
             }
             else if (UTag == "FZ1") {
                 SetFz(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "FLEEAT") {
                 SetFleeAt(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "FONTTYPE") {
                 SetFontType(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "FOODLIST") {
@@ -3791,7 +3791,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'G':
             if (UTag == "GUILDFEALTY") {
                 SetGuildFealty(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GUILDTITLE") {
@@ -3800,11 +3800,11 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "GUILDNUMBER") {
                 SetGuildNumber(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GUILDTOGGLE") {
-                SetGuildToggle(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")),
+                SetGuildToggle(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
                                                            nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -3812,45 +3812,45 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'H':
             if (UTag == "HUNGER") {
                 SetHunger(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "HOLDG") {
                 SetHoldG(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "HAIRSTYLE") {
                 SetHairStyle(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "HAIRCOLOUR") {
                 SetHairColour(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "HAIR") {
-                SetHairStyle(static_cast<UI16>(
+                SetHairStyle(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetHairColour(static_cast<UI16>(
+                SetHairColour(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'I':
             if (UTag == "ISNPC") {
-                SetNpc((static_cast<SI16>(
+                SetNpc((static_cast<std::int16_t>(
                             std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                 rValue = true;
             }
             else if (UTag == "ISSHOP") {
-                SetShop((static_cast<SI16>(
+                SetShop((static_cast<std::int16_t>(
                              std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                 rValue = true;
             }
             else if (UTag == "ISWARRING") {
-                SetWar((static_cast<SI16>(
+                SetWar((static_cast<std::int16_t>(
                             std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                 rValue = true;
             }
@@ -3862,18 +3862,18 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "LASTONSECS") {
                 SetLastOnSecs(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "LOYALTY") {
                 SetLoyalty(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'M':
             if (UTag == "MAYLEVITATE") {
-                SetLevitate((static_cast<SI16>(
+                SetLevitate((static_cast<std::int16_t>(
                                  std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                 rValue = true;
             }
@@ -3884,26 +3884,26 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "MAXHP") {
                 SetFixedMaxHP(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MAXMANA") {
                 SetFixedMaxMana(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MAXLOYALTY") {
                 SetMaxLoyalty(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MAXSTAM") {
                 SetFixedMaxStam(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MOUNTED") {
-                SetMounted(static_cast<UI16>(
+                SetMounted(static_cast<std::uint16_t>(
                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -3911,18 +3911,18 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'N':
             if (UTag == "NPCAITYPE") {
                 SetNPCAiType(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "NPCWANDER") {
                 if (csecs.size() >= 2) {
-                    SetNpcWander(static_cast<SI08>(
+                    SetNpcWander(static_cast<std::int8_t>(
                         std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetOldNpcWander(static_cast<SI08>(
+                    SetOldNpcWander(static_cast<std::int8_t>(
                         std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    SetNpcWander(static_cast<SI08>(
+                    SetNpcWander(static_cast<std::int8_t>(
                         std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -3935,12 +3935,12 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "NPCGUILD") {
                 SetNPCGuild(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "NPCGUILDJOINED") {
                 SetNPCGuildJoined(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
@@ -3951,31 +3951,31 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "ORIGINALBODYID") {
                 SetOrgId(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ORIGINALSKINID") {
                 SetOrgSkin(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ORIGINALID") {
-                SetOrgId(static_cast<UI16>(
+                SetOrgId(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetOrgSkin(static_cast<UI16>(
+                SetOrgSkin(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ORNERINESS") {
                 SetOrneriness(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'P':
             if (UTag == "PRIVILEGES") {
                 SetPriv(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "PACKITEM") {
@@ -3985,7 +3985,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "PETOWNER") {
                 CChar *cList = CalcCharObjFromSer(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 if (ValidateObject(cList)) {
                     AddPetOwnerToList(cList);
                 }
@@ -3993,22 +3993,22 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "POISON") {
                 SetPoisoned(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "POISONSTRENGTH") {
                 SetPoisonStrength(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "PEACEING") {
                 SetPeaceing(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "PROVOING") {
                 SetProvoing(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "PEACETIMER") {
@@ -4018,30 +4018,30 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "PLAYTIME") {
                 SetPlayTime(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'Q':
             if (UTag == "QUESTTYPE") {
                 SetQuestType(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "QUESTDESTINATIONREGION") {
                 SetQuestDestRegion(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "QUESTORIGINALREGION") {
                 SetQuestOrigRegion(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "QUESTREGIONS") {
-                SetQuestOrigRegion(static_cast<UI08>(
+                SetQuestOrigRegion(static_cast<std::uint8_t>(
                     std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetQuestDestRegion(static_cast<UI08>(
+                SetQuestDestRegion(static_cast<std::uint8_t>(
                     std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
@@ -4049,12 +4049,12 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'R':
             if (UTag == "ROBESERIAL") {
                 SetRobe(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "RESERVED") {
                 SetCell(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "RUNNING") {
@@ -4062,12 +4062,12 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "REGION") {
                 SetRegion(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "REATTACKAT") {
                 SetReattackAt(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "RUNNINGSPEED") {
@@ -4083,58 +4083,58 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'S':
             if (UTag == "SPLIT") {
                 if (csecs.size() >= 2) {
-                    SetSplit(static_cast<UI08>(
+                    SetSplit(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSplitChance(static_cast<UI08>(
+                    SetSplitChance(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    SetSplit(static_cast<UI08>(
+                    SetSplit(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
             }
             else if (UTag == "SPLITCHANCE") {
                 SetSplitChance(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SUMMONTIMER") {
-                SetTimer(tNPC_SUMMONTIME, static_cast<UI32>(std::stoul(
+                SetTimer(tNPC_SUMMONTIME, static_cast<std::uint32_t>(std::stoul(
                                               util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SAY") {
                 SetSayColour(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "STEALTH") {
                 SetStealth(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SPATTACK") {
                 if (csecs.size() >= 2) {
-                    SetSpAttack(static_cast<UI16>(
+                    SetSpAttack(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSpDelay(static_cast<UI08>(
+                    SetSpDelay(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    SetSpAttack(static_cast<UI16>(
+                    SetSpAttack(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
             }
             else if (UTag == "SPECIALATTACKDELAY") {
                 SetSpDelay(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SQUELCHED") {
                 SetSquelched(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SKILLLOCKS") {
@@ -4149,7 +4149,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     if (secs.size() != 2) {
                         break;
                     }
-                    auto skillnum = static_cast<UI08>(std::stoul(secs[0].substr(1), nullptr, 0));
+                    auto skillnum = static_cast<std::uint8_t>(std::stoul(secs[0].substr(1), nullptr, 0));
                     auto skillvalue = static_cast<SkillLock>(
                         std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
                     SetSkillLock(skillvalue, skillnum);
@@ -4157,14 +4157,14 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                 rValue = true;
             }
             else if (UTag == "SPEECH") {
-                SetSayColour(static_cast<UI16>(
+                SetSayColour(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetEmoteColour(static_cast<UI16>(
+                SetEmoteColour(static_cast<std::uint16_t>(
                     std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "STABLED") {
-                SetStabled(static_cast<UI16>(
+                SetStabled(static_cast<std::uint16_t>(
                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -4172,80 +4172,80 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'T':
             if (UTag == "TAMING") {
                 SetTaming(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TAMEDHUNGERRATE") {
                 SetTamedHungerRate(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TAMEDHUNGERWILDCHANCE") {
                 SetTamedHungerWildChance(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TAMEDTHIRSTRATE") {
                 SetTamedThirstRate(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TAMEDTHIRSTWILDCHANCE") {
                 SetTamedThirstWildChance(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TOWN") {
                 SetTown(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TOWNVOTE") {
                 SetTownVote(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TOWNPRIVILEGES") {
                 SetTownpriv(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "TOWNTITLE") {
-                SetTownTitle(static_cast<SI16>(
+                SetTownTitle(static_cast<std::int16_t>(
                                  std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "THIRST") {
                 SetThirst(
-                    static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'W':
             if (UTag == "WANDERAREA") {
-                SetFx(static_cast<SI16>(
+                SetFx(static_cast<std::int16_t>(
                           std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
                       0);
-                SetFy(static_cast<SI16>(
+                SetFy(static_cast<std::int16_t>(
                           std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
                       0);
-                SetFx(static_cast<SI16>(
+                SetFx(static_cast<std::int16_t>(
                           std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0)),
                       1);
-                SetFy(static_cast<SI16>(
+                SetFy(static_cast<std::int16_t>(
                           std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0)),
                       1);
-                SetFz(static_cast<SI08>(
+                SetFz(static_cast<std::int8_t>(
                     std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "WILLHUNGER") {
-                SetHungerStatus(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")),
+                SetHungerStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
                                                             nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "WILLTHIRST") {
-                SetThirstStatus(static_cast<SI16>(std::stoi(util::trim(util::strip(data, "//")),
+                SetThirstStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
                                                             nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -4262,7 +4262,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
         case 'X':
             if (UTag == "XNPCWANDER") {
                 SetOldNpcWander(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
@@ -4292,7 +4292,7 @@ bool CChar::LoadRemnants(void) {
         SetId(GetOrgId());
     }
 
-    const UI16 acct = GetAccount().accountNumber;
+    const std::uint16_t acct = GetAccount().accountNumber;
 
     // Max body/anim ID supported in default client is 2048 (or 0x800),
     // though custom clients like CUO can be modified to bypass this limit
@@ -4311,8 +4311,8 @@ bool CChar::LoadRemnants(void) {
     if (rValue) {
         MapRegion->AddChar(this);
 
-        const SI16 mx = GetX();
-        const SI16 my = GetY();
+        const std::int16_t mx = GetX();
+        const std::int16_t my = GetY();
 
         auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
         const bool overRight = (mx > mapWidth);
@@ -4350,11 +4350,11 @@ bool CChar::LoadRemnants(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the skill is being used
 // o------------------------------------------------------------------------------------------------o
-bool CChar::SkillUsed(UI08 skillNum) const {
+bool CChar::SkillUsed(std::uint8_t skillNum) const {
     bool rValue = false;
     if (skillNum < ALLSKILLS) {
-        UI08 part = static_cast<UI08>(skillNum / 32);
-        UI08 offset = static_cast<UI08>(skillNum % 32);
+        std::uint8_t part = static_cast<std::uint8_t>(skillNum / 32);
+        std::uint8_t offset = static_cast<std::uint8_t>(skillNum % 32);
         rValue = skillUsed[part].test(offset);
     }
     return rValue;
@@ -4366,10 +4366,10 @@ bool CChar::SkillUsed(UI08 skillNum) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets whether the skill skillNum is being used or not
 // o------------------------------------------------------------------------------------------------o
-void CChar::SkillUsed(bool value, UI08 skillNum) {
+void CChar::SkillUsed(bool value, std::uint8_t skillNum) {
     if (skillNum < ALLSKILLS) {
-        UI08 part = static_cast<UI08>(skillNum / 32);
-        UI08 offset = static_cast<UI08>(skillNum % 32);
+        std::uint8_t part = static_cast<std::uint8_t>(skillNum / 32);
+        std::uint8_t offset = static_cast<std::uint8_t>(skillNum % 32);
         skillUsed[part].set(offset, value);
     }
 }
@@ -4389,11 +4389,11 @@ void CChar::PostLoadProcessing(void) {
         SetPackItem(nullptr);
     }
 
-    SI32 maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+    std::int32_t maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
     if (GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight) {
         SetWeight(Weight->CalcCharWeight(this));
     }
-    for (UI08 i = 0; i < ALLSKILLS; ++i) {
+    for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         Skills->UpdateSkillLevel(this, i);
     }
 
@@ -4441,7 +4441,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
             }
         }
         if (canSpeak) {
-            UI16 txtColor = 0x5A;
+            std::uint16_t txtColor = 0x5A;
             if (msgType == EMOTE || msgType == ASCIIEMOTE) {
                 txtColor = GetEmoteColour();
             }
@@ -4496,7 +4496,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
                 bool sendSock = (s != nullptr);
 
                 if (sendAll) {
-                    UI16 searchDistance = DIST_SAMESCREEN;
+                    std::uint16_t searchDistance = DIST_SAMESCREEN;
                     if (msgType == WHISPER || msgType == ASCIIWHISPER) {
                         searchDistance = DIST_SAMETILE;
                     }
@@ -4539,7 +4539,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle server-triggered speech for characters
 // o------------------------------------------------------------------------------------------------o
-void CChar::TextMessage(CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ...) {
+void CChar::TextMessage(CSocket *s, std::int32_t dictEntry, SpeechType msgType, int spamTimer, ...) {
     UnicodeTypes dictLang = ZERO;
     if (s != nullptr) {
         dictLang = s->Language();
@@ -4586,13 +4586,13 @@ void CChar::SendWornItems(CSocket *mSock) {
 //|	Purpose		-	Update character'z Z coordinate based on movement, and handle
 // falling
 // o------------------------------------------------------------------------------------------------o
-void CChar::WalkZ(SI08 newZ) {
+void CChar::WalkZ(std::int8_t newZ) {
     oldLocZ = z;
     z = newZ;
-    UI08 fallDistance = oldLocZ - z;
+    std::uint8_t fallDistance = oldLocZ - z;
 
     if (fallDistance > MAX_Z_FALL) {
-        std::vector<UI16> scriptTriggers = GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -4607,7 +4607,7 @@ void CChar::WalkZ(SI08 newZ) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update character's walking direction
 // o------------------------------------------------------------------------------------------------o
-void CChar::WalkDir(SI08 newDir) { dir = newDir; }
+void CChar::WalkDir(std::int8_t newDir) { dir = newDir; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::Cleanup()
@@ -4700,7 +4700,7 @@ void CChar::Cleanup(void) {
         // this will fix several crashes
         if (IsNpc() && IsSpawned()) {
             if (GetSpawn() < BASEITEMSERIAL) {
-                UI16 spawnRegNum = static_cast<UI16>(GetSpawn());
+                std::uint16_t spawnRegNum = static_cast<std::uint16_t>(GetSpawn());
                 if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
                     cwmWorldState->spawnRegions.end()) {
                     CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -4714,7 +4714,7 @@ void CChar::Cleanup(void) {
         if (!IsNpc()) {
             AccountEntry &mAcct = GetAccount();
             if (mAcct.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-                for (UI08 actr = 0; actr < 7; ++actr) {
+                for (std::uint8_t actr = 0; actr < 7; ++actr) {
                     if (mAcct[actr].pointer != nullptr &&
                         mAcct[actr].pointer->GetSerial() == GetSerial()) {
                         Account::shared()[mAcct.accountNumber].delCharacter(actr);
@@ -4785,9 +4785,9 @@ void CChar::Cleanup(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets hitpoints of the character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetHP(SI16 newValue) {
+void CChar::SetHP(std::int16_t newValue) {
     CBaseObject::SetHP(
-        std::min(std::max(static_cast<SI16>(0), newValue), static_cast<SI16>(GetMaxHP())));
+        std::min(std::max(static_cast<std::int16_t>(0), newValue), static_cast<std::int16_t>(GetMaxHP())));
     Dirty(UT_HITPOINTS);
     UpdateRegion();
 }
@@ -4797,8 +4797,8 @@ void CChar::SetHP(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets mana of the character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetMana(SI16 newValue) {
-    CBaseObject::SetMana(std::min(std::max(static_cast<SI16>(0), newValue), GetMaxMana()));
+void CChar::SetMana(std::int16_t newValue) {
+    CBaseObject::SetMana(std::min(std::max(static_cast<std::int16_t>(0), newValue), GetMaxMana()));
     Dirty(UT_MANA);
     UpdateRegion();
 }
@@ -4808,8 +4808,8 @@ void CChar::SetMana(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets stamina of the character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetStamina(SI16 newValue) {
-    CBaseObject::SetStamina(std::min(std::max(static_cast<SI16>(0), newValue), GetMaxStam()));
+void CChar::SetStamina(std::int16_t newValue) {
+    CBaseObject::SetStamina(std::min(std::max(static_cast<std::int16_t>(0), newValue), GetMaxStam()));
     Dirty(UT_STAMINA);
     UpdateRegion();
 }
@@ -4819,7 +4819,7 @@ void CChar::SetStamina(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets poisoned state of character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetPoisoned(UI08 newValue) {
+void CChar::SetPoisoned(std::uint8_t newValue) {
     CBaseObject::SetPoisoned(newValue);
     Dirty(UT_UPDATE);
     UpdateRegion();
@@ -4830,7 +4830,7 @@ void CChar::SetPoisoned(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus strength stat for character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetStrength2(SI16 nVal) {
+void CChar::SetStrength2(std::int16_t nVal) {
     CBaseObject::SetStrength2(nVal);
     Dirty(UT_HITPOINTS);
     UpdateRegion();
@@ -4841,7 +4841,7 @@ void CChar::SetStrength2(SI16 nVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus dexterity stat for character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetDexterity2(SI16 nVal) {
+void CChar::SetDexterity2(std::int16_t nVal) {
     CBaseObject::SetDexterity2(nVal);
     Dirty(UT_STAMINA);
     UpdateRegion();
@@ -4852,7 +4852,7 @@ void CChar::SetDexterity2(SI16 nVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets bonus intelligence stat for character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetIntelligence2(SI16 nVal) {
+void CChar::SetIntelligence2(std::int16_t nVal) {
     CBaseObject::SetIntelligence2(nVal);
     Dirty(UT_MANA);
     UpdateRegion();
@@ -4863,14 +4863,14 @@ void CChar::SetIntelligence2(SI16 nVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increase character's stamina by specified value
 // o------------------------------------------------------------------------------------------------o
-void CChar::IncStamina(SI16 toInc) { SetStamina(GetStamina() + toInc); }
+void CChar::IncStamina(std::int16_t toInc) { SetStamina(GetStamina() + toInc); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IncMana()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Increase character's mana by specified value
 // o------------------------------------------------------------------------------------------------o
-void CChar::IncMana(SI16 toInc) { SetMana(GetMana() + toInc); }
+void CChar::IncMana(std::int16_t toInc) { SetMana(GetMana() + toInc); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::ToggleCombat()
@@ -4934,7 +4934,7 @@ void CChar::SetAccount(AccountEntry &actbAccount) {
     }
 }
 AccountEntry &CChar::GetAccount(void) {
-    UI16 rVal = AccountEntry::INVALID_ACCOUNT;
+    std::uint16_t rVal = AccountEntry::INVALID_ACCOUNT;
     if (IsValidPlayer()) {
         rVal = mPlayer->accountNum;
     }
@@ -4949,14 +4949,14 @@ AccountEntry &CChar::GetAccount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets and Returns the account number associated with this player
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetAccountNum(void) const {
-    UI16 rVal = AccountEntry::INVALID_ACCOUNT;
+std::uint16_t CChar::GetAccountNum(void) const {
+    std::uint16_t rVal = AccountEntry::INVALID_ACCOUNT;
     if (IsValidPlayer()) {
         rVal = mPlayer->accountNum;
     }
     return rVal;
 }
-void CChar::SetAccountNum(UI16 newVal) {
+void CChar::SetAccountNum(std::uint16_t newVal) {
     if (!IsValidPlayer()) {
         if (newVal != DEFPLAYER_ACCOUNTNUM) {
             CreatePlayer();
@@ -4999,8 +4999,8 @@ void CChar::SetRobe(SERIAL newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::LastMoveTime(void) const { return lastMoveTime; }
-void CChar::LastMoveTime(UI32 newValue) { lastMoveTime = newValue; }
+std::uint32_t CChar::LastMoveTime(void) const { return lastMoveTime; }
+void CChar::LastMoveTime(std::uint32_t newValue) { lastMoveTime = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetLastOn()
@@ -5033,14 +5033,14 @@ void CChar::SetLastOn(std::string newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player was last online
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetLastOnSecs(void) const {
-    UI32 rVal = 0;
+std::uint32_t CChar::GetLastOnSecs(void) const {
+    std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->lastOnSecs;
     }
     return rVal;
 }
-void CChar::SetLastOnSecs(UI32 newValue) {
+void CChar::SetLastOnSecs(std::uint32_t newValue) {
     if (IsValidPlayer()) {
         mPlayer->lastOnSecs = newValue;
         UpdateRegion();
@@ -5054,14 +5054,14 @@ void CChar::SetLastOnSecs(UI32 newValue) {
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was
 // created
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetCreatedOn(void) const {
-    UI32 rVal = 0;
+std::uint32_t CChar::GetCreatedOn(void) const {
+    std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->createdOn;
     }
     return rVal;
 }
-void CChar::SetCreatedOn(UI32 newValue) {
+void CChar::SetCreatedOn(std::uint32_t newValue) {
     if (IsValidPlayer()) {
         mPlayer->createdOn = newValue;
         UpdateRegion();
@@ -5075,14 +5075,14 @@ void CChar::SetCreatedOn(UI32 newValue) {
 //| Purpose		-	Gets/Sets/Updates play time (in minutes) of character since it was
 // created
 // o------------------------------------------------------------------------------------------------o
-auto CChar::GetPlayTime() const -> UI32 {
-    UI32 rVal = 0;
+auto CChar::GetPlayTime() const -> std::uint32_t {
+    std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->playTime;
     }
     return rVal;
 }
-auto CChar::SetPlayTime(UI32 newValue) -> void {
+auto CChar::SetPlayTime(std::uint32_t newValue) -> void {
     if (IsValidPlayer()) {
         mPlayer->playTime = newValue;
         UpdateRegion();
@@ -5095,14 +5095,14 @@ auto CChar::SetPlayTime(UI32 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets skill atrophy for character
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetAtrophy(UI08 skillToGet) const {
-    UI08 rVal = 0;
+std::uint8_t CChar::GetAtrophy(std::uint8_t skillToGet) const {
+    std::uint8_t rVal = 0;
     if (IsValidPlayer() && skillToGet <= INTELLECT) {
         rVal = mPlayer->atrophy[skillToGet];
     }
     return rVal;
 }
-void CChar::SetAtrophy(UI08 newValue, UI08 skillToSet) {
+void CChar::SetAtrophy(std::uint8_t newValue, std::uint8_t skillToSet) {
     if (IsValidPlayer() && skillToSet <= INTELLECT) {
         mPlayer->atrophy[skillToSet] = newValue;
         UpdateRegion();
@@ -5115,14 +5115,14 @@ void CChar::SetAtrophy(UI08 newValue, UI08 skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets skill (and stat) lock for character
 // o------------------------------------------------------------------------------------------------o
-SkillLock CChar::GetSkillLock(UI08 skillToGet) const {
+SkillLock CChar::GetSkillLock(std::uint8_t skillToGet) const {
     SkillLock rVal = SKILL_INCREASE;
     if (IsValidPlayer() && skillToGet <= INTELLECT) {
         rVal = mPlayer->lockState[skillToGet];
     }
     return rVal;
 }
-void CChar::SetSkillLock(SkillLock newValue, UI08 skillToSet) {
+void CChar::SetSkillLock(SkillLock newValue, std::uint8_t skillToSet) {
     if (IsValidPlayer() && skillToSet <= INTELLECT) {
         mPlayer->lockState[skillToSet] = newValue;
         UpdateRegion();
@@ -5223,8 +5223,8 @@ bool CChar::ToggleFlying(void) {
                         if (ValidateObject(mChar)) {
                             if ((WorldNumber() == mChar->WorldNumber()) &&
                                 (GetInstanceId() == mChar->GetInstanceId())) {
-                                UI16 effRange = static_cast<UI16>(tSend->Range());
-                                const UI16 visibleRange = static_cast<UI16>(
+                                std::uint16_t effRange = static_cast<std::uint16_t>(tSend->Range());
+                                const std::uint16_t visibleRange = static_cast<std::uint16_t>(
                                     tSend->Range() + Races->VisRange(mChar->GetRace()));
                                 if (visibleRange >= effRange) {
                                     effRange = visibleRange;
@@ -5235,7 +5235,7 @@ bool CChar::ToggleFlying(void) {
                                         continue;
                                 }
 
-                                toSend.FlagColour(static_cast<UI08>(FlagColour(mChar)));
+                                toSend.FlagColour(static_cast<std::uint8_t>(FlagColour(mChar)));
                                 tSend->Send(&toSend);
                             }
                         }
@@ -5325,14 +5325,14 @@ void CChar::SetOrgName(std::string newName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the player character's original ID
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetOrgId(void) const {
-    UI16 rVal = GetId();
+std::uint16_t CChar::GetOrgId(void) const {
+    std::uint16_t rVal = GetId();
     if (IsValidPlayer()) {
         rVal = mPlayer->origId;
     }
     return rVal;
 }
-void CChar::SetOrgId(UI16 value) {
+void CChar::SetOrgId(std::uint16_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_ORIGID) {
             CreatePlayer();
@@ -5350,14 +5350,14 @@ void CChar::SetOrgId(UI16 value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's original skin
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetOrgSkin(void) const {
-    UI16 rVal = GetSkin();
+std::uint16_t CChar::GetOrgSkin(void) const {
+    std::uint16_t rVal = GetSkin();
     if (IsValidPlayer()) {
         rVal = mPlayer->origSkin;
     }
     return rVal;
 }
-void CChar::SetOrgSkin(UI16 value) {
+void CChar::SetOrgSkin(std::uint16_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_ORIGSKIN) {
             CreatePlayer();
@@ -5374,14 +5374,14 @@ void CChar::SetOrgSkin(UI16 value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default hairstyle
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetHairStyle(void) const {
-    UI16 rVal = DEFPLAYER_HAIRSTYLE;
+std::uint16_t CChar::GetHairStyle(void) const {
+    std::uint16_t rVal = DEFPLAYER_HAIRSTYLE;
     if (IsValidPlayer()) {
         rVal = mPlayer->hairStyle;
     }
     return rVal;
 }
-void CChar::SetHairStyle(UI16 value) {
+void CChar::SetHairStyle(std::uint16_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_HAIRSTYLE) {
             CreatePlayer();
@@ -5399,14 +5399,14 @@ void CChar::SetHairStyle(UI16 value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default beardstyle
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetBeardStyle(void) const {
-    UI16 rVal = DEFPLAYER_BEARDSTYLE;
+std::uint16_t CChar::GetBeardStyle(void) const {
+    std::uint16_t rVal = DEFPLAYER_BEARDSTYLE;
     if (IsValidPlayer()) {
         rVal = mPlayer->beardStyle;
     }
     return rVal;
 }
-void CChar::SetBeardStyle(UI16 value) {
+void CChar::SetBeardStyle(std::uint16_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_BEARDSTYLE) {
             CreatePlayer();
@@ -5503,7 +5503,7 @@ SERIAL CChar::GetTrackingTargetSerial(void) const {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets list of possible tracking targets
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::GetTrackingTargets(UI08 targetNum) const {
+CChar *CChar::GetTrackingTargets(std::uint8_t targetNum) const {
     CChar *rVal = nullptr;
     if (IsValidPlayer()) {
         if (targetNum < mPlayer->trackingTargets.size()) {
@@ -5512,7 +5512,7 @@ CChar *CChar::GetTrackingTargets(UI08 targetNum) const {
     }
     return rVal;
 }
-void CChar::SetTrackingTargets(CChar *newValue, UI08 targetNum) {
+void CChar::SetTrackingTargets(CChar *newValue, std::uint8_t targetNum) {
     if (!IsValidPlayer()) {
         if (newValue != nullptr) {
             CreatePlayer();
@@ -5531,14 +5531,14 @@ void CChar::SetTrackingTargets(CChar *newValue, UI08 targetNum) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's command level
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetCommandLevel(void) const {
-    UI08 rVal = DEFPLAYER_COMMANDLEVEL;
+std::uint8_t CChar::GetCommandLevel(void) const {
+    std::uint8_t rVal = DEFPLAYER_COMMANDLEVEL;
     if (IsValidPlayer()) {
         rVal = mPlayer->commandLevel;
     }
     return rVal;
 }
-void CChar::SetCommandLevel(UI08 newValue) {
+void CChar::SetCommandLevel(std::uint8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_COMMANDLEVEL) {
             CreatePlayer();
@@ -5556,14 +5556,14 @@ void CChar::SetCommandLevel(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets player character's messageboard posting level
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetPostType(void) const {
-    UI08 rVal = DEFPLAYER_POSTTYPE;
+std::uint8_t CChar::GetPostType(void) const {
+    std::uint8_t rVal = DEFPLAYER_POSTTYPE;
     if (IsValidPlayer()) {
         rVal = mPlayer->postType;
     }
     return rVal;
 }
-void CChar::SetPostType(UI08 newValue) {
+void CChar::SetPostType(std::uint8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_POSTTYPE) {
             CreatePlayer();
@@ -5581,7 +5581,7 @@ void CChar::SetPostType(UI08 newValue) {
 //| Purpose		-	Gets/Sets the currently active GM/Counselor call for the character
 // o------------------------------------------------------------------------------------------------o
 SERIAL CChar::GetCallNum(void) const {
-    SI16 rVal = DEFPLAYER_CALLNUM;
+    std::int16_t rVal = DEFPLAYER_CALLNUM;
     if (IsValidPlayer()) {
         rVal = mPlayer->callNum;
     }
@@ -5628,14 +5628,14 @@ void CChar::SetPlayerCallNum(SERIAL newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the squelched status of the player's character
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetSquelched(void) const {
-    UI08 rVal = DEFPLAYER_SQUELCHED;
+std::uint8_t CChar::GetSquelched(void) const {
+    std::uint8_t rVal = DEFPLAYER_SQUELCHED;
     if (IsValidPlayer()) {
         rVal = mPlayer->squelched;
     }
     return rVal;
 }
-void CChar::SetSquelched(UI08 newValue) {
+void CChar::SetSquelched(std::uint8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_SQUELCHED) {
             CreatePlayer();
@@ -5691,14 +5691,14 @@ void CChar::SetSpeechItem(CItem *newValue) {
 //|						8 Sign renaming
 //|						9 JS Speech
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetSpeechMode(void) const {
-    UI08 rVal = DEFPLAYER_SPEECHMODE;
+std::uint8_t CChar::GetSpeechMode(void) const {
+    std::uint8_t rVal = DEFPLAYER_SPEECHMODE;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechMode;
     }
     return rVal;
 }
-void CChar::SetSpeechMode(UI08 newValue) {
+void CChar::SetSpeechMode(std::uint8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_SPEECHMODE) {
             CreatePlayer();
@@ -5716,14 +5716,14 @@ void CChar::SetSpeechMode(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID for the JS Speech Input
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetSpeechId(void) const {
-    UI08 rVal = DEFPLAYER_SPEECHID;
+std::uint8_t CChar::GetSpeechId(void) const {
+    std::uint8_t rVal = DEFPLAYER_SPEECHID;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechId;
     }
     return rVal;
 }
-void CChar::SetSpeechId(UI08 newValue) {
+void CChar::SetSpeechId(std::uint8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_SPEECHID) {
             CreatePlayer();
@@ -5764,14 +5764,14 @@ void CChar::SetSpeechCallback(cScript *newValue) {
 //| Purpose		-	Gets/Sets fixed light level of the character
 //|					255 is off
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetFixedLight(void) const {
-    UI08 rVal = DEFPLAYER_FIXEDLIGHT;
+std::uint8_t CChar::GetFixedLight(void) const {
+    std::uint8_t rVal = DEFPLAYER_FIXEDLIGHT;
     if (IsValidPlayer()) {
         rVal = mPlayer->fixedLight;
     }
     return rVal;
 }
-void CChar::SetFixedLight(UI08 newVal) {
+void CChar::SetFixedLight(std::uint8_t newVal) {
     if (!IsValidPlayer()) {
         if (newVal != DEFPLAYER_FIXEDLIGHT) {
             CreatePlayer();
@@ -5789,14 +5789,14 @@ void CChar::SetFixedLight(UI08 newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the total number of deaths a player has
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetDeaths(void) const {
-    UI16 rVal = DEFPLAYER_DEATHS;
+std::uint16_t CChar::GetDeaths(void) const {
+    std::uint16_t rVal = DEFPLAYER_DEATHS;
     if (IsValidPlayer()) {
         rVal = mPlayer->deaths;
     }
     return rVal;
 }
-void CChar::SetDeaths(UI16 newVal) {
+void CChar::SetDeaths(std::uint16_t newVal) {
     if (!IsValidPlayer()) {
         if (newVal != DEFPLAYER_DEATHS) {
             CreatePlayer();
@@ -5838,14 +5838,14 @@ void CChar::SetSocket(CSocket *newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets serial of the player a character has voted to be mayor.
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetTownVote(void) const {
-    UI32 retVal = DEFPLAYER_TOWNVOTE;
+std::uint32_t CChar::GetTownVote(void) const {
+    std::uint32_t retVal = DEFPLAYER_TOWNVOTE;
     if (IsValidPlayer()) {
         retVal = mPlayer->townVote;
     }
     return retVal;
 }
-void CChar::SetTownVote(UI32 newValue) {
+void CChar::SetTownVote(std::uint32_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_TOWNVOTE) {
             CreatePlayer();
@@ -5863,14 +5863,14 @@ void CChar::SetTownVote(UI32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets town member privledges (1 = Resident, 2 = Mayor)
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetTownPriv(void) const {
-    SI08 retVal = DEFPLAYER_TOWNPRIV;
+std::int8_t CChar::GetTownPriv(void) const {
+    std::int8_t retVal = DEFPLAYER_TOWNPRIV;
     if (IsValidPlayer()) {
         retVal = mPlayer->townPriv;
     }
     return retVal;
 }
-void CChar::SetTownpriv(SI08 newValue) {
+void CChar::SetTownpriv(std::int8_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_TOWNPRIV) {
             CreatePlayer();
@@ -5890,14 +5890,14 @@ void CChar::SetTownpriv(SI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the max loyalty of the NPC
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetMaxLoyalty(void) const {
-    UI16 retVal = DEFNPC_MAXLOYALTY;
+std::uint16_t CChar::GetMaxLoyalty(void) const {
+    std::uint16_t retVal = DEFNPC_MAXLOYALTY;
     if (IsValidNPC()) {
         retVal = mNPC->maxLoyalty;
     }
     return retVal;
 }
-void CChar::SetMaxLoyalty(UI16 newValue) {
+void CChar::SetMaxLoyalty(std::uint16_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_MAXLOYALTY != newValue) {
             CreateNPC();
@@ -5915,21 +5915,21 @@ void CChar::SetMaxLoyalty(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the loyalty of the NPC
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetLoyalty(void) const {
-    UI16 retVal = DEFNPC_LOYALTY;
+std::uint16_t CChar::GetLoyalty(void) const {
+    std::uint16_t retVal = DEFNPC_LOYALTY;
     if (IsValidNPC()) {
         retVal = mNPC->loyalty;
     }
     return retVal;
 }
-void CChar::SetLoyalty(UI16 newValue) {
+void CChar::SetLoyalty(std::uint16_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_LOYALTY != newValue) {
             CreateNPC();
         }
     }
     if (IsValidNPC()) {
-        std::vector<UI16> scriptTriggers = GetScriptTriggers();
+        std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -5965,7 +5965,7 @@ void CChar::DoLoyaltyUpdate(void) {
 
     if (GetTimer(tNPC_LOYALTYTIME) <= cwmWorldState->GetUICurrentTime() ||
         cwmWorldState->GetOverflow()) {
-        UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
+        std::uint16_t loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
         if (GetLoyalty() > 0) {
             // Reduce loyalty by 1, reset timer
             SetLoyalty(std::max(0, GetLoyalty() - 1));
@@ -6042,14 +6042,14 @@ void CChar::DoLoyaltyUpdate(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Set the rate at which a pet hungers
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetTamedHungerRate(void) const {
-    UI16 retVal = DEFNPC_TAMEDHUNGERRATE;
+std::uint16_t CChar::GetTamedHungerRate(void) const {
+    std::uint16_t retVal = DEFNPC_TAMEDHUNGERRATE;
     if (IsValidNPC()) {
         retVal = mNPC->tamedHungerRate;
     }
     return retVal;
 }
-void CChar::SetTamedHungerRate(UI16 newValue) {
+void CChar::SetTamedHungerRate(std::uint16_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_TAMEDHUNGERRATE != newValue) {
             CreateNPC();
@@ -6067,14 +6067,14 @@ void CChar::SetTamedHungerRate(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Get/Set the rate at which a pet thirsts
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetTamedThirstRate(void) const {
-    UI16 retVal = DEFNPC_TAMEDTHIRSTRATE;
+std::uint16_t CChar::GetTamedThirstRate(void) const {
+    std::uint16_t retVal = DEFNPC_TAMEDTHIRSTRATE;
     if (IsValidNPC()) {
         retVal = mNPC->tamedThirstRate;
     }
     return retVal;
 }
-void CChar::SetTamedThirstRate(UI16 newValue) {
+void CChar::SetTamedThirstRate(std::uint16_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_TAMEDTHIRSTRATE != newValue) {
             CreateNPC();
@@ -6092,14 +6092,14 @@ void CChar::SetTamedThirstRate(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets chance for a hungry pet to go wild
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetTamedHungerWildChance(void) const {
-    UI08 retVal = DEFNPC_HUNGERWILDCHANCE;
+std::uint8_t CChar::GetTamedHungerWildChance(void) const {
+    std::uint8_t retVal = DEFNPC_HUNGERWILDCHANCE;
     if (IsValidNPC()) {
         retVal = mNPC->hungerWildChance;
     }
     return retVal;
 }
-void CChar::SetTamedHungerWildChance(UI08 newValue) {
+void CChar::SetTamedHungerWildChance(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_HUNGERWILDCHANCE != newValue) {
             CreateNPC();
@@ -6117,14 +6117,14 @@ void CChar::SetTamedHungerWildChance(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets chance for a thirsty pet to go wild
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetTamedThirstWildChance(void) const {
-    UI08 retVal = DEFNPC_THIRSTWILDCHANCE;
+std::uint8_t CChar::GetTamedThirstWildChance(void) const {
+    std::uint8_t retVal = DEFNPC_THIRSTWILDCHANCE;
     if (IsValidNPC()) {
         retVal = mNPC->thirstWildChance;
     }
     return retVal;
 }
-void CChar::SetTamedThirstWildChance(UI08 newValue) {
+void CChar::SetTamedThirstWildChance(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_THIRSTWILDCHANCE != newValue) {
             CreateNPC();
@@ -6167,14 +6167,14 @@ void CChar::SetFood(std::string food) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the AI type of the NPC
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetNpcAiType(void) const {
-    SI16 rVal = DEFNPC_AITYPE;
+std::int16_t CChar::GetNpcAiType(void) const {
+    std::int16_t rVal = DEFNPC_AITYPE;
     if (IsValidNPC()) {
         rVal = mNPC->aiType;
     }
     return rVal;
 }
-void CChar::SetNPCAiType(SI16 newValue) {
+void CChar::SetNPCAiType(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_AITYPE) {
             CreateNPC();
@@ -6192,8 +6192,8 @@ void CChar::SetNPCAiType(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC Guild the character belongs to
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetNPCGuild(void) const { return npcGuild; }
-void CChar::SetNPCGuild(UI16 newValue) {
+std::uint16_t CChar::GetNPCGuild(void) const { return npcGuild; }
+void CChar::SetNPCGuild(std::uint16_t newValue) {
     npcGuild = newValue;
     UpdateRegion();
 }
@@ -6205,14 +6205,14 @@ void CChar::SetNPCGuild(UI16 newValue) {
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined
 //NPC guild
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetNPCGuildJoined(void) const {
-    UI32 rVal = 0;
+std::uint32_t CChar::GetNPCGuildJoined(void) const {
+    std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->npcGuildJoined;
     }
     return rVal;
 }
-void CChar::SetNPCGuildJoined(UI32 newValue) {
+void CChar::SetNPCGuildJoined(std::uint32_t newValue) {
     if (IsValidPlayer()) {
         mPlayer->npcGuildJoined = newValue;
         UpdateRegion();
@@ -6249,14 +6249,14 @@ void CChar::SetGuarding(CBaseObject *newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to tame the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetTaming(void) const {
-    SI16 rVal = DEFNPC_TAMING;
+std::int16_t CChar::GetTaming(void) const {
+    std::int16_t rVal = DEFNPC_TAMING;
     if (IsValidNPC()) {
         rVal = mNPC->taming;
     }
     return rVal;
 }
-void CChar::SetTaming(SI16 newValue) {
+void CChar::SetTaming(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_TAMING) {
             CreateNPC();
@@ -6275,17 +6275,17 @@ void CChar::SetTaming(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to peace the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetPeaceing(void) const {
-    SI16 rVal = DEFNPC_PEACEING;
+std::int16_t CChar::GetPeaceing(void) const {
+    std::int16_t rVal = DEFNPC_PEACEING;
     if (IsValidNPC()) {
         rVal = mNPC->peaceing;
     }
     else if (IsValidPlayer()) {
-        rVal = static_cast<SI16>(GetBaseSkill(PEACEMAKING));
+        rVal = static_cast<std::int16_t>(GetBaseSkill(PEACEMAKING));
     }
     return rVal;
 }
-void CChar::SetPeaceing(SI16 newValue) {
+void CChar::SetPeaceing(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_PEACEING) {
             CreateNPC();
@@ -6304,17 +6304,17 @@ void CChar::SetPeaceing(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to provocate the character
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetProvoing(void) const {
-    SI16 rVal = DEFNPC_PROVOING;
+std::int16_t CChar::GetProvoing(void) const {
+    std::int16_t rVal = DEFNPC_PROVOING;
     if (IsValidNPC()) {
         rVal = mNPC->provoing;
     }
     else if (IsValidPlayer()) {
-        rVal = static_cast<SI16>(GetBaseSkill(PROVOCATION));
+        rVal = static_cast<std::int16_t>(GetBaseSkill(PROVOCATION));
     }
     return rVal;
 }
-void CChar::SetProvoing(SI16 newValue) {
+void CChar::SetProvoing(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_PROVOING) {
             CreateNPC();
@@ -6332,14 +6332,14 @@ void CChar::SetProvoing(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets skill the player is being trained in. 255 is no training
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetTrainingPlayerIn(void) const {
-    UI08 rVal = DEFNPC_TRAININGPLAYERIN;
+std::uint8_t CChar::GetTrainingPlayerIn(void) const {
+    std::uint8_t rVal = DEFNPC_TRAININGPLAYERIN;
     if (IsValidNPC()) {
         rVal = mNPC->trainingPlayerIn;
     }
     return rVal;
 }
-void CChar::SetTrainingPlayerIn(UI08 newValue) {
+void CChar::SetTrainingPlayerIn(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_TRAININGPLAYERIN) {
             CreateNPC();
@@ -6356,14 +6356,14 @@ void CChar::SetTrainingPlayerIn(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets amount of gold being held by a Player Vendor
 // o------------------------------------------------------------------------------------------------o
-UI32 CChar::GetHoldG(void) const {
-    UI32 rVal = DEFNPC_HOLDG;
+std::uint32_t CChar::GetHoldG(void) const {
+    std::uint32_t rVal = DEFNPC_HOLDG;
     if (IsValidNPC()) {
         rVal = mNPC->goldOnHand;
     }
     return rVal;
 }
-void CChar::SetHoldG(UI32 newValue) {
+void CChar::SetHoldG(std::uint32_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_HOLDG) {
             CreateNPC();
@@ -6381,14 +6381,14 @@ void CChar::SetHoldG(UI32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets split level of the character
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetSplit(void) const {
-    UI08 rVal = DEFNPC_SPLIT;
+std::uint8_t CChar::GetSplit(void) const {
+    std::uint8_t rVal = DEFNPC_SPLIT;
     if (IsValidNPC()) {
         rVal = mNPC->splitNum;
     }
     return rVal;
 }
-void CChar::SetSplit(UI08 newValue) {
+void CChar::SetSplit(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_SPLIT) {
             CreateNPC();
@@ -6406,14 +6406,14 @@ void CChar::SetSplit(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the chance of an NPC splitting
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetSplitChance(void) const {
-    UI08 rVal = DEFNPC_SPLITCHANCE;
+std::uint8_t CChar::GetSplitChance(void) const {
+    std::uint8_t rVal = DEFNPC_SPLITCHANCE;
     if (IsValidNPC()) {
         rVal = mNPC->splitChance;
     }
     return rVal;
 }
-void CChar::SetSplitChance(UI08 newValue) {
+void CChar::SetSplitChance(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_SPLITCHANCE) {
             CreateNPC();
@@ -6431,8 +6431,8 @@ void CChar::SetSplitChance(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets x1 and x2 boundry of an npc wander area
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetFx(UI08 part) const {
-    SI16 rVal = DEFNPC_WANDERAREA;
+std::int16_t CChar::GetFx(std::uint8_t part) const {
+    std::int16_t rVal = DEFNPC_WANDERAREA;
     if (IsValidNPC()) {
         if (part < 2) {
             rVal = mNPC->fx[part];
@@ -6440,7 +6440,7 @@ SI16 CChar::GetFx(UI08 part) const {
     }
     return rVal;
 }
-void CChar::SetFx(SI16 newVal, UI08 part) {
+void CChar::SetFx(std::int16_t newVal, std::uint8_t part) {
     if (!IsValidNPC()) {
         if (newVal != DEFNPC_WANDERAREA) {
             CreateNPC();
@@ -6460,8 +6460,8 @@ void CChar::SetFx(SI16 newVal, UI08 part) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets y1 and y2 boundry of an npc wander area
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetFy(UI08 part) const {
-    SI16 rVal = DEFNPC_WANDERAREA;
+std::int16_t CChar::GetFy(std::uint8_t part) const {
+    std::int16_t rVal = DEFNPC_WANDERAREA;
     if (IsValidNPC()) {
         if (part < 2) {
             rVal = mNPC->fy[part];
@@ -6469,7 +6469,7 @@ SI16 CChar::GetFy(UI08 part) const {
     }
     return rVal;
 }
-void CChar::SetFy(SI16 newVal, UI08 part) {
+void CChar::SetFy(std::int16_t newVal, std::uint8_t part) {
     if (!IsValidNPC()) {
         if (newVal != DEFNPC_WANDERAREA) {
             CreateNPC();
@@ -6489,14 +6489,14 @@ void CChar::SetFy(SI16 newVal, UI08 part) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets z of an npc wander area
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetFz(void) const {
-    SI08 rVal = DEFNPC_FZ1;
+std::int8_t CChar::GetFz(void) const {
+    std::int8_t rVal = DEFNPC_FZ1;
     if (IsValidNPC()) {
         rVal = mNPC->fz;
     }
     return rVal;
 }
-void CChar::SetFz(SI08 newVal) {
+void CChar::SetFz(std::int8_t newVal) {
     if (!IsValidNPC()) {
         if (newVal != DEFNPC_FZ1) {
             CreateNPC();
@@ -6514,14 +6514,14 @@ void CChar::SetFz(SI08 newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC Wander mode
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetNpcWander(void) const {
-    SI08 rVal = DEFNPC_WANDER;
+std::int8_t CChar::GetNpcWander(void) const {
+    std::int8_t rVal = DEFNPC_WANDER;
     if (IsValidNPC()) {
         rVal = mNPC->wanderMode;
     }
     return rVal;
 }
-void CChar::SetNpcWander(SI08 newValue, bool initArea) {
+void CChar::SetNpcWander(std::int8_t newValue, bool initArea) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_WANDER) {
             CreateNPC();
@@ -6546,14 +6546,14 @@ void CChar::SetNpcWander(SI08 newValue, bool initArea) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets previous NPC Wander mode
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetOldNpcWander(void) const {
-    SI08 rVal = DEFNPC_OLDWANDER;
+std::int8_t CChar::GetOldNpcWander(void) const {
+    std::int8_t rVal = DEFNPC_OLDWANDER;
     if (IsValidNPC()) {
         rVal = mNPC->oldWanderMode;
     }
     return rVal;
 }
-void CChar::SetOldNpcWander(SI08 newValue) {
+void CChar::SetOldNpcWander(std::int8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_OLDWANDER) {
             CreateNPC();
@@ -6595,14 +6595,14 @@ void CChar::SetFTarg(CChar *newTarg) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Spell Attack setting
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetSpAttack(void) const {
-    SI16 rVal = DEFNPC_SPATTACK;
+std::int16_t CChar::GetSpAttack(void) const {
+    std::int16_t rVal = DEFNPC_SPATTACK;
     if (IsValidNPC()) {
         rVal = mNPC->spellAttack;
     }
     return rVal;
 }
-void CChar::SetSpAttack(SI16 newValue) {
+void CChar::SetSpAttack(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_SPATTACK) {
             CreateNPC();
@@ -6620,14 +6620,14 @@ void CChar::SetSpAttack(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Spell Delay setting
 // o------------------------------------------------------------------------------------------------o
-SI08 CChar::GetSpDelay(void) const {
-    SI08 rVal = DEFNPC_SPADELAY;
+std::int8_t CChar::GetSpDelay(void) const {
+    std::int8_t rVal = DEFNPC_SPADELAY;
     if (IsValidNPC()) {
         rVal = mNPC->spellDelay;
     }
     return rVal;
 }
-void CChar::SetSpDelay(SI08 newValue) {
+void CChar::SetSpDelay(std::int8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_SPADELAY) {
             CreateNPC();
@@ -6645,14 +6645,14 @@ void CChar::SetSpDelay(SI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Type
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetQuestType(void) const {
-    UI08 rVal = DEFNPC_QUESTTYPE;
+std::uint8_t CChar::GetQuestType(void) const {
+    std::uint8_t rVal = DEFNPC_QUESTTYPE;
     if (IsValidNPC()) {
         rVal = mNPC->questType;
     }
     return rVal;
 }
-void CChar::SetQuestType(UI08 newValue) {
+void CChar::SetQuestType(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_QUESTTYPE) {
             CreateNPC();
@@ -6670,14 +6670,14 @@ void CChar::SetQuestType(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Origin Region - used for escort quests
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetQuestOrigRegion(void) const {
-    UI08 rVal = DEFNPC_QUESTORIGREGION;
+std::uint8_t CChar::GetQuestOrigRegion(void) const {
+    std::uint8_t rVal = DEFNPC_QUESTORIGREGION;
     if (IsValidNPC()) {
         rVal = mNPC->questOrigRegion;
     }
     return rVal;
 }
-void CChar::SetQuestOrigRegion(UI08 newValue) {
+void CChar::SetQuestOrigRegion(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_QUESTORIGREGION) {
             CreateNPC();
@@ -6695,14 +6695,14 @@ void CChar::SetQuestOrigRegion(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Destination Region
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetQuestDestRegion(void) const {
-    UI08 rVal = DEFNPC_QUESTDESTREGION;
+std::uint8_t CChar::GetQuestDestRegion(void) const {
+    std::uint8_t rVal = DEFNPC_QUESTDESTREGION;
     if (IsValidNPC()) {
         rVal = mNPC->questDestRegion;
     }
     return rVal;
 }
-void CChar::SetQuestDestRegion(UI08 newValue) {
+void CChar::SetQuestDestRegion(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_QUESTDESTREGION) {
             CreateNPC();
@@ -6720,14 +6720,14 @@ void CChar::SetQuestDestRegion(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets health value at which an NPC will turn tail and run
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetFleeAt(void) const {
-    SI16 rVal = DEFNPC_FLEEAT;
+std::int16_t CChar::GetFleeAt(void) const {
+    std::int16_t rVal = DEFNPC_FLEEAT;
     if (IsValidNPC()) {
         rVal = mNPC->fleeAt;
     }
     return rVal;
 }
-void CChar::SetFleeAt(SI16 newValue) {
+void CChar::SetFleeAt(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_FLEEAT) {
             CreateNPC();
@@ -6745,14 +6745,14 @@ void CChar::SetFleeAt(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets health value at which an NPC will start fighting again
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetReattackAt(void) const {
-    SI16 rVal = DEFNPC_REATTACKAT;
+std::int16_t CChar::GetReattackAt(void) const {
+    std::int16_t rVal = DEFNPC_REATTACKAT;
     if (IsValidNPC()) {
         rVal = mNPC->reAttackAt;
     }
     return rVal;
 }
-void CChar::SetReattackAt(SI16 newValue) {
+void CChar::SetReattackAt(std::int16_t newValue) {
     if (!IsValidNPC()) {
         if (newValue != DEFNPC_REATTACKAT) {
             CreateNPC();
@@ -6770,14 +6770,14 @@ void CChar::SetReattackAt(SI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the distance an NPC has moved since entering flee/scared wander mode
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetFleeDistance(void) const {
-    UI08 retVal = DEFNPC_FLEEDISTANCE;
+std::uint8_t CChar::GetFleeDistance(void) const {
+    std::uint8_t retVal = DEFNPC_FLEEDISTANCE;
     if (IsValidNPC()) {
         retVal = mNPC->fleeDistance;
     }
     return retVal;
 }
-void CChar::SetFleeDistance(UI08 newValue) {
+void CChar::SetFleeDistance(std::uint8_t newValue) {
     if (!IsValidNPC()) {
         if (DEFNPC_FLEEDISTANCE != newValue) {
             CreateNPC();
@@ -6794,8 +6794,8 @@ void CChar::SetFleeDistance(UI08 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets queue of directions for NPC
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::PopDirection(void) {
-    UI08 rVal = 0;
+std::uint8_t CChar::PopDirection(void) {
+    std::uint8_t rVal = 0;
     if (IsValidNPC()) {
         if (!mNPC->pathToFollow.empty()) {
             rVal = mNPC->pathToFollow.front();
@@ -6804,7 +6804,7 @@ UI08 CChar::PopDirection(void) {
     }
     return rVal;
 }
-void CChar::PushDirection(UI08 newDir, bool pushFront) {
+void CChar::PushDirection(std::uint8_t newDir, bool pushFront) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7066,7 +7066,7 @@ bool CChar::RemoveFriend(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get the total number of owners a pet/follower has had
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetOwnerCount(void) { return static_cast<UI08>(GetPetOwnerList()->Num()); }
+std::uint8_t CChar::GetOwnerCount(void) { return static_cast<std::uint8_t>(GetPetOwnerList()->Num()); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetControlSlotsUsed()
@@ -7075,14 +7075,14 @@ UI08 CChar::GetOwnerCount(void) { return static_cast<UI08>(GetPetOwnerList()->Nu
 //| Purpose		-	Get/Sets the total number of control slots used by a player's active
 // pets/followers
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetControlSlotsUsed(void) const {
-    UI08 rVal = DEFPLAYER_CONTROLSLOTSUSED;
+std::uint8_t CChar::GetControlSlotsUsed(void) const {
+    std::uint8_t rVal = DEFPLAYER_CONTROLSLOTSUSED;
     if (IsValidPlayer()) {
         rVal = mPlayer->controlSlotsUsed;
     }
     return rVal;
 }
-void CChar::SetControlSlotsUsed(UI08 newVal) {
+void CChar::SetControlSlotsUsed(std::uint8_t newVal) {
     if (!IsValidPlayer()) {
         if (newVal != DEFPLAYER_CONTROLSLOTSUSED) {
             CreatePlayer();
@@ -7101,14 +7101,14 @@ void CChar::SetControlSlotsUsed(UI08 newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the total number of control slots an NPC takes up
 // o------------------------------------------------------------------------------------------------o
-UI08 CChar::GetControlSlots(void) const {
-    UI08 rVal = DEFNPC_CONTROLSLOTS;
+std::uint8_t CChar::GetControlSlots(void) const {
+    std::uint8_t rVal = DEFNPC_CONTROLSLOTS;
     if (IsValidNPC()) {
         rVal = mNPC->controlSlots;
     }
     return rVal;
 }
-void CChar::SetControlSlots(UI08 newVal) {
+void CChar::SetControlSlots(std::uint8_t newVal) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7124,14 +7124,14 @@ void CChar::SetControlSlots(UI08 newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the difficulty of controlling a pet
 // o------------------------------------------------------------------------------------------------o
-UI16 CChar::GetOrneriness(void) const {
-    UI16 rVal = DEFNPC_ORNERINESS;
+std::uint16_t CChar::GetOrneriness(void) const {
+    std::uint16_t rVal = DEFNPC_ORNERINESS;
     if (IsValidNPC()) {
         rVal = mNPC->orneriness;
     }
     return rVal;
 }
-void CChar::SetOrneriness(UI16 newVal) {
+void CChar::SetOrneriness(std::uint16_t newVal) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7377,7 +7377,7 @@ bool DTEgreater(DamageTrackEntry_st *elem1, DamageTrackEntry_st *elem2) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Heal character, and keep track of healer and amount healed
 // o------------------------------------------------------------------------------------------------o
-void CChar::Heal(SI16 healValue, CChar *healer) {
+void CChar::Heal(std::int16_t healValue, CChar *healer) {
     SetHP(hitpoints + healValue);
     if (healer != nullptr) {
         const SERIAL healerSerial = healer->GetSerial();
@@ -7457,11 +7457,11 @@ void CChar::ReactOnDamage([[maybe_unused]] WeatherType damageType, CChar *attack
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Damage character, and keep track of attacker and damage amount
 // o------------------------------------------------------------------------------------------------o
-bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys) {
+bool CChar::Damage(std::int16_t damageValue, WeatherType damageType, CChar *attacker, bool doRepsys) {
     CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
 
     if (ValidateObject(attacker)) {
-        std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
+        std::vector<std::uint16_t> attScriptTriggers = attacker->GetScriptTriggers();
         for (auto i : attScriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
@@ -7473,7 +7473,7 @@ bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bo
         }
     }
 
-    std::vector<UI16> scriptTriggers = GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
@@ -7493,7 +7493,7 @@ bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bo
 
     // Display damage numbers
     if (cwmWorldState->ServerData()->CombatDisplayDamageNumbers()) {
-        CPDisplayDamage toDisplay((*this), static_cast<UI16>(damageValue));
+        CPDisplayDamage toDisplay((*this), static_cast<std::uint16_t>(damageValue));
         if (mSock != nullptr) {
             mSock->Send(&toDisplay);
         }
@@ -7510,21 +7510,21 @@ bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bo
 
     // Spawn blood effects
     if (damageValue >=
-        std::max(static_cast<SI16>(1),
-                 static_cast<SI16>(floor(
+        std::max(static_cast<std::int16_t>(1),
+                 static_cast<std::int16_t>(floor(
                      GetMaxHP() * 0.01)))) // Only display blood effects if damage done is higher
                                            // than 1, or 1% of max health - whichever is higher
     {
-        UI08 bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
-        bool spawnBlood = (bloodEffectChance >= static_cast<UI08>(RandomNum(0, 99)));
+        std::uint8_t bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
+        bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(RandomNum(0, 99)));
         if (spawnBlood) {
             BloodTypes bloodType = BLOOD_BLEED;
-            if (damageValue >= static_cast<SI16>(floor(GetMaxHP() * 0.2))) {
+            if (damageValue >= static_cast<std::int16_t>(floor(GetMaxHP() * 0.2))) {
                 // If damage done is higher than 20% of max health, spawn larger blood splats
                 bloodType = BLOOD_CRITICAL;
             }
 
-            UI16 bloodColour =
+            std::uint16_t bloodColour =
                 Races->BloodColour(GetRace()); // Fetch blood color from race property
             if (bloodColour == 0xffff) {
                 // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
@@ -7541,8 +7541,8 @@ bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bo
 
     // Handle peace state
     if (!GetCanAttack()) {
-        const UI08 currentBreakChance = GetBrkPeaceChance();
-        if (static_cast<UI08>(RandomNum(1, 100)) <= currentBreakChance) {
+        const std::uint8_t currentBreakChance = GetBrkPeaceChance();
+        if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= currentBreakChance) {
             SetCanAttack(true);
             if (mSock != nullptr) {
                 mSock->SysMessage(1779); // You are no longer affected by peace!
@@ -7611,7 +7611,7 @@ bool CChar::Damage(SI16 damageValue, WeatherType damageType, CChar *attacker, bo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the character's karma
 // o------------------------------------------------------------------------------------------------o
-SI16 CChar::GetKarma(void) const {
+std::int16_t CChar::GetKarma(void) const {
     if (GetOwnerObj() != nullptr && IsTamed()) {
         if (ValidateObject(GetOwnerObj()) && GetOwnerObj() != this) {
             // Pets inherit the karma of their owner
@@ -7627,11 +7627,11 @@ SI16 CChar::GetKarma(void) const {
 //| Purpose		-	Kills character and handles consequences for character death
 // o------------------------------------------------------------------------------------------------o
 void CChar::Die(CChar *attacker, bool doRepsys) {
-    std::vector<UI16> scriptTriggers = GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
-            SI08 retStatus = toExecute->OnDeathBlow(this, attacker);
+            std::int8_t retStatus = toExecute->OnDeathBlow(this, attacker);
 
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -7740,7 +7740,7 @@ void CChar::UpdateDamageTrack(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets weight of character
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetWeight(SI32 newVal, [[maybe_unused]] bool doWeightUpdate) {
+void CChar::SetWeight(std::int32_t newVal, [[maybe_unused]] bool doWeightUpdate) {
     Dirty(UT_STATWINDOW);
     weight = newVal;
     UpdateRegion();
@@ -7802,8 +7802,8 @@ bool CChar::InParty(void) const { return bools.test(BIT_INPARTY); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to count the houses owned by a given character
 // o------------------------------------------------------------------------------------------------o
-bool CountHousesOwnedFunctor(CBaseObject *a, UI32 &b, void *extraData) {
-    UI32 *ourData = (UI32 *)extraData;
+bool CountHousesOwnedFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) {
+    std::uint32_t *ourData = (std::uint32_t *)extraData;
     CChar *mChar = CalcCharObjFromSer(ourData[0]);
     bool trackHousesPerAccount = ourData[1];
     bool countCoOwnedHouses = ourData[2];
@@ -7857,12 +7857,12 @@ bool CountHousesOwnedFunctor(CBaseObject *a, UI32 &b, void *extraData) {
     }
     return true;
 }
-auto CChar::CountHousesOwned(bool countCoOwnedHouses) -> UI32 {
-    auto b = UI32(0);
+auto CChar::CountHousesOwned(bool countCoOwnedHouses) -> std::uint32_t {
+    auto b = std::uint32_t(0);
     if (cwmWorldState->ServerData()->TrackHousesPerAccount() || countCoOwnedHouses) {
         // Count all houses owned by characters on player's account by iterating over all multis on
         // the server(!)
-        UI32 toPass[3];
+        std::uint32_t toPass[3];
         toPass[0] = GetSerial();
         toPass[1] = cwmWorldState->ServerData()->TrackHousesPerAccount();
         toPass[2] = countCoOwnedHouses;

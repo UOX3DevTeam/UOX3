@@ -27,7 +27,7 @@ class CDictionary {
     auto GetEntry(int message_number) -> std::string &;
 
     auto ShowList() -> void;
-    auto LoadDictionary(const std::string filepath = "", const std::string &language = "") -> SI32;
+    auto LoadDictionary(const std::string filepath = "", const std::string &language = "") -> std::int32_t;
     auto NumberOfEntries() const -> size_t;
     auto GetValid() const -> bool;
 

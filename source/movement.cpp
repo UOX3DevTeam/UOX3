@@ -84,14 +84,14 @@ CMovement *Movement;
 
 #define XYMAX 256 // Maximum items UOX can handle on one X/Y square
 
-inline UI08 TurnClockWise(UI08 dir) {
-    UI08 t = ((dir & 0x07) + 1) % 8;
-    return static_cast<UI08>(dir & 0x80) ? (t | 0x80) : t;
+inline std::uint8_t TurnClockWise(std::uint8_t dir) {
+    std::uint8_t t = ((dir & 0x07) + 1) % 8;
+    return static_cast<std::uint8_t>(dir & 0x80) ? (t | 0x80) : t;
 }
 
-inline UI08 TurnCounterClockWise(UI08 dir) {
-    UI08 t = (dir - 1) & 7;
-    return static_cast<UI08>(dir & 0x80) ? (t | 0x80) : t;
+inline std::uint8_t TurnCounterClockWise(std::uint8_t dir) {
+    std::uint8_t t = (dir - 1) & 7;
+    return static_cast<std::uint8_t>(dir & 0x80) ? (t | 0x80) : t;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -104,12 +104,12 @@ inline UI08 TurnCounterClockWise(UI08 dir) {
 //|					if the tile is height is "negative" (stairs in despise
 //blocking bug)
 //|
-//|	Arguments	-	SI08 h   orignial height as saved in mul file
+//|	Arguments	-	std::int8_t h   orignial height as saved in mul file
 //|
 //|	Returns		- The absoulte value of the two's complement if the value was "negative"
 // o------------------------------------------------------------------------------------------------o
-inline SI08 CalcTileHeight(SI08 h) {
-    return static_cast<SI08>((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
+inline std::int8_t CalcTileHeight(std::int8_t h) {
+    return static_cast<std::int8_t>((h & 0x8) ? ((h & 0xF) >> 1) : h & 0xF);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -121,7 +121,7 @@ auto HandleTeleporters(CChar *s) -> void {
     if (!ValidateObject(s))
         return;
 
-    UI08 charWorld = s->WorldNumber();
+    std::uint8_t charWorld = s->WorldNumber();
     CTeleLocationEntry *getTeleLoc = nullptr;
     bool isOnTeleporter;
     for (size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i) {
@@ -141,7 +141,7 @@ auto HandleTeleporters(CChar *s) -> void {
 
                 if (isOnTeleporter) {
                     // If they are, whisk them away to the target destination
-                    UI08 targetWorld = 0;
+                    std::uint8_t targetWorld = 0;
                     if (getTeleLoc->SourceWorld() == 0xFF) {
                         targetWorld = s->WorldNumber();
                     }
@@ -149,9 +149,9 @@ auto HandleTeleporters(CChar *s) -> void {
                         targetWorld = getTeleLoc->TargetWorld();
                     }
 
-                    s->SetLocation(static_cast<SI16>(getTeleLoc->TargetLocation().x),
-                                   static_cast<SI16>(getTeleLoc->TargetLocation().y),
-                                   static_cast<UI08>(getTeleLoc->TargetLocation().z), targetWorld,
+                    s->SetLocation(static_cast<std::int16_t>(getTeleLoc->TargetLocation().x),
+                                   static_cast<std::int16_t>(getTeleLoc->TargetLocation().y),
+                                   static_cast<std::uint8_t>(getTeleLoc->TargetLocation().z), targetWorld,
                                    s->GetInstanceId());
                     if (!s->IsNpc()) {
                         if (targetWorld != charWorld) {
@@ -218,7 +218,7 @@ void CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight);
 //|					should only happen when a player walks on top of an NPC and the
 //NPC tries to move.
 // o------------------------------------------------------------------------------------------------o
-void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
+void CMovement::Walking(CSocket *mSock, CChar *c, std::uint8_t dir, std::int16_t sequence) {
     if (!IsValidDirection(dir)) {
         std::string charName = GetNpcDictName(c, nullptr, NRS_SYSTEM);
         Console::shared().Error(
@@ -245,8 +245,8 @@ void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
         return;
 
     // save our original location before we even think about moving
-    const SI16 oldx = c->GetX();
-    const SI16 oldy = c->GetY();
+    const std::int16_t oldx = c->GetX();
+    const std::int16_t oldy = c->GetY();
 
     // see if we have stopped to turn or if we are moving
     const bool amTurning = ((dir & 0x07) != c->GetDir());
@@ -257,9 +257,9 @@ void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
         if (!CheckForStealth(c))
             return;
 
-        SI08 myz = ILLEGAL_Z;
-        const SI16 myx = GetXfromDir(dir, oldx);
-        const SI16 myy = GetYfromDir(dir, oldy);
+        std::int8_t myz = ILLEGAL_Z;
+        const std::int16_t myx = GetXfromDir(dir, oldx);
+        const std::int16_t myy = GetYfromDir(dir, oldy);
         if (!CalcMove(c, oldx, oldy, myz, dir)) {
 #if DEBUG_WALKING
             std::string charName = GetNpcDictName(c, nullptr, NRS_SYSTEM);
@@ -282,16 +282,16 @@ void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
                 // The following bits are to stop NPCs from constantly pathfinding
                 // if the server thinks the paths they're finding are valid, but they
                 // can't actually move there!
-                const SI16 fx1 = c->GetFx(0);
-                const SI16 fx2 = c->GetFx(1);
-                const SI16 fy1 = c->GetFy(0);
-                const SI16 fy2 = c->GetFy(1);
+                const std::int16_t fx1 = c->GetFx(0);
+                const std::int16_t fx2 = c->GetFx(1);
+                const std::int16_t fy1 = c->GetFy(0);
+                const std::int16_t fy2 = c->GetFy(1);
 
                 c->SetPathFail(c->GetPathFail() + 1);
                 if (c->GetPathFail() > 10) {
-                    UI16 fx2Actual = 0;
-                    UI16 fy2Actual = 0;
-                    SI08 npcWanderType = c->GetNpcWander();
+                    std::uint16_t fx2Actual = 0;
+                    std::uint16_t fy2Actual = 0;
+                    std::int8_t npcWanderType = c->GetNpcWander();
                     if (npcWanderType == WT_FLEE || npcWanderType == WT_SCARED) {
                         // If NPC fails to flee, reset to original wandermode instead, and put a
                         // cooldown on the fleeing
@@ -433,7 +433,7 @@ void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
         MoveCharForDirection(c, myx, myy, myz);
         c->SetPathFail(0);
         if (c->GetNpcWander() == WT_FLEE || c->GetNpcWander() == WT_SCARED) {
-            c->SetFleeDistance(static_cast<UI08>(c->GetFleeDistance() + 1));
+            c->SetFleeDistance(static_cast<std::uint8_t>(c->GetFleeDistance() + 1));
         }
 
         // i actually moved this for now after the z =  illegal_z, in the end of CrazyXYBlockStuff()
@@ -486,7 +486,7 @@ void CMovement::Walking(CSocket *mSock, CChar *c, UI08 dir, SI16 sequence) {
 //|						West           6 0x06         134 0x86
 //|						Northwest      7 0x07         135 0x87
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::IsValidDirection(UI08 dir) { return (dir == (dir & 0x87)); }
+bool CMovement::IsValidDirection(std::uint8_t dir) { return (dir == (dir & 0x87)); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMovement::IsFrozen()
@@ -500,7 +500,7 @@ bool CMovement::IsValidDirection(UI08 dir) { return (dir == (dir & 0x87)); }
 // end of the spell cast. With this new check, we don't even need to set the frozen bit when |
 // casting a spell!
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::IsFrozen(CChar *c, CSocket *mSock, SI16 sequence) {
+bool CMovement::IsFrozen(CChar *c, CSocket *mSock, std::int16_t sequence) {
     if (c->IsCasting() && !cwmWorldState->ServerData()->CastSpellsWhileMoving()) {
         if (mSock != nullptr) {
             mSock->SysMessage(1380); // You cannot move while casting.
@@ -545,7 +545,7 @@ bool CMovement::IsFrozen(CChar *c, CSocket *mSock, SI16 sequence) {
 //|
 //|					Rewrote to deny the client... We'll see if it works.
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, SI16 sequence) {
+bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, std::int16_t sequence) {
     // Who are we going to check for weight restrictions?
     if (!c->IsDead() && !c->IsNpc() && c->GetCommandLevel() < CL_CNS) {
         if (mSock != nullptr) {
@@ -589,7 +589,7 @@ bool CMovement::IsOverloaded(CChar *c, CSocket *mSock, SI16 sequence) {
 //|					I left a gap between Player and NPC because someone may want
 //to implement race |					restrictions...
 // o------------------------------------------------------------------------------------------------o
-auto CMovement::CheckForCharacterAtXYZ(CChar *c, SI16 cx, SI16 cy, SI08 cz) -> bool {
+auto CMovement::CheckForCharacterAtXYZ(CChar *c, std::int16_t cx, std::int16_t cy, std::int8_t cz) -> bool {
     CMapRegion *MapArea =
         MapRegion->GetMapRegion(MapRegion->GetGridX(cx), MapRegion->GetGridY(cy),
                                 c->WorldNumber()); // check 3 cols... do we really NEED to?
@@ -619,7 +619,7 @@ auto CMovement::CheckForCharacterAtXYZ(CChar *c, SI16 cx, SI16 cy, SI08 cz) -> b
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Verifies if walk sequence is in sync, and if not, denies movement
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::VerifySequence(CChar *c, CSocket *mSock, SI16 sequence) {
+bool CMovement::VerifySequence(CChar *c, CSocket *mSock, std::int16_t sequence) {
     if (mSock != nullptr) {
         if (mSock->WalkSequence() + 1 != sequence && sequence != 256) {
             DenyMovement(mSock, c, sequence);
@@ -639,7 +639,7 @@ bool CMovement::VerifySequence(CChar *c, CSocket *mSock, SI16 sequence) {
 //|	Purpose		-	Checks if character is running, and updates character accordingly
 //|	Notes		-	returns true if updatechar required, or false if not
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::CheckForRunning(CChar *c, UI08 dir) {
+bool CMovement::CheckForRunning(CChar *c, std::uint8_t dir) {
     // if we are running
     if (dir & 0x80) {
         // if we are using stealth
@@ -728,7 +728,7 @@ bool CMovement::CheckForHouseBan(CChar *c, [[maybe_unused]] CSocket *mSock) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	bool MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ
+//|	Function	-	bool MoveCharForDirection( CChar *c, std::int16_t newX, std::int16_t newY, std::int8_t newZ
 //) |	Date		-	21/09/2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	I already made sure I could move there (even the crazy XY block
@@ -738,7 +738,7 @@ bool CMovement::CheckForHouseBan(CChar *c, [[maybe_unused]] CSocket *mSock) {
 //|					have the GetX/YfromDir functions (and we need those) why don't
 //we just |					use them here?
 // o------------------------------------------------------------------------------------------------o
-void CMovement::MoveCharForDirection(CChar *c, SI16 newX, SI16 newY, SI08 newZ) {
+void CMovement::MoveCharForDirection(CChar *c, std::int16_t newX, std::int16_t newY, std::int8_t newZ) {
     if (!c->IsNpc()) {
         // if we're a PC in combat, or casting, we want to break/adjust their timers
         const bool casting = (c->IsCasting() || c->IsJSCasting());
@@ -763,8 +763,8 @@ void CMovement::MoveCharForDirection(CChar *c, SI16 newX, SI16 newY, SI08 newZ) 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of static items that block character movement
 // o------------------------------------------------------------------------------------------------o
-void CMovement::GetBlockingStatics(SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount,
-                                   UI08 worldNumber) {
+void CMovement::GetBlockingStatics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount,
+                                   std::uint8_t worldNumber) {
     if (xycount >= XYMAX) // don't overflow
         return;
 
@@ -782,8 +782,8 @@ void CMovement::GetBlockingStatics(SI16 x, SI16 y, std::vector<Tile_st> &xyblock
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 // o------------------------------------------------------------------------------------------------o
-auto CMovement::GetBlockingDynamics(SI16 x, SI16 y, std::vector<Tile_st> &xyblock, UI16 &xycount,
-                                    UI08 worldNumber, UI16 instanceId) -> void {
+auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<Tile_st> &xyblock, std::uint16_t &xycount,
+                                    std::uint8_t worldNumber, std::uint16_t instanceId) -> void {
     if (xycount >= XYMAX) // don't overflow
         return;
 
@@ -814,8 +814,8 @@ auto CMovement::GetBlockingDynamics(SI16 x, SI16 y, std::vector<Tile_st> &xybloc
                              std::abs(tItem->GetY() - y) <=
                                  DIST_BUILDRANGE) // implication, is, this is now a CMultiObj
                     {
-                        const UI16 multiId = (tItem->GetId() - 0x4000);
-                        [[maybe_unused]] SI32 length = 0;
+                        const std::uint16_t multiId = (tItem->GetId() - 0x4000);
+                        [[maybe_unused]] std::int32_t length = 0;
 
                         if (!Map->MultiExists(multiId)) {
                             Console::shared().Error(
@@ -861,7 +861,7 @@ auto CMovement::GetBlockingDynamics(SI16 x, SI16 y, std::vector<Tile_st> &xybloc
 //|	Purpose		-	Actually send the walk command back to the player and increment the
 // sequence
 // o------------------------------------------------------------------------------------------------o
-void CMovement::SendWalkToPlayer(CChar *c, CSocket *mSock, SI16 sequence) {
+void CMovement::SendWalkToPlayer(CChar *c, CSocket *mSock, std::int16_t sequence) {
     if (mSock != nullptr) {
         CPWalkOK toSend;
 
@@ -870,7 +870,7 @@ void CMovement::SendWalkToPlayer(CChar *c, CSocket *mSock, SI16 sequence) {
             toSend.FlagColour(0);
         }
         else {
-            toSend.FlagColour(static_cast<UI08>(c->FlagColour(c)));
+            toSend.FlagColour(static_cast<std::uint8_t>(c->FlagColour(c)));
         }
 
         mSock->Send(&toSend);
@@ -886,16 +886,16 @@ void CMovement::SendWalkToPlayer(CChar *c, CSocket *mSock, SI16 sequence) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the character's walk action to other players in range
 // o------------------------------------------------------------------------------------------------o
-void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] UI08 dir, SI16 oldx, SI16 oldy) {
+void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] std::uint8_t dir, std::int16_t oldx, std::int16_t oldy) {
     // lets cache these vars in advance
-    const SI16 newx = c->GetX();
-    const SI16 newy = c->GetY();
+    const std::int16_t newx = c->GetX();
+    const std::int16_t newy = c->GetY();
 
     bool checkX = (oldx != newx);
     bool checkY = (oldy != newy);
-    UI16 effRange;
-    UI08 worldnumber = c->WorldNumber();
-    UI16 instanceId = c->GetInstanceId();
+    std::uint16_t effRange;
+    std::uint8_t worldnumber = c->WorldNumber();
+    std::uint16_t instanceId = c->GetInstanceId();
 
     CPExtMove toSend = (*c);
 
@@ -910,9 +910,9 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] UI08 dir, SI16
         if (worldnumber != mChar->WorldNumber() || instanceId != mChar->GetInstanceId())
             continue;
 
-        effRange = static_cast<UI16>(tSend->Range());
+        effRange = static_cast<std::uint16_t>(tSend->Range());
         const auto visibleRange =
-            static_cast<UI16>(tSend->Range() + Races->VisRange(mChar->GetRace()));
+            static_cast<std::uint16_t>(tSend->Range() + Races->VisRange(mChar->GetRace()));
         if (visibleRange >= effRange) {
             effRange = visibleRange;
         }
@@ -920,11 +920,11 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] UI08 dir, SI16
         if (c != mChar) {
             // We need to ensure they are within range of our X AND Y location regardless of how
             // they moved.
-            const auto dxNew = static_cast<UI16>(abs(newx - mChar->GetX()));
-            const auto dyNew = static_cast<UI16>(abs(newy - mChar->GetY()));
+            const auto dxNew = static_cast<std::uint16_t>(abs(newx - mChar->GetX()));
+            const auto dyNew = static_cast<std::uint16_t>(abs(newy - mChar->GetY()));
             if (checkX && dyNew <= (effRange + 2)) // Only check X Plane if their x changed
             {
-                UI16 dxOld = static_cast<UI16>(abs(oldx - mChar->GetX()));
+                std::uint16_t dxOld = static_cast<std::uint16_t>(abs(oldx - mChar->GetX()));
                 if ((dxNew == effRange) && (dxOld > effRange)) {
                     c->SendToSocket(tSend);
                     continue; // Incase they moved diagonally, lets not update the same character
@@ -938,7 +938,7 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] UI08 dir, SI16
             }
             if (checkY && dxNew <= (effRange + 2)) // Only check Y plane if their y changed
             {
-                UI16 dyOld = static_cast<UI16>(abs(oldy - mChar->GetY()));
+                std::uint16_t dyOld = static_cast<std::uint16_t>(abs(oldy - mChar->GetY()));
                 if ((dyNew == effRange) && (dyOld > effRange)) {
                     c->SendToSocket(tSend);
                     continue;
@@ -948,7 +948,7 @@ void CMovement::SendWalkToOtherPlayers(CChar *c, [[maybe_unused]] UI08 dir, SI16
                     continue;
                 }
             }
-            toSend.FlagColour(static_cast<UI08>(c->FlagColour(mChar)));
+            toSend.FlagColour(static_cast<std::uint8_t>(c->FlagColour(mChar)));
             tSend->Send(&toSend);
         }
     }
@@ -974,13 +974,13 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
 
     auto regChars = grid->GetCharList();
     bool didShove = false;
-    const SI16 x = c->GetX();
-    const SI16 y = c->GetY();
-    const SI08 z = c->GetZ();
-    const UI16 instanceId = c->GetInstanceId();
+    const std::int16_t x = c->GetX();
+    const std::int16_t y = c->GetY();
+    const std::int8_t z = c->GetZ();
+    const std::uint16_t instanceId = c->GetInstanceId();
 
-    std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
-    std::vector<UI16> ourScriptTriggers;
+    std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
+    std::vector<std::uint16_t> ourScriptTriggers;
     cScript *toExecute;
     for (const auto &ourChar : regChars->collection()) {
         if (ValidateObject(ourChar) && ourChar != c && ourChar->GetInstanceId() == instanceId) {
@@ -1060,7 +1060,7 @@ auto CMovement::OutputShoveMessage(CChar *c, CSocket *mSock) -> void {
 //|	Purpose		-	Trigger InRange JS event
 // o------------------------------------------------------------------------------------------------o
 void DoJSInRange(CBaseObject *mObj, CBaseObject *objInRange) {
-    std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1075,7 +1075,7 @@ void DoJSInRange(CBaseObject *mObj, CBaseObject *objInRange) {
 //|	Purpose		-	Trigger OutOfRange JS event
 // o------------------------------------------------------------------------------------------------o
 void DoJSOutOfRange(CBaseObject *mObj, CBaseObject *objOutOfRange) {
-    std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1089,8 +1089,8 @@ void DoJSOutOfRange(CBaseObject *mObj, CBaseObject *objOutOfRange) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Update items that come within range or go out of range of the player
 // o------------------------------------------------------------------------------------------------o
-bool UpdateItemsOnPlane(CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI16 dNew, UI16 dOld,
-                        UI16 visibleRange, bool isGM) {
+bool UpdateItemsOnPlane(CSocket *mSock, CChar *mChar, CItem *tItem, std::uint16_t id, std::uint16_t dNew, std::uint16_t dOld,
+                        std::uint16_t visibleRange, bool isGM) {
     if (isGM || tItem->GetVisible() == VT_VISIBLE ||
         (tItem->GetVisible() == VT_TEMPHIDDEN && tItem->GetOwnerObj() == mChar)) {
         if (mSock != nullptr && ((id >= 0x407A && id <= 0x407F) || id == 0x5388)) {
@@ -1143,8 +1143,8 @@ bool UpdateItemsOnPlane(CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI1
 //|	Purpose		-	Update characters that come within range or go out of range of the
 // player
 // o------------------------------------------------------------------------------------------------o
-bool UpdateCharsOnPlane(CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, UI16 dOld,
-                        UI16 visibleRange) {
+bool UpdateCharsOnPlane(CSocket *mSock, CChar *mChar, CChar *tChar, std::uint16_t dNew, std::uint16_t dOld,
+                        std::uint16_t visibleRange) {
     if (dNew == visibleRange && dOld > visibleRange) // Just came into range
     {
         if (mSock != nullptr) {
@@ -1167,7 +1167,7 @@ bool UpdateCharsOnPlane(CSocket *mSock, CChar *mChar, CChar *tChar, UI16 dNew, U
 }
 
 void MonsterGate(CChar *s, const std::string &scriptEntry);
-void AdvanceObj(CChar *s, UI16 x, bool multiUse);
+void AdvanceObj(CChar *s, std::uint16_t x, bool multiUse);
 void SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate);
 bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType);
 // o------------------------------------------------------------------------------------------------o
@@ -1181,15 +1181,15 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
         if (itemCheck->GetTempVar(CITV_MOREX) + itemCheck->GetTempVar(CITV_MOREY) +
                 itemCheck->GetTempVar(CITV_MOREZ) >
             0) {
-            mChar->SetLocation(static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREX)),
-                               static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREY)),
-                               static_cast<SI08>(itemCheck->GetTempVar(CITV_MOREZ)));
+            mChar->SetLocation(static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),
+                               static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREY)),
+                               static_cast<std::int8_t>(itemCheck->GetTempVar(CITV_MOREZ)));
         }
         break;
     case IT_ADVANCEGATE: // advancement gates
     case IT_MULTIADVANCEGATE:
         if (!mChar->IsNpc()) {
-            AdvanceObj(mChar, static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREX)),
+            AdvanceObj(mChar, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),
                        (itemCheck->GetType() == IT_MULTIADVANCEGATE));
         }
         break;
@@ -1209,8 +1209,8 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
         }
         break;
     case IT_SOUNDOBJECT: // sound objects
-        if (static_cast<UI32>(RandomNum(1, 100)) <= itemCheck->GetTempVar(CITV_MOREZ)) {
-            Effects->PlaySound(itemCheck, static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREX)));
+        if (static_cast<std::uint32_t>(RandomNum(1, 100)) <= itemCheck->GetTempVar(CITV_MOREZ)) {
+            Effects->PlaySound(itemCheck, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)));
         }
         break;
     case IT_MAPCHANGEOBJECT:
@@ -1272,24 +1272,24 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 // and if the character steps on something |					that might cause
 // damage
 // o------------------------------------------------------------------------------------------------o
-void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI16 oldy) {
+void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t oldx, std::int16_t oldy) {
     // lets cache these vars in advance
-    UI16 visibleRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange(mChar->GetRace()));
+    std::uint16_t visibleRange = static_cast<std::uint16_t>(MAX_VISRANGE + Races->VisRange(mChar->GetRace()));
     if (mSock != nullptr) {
-        visibleRange = static_cast<UI16>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+        visibleRange = static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
     }
 
-    const SI16 newx = mChar->GetX();
-    const SI16 newy = mChar->GetY();
-    const UI16 instanceId = mChar->GetInstanceId();
-    UI16 id;
+    const std::int16_t newx = mChar->GetX();
+    const std::int16_t newy = mChar->GetY();
+    const std::uint16_t instanceId = mChar->GetInstanceId();
+    std::uint16_t id;
     ItemTypes type;
     bool EffRange;
     bool inMoveDetectRange = false;
-    UI08 moveDetectRange = 1;
+    std::uint8_t moveDetectRange = 1;
 
     bool isGM = mChar->IsGM();
-    UI16 dxNew, dyNew, dxOld, dyOld;
+    std::uint16_t dxNew, dyNew, dxOld, dyOld;
     const bool checkX = (oldx != newx);
     const bool checkY = (oldy != newy);
     /*
@@ -1315,8 +1315,8 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
             Logins, teleports, object additions and removals all now calculate vis range via square
             pattern instead of a circular one, which seems to fix most of these 20+ year old issues.
     */
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
-    std::vector<UI16> itemScriptTriggers;
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> itemScriptTriggers;
     for (auto &MapArea : MapRegion->PopulateList(newx, newy, mChar->WorldNumber())) {
         if (MapArea == nullptr) // no valid region
             continue;
@@ -1329,12 +1329,12 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                     // Character Send Stuff
                     if (tempChar->IsNpc() || IsOnline((*tempChar)) ||
                         (isGM && cwmWorldState->ServerData()->ShowOfflinePCs())) {
-                        dxNew = static_cast<UI16>(abs(tempChar->GetX() - newx));
-                        dyNew = static_cast<UI16>(abs(tempChar->GetY() - newy));
+                        dxNew = static_cast<std::uint16_t>(abs(tempChar->GetX() - newx));
+                        dyNew = static_cast<std::uint16_t>(abs(tempChar->GetY() - newy));
                         if (checkX &&
                             dyNew <= (visibleRange + 2)) // Only update on x plane if our x changed
                         {
-                            dxOld = static_cast<UI16>(abs(tempChar->GetX() - oldx));
+                            dxOld = static_cast<std::uint16_t>(abs(tempChar->GetX() - oldx));
                             if (UpdateCharsOnPlane(mSock, mChar, tempChar, dxNew, dxOld,
                                                    visibleRange)) {
                                 continue; // If we moved diagonally, don't update the same char
@@ -1344,7 +1344,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                         if (checkY &&
                             dxNew <= (visibleRange + 2)) // Only update on y plane if our y changed
                         {
-                            dyOld = static_cast<UI16>(abs(tempChar->GetY() - oldy));
+                            dyOld = static_cast<std::uint16_t>(abs(tempChar->GetY() - oldy));
 
                             if (UpdateCharsOnPlane(mSock, mChar, tempChar, dyNew, dyOld,
                                                    visibleRange)) {
@@ -1384,7 +1384,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                             if (toExecute) {
                                 if (EffRange) {
                                     // Script was found, let's check for onCollide event
-                                    SI08 retVal = toExecute->OnCollide(mSock, mChar, tItem);
+                                    std::int8_t retVal = toExecute->OnCollide(mSock, mChar, tItem);
                                     if (retVal != -1) {
                                         scriptExecuted = true;
                                         if (retVal == 1) {
@@ -1395,12 +1395,12 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                                     }
                                 }
                                 if (inMoveDetectRange) {
-                                    UI08 rangeToChar = GetDist(
+                                    std::uint8_t rangeToChar = GetDist(
                                         Point3_st(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
                                         Point3_st(newx, newy, mChar->GetZ()));
 
                                     // Script was found, let's check for onMoveDetect event
-                                    SI08 retVal = toExecute->OnMoveDetect(tItem, mChar, rangeToChar,
+                                    std::int8_t retVal = toExecute->OnMoveDetect(tItem, mChar, rangeToChar,
                                                                           oldx, oldy);
                                     if (retVal != -1) {
                                         scriptExecuted = true;
@@ -1418,10 +1418,10 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                         // once
                         cScript *toExecute = nullptr;
                         if (scriptTriggers.size() == 0 || !scriptExecuted) {
-                            UI16 envTrig = 0;
-                            if (JSMapping->GetEnvokeByType()->Check(static_cast<UI16>(type))) {
+                            std::uint16_t envTrig = 0;
+                            if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(type))) {
                                 envTrig = JSMapping->GetEnvokeByType()->GetScript(
-                                    static_cast<UI16>(type));
+                                    static_cast<std::uint16_t>(type));
                                 toExecute = JSMapping->GetScript(envTrig);
                             }
                             else if (JSMapping->GetEnvokeById()->Check(id)) {
@@ -1434,24 +1434,24 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                             if (EffRange) {
                                 // We don't care about the return value from onCollide here, so
                                 // suppress the warning
-                                [[maybe_unused]] SI08 retVal =
+                                [[maybe_unused]] std::int8_t retVal =
                                     toExecute->OnCollide(mSock, mChar, tItem);
                             }
                             if (inMoveDetectRange) {
-                                UI08 rangeToChar =
+                                std::uint8_t rangeToChar =
                                     GetDist(Point3_st(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
                                             Point3_st(newx, newy, mChar->GetZ()));
 
                                 // We don't care about the return value from onCollide here, so
                                 // suppress the warning
-                                [[maybe_unused]] SI08 retVal =
+                                [[maybe_unused]] std::int8_t retVal =
                                     toExecute->OnMoveDetect(tItem, mChar, rangeToChar, oldx, oldy);
                             }
                         }
 
                         // Ok let's trigger onCollide for the character as well
                         if (EffRange) {
-                            std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
+                            std::vector<std::uint16_t> charScriptTriggers = mChar->GetScriptTriggers();
                             for (auto scriptTrig : charScriptTriggers) {
                                 toExecute = JSMapping->GetScript(scriptTrig);
                                 if (toExecute) {
@@ -1469,12 +1469,12 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
                 }
             }
 
-            dxNew = static_cast<UI16>(abs(tItem->GetX() - newx));
-            dyNew = static_cast<UI16>(abs(tItem->GetY() - newy));
+            dxNew = static_cast<std::uint16_t>(abs(tItem->GetX() - newx));
+            dyNew = static_cast<std::uint16_t>(abs(tItem->GetY() - newy));
             if (checkX && dyNew <= (visibleRange +
                                     2)) // Only update items on furthest x plane if our x changed
             {
-                dxOld = static_cast<UI16>(abs(tItem->GetX() - oldx));
+                dxOld = static_cast<std::uint16_t>(abs(tItem->GetX() - oldx));
                 if (UpdateItemsOnPlane(mSock, mChar, tItem, id, dxNew, dxOld, visibleRange, isGM)) {
                     continue; // If we moved diagonally, lets not update an item twice (since it
                               // could match the furthest x and y)
@@ -1483,7 +1483,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, SI16 oldx, SI1
             if (checkY && dxNew <= (visibleRange +
                                     2)) // Only update items on furthest y plane if our y changed
             {
-                dyOld = static_cast<UI16>(abs(tItem->GetY() - oldy));
+                dyOld = static_cast<std::uint16_t>(abs(tItem->GetY() - oldy));
                 if (UpdateItemsOnPlane(mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM)) {
                     continue; // ?????
                 }
@@ -1523,16 +1523,16 @@ void CMovement::CombatWalk(CChar *i) {
     for (auto &sock : FindNearbyPlayers(i)) {
         CChar *mChar = sock->CurrcharObj();
         if (mChar != i) {
-            toSend.FlagColour(static_cast<UI08>(i->FlagColour(mChar)));
+            toSend.FlagColour(static_cast<std::uint8_t>(i->FlagColour(mChar)));
             sock->Send(&toSend);
         }
     }
 }
 
-bool CheckBoundingBox(SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 fx2, SI16 fy2,
-                      UI08 worldNumber, UI16 instanceId);
-bool CheckBoundingCircle(SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI16 radius,
-                         UI08 worldNumber, UI16 instanceId);
+bool CheckBoundingBox(std::int16_t xPos, std::int16_t yPos, std::int16_t fx1, std::int16_t fy1, std::int8_t fz1, std::int16_t fx2, std::int16_t fy2,
+                      std::uint8_t worldNumber, std::uint16_t instanceId);
+bool CheckBoundingCircle(std::int16_t xPos, std::int16_t yPos, std::int16_t fx1, std::int16_t fy1, std::int8_t fz1, std::int16_t radius,
+                         std::uint8_t worldNumber, std::uint16_t instanceId);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMovement::NpcWalk()
 // o------------------------------------------------------------------------------------------------o
@@ -1541,12 +1541,12 @@ bool CheckBoundingCircle(SI16 xPos, SI16 yPos, SI16 fx1, SI16 fy1, SI08 fz1, SI1
 // 3 for box, |					4 for circle, 5 for frozen, 6 for flee, 7 for
 // pathfind
 // o------------------------------------------------------------------------------------------------o
-void CMovement::NpcWalk(CChar *i, UI08 j, SI08 getWander) {
-    const SI16 fx1 = i->GetFx(0);
-    const SI16 fx2 = i->GetFx(1);
-    const SI16 fy1 = i->GetFy(0);
-    const SI16 fy2 = i->GetFy(1);
-    const SI08 fz1 = i->GetFz();
+void CMovement::NpcWalk(CChar *i, std::uint8_t j, std::int8_t getWander) {
+    const std::int16_t fx1 = i->GetFx(0);
+    const std::int16_t fx2 = i->GetFx(1);
+    const std::int16_t fy1 = i->GetFy(0);
+    const std::int16_t fy2 = i->GetFy(1);
+    const std::int8_t fz1 = i->GetFz();
     // if we are walking in an area, and the area is not properly defined, just don't bother with
     // the area anymore
     if (((getWander == WT_BOX) && (fx1 == -1 || fx2 == -1 || fy1 == -1 || fy2 == -1)) ||
@@ -1557,15 +1557,15 @@ void CMovement::NpcWalk(CChar *i, UI08 j, SI08 getWander) {
         i->SetNpcWander(WT_FREE); // Wander freely from now on
     }
     // New Stuff 2000.09.21
-    const SI16 newx = GetXfromDir(j, i->GetX());
-    const SI16 newy = GetYfromDir(j, i->GetY());
-    const UI08 worldNumber = i->WorldNumber();
-    const UI16 instanceId = i->GetInstanceId();
+    const std::int16_t newx = GetXfromDir(j, i->GetX());
+    const std::int16_t newy = GetYfromDir(j, i->GetY());
+    const std::uint8_t worldNumber = i->WorldNumber();
+    const std::uint16_t instanceId = i->GetInstanceId();
     // Let's make this a little more readable.
-    const UI08 jMod = (j & 0x87);
+    const std::uint8_t jMod = (j & 0x87);
     bool pathFound = true;
-    UI16 fx2Actual = 0;
-    UI16 fy2Actual = 0;
+    std::uint16_t fx2Actual = 0;
+    std::uint16_t fy2Actual = 0;
     switch (getWander) {
     case WT_FREE:   // Wander freely
     case WT_FLEE:   // Wander freely after fleeing
@@ -1653,15 +1653,15 @@ void CMovement::NpcWalk(CChar *i, UI08 j, SI08 getWander) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Teleport NPC back to BoundingBox if path wasn't found
 // o------------------------------------------------------------------------------------------------o
-void CMovement::BoundingBoxTeleport(CChar *nChar, UI16 fx2Actual, UI16 fy2Actual, SI16 newx,
-                                    SI16 newy) {
-    const SI16 fx1 = nChar->GetFx(0);
-    const SI16 fx2 = nChar->GetFx(1);
-    const SI16 fy1 = nChar->GetFy(0);
-    const SI16 fy2 = nChar->GetFy(1);
-    const SI08 fz1 = nChar->GetFz();
-    const UI08 worldNumber = nChar->WorldNumber();
-    const UI16 instanceId = nChar->GetInstanceId();
+void CMovement::BoundingBoxTeleport(CChar *nChar, std::uint16_t fx2Actual, std::uint16_t fy2Actual, std::int16_t newx,
+                                    std::int16_t newy) {
+    const std::int16_t fx1 = nChar->GetFx(0);
+    const std::int16_t fx2 = nChar->GetFx(1);
+    const std::int16_t fy1 = nChar->GetFy(0);
+    const std::int16_t fy2 = nChar->GetFy(1);
+    const std::int8_t fz1 = nChar->GetFz();
+    const std::uint8_t worldNumber = nChar->WorldNumber();
+    const std::uint16_t instanceId = nChar->GetInstanceId();
     bool checkSuccess = true;
 
     if (!nChar->GetOldNpcWander()) {
@@ -1687,8 +1687,8 @@ void CMovement::BoundingBoxTeleport(CChar *nChar, UI16 fx2Actual, UI16 fy2Actual
         bool boundingBoxTeleport = false;
         bool waterWalk = cwmWorldState->creatures[nChar->GetId()].IsWater();
         bool amphibWalk = cwmWorldState->creatures[nChar->GetId()].IsAmphibian();
-        for (UI16 m = fx1; m < fx2Actual; m++) {
-            for (UI16 n = fy1; n < fy2Actual; n++) {
+        for (std::uint16_t m = fx1; m < fx2Actual; m++) {
+            for (std::uint16_t n = fy1; n < fy2Actual; n++) {
                 if ((!waterWalk || amphibWalk) &&
                     Map->ValidSpawnLocation(m, n, fz1, worldNumber, false)) {
                     boundingBoxTeleport = true;
@@ -1728,7 +1728,7 @@ void CMovement::BoundingBoxTeleport(CChar *nChar, UI16 fx2Actual, UI16 fy2Actual
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return the new y from given dir
 // o------------------------------------------------------------------------------------------------o
-SI16 CMovement::GetYfromDir(UI08 dir, SI16 y) {
+std::int16_t CMovement::GetYfromDir(std::uint8_t dir, std::int16_t y) {
     switch (dir & 0x07) {
     case NORTH:
     case NORTHEAST:
@@ -1751,7 +1751,7 @@ SI16 CMovement::GetYfromDir(UI08 dir, SI16 y) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return the new x from given dir
 // o------------------------------------------------------------------------------------------------o
-SI16 CMovement::GetXfromDir(UI08 dir, SI16 x) {
+std::int16_t CMovement::GetXfromDir(std::uint8_t dir, std::int16_t x) {
     switch (dir & 0x07) {
     case EAST:
     case NORTHEAST:
@@ -1804,7 +1804,7 @@ SI16 CMovement::GetXfromDir(UI08 dir, SI16 x) {
 //|					in chars_st... all we need is to hold the directions, not the x
 //and y... Hopefully this will |					save memory.
 // o------------------------------------------------------------------------------------------------o
-void CMovement::PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen) {
+void CMovement::PathFind(CChar *c, std::int16_t gx, std::int16_t gy, bool willRun, std::uint8_t pathLen) {
     // Make sure this is a valid character before proceeding
     if (!ValidateObject(c))
         return;
@@ -1820,32 +1820,32 @@ void CMovement::PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen)
     // 2000.09.21
     // initial rewrite of pathfinding...
 
-    const SI16 oldx = c->GetX();
-    const SI16 oldy = c->GetY();
-    SI16 newx = oldx;
-    SI16 newy = oldy;
-    SI08 newz = c->GetZ();
-    UI08 olddir = c->GetDir();
-    UI08 pf_dir = Direction(newx, newy, gx, gy);
+    const std::int16_t oldx = c->GetX();
+    const std::int16_t oldy = c->GetY();
+    std::int16_t newx = oldx;
+    std::int16_t newy = oldy;
+    std::int8_t newz = c->GetZ();
+    std::uint8_t olddir = c->GetDir();
+    std::uint8_t pf_dir = Direction(newx, newy, gx, gy);
 
-    for (UI08 pn = 0; pn < pathLen; ++pn) {
+    for (std::uint8_t pn = 0; pn < pathLen; ++pn) {
         bool bFound = false;
-        SI32 pf_neg = ((RandomNum(0, 1)) ? 1 : -1);
-        UI08 newDir = Direction(newx, newy, gx, gy);
+        std::int32_t pf_neg = ((RandomNum(0, 1)) ? 1 : -1);
+        std::uint8_t newDir = Direction(newx, newy, gx, gy);
 
         bool canMoveInDir = false;
         if (newDir < 8 && CalcMove(c, newx, newy, newz, newDir)) {
             pf_dir = newDir;
             canMoveInDir = true;
         }
-        for (UI08 i = 0; i < 7; ++i) {
+        for (std::uint8_t i = 0; i < 7; ++i) {
             if (canMoveInDir || (pf_dir < 8 && CalcMove(c, newx, newy, newz, pf_dir))) {
                 newx = GetXfromDir(pf_dir, newx); // moved inside if to reduce calculations
                 newy = GetYfromDir(pf_dir, newy);
                 if ((pn < P_PF_MRV) && CheckForCharacterAtXYZ(c, newx, newy, newz)) {
                     // Character is blocking the way. Let's try to find a way around by
                     // randomizing the direction a bit!
-                    SI08 rndDir = pf_dir + RandomNum(-2, 2);
+                    std::int8_t rndDir = pf_dir + RandomNum(-2, 2);
                     if (rndDir < 0) {
                         rndDir = 7 + (rndDir + 1);
                     }
@@ -1855,7 +1855,7 @@ void CMovement::PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen)
                     pf_dir = rndDir;
                 }
 
-                UI08 dirToPush = pf_dir;
+                std::uint8_t dirToPush = pf_dir;
                 if (willRun) {
                     dirToPush |= 0x80;
                 }
@@ -1872,7 +1872,7 @@ void CMovement::PathFind(CChar *c, SI16 gx, SI16 gy, bool willRun, UI08 pathLen)
                 break;
             }
             pf_neg *= -1;
-            pf_dir = static_cast<UI08>(static_cast<UI08>(pf_dir + (i * pf_neg)) % 8);
+            pf_dir = static_cast<std::uint8_t>(static_cast<std::uint8_t>(pf_dir + (i * pf_neg)) % 8);
         }
         if (!bFound) {
 #if DEBUG_PATHFIND
@@ -1894,8 +1894,8 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
     bool shouldRun = false;
     bool canRun = false;
     CChar *kChar = nullptr;
-    UI08 j;
-    SI08 npcWanderType = mChar.GetNpcWander();
+    std::uint8_t j;
+    std::int8_t npcWanderType = mChar.GetNpcWander();
     switch (npcWanderType) {
     case WT_NONE: // No movement
         if (mChar.GetOldNpcWander() != WT_NONE &&
@@ -1914,7 +1914,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
             break;
 
         if (IsOnline((*kChar)) || kChar->IsNpc()) {
-            const UI16 charDist = GetDist(&mChar, kChar);
+            const std::uint16_t charDist = GetDist(&mChar, kChar);
             if (!ObjInRange(&mChar, kChar, DIST_NEXTTILE) &&
                 Direction(&mChar, kChar->GetX(), kChar->GetY()) < 8) {
                 if (mChar.GetStamina() > 0) {
@@ -1931,8 +1931,8 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
 
                 // Don't always re-calculate pathfinding on every step
                 // Update some of the time if target moves, but also use what we already have
-                SI16 oldTargX = 0;
-                SI16 oldTargY = 0;
+                std::int16_t oldTargX = 0;
+                std::int16_t oldTargY = 0;
                 oldTargX = mChar.GetOldTargLocX();
                 oldTargY = mChar.GetOldTargLocY();
 
@@ -2017,13 +2017,13 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                     // Target is within minimum flee distance - flee!
                     // calculate a x,y to flee towards
                     targInRange = true;
-                    const UI16 mydist = P_PF_MFD - GetDist(&mChar, kChar) + 1;
+                    const std::uint16_t mydist = P_PF_MFD - GetDist(&mChar, kChar) + 1;
                     j = Direction(&mChar, kChar->GetX(), kChar->GetY());
-                    SI16 myx = GetXfromDir(j, mChar.GetX());
-                    SI16 myy = GetYfromDir(j, mChar.GetY());
+                    std::int16_t myx = GetXfromDir(j, mChar.GetX());
+                    std::int16_t myy = GetYfromDir(j, mChar.GetY());
 
-                    SI16 xFactor = 0;
-                    SI16 yFactor = 0;
+                    std::int16_t xFactor = 0;
+                    std::int16_t yFactor = 0;
                     // Sept 22, 2002
                     if (myx != mChar.GetX()) {
                         if (myx < mChar.GetX()) {
@@ -2043,8 +2043,8 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                         }
                     }
 
-                    myx += static_cast<SI16>(xFactor * mydist);
-                    myy += static_cast<SI16>(yFactor * mydist);
+                    myx += static_cast<std::int16_t>(xFactor * mydist);
+                    myy += static_cast<std::int16_t>(yFactor * mydist);
 
                     canRun = (mChar.GetStamina() > 0);
 
@@ -2130,7 +2130,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
         else {
             mChar.SetNpcWander(mChar.GetOldNpcWander());
 
-            std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -2178,8 +2178,8 @@ void CMovement::NpcMovement(CChar &mChar) {
             // CChar *l = mChar.GetAttacker();
             CChar *l = mChar.GetTarg();
             if (ValidateObject(l) && (IsOnline((*l)) || l->IsNpc())) {
-                const UI08 charDir = Direction(&mChar, l->GetX(), l->GetY());
-                const UI16 charDist = GetDist(&mChar, l);
+                const std::uint8_t charDir = Direction(&mChar, l->GetX(), l->GetY());
+                const std::uint16_t charDist = GetDist(&mChar, l);
 
                 // NPC is using a ranged weapon, and is within range to shoot at the target
                 CItem *equippedWeapon = Combat->GetWeapon(&mChar);
@@ -2223,7 +2223,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         // mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(),
                         // mChar.GetZ(), mChar.WorldNumber() ));
 
-                        std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+                        std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                         for (auto scriptTrig : scriptTriggers) {
                             cScript *toExecute = JSMapping->GetScript(scriptTrig);
                             if (toExecute != nullptr) {
@@ -2241,10 +2241,10 @@ void CMovement::NpcMovement(CChar &mChar) {
                 if (cwmWorldState->ServerData()->AdvancedPathfinding()) {
                     // Don't always re-calculate pathfinding on every step
                     // Update some of the time if target moves, but also use what we already have
-                    SI16 targX = 0;
-                    SI16 targY = 0;
-                    SI16 oldTargX = 0;
-                    SI16 oldTargY = 0;
+                    std::int16_t targX = 0;
+                    std::int16_t targY = 0;
+                    std::int16_t oldTargX = 0;
+                    std::int16_t oldTargY = 0;
                     oldTargX = mChar.GetOldTargLocX();
                     oldTargY = mChar.GetOldTargLocY();
 
@@ -2253,7 +2253,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange()) {
                         // NPC already within spellcasting distance, we can forgive a lack of
                         // pathfinding to target
-                        UI08 NewDir = Direction(&mChar, l->GetX(), l->GetY());
+                        std::uint8_t NewDir = Direction(&mChar, l->GetX(), l->GetY());
 
                         // Turn towards target
                         if (NewDir != mChar.GetDir()) {
@@ -2295,17 +2295,17 @@ void CMovement::NpcMovement(CChar &mChar) {
                             if (mChar.GetSpAttack() > 0 && mChar.GetMana() > 0) {
                                 // What if we try another location that's nearby the target, but not
                                 // exactly the target?
-                                SI16 rndNum1 = RandomNum(-2, 2);
-                                SI16 rndNum2 = RandomNum(-2, 2);
-                                SI16 rndTargX = l->GetX() + rndNum1;
-                                SI16 rndTargY = l->GetY() + rndNum2;
+                                std::int16_t rndNum1 = RandomNum(-2, 2);
+                                std::int16_t rndNum2 = RandomNum(-2, 2);
+                                std::int16_t rndTargX = l->GetX() + rndNum1;
+                                std::int16_t rndTargY = l->GetY() + rndNum2;
 
                                 if (AdvancedPathfinding(&mChar, rndTargX, rndTargY, canRun)) {
                                     mChar.SetPathFail(0);
                                     mChar.SetOldTargLocX(rndTargX);
                                     mChar.SetOldTargLocY(rndTargY);
-                                    mChar.SetPathTargX(static_cast<UI16>(rndTargX));
-                                    mChar.SetPathTargY(static_cast<UI16>(rndTargY));
+                                    mChar.SetPathTargX(static_cast<std::uint16_t>(rndTargX));
+                                    mChar.SetPathTargY(static_cast<std::uint16_t>(rndTargY));
                                 }
                                 else {
                                     mChar.SetPathFail(mChar.GetPathFail() + 1);
@@ -2318,7 +2318,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                                         cwmWorldState->ServerData()->CombatMaxSpellRange()) {
                                     // NPC already within spellcasting distance, we can forgive a
                                     // lack of pathfinding to target
-                                    UI08 NewDir = Direction(&mChar, l->GetX(), l->GetY());
+                                    std::uint8_t NewDir = Direction(&mChar, l->GetX(), l->GetY());
                                     if (NewDir != mChar.GetDir()) {
                                         mChar.SetDir(NewDir);
                                     }
@@ -2349,7 +2349,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 // mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(),
                                 // mChar.WorldNumber() ));
 
-                                std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+                                std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                                 for (auto scriptTrig : scriptTriggers) {
                                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                                     if (toExecute != nullptr) {
@@ -2373,7 +2373,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                 else {
                     PathFind(&mChar, l->GetX(), l->GetY(), canRun); // Non-advanced pathfinding
                 }
-                const UI08 j = mChar.PopDirection();
+                const std::uint8_t j = mChar.PopDirection();
                 shouldRun = ((j & 0x80) != 0);
                 Walking(nullptr, &mChar, j, 256);
             }
@@ -2385,7 +2385,7 @@ void CMovement::NpcMovement(CChar &mChar) {
             shouldRun = HandleNPCWander(mChar);
         }
 
-        SI08 npcWanderType = mChar.GetNpcWander();
+        std::int8_t npcWanderType = mChar.GetNpcWander();
         if (shouldRun) {
             if (npcWanderType == WT_FOLLOW) {
                 if (mChar.GetMounted()) {
@@ -2462,7 +2462,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                     case 0x97: // Dolphin
                     {
                         // Randomize between two non-standard idle anims, using old animation packet
-                        auto rndVal = static_cast<UI16>(RandomNum(3, 4));
+                        auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
                         Effects->PlayCharacterAnimation(&mChar, rndVal, 0, (rndVal == 3 ? 14 : 19));
                         break;
                     }
@@ -2479,8 +2479,8 @@ void CMovement::NpcMovement(CChar &mChar) {
                 else {
                     if (cwmWorldState->creatures[mChar.GetId()].IsHuman()) {
                         Effects->PlayCharacterAnimation(&mChar,
-                                                        RandomNum(static_cast<UI16>(ACT_IDLE_LOOK),
-                                                                  static_cast<UI16>(ACT_IDLE_YAWN)),
+                                                        RandomNum(static_cast<std::uint16_t>(ACT_IDLE_LOOK),
+                                                                  static_cast<std::uint16_t>(ACT_IDLE_YAWN)),
                                                         0, 5);
                     }
                     else {
@@ -2505,7 +2505,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         case 0x97: // Dolphin
                         {
                             // Randomize between two non-standard idle anims
-                            auto rndVal = static_cast<UI16>(RandomNum(3, 4));
+                            auto rndVal = static_cast<std::uint16_t>(RandomNum(3, 4));
                             Effects->PlayCharacterAnimation(&mChar, rndVal, 0,
                                                             (rndVal == 3 ? 14 : 19));
                             break;
@@ -2518,13 +2518,13 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 !cwmWorldState->creatures[mChar.GetId()].CanFly()) {
                                 // Animal, excluding birds, which have animation setups like
                                 // monsters
-                                auto rndVal = static_cast<UI16>(RandomNum(9, 10));
+                                auto rndVal = static_cast<std::uint16_t>(RandomNum(9, 10));
                                 Effects->PlayCharacterAnimation(&mChar, rndVal, 0,
                                                                 (rndVal == 9 ? 5 : 3));
                             }
                             else {
                                 // Monster
-                                auto rndVal = static_cast<UI16>(RandomNum(17, 18));
+                                auto rndVal = static_cast<std::uint16_t>(RandomNum(17, 18));
                                 Effects->PlayCharacterAnimation(&mChar, rndVal, 0, 5);
                             }
                             break;
@@ -2541,11 +2541,11 @@ void CMovement::NpcMovement(CChar &mChar) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the average Z height level of the maptile at a given coordinate
 // o------------------------------------------------------------------------------------------------o
-void CMovement::GetAverageZ(UI08 nm, SI16 x, SI16 y, SI08 &z, SI08 &avg, SI08 &top) {
-    SI08 zTop = Map->MapElevation(x, y, nm);
-    SI08 zLeft = Map->MapElevation(x, y + 1, nm);
-    SI08 zRight = Map->MapElevation(x + 1, y, nm);
-    SI08 zBottom = Map->MapElevation(x + 1, y + 1, nm);
+void CMovement::GetAverageZ(std::uint8_t nm, std::int16_t x, std::int16_t y, std::int8_t &z, std::int8_t &avg, std::int8_t &top) {
+    std::int8_t zTop = Map->MapElevation(x, y, nm);
+    std::int8_t zLeft = Map->MapElevation(x, y + 1, nm);
+    std::int8_t zRight = Map->MapElevation(x + 1, y, nm);
+    std::int8_t zBottom = Map->MapElevation(x + 1, y + 1, nm);
 
     z = zTop;
     if (zLeft < z) {
@@ -2584,9 +2584,9 @@ void CMovement::GetAverageZ(UI08 nm, SI16 x, SI16 y, SI08 &z, SI08 &avg, SI08 &t
 //|						character's potential new Z and the top of their
 // head
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] UI16 &xycount,
-                     [[maybe_unused]] UI08 world, SI08 ourZ, SI08 ourTop, [[maybe_unused]] SI16 x,
-                     [[maybe_unused]] SI16 y, [[maybe_unused]] UI16 instanceId, bool ignoreDoor,
+bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] std::uint16_t &xycount,
+                     [[maybe_unused]] std::uint8_t world, std::int8_t ourZ, std::int8_t ourTop, [[maybe_unused]] std::int16_t x,
+                     [[maybe_unused]] std::int16_t y, [[maybe_unused]] std::uint16_t instanceId, bool ignoreDoor,
                      bool waterWalk) {
     for (auto &tile : xyblock) {
         if (tile.CheckFlag(TF_WET)) {
@@ -2602,8 +2602,8 @@ bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] UI16 &xycou
                  tile.tileId == 0x873 || (tile.tileId >= 0x6F5 && tile.tileId <= 0x6F6)))
                 continue;
 
-            SI08 checkz = tile.altitude;
-            SI08 checkTop = tile.top();
+            std::int8_t checkz = tile.altitude;
+            std::int8_t checkTop = tile.top();
 
             if (checkTop > ourZ && ourTop > checkz)
                 return false;
@@ -2617,11 +2617,11 @@ bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] UI16 &xycou
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the Z height at the character's feet at specified location
 // o------------------------------------------------------------------------------------------------o
-void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y, SI08 z, SI08 &zlow,
-                          SI08 &ztop, UI16 instanceId, bool waterwalk) {
-    SI08 landz = 0;
-    SI08 landcent = 0;
-    SI08 landtop = 0;
+void CMovement::GetStartZ(std::uint8_t world, [[maybe_unused]] CChar *c, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t &zlow,
+                          std::int8_t &ztop, std::uint16_t instanceId, bool waterwalk) {
+    std::int8_t landz = 0;
+    std::int8_t landcent = 0;
+    std::int8_t landtop = 0;
     bool landBlock = true;
 
     auto map = Map->SeekMap(x, y, world);
@@ -2632,7 +2632,7 @@ void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y,
     }
 
     std::vector<Tile_st> xyblock;
-    UI16 xycount = 0;
+    std::uint16_t xycount = 0;
     GetBlockingStatics(x, y, xyblock, xycount, world);
     GetBlockingDynamics(x, y, xyblock, xycount, world, instanceId);
 
@@ -2640,7 +2640,7 @@ void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y,
     GetAverageZ(world, x, y, landz, landcent, landtop);
 
     bool isset = false;
-    SI08 zcenter = zlow = ztop = 0;
+    std::int8_t zcenter = zlow = ztop = 0;
 
     if (considerLand && !landBlock && z >= landcent) {
         zlow = landz;
@@ -2664,7 +2664,7 @@ void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y,
             // Fetch the top Z position of surface tile as zcenter
             zcenter = tile.top();
 
-            SI08 top = tile.altitude + tile.height();
+            std::int8_t top = tile.altitude + tile.height();
 
             if (!isset || top > ztop) {
                 ztop = top;
@@ -2690,14 +2690,14 @@ void CMovement::GetStartZ(UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y,
 //|					the walking code. Ever wonder why NPCs can walk through walls
 //and stuff in |					combat mode? This is the fix, plus more.
 // o------------------------------------------------------------------------------------------------o
-UI08 CMovement::Direction(CChar *mChar, SI16 x, SI16 y) {
+std::uint8_t CMovement::Direction(CChar *mChar, std::int16_t x, std::int16_t y) {
     return Direction(mChar->GetX(), mChar->GetY(), x, y);
 }
-UI08 CMovement::Direction(SI16 sx, SI16 sy, SI16 dx, SI16 dy) {
-    UI08 dir;
+std::uint8_t CMovement::Direction(std::int16_t sx, std::int16_t sy, std::int16_t dx, std::int16_t dy) {
+    std::uint8_t dir;
 
-    const SI16 xdif = static_cast<SI16>(dx - sx);
-    const SI16 ydif = static_cast<SI16>(dy - sy);
+    const std::int16_t xdif = static_cast<std::int16_t>(dx - sx);
+    const std::int16_t ydif = static_cast<std::int16_t>(dy - sy);
 
     if (xdif == 0 && ydif < 0) {
         dir = NORTH;
@@ -2752,8 +2752,8 @@ UI08 CMovement::Direction(SI16 sx, SI16 sy, SI16 dx, SI16 dy) {
 //|
 //|					Parameters:
 //|						CChar *c			Character
-//|						SI16 x, y			new cords.
-//|						SI16 oldx, oldy		old cords.
+//|						std::int16_t x, y			new cords.
+//|						std::int16_t oldx, oldy		old cords.
 //|						bool justask		don't make any changes, the func.
 //is just asked "what if".. |						bool waterWalk Character can
 // swim (true/false)
@@ -2762,17 +2762,17 @@ UI08 CMovement::Direction(SI16 sx, SI16 sy, SI16 dx, SI16 dy) {
 //|						new z - value        if not blocked
 //|						illegal_z == -128, if walk is blocked
 // o------------------------------------------------------------------------------------------------o
-SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz,
+std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::int16_t oldx, std::int16_t oldy, std::int8_t oldz,
                          [[maybe_unused]] bool justask, bool waterWalk) {
     if (!ValidateObject(c))
         return ILLEGAL_Z;
 
     const bool isGM = IsGMBody(c);
-    SI08 newz = ILLEGAL_Z;
-    SI08 charHeight = 16;
-    UI16 xycount = 0;
-    UI08 worldNumber = c->WorldNumber();
-    UI16 instanceId = c->GetInstanceId();
+    std::int8_t newz = ILLEGAL_Z;
+    std::int8_t charHeight = 16;
+    std::uint16_t xycount = 0;
+    std::uint8_t worldNumber = c->WorldNumber();
+    std::uint16_t instanceId = c->GetInstanceId();
     bool landBlock = true;
 
     std::vector<Tile_st> xyblock;
@@ -2806,9 +2806,9 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
         Map->IsIgnored(map.tileId); // Special case for a couple of land-tiles. Returns true if tile
                                     // being checked equals one of those tiles.
 
-    SI08 startTop = 0;
-    SI08 startz = 0;
-    SI08 landz, landCenter, landtop;
+    std::int8_t startTop = 0;
+    std::int8_t startz = 0;
+    std::int8_t landz, landCenter, landtop;
 
     // Calculate the average Z of landtile at target location
     GetAverageZ(c->WorldNumber(), x, y, landz, landCenter, landtop);
@@ -2818,10 +2818,10 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
               waterWalk);
 
     // Define the maximum height the character can step up to
-    SI08 stepTop = startTop + 2;
+    std::int8_t stepTop = startTop + 2;
 
     // Define the initial Z position of the character's position + height
-    SI08 checkTop = startz + charHeight;
+    std::int8_t checkTop = startz + charHeight;
 
     // Assume move is NOT ok by default
     bool moveIsOk = false;
@@ -2832,14 +2832,14 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
     for (auto &tile : xyblock) {
         if ((!tile.CheckFlag(TF_BLOCKING) && tile.CheckFlag(TF_SURFACE) && !waterWalk) ||
             (waterWalk && tile.CheckFlag(TF_WET))) {
-            SI08 itemz = tile.altitude; // Object's current Z position
-            SI08 itemTop = itemz;
-            SI08 potentialNewZ =
+            std::int8_t itemz = tile.altitude; // Object's current Z position
+            std::int8_t itemTop = itemz;
+            std::int8_t potentialNewZ =
                 tile.top(); // Character's potential new Z position on top of object
-            SI08 testTop = checkTop;
+            std::int8_t testTop = checkTop;
 
             if (moveIsOk) {
-                SI08 cmp = std::abs(potentialNewZ - c->GetZ()) - std::abs(newz - c->GetZ());
+                std::int8_t cmp = std::abs(potentialNewZ - c->GetZ()) - std::abs(newz - c->GetZ());
                 if (cmp > 0 || (cmp == 0 && potentialNewZ > newz))
                     continue;
             }
@@ -2854,7 +2854,7 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
 
             // Check if the character can step up onto the item at target location
             if (stepTop >= itemTop) {
-                SI08 landCheck = itemz;
+                std::int8_t landCheck = itemz;
 
                 if (tile.height() >= 2) {
                     landCheck += 2;
@@ -2880,8 +2880,8 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
     }
 
     if (!considerLand && !landBlock && stepTop >= landz) {
-        SI08 potentialNewZ = landCenter;
-        SI08 testTop = checkTop;
+        std::int8_t potentialNewZ = landCenter;
+        std::int8_t testTop = checkTop;
 
         if (potentialNewZ + charHeight > testTop) {
             testTop = potentialNewZ + charHeight;
@@ -2890,7 +2890,7 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
         bool shouldCheck = true;
 
         if (moveIsOk) {
-            SI08 cmp = abs(potentialNewZ - c->GetZ()) - abs(newz - c->GetZ());
+            std::int8_t cmp = abs(potentialNewZ - c->GetZ()) - abs(newz - c->GetZ());
             if (cmp > 0 || (cmp == 0 && potentialNewZ > newz)) {
                 shouldCheck = false;
             }
@@ -2918,14 +2918,14 @@ SI08 CMovement::CalcWalk(CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 ol
 //|	Purpose		-	Check if a character can walk in a specific direction from a given
 // location |				-	This handles the funky diagonal moves.
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir) {
+bool CMovement::CalcMove(CChar *c, std::int16_t x, std::int16_t y, std::int8_t &z, std::uint8_t dir) {
     // NPCs that walk on land
     if (!cwmWorldState->creatures[c->GetId()].IsWater()) {
         // Is the character moving diagonally (NW, NE, SE, SW)? If so, we should check the nearby
         // directions for blocking items too
         if ((dir & 0x07) % 2) {
             // Check direction counter-clockwise to actual direction
-            UI08 ndir = TurnCounterClockWise(dir);
+            std::uint8_t ndir = TurnCounterClockWise(dir);
             if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true) ==
                     ILLEGAL_Z &&
                 !cwmWorldState->creatures[c->GetId()].IsAmphibian())
@@ -2950,7 +2950,7 @@ bool CMovement::CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir) {
         // directions for blocking items too
         if ((dir & 0x07) % 2) {
             // Check direction counter-clockwise to actual direction
-            UI08 ndir = TurnCounterClockWise(dir);
+            std::uint8_t ndir = TurnCounterClockWise(dir);
             if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true,
                          true) == ILLEGAL_Z)
                 return false;
@@ -2974,10 +2974,10 @@ bool CMovement::CalcMove(CChar *c, SI16 x, SI16 y, SI08 &z, UI08 dir) {
 //|	Purpose		-	Deny player movement and send character's previous location back to
 // client
 // o------------------------------------------------------------------------------------------------o
-void CMovement::DenyMovement(CSocket *mSock, CChar *s, SI16 sequence) {
+void CMovement::DenyMovement(CSocket *mSock, CChar *s, std::int16_t sequence) {
     CPWalkDeny denPack;
 
-    denPack.SequenceNumber(static_cast<SI08>(sequence));
+    denPack.SequenceNumber(static_cast<std::int8_t>(sequence));
     denPack.X(s->GetX());
     denPack.Y(s->GetY());
     denPack.Direction(s->GetDir());
@@ -3001,24 +3001,24 @@ bool operator>(const NodeFCost_st &x, const NodeFCost_st &y) { return (x.fCost >
 //|	Purpose		-	Calculate nodes from source to target location for advanced
 // pathfinding
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI16 curY, SI08 curZ,
-                            UI32 parentSer, std::map<UI32, PfNode_st> &openList,
-                            std::map<UI32, UI32> &closedList, std::deque<NodeFCost_st> &fCostList) {
-    std::map<UI32, bool> blockList;
+bool CMovement::PFGrabNodes(CChar *mChar, std::uint16_t targX, std::uint16_t targY, std::uint16_t curX, std::uint16_t curY, std::int8_t curZ,
+                            std::uint32_t parentSer, std::map<std::uint32_t, PfNode_st> &openList,
+                            std::map<std::uint32_t, std::uint32_t> &closedList, std::deque<NodeFCost_st> &fCostList) {
+    std::map<std::uint32_t, bool> blockList;
     blockList.clear();
 
     bool waterWalk = cwmWorldState->creatures[mChar->GetId()].IsWater();
     bool amphibianWalk = cwmWorldState->creatures[mChar->GetId()].IsAmphibian();
 
-    SI08 newZ = ILLEGAL_Z;
-    for (SI08 xOff = -1; xOff < 2; ++xOff) {
-        SI16 checkX = curX + xOff;
-        for (SI08 yOff = -1; yOff < 2; ++yOff) {
+    std::int8_t newZ = ILLEGAL_Z;
+    for (std::int8_t xOff = -1; xOff < 2; ++xOff) {
+        std::int16_t checkX = curX + xOff;
+        for (std::int8_t yOff = -1; yOff < 2; ++yOff) {
             if (!yOff && !xOff)
                 continue;
 
-            SI16 checkY = curY + yOff;
-            UI32 locSer = (checkY + (checkX << 16));
+            std::int16_t checkY = curY + yOff;
+            std::uint32_t locSer = (checkY + (checkX << 16));
 
             if (amphibianWalk || !waterWalk) {
                 newZ = CalcWalk(mChar, checkX, checkY, curX, curY, curZ, false);
@@ -3044,8 +3044,8 @@ bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI1
             // Don't Cut Corners
             bool cornerBlocked = false;
             if (xOff != 0 && yOff != 0) {
-                UI32 check1Ser = (checkY + (curX << 16));
-                UI32 check2Ser = (curY + (checkX << 16));
+                std::uint32_t check1Ser = (checkY + (curX << 16));
+                std::uint32_t check2Ser = (curY + (checkX << 16));
                 if (blockList.find(check1Ser) != blockList.end() ||
                     blockList.find(check2Ser) != blockList.end()) {
                     cornerBlocked = true;
@@ -3067,12 +3067,12 @@ bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI1
             if (checkX == targX && checkY == targY)
                 return true;
 
-            UI08 gCost = 10;
+            std::uint8_t gCost = 10;
             if (xOff && yOff) {
                 gCost = 14;
             }
 
-            std::map<UI32, PfNode_st>::const_iterator olIter;
+            std::map<std::uint32_t, PfNode_st>::const_iterator olIter;
             olIter = openList.find(locSer);
             if (olIter != openList.end()) {
                 PfNode_st mNode = olIter->second;
@@ -3091,8 +3091,8 @@ bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI1
                 }
             }
             else if (closedList.find(locSer) == closedList.end()) {
-                UI16 hCost = 10 * (abs(checkX - targX) + abs(checkY - targY));
-                UI16 fCost = gCost + hCost;
+                std::uint16_t hCost = 10 * (abs(checkX - targX) + abs(checkY - targY));
+                std::uint16_t fCost = gCost + hCost;
 
                 openList[locSer] = PfNode_st(hCost, gCost, parentSer, newZ);
                 fCostList.push_back(NodeFCost_st(fCost, locSer));
@@ -3110,15 +3110,15 @@ bool CMovement::PFGrabNodes(CChar *mChar, UI16 targX, UI16 targY, UI16 curX, UI1
 //|					Enabled/Disabled throuugh UOX.INI setting -
 // ADVANCEDPATHFINDING=0/1
 // o------------------------------------------------------------------------------------------------o
-bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool willRun,
-                                    UI16 maxSteps) {
-    UI16 startX = mChar->GetX();
-    UI16 startY = mChar->GetY();
-    UI16 curX = mChar->GetX();
-    UI16 curY = mChar->GetY();
-    SI08 curZ = mChar->GetZ();
-    UI08 oldDir = mChar->GetDir();
-    UI16 loopCtr = 0;
+bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint16_t targY, bool willRun,
+                                    std::uint16_t maxSteps) {
+    std::uint16_t startX = mChar->GetX();
+    std::uint16_t startY = mChar->GetY();
+    std::uint16_t curX = mChar->GetX();
+    std::uint16_t curY = mChar->GetY();
+    std::int8_t curZ = mChar->GetZ();
+    std::uint8_t oldDir = mChar->GetDir();
+    std::uint16_t loopCtr = 0;
     EVENT_TIMER(mytimer, EVENT_TIMER_OFF);
     // Set target location in NPC's mind
     mChar->SetPathTargX(targX);
@@ -3127,7 +3127,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool w
 
     // If no maxSteps was provided, set appropriate value based on current scenario
     if (maxSteps == 0) {
-        SI08 npcWanderType = mChar->GetNpcWander();
+        std::int8_t npcWanderType = mChar->GetNpcWander();
         if (mChar->IsAtWar()) {
             if (GetDist(mChar->GetLocation(), Point3_st(targX, targY, curZ)) >= 30) {
                 maxSteps = 150;
@@ -3159,32 +3159,32 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool w
         }
     }
 
-    std::map<UI32, PfNode_st> openList;
-    std::map<UI32, UI32> closedList;
+    std::map<std::uint32_t, PfNode_st> openList;
+    std::map<std::uint32_t, std::uint32_t> closedList;
     std::deque<NodeFCost_st> fCostList;
 
     openList.clear();
     closedList.clear();
     fCostList.resize(0);
 
-    UI32 parentSer = (curY + (curX << 16));
+    std::uint32_t parentSer = (curY + (curX << 16));
     openList[parentSer] = PfNode_st();
     openList[parentSer].z = curZ;
     fCostList.push_back(NodeFCost_st(0, parentSer));
     while ((curX != targX || curY != targY) && loopCtr < maxSteps) {
         parentSer = fCostList[0].xySer;
-        curX = static_cast<UI16>(parentSer >> 16);
-        curY = static_cast<UI16>(parentSer % 65536);
+        curX = static_cast<std::uint16_t>(parentSer >> 16);
+        curY = static_cast<std::uint16_t>(parentSer % 65536);
         curZ = openList[parentSer].z;
 
-        closedList[parentSer] = static_cast<UI32>(openList[parentSer].parent);
+        closedList[parentSer] = static_cast<std::uint32_t>(openList[parentSer].parent);
         openList.erase(openList.find(parentSer));
         fCostList.pop_front();
 
         if (PFGrabNodes(mChar, targX, targY, curX, curY, curZ, parentSer, openList, closedList,
                         fCostList)) {
             while (parentSer != 0) {
-                UI08 newDir = Direction(curX, curY, targX, targY);
+                std::uint8_t newDir = Direction(curX, curY, targX, targY);
 
                 if (willRun) {
                     newDir |= 0x80;
@@ -3199,8 +3199,8 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, UI16 targX, UI16 targY, bool w
                 targX = curX;
                 targY = curY;
                 parentSer = closedList[parentSer];
-                curX = static_cast<UI16>(parentSer >> 16);
-                curY = static_cast<UI16>(parentSer % 65536);
+                curX = static_cast<std::uint16_t>(parentSer >> 16);
+                curY = static_cast<std::uint16_t>(parentSer % 65536);
             }
             break;
         }
@@ -3295,30 +3295,30 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
 
             // Calculate where to move to in order to avoid character that is causing the evade
             // state to trigger
-            SI16 mCharX = mChar->GetX();
-            SI16 mCharY = mChar->GetY();
-            SI16 mTargX = mTarget->GetX();
-            SI16 mTargY = mTarget->GetY();
+            std::int16_t mCharX = mChar->GetX();
+            std::int16_t mCharY = mChar->GetY();
+            std::int16_t mTargX = mTarget->GetX();
+            std::int16_t mTargY = mTarget->GetY();
 
-            SI16 distanceX = mTargX - mCharX; // Adjusted for the inverted x-axis
-            SI16 distanceY = mTargY - mCharY; // Adjusted for the inverted y-axis
+            std::int16_t distanceX = mTargX - mCharX; // Adjusted for the inverted x-axis
+            std::int16_t distanceY = mTargY - mCharY; // Adjusted for the inverted y-axis
 
-            SI16 moveDist = RandomNum(2, 5);
+            std::int16_t moveDist = RandomNum(2, 5);
 
             double magnitude = sqrt(distanceX * distanceX + distanceY * distanceY);
             [[maybe_unused]] int moveDir = Direction(mCharX, mCharY, mTargX, mTargY);
 
-            SI16 evadeTargX = mCharX;
-            SI16 evadeTargY = mCharY;
+            std::int16_t evadeTargX = mCharX;
+            std::int16_t evadeTargY = mCharY;
 
             if (std::abs(distanceX) >= std::abs(distanceY)) {
                 // Move primarily along the X-axis
                 if (distanceX >= 0) {
-                    evadeTargX = mCharX - static_cast<SI16>(
+                    evadeTargX = mCharX - static_cast<std::int16_t>(
                                               std::round(moveDist * (abs(distanceX) / magnitude)));
                 }
                 else {
-                    evadeTargX = mCharX + static_cast<SI16>(
+                    evadeTargX = mCharX + static_cast<std::int16_t>(
                                               std::round(moveDist * (abs(distanceX) / magnitude)));
                 }
                 evadeTargY += RandomNum(-1, 1); // Add a small variation along the Y-axis
@@ -3327,11 +3327,11 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
                 // Move primarily along the Y-axis
                 if (distanceY >= 0) {
                     evadeTargY =
-                        mCharY - static_cast<SI16>(std::round(moveDist * (distanceY / magnitude)));
+                        mCharY - static_cast<std::int16_t>(std::round(moveDist * (distanceY / magnitude)));
                 }
                 else {
                     evadeTargY =
-                        mCharY + static_cast<SI16>(std::round(moveDist * (distanceY / magnitude)));
+                        mCharY + static_cast<std::int16_t>(std::round(moveDist * (distanceY / magnitude)));
                 }
                 evadeTargX += RandomNum(-1, 1); // Add a small variation along the X-axis
             }

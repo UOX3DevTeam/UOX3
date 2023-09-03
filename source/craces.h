@@ -23,12 +23,12 @@ class CRace {
 
     typedef std::vector<ColourPair_st> COLOURLIST;
     typedef std::vector<RaceRelate> RACEIDLIST;
-    typedef std::unordered_set<UI16> ALLOWEQUIPLIST;
-    typedef std::unordered_set<UI16> BANEQUIPLIST;
+    typedef std::unordered_set<std::uint16_t> ALLOWEQUIPLIST;
+    typedef std::unordered_set<std::uint16_t> BANEQUIPLIST;
 
-    SI16 HPMod;
-    SI16 ManaMod;
-    SI16 StamMod;
+    std::int16_t HPMod;
+    std::int16_t ManaMod;
+    std::int16_t StamMod;
 
   private:
     std::array<SKILLVAL, SKILLS> iSkills;
@@ -61,22 +61,22 @@ class CRace {
     std::bitset<WEATHNUM> weatherAffected;
     std::array<SECONDS, WEATHNUM> weathSecs;
     // SECONDS					weathSecs[WEATHNUM];
-    std::array<SI08, WEATHNUM> weathDamage;
-    // SI08					weathDamage[WEATHNUM];
+    std::array<std::int8_t, WEATHNUM> weathDamage;
+    // std::int8_t					weathDamage[WEATHNUM];
 
     bool doesHunger;
     bool doesThirst;
-    UI16 hungerRate;
-    UI16 thirstRate;
-    SI16 hungerDamage;
-    SI16 thirstDrain;
+    std::uint16_t hungerRate;
+    std::uint16_t thirstRate;
+    std::int16_t hungerDamage;
+    std::int16_t thirstDrain;
 
   public:
     CRace();
-    CRace(SI32 numRaces);
+    CRace(std::int32_t numRaces);
     ~CRace();
 
-    SKILLVAL Skill(SI32 skillNum) const;
+    SKILLVAL Skill(std::int32_t skillNum) const;
     const std::string Name(void) const;
     bool RequiresBeard(void) const;
     bool NoBeard(void) const;
@@ -84,7 +84,7 @@ class CRace {
     bool AffectedBy(WeatherType iNum) const;
     void AffectedBy(bool value, WeatherType iNum);
     bool NoHair(void) const;
-    bool CanEquipItem(UI16 itemId) const;
+    bool CanEquipItem(std::uint16_t itemId) const;
 
     GENDER GenderRestriction(void) const;
     LIGHTLEVEL LightLevel(void) const;
@@ -93,7 +93,7 @@ class CRace {
     LIGHTLEVEL NightVision(void) const;
     ARMORCLASS ArmourClassRestriction(void) const;
     SECONDS WeatherSeconds(WeatherType iNum) const;
-    SI08 WeatherDamage(WeatherType iNum) const;
+    std::int8_t WeatherDamage(WeatherType iNum) const;
     R32 MagicResistance(void) const;
     R32 PoisonResistance(void) const;
 
@@ -101,20 +101,20 @@ class CRace {
     RANGE VisibilityRange(void) const;
     RaceRelate RaceRelation(RACEID race) const;
 
-    UI16 GetHungerRate(void) const;
-    UI16 GetThirstRate(void) const;
-    void SetHungerRate(UI16 newValue);
-    void SetThirstRate(UI16 newValue);
-    SI16 GetHungerDamage(void) const;
-    SI16 GetThirstDrain(void) const;
-    void SetHungerDamage(SI16 newValue);
-    void SetThirstDrain(SI16 newValue);
+    std::uint16_t GetHungerRate(void) const;
+    std::uint16_t GetThirstRate(void) const;
+    void SetHungerRate(std::uint16_t newValue);
+    void SetThirstRate(std::uint16_t newValue);
+    std::int16_t GetHungerDamage(void) const;
+    std::int16_t GetThirstDrain(void) const;
+    void SetHungerDamage(std::int16_t newValue);
+    void SetThirstDrain(std::int16_t newValue);
     bool DoesHunger(void) const;
     bool DoesThirst(void) const;
     void DoesHunger(bool newValue);
     void DoesThirst(bool newValue);
 
-    void Skill(SKILLVAL newValue, SI32 iNum);
+    void Skill(SKILLVAL newValue, std::int32_t iNum);
     void Name(const std::string &newName);
     void RequiresBeard(bool newValue);
     void NoBeard(bool newValue);
@@ -122,12 +122,12 @@ class CRace {
     void NoHair(bool newValue);
     void RestrictGear(bool newValue);
 
-    SI16 HPModifier(void) const;
-    void HPModifier(SI16 value);
-    SI16 ManaModifier(void) const;
-    void ManaModifier(SI16 value);
-    SI16 StamModifier(void) const;
-    void StamModifier(SI16 value);
+    std::int16_t HPModifier(void) const;
+    void HPModifier(std::int16_t value);
+    std::int16_t ManaModifier(void) const;
+    void ManaModifier(std::int16_t value);
+    std::int16_t StamModifier(void) const;
+    void StamModifier(std::int16_t value);
 
     void MagicResistance(R32 value);
     void PoisonResistance(R32 value);
@@ -139,11 +139,11 @@ class CRace {
     void NightVision(LIGHTLEVEL newValue);
     void ArmourClassRestriction(ARMORCLASS newValue);
     void WeatherSeconds(SECONDS newValue, WeatherType iNum);
-    void WeatherDamage(SI08 newValue, WeatherType iNum);
+    void WeatherDamage(std::int8_t newValue, WeatherType iNum);
     void LanguageMin(SKILLVAL newValue);
     void VisibilityRange(RANGE newValue);
 
-    void NumEnemyRaces(SI32 iNum);
+    void NumEnemyRaces(std::int32_t iNum);
     void RaceRelation(RaceRelate value, RACEID race);
 
     COLOUR RandomSkin(void) const;
@@ -160,14 +160,14 @@ class CRace {
     bool IsValidHair(COLOUR val) const;
     bool IsValidBeard(COLOUR val) const;
 
-    void Load(size_t sectNum, SI32 modCount);
+    void Load(size_t sectNum, std::int32_t modCount);
     CRace &operator=(CRace &trgRace);
 };
 
 class cRaces {
   private:
     struct CombatModifiers_st {
-        UI08 value;
+        std::uint8_t value;
     };
     typedef std::vector<CRace *> RACELIST;
     typedef std::vector<CombatModifiers_st> MODIFIERLIST;
@@ -204,10 +204,10 @@ class cRaces {
 
     // Accessors
     SECONDS Secs(RACEID race, WeatherType element) const;
-    SI08 Damage(RACEID race, WeatherType element) const;
+    std::int8_t Damage(RACEID race, WeatherType element) const;
     bool Affect(RACEID race, WeatherType element) const;
     const std::string Name(RACEID race) const; // Returns race name of player
-    SKILLVAL Skill(SI32 skill, RACEID race) const;
+    SKILLVAL Skill(std::int32_t skill, RACEID race) const;
     GENDER GenderRestrict(RACEID race) const;
     bool RequireBeard(RACEID race) const;
     bool IsPlayerRace(RACEID race) const;
@@ -216,17 +216,17 @@ class cRaces {
     HEATLEVEL HeatLevel(RACEID race) const;
     bool DoesHunger(RACEID race) const;
     bool DoesThirst(RACEID race) const;
-    UI16 GetHungerRate(RACEID race) const;
-    UI16 GetThirstRate(RACEID race) const;
-    SI16 GetHungerDamage(RACEID race) const;
-    SI16 GetThirstDrain(RACEID race) const;
+    std::uint16_t GetHungerRate(RACEID race) const;
+    std::uint16_t GetThirstRate(RACEID race) const;
+    std::int16_t GetHungerDamage(RACEID race) const;
+    std::int16_t GetThirstDrain(RACEID race) const;
     ARMORCLASS ArmorRestrict(RACEID race) const;
     COLOUR RandomSkin(RACEID x) const;
     COLOUR RandomHair(RACEID x) const;
     COLOUR RandomBeard(RACEID x) const;
     COLOUR BloodColour(RACEID x) const;
-    SI32 DamageFromSkill(SI32 skill, RACEID x) const;
-    SI32 FightPercent(SI32 skill, RACEID x) const;
+    std::int32_t DamageFromSkill(std::int32_t skill, RACEID x) const;
+    std::int32_t FightPercent(std::int32_t skill, RACEID x) const;
     SKILLVAL LanguageMin(RACEID x) const;
     LIGHTLEVEL VisLevel(RACEID x) const;
     RANGE VisRange(RACEID x) const;
@@ -234,9 +234,9 @@ class cRaces {
 
     // Mutators
     void Secs(RACEID race, WeatherType element, SECONDS value);
-    void Damage(RACEID race, WeatherType element, SI08 value);
+    void Damage(RACEID race, WeatherType element, std::int8_t value);
     void Affect(RACEID race, WeatherType element, bool value);
-    void Skill(SI32 skill, SI32 value, RACEID race);
+    void Skill(std::int32_t skill, std::int32_t value, RACEID race);
     void GenderRestrict(GENDER gender, RACEID race);
     void RequireBeard(bool value, RACEID race);
     void NoBeard(bool value, RACEID race);
@@ -245,10 +245,10 @@ class cRaces {
     void HeatLevel(RACEID race, HEATLEVEL value);
     void DoesHunger(RACEID race, bool value);
     void DoesThirst(RACEID race, bool value);
-    void SetHungerRate(RACEID race, UI16 value);
-    void SetThirstRate(RACEID race, UI16 value);
-    void SetHungerDamage(RACEID race, SI16 value);
-    void SetThirstDrain(RACEID race, SI16 value);
+    void SetHungerRate(RACEID race, std::uint16_t value);
+    void SetThirstRate(RACEID race, std::uint16_t value);
+    void SetHungerDamage(RACEID race, std::int16_t value);
+    void SetThirstDrain(RACEID race, std::int16_t value);
     void ArmorRestrict(RACEID race, ARMORCLASS value);
     void RacialEnemy(RACEID race, RACEID enemy);
     void RacialAlly(RACEID race, RACEID ally);

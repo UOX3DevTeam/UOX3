@@ -309,10 +309,10 @@ class CSpeechEntry {
     SpeechTarget targType;
     FontType targFont;
     UnicodeTypes targLanguage;
-    SI32 timeToSayAt; // time when it should be said
+    std::int32_t timeToSayAt; // time when it should be said
     std::string toSay;
     std::string sName;
-    UI08 minCmdLevelToReceive;
+    std::uint8_t minCmdLevelToReceive;
 
   public:
     CSpeechEntry()
@@ -333,10 +333,10 @@ class CSpeechEntry {
     SpeechTarget TargType(void) const { return targType; }
     FontType Font(void) const { return targFont; }
     UnicodeTypes Language(void) const { return targLanguage; }
-    SI32 At(void) const { return timeToSayAt; }
+    std::int32_t At(void) const { return timeToSayAt; }
     const std::string Speech(void) const { return toSay; }
     const std::string SpeakerName(void) const { return sName; }
-    UI08 CmdLevel(void) const { return minCmdLevelToReceive; }
+    std::uint8_t CmdLevel(void) const { return minCmdLevelToReceive; }
 
     void Type(SpeechType type) { typeOfSpeech = type; }
     void AntiSpam(bool value) { antiSpam = value; }
@@ -347,8 +347,8 @@ class CSpeechEntry {
     void TargType(SpeechTarget type) { targType = type; }
     void Font(FontType type) { targFont = type; }
     void Language(UnicodeTypes val) { targLanguage = val; }
-    void At(SI32 newTime) { timeToSayAt = newTime; }
-    void CmdLevel(UI08 nLevel) { minCmdLevelToReceive = nLevel; }
+    void At(std::int32_t newTime) { timeToSayAt = newTime; }
+    void CmdLevel(std::uint8_t nLevel) { minCmdLevelToReceive = nLevel; }
 
     void Speech(const std::string &said) { toSay = said.substr(0, MAX_SPEECH - 1); }
     void SpeakerName(const std::string &spkName) { sName = spkName.substr(0, MAX_NAME - 1); }
@@ -373,7 +373,7 @@ typedef std::vector<CSpeechEntry *>::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue {
   private:
-    SI32 pollTime; // MILLISECONDS How often to poll the queue
+    std::int32_t pollTime; // MILLISECONDS How often to poll the queue
     SPEECHLIST speechList;
     bool runAsThread;
 
@@ -386,8 +386,8 @@ class CSpeechQueue {
     auto Startup() -> void;
     bool Poll(void);         // Send out any pending speech, returning true if entries were sent
     CSpeechEntry &Add(void); // Make space in queue, and return pointer to new entry
-    SI32 PollTime(void) const;
-    void PollTime(SI32 value);
+    std::int32_t PollTime(void) const;
+    void PollTime(std::int32_t value);
     void RunAsThread(bool newValue);
     bool RunAsThread(void) const;
     void DumpInFile(void);

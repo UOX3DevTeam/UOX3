@@ -57,7 +57,7 @@ CEndL myendl;
 constexpr auto NORMALMODE = std::uint8_t(0);
 constexpr auto WARNINGMODE = std::uint8_t(1);
 constexpr auto ERRORMODE = std::uint8_t(2);
-// const UI08 COLOURMODE			= 3;
+// const std::uint8_t COLOURMODE			= 3;
 const std::string Console::ESC = "\x1b"s;
 const std::string Console::CSI = Console::ESC + "["s;
 const std::string Console::BEL = "\x07"s;
@@ -79,7 +79,7 @@ const std::string Console::SETTITLE = Console::ESC + "]2;TITLEs"s + Console::BEL
 const std::string Console::CLEAR = Console::CSI + "2J"s;
 
 // Forward function declarations
-auto EndMessage(SI32 x) -> void;
+auto EndMessage(std::int32_t x) -> void;
 auto LoadCustomTitle() -> void;
 auto LoadSkills() -> void;
 auto LoadSpawnRegions() -> void;
@@ -243,7 +243,7 @@ auto Console::operator<<(const char *output) -> Console & {
         bool wrapDone = false;
         while (!wrapDone) {
             GetConsoleScreenBufferInfo(hco, &ScrBuffInfo);
-            SI32 diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
+            std::int32_t diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
             if (diff > toDisplay.length()) {
                 std::cout << toDisplay;
                 wrapDone = true;
@@ -279,7 +279,7 @@ auto Console::operator<<(const std::int8_t *output) -> Console & {
 //================================================================================================
 auto Console::operator<<(const std::uint8_t &output) -> Console & {
     StartOfLineCheck();
-    std::cout << static_cast<UI16>(output);
+    std::cout << static_cast<std::uint16_t>(output);
     return (*this);
 }
 //================================================================================================
@@ -289,7 +289,7 @@ auto Console::operator<<(const std::int8_t &output) -> Console & {
     return (*this);
 }
 //================================================================================================
-auto Console::operator<<(const UI16 &output) -> Console & {
+auto Console::operator<<(const std::uint16_t &output) -> Console & {
     StartOfLineCheck();
     std::cout << output;
     return (*this);
@@ -447,7 +447,7 @@ auto Console::Log(const std::string &msg) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto Console::Error(const std::string &msg) -> void {
     try {
-        UI08 oldMode = CurrentMode();
+        std::uint8_t oldMode = CurrentMode();
         CurrentMode(ERRORMODE);
         Log(msg, "error.log");
         if (curLeft != 0) {
@@ -631,7 +631,7 @@ auto Console::PrintBasedOnVal(bool value) -> void {
 //|	Purpose		-	Writes to the warning log and the console.
 // o------------------------------------------------------------------------------------------------o
 auto Console::Warning(const std::string &msg) -> void {
-    UI08 oldMode = CurrentMode();
+    std::uint8_t oldMode = CurrentMode();
     CurrentMode(WARNINGMODE);
     Log(msg, "warning.log");
     if (curLeft != 0) {
@@ -682,12 +682,12 @@ auto Console::PrintStartOfLine() -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	Console::MoveTo( SI32 x, SI32 y )
+//|	Function	-	Console::MoveTo( std::int32_t x, std::int32_t y )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 // o------------------------------------------------------------------------------------------------o
 #if defined(_WIN32)
-auto Console::MoveTo(SI32 x, SI32 y) -> void {
+auto Console::MoveTo(std::int32_t x, std::int32_t y) -> void {
     auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD Pos;
     if (y == -1) {
@@ -695,17 +695,17 @@ auto Console::MoveTo(SI32 x, SI32 y) -> void {
 
         GetConsoleScreenBufferInfo(hco, &ScrBuffInfo);
         Pos.Y = ScrBuffInfo.dwCursorPosition.Y;
-        Pos.X = static_cast<UI16>(x);
+        Pos.X = static_cast<std::uint16_t>(x);
         SetConsoleCursorPosition(hco, Pos);
     }
     else {
-        Pos.X = static_cast<UI16>(x);
-        Pos.Y = static_cast<UI16>(y);
+        Pos.X = static_cast<std::uint16_t>(x);
+        Pos.Y = static_cast<std::uint16_t>(y);
         SetConsoleCursorPosition(hco, Pos);
     }
 }
 #else
-void Console::MoveTo(SI32 x, [[maybe_unused]] SI32 y) {
+void Console::MoveTo(std::int32_t x, [[maybe_unused]] std::int32_t y) {
     std::cout << "\033[255D";
     std::cout << "\033[" << x << "C";
 }
@@ -745,10 +745,10 @@ auto Console::StartOfLineCheck() -> void {
 //|	Purpose		-	This is much like PrintFailed, PrintDone and so on except
 //|					we specify the text and the colour
 // o------------------------------------------------------------------------------------------------o
-auto Console::PrintSpecial(UI08 colour, const std::string &msg) -> void {
+auto Console::PrintSpecial(std::uint8_t colour, const std::string &msg) -> void {
     StartOfLineCheck();
     size_t stringLength = msg.size() + 3;
-    MoveTo(static_cast<SI32>(width - stringLength));
+    MoveTo(static_cast<std::int32_t>(width - stringLength));
     TurnNormal();
     (*this) << "[";
     switch (colour) {
@@ -853,7 +853,7 @@ auto Console::cl_getch() -> std::int32_t {
             }
         }
         // Not escape if here, so just return it
-        return static_cast<SI32>(data);
+        return static_cast<std::int32_t>(data);
     }
     else {
         return -1;
@@ -877,7 +877,7 @@ auto Console::cl_getch() -> std::int32_t {
 //|					controls.
 // o------------------------------------------------------------------------------------------------o
 auto Console::Poll() -> void {
-    SI32 c = cl_getch();
+    std::int32_t c = cl_getch();
     if (c > 0) {
         c = std::toupper(c);
         Process(c);
@@ -932,9 +932,9 @@ auto Console::Process(std::int32_t c) -> void {
         [[maybe_unused]] CSocket *tSock = nullptr;
         // char outputline[128], temp[1024];
         std::string outputline, temp;
-        SI32 indexcount = 0;
+        std::int32_t indexcount = 0;
         bool kill = false;
-        SI32 j = 0;
+        std::int32_t j = 0;
         switch (c) {
         case '!':
             // Force server to save accounts file
@@ -947,7 +947,7 @@ auto Console::Process(std::int32_t c) -> void {
             messageLoop << MSG_WORLDSAVE;
             break;
         case 'Y':
-            SI32 keyresp;
+            std::int32_t keyresp;
             std::cout << "System: ";
             std::cout.flush();
             while (!kill) {
@@ -985,9 +985,9 @@ auto Console::Process(std::int32_t c) -> void {
                     messageLoop << temp;
                     break;
                 default:
-                    outputline = outputline + std::string(1, static_cast<SI08>(keyresp));
+                    outputline = outputline + std::string(1, static_cast<std::int8_t>(keyresp));
                     indexcount = indexcount + 1;
-                    std::cout << static_cast<SI08>(keyresp);
+                    std::cout << static_cast<std::int8_t>(keyresp);
                     std::cout.flush();
                     break;
                 }
@@ -1003,7 +1003,7 @@ auto Console::Process(std::int32_t c) -> void {
             std::string szBuffer;
             // We need to get an iteration into the map first of all the top level ULONGs then we
             // can get an equal range.
-            std::map<UI32, UI08> localMap;
+            std::map<std::uint32_t, std::uint8_t> localMap;
             localMap.clear();
             for (ADDMENUMAP_CITERATOR CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end();
                  CJ++) {
@@ -1015,7 +1015,7 @@ auto Console::Process(std::int32_t c) -> void {
                     messageLoop << szBuffer;
                     std::pair<ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR> pairRange =
                         g_mmapAddMenuMap.equal_range(CJ->first);
-                    SI32 count = 0;
+                    std::int32_t count = 0;
                     for (ADDMENUMAP_CITERATOR CI = pairRange.first; CI != pairRange.second; CI++) {
                         count++;
                     }
@@ -1113,10 +1113,10 @@ auto Console::Process(std::int32_t c) -> void {
             messageLoop << "CMD: All Connections Closed.";
         } break;
         case 'P': {
-            UI32 networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-            UI32 timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-            UI32 autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-            UI32 loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+            std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
+            std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
+            std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
+            std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
             // 1/13/2003 - Dreoth - Log Performance Information enhancements
             LogEcho(true);
             Log("--- Starting Performance Dump ---", "performance.log");
@@ -1188,13 +1188,13 @@ auto Console::Process(std::int32_t c) -> void {
             break;
         }
         case 'M':
-            UI32 tmp, total;
+            std::uint32_t tmp, total;
             total = 0;
             tmp = 0;
             messageLoop << "CMD: UOX Memory Information:";
-            UI32 m, n;
+            std::uint32_t m, n;
             m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(OT_CHAR));
-            total += tmp = m + m * sizeof(CTEffect) + m * sizeof(SI08) + m * sizeof(intptr_t) * 5;
+            total += tmp = m + m * sizeof(CTEffect) + m * sizeof(std::int8_t) + m * sizeof(intptr_t) * 5;
             temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
                                 ObjectFactory::shared().CountOfObjects(OT_CHAR), m);
             messageLoop << temp;
@@ -1281,7 +1281,7 @@ auto Console::Process(std::int32_t c) -> void {
             FileLookup->DisplayPriorityMap();
             break;
         default:
-            temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<SI08>(c),
+            temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c),
                                 c);
             messageLoop << temp;
             break;
@@ -1323,8 +1323,8 @@ auto Console::DisplaySettings() -> void {
     (*this) << "   -Adv. Trade System: ";
     (*this) << activeMap[cwmWorldState->ServerData()->TradeSystemStatus()] << myendl;
 
-    (*this) << "   -Races: " << static_cast<UI32>(Races->Count()) << myendl;
-    (*this) << "   -Guilds: " << static_cast<UI32>(GuildSys->NumGuilds()) << myendl;
+    (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
+    (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;
     (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(OT_CHAR)
             << myendl;
     (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(OT_ITEM)
@@ -1357,7 +1357,7 @@ auto Console::DisplaySettings() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers key input for detection in console
 // o------------------------------------------------------------------------------------------------o
-auto Console::RegisterKey(SI32 key, std::string cmdName, UI16 scriptId) -> void {
+auto Console::RegisterKey(std::int32_t key, std::string cmdName, std::uint16_t scriptId) -> void {
 #if defined(UOX_DEBUG_MODE)
     messageLoop << util::format("         Registering key \"%c\"", key);
 #endif
@@ -1369,7 +1369,7 @@ auto Console::RegisterKey(SI32 key, std::string cmdName, UI16 scriptId) -> void 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enabling/Disabling specific key input in console
 // o------------------------------------------------------------------------------------------------o
-auto Console::SetKeyStatus(SI32 key, bool isEnabled) -> void {
+auto Console::SetKeyStatus(std::int32_t key, bool isEnabled) -> void {
     auto toFind = JSKeyHandler.find(key);
     if (toFind != JSKeyHandler.end()) {
         toFind->second.isEnabled = isEnabled;
@@ -1381,7 +1381,7 @@ auto Console::SetKeyStatus(SI32 key, bool isEnabled) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console function
 // o------------------------------------------------------------------------------------------------o
-auto Console::RegisterFunc(const std::string &cmdFunc, const std::string &cmdName, UI16 scriptId)
+auto Console::RegisterFunc(const std::string &cmdFunc, const std::string &cmdName, std::uint16_t scriptId)
     -> void {
 #if defined(UOX_DEBUG_MODE)
     Print(util::format("         Registering console func \"%s\"\n", cmdFunc.c_str()));

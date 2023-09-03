@@ -13,9 +13,9 @@ class CSocket;
 // Different types of user posts
 enum PostTypes { PT_GLOBAL = 1, PT_REGIONAL, PT_LOCAL };
 
-const UI32 BASEGLOBALPOST = 0x01000000;
-const UI32 BASEREGIONPOST = 0x02000000;
-const UI32 BASELOCALPOST = 0x03000000;
+const std::uint32_t BASEGLOBALPOST = 0x01000000;
+const std::uint32_t BASEREGIONPOST = 0x02000000;
+const std::uint32_t BASELOCALPOST = 0x03000000;
 
 // Different types of QUESTS (nQuestType)
 // Added for Quests (ESCORTS)
@@ -32,17 +32,17 @@ enum QuestTypes {
 };
 
 struct MsgBoardPost_st {
-    UI32 serial;
-    UI16 size;
-    UI08 posterLen;
+    std::uint32_t serial;
+    std::uint16_t size;
+    std::uint8_t posterLen;
     char poster[MAX_NAME];
-    UI08 subjectLen;
+    std::uint8_t subjectLen;
     char subject[256];
-    UI08 dateLen;
+    std::uint8_t dateLen;
     char date[256];
-    UI08 lines;
-    UI32 parentSerial;
-    UI08 toggle;
+    std::uint8_t lines;
+    std::uint32_t parentSerial;
+    std::uint8_t toggle;
 
     std::vector<std::string> msgBoardLine;
 

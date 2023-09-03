@@ -58,14 +58,6 @@ typedef void *va_list;
 
 using R32 = float;
 using R64 = double;
-using UI08 = std::uint8_t;  // 0 to 255
-using SI08 = std::int8_t;   // -128 to 127
-using UI16 = std::uint16_t; // 0 to 65535
-using SI16 = std::int16_t;  // -32768 to 32767
-using UI32 = std::uint32_t; // 0 to 4294967295
-using SI32 = std::int32_t;  // -2147483648 to 2147483647
-using UI64 = std::uint64_t; // 0 to 18446744073709551615
-using SI64 = std::int64_t;  // -9223372036854775808 to 9223372036854775807
 
 using SERIAL = std::uint32_t;
 using GENDER = std::uint8_t;

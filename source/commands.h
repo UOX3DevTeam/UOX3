@@ -12,18 +12,18 @@
 class CChar;
 class cScript;
 
-const UI32 BIT_STRIPHAIR = 1;
-const UI32 BIT_STRIPITEMS = 2;
+const std::uint32_t BIT_STRIPHAIR = 1;
+const std::uint32_t BIT_STRIPITEMS = 2;
 
 struct CommandLevel_st {
     std::string name;        // name of level
     std::string title;       // Title of level, displayed in front of name
-    UI08 commandLevel;       // upper limit of level
-    UI16 defaultPriv;        // default privs associated with it
-    UI16 nickColour;         // colour of a person's name
-    UI16 allSkillVals;       // if 0, skills left same, if not, all skills set to this value
-    UI16 targBody;           // target body value
-    UI16 bodyColour;         // target body colour
+    std::uint8_t commandLevel;       // upper limit of level
+    std::uint16_t defaultPriv;        // default privs associated with it
+    std::uint16_t nickColour;         // colour of a person's name
+    std::uint16_t allSkillVals;       // if 0, skills left same, if not, all skills set to this value
+    std::uint16_t targBody;           // target body value
+    std::uint16_t bodyColour;         // target body colour
     std::bitset<8> stripOff; // strips off hair, beard and clothes
     CommandLevel_st()
         : name(""), title(""), commandLevel(0), defaultPriv(0), nickColour(0), allSkillVals(0),
@@ -43,14 +43,14 @@ class CCommands {
     void CommandReset();
 
   public:
-    UI08 NumArguments(void);
-    SI32 Argument(UI08 argNum);
-    std::string CommandString(UI08 section, UI08 end = 0);
+    std::uint8_t NumArguments(void);
+    std::int32_t Argument(std::uint8_t argNum);
+    std::string CommandString(std::uint8_t section, std::uint8_t end = 0);
     void CommandString(std::string newValue);
 
     CommandLevel_st *GetClearance(std::string clearName); // return by command name
-    CommandLevel_st *GetClearance(UI08 commandLevel);     // return by command level
-    UI16 GetColourByLevel(UI08 commandLevel);
+    CommandLevel_st *GetClearance(std::uint8_t commandLevel);     // return by command level
+    std::uint16_t GetColourByLevel(std::uint8_t commandLevel);
     void Command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
     void Load(void);
     void Log(const std::string &command, CChar *player1, CChar *player2,
@@ -67,7 +67,7 @@ class CCommands {
     auto Startup() -> void;
     ~CCommands();
 
-    void Register(const std::string &cmdName, UI16 scriptId, UI08 cmdLevel, bool isEnabled);
+    void Register(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled);
     void UnRegister(const std::string &cmdName, cScript *toRegister);
     void SetCommandStatus(const std::string &cmdName, bool isEnabled);
 };

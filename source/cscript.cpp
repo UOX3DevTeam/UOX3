@@ -199,7 +199,7 @@ static JSFunctionSpec my_functions[] = {
 };
 
 void UOX3ErrorReporter(JSContext *cx, const char *message, JSErrorReport *report) {
-    UI16 scriptNum = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptNum = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     // If we're loading the world then do NOT print out anything!
     Console::shared().Error(
         util::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message));
@@ -265,18 +265,18 @@ void ScriptError(JSContext *cx, const char *txt, ...) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 TryParseJSVal( jsval toParse )
+//|	Function	-	std::int32_t TryParseJSVal( jsval toParse )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper function to parse jsval returned from script
 // o------------------------------------------------------------------------------------------------o
-SI32 TryParseJSVal(jsval toParse) {
+std::int32_t TryParseJSVal(jsval toParse) {
     if (JSVAL_IS_NULL(toParse) || (!JSVAL_IS_BOOLEAN(toParse) && !JSVAL_IS_INT(toParse))) {
         // jsval is neither a bool nor an int - possibly an object!
         return 0;
     }
     else if (JSVAL_IS_BOOLEAN(toParse) == JS_FALSE && JSVAL_IS_INT(toParse)) {
         // jsval is an int!
-        return static_cast<SI32>(JSVAL_TO_INT(toParse));
+        return static_cast<std::int32_t>(JSVAL_TO_INT(toParse));
     }
     else if (JSVAL_IS_BOOLEAN(toParse) == JS_TRUE) {
         // jsval is a bool! convert it to int
@@ -292,8 +292,8 @@ SI32 TryParseJSVal(jsval toParse) {
     }
 }
 
-cScript::cScript(std::string targFile, UI08 rT) : isFiring(false), runTime(rT) {
-    for (SI32 i = 0; i < 3; ++i) {
+cScript::cScript(std::string targFile, std::uint8_t rT) : isFiring(false), runTime(rT) {
+    for (std::int32_t i = 0; i < 3; ++i) {
         eventPresence[i].set();
         needsChecking[i].set();
     }
@@ -431,7 +431,7 @@ bool cScript::OnCreate(CBaseObject *thingCreated, bool dfnCreated, bool isPlayer
     }
 
     jsval rval, params[2];
-    UI08 paramType = 0;
+    std::uint8_t paramType = 0;
     JSObject *myObj;
     if (thingCreated->GetObjType() == OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, thingCreated, runTime);
@@ -473,7 +473,7 @@ bool cScript::OnDelete(CBaseObject *thingDestroyed) {
         return false;
 
     jsval rval, params[2];
-    UI08 paramType = 0;
+    std::uint8_t paramType = 0;
     JSObject *myObj;
     if (thingDestroyed->GetObjType() != OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_ITEM, thingDestroyed, runTime);
@@ -507,10 +507,10 @@ bool cScript::OnDelete(CBaseObject *thingDestroyed) {
 //|					If JS returns bool, true == 2, false == 0
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	22 June, 2003 17:30 (making it version 3)
-//|						Changed return values from bool to SI08
+//|						Changed return values from bool to std::int8_t
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObject *talkingTo) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObject *talkingTo) {
+    const std::int8_t RV_NOFUNC = -1;
     if (speech == nullptr || !ValidateObject(personTalking) || !ValidateObject(talkingTo))
         return RV_NOFUNC;
 
@@ -545,7 +545,7 @@ SI08 cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObject *ta
     if (!(JSVAL_IS_NULL(rval))) // They returned some sort of value
     {
         if (JSVAL_IS_INT(rval)) {
-            return static_cast<SI08>(JSVAL_TO_INT(rval));
+            return static_cast<std::int8_t>(JSVAL_TO_INT(rval));
         }
         else if (JSVAL_IS_BOOLEAN(rval)) {
             if (JSVAL_TO_BOOLEAN(rval) == JS_TRUE)
@@ -608,8 +608,8 @@ bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
 //|	Purpose		-	Triggers for object event is attached to when a character collides
 // with it
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objColliding) || !ValidateObject(objCollideWith))
         return RV_NOFUNC;
 
@@ -645,9 +645,9 @@ SI08 cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject *objCol
 //|	Purpose		-	Triggers for object event is attached to when movement is detected
 // within 5 tiles
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar,
-                           UI16 oldCharX, UI16 oldCharY) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, std::uint8_t rangeToChar,
+                           std::uint16_t oldCharX, std::uint16_t oldCharY) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(sourceObj) || !ValidateObject(charInRange))
         return RV_NOFUNC;
 
@@ -684,8 +684,8 @@ SI08 cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, UI08 rang
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when stolen
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSteal(CChar *thief, CItem *theft, CChar *victim) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSteal(CChar *thief, CItem *theft, CChar *victim) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(thief) || !ValidateObject(theft) || !ValidateObject(victim))
         return RV_NOFUNC;
 
@@ -715,8 +715,8 @@ SI08 cScript::OnSteal(CChar *thief, CItem *theft, CChar *victim) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when dispelled
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDispel(CBaseObject *dispelled) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDispel(CBaseObject *dispelled) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(dispelled))
         return RV_NOFUNC;
 
@@ -758,7 +758,7 @@ SI08 cScript::OnDispel(CBaseObject *dispelled) {
 //|					SCRIPT_LIST instead, event will be a global listener for ALL
 //skills used
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnSkill(CBaseObject *skillUse, SI08 skillUsed) {
+bool cScript::OnSkill(CBaseObject *skillUse, std::int8_t skillUsed) {
     if (!ValidateObject(skillUse))
         return false;
 
@@ -839,7 +839,7 @@ std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which client has requested the name for
 // o------------------------------------------------------------------------------------------------o
-std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, UI08 requestSource) {
+std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std::uint8_t requestSource) {
     if (!ValidateObject(myObj))
         return "";
 
@@ -971,8 +971,8 @@ bool cScript::OnDefense(CChar *attacker, CChar *defender) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining skillpoints
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillGain(CChar *player, SI08 skill, UI32 skillGainAmount) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSkillGain(CChar *player, std::int8_t skill, std::uint32_t skillGainAmount) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player))
         return RV_NOFUNC;
 
@@ -999,8 +999,8 @@ SI08 cScript::OnSkillGain(CChar *player, SI08 skill, UI32 skillGainAmount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining stats
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnStatGained(CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnStatGained(CChar *player, std::uint32_t stat, std::int8_t skill, std::uint32_t statGainedAmount) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player))
         return RV_NOFUNC;
 
@@ -1028,7 +1028,7 @@ SI08 cScript::OnStatGained(CChar *player, UI32 stat, SI08 skill, UI32 statGained
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnStatGain(CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount) {
+bool cScript::OnStatGain(CChar *player, std::uint32_t stat, std::int8_t skill, std::uint32_t statGainAmount) {
     if (!ValidateObject(player))
         return false;
 
@@ -1057,8 +1057,8 @@ bool cScript::OnStatGain(CChar *player, UI32 stat, SI08 skill, UI32 statGainAmou
 //|	Purpose		-	Triggers for character with event attached when activating Virtue
 // Gump icon
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, UI16 buttonId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, std::uint16_t buttonId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar) || !ValidateObject(tChar))
         return RV_NOFUNC;
 
@@ -1089,8 +1089,8 @@ SI08 cScript::OnVirtueGumpPress(CChar *mChar, CChar *tChar, UI16 buttonId) {
 //|					Return true to prevent additional onQuestGump events from
 // triggering
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnQuestGump(CChar *mChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnQuestGump(CChar *mChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar))
         return RV_NOFUNC;
 
@@ -1118,8 +1118,8 @@ SI08 cScript::OnQuestGump(CChar *mChar) {
 //|					Return false to prevent additional onHelpButton events from
 // triggering
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnHelpButton(CChar *mChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnHelpButton(CChar *mChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar))
         return RV_NOFUNC;
 
@@ -1146,8 +1146,8 @@ SI08 cScript::OnHelpButton(CChar *mChar) {
 //|	Purpose		-	Triggers for character who toggle War Mode
 //|					Return false to prevent character from entering War Mode
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnWarModeToggle(CChar *mChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnWarModeToggle(CChar *mChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar))
         return RV_NOFUNC;
 
@@ -1170,13 +1170,13 @@ SI08 cScript::OnWarModeToggle(CChar *mChar) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cScript::SI08()
+//|	Function	-	cScript::std::int8_t()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate special abilities in combat
 // books etc
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpecialMove(CChar *mChar, UI08 abilityId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpecialMove(CChar *mChar, std::uint8_t abilityId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar))
         return RV_NOFUNC;
 
@@ -1204,8 +1204,8 @@ SI08 cScript::OnSpecialMove(CChar *mChar, UI08 abilityId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropped by character
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDrop(CItem *item, CChar *dropper) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDrop(CItem *item, CChar *dropper) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(item) || !ValidateObject(dropper))
         return RV_NOFUNC;
 
@@ -1233,8 +1233,8 @@ SI08 cScript::OnDrop(CItem *item, CChar *dropper) {
 //|	Purpose		-	Triggers for item with event attached when dropping it on another
 // item, or when |					another item is dropped on said item
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(item) || !ValidateObject(dropper) || !ValidateObject(dest))
         return RV_NOFUNC;
 
@@ -1268,8 +1268,8 @@ SI08 cScript::OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest) {
 //|	Changes		-	16/07/2008
 //|						Adjustments made to fix event, which didn't trigger
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objCont) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objCont) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(item) || !ValidateObject(pickerUpper))
         return RV_NOFUNC;
 
@@ -1337,8 +1337,8 @@ bool cScript::OnContRemoveItem(CItem *contItem, CItem *item, CChar *itemRemover)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item event is attached to when swung in combat
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(swinger) || !ValidateObject(swingTarg))
         return RV_NOFUNC;
 
@@ -1368,8 +1368,8 @@ SI08 cScript::OnSwing(CItem *swinging, CChar *swinger, CChar *swingTarg) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item event is attached to when about to decay
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDecay(CItem *decaying) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDecay(CItem *decaying) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(decaying))
         return RV_NOFUNC;
 
@@ -1393,8 +1393,8 @@ SI08 cScript::OnDecay(CItem *decaying) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a multi
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnLeaving(CMultiObj *left, CBaseObject *leaving) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnLeaving(CMultiObj *left, CBaseObject *leaving) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(left) || !ValidateObject(leaving))
         return RV_NOFUNC;
 
@@ -1429,8 +1429,8 @@ SI08 cScript::OnLeaving(CMultiObj *left, CBaseObject *leaving) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for multi when a player logs out inside the multi
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(iMulti) || !ValidateObject(cPlayer))
         return RV_NOFUNC;
 
@@ -1459,8 +1459,8 @@ SI08 cScript::OnMultiLogout(CMultiObj *iMulti, CChar *cPlayer) {
 //|	Purpose		-	Triggers for item with event attached when character tries to equip
 // it
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnEquipAttempt(CChar *equipper, CItem *equipping) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnEquipAttempt(CChar *equipper, CItem *equipping) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(equipper) || !ValidateObject(equipping))
         return RV_NOFUNC;
 
@@ -1488,8 +1488,8 @@ SI08 cScript::OnEquipAttempt(CChar *equipper, CItem *equipping) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when equipped by a character
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnEquip(CChar *equipper, CItem *equipping) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnEquip(CChar *equipper, CItem *equipping) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(equipper) || !ValidateObject(equipping))
         return RV_NOFUNC;
 
@@ -1516,8 +1516,8 @@ SI08 cScript::OnEquip(CChar *equipper, CItem *equipping) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when unequipped by a character
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnUnequipAttempt(CChar *equipper, CItem *equipping) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnUnequipAttempt(CChar *equipper, CItem *equipping) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(equipper) || !ValidateObject(equipping))
         return RV_NOFUNC;
 
@@ -1545,8 +1545,8 @@ SI08 cScript::OnUnequipAttempt(CChar *equipper, CItem *equipping) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when unequipped by a character
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnUnequip(CChar *equipper, CItem *equipping) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnUnequip(CChar *equipper, CItem *equipping) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(equipper) || !ValidateObject(equipping))
         return RV_NOFUNC;
 
@@ -1580,12 +1580,12 @@ SI08 cScript::OnUnequip(CChar *equipper, CItem *equipping) {
 //|					1	=> Execute hard coded implementations as well
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	31 July, 2003 15:39 ( making it version 3)
-//|						Changed return values from bool to SI08
+//|						Changed return values from bool to std::int8_t
 //|					27 October, 2007
 //|						Split onUse into onUseChecked and onUseUnChecked
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnUseChecked(CChar *user, CItem *iUsing) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnUseChecked(CChar *user, CItem *iUsing) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(user) || !ValidateObject(iUsing))
         return RV_NOFUNC;
 
@@ -1620,12 +1620,12 @@ SI08 cScript::OnUseChecked(CChar *user, CItem *iUsing) {
 //|					1	=> Execute hard coded implementations as well
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	31 July, 2003 15:39 ( making it version 3)
-//|						Changed return values from bool to SI08
+//|						Changed return values from bool to std::int8_t
 //|					27 October, 2007
 //|						Split onUse into onUseChecked and onUseUnChecked
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnUseUnChecked(CChar *user, CItem *iUsing) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnUseUnChecked(CChar *user, CItem *iUsing) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(user) || !ValidateObject(iUsing))
         return RV_NOFUNC;
 
@@ -1664,8 +1664,8 @@ SI08 cScript::OnUseUnChecked(CChar *user, CItem *iUsing) {
 //|							1 if should not bounce and use code
 //|							2 if should not bounce and not use code
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDropItemOnNpc(CChar *srcChar, CChar *dstChar, CItem *item) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDropItemOnNpc(CChar *srcChar, CChar *dstChar, CItem *item) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(srcChar) || !ValidateObject(dstChar) || !ValidateObject(item))
         return RV_NOFUNC;
 
@@ -1696,8 +1696,8 @@ SI08 cScript::OnDropItemOnNpc(CChar *srcChar, CChar *dstChar, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when entering a multi
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnEntrance(CMultiObj *left, CBaseObject *leaving) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnEntrance(CMultiObj *left, CBaseObject *leaving) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(left) || !ValidateObject(leaving))
         return RV_NOFUNC;
 
@@ -1831,8 +1831,8 @@ bool cScript::OnLogout(CSocket *sockPlayer, CChar *pPlayer) {
 //|	Purpose		-	Triggers for item with event attached when a player single-clicks on
 // it
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objClicked))
         return false;
 
@@ -1866,7 +1866,7 @@ SI08 cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
 //|	Purpose		-	Triggers for character with event attached when fallDistance is over
 // 20
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnFall(CChar *pFall, SI08 fallDistance) {
+bool cScript::OnFall(CChar *pFall, std::int8_t fallDistance) {
     if (!ValidateObject(pFall))
         return false;
 
@@ -1890,8 +1890,8 @@ bool cScript::OnFall(CChar *pFall, SI08 fallDistance) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers on every AI loop for character with event attached
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnAISliver(CChar *pSliver) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnAISliver(CChar *pSliver) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pSliver))
         return RV_NOFUNC;
 
@@ -1934,8 +1934,8 @@ bool cScript::OnSystemSlice(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when lightlevel changes
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnLightChange(CBaseObject *tObject, UI08 lightLevel) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(tObject))
         return RV_NOFUNC;
 
@@ -2001,7 +2001,7 @@ bool cScript::OnWeatherChange(CBaseObject *tObject, WeatherType element) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when temperature changes
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnTempChange(CBaseObject *tObject, SI08 temp) {
+bool cScript::OnTempChange(CBaseObject *tObject, std::int8_t temp) {
     if (!ValidateObject(tObject))
         return false;
 
@@ -2033,7 +2033,7 @@ bool cScript::OnTempChange(CBaseObject *tObject, SI08 temp) {
 //|	Purpose		-	Triggers for object with event attached, when custom timers started
 // on said |					object using StartTimer function update
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnTimer(CBaseObject *tObject, UI16 timerId) {
+bool cScript::OnTimer(CBaseObject *tObject, std::uint16_t timerId) {
     if (!ValidateObject(tObject))
         return false;
 
@@ -2064,8 +2064,8 @@ bool cScript::OnTimer(CBaseObject *tObject, UI16 timerId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing stats
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnStatLoss(CChar *player, UI32 stat, UI32 statLossAmount) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnStatLoss(CChar *player, std::uint32_t stat, std::uint32_t statLossAmount) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player))
         return RV_NOFUNC;
 
@@ -2091,7 +2091,7 @@ SI08 cScript::OnStatLoss(CChar *player, UI32 stat, UI32 statLossAmount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when stats change
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnStatChange(CChar *player, UI32 stat, SI32 statChangeAmount) {
+bool cScript::OnStatChange(CChar *player, std::uint32_t stat, std::int32_t statChangeAmount) {
     if (!ValidateObject(player))
         return false;
 
@@ -2116,8 +2116,8 @@ bool cScript::OnStatChange(CChar *player, UI32 stat, SI32 statChangeAmount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing skillpoints
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillLoss(CChar *player, SI08 skill, UI32 skillLossAmount) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSkillLoss(CChar *player, std::int8_t skill, std::uint32_t skillLossAmount) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player))
         return RV_NOFUNC;
 
@@ -2143,7 +2143,7 @@ SI08 cScript::OnSkillLoss(CChar *player, SI08 skill, UI32 skillLossAmount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when skillpoints change
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnSkillChange(CChar *player, SI08 skill, SI32 skillChangeAmount) {
+bool cScript::OnSkillChange(CChar *player, std::int8_t skill, std::int32_t skillChangeAmount) {
     if (!ValidateObject(player))
         return false;
 
@@ -2168,8 +2168,8 @@ bool cScript::OnSkillChange(CChar *player, SI08 skill, SI32 skillChangeAmount) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached after dying
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDeath(CChar *pDead, CItem *iCorpse) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDeath(CChar *pDead, CItem *iCorpse) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pDead) || !ValidateObject(iCorpse))
         return RV_NOFUNC;
 
@@ -2196,8 +2196,8 @@ SI08 cScript::OnDeath(CChar *pDead, CItem *iCorpse) {
 //|	Purpose		-	Triggers for character with event attached when being resurrected
 //|	Notes		-	If script returns false when event triggers, resurrection is blocked
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnResurrect(CChar *pAlive) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnResurrect(CChar *pAlive) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pAlive))
         return RV_NOFUNC;
 
@@ -2222,8 +2222,8 @@ SI08 cScript::OnResurrect(CChar *pAlive) {
 //|	Purpose		-	Triggers for character with event attached when the flag status
 // changes
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnFlagChange(CChar *pChanging, UI08 newStatus, UI08 oldStatus) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnFlagChange(CChar *pChanging, std::uint8_t newStatus, std::uint8_t oldStatus) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pChanging))
         return RV_NOFUNC;
 
@@ -2249,12 +2249,12 @@ SI08 cScript::OnFlagChange(CChar *pChanging, UI08 newStatus, UI08 oldStatus) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles callbacks for custom target cursors triggered from scripts
 // o------------------------------------------------------------------------------------------------o
-bool cScript::DoCallback(CSocket *tSock, SERIAL targeted, UI08 callNum) {
+bool cScript::DoCallback(CSocket *tSock, SERIAL targeted, std::uint8_t callNum) {
     if (tSock == nullptr)
         return false;
 
     jsval params[2], rval;
-    SI32 objType = 2; // 2 == null, 1 == char, 0 == item
+    std::int32_t objType = 2; // 2 == null, 1 == char, 0 == item
     CBaseObject *mObj = nullptr;
     JSObject *myObj2 = nullptr;
     try {
@@ -2305,8 +2305,8 @@ JSObject *cScript::Object(void) const { return targObject; }
 //|	Purpose		-	Triggers for NPC character with event attached when loyalty level
 // changes
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnLoyaltyChange(CChar *pChanging, SI08 newStatus) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnLoyaltyChange(CChar *pChanging, std::int8_t newStatus) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pChanging))
         return RV_NOFUNC;
 
@@ -2332,8 +2332,8 @@ SI08 cScript::OnLoyaltyChange(CChar *pChanging, SI08 newStatus) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when hunger level changes
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnHungerChange(CChar *pChanging, SI08 newStatus) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnHungerChange(CChar *pChanging, std::int8_t newStatus) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pChanging))
         return RV_NOFUNC;
 
@@ -2359,8 +2359,8 @@ SI08 cScript::OnHungerChange(CChar *pChanging, SI08 newStatus) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Triggers for character with event attached when thirst level changes
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnThirstChange(CChar *pChanging, SI08 newStatus) {
-    const SI08 RV_NOFUNC = -1;
+bool cScript::OnThirstChange(CChar *pChanging, std::int8_t newStatus) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(pChanging))
         return RV_NOFUNC;
 
@@ -2386,8 +2386,8 @@ bool cScript::OnThirstChange(CChar *pChanging, SI08 newStatus) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when being stolen from
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(stealing) || !ValidateObject(stolenFrom) || !ValidateObject(stolen))
         return RV_NOFUNC;
 
@@ -2418,8 +2418,8 @@ SI08 cScript::OnStolenFrom(CChar *stealing, CChar *stolenFrom, CItem *stolen) {
 //|	Purpose		-	Triggers for character with event attached when someone snoops their
 // backpack
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(snooped) || !ValidateObject(snooper))
         return RV_NOFUNC;
 
@@ -2449,8 +2449,8 @@ SI08 cScript::OnSnooped(CChar *snooped, CChar *snooper, bool success) {
 //|	Purpose		-	Triggers for character with event attached if they attempt to snoop
 // someone's backpack
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(snooped) || !ValidateObject(pack) || !ValidateObject(snooper))
         return RV_NOFUNC;
 
@@ -2496,7 +2496,7 @@ size_t cScript::NewGumpList(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-SEGump_st *cScript::GetGumpList(SI32 index) {
+SEGump_st *cScript::GetGumpList(std::int32_t index) {
     if (index < 0 || static_cast<size_t>(index) >= gumpDisplays.size())
         return nullptr;
 
@@ -2508,7 +2508,7 @@ SEGump_st *cScript::GetGumpList(SI32 index) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-void cScript::RemoveGumpList(SI32 index) {
+void cScript::RemoveGumpList(std::int32_t index) {
     if (index < 0 || static_cast<size_t>(index) >= gumpDisplays.size())
         return;
 
@@ -2524,11 +2524,11 @@ void cScript::RemoveGumpList(SI32 index) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-void cScript::SendGumpList(SI32 index, CSocket *toSendTo) {
+void cScript::SendGumpList(std::int32_t index, CSocket *toSendTo) {
     if (index < 0 || static_cast<size_t>(index) >= gumpDisplays.size())
         return;
 
-    UI32 gumpId = (0xFFFF + JSMapping->GetScriptId(targObject));
+    std::uint32_t gumpId = (0xFFFF + JSMapping->GetScriptId(targObject));
     SendVecsAsGump(toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), gumpId,
                    INVALIDSERIAL);
 }
@@ -2552,9 +2552,9 @@ void cScript::HandleGumpPress(CPIGumpMenuSelect *packet) {
     if (pressing == nullptr)
         return;
 
-    UI32 button = packet->ButtonId();
-    UI16 nButtons = static_cast<UI16>(packet->SwitchCount());
-    UI16 nText = static_cast<UI16>(packet->TextCount());
+    std::uint32_t button = packet->ButtonId();
+    std::uint16_t nButtons = static_cast<std::uint16_t>(packet->SwitchCount());
+    std::uint16_t nText = static_cast<std::uint16_t>(packet->TextCount());
 
     SEGumpData_st *segdGumpData = new SEGumpData_st;
     JSObject *jsoObject = JS_NewObject(targContext, &UOXGumpData_class, nullptr, nullptr);
@@ -2564,7 +2564,7 @@ void cScript::HandleGumpPress(CPIGumpMenuSelect *packet) {
     JS_LockGCThing(targContext, jsoObject);
     // JS_AddRoot( targContext, &jsoObject );
 
-    UI16 i;
+    std::uint16_t i;
     // Loop through Buttons
     for (i = 0; i < nButtons; ++i) {
         segdGumpData->nButtons.push_back(packet->SwitchValue(i));
@@ -2614,8 +2614,8 @@ void cScript::HandleGumpInput(CPIGumpInput *pressing) {
 //|	Purpose		-	Triggers for character with event attached when clicking the old
 // school horizontally scrolling gump |					if ID of this gump is 0
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnScrollingGumpPress(CSocket *tSock, UI16 gumpId, UI16 buttonId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnScrollingGumpPress(CSocket *tSock, std::uint16_t gumpId, std::uint16_t buttonId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (tSock == nullptr)
         return RV_NOFUNC;
 
@@ -2642,7 +2642,7 @@ SI08 cScript::OnScrollingGumpPress(CSocket *tSock, UI16 gumpId, UI16 buttonId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when entering a region
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnEnterRegion(CChar *entering, UI16 region) {
+bool cScript::OnEnterRegion(CChar *entering, std::uint16_t region) {
     if (!ValidateObject(entering))
         return false;
 
@@ -2666,7 +2666,7 @@ bool cScript::OnEnterRegion(CChar *entering, UI16 region) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a region
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnLeaveRegion(CChar *leaving, UI16 region) {
+bool cScript::OnLeaveRegion(CChar *leaving, std::uint16_t region) {
     if (!ValidateObject(leaving))
         return false;
 
@@ -2691,8 +2691,8 @@ bool cScript::OnLeaveRegion(CChar *leaving, UI16 region) {
 //|	Purpose		-	Triggers for characters with event attached when switching to a
 // different facet
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnFacetChange(CChar *mChar, const UI08 oldFacet, const UI08 newFacet) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnFacetChange(CChar *mChar, const std::uint8_t oldFacet, const std::uint8_t newFacet) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mChar))
         return RV_NOFUNC;
 
@@ -2721,8 +2721,8 @@ SI08 cScript::OnFacetChange(CChar *mChar, const UI08 oldFacet, const UI08 newFac
 //|	Purpose		-	Triggers for character with event attached who targets someone with
 // a spell
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, UI08 spellNum) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, std::uint8_t spellNum) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(target) || !ValidateObject(caster))
         return RV_NOFUNC;
 
@@ -2757,8 +2757,8 @@ SI08 cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, UI08 spell
 //|	Purpose		-	Triggers for character with event attached who is the target of a
 // spell
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellTarget(CBaseObject *target, CChar *caster, UI08 spellNum) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpellTarget(CBaseObject *target, CChar *caster, std::uint8_t spellNum) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(target) || !ValidateObject(caster))
         return RV_NOFUNC;
 
@@ -2792,7 +2792,7 @@ SI08 cScript::OnSpellTarget(CBaseObject *target, CChar *caster, UI08 spellNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
 // o------------------------------------------------------------------------------------------------o
-bool cScript::CallParticularEvent(const char *eventToCall, jsval *params, SI32 numParams,
+bool cScript::CallParticularEvent(const char *eventToCall, jsval *params, std::int32_t numParams,
                                   jsval *eventRetVal) {
     if (eventToCall == nullptr)
         return false;
@@ -2819,7 +2819,7 @@ bool cScript::CallParticularEvent(const char *eventToCall, jsval *params, SI32 n
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 // o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnSpellCast(CChar *tChar, UI08 SpellId) {
+std::int16_t cScript::OnSpellCast(CChar *tChar, std::uint8_t SpellId) {
     if (!ValidateObject(tChar))
         return -2;
 
@@ -2839,7 +2839,7 @@ SI16 cScript::OnSpellCast(CChar *tChar, UI08 SpellId) {
         return -2;
     }
 
-    return static_cast<SI16>(JSVAL_TO_INT(rval));
+    return static_cast<std::int16_t>(JSVAL_TO_INT(rval));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2851,7 +2851,7 @@ SI16 cScript::OnSpellCast(CChar *tChar, UI08 SpellId) {
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
 // o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnScrollCast(CChar *tChar, UI08 SpellId) {
+std::int16_t cScript::OnScrollCast(CChar *tChar, std::uint8_t SpellId) {
     if (!ValidateObject(tChar))
         return -2;
 
@@ -2871,7 +2871,7 @@ SI16 cScript::OnScrollCast(CChar *tChar, UI08 SpellId) {
         return -2;
     }
 
-    return static_cast<SI16>(JSVAL_TO_INT(rval));
+    return static_cast<std::int16_t>(JSVAL_TO_INT(rval));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2880,8 +2880,8 @@ SI16 cScript::OnScrollCast(CChar *tChar, UI08 SpellId) {
 //|	Purpose		-	Triggers after character with event attached successfully casts a
 // spell
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellSuccess(CChar *tChar, UI08 SpellId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpellSuccess(CChar *tChar, std::uint8_t SpellId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(tChar))
         return RV_NOFUNC;
 
@@ -2910,8 +2910,8 @@ SI08 cScript::OnSpellSuccess(CChar *tChar, UI08 SpellId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached says something
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnTalk(CChar *myChar, const char *mySpeech) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnTalk(CChar *myChar, const char *mySpeech) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(myChar))
         return RV_NOFUNC;
 
@@ -2992,8 +2992,8 @@ bool cScript::OnSpeechInput(CChar *myChar, CItem *myItem, const char *mySpeech) 
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are added to
 // them
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellGain(CItem *book, const UI08 spellNum) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpellGain(CItem *book, const std::uint8_t spellNum) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(book))
         return RV_NOFUNC;
 
@@ -3019,8 +3019,8 @@ SI08 cScript::OnSpellGain(CItem *book, const UI08 spellNum) {
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are removed
 // from them
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellLoss(CItem *book, const UI08 spellNum) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSpellLoss(CItem *book, const std::uint8_t spellNum) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(book))
         return RV_NOFUNC;
 
@@ -3046,9 +3046,9 @@ SI08 cScript::OnSpellLoss(CItem *book, const UI08 spellNum) {
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is
 // performed
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillCheck(CChar *myChar, const UI08 skill, const UI16 lowSkill,
-                           const UI16 highSkill, bool isCraftSkill) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSkillCheck(CChar *myChar, const std::uint8_t skill, const std::uint16_t lowSkill,
+                           const std::uint16_t highSkill, bool isCraftSkill) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(myChar) || skill > ALLSKILLS)
         return RV_NOFUNC;
 
@@ -3143,8 +3143,8 @@ bool cScript::AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Quick and dirty way to setup custom commands
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCommand(CSocket *mSock, std::string command) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCommand(CSocket *mSock, std::string command) {
+    const std::int8_t RV_NOFUNC = -1;
     if (mSock == nullptr || command == "")
         return RV_NOFUNC;
 
@@ -3243,7 +3243,7 @@ bool cScript::executeCommand(CSocket *s, std::string funcName, std::string execu
 //|	Purpose		-	Triggers before a spellcast attempt for characters with onSpellCast
 // event attached
 // o------------------------------------------------------------------------------------------------o
-bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum) {
+bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, std::int32_t spellNum) {
     if (!ValidateObject(tChar))
         return false;
 
@@ -3275,7 +3275,7 @@ bool cScript::MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, SI32
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all
 // items or |					characters (as specified) in the game
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterate(CBaseObject *a, UI32 &b) {
+bool cScript::OnIterate(CBaseObject *a, std::uint32_t &b) {
     if (!ValidateObject(a))
         return true;
 
@@ -3324,7 +3324,7 @@ bool cScript::OnIterate(CBaseObject *a, UI32 &b) {
 //|	Purpose		-	Called after IterateOverSpawnRegions JS function is used, and
 // iterates over |					all spawn regions in game
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, UI32 &b) {
+bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, std::uint32_t &b) {
     if (a == nullptr)
         return true;
 
@@ -3360,7 +3360,7 @@ bool cScript::OnIterateSpawnRegions(CSpawnRegion *a, UI32 &b) {
 //|					be registered in JSE_FILEASSOCIATIONS.SCP under the
 //[PACKET_SCRIPTS] section
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnPacketReceive(CSocket *mSock, UI16 packetNum) {
+bool cScript::OnPacketReceive(CSocket *mSock, std::uint16_t packetNum) {
     if (mSock == nullptr)
         return false;
 
@@ -3370,8 +3370,8 @@ bool cScript::OnPacketReceive(CSocket *mSock, UI16 packetNum) {
     jsval rval, params[3];
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, mSock, runTime);
     params[0] = OBJECT_TO_JSVAL(myObj);
-    params[1] = INT_TO_JSVAL(static_cast<UI08>(packetNum % 256));
-    params[2] = INT_TO_JSVAL(static_cast<UI08>(packetNum >> 8));
+    params[1] = INT_TO_JSVAL(static_cast<std::uint8_t>(packetNum % 256));
+    params[2] = INT_TO_JSVAL(static_cast<std::uint8_t>(packetNum >> 8));
     JSBool retVal =
         JS_CallFunctionName(targContext, targObject, "onPacketReceive", 3, params, &rval);
 
@@ -3389,8 +3389,8 @@ bool cScript::OnPacketReceive(CSocket *mSock, UI16 packetNum) {
 //|	Purpose		-	Allows overriding events that happen when doubleclicking characters,
 // such as |					open paperdoll, mounting horses, etc
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(currChar) || !ValidateObject(targChar))
         return RV_NOFUNC;
 
@@ -3422,8 +3422,8 @@ SI08 cScript::OnCharDoubleClick(CChar *currChar, CChar *targChar) {
 // skillgump, and |					instead do something else (like opening a
 // custom skillgump instead).
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSkillGump(CChar *currChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSkillGump(CChar *currChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(currChar))
         return RV_NOFUNC;
 
@@ -3451,8 +3451,8 @@ SI08 cScript::OnSkillGump(CChar *currChar) {
 //|	Purpose		-	Expose bandage macro usage to JS engine so server admins can
 // override the effects
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageItem) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageItem) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(targChar) || mSock == nullptr)
         return RV_NOFUNC;
 
@@ -3487,8 +3487,8 @@ SI08 cScript::OnUseBandageMacro(CSocket *mSock, CChar *targChar, CItem *bandageI
 //|					Returning TRUE will deem a target valid, and it will be
 // selected
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(attacker) || !ValidateObject(target))
         return RV_NOFUNC;
 
@@ -3521,8 +3521,8 @@ SI08 cScript::OnAICombatTarget(CChar *attacker, CChar *target) {
 //|					Returning TRUE will override code's default handling of this
 // scenario
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCombatStart(CChar *attacker, CChar *defender) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCombatStart(CChar *attacker, CChar *defender) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(attacker) || !ValidateObject(defender))
         return RV_NOFUNC;
 
@@ -3554,8 +3554,8 @@ SI08 cScript::OnCombatStart(CChar *attacker, CChar *defender) {
 //|					Returning TRUE will override code's default handling of this
 // scenario
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(currChar))
         return RV_NOFUNC;
 
@@ -3589,8 +3589,8 @@ SI08 cScript::OnCombatEnd(CChar *currChar, CChar *targChar) {
 //|					Returning TRUE will override code's default handling of this
 // scenario
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(mKilled)) // || !ValidateObject( mKiller ))
         return RV_NOFUNC;
 
@@ -3621,16 +3621,16 @@ SI08 cScript::OnDeathBlow(CChar *mKilled, CChar *mKiller) {
 // event |					Returning another value will override code's default
 // handling of event
 // o------------------------------------------------------------------------------------------------o
-SI16 cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, UI08 getFightSkill,
-                                 UI08 hitLoc) {
-    const SI16 RV_NOFUNC = -1;
+std::int16_t cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, std::uint8_t getFightSkill,
+                                 std::uint8_t hitLoc) {
+    const std::int16_t RV_NOFUNC = -1;
     if (!ValidateObject(attacker) || !ValidateObject(defender))
         return RV_NOFUNC;
 
     if (!ExistAndVerify(seOnCombatDamageCalc, "onCombatDamageCalc"))
         return RV_NOFUNC;
 
-    SI16 funcRetVal = -1;
+    std::int16_t funcRetVal = -1;
 
     jsval rval, params[4];
     JSObject *attackerObj = JSEngine->AcquireObject(IUE_CHAR, attacker, runTime);
@@ -3651,7 +3651,7 @@ SI16 cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, UI08 getFight
 
     if (damage.isType(JSOT_INT) || damage.isType(JSOT_DOUBLE)) // They returned some sort of value
     {
-        return static_cast<SI16>(damage.toInt());
+        return static_cast<std::int16_t>(damage.toInt());
     }
     else {
         funcRetVal = -1; // default to hard code
@@ -3666,8 +3666,8 @@ SI16 cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, UI08 getFight
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached takes damage
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDamage(CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, WeatherType damageType) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(damaged))
         return RV_NOFUNC;
 
@@ -3703,9 +3703,9 @@ SI08 cScript::OnDamage(CChar *damaged, CChar *attacker, SI16 damageValue, Weathe
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached deals damage
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDamageDeal(CChar *attacker, CChar *damaged, SI16 damageValue,
+std::int8_t cScript::OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue,
                            WeatherType damageType) {
-    const SI08 RV_NOFUNC = -1;
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(damaged))
         return RV_NOFUNC;
 
@@ -3737,8 +3737,8 @@ SI08 cScript::OnDamageDeal(CChar *attacker, CChar *damaged, SI16 damageValue,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBuy(CSocket *tSock, CChar *objVendor) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnBuy(CSocket *tSock, CChar *objVendor) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || tSock == nullptr)
         return RV_NOFUNC;
 
@@ -3768,8 +3768,8 @@ SI08 cScript::OnBuy(CSocket *tSock, CChar *objVendor) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSell(CSocket *tSock, CChar *objVendor) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSell(CSocket *tSock, CChar *objVendor) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || tSock == nullptr)
         return RV_NOFUNC;
 
@@ -3802,9 +3802,9 @@ SI08 cScript::OnSell(CSocket *tSock, CChar *objVendor) {
 //|					from an NPC vendor. Returning false/0 from the script will halt
 //the purchase
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought,
-                              UI16 numItemsBuying) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought,
+                              std::uint16_t numItemsBuying) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || !ValidateObject(objItemBought) || tSock == nullptr ||
         numItemsBuying == 0)
         return RV_NOFUNC;
@@ -3844,9 +3844,9 @@ SI08 cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *obj
 // being sold to |					an NPC vendor. Returning false/0 from script
 // will halt the sale
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold,
-                             UI16 numItemsSelling) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold,
+                             std::uint16_t numItemsSelling) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || !ValidateObject(objItemSold) || tSock == nullptr ||
         numItemsSelling == 0)
         return RV_NOFUNC;
@@ -3885,9 +3885,9 @@ SI08 cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objI
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					bought from an NPC vendor
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoughtFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought,
-                                 UI16 numItemsBought) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnBoughtFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought,
+                                 std::uint16_t numItemsBought) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || !ValidateObject(objItemBought) || tSock == nullptr)
         return RV_NOFUNC;
 
@@ -3925,9 +3925,9 @@ SI08 cScript::OnBoughtFromVendor(CSocket *tSock, CChar *objVendor, CBaseObject *
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					sold to an NPC vendor
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSoldToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold,
-                             UI16 numItemsSold) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnSoldToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold,
+                             std::uint16_t numItemsSold) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objVendor) || !ValidateObject(objItemSold) || tSock == nullptr)
         return RV_NOFUNC;
 
@@ -3963,8 +3963,8 @@ SI08 cScript::OnSoldToVendor(CSocket *tSock, CChar *objVendor, CBaseObject *objI
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding house commands via JS script attached to multi
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnHouseCommand(CSocket *tSock, CMultiObj *objMulti, UI08 cmdId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnHouseCommand(CSocket *tSock, CMultiObj *objMulti, std::uint8_t cmdId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objMulti) || tSock == nullptr)
         return RV_NOFUNC;
 
@@ -3995,8 +3995,8 @@ SI08 cScript::OnHouseCommand(CSocket *tSock, CMultiObj *objMulti, UI08 cmdId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows doing additional stuff with newly crafted items
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, std::uint16_t createEntryId) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(objChar) || mSock == nullptr)
         return RV_NOFUNC;
 
@@ -4030,8 +4030,8 @@ SI08 cScript::OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, UI16 cr
 //|	Notes		-	pathfindResult gives a value that represents how the pathfinding
 // ended
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnPathfindEnd(CChar *npc, SI08 pathfindResult) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnPathfindEnd(CChar *npc, std::int8_t pathfindResult) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(npc))
         return RV_NOFUNC;
 
@@ -4059,8 +4059,8 @@ SI08 cScript::OnPathfindEnd(CChar *npc, SI08 pathfindResult) {
 //|	Purpose		-	Triggers for NPCs when they enter the evade state after failing to
 // pathfind to |					a target in combat
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(npc) || !ValidateObject(enemy))
         return RV_NOFUNC;
 
@@ -4090,8 +4090,8 @@ SI08 cScript::OnEnterEvadeState(CChar *npc, CChar *enemy) {
 //|	Purpose		-	Triggers for corpse of character when player attempts to carve said
 // corpse
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnCarveCorpse(CChar *player, CItem *corpse) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnCarveCorpse(CChar *player, CItem *corpse) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player) || !ValidateObject(corpse))
         return RV_NOFUNC;
 
@@ -4119,8 +4119,8 @@ SI08 cScript::OnCarveCorpse(CChar *player, CItem *corpse) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for dye tub when player attempts to dye something with it
 // o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target) {
-    const SI08 RV_NOFUNC = -1;
+std::int8_t cScript::OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target) {
+    const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(player) || !ValidateObject(dyeTub) || !ValidateObject(target))
         return RV_NOFUNC;
 
@@ -4146,14 +4146,14 @@ SI08 cScript::OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target) {
 }
 
 bool cScript::EventExists(ScriptEvent eventNum) const {
-    UI32 index = eventNum / 64;
+    std::uint32_t index = eventNum / 64;
     if (index > 2)
         return false;
 
     return eventPresence[index].test((eventNum % 64));
 }
 void cScript::SetEventExists(ScriptEvent eventNum, bool status) {
-    UI32 index = eventNum / 64;
+    std::uint32_t index = eventNum / 64;
     if (index > 2)
         return;
 
@@ -4161,14 +4161,14 @@ void cScript::SetEventExists(ScriptEvent eventNum, bool status) {
 }
 
 bool cScript::NeedsChecking(ScriptEvent eventNum) const {
-    UI32 index = eventNum / 64;
+    std::uint32_t index = eventNum / 64;
     if (index > 2)
         return false;
 
     return needsChecking[index].test((eventNum % 64));
 }
 void cScript::SetNeedsChecking(ScriptEvent eventNum, bool status) {
-    UI32 index = eventNum / 64;
+    std::uint32_t index = eventNum / 64;
     if (index > 2)
         return;
 

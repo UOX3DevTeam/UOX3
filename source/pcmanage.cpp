@@ -39,7 +39,7 @@ template <class T> T Capped(const T value, const T minimum, const T maximum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if selected hair is a valid hair type
 // o------------------------------------------------------------------------------------------------o
-bool ValidHairStyle(UI16 id, UI16 bodyId) {
+bool ValidHairStyle(std::uint16_t id, std::uint16_t bodyId) {
     bool rValue = false;
     switch (bodyId) {
     case 0x025D: // elven male
@@ -134,7 +134,7 @@ bool ValidHairStyle(UI16 id, UI16 bodyId) {
 //|	Purpose		-	Check if selected beard is a valid beard type
 //|					 in his pack, on his paperdoll or in his hands
 // o------------------------------------------------------------------------------------------------o
-bool ValidBeard(UI16 id, UI16 bodyId) {
+bool ValidBeard(std::uint16_t id, std::uint16_t bodyId) {
     bool rValue = false;
     switch (bodyId) {
     case 0x029A: // gargoyle male
@@ -171,7 +171,7 @@ bool ValidBeard(UI16 id, UI16 bodyId) {
 //|	Purpose		-	Check if selected skin colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
 // o------------------------------------------------------------------------------------------------o
-COLOUR ValidSkinColour(UI16 id, UI16 bodyId) {
+COLOUR ValidSkinColour(std::uint16_t id, std::uint16_t bodyId) {
     COLOUR rValue;
     switch (bodyId) {
     case 0x025D:    // elven male
@@ -219,10 +219,10 @@ COLOUR ValidSkinColour(UI16 id, UI16 bodyId) {
         break;
     case 0x029A:
     case 0x029B: // gargoyle male/female
-        rValue = Capped(id, static_cast<UI16>(0x06DB), static_cast<UI16>(0x06F3));
+        rValue = Capped(id, static_cast<std::uint16_t>(0x06DB), static_cast<std::uint16_t>(0x06F3));
         break;
     default: // human male/female
-        rValue = Capped(id, static_cast<UI16>(0x03EA), static_cast<UI16>(0x0422));
+        rValue = Capped(id, static_cast<std::uint16_t>(0x03EA), static_cast<std::uint16_t>(0x0422));
         break;
     }
     return rValue;
@@ -236,7 +236,7 @@ COLOUR ValidSkinColour(UI16 id, UI16 bodyId) {
 //|	Purpose		-	Check if selected hair colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
 // o------------------------------------------------------------------------------------------------o
-COLOUR ValidHairColour(UI16 id, UI16 bodyId) {
+COLOUR ValidHairColour(std::uint16_t id, std::uint16_t bodyId) {
     COLOUR rValue;
     switch (bodyId) {
     case 0x025D:    // elven male
@@ -304,10 +304,10 @@ COLOUR ValidHairColour(UI16 id, UI16 bodyId) {
     case 0x29A: // gargoyle male
     case 0x29B: // gargoyle female
         // not all colors used, but easier than specialcasing each one
-        rValue = Capped(id, static_cast<UI16>(0x06E0), static_cast<UI16>(0x076B));
+        rValue = Capped(id, static_cast<std::uint16_t>(0x06E0), static_cast<std::uint16_t>(0x076B));
         break;
     default: // human male/female
-        rValue = Capped(id, static_cast<UI16>(0x044E), static_cast<UI16>(0x04AD));
+        rValue = Capped(id, static_cast<std::uint16_t>(0x044E), static_cast<std::uint16_t>(0x04AD));
         break;
     }
     return rValue;
@@ -408,9 +408,9 @@ bool CPIPlayCharacter::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 bool CPIDeleteCharacter::Handle(void) {
     if (tSock != nullptr) {
-        SI08 deleteResult = -1;
+        std::int8_t deleteResult = -1;
         AccountEntry *actbTemp = &tSock->GetAccount();
-        UI08 slot = tSock->GetByte(0x22);
+        std::uint8_t slot = tSock->GetByte(0x22);
         if (actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT) {
             CChar *ourObj = (*actbTemp)[slot].pointer;
             if (ValidateObject(ourObj)) // we have a char
@@ -436,8 +436,8 @@ bool CPIDeleteCharacter::Handle(void) {
             tSock->Send(&pckDelResult);
         }
         else {
-            UI08 charCount = 0;
-            for (UI08 i = 0; i < 7; ++i) {
+            std::uint8_t charCount = 0;
+            for (std::uint8_t i = 0; i < 7; ++i) {
                 if (ValidateObject((*actbTemp)[i].pointer)) {
                     ++charCount;
                 }
@@ -445,7 +445,7 @@ bool CPIDeleteCharacter::Handle(void) {
 
             // 0x86 - Resend Characters after Delete
             CharacterListUpdate pckCharList(charCount);
-            for (UI08 i = 0; i < charCount; ++i) {
+            for (std::uint8_t i = 0; i < charCount; ++i) {
                 if (ValidateObject((*actbTemp)[i].pointer)) {
                     pckCharList.AddCharName(i, (*actbTemp)[i].pointer->GetName());
                 }
@@ -487,7 +487,7 @@ auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, COLOUR pantsColou
             if (UTag == "PACKITEM") {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
-                    UI16 nAmount = static_cast<UI16>(
+                    std::uint16_t nAmount = static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                     n = Items->CreateScriptItem(socket, c, util::trim(util::strip(csecs[0], "//")),
                                                 nAmount, OT_ITEM, true);
@@ -497,12 +497,12 @@ auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, COLOUR pantsColou
                 }
             }
             else if (UTag == "EQUIPITEM") {
-                UI16 itemHue = 0;
+                std::uint16_t itemHue = 0;
                 std::string itemSection;
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
                     itemSection = util::trim(util::strip(csecs[0], "//"));
-                    itemHue = static_cast<UI16>(
+                    itemHue = static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
@@ -571,7 +571,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     enum NewbieItems { HAIR = 0, BEARD, PACK, BANK, GOLD, ITOTAL };
 
     CItem *CreatedItems[ITOTAL] = {nullptr, nullptr, nullptr, nullptr, nullptr};
-    UI16 ItemId, ItemColour;
+    std::uint16_t ItemId, ItemColour;
     if (ValidHairStyle(hairStyle, mChar->GetId())) {
         ItemId = hairStyle;
         ItemColour = ValidHairColour(hairColour, mChar->GetId());
@@ -591,12 +591,12 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
         if (mChar->GetId() == 0x029A) // gargoyle male
         {
             ItemColour =
-                Capped(facialHairColour, static_cast<UI16>(0x06E0), static_cast<UI16>(0x076B));
+                Capped(facialHairColour, static_cast<std::uint16_t>(0x06E0), static_cast<std::uint16_t>(0x076B));
         }
         else // human male
         {
             ItemColour =
-                Capped(facialHairColour, static_cast<UI16>(0x044E), static_cast<UI16>(0x04AD));
+                Capped(facialHairColour, static_cast<std::uint16_t>(0x044E), static_cast<std::uint16_t>(0x04AD));
         }
         CreatedItems[BEARD] = Items->CreateItem(tSock, mChar, ItemId, 1, ItemColour, OT_ITEM);
         if (CreatedItems[BEARD] != nullptr) {
@@ -634,19 +634,19 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
 
     std::vector<cSkillClass> vecSkills;
     std::string whichsect;
-    for (UI08 sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
+    for (std::uint8_t sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
         vecSkills.push_back(cSkillClass(sCtr, mChar->GetBaseSkill(sCtr)));
     }
 
     // Give scripted newbie items precedence over default clothing
     std::sort(vecSkills.rbegin(), vecSkills.rend());
 
-    UI08 numStartSkills = 3; // 0 included
+    std::uint8_t numStartSkills = 3; // 0 included
     if (cwmWorldState->ServerData()->ExtendedStartingSkills()) {
         numStartSkills = 4;
     }
 
-    for (UI08 i = 0; i < numStartSkills; ++i) {
+    for (std::uint8_t i = 0; i < numStartSkills; ++i) {
         if (vecSkills[i].value > 0) {
             whichsect = util::format("BESTSKILL %i", vecSkills[i].skill);
             AddNewbieItem(tSock, mChar, whichsect.c_str(), 0, 0);
@@ -783,11 +783,11 @@ bool CPICreateCharacter::Handle(void) {
                             "No starting locations found in ini file; sending new character to "
                             "Sweet Dreams Inn (1495, 1629, 10).");
                     }
-                    SI16 startX;
-                    SI16 startY;
-                    SI08 startZ;
-                    UI08 startWorld;
-                    UI16 startInstanceId;
+                    std::int16_t startX;
+                    std::int16_t startY;
+                    std::int8_t startZ;
+                    std::uint8_t startWorld;
+                    std::uint16_t startInstanceId;
                     startX = 1495;
                     startY = 1629;
                     startZ = 10;
@@ -803,15 +803,15 @@ bool CPICreateCharacter::Handle(void) {
                     else {
                         toGo = cwmWorldState->ServerData()->ServerLocation(0);
                     }
-                    mChar->SetLocation(toGo->x, toGo->y, static_cast<SI08>(toGo->z),
-                                       static_cast<UI08>(toGo->worldNum),
-                                       static_cast<UI16>(toGo->instanceId));
+                    mChar->SetLocation(toGo->x, toGo->y, static_cast<std::int8_t>(toGo->z),
+                                       static_cast<std::uint8_t>(toGo->worldNum),
+                                       static_cast<std::uint16_t>(toGo->instanceId));
                 }
             }
             else {
-                mChar->SetLocation(toGo->x, toGo->y, static_cast<SI08>(toGo->z),
-                                   static_cast<UI08>(toGo->worldNum),
-                                   static_cast<UI16>(toGo->instanceId));
+                mChar->SetLocation(toGo->x, toGo->y, static_cast<std::int8_t>(toGo->z),
+                                   static_cast<std::uint8_t>(toGo->worldNum),
+                                   static_cast<std::uint16_t>(toGo->instanceId));
             }
             mChar->SetDir(SOUTH);
 
@@ -849,8 +849,8 @@ bool CPICreateCharacter::Handle(void) {
 //|	Purpose		-	Sets skills and stats for newly created characters
 // o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
-    SI32 totalstats, totalskills;
-    UI08 i;
+    std::int32_t totalstats, totalskills;
+    std::uint8_t i;
     R32 percheck;
 
     if (profession != 0) // player picked a character profession during character creation
@@ -966,9 +966,9 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
     {
         //	Date Unknown - Modified to fit in with new client, and 80 total starting stats. The
         // highest any one stat can be is 60, and the lowest is 10.
-        mChar->SetStrength(Capped(str, static_cast<UI08>(10), static_cast<UI08>(60)));
-        mChar->SetDexterity(Capped(dex, static_cast<UI08>(10), static_cast<UI08>(60)));
-        mChar->SetIntelligence(Capped(intel, static_cast<UI08>(10), static_cast<UI08>(60)));
+        mChar->SetStrength(Capped(str, static_cast<std::uint8_t>(10), static_cast<std::uint8_t>(60)));
+        mChar->SetDexterity(Capped(dex, static_cast<std::uint8_t>(10), static_cast<std::uint8_t>(60)));
+        mChar->SetIntelligence(Capped(intel, static_cast<std::uint8_t>(10), static_cast<std::uint8_t>(60)));
 
         totalstats = mChar->GetStrength() + mChar->GetDexterity() + mChar->GetIntelligence();
         if (totalstats != 80 && !cwmWorldState->ServerData()->ExtendedStartingStats()) {
@@ -978,11 +978,11 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
                     util::format("Character created with invalid stats (over 80 total): 0x%X, (%s)",
                                  mChar->GetSerial(), mChar->GetName().c_str()));
                 percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
-                mChar->SetStrength(static_cast<UI08>(Capped(percheck * 80, 10.0f, 60.0f)));
+                mChar->SetStrength(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
                 percheck = (mChar->GetDexterity() / static_cast<R32>(totalstats));
-                mChar->SetDexterity(static_cast<UI08>(Capped(percheck * 80, 10.0f, 60.0f)));
+                mChar->SetDexterity(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
                 percheck = (mChar->GetIntelligence() / static_cast<R32>(totalstats));
-                mChar->SetIntelligence(static_cast<UI08>(Capped(percheck * 80, 10.0f, 60.0f)));
+                mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
             }
             else {
                 Console::shared().Error(util::format(
@@ -997,11 +997,11 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
                     util::format("Character created with invalid stats (over 90 total): 0x%X, (%s)",
                                  mChar->GetSerial(), mChar->GetName().c_str()));
                 percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
-                mChar->SetStrength(static_cast<UI08>(Capped(percheck * 90, 10.0f, 60.0f)));
+                mChar->SetStrength(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
                 percheck = (mChar->GetDexterity() / static_cast<R32>(totalstats));
-                mChar->SetDexterity(static_cast<UI08>(Capped(percheck * 90, 10.0f, 60.0f)));
+                mChar->SetDexterity(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
                 percheck = (mChar->GetIntelligence() / static_cast<R32>(totalstats));
-                mChar->SetIntelligence(static_cast<UI08>(Capped(percheck * 90, 10.0f, 60.0f)));
+                mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
             }
             else {
                 Console::shared().Error(util::format(
@@ -1023,7 +1023,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
         }
         if (!cwmWorldState->ServerData()->ExtendedStartingSkills()) {
             if (skillValue[2] + totalskills > 100) {
-                skillValue[2] = static_cast<UI08>(100 - totalskills);
+                skillValue[2] = static_cast<std::uint8_t>(100 - totalskills);
             }
             totalskills += skillValue[2];
             if (totalskills < 100) {
@@ -1035,14 +1035,14 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
         else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
         {
             if (skillValue[2] + totalskills > 120) {
-                skillValue[2] = static_cast<UI08>(120 - totalskills);
+                skillValue[2] = static_cast<std::uint8_t>(120 - totalskills);
             }
             totalskills += skillValue[2];
             if (skillValue[3] > 50) {
                 skillValue[3] = 50;
             }
             if (skillValue[3] + totalskills > 120) {
-                skillValue[3] = static_cast<UI08>(120 - totalskills);
+                skillValue[3] = static_cast<std::uint8_t>(120 - totalskills);
             }
             totalskills += skillValue[3];
             if (totalskills < 120) {
@@ -1058,25 +1058,25 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
     mChar->SetMana(mChar->GetMaxMana());
 
     mChar->SetRaceGate(65535);
-    UI08 firstSkill = skill[0];
-    UI08 secondSkill = skill[1];
-    UI08 thirdSkill = skill[2];
-    UI08 fourthSkill = skill[3];
+    std::uint8_t firstSkill = skill[0];
+    std::uint8_t secondSkill = skill[1];
+    std::uint8_t thirdSkill = skill[2];
+    std::uint8_t fourthSkill = skill[3];
 
     for (i = 0; i < ALLSKILLS; ++i) {
         mChar->SetBaseSkill(0, i);
         if (i == firstSkill) {
-            mChar->SetBaseSkill(static_cast<UI16>(skillValue[0] * 10), i);
+            mChar->SetBaseSkill(static_cast<std::uint16_t>(skillValue[0] * 10), i);
         }
         else if (i == secondSkill) {
-            mChar->SetBaseSkill(static_cast<UI16>(skillValue[1] * 10), i);
+            mChar->SetBaseSkill(static_cast<std::uint16_t>(skillValue[1] * 10), i);
         }
         else if (i == thirdSkill) {
-            mChar->SetBaseSkill(static_cast<UI16>(skillValue[2] * 10), i);
+            mChar->SetBaseSkill(static_cast<std::uint16_t>(skillValue[2] * 10), i);
         }
         else if (i == fourthSkill) {
             if (cwmWorldState->ServerData()->ExtendedStartingSkills()) {
-                mChar->SetBaseSkill(static_cast<UI16>(skillValue[3] * 10), i);
+                mChar->SetBaseSkill(static_cast<std::uint16_t>(skillValue[3] * 10), i);
             }
         }
         Skills->UpdateSkillLevel(mChar, i);
@@ -1089,7 +1089,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
 //|	Purpose		-	Sets gender and race for newly created characters
 // o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
-    UI16 pGenderId = 0x0190;
+    std::uint16_t pGenderId = 0x0190;
     bool gargCreation = false;
     bool elfCreation = false;
     if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_SA)) {
@@ -1307,9 +1307,9 @@ void StartChar(CSocket *mSock, bool onCreate) {
             mSock->Send(&lc);
             Network->SetLastOn(mSock);
 
-            UI08 currentHour = cwmWorldState->ServerData()->ServerTimeHours();
-            UI08 currentMins = cwmWorldState->ServerData()->ServerTimeMinutes();
-            UI08 currentSecs = cwmWorldState->ServerData()->ServerTimeSeconds();
+            std::uint8_t currentHour = cwmWorldState->ServerData()->ServerTimeHours();
+            std::uint8_t currentMins = cwmWorldState->ServerData()->ServerTimeMinutes();
+            std::uint8_t currentSecs = cwmWorldState->ServerData()->ServerTimeSeconds();
 
             CPTime tmPckt(currentHour, currentMins, currentSecs);
             mSock->Send(&tmPckt);
@@ -1326,14 +1326,14 @@ void StartChar(CSocket *mSock, bool onCreate) {
             ShowMessageOfTheDay(mSock);
             if (onCreate) {
                 cScript *onCreateScp =
-                    JSMapping->GetScript(static_cast<UI16>(0)); // 0 == global script
+                    JSMapping->GetScript(static_cast<std::uint16_t>(0)); // 0 == global script
                 if (onCreateScp != nullptr) {
                     onCreateScp->OnCreate(mChar, false, true);
                 }
             }
 
             bool loginEventHandled = false;
-            std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -1347,7 +1347,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 
             if (!loginEventHandled) {
                 // No script attached to character handled onLoginevent. Let's check global script!
-                cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute != nullptr) {
                     toExecute->OnLogin(mSock, mChar);
                 }
@@ -1417,7 +1417,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Generates a corpse or backpack based on the character killed.
 // o------------------------------------------------------------------------------------------------o
-CItem *CreateCorpseItem(CChar &mChar, CChar *killer, UI08 fallDirection) {
+CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection) {
     std::string corpseName = GetNpcDictName(&mChar, nullptr, NRS_SYSTEM);
 
     CItem *iCorpse = nullptr;
@@ -1444,13 +1444,13 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, UI08 fallDirection) {
     iCorpse->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems() + 25);
     iCorpse->SetCorpse(true);
 
-    UI08 canCarve = 0;
+    std::uint8_t canCarve = 0;
     if (mChar.GetId(1) == 0x00 &&
         (mChar.GetId(2) == 0x0C ||
          (mChar.GetId(2) >= 0x3B &&
           mChar.GetId(2) <= 0x3D))) // If it's a dragon, 50/50 chance you can carve it
     {
-        canCarve = static_cast<UI08>(RandomNum(0, 1));
+        canCarve = static_cast<std::uint8_t>(RandomNum(0, 1));
     }
 
     iCorpse->SetDecayable(true);
@@ -1544,8 +1544,8 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
                 // Loop through the items we want to move - and move them!
                 std::for_each(moveItems.begin(), moveItems.end(), [iCorpse](CItem *item) {
                     item->SetCont(iCorpse);
-                    item->SetX(static_cast<SI16>(20 + (RandomNum(0, 49))));
-                    item->SetY(static_cast<SI16>(85 + (RandomNum(0, 75))));
+                    item->SetX(static_cast<std::int16_t>(20 + (RandomNum(0, 49))));
+                    item->SetY(static_cast<std::int16_t>(85 + (RandomNum(0, 75))));
                     item->SetZ(9);
                 });
 
@@ -1568,8 +1568,8 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
             else {
                 // Otherwise, move them to corpse
                 j->SetCont(iCorpse);
-                j->SetX(static_cast<SI16>(20 + (RandomNum(0, 49))));
-                j->SetY(static_cast<SI16>(85 + (RandomNum(0, 74))));
+                j->SetX(static_cast<std::int16_t>(20 + (RandomNum(0, 49))));
+                j->SetY(static_cast<std::int16_t>(85 + (RandomNum(0, 74))));
                 j->SetZ(9);
             }
             break;
@@ -1604,7 +1604,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         mChar->SetId(mChar->GetOrgId());
     }
 
-    UI08 fallDirection = static_cast<UI08>(RandomNum(1, 100) % 2);
+    std::uint8_t fallDirection = static_cast<std::uint8_t>(RandomNum(1, 100) % 2);
     mChar->SetDead(true);
 
     Effects->PlayDeathSound(mChar);
@@ -1633,7 +1633,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         }
 
         // Spawn blood effect below corpse
-        UI16 bloodColour =
+        std::uint16_t bloodColour =
             Races->BloodColour(mChar->GetRace()); // Fetch blood color from race property
         if (bloodColour == 0xffff) {
             // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
@@ -1735,7 +1735,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
     }
 
     auto onDeathEventHandled = false;
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -1749,7 +1749,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
 
     if (!onDeathEventHandled) {
         // No script attached to character handled onDeath. Let's check global script!
-        cScript *toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+        cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
             toExecute->OnDeath(mChar, iCorpse);
         }

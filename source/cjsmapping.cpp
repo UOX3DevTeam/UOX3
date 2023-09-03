@@ -94,7 +94,7 @@ void CJSMapping::Cleanup(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads the JS Scripts
 // o------------------------------------------------------------------------------------------------o
-void CJSMapping::Reload(UI16 scriptId) {
+void CJSMapping::Reload(std::uint16_t scriptId) {
     if (scriptId != 0xFFFF) {
         Console::shared().Print(
             util::format("CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId));
@@ -124,7 +124,7 @@ void CJSMapping::Reload(UI16 scriptId) {
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::Reload(SCRIPTTYPE sectionId) {
     Console::shared().Print(util::format("CMD: Attempting Reload of JavaScript (SectionId %u)\n",
-                                         static_cast<SI32>(sectionId)));
+                                         static_cast<std::int32_t>(sectionId)));
     if (mapSection[sectionId] != nullptr) {
         delete mapSection[sectionId];
         mapSection[sectionId] = new CJSMappingSection(sectionId);
@@ -188,8 +188,8 @@ CJSMappingSection *CJSMapping::GetSection(SCRIPTTYPE toGet) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the scriptId relating to the specified JSObject
 // o------------------------------------------------------------------------------------------------o
-UI16 CJSMapping::GetScriptId(JSObject *toFind) {
-    UI16 retVal = 0xFFFF;
+std::uint16_t CJSMapping::GetScriptId(JSObject *toFind) {
+    std::uint16_t retVal = 0xFFFF;
 
     for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
         retVal = mapSection[i]->GetScriptId(toFind);
@@ -225,7 +225,7 @@ cScript *CJSMapping::GetScript(JSObject *toFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the cScript relating to the specified scriptId
 // o------------------------------------------------------------------------------------------------o
-cScript *CJSMapping::GetScript(UI16 toFind) {
+cScript *CJSMapping::GetScript(std::uint16_t toFind) {
     cScript *retVal = nullptr;
     cScript *toCheck = nullptr;
 
@@ -270,7 +270,7 @@ CJSMappingSection::CJSMappingSection(SCRIPTTYPE sT) {
 }
 CJSMappingSection::~CJSMappingSection() {
 
-    for (std::map<UI16, cScript *>::const_iterator sIter = scriptIdMap.begin();
+    for (std::map<std::uint16_t, cScript *>::const_iterator sIter = scriptIdMap.begin();
          sIter != scriptIdMap.end(); ++sIter) {
         cScript *toDelete = sIter->second;
         if (toDelete != nullptr) {
@@ -292,20 +292,20 @@ CJSMappingSection::~CJSMappingSection() {
 auto CJSMappingSection::Parse(Script *fileAssocData) -> void {
     auto basePath = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS);
     auto mSection = fileAssocData->FindEntry(ScriptNames[scriptType]);
-    UI08 runTime = 0;
+    std::uint8_t runTime = 0;
 
     if (scriptType == SCPT_CONSOLE) {
         runTime = 1;
     }
 
     if (mSection) {
-        UI16 scriptId = 0xFFFF;
+        std::uint16_t scriptId = 0xFFFF;
         size_t i = 0;
         for (const auto &sec : mSection->collection()) {
             auto tag = sec->tag;
             auto data = sec->data;
 
-            scriptId = static_cast<UI16>(std::stoul(tag, nullptr, 0));
+            scriptId = static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0));
             auto fullPath = basePath + data;
 
             if (!FileExists(fullPath)) {
@@ -348,7 +348,7 @@ auto CJSMappingSection::Parse(Script *fileAssocData) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads the specified JS file (by its scriptId)
 // o------------------------------------------------------------------------------------------------o
-auto CJSMappingSection::Reload(UI16 toLoad) -> void {
+auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
     auto scpFileName =
         cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS) + "jse_fileassociations.scp"s;
     if (!FileExists(scpFileName)) {
@@ -360,16 +360,16 @@ auto CJSMappingSection::Reload(UI16 toLoad) -> void {
     if (fileAssocData) {
         auto mSection = fileAssocData->FindEntry(ScriptNames[scriptType]);
         if (mSection) {
-            UI16 scriptId = 0xFFFF;
+            std::uint16_t scriptId = 0xFFFF;
             auto basePath = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS);
             std::string data, fullPath;
-            UI08 runTime = 0;
+            std::uint8_t runTime = 0;
             if (scriptType == SCPT_CONSOLE) {
                 runTime = 1;
             }
             for (const auto &sec : mSection->collection()) {
                 auto tag = sec->tag;
-                scriptId = static_cast<UI16>(std::stoul(tag, nullptr, 0));
+                scriptId = static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0));
                 if (scriptId == toLoad) {
                     data = sec->data;
                     fullPath = basePath + data;
@@ -381,12 +381,12 @@ auto CJSMappingSection::Reload(UI16 toLoad) -> void {
                     }
                     else {
                         try {
-                            std::map<UI16, cScript *>::const_iterator iFind =
+                            std::map<std::uint16_t, cScript *>::const_iterator iFind =
                                 scriptIdMap.find(toLoad);
                             if (iFind != scriptIdMap.end()) {
                                 if (scriptIdMap[toLoad]) {
                                     JSObject *jsObj = scriptIdMap[toLoad]->Object();
-                                    std::map<JSObject *, UI16>::iterator jFind =
+                                    std::map<JSObject *, std::uint16_t>::iterator jFind =
                                         scriptJSMap.find(jsObj);
                                     if (jFind != scriptJSMap.end()) {
                                         scriptJSMap.erase(jFind);
@@ -428,10 +428,10 @@ auto CJSMappingSection::Reload(UI16 toLoad) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if the specified scriptId exists in the map
 // o------------------------------------------------------------------------------------------------o
-bool CJSMappingSection::IsInMap(UI16 scriptId) {
+bool CJSMappingSection::IsInMap(std::uint16_t scriptId) {
     bool retVal = false;
 
-    std::map<UI16, cScript *>::const_iterator sIter = scriptIdMap.find(scriptId);
+    std::map<std::uint16_t, cScript *>::const_iterator sIter = scriptIdMap.find(scriptId);
     if (sIter != scriptIdMap.end()) {
         retVal = true;
     }
@@ -445,10 +445,10 @@ bool CJSMappingSection::IsInMap(UI16 scriptId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the scriptId associated with the specified JSObject
 // o------------------------------------------------------------------------------------------------o
-UI16 CJSMappingSection::GetScriptId(JSObject *toFind) {
-    UI16 retVal = 0xFFFF;
+std::uint16_t CJSMappingSection::GetScriptId(JSObject *toFind) {
+    std::uint16_t retVal = 0xFFFF;
 
-    std::map<JSObject *, UI16>::const_iterator sIter = scriptJSMap.find(toFind);
+    std::map<JSObject *, std::uint16_t>::const_iterator sIter = scriptJSMap.find(toFind);
     if (sIter != scriptJSMap.end()) {
         retVal = sIter->second;
     }
@@ -462,10 +462,10 @@ UI16 CJSMappingSection::GetScriptId(JSObject *toFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the cScript associated with the specified scriptId
 // o------------------------------------------------------------------------------------------------o
-cScript *CJSMappingSection::GetScript(UI16 toFind) {
+cScript *CJSMappingSection::GetScript(std::uint16_t toFind) {
     cScript *retVal = nullptr;
 
-    std::map<UI16, cScript *>::const_iterator idIter = scriptIdMap.find(toFind);
+    std::map<std::uint16_t, cScript *>::const_iterator idIter = scriptIdMap.find(toFind);
     if (idIter != scriptIdMap.end()) {
         retVal = idIter->second;
     }
@@ -480,7 +480,7 @@ cScript *CJSMappingSection::GetScript(UI16 toFind) {
 //|	Purpose		-	Finds the cScript associated with the specified JSObject
 // o------------------------------------------------------------------------------------------------o
 cScript *CJSMappingSection::GetScript(JSObject *toFind) {
-    UI16 scriptId = GetScriptId(toFind);
+    std::uint16_t scriptId = GetScriptId(toFind);
     return GetScript(scriptId);
 }
 
@@ -539,8 +539,8 @@ CEnvoke::~CEnvoke() { envokeList.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified envokeId is in the map
 // o------------------------------------------------------------------------------------------------o
-bool CEnvoke::Check(UI16 envokeId) const {
-    std::map<UI16, UI16>::const_iterator p = envokeList.find(envokeId);
+bool CEnvoke::Check(std::uint16_t envokeId) const {
+    std::map<std::uint16_t, std::uint16_t>::const_iterator p = envokeList.find(envokeId);
     return (p != envokeList.end());
 }
 
@@ -550,8 +550,8 @@ bool CEnvoke::Check(UI16 envokeId) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns specified envokeId
 // o------------------------------------------------------------------------------------------------o
-UI16 CEnvoke::GetScript(UI16 envokeId) const {
-    std::map<UI16, UI16>::const_iterator p = envokeList.find(envokeId);
+std::uint16_t CEnvoke::GetScript(std::uint16_t envokeId) const {
+    std::map<std::uint16_t, std::uint16_t>::const_iterator p = envokeList.find(envokeId);
     if (p != envokeList.end())
         return p->second;
 
@@ -583,8 +583,8 @@ auto CEnvoke::Parse() -> void {
                 auto tag = sec->tag;
                 if (!tag.empty() && tag != "\n" && tag != "\r") {
                     auto data = sec->data;
-                    auto envokeId = static_cast<UI16>(std::stoul(tag, nullptr, 0));
-                    auto scriptId = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                    auto envokeId = static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0));
+                    auto scriptId = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                     auto verify = JSMapping->GetScript(scriptId);
                     if (verify) {
                         envokeList[envokeId] = scriptId;

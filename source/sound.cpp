@@ -23,7 +23,7 @@ cEffects *Effects;
 //|	Purpose		-	Plays sound effect for player, echo's to all players if allHear is
 // true
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlaySound(CSocket *mSock, UI16 soundId, bool allHear) {
+void cEffects::PlaySound(CSocket *mSock, std::uint16_t soundId, bool allHear) {
     if (mSock == nullptr)
         return;
 
@@ -48,7 +48,7 @@ void cEffects::PlaySound(CSocket *mSock, UI16 soundId, bool allHear) {
 //|	Purpose		-	Plays sound effect originating from object for all players
 // nearby(default) or originator only
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlaySound(CBaseObject *baseObj, UI16 soundId, bool allHear) {
+void cEffects::PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHear) {
     if (!ValidateObject(baseObj))
         return;
 
@@ -76,7 +76,7 @@ void cEffects::PlaySound(CBaseObject *baseObj, UI16 soundId, bool allHear) {
 //|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
 // o------------------------------------------------------------------------------------------------o
 void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
-    UI16 itemId = item->GetId();
+    std::uint16_t itemId = item->GetId();
     if (itemId >= 0x0F0F && itemId <= 0x0F20) // Large Gem Stones
     {
         PlaySound(s, 0x0034, allHear);
@@ -90,7 +90,7 @@ void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
         GoldSound(s, item->GetAmount(), allHear);
     }
     else {
-        UI16 effectId = 0x0042;
+        std::uint16_t effectId = 0x0042;
         CBaseObject *getCont = item->GetCont();
         if (getCont != nullptr) {
             if (getCont->GetObjType() == OT_ITEM) {
@@ -137,7 +137,7 @@ void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play gold drop sound based on Amount
 // o------------------------------------------------------------------------------------------------o
-void cEffects::GoldSound(CSocket *s, UI32 goldTotal, bool allHear) {
+void cEffects::GoldSound(CSocket *s, std::uint32_t goldTotal, bool allHear) {
     if (goldTotal <= 1) {
         PlaySound(s, 0x0035, allHear);
     }
@@ -159,18 +159,18 @@ void cEffects::PlayDeathSound(CChar *i) {
         i->GetOrgId() == 0x00B8 || i->GetOrgId() == 0x00BA ||
         i->GetId() == 0x02EF) // Female Death (human/elf/gargoyle/savage)
     {
-        UI16 deathSound = 0x0150 + RandomNum(0, 3);
+        std::uint16_t deathSound = 0x0150 + RandomNum(0, 3);
         PlaySound(i, deathSound);
     }
     else if (i->GetOrgId() == 0x0190 || i->GetOrgId() == 0x025D || i->GetOrgId() == 0x029A ||
              i->GetOrgId() == 0x00B7 || i->GetOrgId() == 0x00B9 ||
              i->GetOrgId() == 0x02EE) // Male Death (human/elf/gargoyle/savage)
     {
-        UI16 deathSound = 0x015A + RandomNum(0, 3);
+        std::uint16_t deathSound = 0x015A + RandomNum(0, 3);
         PlaySound(i, deathSound);
     }
     else {
-        const UI16 toPlay = cwmWorldState->creatures[i->GetOrgId()].GetSound(SND_DIE);
+        const std::uint16_t toPlay = cwmWorldState->creatures[i->GetOrgId()].GetSound(SND_DIE);
         if (toPlay != 0x00) {
             Effects->PlaySound(i, toPlay);
         }
@@ -182,7 +182,7 @@ void cEffects::PlayDeathSound(CChar *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays midi/mp3 in client
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlayMusic(CSocket *s, UI16 number) {
+void cEffects::PlayMusic(CSocket *s, std::uint16_t number) {
     CPPlayMusic toSend(number);
     s->Send(&toSend);
 }
@@ -215,16 +215,16 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
         }
     }
 
-    UI16 basesound = 0;
+    std::uint16_t basesound = 0;
     if (!inRange.empty()) {
         CChar *soundSrc = inRange[RandomNum(static_cast<size_t>(0), inRange.size() - 1)];
-        UI16 xx = soundSrc->GetId();
+        std::uint16_t xx = soundSrc->GetId();
         if (cwmWorldState->creatures.find(xx) == cwmWorldState->creatures.end())
             return;
 
         // Play creature sounds, but add a small chance that they won't, to give players a break
         // every now and then
-        UI08 soundChance = static_cast<UI08>(RandomNum(static_cast<size_t>(0), inRange.size() + 9));
+        std::uint8_t soundChance = static_cast<std::uint8_t>(RandomNum(static_cast<size_t>(0), inRange.size() + 9));
         if (soundChance > 5) {
             basesound = cwmWorldState->creatures[xx].GetSound(SND_IDLE);
             if (basesound != 0x00) {
@@ -281,7 +281,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
     if (s == nullptr)
         return;
 
-    SI32 i = 0;
+    std::int32_t i = 0;
     char musicArray[50];
     std::string sect;
 
@@ -304,7 +304,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
             return;
     }
 
-    UI16 musicList = mReg->GetMusicList();
+    std::uint16_t musicList = mReg->GetMusicList();
     if (musicList != 0) {
         if (mChar->IsDead()) {
             sect = "MUSICLIST DEATH";
@@ -320,7 +320,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
         if (MusicList) {
             for (const auto &sec : MusicList->collection()) {
                 if (util::upper(sec->tag) == "MUSIC") {
-                    musicArray[i++] = static_cast<SI08>(std::stoi(sec->data, nullptr, 0));
+                    musicArray[i++] = static_cast<std::int8_t>(std::stoi(sec->data, nullptr, 0));
                 }
             }
             if (i != 0) {
@@ -387,7 +387,7 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
         }
     }
 
-    UI16 soundId = 0;
+    std::uint16_t soundId = 0;
     switch (mChar->GetStep()) // change step info
     {
     case 0:

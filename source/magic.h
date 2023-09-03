@@ -11,77 +11,77 @@ class CItem;
 
 class CMagicMove {
   private:
-    UI16 effect;
-    UI08 speed;
-    UI08 loop;
-    UI08 explode;
+    std::uint16_t effect;
+    std::uint8_t speed;
+    std::uint8_t loop;
+    std::uint8_t explode;
 
   public:
     CMagicMove() : effect(INVALIDID), speed(0), loop(0), explode(0) {}
 
-    UI16 Effect(void) const { return effect; }
-    UI08 Speed(void) const { return speed; }
-    UI08 Loop(void) const { return loop; }
-    UI08 Explode(void) const { return explode; }
-    void Effect(UI08 p1, UI08 p2) { effect = static_cast<UI16>((p1 << 8) + p2); }
-    void Speed(UI08 newVal) { speed = newVal; }
-    void Loop(UI08 newVal) { loop = newVal; }
-    void Explode(UI08 newVal) { explode = newVal; }
+    std::uint16_t Effect(void) const { return effect; }
+    std::uint8_t Speed(void) const { return speed; }
+    std::uint8_t Loop(void) const { return loop; }
+    std::uint8_t Explode(void) const { return explode; }
+    void Effect(std::uint8_t p1, std::uint8_t p2) { effect = static_cast<std::uint16_t>((p1 << 8) + p2); }
+    void Speed(std::uint8_t newVal) { speed = newVal; }
+    void Loop(std::uint8_t newVal) { loop = newVal; }
+    void Explode(std::uint8_t newVal) { explode = newVal; }
 };
 
 class CMagicStat {
   private:
-    UI16 effect;
-    UI08 speed;
-    UI08 loop;
+    std::uint16_t effect;
+    std::uint8_t speed;
+    std::uint8_t loop;
 
   public:
     CMagicStat() : effect(INVALIDID), speed(0xFF), loop(0xFF) {}
-    UI16 Effect(void) const { return effect; }
-    UI08 Speed(void) const { return speed; }
-    UI08 Loop(void) const { return loop; }
-    void Effect(UI08 p1, UI08 p2) { effect = static_cast<UI16>((p1 << 8) + p2); }
-    void Speed(UI08 newVal) { speed = newVal; }
-    void Loop(UI08 newVal) { loop = newVal; }
+    std::uint16_t Effect(void) const { return effect; }
+    std::uint8_t Speed(void) const { return speed; }
+    std::uint8_t Loop(void) const { return loop; }
+    void Effect(std::uint8_t p1, std::uint8_t p2) { effect = static_cast<std::uint16_t>((p1 << 8) + p2); }
+    void Speed(std::uint8_t newVal) { speed = newVal; }
+    void Loop(std::uint8_t newVal) { loop = newVal; }
 };
 
 struct Reag_st {
-    UI08 ginseng;
-    UI08 moss;
-    UI08 drake;
-    UI08 pearl;
-    UI08 silk;
-    UI08 ash;
-    UI08 shade;
-    UI08 garlic;
+    std::uint8_t ginseng;
+    std::uint8_t moss;
+    std::uint8_t drake;
+    std::uint8_t pearl;
+    std::uint8_t silk;
+    std::uint8_t ash;
+    std::uint8_t shade;
+    std::uint8_t garlic;
     Reag_st() : ginseng(0), moss(0), drake(0), pearl(0), silk(0), ash(0), shade(0), garlic(0) {}
 };
 
 class CSpellInfo {
   private:
-    SI16 mana;
-    SI16 stamina;
-    SI16 health;
+    std::int16_t mana;
+    std::int16_t stamina;
+    std::int16_t health;
     R32 delay;         // Casting time of spell
     R32 damageDelay;   // Minimum delay between targeting of a damage spell and the application of
                        // damage
     R32 recoveryDelay; // Minimum delay between the end of one spellcast and the start of another
-    UI16 action;
+    std::uint16_t action;
     Reag_st reags;
     std::string mantra;
     std::string strToSay; // string visualized with targ. system
     bool enabled;
-    UI08 circle;
-    UI16 flags;
+    std::uint8_t circle;
+    std::uint16_t flags;
     CMagicMove moveEffect;
-    UI16 effect;
+    std::uint16_t effect;
     CMagicStat staticEffect;
-    SI16 hiskill;
-    SI16 loskill;
-    SI16 sclo;
-    SI16 schi;
-    UI16 jsScript;
-    SI16 baseDmg;
+    std::int16_t hiskill;
+    std::int16_t loskill;
+    std::int16_t sclo;
+    std::int16_t schi;
+    std::uint16_t jsScript;
+    std::int16_t baseDmg;
 
   public:
     CSpellInfo()
@@ -89,31 +89,31 @@ class CSpellInfo {
           mantra(""), strToSay(""), enabled(false), circle(1), flags(0), effect(INVALIDID),
           hiskill(0), loskill(0), sclo(0), schi(0), jsScript(0), baseDmg(0) {}
 
-    UI16 Action(void) const { return action; }
+    std::uint16_t Action(void) const { return action; }
     R32 Delay(void) const { return delay; }
     R32 DamageDelay(void) const { return damageDelay; }
     R32 RecoveryDelay(void) const { return recoveryDelay; }
-    SI16 Health(void) const { return health; }
-    SI16 Stamina(void) const { return stamina; }
-    SI16 Mana(void) const { return mana; }
+    std::int16_t Health(void) const { return health; }
+    std::int16_t Stamina(void) const { return stamina; }
+    std::int16_t Mana(void) const { return mana; }
 
-    void Action(UI16 newVal) { action = newVal; }
+    void Action(std::uint16_t newVal) { action = newVal; }
     void Delay(R32 newVal) { delay = newVal; }
     void DamageDelay(R32 newVal) { damageDelay = newVal; }
     void RecoveryDelay(R32 newVal) { recoveryDelay = newVal; }
-    void Health(SI16 newVal) { health = newVal; }
-    void Stamina(SI16 newVal) { stamina = newVal; }
-    void Mana(SI16 newVal) { mana = newVal; }
-    SI16 BaseDmg(void) const { return baseDmg; }
+    void Health(std::int16_t newVal) { health = newVal; }
+    void Stamina(std::int16_t newVal) { stamina = newVal; }
+    void Mana(std::int16_t newVal) { mana = newVal; }
+    std::int16_t BaseDmg(void) const { return baseDmg; }
     Reag_st Reagants(void) const { return reags; }
     Reag_st *ReagantsPtr(void) { return &reags; }
     const std::string Mantra(void) const { return mantra; }
     const std::string StringToSay(void) const { return strToSay; }
-    SI16 ScrollLow(void) const { return sclo; }
-    SI16 ScrollHigh(void) const { return schi; }
-    SI16 HighSkill(void) const { return hiskill; }
-    SI16 LowSkill(void) const { return loskill; }
-    UI08 Circle(void) const { return circle; }
+    std::int16_t ScrollLow(void) const { return sclo; }
+    std::int16_t ScrollHigh(void) const { return schi; }
+    std::int16_t HighSkill(void) const { return hiskill; }
+    std::int16_t LowSkill(void) const { return loskill; }
+    std::uint8_t Circle(void) const { return circle; }
     bool Enabled(void) const { return enabled; }
     bool RequireTarget(void) const { return (flags & 0x01) == 0x01; }
     bool RequireItemTarget(void) const { return (flags & 0x02) == 0x02; }
@@ -127,32 +127,32 @@ class CSpellInfo {
     bool Resistable(void) const { return (flags & 0x100) == 0x100; }
     void Mantra(const std::string &toPut) { mantra = toPut; }
     void StringToSay(const std::string &toPut) { strToSay = toPut; }
-    void BaseDmg(SI16 newVal) { baseDmg = newVal; }
-    void ScrollLow(SI16 newVal) { sclo = newVal; }
-    void ScrollHigh(SI16 newVal) { schi = newVal; }
-    void HighSkill(SI16 newVal) { hiskill = newVal; }
-    void LowSkill(SI16 newVal) { loskill = newVal; }
-    void Circle(UI08 newVal) { circle = newVal; }
+    void BaseDmg(std::int16_t newVal) { baseDmg = newVal; }
+    void ScrollLow(std::int16_t newVal) { sclo = newVal; }
+    void ScrollHigh(std::int16_t newVal) { schi = newVal; }
+    void HighSkill(std::int16_t newVal) { hiskill = newVal; }
+    void LowSkill(std::int16_t newVal) { loskill = newVal; }
+    void Circle(std::uint8_t newVal) { circle = newVal; }
     void Enabled(bool newVal) { enabled = newVal; }
-    void Flags(UI16 newVal) { flags = newVal; }
-    UI16 JSScript(void) { return jsScript; }
-    void JSScript(UI16 scpAssign) { jsScript = scpAssign; }
-    UI16 Effect(void) const { return effect; }
-    void Effect(UI16 newVal) { effect = newVal; }
+    void Flags(std::uint16_t newVal) { flags = newVal; }
+    std::uint16_t JSScript(void) { return jsScript; }
+    void JSScript(std::uint16_t scpAssign) { jsScript = scpAssign; }
+    std::uint16_t Effect(void) const { return effect; }
+    void Effect(std::uint16_t newVal) { effect = newVal; }
     CMagicMove MoveEffect(void) const { return moveEffect; }
     CMagicStat StaticEffect(void) const { return staticEffect; }
     CMagicMove *MoveEffectPtr(void) { return &moveEffect; }
     CMagicStat *StaticEffectPtr(void) { return &staticEffect; }
 };
 
-#define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *, SI08
-#define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *, SI08
-#define MAGIC_LOCATION_LIST CSocket *, CChar *, SI16, SI16, SI08, SI08
-#define MAGIC_FIELD_LIST CSocket *, CChar *, UI08, SI16, SI16, SI08, SI08
-#define MAGIC_AREA_STUB_LIST CChar *, CChar *, SI08, SI08
-#define MAGIC_NOTARG_LIST CSocket *, CChar *, SI08
+#define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *, std::int8_t
+#define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *, std::int8_t
+#define MAGIC_LOCATION_LIST CSocket *, CChar *, std::int16_t, std::int16_t, std::int8_t, std::int8_t
+#define MAGIC_FIELD_LIST CSocket *, CChar *, std::uint8_t, std::int16_t, std::int16_t, std::int8_t, std::int8_t
+#define MAGIC_AREA_STUB_LIST CChar *, CChar *, std::int8_t, std::int8_t
+#define MAGIC_NOTARG_LIST CSocket *, CChar *, std::int8_t
 
-#define MAGIC_TEST_LIST CSocket *, CChar *, CChar *, CChar *, SI08
+#define MAGIC_TEST_LIST CSocket *, CChar *, CChar *, CChar *, std::int8_t
 
 #define MAGIC_TESTFUNC bool (*)(MAGIC_TEST_LIST)
 #define MAGIC_CHARFUNC bool (*)(MAGIC_CHARTARG_LIST)
@@ -174,17 +174,17 @@ class CSpellInfo {
 #define MAGIC_DEFN bool (*)(...)
 
 struct MagicTable_st {
-    SI32 spell_name;
+    std::int32_t spell_name;
     bool (*mag_extra)(...); // extra data - see above
 };
 
 bool AreaAffectSpell(CSocket *sock, CChar *caster, void (*trgFunc)(MAGIC_AREA_STUB_LIST),
-                     SI08 curSpell);
-bool DiamondSpell(CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length);
-bool FieldSpell(CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum);
-bool FloodSpell(CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length);
-bool SquareSpell(CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length);
-SI16 CalcSpellDamageMod(CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted);
+                     std::int8_t curSpell);
+bool DiamondSpell(CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t length);
+bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t fieldDir, std::int8_t spellNum);
+bool FloodSpell(CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t length);
+bool SquareSpell(CSocket *sock, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t length);
+std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t baseDamage, bool spellResisted);
 
 extern const MagicTable_st magic_table[];
 
@@ -259,6 +259,6 @@ MAG_CHARHANDLER(splNecro3);
 MAG_CHARHANDLER(splNecro4);
 MAG_CHARHANDLER(splNecro5);
 
-// All command_ functions take an SI32 value of the player that triggered the command.
+// All command_ functions take an std::int32_t value of the player that triggered the command.
 
 #endif

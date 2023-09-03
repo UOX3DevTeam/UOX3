@@ -168,7 +168,7 @@ class CMulHandler {
     auto DoesDynamicBlock(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
                           std::uint16_t instanceId, bool checkWater, bool waterWalk,
                           bool checkOnlyMultis, bool checkOnlyNonMultis) -> bool;
-    auto DoesCharacterBlock(UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> bool;
+    auto DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool;
     auto DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
                  std::uint16_t instanceId, bool checkOnlyMultis, bool checkOnlyNonMultis)
         -> CItem *;
@@ -176,10 +176,10 @@ class CMulHandler {
                       bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad)
         -> bool;
     auto CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
-                         TileFlags toCheck, UI16 &foundTileId, bool checkSpawnSurface = false)
+                         TileFlags toCheck, std::uint16_t &foundTileId, bool checkSpawnSurface = false)
         -> bool;
     auto CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,
-                          std::uint16_t instanceId, TileFlags toCheck, UI16 &foundTileId) -> bool;
+                          std::uint16_t instanceId, TileFlags toCheck, std::uint16_t &foundTileId) -> bool;
     auto CheckTileFlag(std::uint16_t itemId, TileFlags flagToCheck) -> bool;
 
     // height functions

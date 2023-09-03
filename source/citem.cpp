@@ -69,46 +69,46 @@
 
 #include "weight.h"
 
-const UI32 BIT_MAKERSMARK = 0;
-const UI32 BIT_DOOROPEN = 1;
-const UI32 BIT_PILEABLE = 2;
-const UI32 BIT_DYEABLE = 3;
-const UI32 BIT_CORPSE = 4;
-const UI32 BIT_HELDONCURSOR = 5;
-const UI32 BIT_GUARDED = 6;
-const UI32 BIT_SPAWNERLIST = 7;
+const std::uint32_t BIT_MAKERSMARK = 0;
+const std::uint32_t BIT_DOOROPEN = 1;
+const std::uint32_t BIT_PILEABLE = 2;
+const std::uint32_t BIT_DYEABLE = 3;
+const std::uint32_t BIT_CORPSE = 4;
+const std::uint32_t BIT_HELDONCURSOR = 5;
+const std::uint32_t BIT_GUARDED = 6;
+const std::uint32_t BIT_SPAWNERLIST = 7;
 
-const SI32 DEFITEM_RANDVALUE = 0;
-const SI16 DEFITEM_GOOD = -1;
-const SI08 DEFITEM_RANK = 0;
-const UI16 DEFITEM_RESTOCK = 0;
-const SI08 DEFITEM_MOVEABLE = 0;
+const std::int32_t DEFITEM_RANDVALUE = 0;
+const std::int16_t DEFITEM_GOOD = -1;
+const std::int8_t DEFITEM_RANK = 0;
+const std::uint16_t DEFITEM_RESTOCK = 0;
+const std::int8_t DEFITEM_MOVEABLE = 0;
 const TIMERVAL DEFITEM_DECAYTIME = 0;
 const ItemLayers DEFITEM_LAYER = IL_NONE;
 const ItemTypes DEFITEM_TYPE = IT_NOTYPE;
-const UI16 DEFITEM_ENTRYMADEFROM = 0;
-const UI16 DEFITEM_AMOUNT = 1;
-const UI08 DEFITEM_GLOWEFFECT = 0;
+const std::uint16_t DEFITEM_ENTRYMADEFROM = 0;
+const std::uint16_t DEFITEM_AMOUNT = 1;
+const std::uint8_t DEFITEM_GLOWEFFECT = 0;
 const SERIAL DEFITEM_GLOW = INVALIDSERIAL;
 const COLOUR DEFITEM_GLOWCOLOUR = INVALIDCOLOUR;
-const SI08 DEFITEM_MADEWITH = 0;
+const std::int8_t DEFITEM_MADEWITH = 0;
 const ARMORCLASS DEFITEM_ARMORCLASS = 0;
 const TIMERVAL DEFITEM_TEMPTIMER = 0;
-const UI08 DEFITEM_SPEED = 0;
-const UI16 DEFITEM_MAXHP = 0;
-const SI08 DEFITEM_OFFSPELL = 0;
-const SI08 DEFITEM_GRIDLOC = 0;
+const std::uint8_t DEFITEM_SPEED = 0;
+const std::uint16_t DEFITEM_MAXHP = 0;
+const std::int8_t DEFITEM_OFFSPELL = 0;
+const std::int8_t DEFITEM_GRIDLOC = 0;
 const SERIAL DEFITEM_CREATOR = INVALIDSERIAL;
-const SI32 DEFITEM_WEIGHTMAX = 0;
-const SI32 DEFITEM_BASEWEIGHT = 0;
-const UI16 DEFITEM_MAXITEMS = 0;
-const UI08 DEFITEM_MAXRANGE = 0;
-const UI08 DEFITEM_BASERANGE = 0;
-const UI16 DEFITEM_USESLEFT = 0;
-const UI16 DEFITEM_MAXUSES = 0;
-const UI16 DEFITEM_REGIONNUM = 255;
-const UI16 DEFITEM_TEMPLASTTRADED = 0;
-const SI08 DEFITEM_STEALABLE = 1;
+const std::int32_t DEFITEM_WEIGHTMAX = 0;
+const std::int32_t DEFITEM_BASEWEIGHT = 0;
+const std::uint16_t DEFITEM_MAXITEMS = 0;
+const std::uint8_t DEFITEM_MAXRANGE = 0;
+const std::uint8_t DEFITEM_BASERANGE = 0;
+const std::uint16_t DEFITEM_USESLEFT = 0;
+const std::uint16_t DEFITEM_MAXUSES = 0;
+const std::uint16_t DEFITEM_REGIONNUM = 255;
+const std::uint16_t DEFITEM_TEMPLASTTRADED = 0;
+const std::int8_t DEFITEM_STEALABLE = 1;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -175,8 +175,8 @@ auto CItem::GetContSerial(void) const -> SERIAL {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets "Grid Location" - for UOKR
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGridLocation(void) const -> SI08 { return gridLoc; }
-auto CItem::SetGridLocation(SI08 newLoc) -> void {
+auto CItem::GetGridLocation(void) const -> std::int8_t { return gridLoc; }
+auto CItem::SetGridLocation(std::int8_t newLoc) -> void {
     gridLoc = newLoc;
     UpdateRegion();
 }
@@ -188,13 +188,13 @@ auto CItem::SetGridLocation(SI08 newLoc) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temp value of the object
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetTempVar(CITempVars whichVar) const -> UI32 {
+auto CItem::GetTempVar(CITempVars whichVar) const -> std::uint32_t {
     if (whichVar == CITV_COUNT)
         return 0;
 
     return tempVars[whichVar];
 }
-auto CItem::SetTempVar(CITempVars whichVar, UI32 newVal) -> void {
+auto CItem::SetTempVar(CITempVars whichVar, std::uint32_t newVal) -> void {
     if (whichVar == CITV_COUNT)
         return;
 
@@ -211,36 +211,36 @@ auto CItem::SetTempVar(CITempVars whichVar, UI32 newVal) -> void {
 //|	Notes		-	Valid values for part are 1->4.  If outside that, behaves as if it
 // were 1
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetTempVar(CITempVars whichVar, UI08 part) const -> UI08 {
-    UI08 rVal = 0;
+auto CItem::GetTempVar(CITempVars whichVar, std::uint8_t part) const -> std::uint8_t {
+    std::uint8_t rVal = 0;
 
     if (whichVar != CITV_COUNT) {
         switch (part) {
         default:
         case 1:
-            rVal = static_cast<UI08>(tempVars[whichVar] >> 24);
+            rVal = static_cast<std::uint8_t>(tempVars[whichVar] >> 24);
             break;
         case 2:
-            rVal = static_cast<UI08>(tempVars[whichVar] >> 16);
+            rVal = static_cast<std::uint8_t>(tempVars[whichVar] >> 16);
             break;
         case 3:
-            rVal = static_cast<UI08>(tempVars[whichVar] >> 8);
+            rVal = static_cast<std::uint8_t>(tempVars[whichVar] >> 8);
             break;
         case 4:
-            rVal = static_cast<UI08>(tempVars[whichVar] % 256);
+            rVal = static_cast<std::uint8_t>(tempVars[whichVar] % 256);
             break;
         }
     }
     return rVal;
 }
-auto CItem::SetTempVar(CITempVars whichVar, UI08 part, UI08 newVal) -> void {
+auto CItem::SetTempVar(CITempVars whichVar, std::uint8_t part, std::uint8_t newVal) -> void {
     if (whichVar == CITV_COUNT)
         return;
 
-    UI08 part1 = static_cast<UI08>(tempVars[whichVar] >> 24);
-    UI08 part2 = static_cast<UI08>(tempVars[whichVar] >> 16);
-    UI08 part3 = static_cast<UI08>(tempVars[whichVar] >> 8);
-    UI08 part4 = static_cast<UI08>(tempVars[whichVar] % 256);
+    std::uint8_t part1 = static_cast<std::uint8_t>(tempVars[whichVar] >> 24);
+    std::uint8_t part2 = static_cast<std::uint8_t>(tempVars[whichVar] >> 16);
+    std::uint8_t part3 = static_cast<std::uint8_t>(tempVars[whichVar] >> 8);
+    std::uint8_t part4 = static_cast<std::uint8_t>(tempVars[whichVar] % 256);
 
     switch (part) {
     default:
@@ -568,7 +568,7 @@ auto CItem::SetEvent(std::string newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increases item's Z height by specified value
 // o------------------------------------------------------------------------------------------------o
-auto CItem::IncZ(SI16 newValue) -> void {
+auto CItem::IncZ(std::int16_t newValue) -> void {
     SetZ(z + newValue);
     UpdateRegion();
 }
@@ -578,7 +578,7 @@ auto CItem::IncZ(SI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increases item's X and Y coordinates by specified values
 // o------------------------------------------------------------------------------------------------o
-auto CItem::IncLocation(SI16 xInc, SI16 yInc) -> void {
+auto CItem::IncLocation(std::int16_t xInc, std::int16_t yInc) -> void {
     SetLocation((GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber(),
                 GetInstanceId());
 }
@@ -588,7 +588,7 @@ auto CItem::IncLocation(SI16 xInc, SI16 yInc) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates item's old location
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetOldLocation(SI16 newX, SI16 newY, SI08 newZ) {
+void CItem::SetOldLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) {
     oldLocX = newX;
     oldLocY = newY;
     oldLocZ = newZ;
@@ -612,7 +612,7 @@ void CItem::SetLocation(const CBaseObject *toSet) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets item's new location to match specified coordinates
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ) {
+void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) {
     SetLocation(newX, newY, newZ, GetGridLocation(), WorldNumber(), GetInstanceId());
 }
 
@@ -622,8 +622,8 @@ void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ) {
 //|	Purpose		-	Sets item's new location to match specified coordinates, grid
 // location, world and instance
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world,
-                        UI16 instance_id) {
+void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::int8_t newLoc, std::uint8_t world,
+                        std::uint16_t instance_id) {
     if (GetCont() == nullptr) {
         MapRegion->ChangeRegion(this, newX, newY, world);
     }
@@ -669,7 +669,7 @@ void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world
 //|	Purpose		-	Sets item's new location to match specified coordinates, world and
 // instance
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetLocation(SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId) {
+void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::uint8_t world, std::uint16_t instanceId) {
     SetLocation(newX, newY, newZ, GetGridLocation(), world, instanceId);
 }
 
@@ -686,11 +686,11 @@ auto CItem::GetRegion() const -> CTownRegion * {
 
     return cwmWorldState->townRegions[regionNum];
 }
-auto CItem::SetRegion(UI16 newValue) -> void {
+auto CItem::SetRegion(std::uint16_t newValue) -> void {
     regionNum = newValue;
     UpdateRegion();
 }
-auto CItem::GetRegionNum() const -> UI16 { return regionNum; }
+auto CItem::GetRegionNum() const -> std::uint16_t { return regionNum; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetLayer()
@@ -736,8 +736,8 @@ auto CItem::SetType(ItemTypes newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's offspell property - Unused?
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetOffSpell() const -> SI08 { return offspell; }
-auto CItem::SetOffSpell(SI08 newValue) -> void {
+auto CItem::GetOffSpell() const -> std::int8_t { return offspell; }
+auto CItem::SetOffSpell(std::int8_t newValue) -> void {
     offspell = newValue;
     UpdateRegion();
 }
@@ -749,8 +749,8 @@ auto CItem::SetOffSpell(SI08 newValue) -> void {
 //|	Purpose		-	Gets/Sets item's amount property, adjusts weight according to new
 // value
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmount() const -> UI16 { return amount; }
-auto CItem::SetAmount(UI32 newValue) -> void {
+auto CItem::GetAmount() const -> std::uint16_t { return amount; }
+auto CItem::SetAmount(std::uint32_t newValue) -> void {
     CBaseObject *getCont = GetCont();
     if (ValidateObject(getCont)) {
         Weight->SubtractItemWeight(getCont, this);
@@ -760,7 +760,7 @@ auto CItem::SetAmount(UI32 newValue) -> void {
         amount = MAX_STACK;
     }
     else {
-        amount = static_cast<UI16>(newValue);
+        amount = static_cast<std::uint16_t>(newValue);
     }
 
     if (ValidateObject(getCont)) {
@@ -776,15 +776,15 @@ auto CItem::SetAmount(UI32 newValue) -> void {
 //|	Purpose		-	Increases item's amount property by specified amount,
 //|					adjusts weight according to new value
 // o------------------------------------------------------------------------------------------------o
-auto CItem::IncAmount(SI32 incValue, bool noDelete) -> bool {
+auto CItem::IncAmount(std::int32_t incValue, bool noDelete) -> bool {
     bool iDeleted = false;
-    SI32 newAmt = (amount + incValue);
+    std::int32_t newAmt = (amount + incValue);
     if (newAmt >= 0) {
         if (newAmt > MAX_STACK) {
             SetAmount(MAX_STACK);
         }
         else {
-            SetAmount(static_cast<UI16>(newAmt));
+            SetAmount(static_cast<std::uint16_t>(newAmt));
         }
     }
     if (!noDelete && newAmt <= 0) {
@@ -800,8 +800,8 @@ auto CItem::IncAmount(SI32 incValue, bool noDelete) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's max hp property
 // o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetMaxHP(void) const { return maxHp; }
-void CItem::SetMaxHP(UI16 newValue) {
+std::uint16_t CItem::GetMaxHP(void) const { return maxHp; }
+void CItem::SetMaxHP(std::uint16_t newValue) {
     maxHp = newValue;
     UpdateRegion();
 }
@@ -812,8 +812,8 @@ void CItem::SetMaxHP(UI16 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's max uses property
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetMaxUses() const -> UI16 { return maxUses; }
-auto CItem::SetMaxUses(UI16 newValue) -> void {
+auto CItem::GetMaxUses() const -> std::uint16_t { return maxUses; }
+auto CItem::SetMaxUses(std::uint16_t newValue) -> void {
     maxUses = newValue;
     UpdateRegion();
 }
@@ -824,8 +824,8 @@ auto CItem::SetMaxUses(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's property for remaining uses
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetUsesLeft() const -> UI16 { return usesLeft; }
-auto CItem::SetUsesLeft(UI16 newValue) -> void {
+auto CItem::GetUsesLeft() const -> std::uint16_t { return usesLeft; }
+auto CItem::SetUsesLeft(std::uint16_t newValue) -> void {
     usesLeft = newValue;
     Dirty(UT_UPDATE);
     UpdateRegion();
@@ -838,8 +838,8 @@ auto CItem::SetUsesLeft(UI16 newValue) -> void {
 //|	Purpose		-	Gets/Sets item's speed property - used to determine weapon attack
 // speed
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetSpeed() const -> UI08 { return spd; }
-auto CItem::SetSpeed(UI08 newValue) -> void {
+auto CItem::GetSpeed() const -> std::uint8_t { return spd; }
+auto CItem::SetSpeed(std::uint8_t newValue) -> void {
     spd = newValue;
     UpdateRegion();
 }
@@ -851,8 +851,8 @@ auto CItem::SetSpeed(UI08 newValue) -> void {
 //|	Purpose		-	Gets/Sets item's maximum range - primarily used by throwing/archery
 // weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetMaxRange() const -> UI08 { return maxRange; }
-auto CItem::SetMaxRange(UI08 newValue) -> void {
+auto CItem::GetMaxRange() const -> std::uint8_t { return maxRange; }
+auto CItem::SetMaxRange(std::uint8_t newValue) -> void {
     maxRange = newValue;
     UpdateRegion();
 }
@@ -863,8 +863,8 @@ auto CItem::SetMaxRange(UI08 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's base range - primarily used by throwing weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetBaseRange() const -> UI08 { return baseRange; }
-auto CItem::SetBaseRange(UI08 newValue) -> void {
+auto CItem::GetBaseRange() const -> std::uint8_t { return baseRange; }
+auto CItem::SetBaseRange(std::uint8_t newValue) -> void {
     baseRange = newValue;
     UpdateRegion();
 }
@@ -875,8 +875,8 @@ auto CItem::SetBaseRange(UI08 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's movable property
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetMovable() const -> SI08 { return movable; }
-auto CItem::SetMovable(SI08 newValue) -> void {
+auto CItem::GetMovable() const -> std::int8_t { return movable; }
+auto CItem::SetMovable(std::int8_t newValue) -> void {
     movable = newValue;
     UpdateRegion();
 }
@@ -915,8 +915,8 @@ auto CItem::SetDecayTime(TIMERVAL newValue) -> void { decayTime = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets priv settings on item
 // o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetPriv(void) const { return static_cast<UI08>(priv.to_ulong()); }
-void CItem::SetPriv(UI08 newValue) {
+std::uint8_t CItem::GetPriv(void) const { return static_cast<std::uint8_t>(priv.to_ulong()); }
+void CItem::SetPriv(std::uint8_t newValue) {
     priv = newValue;
     UpdateRegion();
 }
@@ -928,8 +928,8 @@ void CItem::SetPriv(UI08 newValue) {
 //|	Purpose		-	Gets/Sets the item's sell value - determines how much player can
 // sell it for
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetSellValue() const -> UI32 { return value[1]; }
-auto CItem::SetSellValue(UI32 newValue) -> void {
+auto CItem::GetSellValue() const -> std::uint32_t { return value[1]; }
+auto CItem::SetSellValue(std::uint32_t newValue) -> void {
     value[1] = newValue;
     UpdateRegion();
 }
@@ -941,8 +941,8 @@ auto CItem::SetSellValue(UI32 newValue) -> void {
 //|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for
 // it
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetBuyValue() const -> UI32 { return value[0]; }
-auto CItem::SetBuyValue(UI32 newValue) -> void {
+auto CItem::GetBuyValue() const -> std::uint32_t { return value[0]; }
+auto CItem::SetBuyValue(std::uint32_t newValue) -> void {
     value[0] = newValue;
     UpdateRegion();
 }
@@ -954,8 +954,8 @@ auto CItem::SetBuyValue(UI32 newValue) -> void {
 //|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for
 // it
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetVendorPrice() const -> UI32 { return value[2]; }
-auto CItem::SetVendorPrice(UI32 newValue) -> void {
+auto CItem::GetVendorPrice() const -> std::uint32_t { return value[2]; }
+auto CItem::SetVendorPrice(std::uint32_t newValue) -> void {
     value[2] = newValue;
     UpdateRegion();
 }
@@ -966,8 +966,8 @@ auto CItem::SetVendorPrice(UI32 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's restock value in vendor sellpack
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetRestock() const -> UI16 { return restock; }
-auto CItem::SetRestock(UI16 newValue) -> void {
+auto CItem::GetRestock() const -> std::uint16_t { return restock; }
+auto CItem::SetRestock(std::uint16_t newValue) -> void {
     restock = newValue;
     UpdateRegion();
 }
@@ -990,8 +990,8 @@ auto CItem::SetArmourClass(ARMORCLASS newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's rank value - used in crafting
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetRank() const -> SI08 { return rank; }
-auto CItem::SetRank(SI08 newValue) -> void {
+auto CItem::GetRank() const -> std::int8_t { return rank; }
+auto CItem::SetRank(std::int8_t newValue) -> void {
     rank = newValue;
     UpdateRegion();
 }
@@ -1002,8 +1002,8 @@ auto CItem::SetRank(SI08 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's good value - used by advanced trade system
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGood() const -> SI16 { return good; }
-auto CItem::SetGood(SI16 newValue) -> void {
+auto CItem::GetGood() const -> std::int16_t { return good; }
+auto CItem::SetGood(std::int16_t newValue) -> void {
     good = newValue;
     UpdateRegion();
 }
@@ -1014,8 +1014,8 @@ auto CItem::SetGood(SI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's random value rate - used by advanced trade system
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetRndValueRate() const -> SI32 { return rndValueRate; }
-auto CItem::SetRndValueRate(SI32 newValue) -> void { rndValueRate = newValue; }
+auto CItem::GetRndValueRate() const -> std::int32_t { return rndValueRate; }
+auto CItem::SetRndValueRate(std::int32_t newValue) -> void { rndValueRate = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetMadeWith()
@@ -1023,8 +1023,8 @@ auto CItem::SetRndValueRate(SI32 newValue) -> void { rndValueRate = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ID of skill used to create item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetMadeWith() const -> SI08 { return madeWith; }
-auto CItem::SetMadeWith(SI08 newValue) -> void {
+auto CItem::GetMadeWith() const -> std::int8_t { return madeWith; }
+auto CItem::SetMadeWith(std::int8_t newValue) -> void {
     madeWith = newValue;
     UpdateRegion();
 }
@@ -1059,8 +1059,8 @@ auto CItem::SetGlowColour(COLOUR newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGlowEffect(void) const -> UI08 { return glowEffect; }
-auto CItem::SetGlowEffect(UI08 newValue) -> void {
+auto CItem::GetGlowEffect(void) const -> std::uint8_t { return glowEffect; }
+auto CItem::SetGlowEffect(std::uint8_t newValue) -> void {
     glowEffect = newValue;
     UpdateRegion();
 }
@@ -1071,8 +1071,8 @@ auto CItem::SetGlowEffect(UI08 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ammo Id for ammo used by ranged weapon
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmmoId() const -> UI16 { return ammo[0]; }
-auto CItem::SetAmmoId(UI16 newValue) -> void {
+auto CItem::GetAmmoId() const -> std::uint16_t { return ammo[0]; }
+auto CItem::SetAmmoId(std::uint16_t newValue) -> void {
     ammo[0] = newValue;
     UpdateRegion();
 }
@@ -1083,8 +1083,8 @@ auto CItem::SetAmmoId(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets hue of ammo used by ranged weapon
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmmoHue() const -> UI16 { return ammo[1]; }
-auto CItem::SetAmmoHue(UI16 newValue) -> void {
+auto CItem::GetAmmoHue() const -> std::uint16_t { return ammo[1]; }
+auto CItem::SetAmmoHue(std::uint16_t newValue) -> void {
     ammo[1] = newValue;
     UpdateRegion();
 }
@@ -1095,8 +1095,8 @@ auto CItem::SetAmmoHue(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets projectile FX shown when firing ranged weapon
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmmoFX() const -> UI16 { return ammoFX[0]; }
-auto CItem::SetAmmoFX(UI16 newValue) -> void {
+auto CItem::GetAmmoFX() const -> std::uint16_t { return ammoFX[0]; }
+auto CItem::SetAmmoFX(std::uint16_t newValue) -> void {
     ammoFX[0] = newValue;
     UpdateRegion();
 }
@@ -1107,8 +1107,8 @@ auto CItem::SetAmmoFX(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of projectiles fired by ranged weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmmoFXHue() const -> UI16 { return ammoFX[1]; }
-auto CItem::SetAmmoFXHue(UI16 newValue) -> void {
+auto CItem::GetAmmoFXHue() const -> std::uint16_t { return ammoFX[1]; }
+auto CItem::SetAmmoFXHue(std::uint16_t newValue) -> void {
     ammoFX[1] = newValue;
     UpdateRegion();
 }
@@ -1120,8 +1120,8 @@ auto CItem::SetAmmoFXHue(UI16 newValue) -> void {
 //|	Purpose		-	Gets/Sets the render mode of projectile FX played when firing ranged
 // weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetAmmoFXRender() const -> UI16 { return ammoFX[2]; }
-auto CItem::SetAmmoFXRender(UI16 newValue) -> void {
+auto CItem::GetAmmoFXRender() const -> std::uint16_t { return ammoFX[2]; }
+auto CItem::SetAmmoFXRender(std::uint16_t newValue) -> void {
     ammoFX[2] = newValue;
     UpdateRegion();
 }
@@ -1132,8 +1132,8 @@ auto CItem::SetAmmoFXRender(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum weight (in stones) a container can hold
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetWeightMax() const -> SI32 { return weightMax; }
-auto CItem::SetWeightMax(SI32 newValue) -> void {
+auto CItem::GetWeightMax() const -> std::int32_t { return weightMax; }
+auto CItem::SetWeightMax(std::int32_t newValue) -> void {
     weightMax = newValue;
     UpdateRegion();
 }
@@ -1145,8 +1145,8 @@ auto CItem::SetWeightMax(SI32 newValue) -> void {
 //|	Purpose		-	Gets/Sets base item weight - primarily used to store original
 // container weight
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetBaseWeight() const -> SI32 { return baseWeight; }
-auto CItem::SetBaseWeight(SI32 newValue) -> void {
+auto CItem::GetBaseWeight() const -> std::int32_t { return baseWeight; }
+auto CItem::SetBaseWeight(std::int32_t newValue) -> void {
     baseWeight = newValue;
     UpdateRegion();
 }
@@ -1157,8 +1157,8 @@ auto CItem::SetBaseWeight(SI32 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum amount of items a container can hold
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetMaxItems() const -> UI16 { return maxItems; }
-auto CItem::SetMaxItems(UI16 newValue) -> void {
+auto CItem::GetMaxItems() const -> std::uint16_t { return maxItems; }
+auto CItem::SetMaxItems(std::uint16_t newValue) -> void {
     maxItems = newValue;
     UpdateRegion();
 }
@@ -1169,7 +1169,7 @@ auto CItem::SetMaxItems(UI16 newValue) -> void {
 //|	Purpose		-	Returns whether item belongs to a field spell - and if so - which
 // one
 // o------------------------------------------------------------------------------------------------o
-auto CItem::IsFieldSpell() const -> UI08 {
+auto CItem::IsFieldSpell() const -> std::uint8_t {
     switch (id) {
     case 0x3996:
     case 0x398C:
@@ -1435,7 +1435,7 @@ auto CItem::CopyData(CItem *target) -> void {
     target->SetStealable(GetStealable());
 
     // Set damage types on new item
-    for (SI32 i = 0; i < WEATHNUM; ++i) {
+    for (std::int32_t i = 0; i < WEATHNUM; ++i) {
         target->SetWeatherDamage(static_cast<WeatherType>(i),
                                  GetWeatherDamage(static_cast<WeatherType>(i)));
     }
@@ -1479,8 +1479,8 @@ bool CItem::DumpBody(std::ostream &outStream) const {
 
     // Hexadecimal Values
     outStream << std::hex;
-    outStream << "GridLoc=0x" << static_cast<SI16>(GetGridLocation()) << newLine;
-    outStream << "Layer=0x" << static_cast<SI16>(GetLayer()) << newLine;
+    outStream << "GridLoc=0x" << static_cast<std::int16_t>(GetGridLocation()) << newLine;
+    outStream << "Layer=0x" << static_cast<std::int16_t>(GetLayer()) << newLine;
     outStream << "Cont=0x" << GetContSerial() << newLine;
     outStream << "Creator=0x" << GetCreator() << newLine;
     outStream << "More=0x" << GetTempVar(CITV_MORE) << newLine;
@@ -1525,12 +1525,12 @@ bool CItem::DumpBody(std::ostream &outStream) const {
     outStream << "MaxUses=" + std::to_string(GetMaxUses()) + newLine;
     outStream << "UsesLeft=" + std::to_string(GetUsesLeft()) + newLine;
     outStream << "RaceDamage=" +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(LIGHT) ? 1 : 0)) + "," +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(RAIN) ? 1 : 0)) + "," +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(HEAT) ? 1 : 0)) + "," +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(COLD) ? 1 : 0)) + "," +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(SNOW) ? 1 : 0)) + "," +
-                     std::to_string(static_cast<SI16>(GetWeatherDamage(LIGHTNING) ? 1 : 0)) +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHT) ? 1 : 0)) + "," +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(RAIN) ? 1 : 0)) + "," +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(HEAT) ? 1 : 0)) + "," +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(COLD) ? 1 : 0)) + "," +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(SNOW) ? 1 : 0)) + "," +
+                     std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHTNING) ? 1 : 0)) +
                      newLine;
     outStream << "EntryMadeFrom=" + std::to_string(EntryMadeFrom()) + newLine;
     outStream << "Stealable=" + std::to_string(GetStealable()) + newLine;
@@ -1551,13 +1551,13 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'A':
             if (UTag == "AMMO") {
                 if (csecs.size() == 2) {
-                    SetAmmoId(static_cast<UI16>(
+                    SetAmmoId(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetAmmoHue(static_cast<UI16>(
+                    SetAmmoHue(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    SetAmmoId(static_cast<UI16>(
+                    SetAmmoId(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     SetAmmoHue((0));
                 }
@@ -1565,15 +1565,15 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "AMMOFX") {
                 if (csecs.size() == 2) {
-                    SetAmmoFX(static_cast<UI16>(
+                    SetAmmoFX(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetAmmoFXHue(static_cast<UI16>(
+                    SetAmmoFXHue(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetAmmoFXRender(static_cast<UI16>(
+                    SetAmmoFXRender(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    SetAmmoFX(static_cast<UI16>(
+                    SetAmmoFX(static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     SetAmmoFXHue((0));
                     SetAmmoFXRender((0));
@@ -1582,19 +1582,19 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "AMOUNT") {
                 amount =
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             else if (UTag == "AC") {
                 SetArmourClass(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'B':
             if (UTag == "BOOLS") {
                 bools =
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
             break;
@@ -1606,16 +1606,16 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "CREATOR" || UTag == "CREATER") {
                 SetCreator(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "CORPSE") {
-                SetCorpse(static_cast<UI08>(
+                SetCorpse(static_cast<std::uint8_t>(
                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "COLD") {
-                SetWeatherDamage(COLD, static_cast<UI08>(std::stoul(
+                SetWeatherDamage(COLD, static_cast<std::uint8_t>(std::stoul(
                                            util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -1627,11 +1627,11 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             }
             if (UTag == "DIR") {
                 SetDir(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "DYEABLE") {
-                SetDye(static_cast<UI08>(
+                SetDye(static_cast<std::uint8_t>(
                            std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -1639,7 +1639,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'E':
             if (UTag == "ENTRYMADEFROM") {
                 EntryMadeFrom(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "EVENT") {
@@ -1650,33 +1650,33 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'G':
             if (UTag == "GRIDLOC") {
                 SetGridLocation(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GLOWTYPE") {
                 SetGlowEffect(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GLOWBC") {
                 SetGlowColour(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GLOW") {
                 SetGlow(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "GOOD") {
                 SetGood(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'H':
             if (UTag == "HEAT") {
-                SetWeatherDamage(HEAT, static_cast<UI16>(std::stoul(
+                SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -1688,13 +1688,13 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 rValue = true;
             }
             else if (UTag == "LIGHT") {
-                SetWeatherDamage(LIGHT, static_cast<UI16>(std::stoul(
+                SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "LIGHTNING") {
                 SetWeatherDamage(LIGHTNING,
-                                 static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")),
+                                 static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
                                                               nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -1702,26 +1702,26 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'M':
             if (UTag == "MAXITEMS") {
                 SetMaxItems(
-                    static_cast<UI32>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MORE") {
                 if (csecs.size() >= 4) {
                     SetTempVar(CITV_MORE, 1,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MORE, 2,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MORE, 3,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[2], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MORE, 4,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[3], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
                                                             nullptr, 0)));
                 }
                 else {
-                    SetTempVar(CITV_MORE, static_cast<UI32>(std::stoul(
+                    SetTempVar(CITV_MORE, static_cast<std::uint32_t>(std::stoul(
                                               util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -1731,40 +1731,40 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 rValue = true;
             }
             else if (UTag == "MORE012") {
-                SetTempVar(CITV_MOREX, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetTempVar(CITV_MOREY, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                SetTempVar(CITV_MOREZ, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MOREXYZ") {
-                SetTempVar(CITV_MOREX, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetTempVar(CITV_MOREY, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                SetTempVar(CITV_MOREZ, static_cast<UI32>(std::stoul(
+                SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
                                            util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MOREX") {
                 if (csecs.size() >= 4) {
                     SetTempVar(CITV_MOREX, 1,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREX, 2,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREX, 3,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[2], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREX, 4,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[3], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
                                                             nullptr, 0)));
                 }
                 else {
-                    SetTempVar(CITV_MOREX, static_cast<UI32>(std::stoul(
+                    SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
                                                util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -1772,20 +1772,20 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             else if (UTag == "MOREY") {
                 if (csecs.size() >= 4) {
                     SetTempVar(CITV_MOREY, 1,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREY, 2,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREY, 3,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[2], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREY, 4,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[3], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
                                                             nullptr, 0)));
                 }
                 else {
-                    SetTempVar(CITV_MOREY, static_cast<UI32>(std::stoul(
+                    SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
                                                util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -1793,20 +1793,20 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             else if (UTag == "MOREZ") {
                 if (csecs.size() >= 4) {
                     SetTempVar(CITV_MOREZ, 1,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREZ, 2,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREZ, 3,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[2], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
                                                             nullptr, 0)));
                     SetTempVar(CITV_MOREZ, 4,
-                               static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[3], "//")),
+                               static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
                                                             nullptr, 0)));
                 }
                 else {
-                    SetTempVar(CITV_MOREZ, static_cast<UI32>(std::stoul(
+                    SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
                                                util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -1816,17 +1816,17 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "MOVABLE") {
                 SetMovable(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MAXHP") {
                 SetMaxHP(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "MAXUSES") {
                 SetMaxUses(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
@@ -1839,18 +1839,18 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'O':
             if (UTag == "OFFSPELL") {
                 SetOffSpell(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'P':
             if (UTag == "PRIV") {
                 SetPriv(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "PILEABLE") {
-                SetPileable(static_cast<UI16>(
+                SetPileable(static_cast<std::uint16_t>(
                                 std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
@@ -1858,49 +1858,49 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'R':
             if (UTag == "RESTOCK") {
                 SetRestock(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "RACEDAMAGE") {
                 SetWeatherDamage(
-                    LIGHT, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                    LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                         nullptr, 0)) == 1);
                 SetWeatherDamage(
-                    RAIN, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                    RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                        nullptr, 0)) == 1);
                 SetWeatherDamage(
-                    HEAT, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[2], "//")),
+                    HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
                                                        nullptr, 0)) == 1);
                 SetWeatherDamage(
-                    COLD, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[3], "//")),
+                    COLD, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
                                                        nullptr, 0)) == 1);
                 SetWeatherDamage(
-                    SNOW, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[4], "//")),
+                    SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")),
                                                        nullptr, 0)) == 1);
                 SetWeatherDamage(
-                    LIGHTNING, static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[5], "//")),
+                    LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[5], "//")),
                                                             nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "RANK") {
                 SetRank(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "RAIN") {
-                SetWeatherDamage(RAIN, static_cast<UI16>(std::stoul(
+                SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "RANGE") {
                 if (csecs.size() > 1) {
-                    SetBaseRange(static_cast<UI08>(
+                    SetBaseRange(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetMaxRange(static_cast<UI08>(
+                    SetMaxRange(static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    auto val = static_cast<UI08>(
+                    auto val = static_cast<std::uint8_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                     SetBaseRange(val);
                     SetMaxRange(val / 2);
@@ -1914,31 +1914,31 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'S':
             if (UTag == "SPEED") {
                 SetSpeed(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SK_MADE") {
                 SetMadeWith(
-                    static_cast<SI08>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "SNOW") {
-                SetWeatherDamage(SNOW, static_cast<UI16>(std::stoul(
+                SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                 rValue = true;
             }
             else if (UTag == "SPELLS") {
-                SetSpell(0, static_cast<UI32>(
+                SetSpell(0, static_cast<std::uint32_t>(
                                 std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetSpell(1, static_cast<UI32>(
+                SetSpell(1, static_cast<std::uint32_t>(
                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                SetSpell(2, static_cast<UI32>(
+                SetSpell(2, static_cast<std::uint32_t>(
                                 std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "STEALABLE") {
                 SetStealable(
-                    static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
@@ -1961,28 +1961,28 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'U':
             if (UTag == "USESLEFT") {
                 SetUsesLeft(
-                    static_cast<UI16>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
         case 'V':
             if (UTag == "VALUE") {
                 if (csecs.size() > 2) {
-                    SetBuyValue(static_cast<UI32>(
+                    SetBuyValue(static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSellValue(static_cast<UI32>(
+                    SetSellValue(static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetVendorPrice(static_cast<UI32>(
+                    SetVendorPrice(static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                 }
                 else if (csecs.size() > 1) {
-                    SetBuyValue(static_cast<UI32>(
+                    SetBuyValue(static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSellValue(static_cast<UI32>(
+                    SetSellValue(static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
                 else {
-                    auto val = static_cast<UI32>(
+                    auto val = static_cast<std::uint32_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                     SetBuyValue(val);
                     SetSellValue(val / 2);
@@ -1993,7 +1993,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'W':
             if (UTag == "WEIGHTMAX") {
                 SetWeightMax(
-                    static_cast<SI32>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    static_cast<std::int32_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                 rValue = true;
             }
             break;
@@ -2133,10 +2133,10 @@ void CItem::CheckItemIntegrity(void) {
     }
 }
 
-const UI32 BIT_DECAYABLE = 0;
-const UI32 BIT_NEWBIE = 1;
-const UI32 BIT_DISPELLABLE = 2;
-const UI32 BIT_DIVINELOCK = 3;
+const std::uint32_t BIT_DECAYABLE = 0;
+const std::uint32_t BIT_NEWBIE = 1;
+const std::uint32_t BIT_DISPELLABLE = 2;
+const std::uint32_t BIT_DIVINELOCK = 3;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::IsDecayable()
@@ -2199,8 +2199,8 @@ auto CItem::SetDivineLock(bool newValue) -> void {
 //|	Purpose		-	Gets/Sets property that determines under which conditions item can
 // be stolen
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetStealable() const -> UI08 { return stealable; }
-auto CItem::SetStealable(UI08 newValue) -> void {
+auto CItem::GetStealable() const -> std::uint8_t { return stealable; }
+auto CItem::SetStealable(std::uint8_t newValue) -> void {
     stealable = newValue;
     UpdateRegion();
 }
@@ -2211,8 +2211,8 @@ auto CItem::SetStealable(UI08 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Create-DFNs entry the item was made from
 // o------------------------------------------------------------------------------------------------o
-auto CItem::EntryMadeFrom() const -> UI16 { return entryMadeFrom; }
-auto CItem::EntryMadeFrom(UI16 newValue) -> void {
+auto CItem::EntryMadeFrom() const -> std::uint16_t { return entryMadeFrom; }
+auto CItem::EntryMadeFrom(std::uint16_t newValue) -> void {
     entryMadeFrom = newValue;
     UpdateRegion();
 }
@@ -2222,7 +2222,7 @@ auto CItem::EntryMadeFrom(UI16 newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the weight of the item
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetWeight(SI32 newVal, bool doWeightUpdate) {
+void CItem::SetWeight(std::int32_t newVal, bool doWeightUpdate) {
     CBaseObject *checkCont = nullptr;
     if (IsPostLoaded() && doWeightUpdate) {
         checkCont = GetCont();
@@ -2298,7 +2298,7 @@ inline bool operator>(const CItem &x, const CItem &y) { return (x.GetSerial() > 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display "speech" over an item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::TextMessage(CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour) -> void {
+auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std::uint16_t Colour) -> void {
     UnicodeTypes dictLang = ZERO;
     SERIAL speakTo = INVALIDSERIAL;
     SpeechTarget target = SPTRG_PCNPC;
@@ -2592,7 +2592,7 @@ void CItem::RemoveFromSight(CSocket *mSock) {
                     if (ValidateObject(oChar)) {
                         // Get character's visual range
                         auto visRange =
-                            static_cast<UI16>(oSock->Range() + Races->VisRange(oChar->GetRace()));
+                            static_cast<std::uint16_t>(oSock->Range() + Races->VisRange(oChar->GetRace()));
 
                         // Find the root container (if any) of the container
                         auto rootCont = FindRootContainer(itemCont);
@@ -2706,8 +2706,8 @@ auto CItem::PlaceInPack() -> void {
     case PT_BANK:
     case PT_UNKNOWN:
     default:
-        SetX(static_cast<SI16>(25 + RandomNum(0, 79)));
-        SetY(static_cast<SI16>(25 + RandomNum(0, 79)));
+        SetX(static_cast<std::int16_t>(25 + RandomNum(0, 79)));
+        SetY(static_cast<std::int16_t>(25 + RandomNum(0, 79)));
         break;
     }
     SetZ(9);
@@ -2720,14 +2720,14 @@ auto CItem::PlaceInPack() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets spells in a spellbook item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetSpell(UI08 part) const -> UI32 {
-    UI32 rValue = 0;
+auto CItem::GetSpell(std::uint8_t part) const -> std::uint32_t {
+    std::uint32_t rValue = 0;
     if (part < 3) {
         rValue = spells[part];
     }
     return rValue;
 }
-auto CItem::SetSpell(UI08 part, UI32 newValue) -> void {
+auto CItem::SetSpell(std::uint8_t part, std::uint32_t newValue) -> void {
     if (part < 3) {
         spells[part] = newValue;
         UpdateRegion();
@@ -2772,7 +2772,7 @@ void CItem::Cleanup(void) {
         // this will fix several crashes
         if (IsSpawned()) {
             if (GetSpawn() < BASEITEMSERIAL) {
-                UI16 spawnRegNum = static_cast<UI16>(GetSpawn());
+                std::uint16_t spawnRegNum = static_cast<std::uint16_t>(GetSpawn());
                 if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
                     cwmWorldState->spawnRegions.end()) {
                     CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -2930,14 +2930,14 @@ CSpawnItem::CSpawnItem() : CItem(), isSectionAList(false) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Min and Max interval for spawner to respawn
 // o------------------------------------------------------------------------------------------------o
-auto CSpawnItem::GetInterval(UI08 part) const -> UI08 {
-    UI08 rValue = 0;
+auto CSpawnItem::GetInterval(std::uint8_t part) const -> std::uint8_t {
+    std::uint8_t rValue = 0;
     if (part < 2) {
         rValue = spawnInterval[part];
     }
     return rValue;
 }
-auto CSpawnItem::SetInterval(UI08 part, UI08 newVal) -> void {
+auto CSpawnItem::SetInterval(std::uint8_t part, std::uint8_t newVal) -> void {
     if (part < 2) {
         spawnInterval[part] = newVal;
         UpdateRegion();
@@ -2988,10 +2988,10 @@ bool CSpawnItem::DumpHeader(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 bool CSpawnItem::DumpBody(std::ostream &outStream) const {
     CItem::DumpBody(outStream);
-    outStream << "Interval=" << static_cast<UI16>(GetInterval(0)) << ","
-              << static_cast<UI16>(GetInterval(1)) << '\n';
+    outStream << "Interval=" << static_cast<std::uint16_t>(GetInterval(0)) << ","
+              << static_cast<std::uint16_t>(GetInterval(1)) << '\n';
     outStream << "SpawnSection=" << GetSpawnSection() << '\n';
-    outStream << "IsSectionAList=" << static_cast<UI16>(IsSectionAList() ? 1 : 0) << '\n';
+    outStream << "IsSectionAList=" << static_cast<std::uint16_t>(IsSectionAList() ? 1 : 0) << '\n';
     return true;
 }
 
@@ -3008,14 +3008,14 @@ bool CSpawnItem::HandleLine(std::string &UTag, std::string &data) {
         switch ((UTag.data()[0])) {
         case 'I':
             if (UTag == "INTERVAL") {
-                SetInterval(0, static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[0], "//")),
+                SetInterval(0, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
-                SetInterval(1, static_cast<UI08>(std::stoul(util::trim(util::strip(csecs[1], "//")),
+                SetInterval(1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                 rValue = true;
             }
             else if (UTag == "ISSECTIONALIST") {
-                IsSectionAList((static_cast<UI08>(std::stoul(util::trim(util::strip(data, "//")),
+                IsSectionAList((static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")),
                                                              nullptr, 0)) == 1));
                 rValue = true;
             }
@@ -3139,7 +3139,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                         auto listObj = oldstrutil::sections(
                             util::trim(util::strip(itemList->MoveTo(i), "//")), ",");
                         if (!listObj.empty()) {
-                            UI16 amountToSpawn = 1;
+                            std::uint16_t amountToSpawn = 1;
                             std::vector<std::string> itemListData;
                             if (util::upper(listObj[0]) == "ITEMLIST" ||
                                 util::upper(listObj[0]) == "LOOTLIST") {
@@ -3159,18 +3159,18 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                         1) // check if the second part of the tag-data contains two
                                            // sections separated by a space
                                     {
-                                        auto first = static_cast<UI16>(std::stoul(
+                                        auto first = static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                        auto second = static_cast<UI16>(std::stoul(
+                                        auto second = static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(tsects[1], "//")), nullptr, 0));
 
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
-                                        amountToSpawn = static_cast<UI16>(RandomNum(first, second));
+                                        amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
                                     }
                                     else {
                                         amountToSpawn =
-                                            static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+                                            static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                                     }
                                 }
 
@@ -3200,18 +3200,18 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                         1) // check if the second part of the tag-data contains two
                                            // sections separated by a space
                                     {
-                                        auto first = static_cast<UI16>(std::stoul(
+                                        auto first = static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                        auto second = static_cast<UI16>(std::stoul(
+                                        auto second = static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(tsects[1], "//")), nullptr, 0));
 
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
-                                        amountToSpawn = static_cast<UI16>(RandomNum(first, second));
+                                        amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
                                     }
                                     else {
                                         amountToSpawn =
-                                            static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+                                            static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                                     }
                                 }
 

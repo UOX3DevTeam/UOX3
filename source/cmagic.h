@@ -19,53 +19,53 @@ class CMagic {
     // adding constructor/destructor
     CMagic();
     ~CMagic(); // no need for a virtual destructor as long as no subclasses us
-    bool HasSpell(CItem *book, SI32 spellNum);
-    void AddSpell(CItem *book, SI32 spellNum);
-    void RemoveSpell(CItem *book, SI32 spellNum);
+    bool HasSpell(CItem *book, std::int32_t spellNum);
+    void AddSpell(CItem *book, std::int32_t spellNum);
+    void RemoveSpell(CItem *book, std::int32_t spellNum);
 
     void LoadScript(void); // adding function for spell system "cache"
     void SpellBook(CSocket *mSock);
     void GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type);
-    bool SelectSpell(CSocket *mSock, SI32 num);
-    void DoMoveEffect(SI32 num, CBaseObject *target, CChar *source);
-    void DoStaticEffect(CChar *source, SI32 num);
-    void PlaySound(CChar *source, SI32 num);
+    bool SelectSpell(CSocket *mSock, std::int32_t num);
+    void DoMoveEffect(std::int32_t num, CBaseObject *target, CChar *source);
+    void DoStaticEffect(CChar *source, std::int32_t num);
+    void PlaySound(CChar *source, std::int32_t num);
     void DelReagents(CChar *s, Reag_st reags);
     void CastSpell(CSocket *s, CChar *caster); // changed for NPC casting
-    bool CheckResist(CChar *attacker, CChar *defender, SI32 circle);
-    bool CheckResist(SI16 resistDifficulty, CChar *defender, SI32 circle);
-    void PoisonDamage(CChar *p, SI32 posion);
+    bool CheckResist(CChar *attacker, CChar *defender, std::int32_t circle);
+    bool CheckResist(std::int16_t resistDifficulty, CChar *defender, std::int32_t circle);
+    void PoisonDamage(CChar *p, std::int32_t posion);
     void CheckFieldEffects(CChar &mChar);
-    bool HandleFieldEffects(CChar *mChar, CItem *fieldItem, UI16 id);
-    bool CheckBook(SI32 circle, SI32 spell, CItem *i);
+    bool HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id);
+    bool CheckBook(std::int32_t circle, std::int32_t spell, CItem *i);
     bool CheckReagents(CChar *s, const Reag_st *reagents);
-    bool CheckMana(CChar *s, SI32 num);
-    bool CheckStamina(CChar *s, SI32 num);
-    bool CheckHealth(CChar *s, SI32 num);
+    bool CheckMana(CChar *s, std::int32_t num);
+    bool CheckStamina(CChar *s, std::int32_t num);
+    bool CheckHealth(CChar *s, std::int32_t num);
     bool CheckMagicReflect(CChar *i);
 
-    void MagicDamage(CChar *p, SI16 amount, CChar *attacker = nullptr, WeatherType element = NONE);
+    void MagicDamage(CChar *p, std::int16_t amount, CChar *attacker = nullptr, WeatherType element = NONE);
     void SpellFail(CSocket *s);
-    void SubtractMana(CChar *s, SI32 mana);
-    void SubtractStamina(CChar *s, SI32 stamina);
-    void SubtractHealth(CChar *s, SI32 health, SI32 spellNum);
+    void SubtractMana(CChar *s, std::int32_t mana);
+    void SubtractStamina(CChar *s, std::int32_t stamina);
+    void SubtractHealth(CChar *s, std::int32_t health, std::int32_t spellNum);
     void MagicTrap(CChar *s, CItem *i);
-    void Polymorph(CSocket *s, UI16 polyId);
-    void BoxSpell(CSocket *s, CChar *caster, SI16 &x1, SI16 &x2, SI16 &y1, SI16 &y2, SI08 &z1,
-                  SI08 &z2);
-    void SummonMonster(CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z);
-    void PolymorphMenu(CSocket *s, UI16 gmindex);
+    void Polymorph(CSocket *s, std::uint16_t polyId);
+    void BoxSpell(CSocket *s, CChar *caster, std::int16_t &x1, std::int16_t &x2, std::int16_t &y1, std::int16_t &y2, std::int8_t &z1,
+                  std::int8_t &z2);
+    void SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z);
+    void PolymorphMenu(CSocket *s, std::uint16_t gmindex);
 
     std::vector<CSpellInfo> spells; // adding variable for spell system "cache"
 
-    void Register(cScript *toRegister, SI32 spellNumber, bool isEnabled);
-    void SetSpellStatus(SI32 spellNumber, bool isEnabled);
+    void Register(cScript *toRegister, std::int32_t spellNumber, bool isEnabled);
+    void SetSpellStatus(std::int32_t spellNumber, bool isEnabled);
 
   private:
-    UI08 GetFieldDir(CChar *s, SI16 x, SI16 y);
+    std::uint8_t GetFieldDir(CChar *s, std::int16_t x, std::int16_t y);
     bool RegMsg(CChar *s, Reag_st failmsg);
     void LogSpell(std::string spell, CChar *player1, CChar *player2, const std::string &extraInfo);
-    UI08 spellCount;
+    std::uint8_t spellCount;
 };
 
 extern CMagic *Magic;

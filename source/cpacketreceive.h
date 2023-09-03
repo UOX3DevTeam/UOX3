@@ -16,7 +16,7 @@ class CPIFirstLogin : public CPInputBuffer {
     virtual void InternalReset(void);
     std::string userId;
     std::string password;
-    UI08 unknown;
+    std::uint8_t unknown;
 
   public:
     virtual ~CPIFirstLogin() {}
@@ -25,7 +25,7 @@ class CPIFirstLogin : public CPInputBuffer {
     virtual void Receive(void) override;
     virtual const std::string Name(void);
     virtual const std::string Pass(void);
-    virtual UI08 Unknown(void);
+    virtual std::uint8_t Unknown(void);
     virtual bool Handle(void) override;
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
@@ -39,7 +39,7 @@ class CPIServerSelect : public CPInputBuffer {
     CPIServerSelect();
     CPIServerSelect(CSocket *s);
     virtual void Receive(void) override;
-    virtual SI16 ServerNum(void);
+    virtual std::int16_t ServerNum(void);
     virtual bool Handle(void) override;
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
@@ -47,7 +47,7 @@ class CPIServerSelect : public CPInputBuffer {
 class CPISecondLogin : public CPInputBuffer {
   protected:
     virtual void InternalReset(void);
-    UI32 keyUsed;
+    std::uint32_t keyUsed;
     std::string sid;
     std::string password;
 
@@ -56,7 +56,7 @@ class CPISecondLogin : public CPInputBuffer {
     CPISecondLogin();
     CPISecondLogin(CSocket *s);
     virtual void Receive(void) override;
-    virtual UI32 Account(void);
+    virtual std::uint32_t Account(void);
     virtual const std::string Name(void);
     virtual const std::string Pass(void);
     virtual bool Handle(void) override;
@@ -67,7 +67,7 @@ class CPIClientVersion : public CPInputBuffer {
   protected:
     virtual void InternalReset(void);
     char *Offset(void);
-    SI16 len;
+    std::int16_t len;
 
   public:
     virtual ~CPIClientVersion() {}
@@ -83,12 +83,12 @@ class CPINewClientVersion : public CPInputBuffer {
   protected:
     virtual void InternalReset(void);
     // char *			Offset( void );
-    // SI16			len;
-    UI32 seed;
-    UI32 majorVersion;
-    UI32 minorVersion;
-    UI32 clientRevision;
-    UI32 clientPrototype;
+    // std::int16_t			len;
+    std::uint32_t seed;
+    std::uint32_t majorVersion;
+    std::uint32_t minorVersion;
+    std::uint32_t clientRevision;
+    std::uint32_t clientPrototype;
 
   public:
     virtual ~CPINewClientVersion() {}
@@ -126,8 +126,8 @@ class CPILogoutStatus : public CPInputBuffer {
 };
 
 class CPIKrriosClientSpecial : public CPInputBuffer {
-    UI08 type;
-    UI16 blockLen;
+    std::uint8_t type;
+    std::uint16_t blockLen;
     bool locations;
 
   protected:
@@ -176,8 +176,8 @@ class CPIKeepAlive : public CPInputBuffer {
 };
 
 class CPIStatusRequest : public CPInputBuffer {
-    UI32 pattern;
-    UI08 getType;
+    std::uint32_t pattern;
+    std::uint8_t getType;
     SERIAL playerId;
 
   public:
@@ -319,8 +319,8 @@ class CPIGetItem : public CPInputBuffer {
 class CPIDropItem : public CPInputBuffer {
   protected:
     bool uokrFlag;
-    SI16 x, y;
-    SI08 z, gridLoc;
+    std::int16_t x, y;
+    std::int8_t z, gridLoc;
     SERIAL item, dest;
 
   public:
@@ -342,20 +342,20 @@ class CPIGumpMenuSelect : public CPInputBuffer {
     SERIAL ButtonId(void) const;
     SERIAL GumpId(void) const;
     SERIAL ID(void) const;
-    UI32 SwitchCount(void) const;
-    UI32 TextCount(void) const;
-    UI32 SwitchValue(UI32 index) const;
+    std::uint32_t SwitchCount(void) const;
+    std::uint32_t TextCount(void) const;
+    std::uint32_t SwitchValue(std::uint32_t index) const;
 
-    UI16 GetTextId(UI08 number) const;
-    UI16 GetTextLength(UI08 number) const;
-    std::string GetTextString(UI08 number) const;
+    std::uint16_t GetTextId(std::uint8_t number) const;
+    std::uint16_t GetTextLength(std::uint8_t number) const;
+    std::string GetTextString(std::uint8_t number) const;
 
   protected:
     SERIAL id, buttonId, gumpId;
-    UI32 switchCount, textCount;
-    UI32 textOffset;
+    std::uint32_t switchCount, textCount;
+    std::uint32_t textOffset;
 
-    std::vector<UI16> textLocationOffsets;
+    std::vector<std::uint16_t> textLocationOffsets;
 
     void BuildTextLocations(void);
 };
@@ -363,8 +363,8 @@ class CPIGumpMenuSelect : public CPInputBuffer {
 class CPITalkRequest : public CPInputBuffer {
   protected:
     COLOUR textColour;
-    UI16 strLen;
-    UI16 fontUsed;
+    std::uint16_t strLen;
+    std::uint16_t fontUsed;
     char txtSaid[4096];
     SpeechType typeUsed;
     bool isUnicode;
@@ -379,8 +379,8 @@ class CPITalkRequest : public CPInputBuffer {
     virtual bool Handle(void) override;
 
     COLOUR TextColour(void) const;
-    UI16 Length(void) const;
-    UI16 Font(void) const;
+    std::uint16_t Length(void) const;
+    std::uint16_t Font(void) const;
     SpeechType Type(void) const;
     bool IsUnicode(void) const;
     virtual std::string TextString(void) const;
@@ -458,46 +458,46 @@ class CPIDeleteCharacter : public CPInputBuffer {
 
 class CPICreateCharacter : public CPInputBuffer {
   protected:
-    UI32 pattern1;
-    UI32 pattern2;
-    UI08 pattern3;
+    std::uint32_t pattern1;
+    std::uint32_t pattern2;
+    std::uint8_t pattern3;
     char charName[30];
     char password[30];
-    UI08 sex;
-    UI08 str;
-    UI08 dex;
-    UI08 intel;
-    UI08 skill[4];
-    UI08 skillValue[4];
+    std::uint8_t sex;
+    std::uint8_t str;
+    std::uint8_t dex;
+    std::uint8_t intel;
+    std::uint8_t skill[4];
+    std::uint8_t skillValue[4];
     COLOUR skinColour;
-    UI16 hairStyle;
+    std::uint16_t hairStyle;
     COLOUR hairColour;
-    UI16 facialHair;
+    std::uint16_t facialHair;
     COLOUR facialHairColour;
-    UI16 locationNumber;
-    UI16 unknown;
-    UI16 slot;
-    UI32 ipAddress;
+    std::uint16_t locationNumber;
+    std::uint16_t unknown;
+    std::uint16_t slot;
+    std::uint32_t ipAddress;
     COLOUR shirtColour;
     COLOUR pantsColour;
 
     // extra for 3DCharCreate - 0x8D
-    UI08 packetSize;
-    UI08 profession;
-    UI08 clientFlags;
-    UI08 race;
-    UI16 unknown1;
-    UI16 unknown2;
+    std::uint8_t packetSize;
+    std::uint8_t profession;
+    std::uint8_t clientFlags;
+    std::uint8_t race;
+    std::uint16_t unknown1;
+    std::uint16_t unknown2;
     char unknown3[25];
-    UI16 unknown4;
-    UI08 unknown5;
-    UI16 unknown6;
-    UI08 unknown7;
-    UI08 unknown8;
-    UI08 unknown9;
-    UI16 shirtId;
+    std::uint16_t unknown4;
+    std::uint8_t unknown5;
+    std::uint16_t unknown6;
+    std::uint8_t unknown7;
+    std::uint8_t unknown8;
+    std::uint8_t unknown9;
+    std::uint16_t shirtId;
     COLOUR faceColour;
-    UI16 faceId;
+    std::uint16_t faceId;
 
     void NewbieItems(CChar *mChar);
 
@@ -516,11 +516,11 @@ class CPICreateCharacter : public CPInputBuffer {
 
 class CPIPlayCharacter : public CPInputBuffer {
   protected:
-    UI32 pattern;
+    std::uint32_t pattern;
     char charName[30];
     char unknown[33];
-    UI08 slotChosen;
-    UI32 ipAddress;
+    std::uint8_t slotChosen;
+    std::uint32_t ipAddress;
 
   public:
     virtual ~CPIPlayCharacter() {}
@@ -533,13 +533,13 @@ class CPIPlayCharacter : public CPInputBuffer {
 
 class CPIGumpInput : public CPInputBuffer {
   protected:
-    UI32 id;
-    UI08 type;
-    UI08 index;
-    UI08 unk[3];
+    std::uint32_t id;
+    std::uint8_t type;
+    std::uint8_t index;
+    std::uint8_t unk[3];
     std::string reply;
 
-    void HandleTownstoneText(UI08 index);
+    void HandleTownstoneText(std::uint8_t index);
 
   public:
     virtual ~CPIGumpInput() {}
@@ -548,21 +548,21 @@ class CPIGumpInput : public CPInputBuffer {
     virtual void Receive(void) override;
     virtual bool Handle(void) override;
 
-    UI32 ID(void) const;
-    UI08 Type(void) const;
-    UI08 Index(void) const;
-    UI08 Unk(SI32 offset) const;
+    std::uint32_t ID(void) const;
+    std::uint8_t Type(void) const;
+    std::uint8_t Index(void) const;
+    std::uint8_t Unk(std::int32_t offset) const;
     const std::string Reply(void) const;
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIHelpRequest : public CPInputBuffer {
   protected:
-    UI16 menuNum;
+    std::uint16_t menuNum;
 
   public:
     virtual ~CPIHelpRequest() {}
-    CPIHelpRequest(CSocket *s, UI16 menuVal);
+    CPIHelpRequest(CSocket *s, std::uint16_t menuVal);
     CPIHelpRequest(CSocket *s);
     virtual void Receive(void) override;
     virtual bool Handle(void) override;
@@ -581,7 +581,7 @@ class CPIDyeWindow : public CPInputBuffer {
   protected:
     SERIAL changing;
     COLOUR newValue;
-    UI16 modelId;
+    std::uint16_t modelId;
 
   public:
     virtual ~CPIDyeWindow() {}
@@ -636,8 +636,8 @@ class CPIMetrics : public CPInputBuffer {
 
 class CPISubcommands : public CPInputBuffer {
   protected:
-    UI16 subCmd;
-    UI08 subSubCmd;
+    std::uint16_t subCmd;
+    std::uint8_t subSubCmd;
     bool skipOver;
     CPInputBuffer *subPacket;
 
@@ -688,7 +688,7 @@ class CPIClientLanguage : public CPInputBuffer {
 
 class CPIUOTDActions : public CPInputBuffer {
   protected:
-    UI16 action;
+    std::uint16_t action;
 
   public:
     virtual ~CPIUOTDActions() {}
@@ -744,7 +744,7 @@ class CPIPopupMenuRequest : public CPInputBuffer {
 
 class CPIPopupMenuSelect : public CPInputBuffer {
   protected:
-    UI16 popupEntry;
+    std::uint16_t popupEntry;
     CChar *targChar;
 
   public:
@@ -759,8 +759,8 @@ class CPIPopupMenuSelect : public CPInputBuffer {
 
 class CPIExtendedStats : public CPInputBuffer {
   protected:
-    UI08 statToSet;
-    UI08 value;
+    std::uint8_t statToSet;
+    std::uint8_t value;
 
   public:
     virtual ~CPIExtendedStats() {}

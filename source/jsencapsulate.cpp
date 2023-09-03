@@ -71,7 +71,7 @@ JSEncapsulate::JSEncapsulate(JSContext *jsCX, JSObject *jsVP)
 
 bool JSEncapsulate::isType(JSEncapsObjectType toCheck) { return (nativeType == toCheck); }
 
-SI32 JSEncapsulate::toInt(void) {
+std::int32_t JSEncapsulate::toInt(void) {
     if (nativeType == JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert JS Object to an int");
     }
@@ -148,7 +148,7 @@ std::string JSEncapsulate::ClassName(void) {
 }
 void JSEncapsulate::Parse(JSEncapsObjectType typeConvert) {
     jsdouble fvalue;
-    SI32 ivalue;
+    std::int32_t ivalue;
     std::string svalue;
     bool bvalue;
     switch (typeConvert) {
@@ -159,7 +159,7 @@ void JSEncapsulate::Parse(JSEncapsObjectType typeConvert) {
             break;
         case JSOT_DOUBLE:
             JS_ValueToNumber(cx, (*vp), &fvalue);
-            intVal = static_cast<SI32>(fvalue);
+            intVal = static_cast<std::int32_t>(fvalue);
             break;
         case JSOT_BOOL:
             intVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1 : 0);

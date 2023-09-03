@@ -12,7 +12,7 @@ class CSocket;
 class CWhoList {
   private:
     bool needsUpdating; // true if the list needs updating (new player online, new char made)
-    SI32 gmCount;       // number of GMs already in it
+    std::int32_t gmCount;       // number of GMs already in it
     bool online;
 
     std::vector<SERIAL> whoMenuData;
@@ -22,7 +22,7 @@ class CWhoList {
     void ResetUpdateFlag(void);
     void AddSerial(SERIAL toAdd);
     void Delete(void);
-    void Command(CSocket *toSendTo, UI08 type, UI16 buttonPressed);
+    void Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed);
 
   public:
     CWhoList(bool trulyOnline = true);
@@ -31,7 +31,7 @@ class CWhoList {
     void SendSocket(CSocket *toSendTo);
     void GMEnter(void);
     void GMLeave(void);
-    void ButtonSelect(CSocket *toSendTo, UI16 buttonPressed, UI08 type);
+    void ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std::uint8_t type);
     void ZeroWho(void);
     void SetOnline(bool newValue);
 };

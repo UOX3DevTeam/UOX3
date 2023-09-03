@@ -123,7 +123,7 @@ CItem *StartTrade(CSocket *mSock, CChar *nChar) {
     return tradeWindowOne;
 }
 
-bool ClearTradesFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData) {
+bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
     if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
         // Body of the functor goes here
@@ -170,7 +170,7 @@ bool ClearTradesFunctor(CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraDat
 //|	Purpose		-	Loops through all items to clear any active trades
 // o------------------------------------------------------------------------------------------------o
 void ClearTrades(void) {
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &ClearTradesFunctor);
 }
 
@@ -335,7 +335,7 @@ bool CPITradeMessage::Handle(void) {
     return true;
 }
 
-bool KillTradesFunctor(CBaseObject *a, UI32 &b, void *extraData) {
+bool KillTradesFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) {
     bool retVal = true;
     if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
         // Body of the functor goes here
@@ -362,6 +362,6 @@ bool KillTradesFunctor(CBaseObject *a, UI32 &b, void *extraData) {
 //|	Purpose		-	Cancels any active trades associated with a character.
 // o------------------------------------------------------------------------------------------------o
 void KillTrades(CChar *i) {
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_ITEM, b, i, &KillTradesFunctor);
 }

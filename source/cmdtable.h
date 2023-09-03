@@ -29,31 +29,31 @@ enum commandTypes {
 };
 
 struct CommandMapEntry_st {
-    UI08 cmdLevelReq;
-    UI08 cmdType;
+    std::uint8_t cmdLevelReq;
+    std::uint8_t cmdType;
     void (*cmd_extra)(); // executable function
     CommandMapEntry_st() : cmdLevelReq(0), cmdType(CMD_SOCKFUNC), cmd_extra(nullptr) {}
-    CommandMapEntry_st(UI08 cLR, UI08 cT, void (*ce)())
+    CommandMapEntry_st(std::uint8_t cLR, std::uint8_t cT, void (*ce)())
         : cmdLevelReq(cLR), cmdType(cT), cmd_extra(ce) {}
 };
 
 struct TargetMapEntry_st {
-    UI08 cmdLevelReq;
-    UI08 cmdType;
+    std::uint8_t cmdLevelReq;
+    std::uint8_t cmdType;
     TargetIds targId;
-    SI32 dictEntry;
+    std::int32_t dictEntry;
     TargetMapEntry_st()
         : cmdLevelReq(0), cmdType(CMD_TARGET), targId(TARGET_NOFUNC), dictEntry(0) {}
-    TargetMapEntry_st(UI08 cLR, UI08 cT, TargetIds tID, SI32 dE)
+    TargetMapEntry_st(std::uint8_t cLR, std::uint8_t cT, TargetIds tID, std::int32_t dE)
         : cmdLevelReq(cLR), cmdType(cT), targId(tID), dictEntry(dE) {}
 };
 
 struct JSCommandEntry_st {
-    UI08 cmdLevelReq;
-    UI16 scriptId;
+    std::uint8_t cmdLevelReq;
+    std::uint16_t scriptId;
     bool isEnabled;
     JSCommandEntry_st() : cmdLevelReq(0), scriptId(0), isEnabled(true) {}
-    JSCommandEntry_st(UI08 cLR, UI16 id, bool iE) : cmdLevelReq(cLR), scriptId(id), isEnabled(iE) {}
+    JSCommandEntry_st(std::uint8_t cLR, std::uint16_t id, bool iE) : cmdLevelReq(cLR), scriptId(id), isEnabled(iE) {}
 };
 
 typedef std::map<std::string, CommandMapEntry_st> COMMANDMAP;

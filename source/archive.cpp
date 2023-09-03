@@ -52,15 +52,15 @@ void FileArchive(void) {
         // effect backups
         BackupFile("effects.wsc", backupRoot);
 
-        const SI16 AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
-        const SI16 AreaY = UpperY / 8;
+        const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
+        const std::int16_t AreaY = UpperY / 8;
 
         auto backupPath = util::format(
             "%s%s/", cwmWorldState->ServerData()->Directory(CSDDP_SHARED).c_str(), timenow.c_str());
 
-        for (SI16 counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
+        for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
         {
-            for (SI16 counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
+            for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
             {
                 auto filename1 = util::format("%i.%i.wsc", counter1, counter2);
                 BackupFile(filename1, backupRoot);

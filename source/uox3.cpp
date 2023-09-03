@@ -169,8 +169,8 @@ void LoadPlaces(void);
 void RestockNPC(CChar &i, bool stockAll);
 void ClearTrades(void);
 void SysBroadcast(const std::string &txt);
-void MoveBoat(UI08 dir, CBoatObj *boat);
-bool DecayItem(CItem &toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses);
+void MoveBoat(std::uint8_t dir, CBoatObj *boat);
+bool DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, const std::uint32_t nextDecayItemsInHouses);
 void CheckAI(CChar &mChar);
 // o------------------------------------------------------------------------------------------------o
 //  Internal Pre-Declares
@@ -180,7 +180,7 @@ BOOL WINAPI exit_handler(DWORD dwCtrlType);
 #else
 void app_stopped(int sig);
 #endif
-auto EndMessage(SI32 x) -> void;
+auto EndMessage(std::int32_t x) -> void;
 auto InitClasses() -> void;
 auto InitMultis() -> void;
 auto DisplayBanner() -> void;
@@ -196,9 +196,9 @@ auto AdjustInterval(std::chrono::milliseconds interval, std::chrono::millisecond
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Main UOX startup
 // o------------------------------------------------------------------------------------------------o
-auto main(SI32 argc, char *argv[]) -> int {
-    UI32 tempSecs, tempMilli, tempTime;
-    UI32 loopSecs, loopMilli;
+auto main(std::int32_t argc, char *argv[]) -> int {
+    std::uint32_t tempSecs, tempMilli, tempTime;
+    std::uint32_t loopSecs, loopMilli;
     TIMERVAL uiNextCheckConn = 0;
 
     // We are going to do some fundmental checks, that if fail, we will bail out before
@@ -259,7 +259,7 @@ auto main(SI32 argc, char *argv[]) -> int {
             ->APSPerfThreshold(); // Performance threshold from ini, 0 disables APS feature
 
     [[maybe_unused]] int avgSimCycles = 0;
-    UI16 apsMovingAvgOld = 0;
+    std::uint16_t apsMovingAvgOld = 0;
     const int maxSimCycleSamples = 10; // Max number of samples for moving average
     std::vector<int> simCycleSamples;  // Store simulation cycle measurements for moving average
 
@@ -340,7 +340,7 @@ auto main(SI32 argc, char *argv[]) -> int {
 
             std::chrono::time_point<std::chrono::system_clock> currentTime =
                 std::chrono::system_clock::now();
-            if (apsPerfThreshold == static_cast<UI16>(0) ||
+            if (apsPerfThreshold == static_cast<std::uint16_t>(0) ||
                 apsDelay == std::chrono::milliseconds(0) || currentTime >= adaptivePerfTimer) {
                 // Check autotimers if the APS feature is disabled, if there's no delay, or if timer
                 // has expired
@@ -373,7 +373,7 @@ auto main(SI32 argc, char *argv[]) -> int {
                 // Check if it's time for evaluation and adjustment
                 std::chrono::time_point<std::chrono::system_clock> currentTime =
                     std::chrono::system_clock::now();
-                if (apsPerfThreshold > static_cast<UI16>(0) && currentTime >= nextEvaluationTime) {
+                if (apsPerfThreshold > static_cast<std::uint16_t>(0) && currentTime >= nextEvaluationTime) {
                     // Get simulation cycles count
                     auto simCycles =
                         (1000.0 *
@@ -391,7 +391,7 @@ auto main(SI32 argc, char *argv[]) -> int {
                     }
 
                     int sum = std::accumulate(simCycleSamples.begin(), simCycleSamples.end(), 0);
-                    UI16 apsMovingAvg = static_cast<UI16>(sum / simCycleSamples.size());
+                    std::uint16_t apsMovingAvg = static_cast<std::uint16_t>(sum / simCycleSamples.size());
                     if (apsMovingAvg < apsPerfThreshold) {
                         // Performance is below threshold...
                         if (apsMovingAvg <= apsMovingAvgOld && apsDelay < apsDelayMaxCap) {
@@ -485,7 +485,7 @@ auto InitOperatingSystem() -> std::optional<std::string> {
 #if defined(_WIN32)
     WSADATA wsaData;
     WORD wVersionRequested = MAKEWORD(2, 2);
-    SI32 err = WSAStartup(wVersionRequested, &wsaData);
+    std::int32_t err = WSAStartup(wVersionRequested, &wsaData);
     if (err) {
                 return "Winsock 2.2 not found on your system!"s;
     }
@@ -728,12 +728,12 @@ BOOL WINAPI exit_handler(DWORD dwCtrlType) {
 // o------------------------------------------------------------------------------------------------o
 //  These first two, should be removed.  We should fix the error
 // o------------------------------------------------------------------------------------------------o
-auto illinst(SI32 x = 0) -> void {
+auto illinst(std::int32_t x = 0) -> void {
     SysBroadcast("Fatal Server Error! Bailing out - Have a nice day!");
     Console::shared().Error("Illegal Instruction Signal caught - attempting shutdown");
     EndMessage(x);
 }
-auto aus([[maybe_unused]] SI32 signal) -> void {
+auto aus([[maybe_unused]] std::int32_t signal) -> void {
     Console::shared().Error("Server crash averted! Floating point exception caught.");
 }
 void app_stopped([[maybe_unused]] int sig) {
@@ -799,7 +799,7 @@ auto UnloadSpawnRegions() -> void {
 // o------------------------------------------------------------------------------------------------o
 auto UnloadRegions() -> void {
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                  [](const std::pair<UI16, CTownRegion *> &entry) {
+                  [](const std::pair<std::uint16_t, CTownRegion *> &entry) {
                       if (entry.second) {
                           delete entry.second;
                       }
@@ -975,7 +975,7 @@ auto IsOnline(CChar &mChar) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates object's stats
 // o------------------------------------------------------------------------------------------------o
-auto UpdateStats(CBaseObject *mObj, UI08 x) -> void {
+auto UpdateStats(CBaseObject *mObj, std::uint8_t x) -> void {
     for (auto &tSock : FindNearbyPlayers(mObj)) {
                 if (tSock->LoginComplete()) {
                     // Normalize stats if we're updating our stats for other players
@@ -1001,9 +1001,9 @@ auto UpdateStats(CBaseObject *mObj, UI08 x) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CollectGarbage() -> void {
     Console::shared() << "Performing Garbage Collection...";
-    auto objectsDeleted = UI32(0);
+    auto objectsDeleted = std::uint32_t(0);
     std::for_each(cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(),
-                  [&objectsDeleted](std::pair<CBaseObject *, UI32> entry) {
+                  [&objectsDeleted](std::pair<CBaseObject *, std::uint32_t> entry) {
                       if (entry.first) {
                           if (entry.first->IsFree() && entry.first->IsDeleted()) {
                               Console::shared().Warning("Invalid object found in Deletion Queue");
@@ -1131,9 +1131,9 @@ auto DismountCreature(CChar *s) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Global message players with shutdown message
 // o------------------------------------------------------------------------------------------------o
-auto EndMessage([[maybe_unused]] SI32 x) -> void {
+auto EndMessage([[maybe_unused]] std::int32_t x) -> void {
     x = 0; // Really, then why take a parameter?
-    const UI32 iGetClock = cwmWorldState->GetUICurrentTime();
+    const std::uint32_t iGetClock = cwmWorldState->GetUICurrentTime();
     if (cwmWorldState->GetEndTime() < iGetClock) {
                 cwmWorldState->SetEndTime(iGetClock);
     }
@@ -1240,7 +1240,7 @@ auto CallGuards(CChar *mChar, CChar *targChar) -> void {
 //|	Purpose		-	Check characters status.  Returns true if character was killed
 // o------------------------------------------------------------------------------------------------o
 auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doWeather) -> bool {
-    UI16 c;
+    std::uint16_t c;
     if (!mChar.IsDead()) {
                 const auto maxHP = mChar.GetMaxHP();
                 const auto maxStam = mChar.GetMaxStam();
@@ -1306,7 +1306,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                         if (!cwmWorldState->ServerData()->ThirstSystemEnabled() ||
                             (mChar.GetThirst() > 0) ||
                             ((mChar.GetThirst() == 0) &&
-                             (mStamina < static_cast<SI16>(maxStam * 0.25))) ||
+                             (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) ||
                             (!Races->DoesThirst(mChar.GetRace()) &&
                              (cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE) == 0 ||
                               mChar.IsNpc()))) {
@@ -1362,7 +1362,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                     }
                     const R32 MeditationBonus =
                         (.00075f * mChar.GetSkill(MEDITATION)); // Bonus for Meditation
-                    SI32 NextManaRegen = static_cast<SI32>(
+                    std::int32_t NextManaRegen = static_cast<std::int32_t>(
                         cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN) *
                         (1 - MeditationBonus) * 1000);
                     if (cwmWorldState->ServerData()
@@ -1376,7 +1376,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             ArmorPenalty = 100;
                         }
                         ArmorPenalty = 1 + (ArmorPenalty / 25);
-                        NextManaRegen = static_cast<SI32>(NextManaRegen * ArmorPenalty);
+                        NextManaRegen = static_cast<std::int32_t>(NextManaRegen * ArmorPenalty);
                     }
                     if (mChar.IsMeditating()) // If player is meditation...
                     {
@@ -1435,12 +1435,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                         nullptr, 1240, EMOTE, 1,
                                         mCharName.c_str()); // * %s looks a bit nauseous *
                                 }
-                                SI16 poisonDmgPercent =
+                                std::int16_t poisonDmgPercent =
                                     RandomNum(3, 6); // 3% to 6% of current health per tick
-                                SI16 poisonDmg =
-                                    static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+                                std::int16_t poisonDmg =
+                                    static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                                 [[maybe_unused]] bool retVal =
-                                    mChar.Damage(std::max(static_cast<SI16>(3), poisonDmg),
+                                    mChar.Damage(std::max(static_cast<std::int16_t>(3), poisonDmg),
                                                  POISON); // Minimum 3 damage per tick
                                 break;
                             }
@@ -1456,12 +1456,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                         mCharName
                                             .c_str()); // * %s looks disoriented and nauseous! *
                                 }
-                                SI16 poisonDmgPercent =
+                                std::int16_t poisonDmgPercent =
                                     RandomNum(4, 8); // 4% to 8% of current health per tick
-                                SI16 poisonDmg =
-                                    static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+                                std::int16_t poisonDmg =
+                                    static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                                 [[maybe_unused]] bool retVal =
-                                    mChar.Damage(std::max(static_cast<SI16>(5), poisonDmg),
+                                    mChar.Damage(std::max(static_cast<std::int16_t>(5), poisonDmg),
                                                  POISON); // Minimum 5 damage per tick
                                 break;
                             }
@@ -1476,12 +1476,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                         nullptr, 1242, EMOTE, 1,
                                         mCharName.c_str()); // * %s is in severe pain! *
                                 }
-                                SI16 poisonDmgPercent =
+                                std::int16_t poisonDmgPercent =
                                     RandomNum(8, 12); // 8% to 12% of current health per tick
-                                SI16 poisonDmg =
-                                    static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+                                std::int16_t poisonDmg =
+                                    static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                                 [[maybe_unused]] bool retVal =
-                                    mChar.Damage(std::max(static_cast<SI16>(8), poisonDmg),
+                                    mChar.Damage(std::max(static_cast<std::int16_t>(8), poisonDmg),
                                                  POISON); // Minimum 8 damage per tick
                                 break;
                             }
@@ -1497,12 +1497,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                         mCharName.c_str()); // * %s looks extremely weak and is
                                                             // wrecked in pain! *
                                 }
-                                SI16 poisonDmgPercent =
+                                std::int16_t poisonDmgPercent =
                                     RandomNum(12, 25); // 12% to 25% of current health per tick
-                                SI16 poisonDmg =
-                                    static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+                                std::int16_t poisonDmg =
+                                    static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                                 [[maybe_unused]] bool retVal =
-                                    mChar.Damage(std::max(static_cast<SI16>(14), poisonDmg),
+                                    mChar.Damage(std::max(static_cast<std::int16_t>(14), poisonDmg),
                                                  POISON); // Minimum 14 damage per tick
                                 break;
                             }
@@ -1518,12 +1518,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                         mCharName.c_str()); // * %s looks extremely weak and is
                                                             // wrecked in pain! *
                                 }
-                                SI16 poisonDmgPercent =
+                                std::int16_t poisonDmgPercent =
                                     RandomNum(25, 50); // 25% to 50% of current health per tick
-                                SI16 poisonDmg =
-                                    static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+                                std::int16_t poisonDmg =
+                                    static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
                                 [[maybe_unused]] bool retVal =
-                                    mChar.Damage(std::max(static_cast<SI16>(17), poisonDmg),
+                                    mChar.Damage(std::max(static_cast<std::int16_t>(17), poisonDmg),
                                                  POISON); // Minimum 14 damage per tick
                                 break;
                             }
@@ -1535,11 +1535,11 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                                 break;
                             }
                             if (mChar.GetHP() < 1 && !mChar.IsDead()) {
-                                std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+                                std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                                 for (auto &i : scriptTriggers) {
                                     cScript *toExecute = JSMapping->GetScript(i);
                                     if (toExecute) {
-                                        SI08 retStatus =
+                                        std::int8_t retStatus =
                                             toExecute->OnDeathBlow(&mChar, mChar.GetAttacker());
 
                                         // -1 == script doesn't exist, or returned -1
@@ -1610,7 +1610,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
     if (mChar.GetKills() &&
         (mChar.GetTimer(tCHAR_MURDERRATE) <= cwmWorldState->GetUICurrentTime() ||
          cwmWorldState->GetOverflow())) {
-                mChar.SetKills(static_cast<SI16>(mChar.GetKills() - 1));
+                mChar.SetKills(static_cast<std::int16_t>(mChar.GetKills() - 1));
 
                 if (mChar.GetKills()) {
                     mChar.SetTimer(
@@ -1629,13 +1629,13 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
 
     if (!mChar.IsDead()) {
                 if (doWeather) {
-                    const UI08 curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+                    const std::uint8_t curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
                     LIGHTLEVEL toShow;
                     if (Races->VisLevel(mChar.GetRace()) > curLevel) {
                         toShow = 0;
                     }
                     else {
-                        toShow = static_cast<UI08>(curLevel - Races->VisLevel(mChar.GetRace()));
+                        toShow = static_cast<std::uint8_t>(curLevel - Races->VisLevel(mChar.GetRace()));
                     }
                     if (mChar.IsNpc()) {
                         DoLight(&mChar, toShow);
@@ -1663,7 +1663,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 return true;
     }
     else if (mChar.GetHP() <= 0) {
-                std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+                std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
                 for (auto i : scriptTriggers) {
                     auto toExecute = JSMapping->GetScript(i);
                     if (toExecute) {
@@ -1718,7 +1718,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
                         mChar.SetCasting(false);
                         mChar.SetFrozen(false);
                         mChar.Dirty(UT_UPDATE);
-                        UI08 cursorType = 0;
+                        std::uint8_t cursorType = 0;
                         if (Magic->spells[spellNum].AggressiveSpell()) {
                             cursorType = 1;
                         }
@@ -1755,8 +1755,8 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
                 if (cwmWorldState->ServerData()->WorldAmbientSounds() > 10) {
                     cwmWorldState->ServerData()->WorldAmbientSounds(10);
                 }
-                const SI16 soundTimer =
-                    static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
+                const std::int16_t soundTimer =
+                    static_cast<std::int16_t>(cwmWorldState->ServerData()->WorldAmbientSounds() * 100);
                 if (!mChar.IsDead() && (RandomNum(0, soundTimer - 1)) == (soundTimer / 2)) {
                     Effects->PlayBGSound((*mSock), mChar);
                 }
@@ -1819,7 +1819,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck) -> void {
     bool doAICheck = true;
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute) {
@@ -1883,7 +1883,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
                     cwmWorldState->GetOverflow()) {
                     if (mChar.GetTimer(tNPC_MOVETIME) <= cwmWorldState->GetUICurrentTime() ||
                         cwmWorldState->GetOverflow()) {
-                        mChar.SetFleeDistance(static_cast<UI08>(0));
+                        mChar.SetFleeDistance(static_cast<std::uint8_t>(0));
                         CChar *mTarget = mChar.GetTarg();
                         if (ValidateObject(mTarget) && !mTarget->IsDead() &&
                             ObjInRange(&mChar, mTarget, DIST_INRANGE)) {
@@ -1923,7 +1923,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
                     CChar *mTarget = mChar.GetTarg();
                     if (ValidateObject(mTarget) && !mTarget->IsDead() &&
                         ObjInRange(&mChar, mTarget, DIST_SAMESCREEN)) {
-                        mChar.SetFleeDistance(static_cast<UI08>(0));
+                        mChar.SetFleeDistance(static_cast<std::uint8_t>(0));
                         mChar.SetOldNpcWander(mNpcWander);
                         mChar.SetNpcWander(WT_FLEE);
                         if (mChar.GetMounted()) {
@@ -1959,8 +1959,8 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
 // o------------------------------------------------------------------------------------------------o
-auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
-               UI32 nextDecayItemsInHouses, bool doWeather) {
+auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItems,
+               std::uint32_t nextDecayItemsInHouses, bool doWeather) {
     auto regItems = toCheck->GetItemList();
     auto collection = regItems->collection();
     for (const auto &itemCheck : collection) {
@@ -1988,7 +1988,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             }
 
                             // Check global script! Maybe there's another event there
-                            auto toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                            auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                             if (toExecute) {
                                 if (toExecute->OnDecay(itemCheck) == 0) {
                                     // if it exists and we don't want hard code, return
@@ -2059,12 +2059,12 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                     case IT_SOUNDOBJECT:
                         if (itemCheck->GetTempVar(CITV_MOREY) < 25) {
                             if (RandomNum(1, 100) <=
-                                static_cast<SI32>(itemCheck->GetTempVar(CITV_MOREZ))) {
+                                static_cast<std::int32_t>(itemCheck->GetTempVar(CITV_MOREZ))) {
                                 for (auto &tSock : FindNearbyPlayers(
                                          itemCheck,
-                                         static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREY)))) {
+                                         static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREY)))) {
                                     Effects->PlaySound(
-                                        tSock, static_cast<UI16>(itemCheck->GetTempVar(CITV_MOREX)),
+                                        tSock, static_cast<std::uint16_t>(itemCheck->GetTempVar(CITV_MOREX)),
                                         false);
                                 }
                             }
@@ -2076,7 +2076,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                 }
                 if (itemCheck->CanBeObjType(OT_BOAT)) {
                     CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
-                    SI08 boatMoveType = mBoat->GetMoveType();
+                    std::int8_t boatMoveType = mBoat->GetMoveType();
                     if (ValidateObject(mBoat) && boatMoveType &&
                         ((mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime()) ||
                          cwmWorldState->GetOverflow())) {
@@ -2092,7 +2092,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_BACKWARD:
                             case BOAT_SLOWBACKWARD:
                             case BOAT_ONEBACKWARD: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() + 4);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() + 4);
                                 if (dir > 7) {
                                     dir %= 8;
                                 }
@@ -2102,7 +2102,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_LEFT:
                             case BOAT_SLOWLEFT:
                             case BOAT_ONELEFT: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() - 2);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() - 2);
 
                                 dir %= 8;
                                 MoveBoat(dir, mBoat);
@@ -2112,7 +2112,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_SLOWRIGHT:
                             case BOAT_ONERIGHT: {
                                 // Right / One Right
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() + 2);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() + 2);
 
                                 dir %= 8;
                                 MoveBoat(dir, mBoat);
@@ -2121,7 +2121,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_FORWARDLEFT:
                             case BOAT_SLOWFORWARDLEFT:
                             case BOAT_ONEFORWARDLEFT: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() - 1);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() - 1);
 
                                 dir %= 8;
                                 MoveBoat(dir, mBoat);
@@ -2130,7 +2130,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_FORWARDRIGHT:
                             case BOAT_SLOWFORWARDRIGHT:
                             case BOAT_ONEFORWARDRIGHT: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() + 1);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() + 1);
 
                                 dir %= 8;
                                 MoveBoat(dir, mBoat);
@@ -2139,7 +2139,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_BACKWARDLEFT:
                             case BOAT_SLOWBACKWARDLEFT:
                             case BOAT_ONEBACKWARDLEFT: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() + 5);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() + 5);
                                 if (dir > 7) {
                                     dir %= 8;
                                 }
@@ -2149,7 +2149,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
                             case BOAT_BACKWARDRIGHT:
                             case BOAT_SLOWBACKWARDRIGHT:
                             case BOAT_ONEBACKWARDRIGHT: {
-                                UI08 dir = static_cast<UI08>(itemCheck->GetDir() + 3);
+                                std::uint8_t dir = static_cast<std::uint8_t>(itemCheck->GetDir() + 3);
                                 if (dir > 7) {
                                     dir %= 8;
                                 }
@@ -2210,13 +2210,13 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems,
 //|	Purpose		-	Check automatic and timer controlled functions
 // o------------------------------------------------------------------------------------------------o
 auto CWorldMain::CheckAutoTimers() -> void {
-    static UI32 nextCheckSpawnRegions = 0;
-    static UI32 nextCheckTownRegions = 0;
-    static UI32 nextCheckItems = 0;
-    static UI32 nextDecayItems = 0;
-    static UI32 nextDecayItemsInHouses = 0;
-    static UI32 nextSetNPCFlagTime = 0;
-    static UI32 accountFlush = 0;
+    static std::uint32_t nextCheckSpawnRegions = 0;
+    static std::uint32_t nextCheckTownRegions = 0;
+    static std::uint32_t nextCheckItems = 0;
+    static std::uint32_t nextDecayItems = 0;
+    static std::uint32_t nextDecayItemsInHouses = 0;
+    static std::uint32_t nextSetNPCFlagTime = 0;
+    static std::uint32_t accountFlush = 0;
     bool doWeather = false;
     bool doPetOfflineCheck = false;
     CServerData *serverData = ServerData();
@@ -2255,7 +2255,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 {
                     for (auto &tSock : Network->connClients) {
                         if ((tSock->IdleTimeout() != -1) &&
-                            static_cast<UI32>(tSock->IdleTimeout()) <= GetUICurrentTime()) {
+                            static_cast<std::uint32_t>(tSock->IdleTimeout()) <= GetUICurrentTime()) {
                             CChar *tChar = tSock->CurrcharObj();
                             if (!ValidateObject(tChar)) {
                                 continue;
@@ -2267,9 +2267,9 @@ auto CWorldMain::CheckAutoTimers() -> void {
                                 Network->Disconnect(tSock);
                             }
                         }
-                        else if (((static_cast<UI32>(tSock->IdleTimeout() + 300 * 1000) <=
+                        else if (((static_cast<std::uint32_t>(tSock->IdleTimeout() + 300 * 1000) <=
                                        GetUICurrentTime() &&
-                                   static_cast<UI32>(tSock->IdleTimeout() + 200 * 1000) >=
+                                   static_cast<std::uint32_t>(tSock->IdleTimeout() + 200 * 1000) >=
                                        GetUICurrentTime()) ||
                                   GetOverflow()) &&
                                  !tSock->WasIdleWarned()) {
@@ -2283,7 +2283,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         if (serverData->KickOnAssistantSilence()) {
                             if (!tSock->NegotiatedWithAssistant() &&
                                 tSock->NegotiateTimeout() != -1 &&
-                                static_cast<UI32>(tSock->NegotiateTimeout()) <=
+                                static_cast<std::uint32_t>(tSock->NegotiateTimeout()) <=
                                     GetUICurrentTime()) {
                                 const CChar *tChar = tSock->CurrcharObj();
                                 if (!ValidateObject(tChar)) {
@@ -2366,14 +2366,14 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 {
                     for (auto &wsSocket : Network->connClients) {
                         if (wsSocket) {
-                            if (static_cast<UI32>(wsSocket->IdleTimeout()) < GetUICurrentTime()) {
+                            if (static_cast<std::uint32_t>(wsSocket->IdleTimeout()) < GetUICurrentTime()) {
                                 wsSocket->IdleTimeout(BuildTimeValue(60.0F));
                                 wsSocket->WasIdleWarned(
                                     true); // don't give them the message if they only have 60s
                             }
                             if (cwmWorldState->ServerData()->KickOnAssistantSilence()) {
                                 if (!wsSocket->NegotiatedWithAssistant() &&
-                                    static_cast<UI32>(wsSocket->NegotiateTimeout()) <
+                                    static_cast<std::uint32_t>(wsSocket->NegotiateTimeout()) <
                                         GetUICurrentTime()) {
                                     wsSocket->NegotiateTimeout(BuildTimeValue(60.0F));
                                 }
@@ -2385,7 +2385,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     }
     if ((nextCheckTownRegions <= GetUICurrentTime()) || GetOverflow()) {
                 std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                              [](std::pair<const UI16, CTownRegion *> &town) {
+                              [](std::pair<const std::uint16_t, CTownRegion *> &town) {
                                   if (town.second != nullptr) {
                                       town.second->PeriodicCheck();
                                   }
@@ -2398,12 +2398,12 @@ auto CWorldMain::CheckAutoTimers() -> void {
     if ((nextCheckSpawnRegions <= GetUICurrentTime()) &&
         (serverData->CheckSpawnRegionSpeed() != -1)) {
                 // Regionspawns
-                UI32 itemsSpawned = 0;
-                UI32 npcsSpawned = 0;
-                UI32 totalItemsSpawned = 0;
-                UI32 totalNpcsSpawned = 0;
-                UI32 maxItemsSpawned = 0;
-                UI32 maxNpcsSpawned = 0;
+                std::uint32_t itemsSpawned = 0;
+                std::uint32_t npcsSpawned = 0;
+                std::uint32_t totalItemsSpawned = 0;
+                std::uint32_t totalNpcsSpawned = 0;
+                std::uint32_t maxItemsSpawned = 0;
+                std::uint32_t maxNpcsSpawned = 0;
 
                 for (auto &[regnum, spawnReg] : cwmWorldState->spawnRegions) {
                     if (spawnReg) {
@@ -2412,10 +2412,10 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         }
                         // Grab some info from the spawn region anyway, even if it's not time to
                         // spawn
-                        totalItemsSpawned += static_cast<UI32>(spawnReg->GetCurrentItemAmt());
-                        totalNpcsSpawned += static_cast<UI32>(spawnReg->GetCurrentCharAmt());
-                        maxItemsSpawned += static_cast<UI32>(spawnReg->GetMaxItemSpawn());
-                        maxNpcsSpawned += static_cast<UI32>(spawnReg->GetMaxCharSpawn());
+                        totalItemsSpawned += static_cast<std::uint32_t>(spawnReg->GetCurrentItemAmt());
+                        totalNpcsSpawned += static_cast<std::uint32_t>(spawnReg->GetCurrentCharAmt());
+                        maxItemsSpawned += static_cast<std::uint32_t>(spawnReg->GetMaxItemSpawn());
+                        maxNpcsSpawned += static_cast<std::uint32_t>(spawnReg->GetMaxCharSpawn());
                     }
                 }
 
@@ -2424,12 +2424,12 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 // regions again. Similarly, the more room there is to spawn additional stuff, the
                 // more frequently UOX3 will check spawn regions
                 auto checkSpawnRegionSpeed = static_cast<R32>(serverData->CheckSpawnRegionSpeed());
-                UI16 itemSpawnCompletionRatio =
+                std::uint16_t itemSpawnCompletionRatio =
                     (maxItemsSpawned > 0 ? ((totalItemsSpawned * 100.0) / maxItemsSpawned) : 100);
-                UI16 npcSpawnCompletionRatio =
+                std::uint16_t npcSpawnCompletionRatio =
                     (maxNpcsSpawned > 0 ? ((totalNpcsSpawned * 100.0) / maxNpcsSpawned) : 100);
 
-                SI32 avgCompletionRatio = (itemSpawnCompletionRatio + npcSpawnCompletionRatio) / 2;
+                std::int32_t avgCompletionRatio = (itemSpawnCompletionRatio + npcSpawnCompletionRatio) / 2;
                 if (avgCompletionRatio == 100) {
                     checkSpawnRegionSpeed *= 3;
                 }
@@ -2449,17 +2449,17 @@ auto CWorldMain::CheckAutoTimers() -> void {
 
     HTMLTemplates->Poll(ETT_ALLTEMPLATES);
 
-    const UI32 saveinterval = serverData->ServerSavesTimerStatus();
+    const std::uint32_t saveinterval = serverData->ServerSavesTimerStatus();
     if (saveinterval != 0) {
                 time_t oldTime = GetOldTime();
                 if (!GetAutoSaved()) {
                     SetAutoSaved(true);
                     time(&oldTime);
-                    SetOldTime(static_cast<UI32>(oldTime));
+                    SetOldTime(static_cast<std::uint32_t>(oldTime));
                 }
                 time_t newTime = GetNewTime();
                 time(&newTime);
-                SetNewTime(static_cast<UI32>(newTime));
+                SetNewTime(static_cast<std::uint32_t>(newTime));
 
                 if (difftime(GetNewTime(), GetOldTime()) >= saveinterval) {
                     // Added Dec 20, 1999
@@ -2494,11 +2494,11 @@ auto CWorldMain::CheckAutoTimers() -> void {
     {
             SetIPUpdated( true );
             time(&oldIPTime);
-            SetOldIPTime( static_cast<UI32>(oldIPTime) );
+            SetOldIPTime( static_cast<std::uint32_t>(oldIPTime) );
     }
     time_t newIPTime = GetNewIPTime();
     time(&newIPTime);
-    SetNewIPTime( static_cast<UI32>(newIPTime) );
+    SetNewIPTime( static_cast<std::uint32_t>(newIPTime) );
 
     if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
     {
@@ -2508,7 +2508,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
 
     // Time functions
     if ((GetUOTickCount() <= GetUICurrentTime()) || (GetOverflow())) {
-                UI08 oldHour = serverData->ServerTimeHours();
+                std::uint8_t oldHour = serverData->ServerTimeHours();
                 if (serverData->IncMinute()) {
                     Weather->NewDay();
                 }
@@ -2545,14 +2545,14 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         if (!ValidateObject(mChar)) {
                             continue;
                         }
-                        UI08 worldNumber = mChar->WorldNumber();
+                        std::uint8_t worldNumber = mChar->WorldNumber();
                         if (mChar->GetAccount().accountNumber == iSock->AcctNo() &&
                             mChar->GetAccount().inGame == mChar->GetSerial()) {
                             GenericCheck(iSock, (*mChar), checkFieldEffects, doWeather);
                             CheckPC(iSock, (*mChar));
 
-                            SI16 xOffset = MapRegion->GetGridX(mChar->GetX());
-                            SI16 yOffset = MapRegion->GetGridY(mChar->GetY());
+                            std::int16_t xOffset = MapRegion->GetGridX(mChar->GetX());
+                            std::int16_t yOffset = MapRegion->GetGridY(mChar->GetY());
 
                             // Restrict the amount of active regions based on how far player is from
                             // the border to the next one. This reduces active regions around a
@@ -2560,7 +2560,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                             // yOffset are considered, because the xOffset ones are too narrow
                             auto yOffsetUnrounded =
                                 static_cast<R32>(mChar->GetY()) / static_cast<R32>(MapRowSize);
-                            SI08 counter2Start = 0, counter2End = 0;
+                            std::int8_t counter2Start = 0, counter2End = 0;
                             if (yOffsetUnrounded < yOffset + 0.25) {
                                 counter2Start = -1;
                                 counter2End = 0;
@@ -2570,9 +2570,9 @@ auto CWorldMain::CheckAutoTimers() -> void {
                                 counter2End = 1;
                             }
 
-                            for (SI08 counter = -1; counter <= 1; ++counter) {
+                            for (std::int8_t counter = -1; counter <= 1; ++counter) {
                                 // Check 3 x colums
-                                for (SI08 ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2) {
+                                for (std::int8_t ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2) {
                                     // Check variable y colums
                                     auto tC = MapRegion->GetMapRegion(xOffset + counter,
                                                                       yOffset + ctr2, worldNumber);
@@ -2696,7 +2696,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
 
     // Implement RefreshItem() / StatWindow() queue here
     std::for_each(cwmWorldState->refreshQueue.begin(), cwmWorldState->refreshQueue.end(),
-                  [](std::pair<CBaseObject *, UI32> entry) {
+                  [](std::pair<CBaseObject *, std::uint32_t> entry) {
                       if (ValidateObject(entry.first)) {
                           if (entry.first->CanBeObjType(OT_CHAR)) {
                               auto uChar = static_cast<CChar *>(entry.first);
@@ -2791,16 +2791,16 @@ auto InitClasses() -> void {
         std::filesystem::path(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
 }
 
-auto FindNearbyObjects(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
+auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
     -> std::vector<CBaseObject *>;
-auto InMulti(SI16 x, SI16 y, SI08 z, CMultiObj *m) -> bool;
+auto InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) -> bool;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	FindMultiFunctor()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for a multi at object's location and assigns any multi found
 // to object
 // o------------------------------------------------------------------------------------------------o
-auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData)
+auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_unused]] void *extraData)
     -> bool {
     if (ValidateObject(a)) {
                 if (a->CanBeObjType(OT_MULTI)) {
@@ -2846,7 +2846,7 @@ auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]]
 auto InitMultis() -> void {
     Console::shared() << "Initializing multis            ";
 
-    UI32 b = 0;
+    std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &FindMultiFunctor);
 
     Console::shared().PrintDone();
@@ -2887,7 +2887,7 @@ auto DisplayBanner() -> void {
 //|					as well as closing open file handles to avoid file file
 // corruption. |					Exits with proper error code.
 // o------------------------------------------------------------------------------------------------o
-auto Shutdown(SI32 retCode) -> void {
+auto Shutdown(std::int32_t retCode) -> void {
     Console::shared().PrintSectionBegin();
     Console::shared() << "Beginning UOX final shut down sequence..." << myendl;
     if (retCode && saveOnShutdown) {
@@ -2970,7 +2970,7 @@ auto Shutdown(SI32 retCode) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle advancement objects (stat / skill gates)
 // o------------------------------------------------------------------------------------------------o
-auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
+auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
     if ((applyTo->GetAdvObj() == 0) || multiUse) {
                 Effects->PlayStaticAnimation(applyTo, 0x373A, 0, 15);
                 Effects->PlaySound(applyTo, 0x01E9);
@@ -2989,8 +2989,8 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                 auto beardobject = applyTo->GetItemAtLayer(IL_FACIALHAIR);
                 DFNTAGS tag = DFNTAG_COUNTOFTAGS;
                 std::string cdata;
-                SI32 ndata = -1, odata = -1;
-                UI08 skillToSet = 0;
+                std::int32_t ndata = -1, odata = -1;
+                std::uint8_t skillToSet = 0;
                 for (const auto &sec : Advancement->collection2()) {
                     tag = sec->tag;
                     cdata = sec->cdata;
@@ -3014,7 +3014,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = ARCHERY;
                         break;
                     case DFNTAG_ADVOBJ:
-                        applyTo->SetAdvObj(static_cast<UI16>(ndata));
+                        applyTo->SetAdvObj(static_cast<std::uint16_t>(ndata));
                         break;
                     case DFNTAG_BEGGING:
                         skillToSet = BEGGING;
@@ -3044,19 +3044,19 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = COOKING;
                         break;
                     case DFNTAG_DEX:
-                        applyTo->SetDexterity(static_cast<SI16>(RandomNum(ndata, odata)));
+                        applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                         break;
                     case DFNTAG_DETECTINGHIDDEN:
                         skillToSet = DETECTINGHIDDEN;
                         break;
                     case DFNTAG_DYEHAIR:
                         if (ValidateObject(hairobject)) {
-                            hairobject->SetColour(static_cast<UI16>(ndata));
+                            hairobject->SetColour(static_cast<std::uint16_t>(ndata));
                         }
                         break;
                     case DFNTAG_DYEBEARD:
                         if (ValidateObject(beardobject)) {
-                            beardobject->SetColour(static_cast<UI16>(ndata));
+                            beardobject->SetColour(static_cast<std::uint16_t>(ndata));
                         }
                         break;
                     case DFNTAG_ENTICEMENT:
@@ -3076,7 +3076,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         }
                         break;
                     case DFNTAG_FAME:
-                        applyTo->SetFame(static_cast<SI16>(ndata));
+                        applyTo->SetFame(static_cast<std::int16_t>(ndata));
                         break;
                     case DFNTAG_FENCING:
                         skillToSet = FENCING;
@@ -3103,7 +3103,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = IMBUING;
                         break;
                     case DFNTAG_INTELLIGENCE:
-                        applyTo->SetIntelligence(static_cast<SI16>(RandomNum(ndata, odata)));
+                        applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                         break;
                     case DFNTAG_ITEMID:
                         skillToSet = ITEMID;
@@ -3112,7 +3112,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = INSCRIPTION;
                         break;
                     case DFNTAG_KARMA:
-                        applyTo->SetKarma(static_cast<SI16>(ndata));
+                        applyTo->SetKarma(static_cast<std::int16_t>(ndata));
                         break;
                     case DFNTAG_KILLHAIR:
                         retItem = applyTo->GetItemAtLayer(IL_HAIR);
@@ -3178,7 +3178,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = PROVOCATION;
                         break;
                     case DFNTAG_POLY:
-                        applyTo->SetId(static_cast<UI16>(ndata));
+                        applyTo->SetId(static_cast<std::uint16_t>(ndata));
                         break;
                     case DFNTAG_PACKITEM:
                         if (ValidateObject(applyTo->GetPackItem())) {
@@ -3187,7 +3187,7 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                                 if (csecs.size() > 1) {
                                     retItem = Items->CreateScriptItem(
                                         nullptr, applyTo, util::trim(util::strip(csecs[0], "//")),
-                                        util::ston<UI16>(util::trim(util::strip(csecs[1], "//"))),
+                                        util::ston<std::uint16_t>(util::trim(util::strip(csecs[1], "//"))),
                                         OT_ITEM, true);
                                 }
                                 else {
@@ -3206,13 +3206,13 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         skillToSet = REMOVETRAP;
                         break;
                     case DFNTAG_STRENGTH:
-                        applyTo->SetStrength(static_cast<SI16>(RandomNum(ndata, odata)));
+                        applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                         break;
                     case DFNTAG_SKILL:
-                        applyTo->SetBaseSkill(static_cast<UI16>(odata), static_cast<UI08>(ndata));
+                        applyTo->SetBaseSkill(static_cast<std::uint16_t>(odata), static_cast<std::uint8_t>(ndata));
                         break;
                     case DFNTAG_SKIN:
-                        applyTo->SetSkin(static_cast<UI16>(std::stoul(cdata, nullptr, 0)));
+                        applyTo->SetSkin(static_cast<std::uint16_t>(std::stoul(cdata, nullptr, 0)));
                         break;
                     case DFNTAG_SNOOPING:
                         skillToSet = SNOOPING;
@@ -3261,11 +3261,11 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
                         break;
                     default:
                         Console::shared()
-                            << "Unknown tag in AdvanceObj(): " << static_cast<SI32>(tag) << myendl;
+                            << "Unknown tag in AdvanceObj(): " << static_cast<std::int32_t>(tag) << myendl;
                         break;
                     }
                     if (skillToSet > 0) {
-                        applyTo->SetBaseSkill(static_cast<UI16>(RandomNum(ndata, odata)),
+                        applyTo->SetBaseSkill(static_cast<std::uint16_t>(RandomNum(ndata, odata)),
                                               skillToSet);
                         skillToSet = 0; // reset for next time through
                     }
@@ -3286,9 +3286,9 @@ auto AdvanceObj(CChar *applyTo, UI16 advObj, bool multiUse) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
 // o------------------------------------------------------------------------------------------------o
-auto GetClock() -> UI32 {
+auto GetClock() -> std::uint32_t {
     auto now = std::chrono::system_clock::now();
-    return static_cast<UI32>(
+    return static_cast<std::uint32_t>(
         std::chrono::duration_cast<std::chrono::milliseconds>(now - current).count());
 }
 
@@ -3319,7 +3319,7 @@ auto IsNumber(const std::string &str) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets light level for player and applies relevant effects
 // o------------------------------------------------------------------------------------------------o
-auto DoLight(CSocket *s, UI08 level) -> void {
+auto DoLight(CSocket *s, std::uint8_t level) -> void {
     if (s == nullptr)
                 return;
 
@@ -3327,7 +3327,7 @@ auto DoLight(CSocket *s, UI08 level) -> void {
     CPLightLevel toSend(level);
 
     if ((Races->Affect(mChar->GetRace(), LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
-                mChar->SetWeathDamage(static_cast<UI32>(BuildTimeValue(
+                mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
                                           static_cast<R32>(Races->Secs(mChar->GetRace(), LIGHT)))),
                                       LIGHT);
     }
@@ -3392,7 +3392,7 @@ auto DoLight(CSocket *s, UI08 level) -> void {
 
     if (!eventFound) {
                 // Check global script! Maybe there's another event there
-                auto toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute) {
                     toExecute->OnLightChange(mChar, toShow);
                 }
@@ -3406,9 +3406,9 @@ auto DoLight(CSocket *s, UI08 level) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets light level for character and applies relevant effects
 // o------------------------------------------------------------------------------------------------o
-auto DoLight(CChar *mChar, UI08 level) -> void {
+auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     if ((Races->Affect(mChar->GetRace(), LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
-                mChar->SetWeathDamage(static_cast<UI32>(BuildTimeValue(
+                mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
                                           static_cast<R32>(Races->Secs(mChar->GetRace(), LIGHT)))),
                                       LIGHT);
     }
@@ -3461,7 +3461,7 @@ auto DoLight(CChar *mChar, UI08 level) -> void {
 
     if (!eventFound) {
                 // Check global script! Maybe there's another event there
-                auto toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute) {
                     toExecute->OnLightChange(mChar, toShow);
                 }
@@ -3475,7 +3475,7 @@ auto DoLight(CChar *mChar, UI08 level) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets light level for items and applies relevant effects
 // o------------------------------------------------------------------------------------------------o
-auto DoLight(CItem *mItem, UI08 level) -> void {
+auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     auto curRegion = mItem->GetRegion();
     auto wSys = Weather->Weather(curRegion->GetWeather());
 
@@ -3511,7 +3511,7 @@ auto DoLight(CItem *mItem, UI08 level) -> void {
 
     if (!eventFound) {
                 // Check global script! Maybe there's another event there
-                auto toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+                auto toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
                 if (toExecute) {
                     toExecute->OnLightChange(mItem, toShow);
                 }
@@ -3525,7 +3525,7 @@ auto DoLight(CItem *mItem, UI08 level) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates the duration of poison based on its strength
 // o------------------------------------------------------------------------------------------------o
-auto GetPoisonDuration(UI08 poisonStrength) -> TIMERVAL {
+auto GetPoisonDuration(std::uint8_t poisonStrength) -> TIMERVAL {
     // Calculate duration of poison, based on the strength of the poison
     auto poisonDuration = TIMERVAL(0);
     switch (poisonStrength) {
@@ -3554,7 +3554,7 @@ auto GetPoisonDuration(UI08 poisonStrength) -> TIMERVAL {
 //|	Purpose		-	Calculates the time between each tick of a poison, based on its
 // strength
 // o------------------------------------------------------------------------------------------------o
-auto GetPoisonTickTime(UI08 poisonStrength) -> TIMERVAL {
+auto GetPoisonTickTime(std::uint8_t poisonStrength) -> TIMERVAL {
     // Calculate duration of poison, based on the strength of the poison
     auto poisonTickTime = TIMERVAL(0);
     switch (poisonStrength) {
@@ -3588,7 +3588,7 @@ auto GetPoisonTickTime(UI08 poisonStrength) -> TIMERVAL {
 auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
     std::string temp = mItem.GetName();
     temp = util::trim(util::strip(temp, "//"));
-    const UI16 getAmount = mItem.GetAmount();
+    const std::uint16_t getAmount = mItem.GetAmount();
     CTile &tile = Map->SeekTile(mItem.GetId());
     if (temp.substr(0, 1) == "#") {
                 temp = tile.Name();
@@ -3632,19 +3632,19 @@ auto GetTileName(CItem &mItem, std::string &itemname) -> size_t {
 //|	Purpose		-	Returns the dictionary name for a given NPC, if their name equals #
 // or a dictionary ID
 // o------------------------------------------------------------------------------------------------o
-auto GetNpcDictName(CChar *mChar, CSocket *tSock, UI08 requestSource) -> std::string {
+auto GetNpcDictName(CChar *mChar, CSocket *tSock, std::uint8_t requestSource) -> std::string {
     CChar *tChar = nullptr;
     if (tSock) {
                 tChar = tSock->CurrcharObj();
     }
 
     std::string dictName = mChar->GetNameRequest(tChar, requestSource);
-    SI32 dictEntryId = 0;
+    std::int32_t dictEntryId = 0;
 
     if (dictName == "#") {
                 // If character name is #, get dictionary entry based on base dictionary entry for
                 // creature names (3000) plus character's ID
-                dictEntryId = static_cast<SI32>(3000 + mChar->GetId());
+                dictEntryId = static_cast<std::int32_t>(3000 + mChar->GetId());
                 if (tSock) {
                     dictName = Dictionary->GetEntry(dictEntryId, tSock->Language());
                 }
@@ -3655,7 +3655,7 @@ auto GetNpcDictName(CChar *mChar, CSocket *tSock, UI08 requestSource) -> std::st
     else if (IsNumber(dictName)) {
                 // If name is a number, assume it's a direct dictionary entry reference, and use
                 // that
-                dictEntryId = static_cast<SI32>(util::ston<SI32>(dictName));
+                dictEntryId = static_cast<std::int32_t>(util::ston<std::int32_t>(dictName));
                 if (tSock) {
                     dictName = Dictionary->GetEntry(dictEntryId, tSock->Language());
                 }
@@ -3675,12 +3675,12 @@ auto GetNpcDictName(CChar *mChar, CSocket *tSock, UI08 requestSource) -> std::st
 // o------------------------------------------------------------------------------------------------o
 auto GetNpcDictTitle(CChar *mChar, CSocket *tSock) -> std::string {
     std::string dictTitle = mChar->GetTitle();
-    SI32 dictEntryId = 0;
+    std::int32_t dictEntryId = 0;
 
     if (!dictTitle.empty() && IsNumber(dictTitle)) {
                 // If title is a number, assume it's a direct dictionary entry reference, and use
                 // that
-                dictEntryId = static_cast<SI32>(util::ston<SI32>(dictTitle));
+                dictEntryId = static_cast<std::int32_t>(util::ston<std::int32_t>(dictTitle));
                 if (tSock) {
                     dictTitle = Dictionary->GetEntry(dictEntryId, tSock->Language());
                 }
@@ -3774,7 +3774,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
                                     if (ValidateObject(toScan)) {
                                         if (toScan->GetType() == IT_TOWNSTONE) {
                                             CTownRegion *targRegion =
-                                                cwmWorldState->townRegions[static_cast<UI16>(
+                                                cwmWorldState->townRegions[static_cast<std::uint16_t>(
                                                     toScan->GetTempVar(CITV_MOREX))];
                                             mSock->SysMessage(
                                                 1365,
@@ -3784,7 +3784,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
                                             targRegion->DoDamage(
                                                 targRegion->GetHealth()); // finish it off
                                             targRegion->Possess(calcReg);
-                                            mChar.SetFame(static_cast<SI16>(
+                                            mChar.SetFame(static_cast<std::int16_t>(
                                                 mChar.GetFame() +
                                                 mChar.GetFame() / 5)); // 20% fame boost
                                             break;
@@ -3951,7 +3951,7 @@ auto UpdateFlag(CChar *mChar) -> void {
     if (!ValidateObject(mChar))
                 return;
 
-    UI08 oldFlag = mChar->GetFlag();
+    std::uint8_t oldFlag = mChar->GetFlag();
 
     if (mChar->IsTamed()) {
                 CChar *i = mChar->GetOwnerObj();
@@ -4011,7 +4011,7 @@ auto UpdateFlag(CChar *mChar) -> void {
                 }
     }
 
-    UI08 newFlag = mChar->GetFlag();
+    std::uint8_t newFlag = mChar->GetFlag();
     if (oldFlag != newFlag) {
                 auto scriptTriggers = mChar->GetScriptTriggers();
                 for (auto scriptTrig : scriptTriggers) {
@@ -4044,7 +4044,7 @@ auto UpdateFlag(CChar *mChar) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send mapchange packet to client to teleport player to new world/map
 // o------------------------------------------------------------------------------------------------o
-void SendMapChange(UI08 worldNumber, CSocket *sock, [[maybe_unused]] bool initialLogin) {
+void SendMapChange(std::uint8_t worldNumber, CSocket *sock, [[maybe_unused]] bool initialLogin) {
     if (sock) {
                 CPMapChange mapChange(worldNumber);
                 sock->Send(&mapChange);
@@ -4064,8 +4064,8 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
     if (!ValidateObject(gate) || !ValidateObject(charMoving))
                 return;
 
-    UI08 tWorldNum = static_cast<UI08>(gate->GetTempVar(CITV_MORE));
-    UI16 tInstanceId = gate->GetInstanceId();
+    std::uint8_t tWorldNum = static_cast<std::uint8_t>(gate->GetTempVar(CITV_MORE));
+    std::uint16_t tInstanceId = gate->GetInstanceId();
     if (!Map->MapExists(tWorldNum))
                 return;
 
@@ -4087,9 +4087,9 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
                     if (!myFollower->GetMounted() && myFollower->GetOwnerObj() == toMove) {
                         if (myFollower->GetNpcWander() == WT_FOLLOW &&
                             ObjInOldRange(toMove, myFollower, DIST_CMDRANGE)) {
-                            myFollower->SetLocation(static_cast<SI16>(gate->GetTempVar(CITV_MOREX)),
-                                                    static_cast<SI16>(gate->GetTempVar(CITV_MOREY)),
-                                                    static_cast<SI08>(gate->GetTempVar(CITV_MOREZ)),
+                            myFollower->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),
+                                                    static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)),
+                                                    static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)),
                                                     tWorldNum, tInstanceId);
                         }
                     }
@@ -4099,15 +4099,15 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
     switch (sock->ClientType()) {
     case CV_UO3D:
     case CV_KRRIOS:
-                toMove->SetLocation(static_cast<SI16>(gate->GetTempVar(CITV_MOREX)),
-                                    static_cast<SI16>(gate->GetTempVar(CITV_MOREY)),
-                                    static_cast<SI08>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
+                toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),
+                                    static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)),
+                                    static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
                                     tInstanceId);
                 break;
     default:
-                toMove->SetLocation(static_cast<SI16>(gate->GetTempVar(CITV_MOREX)),
-                                    static_cast<SI16>(gate->GetTempVar(CITV_MOREY)),
-                                    static_cast<SI08>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
+                toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),
+                                    static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)),
+                                    static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
                                     tInstanceId);
                 break;
     }
@@ -4123,7 +4123,7 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
 // o------------------------------------------------------------------------------------------------o
 void DoorMacro(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
-    SI16 xc = mChar->GetX(), yc = mChar->GetY();
+    std::int16_t xc = mChar->GetX(), yc = mChar->GetY();
     switch (mChar->GetDir()) {
     case 0:
                 --yc;
@@ -4165,18 +4165,18 @@ void DoorMacro(CSocket *s) {
                         itemCheck->GetInstanceId() != mChar->GetInstanceId())
                         continue;
 
-                    SI16 distZ = abs(itemCheck->GetZ() - mChar->GetZ());
+                    std::int16_t distZ = abs(itemCheck->GetZ() - mChar->GetZ());
                     if (itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7) {
                         if (itemCheck->GetType() == IT_DOOR ||
                             itemCheck->GetType() == IT_LOCKEDDOOR) {
                             // only open doors
                             if (JSMapping->GetEnvokeByType()->Check(
-                                    static_cast<UI16>(itemCheck->GetType()))) {
-                                UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript(
-                                    static_cast<UI16>(itemCheck->GetType()));
+                                    static_cast<std::uint16_t>(itemCheck->GetType()))) {
+                                std::uint16_t envTrig = JSMapping->GetEnvokeByType()->GetScript(
+                                    static_cast<std::uint16_t>(itemCheck->GetType()));
                                 auto envExecute = JSMapping->GetScript(envTrig);
                                 if (envExecute) {
-                                    [[maybe_unused]] SI08 retVal =
+                                    [[maybe_unused]] std::int8_t retVal =
                                         envExecute->OnUseChecked(mChar, itemCheck);
                                 }
 

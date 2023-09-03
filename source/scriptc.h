@@ -14,7 +14,7 @@ typedef std::unordered_map<std::string, CScriptSection *> SSMAP;
 
 class Script {
   public:
-    UI32 lastModTime;
+    std::uint32_t lastModTime;
     Script(const std::string &_filename, DEFINITIONCATEGORIES d, bool disp = true);
     ~Script();
 

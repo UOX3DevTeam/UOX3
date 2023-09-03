@@ -38,9 +38,9 @@ using namespace std::string_literals;
 void SendTradeStatus(CItem *cont1, CItem *cont2);
 CItem *StartTrade(CSocket *mSock, CChar *i);
 bool CheckItemRange(CChar *mChar, CItem *i);
-void DoHouseTarget(CSocket *mSock, UI16 houseEntry);
+void DoHouseTarget(CSocket *mSock, std::uint16_t houseEntry);
 void SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate);
-void BuildGumpFromScripts(CSocket *s, UI16 m);
+void BuildGumpFromScripts(CSocket *s, std::uint16_t m);
 void PlankStuff(CSocket *s, CItem *p);
 CBoatObj *GetBoat(CSocket *s);
 void ModelBoat(CSocket *s, CBoatObj *i);
@@ -50,7 +50,7 @@ void ModelBoat(CSocket *s, CBoatObj *i);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Bounce items back from where they came
 // o------------------------------------------------------------------------------------------------o
-void Bounce(CSocket *bouncer, CItem *bouncing, UI08 mode = 5) {
+void Bounce(CSocket *bouncer, CItem *bouncing, std::uint8_t mode = 5) {
     if (bouncer == nullptr || !ValidateObject(bouncing))
         return;
 
@@ -62,9 +62,9 @@ void Bounce(CSocket *bouncer, CItem *bouncing, UI08 mode = 5) {
     case PL_NOWHERE:
         break;
     case PL_GROUND: {
-        SI16 x = bouncer->PickupX();
-        SI16 y = bouncer->PickupY();
-        SI08 z = bouncer->PickupZ();
+        std::int16_t x = bouncer->PickupX();
+        std::int16_t y = bouncer->PickupY();
+        std::int8_t z = bouncer->PickupZ();
         bouncing->SetLocation(x, y, z);
 
         // If item bounces out of range, bounce it to character's feet instead
@@ -95,7 +95,7 @@ void Bounce(CSocket *bouncer, CItem *bouncing, UI08 mode = 5) {
 //|	Purpose		-	Bounce items back if pickup is illegal. Doesn't require updating
 // item.
 // o------------------------------------------------------------------------------------------------o
-void PickupBounce(CSocket *bouncer, UI08 mode = 0) {
+void PickupBounce(CSocket *bouncer, std::uint8_t mode = 0) {
     if (bouncer == nullptr)
         return;
 
@@ -120,7 +120,7 @@ void PickupBounce(CSocket *bouncer, UI08 mode = 0) {
 //|					09/25/2002 - Weight fixes
 // o------------------------------------------------------------------------------------------------o
 CItem *DoStacking(CSocket *mSock, [[maybe_unused]] CChar *mChar, CItem *i, CItem *stack) {
-    UI32 newAmt = stack->GetAmount() + i->GetAmount();
+    std::uint32_t newAmt = stack->GetAmount() + i->GetAmount();
     if (newAmt > MAX_STACK) {
         i->SetAmount((newAmt - MAX_STACK));
         stack->SetAmount(MAX_STACK);
@@ -159,15 +159,15 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
             (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND)) {
             Weight->SubtractItemWeight(mChar, iToStack);
         }
-        const UI16 itId = iToStack->GetId();
+        const std::uint16_t itId = iToStack->GetId();
         const SERIAL itSer = iToStack->GetSerial();
-        const UI16 itCol = iToStack->GetColour();
-        const UI32 itMore = iToStack->GetTempVar(CITV_MORE);
-        const UI32 itMoreX = iToStack->GetTempVar(CITV_MOREX);
-        const UI32 itMoreY = iToStack->GetTempVar(CITV_MOREY);
-        const UI32 itMoreZ = iToStack->GetTempVar(CITV_MOREZ);
-        const UI32 itBuyValue = iToStack->GetBuyValue();
-        const UI32 itSellValue = iToStack->GetSellValue();
+        const std::uint16_t itCol = iToStack->GetColour();
+        const std::uint32_t itMore = iToStack->GetTempVar(CITV_MORE);
+        const std::uint32_t itMoreX = iToStack->GetTempVar(CITV_MOREX);
+        const std::uint32_t itMoreY = iToStack->GetTempVar(CITV_MOREY);
+        const std::uint32_t itMoreZ = iToStack->GetTempVar(CITV_MOREZ);
+        const std::uint32_t itBuyValue = iToStack->GetBuyValue();
+        const std::uint32_t itSellValue = iToStack->GetSellValue();
 
         auto ipCont = iPack->GetContainsList();
         for (const auto &stack : ipCont->collection()) {
@@ -201,7 +201,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
     return iToStack;
 }
 
-auto FindNearbyChars(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
+auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
     -> std::vector<CChar *>;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPIGetItem::Handle()
@@ -421,11 +421,11 @@ bool CPIGetItem::Handle(void) {
     }
 
     // Trigger pickup event for item being picked up
-    std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            SI08 retStatus = toExecute->OnPickup(i, ourChar, iCont);
+            std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
 
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -443,7 +443,7 @@ bool CPIGetItem::Handle(void) {
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            SI08 retStatus = toExecute->OnPickup(i, ourChar, iCont);
+            std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
 
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -463,7 +463,7 @@ bool CPIGetItem::Handle(void) {
         for (auto scriptTrig : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
-                SI08 retStatus = toExecute->OnPickup(i, ourChar, iCont);
+                std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
 
                 // -1 == script doesn't exist, or returned -1
                 // 0 == script returned false, 0, or nothing - don't execute hard code
@@ -477,7 +477,7 @@ bool CPIGetItem::Handle(void) {
     }
 
     if (i->GetAmount() > 1 && i->GetObjType() != OT_SPAWNER) {
-        UI16 amount = tSock->GetWord(5);
+        std::uint16_t amount = tSock->GetWord(5);
         if (amount > i->GetAmount()) {
             amount = i->GetAmount();
         }
@@ -540,7 +540,7 @@ bool CPIGetItem::Handle(void) {
 
     if (iCont != nullptr) {
         if (ValidateObject(iCont) && iCont->CanBeObjType(OT_ITEM)) {
-            std::vector<UI16> contScriptTriggers = iCont->GetScriptTriggers();
+            std::vector<std::uint16_t> contScriptTriggers = iCont->GetScriptTriggers();
             for (auto scriptTrig : contScriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -800,7 +800,7 @@ bool DropOnPC(CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a particular item is on an NPC's list of accepted foods
 // o------------------------------------------------------------------------------------------------o
-auto IsOnFoodList(const std::string &sFoodList, const UI16 sItemId) -> bool {
+auto IsOnFoodList(const std::string &sFoodList, const std::uint16_t sItemId) -> bool {
     auto doesEat = false;
 
     const std::string sect = "FOODLIST "s + sFoodList;
@@ -812,7 +812,7 @@ auto IsOnFoodList(const std::string &sFoodList, const UI16 sItemId) -> bool {
                 if (util::upper(tag) == "FOODLIST") {
                     doesEat = IsOnFoodList(sec->data, sItemId);
                 }
-                else if (sItemId == static_cast<UI16>(std::stoul(tag, nullptr, 0))) {
+                else if (sItemId == static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0))) {
                     doesEat = true;
                 }
             }
@@ -830,13 +830,13 @@ auto IsOnFoodList(const std::string &sFoodList, const UI16 sItemId) -> bool {
 //|	Purpose		-	Called when an item is dropped on an NPC
 // o------------------------------------------------------------------------------------------------o
 bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
-    UI08 dropResult = 0;
+    std::uint8_t dropResult = 0;
     const bool isGM = (mChar->GetCommandLevel() >= CL_CNS);
     bool stackDeleted = false;
     bool executeNpc = true;
 
-    SI08 rVal = 0;
-    std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+    std::int8_t rVal = 0;
+    std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -864,7 +864,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     }
 
     if (executeNpc) {
-        std::vector<UI16> targScriptTriggers = targNPC->GetScriptTriggers();
+        std::vector<std::uint16_t> targScriptTriggers = targNPC->GetScriptTriggers();
         for (auto scriptTrig : targScriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
@@ -895,7 +895,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     {
         if (targNPC->WillHunger() && IsOnFoodList(targNPC->GetFood(), i->GetId())) {
             if (targNPC->GetHunger() < 6) {
-                Effects->PlaySound(mSock, static_cast<UI16>(0x003A + RandomNum(0, 2)), true);
+                Effects->PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
                 if (cwmWorldState->creatures[targNPC->GetId()].IsAnimal()) {
                     Effects->PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
                 }
@@ -915,7 +915,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                     mSock->SysMessage(2416); // Your pet looks happier.
                 }
 
-                UI08 poisonStrength = i->GetPoisoned();
+                std::uint8_t poisonStrength = i->GetPoisoned();
                 if (poisonStrength && targNPC->GetPoisoned() < poisonStrength) {
                     Effects->PlaySound(mSock, 0x0246, true); // poison sound - SpaceDog
 
@@ -936,15 +936,15 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
 
                     // Cut loyalty in half if pet was fed poisoned food
                     if (targNPC->GetLoyalty() > 0) {
-                        targNPC->SetLoyalty(std::clamp(static_cast<UI16>(targNPC->GetLoyalty() / 2),
-                                                       static_cast<UI16>(0),
-                                                       static_cast<UI16>(100)));
+                        targNPC->SetLoyalty(std::clamp(static_cast<std::uint16_t>(targNPC->GetLoyalty() / 2),
+                                                       static_cast<std::uint16_t>(0),
+                                                       static_cast<std::uint16_t>(100)));
                     }
                 }
 
                 // Remove a food item
                 bool iDeleted = i->IncAmount(-1);
-                targNPC->SetHunger(static_cast<SI08>(targNPC->GetHunger() + 1));
+                targNPC->SetHunger(static_cast<std::int8_t>(targNPC->GetHunger() + 1));
                 mSock->SysMessage(1781); // That pet accepts your food and happily eats it.
                 if (iDeleted) {
                     return true; // stackdeleted
@@ -977,9 +977,9 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             targNPC->TextMessage(mSock, 1198, TALK,
                                  false); // I thank thee for thy payment. That should give thee a
                                          // good start on thy way. Farewell!
-            UI08 trainedIn = targNPC->GetTrainingPlayerIn();
-            UI16 oldskill = mChar->GetBaseSkill(trainedIn);
-            mChar->SetBaseSkill(static_cast<UI16>(mChar->GetBaseSkill(trainedIn) + i->GetAmount()),
+            std::uint8_t trainedIn = targNPC->GetTrainingPlayerIn();
+            std::uint16_t oldskill = mChar->GetBaseSkill(trainedIn);
+            mChar->SetBaseSkill(static_cast<std::uint16_t>(mChar->GetBaseSkill(trainedIn) + i->GetAmount()),
                                 trainedIn);
             if (mChar->GetBaseSkill(trainedIn) > 250) {
                 mChar->SetBaseSkill(250, trainedIn);
@@ -987,7 +987,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
 
             Skills->UpdateSkillLevel(mChar, trainedIn);
             mSock->UpdateSkill(trainedIn);
-            UI16 getAmount = i->GetAmount();
+            std::uint16_t getAmount = i->GetAmount();
             if (i->GetAmount() > 250) // Paid too much
             {
                 i->IncAmount(-(250 - oldskill));
@@ -1055,7 +1055,7 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
         if (mSock->PickupSpot() != PL_OWNPACK &&
             (GetTotalItemCount(packItem) >= packItem->GetMaxItems() ||
              GetTotalItemCount(packItem) +
-                     std::max(static_cast<UI32>(1), 1 + GetTotalItemCount(i)) >
+                     std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(i)) >
                  packItem->GetMaxItems())) {
             mSock->SysMessage(1818); // The container is already at capacity.
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
@@ -1092,7 +1092,7 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
 //|	Purpose		-	Check for a valid drop location at the location where client
 // attempts to drop an item
 // o------------------------------------------------------------------------------------------------o
-bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI08 z) {
+bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, std::uint16_t y, std::int8_t z) {
     bool dropLocationBlocked = false;
 
     // Don't allow dropping item at a location far below or far above character
@@ -1108,8 +1108,8 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI0
         // If done the other way, the valid surface will override the blocking tiles!
 
         // First, check for a static surface to drop item on
-        UI16 foundTileId1 = 0;
-        UI16 foundTileId2 = 0;
+        std::uint16_t foundTileId1 = 0;
+        std::uint16_t foundTileId2 = 0;
         if (!Map->CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false)) {
             // Nowhere static to put item? Check dynamic tiles for surface!
             if (!Map->CheckDynamicFlag(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(),
@@ -1157,7 +1157,7 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI0
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Item is dropped on the ground or on a character
 // o------------------------------------------------------------------------------------------------o
-void Drop(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc) {
+void Drop(CSocket *mSock, SERIAL item, SERIAL dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
     CChar *nChar = mSock->CurrcharObj();
     CItem *i = CalcItemObjFromSer(item);
     bool stackDeleted = false;
@@ -1174,11 +1174,11 @@ void Drop(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08
         return;
     }
 
-    std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            SI08 rVal = toExecute->OnDrop(i, nChar); // returns 1 if we should bounce it
+            std::int8_t rVal = toExecute->OnDrop(i, nChar); // returns 1 if we should bounce it
             switch (rVal) {
             case 1:  // don't bounce, use code
             case -1: // no such event
@@ -1339,8 +1339,8 @@ void Drop(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when item is dropped in the secure trade window
 // o------------------------------------------------------------------------------------------------o
-void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CItem &iDropped, SI16 x,
-                       SI16 y, SI08 gridLoc) {
+void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CItem &iDropped, std::int16_t x,
+                       std::int16_t y, std::int8_t gridLoc) {
     if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
         Weight->SubtractItemWeight(&mChar, &iDropped);
     }
@@ -1434,8 +1434,8 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
         spellBook.SetSpell(2, INVALIDSERIAL);
     }
     else {
-        SI32 targSpellNum = 0;
-        UI16 scrollId = iDropped.GetId();
+        std::int32_t targSpellNum = 0;
+        std::uint16_t scrollId = iDropped.GetId();
         if (scrollId == 0x1F2D) {
             targSpellNum = 6;
         }
@@ -1523,7 +1523,7 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Automatically stack an item with existing items in a container
 // o------------------------------------------------------------------------------------------------o
-UI16 HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar) {
+std::uint16_t HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar) {
     // Check that container can hold more weight
     if (mItem != mCont->GetCont() && !Weight->CheckPackWeight(mChar, mCont, mItem)) {
         if (mSock != nullptr && ValidateObject(mChar)) {
@@ -1556,7 +1556,7 @@ UI16 HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar) {
 //|	Purpose		-	Called when item is dropped on a container
 // o------------------------------------------------------------------------------------------------o
 bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped,
-                     [[maybe_unused]] bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc) {
+                     [[maybe_unused]] bool &stackDeleted, std::int16_t x, std::int16_t y, std::int8_t gridLoc) {
     CChar *contOwner = FindItemOwner(&droppedOn);
     if (ValidateObject(contOwner)) {
         if (contOwner == &mChar) {
@@ -1652,7 +1652,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         (mSock.PickupSpot() != PL_OWNPACK &&
          (GetTotalItemCount(&droppedOn) >= droppedOn.GetMaxItems() ||
           GetTotalItemCount(&droppedOn) +
-                  std::max(static_cast<UI32>(1), 1 + GetTotalItemCount(&iDropped)) >
+                  std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(&iDropped)) >
               droppedOn.GetMaxItems()))) {
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
             Weight->SubtractItemWeight(&mChar, &iDropped);
@@ -1689,7 +1689,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
     }
     else // Drop directly on a container, placing it randomly inside
     {
-        [[maybe_unused]] UI16 amountLeft = HandleAutoStack(&iDropped, &droppedOn, &mSock, &mChar);
+        [[maybe_unused]] std::uint16_t amountLeft = HandleAutoStack(&iDropped, &droppedOn, &mSock, &mChar);
 
         // Only send tooltip if server feature for tooltips is enabled
         if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
@@ -1706,7 +1706,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped in a container or on another item
 // o------------------------------------------------------------------------------------------------o
-void DropOnItem(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI08 gridLoc) {
+void DropOnItem(CSocket *mSock, SERIAL item, SERIAL dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
     CChar *mChar = mSock->CurrcharObj();
     CItem *nCont = CalcItemObjFromSer(dest);
     if (!ValidateObject(nCont) || !ValidateObject(mChar))
@@ -1719,11 +1719,11 @@ void DropOnItem(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z
     nItem->SetHeldOnCursor(false);
 
     bool executeCont = true;
-    std::vector<UI16> scriptTriggers = nItem->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = nItem->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            SI08 rVal = toExecute->OnDropItemOnItem(nItem, mChar,
+            std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,
                                                     nCont); // returns 1 if we should bounce it
             switch (rVal) {
             case -1: // no such event
@@ -1747,11 +1747,11 @@ void DropOnItem(CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z
     }
 
     if (executeCont) {
-        std::vector<UI16> contScriptTriggers = nCont->GetScriptTriggers();
+        std::vector<std::uint16_t> contScriptTriggers = nCont->GetScriptTriggers();
         for (auto scriptTrig : contScriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
-                SI08 rVal = toExecute->OnDropItemOnItem(nItem, mChar,
+                std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,
                                                         nCont); // returns 1 if we should bounce it
                 switch (rVal) {
                 case 1:  // don't bounce, use code
@@ -1873,8 +1873,8 @@ bool CPIDropItem::Handle(void) {
 
     // Display overloaded message if character is overloaded as a result of the above
     if (Weight->IsOverloaded(ourChar)) {
-        SI32 maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
-        SI32 currentWeight = ourChar->GetWeight() / 100;
+        std::int32_t maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+        std::int32_t currentWeight = ourChar->GetWeight() / 100;
         tSock->SysMessage(1784, currentWeight,
                           maxWeight); // You are overloaded. Current / Max: %i / %i
     }
@@ -1897,10 +1897,10 @@ bool CPIDropItem::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return characters highest skill
 // o------------------------------------------------------------------------------------------------o
-UI08 BestSkill(CChar *mChar, SKILLVAL &skillLevel) {
-    UI08 retSkill = 0;
+std::uint8_t BestSkill(CChar *mChar, SKILLVAL &skillLevel) {
+    std::uint8_t retSkill = 0;
     std::vector<cSkillClass> vecSkills;
-    for (UI08 sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
+    for (std::uint8_t sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
         vecSkills.push_back(cSkillClass(sCtr, mChar->GetBaseSkill(sCtr)));
     }
 
@@ -1923,7 +1923,7 @@ void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
         return;
 
     SKILLVAL skillLevel = 0;
-    UI08 bestSkill = BestSkill(mChar, skillLevel);
+    std::uint8_t bestSkill = BestSkill(mChar, skillLevel);
     if (skillLevel <= cwmWorldState->prowessTitles[0].lowBound) {
         SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
     }
@@ -1936,7 +1936,7 @@ void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
         }
         SkillProwessTitle = cwmWorldState->prowessTitles[pEntry].toDisplay;
     }
-    SkillProwessTitle += " " + cwmWorldState->title[static_cast<UI08>(bestSkill + 1)].skill;
+    SkillProwessTitle += " " + cwmWorldState->title[static_cast<std::uint8_t>(bestSkill + 1)].skill;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1947,10 +1947,10 @@ void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
 void GetFameTitle(CChar *p, std::string &fameTitle) {
     if (ValidateObject(p)) {
         std::string theTitle;
-        UI08 titleNum = 0xFF;
+        std::uint8_t titleNum = 0xFF;
 
-        SI16 k = p->GetKarma();
-        SI16 f = p->GetFame();
+        std::int16_t k = p->GetKarma();
+        std::int16_t f = p->GetFame();
 
         if (k >= 10000) {
             if (f >= 5000) {
@@ -2169,7 +2169,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     UnicodeTypes sLang = s->Language();
 
     cScript *toExecute;
-    std::vector<UI16> scriptTriggers = pdoll->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = pdoll->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2184,7 +2184,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     }
 
     // Also check global script!
-    toExecute = JSMapping->GetScript(static_cast<UI16>(0));
+    toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
         if (toExecute->OnCharDoubleClick(myChar, pdoll) == 0) {
             // if it exists and we don't want hard code, return
@@ -2237,7 +2237,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
             bContinue = true;
         }
         else {
-            SI16 mKills = pdoll->GetKills();
+            std::int16_t mKills = pdoll->GetKills();
             size_t kCtr;
             for (kCtr = 0; kCtr < cwmWorldState->murdererTags.size() - 1; ++kCtr) {
                 if (mKills >= cwmWorldState->murdererTags[kCtr].lowBound &&
@@ -2342,7 +2342,7 @@ void handleCharDoubleClick(CSocket *mSock, SERIAL serial, bool keyboard) {
     if (!ValidateObject(c))
         return;
 
-    std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -2442,7 +2442,7 @@ void handleCharDoubleClick(CSocket *mSock, SERIAL serial, bool keyboard) {
 bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType) {
     CChar *iChar = nullptr;
     CItem *i = nullptr;
-    UI16 itemId = iUsed->GetId();
+    std::uint16_t itemId = iUsed->GetId();
     bool canTrap = false;
 
     // Begin Check items by type
@@ -2640,16 +2640,16 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
         return true;
     case IT_OBJTELEPORTER: // Object Teleporter
         if (ObjInRange(mChar, iUsed, DIST_NEARBY)) {
-            mChar->SetLocation(static_cast<SI16>(iUsed->GetTempVar(CITV_MOREX)),
-                               static_cast<SI16>(iUsed->GetTempVar(CITV_MOREY)),
-                               static_cast<SI08>(iUsed->GetTempVar(CITV_MOREZ)));
+            mChar->SetLocation(static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREX)),
+                               static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREY)),
+                               static_cast<std::int8_t>(iUsed->GetTempVar(CITV_MOREZ)));
         }
         return true;
     case IT_MAPCHANGEOBJECT:
         SocketMapChange(mSock, mChar, iUsed);
         return true;
     case IT_MORPHOBJECT: // Morph Object
-        mChar->SetId(static_cast<UI16>(iUsed->GetTempVar(CITV_MOREX)));
+        mChar->SetId(static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
         iUsed->SetType(IT_UNMORPHOBJECT);
         return true;
     case IT_UNMORPHOBJECT: // Unmorph Object
@@ -2746,13 +2746,13 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
         }
         iUsed->SetTempVar(CITV_MOREX, iUsed->GetTempVar(CITV_MOREX) - 1);
         mSock->SysMessage(397, iUsed->GetTempVar(CITV_MOREX));
-        UI08 j;
-        for (j = 0; j < static_cast<UI08>(RandomNum(0, 3) + 2); ++j) {
-            SI16 wx = (mChar->GetX() + RandomNum(0, 5) - 5);
-            SI16 wy = (mChar->GetY() - RandomNum(0, 7));
+        std::uint8_t j;
+        for (j = 0; j < static_cast<std::uint8_t>(RandomNum(0, 3) + 2); ++j) {
+            std::int16_t wx = (mChar->GetX() + RandomNum(0, 5) - 5);
+            std::int16_t wy = (mChar->GetY() - RandomNum(0, 7));
             Effects->PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0,
                                          (RandomNum(0, 1) == 1));
-            UI16 animId;
+            std::uint16_t animId;
             switch (RandomNum(0, 4)) {
             default:
             case 0:
@@ -2823,10 +2823,10 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
         {
             mSock->TempInt(iUsed->GetTempVar(CITV_MORE)); // track things properly
             if (mChar->GetGuildNumber() == -1 ||
-                mChar->GetGuildNumber() != static_cast<SI16>(iUsed->GetTempVar(CITV_MORE))) {
+                mChar->GetGuildNumber() != static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
                 mSock->SysMessage(1984); // You are not a member of this guild!
             }
-            else if (mChar->GetGuildNumber() == static_cast<SI16>(iUsed->GetTempVar(CITV_MORE))) {
+            else if (mChar->GetGuildNumber() == static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
                 GuildSys->Menu(mSock, BasePage + 1,
                                static_cast<GUILDID>(iUsed->GetTempVar(
                                    CITV_MORE))); // more of the stone is the guild number
@@ -2894,7 +2894,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
                 break;
 
             mChar->SetSpeechItem(iUsed);
-            DoHouseTarget(mSock, static_cast<UI16>(iUsed->GetTempVar(CITV_MOREX)));
+            DoHouseTarget(mSock, static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
         }
         return true;
     case IT_SMITHYTOOL:
@@ -3018,7 +3018,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
     default:
         if (iType) {
             Console::shared() << "Unhandled item type for item: " << iUsed->GetName() << "["
-                              << iUsed->GetSerial() << "] of type: " << static_cast<UI16>(iType)
+                              << iUsed->GetSerial() << "] of type: " << static_cast<std::uint16_t>(iType)
                               << myendl;
         }
         break;
@@ -3107,7 +3107,7 @@ ItemTypes FindItemTypeFromTag(const std::string &strToFind) {
     return IT_COUNT;
 }
 
-std::map<UI16, ItemTypes> idToItemType;
+std::map<std::uint16_t, ItemTypes> idToItemType;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	InitIdToItemType()
@@ -3117,7 +3117,7 @@ std::map<UI16, ItemTypes> idToItemType;
 auto InitIdToItemType() -> void {
     auto Itemtypes = FileLookup->FindEntry("ITEMTYPES", items_def);
     if (Itemtypes) {
-        SI32 sectionCount;
+        std::int32_t sectionCount;
         ItemTypes iType = IT_COUNT;
         for (const auto &sec : Itemtypes->collection()) {
             auto tag = sec->tag;
@@ -3125,15 +3125,15 @@ auto InitIdToItemType() -> void {
             auto comma_secs = oldstrutil::sections(data, ",");
             iType = FindItemTypeFromTag(tag);
             if (iType != IT_COUNT) {
-                sectionCount = static_cast<SI32>(comma_secs.size() - 1);
+                sectionCount = static_cast<std::int32_t>(comma_secs.size() - 1);
                 if (sectionCount != 0) {
-                    for (SI32 i = 0; i <= sectionCount; i++) {
-                        idToItemType[util::ston<UI16>(oldstrutil::extractSection(data, ",", i, i),
+                    for (std::int32_t i = 0; i <= sectionCount; i++) {
+                        idToItemType[util::ston<std::uint16_t>(oldstrutil::extractSection(data, ",", i, i),
                                                       16)] = iType;
                     }
                 }
                 else {
-                    idToItemType[static_cast<UI16>(std::stoul(data, nullptr, 16))] = iType;
+                    idToItemType[static_cast<std::uint16_t>(std::stoul(data, nullptr, 16))] = iType;
                 }
             }
         }
@@ -3145,12 +3145,12 @@ auto InitIdToItemType() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find an item's type based on its ID
 // o------------------------------------------------------------------------------------------------o
-ItemTypes FindItemTypeFromId(UI16 idToFind) {
+ItemTypes FindItemTypeFromId(std::uint16_t idToFind) {
     if (idToItemType.empty()) // if we haven't built our array yet
     {
         InitIdToItemType();
     }
-    std::map<UI16, ItemTypes>::const_iterator toFind = idToItemType.find(idToFind);
+    std::map<std::uint16_t, ItemTypes>::const_iterator toFind = idToItemType.find(idToFind);
     if (toFind != idToItemType.end()) {
         return toFind->second;
     }
@@ -3304,7 +3304,7 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType)
 bool CPIDblClick::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
-    UI08 a1 = tSock->GetByte(1);
+    std::uint8_t a1 = tSock->GetByte(1);
 
     bool keyboard = ((a1 & 0x80) == 0x80);
     if (keyboard) {
@@ -3323,7 +3323,7 @@ bool CPIDblClick::Handle(void) {
 
     ItemTypes iType = FindItemType(iUsed);
     bool scriptExecuted = false;
-    std::vector<UI16> scriptTriggers = iUsed->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = iUsed->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         // First loop through all scripts, checking for OnUseUnChecked events, which should run
         // before item usage check is performed
@@ -3334,7 +3334,7 @@ bool CPIDblClick::Handle(void) {
             // If retVal is 0, event exists, but returned false/0, and handles item usage. Don't
             // proceed with hard code (or other scripts!) If retVal is 1, event exists, proceed with
             // hard code/other scripts
-            SI08 retVal = toExecute->OnUseUnChecked(ourChar, iUsed);
+            std::int8_t retVal = toExecute->OnUseUnChecked(ourChar, iUsed);
             if (retVal == 1) {
                 // Event exists, and returned 1 - proceed with other scripts/hard code
                 scriptExecuted = true;
@@ -3369,7 +3369,7 @@ bool CPIDblClick::Handle(void) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             // Check if OnUseChecked event is present in script
-            SI08 retVal = toExecute->OnUseChecked(ourChar, iUsed);
+            std::int8_t retVal = toExecute->OnUseChecked(ourChar, iUsed);
             if (retVal == 1) {
                 // Event exists, and returned 1 - proceed with other scripts/hard code
                 scriptExecuted = true;
@@ -3383,13 +3383,13 @@ bool CPIDblClick::Handle(void) {
 
     // If no scripts were found, or if no script contained onUse events, proceed with envoke stuff
     if (scriptTriggers.size() == 0 || !scriptExecuted) {
-        UI16 itemId = iUsed->GetId();
+        std::uint16_t itemId = iUsed->GetId();
         cScript *toExecute = nullptr;
-        UI16 envTrig = 0;
+        std::uint16_t envTrig = 0;
 
-        if (JSMapping->GetEnvokeByType()->Check(static_cast<UI16>(iType))) {
+        if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
             // Get script to run by item type
-            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<UI16>(iType));
+            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
             toExecute = JSMapping->GetScript(envTrig);
         }
         else if (JSMapping->GetEnvokeById()->Check(itemId)) {
@@ -3429,13 +3429,13 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     case IT_CONTAINER:
     case IT_SPAWNCONT:
     case IT_UNLOCKABLESPAWNCONT:
-        dataToAdd = std::string(" (") + util::ntos(static_cast<SI32>(i->GetContainsList()->Num())) +
+        dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
                     std::string(" items, ");
         dataToAdd += util::ntos((i->GetWeight() / 100)) + std::string(" stones)");
         break;
     case IT_LOCKEDCONTAINER: // containers
     case IT_LOCKEDSPAWNCONT: // spawn containers
-        dataToAdd = std::string(" (") + util::ntos(static_cast<SI32>(i->GetContainsList()->Num())) +
+        dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
                     std::string(" items, ");
         dataToAdd +=
             util::ntos((i->GetWeight() / 100)) +
@@ -3447,8 +3447,8 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     case IT_RECALLRUNE:
     case IT_GATE:
     case IT_OBJTELEPORTER: {
-        CTownRegion *newRegion = CalcRegionFromXY(static_cast<SI16>(i->GetTempVar(CITV_MOREX)),
-                                                  static_cast<SI16>(i->GetTempVar(CITV_MOREY)),
+        CTownRegion *newRegion = CalcRegionFromXY(static_cast<std::int16_t>(i->GetTempVar(CITV_MOREX)),
+                                                  static_cast<std::int16_t>(i->GetTempVar(CITV_MOREY)),
                                                   i->WorldNumber(), i->GetInstanceId());
         dataToAdd = std::string(" (") + newRegion->GetName() + std::string(")");
         break;
@@ -3500,7 +3500,7 @@ bool CPISingleClick::Handle(void) {
         // Begin chars/npcs section
         CChar *c = CalcCharObjFromSer(objectId);
         if (ValidateObject(c)) {
-            std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+            std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
@@ -3524,16 +3524,16 @@ bool CPISingleClick::Handle(void) {
     CChar *mChar = tSock->CurrcharObj();
 
     // Begin items section
-    UI08 a1 = tSock->GetByte(1);
-    UI08 a2 = tSock->GetByte(2);
-    UI08 a3 = tSock->GetByte(3);
-    UI08 a4 = tSock->GetByte(4);
+    std::uint8_t a1 = tSock->GetByte(1);
+    std::uint8_t a2 = tSock->GetByte(2);
+    std::uint8_t a3 = tSock->GetByte(3);
+    std::uint8_t a4 = tSock->GetByte(4);
     CItem *i = CalcItemObjFromSer(objectId);
     if (!ValidateObject(i)) // invalid item
         return true;
 
     // October 6, 2002 - Added support for the onClick event
-    std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -3549,7 +3549,7 @@ bool CPISingleClick::Handle(void) {
         tSock->ObjMessage(1737, i, 0.0f, 0x03B2, a1, a2, a3, a4);
     }
 
-    UI16 getAmount = i->GetAmount();
+    std::uint16_t getAmount = i->GetAmount();
     if (i->GetCont() != nullptr && i->GetContSerial() >= BASEITEMSERIAL) {
         CChar *w = FindItemOwner(static_cast<CItem *>(i->GetCont()));
         if (ValidateObject(w)) {
@@ -3602,12 +3602,12 @@ bool CPISingleClick::Handle(void) {
         }
     }
     else if (i->IsContType()) {
-        SI32 iCount = 0;
+        std::int32_t iCount = 0;
         if (i->IsCorpse()) {
-            iCount = static_cast<SI32>(GetTotalItemCount(i));
+            iCount = static_cast<std::int32_t>(GetTotalItemCount(i));
         }
         else {
-            iCount = static_cast<SI32>(i->GetContainsList()->Num());
+            iCount = static_cast<std::int32_t>(i->GetContainsList()->Num());
         }
         realname += util::format(", (%u items, %u stones)", iCount, (i->GetWeight() / 100));
     }

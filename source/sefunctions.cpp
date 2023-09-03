@@ -99,11 +99,11 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
         ScriptError(cx, "DoTempEffect: Invalid number of arguments (takes 7 or 8)");
         return JS_FALSE;
     }
-    UI08 iType = static_cast<UI08>(JSVAL_TO_INT(argv[0]));
-    UI32 targNum = JSVAL_TO_INT(argv[3]);
-    UI08 more1 = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
-    UI08 more2 = static_cast<UI08>(JSVAL_TO_INT(argv[5]));
-    UI08 more3 = static_cast<UI08>(JSVAL_TO_INT(argv[6]));
+    std::uint8_t iType = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
+    std::uint32_t targNum = JSVAL_TO_INT(argv[3]);
+    std::uint8_t more1 = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
+    std::uint8_t more2 = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[5]));
+    std::uint8_t more3 = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[6]));
 
     CItem *myItemPtr = nullptr;
 
@@ -136,11 +136,11 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
             return JS_FALSE;
         }
         if (argc == 8) {
-            Effects->TempEffect(mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2,
+            Effects->TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2,
                                 more3, myItemPtr);
         }
         else {
-            Effects->TempEffect(mysrcChar, mydestChar, static_cast<SI08>(targNum), more1, more2,
+            Effects->TempEffect(mysrcChar, mydestChar, static_cast<std::int8_t>(targNum), more1, more2,
                                 more3);
         }
     }
@@ -152,7 +152,7 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
             ScriptError(cx, "DoTempEffect: Invalid target ");
             return JS_FALSE;
         }
-        Effects->TempEffect(mysrcChar, mydestItem, static_cast<SI08>(targNum), more1, more2, more3);
+        Effects->TempEffect(mysrcChar, mydestItem, static_cast<std::int8_t>(targNum), more1, more2, more3);
     }
     return JS_TRUE;
 }
@@ -198,8 +198,8 @@ JSBool SE_CalcItemFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     }
     else {
         targSerial = CalcSerial(
-            static_cast<UI08>(JSVAL_TO_INT(argv[0])), static_cast<UI08>(JSVAL_TO_INT(argv[1])),
-            static_cast<UI08>(JSVAL_TO_INT(argv[2])), static_cast<UI08>(JSVAL_TO_INT(argv[3])));
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1])),
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3])));
     }
 
     CItem *newItem = CalcItemObjFromSer(targSerial);
@@ -231,8 +231,8 @@ JSBool SE_CalcMultiFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
     else {
         targSerial = CalcSerial(
-            static_cast<UI08>(JSVAL_TO_INT(argv[0])), static_cast<UI08>(JSVAL_TO_INT(argv[1])),
-            static_cast<UI08>(JSVAL_TO_INT(argv[2])), static_cast<UI08>(JSVAL_TO_INT(argv[3])));
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1])),
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3])));
     }
 
     CItem *newMulti = CalcMultiFromSer(targSerial);
@@ -264,8 +264,8 @@ JSBool SE_CalcCharFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     }
     else {
         targSerial = CalcSerial(
-            static_cast<UI08>(JSVAL_TO_INT(argv[0])), static_cast<UI08>(JSVAL_TO_INT(argv[1])),
-            static_cast<UI08>(JSVAL_TO_INT(argv[2])), static_cast<UI08>(JSVAL_TO_INT(argv[3])));
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1])),
+            static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2])), static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3])));
     }
 
     CChar *newChar = CalcCharObjFromSer(targSerial);
@@ -298,18 +298,18 @@ JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     CBaseObject *trg = nullptr;
     bool srcLocation = false;
     bool targLocation = false;
-    UI16 srcX = 0;
-    UI16 srcY = 0;
-    SI08 srcZ = 0;
-    UI16 targX = 0;
-    UI16 targY = 0;
-    SI08 targZ = 0;
-    UI16 effect = 0;
-    UI08 speed = 0;
-    UI08 loop = 0;
+    std::uint16_t srcX = 0;
+    std::uint16_t srcY = 0;
+    std::int8_t srcZ = 0;
+    std::uint16_t targX = 0;
+    std::uint16_t targY = 0;
+    std::int8_t targZ = 0;
+    std::uint16_t effect = 0;
+    std::uint8_t speed = 0;
+    std::uint8_t loop = 0;
     bool explode = 0;
-    UI32 hue = 0;
-    UI32 renderMode = 0;
+    std::uint32_t hue = 0;
+    std::uint32_t renderMode = 0;
 
     if (JSVAL_IS_INT(argv[0])) {
         // 10, 11 or 12 arguments
@@ -317,21 +317,21 @@ JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         srcLocation = true;
         targLocation = true;
         targLocation = true;
-        srcX = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-        srcY = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-        srcZ = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-        targX = static_cast<SI16>(JSVAL_TO_INT(argv[3]));
-        targY = static_cast<SI16>(JSVAL_TO_INT(argv[4]));
-        targZ = static_cast<SI08>(JSVAL_TO_INT(argv[5]));
-        effect = static_cast<UI16>(JSVAL_TO_INT(argv[6]));
-        speed = static_cast<UI08>(JSVAL_TO_INT(argv[7]));
-        loop = static_cast<UI08>(JSVAL_TO_INT(argv[8]));
+        srcX = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+        srcY = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+        srcZ = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+        targX = static_cast<std::int16_t>(JSVAL_TO_INT(argv[3]));
+        targY = static_cast<std::int16_t>(JSVAL_TO_INT(argv[4]));
+        targZ = static_cast<std::int8_t>(JSVAL_TO_INT(argv[5]));
+        effect = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[6]));
+        speed = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[7]));
+        loop = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[8]));
         explode = (JSVAL_TO_BOOLEAN(argv[9]) == JS_TRUE);
         if (argc >= 11) {
-            hue = static_cast<UI32>(JSVAL_TO_INT(argv[10]));
+            hue = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[10]));
         }
         if (argc >= 12) {
-            renderMode = static_cast<UI32>(JSVAL_TO_INT(argv[11]));
+            renderMode = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[11]));
         }
     }
     else {
@@ -346,18 +346,18 @@ JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
             // 8, 9 or 10 arguments
             // srcObj, targX, targY, targZ, effect, speed, loop, explode, [hue], [renderMode]
             targLocation = true;
-            targX = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-            targY = static_cast<UI16>(JSVAL_TO_INT(argv[2]));
-            targZ = static_cast<SI08>(JSVAL_TO_INT(argv[3]));
-            effect = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
-            speed = static_cast<UI08>(JSVAL_TO_INT(argv[5]));
-            loop = static_cast<UI08>(JSVAL_TO_INT(argv[6]));
+            targX = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+            targY = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
+            targZ = static_cast<std::int8_t>(JSVAL_TO_INT(argv[3]));
+            effect = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
+            speed = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[5]));
+            loop = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[6]));
             explode = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
             if (argc >= 9) {
-                hue = static_cast<UI32>(JSVAL_TO_INT(argv[8]));
+                hue = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[8]));
             }
             if (argc >= 10) {
-                renderMode = static_cast<UI32>(JSVAL_TO_INT(argv[9]));
+                renderMode = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[9]));
             }
         }
         else {
@@ -375,15 +375,15 @@ JSBool SE_DoMovingEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
                 return JS_FALSE;
             }
 
-            effect = static_cast<UI16>(JSVAL_TO_INT(argv[2]));
-            speed = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-            loop = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+            effect = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
+            speed = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+            loop = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
             explode = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
             if (argc >= 7) {
-                hue = static_cast<UI32>(JSVAL_TO_INT(argv[6]));
+                hue = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[6]));
             }
             if (argc >= 8) {
-                renderMode = static_cast<UI32>(JSVAL_TO_INT(argv[7]));
+                renderMode = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[7]));
             }
         }
     }
@@ -415,12 +415,12 @@ JSBool SE_DoStaticEffect([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
         return JS_FALSE;
     }
 
-    SI16 targX = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 targY = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI16 targZ = static_cast<SI16>(JSVAL_TO_INT(argv[2]));
-    UI16 effectId = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
-    UI08 speed = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
-    UI08 loop = static_cast<UI08>(JSVAL_TO_INT(argv[5]));
+    std::int16_t targX = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t targY = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int16_t targZ = static_cast<std::int16_t>(JSVAL_TO_INT(argv[2]));
+    std::uint16_t effectId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
+    std::uint8_t speed = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
+    std::uint8_t loop = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[5]));
     bool explode = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
 
     Effects->PlayStaticAnimation(targX, targY, targZ, effectId, speed, loop, explode);
@@ -465,15 +465,15 @@ JSBool SE_MakeItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
         ScriptError(cx, "MakeItem: Invalid character");
         return JS_FALSE;
     }
-    UI16 itemMenu = static_cast<UI16>(JSVAL_TO_INT(argv[2]));
+    std::uint16_t itemMenu = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
     CreateEntry_st *toFind = Skills->FindItem(itemMenu);
     if (toFind == nullptr) {
         ScriptError(cx, util::format("MakeItem: Invalid make item (%i)", itemMenu).c_str());
         return JS_FALSE;
     }
-    UI16 resourceColour = 0;
+    std::uint16_t resourceColour = 0;
     if (argc == 4) {
-        resourceColour = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
+        resourceColour = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
     }
 
     Skills->MakeItem(*toFind, player, sock, itemMenu, resourceColour);
@@ -600,9 +600,9 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         return JS_FALSE;
     }
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    UI08 execLevel = static_cast<UI08>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t execLevel = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[2]) == JS_TRUE);
-    UI16 scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
 
     if (scriptId == 0xFFFF) {
         ScriptError(cx, " RegisterCommand: JS Script has an Invalid ScriptID");
@@ -629,7 +629,7 @@ JSBool SE_RegisterSpell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         ScriptError(cx, "RegisterSpell: Invalid number of arguments (takes 2)");
         return JS_FALSE;
     }
-    SI32 spellNumber = JSVAL_TO_INT(argv[0]);
+    std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     Magic->Register(myScript, spellNumber, isEnabled);
@@ -652,9 +652,9 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         ScriptError(cx, "RegisterSkill: Invalid number of arguments (takes 2)");
         return JS_FALSE;
     }
-    SI32 skillNumber = JSVAL_TO_INT(argv[0]);
+    std::int32_t skillNumber = JSVAL_TO_INT(argv[0]);
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
-    UI16 scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
         Console::shared().Print(" ");
@@ -702,9 +702,9 @@ JSBool SE_RegisterPacket(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         ScriptError(cx, "RegisterPacket: Invalid number of arguments (takes 2)");
         return JS_FALSE;
     }
-    UI08 packet = static_cast<UI08>(JSVAL_TO_INT(argv[0]));
-    UI08 subCmd = static_cast<UI08>(JSVAL_TO_INT(argv[1]));
-    UI16 scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint8_t packet = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
+    std::uint8_t subCmd = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
+    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
         Console::shared().Print(
@@ -733,13 +733,13 @@ JSBool SE_RegisterKey(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     }
     JSEncapsulate encaps(cx, &(argv[0]));
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    UI16 scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
 
     if (scriptId == 0xFFFF) {
         ScriptError(cx, "RegisterKey: JS Script has an Invalid ScriptID");
         return JS_FALSE;
     }
-    SI32 toPass = 0;
+    std::int32_t toPass = 0;
     if (encaps.isType(JSOT_STRING)) {
         std::string enStr = encaps.toString();
         if (enStr.length() != 0) {
@@ -770,7 +770,7 @@ JSBool SE_RegisterConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uin
     }
     std::string funcToRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     std::string toRegister = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    UI16 scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
+    std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
 
     if (scriptId == 0xFFFF) {
         ScriptError(cx, "RegisterConsoleFunc: JS Script has an Invalid ScriptID");
@@ -808,7 +808,7 @@ JSBool SE_DisableKey([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *
         ScriptError(cx, "DisableKey: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    SI32 toDisable = JSVAL_TO_INT(argv[0]);
+    std::int32_t toDisable = JSVAL_TO_INT(argv[0]);
     Console::shared().SetKeyStatus(toDisable, false);
     return JS_TRUE;
 }
@@ -840,7 +840,7 @@ JSBool SE_DisableSpell([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         ScriptError(cx, "DisableSpell: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    SI32 spellNumber = JSVAL_TO_INT(argv[0]);
+    std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
     Magic->SetSpellStatus(spellNumber, false);
     return JS_TRUE;
 }
@@ -872,7 +872,7 @@ JSBool SE_EnableSpell([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
         ScriptError(cx, "EnableSpell: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    SI32 spellNumber = JSVAL_TO_INT(argv[0]);
+    std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
     Magic->SetSpellStatus(spellNumber, true);
     return JS_TRUE;
 }
@@ -888,7 +888,7 @@ JSBool SE_EnableKey([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
         ScriptError(cx, "EnableKey: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    SI32 toEnable = JSVAL_TO_INT(argv[0]);
+    std::int32_t toEnable = JSVAL_TO_INT(argv[0]);
     Console::shared().SetKeyStatus(toEnable, true);
     return JS_TRUE;
 }
@@ -917,9 +917,9 @@ JSBool SE_EnableConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                   [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
     bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
-    UI08 hour = cwmWorldState->ServerData()->ServerTimeHours();
+    std::uint8_t hour = cwmWorldState->ServerData()->ServerTimeHours();
     if (ampm) {
-        *rval = INT_TO_JSVAL(static_cast<UI64>(hour) + 12);
+        *rval = INT_TO_JSVAL(static_cast<std::uint64_t>(hour) + 12);
     }
     else {
         *rval = INT_TO_JSVAL(hour);
@@ -934,7 +934,7 @@ JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                     [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    UI08 minute = cwmWorldState->ServerData()->ServerTimeMinutes();
+    std::uint8_t minute = cwmWorldState->ServerData()->ServerTimeMinutes();
     *rval = INT_TO_JSVAL(minute);
     return JS_TRUE;
 }
@@ -946,7 +946,7 @@ JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetDay([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                  [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    SI16 day = cwmWorldState->ServerData()->ServerTimeDay();
+    std::int16_t day = cwmWorldState->ServerData()->ServerTimeDay();
     *rval = INT_TO_JSVAL(day);
     return JS_TRUE;
 }
@@ -964,7 +964,7 @@ JSBool SE_SecondsPerUOMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
         return JS_FALSE;
     }
     else if (argc == 1) {
-        UI16 secondsPerUOMinute = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+        std::uint16_t secondsPerUOMinute = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
         cwmWorldState->ServerData()->ServerSecondsPerUOMinute(secondsPerUOMinute);
     }
     *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ServerSecondsPerUOMinute());
@@ -1008,11 +1008,11 @@ JSBool SE_GetRandomSOSArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         return JS_FALSE;
     }
 
-    UI08 worldNum = 0;
-    UI16 instanceId = 0;
+    std::uint8_t worldNum = 0;
+    std::uint16_t instanceId = 0;
     if (JSVAL_IS_INT(argv[0]) && JSVAL_IS_INT(argv[1])) {
-        worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[0]));
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
+        worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
     }
     else {
         ScriptError(cx, "GetRandomSOSArea: Invalid values passed in for worldNum and instanceId - "
@@ -1077,11 +1077,11 @@ JSBool SE_SpawnNPC(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 
     CChar *cMade = nullptr;
     std::string nnpcNum = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    UI16 x = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-    UI16 y = static_cast<UI16>(JSVAL_TO_INT(argv[2]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[3]));
-    UI08 world = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
-    UI16 instanceId = (argc == 6 ? static_cast<SI16>(JSVAL_TO_INT(argv[5])) : 0);
+    std::uint16_t x = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint16_t y = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint8_t world = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
+    std::uint16_t instanceId = (argc == 6 ? static_cast<std::int16_t>(JSVAL_TO_INT(argv[5])) : 0);
     bool useNpcList = (argc == 7 ? (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE) : false);
 
     // Store original script context and object, in case NPC spawned has some event that triggers on
@@ -1130,14 +1130,14 @@ JSBool SE_CreateDFNItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
     std::string bpSectNumber = JS_GetStringBytes(JS_ValueToString(cx, argv[2]));
     bool bInPack = true;
-    UI16 iAmount = 1;
+    std::uint16_t iAmount = 1;
     ObjectType itemType = OT_ITEM;
-    UI16 iColor = 0xFFFF;
-    UI08 worldNumber = 0;
-    UI16 instanceId = 0;
+    std::uint16_t iColor = 0xFFFF;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t instanceId = 0;
 
     if (argc > 3) {
-        iAmount = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
+        iAmount = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
     }
     if (argc > 4) {
         std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[4]));
@@ -1147,13 +1147,13 @@ JSBool SE_CreateDFNItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
         bInPack = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     }
     if (argc > 6) {
-        iColor = static_cast<UI16>(JSVAL_TO_INT(argv[6]));
+        iColor = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[6]));
     }
     if (argc > 7) {
-        worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[7]));
+        worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[7]));
     }
     if (argc > 8) {
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[8]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[8]));
     }
 
     // Store original script context and object, in case Item spawned has some event that triggers
@@ -1210,10 +1210,10 @@ JSBool SE_CreateBlankItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         myChar = static_cast<CChar *>(JS_GetPrivate(cx, mChar));
     }
 
-    SI32 amount = static_cast<SI32>(JSVAL_TO_INT(argv[2]));
+    std::int32_t amount = static_cast<std::int32_t>(JSVAL_TO_INT(argv[2]));
     std::string itemName = JS_GetStringBytes(JS_ValueToString(cx, argv[3]));
-    UI16 itemId = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
-    UI16 colour = static_cast<UI16>(JSVAL_TO_INT(argv[5]));
+    std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
+    std::uint16_t colour = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[5]));
     std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[6]));
     ObjectType itemType = FindObjTypeFromString(objType);
     bool inPack = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
@@ -1242,8 +1242,8 @@ JSBool SE_CreateBlankItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     return JS_TRUE;
 }
 
-CMultiObj *BuildHouse(CSocket *s, UI16 houseEntry, bool checkLocation = true, SI16 xLoc = -1,
-                      SI16 yLoc = -1, SI08 zLoc = -1, UI08 worldNumber = 0, UI16 instanceId = 0);
+CMultiObj *BuildHouse(CSocket *s, std::uint16_t houseEntry, bool checkLocation = true, std::int16_t xLoc = -1,
+                      std::int16_t yLoc = -1, std::int8_t zLoc = -1, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateHouse()
 // o------------------------------------------------------------------------------------------------o
@@ -1255,23 +1255,23 @@ JSBool SE_CreateHouse(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
         return JS_FALSE;
     }
 
-    UI16 houseId = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    SI16 xLoc = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI16 yLoc = static_cast<SI16>(JSVAL_TO_INT(argv[2]));
-    SI08 zLoc = static_cast<SI08>(JSVAL_TO_INT(argv[3]));
-    UI16 iColor = 0xFFFF;
-    UI08 worldNumber = 0;
-    UI16 instanceId = 0;
+    std::uint16_t houseId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t xLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int16_t yLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[2]));
+    std::int8_t zLoc = static_cast<std::int8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint16_t iColor = 0xFFFF;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t instanceId = 0;
     bool checkLocation = true;
 
     if (argc > 4) {
-        worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+        worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     }
     if (argc > 5) {
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[5]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[5]));
     }
     if (argc > 6) {
-        iColor = static_cast<UI16>(JSVAL_TO_INT(argv[6]));
+        iColor = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[6]));
     }
     if (argc > 7) {
         checkLocation = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
@@ -1303,8 +1303,8 @@ JSBool SE_CreateHouse(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
     return JS_TRUE;
 }
 
-CMultiObj *BuildBaseMulti(UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127,
-                          UI08 worldNumber = 0, UI16 instanceId = 0);
+CMultiObj *BuildBaseMulti(std::uint16_t multiId, std::int16_t xLoc = -1, std::int16_t yLoc = -1, std::int8_t zLoc = 127,
+                          std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateBaseMulti()
 // o------------------------------------------------------------------------------------------------o
@@ -1316,24 +1316,24 @@ JSBool SE_CreateBaseMulti(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-    UI16 multiId = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    SI16 xLoc = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI16 yLoc = static_cast<SI16>(JSVAL_TO_INT(argv[2]));
-    SI08 zLoc = static_cast<SI08>(JSVAL_TO_INT(argv[3]));
-    UI16 iColor = 0xFFFF;
-    UI08 worldNumber = 0;
-    UI16 instanceId = 0;
+    std::uint16_t multiId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t xLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int16_t yLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[2]));
+    std::int8_t zLoc = static_cast<std::int8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint16_t iColor = 0xFFFF;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t instanceId = 0;
     bool checkLocation = true;
     (void)checkLocation;
 
     if (argc > 4) {
-        worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+        worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     }
     if (argc > 5) {
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[5]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[5]));
     }
     if (argc > 6) {
-        iColor = static_cast<UI16>(JSVAL_TO_INT(argv[6]));
+        iColor = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[6]));
     }
     if (argc > 7) {
         checkLocation = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
@@ -1387,9 +1387,9 @@ JSBool SE_RollDice([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *ob
         ScriptError(cx, "RollDice: Invalid number of arguments (takes 3)");
         return JS_FALSE;
     }
-    UI32 numDice = JSVAL_TO_INT(argv[0]);
-    UI32 numFace = JSVAL_TO_INT(argv[1]);
-    UI32 numAdd = JSVAL_TO_INT(argv[2]);
+    std::uint32_t numDice = JSVAL_TO_INT(argv[0]);
+    std::uint32_t numFace = JSVAL_TO_INT(argv[1]);
+    std::uint32_t numAdd = JSVAL_TO_INT(argv[2]);
 
     cDice toRoll(numDice, numFace, numAdd);
 
@@ -1428,10 +1428,10 @@ JSBool SE_FindMulti(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
         ScriptError(cx, "FindMulti: Invalid number of parameters (1, 4 or 5)");
         return JS_FALSE;
     }
-    SI16 xLoc = 0, yLoc = 0;
-    SI08 zLoc = 0;
-    UI08 worldNumber = 0;
-    UI16 instanceId = 0;
+    std::int16_t xLoc = 0, yLoc = 0;
+    std::int8_t zLoc = 0;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t instanceId = 0;
     if (argc == 1) {
         JSObject *myitemptr = JSVAL_TO_OBJECT(argv[0]);
         CBaseObject *myItemPtr = static_cast<CBaseObject *>(JS_GetPrivate(cx, myitemptr));
@@ -1448,12 +1448,12 @@ JSBool SE_FindMulti(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
         }
     }
     else {
-        xLoc = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-        yLoc = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-        zLoc = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-        worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
+        xLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+        yLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+        zLoc = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+        worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
         if (argc == 5) {
-            instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
+            instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
         }
     }
     CMultiObj *multi = FindMulti(xLoc, yLoc, zLoc, worldNumber, instanceId);
@@ -1480,17 +1480,17 @@ JSBool SE_GetItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
         ScriptError(cx, "GetItem: Invalid number of parameters (4 or 5)");
         return JS_FALSE;
     }
-    SI16 xLoc = 0, yLoc = 0;
-    SI08 zLoc = 0;
-    UI08 worldNumber = 0;
-    UI16 instanceId = 0;
+    std::int16_t xLoc = 0, yLoc = 0;
+    std::int8_t zLoc = 0;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t instanceId = 0;
 
-    xLoc = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    yLoc = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    zLoc = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
+    xLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    yLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    zLoc = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     if (argc == 5) {
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     }
 
     CItem *item = GetItemAtXYZ(xLoc, yLoc, zLoc, worldNumber, instanceId);
@@ -1517,19 +1517,19 @@ JSBool SE_FindItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, js
         ScriptError(cx, "FindItem: Invalid number of parameters (5 or 6)");
         return JS_FALSE;
     }
-    SI16 xLoc = 0, yLoc = 0;
-    SI08 zLoc = 0;
-    UI08 worldNumber = 0;
-    UI16 id = 0;
-    UI16 instanceId = 0;
+    std::int16_t xLoc = 0, yLoc = 0;
+    std::int8_t zLoc = 0;
+    std::uint8_t worldNumber = 0;
+    std::uint16_t id = 0;
+    std::uint16_t instanceId = 0;
 
-    xLoc = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    yLoc = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    zLoc = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    worldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-    id = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
+    xLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    yLoc = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    zLoc = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+    id = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     if (argc == 6) {
-        instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[5]));
+        instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[5]));
     }
 
     CItem *item = FindItemNearXYZ(xLoc, yLoc, zLoc, worldNumber, id, instanceId);
@@ -1576,8 +1576,8 @@ JSBool SE_PossessTown([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
     if (argc != 2) {
         return JS_FALSE;
     }
-    UI16 town = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    UI16 sTown = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
+    std::uint16_t town = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t sTown = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
     cwmWorldState->townRegions[town]->Possess(cwmWorldState->townRegions[sTown]);
     return JS_TRUE;
 }
@@ -1613,7 +1613,7 @@ JSBool SE_GetRaceSkillAdjustment([[maybe_unused]] JSContext *cx, [[maybe_unused]
         return JS_FALSE;
     }
     RACEID race = static_cast<RACEID>(JSVAL_TO_INT(argv[0]));
-    SI32 skill = JSVAL_TO_INT(argv[1]);
+    std::int32_t skill = JSVAL_TO_INT(argv[1]);
     *rval = INT_TO_JSVAL(Races->DamageFromSkill(skill, race));
     return JS_TRUE;
 }
@@ -1671,13 +1671,13 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
     auto origObject = obj;
 
     bool scriptExecuted = false;
-    std::vector<UI16> scriptTriggers = myItem->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = myItem->GetScriptTriggers();
     for (auto i : scriptTriggers) {
         // Loop through all scriptIDs registered for item, check for scripts
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
             // Script was found, let's check for OnUseUnChecked event
-            SI08 retVal = toExecute->OnUseUnChecked(mChar, myItem);
+            std::int8_t retVal = toExecute->OnUseUnChecked(mChar, myItem);
             if (retVal != -1) {
                 scriptExecuted = true;
                 if (retVal == 0) {
@@ -1703,11 +1703,11 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
     // Handle envoke stuff outside for loop, as we only want this to execute once
     if (scriptTriggers.size() == 0 || !scriptExecuted) {
         ItemTypes iType = myItem->GetType();
-        UI16 itemId = myItem->GetId();
-        UI16 envTrig = 0;
+        std::uint16_t itemId = myItem->GetId();
+        std::uint16_t envTrig = 0;
         cScript *toExecute = nullptr;
-        if (JSMapping->GetEnvokeByType()->Check(static_cast<UI16>(iType))) {
-            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<UI16>(iType));
+        if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
+            envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
             toExecute = JSMapping->GetScript(envTrig);
         }
         else if (JSMapping->GetEnvokeById()->Check(itemId)) {
@@ -1808,7 +1808,7 @@ JSBool SE_TriggerEvent(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
         return JS_FALSE;
     }
 
-    UI16 scriptNumberToFire = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t scriptNumberToFire = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     char *eventToFire = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
     cScript *toExecute = JSMapping->GetScript(scriptNumberToFire);
 
@@ -1844,7 +1844,7 @@ JSBool SE_DoesEventExist(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     }
 
     *rval = INT_TO_JSVAL(1);
-    UI16 scriptNumberToCheck = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t scriptNumberToCheck = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     char *eventToCheck = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
     cScript *toExecute = JSMapping->GetScript(scriptNumberToCheck);
 
@@ -1871,7 +1871,7 @@ JSBool SE_GetPackOwner(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
         return JS_FALSE;
     }
 
-    UI08 mType = static_cast<UI08>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t mType = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
     CChar *pOwner = nullptr;
 
     if (mType == 0) // item
@@ -1882,7 +1882,7 @@ JSBool SE_GetPackOwner(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     }
     else // serial
     {
-        SI32 mSerItem = JSVAL_TO_INT(argv[0]);
+        std::int32_t mSerItem = JSVAL_TO_INT(argv[0]);
         pOwner = FindItemOwner(CalcItemObjFromSer(mSerItem));
     }
     if (ValidateObject(pOwner)) {
@@ -1908,7 +1908,7 @@ JSBool SE_FindRootContainer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
         return JS_FALSE;
     }
 
-    UI08 mType = static_cast<UI08>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t mType = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[1]));
     CItem *iRoot = nullptr;
 
     if (mType == 0) // item
@@ -1919,7 +1919,7 @@ JSBool SE_FindRootContainer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
     }
     else // serial
     {
-        SI32 mSerItem = JSVAL_TO_INT(argv[0]);
+        std::int32_t mSerItem = JSVAL_TO_INT(argv[0]);
         iRoot = FindRootContainer(CalcItemObjFromSer(mSerItem));
     }
     if (ValidateObject(iRoot)) {
@@ -2007,9 +2007,9 @@ JSBool SE_GetTileIdAtMapCoord([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
         return JS_FALSE;
     }
 
-    UI16 xLoc = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    UI16 yLoc = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-    UI08 wrldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
+    std::uint16_t xLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t yLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t wrldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
     auto mMap = Map->SeekMap(xLoc, yLoc, wrldNumber);
     *rval = INT_TO_JSVAL(mMap.tileId);
     return JS_TRUE;
@@ -2029,15 +2029,15 @@ JSBool SE_StaticInRange([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
         return JS_FALSE;
     }
 
-    UI16 xLoc = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    UI16 yLoc = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-    UI08 wrldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
-    UI16 radius = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
-    UI16 tileId = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
+    std::uint16_t xLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t yLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t wrldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint16_t radius = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
+    std::uint16_t tileId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     bool tileFound = false;
 
-    for (SI32 i = xLoc - radius; i <= (xLoc + radius); ++i) {
-        for (SI32 j = yLoc - radius; j <= (yLoc + radius); ++j) {
+    for (std::int32_t i = xLoc - radius; i <= (xLoc + radius); ++i) {
+        for (std::int32_t j = yLoc - radius; j <= (yLoc + radius); ++j) {
             auto artwork = Map->ArtAt(xLoc, yLoc, wrldNumber);
             auto iter = std::find_if(artwork.begin(), artwork.end(), [tileId](const Tile_st &tile) {
                 return tile.tileId == tileId;
@@ -2071,13 +2071,13 @@ JSBool SE_StaticAt([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *ob
         return JS_FALSE;
     }
 
-    UI16 xLoc = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-    UI16 yLoc = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-    UI08 wrldNumber = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
-    UI16 tileId = 0xFFFF;
+    std::uint16_t xLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t yLoc = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t wrldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint16_t tileId = 0xFFFF;
     [[maybe_unused]] bool tileMatch = false;
     if (argc == 4) {
-        tileId = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
+        tileId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
         tileMatch = true;
     }
     bool tileFound = false;
@@ -2122,7 +2122,7 @@ JSBool SE_NumToString(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
         return JS_FALSE;
     }
 
-    SI32 num = JSVAL_TO_INT(argv[0]);
+    std::int32_t num = JSVAL_TO_INT(argv[0]);
     auto str = util::ntos(num);
     *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, str.c_str()));
     return JS_TRUE;
@@ -2141,7 +2141,7 @@ JSBool SE_NumToHexString(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         return JS_FALSE;
     }
 
-    SI32 num = JSVAL_TO_INT(argv[0]);
+    std::int32_t num = JSVAL_TO_INT(argv[0]);
     auto str = util::ntos(num, 16);
 
     *rval = STRING_TO_JSVAL(JS_NewStringCopyZ(cx, str.c_str()));
@@ -2203,14 +2203,14 @@ JSBool SE_AreaCharacterFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, u
     }
 
     std::vector<CChar *> charsFound;
-    UI16 retCounter = 0;
+    std::uint16_t retCounter = 0;
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     for (auto &MapArea : MapRegion->PopulateList(srcObject)) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
                 if (ValidateObject(tempChar)) {
-                    if (ObjInRange(srcObject, tempChar, static_cast<UI16>(distance))) {
+                    if (ObjInRange(srcObject, tempChar, static_cast<std::uint16_t>(distance))) {
                         // Store character reference for later
                         charsFound.push_back(tempChar);
                     }
@@ -2278,14 +2278,14 @@ JSBool SE_AreaItemFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
 
     std::vector<CItem *> itemsFound;
-    UI16 retCounter = 0;
+    std::uint16_t retCounter = 0;
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     for (auto &MapArea : MapRegion->PopulateList(srcObject)) {
         if (MapArea) {
             auto regItems = MapArea->GetItemList();
             for (const auto &tempItem : regItems->collection()) {
                 if (ValidateObject(tempItem)) {
-                    if (ObjInRange(srcObject, tempItem, static_cast<UI16>(distance))) {
+                    if (ObjInRange(srcObject, tempItem, static_cast<std::uint16_t>(distance))) {
                         // Store item reference for later
                         itemsFound.push_back(tempItem);
                     }
@@ -2321,7 +2321,7 @@ JSBool SE_GetDictionaryEntry(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         return JS_FALSE;
     }
 
-    SI32 dictEntry = static_cast<SI32>(JSVAL_TO_INT(argv[0]));
+    std::int32_t dictEntry = static_cast<std::int32_t>(JSVAL_TO_INT(argv[0]));
     UnicodeTypes language = ZERO;
     if (argc == 2) {
         language = static_cast<UnicodeTypes>(JSVAL_TO_INT(argv[1]));
@@ -2352,7 +2352,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
     CSocket *mySock = static_cast<CSocket *>(JS_GetPrivate(cx, mSock));
     CChar *myChar = mySock->CurrcharObj();
     std::string textToYell = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
-    UI08 commandLevel = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t commandLevel = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
 
     std::string yellTo = "";
     switch (static_cast<CommandLevels>(commandLevel)) {
@@ -2429,7 +2429,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
         return JS_FALSE;
     }
 
-    SI32 toLoad = JSVAL_TO_INT(argv[0]);
+    std::int32_t toLoad = JSVAL_TO_INT(argv[0]);
 
     switch (toLoad) {
     case 0: // Reload regions
@@ -2513,11 +2513,11 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         return JS_TRUE;
 
     if (mySock->GetDWord(7) == 0) {
-        UI08 worldNumber = myChar->WorldNumber();
-        UI16 targetId = mySock->GetWord(0x11);
-        SI16 targetX = mySock->GetWord(0x0B); // store our target x y and z locations
-        SI16 targetY = mySock->GetWord(0x0D);
-        SI08 targetZ = mySock->GetByte(0x10);
+        std::uint8_t worldNumber = myChar->WorldNumber();
+        std::uint16_t targetId = mySock->GetWord(0x11);
+        std::int16_t targetX = mySock->GetWord(0x0B); // store our target x y and z locations
+        std::int16_t targetY = mySock->GetWord(0x0D);
+        std::int8_t targetZ = mySock->GetByte(0x10);
         if (targetId != 0) // we might have a static rock or mountain
         {
             auto artwork = Map->ArtAt(targetX, targetY, worldNumber);
@@ -2558,12 +2558,12 @@ JSBool SE_GetTileHeight([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
         return JS_FALSE;
     }
 
-    UI16 tileNum = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t tileNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     *rval = INT_TO_JSVAL(Map->TileHeight(tileNum));
     return JS_TRUE;
 }
 
-bool SE_IterateFunctor(CBaseObject *a, UI32 &b, void *extraData) {
+bool SE_IterateFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) {
     cScript *myScript = static_cast<cScript *>(extraData);
     return myScript->OnIterate(a, b);
 }
@@ -2581,7 +2581,7 @@ JSBool SE_IterateOver(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
         return JS_FALSE;
     }
 
-    UI32 b = 0;
+    std::uint32_t b = 0;
     std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     ObjectType toCheck = FindObjTypeFromString(objType);
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
@@ -2595,7 +2595,7 @@ JSBool SE_IterateOver(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     return JS_TRUE;
 }
 
-bool SE_IterateSpawnRegionsFunctor(CSpawnRegion *a, UI32 &b, void *extraData) {
+bool SE_IterateSpawnRegionsFunctor(CSpawnRegion *a, std::uint32_t &b, void *extraData) {
     cScript *myScript = static_cast<cScript *>(extraData);
     return myScript->OnIterateSpawnRegions(a, b);
 }
@@ -2609,12 +2609,12 @@ bool SE_IterateSpawnRegionsFunctor(CSpawnRegion *a, UI32 &b, void *extraData) {
 JSBool SE_IterateOverSpawnRegions(JSContext *cx, [[maybe_unused]] JSObject *obj,
                                   [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                                   jsval *rval) {
-    UI32 b = 0;
+    std::uint32_t b = 0;
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
 
     if (myScript != nullptr) {
         std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-                      [&myScript, &b](std::pair<UI16, CSpawnRegion *> entry) {
+                      [&myScript, &b](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                           if (entry.second) {
                               SE_IterateSpawnRegionsFunctor(entry.second, b, myScript);
                           }
@@ -2706,7 +2706,7 @@ JSBool SE_GetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
         return JS_FALSE;
     }
     else if (argc == 1) {
-        UI32 spawnRegionFacet = static_cast<UI32>(JSVAL_TO_INT(argv[0]));
+        std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         bool spawnRegionFacetStatus =
             cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(spawnRegionFacet);
         if (spawnRegionFacetStatus) {
@@ -2733,11 +2733,11 @@ JSBool SE_SetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
         return JS_FALSE;
     }
     else if (argc == 1) {
-        UI32 spawnRegionFacetVal = static_cast<UI32>(JSVAL_TO_INT(argv[0]));
+        std::uint32_t spawnRegionFacetVal = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus(spawnRegionFacetVal);
     }
     else if (argc == 2) {
-        UI32 spawnRegionFacet = static_cast<UI32>(JSVAL_TO_INT(argv[0]));
+        std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         bool spawnRegionFacetStatus = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
         cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus(spawnRegionFacet,
                                                                 spawnRegionFacetStatus);
@@ -2789,7 +2789,7 @@ JSBool SE_ReloadJSFile(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
         ScriptError(cx, "ReloadJSFile: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    UI16 scriptId = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     if (scriptId == JSMapping->GetScriptId(JS_GetGlobalObject(cx))) {
         ScriptError(
             cx,
@@ -2844,7 +2844,7 @@ JSBool SE_ResourceAmount(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     resType = util::upper(util::trim(util::strip(resType, "//")));
 
     if (argc == 2) {
-        SI16 newVal = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
+        std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
         if (resType == "LOGS") {
             cwmWorldState->ServerData()->ResLogs(newVal);
         }
@@ -2885,7 +2885,7 @@ JSBool SE_ResourceTime(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     auto resType = std::string(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     resType = util::upper(util::trim(util::strip(resType, "//")));
     if (argc == 2) {
-        UI16 newVal = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
+        std::uint16_t newVal = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
         if (resType == "LOGS") {
             cwmWorldState->ServerData()->ResLogTime(newVal);
         }
@@ -2921,9 +2921,9 @@ JSBool SE_ResourceRegion(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         ScriptError(cx, "ResourceRegion: Invalid number of arguments (takes 3)");
         return JS_FALSE;
     }
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
     MapResource_st *mRes = MapRegion->GetResource(x, y, worldNum);
     if (mRes == nullptr) {
         ScriptError(cx, "ResourceRegion: Invalid Resource Region");
@@ -2980,7 +2980,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     }
 
     CChar *attacker = nullptr, *defender = nullptr;
-    SI16 damage = 0;
+    std::int16_t damage = 0;
 
     JSEncapsulate damageType(cx, &(argv[0]));
     JSEncapsulate getFightSkill(cx, &(argv[3]));
@@ -3026,9 +3026,9 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     }
 
     damage = Combat->ApplyDamageBonuses(static_cast<WeatherType>(damageType.toInt()), attacker,
-                                        defender, static_cast<UI08>(getFightSkill.toInt()),
-                                        static_cast<UI08>(hitLoc.toInt()),
-                                        static_cast<SI16>(baseDamage.toInt()));
+                                        defender, static_cast<std::uint8_t>(getFightSkill.toInt()),
+                                        static_cast<std::uint8_t>(hitLoc.toInt()),
+                                        static_cast<std::int16_t>(baseDamage.toInt()));
 
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;
@@ -3049,7 +3049,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
     }
 
     CChar *attacker = nullptr, *defender = nullptr;
-    SI16 damage = 0;
+    std::int16_t damage = 0;
 
     JSEncapsulate damageType(cx, &(argv[0]));
     JSEncapsulate getFightSkill(cx, &(argv[3]));
@@ -3091,8 +3091,8 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
 
     damage = Combat->ApplyDefenseModifiers(
         static_cast<WeatherType>(damageType.toInt()), attacker, defender,
-        static_cast<UI08>(getFightSkill.toInt()), static_cast<UI08>(hitLoc.toInt()),
-        static_cast<SI16>(baseDamage.toInt()), doArmorDamage.toBool());
+        static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()),
+        static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
 
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;
@@ -3195,9 +3195,9 @@ JSBool SE_Moon([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, u
         return JS_FALSE;
     }
 
-    SI16 slot = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
+    std::int16_t slot = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     if (argc == 2) {
-        SI16 newVal = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
+        std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
         cwmWorldState->ServerData()->ServerMoon(slot, newVal);
     }
 
@@ -3218,7 +3218,7 @@ JSBool SE_GetTownRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         return JS_FALSE;
     }
 
-    UI16 regNum = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t regNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     if (cwmWorldState->townRegions.find(regNum) != cwmWorldState->townRegions.end()) {
         CTownRegion *townReg = cwmWorldState->townRegions[regNum];
         if (townReg != nullptr) {
@@ -3252,7 +3252,7 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 
     if (argc == 1) {
         // Assume spawn region number was provided
-        UI16 spawnRegNum = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+        std::uint16_t spawnRegNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
         if (cwmWorldState->spawnRegions.find(spawnRegNum) != cwmWorldState->spawnRegions.end()) {
             CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
             if (spawnReg != nullptr) {
@@ -3270,15 +3270,15 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     }
     else {
         // Assume coordinates were provided
-        UI16 x = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-        UI16 y = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-        UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
-        UI16 instanceID = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
+        std::uint16_t x = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+        std::uint16_t y = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+        std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
+        std::uint16_t instanceID = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
 
         // Iterate over each spawn region to find the right one
         auto iter = std::find_if(
             cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-            [&x, &y, &worldNum, &instanceID, &cx, &rval](std::pair<UI16, CSpawnRegion *> entry) {
+            [&x, &y, &worldNum, &instanceID, &cx, &rval](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                 if (entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() &&
                     y >= entry.second->GetY1() && y <= entry.second->GetY2() &&
                     entry.second->GetInstanceId() == instanceID &&
@@ -3329,10 +3329,10 @@ JSBool SE_GetMapElevation([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
-    SI08 mapElevation = Map->MapElevation(x, y, worldNum);
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[2]));
+    std::int8_t mapElevation = Map->MapElevation(x, y, worldNum);
     *rval = INT_TO_JSVAL(mapElevation);
     return JS_TRUE;
 }
@@ -3354,11 +3354,11 @@ JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-    UI16 instanceId = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint16_t instanceId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     bool checkHeight = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     bool isInBuilding = Map->InBuilding(x, y, z, worldNum, instanceId);
     if (!isInBuilding) {
@@ -3367,7 +3367,7 @@ JSBool SE_IsInBuilding([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         if (ValidateObject(multi)) {
             if (checkHeight) {
                 // Check if there's multi-items over the player's head
-                SI08 multiZ = Map->MultiHeight(multi, x, y, z, 127, checkHeight);
+                std::int8_t multiZ = Map->MultiHeight(multi, x, y, z, 127, checkHeight);
                 if (multiZ > z) {
                     isInBuilding = true;
                 }
@@ -3395,12 +3395,12 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     TileFlags toCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[4]));
-    [[maybe_unused]] UI16 ignoreMe = 0;
+    [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasStaticFlag = Map->CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
     *rval = BOOLEAN_TO_JSVAL(hasStaticFlag);
     return JS_TRUE;
@@ -3420,13 +3420,13 @@ JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-    UI08 instanceId = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     TileFlags toCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[5]));
-    [[maybe_unused]] UI16 ignoreMe = 0;
+    [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasDynamicFlag = Map->CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
     *rval = BOOLEAN_TO_JSVAL(hasDynamicFlag);
     return JS_TRUE;
@@ -3445,7 +3445,7 @@ JSBool SE_CheckTileFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
         return JS_FALSE;
     }
 
-    UI16 itemId = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
+    std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     TileFlags flagToCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[1]));
 
     bool tileHasFlag = Map->CheckTileFlag(itemId, flagToCheck);
@@ -3466,10 +3466,10 @@ JSBool SE_DoesStaticBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     bool checkWater = (JSVAL_TO_BOOLEAN(argv[4]) == JS_TRUE);
     bool staticBlocks = Map->DoesStaticBlock(x, y, z, worldNum, checkWater);
     *rval = BOOLEAN_TO_JSVAL(staticBlocks);
@@ -3490,11 +3490,11 @@ JSBool SE_DoesDynamicBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-    UI08 instanceId = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     bool checkWater = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
     bool checkOnlyMultis = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
@@ -3518,10 +3518,10 @@ JSBool SE_DoesMapBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     bool checkWater = (JSVAL_TO_BOOLEAN(argv[4]) == JS_TRUE);
     bool waterWalk = (JSVAL_TO_BOOLEAN(argv[5]) == JS_TRUE);
     bool checkMultiPlacement = (JSVAL_TO_BOOLEAN(argv[6]) == JS_TRUE);
@@ -3545,11 +3545,11 @@ JSBool SE_DoesCharacterBlock([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
         return JS_FALSE;
     }
 
-    SI16 x = static_cast<SI16>(JSVAL_TO_INT(argv[0]));
-    SI16 y = static_cast<SI16>(JSVAL_TO_INT(argv[1]));
-    SI08 z = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-    UI08 worldNum = static_cast<UI08>(JSVAL_TO_INT(argv[3]));
-    UI08 instanceId = static_cast<UI08>(JSVAL_TO_INT(argv[4]));
+    std::int16_t x = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
+    std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
+    std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+    std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
+    std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
     bool characterBlocks = Map->DoesCharacterBlock(x, y, z, worldNum, instanceId);
     *rval = BOOLEAN_TO_JSVAL(characterBlocks);
     return JS_TRUE;
@@ -3637,7 +3637,7 @@ JSBool SE_EraStringToNum(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 
     std::string eraString = util::upper(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     if (!eraString.empty()) {
-        UI08 eraNum = static_cast<UI08>(
+        std::uint8_t eraNum = static_cast<std::uint8_t>(
             cwmWorldState->ServerData()->EraStringToEnum(eraString, false, false));
         if (eraNum != 0) {
             *rval = INT_TO_JSVAL(eraNum);
@@ -3704,99 +3704,99 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 6: // SAVESTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI32>(cwmWorldState->ServerData()->ServerSavesTimerStatus()));
+                static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerSavesTimerStatus()));
             break;
         case 7: // SKILLCAP
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->ServerSkillTotalCapStatus()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSkillTotalCapStatus()));
             break;
         case 8: // SKILLDELAY
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->ServerSkillDelayStatus()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerSkillDelayStatus()));
             break;
         case 9: // STATCAP
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ServerStatCapStatus()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerStatCapStatus()));
             break;
         case 10: // MAXSTEALTHMOVEMENTS
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->MaxStealthMovement()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->MaxStealthMovement()));
             break;
         case 11: // MAXSTAMINAMOVEMENTS
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->MaxStaminaMovement()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->MaxStaminaMovement()));
             break;
         case 12: // ARMORAFFECTMANAREGEN
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ArmorAffectManaRegen());
             break;
         case 13: // CORPSEDECAYTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CORPSEDECAY)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CORPSEDECAY)));
             break;
         case 14: // WEATHERTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_WEATHER)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_WEATHER)));
             break;
         case 15: // SHOPSPAWNTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SHOPSPAWN)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SHOPSPAWN)));
             break;
         case 16: // DECAYTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_DECAY)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_DECAY)));
             break;
         case 17: // INVISIBILITYTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_INVISIBILITY)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_INVISIBILITY)));
             break;
         case 18: // OBJECTUSETIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_OBJECTUSAGE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_OBJECTUSAGE)));
             break;
         case 19: // GATETIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_GATE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_GATE)));
             break;
         case 20: // POISONTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POISON)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POISON)));
             break;
         case 21: // LOGINTIMEOUT
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOGINTIMEOUT)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOGINTIMEOUT)));
             break;
         case 22: // HITPOINTREGENTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HITPOINTREGEN)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HITPOINTREGEN)));
             break;
         case 23: // STAMINAREGENTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STAMINAREGEN)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STAMINAREGEN)));
             break;
         case 37: // MANAREGENTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN)));
             break;
         case 24: // BASEFISHINGTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGBASE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGBASE)));
             break;
         case 34: // MAXPETOWNERS
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->MaxPetOwners()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxPetOwners()));
             break;
         case 35: // MAXFOLLOWERS
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->MaxFollowers()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxFollowers()));
             break;
         case 36: // MAXCONTROLSLOTS
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->MaxControlSlots()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxControlSlots()));
             break;
         case 38: // RANDOMFISHINGTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGRANDOM)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGRANDOM)));
             break;
         case 39: // SPIRITSPEAKTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SPIRITSPEAK)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SPIRITSPEAK)));
             break;
         case 40: // DIRECTORY
         {
@@ -3865,7 +3865,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 50: // AMBIENTSOUNDS
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->WorldAmbientSounds()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->WorldAmbientSounds()));
             break;
         case 51: // AMBIENTFOOTSTEPS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AmbientFootsteps());
@@ -3887,14 +3887,14 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->AccountFlushTimer()));
             break;
         case 57: // HTMLSTATUSENABLED
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->HtmlStatsStatus()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->HtmlStatsStatus()));
             break;
         case 58: // SELLBYNAME
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SellByNameStatus());
             break;
         case 59: // SELLMAXITEMS
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->SellMaxItemsStatus()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->SellMaxItemsStatus()));
             break;
         case 60: // TRADESYSTEM
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TradeSystemStatus());
@@ -3920,28 +3920,28 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 67: // POSTINGLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->MsgBoardPostingLevel()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->MsgBoardPostingLevel()));
             break;
         case 68: // REMOVALLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->MsgBoardPostRemovalLevel()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->MsgBoardPostRemovalLevel()));
             break;
         case 69: // ESCORTENABLED
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->EscortsEnabled());
             break;
         case 70: // ESCORTINITEXPIRE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTWAIT)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTWAIT)));
             break;
         case 71: // ESCORTACTIVEEXPIRE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTACTIVE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTACTIVE)));
             break;
         case 72: // MOON1
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ServerMoon(0)));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerMoon(0)));
             break;
         case 73: // MOON2
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ServerMoon(1)));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerMoon(1)));
             break;
         case 74: // DUNGEONLEVEL
             *rval = INT_TO_JSVAL(
@@ -3957,66 +3957,66 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 77: // BASERANGE
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->TrackingBaseRange()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingBaseRange()));
             break;
         case 78: // BASETIMER
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->TrackingBaseTimer()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingBaseTimer()));
             break;
         case 79: // MAXTARGETS
             *rval =
-                INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->TrackingMaxTargets()));
+                INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->TrackingMaxTargets()));
             break;
         case 80: // MSGREDISPLAYTIME
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->TrackingRedisplayTime()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingRedisplayTime()));
             break;
         case 81: // MURDERDECAYTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MURDERDECAY)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MURDERDECAY)));
             break;
         case 82: // MAXKILLS
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->RepMaxKills()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->RepMaxKills()));
             break;
         case 83: // CRIMINALTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CRIMINAL)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CRIMINAL)));
             break;
         case 84: // MINECHECK
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->MineCheck()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MineCheck()));
             break;
         case 85: // OREPERAREA
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ResOre()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ResOre()));
             break;
         case 86: // ORERESPAWNTIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ResOreTime()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ResOreTime()));
             break;
         case 87: // RESOURCEAREASIZE
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ResourceAreaSize()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ResourceAreaSize()));
             break;
         case 88: // LOGSPERAREA
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ResLogs()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ResLogs()));
             break;
         case 89: // LOGSRESPAWNTIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ResLogTime()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ResLogTime()));
             break;
         case 90: // STATSAFFECTSKILLCHECKS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->StatsAffectSkillChecks());
             break;
         case 91: // HUNGERRATE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE)));
             break;
         case 92: // HUNGERDMGVAL
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->HungerDamage()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->HungerDamage()));
             break;
         case 93: // MAXRANGE
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->CombatMaxRange()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatMaxRange()));
             break;
         case 94: // SPELLMAXRANGE
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->CombatMaxSpellRange()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatMaxSpellRange()));
             break;
         case 95: // DISPLAYHITMSG
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatDisplayHitMessage());
@@ -4026,99 +4026,99 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 97: // ANIMALATTACKCHANCE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
             break;
         case 98: // ANIMALSGUARDED
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatAnimalsGuarded());
             break;
         case 99: // NPCDAMAGERATE
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->CombatNpcDamageRate()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatNpcDamageRate()));
             break;
         case 100: // NPCBASEFLEEAT
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->CombatNPCBaseFleeAt()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatNPCBaseFleeAt()));
             break;
         case 101: // NPCBASEREATTACKAT
             *rval = INT_TO_JSVAL(
-                static_cast<SI16>(cwmWorldState->ServerData()->CombatNPCBaseReattackAt()));
+                static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatNPCBaseReattackAt()));
             break;
         case 102: // ATTACKSTAMINA
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->CombatAttackStamina()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatAttackStamina()));
             break;
         // case 103:	 // LOCATION
         // break;
         case 104: // STARTGOLD
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ServerStartGold()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerStartGold()));
             break;
         case 105: // STARTPRIVS
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ServerStartPrivs()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerStartPrivs()));
             break;
         case 106: // ESCORTDONEEXPIRE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTDONE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTDONE)));
             break;
         case 107: // DARKLEVEL
             *rval = INT_TO_JSVAL(
                 static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightDarkLevel()));
             break;
         case 108: // TITLECOLOUR
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->TitleColour()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TitleColour()));
             break;
         case 109: // LEFTTEXTCOLOUR
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->LeftTextColour()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->LeftTextColour()));
             break;
         case 110: // RIGHTTEXTCOLOUR
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->RightTextColour()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->RightTextColour()));
             break;
         case 111: // BUTTONCANCEL
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ButtonCancel()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonCancel()));
             break;
         case 112: // BUTTONLEFT
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ButtonLeft()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonLeft()));
             break;
         case 113: // BUTTONRIGHT
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ButtonRight()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonRight()));
             break;
         case 114: // BACKGROUNDPIC
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->BackgroundPic()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->BackgroundPic()));
             break;
         case 115: // POLLTIME
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->TownNumSecsPollOpen()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->TownNumSecsPollOpen()));
             break;
         case 116: // MAYORTIME
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->TownNumSecsAsMayor()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->TownNumSecsAsMayor()));
             break;
         case 117: // TAXPERIOD
-            *rval = INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->TownTaxPeriod()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->TownTaxPeriod()));
             break;
         case 118: // GUARDSPAID
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->TownGuardPayment()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->TownGuardPayment()));
             break;
         case 119: // DAY
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ServerTimeDay()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerTimeDay()));
             break;
         case 120: // HOURS
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeHours()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeHours()));
             break;
         case 121: // MINUTES
             *rval =
-                INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeMinutes()));
+                INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeMinutes()));
             break;
         case 122: // SECONDS
             *rval =
-                INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->ServerTimeSeconds()));
+                INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeSeconds()));
             break;
         case 123: // AMPM
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerTimeAMPM());
             break;
         case 124: // SKILLLEVEL
-            *rval = INT_TO_JSVAL(static_cast<UI08>(cwmWorldState->ServerData()->SkillLevel()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->SkillLevel()));
             break;
         case 125: // SNOOPISCRIME
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SnoopIsCrime());
@@ -4131,7 +4131,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         // case 127:	 // SERVERLIST
         // break;
         case 128: // PORT
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ServerPort()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerPort()));
             break;
         case 129: // ACCESSDIRECTORY
             tString =
@@ -4160,40 +4160,40 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = STRING_TO_JSVAL(tString);
             break;
         case 136: // BACKUPSAVERATIO
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->BackupRatio()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->BackupRatio()));
             break;
         case 137: // HIDEWHILEMOUNTED
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CharHideWhileMounted());
             break;
         case 138: // SECONDSPERUOMINUTE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->ServerSecondsPerUOMinute()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSecondsPerUOMinute()));
             break;
         case 139: // WEIGHTPERSTR
             *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->WeightPerStr()));
             break;
         case 140: // POLYDURATION
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POLYMORPH)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POLYMORPH)));
             break;
         case 141: // UOGENABLED
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerUOGEnabled());
             break;
         case 142: // NETRCVTIMEOUT
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->ServerNetRcvTimeout()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout()));
             break;
         case 143: // NETSNDTIMEOUT
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->ServerNetSndTimeout()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetSndTimeout()));
             break;
         case 144: // NETRETRYCOUNT
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->ServerNetRetryCount()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRetryCount()));
             break;
         case 145: // CLIENTFEATURES
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->GetClientFeatures()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetClientFeatures()));
             break;
         case 146: // PACKETOVERLOADS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerOverloadPackets());
@@ -4206,10 +4206,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 149: // PETOFFLINETIMEOUT
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->PetOfflineTimeout()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->PetOfflineTimeout()));
             break;
         case 150: // PETOFFLINECHECKTIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
                 static_cast<cSD_TID>(tSERVER_PETOFFLINECHECK))));
             break;
         case 152: // ADVANCEDPATHFINDING
@@ -4245,7 +4245,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 162: // SPAWNREGIONSFACETS
             *rval = INT_TO_JSVAL(
-                static_cast<UI32>(cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus()));
+                static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus()));
             break;
         case 163: // PAPERDOLLGUILDBUTTON
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PaperdollGuildButton());
@@ -4300,27 +4300,27 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 184: // WEAPONDAMAGECHANCE
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageChance()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatWeaponDamageChance()));
             break;
         case 185: // ARMORDAMAGECHANCE
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageChance()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatArmorDamageChance()));
             break;
         case 186: // WEAPONDAMAGEMIN
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageMin()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatWeaponDamageMin()));
             break;
         case 187: // WEAPONDAMAGEMAX
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatWeaponDamageMax()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatWeaponDamageMax()));
             break;
         case 188: // ARMORDAMAGEMIN
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageMin()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatArmorDamageMin()));
             break;
         case 189: // ARMORDAMAGEMAX
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatArmorDamageMax()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatArmorDamageMax()));
             break;
         case 190: // GLOBALATTACKSPEED
             *rval =
@@ -4332,7 +4332,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 192: // FISHINGSTAMINALOSS
             *rval =
-                INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->FishingStaminaLoss()));
+                INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->FishingStaminaLoss()));
             break;
         case 193: // RANDOMSTARTINGLOCATION
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerRandomStartingLocation());
@@ -4435,7 +4435,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetClassicUOMapTracker());
             break;
         case 219: // DECAYTIMERINHOUSE
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
                 static_cast<cSD_TID>(tSERVER_DECAYINHOUSE))));
             break;
         case 220: // PROTECTPRIVATEHOUSES
@@ -4446,11 +4446,11 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 222: // MAXHOUSESOWNABLE
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->MaxHousesOwnable()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxHousesOwnable()));
             break;
         case 223: // MAXHOUSESCOOWNABLE
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->MaxHousesCoOwnable()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxHousesCoOwnable()));
             break;
         case 224: // CANOWNANDCOOWNHOUSES
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CanOwnAndCoOwnHouses());
@@ -4463,11 +4463,11 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 227: // MAXPLAYERPACKITEMS
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerPackItems()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxPlayerPackItems()));
             break;
         case 228: // MAXPLAYERBANKITEMS
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
             break;
         case 229: // FORCENEWANIMATIONPACKET
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ForceNewAnimationPacket());
@@ -4558,15 +4558,15 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         }
         case 240: // PARRYDAMAGECHANCE
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatParryDamageChance()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatParryDamageChance()));
             break;
         case 241: // PARRYDAMAGEMIN
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->CombatParryDamageMin()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMin()));
             break;
         case 242: // PARRYDAMAGEMAX
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->CombatParryDamageMax()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMax()));
             break;
         case 243: // ARMORCLASSDAMAGEBONUS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatArmorClassDamageBonus());
@@ -4579,18 +4579,18 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 246: // ALCHEMYBONUSMODIFIER
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
             break;
         case 247: // NPCFLAGUPDATETIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
                 static_cast<cSD_TID>(tSERVER_NPCFLAGUPDATETIMER))));
             break;
         case 248: // JSENGINESIZE
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->GetJSEngineSize()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetJSEngineSize()));
             break;
         case 249: // USEUNICODEMESSAGES
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->UseUnicodeMessages()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->UseUnicodeMessages()));
             break;
         case 250: // SCRIPTDATADIRECTORY
         {
@@ -4600,29 +4600,29 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         }
         case 251: // THIRSTRATE
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
                 static_cast<cSD_TID>(tSERVER_THIRSTRATE))));
             break;
         case 252: // THIRSTDRAINVAL
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ThirstDrain()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ThirstDrain()));
             break;
         case 253: // PETTHIRSTOFFLINE
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PetThirstOffline());
             break;
         case 255: // BLOODDECAYTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY)));
             break;
         case 256: // BLOODDECAYCORPSETIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(
                 cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAYCORPSE)));
             break;
         case 257: // BLOODEFFECTCHANCE
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->CombatBloodEffectChance()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatBloodEffectChance()));
             break;
         case 258: // NPCCORPSEDECAYTIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(
                 cwmWorldState->ServerData()->SystemTimer(tSERVER_NPCCORPSEDECAY)));
             break;
         case 259: // HUNGERENABLED
@@ -4647,7 +4647,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TravelSpellsWhileAggressor());
             break;
         case 266: // BANKBUYTHRESHOLD
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->BuyThreshold()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->BuyThreshold()));
             break;
         case 267: // NETWORKLOG
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerNetworkLog());
@@ -4671,41 +4671,41 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerContextMenus());
             break;
         case 273: // SERVERLANGUAGE
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ServerLanguage()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerLanguage()));
             break;
         case 274: // CHECKPETCONTROLDIFFICULTY
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CheckPetControlDifficulty());
             break;
         case 275: // PETLOYALTYGAINONSUCCESS
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess()));
             break;
         case 276: // PETLOYALTYLOSSONFAILURE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure()));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure()));
             break;
         case 277: // PETLOYALTYRATE
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE)));
             break;
         case 278: // SHOWNPCTITLESINTOOLTIPS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowNpcTitlesInTooltips());
             break;
         case 279: // FISHPERAREA
-            *rval = INT_TO_JSVAL(static_cast<SI16>(cwmWorldState->ServerData()->ResFish()));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ResFish()));
             break;
         case 280: // FISHRESPAWNTIMER
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->ResFishTime()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ResFishTime()));
             break;
         case 281: // ARCHERYHITBONUS
             *rval = INT_TO_JSVAL(
-                static_cast<SI16>(cwmWorldState->ServerData()->CombatArcheryHitBonus()));
+                static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatArcheryHitBonus()));
             break;
         case 282: // ITEMSINTERRUPTCASTING
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ItemsInterruptCasting());
             break;
         case 283: // SYSMESSAGECOLOUR
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->SysMsgColour()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SysMsgColour()));
             break;
         case 284: // AF_AUTOBANDAGE
             *rval = BOOLEAN_TO_JSVAL(
@@ -4737,15 +4737,15 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 291: // MAXCLIENTBYTESIN
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->MaxClientBytesIn()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->MaxClientBytesIn()));
             break;
         case 292: // MAXCLIENTBYTESOUT
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->MaxClientBytesOut()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->MaxClientBytesOut()));
             break;
         case 293: // NETTRAFFICTIMEBAN
             *rval =
-                INT_TO_JSVAL(static_cast<UI32>(cwmWorldState->ServerData()->NetTrafficTimeban()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->NetTrafficTimeban()));
             break;
         case 294: // TOOLUSELIMIT
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ToolUseLimit());
@@ -4764,7 +4764,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 299: // MAXSAFETELEPORTSPERDAY
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->MaxSafeTeleportsPerDay()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxSafeTeleportsPerDay()));
             break;
         case 300: // TELEPORTONEARESTSAFELOCATION
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TeleportToNearestSafeLocation());
@@ -4844,11 +4844,11 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 319: // MAXPLAYERPACKWEIGHT
             *rval =
-                INT_TO_JSVAL(static_cast<SI32>(cwmWorldState->ServerData()->MaxPlayerPackWeight()));
+                INT_TO_JSVAL(static_cast<std::int32_t>(cwmWorldState->ServerData()->MaxPlayerPackWeight()));
             break;
         case 320: // MAXPLAYERBANKWEIGHT
             *rval =
-                INT_TO_JSVAL(static_cast<SI32>(cwmWorldState->ServerData()->MaxPlayerBankWeight()));
+                INT_TO_JSVAL(static_cast<std::int32_t>(cwmWorldState->ServerData()->MaxPlayerBankWeight()));
             break;
         case 321: // SAFECOOWNERLOGOUT
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SafeCoOwnerLogout());
@@ -4873,7 +4873,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 328: // WEAPONDAMAGEBONUSTYPE
             *rval = INT_TO_JSVAL(
-                static_cast<UI08>(cwmWorldState->ServerData()->WeaponDamageBonusType()));
+                static_cast<std::uint8_t>(cwmWorldState->ServerData()->WeaponDamageBonusType()));
             break;
         case 329: // OFFERBODSFROMITEMSALES
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->OfferBODsFromItemSales());
@@ -4900,32 +4900,32 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 336: // AGGRESSORFLAGTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_AGGRESSORFLAG)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_AGGRESSORFLAG)));
             break;
         case 337: // PERMAGREYFLAGTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_PERMAGREYFLAG)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_PERMAGREYFLAG)));
             break;
         case 338: // STEALINGFLAGTIMER
             *rval = INT_TO_JSVAL(
-                static_cast<UI16>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STEALINGFLAG)));
+                static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STEALINGFLAG)));
             break;
         case 339: // SNOOPAWARENESS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SnoopAwareness());
             break;
         case 340: // APSPERFTHRESHOLD
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->APSPerfThreshold()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSPerfThreshold()));
             break;
         case 341: // APSINTERVAL
             *rval =
-                INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->APSPerfThreshold()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSPerfThreshold()));
             break;
         case 342: // APSDELAYSTEP
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->APSDelayStep()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSDelayStep()));
             break;
         case 343: // APSDELAYMAXCAP
-            *rval = INT_TO_JSVAL(static_cast<UI16>(cwmWorldState->ServerData()->APSDelayMaxCap()));
+            *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSDelayMaxCap()));
             break;
         case 344: // YOUNGPLAYERSYSTEM
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->YoungPlayerSystem());
@@ -5091,22 +5091,22 @@ JSBool SE_DistanceBetween(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         }
     }
     else {
-        UI16 x1 = static_cast<UI16>(JSVAL_TO_INT(argv[0]));
-        UI16 y1 = static_cast<UI16>(JSVAL_TO_INT(argv[1]));
-        UI16 x2 = 0;
-        UI16 y2 = 0;
+        std::uint16_t x1 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
+        std::uint16_t y1 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
+        std::uint16_t x2 = 0;
+        std::uint16_t y2 = 0;
         if (argc == 4) {
             // 4 arguments - find distance in 2D
-            x2 = static_cast<UI16>(JSVAL_TO_INT(argv[2]));
-            y2 = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
+            x2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
+            y2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
             *rval = INT_TO_JSVAL(GetDist(Point3_st(x1, y1, 0), Point3_st(x2, y2, 0)));
         }
         else {
             // 6 arguments - find distance in 3D
-            SI08 z1 = static_cast<SI08>(JSVAL_TO_INT(argv[2]));
-            x2 = static_cast<UI16>(JSVAL_TO_INT(argv[3]));
-            y2 = static_cast<UI16>(JSVAL_TO_INT(argv[4]));
-            SI08 z2 = static_cast<SI08>(JSVAL_TO_INT(argv[5]));
+            std::int8_t z1 = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
+            x2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
+            y2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
+            std::int8_t z2 = static_cast<std::int8_t>(JSVAL_TO_INT(argv[5]));
             *rval = INT_TO_JSVAL(GetDist3D(Point3_st(x1, y1, z1), Point3_st(x2, y2, z2)));
         }
     }

@@ -20,20 +20,20 @@
 using namespace std::string_literals;
 
 const TIMERVAL DEFSPAWN_NEXTTIME = 0;
-const UI16 DEFSPAWN_CALL = 1;
-const SI16 DEFSPAWN_X1 = 0;
-const SI16 DEFSPAWN_X2 = 0;
-const SI16 DEFSPAWN_Y1 = 0;
-const SI16 DEFSPAWN_Y2 = 0;
+const std::uint16_t DEFSPAWN_CALL = 1;
+const std::int16_t DEFSPAWN_X1 = 0;
+const std::int16_t DEFSPAWN_X2 = 0;
+const std::int16_t DEFSPAWN_Y1 = 0;
+const std::int16_t DEFSPAWN_Y2 = 0;
 const size_t DEFSPAWN_MAXCSPAWN = 0;
 const size_t DEFSPAWN_MAXISPAWN = 0;
-const UI08 DEFSPAWN_MAXTIME = 0;
-const UI08 DEFSPAWN_MINTIME = 0;
-const SI32 DEFSPAWN_CURCSPAWN = 0;
-const SI32 DEFSPAWN_CURISPAWN = 0;
-const UI08 DEFSPAWN_WORLDNUM = 0;
-const SI08 DEFSPAWN_PREFZ = 18;
-const SI08 DEFSPAWN_DEFZ = ILLEGAL_Z;
+const std::uint8_t DEFSPAWN_MAXTIME = 0;
+const std::uint8_t DEFSPAWN_MINTIME = 0;
+const std::int32_t DEFSPAWN_CURCSPAWN = 0;
+const std::int32_t DEFSPAWN_CURISPAWN = 0;
+const std::uint8_t DEFSPAWN_WORLDNUM = 0;
+const std::int8_t DEFSPAWN_PREFZ = 18;
+const std::int8_t DEFSPAWN_DEFZ = ILLEGAL_Z;
 const bool DEFSPAWN_ONLYOUTSIDE = false;
 const bool DEFSPAWN_ISSPAWNER = false;
 
@@ -42,7 +42,7 @@ const bool DEFSPAWN_ISSPAWNER = false;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for CSpawnRegion class
 // o------------------------------------------------------------------------------------------------o
-CSpawnRegion::CSpawnRegion(UI16 spawnregion)
+CSpawnRegion::CSpawnRegion(std::uint16_t spawnregion)
     : regionNum(spawnregion), maxCharSpawn(DEFSPAWN_MAXCSPAWN), maxItemSpawn(DEFSPAWN_MAXISPAWN),
       curCharSpawn(DEFSPAWN_CURCSPAWN), curItemSpawn(DEFSPAWN_CURISPAWN), minTime(DEFSPAWN_MINTIME),
       maxTime(DEFSPAWN_MAXTIME), nextTime(DEFSPAWN_NEXTTIME), x1(DEFSPAWN_X1), x2(DEFSPAWN_X2),
@@ -107,7 +107,7 @@ void CSpawnRegion::SetMaxItemSpawn(size_t newVal) { maxItemSpawn = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Current amount of objects spawned
 // o------------------------------------------------------------------------------------------------o
-SI32 CSpawnRegion::GetCurrent(void) const { return (curCharSpawn + curItemSpawn); }
+std::int32_t CSpawnRegion::GetCurrent(void) const { return (curCharSpawn + curItemSpawn); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetCurrentCharAmt()
@@ -115,8 +115,8 @@ SI32 CSpawnRegion::GetCurrent(void) const { return (curCharSpawn + curItemSpawn)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current amount of characters spawned
 // o------------------------------------------------------------------------------------------------o
-SI32 CSpawnRegion::GetCurrentCharAmt(void) const { return curCharSpawn; }
-void CSpawnRegion::IncCurrentCharAmt(SI16 incAmt) { curCharSpawn += incAmt; }
+std::int32_t CSpawnRegion::GetCurrentCharAmt(void) const { return curCharSpawn; }
+void CSpawnRegion::IncCurrentCharAmt(std::int16_t incAmt) { curCharSpawn += incAmt; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetCurrentItemAmt()
@@ -124,8 +124,8 @@ void CSpawnRegion::IncCurrentCharAmt(SI16 incAmt) { curCharSpawn += incAmt; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current amount of items spawned
 // o------------------------------------------------------------------------------------------------o
-SI32 CSpawnRegion::GetCurrentItemAmt(void) const { return curItemSpawn; }
-void CSpawnRegion::IncCurrentItemAmt(SI16 incAmt) { curItemSpawn += incAmt; }
+std::int32_t CSpawnRegion::GetCurrentItemAmt(void) const { return curItemSpawn; }
+void CSpawnRegion::IncCurrentItemAmt(std::int16_t incAmt) { curItemSpawn += incAmt; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetRegionNum()
@@ -133,8 +133,8 @@ void CSpawnRegion::IncCurrentItemAmt(SI16 incAmt) { curItemSpawn += incAmt; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets spawn region number
 // o------------------------------------------------------------------------------------------------o
-UI16 CSpawnRegion::GetRegionNum(void) const { return regionNum; }
-void CSpawnRegion::SetRegionNum(UI16 newVal) { regionNum = newVal; }
+std::uint16_t CSpawnRegion::GetRegionNum(void) const { return regionNum; }
+void CSpawnRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetMinTime()
@@ -143,8 +143,8 @@ void CSpawnRegion::SetRegionNum(UI16 newVal) { regionNum = newVal; }
 //|	Purpose		-	Gets/Sets minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 // o------------------------------------------------------------------------------------------------o
-UI08 CSpawnRegion::GetMinTime(void) const { return minTime; }
-void CSpawnRegion::SetMinTime(UI08 newVal) { minTime = newVal; }
+std::uint8_t CSpawnRegion::GetMinTime(void) const { return minTime; }
+void CSpawnRegion::SetMinTime(std::uint8_t newVal) { minTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetMaxTime()
@@ -153,8 +153,8 @@ void CSpawnRegion::SetMinTime(UI08 newVal) { minTime = newVal; }
 //|	Purpose		-	Gets/Sets maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 // o------------------------------------------------------------------------------------------------o
-UI08 CSpawnRegion::GetMaxTime(void) const { return maxTime; }
-void CSpawnRegion::SetMaxTime(UI08 newVal) { maxTime = newVal; }
+std::uint8_t CSpawnRegion::GetMaxTime(void) const { return maxTime; }
+void CSpawnRegion::SetMaxTime(std::uint8_t newVal) { maxTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetNextTime()
@@ -172,8 +172,8 @@ void CSpawnRegion::SetNextTime(TIMERVAL newVal) { nextTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Z Level of the Spawn Region
 // o------------------------------------------------------------------------------------------------o
-void CSpawnRegion::SetPrefZ(SI08 newVal) { prefZ = newVal; }
-SI08 CSpawnRegion::GetPrefZ(void) const { return prefZ; }
+void CSpawnRegion::SetPrefZ(std::int8_t newVal) { prefZ = newVal; }
+std::int8_t CSpawnRegion::GetPrefZ(void) const { return prefZ; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::SetDefZ()
@@ -183,8 +183,8 @@ SI08 CSpawnRegion::GetPrefZ(void) const { return prefZ; }
 //|	Purpose		-	Gets/Sets definitive Z Level of the Spawn Region at which to attempt
 // spawning objects
 // o------------------------------------------------------------------------------------------------o
-void CSpawnRegion::SetDefZ(SI08 newVal) { defZ = newVal; }
-SI08 CSpawnRegion::GetDefZ(void) const { return defZ; }
+void CSpawnRegion::SetDefZ(std::int8_t newVal) { defZ = newVal; }
+std::int8_t CSpawnRegion::GetDefZ(void) const { return defZ; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetY1()
@@ -192,8 +192,8 @@ SI08 CSpawnRegion::GetDefZ(void) const { return defZ; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the y pos of the top corner of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-SI16 CSpawnRegion::GetY1(void) const { return y1; }
-void CSpawnRegion::SetY1(SI16 newVal) { y1 = newVal; }
+std::int16_t CSpawnRegion::GetY1(void) const { return y1; }
+void CSpawnRegion::SetY1(std::int16_t newVal) { y1 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetX1()
@@ -201,8 +201,8 @@ void CSpawnRegion::SetY1(SI16 newVal) { y1 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the x pos of the top corner of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-SI16 CSpawnRegion::GetX1(void) const { return x1; }
-void CSpawnRegion::SetX1(SI16 newVal) { x1 = newVal; }
+std::int16_t CSpawnRegion::GetX1(void) const { return x1; }
+void CSpawnRegion::SetX1(std::int16_t newVal) { x1 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetY2()
@@ -210,8 +210,8 @@ void CSpawnRegion::SetX1(SI16 newVal) { x1 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the y pos of the bottom corner of the spawn region
 // o------------------------------------------------------------------------------------------------o
-SI16 CSpawnRegion::GetY2(void) const { return y2; }
-void CSpawnRegion::SetY2(SI16 newVal) { y2 = newVal; }
+std::int16_t CSpawnRegion::GetY2(void) const { return y2; }
+void CSpawnRegion::SetY2(std::int16_t newVal) { y2 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetX2()
@@ -219,8 +219,8 @@ void CSpawnRegion::SetY2(SI16 newVal) { y2 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the x pos of the bottom corner of the spawn region
 // o------------------------------------------------------------------------------------------------o
-SI16 CSpawnRegion::GetX2(void) const { return x2; }
-void CSpawnRegion::SetX2(SI16 newVal) { x2 = newVal; }
+std::int16_t CSpawnRegion::GetX2(void) const { return x2; }
+void CSpawnRegion::SetX2(std::int16_t newVal) { x2 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::WorldNumber()
@@ -228,8 +228,8 @@ void CSpawnRegion::SetX2(SI16 newVal) { x2 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the world number of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-UI08 CSpawnRegion::WorldNumber(void) const { return worldNumber; }
-void CSpawnRegion::WorldNumber(UI08 newVal) { worldNumber = newVal; }
+std::uint8_t CSpawnRegion::WorldNumber(void) const { return worldNumber; }
+void CSpawnRegion::WorldNumber(std::uint8_t newVal) { worldNumber = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetInstanceId()
@@ -237,8 +237,8 @@ void CSpawnRegion::WorldNumber(UI08 newVal) { worldNumber = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the instanceId of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CSpawnRegion::GetInstanceId(void) const { return instanceId; }
-void CSpawnRegion::SetInstanceId(UI16 newVal) { instanceId = newVal; }
+std::uint16_t CSpawnRegion::GetInstanceId(void) const { return instanceId; }
+void CSpawnRegion::SetInstanceId(std::uint16_t newVal) { instanceId = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetOnlyOutside()
@@ -264,8 +264,8 @@ void CSpawnRegion::IsSpawner(bool newVal) { isSpawner = newVal; }
 //|	Purpose		-	Gets/Sets number of objects that should be spawned in each call for
 // a spawnregion
 // o------------------------------------------------------------------------------------------------o
-UI16 CSpawnRegion::GetCall(void) const { return call; }
-void CSpawnRegion::SetCall(UI16 newVal) { call = newVal; }
+std::uint16_t CSpawnRegion::GetCall(void) const { return call; }
+void CSpawnRegion::SetCall(std::uint16_t newVal) { call = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetNPC()
@@ -432,70 +432,70 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
                 sItems.push_back(data);
             }
             else if (UTag == "ISSPAWNER") {
-                isSpawner = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+                isSpawner = (static_cast<std::int8_t>(std::stoi(data, nullptr, 0)) == 1);
             }
             else if (UTag == "MAXITEMS") {
-                maxItemSpawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+                maxItemSpawn = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "MAXNPCS") {
-                maxCharSpawn = static_cast<UI32>(std::stoul(data, nullptr, 0));
+                maxCharSpawn = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "X1") {
-                x1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                x1 = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "X2") {
-                x2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                x2 = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "Y1") {
-                y1 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                y1 = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "Y2") {
-                y2 = static_cast<SI16>(std::stoi(data, nullptr, 0));
+                y2 = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "MINTIME") {
-                minTime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                minTime = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "MAXTIME") {
-                maxTime = static_cast<UI08>(std::stoul(data, nullptr, 0));
+                maxTime = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "NAME") {
                 name = data;
             }
             else if (UTag == "CALL") {
-                call = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                call = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "WORLD") {
-                worldNumber = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                worldNumber = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "INSTANCEID") {
-                instanceId = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                instanceId = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
             }
             else if (UTag == "DEFZ") {
-                defZ = static_cast<SI08>(std::stoi(data, nullptr, 0));
+                defZ = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "PREFZ") {
-                prefZ = static_cast<SI08>(std::stoi(data, nullptr, 0));
+                prefZ = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
             }
             else if (UTag == "ONLYOUTSIDE") {
-                onlyOutside = (static_cast<SI08>(std::stoi(data, nullptr, 0)) == 1);
+                onlyOutside = (static_cast<std::int8_t>(std::stoi(data, nullptr, 0)) == 1);
             }
             else if (UTag == "VALIDLANDPOS") {
                 data = util::simplify(data);
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
                     validLandPos.push_back(Point3_st(
-                        static_cast<UI16>(
+                        static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
-                        static_cast<UI16>(
+                        static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                        static_cast<UI08>(
+                        static_cast<std::uint8_t>(
                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
-                    validLandPosCheck[static_cast<UI16>(std::stoul(
+                    validLandPosCheck[static_cast<std::uint16_t>(std::stoul(
                                           util::trim(util::strip(csecs[1], "//")), nullptr, 0)) +
-                                      (static_cast<UI16>(std::stoul(
+                                      (static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(csecs[0], "//")), nullptr, 0))
                                        << 16)] =
-                        static_cast<UI08>(
+                        static_cast<std::uint8_t>(
                             std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                 }
             }
@@ -504,18 +504,18 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
                     validWaterPos.push_back(Point3_st(
-                        static_cast<UI16>(
+                        static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
-                        static_cast<UI16>(
+                        static_cast<std::uint16_t>(
                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                        static_cast<UI08>(
+                        static_cast<std::uint8_t>(
                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
-                    validWaterPosCheck[static_cast<UI16>(std::stoul(
+                    validWaterPosCheck[static_cast<std::uint16_t>(std::stoul(
                                            util::trim(util::strip(csecs[1], "//")), nullptr, 0)) +
-                                       (static_cast<UI16>(std::stoul(
+                                       (static_cast<std::uint16_t>(std::stoul(
                                             util::trim(util::strip(csecs[0], "//")), nullptr, 0))
                                         << 16)] =
-                        static_cast<UI08>(
+                        static_cast<std::uint8_t>(
                             std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                 }
             }
@@ -528,9 +528,9 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do spawn stuff for spawnregion
 // o------------------------------------------------------------------------------------------------o
-void CSpawnRegion::DoRegionSpawn(UI32 &itemsSpawned, UI32 &npcsSpawned) {
+void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned) {
     // Only perform the region spawn if the spawn region in question is active
-    if (!cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(static_cast<UI32>(WorldNumber())))
+    if (!cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
         return;
 
     if (sNpcs.empty()) {
@@ -545,10 +545,10 @@ void CSpawnRegion::DoRegionSpawn(UI32 &itemsSpawned, UI32 &npcsSpawned) {
     if (shouldSpawnChars || shouldSpawnItems) {
         CChar *spawnChar = nullptr;
         CItem *spawnItem = nullptr;
-        const UI08 spawnChars = (shouldSpawnChars ? 0 : 50);
-        const UI08 spawnItems = (shouldSpawnItems ? 100 : 49);
-        for (UI16 i = 0; i < call && (shouldSpawnItems || shouldSpawnChars); ++i) {
-            if (RandomNum(static_cast<UI16>(spawnChars), static_cast<UI16>(spawnItems)) > 49) {
+        const std::uint8_t spawnChars = (shouldSpawnChars ? 0 : 50);
+        const std::uint8_t spawnItems = (shouldSpawnItems ? 100 : 49);
+        for (std::uint16_t i = 0; i < call && (shouldSpawnItems || shouldSpawnChars); ++i) {
+            if (RandomNum(static_cast<std::uint16_t>(spawnChars), static_cast<std::uint16_t>(spawnItems)) > 49) {
                 if (shouldSpawnItems) {
                     spawnItem = RegionSpawnItem();
                     if (ValidateObject(spawnItem)) {
@@ -572,7 +572,7 @@ void CSpawnRegion::DoRegionSpawn(UI32 &itemsSpawned, UI32 &npcsSpawned) {
     }
 
     SetNextTime(BuildTimeValue(static_cast<R32>(
-        RandomNum(static_cast<UI16>(GetMinTime() * 60), static_cast<UI16>(GetMaxTime() * 60)))));
+        RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -582,15 +582,15 @@ void CSpawnRegion::DoRegionSpawn(UI32 &itemsSpawned, UI32 &npcsSpawned) {
 // o------------------------------------------------------------------------------------------------o
 auto CSpawnRegion::RegionSpawnChar() -> CChar * {
     // Stuff each NPC entry into a vector
-    std::vector<std::pair<std::string, UI16>> npcListVector;
+    std::vector<std::pair<std::string, std::uint16_t>> npcListVector;
     for (size_t i = 0; i < sNpcs.size(); i++) {
         // Split string for entry into a stringlist based on | as separator
         auto csecs = oldstrutil::sections(util::trim(util::strip(sNpcs[i], "//")), "|");
 
-        UI16 sectionWeight = 1;
+        std::uint16_t sectionWeight = 1;
         if (csecs.size() > 1) {
             sectionWeight =
-                static_cast<UI16>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
         }
 
         auto npcSection = (csecs.size() > 1 ? csecs[1] : csecs[0]);
@@ -612,14 +612,14 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar * {
         return nullptr;
 
     std::string cdata;
-    SI32 ndata = -1, odata = -1;
-    UI16 npcId = 0;
+    std::int32_t ndata = -1, odata = -1;
+    std::uint16_t npcId = 0;
 
     for (DFNTAGS tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag()) {
         cdata = npcCreate->GrabData(ndata, odata);
         switch (tag) {
         case DFNTAG_ID:
-            npcId = util::ston<UI16>(cdata); // static_cast<UI16>( ndata );
+            npcId = util::ston<std::uint16_t>(cdata); // static_cast<std::uint16_t>( ndata );
             goto foundNpcId;
         default:
             break;
@@ -634,8 +634,8 @@ foundNpcId:
         amphiCreature = cwmWorldState->creatures[npcId].IsAmphibian();
     }
 
-    SI16 x, y;
-    SI08 z;
+    std::int16_t x, y;
+    std::int8_t z;
     if (FindCharSpotToSpawn(x, y, z, waterCreature, amphiCreature)) {
         CChar *CSpawn = nullptr;
         CSpawn = Npcs->CreateBaseNPC(ourNPC, false);
@@ -650,7 +650,7 @@ foundNpcId:
             CSpawn->SetLocation(x, y, z, worldNumber, instanceId);
             CSpawn->SetSpawned(true);
             CSpawn->ShouldSave(false);
-            CSpawn->SetSpawn(static_cast<UI32>(regionNum));
+            CSpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));
             Npcs->PostSpawnUpdate(CSpawn);
             IncCurrentCharAmt();
             return CSpawn;
@@ -670,8 +670,8 @@ foundNpcId:
 // o------------------------------------------------------------------------------------------------o
 auto CSpawnRegion::RegionSpawnItem() -> CItem * {
     CItem *ISpawn = nullptr;
-    SI16 x, y;
-    SI08 z;
+    std::int16_t x, y;
+    std::int8_t z;
     if (FindItemSpotToSpawn(x, y, z)) {
         auto objType = OT_ITEM;
         if (isSpawner) {
@@ -683,7 +683,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
             instanceId, objType, 0xFFFF, false);
         if (ISpawn != nullptr) {
             ISpawn->SetLocation(x, y, z);
-            ISpawn->SetSpawn(static_cast<UI32>(regionNum));
+            ISpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));
             ISpawn->SetSpawned(true);
             ISpawn->ShouldSave(false);
             IncCurrentItemAmt();
@@ -697,17 +697,17 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCreature,
+bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z, bool &waterCreature,
                                        bool &amphiCreature) {
     bool rValue = false;
     Point3_st currLoc;
-    std::map<UI32, SI08>::const_iterator checkValid;
-    SI08 z2 = ILLEGAL_Z;
+    std::map<std::uint32_t, std::int8_t>::const_iterator checkValid;
+    std::int8_t z2 = ILLEGAL_Z;
     const size_t landPosSize = validLandPos.size();
     const size_t waterPosSize = validWaterPos.size();
 
     // By default, let's attempt - at most - this many times to find a valid spawn point for the NPC
-    UI08 maxSpawnAttempts = 100;
+    std::uint8_t maxSpawnAttempts = 100;
 
     // However, if we have found some valid spawn points already, reduce the amount of attempts to
     // find MORE valid spawn points, and increase the chance of using those valid spots instead!
@@ -720,10 +720,10 @@ bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCre
     else if ((waterCreature || amphiCreature) && waterPosSize > 0) // water or amphibian creature
     {
         maxSpawnAttempts =
-            std::max(static_cast<SI16>(25), static_cast<SI16>(maxSpawnAttempts - waterPosSize));
+            std::max(static_cast<std::int16_t>(25), static_cast<std::int16_t>(maxSpawnAttempts - waterPosSize));
     }
 
-    for (UI08 a = 0; a < maxSpawnAttempts; ++a) {
+    for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
         z = Map->MapElevation(x, y, worldNumber);
@@ -735,14 +735,14 @@ bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCre
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const SI08 dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
 
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const SI08 staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -812,17 +812,17 @@ bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCre
     // If we haven't found a valid location pick a random location from the stored ones
     if (!rValue && !waterCreature && !validLandPos.empty() && landPosSize > 0) {
         currLoc = validLandPos[RandomNum(static_cast<size_t>(0), (landPosSize - 1))];
-        x = static_cast<SI16>(currLoc.x);
-        y = static_cast<SI16>(currLoc.y);
-        z = static_cast<SI08>(currLoc.z);
+        x = static_cast<std::int16_t>(currLoc.x);
+        y = static_cast<std::int16_t>(currLoc.y);
+        z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
         z2 = Map->MapElevation(x, y, worldNumber);
-        const SI08 dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const SI08 staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -835,17 +835,17 @@ bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCre
     else if (!rValue && (waterCreature || amphiCreature) && !validWaterPos.empty() &&
              waterPosSize > 0) {
         currLoc = validWaterPos[RandomNum(static_cast<size_t>(0), (waterPosSize - 1))];
-        x = static_cast<SI16>(currLoc.x);
-        y = static_cast<SI16>(currLoc.y);
-        z = static_cast<SI08>(currLoc.z);
+        x = static_cast<std::int16_t>(currLoc.x);
+        y = static_cast<std::int16_t>(currLoc.y);
+        z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
         z2 = Map->MapElevation(x, y, worldNumber);
-        const SI08 dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const SI08 staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }
@@ -863,15 +863,15 @@ bool CSpawnRegion::FindCharSpotToSpawn(SI16 &x, SI16 &y, SI08 &z, bool &waterCre
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnRegion::FindItemSpotToSpawn(SI16 &x, SI16 &y, SI08 &z) {
+bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z) {
     bool rValue = false;
     Point3_st currLoc;
-    SI08 z2 = ILLEGAL_Z;
-    std::map<UI32, SI08>::const_iterator checkValid;
+    std::int8_t z2 = ILLEGAL_Z;
+    std::map<std::uint32_t, std::int8_t>::const_iterator checkValid;
     const size_t landPosSize = validLandPos.size();
 
     // By default, let's try - at most - this many times to find a valid spawn point for the item
-    UI08 maxSpawnAttempts = 100;
+    std::uint8_t maxSpawnAttempts = 100;
 
     // However, if we have found some valid spawn points already, reduce the amount of attempts to
     // find MORE valid spawn points, and increase the chance of using those valid spots instead!
@@ -880,7 +880,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(SI16 &x, SI16 &y, SI08 &z) {
                                     static_cast<std::uint8_t>(maxSpawnAttempts - landPosSize));
     }
 
-    for (UI08 a = 0; a < maxSpawnAttempts; ++a) {
+    for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
         x = RandomNum(x1, x2);
         y = RandomNum(y1, y2);
         z = Map->MapElevation(x, y, worldNumber);
@@ -892,14 +892,14 @@ bool CSpawnRegion::FindItemSpotToSpawn(SI16 &x, SI16 &y, SI08 &z) {
         }
         else {
             // No definite Z has been defined, look for valid dynamic Z based on prefZ
-            const SI08 dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+            const std::int8_t dynZ = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
             if (ILLEGAL_Z != dynZ) {
                 z = dynZ;
             }
 
             // Even if we got a valid dynamic Z, there might be a better match with statics, based
             // on prefZ
-            const SI08 staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticZ = Map->StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticZ && staticZ > z) {
                 z = staticZ;
             }
@@ -931,17 +931,17 @@ bool CSpawnRegion::FindItemSpotToSpawn(SI16 &x, SI16 &y, SI08 &z) {
     // If we haven't found a valid location pick a random location from the stored ones
     if (!rValue && !validLandPos.empty() && landPosSize > 0) {
         currLoc = validLandPos[RandomNum(static_cast<size_t>(0), (landPosSize - 1))];
-        x = static_cast<SI16>(currLoc.x);
-        y = static_cast<SI16>(currLoc.y);
-        z = static_cast<SI08>(currLoc.z);
+        x = static_cast<std::int16_t>(currLoc.x);
+        y = static_cast<std::int16_t>(currLoc.y);
+        z = static_cast<std::int8_t>(currLoc.z);
         // Recalculate the z coordinate to see whether something has changed
         z2 = Map->MapElevation(x, y, worldNumber);
-        const SI08 dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
+        const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, prefZ);
         if (ILLEGAL_Z != dynz) {
             z2 = dynz;
         }
         else {
-            const SI08 staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
+            const std::int8_t staticz = Map->StaticTop(x, y, z, worldNumber, prefZ);
             if (ILLEGAL_Z != staticz) {
                 z2 = staticz;
             }

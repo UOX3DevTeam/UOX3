@@ -14,30 +14,30 @@ class CSocket;
 
 // create DFN revisions
 struct ResAmountPair_st {
-    std::vector<UI16> idList;
-    UI08 amountNeeded;
-    UI16 colour;
-    UI32 moreVal;
+    std::vector<std::uint16_t> idList;
+    std::uint8_t amountNeeded;
+    std::uint16_t colour;
+    std::uint32_t moreVal;
     ResAmountPair_st() : amountNeeded(1), colour(0), moreVal(0) { idList.resize(0); }
     ~ResAmountPair_st() { idList.resize(0); }
 };
 
 struct ResSkillReq_st {
-    UI08 skillNumber;
-    UI16 minSkill;
-    UI16 maxSkill;
+    std::uint8_t skillNumber;
+    std::uint16_t minSkill;
+    std::uint16_t maxSkill;
     ResSkillReq_st() : skillNumber(0), minSkill(0), maxSkill(0) {}
 };
 
 struct CreateEntry_st {
-    UI16 colour;
-    UI16 targId;
-    UI16 soundPlayed;
-    UI08 minRank;
-    UI08 maxRank;
+    std::uint16_t colour;
+    std::uint16_t targId;
+    std::uint16_t soundPlayed;
+    std::uint8_t minRank;
+    std::uint8_t maxRank;
     std::string addItem;
-    SI16 delay;
-    UI16 spell;
+    std::int16_t delay;
+    std::uint16_t spell;
     std::vector<ResAmountPair_st> resourceNeeded;
     std::vector<ResSkillReq_st> skillReqs;
     std::string name;
@@ -69,12 +69,12 @@ struct CreateEntry_st {
 
 struct MiningData_st {
     std::string oreName; // ore name from ORE_LIST in skills.dfn
-    UI16 colour;         // colour of the ore, for colour of ingot
-    UI16 minSkill;       // minimum skill needed to make the ingot
+    std::uint16_t colour;         // colour of the ore, for colour of ingot
+    std::uint16_t minSkill;       // minimum skill needed to make the ingot
     std::string name;    // name of the ingot: no need to be fixed, as we're loading it dynamically
-    SI32 makemenu;       // the makemenu required for making with
-    UI16 oreChance;      // default chance of finding ore type if nothing else is specified
-    UI16 scriptID;       // scriptID assigned to ore items
+    std::int32_t makemenu;       // the makemenu required for making with
+    std::uint16_t oreChance;      // default chance of finding ore type if nothing else is specified
+    std::uint16_t scriptID;       // scriptID assigned to ore items
 
     MiningData_st()
         : oreName(""), colour(0), minSkill(0), name(""), makemenu(0), oreChance(0), scriptID(0) {}
@@ -83,11 +83,11 @@ struct MiningData_st {
 class CSkills {
   private:
     struct CreateMenu_st {
-        std::vector<UI16> itemEntries;
-        std::vector<UI16> menuEntries;
+        std::vector<std::uint16_t> itemEntries;
+        std::vector<std::uint16_t> menuEntries;
 
-        std::vector<UI16>::iterator iIter;
-        std::vector<UI16>::iterator mIter;
+        std::vector<std::uint16_t>::iterator iIter;
+        std::vector<std::uint16_t>::iterator mIter;
 
         CreateMenu_st() {
             itemEntries.resize(0);
@@ -102,38 +102,38 @@ class CSkills {
         }
     };
     struct CreateMenuEntry_st {
-        UI16 targId;
-        UI16 colour;
+        std::uint16_t targId;
+        std::uint16_t colour;
         std::string name;
-        UI16 subMenu;
+        std::uint16_t subMenu;
         CreateMenuEntry_st() : targId(0), colour(0), name(""), subMenu(0) {}
     };
 
     std::vector<MiningData_st> ores;
-    std::map<UI16, CreateMenu_st> actualMenus;
-    std::map<UI16, CreateMenuEntry_st> skillMenus;
-    std::map<UI16, CreateEntry_st> itemsForMenus;
+    std::map<std::uint16_t, CreateMenu_st> actualMenus;
+    std::map<std::uint16_t, CreateMenuEntry_st> skillMenus;
+    std::map<std::uint16_t, CreateEntry_st> itemsForMenus;
 
   private:
-    void RegenerateOre(SI16 grX, SI16 grY, UI08 worldNum);
+    void RegenerateOre(std::int16_t grX, std::int16_t grY, std::uint8_t worldNum);
     void DoStealing(CSocket *s, CChar *mChar, CChar *npc, CItem *item);
-    SI16 CalcStealDiff(CChar *c, CItem *i);
+    std::int16_t CalcStealDiff(CChar *c, CItem *i);
 
     TargetFunc RandomSteal;
 
-    SI08 FindSkillPoint(UI08 sk, SI32 value);
+    std::int8_t FindSkillPoint(std::uint8_t sk, std::int32_t value);
     void AnvilTarget(CSocket *s, CItem &item, MiningData_st *oreType);
-    void HandleSkillChange(CChar *c, UI08 sk, SI08 skillAdvance, bool success);
+    void HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdvance, bool success);
 
     bool LoadMiningData(void);
     void LoadCreateMenus(void);
-    bool AdvanceSkill(CChar *s, UI08 sk, bool skillused);
+    bool AdvanceSkill(CChar *s, std::uint8_t sk, bool skillused);
 
   public:
     CSkills();
     ~CSkills();
 
-    SI32 CalcRankAvg(CChar *player, CreateEntry_st &skillMake);
+    std::int32_t CalcRankAvg(CChar *player, CreateEntry_st &skillMake);
 
     TargetFunc Persecute;
     TargetFunc RepairMetal;
@@ -143,31 +143,31 @@ class CSkills {
 
     void Load(void);
 
-    void NewMakeMenu(CSocket *s, SI32 menu, UI08 skill);
-    CreateEntry_st *FindItem(UI16 itemNum);
-    void MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, UI16 itemEntry,
-                  UI16 resourceColour = 0);
-    void ApplyRank(CSocket *s, CItem *c, UI08 rank, UI08 maxrank);
-    void HandleMakeMenu(CSocket *s, SI32 button, SI32 menu);
+    void NewMakeMenu(CSocket *s, std::int32_t menu, std::uint8_t skill);
+    CreateEntry_st *FindItem(std::uint16_t itemNum);
+    void MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std::uint16_t itemEntry,
+                  std::uint16_t resourceColour = 0);
+    void ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t maxrank);
+    void HandleMakeMenu(CSocket *s, std::int32_t button, std::int32_t menu);
 
-    void CreateTrackingMenu(CSocket *s, UI16 m);
-    void TrackingMenu(CSocket *s, UI16 gmindex);
+    void CreateTrackingMenu(CSocket *s, std::uint16_t m);
+    void TrackingMenu(CSocket *s, std::uint16_t gmindex);
     void Track(CChar *i);
-    void Tracking(CSocket *s, SI32 selection);
-    void MakeNecroReg(CSocket *nSocket, CItem *nItem, UI16 itemId);
+    void Tracking(CSocket *s, std::int32_t selection);
+    void MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId);
 
     void Snooping(CSocket *s, CChar *target, CItem *pack);
 
-    UI16 CalculatePetControlChance(CChar *mChar, CChar *Npc);
-    bool CheckSkill(CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false);
-    void SkillUse(CSocket *s, UI08 x);
-    void UpdateSkillLevel(CChar *c, UI08 s) const;
-    void AdvanceStats(CChar *s, UI08 sk, bool skillsuccess);
+    std::uint16_t CalculatePetControlChance(CChar *mChar, CChar *Npc);
+    bool CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::int16_t highSkill, bool isCraftSkill = false);
+    void SkillUse(CSocket *s, std::uint8_t x);
+    void UpdateSkillLevel(CChar *c, std::uint8_t s) const;
+    void AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess);
 
     size_t GetNumberOfOres(void);
     MiningData_st *GetOre(size_t number);
     MiningData_st *FindOre(std::string const &name);
-    MiningData_st *FindOre(UI16 const &colour);
+    MiningData_st *FindOre(std::uint16_t const &colour);
 };
 
 extern CSkills *Skills;

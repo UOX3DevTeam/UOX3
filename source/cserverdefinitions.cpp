@@ -36,7 +36,7 @@ const std::array<std::string, NUM_DEFS> dirNames{
     "spells"s, "newbie"s,  "titles"s,    "advance"s, "house"s,    "colors"s, "spawn"s,     "html"s,
     "race"s,   "weather"s, "harditems"s, "command"s, "msgboard"s, "carve"s,  "creatures"s, "maps"s};
 
-std::multimap<UI32, ADDMENUITEM> g_mmapAddMenuMap;
+std::multimap<std::uint32_t, ADDMENUITEM> g_mmapAddMenuMap;
 
 //==================================================================================================
 CServerDefinitions::CServerDefinitions() : defaultPriority(0) {}
@@ -45,7 +45,7 @@ auto CServerDefinitions::Startup() -> void {
     Console::shared().PrintSectionBegin();
     Console::shared() << "Loading server scripts..." << myendl;
     Console::shared() << "   o Clearing AddMenuMap entries("
-                      << static_cast<UI64>(g_mmapAddMenuMap.size()) << ")" << myendl;
+                      << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
     g_mmapAddMenuMap.clear();
     ScriptListings.resize(NUM_DEFS);
     ReloadScriptObjects();
@@ -156,9 +156,9 @@ const std::string defExt = ".dfn";
 //==================================================================================================
 struct PrioScan_st {
     std::string filename;
-    SI16 priority;
+    std::int16_t priority;
     PrioScan_st() : filename(""), priority(0) {}
-    PrioScan_st(const char *toUse, SI16 mPrio) : filename(toUse), priority(mPrio) {}
+    PrioScan_st(const char *toUse, std::int16_t mPrio) : filename(toUse), priority(mPrio) {}
 };
 
 //==================================================================================================
@@ -184,7 +184,7 @@ inline auto operator>(const PrioScan_st &x, const PrioScan_st &y) -> bool {
 auto CServerDefinitions::LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void {
     CleanPriorityMap();
     defaultPriority = 0;
-    UI08 wasPriod = 2;
+    std::uint8_t wasPriod = 2;
     BuildPriorityMap(toLoad, wasPriod);
 
     CDirectoryListing fileList(toLoad, defExt);
@@ -237,7 +237,7 @@ auto CServerDefinitions::LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void {
 auto CServerDefinitions::ReloadScriptObjects() -> void {
     Console::shared() << myendl;
 
-    for (SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr) {
+    for (std::int32_t sCtr = 0; sCtr < NUM_DEFS; ++sCtr) {
         LoadDFNCategory(static_cast<DEFINITIONCATEGORIES>(sCtr));
     }
     CleanPriorityMap();
@@ -292,7 +292,7 @@ auto CServerDefinitions::CleanPriorityMap() -> void { priorityMap.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Build DFN priority map based on entires from priority.nfo
 // o------------------------------------------------------------------------------------------------o
-auto CServerDefinitions::BuildPriorityMap(DEFINITIONCATEGORIES category, UI08 &wasPrioritized)
+auto CServerDefinitions::BuildPriorityMap(DEFINITIONCATEGORIES category, std::uint8_t &wasPrioritized)
     -> void {
     CDirectoryListing priorityFile(category, "priority.nfo", false);
     std::vector<std::string> *longList = priorityFile.List();
@@ -311,12 +311,12 @@ auto CServerDefinitions::BuildPriorityMap(DEFINITIONCATEGORIES category, UI08 &w
                         auto tag = sec->tag;
                         auto data = sec->data;
                         if (util::upper(tag) == "DEFAULTPRIORITY") {
-                            defaultPriority = static_cast<UI16>(std::stoul(data, nullptr, 0));
+                            defaultPriority = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else {
                             std::string filenametemp = util::lower(tag);
                             priorityMap[filenametemp] =
-                                static_cast<SI16>(std::stoi(data, nullptr, 0));
+                                static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
                         }
                     }
                     wasPrioritized = 0;
@@ -353,7 +353,7 @@ void CServerDefinitions::DisplayPriorityMap() {
 }
 
 //==================================================================================================
-auto CServerDefinitions::GetPriority(const char *file) -> SI16 {
+auto CServerDefinitions::GetPriority(const char *file) -> std::int16_t {
     auto retVal = defaultPriority;
     auto lowername = util::lower(file);
     auto p = priorityMap.find(lowername);

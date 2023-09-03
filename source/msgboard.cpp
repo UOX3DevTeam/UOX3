@@ -52,7 +52,7 @@ using namespace std::string_literals;
 //|	Purpose		-	Creates the proper MessageBoard filename based on the messageType
 // and board Serial
 // o------------------------------------------------------------------------------------------------o
-std::string GetMsgBoardFile(const SERIAL msgBoardSer, const UI08 msgType) {
+std::string GetMsgBoardFile(const SERIAL msgBoardSer, const std::uint8_t msgType) {
     std::string fileName;
     switch (msgType) {
     case PT_GLOBAL:
@@ -105,7 +105,7 @@ void MsgBoardOpen(CSocket *mSock) {
         dirPath = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
     }
 
-    for (UI08 currentFile = 1; currentFile < 4 && mSock->PostCount() < MAXPOSTS; ++currentFile) {
+    for (std::uint8_t currentFile = 1; currentFile < 4 && mSock->PostCount() < MAXPOSTS; ++currentFile) {
         fileName = dirPath + GetMsgBoardFile(boardSer, currentFile);
 
         std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
@@ -115,12 +115,12 @@ void MsgBoardOpen(CSocket *mSock) {
             file.seekg(0, std::ios::beg);
             while (file && mSock->PostCount() < MAXPOSTS) {
                 SERIAL tmpSerial = 0;
-                UI08 tmpToggle = 0;
-                UI16 tmpSize = 0;
+                std::uint8_t tmpToggle = 0;
+                std::uint16_t tmpSize = 0;
                 [[maybe_unused]] SERIAL repliedTo = 0;
 
                 file.read(buffer, 2);
-                tmpSize = static_cast<UI16>((buffer[0] << 8) + buffer[1]);
+                tmpSize = static_cast<std::uint16_t>((buffer[0] << 8) + buffer[1]);
 
                 file.read(buffer, 1);
                 tmpToggle = buffer[0];
@@ -170,7 +170,7 @@ void MsgBoardList(CSocket *mSock) {
         dirPath = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
     }
 
-    for (UI08 currentFile = 1; currentFile < 4 && mSock->PostCount() > 0; ++currentFile) {
+    for (std::uint8_t currentFile = 1; currentFile < 4 && mSock->PostCount() > 0; ++currentFile) {
         fileName = dirPath + GetMsgBoardFile(msgBoard->GetSerial(), currentFile);
 
         std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
@@ -181,7 +181,7 @@ void MsgBoardList(CSocket *mSock) {
             file.seekg(0, std::ios::beg);
             while (file) {
                 file.read(buffer, 2);
-                msgBoardPost.size = static_cast<UI16>((buffer[0] << 8) + buffer[1]);
+                msgBoardPost.size = static_cast<std::uint16_t>((buffer[0] << 8) + buffer[1]);
 
                 file.seekg(msgBoardPost.size - 6, std::ios::cur);
 
@@ -257,7 +257,7 @@ void MsgBoardList(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates nextMsgId with the next available message serial.
 // o------------------------------------------------------------------------------------------------o
-bool GetMaxSerial(const std::string &fileName, UI08 *nextMsgId, const PostTypes msgType) {
+bool GetMaxSerial(const std::string &fileName, std::uint8_t *nextMsgId, const PostTypes msgType) {
     SERIAL msgIdSer = (CalcSerial(nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3]));
     if (msgIdSer == INVALIDSERIAL) {
         switch (msgType) {
@@ -276,10 +276,10 @@ bool GetMaxSerial(const std::string &fileName, UI08 *nextMsgId, const PostTypes 
         ++msgIdSer;
     }
 
-    nextMsgId[0] = static_cast<UI08>(msgIdSer >> 24);
-    nextMsgId[1] = static_cast<UI08>(msgIdSer >> 16);
-    nextMsgId[2] = static_cast<UI08>(msgIdSer >> 8);
-    nextMsgId[3] = static_cast<UI08>(msgIdSer % 256);
+    nextMsgId[0] = static_cast<std::uint8_t>(msgIdSer >> 24);
+    nextMsgId[1] = static_cast<std::uint8_t>(msgIdSer >> 16);
+    nextMsgId[2] = static_cast<std::uint8_t>(msgIdSer >> 8);
+    nextMsgId[3] = static_cast<std::uint8_t>(msgIdSer % 256);
 
     if (nextMsgId[1] == 0xFF && nextMsgId[2] == 0xFF && nextMsgId[3] == 0xFF) {
         Console::shared().Warning(
@@ -301,18 +301,18 @@ void MsgBoardWritePost(std::ostream &mFile, const MsgBoardPost_st &msgBoardPost)
     char wBuffer[4];
 
     // Add post size to 2 bytes of buffer, and write buffer to file
-    wBuffer[0] = static_cast<SI08>(msgBoardPost.size >> 8);
-    wBuffer[1] = static_cast<SI08>(msgBoardPost.size % 256);
+    wBuffer[0] = static_cast<std::int8_t>(msgBoardPost.size >> 8);
+    wBuffer[1] = static_cast<std::int8_t>(msgBoardPost.size % 256);
     mFile.write((const char *)&wBuffer, 2);
 
     // Write the value of Toggle as the next byte
     mFile.write((const char *)&msgBoardPost.toggle, 1);
 
     // Add parent serial to 4 bytes of buffer, and write buffer to file
-    wBuffer[0] = static_cast<SI08>(msgBoardPost.parentSerial >> 24);
-    wBuffer[1] = static_cast<SI08>(msgBoardPost.parentSerial >> 16);
-    wBuffer[2] = static_cast<SI08>(msgBoardPost.parentSerial >> 8);
-    wBuffer[3] = static_cast<SI08>(msgBoardPost.parentSerial % 256);
+    wBuffer[0] = static_cast<std::int8_t>(msgBoardPost.parentSerial >> 24);
+    wBuffer[1] = static_cast<std::int8_t>(msgBoardPost.parentSerial >> 16);
+    wBuffer[2] = static_cast<std::int8_t>(msgBoardPost.parentSerial >> 8);
+    wBuffer[3] = static_cast<std::int8_t>(msgBoardPost.parentSerial % 256);
     mFile.write((const char *)&wBuffer, 4);
 
     // Write length of poster's name as next byte, and
@@ -337,16 +337,16 @@ void MsgBoardWritePost(std::ostream &mFile, const MsgBoardPost_st &msgBoardPost)
                   [&mFile](const std::string &entry) {
                       // Write length of line as next byte, and
                       // then write the line as next X bytes
-                      auto lineSize = static_cast<UI08>(entry.size());
+                      auto lineSize = static_cast<std::uint8_t>(entry.size());
                       mFile.write((const char *)&lineSize, 1);
                       mFile.write(entry.c_str(), lineSize);
                   });
 
     // Finally, add actual post serial to 4 bytes of buffer, and write buffer to file
-    wBuffer[0] = static_cast<SI08>(msgBoardPost.serial >> 24);
-    wBuffer[1] = static_cast<SI08>(msgBoardPost.serial >> 16);
-    wBuffer[2] = static_cast<SI08>(msgBoardPost.serial >> 8);
-    wBuffer[3] = static_cast<SI08>(msgBoardPost.serial % 256);
+    wBuffer[0] = static_cast<std::int8_t>(msgBoardPost.serial >> 24);
+    wBuffer[1] = static_cast<std::int8_t>(msgBoardPost.serial >> 16);
+    wBuffer[2] = static_cast<std::int8_t>(msgBoardPost.serial >> 8);
+    wBuffer[3] = static_cast<std::int8_t>(msgBoardPost.serial % 256);
     mFile.write((const char *)&wBuffer, 4);
 }
 
@@ -367,7 +367,7 @@ SERIAL MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fileN
 
     std::ifstream file(fullFile.c_str(), std::ios::in | std::ios::ate | std::ios::binary);
 
-    UI08 nextMsgId[4];
+    std::uint8_t nextMsgId[4];
     memset(nextMsgId, 0xFF, 4);
     if (file.is_open()) {
         file.seekg(-4, std::ios::cur);
@@ -390,13 +390,13 @@ SERIAL MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fileN
     auto time = util::format("Day %i @ %i:%02i\0", (timeOfPost.tm_yday + 1), timeOfPost.tm_hour,
                              timeOfPost.tm_min);
     time.resize(time.size() + 1);
-    const UI08 timeSize = static_cast<UI08>(time.size());
-    const UI08 posterSize = static_cast<UI08>(msgBoardPost.posterLen);
-    const UI08 subjSize = static_cast<UI08>(msgBoardPost.subjectLen);
-    auto totalSize = static_cast<UI16>(15 + posterSize + subjSize + timeSize);
+    const std::uint8_t timeSize = static_cast<std::uint8_t>(time.size());
+    const std::uint8_t posterSize = static_cast<std::uint8_t>(msgBoardPost.posterLen);
+    const std::uint8_t subjSize = static_cast<std::uint8_t>(msgBoardPost.subjectLen);
+    auto totalSize = static_cast<std::uint16_t>(15 + posterSize + subjSize + timeSize);
     std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(),
                   [&totalSize](const std::string &entry) {
-                      totalSize += 1 + static_cast<UI16>(entry.size());
+                      totalSize += 1 + static_cast<std::uint16_t>(entry.size());
                   });
 
     msgBoardPost.size = totalSize;
@@ -445,9 +445,9 @@ void MsgBoardPost(CSocket *tSock) {
         return;
     }
 
-    std::vector<UI08> internalBuffer;
+    std::vector<std::uint8_t> internalBuffer;
 
-    const UI16 length = tSock->GetWord(1);
+    const std::uint16_t length = tSock->GetWord(1);
     internalBuffer.resize(length);
     memcpy(&internalBuffer[0], tSock->Buffer(), length);
 
@@ -455,10 +455,10 @@ void MsgBoardPost(CSocket *tSock) {
     msgBoardPost.toggle = 0x05;
     msgBoardPost.parentSerial = repliedTo;
 
-    UI08 i = 0;
-    UI16 offset = 11;
+    std::uint8_t i = 0;
+    std::uint16_t offset = 11;
 
-    msgBoardPost.posterLen = static_cast<UI08>(tChar->GetName().size()) + 1;
+    msgBoardPost.posterLen = static_cast<std::uint8_t>(tChar->GetName().size()) + 1;
     strncopy(msgBoardPost.poster, 128, tChar->GetName().c_str(), msgBoardPost.posterLen);
 
     msgBoardPost.subjectLen = internalBuffer[++offset];
@@ -470,7 +470,7 @@ void MsgBoardPost(CSocket *tSock) {
     msgBoardPost.msgBoardLine.resize(internalBuffer[offset]);
     msgBoardPost.lines = internalBuffer[offset];
     std::vector<std::string>::iterator lIter;
-    UI08 j = 0;
+    std::uint8_t j = 0;
     for (lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end();
          ++lIter) {
         (*lIter).resize(internalBuffer[++offset]);
@@ -559,7 +559,7 @@ bool MsgBoardReadPost(std::istream &file, MsgBoardPost_st &msgBoardPost,
         // Get number of lines from next byte, then read each line from post
         file.read(buffer, 1);
         msgBoardPost.lines = buffer[0];
-        for (UI08 i = 0; i < msgBoardPost.lines; ++i) {
+        for (std::uint8_t i = 0; i < msgBoardPost.lines; ++i) {
             // Get line length from next byte, then read line string into tmpLine
             file.read(buffer, 1);
             file.read(tmpLine, buffer[0]);
@@ -692,7 +692,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
     if (file.is_open()) {
         SERIAL tmpSerial = 0;
         size_t totalSize = 0;
-        UI16 tmpSize = 0;
+        std::uint16_t tmpSize = 0;
         char rBuffer[4];
         bool removeReply = true;
 
@@ -794,7 +794,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
 //|	Purpose		-	Handles a mesage board event from the client.
 // o------------------------------------------------------------------------------------------------o
 bool CPIMsgBoardEvent::Handle(void) {
-    UI08 msgType = tSock->GetByte(3);
+    std::uint8_t msgType = tSock->GetByte(3);
 
     if (tSock->GetByte(0) == 0x06) {
         msgType = 0;
@@ -918,12 +918,12 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
         return false;
     }
 
-    msgBoardPost.lines = static_cast<UI08>(msgBoardPost.msgBoardLine.size());
+    msgBoardPost.lines = static_cast<std::uint8_t>(msgBoardPost.msgBoardLine.size());
 
-    msgBoardPost.subjectLen = static_cast<UI08>(tmpSubject.size() + 1);
+    msgBoardPost.subjectLen = static_cast<std::uint8_t>(tmpSubject.size() + 1);
     strncopy(msgBoardPost.subject, 256, tmpSubject.c_str(), tmpSubject.size());
 
-    msgBoardPost.posterLen = static_cast<UI08>(mNPC->GetName().size() + 1);
+    msgBoardPost.posterLen = static_cast<std::uint8_t>(mNPC->GetName().size() + 1);
     strncopy(msgBoardPost.poster, 128, mNPC->GetName().c_str(), mNPC->GetName().size());
 
     msgBoardPost.parentSerial = mNPC->GetSerial();
@@ -942,11 +942,11 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
 //|	Purpose		-	Creates an escort quest assigning it a valid escort region
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortCreate(CChar *mNPC) {
-    const UI16 npcRegion = mNPC->GetRegionNum();
+    const std::uint16_t npcRegion = mNPC->GetRegionNum();
 
     // Loop through all escort regions in the server and pick out all the ones in the same world as
     // NPC
-    std::vector<UI16> regionCandidates;
+    std::vector<std::uint16_t> regionCandidates;
     for (const auto escortRegion : cwmWorldState->escortRegions) {
         if (escortRegion != npcRegion) {
             CTownRegion *tempRegion = cwmWorldState->townRegions[escortRegion];
@@ -1005,7 +1005,7 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
 
     // Calculate payment for services rendered, partly based on escort's fame and partly based on a
     // percentage (25%) of the amount of gold they're carrying
-    UI16 questReward = ((mNPC->GetFame() > 0 ? ((mNPC->GetFame() / 100) * 50) : 0) +
+    std::uint16_t questReward = ((mNPC->GetFame() > 0 ? ((mNPC->GetFame() / 100) * 50) : 0) +
                         std::round(GetItemAmount(mNPC, 0x0EED) * 0.25));
 
     // If they have no money, well, oops!
@@ -1076,7 +1076,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
     if (file.is_open()) {
         SERIAL tmpSerial = 0;
         size_t totalSize = 0;
-        UI16 tmpSize = 0;
+        std::uint16_t tmpSize = 0;
         char rBuffer[4];
 
         file.seekg(0, std::ios::beg);

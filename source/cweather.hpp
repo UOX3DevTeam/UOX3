@@ -14,10 +14,10 @@ class CItem;
 class CWeather {
   private:
     struct WeathPart_st {
-        SI08 Chance;
-        SI08 Intensity;
-        SI08 IntensityLow;
-        SI08 IntensityHigh;
+        std::int8_t Chance;
+        std::int8_t Intensity;
+        std::int8_t IntensityLow;
+        std::int8_t IntensityHigh;
         bool Active;
     };
 
@@ -34,30 +34,30 @@ class CWeather {
     CWeather();
     virtual ~CWeather();
 
-    SI08 IntensityHigh(UI08 weathType) const;
-    void IntensityHigh(UI08 weathType, SI08 value);
-    SI08 IntensityLow(UI08 weathType) const;
-    void IntensityLow(UI08 weathType, SI08 value);
-    SI08 Intensity(UI08 weathType) const;
-    void Intensity(UI08 weathType, SI08 value);
+    std::int8_t IntensityHigh(std::uint8_t weathType) const;
+    void IntensityHigh(std::uint8_t weathType, std::int8_t value);
+    std::int8_t IntensityLow(std::uint8_t weathType) const;
+    void IntensityLow(std::uint8_t weathType, std::int8_t value);
+    std::int8_t Intensity(std::uint8_t weathType) const;
+    void Intensity(std::uint8_t weathType, std::int8_t value);
 
-    SI08 Chance(UI08 weathType) const;
-    void Chance(UI08 weathType, SI08 value);
+    std::int8_t Chance(std::uint8_t weathType) const;
+    void Chance(std::uint8_t weathType, std::int8_t value);
 
-    R32 Value(UI08 valType, UI08 valOff) const;
-    void Value(UI08 valType, UI08 valOff, R32 value);
+    R32 Value(std::uint8_t valType, std::uint8_t valOff) const;
+    void Value(std::uint8_t valType, std::uint8_t valOff, R32 value);
 
-    SI08 SnowIntensityHigh(void) const;
-    SI08 SnowIntensityLow(void) const;
-    SI08 SnowIntensity(void) const;
-    SI08 RainIntensityHigh(void) const;
-    SI08 RainIntensityLow(void) const;
-    SI08 RainIntensity(void) const;
-    SI08 HeatIntensityHigh(void) const;
-    SI08 ColdIntensityHigh(void) const;
-    SI08 StormIntensityHigh(void) const;
-    SI08 StormIntensityLow(void) const;
-    SI08 StormIntensity(void) const;
+    std::int8_t SnowIntensityHigh(void) const;
+    std::int8_t SnowIntensityLow(void) const;
+    std::int8_t SnowIntensity(void) const;
+    std::int8_t RainIntensityHigh(void) const;
+    std::int8_t RainIntensityLow(void) const;
+    std::int8_t RainIntensity(void) const;
+    std::int8_t HeatIntensityHigh(void) const;
+    std::int8_t ColdIntensityHigh(void) const;
+    std::int8_t StormIntensityHigh(void) const;
+    std::int8_t StormIntensityLow(void) const;
+    std::int8_t StormIntensity(void) const;
 
     R32 MaxTemp(void) const;
     R32 MinTemp(void) const;
@@ -68,11 +68,11 @@ class CWeather {
     R32 RainTempDrop(void) const;
     R32 StormTempDrop(void) const;
 
-    SI08 RainChance(void) const;
-    SI08 SnowChance(void) const;
-    SI08 StormChance(void) const;
-    SI08 HeatChance(void) const;
-    SI08 ColdChance(void) const;
+    std::int8_t RainChance(void) const;
+    std::int8_t SnowChance(void) const;
+    std::int8_t StormChance(void) const;
+    std::int8_t HeatChance(void) const;
+    std::int8_t ColdChance(void) const;
 
     R32 LightMin(void) const;
     R32 LightMax(void) const;
@@ -96,22 +96,22 @@ class CWeather {
     void Temp(R32 value);
     void RainTempDrop(R32 value);
     void StormTempDrop(R32 value);
-    void SnowIntensityHigh(SI08 value);
-    void SnowIntensityLow(SI08 value);
-    void SnowIntensity(SI08 value);
-    void HeatIntensityHigh(SI08 value);
-    void RainIntensityHigh(SI08 value);
-    void RainIntensityLow(SI08 value);
-    void RainIntensity(SI08 value);
-    void ColdIntensityHigh(SI08 value);
-    void StormIntensityHigh(SI08 value);
-    void StormIntensityLow(SI08 value);
-    void StormIntensity(SI08 value);
-    void RainChance(SI08 value);
-    void SnowChance(SI08 value);
-    void StormChance(SI08 value);
-    void HeatChance(SI08 value);
-    void ColdChance(SI08 value);
+    void SnowIntensityHigh(std::int8_t value);
+    void SnowIntensityLow(std::int8_t value);
+    void SnowIntensity(std::int8_t value);
+    void HeatIntensityHigh(std::int8_t value);
+    void RainIntensityHigh(std::int8_t value);
+    void RainIntensityLow(std::int8_t value);
+    void RainIntensity(std::int8_t value);
+    void ColdIntensityHigh(std::int8_t value);
+    void StormIntensityHigh(std::int8_t value);
+    void StormIntensityLow(std::int8_t value);
+    void StormIntensity(std::int8_t value);
+    void RainChance(std::int8_t value);
+    void SnowChance(std::int8_t value);
+    void StormChance(std::int8_t value);
+    void HeatChance(std::int8_t value);
+    void ColdChance(std::int8_t value);
     void SnowThreshold(R32 value);
     void LightMin(R32 value);
     void LightMax(R32 value);
@@ -138,16 +138,16 @@ class CWeather {
 class cWeatherAb {
   private:
     std::vector<CWeather> weather;
-    SI08 IntensityHigh(WEATHID toCheck, UI08 weathType);
-    void IntensityHigh(WEATHID toCheck, UI08 weathType, SI08 value);
-    SI08 IntensityLow(WEATHID toCheck, UI08 weathType);
-    void IntensityLow(WEATHID toCheck, UI08 weathType, SI08 value);
-    SI08 Intensity(WEATHID toCheck, UI08 weathType);
-    void Intensity(WEATHID toCheck, UI08 weathType, SI08 value);
-    SI08 Chance(WEATHID toCheck, UI08 weathType);
-    void Chance(WEATHID toCheck, UI08 weathType, SI08 value);
-    R32 Value(WEATHID toCheck, UI08 valType, UI08 valOff);
-    void Value(WEATHID toCheck, UI08 valType, UI08 valOff, R32 value);
+    std::int8_t IntensityHigh(WEATHID toCheck, std::uint8_t weathType);
+    void IntensityHigh(WEATHID toCheck, std::uint8_t weathType, std::int8_t value);
+    std::int8_t IntensityLow(WEATHID toCheck, std::uint8_t weathType);
+    void IntensityLow(WEATHID toCheck, std::uint8_t weathType, std::int8_t value);
+    std::int8_t Intensity(WEATHID toCheck, std::uint8_t weathType);
+    void Intensity(WEATHID toCheck, std::uint8_t weathType, std::int8_t value);
+    std::int8_t Chance(WEATHID toCheck, std::uint8_t weathType);
+    void Chance(WEATHID toCheck, std::uint8_t weathType, std::int8_t value);
+    R32 Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff);
+    void Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value);
 
   public:
     cWeatherAb();
@@ -157,17 +157,17 @@ class cWeatherAb {
     bool NewHour(void);
     size_t Count(void) const;
 
-    SI08 SnowIntensityHigh(WEATHID toCheck);
-    SI08 SnowIntensityLow(WEATHID toCheck);
-    SI08 SnowIntensity(WEATHID toCheck);
-    SI08 RainIntensityHigh(WEATHID toCheck);
-    SI08 RainIntensityLow(WEATHID toCheck);
-    SI08 RainIntensity(WEATHID toCheck);
-    SI08 HeatIntensityHigh(WEATHID toCheck);
-    SI08 ColdIntensityHigh(WEATHID toCheck);
-    SI08 StormIntensityHigh(WEATHID toCheck);
-    SI08 StormIntensityLow(WEATHID toCheck);
-    SI08 StormIntensity(WEATHID toCheck);
+    std::int8_t SnowIntensityHigh(WEATHID toCheck);
+    std::int8_t SnowIntensityLow(WEATHID toCheck);
+    std::int8_t SnowIntensity(WEATHID toCheck);
+    std::int8_t RainIntensityHigh(WEATHID toCheck);
+    std::int8_t RainIntensityLow(WEATHID toCheck);
+    std::int8_t RainIntensity(WEATHID toCheck);
+    std::int8_t HeatIntensityHigh(WEATHID toCheck);
+    std::int8_t ColdIntensityHigh(WEATHID toCheck);
+    std::int8_t StormIntensityHigh(WEATHID toCheck);
+    std::int8_t StormIntensityLow(WEATHID toCheck);
+    std::int8_t StormIntensity(WEATHID toCheck);
     R32 MaxTemp(WEATHID toCheck);
     R32 MinTemp(WEATHID toCheck);
     R32 Temp(WEATHID toCheck);
@@ -176,11 +176,11 @@ class cWeatherAb {
     R32 MaxWindSpeed(WEATHID toCheck);
     R32 MinWindSpeed(WEATHID toCheck);
     R32 WindSpeed(WEATHID toCheck);
-    SI08 RainChance(WEATHID toCheck);
-    SI08 SnowChance(WEATHID toCheck);
-    SI08 HeatChance(WEATHID toCheck);
-    SI08 ColdChance(WEATHID toCheck);
-    SI08 StormChance(WEATHID toCheck);
+    std::int8_t RainChance(WEATHID toCheck);
+    std::int8_t SnowChance(WEATHID toCheck);
+    std::int8_t HeatChance(WEATHID toCheck);
+    std::int8_t ColdChance(WEATHID toCheck);
+    std::int8_t StormChance(WEATHID toCheck);
     R32 LightMin(WEATHID toCheck);
     R32 LightMax(WEATHID toCheck);
     R32 CurrentLight(WEATHID toCheck);
@@ -201,22 +201,22 @@ class cWeatherAb {
     void Temp(WEATHID toCheck, R32 value);
     void RainTempDrop(WEATHID toCheck, R32 value);
     void StormTempDrop(WEATHID toCheck, R32 value);
-    void SnowIntensityHigh(WEATHID toCheck, SI08 value);
-    void SnowIntensityLow(WEATHID toCheck, SI08 value);
-    void SnowIntensity(WEATHID toCheck, SI08 value);
-    void RainIntensityHigh(WEATHID toCheck, SI08 value);
-    void RainIntensityLow(WEATHID toCheck, SI08 value);
-    void RainIntensity(WEATHID toCheck, SI08 value);
-    void HeatIntensityHigh(WEATHID toCheck, SI08 value);
-    void ColdIntensityHigh(WEATHID toCheck, SI08 value);
-    void StormIntensityHigh(WEATHID toCheck, SI08 value);
-    void StormIntensityLow(WEATHID toCheck, SI08 value);
-    void StormIntensity(WEATHID toCheck, SI08 value);
-    void RainChance(WEATHID toCheck, SI08 value);
-    void SnowChance(WEATHID toCheck, SI08 value);
-    void HeatChance(WEATHID toCheck, SI08 value);
-    void ColdChance(WEATHID toCheck, SI08 value);
-    void StormChance(WEATHID toCheck, SI08 value);
+    void SnowIntensityHigh(WEATHID toCheck, std::int8_t value);
+    void SnowIntensityLow(WEATHID toCheck, std::int8_t value);
+    void SnowIntensity(WEATHID toCheck, std::int8_t value);
+    void RainIntensityHigh(WEATHID toCheck, std::int8_t value);
+    void RainIntensityLow(WEATHID toCheck, std::int8_t value);
+    void RainIntensity(WEATHID toCheck, std::int8_t value);
+    void HeatIntensityHigh(WEATHID toCheck, std::int8_t value);
+    void ColdIntensityHigh(WEATHID toCheck, std::int8_t value);
+    void StormIntensityHigh(WEATHID toCheck, std::int8_t value);
+    void StormIntensityLow(WEATHID toCheck, std::int8_t value);
+    void StormIntensity(WEATHID toCheck, std::int8_t value);
+    void RainChance(WEATHID toCheck, std::int8_t value);
+    void SnowChance(WEATHID toCheck, std::int8_t value);
+    void HeatChance(WEATHID toCheck, std::int8_t value);
+    void ColdChance(WEATHID toCheck, std::int8_t value);
+    void StormChance(WEATHID toCheck, std::int8_t value);
     void SnowThreshold(WEATHID toCheck, R32 value);
     void LightMin(WEATHID toCheck, R32 newValue);
     void LightMax(WEATHID toCheck, R32 newValue);
@@ -234,12 +234,12 @@ class cWeatherAb {
     void ColdActive(WEATHID toCheck, bool value);
     bool DoStuff(void);
     bool DoPlayerStuff(CSocket *mSock, CChar *p);
-    void DoPlayerWeather(CSocket *s, UI08 weathType, SI08 currentTemp, WEATHID currval);
+    void DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, WEATHID currval);
     bool doWeatherEffect(CSocket *mSock, CChar &mChar, WeatherType element);
     bool DoLightEffect(CSocket *mSock, CChar &mChar);
     bool DoNPCStuff(CChar *p);
     bool DoItemStuff(CItem *p);
-    void SendJSWeather(CBaseObject *mObj, WeatherType weathType, SI08 currentTemp);
+    void SendJSWeather(CBaseObject *mObj, WeatherType weathType, std::int8_t currentTemp);
 
     CWeather *Weather(WEATHID toCheck);
 };

@@ -25,13 +25,13 @@ auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
             if (myObj->GetObjType() == OT_MULTI) {
-                if (ObjInOldRangeSquare(myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE))) {
+                if (ObjInOldRangeSquare(myObj, mChar, static_cast<std::uint16_t>(DIST_BUILDRANGE))) {
                     nearbyChars.push_back(mSock);
                 }
             }
             else {
                 auto visRange =
-                    static_cast<UI16>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+                    static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
                 if (ObjInOldRangeSquare(myObj, mChar, visRange)) {
                     nearbyChars.push_back(mSock);
                 }
@@ -51,7 +51,7 @@ auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
     for (auto &mSock : Network->connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
-            auto visRange = static_cast<UI16>(mSock->Range() + Races->VisRange(mChar->GetRace()));
+            auto visRange = static_cast<std::uint16_t>(mSock->Range() + Races->VisRange(mChar->GetRace()));
             if (ObjInRangeSquare(myObj, mChar, visRange)) {
                 nearbyChars.push_back(mSock);
             }
@@ -65,7 +65,7 @@ auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who within a certain distance of an object
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyPlayers(CBaseObject *myObj, UI16 distance) -> std::vector<CSocket *> {
+auto FindNearbyPlayers(CBaseObject *myObj, std::uint16_t distance) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
     for (auto &mSock : Network->connClients) {
         auto mChar = mSock->CurrcharObj();
@@ -78,23 +78,23 @@ auto FindNearbyPlayers(CBaseObject *myObj, UI16 distance) -> std::vector<CSocket
     return nearbyChars;
 }
 auto FindNearbyPlayers(CChar *mChar) -> std::vector<CSocket *> {
-    UI16 visRange = MAX_VISRANGE;
+    std::uint16_t visRange = MAX_VISRANGE;
     if (mChar->GetSocket() != nullptr) {
         visRange =
-            static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange(mChar->GetRace()));
+            static_cast<std::uint16_t>(mChar->GetSocket()->Range() + Races->VisRange(mChar->GetRace()));
     }
     else {
-        visRange += static_cast<UI16>(Races->VisRange(mChar->GetRace()));
+        visRange += static_cast<std::uint16_t>(Races->VisRange(mChar->GetRace()));
     }
     return FindNearbyPlayers(mChar, visRange);
 }
 
 auto FindNearbyPlayers(CBaseObject *mObj) -> std::vector<CSocket *> {
-    UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange(mObj->GetRace()));
+    std::uint16_t visRange = static_cast<std::uint16_t>(MAX_VISRANGE + Races->VisRange(mObj->GetRace()));
     return FindNearbyPlayers(mObj, visRange);
 }
 
-auto FindNearbyPlayers(SI16 x, SI16 y, SI08 z, UI16 distance) -> std::vector<CSocket *> {
+auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t distance) -> std::vector<CSocket *> {
     std::vector<CSocket *> nearbyChars;
     for (auto &mSock : Network->connClients) {
         auto mChar = mSock->CurrcharObj();
@@ -114,7 +114,7 @@ auto FindNearbyPlayers(SI16 x, SI16 y, SI08 z, UI16 distance) -> std::vector<CSo
 //|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain
 // distance
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyChars(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
+auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
     -> std::vector<CChar *> {
     std::vector<CChar *> ourChars;
     for (auto &CellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
@@ -198,7 +198,7 @@ CChar *FindItemOwner(CItem *p) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific ID
 // o------------------------------------------------------------------------------------------------o
-auto SearchSubPackForItem(CItem *toSearch, UI16 itemId) -> CItem * {
+auto SearchSubPackForItem(CItem *toSearch, std::uint16_t itemId) -> CItem * {
     auto tsCont = toSearch->GetContainsList();
     for (const auto &toCheck : tsCont->collection()) {
         if (ValidateObject(toCheck)) {
@@ -224,7 +224,7 @@ auto SearchSubPackForItem(CItem *toSearch, UI16 itemId) -> CItem * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Look for items of a certain ID in character's pack
 // o------------------------------------------------------------------------------------------------o
-CItem *FindItem(CChar *toFind, UI16 itemId) {
+CItem *FindItem(CChar *toFind, std::uint16_t itemId) {
     for (CItem *toCheck = toFind->FirstItem(); !toFind->FinishedItems();
          toCheck = toFind->NextItem()) {
         if (ValidateObject(toCheck)) {
@@ -359,12 +359,12 @@ CItem *FindItemOfSectionId(CChar *toFind, std::string sectionId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if object is in a multi
 // o------------------------------------------------------------------------------------------------o
-bool InMulti(SI16 x, SI16 y, SI08 z, CMultiObj *m) {
+bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
     if (!ValidateObject(m))
         return false;
 
-    const UI16 multiId = static_cast<UI16>(m->GetId() - 0x4000);
-    [[maybe_unused]] SI32 length = 0;
+    const std::uint16_t multiId = static_cast<std::uint16_t>(m->GetId() - 0x4000);
+    [[maybe_unused]] std::int32_t length = 0;
 
     if (!Map->MultiExists(multiId)) {
         // the length associated with the multi means one thing
@@ -388,10 +388,10 @@ bool InMulti(SI16 x, SI16 y, SI08 z, CMultiObj *m) {
         }
     }
     else {
-        UI08 zOff = m->CanBeObjType(OT_BOAT) ? 3 : 20;
-        const SI16 baseX = m->GetX();
-        const SI16 baseY = m->GetY();
-        const SI08 baseZ = m->GetZ();
+        std::uint8_t zOff = m->CanBeObjType(OT_BOAT) ? 3 : 20;
+        const std::int16_t baseX = m->GetX();
+        const std::int16_t baseY = m->GetY();
+        const std::int8_t baseZ = m->GetZ();
 
         for (auto &multi : Map->SeekMulti(multiId).items) {
             // Ignore signs and signposts sticking out of buildings
@@ -401,7 +401,7 @@ bool InMulti(SI16 x, SI16 y, SI08 z, CMultiObj *m) {
 
             if ((baseX + multi.offsetX) == x && (baseY + multi.offsetY) == y) {
                 // Find the top Z level of the multi section being examined
-                const SI08 multiZ = (baseZ + multi.altitude + Map->TileHeight(multi.tileId));
+                const std::int8_t multiZ = (baseZ + multi.altitude + Map->TileHeight(multi.tileId));
                 if (m->GetObjType() == OT_BOAT) {
                     // We're on a boat!
                     if (abs(multiZ - z) <= zOff)
@@ -436,15 +436,15 @@ template <class T> inline T hypotenuse(T sideA, T sideB) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	FindMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId
+//|	Function	-	FindMulti( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId
 //) |	Changes		-	(06/07/2020) Added instanceId support
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find multis at specified location
 // o------------------------------------------------------------------------------------------------o
-auto FindMulti(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> CMultiObj * {
-    SI32 lastdist = 30;
+auto FindMulti(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> CMultiObj * {
+    std::int32_t lastdist = 30;
     CMultiObj *multi = nullptr;
-    SI32 ret, dx, dy;
+    std::int32_t ret, dx, dy;
 
     for (auto &toCheck : MapRegion->PopulateList(x, y, worldNumber)) {
         if (toCheck == nullptr)
@@ -458,7 +458,7 @@ auto FindMulti(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> CMu
             if (itemCheck->GetId(1) >= 0x40 && itemCheck->CanBeObjType(OT_MULTI)) {
                 dx = abs(x - itemCheck->GetX());
                 dy = abs(y - itemCheck->GetY());
-                ret = static_cast<SI32>(hypotenuse(dx, dy));
+                ret = static_cast<std::int32_t>(hypotenuse(dx, dy));
                 if (ret <= lastdist) {
                     lastdist = ret;
                     multi = static_cast<CMultiObj *>(itemCheck);
@@ -480,7 +480,7 @@ auto FindMulti(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> CMu
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find items at specified location
 // o------------------------------------------------------------------------------------------------o
-auto GetItemAtXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> CItem * {
+auto GetItemAtXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> CItem * {
     auto toCheck =
         MapRegion->GetMapRegion(MapRegion->GetGridX(x), MapRegion->GetGridY(y), worldNumber);
     if (toCheck) // no valid region
@@ -502,9 +502,9 @@ auto GetItemAtXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId) -> 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find items near specified location
 // o------------------------------------------------------------------------------------------------o
-CItem *FindItemNearXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 instanceId) {
-    UI16 oldDist = DIST_OUTOFRANGE;
-    UI16 currDist;
+CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t id, std::uint16_t instanceId) {
+    std::uint16_t oldDist = DIST_OUTOFRANGE;
+    std::uint16_t currDist;
     CItem *currItem = nullptr;
     Point3_st targLocation = Point3_st(x, y, z);
     for (auto &toCheck : MapRegion->PopulateList(x, y, worldNumber)) {
@@ -518,7 +518,7 @@ CItem *FindItemNearXYZ(SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 i
 
             if (itemCheck->GetId() == id && itemCheck->GetZ() == z) {
                 Point3_st difference = itemCheck->GetLocation() - targLocation;
-                currDist = static_cast<UI16>(difference.Mag());
+                currDist = static_cast<std::uint16_t>(difference.Mag());
                 if (currDist < oldDist) {
                     oldDist = currDist;
                     currItem = itemCheck;
@@ -555,13 +555,13 @@ auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem 
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	FindNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId,
-// UI16 distance )
+//|	Function	-	FindNearbyItems( std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,
+// std::uint16_t distance )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a
 // location
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyItems(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
+auto FindNearbyItems(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
     -> std::vector<CItem *> {
     std::vector<CItem *> ourItems;
     for (auto &cellResponse : MapRegion->PopulateList(x, y, worldNumber)) {
@@ -587,7 +587,7 @@ auto FindNearbyItems(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 dis
 //|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of
 // a location
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyObjects(SI16 x, SI16 y, UI08 worldNumber, UI16 instanceId, UI16 distance)
+auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
     -> std::vector<CBaseObject *> {
     std::vector<CBaseObject *> ourObjects;
     for (auto &CellResponse : MapRegion->PopulateList(x, y, worldNumber)) {

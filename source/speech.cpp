@@ -27,7 +27,7 @@
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system
 // message
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum,
+void ClilocMessage(CSocket *mSock, SpeechType speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
                    const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
@@ -38,7 +38,7 @@ void ClilocMessage(CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, U
     va_start(marker, types);
     while (*typesPtr != '\0') {
         if (*typesPtr == 'i') {
-            stringVal = util::ntos(va_arg(marker, SI32));
+            stringVal = util::ntos(va_arg(marker, std::int32_t));
         }
         else if (*typesPtr == 's') {
             stringVal = va_arg(marker, char *);
@@ -73,8 +73,8 @@ void ClilocMessage(CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, U
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if
 // said by srcObj
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, UI16 hue, UI16 font,
-                   UI32 messageNum, bool sendAll, const char *types = "", ...) {
+void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, std::uint16_t hue, std::uint16_t font,
+                   std::uint32_t messageNum, bool sendAll, const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
     std::string stringVal = "";
@@ -84,7 +84,7 @@ void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, U
     va_start(marker, types);
     while (*typesPtr != '\0') {
         if (*typesPtr == 'i') {
-            stringVal = util::ntos(va_arg(marker, SI32));
+            stringVal = util::ntos(va_arg(marker, std::int32_t));
         }
         else if (*typesPtr == 's') {
             stringVal = va_arg(marker, char *);
@@ -112,7 +112,7 @@ void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, U
 
     bool sendSock = (mSock != nullptr);
     if (sendAll) {
-        UI16 searchDistance = DIST_SAMESCREEN;
+        std::uint16_t searchDistance = DIST_SAMESCREEN;
         if (speechType == WHISPER || speechType == ASCIIWHISPER) {
             searchDistance = DIST_SAMETILE;
         }
@@ -141,7 +141,7 @@ CSpeechQueue *SpeechSys;
 std::map<std::string, UnicodeTypes> codeLookup;
 
 void InitializeLookup() {
-    for (SI32 i = static_cast<SI32>(ZERO); i < static_cast<SI32>(TOTAL_LANGUAGES); ++i) {
+    for (std::int32_t i = static_cast<std::int32_t>(ZERO); i < static_cast<std::int32_t>(TOTAL_LANGUAGES); ++i) {
         codeLookup[LanguageCodes[static_cast<UnicodeTypes>(i)]] = static_cast<UnicodeTypes>(i);
     }
 }
@@ -151,7 +151,7 @@ void InitializeLookup() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempt to find language used by client
 // o------------------------------------------------------------------------------------------------o
-UnicodeTypes FindLanguage(CSocket *s, UI16 offset) {
+UnicodeTypes FindLanguage(CSocket *s, std::uint16_t offset) {
     if (s == nullptr)
         return ZERO;
 
@@ -244,12 +244,12 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
 //|
 //|					Message Sent By Client:
 //|					0xAD - Unicode Speech Request
-//|					UI08 cmd (0xAD)
+//|					std::uint8_t cmd (0xAD)
 //|					short msgsize 1,2
 //|					byte type (0=say, 2=emote, 8=whisper, 9=yell) 3
 //|					short color 4,5
 //|					short font 6,7
-//|					UI08[4] lang (null terminated, "enu " for US english.)
+//|					std::uint8_t[4] lang (null terminated, "enu " for US english.)
 // 8,9,10,11 |					wchar[?] text (null terminated, ?=(msgsize-12)/2) 13
 //|
 //|					Message Sent By Server:
@@ -278,7 +278,7 @@ bool CPITalkRequest::Handle(void) {
     if (strlen(asciiText) == 0)
         return true;
 
-    std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -595,7 +595,7 @@ bool CSpeechQueue::InternalPoll(void) {
         toCheck = (*slIter);
 
         if (toCheck->At() == -1 ||
-            static_cast<UI32>(toCheck->At()) <= cwmWorldState->GetUICurrentTime()) {
+            static_cast<std::uint32_t>(toCheck->At()) <= cwmWorldState->GetUICurrentTime()) {
             retVal = true;
             SayIt((*toCheck));
 
@@ -632,9 +632,9 @@ CSpeechEntry &CSpeechQueue::Add(void) // Make space in queue, and return pointer
     return (*speechList[iSize]);
 }
 
-SI32 CSpeechQueue::PollTime(void) const { return pollTime; }
+std::int32_t CSpeechQueue::PollTime(void) const { return pollTime; }
 
-void CSpeechQueue::PollTime(SI32 value) { pollTime = value; }
+void CSpeechQueue::PollTime(std::int32_t value) { pollTime = value; }
 
 bool CSpeechQueue::RunAsThread(void) const { return runAsThread; }
 

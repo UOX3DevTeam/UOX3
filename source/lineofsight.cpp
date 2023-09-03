@@ -160,11 +160,11 @@ struct Vector2D_st {
 
 //==================================================================================================
 struct Vector3D_st {
-    SI32 x;
-    SI32 y;
-    SI08 z;
+    std::int32_t x;
+    std::int32_t y;
+    std::int8_t z;
     Vector3D_st() : x(0), y(0), z(0) {}
-    Vector3D_st(SI32 X, SI32 Y, SI08 Z) : x(X), y(Y), z(Z) {}
+    Vector3D_st(std::int32_t X, std::int32_t Y, std::int8_t Z) : x(X), y(Y), z(Z) {}
 };
 
 //==================================================================================================
@@ -244,8 +244,8 @@ inline auto Line3D_st::Projection2D(void) const -> Line2D_st {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 // o------------------------------------------------------------------------------------------------o
-bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, SI16 x1, SI16 y1,
-                   [[maybe_unused]] SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top) {
+bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, std::int16_t x1, std::int16_t y1,
+                   [[maybe_unused]] std::int8_t z, std::int16_t x2, std::int16_t y2, std::uint8_t worldNum, std::int8_t z2Top) {
     // Map tile at previous coordinate along the LoS path
     auto srcMap = Map->SeekMap(x1, y1, worldNum);
 
@@ -253,8 +253,8 @@ bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS
     auto trgMap = Map->SeekMap(x2, y2, worldNum);
 
     // Get tileIDs for previous tile in LoS path, and next one
-    const UI16 mID1 = srcMap.tileId;
-    const UI16 mID2 = trgMap.tileId;
+    const std::uint16_t mID1 = srcMap.tileId;
+    const std::uint16_t mID2 = trgMap.tileId;
 
     // Continue if neither of the two tiles is a NoDraw tile, or a cave entrance tile
     if ((mID1 != 2 && mID2 != 2) && (mID1 != 475 && mID2 != 475)) {
@@ -291,7 +291,7 @@ bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check tiledata flags for tile
 // o------------------------------------------------------------------------------------------------o
-bool CheckFlags(UI08 typeToCheck, Tile_st &toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ) {
+bool CheckFlags(std::uint8_t typeToCheck, Tile_st &toCheck, std::int8_t startZ, std::int8_t destZ, bool useSurfaceZ) {
     switch (typeToCheck) {
     case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags
                        // listed below, assume it's a tree! :P
@@ -334,7 +334,7 @@ bool CheckFlags(UI08 typeToCheck, Tile_st &toCheck, SI08 startZ, SI08 destZ, boo
     return false;
 }
 
-SI08 GetSGN(SI16 startLoc, SI16 destLoc, SI16 &l1, SI16 &l2) {
+std::int8_t GetSGN(std::int16_t startLoc, std::int16_t destLoc, std::int16_t &l1, std::int16_t &l2) {
     if (startLoc < destLoc) {
         l1 = startLoc;
         l2 = destLoc;
@@ -354,12 +354,12 @@ SI08 GetSGN(SI16 startLoc, SI16 destLoc, SI16 &l1, SI16 &l2) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if dynamic item will block Line of Sight
 // o------------------------------------------------------------------------------------------------o
-UI16 DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, SI32 collisioncount, SI16 distX,
-                     SI16 distY, SI16 x1, SI16 x2, SI16 y1, SI16 y2, SI32 dz) {
-    const SI16 curX = toCheck->GetX();
-    const SI16 curY = toCheck->GetY();
-    const SI08 curZ = toCheck->GetZ();
-    SI32 i = 0;
+std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int32_t collisioncount, std::int16_t distX,
+                     std::int16_t distY, std::int16_t x1, std::int16_t x2, std::int16_t y1, std::int16_t y2, std::int32_t dz) {
+    const std::int16_t curX = toCheck->GetX();
+    const std::int16_t curY = toCheck->GetY();
+    const std::int8_t curZ = toCheck->GetZ();
+    std::int32_t i = 0;
     Vector3D_st *checkLoc = nullptr;
     if (!toCheck->CanBeObjType(OT_MULTI)) {
         if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 &&
@@ -374,8 +374,8 @@ UI16 DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, SI32 collisioncoun
         }
     }
     else if (distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE) {
-        const UI16 multiId = static_cast<UI16>(toCheck->GetId() - 0x4000);
-        [[maybe_unused]] SI32 length = 0;
+        const std::uint16_t multiId = static_cast<std::uint16_t>(toCheck->GetId() - 0x4000);
+        [[maybe_unused]] std::int32_t length = 0;
 
         if (!Map->MultiExists(multiId)) {
             Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
@@ -393,10 +393,10 @@ UI16 DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, SI32 collisioncoun
         else {
             for (auto &multi : Map->SeekMulti(multiId).items) {
                 if (multi.flag) {
-                    const SI16 checkX = (curX + multi.offsetX);
-                    const SI16 checkY = (curY + multi.offsetY);
+                    const std::int16_t checkX = (curX + multi.offsetX);
+                    const std::int16_t checkY = (curY + multi.offsetY);
                     if (checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2) {
-                        const SI08 checkZ = (curZ + multi.altitude);
+                        const std::int8_t checkZ = (curZ + multi.altitude);
                         CTile &multiTile = Map->SeekTile(multi.tileId);
                         for (i = 0; i < collisioncount; ++i) {
                             checkLoc = &collisions[i];
@@ -442,16 +442,16 @@ UI16 DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, SI32 collisioncoun
 //|
 //|					it WAS based on the P.T., now its based on linear algebra;)
 // o------------------------------------------------------------------------------------------------o
-auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor,
-                 bool useSurfaceZ, SI08 destZTop, bool checkDistance) -> bool {
+auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t destY, std::int8_t destZ, std::uint8_t checkfor,
+                 bool useSurfaceZ, std::int8_t destZTop, bool checkDistance) -> bool {
     const bool blocked = false;
     const bool not_blocked = true;
 
     if (destX == -1 && destY == -1)
         return not_blocked; // target canceled
 
-    const SI16 startX = mChar->GetX(), startY = mChar->GetY();
-    const SI08 startZ =
+    const std::int16_t startX = mChar->GetX(), startY = mChar->GetY();
+    const std::int8_t startZ =
         (useSurfaceZ ? mChar->GetZ()
                      : (mChar->GetZ() + 15)); // standard eye height of most bodies if useSurfaceZ
                                               // is false, use feet height if true
@@ -459,19 +459,19 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
     if ((startX == destX) && (startY == destY) && (startZ == destZ))
         return not_blocked; // if source and target are on the same position
 
-    const UI08 worldNumber = mChar->WorldNumber();
-    const UI16 instanceId = mChar->GetInstanceId();
+    const std::uint8_t worldNumber = mChar->WorldNumber();
+    const std::uint16_t instanceId = mChar->GetInstanceId();
 
-    const SI32 distX = abs(static_cast<SI32>(destX - startX)),
-               distY = abs(static_cast<SI32>(destY - startY));
-    const SI32 distZ = destZ - startZ; // abs( static_cast<SI32>( destZ - startZ ));
+    const std::int32_t distX = abs(static_cast<std::int32_t>(destX - startX)),
+               distY = abs(static_cast<std::int32_t>(destY - startY));
+    const std::int32_t distZ = destZ - startZ; // abs( static_cast<std::int32_t>( destZ - startZ ));
 
     Line3D_st lineofsight =
         Line3D_st(Vector3D_st(startX, startY, startZ), Vector3D_st(distX, distY, distZ));
 
     const R64 rBlah = (static_cast<R64>(distX) * static_cast<R64>(distX)) +
                       (static_cast<R64>(distY) * static_cast<R64>(distY));
-    const SI32 distance = static_cast<SI32>(sqrt(rBlah));
+    const std::int32_t distance = static_cast<std::int32_t>(sqrt(rBlah));
 
     // Let's provide some leeway based on height of object
     destZTop = destZ + destZTop;
@@ -492,11 +492,11 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
     vec.resize(MAX_COLLISIONS);
     auto collisions = vec.data();
 
-    SI16 x1, y1, x2, y2;
-    SI32 i = 0;
-    const SI08 sgn_x = GetSGN(startX, destX, x1, x2);
-    const SI08 sgn_y = GetSGN(startY, destY, y1, y2);
-    SI08 sgn_z = (startZ < destZ) ? 1 : (-1); // signum for z
+    std::int16_t x1, y1, x2, y2;
+    std::int32_t i = 0;
+    const std::int8_t sgn_x = GetSGN(startX, destX, x1, x2);
+    const std::int8_t sgn_y = GetSGN(startY, destY, y1, y2);
+    std::int8_t sgn_z = (startZ < destZ) ? 1 : (-1); // signum for z
     if (startZ == destZ) {
         sgn_z = 0;
     }
@@ -506,20 +506,20 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
         collisions[i] = Vector3D_st(-1, -1, -1);
     }
 
-    SI32 collisioncount = 0;
-    SI32 dz = 0; // dz is needed later for collisions of the ray with floor tiles
+    std::int32_t collisioncount = 0;
+    std::int32_t dz = 0; // dz is needed later for collisions of the ray with floor tiles
     if (sgn_x == 0 || distY > distX) {
-        dz = static_cast<SI32>(floor(abs(lineofsight.dzInDirectionY())));
+        dz = static_cast<std::int32_t>(floor(abs(lineofsight.dzInDirectionY())));
     }
     else {
-        dz = static_cast<SI32>(floor(abs(lineofsight.dzInDirectionX())));
+        dz = static_cast<std::int32_t>(floor(abs(lineofsight.dzInDirectionX())));
     }
 
     if (sgn_x == 0 && sgn_y == 0 && sgn_z != 0) // should fix shooting through floor issues
     {
         for (i = 1; i <= abs(distZ); ++i) {
             collisions[collisioncount] =
-                Vector3D_st(startX, startY, static_cast<SI08>(startZ + (i * sgn_z)));
+                Vector3D_st(startX, startY, static_cast<std::int8_t>(startZ + (i * sgn_z)));
             ++collisioncount;
         }
     }
@@ -529,7 +529,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
         for (i = 1; i <= distY; ++i) {
             collisions[collisioncount] =
                 Vector3D_st(startX, startY + (sgn_y * i),
-                            static_cast<SI08>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                            static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
@@ -539,7 +539,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
         for (i = 1; i <= distX; ++i) {
             collisions[collisioncount] =
                 Vector3D_st(startX + (sgn_x * i), startY,
-                            static_cast<SI08>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                            static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
@@ -549,7 +549,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
         for (i = 1; i <= distX; ++i) {
             collisions[collisioncount] =
                 Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * i),
-                            static_cast<SI08>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                            static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
@@ -564,7 +564,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
                 collisions[collisioncount] =
                     Vector3D_st(startX + (sgn_x * i),
                                 startY + (sgn_y * static_cast<R32>(RoundNumber(i / steps))),
-                                static_cast<SI08>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                                static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
                 ++collisioncount;
             }
         }
@@ -577,7 +577,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
                 collisions[collisioncount] =
                     Vector3D_st(startX + (sgn_x * static_cast<R32>(RoundNumber(i / steps))),
                                 startY + (sgn_y * i),
-                                static_cast<SI08>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                                static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
                 ++collisioncount;
             }
         }
@@ -585,9 +585,9 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
 
     ////////////////////////////////////////////////////////
     ////////////////  This determines what to check for
-    UI08 checkthis[ITEM_TYPE_CHOICES];
+    std::uint8_t checkthis[ITEM_TYPE_CHOICES];
     size_t checkthistotal = 0;
-    UI08 itemtype = 1;
+    std::uint8_t itemtype = 1;
 
     while (checkfor) {
         if (checkfor >= itemtype && checkfor < (itemtype * 2) && checkfor) {
@@ -604,7 +604,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
     }
 
     std::vector<Tile_st> losItemList;
-    UI16 itemCount = 0;
+    std::uint16_t itemCount = 0;
 
     // We already have to run through all the collisions in this function, so lets just check and
     // push the ID rather than coming back to it later.
@@ -622,7 +622,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 dest
             if (toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ)
                 continue;
 
-            const UI16 idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,
+            const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,
                                                   x1, x2, y1, y2, dz);
             if (idToPush != INVALIDID) {
                 auto tile = Tile_st(TileType_t::art);
@@ -718,7 +718,7 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
         if (mChar->GetInstanceId() != itemOwner->GetInstanceId())
             return false;
 
-        const SI08 height = Map->TileHeight(
+        const std::int8_t height = Map->TileHeight(
             itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
         // Can we see the top or bottom of the item
         if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(),

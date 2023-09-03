@@ -60,15 +60,15 @@ class CServerDefinitions {
   private:
     VECSCRIPTLIST_ITERATOR slIter;
 
-    std::map<std::string, SI16> priorityMap;
-    SI16 defaultPriority;
+    std::map<std::string, std::int16_t> priorityMap;
+    std::int16_t defaultPriority;
 
     auto LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void;
     auto ReloadScriptObjects() -> void;
-    auto BuildPriorityMap(DEFINITIONCATEGORIES category, UI08 &wasPrioritized) -> void;
+    auto BuildPriorityMap(DEFINITIONCATEGORIES category, std::uint8_t &wasPrioritized) -> void;
     auto CleanPriorityMap() -> void;
 
-    auto GetPriority(const char *file) -> SI16;
+    auto GetPriority(const char *file) -> std::int16_t;
 
     auto Cleanup() -> void;
 

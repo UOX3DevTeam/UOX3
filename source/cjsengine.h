@@ -79,7 +79,7 @@ class CJSRuntime {
 
   public:
     CJSRuntime();
-    CJSRuntime(UI32 engineSize);
+    CJSRuntime(std::uint32_t engineSize);
     ~CJSRuntime();
 
     void Reload();
@@ -109,18 +109,18 @@ class CJSEngine {
 
     auto Startup() -> void;
 
-    JSRuntime *GetRuntime(UI08 runTime) const;
-    JSContext *GetContext(UI08 runTime) const;
-    JSObject *GetObject(UI08 runTime) const;
+    JSRuntime *GetRuntime(std::uint8_t runTime) const;
+    JSContext *GetContext(std::uint8_t runTime) const;
+    JSObject *GetObject(std::uint8_t runTime) const;
 
-    UI08 FindActiveRuntime(JSRuntime *rT) const;
+    std::uint8_t FindActiveRuntime(JSRuntime *rT) const;
 
-    JSObject *GetPrototype(UI08 runTime, JSPrototypes protoNum) const;
+    JSObject *GetPrototype(std::uint8_t runTime, JSPrototypes protoNum) const;
 
     void Reload(void);
     void CollectGarbage(void);
 
-    JSObject *AcquireObject(IUEEntries iType, void *index, UI08 runTime);
+    JSObject *AcquireObject(IUEEntries iType, void *index, std::uint8_t runTime);
     void ReleaseObject(IUEEntries IType, void *index);
 };
 

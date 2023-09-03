@@ -92,85 +92,85 @@ class CSocket {
     Ip4Addr_st ipaddress;
 
   private:
-    std::vector<UI16> trigWords;
-    std::vector<UI16>::iterator twIter;
-    UI16 accountNum;
+    std::vector<std::uint16_t> trigWords;
+    std::vector<std::uint16_t>::iterator twIter;
+    std::uint16_t accountNum;
 
     CChar *currCharObj;
-    SI32 idleTimeout;
+    std::int32_t idleTimeout;
     bool wasIdleWarned;
     bool objDelayMsgShown;
     bool skillDelayMsgShown;
-    SI32 negotiateTimeout;
+    std::int32_t negotiateTimeout;
     bool negotiatedWithAssistant;
 
-    UI08 buffer[MAXBUFFER];
-    UI08 outbuffer[MAXBUFFER];
+    std::uint8_t buffer[MAXBUFFER];
+    std::uint8_t outbuffer[MAXBUFFER];
     // These vectors are for dealing with packets that are larger than the buffer size
     // While admittedly not thread friendly, the number of times these buffers are used
     // should be very small and right now, is an implementation that will increase clieht
     // compatability
-    std::vector<UI08> largeBuffer;
-    std::vector<UI08> largePackBuffer;
+    std::vector<std::uint8_t> largeBuffer;
+    std::vector<std::uint8_t> largePackBuffer;
 
     std::string xtext;
     std::string xtext2;
-    SI16 clickx;
-    SI16 clicky;
-    SI08 clickz;
-    UI08 currentSpellType;
-    SI32 outlength;
-    SI32 inlength;
+    std::int16_t clickx;
+    std::int16_t clicky;
+    std::int8_t clickz;
+    std::uint8_t currentSpellType;
+    std::int32_t outlength;
+    std::int32_t inlength;
     bool logging;
-    UI08 range;
+    std::uint8_t range;
     bool cryptclient;
     size_t cliSocket; // client
-    SI16 walkSequence;
+    std::int16_t walkSequence;
     size_t postAckCount;
     PickupLocations pSpot;
     SERIAL pFrom;
 
     GenericList<CItem *> contsOpened;
 
-    SI16 pX;
-    SI16 pY;
-    SI08 pZ;
+    std::int16_t pX;
+    std::int16_t pY;
+    std::int8_t pZ;
 
     UnicodeTypes lang;
     ClientTypes cliType;
     ClientVersions cliVerShort;
-    UI32 clientVersion;
+    std::uint32_t clientVersion;
 
-    UI32 bytesReceived;
-    UI32 bytesSent;
+    std::uint32_t bytesReceived;
+    std::uint32_t bytesSent;
     bool receivedVersion;
     //	Temporary variables (For targeting commands, etc)
     CBaseObject *tmpObj;
     CBaseObject *tmpObj2;
-    SI32 tempint;
-    SI32 tempint2;
-    UI08 dyeall;
-    UI08 addid[4];
+    std::int32_t tempint;
+    std::int32_t tempint2;
+    std::uint8_t dyeall;
+    std::uint8_t addid[4];
 
     bool newClient;
     bool firstPacket;
 
     bool forceOffline;
 
-    UI08 clientip[4];
+    std::uint8_t clientip[4];
 
     bool loginComplete;
     CItem *cursorItem; // pointer to item held on mouse cursor
 
-    UI16 bytesRecvWarningCount;
-    UI16 bytesSentWarningCount;
+    std::uint16_t bytesRecvWarningCount;
+    std::uint16_t bytesSentWarningCount;
 
     bool targetok;
 
     std::vector<SERIAL> postAcked;
     std::vector<SERIAL>::iterator ackIter;
 
-    UI32 Pack(void *pvIn, void *pvOut, SI32 len);
+    std::uint32_t Pack(void *pvIn, void *pvOut, std::int32_t len);
 
     // Timer Vals moved here from CChar due to their inherently temporary nature and to reduce
     // wasted memory
@@ -180,19 +180,19 @@ class CSocket {
     CSocket(size_t sockNum);
     ~CSocket();
 
-    UI32 ClientVersion(void) const;
-    void ClientVersion(UI32 newVer);
-    void ClientVersion(UI08 major, UI08 minor, UI08 sub, UI08 letter);
+    std::uint32_t ClientVersion(void) const;
+    void ClientVersion(std::uint32_t newVer);
+    void ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t sub, std::uint8_t letter);
 
-    void ClientVersionMajor(UI08 value);
-    void ClientVersionMinor(UI08 value);
-    void ClientVersionSub(UI08 value);
-    void ClientVersionLetter(UI08 value);
+    void ClientVersionMajor(std::uint8_t value);
+    void ClientVersionMinor(std::uint8_t value);
+    void ClientVersionSub(std::uint8_t value);
+    void ClientVersionLetter(std::uint8_t value);
 
-    UI08 ClientVersionMajor(void) const;
-    UI08 ClientVersionMinor(void) const;
-    UI08 ClientVersionSub(void) const;
-    UI08 ClientVersionLetter(void) const;
+    std::uint8_t ClientVersionMajor(void) const;
+    std::uint8_t ClientVersionMinor(void) const;
+    std::uint8_t ClientVersionSub(void) const;
+    std::uint8_t ClientVersionLetter(void) const;
 
     ClientVersions ClientVerShort(void) const;
     void ClientVerShort(ClientVersions newVer);
@@ -201,46 +201,46 @@ class CSocket {
     void ClientType(ClientTypes newVer);
 
     void ClearPage(void);
-    void AddTrigWord(UI16);
+    void AddTrigWord(std::uint16_t);
     // Accessors
 
     bool LoginComplete(void) const;
 
     CItem *GetCursorItem(void) const;
     void SetCursorItem(CItem *newValue);
-    SI16 PickupX(void) const;
-    SI16 PickupY(void) const;
-    SI08 PickupZ(void) const;
+    std::int16_t PickupX(void) const;
+    std::int16_t PickupY(void) const;
+    std::int8_t PickupZ(void) const;
     PickupLocations PickupSpot(void) const;
     SERIAL PickupSerial(void) const;
     bool FirstPacket(void) const;
-    SI32 IdleTimeout(void) const;
+    std::int32_t IdleTimeout(void) const;
     bool WasIdleWarned(void) const;
     bool ObjDelayMsgShown(void) const;
     bool SkillDelayMsgShown(void) const;
-    SI32 NegotiateTimeout(void) const;
+    std::int32_t NegotiateTimeout(void) const;
     bool NegotiatedWithAssistant(void) const;
-    UI08 *Buffer(void);
-    UI08 *OutBuffer(void);
-    SI16 WalkSequence(void) const;
-    UI16 AcctNo(void) const;
+    std::uint8_t *Buffer(void);
+    std::uint8_t *OutBuffer(void);
+    std::int16_t WalkSequence(void) const;
+    std::uint16_t AcctNo(void) const;
     std::string XText(void);
     std::string XText2(void);
     bool CryptClient(void) const;
     size_t CliSocket(void) const;
-    UI08 CurrentSpellType(void) const;
-    SI32 OutLength(void) const;
-    SI32 InLength(void) const;
+    std::uint8_t CurrentSpellType(void) const;
+    std::int32_t OutLength(void) const;
+    std::int32_t InLength(void) const;
     bool Logging(void) const;
     CChar *CurrcharObj(void) const;
-    UI08 ClientIP1(void) const;
-    UI08 ClientIP2(void) const;
-    UI08 ClientIP3(void) const;
-    UI08 ClientIP4(void) const;
+    std::uint8_t ClientIP1(void) const;
+    std::uint8_t ClientIP2(void) const;
+    std::uint8_t ClientIP3(void) const;
+    std::uint8_t ClientIP4(void) const;
     bool NewClient(void) const;
     bool TargetOK(void) const;
-    UI16 FirstTrigWord(void);
-    UI16 NextTrigWord(void);
+    std::uint16_t FirstTrigWord(void);
+    std::uint16_t NextTrigWord(void);
     bool FinishedTrigWords(void);
     void ClearTrigWords(void);
     bool ForceOffline(void) const;
@@ -248,15 +248,15 @@ class CSocket {
     // Temporary Variables
     CBaseObject *TempObj(void) const;
     CBaseObject *TempObj2(void) const;
-    SI32 TempInt(void) const;
-    SI32 TempInt2(void) const;
-    UI32 AddId(void) const;
-    UI08 AddId1(void) const;
-    UI08 AddId2(void) const;
-    UI08 AddId3(void) const;
-    UI08 AddId4(void) const;
-    UI08 DyeAll(void) const;
-    SI08 ClickZ(void) const;
+    std::int32_t TempInt(void) const;
+    std::int32_t TempInt2(void) const;
+    std::uint32_t AddId(void) const;
+    std::uint8_t AddId1(void) const;
+    std::uint8_t AddId2(void) const;
+    std::uint8_t AddId3(void) const;
+    std::uint8_t AddId4(void) const;
+    std::uint8_t DyeAll(void) const;
+    std::int8_t ClickZ(void) const;
 
     SERIAL FirstPostAck(void);
     SERIAL NextPostAck(void);
@@ -266,9 +266,9 @@ class CSocket {
     size_t PostCount(void) const;
     size_t PostAckCount(void) const;
 
-    SI16 ClickX(void) const;
-    SI16 ClickY(void) const;
-    UI08 Range(void) const;
+    std::int16_t ClickX(void) const;
+    std::int16_t ClickY(void) const;
+    std::uint8_t Range(void) const;
 
     void CloseSocket(void);
 
@@ -276,34 +276,34 @@ class CSocket {
 
     void LoginComplete(bool newVal);
 
-    void PickupLocation(SI16 x, SI16 y, SI08 z);
-    void PickupX(SI16 x);
-    void PickupY(SI16 y);
-    void PickupZ(SI08 z);
+    void PickupLocation(std::int16_t x, std::int16_t y, std::int8_t z);
+    void PickupX(std::int16_t x);
+    void PickupY(std::int16_t y);
+    void PickupZ(std::int8_t z);
     void PickupSpot(PickupLocations newValue);
     void PickupSerial(SERIAL pickupSerial);
     void FirstPacket(bool newValue);
-    void IdleTimeout(SI32 newValue);
+    void IdleTimeout(std::int32_t newValue);
     void WasIdleWarned(bool value);
     void ObjDelayMsgShown(bool value);
     void SkillDelayMsgShown(bool value);
-    void NegotiateTimeout(SI32 newValue);
+    void NegotiateTimeout(std::int32_t newValue);
     void NegotiatedWithAssistant(bool value);
-    void WalkSequence(SI16 newValue);
-    void AcctNo(UI16 newValue);
+    void WalkSequence(std::int16_t newValue);
+    void AcctNo(std::uint16_t newValue);
     void CryptClient(bool newValue);
     void CliSocket(size_t newValue);
-    void CurrentSpellType(UI08 newValue);
-    void OutLength(SI32 newValue);
-    void InLength(SI32 newValue);
+    void CurrentSpellType(std::uint8_t newValue);
+    void OutLength(std::int32_t newValue);
+    void InLength(std::int32_t newValue);
     void Logging(bool newValue);
     void CurrcharObj(CChar *newValue);
-    void ClientIP1(UI08);
-    void ClientIP2(UI08 newValue);
-    void ClientIP3(UI08 newValue);
-    void ClientIP4(UI08 newValue);
+    void ClientIP1(std::uint8_t);
+    void ClientIP2(std::uint8_t newValue);
+    void ClientIP3(std::uint8_t newValue);
+    void ClientIP4(std::uint8_t newValue);
     void NewClient(bool newValue);
-    void Range(UI08 value);
+    void Range(std::uint8_t value);
     void ForceOffline(bool newValue);
 
     //	Temporary Variables
@@ -314,34 +314,34 @@ class CSocket {
 
     void TempObj(CBaseObject *newValue);
     void TempObj2(CBaseObject *newValue);
-    void TempInt(SI32 newValue);
-    void TempInt2(SI32 newValue);
-    void AddId(UI32 newValue);
-    void AddId1(UI08 newValue);
-    void AddId2(UI08 newValue);
-    void AddId3(UI08 newValue);
-    void AddId4(UI08 newValue);
-    void DyeAll(UI08 newValue);
-    void ClickZ(SI08 newValue);
+    void TempInt(std::int32_t newValue);
+    void TempInt2(std::int32_t newValue);
+    void AddId(std::uint32_t newValue);
+    void AddId1(std::uint8_t newValue);
+    void AddId2(std::uint8_t newValue);
+    void AddId3(std::uint8_t newValue);
+    void AddId4(std::uint8_t newValue);
+    void DyeAll(std::uint8_t newValue);
+    void ClickZ(std::int8_t newValue);
 
     bool FlushBuffer(bool doLog = true);
     bool FlushLargeBuffer(bool doLog = true);
     void FlushIncoming(void);
-    void Send(const void *point, SI32 length);
-    SI32 Receive(SI32 x, bool doLog = true);
+    void Send(const void *point, std::int32_t length);
+    std::int32_t Receive(std::int32_t x, bool doLog = true);
     void ReceiveLogging(CPInputBuffer *toLog);
 
-    UI32 GetDWord(size_t offset);
-    UI16 GetWord(size_t offset);
-    UI08 GetByte(size_t offset);
+    std::uint32_t GetDWord(size_t offset);
+    std::uint16_t GetWord(size_t offset);
+    std::uint8_t GetByte(size_t offset);
 
-    void SetDWord(size_t offset, UI32 newValue);
-    void SetWord(size_t offset, UI16 newValue);
-    void SetByte(size_t offset, UI08 newValue);
-    void ClientIP(UI32 newValue);
+    void SetDWord(size_t offset, std::uint32_t newValue);
+    void SetWord(size_t offset, std::uint16_t newValue);
+    void SetByte(size_t offset, std::uint8_t newValue);
+    void ClientIP(std::uint32_t newValue);
     void TargetOK(bool newValue);
-    void ClickX(SI16 newValue);
-    void ClickY(SI16 newValue);
+    void ClickX(std::int16_t newValue);
+    void ClickY(std::int16_t newValue);
     void PostAcked(SERIAL newValue);
     void PostAckCount(size_t newValue);
     void PostClear();
@@ -354,21 +354,21 @@ class CSocket {
     void Language(UnicodeTypes newVal);
 
     void SysMessage(const std::string txt, ...);
-    void SysMessageJS(const std::string &uformat, UI16 txtColor, const std::string &data);
-    void SysMessage(SI32 dictEntry, ...);
+    void SysMessageJS(const std::string &uformat, std::uint16_t txtColor, const std::string &data);
+    void SysMessage(std::int32_t dictEntry, ...);
     void ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFromNow = 0.0f,
-                    UI16 Color = 0x03B2);
-    void ObjMessage(SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f,
-                    UI32 Color = 0x03B2, ...);
+                    std::uint16_t Color = 0x03B2);
+    void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f,
+                    std::uint32_t Color = 0x03B2, ...);
 
     void ShowCharName(CChar *i, bool showSer);
 
-    void SendTargetCursor(UI08 targType, UI08 targId, const std::string &txt, UI08 cursorType = 0);
-    void SendTargetCursor(UI08 targType, UI08 targId, UI08 cursorType, SI32 dictEntry, ...);
-    void mtarget(UI16 itemId, SI32 dictEntry);
+    void SendTargetCursor(std::uint8_t targType, std::uint8_t targId, const std::string &txt, std::uint8_t cursorType = 0);
+    void SendTargetCursor(std::uint8_t targType, std::uint8_t targId, std::uint8_t cursorType, std::int32_t dictEntry, ...);
+    void mtarget(std::uint16_t itemId, std::int32_t dictEntry);
 
     void StatWindow(CBaseObject *i, bool updateParty = true);
-    void UpdateSkill(UI08 skillnum);
+    void UpdateSkill(std::uint8_t skillnum);
     void OpenPack(CItem *i, bool isPlayerVendor = false);
     void OpenBank(CChar *i);
     void OpenURL(const std::string &txt);
@@ -378,14 +378,14 @@ class CSocket {
     bool ReceivedVersion(void) const;
     void ReceivedVersion(bool value);
 
-    UI32 BytesSent(void) const;
-    void BytesSent(UI32 newValue);
-    UI32 BytesReceived(void) const;
-    void BytesReceived(UI32 newValue);
-    UI16 BytesReceivedWarning(void) const;
-    void BytesReceivedWarning(UI16 newValue);
-    UI16 BytesSentWarning(void) const;
-    void BytesSentWarning(UI16 newValue);
+    std::uint32_t BytesSent(void) const;
+    void BytesSent(std::uint32_t newValue);
+    std::uint32_t BytesReceived(void) const;
+    void BytesReceived(std::uint32_t newValue);
+    std::uint16_t BytesReceivedWarning(void) const;
+    void BytesReceivedWarning(std::uint16_t newValue);
+    std::uint16_t BytesSentWarning(void) const;
+    void BytesSentWarning(std::uint16_t newValue);
 
     TIMERVAL GetTimer(cS_TID timerId) const;
     void SetTimer(cS_TID timerId, TIMERVAL value);

@@ -37,56 +37,56 @@ enum CWM_TID {
 
 class CServerProfile {
   private:
-    UI32 networkTime;
-    UI32 timerTime;
-    UI32 autoTime;
-    UI32 loopTime;
-    UI32 networkTimeCount;
-    UI32 timerTimeCount;
-    UI32 autoTimeCount;
-    UI32 loopTimeCount;
+    std::uint32_t networkTime;
+    std::uint32_t timerTime;
+    std::uint32_t autoTime;
+    std::uint32_t loopTime;
+    std::uint32_t networkTimeCount;
+    std::uint32_t timerTimeCount;
+    std::uint32_t autoTimeCount;
+    std::uint32_t loopTimeCount;
 
-    SI32 globalRecv;
-    SI32 globalSent;
+    std::int32_t globalRecv;
+    std::int32_t globalSent;
 
   public:
     CServerProfile();
 
-    UI32 NetworkTime(void) const;
-    UI32 TimerTime(void) const;
-    UI32 AutoTime(void) const;
-    UI32 LoopTime(void) const;
+    std::uint32_t NetworkTime(void) const;
+    std::uint32_t TimerTime(void) const;
+    std::uint32_t AutoTime(void) const;
+    std::uint32_t LoopTime(void) const;
 
-    void NetworkTime(UI32 newVal);
-    void TimerTime(UI32 newVal);
-    void AutoTime(UI32 newVal);
-    void LoopTime(UI32 newVal);
+    void NetworkTime(std::uint32_t newVal);
+    void TimerTime(std::uint32_t newVal);
+    void AutoTime(std::uint32_t newVal);
+    void LoopTime(std::uint32_t newVal);
 
-    void IncNetworkTime(UI32 toInc);
-    void IncTimerTime(UI32 toInc);
-    void IncAutoTime(UI32 toInc);
-    void IncLoopTime(UI32 toInc);
+    void IncNetworkTime(std::uint32_t toInc);
+    void IncTimerTime(std::uint32_t toInc);
+    void IncAutoTime(std::uint32_t toInc);
+    void IncLoopTime(std::uint32_t toInc);
 
-    UI32 NetworkTimeCount(void) const;
-    UI32 TimerTimeCount(void) const;
-    UI32 AutoTimeCount(void) const;
-    UI32 LoopTimeCount(void) const;
+    std::uint32_t NetworkTimeCount(void) const;
+    std::uint32_t TimerTimeCount(void) const;
+    std::uint32_t AutoTimeCount(void) const;
+    std::uint32_t LoopTimeCount(void) const;
 
-    void NetworkTimeCount(UI32 newVal);
-    void TimerTimeCount(UI32 newVal);
-    void AutoTimeCount(UI32 newVal);
-    void LoopTimeCount(UI32 newVal);
+    void NetworkTimeCount(std::uint32_t newVal);
+    void TimerTimeCount(std::uint32_t newVal);
+    void AutoTimeCount(std::uint32_t newVal);
+    void LoopTimeCount(std::uint32_t newVal);
 
     void IncNetworkTimeCount(void);
     void IncTimerTimeCount(void);
     void IncAutoTimeCount(void);
     void IncLoopTimeCount(void);
 
-    SI32 GlobalReceived(void) const;
-    SI32 GlobalSent(void) const;
+    std::int32_t GlobalReceived(void) const;
+    std::int32_t GlobalSent(void) const;
 
-    void GlobalReceived(SI32 newVal);
-    void GlobalSent(SI32 newVal);
+    void GlobalReceived(std::int32_t newVal);
+    void GlobalSent(std::int32_t newVal);
 };
 
 class CWorldMain {
@@ -108,18 +108,18 @@ class CWorldMain {
     bool hasLoaded;
 
     // Time Functions
-    UI32 uoTickCount;
-    UI32 startTime, endTime, lClock;
+    std::uint32_t uoTickCount;
+    std::uint32_t startTime, endTime, lClock;
     bool overflow;
-    UI32 uiCurrentTime;
+    std::uint32_t uiCurrentTime;
 
     // Worldsave
-    UI32 oldTime, newTime;
+    std::uint32_t oldTime, newTime;
     bool autoSaved;
     SaveStatus worldSaveProgress;
 
     // IP Update
-    UI32 oldIPtime, newIPtime;
+    std::uint32_t oldIPtime, newIPtime;
     bool ipUpdated;
 
     // Misc
@@ -129,13 +129,13 @@ class CWorldMain {
 
   public:
     struct Skill_st {
-        UI16 strength;
-        UI16 dexterity;
-        UI16 intelligence;
-        SI32 skillDelay;
+        std::uint16_t strength;
+        std::uint16_t dexterity;
+        std::uint16_t intelligence;
+        std::int32_t skillDelay;
         std::string madeWord;
         std::vector<Advance_st> advancement;
-        UI16 jsScript;
+        std::uint16_t jsScript;
         std::string name;
         Skill_st() { ResetDefaults(); }
         auto ResetDefaults() -> void {
@@ -165,34 +165,34 @@ class CWorldMain {
     bool GetLoaded(void) const;
 
     // Time Functions
-    void SetUICurrentTime(UI32 newVal);
-    UI32 GetUICurrentTime(void) const;
-    void SetUOTickCount(UI32 newVal);
-    UI32 GetUOTickCount(void) const;
+    void SetUICurrentTime(std::uint32_t newVal);
+    std::uint32_t GetUICurrentTime(void) const;
+    void SetUOTickCount(std::uint32_t newVal);
+    std::uint32_t GetUOTickCount(void) const;
     void SetOverflow(bool newVal);
     bool GetOverflow(void) const;
-    void SetStartTime(UI32 newVal);
-    UI32 GetStartTime(void) const;
-    void SetEndTime(UI32 newVal);
-    UI32 GetEndTime(void) const;
-    void SetLClock(UI32 newVal);
-    UI32 GetLClock(void) const;
+    void SetStartTime(std::uint32_t newVal);
+    std::uint32_t GetStartTime(void) const;
+    void SetEndTime(std::uint32_t newVal);
+    std::uint32_t GetEndTime(void) const;
+    void SetLClock(std::uint32_t newVal);
+    std::uint32_t GetLClock(void) const;
 
     // Worldsave
-    void SetNewTime(UI32 newVal);
-    UI32 GetNewTime(void) const;
-    void SetOldTime(UI32 newVal);
-    UI32 GetOldTime(void) const;
+    void SetNewTime(std::uint32_t newVal);
+    std::uint32_t GetNewTime(void) const;
+    void SetOldTime(std::uint32_t newVal);
+    std::uint32_t GetOldTime(void) const;
     void SetAutoSaved(bool newVal);
     bool GetAutoSaved(void) const;
     void SetWorldSaveProgress(SaveStatus newVal);
     SaveStatus GetWorldSaveProgress(void) const;
 
     // IP update
-    UI32 GetNewIPTime(void) const;
-    void SetNewIPTime(UI32 newVal);
-    UI32 GetOldIPTime(void) const;
-    void SetOldIPTime(UI32 newVal);
+    std::uint32_t GetNewIPTime(void) const;
+    void SetNewIPTime(std::uint32_t newVal);
+    std::uint32_t GetOldIPTime(void) const;
+    void SetOldIPTime(std::uint32_t newVal);
     void SetIPUpdated(bool newVal);
     bool GetIPUpdated(void) const;
 
@@ -208,7 +208,7 @@ class CWorldMain {
     void CheckAutoTimers(void);
 
     // Structs
-    std::map<UI16, CCreatures> creatures;
+    std::map<std::uint16_t, CCreatures> creatures;
     timeval uoxTimeout;
     Skill_st skill[INTELLECT + 1]; // Skill data
     Title_st title[ALLSKILLS + 1]; // For custom titles reads titles.dfn
@@ -217,14 +217,14 @@ class CWorldMain {
     std::vector<CTeleLocationEntry> teleLocs;
     std::vector<LogoutLocationEntry_st> logoutLocs;
     std::vector<SOSLocationEntry_st> sosLocs;
-    std::vector<UI16> escortRegions;
-    std::map<UI16, GoPlaces_st> goPlaces;
-    std::unordered_map<UI16, CSpawnRegion *> spawnRegions;
-    std::map<UI16, CTownRegion *> townRegions;
+    std::vector<std::uint16_t> escortRegions;
+    std::map<std::uint16_t, GoPlaces_st> goPlaces;
+    std::unordered_map<std::uint16_t, CSpawnRegion *> spawnRegions;
+    std::map<std::uint16_t, CTownRegion *> townRegions;
     GenericList<CTEffect *> tempEffects;
 
-    std::map<CBaseObject *, UI32> refreshQueue;
-    std::map<CBaseObject *, UI32> deletionQueue;
+    std::map<CBaseObject *, std::uint32_t> refreshQueue;
+    std::map<CBaseObject *, std::uint32_t> deletionQueue;
 
     void CheckTimers(void);
     void DoWorldLight(void);

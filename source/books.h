@@ -22,7 +22,7 @@ class CBooks {
     void OpenPreDefBook(CSocket *s, CItem *i); // opens old-readonly books, takes data from misc.dfn
     void OpenBook(CSocket *s, CItem *i, bool isWriteable); // opens new books
     void ReadPreDefBook(CSocket *mSock, CItem *mBook,
-                        UI16 pageNum); // reads books from misc.dfn, readonly = old books
+                        std::uint16_t pageNum); // reads books from misc.dfn, readonly = old books
     void DeleteBook(CItem *id);        // deletes bok-file.
 };
 

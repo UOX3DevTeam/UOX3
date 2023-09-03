@@ -152,11 +152,11 @@ class CEscortResponse : public CBaseResponse {
 
 class CTrainingResponse : public CBaseResponse {
   protected:
-    UI16 ourTrigWord;
+    std::uint16_t ourTrigWord;
     CChar *trigChar;
 
   public:
-    CTrainingResponse(UI16 trigWord, CChar *tChar);
+    CTrainingResponse(std::uint16_t trigWord, CChar *tChar);
     virtual ~CTrainingResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };
@@ -176,14 +176,14 @@ class CBasePetResponse : public CBaseResponse {
 
 class CPetMultiResponse : public CBasePetResponse {
   protected:
-    SI32 dictEntry;
+    std::int32_t dictEntry;
     TargetIds targId;
     bool isRestricted;
     bool allSaid;
     bool checkDifficulty;
 
   public:
-    CPetMultiResponse(const std::string &text, bool isRestricted, TargetIds targVal, SI32 dictVal,
+    CPetMultiResponse(const std::string &text, bool isRestricted, TargetIds targVal, std::int32_t dictVal,
                       bool saidAll, bool checkControlDifficulty);
     virtual ~CPetMultiResponse() {}
     virtual bool Handle(CSocket *mSock, CChar *mChar, CChar *Npc) override;
@@ -289,11 +289,11 @@ class CVendorDismissResponse : public CBaseVendorResponse {
 
 class CHouseMultiResponse : public CBaseResponse {
   protected:
-    SI32 dictEntry;
+    std::int32_t dictEntry;
     TargetIds targId;
 
   public:
-    CHouseMultiResponse(TargetIds newTarg, SI32 newDict);
+    CHouseMultiResponse(TargetIds newTarg, std::int32_t newDict);
     virtual ~CHouseMultiResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };
@@ -301,10 +301,10 @@ class CHouseMultiResponse : public CBaseResponse {
 class CBoatResponse : public CBaseResponse {
   protected:
     std::string ourText;
-    UI16 trigWord;
+    std::uint16_t trigWord;
 
   public:
-    CBoatResponse(const std::string &text, UI16 tW);
+    CBoatResponse(const std::string &text, std::uint16_t tW);
     virtual ~CBoatResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };

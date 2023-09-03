@@ -10,16 +10,16 @@
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
-constexpr auto DFN_STRING = UI08(0);
-constexpr auto DFN_NUMERIC = UI08(1);
-constexpr auto DFN_UPPERSTRING = UI08(2);
-constexpr auto DFN_NODATA = UI08(3);
-constexpr auto DFN_UNKNOWN = UI08(4);
-constexpr auto DFN_DOUBLENUMERIC = UI08(5);
+constexpr auto DFN_STRING = std::uint8_t(0);
+constexpr auto DFN_NUMERIC = std::uint8_t(1);
+constexpr auto DFN_UPPERSTRING = std::uint8_t(2);
+constexpr auto DFN_NODATA = std::uint8_t(3);
+constexpr auto DFN_UNKNOWN = std::uint8_t(4);
+constexpr auto DFN_DOUBLENUMERIC = std::uint8_t(5);
 
 using namespace std::string_literals;
 // 04302004 - Added DFN_UPPERSTRING to support the new DFNTAG_ADDMENUITEM tag
-const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] = {
+const std::uint8_t dfnDataTypes[DFNTAG_COUNTOFTAGS] = {
     DFN_NUMERIC,       //	DFNTAG_AC = 0,
     DFN_UPPERSTRING,   //	DFNTAG_ADDMENUITEM,
     DFN_NUMERIC,       //	DFNTAG_ADVOBJ,
@@ -704,7 +704,7 @@ auto CScriptSection::Append(std::string tagToAdd, std::string dataToAdd) -> void
     data.push_back(toAdd);
 }
 
-auto CScriptSection::GrabData(SI32 &ndata, SI32 &odata) -> std::string {
+auto CScriptSection::GrabData(std::int32_t &ndata, std::int32_t &odata) -> std::string {
     std::string rValue;
     if (AtEndTags()) {
         ndata = INVALIDSERIAL;
@@ -792,8 +792,8 @@ auto CScriptSection::ItemListData() const -> std::string { return itemListData; 
 // o------------------------------------------------------------------------------------------------o
 auto CScriptSection::NpcListData() const -> std::string { return npcListData; }
 
-UI32 groupHolder = 0;
-UI32 itemIndexHolder = 0;
+std::uint32_t groupHolder = 0;
+std::uint32_t itemIndexHolder = 0;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CScriptSection::CreateSection()
 // o------------------------------------------------------------------------------------------------o
@@ -862,7 +862,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                 ADDMENUITEM amiLocalCopy = {};
                                 amiLocalCopy.itemName = std::string(localName);
                                 auto csecs = oldstrutil::sections(value, ",");
-                                amiLocalCopy.groupId = static_cast<UI32>(std::stoul(
+                                amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(
                                     util::trim(util::strip(csecs[0], "//")), nullptr, 0));
                                 if (amiLocalCopy.groupId != groupHolder) {
                                     groupHolder = amiLocalCopy.groupId;
@@ -872,13 +872,13 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                     itemIndexHolder += 1;
                                 }
                                 amiLocalCopy.itemIndex = itemIndexHolder;
-                                amiLocalCopy.tileId = static_cast<UI16>(std::stoul(
+                                amiLocalCopy.tileId = static_cast<std::uint16_t>(std::stoul(
                                     util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                                amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(
+                                amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
                                     util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-                                amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(
+                                amiLocalCopy.objectFlags = static_cast<std::uint32_t>(std::stoul(
                                     util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-                                amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(
+                                amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
                                     util::trim(util::strip(csecs[4], "//")), nullptr, 0));
 
                                 // if( amiLocalCopy.tileId == INVALIDSERIAL )

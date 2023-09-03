@@ -22,7 +22,7 @@ class CHelpRequest {
     SERIAL helpReqId;
     SERIAL playerPaging;   // player who is paging
     SERIAL playerHandling; // player who is handling it
-    SI08 priority;         // priority of the page
+    std::int8_t priority;         // priority of the page
     bool handled;          // has it been handled?
     time_t timeOfPage;     // when was the page reported?
     std::string reason;    // reason for the page
@@ -37,7 +37,7 @@ class CHelpRequest {
 
     SERIAL WhoPaging(void) const;
     SERIAL WhoHandling(void) const;
-    SI08 Priority(void) const;
+    std::int8_t Priority(void) const;
     bool IsHandled(void) const;
     time_t TimeOfPage(void) const;
     std::string Reason(void) const;
@@ -45,7 +45,7 @@ class CHelpRequest {
 
     void WhoPaging(SERIAL pPaging);
     void WhoHandling(SERIAL pHandling);
-    void Priority(SI08 pPriority);
+    void Priority(std::int8_t pPriority);
     void IsHandled(bool pHandled);
     void TimeOfPage(time_t pTime);
     void Reason(const std::string &pReason);
@@ -78,10 +78,10 @@ class PageVector {
     ~PageVector();
     void SendAsGump(CSocket *toSendTo);
     void SetTitle(const std::string &newTitle);
-    bool GotoPos(SI32 pos);
-    SI32 CurrentPos(void) const;
+    bool GotoPos(std::int32_t pos);
+    std::int32_t CurrentPos(void) const;
     SERIAL GetCallNum(void) const;
-    SI32 FindCallNum(SERIAL callNum);
+    std::int32_t FindCallNum(SERIAL callNum);
     bool AnswerNextCall(CSocket *mSock, CChar *mChar);
 };
 

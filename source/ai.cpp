@@ -161,7 +161,7 @@ void HandleFighterAI(CChar &mChar) {
         return;
 
     // Fetch scriptTriggers attached to mChar
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
 
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
@@ -180,7 +180,7 @@ void HandleFighterAI(CChar &mChar) {
                 for (auto scriptTrig : scriptTriggers) {
                     auto toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute) {
-                        SI08 retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
+                        std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                         if (retVal == -1) {
                             // No such event found, or returned -1
                             continue;
@@ -244,9 +244,9 @@ void HandleHealerAI(CChar &mChar) {
                             &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        UI16 castAnim = static_cast<UI16>(
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(
                             cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        UI08 castAnimLength =
+                        std::uint8_t castAnimLength =
                             cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
 
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
@@ -313,9 +313,9 @@ void HandleEvilHealerAI(CChar &mChar) {
                             &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        UI16 castAnim = static_cast<UI16>(
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(
                             cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        UI08 castAnimLength =
+                        std::uint8_t castAnimLength =
                             cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
 
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
@@ -351,7 +351,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
         return;
 
     // Fetch scriptTriggers attached to mChar
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
 
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
@@ -373,7 +373,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                     if (toExecute == nullptr)
                         continue;
 
-                    SI08 retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
+                    std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
                             // Invalid target! But look through other scripts with event first
@@ -434,7 +434,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
         return;
 
     // Fetch scriptTriggers attached to mChar
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
 
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
@@ -456,7 +456,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                     if (toExecute == nullptr)
                         continue;
 
-                    SI08 retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
+                    std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
                             // Invalid target! But look through other scripts with event first
@@ -492,12 +492,12 @@ auto HandleAnimalAI(CChar &mChar) -> void {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
 
-    const SI08 hunger = mChar.GetHunger();
+    const std::int8_t hunger = mChar.GetHunger();
     if (hunger > 3)
         return;
 
     // Fetch scriptTriggers attached to mChar
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
 
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
@@ -514,7 +514,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                     if (toExecute == nullptr)
                         continue;
 
-                    SI08 retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
+                    std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
                             // Invalid target! But look through other scripts with event first
@@ -558,7 +558,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
         return;
 
     // Fetch scriptTriggers attached to mChar
-    std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+    std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
 
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
@@ -575,7 +575,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                     if (toExecute == nullptr)
                         continue;
 
-                    SI08 retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
+                    std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
                             // Invalid target! But look through other scripts with event first
