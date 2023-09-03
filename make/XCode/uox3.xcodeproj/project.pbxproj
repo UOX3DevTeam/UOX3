@@ -558,7 +558,6 @@
 				64A900E5293E3DD4009B54DA /* power.h */,
 				64A90100293E3DD4009B54DA /* typedefs.h */,
 				56D6EF002AA227B5005355FA /* ostype.h */,
-				56D6EEFD2AA22593005355FA /* spidermonkey.h */,
 				56D6EF012AA22CB8005355FA /* useful.h */,
 			);
 			name = Other;
@@ -567,6 +566,7 @@
 		64E2F793293FCE6200546A08 /* JS Engine */ = {
 			isa = PBXGroup;
 			children = (
+				56D6EEFD2AA22593005355FA /* spidermonkey.h */,
 				64A9008E293E3DD4009B54DA /* cjsengine.cpp */,
 				64A9008F293E3DD4009B54DA /* cjsengine.h */,
 				64A90090293E3DD4009B54DA /* cjsmapping.cpp */,

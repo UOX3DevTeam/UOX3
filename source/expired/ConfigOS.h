@@ -2,46 +2,43 @@
 #ifndef __ConfigOS_H_
 #define __ConfigOS_H_
 
-
 // Initial platform/compiler-related stuff to set.
 
-
 // Finds the compiler type and version.
-#if defined( _MSC_VER )
-#define XP_WIN            // JS API Requires we define OS we compile with
+#if defined(_MSC_VER)
+#define XP_WIN // JS API Requires we define OS we compile with
 #define XP_PC
 
-//o------------------------------------------------------------------------------------------------o
-//o------------------------------------------------------------------------------------------------o
-// Ok, windows sets _ITERATOR_DEBUG_LEVEL based on debug/release.
-// Check: https://docs.microsoft.com/en-us/cpp/standard-library/iterator-debug-level?view=msvc-170
-// In theory, we shouldn't need these, if we have issues, we want to fix the iterator problem
-// If we continue to need them, then ideally, they should be on the compile line in the project
-// Got rid of _HAS_ITERATOR_DEBUGGING/_SECURE_SCL as _ITERATOR_DEBUG_LEVEL supersedes them.
+// o------------------------------------------------------------------------------------------------o
+// o------------------------------------------------------------------------------------------------o
+//  Ok, windows sets _ITERATOR_DEBUG_LEVEL based on debug/release.
+//  Check: https://docs.microsoft.com/en-us/cpp/standard-library/iterator-debug-level?view=msvc-170
+//  In theory, we shouldn't need these, if we have issues, we want to fix the iterator problem
+//  If we continue to need them, then ideally, they should be on the compile line in the project
+//  Got rid of _HAS_ITERATOR_DEBUGGING/_SECURE_SCL as _ITERATOR_DEBUG_LEVEL supersedes them.
 #ifdef _DEBUG
-#define _ITERATOR_DEBUG_LEVEL 2   // THis is the default, why do we need this?
+#define _ITERATOR_DEBUG_LEVEL 2 // THis is the default, why do we need this?
 #else
-#define _HAS_ITERATOR_DEBUGGING 0  // This is the default for non debug, why do we need?
-#endif		// endif to _DEBUG
-//o------------------------------------------------------------------------------------------------o
+#define _HAS_ITERATOR_DEBUGGING 0 // This is the default for non debug, why do we need?
+#endif                            // endif to _DEBUG
+// o------------------------------------------------------------------------------------------------o
 
 #ifdef _WIN32 // Includes both 32 bit and 64 bit
 
 #ifdef _WIN64
 #define OS_STR "Win64"
-#else 
+#else
 #define OS_STR "Win32"
-#endif   //_WIN64
+#endif //_WIN64
 
-#endif   //_WIN32
+#endif //_WIN32
 
+#else // A unix type system
 
-#else       // A unix type system
+#define XP_UNIX // JS API Requires we define OS we compile with
 
-#define XP_UNIX            // JS API Requires we define OS we compile with
-
-#define ioctlsocket( s, b, c ) ioctl( s, b, c )
-#define closesocket( s ) close( s )
+#define ioctlsocket(s, b, c) ioctl(s, b, c)
+#define closesocket(s) close(s)
 
 #ifdef __linux__
 
@@ -53,7 +50,7 @@
 #define OS_STR "Linux64"
 #elif INTPTR_MAX == INT32_MAX
 #define OS_STR "Linux32"
-#endif  // INTPTR_MAX
+#endif // INTPTR_MAX
 
 #elif defined(__APPLE__)
 
@@ -65,15 +62,15 @@
 #define OS_STR "MacOS64"
 #elif INTPTR_MAX == INT32_MAX
 #define OS_STR "MacOS32"
-#endif   //INPTR_MAX
+#endif // INPTR_MAX
 
 #else
 
 #define OS_STR "Unknown"
-#endif  //__linux__
+#endif //__linux__
 
 #define FALSE 0L
-#define TRUE  1L
-#endif    // End to the compiler type/version
+#define TRUE 1L
+#endif // End to the compiler type/version
 
 #endif //__ConfigOS_H_

@@ -11,121 +11,117 @@
 
 struct JSObject;
 
-enum IUEEntries
-{
-	IUE_RACE = 0,
-	IUE_CHAR,
-	IUE_ITEM,
-	IUE_SOCK,
-	IUE_GUILD,
-	IUE_REGION,
-	IUE_SPAWNREGION,
-	IUE_PARTY,
-	IUE_ACCOUNT,
-	IUE_COUNT
+enum IUEEntries {
+    IUE_RACE = 0,
+    IUE_CHAR,
+    IUE_ITEM,
+    IUE_SOCK,
+    IUE_GUILD,
+    IUE_REGION,
+    IUE_SPAWNREGION,
+    IUE_PARTY,
+    IUE_ACCOUNT,
+    IUE_COUNT
 };
 
-enum JSPrototypes
-{
-	JSP_ITEM	= 0,
-	JSP_CHAR,
-	JSP_SOCK,
-	JSP_GUMP,
-	JSP_PACKET,
-	JSP_GUILD,
-	JSP_RACE,
-	JSP_REGION,
-	JSP_SPAWNREGION,
-	JSP_SPELL,
-	JSP_SPELLS,
-	JSP_GLOBALSKILL,
-	JSP_GLOBALSKILLS,
-	JSP_RESOURCE,
-	JSP_ACCOUNT,
-	JSP_ACCOUNTS,
-	JSP_CONSOLE,
-	JSP_FILE,
-	JSP_PARTY,
-	JSP_CREATEENTRY,
-	JSP_CREATEENTRIES,
-	JSP_TIMER,
-	JSP_SCRIPT,
-	JSP_COUNT
+enum JSPrototypes {
+    JSP_ITEM = 0,
+    JSP_CHAR,
+    JSP_SOCK,
+    JSP_GUMP,
+    JSP_PACKET,
+    JSP_GUILD,
+    JSP_RACE,
+    JSP_REGION,
+    JSP_SPAWNREGION,
+    JSP_SPELL,
+    JSP_SPELLS,
+    JSP_GLOBALSKILL,
+    JSP_GLOBALSKILLS,
+    JSP_RESOURCE,
+    JSP_ACCOUNT,
+    JSP_ACCOUNTS,
+    JSP_CONSOLE,
+    JSP_FILE,
+    JSP_PARTY,
+    JSP_CREATEENTRY,
+    JSP_CREATEENTRIES,
+    JSP_TIMER,
+    JSP_SCRIPT,
+    JSP_COUNT
 };
 
-class CJSRuntime
-{
-private:
-	typedef std::map<void *, JSObject *>					JSOBJECTMAP;
-	typedef std::map<void *, JSObject *>::iterator			JSOBJECTMAP_ITERATOR;
-	typedef std::map<void *, JSObject *>::const_iterator	JSOBJECTMAP_CITERATOR;
+class CJSRuntime {
+  private:
+    typedef std::map<void *, JSObject *> JSOBJECTMAP;
+    typedef std::map<void *, JSObject *>::iterator JSOBJECTMAP_ITERATOR;
+    typedef std::map<void *, JSObject *>::const_iterator JSOBJECTMAP_CITERATOR;
 
-	std::vector<JSOBJECTMAP>								objectList;
-	std::vector<JSObject *>									protoList;
+    std::vector<JSOBJECTMAP> objectList;
+    std::vector<JSObject *> protoList;
 
-	JSObject * spellsObj;
-	JSObject * skillsObj;
-	JSObject * accountsObj;
-	JSObject * consoleObj;
-	JSObject * createEntriesObj;
-	JSObject * timerObj;
-	JSObject * scriptObj;
-	JSRuntime * jsRuntime;
-	JSContext * jsContext;
-	JSObject * jsGlobal;
+    JSObject *spellsObj;
+    JSObject *skillsObj;
+    JSObject *accountsObj;
+    JSObject *consoleObj;
+    JSObject *createEntriesObj;
+    JSObject *timerObj;
+    JSObject *scriptObj;
+    JSRuntime *jsRuntime;
+    JSContext *jsContext;
+    JSObject *jsGlobal;
 
-	JSObject *	FindAssociatedObject( IUEEntries iType, void *index );
-	JSObject *	MakeNewObject( IUEEntries iType );
+    JSObject *FindAssociatedObject(IUEEntries iType, void *index);
+    JSObject *MakeNewObject(IUEEntries iType);
 
-	void		Cleanup( void );
-	void		InitializePrototypes( void );
-public:
-	CJSRuntime();
-	CJSRuntime( UI32 engineSize );
-	~CJSRuntime();
+    void Cleanup(void);
+    void InitializePrototypes(void);
 
-	void		Reload();
-	void		CollectGarbage();
+  public:
+    CJSRuntime();
+    CJSRuntime(UI32 engineSize);
+    ~CJSRuntime();
 
-	JSRuntime *	GetRuntime() const;
-	JSContext * GetContext() const;
-	JSObject *	GetObject() const;
+    void Reload();
+    void CollectGarbage();
 
-	JSObject *	GetPrototype( JSPrototypes protoNum ) const;
+    JSRuntime *GetRuntime() const;
+    JSContext *GetContext() const;
+    JSObject *GetObject() const;
 
-	JSObject *	AcquireObject( IUEEntries iType, void *index );
-	void		ReleaseObject( IUEEntries IType, void *index );
+    JSObject *GetPrototype(JSPrototypes protoNum) const;
+
+    JSObject *AcquireObject(IUEEntries iType, void *index);
+    void ReleaseObject(IUEEntries IType, void *index);
 };
 
-class CJSEngine
-{
-private:
-	typedef std::vector<CJSRuntime *>					RUNTIMELIST;
-	typedef std::vector<CJSRuntime *>::iterator			RUNTIMELIST_ITERATOR;
-	typedef std::vector<CJSRuntime *>::const_iterator	RUNTIMELIST_CITERATOR;
+class CJSEngine {
+  private:
+    typedef std::vector<CJSRuntime *> RUNTIMELIST;
+    typedef std::vector<CJSRuntime *>::iterator RUNTIMELIST_ITERATOR;
+    typedef std::vector<CJSRuntime *>::const_iterator RUNTIMELIST_CITERATOR;
 
-	RUNTIMELIST											runtimeList;
+    RUNTIMELIST runtimeList;
 
-public:
+  public:
+    CJSEngine() = default;
+    ~CJSEngine();
 
-	CJSEngine() = default;
-	~CJSEngine();
+    auto Startup() -> void;
 
-	auto Startup() -> void;
-	
-	JSRuntime *	GetRuntime( UI08 runTime ) const;
-	JSContext * GetContext( UI08 runTime ) const;
-	JSObject *	GetObject( UI08 runTime ) const;
+    JSRuntime *GetRuntime(UI08 runTime) const;
+    JSContext *GetContext(UI08 runTime) const;
+    JSObject *GetObject(UI08 runTime) const;
 
-	UI08		FindActiveRuntime( JSRuntime *rT ) const;
+    UI08 FindActiveRuntime(JSRuntime *rT) const;
 
-	JSObject *	GetPrototype( UI08 runTime, JSPrototypes protoNum ) const;
+    JSObject *GetPrototype(UI08 runTime, JSPrototypes protoNum) const;
 
-	void		Reload( void );
-	void		CollectGarbage( void );
+    void Reload(void);
+    void CollectGarbage(void);
 
-	JSObject *	AcquireObject( IUEEntries iType, void *index, UI08 runTime );
-	void		ReleaseObject( IUEEntries IType, void *index );
+    JSObject *AcquireObject(IUEEntries iType, void *index, UI08 runTime);
+    void ReleaseObject(IUEEntries IType, void *index);
 };
 
 extern CJSEngine *JSEngine;

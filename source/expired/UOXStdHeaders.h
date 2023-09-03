@@ -44,7 +44,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/signal.h>
-#include <errno.h>		// for errno
+#include <errno.h> // for errno
 
 #endif
 

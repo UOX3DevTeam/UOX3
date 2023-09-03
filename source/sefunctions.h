@@ -18,7 +18,7 @@
 // 1.4 		3rd  November, 2001
 //			Addition of Tag functions.
 
-typedef JSBool ( SEngineFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+typedef JSBool(SEngineFunc)(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval);
 
 // 90 functions so far
 // *	== prototype
@@ -26,95 +26,144 @@ typedef JSBool ( SEngineFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval 
 
 // Character related functions (9)
 
-SEngineFunc SE_SpawnNPC;			// Create NPC								*
+SEngineFunc SE_SpawnNPC; // Create NPC								*
 
 // Effect related functions (3)
 
-SEngineFunc SE_DoMovingEffect;		// Does moving effect						***
-SEngineFunc SE_DoTempEffect;		// Does a temp effect						***
-SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
+SEngineFunc SE_DoMovingEffect; // Does moving effect						***
+SEngineFunc SE_DoTempEffect;   // Does a temp effect						***
+SEngineFunc SE_DoStaticEffect; // Does a static effect at location			***
 
 // Item related functions (2)
 
-SEngineFunc SE_CreateBlankItem;		// Create an item							***
-SEngineFunc SE_CreateDFNItem;		// Create an item							***
-SEngineFunc SE_CreateHouse;			// Create a house from houses.dfn			***
-SEngineFunc SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
+SEngineFunc
+    SE_CreateBlankItem;         // Create an item							***
+SEngineFunc SE_CreateDFNItem;   // Create an item							***
+SEngineFunc SE_CreateHouse;     // Create a house from houses.dfn			***
+SEngineFunc SE_CreateBaseMulti; // Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
-SEngineFunc SE_BroadcastMessage;	//											***
+SEngineFunc
+    SE_BroadcastMessage; //											***
 
 // Random functions(5)
-SEngineFunc SE_RandomNumber;		// Calculates a random number				***
-SEngineFunc SE_CalcCharFromSer;		//											***
-SEngineFunc SE_CalcItemFromSer;		//											***
-SEngineFunc SE_CalcMultiFromSer;	//											***
+SEngineFunc SE_RandomNumber; // Calculates a random number				***
+SEngineFunc
+    SE_CalcCharFromSer; //											***
+SEngineFunc
+    SE_CalcItemFromSer; //											***
+SEngineFunc
+    SE_CalcMultiFromSer; //											***
 
-SEngineFunc SE_MakeItem;			//											***
+SEngineFunc
+    SE_MakeItem; //											***
 
-SEngineFunc SE_CommandLevelReq;		//											*
-SEngineFunc SE_CommandExists;		//											*
-SEngineFunc SE_FirstCommand;		//											*
-SEngineFunc SE_NextCommand;			//											*
-SEngineFunc SE_FinishedCommandList;	//											*
+SEngineFunc
+    SE_CommandLevelReq; //											*
+SEngineFunc
+    SE_CommandExists; //											*
+SEngineFunc
+    SE_FirstCommand; //											*
+SEngineFunc
+    SE_NextCommand; //											*
+SEngineFunc
+    SE_FinishedCommandList; //											*
 
-SEngineFunc SE_RegisterCommand;		//											***
-SEngineFunc SE_EnableCommand;		//											***
-SEngineFunc SE_DisableCommand;		//											***
+SEngineFunc
+    SE_RegisterCommand; //											***
+SEngineFunc
+    SE_EnableCommand; //											***
+SEngineFunc
+    SE_DisableCommand; //											***
 
-SEngineFunc SE_RegisterKey;			//											***
-SEngineFunc SE_EnableKey;			//											***
-SEngineFunc SE_DisableKey;			//											***
+SEngineFunc
+    SE_RegisterKey; //											***
+SEngineFunc
+    SE_EnableKey; //											***
+SEngineFunc
+    SE_DisableKey; //											***
 
-SEngineFunc SE_RegisterConsoleFunc;	//											***
-SEngineFunc SE_EnableConsoleFunc;	//											***
-SEngineFunc SE_DisableConsoleFunc;	//											***
+SEngineFunc
+    SE_RegisterConsoleFunc; //											***
+SEngineFunc
+    SE_EnableConsoleFunc; //											***
+SEngineFunc
+    SE_DisableConsoleFunc; //											***
 
-SEngineFunc SE_RegisterSpell;		//											***
-SEngineFunc SE_EnableSpell;			//											***
-SEngineFunc SE_DisableSpell;		//											***
+SEngineFunc
+    SE_RegisterSpell; //											***
+SEngineFunc
+    SE_EnableSpell; //											***
+SEngineFunc
+    SE_DisableSpell; //											***
 
 SEngineFunc SE_RegisterSkill;
 SEngineFunc SE_RegisterPacket;
 
-SEngineFunc SE_GetHour;					//										***
-SEngineFunc SE_GetMinute;				//										***
-SEngineFunc SE_GetDay;					//										***
-SEngineFunc SE_SecondsPerUOMinute;		//										***
+SEngineFunc
+    SE_GetHour; //										***
+SEngineFunc
+    SE_GetMinute; //										***
+SEngineFunc
+    SE_GetDay; //										***
+SEngineFunc
+    SE_SecondsPerUOMinute; //										***
 
-SEngineFunc SE_GetCurrentClock;			//										***
-SEngineFunc SE_GetStartTime;			//										***
-SEngineFunc SE_GetMurderThreshold;		//										***
-SEngineFunc SE_RollDice;				//										***
-SEngineFunc SE_RaceCompareByRace;		//										***
-SEngineFunc SE_GetRandomSOSArea;		//										***
+SEngineFunc
+    SE_GetCurrentClock; //										***
+SEngineFunc
+    SE_GetStartTime; //										***
+SEngineFunc
+    SE_GetMurderThreshold; //										***
+SEngineFunc
+    SE_RollDice; //										***
+SEngineFunc
+    SE_RaceCompareByRace; //										***
+SEngineFunc
+    SE_GetRandomSOSArea; //										***
 
-SEngineFunc SE_FindMulti;				//										***
-SEngineFunc SE_GetItem;					//										***
-SEngineFunc SE_FindItem;				//										***
+SEngineFunc
+    SE_FindMulti; //										***
+SEngineFunc
+    SE_GetItem; //										***
+SEngineFunc
+    SE_FindItem; //										***
 
-SEngineFunc SE_CompareGuildByGuild;		//										**
+SEngineFunc
+    SE_CompareGuildByGuild; //										**
 
-SEngineFunc SE_PossessTown;				//										***
+SEngineFunc
+    SE_PossessTown; //										***
 
-SEngineFunc SE_IsRaceWeakToWeather;		//										***
-SEngineFunc SE_GetRaceSkillAdjustment;	//										***
+SEngineFunc
+    SE_IsRaceWeakToWeather; //										***
+SEngineFunc
+    SE_GetRaceSkillAdjustment; //										***
 
-SEngineFunc SE_UseItem;					//										***
-SEngineFunc SE_TriggerTrap;				//										***
+SEngineFunc
+    SE_UseItem; //										***
+SEngineFunc
+    SE_TriggerTrap; //										***
 
-SEngineFunc SE_TriggerEvent;			//										*
-SEngineFunc SE_DoesEventExist;			//										*
+SEngineFunc
+    SE_TriggerEvent; //										*
+SEngineFunc
+    SE_DoesEventExist; //										*
 
-SEngineFunc SE_GetPackOwner;			//										***
-SEngineFunc SE_FindRootContainer;		//										***
-SEngineFunc SE_CalcTargetedItem;		//										***
-SEngineFunc SE_CalcTargetedChar;		//										***
-SEngineFunc SE_GetTileIdAtMapCoord;		//										***
+SEngineFunc
+    SE_GetPackOwner; //										***
+SEngineFunc
+    SE_FindRootContainer; //										***
+SEngineFunc
+    SE_CalcTargetedItem; //										***
+SEngineFunc
+    SE_CalcTargetedChar; //										***
+SEngineFunc
+    SE_GetTileIdAtMapCoord; //										***
 
-SEngineFunc SE_StringToNum;				// Marked for Deletion
-SEngineFunc SE_NumToString;				// Marked for Deletion
-SEngineFunc SE_NumToHexString;			// Marked for Deletion
+SEngineFunc SE_StringToNum;    // Marked for Deletion
+SEngineFunc SE_NumToString;    // Marked for Deletion
+SEngineFunc SE_NumToHexString; // Marked for Deletion
 SEngineFunc SE_EraStringToNum;
 
 SEngineFunc SE_GetRaceCount;
@@ -172,19 +221,28 @@ SEngineFunc SE_GetServerSetting;
 
 SEngineFunc SE_DeleteFile;
 
-// Account 
-SEngineFunc SE_GetAccountCount;			//										***
-SEngineFunc SE_GetPlayerCount;			//										***
-SEngineFunc SE_GetItemCount;			//										***
-SEngineFunc SE_GetMultiCount;			//										***
-SEngineFunc SE_GetCharacterCount;		//										***
-SEngineFunc SE_GetServerVersionString;	//										***
+// Account
+SEngineFunc
+    SE_GetAccountCount; //										***
+SEngineFunc
+    SE_GetPlayerCount; //										***
+SEngineFunc
+    SE_GetItemCount; //										***
+SEngineFunc
+    SE_GetMultiCount; //										***
+SEngineFunc
+    SE_GetCharacterCount; //										***
+SEngineFunc
+    SE_GetServerVersionString; //										***
 
 // Server constants
-SEngineFunc SE_BASEITEMSERIAL;			//										***
-SEngineFunc SE_INVALIDSERIAL;			//										***
-SEngineFunc SE_INVALIDID;				//										***
-SEngineFunc SE_INVALIDCOLOUR;			//										***
-
+SEngineFunc
+    SE_BASEITEMSERIAL; //										***
+SEngineFunc
+    SE_INVALIDSERIAL; //										***
+SEngineFunc
+    SE_INVALIDID; //										***
+SEngineFunc
+    SE_INVALIDCOLOUR; //										***
 
 #endif

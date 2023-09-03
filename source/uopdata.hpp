@@ -40,7 +40,8 @@
  The number being replaced essentially corresponds to the idx
  entry in artidx.mul.
  The number of keys to be built is around 0x13FDC.
- UOFiddler requires this exact idx length to recognize UOHS art files (it checks with == operator, not with >=)
+ UOFiddler requires this exact idx length to recognize UOHS art files (it checks with == operator,
+ not with >=)
 
  GumpArt
  "build/gumpartlegacymul/{8}.tga"
@@ -90,7 +91,8 @@
 
  UOP Table entry:
 
- std::int64_t	data_offset	;	// Offset to the data for this entry (actually, best I can tell
+ std::int64_t	data_offset	;	// Offset to the data for this entry (actually, best I can
+ tell
  // this is the offset to this header, for the data one adds the header length
  // to it.  So not sure if the TableEntry can actually not be right before
  // the data or not.  Some implementations may just assume.)
@@ -144,110 +146,118 @@
 // UopIndex_st
 //===========================================================
 //===========================================================
-struct UopIndex_st
-{
-	std::vector<std::uint64_t> hashes;
-	static auto HashLittle2( const std::string& s ) -> std::uint64_t;
-	static auto HashAdler32( const std::vector<std::uint8_t> &data ) -> std::uint32_t;
+struct UopIndex_st {
+    std::vector<std::uint64_t> hashes;
+    static auto HashLittle2(const std::string &s) -> std::uint64_t;
+    static auto HashAdler32(const std::vector<std::uint8_t> &data) -> std::uint32_t;
 
-	auto LoadHashes( const std::string &hashstring, size_t max_index ) -> void;
-	UopIndex_st( const std::string &hashstring = "", size_t max_index = 0 );
-	auto operator[]( std::uint64_t hash ) const -> size_t;
-	auto clear() -> void;
-	//==========================================================
-	// The source for this was found on StackOverflow at:
-	// https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
-	//
-	template<typename ... Args>
-	std::string format( const std::string& format_str, Args ... args ) const
-	{
-		int size_s = std::snprintf( nullptr, 0, format_str.c_str(), args ... ) + 1; // Extra space for '\0'
-		if( size_s > 0 )
-		{
-			auto size = static_cast<size_t>( size_s );
-			auto buf = std::make_unique<char[]>( size );
-			std::snprintf( buf.get(), size, format_str.c_str(), args ... );
-			return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
-		}
-		return format_str; // We take the same approach as std library, and just fail silently with
-		// best answer
-	}
+    auto LoadHashes(const std::string &hashstring, size_t max_index) -> void;
+    UopIndex_st(const std::string &hashstring = "", size_t max_index = 0);
+    auto operator[](std::uint64_t hash) const -> size_t;
+    auto clear() -> void;
+    //==========================================================
+    // The source for this was found on StackOverflow at:
+    // https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+    //
+    template <typename... Args>
+    std::string format(const std::string &format_str, Args... args) const {
+        int size_s =
+            std::snprintf(nullptr, 0, format_str.c_str(), args...) + 1; // Extra space for '\0'
+        if (size_s > 0) {
+            auto size = static_cast<size_t>(size_s);
+            auto buf = std::make_unique<char[]>(size);
+            std::snprintf(buf.get(), size, format_str.c_str(), args...);
+            return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+        }
+        return format_str; // We take the same approach as std library, and just fail silently with
+                           // best answer
+    }
 };
 
 //===========================================================
 // UopFile
 //===========================================================
 //===========================================================
-class UopFile
-{
-private:
-	static constexpr 	std::uint32_t _uop_identifer = 0x50594D;
-	static constexpr	std::uint32_t _uop_version = 5;
+class UopFile {
+  private:
+    static constexpr std::uint32_t _uop_identifer = 0x50594D;
+    static constexpr std::uint32_t _uop_version = 5;
 
-	struct TableEntry_st
-	{
-		std::int64_t	offset;
-		std::uint32_t	headerLength;
-		std::uint32_t	compressedLength;
-		std::uint32_t	decompressedLength;
-		std::uint64_t	identifer;
-		std::uint32_t	dataBlockHash;
-		std::int16_t	compression;
-		TableEntry_st();
-		auto 	Load( std::istream &input ) -> TableEntry_st &;
-		auto	Save( std::ostream &output ) -> TableEntry_st &;
-		// 34 bytes for a table entry
-		/*********************** Constants used ******************/
-		static constexpr unsigned int _entry_size = 34;
-	};
+    struct TableEntry_st {
+        std::int64_t offset;
+        std::uint32_t headerLength;
+        std::uint32_t compressedLength;
+        std::uint32_t decompressedLength;
+        std::uint64_t identifer;
+        std::uint32_t dataBlockHash;
+        std::int16_t compression;
+        TableEntry_st();
+        auto Load(std::istream &input) -> TableEntry_st &;
+        auto Save(std::ostream &output) -> TableEntry_st &;
+        // 34 bytes for a table entry
+        /*********************** Constants used ******************/
+        static constexpr unsigned int _entry_size = 34;
+    };
 
-	std::vector<std::uint64_t> _hash1;
-	std::vector<std::uint64_t> _hash2;
+    std::vector<std::uint64_t> _hash1;
+    std::vector<std::uint64_t> _hash2;
 
-	/****************** zlib compression wrappers *********************/
-	auto zcompress( const std::vector<std::uint8_t> &data ) const -> std::vector<unsigned char>;
-	auto zdecompress( const std::vector<std::uint8_t> &source, std::size_t decompressed_size ) const -> std::vector<unsigned char>;
+    /****************** zlib compression wrappers *********************/
+    auto zcompress(const std::vector<std::uint8_t> &data) const -> std::vector<unsigned char>;
+    auto zdecompress(const std::vector<std::uint8_t> &source, std::size_t decompressed_size) const
+        -> std::vector<unsigned char>;
 
-protected:
-	//==============================================================================
-	// Virtual routines, modify based on uop file processing
-	//==============================================================================
-	virtual auto ProcessEntry( [[maybe_unused]] std::size_t entry, [[maybe_unused]] std::size_t index, [[maybe_unused]] std::vector<std::uint8_t> &data ) -> bool { return true; }
-	virtual auto ProcessHash( [[maybe_unused]] std::uint64_t hash, [[maybe_unused]] std::size_t entry, [[maybe_unused]] std::vector<std::uint8_t> &data ) -> bool { return true; }
-	virtual auto NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool;
-	virtual auto EndUopProcessing() -> bool { return true; };
+  protected:
+    //==============================================================================
+    // Virtual routines, modify based on uop file processing
+    //==============================================================================
+    virtual auto ProcessEntry([[maybe_unused]] std::size_t entry,
+                              [[maybe_unused]] std::size_t index,
+                              [[maybe_unused]] std::vector<std::uint8_t> &data) -> bool {
+        return true;
+    }
+    virtual auto ProcessHash([[maybe_unused]] std::uint64_t hash,
+                             [[maybe_unused]] std::size_t entry,
+                             [[maybe_unused]] std::vector<std::uint8_t> &data) -> bool {
+        return true;
+    }
+    virtual auto NonIndexHash(std::uint64_t hash, std::size_t entry,
+                              std::vector<std::uint8_t> &data) -> bool;
+    virtual auto EndUopProcessing() -> bool { return true; };
 
-	virtual auto EntriesToWrite() const -> int { return 0; }
-	virtual auto WriteCompress() const -> bool { return false; }
-	virtual auto EntryForWrite( [[maybe_unused]] int entry ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
-	virtual auto WriteHash( [[maybe_unused]] int entry ) -> std::string{ return std::string(); };
-	//========================================================================
-	auto IsUop( const std::string &filepath ) const -> bool;
+    virtual auto EntriesToWrite() const -> int { return 0; }
+    virtual auto WriteCompress() const -> bool { return false; }
+    virtual auto EntryForWrite([[maybe_unused]] int entry) -> std::vector<unsigned char> {
+        return std::vector<unsigned char>();
+    }
+    virtual auto WriteHash([[maybe_unused]] int entry) -> std::string { return std::string(); };
+    //========================================================================
+    auto IsUop(const std::string &filepath) const -> bool;
 
-	auto LoadUop( const std::string &filepath, std::size_t max_hashindex, const std::string &hashformat1, const std::string &hashformat2 = "" ) -> bool;
+    auto LoadUop(const std::string &filepath, std::size_t max_hashindex,
+                 const std::string &hashformat1, const std::string &hashformat2 = "") -> bool;
 
-	auto WriteUop( const std::string &filepath ) -> bool;
-	//==========================================================
-	// The source for this was found on StackOverflow at:
-	// https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
-	//
-	template<typename ... Args>
-	std::string Format( const std::string& format_str, Args ... args ) const
-	{
-		int size_s = std::snprintf( nullptr, 0, format_str.c_str(), args ... ) + 1; // Extra space for '\0'
-		if( size_s > 0 )
-		{
-			auto size = static_cast<size_t>( size_s );
-			auto buf = std::make_unique<char[]>( size );
-			std::snprintf( buf.get(), size, format_str.c_str(), args ... );
-			return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
-		}
-		return format_str; // We take the same approach as std library, and just fail silently with
-		// best answer
-	}
+    auto WriteUop(const std::string &filepath) -> bool;
+    //==========================================================
+    // The source for this was found on StackOverflow at:
+    // https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+    //
+    template <typename... Args>
+    std::string Format(const std::string &format_str, Args... args) const {
+        int size_s =
+            std::snprintf(nullptr, 0, format_str.c_str(), args...) + 1; // Extra space for '\0'
+        if (size_s > 0) {
+            auto size = static_cast<size_t>(size_s);
+            auto buf = std::make_unique<char[]>(size);
+            std::snprintf(buf.get(), size, format_str.c_str(), args...);
+            return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+        }
+        return format_str; // We take the same approach as std library, and just fail silently with
+                           // best answer
+    }
 
-public:
-	virtual ~UopFile() = default;
+  public:
+    virtual ~UopFile() = default;
 };
 
 #endif /* UOPData_hpp */
