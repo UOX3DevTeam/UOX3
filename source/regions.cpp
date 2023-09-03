@@ -9,7 +9,7 @@
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 
-using namespace std::string_literals ;
+using namespace std::string_literals;
 
 #define DEBUG_REGIONS		0
 
@@ -329,23 +329,26 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::SaveResources( UI08 worldNum )
 {
-    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].bin"s);
-    auto output = std::ofstream(resourceFile.string(), std::ios::binary);
-    auto buffer = std::vector<std::int16_t>(3,0) ;
+    auto resourceFile = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].bin"s );
+    auto output = std::ofstream( resourceFile.string(), std::ios::binary );
+    auto buffer = std::vector<SI16>( 3, 0 );
     
-    if (output.is_open()) {
-        for (auto iter = mapResources.begin(); iter != mapResources.end();iter++) {
-            buffer[0] = iter->oreAmt ;
-            std::reverse(reinterpret_cast<char*>(buffer.data()),reinterpret_cast<char*>(buffer.data())+2);  // Make it big endian
-            buffer[1] = iter->logAmt ;
-            std::reverse(reinterpret_cast<char*>(buffer.data())+2,reinterpret_cast<char*>(buffer.data())+4);
-            buffer[2] = iter->fishAmt ;
-            std::reverse(reinterpret_cast<char*>(buffer.data())+4,reinterpret_cast<char*>(buffer.data())+6);
+    if( output.is_open() )
+	{
+        for( auto iter = mapResources.begin(); iter != mapResources.end(); iter++ )
+		{
+            buffer[0] = iter->oreAmt;
+            std::reverse( reinterpret_cast<char*>( buffer.data()), reinterpret_cast<char*>( buffer.data()) + 2 );  // Make it big endian
+            buffer[1] = iter->logAmt;
+            std::reverse( reinterpret_cast<char*>( buffer.data()) + 2, reinterpret_cast<char*>( buffer.data()) + 4 );
+            buffer[2] = iter->fishAmt;
+            std::reverse( reinterpret_cast<char*>( buffer.data()) + 4, reinterpret_cast<char*>( buffer.data()) + 6 );
             // Now write it
-            output.write(reinterpret_cast<char*>(buffer.data()),buffer.size()*2);
+            output.write( reinterpret_cast<char*>( buffer.data()), buffer.size() * 2 );
         }
     }
-	else {
+	else
+	{
         // Can't save resources
 		Console.Error( "Failed to open resource.bin for writing" );
 	}
@@ -359,36 +362,42 @@ void CMapWorld::SaveResources( UI08 worldNum )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources( UI08 worldNum )
 {
-    mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(cwmWorldState->ServerData()->ResOre(),cwmWorldState->ServerData()->ResLogs(),cwmWorldState->ServerData()->ResFish(),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))))  ;
+    mapResources = std::vector<MapResource_st>( mapResources.size(), 
+		MapResource_st( cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(), 
+			cwmWorldState->ServerData()->ResFish(), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), 
+			BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))));
     
-    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s);
+    auto resourceFile = std::filesystem::path( cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s );
 
     // The data is grouped as three shorts (for each resource), so we read in that format
-    auto buffer = std::vector<std::int16_t>(3,0) ;
-    auto input = std::ifstream(resourceFile.string(),std::ios::binary) ;
+    auto buffer = std::vector<SI16>( 3, 0 );
+    auto input = std::ifstream( resourceFile.string(), std::ios::binary );
 
     // We want to get the iteratro for the first mapResources ;
-    auto iter = mapResources.begin() ;
-    if (input.is_open()){
-        while(input.good() && !input.eof() && iter != mapResources.end()){
-            input.read(reinterpret_cast<char*>(buffer.data()),buffer.size()*2) ;
-            if (input.gcount() != buffer.size()*2) {
+    auto iter = mapResources.begin();
+    if( input.is_open() )
+	{
+        while( input.good() && !input.eof() && iter != mapResources.end() )
+		{
+            input.read( reinterpret_cast<char*>( buffer.data() ), buffer.size() * 2 );
+            if( input.gcount() != buffer.size() * 2 )
+			{
                 // We had issues reading the full amount, break out of this
                 break;
             }
+
             // For whatever reason the resources are stored in big endidan, which on int/arm machines , we need little endian, so reverse them
-            std::for_each(buffer.begin(), buffer.end(), [](std::int16_t &value){
-                std::reverse(reinterpret_cast<char*>(&value),reinterpret_cast<char*>(&value)+2);
+            std::for_each( buffer.begin(), buffer.end(), []( SI16 &value ) {
+                std::reverse( reinterpret_cast<char*>( &value ), reinterpret_cast<char*>( &value ) + 2 );
             });
+
             // Now set the values
-            (*iter).oreAmt = buffer[0] ;
-            (*iter).logAmt = buffer[1] ;
-            (*iter).fishAmt = buffer[2] ;
-             iter++ ;
+            ( *iter ).oreAmt = buffer[0];
+            ( *iter ).logAmt = buffer[1];
+            ( *iter ).fishAmt = buffer[2];
+             iter++;
         }
     }
-
-
 }
 
 //o------------------------------------------------------------------------------------------------o
