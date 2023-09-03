@@ -2616,7 +2616,7 @@
 26/04/2021 - Xuri
 	Increased default timer for worldsaves from 5 to 10 minutes
 	Fixed an issue where the tile command could spawn items with incorrect ID because tempInt2 wasn't reset properly
-	Additional string handling modernization in cAccountClass.cpp, chtmlsystem.cpp, cresponse.cpp, cserverdata.cpp, cserverdata.h, cServerDefinitions.cpp, csocket.cpp, cspawnregion.cpp, cspawnregion.h, cweather.cpp, Dictionary.cpp, effect.cpp and uox3.cpp (punt)
+	Additional string handling modernization in cAccountClass.cpp, chtmlsystem.cpp, cresponse.cpp, cserverdata.cpp, cserverdata.h, cserverdefinitions.cpp, csocket.cpp, cspawnregion.cpp, cspawnregion.h, cweather.cpp, dictionary.cpp, effect.cpp and uox3.cpp (punt)
 
 26/04/2021 - Xuri
 	Fixed an issue where 'get command attempts to retrieve incorrect property when isonline parameter is provided
@@ -3364,7 +3364,7 @@
 	Fixed an issue with CTownRegion::DisplayTownMenu() that prevented players from joining a town when interacting with a townstone for the first time
 
 14/08/2020 - Xuri (0.99.2n)
-	Replaced platform specific ways of looking up and loading DFN files in cServerDefinitions.cpp with a common, cross-platform method using std::filesystem. This also fixes an issue with loading of map0.mul on Linux when maps.4xclients.old is present in dfndata/maps/ directory (thanks, punt!)
+	Replaced platform specific ways of looking up and loading DFN files in cserverdefinitions.cpp with a common, cross-platform method using std::filesystem. This also fixes an issue with loading of map0.mul on Linux when maps.4xclients.old is present in dfndata/maps/ directory (thanks, punt!)
 
 13/08/2020 - Xuri
 	Misc changes to address errors and warnings when compiling on 64bit Linux
@@ -8922,7 +8922,7 @@ Changed:
 
 2001-11-29 19:23  darkangelab
 
-	* cserverdata.cpp, cServerDefinitions.cpp, jail.cpp, scriptc.cpp,
+	* cserverdata.cpp, cserverdefinitions.cpp, jail.cpp, scriptc.cpp,
 	ssection.cpp, townregion.cpp, uox3.cpp:
 	Code changes and updates to turn the DFN support on, in preparation
 	for a package release
@@ -9047,7 +9047,7 @@ Changed:
 2001-11-18 20:20  darkangelab
 
 	* boats.cpp, cAccount.cpp, cClick.cpp, cserverdata.cpp,
-	cserverdata.h, cServerDefinitions.cpp, csocket.cpp,
+	cserverdata.h, cserverdefinitions.cpp, csocket.cpp,
 	cspawnregion.cpp, cspawnregion.h, classes.h, cmdtable.cpp,
 	cmdtable.h, combat.cpp, debug.cpp, effect.cpp, fileio.cpp,
 	funcdecl.h, house.cpp, im.cpp, items.cpp, magic.cpp, magic.h,
@@ -9121,7 +9121,7 @@ Changed:
 
 2001-11-15 17:47  bpass
 
-	* cserverdata.cpp, cserverdata.h, cServerDefinitions.cpp,
+	* cserverdata.cpp, cserverdata.h, cserverdefinitions.cpp,
 	combat.cpp, network.cpp, uox3.cpp, worldmain.cpp:
 	New INI format & fixes...
 	Fixes for combat.
@@ -9197,9 +9197,9 @@ Changed:
 
 2001-11-12 23:11  darkangelab
 
-	* Dictionary.cpp, boats.cpp, books.cpp, cAccount.cpp,
+	* dictionary.cpp, boats.cpp, books.cpp, cAccount.cpp,
 	cBaseobject.cpp, cchar.cpp, cClick.cpp, citem.cpp, citem.h,
-	cServerDefinitions.cpp, cweather.cpp, calcfuncs.cpp,
+	cserverdefinitions.cpp, cweather.cpp, calcfuncs.cpp,
 	charhandle.cpp, cmdtable.cpp, combat.cpp, dist.cpp, fileio.cpp,
 	globals.cpp, gumps.cpp, itemhandler.cpp, items.cpp,
 	lineofsight.cpp, magic.cpp, mapstuff.cpp, movement.cpp,
@@ -9424,7 +9424,7 @@ Changed:
 
 2001-11-03 21:53  bpass
 
-	* cServerDefinitions.cpp, csocket.cpp:
+	* cserverdefinitions.cpp, csocket.cpp:
 	Small crash Fixes
 
 2001-11-03 13:00  shadowlord13
@@ -9573,7 +9573,7 @@ Changed:
 
 2001-10-28 12:03  bpass
 
-	* citem.cpp, cServerDefinitions.cpp, network.cpp, regions.cpp,
+	* citem.cpp, cserverdefinitions.cpp, network.cpp, regions.cpp,
 	uox3.cpp, worldmain.cpp:
 	Small fix or two
 
@@ -9585,7 +9585,7 @@ Changed:
 2001-10-25 21:40  bpass
 
 	* cBaseobject.cpp, cchar.cpp, citem.cpp, citem.h, cserverdata.cpp,
-	cServerDefinitions.cpp, cspawnregion.cpp, calcfuncs.cpp,
+	cserverdefinitions.cpp, cspawnregion.cpp, calcfuncs.cpp,
 	cmdtable.cpp, combat.cpp, commands.cpp, fileio.cpp, html.cpp,
 	items.cpp, magic.cpp, network.cpp, network.h, npcs.cpp, power.h,
 	regions.cpp, speech.cpp, uox3.cpp, worldmain.cpp:
@@ -9594,7 +9594,7 @@ Changed:
 
 2001-10-25 13:26  bpass
 
-	* Dictionary.cpp, dictionary.h, cClick.cpp, cConsole.cpp,
+	* dictionary.cpp, dictionary.h, cClick.cpp, cConsole.cpp,
 	combat.cpp, speech.cpp:
 	Misc
 
@@ -9726,7 +9726,7 @@ Changed:
 
 	* ai.cpp, archive.cpp, boats.cpp, cbaseobject.h, cBaseobject.cpp,
 	cchar.cpp, cchar.h, cClick.cpp, cguild.cpp, citem.cpp, cRaces.cpp,
-	cscript.cpp, cserverdata.cpp, cServerDefinitions.cpp, csocket.cpp,
+	cscript.cpp, cserverdata.cpp, cserverdefinitions.cpp, csocket.cpp,
 	cspawnregion.cpp, cspawnregion.h, calcfuncs.cpp, classes.h,
 	cmdtable.cpp, combat.cpp, dist.cpp, door.cpp, enums.h, fileio.cpp,
 	fileio.h, funcdecl.h, gumps.cpp, house.cpp, items.cpp,
@@ -9776,7 +9776,7 @@ Changed:
 
 2001-09-25 18:09  darkangelab
 
-	* cAccount.cpp, cServerDefinitions.cpp, cmdtable.cpp, commands.cpp,
+	* cAccount.cpp, cserverdefinitions.cpp, cmdtable.cpp, commands.cpp,
 	globals.cpp, gumps.cpp, network.cpp, uox3.cpp, uox3.h,
 	worldmain.cpp, worldmain.h:
 	Removed some superfluous global objects
@@ -9821,7 +9821,7 @@ Changed:
 	* pagevector.h, sefunctions.cpp, archive.cpp, boats.cpp,
 	cBaseobject.cpp, cClick.cpp, cguild.cpp, citem.cpp, citem.h,
 	cmultiobj.cpp, cserverdata.cpp, cserverdata.h,
-	cServerDefinitions.cpp, cspawnregion.cpp, cspawnregion.h,
+	cserverdefinitions.cpp, cspawnregion.cpp, cspawnregion.h,
 	cmdtable.cpp, combat.cpp, commands.cpp, funcdecl.h, house.cpp,
 	itemhandler.cpp, items.cpp, jail.cpp, network.cpp, queue.cpp,
 	regions.cpp, ssection.cpp, townregion.cpp, trigger.cpp, uox3.cpp,
@@ -10211,7 +10211,7 @@ Changed:
 
 	* books.cpp, cAccount.cpp, cBaseobject.cpp, cchar.cpp, cguild.cpp,
 	citem.cpp, cmultiobj.cpp, cRaces.cpp, cserverdata.cpp,
-	cServerDefinitions.cpp, cspawnregion.cpp, cweather.cpp,
+	cserverdefinitions.cpp, cspawnregion.cpp, cweather.cpp,
 	commands.cpp, funcdecl.h, gumps.cpp, house.cpp, html.cpp,
 	items.cpp, jail.cpp, magic.cpp, msgboard.cpp, necro.cpp,
 	network.cpp, newbie.cpp, npcs.cpp, skills.cpp, targeting.cpp,
@@ -10236,7 +10236,7 @@ Changed:
 	* sefunctions.cpp, cAccount.cpp, cAccount.h, cbaseobject.h,
 	cBaseobject.cpp, cchar.cpp, cchar.h, citem.cpp, citem.h,
 	cmultiobj.cpp, cserverdata.cpp, cserverdata.h,
-	cServerDefinitions.cpp, csocket.cpp, csocket.h, cweather.cpp,
+	cserverdefinitions.cpp, csocket.cpp, csocket.h, cweather.cpp,
 	cmdtable.cpp, fileio.cpp, funcdecl.h, hash.cpp, items.cpp,
 	mapstuff.cpp, network.cpp, network.h, npcs.cpp, speech.cpp,
 	teffect.h, trigger.cpp, typedefs.h, uox3.cpp, uox3.h:
@@ -10446,7 +10446,7 @@ Changed:
 
 2001-08-16 21:18  toinzane
 
-	* cServerDefinitions.cpp, npcs.cpp, targeting.cpp, targeting.h,
+	* cserverdefinitions.cpp, npcs.cpp, targeting.cpp, targeting.h,
 	uox3.cpp:
 	Minor cleanups in targeting.
 	Added support for CARVE.scp using the groundwork Abaddon put in
@@ -10549,7 +10549,7 @@ Changed:
 
 2001-08-13 17:48  darkangelab
 
-	* Dictionary.cpp, csocket.cpp, effect.cpp, enums.h, magic.cpp,
+	* dictionary.cpp, csocket.cpp, effect.cpp, enums.h, magic.cpp,
 	network.h, speech.cpp, speech.h, uox3.cpp:
 	Cleaned up some dead code / unreachable code / useless code
 	Added distinct language support, collapsing all english flavours
@@ -10987,7 +10987,7 @@ Changed:
 
 2001-08-02 17:37  darkangelab
 
-	* Dictionary.cpp, cServerDefinitions.cpp, csocket.cpp,
+	* dictionary.cpp, cserverdefinitions.cpp, csocket.cpp,
 	cmdtable.cpp, commands.cpp, fileio.cpp, im.cpp, jail.cpp,
 	magic.cpp, mapstuff.cpp, regions.cpp, skills.cpp, speech.cpp,
 	trigger.cpp, uox3.cpp:
@@ -11450,7 +11450,7 @@ Changed:
 
 2001-07-18 15:27  seank
 
-	* cserverdata.cpp, cServerDefinitions.cpp, calcfuncs.cpp:
+	* cserverdata.cpp, cserverdefinitions.cpp, calcfuncs.cpp:
 	Fixed the linux directory functions
 
 2001-07-18 14:15  toinzane
@@ -12233,7 +12233,7 @@ Changed:
 
 2001-07-05 20:36  darkangelab
 
-	* Dictionary.cpp, ssection.cpp:
+	* dictionary.cpp, ssection.cpp:
 	Minor dictionary tweaks
 	Added function headers for ScriptSection
 	Tidied up ScriptSection constructors
@@ -12548,7 +12548,7 @@ Changed:
 
 2001-07-02 20:24  darkangelab
 
-	* UOX3_Official.dsp, cserverdata.cpp, cServerDefinitions.cpp,
+	* UOX3_Official.dsp, cserverdata.cpp, cserverdefinitions.cpp,
 	magic.cpp, uox3.cpp:
 	Fixed release crash bug when loading spells
 	Adjusted Release part of the project to have the proper defines
@@ -12604,7 +12604,7 @@ Changed:
 
 2001-07-01 21:23  darkangelab
 
-	* Dictionary.cpp, dictionary.h, cskillclass.h, csocket.cpp,
+	* dictionary.cpp, dictionary.h, cskillclass.h, csocket.cpp,
 	csocket.h, cthreadqueue.cpp, cthreadqueue.h, cweather.cpp,
 	cweather.hpp, debug.cpp, debug.h, dist.cpp, effect.cpp, enums.h,
 	fileio.cpp, fileio.h, funcdecl.h, globals.cpp, cgump.h, gumps.cpp,
@@ -12630,7 +12630,7 @@ Changed:
 	citem.cpp, citem.h, cmagic.h, cmultiobj.cpp, cmultiobj.h,
 	classes.h, cmdtable.cpp, cmdtable.h, combat.cpp, cRaces.cpp,
 	craces.h, cscript.cpp, cscript.h, cserverdata.cpp, cserverdata.h,
-	cServerDefinitions.cpp, cserverdefinitions.h, combat.h,
+	cserverdefinitions.cpp, cserverdefinitions.h, combat.h,
 	commands.cpp, commands.h:
 	Initial commit of 0.95 source
 

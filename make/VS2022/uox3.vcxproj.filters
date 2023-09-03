@@ -70,10 +70,10 @@
     <ClCompile Include="..\..\source\cserverdata.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cServerDefinitions.cpp">
+    <ClCompile Include="..\..\source\cserverdefinitions.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\Dictionary.cpp">
+    <ClCompile Include="..\..\source\dictionary.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\scriptc.cpp">

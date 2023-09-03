@@ -95,8 +95,8 @@
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdata.cpp" />
-    <ClCompile Include="..\..\source\cServerDefinitions.cpp" />
-    <ClCompile Include="..\..\source\Dictionary.cpp" />
+    <ClCompile Include="..\..\source\cserverdefinitions.cpp" />
+    <ClCompile Include="..\..\source\dictionary.cpp" />
     <ClCompile Include="..\..\source\scriptc.cpp" />
     <ClCompile Include="..\..\source\ssection.cpp" />
     <!-- Base Object group -->

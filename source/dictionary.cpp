@@ -1,4 +1,4 @@
-// Dictionary.cpp: implementation of the CDictionary class.
+// dictionary.cpp: implementation of the CDictionary class.
 //
 //////////////////////////////////////////////////////////////////////
 
