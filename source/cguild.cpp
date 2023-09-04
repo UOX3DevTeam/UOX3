@@ -55,7 +55,7 @@ CGuild::~CGuild() {
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at war
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuild::FirstWar(void) {
+guildid_t CGuild::FirstWar(void) {
     warPtr = relationList.begin();
     return NextWar();
 }
@@ -66,7 +66,7 @@ GUILDID CGuild::FirstWar(void) {
 //| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild at war, or -1 if no war
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuild::NextWar(void) {
+guildid_t CGuild::NextWar(void) {
     while (warPtr != relationList.end()) {
         if (warPtr->second == GR_WAR) {
             return warPtr->first;
@@ -104,7 +104,7 @@ bool CGuild::FinishedWar(void) {
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at ally
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuild::FirstAlly(void) {
+guildid_t CGuild::FirstAlly(void) {
     allyPtr = relationList.begin();
     return NextAlly();
 }
@@ -115,7 +115,7 @@ GUILDID CGuild::FirstAlly(void) {
 //| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild as ally, or -1 if no ally
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuild::NextAlly(void) {
+guildid_t CGuild::NextAlly(void) {
     while (allyPtr != relationList.end()) {
         if (allyPtr->second == GR_ALLY) {
             return allyPtr->first;
@@ -453,8 +453,8 @@ auto CGuild::IsMember(SERIAL toCheck) const -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine other guild's relation (Alliance/War) to this guild
 // o------------------------------------------------------------------------------------------------o
-GUILDRELATION CGuild::RelatedToGuild(GUILDID otherGuild) const {
-    GUILDREL::const_iterator toFind = relationList.find(otherGuild);
+GuildRelation CGuild::RelatedToGuild(guildid_t otherGuild) const {
+   auto toFind = relationList.find(otherGuild);
     if (toFind == relationList.end()) {
         return GR_UNKNOWN;
     }
@@ -462,8 +462,8 @@ GUILDRELATION CGuild::RelatedToGuild(GUILDID otherGuild) const {
         return toFind->second;
     }
 }
-bool CGuild::IsAtWar(GUILDID otherGuild) const {
-    GUILDREL::const_iterator toFind = relationList.find(otherGuild);
+bool CGuild::IsAtWar(guildid_t otherGuild) const {
+    auto toFind = relationList.find(otherGuild);
     if (toFind == relationList.end()) {
         return false;
     }
@@ -471,8 +471,8 @@ bool CGuild::IsAtWar(GUILDID otherGuild) const {
         return (toFind->second == GR_WAR);
     }
 }
-bool CGuild::IsNeutral(GUILDID otherGuild) const {
-    GUILDREL::const_iterator toFind = relationList.find(otherGuild);
+bool CGuild::IsNeutral(guildid_t otherGuild) const {
+    auto toFind = relationList.find(otherGuild);
     if (toFind == relationList.end()) {
         return false;
     }
@@ -480,8 +480,8 @@ bool CGuild::IsNeutral(GUILDID otherGuild) const {
         return (toFind->second == GR_NEUTRAL);
     }
 }
-bool CGuild::IsAlly(GUILDID otherGuild) const {
-    GUILDREL::const_iterator toFind = relationList.find(otherGuild);
+bool CGuild::IsAlly(guildid_t otherGuild) const {
+    auto toFind = relationList.find(otherGuild);
     if (toFind == relationList.end()) {
         return false;
     }
@@ -512,17 +512,17 @@ bool CGuild::IsAtPeace() const {
 //|	Purpose		-	Gets/Sets guild's relation to another guild
 //|	Notes		-	NOTE: This is aimed ONLY at menu stuff
 // o------------------------------------------------------------------------------------------------o
-void CGuild::SetGuildRelation(GUILDID otherGuild, GUILDRELATION toSet) {
+void CGuild::SetGuildRelation(guildid_t otherGuild, GuildRelation toSet) {
     relationList[otherGuild] = toSet;
 }
-GUILDREL *CGuild::GuildRelationList(void) { return &relationList; }
+std::map<guildid_t, GuildRelation>* CGuild::GuildRelationList(void) { return &relationList; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::Save()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save guild data to worldfiles
 // o------------------------------------------------------------------------------------------------o
-void CGuild::Save(std::ostream &toSave, GUILDID gNum) {
+void CGuild::Save(std::ostream &toSave, guildid_t gNum) {
     toSave << "[GUILD " << gNum << ']' << '\n' << "{" << '\n';
     toSave << "NAME=" << name << '\n';
     toSave << "ABBREVIATION=" << abbreviation << '\n';
@@ -535,7 +535,7 @@ void CGuild::Save(std::ostream &toSave, GUILDID gNum) {
                   [&toSave](SERIAL entry) { toSave << "RECRUIT=" << entry << '\n'; });
     std::for_each(members.begin(), members.end(),
                   [&toSave](SERIAL entry) { toSave << "MEMBER=" << entry << '\n'; });
-    GUILDREL::const_iterator relly = relationList.begin();
+    auto relly = relationList.begin();
     while (relly != relationList.end()) {
         toSave << GRelationNames[relly->second] << " " << relly->first << '\n';
         ++relly;
@@ -762,16 +762,16 @@ size_t CGuildCollection::NumGuilds(void) const { return gList.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next available guild ID
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuildCollection::MaximumGuild(void) {
-    GUILDID maxVal = -1;
-    GUILDLIST::const_iterator pFind = gList.begin();
+guildid_t CGuildCollection::MaximumGuild(void) {
+    guildid_t maxVal = -1;
+    auto pFind = gList.begin();
     while (pFind != gList.end()) {
         if (pFind->first > maxVal) {
             maxVal = pFind->first;
         }
         ++pFind;
     }
-    return static_cast<GUILDID>(maxVal + 1);
+    return static_cast<guildid_t>(maxVal + 1);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -779,20 +779,20 @@ GUILDID CGuildCollection::MaximumGuild(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a new guild
 // o------------------------------------------------------------------------------------------------o
-GUILDID CGuildCollection::NewGuild(void) {
+guildid_t CGuildCollection::NewGuild(void) {
     CGuild *toAdd = new CGuild();
-    GUILDID gAdd = MaximumGuild();
+    guildid_t gAdd = MaximumGuild();
     gList[gAdd] = toAdd;
     return gAdd;
 }
-CGuild *CGuildCollection::Guild(GUILDID num) const {
-    GUILDLIST::const_iterator pFind = gList.find(num);
+CGuild *CGuildCollection::Guild(guildid_t num) const {
+    auto pFind = gList.find(num);
     if (pFind == gList.end())
         return nullptr;
 
     return pFind->second;
 }
-CGuild *CGuildCollection::operator[](GUILDID num) { return Guild(num); }
+CGuild *CGuildCollection::operator[](guildid_t num) { return Guild(num); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::Save()
@@ -803,7 +803,7 @@ void CGuildCollection::Save(void) {
     Console::shared() << "Saving guild data.... ";
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
     std::ofstream toSave(filename.c_str());
-    GUILDLIST::const_iterator pMove = gList.begin();
+    auto pMove = gList.begin();
     while (pMove != gList.end()) {
         (pMove->second)->Save(toSave, pMove->first);
         ++pMove;
@@ -821,7 +821,7 @@ void CGuildCollection::Load(void) {
     if (FileExists(filename)) {
         Script newScript(filename, NUM_DEFS, false);
         CScriptSection *testSect = nullptr;
-        GUILDID guildNum = 0;
+        guildid_t guildNum = 0;
         for (testSect = newScript.FirstEntry(); testSect != nullptr;
              testSect = newScript.NextEntry()) {
             std::string text = newScript.EntryName();
@@ -841,7 +841,7 @@ void CGuildCollection::Load(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Compare the guild relation between two guilds
 // o------------------------------------------------------------------------------------------------o
-GUILDRELATION CGuildCollection::Compare(GUILDID srcGuild, GUILDID trgGuild) const {
+GuildRelation CGuildCollection::Compare(guildid_t srcGuild, guildid_t trgGuild) const {
     if (srcGuild == -1 || trgGuild == -1)
         return GR_UNKNOWN;
 
@@ -860,7 +860,7 @@ GUILDRELATION CGuildCollection::Compare(GUILDID srcGuild, GUILDID trgGuild) cons
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Compare the guild relation between two characters
 // o------------------------------------------------------------------------------------------------o
-GUILDRELATION CGuildCollection::Compare(CChar *src, CChar *trg) const {
+GuildRelation CGuildCollection::Compare(CChar *src, CChar *trg) const {
     if (src == nullptr || trg == nullptr)
         return GR_UNKNOWN;
 
@@ -880,7 +880,7 @@ GUILDRELATION CGuildCollection::Compare(CChar *src, CChar *trg) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send guild menu to player
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Menu(CSocket *s, std::int16_t menu, GUILDID trgGuild, SERIAL plId) {
+void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, SERIAL plId) {
     if (s == nullptr)
         return;
     if (trgGuild >= static_cast<std::int32_t>(NumGuilds()))
@@ -937,8 +937,8 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, GUILDID trgGuild, SER
     std::string gName = gList[trgGuild]->Name();
     std::uint16_t tCtr = 0;
     SERIAL tChar = 0;
-    GUILDREL::iterator toCheck;
-    GUILDREL *ourList;
+    std::map<guildid_t, GuildRelation>::iterator toCheck;
+    std::map<guildid_t, GuildRelation> *ourList;
     s->TempInt(trgGuild);
     UnicodeTypes sLang = s->Language();
 
@@ -1215,7 +1215,7 @@ void CGuildCollection::GumpInput(CPIGumpInput *gi) {
     if (type != 100)
         return;
 
-    GUILDID trgGuild = static_cast<GUILDID>(s->TempInt());
+    guildid_t trgGuild = static_cast<guildid_t>(s->TempInt());
     CChar *gMaster = CalcCharObjFromSer(gList[trgGuild]->Master());
     switch (index) {
     case 1:
@@ -1256,7 +1256,7 @@ void CGuildCollection::GumpInput(CPIGumpInput *gi) {
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::ToggleAbbreviation(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
-    GUILDID guildNumber = mChar->GetGuildNumber();
+    guildid_t guildNumber = mChar->GetGuildNumber();
     if (guildNumber == -1)
         return;
 
@@ -1278,7 +1278,7 @@ void CGuildCollection::ToggleAbbreviation(CSocket *s) {
     }
 }
 
-void CGuildCollection::TransportGuildStone(CSocket *s, GUILDID guildId) {
+void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
     CChar *mChar = s->CurrcharObj();
     if (guildId == -1)
         return;
@@ -1315,7 +1315,7 @@ void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index
 void CGuildCollection::GumpChoice(CSocket *s) {
     std::uint32_t realType = s->GetDWord(7);
     std::uint32_t button = s->GetDWord(11);
-    GUILDID trgGuild = static_cast<GUILDID>(s->TempInt());
+    guildid_t trgGuild = static_cast<guildid_t>(s->TempInt());
     if (button == 1) // hit cancel
         return;
 
@@ -1325,8 +1325,8 @@ void CGuildCollection::GumpChoice(CSocket *s) {
 
     SERIAL ser = mChar->GetSerial();
     std::uint16_t tCtr = 0;
-    GUILDREL::iterator toCheck;
-    GUILDREL *ourList;
+    std::map<guildid_t, GuildRelation>::iterator toCheck;
+    std::map<guildid_t, GuildRelation> *ourList;
     size_t offCounter;
 
     CChar *tChar = nullptr;
@@ -1661,8 +1661,8 @@ void CGuildCollection::Resign(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Erase guild - there are no guild members left
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Erase(GUILDID toErase) {
-    GUILDLIST::iterator pFind = gList.find(toErase);
+void CGuildCollection::Erase(guildid_t toErase) {
+    auto pFind = gList.find(toErase);
     if (pFind == gList.end()) // doesn't exist
         return;
 
@@ -1690,7 +1690,7 @@ void CGuildCollection::Erase(GUILDID toErase) {
 }
 
 CGuildCollection::~CGuildCollection() {
-    GUILDLIST::const_iterator i = gList.begin();
+    auto i = gList.begin();
     while (i != gList.end()) {
         if (i->second != nullptr) {
             delete i->second;
@@ -1720,7 +1720,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
             s->ObjMessage(173, deed); // You are already in a guild.
             return;
         }
-        GUILDID gNum = NewGuild();
+        guildid_t gNum = NewGuild();
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
@@ -1769,7 +1769,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
                           deed); // You don't appear to be in a guild
             return;
         }
-        GUILDID gNum = deed->GetTempVar(CITV_MORE);
+        guildid_t gNum = deed->GetTempVar(CITV_MORE);
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
@@ -1807,8 +1807,8 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
 //|	Purpose		-	Sets/Gets whether action will result in criminal flag based on guild
 // relation
 // o------------------------------------------------------------------------------------------------o
-bool CGuildCollection::ResultInCriminal(GUILDID srcGuild, GUILDID trgGuild) const {
-    GUILDRELATION gRel = Compare(srcGuild, trgGuild);
+bool CGuildCollection::ResultInCriminal(guildid_t srcGuild, guildid_t trgGuild) const {
+    auto gRel = Compare(srcGuild, trgGuild);
     switch (gRel) {
     case GR_WAR:
     case GR_SAME:
@@ -1837,7 +1837,7 @@ void CGuildCollection::DisplayTitle(CSocket *s, CChar *src) const {
     if (!ValidateObject(src) || s == nullptr)
         return;
 
-    GUILDID sGuild = src->GetGuildNumber();
+    guildid_t sGuild = src->GetGuildNumber();
     if (sGuild != -1 && src->GetGuildToggle()) {
         std::string title;
 

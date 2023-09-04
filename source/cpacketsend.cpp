@@ -289,7 +289,7 @@ void CPacketSpeech::SpeakerName(const std::string &toPut) {
 }
 void CPacketSpeech::SpeakerSerial(SERIAL toPut) { pStream.WriteLong(3, toPut); }
 void CPacketSpeech::SpeakerModel(std::uint16_t toPut) { pStream.WriteShort(7, toPut); }
-void CPacketSpeech::Colour(COLOUR toPut) { pStream.WriteShort(10, toPut); }
+void CPacketSpeech::Colour(colour_t toPut) { pStream.WriteShort(10, toPut); }
 void CPacketSpeech::Font(FontType toPut) { pStream.WriteShort(12, toPut); }
 void CPacketSpeech::Language([[maybe_unused]] UnicodeTypes toPut) {}
 void CPacketSpeech::Unicode(bool toPut) { isUnicode = toPut; }
@@ -5120,7 +5120,7 @@ void CPUnicodeSpeech::Object(CBaseObject &talking) { CopyData(talking); }
 void CPUnicodeSpeech::Object(CPITalkRequestAscii &tSaid) { CopyData(tSaid); }
 void CPUnicodeSpeech::Object(CPITalkRequestUnicode &tSaid) { CopyData(tSaid); }
 void CPUnicodeSpeech::Type(std::uint8_t value) { pStream.WriteByte(9, (value & 0x0F)); }
-void CPUnicodeSpeech::Colour(COLOUR value) { pStream.WriteShort(10, value); }
+void CPUnicodeSpeech::Colour(colour_t value) { pStream.WriteShort(10, value); }
 void CPUnicodeSpeech::Font(std::uint16_t value) { pStream.WriteShort(12, value); }
 void CPUnicodeSpeech::Language(char *value) { pStream.WriteString(14, value, 4); }
 void CPUnicodeSpeech::Language(const char *value) { pStream.WriteString(14, value, 4); }
@@ -5269,7 +5269,7 @@ void CPUnicodeMessage::CopyData(CBaseObject &toCopy) {
 }
 void CPUnicodeMessage::Object(CBaseObject &talking) { CopyData(talking); }
 void CPUnicodeMessage::Type(std::uint8_t value) { pStream.WriteByte(9, (value & 0x0F)); }
-void CPUnicodeMessage::Colour(COLOUR value) { pStream.WriteShort(10, value); }
+void CPUnicodeMessage::Colour(colour_t value) { pStream.WriteShort(10, value); }
 void CPUnicodeMessage::Font(std::uint16_t value) { pStream.WriteShort(12, value); }
 void CPUnicodeMessage::Language(char *value) { pStream.WriteString(14, value, 4); }
 void CPUnicodeMessage::Language(const char *value) { pStream.WriteString(14, value, 4); }
@@ -6090,8 +6090,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             std::string textFromScript1 = toExecute1->OnTooltip(&cItem, tSock);
             if (!textFromScript1.empty()) {
                 std::uint32_t clilocNumFromScript = 0;
-                TAGMAPOBJECT tempTagObj = cItem.GetTempTag("tooltipCliloc");
-                if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
+                auto tempTagObj = cItem.GetTempTag("tooltipCliloc");
+                if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
                     // Use cliloc set in tooltipCliloc temptag, if present
                     clilocNumFromScript = tempTagObj.m_IntValue;
                 }
@@ -6112,8 +6112,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         std::string textFromGlobalScript = toExecuteGlobal->OnTooltip(&cItem, tSock);
         if (!textFromGlobalScript.empty()) {
             std::uint32_t clilocNumFromScript = 0;
-            TAGMAPOBJECT tempTagObj = cItem.GetTempTag("tooltipCliloc");
-            if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
+            auto tempTagObj = cItem.GetTempTag("tooltipCliloc");
+            if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
                 // Use cliloc set in tooltipCliloc temptag, if present
                 clilocNumFromScript = tempTagObj.m_IntValue;
             }
@@ -6529,8 +6529,8 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
             std::string textFromScript = toExecute->OnTooltip(&mChar, tSock);
             if (!textFromScript.empty()) {
                 std::uint32_t clilocNumFromScript = 0;
-                TAGMAPOBJECT tempTagObj = mChar.GetTempTag("tooltipCliloc");
-                if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
+                auto tempTagObj = mChar.GetTempTag("tooltipCliloc");
+                if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
                     // Use cliloc set in tooltipCliloc temptag, if present
                     clilocNumFromScript = tempTagObj.m_IntValue;
                 }
@@ -6883,7 +6883,7 @@ void CPOpenMsgBoardPost::CopyData(CSocket *mSock, const MsgBoardPost_st &mbPost)
         size_t offset = 12;
 
         CChar *mChar = mSock->CurrcharObj();
-        TAGMAPOBJECT modboards = mChar->GetTag("modboards");
+        auto modboards = mChar->GetTag("modboards");
         if (mChar->IsGM() && modboards.m_IntValue == 1) {
             // If character is a GM, and has used the MSGMOD ON command, send their username instead
             // of poster's, to allow removing messages from the message board
@@ -7400,7 +7400,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
 
     // Bulk Order Info - if enabled in ini
     if (cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopy.IsShop()) {
-        TAGMAPOBJECT isBodVendor = toCopy.GetTag("bodType");
+        auto isBodVendor = toCopy.GetTag("bodType");
         if (isBodVendor.m_IntValue > 0) {
             if (numEntries > 0) {
                 offset += 2;
@@ -8341,13 +8341,11 @@ CPClientVersion::CPClientVersion() { InternalReset(); }
 //|						BYTE cmd
 //|
 //|					Notes
-//|						Older 2D Clients this was for Paperdoll
-// ackknowledgement.
-//|						Newest (KR era and 6.0.1.7 and higher) use this also for
-//the regular drop item packet. |							> 6.0.1.7 =
-//Client sends Drop On Paperdoll (0x13), Server Responds with This (0x29) |
-//< 6.0.1.7 = Client sends Drop On Paperdoll (0x13) or sends Drop Item (0x08), server responds with
-// this (0x29)
+//|						Older 2D Clients this was for Paperdoll ackknowledgement.
+//|						Newest (KR era and 6.0.1.7 and higher) use this also for the regular drop item packet.
+//|                     > 6.0.1.7 = Client sends Drop On Paperdoll (0x13), Server Responds with This (0x29)
+//|                     < 6.0.1.7 = Client sends Drop On Paperdoll (0x13) or sends Drop Item (0x08), server responds with
+//|                     this (0x29)
 // o------------------------------------------------------------------------------------------------o
 CPDropItemApproved::CPDropItemApproved() {
     pStream.ReserveSize(1);

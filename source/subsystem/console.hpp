@@ -127,13 +127,9 @@ class Console {
             : scriptId(id), isEnabled(true), cmdName(cName) {}
     };
 
-    typedef std::map<std::string, JSConsoleEntry_st> JSCONSOLEFUNCMAP;
-    typedef std::map<std::string, JSConsoleEntry_st>::iterator JSCONSOLEFUNCMAP_ITERATOR;
-    typedef std::map<std::int32_t, JSConsoleEntry_st> JSCONSOLEKEYMAP;
-    typedef std::map<std::int32_t, JSConsoleEntry_st>::iterator JSCONSOLEKEYMAP_ITERATOR;
 
-    JSCONSOLEKEYMAP JSKeyHandler;
-    JSCONSOLEFUNCMAP JSConsoleFunctions;
+    std::map<std::int32_t, JSConsoleEntry_st> JSKeyHandler;
+    std::map<std::string, JSConsoleEntry_st> JSConsoleFunctions;
     std::uint16_t width, height; // for differing windows
     std::uint16_t curLeft, curTop;
     std::bitset<16> filterSettings;

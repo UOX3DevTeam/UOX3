@@ -303,7 +303,7 @@ class CSpeechEntry {
     SpeechType typeOfSpeech;
     bool antiSpam;
     bool unicode;
-    COLOUR speechColour;
+    colour_t speechColour;
     SERIAL speaker;
     SERIAL spokenTo; // Only in a case of SPTRG_INDIVIDUAL
     SpeechTarget targType;
@@ -327,7 +327,7 @@ class CSpeechEntry {
     SpeechType Type(void) const { return typeOfSpeech; }
     bool AntiSpam(void) const { return antiSpam; }
     bool Unicode(void) const { return unicode; }
-    COLOUR Colour(void) const { return speechColour; }
+    colour_t Colour(void) const { return speechColour; }
     SERIAL Speaker(void) const { return speaker; }
     SERIAL SpokenTo(void) const { return spokenTo; }
     SpeechTarget TargType(void) const { return targType; }
@@ -341,7 +341,7 @@ class CSpeechEntry {
     void Type(SpeechType type) { typeOfSpeech = type; }
     void AntiSpam(bool value) { antiSpam = value; }
     void Unicode(bool value) { unicode = value; }
-    void Colour(COLOUR value) { speechColour = value; }
+    void Colour(colour_t value) { speechColour = value; }
     void Speaker(SERIAL value) { speaker = value; }
     void SpokenTo(SERIAL value) { spokenTo = value; }
     void TargType(SpeechTarget type) { targType = type; }
@@ -366,15 +366,11 @@ class CSpeechEntry {
     }
 };
 
-typedef std::vector<CSpeechEntry *> SPEECHLIST;
-typedef std::vector<CSpeechEntry *>::iterator SPEECHLIST_ITERATOR;
-typedef std::vector<CSpeechEntry *>::reverse_iterator SPEECHLIST_RITERATOR;
-typedef std::vector<CSpeechEntry *>::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue {
   private:
     std::int32_t pollTime; // MILLISECONDS How often to poll the queue
-    SPEECHLIST speechList;
+    std::vector<CSpeechEntry *> speechList;
     bool runAsThread;
 
     void SayIt(CSpeechEntry &toSay);

@@ -896,7 +896,7 @@ CBasePetResponse::CBasePetResponse(const std::string &text) { ourText = text; }
 //|	Purpose		-	Handles response to players wanting to execute pet commands
 // o------------------------------------------------------------------------------------------------o
 void CBasePetResponse::Handle(CSocket *mSock, CChar *mChar) {
-    TAGMAPOBJECT petTagObj = mChar->GetTag("petTagObjSerial");
+    auto petTagObj = mChar->GetTag("petTagObjSerial");
     CChar *petCommandObj = CalcCharObjFromSer(petTagObj.m_IntValue);
     if (ValidateObject(petCommandObj)) {
         petTagObj.m_Destroy = true;

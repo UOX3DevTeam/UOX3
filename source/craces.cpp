@@ -335,7 +335,7 @@ void cRaces::ApplyRace(CChar *s, RACEID x, bool always) {
 //|	Purpose		-	Checks if specified colour is a valid beard colour for specified
 // race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::BeardInRange(COLOUR color, RACEID x) const {
+bool cRaces::BeardInRange(colour_t color, RACEID x) const {
     if (InvalidRace(x))
         return false;
 
@@ -347,7 +347,7 @@ bool cRaces::BeardInRange(COLOUR color, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified colour is a valid skin colour for specified race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::SkinInRange(COLOUR color, RACEID x) const {
+bool cRaces::SkinInRange(colour_t color, RACEID x) const {
     if (InvalidRace(x))
         return false;
 
@@ -359,7 +359,7 @@ bool cRaces::SkinInRange(COLOUR color, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified colour is a valid hair colour for specified race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::HairInRange(COLOUR color, RACEID x) const {
+bool cRaces::HairInRange(colour_t color, RACEID x) const {
     if (InvalidRace(x))
         return false;
 
@@ -390,13 +390,13 @@ void cRaces::Skill(std::int32_t skill, std::int32_t value, RACEID race) {
 //|	Purpose		-	Gets/Sets race's gender restriction
 //|	Purpose		-	0 = none, 1 = male, 2 = female
 // o------------------------------------------------------------------------------------------------o
-GENDER cRaces::GenderRestrict(RACEID race) const {
+gender_t cRaces::GenderRestrict(RACEID race) const {
     if (InvalidRace(race))
         return MALE;
 
     return races[race]->GenderRestriction();
 }
-void cRaces::GenderRestrict(GENDER gender, RACEID race) {
+void cRaces::GenderRestrict(gender_t gender, RACEID race) {
     if (InvalidRace(race))
         return;
 
@@ -444,7 +444,7 @@ ARMORCLASS cRaces::ArmorRestrict(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid skin colour for specified race
 // o------------------------------------------------------------------------------------------------o
-COLOUR cRaces::RandomSkin(RACEID x) const {
+colour_t cRaces::RandomSkin(RACEID x) const {
     if (InvalidRace(x))
         return 0000;
 
@@ -456,7 +456,7 @@ COLOUR cRaces::RandomSkin(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid hair colour for specified race
 // o------------------------------------------------------------------------------------------------o
-COLOUR cRaces::RandomHair(RACEID x) const {
+colour_t cRaces::RandomHair(RACEID x) const {
     if (InvalidRace(x))
         return 0000;
 
@@ -468,7 +468,7 @@ COLOUR cRaces::RandomHair(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid beard colour for specified race
 // o------------------------------------------------------------------------------------------------o
-COLOUR cRaces::RandomBeard(RACEID x) const {
+colour_t cRaces::RandomBeard(RACEID x) const {
     if (InvalidRace(x))
         return 0;
 
@@ -480,13 +480,13 @@ COLOUR cRaces::RandomBeard(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets blood colour for members of specified race
 // o------------------------------------------------------------------------------------------------o
-COLOUR cRaces::BloodColour(RACEID x) const {
+colour_t cRaces::BloodColour(RACEID x) const {
     if (InvalidRace(x))
         return 0000;
 
     return races[x]->BloodColour();
 }
-void cRaces::BloodColour(RACEID x, COLOUR newValue) {
+void cRaces::BloodColour(RACEID x, colour_t newValue) {
     if (InvalidRace(x))
         return;
 
@@ -1036,8 +1036,8 @@ void CRace::NoHair(bool newValue) { bools.set(BIT_NOHAIR, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether race is gender-restricted
 // o------------------------------------------------------------------------------------------------o
-GENDER CRace::GenderRestriction(void) const { return restrictGender; }
-void CRace::GenderRestriction(GENDER newValue) { restrictGender = newValue; }
+gender_t CRace::GenderRestriction(void) const { return restrictGender; }
+void CRace::GenderRestriction(gender_t newValue) { restrictGender = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::LightLevel()
@@ -1247,26 +1247,26 @@ CRace::CRace(std::int32_t numRaces)
 void CRace::NumEnemyRaces(std::int32_t iNum) { racialEnemies.resize(iNum); }
 RaceRelate CRace::RaceRelation(RACEID race) const { return racialEnemies[race]; }
 
-COLOUR CRace::RandomSkin(void) const {
+colour_t CRace::RandomSkin(void) const {
     if (!IsSkinRestricted())
         return 0;
 
     size_t sNum = RandomNum(static_cast<size_t>(0), skinColours.size() - 1);
-    return static_cast<COLOUR>(RandomNum(skinColours[sNum].cMin, skinColours[sNum].cMax));
+    return static_cast<colour_t>(RandomNum(skinColours[sNum].cMin, skinColours[sNum].cMax));
 }
-COLOUR CRace::RandomHair(void) const {
+colour_t CRace::RandomHair(void) const {
     if (!IsHairRestricted())
         return 0;
 
     size_t sNum = RandomNum(static_cast<size_t>(0), hairColours.size() - 1);
-    return static_cast<COLOUR>(RandomNum(hairColours[sNum].cMin, hairColours[sNum].cMax));
+    return static_cast<colour_t>(RandomNum(hairColours[sNum].cMin, hairColours[sNum].cMax));
 }
-COLOUR CRace::RandomBeard(void) const {
+colour_t CRace::RandomBeard(void) const {
     if (!IsBeardRestricted())
         return 0;
 
     size_t sNum = RandomNum(static_cast<size_t>(0), beardColours.size() - 1);
-    return static_cast<COLOUR>(RandomNum(beardColours[sNum].cMin, beardColours[sNum].cMax));
+    return static_cast<colour_t>(RandomNum(beardColours[sNum].cMin, beardColours[sNum].cMax));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1274,8 +1274,8 @@ COLOUR CRace::RandomBeard(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the blood colour of members of race
 // o------------------------------------------------------------------------------------------------o
-COLOUR CRace::BloodColour(void) const { return bloodColour; }
-void CRace::BloodColour(COLOUR newValue) { bloodColour = newValue; }
+colour_t CRace::BloodColour(void) const { return bloodColour; }
+void CRace::BloodColour(colour_t newValue) { bloodColour = newValue; }
 
 bool CRace::IsSkinRestricted(void) const { return (!skinColours.empty()); }
 bool CRace::IsHairRestricted(void) const { return (!hairColours.empty()); }
@@ -1286,7 +1286,7 @@ bool CRace::IsBeardRestricted(void) const { return (!beardColours.empty()); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specific colour is valid for skins for this race
 // o------------------------------------------------------------------------------------------------o
-bool CRace::IsValidSkin(COLOUR val) const {
+bool CRace::IsValidSkin(colour_t val) const {
     if (!IsSkinRestricted())
         return true;
 
@@ -1302,7 +1302,7 @@ bool CRace::IsValidSkin(COLOUR val) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specific colour is valid for hairs for this race
 // o------------------------------------------------------------------------------------------------o
-bool CRace::IsValidHair(COLOUR val) const {
+bool CRace::IsValidHair(colour_t val) const {
     if (!IsHairRestricted())
         return true;
 
@@ -1318,7 +1318,7 @@ bool CRace::IsValidHair(COLOUR val) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether specific colour is valid for beards for this race
 // o------------------------------------------------------------------------------------------------o
-bool CRace::IsValidBeard(COLOUR val) const {
+bool CRace::IsValidBeard(colour_t val) const {
     if (!IsBeardRestricted())
         return true;
 
@@ -1396,7 +1396,7 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
     if (RacialPart == nullptr)
         return;
 
-    COLOUR beardMin = 0, skinMin = 0, hairMin = 0;
+    colour_t beardMin = 0, skinMin = 0, hairMin = 0;
 
     for (tag = RacialPart->First(); !RacialPart->AtEnd(); tag = RacialPart->Next()) {
         UTag = util::upper(tag);
@@ -1484,10 +1484,10 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
             }
             else if (UTag == "BEARDMAX") {
                 beardColours.push_back(
-                    ColourPair_st(beardMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
+                    ColourPair(beardMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
             }
             else if (UTag == "BLOODCOLOUR") {
-                bloodColour = static_cast<COLOUR>(std::stoul(data, nullptr, 0));
+                bloodColour = static_cast<colour_t>(std::stoul(data, nullptr, 0));
             }
             break;
 
@@ -1541,7 +1541,7 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
             }
             else if (UTag == "HAIRMAX") {
                 hairColours.push_back(
-                    ColourPair_st(hairMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
+                    ColourPair(hairMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
             }
             else if (UTag == "HEATAFFECT") {
                 // are we affected by light?
@@ -1733,7 +1733,7 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
             }
             else if (UTag == "SKINMAX") {
                 skinColours.push_back(
-                    ColourPair_st(skinMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
+                    ColourPair(skinMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
             }
             else if (UTag == "SNOWAFFECT") // are we affected by light?
             {

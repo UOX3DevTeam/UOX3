@@ -69,7 +69,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
     std::int32_t ndata = -1, odata = -1;
     bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
 
-    TAGMAPOBJECT customTag;
+    TagMap customTag;
     std::string customTagName;
     std::string customTagStringValue;
     for (const auto &sec : toApply->collection2()) {
@@ -839,7 +839,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 customTag.m_Destroy = false;
                 customTag.m_StringValue = customTagStringValue;
                 customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
-                customTag.m_ObjectType = TAGMAP_TYPE_STRING;
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                 applyTo->SetTag(customTagName, customTag);
             }
             else {
@@ -867,7 +867,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 customTag.m_Destroy = false;
                 customTag.m_IntValue =
                     static_cast<std::int32_t>(std::stoi(customTagStringValue, nullptr, 0));
-                customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 customTag.m_StringValue = "";
                 applyTo->SetTag(customTagName, customTag);
                 if (count > 2) {

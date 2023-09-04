@@ -527,8 +527,8 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     if (ValidateObject(src)) {
         // Get colour of the resource targeted by player (if any), so it can be applied to the item
         // being made
-        TAGMAPOBJECT tempTagObj = src->GetTempTag("craftItemColor");
-        if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
+        auto tempTagObj = src->GetTempTag("craftItemColor");
+        if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
             iColour = static_cast<std::uint16_t>(tempTagObj.m_IntValue);
         }
     }

@@ -555,8 +555,8 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     p2->SetDecayable(false);
 
     // Lock the plank
-    TAGMAPOBJECT tagvalObject;
-    tagvalObject.m_ObjectType = TAGMAP_TYPE_INT;
+    TagMap tagvalObject;
+    tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
     tagvalObject.m_IntValue = 1;
     tagvalObject.m_Destroy = false;
     tagvalObject.m_StringValue = "";
@@ -571,7 +571,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     p1->SetDecayable(false);
 
     // Lock the plank
-    tagvalObject.m_ObjectType = TAGMAP_TYPE_INT;
+    tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
     tagvalObject.m_IntValue = 1;
     tagvalObject.m_Destroy = false;
     tagvalObject.m_StringValue = "";

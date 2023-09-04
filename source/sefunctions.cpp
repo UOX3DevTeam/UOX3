@@ -1560,8 +1560,8 @@ JSBool SE_CompareGuildByGuild([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     if (argc != 2) {
         return JS_FALSE;
     }
-    GUILDID toCheck = static_cast<GUILDID>(JSVAL_TO_INT(argv[0]));
-    GUILDID toCheck2 = static_cast<GUILDID>(JSVAL_TO_INT(argv[1]));
+    guildid_t toCheck = static_cast<guildid_t>(JSVAL_TO_INT(argv[0]));
+    guildid_t toCheck2 = static_cast<guildid_t>(JSVAL_TO_INT(argv[1]));
     *rval = INT_TO_JSVAL(GuildSys->Compare(toCheck, toCheck2));
     return JS_TRUE;
 }

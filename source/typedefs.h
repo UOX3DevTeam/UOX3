@@ -60,7 +60,7 @@ using R32 = float;
 using R64 = double;
 
 using SERIAL = std::uint32_t;
-using GENDER = std::uint8_t;
+using gender_t = std::uint8_t;
 using LIGHTLEVEL = std::uint8_t;
 using COLDLEVEL = std::uint8_t;
 using HEATLEVEL = std::uint8_t;
@@ -69,10 +69,10 @@ using ARMORCLASS = std::uint8_t;
 using RACEREL = std::int8_t;
 using RANGE = std::int8_t;
 using RACEID = std::uint16_t;
-using COLOUR = std::uint16_t;
+using colour_t = std::uint16_t;
 using SKILLVAL = std::uint16_t;
 using WEATHID = std::uint16_t;
-using GUILDID = std::int16_t;
+using guildid_t = std::int16_t;
 using TIMERVAL = std::uint32_t;
 
 #if defined(_WIN32)

@@ -986,7 +986,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
     }
     else {
         // Check if rune was marked in a multi - if so, try to take user directly there
-        TAGMAPOBJECT runeMore = i->GetTag("multiSerial");
+        auto runeMore = i->GetTag("multiSerial");
         if (runeMore.m_StringValue != "") {
             SERIAL mSerial = util::ston<SERIAL>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {
@@ -1519,11 +1519,11 @@ bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_
         else {
             // Let's allow marking the rune in the multi, and store multi's serial in a tag
             auto mSerial = multi->GetSerial();
-            TAGMAPOBJECT tagObject;
+            TagMap tagObject;
             tagObject.m_Destroy = false;
             tagObject.m_StringValue = std::to_string(mSerial);
             tagObject.m_IntValue = static_cast<std::int32_t>(tagObject.m_StringValue.size());
-            tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
+            tagObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             i->SetTag("multiSerial", tagObject);
             markedInMulti = true;
 
@@ -1818,7 +1818,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
     }
     else {
         // Check if rune was marked in a multi - if so, try to take user directly there
-        TAGMAPOBJECT runeMore = i->GetTag("multiSerial");
+        auto runeMore = i->GetTag("multiSerial");
         if (runeMore.m_StringValue != "") {
             SERIAL mSerial = util::ston<SERIAL>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {

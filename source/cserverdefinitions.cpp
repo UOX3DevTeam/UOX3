@@ -36,7 +36,7 @@ const std::array<std::string, NUM_DEFS> dirNames{
     "spells"s, "newbie"s,  "titles"s,    "advance"s, "house"s,    "colors"s, "spawn"s,     "html"s,
     "race"s,   "weather"s, "harditems"s, "command"s, "msgboard"s, "carve"s,  "creatures"s, "maps"s};
 
-std::multimap<std::uint32_t, ADDMENUITEM> g_mmapAddMenuMap;
+std::multimap<std::uint32_t, AddMenuItem> g_mmapAddMenuMap;
 
 //==================================================================================================
 CServerDefinitions::CServerDefinitions() : defaultPriority(0) {}
@@ -74,9 +74,9 @@ auto CServerDefinitions::Reload() -> bool {
 
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void {
-    std::vector<VECSCRIPTLIST>::iterator slIter;
-    for (slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
-        VECSCRIPTLIST &toDel = (*slIter);
+   
+    for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
+        auto &toDel = (*slIter);
         for (size_t j = 0; j < toDel.size(); ++j) {
             if (toDel[j]) {
                 delete toDel[j];
@@ -93,8 +93,8 @@ CServerDefinitions::~CServerDefinitions() { Cleanup(); }
 auto CServerDefinitions::Dispose(DEFINITIONCATEGORIES toDispose) -> bool {
     bool retVal = false;
     if (toDispose != NUM_DEFS) {
-        VECSCRIPTLIST &toDel = ScriptListings[toDispose];
-        for (VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
+        auto &toDel = ScriptListings[toDispose];
+        for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
             Script *toDelete = (*dIter);
             if (toDelete) {
                 retVal = true;
@@ -118,8 +118,8 @@ auto CServerDefinitions::FindEntry(const std::string &toFind, DEFINITIONCATEGORI
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
         auto tUFind = util::upper(toFind);
 
-        VECSCRIPTLIST &toDel = ScriptListings[typeToFind];
-        for (VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
+        auto &toDel = ScriptListings[typeToFind];
+        for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
             Script *toCheck = (*dIter);
             if (toCheck) {
                 rValue = toCheck->FindEntry(tUFind);
@@ -137,8 +137,8 @@ auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, DEFINITIONCA
     -> CScriptSection * {
     CScriptSection *rValue = nullptr;
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
-        VECSCRIPTLIST &toDel = ScriptListings[typeToFind];
-        for (VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
+        auto &toDel = ScriptListings[typeToFind];
+        for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
             Script *toCheck = (*dIter);
             if (toCheck) {
                 rValue = toCheck->FindEntrySubStr(toFind);
@@ -246,7 +246,7 @@ auto CServerDefinitions::ReloadScriptObjects() -> void {
 //==================================================================================================
 auto CServerDefinitions::CountOfEntries(DEFINITIONCATEGORIES typeToFind) -> size_t {
     size_t sumEntries = 0;
-    VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
+    auto toScan = &(ScriptListings[typeToFind]);
     if (toScan) {
         for (auto cIter = toScan->begin(); cIter != toScan->end(); ++cIter) {
             sumEntries += (*cIter)->NumEntries();
@@ -509,8 +509,8 @@ auto CDirectoryListing::Flatten(bool isParent) -> void {
                       flattenedShort.push_back(temp);
                   });
     std::string temp;
-    DIRLIST_ITERATOR dIter;
-    for (dIter = subdirectories.begin(); dIter != subdirectories.end(); ++dIter) {
+   
+    for (auto dIter = subdirectories.begin(); dIter != subdirectories.end(); ++dIter) {
         (*dIter).Flatten(false);
         auto shortFlat = (*dIter).FlattenedShortList();
         auto longFlat = (*dIter).FlattenedList();

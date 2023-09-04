@@ -16,15 +16,12 @@ class CItem;
 
 enum GuildType { GT_STANDARD = 0, GT_ORDER, GT_CHAOS, GT_UNKNOWN, GT_COUNT };
 
-enum GUILDRELATION { GR_NEUTRAL = 0, GR_WAR, GR_ALLY, GR_UNKNOWN, GR_SAME, GR_COUNT };
+enum GuildRelation { GR_NEUTRAL = 0, GR_WAR, GR_ALLY, GR_UNKNOWN, GR_SAME, GR_COUNT };
 
 const std::string GTypeNames[GT_COUNT] = {"Standard", "Order", "Chaos", "Unknown"};
 const std::string GRelationNames[GR_COUNT] = {"Neutral", "War", "Ally", "Unknown", "Same"};
 const std::int16_t BasePage = 8000;
 
-typedef std::map<GUILDID, GUILDRELATION> GUILDREL;
-typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
-typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
 
 class CGuild {
   private:
@@ -37,21 +34,21 @@ class CGuild {
     SERIAL master;
     std::vector<SERIAL> recruits;
     std::vector<SERIAL> members;
-    GUILDREL relationList;
+    std::map<guildid_t, GuildRelation> relationList;
 
     std::vector<SERIAL>::iterator recruitPtr;
     std::vector<SERIAL>::iterator memberPtr;
 
-    GUILDREL_ITERATOR warPtr;
-    GUILDREL_ITERATOR allyPtr;
+    std::map<guildid_t, GuildRelation>::iterator warPtr;
+    std::map<guildid_t, GuildRelation>::iterator allyPtr;
 
   public:
-    GUILDID FirstWar(void);
-    GUILDID NextWar(void);
+    guildid_t FirstWar(void);
+    guildid_t NextWar(void);
     bool FinishedWar(void);
 
-    GUILDID FirstAlly(void);
-    GUILDID NextAlly(void);
+    guildid_t FirstAlly(void);
+    guildid_t NextAlly(void);
     bool FinishedAlly(void);
 
     CGuild();
@@ -95,18 +92,18 @@ class CGuild {
     size_t NumMembers() const;
     size_t NumRecruits() const;
 
-    GUILDRELATION RelatedToGuild(GUILDID otherGuild) const;
-    bool IsAtWar(GUILDID otherGuild) const;
-    bool IsNeutral(GUILDID otherGuild) const;
-    bool IsAlly(GUILDID otherGuild) const;
+    GuildRelation RelatedToGuild(guildid_t otherGuild) const;
+    bool IsAtWar(guildid_t otherGuild) const;
+    bool IsNeutral(guildid_t otherGuild) const;
+    bool IsAlly(guildid_t otherGuild) const;
     bool IsAtPeace() const;
 
     void SetGuildFaction(GuildType newFaction);
-    void SetGuildRelation(GUILDID otherGuild, GUILDRELATION toSet);
-    void Save(std::ostream &toSave, GUILDID gNum);
+    void SetGuildRelation(guildid_t otherGuild, GuildRelation toSet);
+    void Save(std::ostream &toSave, guildid_t gNum);
     void Load(CScriptSection *toRead);
 
-    GUILDREL *GuildRelationList(); // NOTE: This is aimed ONLY at menu stuff
+    std::map<guildid_t, GuildRelation>* GuildRelationList(); // NOTE: This is aimed ONLY at menu stuff
 
     void CalcMaster();
 
@@ -120,32 +117,31 @@ class CGuild {
     bool IsMember(CChar &toCheck) const;
 };
 
-typedef std::map<GUILDID, CGuild *> GUILDLIST;
 class CGuildCollection {
   private:
-    GUILDLIST gList;
+    std::map<guildid_t, CGuild *> gList;
 
     void ToggleAbbreviation(CSocket *s);
-    void TransportGuildStone(CSocket *s, GUILDID guildId);
-    void Erase(GUILDID toErase);
-    GUILDID MaximumGuild(void);
+    void TransportGuildStone(CSocket *s, guildid_t guildId);
+    void Erase(guildid_t toErase);
+    guildid_t MaximumGuild(void);
 
   public:
     void Resign(CSocket *s);
     CGuildCollection() = default;
     size_t NumGuilds(void) const;
-    GUILDID NewGuild(void);
-    CGuild *Guild(GUILDID num) const;
-    CGuild *operator[](GUILDID num);
+    guildid_t NewGuild(void);
+    CGuild *Guild(guildid_t num) const;
+    CGuild *operator[](guildid_t num);
     void Save();
     void Load();
-    GUILDRELATION Compare(GUILDID srcGuild, GUILDID trgGuild) const;
-    GUILDRELATION Compare(CChar *src, CChar *trg) const;
-    void Menu(CSocket *s, std::int16_t menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL);
+    GuildRelation Compare(guildid_t srcGuild, guildid_t trgGuild) const;
+    GuildRelation Compare(CChar *src, CChar *trg) const;
+    void Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild = -1, SERIAL plID = INVALIDSERIAL);
     void GumpInput(CPIGumpInput *gi);
     void GumpChoice(CSocket *s);
     void PlaceStone(CSocket *s, CItem *deed);
-    bool ResultInCriminal(GUILDID srcGuild, GUILDID trgGuild) const;
+    bool ResultInCriminal(guildid_t srcGuild, guildid_t trgGuild) const;
     bool ResultInCriminal(CChar *src, CChar *trg) const;
     void DisplayTitle(CSocket *s, CChar *src) const;
     ~CGuildCollection();

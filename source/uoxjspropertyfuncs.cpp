@@ -2387,7 +2387,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             break;
         }
         case CCP_GUILD: {
-            GUILDID tempGuildId = -1;
+            guildid_t tempGuildId = -1;
             tempGuildId = gPriv->GetGuildNumber();
 
             // Character has no guild
@@ -3283,10 +3283,10 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetFontType(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CCP_SAYCOLOUR:
-            gPriv->SetSayColour(static_cast<COLOUR>(encaps.toInt()));
+            gPriv->SetSayColour(static_cast<colour_t>(encaps.toInt()));
             break;
         case CCP_EMOTECOLOUR:
-            gPriv->SetEmoteColour(static_cast<COLOUR>(encaps.toInt()));
+            gPriv->SetEmoteColour(static_cast<colour_t>(encaps.toInt()));
             break;
         case CCP_ATTACKER:
             if (*vp != JSVAL_NULL) {
@@ -4249,7 +4249,7 @@ JSBool CRaceProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->IsPlayerRace(encaps.toBool());
             break;
         case CRP_GENDERRESTRICT:
-            gPriv->GenderRestriction(static_cast<GENDER>(encaps.toInt()));
+            gPriv->GenderRestriction(static_cast<gender_t>(encaps.toInt()));
             break;
         case CRP_ARMOURCLASS:
             gPriv->ArmourClassRestriction(static_cast<std::uint8_t>(encaps.toInt()));

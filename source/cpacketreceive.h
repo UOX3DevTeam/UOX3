@@ -362,7 +362,7 @@ class CPIGumpMenuSelect : public CPInputBuffer {
 
 class CPITalkRequest : public CPInputBuffer {
   protected:
-    COLOUR textColour;
+    colour_t textColour;
     std::uint16_t strLen;
     std::uint16_t fontUsed;
     char txtSaid[4096];
@@ -378,7 +378,7 @@ class CPITalkRequest : public CPInputBuffer {
     virtual void Receive(void) override = 0;
     virtual bool Handle(void) override;
 
-    COLOUR TextColour(void) const;
+    colour_t TextColour(void) const;
     std::uint16_t Length(void) const;
     std::uint16_t Font(void) const;
     SpeechType Type(void) const;
@@ -469,17 +469,17 @@ class CPICreateCharacter : public CPInputBuffer {
     std::uint8_t intel;
     std::uint8_t skill[4];
     std::uint8_t skillValue[4];
-    COLOUR skinColour;
+    colour_t skinColour;
     std::uint16_t hairStyle;
-    COLOUR hairColour;
+    colour_t hairColour;
     std::uint16_t facialHair;
-    COLOUR facialHairColour;
+    colour_t facialHairColour;
     std::uint16_t locationNumber;
     std::uint16_t unknown;
     std::uint16_t slot;
     std::uint32_t ipAddress;
-    COLOUR shirtColour;
-    COLOUR pantsColour;
+    colour_t shirtColour;
+    colour_t pantsColour;
 
     // extra for 3DCharCreate - 0x8D
     std::uint8_t packetSize;
@@ -496,7 +496,7 @@ class CPICreateCharacter : public CPInputBuffer {
     std::uint8_t unknown8;
     std::uint8_t unknown9;
     std::uint16_t shirtId;
-    COLOUR faceColour;
+    colour_t faceColour;
     std::uint16_t faceId;
 
     void NewbieItems(CChar *mChar);
@@ -580,7 +580,7 @@ class CPITradeMessage : public CPInputBuffer {
 class CPIDyeWindow : public CPInputBuffer {
   protected:
     SERIAL changing;
-    COLOUR newValue;
+    colour_t newValue;
     std::uint16_t modelId;
 
   public:

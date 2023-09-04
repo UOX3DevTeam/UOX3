@@ -75,9 +75,6 @@ bool DTEgreater(DamageTrackEntry_st &elem1, DamageTrackEntry_st &elem2);
 
 class CChar : public CBaseObject {
   private:
-    typedef std::map<ItemLayers, CItem *> LAYERLIST;
-    typedef std::map<ItemLayers, CItem *>::iterator LAYERLIST_ITERATOR;
-    typedef GenericList<DamageTrackEntry_st *> DAMAGETRACK;
 
     struct NPCValues_st {
         NPCValues_st();
@@ -151,8 +148,8 @@ class CChar : public CBaseObject {
         std::uint8_t postType;
         std::uint16_t hairStyle;
         std::uint16_t beardStyle;
-        COLOUR hairColour;
-        COLOUR beardColour;
+        colour_t hairColour;
+        colour_t beardColour;
         CItem *speechItem;
         std::uint8_t speechMode;
         std::uint8_t speechId;
@@ -211,8 +208,8 @@ class CChar : public CBaseObject {
     std::uint16_t maxMana_oldint;
     std::int16_t maxStam;
     std::uint16_t maxStam_olddex;
-    COLOUR sayColor;
-    COLOUR emoteColor;
+    colour_t sayColor;
+    colour_t emoteColor;
     std::int8_t cell;       // Reserved for jailing players
     CItem *packItem; // Characters backpack
     SERIAL targ;     // Current combat target
@@ -255,8 +252,8 @@ class CChar : public CBaseObject {
     SKILLVAL baseskill[ALLSKILLS]; // Base skills without stat modifiers
     SKILLVAL skill[INTELLECT + 1]; // List of skills (with stat modifiers)
 
-    LAYERLIST itemLayers;
-    LAYERLIST_ITERATOR layerCtr;
+    std::map<ItemLayers, CItem *> itemLayers;
+    std::map<ItemLayers, CItem *>::iterator layerCtr;
     std::unordered_map<SERIAL, TargetInfo>
         aggressorFlags; // Chars this char is marked as aggressor to, with timestamps
     std::unordered_map<SERIAL, TargetInfo>
@@ -268,8 +265,8 @@ class CChar : public CBaseObject {
     std::bitset<32> skillUsed[2]; // no more than 64 skills
     std::bitset<UT_COUNT> updateTypes;
 
-    DAMAGETRACK damageDealt;
-    DAMAGETRACK damageHealed;
+    GenericList<DamageTrackEntry_st *> damageDealt;
+    GenericList<DamageTrackEntry_st *> damageHealed;
 
     virtual bool DumpHeader(std::ostream &outStream) const override;
     virtual bool DumpBody(std::ostream &outStream) const override;
@@ -457,13 +454,13 @@ class CChar : public CBaseObject {
     void SetWeathDamage(TIMERVAL newValue, std::uint8_t part);
     void SetNextAct(std::uint8_t newVal);
 
-    COLOUR GetEmoteColour(void) const;
-    COLOUR GetSayColour(void) const;
+    colour_t GetEmoteColour(void) const;
+    colour_t GetSayColour(void) const;
     std::uint16_t GetSkin(void) const;
 
     void SetSkin(std::uint16_t value);
-    void SetEmoteColour(COLOUR newValue);
-    void SetSayColour(COLOUR newValue);
+    void SetEmoteColour(colour_t newValue);
+    void SetSayColour(colour_t newValue);
 
     std::int8_t GetStealth(void) const;
     std::int8_t GetCell(void) const;
@@ -866,11 +863,11 @@ class CChar : public CBaseObject {
 
     std::uint16_t GetHairStyle(void) const;
     std::uint16_t GetBeardStyle(void) const;
-    COLOUR GetHairColour(void) const;
-    COLOUR GetBeardColour(void) const;
+    colour_t GetHairColour(void) const;
+    colour_t GetBeardColour(void) const;
 
-    void SetHairColour(COLOUR value);
-    void SetBeardColour(COLOUR value);
+    void SetHairColour(colour_t value);
+    void SetBeardColour(colour_t value);
     void SetHairStyle(std::uint16_t value);
     void SetBeardStyle(std::uint16_t value);
 

@@ -119,9 +119,9 @@ Script::Script(const std::string &_filename, DEFINITIONCATEGORIES d, bool disp)
     Reload(disp);
 }
 //===============================================================================================
-auto Script::collection() const -> const SSMAP & { return defEntries; }
+auto Script::collection() const -> const std::unordered_map<std::string, CScriptSection *> & { return defEntries; }
 //===============================================================================================
-auto Script::collection() -> SSMAP & { return defEntries; }
+auto Script::collection() -> std::unordered_map<std::string, CScriptSection *> & { return defEntries; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function		-	~Script()
@@ -137,7 +137,7 @@ Script::~Script() { DeleteMap(); }
 // o------------------------------------------------------------------------------------------------o
 bool Script::IsInSection(const std::string &section) {
     std::string temp(section);
-    SSMAP::const_iterator iSearch = defEntries.find(util::upper(temp));
+    auto iSearch = defEntries.find(util::upper(temp));
     if (iSearch != defEntries.end())
         return true;
 
@@ -152,7 +152,7 @@ bool Script::IsInSection(const std::string &section) {
 // o------------------------------------------------------------------------------------------------o
 CScriptSection *Script::FindEntry(const std::string &section) {
     CScriptSection *rValue = nullptr;
-    SSMAP::const_iterator iSearch = defEntries.find(section);
+    auto iSearch = defEntries.find(section);
     if (iSearch != defEntries.end()) {
         rValue = iSearch->second;
     }
@@ -169,7 +169,7 @@ CScriptSection *Script::FindEntrySubStr(const std::string &section) {
     CScriptSection *rValue = nullptr;
     auto usection = std::string(section);
     usection = util::upper(usection);
-    for (SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end();
+    for (auto iSearch = defEntries.begin(); iSearch != defEntries.end();
          ++iSearch) {
         if (iSearch->first.find(usection) != std::string::npos) // FOUND IT!
         {
@@ -216,7 +216,7 @@ CScriptSection *Script::NextEntry(void) {
 //|	Purpose			-	Destroys any memory that has been allocated
 // o------------------------------------------------------------------------------------------------o
 void Script::DeleteMap(void) {
-    for (SSMAP::const_iterator iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest) {
+    for (auto iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest) {
         delete iTest->second;
     }
     defEntries.clear();

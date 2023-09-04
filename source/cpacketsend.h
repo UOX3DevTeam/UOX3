@@ -49,7 +49,7 @@ class CPacketSpeech : public CPUOXBuffer {
     CPacketSpeech(CPITalkRequest &toCopy);
     virtual void SpeakerSerial(SERIAL toPut);
     virtual void SpeakerModel(std::uint16_t toPut);
-    virtual void Colour(COLOUR toPut);
+    virtual void Colour(colour_t toPut);
     virtual void Font(FontType toPut);
     virtual void Language(UnicodeTypes toPut);
     virtual void Unicode(bool toPut);
@@ -1105,7 +1105,7 @@ class CPUnicodeSpeech : public CPUOXBuffer {
     void Language(const char *value);
     void Lanaguge(const std::string &value);
     void Type(std::uint8_t value);
-    void Colour(COLOUR value);
+    void Colour(colour_t value);
     void Font(std::uint16_t value);
     void Name(std::string value);
     void Message(const char *value);
@@ -1132,7 +1132,7 @@ class CPUnicodeMessage : public CPUOXBuffer {
     void Language(const char *value);
     void Lanaguge(const std::string &value);
     void Type(std::uint8_t value);
-    void Colour(COLOUR value);
+    void Colour(colour_t value);
     void Font(std::uint16_t value);
     void Name(std::string value);
     void Message(const char *value);

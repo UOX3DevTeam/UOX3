@@ -90,7 +90,7 @@ const std::uint16_t DEFITEM_ENTRYMADEFROM = 0;
 const std::uint16_t DEFITEM_AMOUNT = 1;
 const std::uint8_t DEFITEM_GLOWEFFECT = 0;
 const SERIAL DEFITEM_GLOW = INVALIDSERIAL;
-const COLOUR DEFITEM_GLOWCOLOUR = INVALIDCOLOUR;
+const colour_t DEFITEM_GLOWCOLOUR = INVALIDCOLOUR;
 const std::int8_t DEFITEM_MADEWITH = 0;
 const ARMORCLASS DEFITEM_ARMORCLASS = 0;
 const TIMERVAL DEFITEM_TEMPTIMER = 0;
@@ -1047,8 +1047,8 @@ auto CItem::SetGlow(SERIAL newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGlowColour(void) const -> COLOUR { return glowColour; }
-auto CItem::SetGlowColour(COLOUR newValue) -> void {
+auto CItem::GetGlowColour(void) const -> colour_t { return glowColour; }
+auto CItem::SetGlowColour(colour_t newValue) -> void {
     glowColour = newValue;
     UpdateRegion();
 }

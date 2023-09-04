@@ -859,7 +859,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                 // this tag is added to the list, and assigned to the correct
                                 // menuitem group Format:
                                 // ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
-                                ADDMENUITEM amiLocalCopy = {};
+                                AddMenuItem amiLocalCopy = {};
                                 amiLocalCopy.itemName = std::string(localName);
                                 auto csecs = oldstrutil::sections(value, ",");
                                 amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(

@@ -171,8 +171,8 @@ bool ValidBeard(std::uint16_t id, std::uint16_t bodyId) {
 //|	Purpose		-	Check if selected skin colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
 // o------------------------------------------------------------------------------------------------o
-COLOUR ValidSkinColour(std::uint16_t id, std::uint16_t bodyId) {
-    COLOUR rValue;
+colour_t ValidSkinColour(std::uint16_t id, std::uint16_t bodyId) {
+    colour_t rValue;
     switch (bodyId) {
     case 0x025D:    // elven male
     case 0x025E:    // elven female
@@ -236,8 +236,8 @@ COLOUR ValidSkinColour(std::uint16_t id, std::uint16_t bodyId) {
 //|	Purpose		-	Check if selected hair colour is a valid colour, based on
 //|					 the body types involved (elves and humans not the same)
 // o------------------------------------------------------------------------------------------------o
-COLOUR ValidHairColour(std::uint16_t id, std::uint16_t bodyId) {
-    COLOUR rValue;
+colour_t ValidHairColour(std::uint16_t id, std::uint16_t bodyId) {
+    colour_t rValue;
     switch (bodyId) {
     case 0x025D:    // elven male
     case 0x025E:    // elven female
@@ -471,8 +471,8 @@ bool CPIDeleteCharacter::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	PACKITEM now supports item,amount
 // o------------------------------------------------------------------------------------------------o
-auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, COLOUR pantsColour,
-                   COLOUR shirtColour) -> void {
+auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, colour_t pantsColour,
+                   colour_t shirtColour) -> void {
     auto newbieData = FileLookup->FindEntry(str, newbie_def);
     if (newbieData == nullptr)
         return;

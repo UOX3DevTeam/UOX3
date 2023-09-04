@@ -30,7 +30,7 @@ class CItem : public CBaseObject {
     CBaseObject *contObj;
     std::uint8_t glowEffect;
     SERIAL glow; // identifies glowing objects
-    COLOUR glowColour;
+    colour_t glowColour;
     std::int8_t madeWith;     // Store the skills used to make this item
     std::int32_t rndValueRate; // Store the value calculated base on RANDOMVALUE in region.dfn
     std::int16_t good;         // Store type of GOODs to trade system! (Plz not set as UNSIGNED)
@@ -295,8 +295,8 @@ class CItem : public CBaseObject {
     auto GetGlow() const -> SERIAL;
     auto SetGlow(SERIAL newValue) -> void;
 
-    auto GetGlowColour() const -> COLOUR;
-    auto SetGlowColour(COLOUR newValue) -> void;
+    auto GetGlowColour() const -> colour_t;
+    auto SetGlowColour(colour_t newValue) -> void;
 
     auto GetGlowEffect() const -> std::uint8_t;
     auto SetGlowEffect(std::uint8_t newValue) -> void;

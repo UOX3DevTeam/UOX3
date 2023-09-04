@@ -150,8 +150,8 @@ const std::uint8_t DEFPLAYER_COMMANDLEVEL = CL_PLAYER;
 const std::uint8_t DEFPLAYER_POSTTYPE = PT_LOCAL;
 const std::uint16_t DEFPLAYER_HAIRSTYLE = INVALIDID;
 const std::uint16_t DEFPLAYER_BEARDSTYLE = INVALIDID;
-const COLOUR DEFPLAYER_HAIRCOLOUR = INVALIDCOLOUR;
-const COLOUR DEFPLAYER_BEARDCOLOUR = INVALIDCOLOUR;
+const colour_t DEFPLAYER_HAIRCOLOUR = INVALIDCOLOUR;
+const colour_t DEFPLAYER_BEARDCOLOUR = INVALIDCOLOUR;
 const std::uint8_t DEFPLAYER_SPEECHMODE = 0;
 const std::uint8_t DEFPLAYER_SPEECHID = 0;
 const SERIAL DEFPLAYER_ROBE = INVALIDSERIAL;
@@ -267,8 +267,8 @@ const std::uint16_t DEFCHAR_MAXMANA = 0;
 const std::uint16_t DEFCHAR_MAXMANA_OLDINT = 0;
 const std::uint16_t DEFCHAR_MAXSTAM = 0;
 const std::uint16_t DEFCHAR_MAXSTAM_OLDDEX = 0;
-const COLOUR DEFCHAR_SAYCOLOUR = 0x0058;
-const COLOUR DEFCHAR_EMOTECOLOUR = 0x0023;
+const colour_t DEFCHAR_SAYCOLOUR = 0x0058;
+const colour_t DEFCHAR_EMOTECOLOUR = 0x0023;
 const std::int8_t DEFCHAR_CELL = -1;
 const SERIAL DEFCHAR_TARG = INVALIDSERIAL;
 const SERIAL DEFCHAR_ATTACKER = INVALIDSERIAL;
@@ -1421,8 +1421,8 @@ void CChar::SetPoisonStrength(std::uint8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's emote text colour
 // o------------------------------------------------------------------------------------------------o
-COLOUR CChar::GetEmoteColour(void) const { return emoteColor; }
-void CChar::SetEmoteColour(COLOUR newValue) {
+colour_t CChar::GetEmoteColour(void) const { return emoteColor; }
+void CChar::SetEmoteColour(colour_t newValue) {
     emoteColor = newValue;
     UpdateRegion();
 }
@@ -1433,8 +1433,8 @@ void CChar::SetEmoteColour(COLOUR newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's normal speech text colour
 // o------------------------------------------------------------------------------------------------o
-COLOUR CChar::GetSayColour(void) const { return sayColor; }
-void CChar::SetSayColour(COLOUR newValue) {
+colour_t CChar::GetSayColour(void) const { return sayColor; }
+void CChar::SetSayColour(colour_t newValue) {
     sayColor = newValue;
     UpdateRegion();
 }
@@ -2078,7 +2078,7 @@ void CChar::CopyData(CChar *target) {
 FlagColors CChar::FlagColour(CChar *toCompare) {
     FlagColors retVal = FC_INNOCENT;
 
-    GUILDRELATION gComp = GR_UNKNOWN;
+    auto gComp = GR_UNKNOWN;
     RaceRelate rComp = RACE_NEUTRAL;
 
     if (ValidateObject(toCompare)) {
@@ -2254,7 +2254,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
 
         toSend.SetRepFlag(static_cast<std::uint8_t>(FlagColour(mCharObj)));
 
-        for (LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter) {
+        for (auto lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter) {
             if (ValidateObject(lIter->second)) {
                 toSend.AddItem(lIter->second, alwaysSendItemHue);
             }
@@ -2403,7 +2403,7 @@ void CChar::Update(CSocket *mSock, bool drawGamePlayer, bool sendToSelf) {
 // o------------------------------------------------------------------------------------------------o
 CItem *CChar::GetItemAtLayer(ItemLayers Layer) {
     CItem *rVal = nullptr;
-    LAYERLIST_ITERATOR lIter = itemLayers.find(Layer);
+    auto lIter = itemLayers.find(Layer);
     if (lIter != itemLayers.end()) {
         rVal = lIter->second;
     }
@@ -2793,7 +2793,7 @@ bool CChar::Save(std::ostream &outStream) {
                 DumpBody(outStream);
                 DumpFooter(outStream);
 
-                for (LAYERLIST_ITERATOR lIter = itemLayers.begin(); lIter != itemLayers.end();
+                for (auto lIter = itemLayers.begin(); lIter != itemLayers.end();
                      ++lIter) {
                     if (ValidateObject(lIter->second)) {
                         if (lIter->second->ShouldSave()) {
@@ -5424,14 +5424,14 @@ void CChar::SetBeardStyle(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default haircolour
 // o------------------------------------------------------------------------------------------------o
-COLOUR CChar::GetHairColour(void) const {
-    COLOUR rVal = DEFPLAYER_HAIRCOLOUR;
+colour_t CChar::GetHairColour(void) const {
+    colour_t rVal = DEFPLAYER_HAIRCOLOUR;
     if (IsValidPlayer()) {
         rVal = mPlayer->hairColour;
     }
     return rVal;
 }
-void CChar::SetHairColour(COLOUR value) {
+void CChar::SetHairColour(colour_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_HAIRCOLOUR) {
             CreatePlayer();
@@ -5448,14 +5448,14 @@ void CChar::SetHairColour(COLOUR value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default beardcolour
 // o------------------------------------------------------------------------------------------------o
-COLOUR CChar::GetBeardColour(void) const {
-    COLOUR rVal = DEFPLAYER_BEARDCOLOUR;
+colour_t CChar::GetBeardColour(void) const {
+    colour_t rVal = DEFPLAYER_BEARDCOLOUR;
     if (IsValidPlayer()) {
         rVal = mPlayer->beardColour;
     }
     return rVal;
 }
-void CChar::SetBeardColour(COLOUR value) {
+void CChar::SetBeardColour(colour_t value) {
     if (!IsValidPlayer()) {
         if (value != DEFPLAYER_BEARDCOLOUR) {
             CreatePlayer();

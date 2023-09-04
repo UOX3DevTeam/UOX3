@@ -10,7 +10,6 @@
 #include "typedefs.h"
 
 class CScriptSection;
-typedef std::unordered_map<std::string, CScriptSection *> SSMAP;
 
 class Script {
   public:
@@ -22,8 +21,8 @@ class Script {
     CScriptSection *FindEntrySubStr(const std::string &section);
     CScriptSection *FirstEntry();
     CScriptSection *NextEntry();
-    auto collection() const -> const SSMAP &;
-    auto collection() -> SSMAP &;
+    auto collection() const -> const std::unordered_map<std::string, CScriptSection *> &;
+    auto collection() -> std::unordered_map<std::string, CScriptSection *> &;
 
     bool IsInSection(const std::string &section);
     std::string EntryName(void);
@@ -35,8 +34,8 @@ class Script {
     void Reload(bool disp = true);
     bool CreateSection(std::string &name);
 
-    SSMAP defEntries; // string is the name of section
-    SSMAP::iterator iSearch;
+    std::unordered_map<std::string, CScriptSection *> defEntries; // string is the name of section
+    std::unordered_map<std::string, CScriptSection *>::iterator iSearch;
     time_t last_modification;
     std::string filename;
     bool errorState;

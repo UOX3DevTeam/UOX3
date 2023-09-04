@@ -1959,7 +1959,7 @@ void CPITalkRequest::InternalReset(void) {
     isUnicode = false;
 }
 
-COLOUR CPITalkRequest::TextColour(void) const { return textColour; }
+colour_t CPITalkRequest::TextColour(void) const { return textColour; }
 std::uint16_t CPITalkRequest::Length(void) const { return strLen; }
 std::uint16_t CPITalkRequest::Font(void) const { return fontUsed; }
 
@@ -4252,10 +4252,10 @@ bool CPIPopupMenuSelect::Handle(void) {
         if (cwmWorldState->creatures[targChar->GetId()].IsAnimal()) {
             if (ObjInRange(mChar, targChar, 8)) {
                 // Set a tag on the player to reference the animal they're about to tame
-                TAGMAPOBJECT targCharSerial;
+                TagMap targCharSerial;
                 targCharSerial.m_Destroy = false;
                 targCharSerial.m_IntValue = targChar->GetSerial();
-                targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+                targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 targCharSerial.m_StringValue = "";
                 mChar->SetTag("tameSerial", targCharSerial);
 
@@ -4270,10 +4270,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     {
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4290,10 +4290,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0011: // Command: Stop (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4309,10 +4309,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0012: // Command: Follow (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4328,10 +4328,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0013: // Command: Stay (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4347,10 +4347,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0014: // Command: Guard (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4366,10 +4366,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0015: // Add Friend (Pet/Hireling)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4385,10 +4385,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0016: // Transfer (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4404,10 +4404,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0017: // Release (Pet)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("petCommandObj", targCharSerial);
 
@@ -4423,10 +4423,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0018: // Dismiss (Hireling)
         if (ObjInRange(mChar, targChar, 12)) {
             // Set a tag on the player to reference the pet they are commanding
-            TAGMAPOBJECT targCharSerial;
+            TagMap targCharSerial;
             targCharSerial.m_Destroy = false;
             targCharSerial.m_IntValue = targChar->GetSerial();
-            targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerial.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerial.m_StringValue = "";
             mChar->SetTag("hirelingObj", targCharSerial);
 
@@ -4526,10 +4526,10 @@ bool CPIPopupMenuSelect::Handle(void) {
     case 0x0100: // Bulk Order Info
         if (ObjInRange(mChar, targChar, 8)) {
             // Set a tag on the player to reference the NPC they're requesting bulk order from
-            TAGMAPOBJECT targCharSerialTag;
+            TagMap targCharSerialTag;
             targCharSerialTag.m_Destroy = false;
             targCharSerialTag.m_IntValue = targChar->GetSerial();
-            targCharSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
+            targCharSerialTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             targCharSerialTag.m_StringValue = "";
             mChar->SetTempTag("bodShopkeeperSerial", targCharSerialTag);
 
@@ -5097,7 +5097,7 @@ bool CPIAOSCommand::Handle(void) {
         if (cwmWorldState->ServerData()->PaperdollGuildButton()) {
             if (tSock->CurrcharObj()->GetGuildNumber() != -1) {
                 GuildSys->Menu(tSock, BasePage + 1,
-                               static_cast<GUILDID>(tSock->CurrcharObj()->GetGuildNumber()));
+                               static_cast<guildid_t>(tSock->CurrcharObj()->GetGuildNumber()));
             }
             else {
                 tSock->SysMessage(1793); // You are not currently in a guild. Go buy a guildstone!

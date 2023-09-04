@@ -511,11 +511,11 @@ bool CPIGetItem::Handle(void) {
 
     if (i->IsCorpse()) {
         // Store temp tag on corpse with serial of player who looted the corpse last
-        TAGMAPOBJECT tagObject;
+        TagMap tagObject;
         tagObject.m_Destroy = false;
         tagObject.m_StringValue = util::ntos(ourChar->GetSerial());
         tagObject.m_IntValue = 0;
-        tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+        tagObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         i->SetTempTag("lootedBy", tagObject);
     }
 
@@ -2828,7 +2828,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
             }
             else if (mChar->GetGuildNumber() == static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
                 GuildSys->Menu(mSock, BasePage + 1,
-                               static_cast<GUILDID>(iUsed->GetTempVar(
+                               static_cast<guildid_t>(iUsed->GetTempVar(
                                    CITV_MORE))); // more of the stone is the guild number
             }
             else {

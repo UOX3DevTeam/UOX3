@@ -14,14 +14,14 @@ class CChar;
 
 class CRace {
   private:
-    struct ColourPair_st {
-        COLOUR cMin;
-        COLOUR cMax;
-        ColourPair_st(COLOUR a, COLOUR b) : cMin(a), cMax(b) {}
-        ColourPair_st() : cMin(0), cMax(0) {}
+    struct ColourPair {
+        colour_t cMin;
+        colour_t cMax;
+        ColourPair(colour_t a, colour_t b) : cMin(a), cMax(b) {}
+        ColourPair() : cMin(0), cMax(0) {}
     };
 
-    typedef std::vector<ColourPair_st> COLOURLIST;
+    typedef std::vector<ColourPair> COLOURLIST;
     typedef std::vector<RaceRelate> RACEIDLIST;
     typedef std::unordered_set<std::uint16_t> ALLOWEQUIPLIST;
     typedef std::unordered_set<std::uint16_t> BANEQUIPLIST;
@@ -40,7 +40,7 @@ class CRace {
     LIGHTLEVEL nightVision;
     ARMORCLASS armourRestrict;
     LIGHTLEVEL lightLevel;
-    GENDER restrictGender;
+    gender_t restrictGender;
     SKILLVAL languageMin;
     R32 poisonResistance; // % of poison to cancel
     R32 magicResistance;  // % of magic to cancel
@@ -48,7 +48,7 @@ class CRace {
     COLOURLIST beardColours;
     COLOURLIST hairColours;
     COLOURLIST skinColours;
-    COLOUR bloodColour;
+    colour_t bloodColour;
 
     RACEIDLIST racialEnemies;
 
@@ -86,7 +86,7 @@ class CRace {
     bool NoHair(void) const;
     bool CanEquipItem(std::uint16_t itemId) const;
 
-    GENDER GenderRestriction(void) const;
+    gender_t GenderRestriction(void) const;
     LIGHTLEVEL LightLevel(void) const;
     COLDLEVEL ColdLevel(void) const;
     HEATLEVEL HeatLevel(void) const;
@@ -132,7 +132,7 @@ class CRace {
     void MagicResistance(R32 value);
     void PoisonResistance(R32 value);
 
-    void GenderRestriction(GENDER newValue);
+    void GenderRestriction(gender_t newValue);
     void LightLevel(LIGHTLEVEL newValue);
     void ColdLevel(COLDLEVEL newValue);
     void HeatLevel(HEATLEVEL newValue);
@@ -146,19 +146,19 @@ class CRace {
     void NumEnemyRaces(std::int32_t iNum);
     void RaceRelation(RaceRelate value, RACEID race);
 
-    COLOUR RandomSkin(void) const;
-    COLOUR RandomHair(void) const;
-    COLOUR RandomBeard(void) const;
-    COLOUR BloodColour(void) const;
-    void BloodColour(COLOUR newValue);
+    colour_t RandomSkin(void) const;
+    colour_t RandomHair(void) const;
+    colour_t RandomBeard(void) const;
+    colour_t BloodColour(void) const;
+    void BloodColour(colour_t newValue);
 
     bool IsSkinRestricted(void) const;
     bool IsHairRestricted(void) const;
     bool IsBeardRestricted(void) const;
 
-    bool IsValidSkin(COLOUR val) const;
-    bool IsValidHair(COLOUR val) const;
-    bool IsValidBeard(COLOUR val) const;
+    bool IsValidSkin(colour_t val) const;
+    bool IsValidHair(colour_t val) const;
+    bool IsValidBeard(colour_t val) const;
 
     void Load(size_t sectNum, std::int32_t modCount);
     CRace &operator=(CRace &trgRace);
@@ -193,9 +193,9 @@ class cRaces {
     RaceRelate Compare(CChar *player1, CChar *player2) const;
     RaceRelate CompareByRace(RACEID race1, RACEID race2) const; // compares chars
     void ApplyRace(CChar *s, RACEID x, bool always = false);    // Race Gate
-    bool BeardInRange(COLOUR color, RACEID x) const;
-    bool SkinInRange(COLOUR color, RACEID x) const;
-    bool HairInRange(COLOUR color, RACEID x) const;
+    bool BeardInRange(colour_t color, RACEID x) const;
+    bool SkinInRange(colour_t color, RACEID x) const;
+    bool HairInRange(colour_t color, RACEID x) const;
     bool BeardRestricted(RACEID x) const;
     bool HairRestricted(RACEID x) const;
     bool SkinRestricted(RACEID x) const;
@@ -208,7 +208,7 @@ class cRaces {
     bool Affect(RACEID race, WeatherType element) const;
     const std::string Name(RACEID race) const; // Returns race name of player
     SKILLVAL Skill(std::int32_t skill, RACEID race) const;
-    GENDER GenderRestrict(RACEID race) const;
+    gender_t GenderRestrict(RACEID race) const;
     bool RequireBeard(RACEID race) const;
     bool IsPlayerRace(RACEID race) const;
     LIGHTLEVEL LightLevel(RACEID race) const;
@@ -221,10 +221,10 @@ class cRaces {
     std::int16_t GetHungerDamage(RACEID race) const;
     std::int16_t GetThirstDrain(RACEID race) const;
     ARMORCLASS ArmorRestrict(RACEID race) const;
-    COLOUR RandomSkin(RACEID x) const;
-    COLOUR RandomHair(RACEID x) const;
-    COLOUR RandomBeard(RACEID x) const;
-    COLOUR BloodColour(RACEID x) const;
+    colour_t RandomSkin(RACEID x) const;
+    colour_t RandomHair(RACEID x) const;
+    colour_t RandomBeard(RACEID x) const;
+    colour_t BloodColour(RACEID x) const;
     std::int32_t DamageFromSkill(std::int32_t skill, RACEID x) const;
     std::int32_t FightPercent(std::int32_t skill, RACEID x) const;
     SKILLVAL LanguageMin(RACEID x) const;
@@ -237,7 +237,7 @@ class cRaces {
     void Damage(RACEID race, WeatherType element, std::int8_t value);
     void Affect(RACEID race, WeatherType element, bool value);
     void Skill(std::int32_t skill, std::int32_t value, RACEID race);
-    void GenderRestrict(GENDER gender, RACEID race);
+    void GenderRestrict(gender_t gender, RACEID race);
     void RequireBeard(bool value, RACEID race);
     void NoBeard(bool value, RACEID race);
     void LightLevel(RACEID race, LIGHTLEVEL value);
@@ -254,7 +254,7 @@ class cRaces {
     void RacialAlly(RACEID race, RACEID ally);
     void RacialNeutral(RACEID race, RACEID neutral);
     void LanguageMin(SKILLVAL toSetTo, RACEID race);
-    void BloodColour(RACEID race, COLOUR newValue);
+    void BloodColour(RACEID race, colour_t newValue);
 
     void VisLevel(RACEID x, LIGHTLEVEL bonus);
     void VisRange(RACEID x, RANGE range);

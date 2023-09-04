@@ -803,7 +803,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
     std::int32_t ndata = -1, odata = -1;
     std::uint8_t skillToSet = 0xFF;
 
-    TAGMAPOBJECT customTag;
+    TagMap customTag;
     std::string customTagName;
     std::string customTagStringValue;
     for (const auto &sec : NpcCreation->collection2()) {
@@ -2011,7 +2011,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 customTag.m_Destroy = false;
                 customTag.m_StringValue = customTagStringValue;
                 customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
-                customTag.m_ObjectType = TAGMAP_TYPE_STRING;
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                 applyTo->SetTag(customTagName, customTag);
             }
             else {
@@ -2038,7 +2038,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             if (!customTagName.empty() && !customTagStringValue.empty()) {
                 customTag.m_Destroy = false;
                 customTag.m_IntValue = std::stoi(customTagStringValue);
-                customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 customTag.m_StringValue = "";
                 applyTo->SetTag(customTagName, customTag);
                 if (count > 2) {

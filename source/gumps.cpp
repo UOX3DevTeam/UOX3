@@ -680,9 +680,9 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
                     continue;
                 }
                 // m contains the groupId that we need to do fetch the auto-addmenu items
-                std::pair<ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR> pairRange =
+                auto pairRange =
                     g_mmapAddMenuMap.equal_range(m);
-                for (ADDMENUMAP_CITERATOR CI = pairRange.first; CI != pairRange.second; CI++) {
+                for (auto CI = pairRange.first; CI != pairRange.second; CI++) {
                     toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 15, position,
                                                    0x4B9, 0x4BA, 1, 0, buttonnum));
                     toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 35,
@@ -825,7 +825,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
 
     // Settings Options START
     // Add at Location
-    TAGMAPOBJECT addAtLoc = mChar->GetTag("addAtLoc");
+    auto addAtLoc = mChar->GetTag("addAtLoc");
     if (addAtLoc.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
@@ -843,7 +843,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addText(szBuffer);
 
     // Repeat Add Object
-    TAGMAPOBJECT repeatAdd = mChar->GetTag("repeatAdd");
+    auto repeatAdd = mChar->GetTag("repeatAdd");
     if (repeatAdd.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
@@ -861,7 +861,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addText(szBuffer);
 
     // Auto-reopen Menu
-    TAGMAPOBJECT reopenMenu = mChar->GetTag("reopenMenu");
+    auto reopenMenu = mChar->GetTag("reopenMenu");
     if (reopenMenu.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
@@ -879,7 +879,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addText(szBuffer);
 
     // Force-Decayable Off
-    TAGMAPOBJECT forceDecayOff = mChar->GetTag("forceDecayOff");
+    auto forceDecayOff = mChar->GetTag("forceDecayOff");
     if (forceDecayOff.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
@@ -889,7 +889,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
             util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
     }
     // Force-Decayable On
-    TAGMAPOBJECT forceDecayOn = mChar->GetTag("forceDecayOn");
+    auto forceDecayOn = mChar->GetTag("forceDecayOn");
     if (forceDecayOn.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
@@ -909,7 +909,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addText(szBuffer);
 
     // Force-Movable Off
-    TAGMAPOBJECT forceMovableOff = mChar->GetTag("forceMovableOff");
+    auto forceMovableOff = mChar->GetTag("forceMovableOff");
     if (forceMovableOff.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
@@ -919,7 +919,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
             util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
     }
     // Force-Movable On
-    TAGMAPOBJECT forceMovableOn = mChar->GetTag("forceMovableOn");
+    auto forceMovableOn = mChar->GetTag("forceMovableOn");
     if (forceMovableOn.m_IntValue == 1) {
         toSend.addCommand(
             util::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
@@ -1143,14 +1143,14 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 runCommand = true;
                 itemType = OT_SPAWNER;
             }
-            TAGMAPOBJECT reopenMenu = mChar->GetTag("reopenMenu");
+            auto reopenMenu = mChar->GetTag("reopenMenu");
             if (runCommand) {
-                TAGMAPOBJECT addAtLoc = mChar->GetTag("addAtLoc");
-                TAGMAPOBJECT repeatAdd = mChar->GetTag("repeatAdd");
-                TAGMAPOBJECT forceDecayOn = mChar->GetTag("forceDecayOn");
-                TAGMAPOBJECT forceDecayOff = mChar->GetTag("forceDecayOff");
-                TAGMAPOBJECT forceMovableOn = mChar->GetTag("forceMovableOn");
-                TAGMAPOBJECT forceMovableOff = mChar->GetTag("forceMovableOff");
+                auto addAtLoc = mChar->GetTag("addAtLoc");
+                auto repeatAdd = mChar->GetTag("repeatAdd");
+                auto forceDecayOn = mChar->GetTag("forceDecayOn");
+                auto forceDecayOff = mChar->GetTag("forceDecayOff");
+                auto forceMovableOn = mChar->GetTag("forceMovableOn");
+                auto forceMovableOff = mChar->GetTag("forceMovableOff");
                 auto secs = oldstrutil::sections(data, ",");
                 if (secs.size() > 1) {
                     std::string tmp = util::trim(util::strip(secs[0], "//"));
@@ -1372,7 +1372,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             std::string menuString = util::format("itemmenu %d", s->TempInt());
             Commands->Command(s, mChar, menuString);
 
-            TAGMAPOBJECT repeatAdd = mChar->GetTag("repeatAdd");
+            auto repeatAdd = mChar->GetTag("repeatAdd");
             if (repeatAdd.m_IntValue == 1) {
                 std::string addCmd = util::format("raddnpc %s", data.c_str());
                 Commands->Command(s, mChar, addCmd);
@@ -1405,7 +1405,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             if (data.empty())
                 return;
 
-            COLOUR newSkin = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
+            auto newSkin = static_cast<colour_t>(std::stoul(data, nullptr, 0));
             mChar->SetSkin(newSkin);
             mChar->SetOrgSkin(newSkin);
         }
@@ -1439,31 +1439,31 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
     CChar *mChar = s->CurrcharObj();
 
     if (button >= 50000 && button <= 50020) {
-        TAGMAPOBJECT addAtLoc = mChar->GetTag("addAtLoc");
-        TAGMAPOBJECT repeatAdd = mChar->GetTag("repeatAdd");
-        TAGMAPOBJECT reopenMenu = mChar->GetTag("reopenMenu");
-        TAGMAPOBJECT forceDecayOn = mChar->GetTag("forceDecayOn");
-        TAGMAPOBJECT forceDecayOff = mChar->GetTag("forceDecayOff");
-        TAGMAPOBJECT forceMovableOn = mChar->GetTag("forceMovableOn");
-        TAGMAPOBJECT forceMovableOff = mChar->GetTag("forceMovableOff");
+        auto addAtLoc = mChar->GetTag("addAtLoc");
+        auto repeatAdd = mChar->GetTag("repeatAdd");
+        auto reopenMenu = mChar->GetTag("reopenMenu");
+        auto forceDecayOn = mChar->GetTag("forceDecayOn");
+        auto forceDecayOff = mChar->GetTag("forceDecayOff");
+        auto forceMovableOn = mChar->GetTag("forceMovableOn");
+        auto forceMovableOff = mChar->GetTag("forceMovableOff");
 
         std::string tagName = "";
         std::int32_t tagVal = 0;
-        TAGMAPOBJECT customTag;
-        std::map<std::string, TAGMAPOBJECT> customTagMap;
+        TagMap customTag;
+        std::map<std::string, TagMap> customTagMap;
         if (button == 50000) // Add item at specific location
         {
             tagName = "addAtLoc";
-            TAGMAPOBJECT addAtLoc = mChar->GetTag("addAtLoc");
+            auto addAtLoc = mChar->GetTag("addAtLoc");
             if (addAtLoc.m_IntValue == 1) {
                 tagVal = 0;
                 if (repeatAdd.m_IntValue == 1) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 0;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("repeatAdd", customTag));
+                        std::pair<std::string, TagMap>("repeatAdd", customTag));
                 }
             }
             else {
@@ -1473,7 +1473,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         else if (button == 50001) // Repeatedly add items until cancelled
         {
             tagName = "repeatAdd";
-            TAGMAPOBJECT addAtLoc = mChar->GetTag("repeatAdd");
+            auto addAtLoc = mChar->GetTag("repeatAdd");
             if (addAtLoc.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1482,10 +1482,10 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (addAtLoc.m_IntValue == 0) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 1;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("addAtLoc", customTag));
+                        std::pair<std::string, TagMap>("addAtLoc", customTag));
                 }
             }
         }
@@ -1497,7 +1497,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         else if (button == 50003) // Automatically reopen menu after adding objects
         {
             tagName = "reopenMenu";
-            TAGMAPOBJECT reopenMenu = mChar->GetTag("reopenMenu");
+            auto reopenMenu = mChar->GetTag("reopenMenu");
             if (reopenMenu.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1506,17 +1506,17 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (reopenMenu.m_IntValue == 0) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 1;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("reopenMenu", customTag));
+                        std::pair<std::string, TagMap>("reopenMenu", customTag));
                 }
             }
         }
         else if (button == 50004) // Toggle Force Decay state for items on/off
         {
             tagName = "forceDecayOff";
-            TAGMAPOBJECT forceDecayOff = mChar->GetTag("forceDecayOff");
+            auto forceDecayOff = mChar->GetTag("forceDecayOff");
             if (forceDecayOff.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1525,17 +1525,17 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (forceDecayOn.m_IntValue == 1) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 0;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("forceDecayOn", customTag));
+                        std::pair<std::string, TagMap>("forceDecayOn", customTag));
                 }
             }
         }
         else if (button == 50005) // Toggle Force Decay state for items on/off
         {
             tagName = "forceDecayOn";
-            TAGMAPOBJECT forceDecayOn = mChar->GetTag("forceDecayOn");
+            auto forceDecayOn = mChar->GetTag("forceDecayOn");
             if (forceDecayOn.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1544,17 +1544,17 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (forceDecayOff.m_IntValue == 1) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 0;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("forceDecayOff", customTag));
+                        std::pair<std::string, TagMap>("forceDecayOff", customTag));
                 }
             }
         }
         else if (button == 50006) // Toggle Force OFF Movable state for items
         {
             tagName = "forceMovableOff";
-            TAGMAPOBJECT forceMovableOff = mChar->GetTag("forceMovableOff");
+            auto forceMovableOff = mChar->GetTag("forceMovableOff");
             if (forceMovableOff.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1563,17 +1563,17 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (forceMovableOn.m_IntValue == 1) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 0;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("forceMovableOn", customTag));
+                        std::pair<std::string, TagMap>("forceMovableOn", customTag));
                 }
             }
         }
         else if (button == 50007) // Toggle Force ON Movable state for items
         {
             tagName = "forceMovableOn";
-            TAGMAPOBJECT forceMovableOn = mChar->GetTag("forceMovableOn");
+            auto forceMovableOn = mChar->GetTag("forceMovableOn");
             if (forceMovableOn.m_IntValue == 1) {
                 tagVal = 0;
             }
@@ -1582,10 +1582,10 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                 if (forceMovableOff.m_IntValue == 1) {
                     customTag.m_Destroy = false;
                     customTag.m_IntValue = 0;
-                    customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
                     customTagMap.insert(
-                        std::pair<std::string, TAGMAPOBJECT>("forceMovableOff", customTag));
+                        std::pair<std::string, TagMap>("forceMovableOff", customTag));
                 }
             }
         }
@@ -1625,9 +1625,9 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         customTag.m_Destroy = false;
         customTag.m_IntValue = tagVal;
-        customTag.m_ObjectType = TAGMAP_TYPE_INT;
+        customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         customTag.m_StringValue = "";
-        customTagMap.insert(std::pair<std::string, TAGMAPOBJECT>(tagName, customTag));
+        customTagMap.insert(std::pair<std::string, TagMap>(tagName, customTag));
 
         // Add custom tags to multi
         for (const auto &[key, value] : customTagMap) {
@@ -1646,10 +1646,10 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
     // If we get here we have to check to see if there are any other entryies added via the
     // auto-addmenu code. Each item == 2 entries IE: IDNUM=Text name of Item, and ADDITEM=itemID to
     // add
-    std::pair<ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR> pairRange =
+    auto pairRange =
         g_mmapAddMenuMap.equal_range(addMenuLoc);
     std::uint32_t autoAddMenuItemCount = 0;
-    for (ADDMENUMAP_CITERATOR CI = pairRange.first; CI != pairRange.second; ++CI) {
+    for (auto CI = pairRange.first; CI != pairRange.second; ++CI) {
         autoAddMenuItemCount += 2; // Need to inicrement by 2 because each entry is measured in the
                                    // dfn' as two lines. Used in teh calculation below.
     }

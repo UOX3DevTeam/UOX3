@@ -271,7 +271,7 @@ enum DFNTAGS {
     DFNTAG_COUNTOFTAGS
 };
 
-typedef struct __ADDMENUITEM__ {
+struct AddMenuItem {
     std::uint32_t itemIndex;
     std::string itemName;
     std::uint32_t groupId;
@@ -279,14 +279,12 @@ typedef struct __ADDMENUITEM__ {
     std::uint32_t weightPosition;
     std::uint32_t objectFlags;
     std::string objectId;
-    __ADDMENUITEM__()
+    AddMenuItem()
         : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0),
           objectId("") {}
-} ADDMENUITEM, *LPADDMENUITEM;
+} ;
 
-extern std::multimap<std::uint32_t, ADDMENUITEM> g_mmapAddMenuMap;
-typedef std::multimap<std::uint32_t, ADDMENUITEM>::iterator ADDMENUMAP_ITERATOR;
-typedef std::multimap<std::uint32_t, ADDMENUITEM>::const_iterator ADDMENUMAP_CITERATOR;
+extern std::multimap<std::uint32_t, AddMenuItem> g_mmapAddMenuMap;
 
 class CScriptSection {
     friend class Script;

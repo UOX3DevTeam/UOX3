@@ -911,7 +911,7 @@ auto Console::Process(std::int32_t c) -> void {
             return;
         }
 
-        JSCONSOLEKEYMAP_ITERATOR toFind = JSKeyHandler.find(c);
+        auto toFind = JSKeyHandler.find(c);
         if (toFind != JSKeyHandler.end()) {
             if (toFind->second.isEnabled) {
                 cScript *toExecute = JSMapping->GetScript(toFind->second.scriptId);
@@ -1005,7 +1005,7 @@ auto Console::Process(std::int32_t c) -> void {
             // can get an equal range.
             std::map<std::uint32_t, std::uint8_t> localMap;
             localMap.clear();
-            for (ADDMENUMAP_CITERATOR CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end();
+            for (auto CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end();
                  CJ++) {
                 // check to see if the group id has been checked already
                 if (localMap.find(CJ->first) == localMap.end()) {
@@ -1013,10 +1013,10 @@ auto Console::Process(std::int32_t c) -> void {
                     szBuffer = "";
                     szBuffer = util::format("AddMenuGroup %u:", CJ->first);
                     messageLoop << szBuffer;
-                    std::pair<ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR> pairRange =
+                    auto pairRange =
                         g_mmapAddMenuMap.equal_range(CJ->first);
                     std::int32_t count = 0;
-                    for (ADDMENUMAP_CITERATOR CI = pairRange.first; CI != pairRange.second; CI++) {
+                    for (auto CI = pairRange.first; CI != pairRange.second; CI++) {
                         count++;
                     }
                     szBuffer = "";

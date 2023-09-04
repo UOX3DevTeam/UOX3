@@ -2089,8 +2089,8 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
 
     // Get potential tag with ID of a targeted sub-resource
     std::uint16_t targetedSubResourceId = 0;
-    TAGMAPOBJECT tempTagObj = player->GetTempTag("targetedSubResourceId");
-    if (tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
+    auto tempTagObj = player->GetTempTag("targetedSubResourceId");
+    if (tempTagObj.m_ObjectType == TagMap::TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0) {
         targetedSubResourceId = static_cast<std::uint16_t>(tempTagObj.m_IntValue);
     }
 
@@ -2182,11 +2182,11 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
     }
     else {
         // Store temp tag on player with colour of item to craft
-        TAGMAPOBJECT tagObject;
+        TagMap tagObject;
         tagObject.m_Destroy = false;
         tagObject.m_StringValue = "";
         tagObject.m_IntValue = resourceColour;
-        tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+        tagObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         player->SetTempTag("craftItemColor", tagObject);
 
         for (sCounter = toMake.skillReqs.begin(); sCounter != toMake.skillReqs.end(); ++sCounter) {

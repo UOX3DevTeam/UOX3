@@ -70,7 +70,7 @@ void ScriptError(JSContext *cx, const char *txt, ...);
 // queue | Notes		-	Copied that here from sefunctions.cpp. Default paramters
 // weren't working !?
 // o------------------------------------------------------------------------------------------------o
-void MethodSpeech(CBaseObject &speaker, char *message, SpeechType sType, COLOUR sColour = 0x005A,
+void MethodSpeech(CBaseObject &speaker, char *message, SpeechType sType, colour_t sColour = 0x005A,
                   FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC,
                   SERIAL spokenTo = INVALIDSERIAL, bool useUnicode = false) {
     if (useUnicode) {
@@ -2956,14 +2956,14 @@ JSBool CBase_GetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
     }
 
     std::string localString = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    TAGMAPOBJECT localObject = myObj->GetTag(localString);
-    if (localObject.m_ObjectType == TAGMAP_TYPE_STRING) {
+    auto localObject = myObj->GetTag(localString);
+    if (localObject.m_ObjectType == TagMap::TAGMAP_TYPE_STRING) {
         JSString *localJSString =
             JS_NewStringCopyN(cx, (const char *)localObject.m_StringValue.c_str(),
                               localObject.m_StringValue.length());
         *rval = static_cast<jsval>(STRING_TO_JSVAL(localJSString));
     }
-    else if (localObject.m_ObjectType == TAGMAP_TYPE_BOOL) {
+    else if (localObject.m_ObjectType == TagMap::TAGMAP_TYPE_BOOL) {
         *rval = static_cast<jsval>(BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1)));
     }
     else {
@@ -2994,7 +2994,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
 
     std::string localString = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    TAGMAPOBJECT localObject;
+    TagMap localObject;
     if (argc == 2) {
         JSEncapsulate encaps(cx, &(argv[1]));
         if (encaps.isType(JSOT_STRING)) { // String value handling
@@ -3002,14 +3002,14 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             if (stringVal == "") {
                 localObject.m_Destroy = true;
                 localObject.m_IntValue = 0;
-                localObject.m_ObjectType = TAGMAP_TYPE_INT;
+                localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 localObject.m_StringValue = "";
             }
             else {
                 localObject.m_Destroy = false;
                 localObject.m_StringValue = stringVal;
                 localObject.m_IntValue = static_cast<std::int32_t>(localObject.m_StringValue.length());
-                localObject.m_ObjectType = TAGMAP_TYPE_STRING;
+                localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             }
         }
         else if (encaps.isType(JSOT_BOOL)) {
@@ -3022,7 +3022,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_Destroy = false;
                 localObject.m_IntValue = 1;
             }
-            localObject.m_ObjectType = TAGMAP_TYPE_BOOL;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_BOOL;
             localObject.m_StringValue = "";
         }
         else if (encaps.isType(JSOT_INT)) {
@@ -3035,13 +3035,13 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_Destroy = false;
                 localObject.m_IntValue = intVal;
             }
-            localObject.m_ObjectType = TAGMAP_TYPE_INT;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
         else if (encaps.isType(JSOT_NULL)) {
             localObject.m_Destroy = true;
             localObject.m_IntValue = 0;
-            localObject.m_ObjectType = TAGMAP_TYPE_INT;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
         else {
@@ -3051,7 +3051,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     else {
         localObject.m_Destroy = true;
-        localObject.m_ObjectType = TAGMAP_TYPE_INT;
+        localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         localObject.m_IntValue = 0;
         localObject.m_StringValue = "";
         myObj->SetTag(localString, localObject);
@@ -3079,14 +3079,14 @@ JSBool CBase_GetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     }
 
     std::string localString = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    TAGMAPOBJECT localObject = myObj->GetTempTag(localString);
-    if (localObject.m_ObjectType == TAGMAP_TYPE_STRING) {
+    auto localObject = myObj->GetTempTag(localString);
+    if (localObject.m_ObjectType == TagMap::TAGMAP_TYPE_STRING) {
         JSString *localJSString =
             JS_NewStringCopyN(cx, (const char *)localObject.m_StringValue.c_str(),
                               localObject.m_StringValue.length());
         *rval = static_cast<jsval>(STRING_TO_JSVAL(localJSString));
     }
-    else if (localObject.m_ObjectType == TAGMAP_TYPE_BOOL) {
+    else if (localObject.m_ObjectType == TagMap::TAGMAP_TYPE_BOOL) {
         *rval = static_cast<jsval>(BOOLEAN_TO_JSVAL((localObject.m_IntValue == 1)));
     }
     else {
@@ -3119,7 +3119,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
 
     std::string localString = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    TAGMAPOBJECT localObject;
+    TagMap localObject;
     if (argc == 2) {
         JSEncapsulate encaps(cx, &(argv[1]));
         if (encaps.isType(JSOT_STRING)) { // String value handling
@@ -3127,14 +3127,14 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             if (stringVal == "") {
                 localObject.m_Destroy = true;
                 localObject.m_IntValue = 0;
-                localObject.m_ObjectType = TAGMAP_TYPE_INT;
+                localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 localObject.m_StringValue = "";
             }
             else {
                 localObject.m_Destroy = false;
                 localObject.m_StringValue = stringVal;
                 localObject.m_IntValue = static_cast<std::int32_t>(localObject.m_StringValue.length());
-                localObject.m_ObjectType = TAGMAP_TYPE_STRING;
+                localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             }
         }
         else if (encaps.isType(JSOT_BOOL)) {
@@ -3147,7 +3147,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_Destroy = false;
                 localObject.m_IntValue = 1;
             }
-            localObject.m_ObjectType = TAGMAP_TYPE_BOOL;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_BOOL;
             localObject.m_StringValue = "";
         }
         else if (encaps.isType(JSOT_INT)) {
@@ -3160,13 +3160,13 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_Destroy = false;
                 localObject.m_IntValue = intVal;
             }
-            localObject.m_ObjectType = TAGMAP_TYPE_INT;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
         else if (encaps.isType(JSOT_NULL)) {
             localObject.m_Destroy = true;
             localObject.m_IntValue = 0;
-            localObject.m_ObjectType = TAGMAP_TYPE_INT;
+            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
         else {
@@ -3176,7 +3176,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     else {
         localObject.m_Destroy = true;
-        localObject.m_ObjectType = TAGMAP_TYPE_INT;
+        localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         localObject.m_IntValue = 0;
         localObject.m_StringValue = "";
         myObj->SetTempTag(localString, localObject);
@@ -3227,7 +3227,7 @@ JSBool CBase_GetTagMap(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
     }
 
     // Fetch tag map from object
-    TAGMAP2 tagMap = myObj->GetTagMap();
+    auto tagMap = myObj->GetTagMap();
 
     // Create main JSObject to store full list of tags
     JSObject *jsTagMap = JS_NewArrayObject(cx, 0, nullptr);
@@ -3249,18 +3249,18 @@ JSBool CBase_GetTagMap(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
         jsval jsType;
         jsval jsValue;
         switch (tagObj.second.m_ObjectType) {
-        case TAGMAP_TYPE_INT:
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_INT);
+            case TagMap::TAGMAP_TYPE_INT:
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_INT);
             jsValue = INT_TO_JSVAL(tagObj.second.m_IntValue);
             break;
-        case TAGMAP_TYPE_STRING: {
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
+            case TagMap::TAGMAP_TYPE_STRING: {
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_STRING);
             JSString *jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
             jsValue = STRING_TO_JSVAL(jsStringVal);
             break;
         }
-        case TAGMAP_TYPE_BOOL:
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
+            case TagMap::TAGMAP_TYPE_BOOL:
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_BOOL);
             jsValue = BOOLEAN_TO_JSVAL(tagObj.second.m_IntValue != 0);
             break;
         default:
@@ -3304,7 +3304,7 @@ JSBool CBase_GetTempTagMap(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
     }
 
     // Fetch tag map from object
-    TAGMAP2 tagMap = myObj->GetTempTagMap();
+    auto tagMap = myObj->GetTempTagMap();
 
     // Create main JSObject to store full list of tags
     JSObject *jsTagMap = JS_NewArrayObject(cx, 0, nullptr);
@@ -3326,18 +3326,18 @@ JSBool CBase_GetTempTagMap(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
         jsval jsType;
         jsval jsValue;
         switch (tagObj.second.m_ObjectType) {
-        case TAGMAP_TYPE_INT:
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_INT);
+            case TagMap::TAGMAP_TYPE_INT:
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_INT);
             jsValue = INT_TO_JSVAL(tagObj.second.m_IntValue);
             break;
-        case TAGMAP_TYPE_STRING: {
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_STRING);
+            case TagMap::TAGMAP_TYPE_STRING: {
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_STRING);
             JSString *jsStringVal = JS_NewStringCopyZ(cx, tagObj.second.m_StringValue.c_str());
             jsValue = STRING_TO_JSVAL(jsStringVal);
             break;
         }
-        case TAGMAP_TYPE_BOOL:
-            jsType = INT_TO_JSVAL(TAGMAP_TYPE_BOOL);
+            case TagMap::TAGMAP_TYPE_BOOL:
+            jsType = INT_TO_JSVAL(TagMap::TAGMAP_TYPE_BOOL);
             jsValue = BOOLEAN_TO_JSVAL(tagObj.second.m_IntValue != 0);
             break;
         default:
@@ -5918,7 +5918,7 @@ JSBool CRace_IsValidHairColour(JSContext *cx, JSObject *obj, uintN argc, jsval *
         return JS_FALSE;
     }
 
-    COLOUR cVal = static_cast<COLOUR>(JSVAL_TO_INT(argv[0]));
+    auto cVal = static_cast<colour_t>(JSVAL_TO_INT(argv[0]));
     *rval = BOOLEAN_TO_JSVAL((myRace->IsValidHair(cVal)));
     return JS_TRUE;
 }
@@ -5941,7 +5941,7 @@ JSBool CRace_IsValidSkinColour(JSContext *cx, JSObject *obj, uintN argc, jsval *
         return JS_FALSE;
     }
 
-    COLOUR cVal = static_cast<COLOUR>(JSVAL_TO_INT(argv[0]));
+    auto cVal = static_cast<colour_t>(JSVAL_TO_INT(argv[0]));
     *rval = BOOLEAN_TO_JSVAL((myRace->IsValidSkin(cVal)));
     return JS_TRUE;
 }
@@ -5965,7 +5965,7 @@ JSBool CRace_IsValidBeardColour(JSContext *cx, JSObject *obj, uintN argc, jsval 
         return JS_FALSE;
     }
 
-    COLOUR cVal = static_cast<COLOUR>(JSVAL_TO_INT(argv[0]));
+    auto cVal = static_cast<colour_t>(JSVAL_TO_INT(argv[0]));
     *rval = BOOLEAN_TO_JSVAL((myRace->IsValidBeard(cVal)));
     return JS_TRUE;
 }

@@ -18,18 +18,16 @@ class CSpawnItem;
 class CChar;
 class CSocket;
 
-enum TAGMAPOBJECT_TYPE { TAGMAP_TYPE_INT = 0, TAGMAP_TYPE_STRING, TAGMAP_TYPE_BOOL };
 
-typedef struct __TAGMAP_STRUCT__ {
+struct TagMap {
+    enum TagMapObject { TAGMAP_TYPE_INT = 0, TAGMAP_TYPE_STRING, TAGMAP_TYPE_BOOL };
+
     std::uint8_t m_ObjectType;
     std::int32_t m_IntValue;
     bool m_Destroy;
     std::string m_StringValue;
-} TAGMAPOBJECT, *LPTAGMAPOBJECT;
+} ;
 
-typedef std::map<std::string, TAGMAPOBJECT> TAGMAP2;
-typedef std::map<std::string, TAGMAPOBJECT>::iterator TAGMAP2_ITERATOR;
-typedef std::map<std::string, TAGMAPOBJECT>::const_iterator TAGMAP2_CITERATOR;
 
 enum UpdateTypes {
     UT_UPDATE = 0,
@@ -49,8 +47,8 @@ enum UpdateTypes {
 // o------------------------------------------------------------------------------------------------o
 class CBaseObject {
   protected:
-    TAGMAP2 tags;
-    TAGMAP2 tempTags;
+    std::map<std::string, TagMap> tags;
+    std::map<std::string, TagMap> tempTags;
     std::string title;
     ObjectType objType;
     RACEID race;
@@ -116,14 +114,14 @@ class CBaseObject {
     Point3_st GetOldLocation(void);
 
     size_t GetNumTags(void) const;
-    auto GetTagMap() const -> const TAGMAP2;
-    auto GetTempTagMap() const -> const TAGMAP2;
+    auto GetTagMap() const -> const std::map<std::string, TagMap>;
+    auto GetTempTagMap() const -> const std::map<std::string, TagMap>;
 
-    TAGMAPOBJECT GetTag(std::string tagname) const;
-    void SetTag(std::string tagname, TAGMAPOBJECT tagval);
+    TagMap GetTag(std::string tagname) const;
+    void SetTag(std::string tagname, TagMap tagval);
 
-    TAGMAPOBJECT GetTempTag(std::string tempTagName) const;
-    void SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal);
+    TagMap GetTempTag(std::string tempTagName) const;
+    void SetTempTag(std::string tempTagName, TagMap tagVal);
 
     void SetResist(std::uint16_t newValue, WeatherType damage);
     std::uint16_t GetResist(WeatherType damage) const;

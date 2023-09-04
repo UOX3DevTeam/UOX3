@@ -12,15 +12,9 @@
 class CScriptSection;
 class Script;
 
-typedef std::vector<Script *> VECSCRIPTLIST;
-typedef std::vector<Script *>::iterator VECSCRIPTLIST_ITERATOR;
-typedef std::vector<Script *>::const_iterator VECSCRIPTLIST_CITERATOR;
-typedef std::stack<std::string> dirList;
 
 class CDirectoryListing {
   private:
-    typedef std::vector<CDirectoryListing> DIRLIST;
-    typedef std::vector<CDirectoryListing>::iterator DIRLIST_ITERATOR;
 
     auto PushDir(DEFINITIONCATEGORIES toMove) -> bool;
     auto PushDir(std::string toMove) -> bool;
@@ -28,12 +22,12 @@ class CDirectoryListing {
 
     std::vector<std::string> filenameList, shortList;
     std::vector<std::string> flattenedShort, flattenedFull;
-    dirList dirs;
+    std::stack<std::string> dirs;
     std::string extension;
     std::string currentDir;
     std::string shortCurrentDir;
 
-    DIRLIST subdirectories;
+    std::vector<CDirectoryListing> subdirectories;
     bool doRecursion;
 
     void InternalRetrieve();
@@ -58,7 +52,7 @@ class CDirectoryListing {
 
 class CServerDefinitions {
   private:
-    VECSCRIPTLIST_ITERATOR slIter;
+    std::vector<Script *>::iterator slIter;
 
     std::map<std::string, std::int16_t> priorityMap;
     std::int16_t defaultPriority;
@@ -73,7 +67,7 @@ class CServerDefinitions {
     auto Cleanup() -> void;
 
   public:
-    std::vector<VECSCRIPTLIST> ScriptListings;
+    std::vector<std::vector<Script *>> ScriptListings;
 
     CServerDefinitions();
     ~CServerDefinitions();

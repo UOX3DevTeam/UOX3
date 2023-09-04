@@ -150,27 +150,27 @@ size_t CBaseObject::GetNumTags(void) const { return tags.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return object's tag map
 // o------------------------------------------------------------------------------------------------o
-auto CBaseObject::GetTagMap() const -> const TAGMAP2 { return tags; }
+auto CBaseObject::GetTagMap() const -> const std::map<std::string, TagMap> { return tags; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetTempTagMap()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return object's temporary tag map
 // o------------------------------------------------------------------------------------------------o
-auto CBaseObject::GetTempTagMap() const -> const TAGMAP2 { return tempTags; }
+auto CBaseObject::GetTempTagMap() const -> const std::map<std::string, TagMap> { return tempTags; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetTag()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetch custom tag with specified name from object's tag map
 // o------------------------------------------------------------------------------------------------o
-TAGMAPOBJECT CBaseObject::GetTag(std::string tagname) const {
-    TAGMAPOBJECT localObject;
-    localObject.m_ObjectType = TAGMAP_TYPE_INT;
+TagMap CBaseObject::GetTag(std::string tagname) const {
+    TagMap localObject;
+    localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
     localObject.m_IntValue = 0;
     localObject.m_Destroy = false;
     localObject.m_StringValue = "";
-    TAGMAP2_CITERATOR CI = tags.find(tagname);
+    auto CI = tags.find(tagname);
     if (CI != tags.end()) {
         localObject = CI->second;
     }
@@ -189,8 +189,8 @@ TAGMAPOBJECT CBaseObject::GetTag(std::string tagname) const {
 //|					stored jsval in a context that may or may not change when
 // reloaded.
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
-    TAGMAP2_ITERATOR I = tags.find(tagname);
+void CBaseObject::SetTag(std::string tagname, TagMap tagval) {
+    auto I = tags.find(tagname);
     if (I != tags.end()) {
         // Check to see if this object needs to be destroyed
         if (I->second.m_Destroy || tagval.m_Destroy) {
@@ -203,9 +203,9 @@ void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
             }
             return;
         }
-        // Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be
+        // Change the tag's TagMap value. NOTE this will also change type should type be
         // changed
-        else if (tagval.m_ObjectType == TAGMAP_TYPE_STRING) {
+        else if (tagval.m_ObjectType == TagMap::TAGMAP_TYPE_STRING) {
             I->second.m_Destroy = false;
             I->second.m_ObjectType = tagval.m_ObjectType;
             I->second.m_StringValue = tagval.m_StringValue;
@@ -227,7 +227,7 @@ void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
             (static_cast<CChar *>(this))->UpdateRegion();
         }
     }
-    else { // We need to create a TAGMAPOBJECT and initialize and store into the tagmap
+    else { // We need to create a TagMap and initialize and store into the tagmap
         if (!tagval.m_Destroy) {
             tags[tagname] = tagval;
             if (CanBeObjType(OT_ITEM)) {
@@ -246,13 +246,13 @@ void CBaseObject::SetTag(std::string tagname, TAGMAPOBJECT tagval) {
 //|	Purpose		-	Fetch custom, temporary tag with specified name from object's
 // temporary tag map
 // o------------------------------------------------------------------------------------------------o
-TAGMAPOBJECT CBaseObject::GetTempTag(std::string tempTagName) const {
-    TAGMAPOBJECT localObject;
-    localObject.m_ObjectType = TAGMAP_TYPE_INT;
+TagMap CBaseObject::GetTempTag(std::string tempTagName) const {
+    TagMap localObject;
+    localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
     localObject.m_IntValue = 0;
     localObject.m_Destroy = false;
     localObject.m_StringValue = "";
-    TAGMAP2_CITERATOR CI = tempTags.find(tempTagName);
+    auto CI = tempTags.find(tempTagName);
     if (CI != tempTags.end()) {
         localObject = CI->second;
     }
@@ -266,8 +266,8 @@ TAGMAPOBJECT CBaseObject::GetTempTag(std::string tempTagName) const {
 //|	Purpose		-	Store custom, temporary string/int tag in an object's temporary tag
 // map
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal) {
-    TAGMAP2_ITERATOR I = tempTags.find(tempTagName);
+void CBaseObject::SetTempTag(std::string tempTagName, TagMap tagVal) {
+    auto I = tempTags.find(tempTagName);
     if (I != tempTags.end()) {
         // Check to see if this object needs to be destroyed
         if (I->second.m_Destroy || tagVal.m_Destroy) {
@@ -280,9 +280,9 @@ void CBaseObject::SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal) {
             }
             return;
         }
-        // Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be
+        // Change the tag's TagMap value. NOTE this will also change type should type be
         // changed
-        else if (tagVal.m_ObjectType == TAGMAP_TYPE_STRING) {
+        else if (tagVal.m_ObjectType == TagMap::TAGMAP_TYPE_STRING) {
             I->second.m_Destroy = false;
             I->second.m_ObjectType = tagVal.m_ObjectType;
             I->second.m_StringValue = tagVal.m_StringValue;
@@ -304,7 +304,7 @@ void CBaseObject::SetTempTag(std::string tempTagName, TAGMAPOBJECT tagVal) {
             (static_cast<CChar *>(this))->UpdateRegion();
         }
     }
-    else { // We need to create a TAGMAPOBJECT and initialize and store into the tagmap
+    else { // We need to create a TagMap and initialize and store into the tagmap
         if (!tagVal.m_Destroy) {
             tempTags[tempTagName] = tagVal;
             if (CanBeObjType(OT_ITEM)) {
@@ -718,10 +718,10 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
                      "," + std::to_string(GetKills()) + newLine;
 
     // Spin the character tags to save make sure to dump them too
-    TAGMAP2_CITERATOR CI;
-    for (CI = tags.begin(); CI != tags.end(); ++CI) {
+    
+    for (auto CI = tags.begin(); CI != tags.end(); ++CI) {
         outStream << "TAGNAME=" << CI->first << newLine;
-        if (CI->second.m_ObjectType == TAGMAP_TYPE_STRING) {
+        if (CI->second.m_ObjectType == TagMap::TAGMAP_TYPE_STRING) {
             outStream << "TAGVALS=" << CI->second.m_StringValue << newLine;
         }
         else {
@@ -1734,8 +1734,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             staticTagName = data;
         }
         else if (UTag == "TAGVAL") {
-            TAGMAPOBJECT tagvalObject;
-            tagvalObject.m_ObjectType = TAGMAP_TYPE_INT;
+            TagMap tagvalObject;
+            tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             tagvalObject.m_IntValue = std::stoi(util::trim(util::strip(data, "//")), nullptr, 0);
             tagvalObject.m_Destroy = false;
             tagvalObject.m_StringValue = "";
@@ -1743,8 +1743,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
         }
         else if (UTag == "TAGVALS") {
             std::string localString = data;
-            TAGMAPOBJECT tagvalObject;
-            tagvalObject.m_ObjectType = TAGMAP_TYPE_STRING;
+            TagMap tagvalObject;
+            tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             tagvalObject.m_IntValue = static_cast<std::int32_t>(localString.size());
             tagvalObject.m_Destroy = false;
             tagvalObject.m_StringValue = localString;

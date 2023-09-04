@@ -142,10 +142,10 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                             hItem->SetTempVar(CITV_MORE, house->GetSerial());
 
                             // Store a custom tag on addon to mark it as a house addon
-                            TAGMAPOBJECT addonTagObject;
+                            TagMap addonTagObject;
                             addonTagObject.m_Destroy = false;
                             addonTagObject.m_IntValue = 1;
-                            addonTagObject.m_ObjectType = TAGMAP_TYPE_INT;
+                            addonTagObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                             addonTagObject.m_StringValue = "";
                             hItem->SetTag("addon", addonTagObject);
 
@@ -225,12 +225,12 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                 }
                 else if (UTag == "FRONTDOOR") {
                     if (ValidateObject(hItem)) {
-                        TAGMAPOBJECT frontDoorTag;
+                        TagMap frontDoorTag;
                         frontDoorTag.m_Destroy = false;
                         frontDoorTag.m_StringValue = "front";
                         frontDoorTag.m_IntValue =
                             static_cast<std::int32_t>(frontDoorTag.m_StringValue.size());
-                        frontDoorTag.m_ObjectType = TAGMAP_TYPE_STRING;
+                        frontDoorTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                         hItem->SetTag("DoorType", frontDoorTag);
 
                         // Lock it automatically since house is private when placed initially
@@ -239,12 +239,12 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                 }
                 else if (UTag == "INTERIORDOOR") {
                     if (ValidateObject(hItem)) {
-                        TAGMAPOBJECT frontDoorTag;
+                        TagMap frontDoorTag;
                         frontDoorTag.m_Destroy = false;
                         frontDoorTag.m_StringValue = "interior";
                         frontDoorTag.m_IntValue =
                             static_cast<std::int32_t>(frontDoorTag.m_StringValue.size());
-                        frontDoorTag.m_ObjectType = TAGMAP_TYPE_STRING;
+                        frontDoorTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                         hItem->SetTag("DoorType", frontDoorTag);
                     }
                 }
@@ -536,8 +536,8 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     std::uint16_t maxItems = 125;  // Default
     std::string customTagName;
     std::string customTagStringValue;
-    TAGMAPOBJECT customTag;
-    std::map<std::string, TAGMAPOBJECT> customTagMap;
+    TagMap customTag;
+    std::map<std::string, TagMap> customTagMap;
 
     std::string sect = "HOUSE " + util::ntos(houseEntry);
     CScriptSection *House = FileLookup->FindEntry(sect, house_def);
@@ -658,8 +658,8 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
                 customTag.m_Destroy = false;
                 customTag.m_StringValue = customTagStringValue;
                 customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
-                customTag.m_ObjectType = TAGMAP_TYPE_STRING;
-                customTagMap.insert(std::pair<std::string, TAGMAPOBJECT>(customTagName, customTag));
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
+                customTagMap.insert(std::pair<std::string, TagMap>(customTagName, customTag));
             }
             else {
                 Console::shared().Warning(
@@ -687,9 +687,9 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
                 customTag.m_Destroy = false;
                 customTag.m_IntValue =
                     std::stoi(util::trim(util::strip(customTagStringValue, "//")), nullptr, 0);
-                customTag.m_ObjectType = TAGMAP_TYPE_INT;
+                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                 customTag.m_StringValue = "";
-                customTagMap.insert(std::pair<std::string, TAGMAPOBJECT>(customTagName, customTag));
+                customTagMap.insert(std::pair<std::string, TagMap>(customTagName, customTag));
                 if (count > 1) {
                     Console::shared().Warning(util::format(
                         "Multiple values detected for CUSTOMINTTAG in House script [%s] - only "
@@ -878,11 +878,11 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
         fakeHouse->SetVisible(VT_PERMHIDDEN);
 
         // Store name of deed in a custom tag on the addon
-        TAGMAPOBJECT deedObject;
+        TagMap deedObject;
         deedObject.m_Destroy = false;
         deedObject.m_StringValue = houseDeed;
         deedObject.m_IntValue = static_cast<std::int32_t>(deedObject.m_StringValue.size());
-        deedObject.m_ObjectType = TAGMAP_TYPE_STRING;
+        deedObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
         fakeHouse->SetTag("deed", deedObject);
     }
 
@@ -1041,13 +1041,13 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
                 if (keyCount > 0) {
                     for (std::int32_t j = 1; j < keyCount + 1; j++) {
                         std::string keyTag = "key" + std::to_string(j) + "more";
-                        TAGMAPOBJECT keyMore = i->GetTag(keyTag);
+                        auto keyMore = i->GetTag(keyTag);
                         if (util::ston<SERIAL>(keyMore.m_StringValue) == targSerial) {
                             // More value of key in keyring matches house serial
-                            TAGMAPOBJECT localObject;
+                            TagMap localObject;
                             localObject.m_Destroy = false;
                             localObject.m_IntValue = 0;
-                            localObject.m_ObjectType = TAGMAP_TYPE_STRING;
+                            localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                             localObject.m_StringValue = "0";
                             i->SetTag(keyTag, localObject);
                         }
@@ -1101,13 +1101,13 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
                     if (keyCount > 0) {
                         for (std::int32_t j = 1; j < keyCount + 1; j++) {
                             std::string keyTag = "key" + std::to_string(j) + "more";
-                            TAGMAPOBJECT keyMore = i->GetTag(keyTag);
+                            auto keyMore = i->GetTag(keyTag);
                             if (util::ston<SERIAL>(keyMore.m_StringValue) == targSerial) {
                                 // More value of key in keyring matches house serial
-                                TAGMAPOBJECT localObject;
+                                TagMap localObject;
                                 localObject.m_Destroy = false;
                                 localObject.m_IntValue = 0;
-                                localObject.m_ObjectType = TAGMAP_TYPE_STRING;
+                                localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
                                 localObject.m_StringValue = "0";
                                 i->SetTag(keyTag, localObject);
                             }

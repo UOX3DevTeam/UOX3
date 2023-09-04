@@ -489,7 +489,7 @@ CSpeechQueue::CSpeechQueue() : pollTime(100), runAsThread(false) {
 }
 auto CSpeechQueue::Startup() -> void { InitializeLookup(); }
 CSpeechQueue::~CSpeechQueue() {
-    for (SPEECHLIST_ITERATOR slIter = speechList.begin(); slIter != speechList.end(); ++slIter) {
+    for (auto slIter = speechList.begin(); slIter != speechList.end(); ++slIter) {
         delete (*slIter);
         (*slIter) = nullptr;
     }
@@ -590,7 +590,7 @@ bool CSpeechQueue::InternalPoll(void) {
     bool retVal = false;
     CSpeechEntry *toCheck = nullptr;
 
-    SPEECHLIST_ITERATOR slIter = speechList.begin();
+    auto slIter = speechList.begin();
     while (slIter != speechList.end()) {
         toCheck = (*slIter);
 
@@ -647,8 +647,8 @@ void CSpeechQueue::DumpInFile(void) {
         Console::shared().Error(util::format("Failed to open %s for writing", speechFile.c_str()));
         return;
     }
-    SPEECHLIST_ITERATOR toWrite;
-    for (toWrite = speechList.begin(); toWrite != speechList.end(); ++toWrite) {
+    
+    for (auto toWrite = speechList.begin(); toWrite != speechList.end(); ++toWrite) {
         speechDestination << "Time: " << (*toWrite)->At() << std::endl;
         speechDestination << "nColour: " << (*toWrite)->Colour() << std::endl;
         speechDestination << "nFont: " << (*toWrite)->Font() << std::endl;

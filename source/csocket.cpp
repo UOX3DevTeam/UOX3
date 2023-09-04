@@ -1833,8 +1833,8 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the current flag colour associated with the socket
 // o------------------------------------------------------------------------------------------------o
-COLOUR CSocket::GetFlagColour(CChar *src, CChar *trg) {
-    COLOUR retVal = 0x0058;
+colour_t CSocket::GetFlagColour(CChar *src, CChar *trg) {
+    colour_t retVal = 0x0058;
     auto flagColour = trg->FlagColour(src);
 
     if (trg->CheckAggressorFlag(src->GetSerial())) {
