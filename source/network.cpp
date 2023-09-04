@@ -259,7 +259,7 @@ void CNetworkStuff::Disconnect(uoxsocket_t s) {
     if (connClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
         AccountEntry &actbAccount = connClients[s]->GetAccount();
         if (actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-            actbAccount.flag.set(AccountEntry::AttributeFlag::ONLINE, false);
+            actbAccount.flag.set(AccountEntry::attributeflag_t::ONLINE, false);
         }
     }
     // Instalog
@@ -323,7 +323,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
 
     if (p->GetCommandLevel() >= CL_CNS || p->GetAccount().accountNumber == 0 ||
         (cwmWorldState->ServerData()->YoungPlayerSystem() &&
-         p->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) &&
+         p->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
          cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR)) {
         valid = true;
     }
@@ -398,7 +398,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
     }
 
     s->LoginComplete(false);
-    actbAccount.flag.set(AccountEntry::AttributeFlag::ONLINE, false);
+    actbAccount.flag.set(AccountEntry::attributeflag_t::ONLINE, false);
     p->SetSocket(nullptr);
 }
 
@@ -1157,7 +1157,7 @@ void CNetworkStuff::LoginDisconnect(uoxsocket_t s) {
     if (loggedInClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
         AccountEntry &actbAccount = loggedInClients[s]->GetAccount();
         if (actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-            actbAccount.flag.set(AccountEntry::AttributeFlag::ONLINE, false);
+            actbAccount.flag.set(AccountEntry::attributeflag_t::ONLINE, false);
         }
     }
 

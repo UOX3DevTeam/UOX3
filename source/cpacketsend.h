@@ -1019,7 +1019,7 @@ class CPGodModeToggle : public CPUOXBuffer {
     virtual void ToggleStatus(bool toSet);
 };
 
-enum LoginDenyReason {
+enum logindenyreason_t {
     LDR_UNKNOWNUSER = 0,
     LDR_ACCOUNTINUSE,
     LDR_ACCOUNTDISABLED,
@@ -1035,8 +1035,8 @@ class CPLoginDeny : public CPUOXBuffer {
   public:
     virtual ~CPLoginDeny() {}
     CPLoginDeny();
-    CPLoginDeny(LoginDenyReason reason);
-    virtual void DenyReason(LoginDenyReason reason);
+    CPLoginDeny(logindenyreason_t reason);
+    virtual void DenyReason(logindenyreason_t reason);
 };
 
 class CPCharDeleteResult : public CPUOXBuffer {

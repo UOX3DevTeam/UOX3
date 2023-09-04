@@ -2870,7 +2870,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                     auto doPoison = true;
                     if (!mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() &&
                         !ourTarg->IsNpc() &&
-                        ourTarg->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                        ourTarg->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         doPoison = false;
                         if (targSock != nullptr) {
                             targSock->SysMessage(
@@ -2880,7 +2880,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                     }
                     else if (!mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() &&
                              !mChar.IsNpc() &&
-                             mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                             mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         doPoison = false;
                         if (mSock != nullptr) {
                             ourTarg->TextMessage(mSock, 18738, TALK,

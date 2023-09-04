@@ -662,7 +662,7 @@ inline JSPropertySpec CGumpDataProperties[] = {
     {"IDs", CGumpData_ID, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CAccountProperties[] = {
+inline JSPropertySpec caccountproperties_t[] = {
     {"id", CACCOUNT_ID, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"username", CACCOUNT_USERNAME, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"password", CACCOUNT_PASSWORD, JSPROP_ENUMANDPERM, nullptr, nullptr},
@@ -701,18 +701,18 @@ inline JSPropertySpec CAccountProperties[] = {
     {"isGM", CACCOUNT_GM, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CConsoleProperties[] = {
+inline JSPropertySpec cconsoleproperties_t[] = {
     {"mode", CCONSOLE_MODE, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"logEcho", CCONSOLE_LOGECHO, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CScriptSectionProperties[] = {
+inline JSPropertySpec cscriptsectionproperties_t[] = {
     {"numTags", CSS_NUMTAGS, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"atEnd", CSS_ATEND, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"atEndTags", CSS_ATENDTAGS, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CResourceProperties[] = {
+inline JSPropertySpec cresourceproperties_t[] = {
     {"logAmount", CRESP_LOGAMT, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"logTime", CRESP_LOGTIME, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"oreAmount", CRESP_OREAMT, JSPROP_ENUMANDPERM, nullptr, nullptr},
@@ -727,7 +727,7 @@ inline JSPropertySpec CPartyProperties[] = {
     {"isNPC", CPARTYP_ISNPC, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CScriptProperties[] = {
+inline JSPropertySpec cscriptproperties_t[] = {
     {"script_id", CSCRIPT_SCRIPTID, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 

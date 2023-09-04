@@ -615,7 +615,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar * {
     std::int32_t ndata = -1, odata = -1;
     std::uint16_t npcId = 0;
 
-    for (DFNTAGS tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag()) {
+    for (auto tag = npcCreate->FirstTag(); !npcCreate->AtEndTags(); tag = npcCreate->NextTag()) {
         cdata = npcCreate->GrabData(ndata, odata);
         switch (tag) {
         case DFNTAG_ID:

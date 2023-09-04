@@ -20,7 +20,7 @@ class CSocket;
 
 
 struct TagMap {
-    enum TagMapObject { TAGMAP_TYPE_INT = 0, TAGMAP_TYPE_STRING, TAGMAP_TYPE_BOOL };
+    enum tagmapobject_t { TAGMAP_TYPE_INT = 0, TAGMAP_TYPE_STRING, TAGMAP_TYPE_BOOL };
 
     std::uint8_t m_ObjectType;
     std::int32_t m_IntValue;
@@ -29,7 +29,7 @@ struct TagMap {
 } ;
 
 
-enum UpdateTypes {
+enum updatetypes_t {
     UT_UPDATE = 0,
     UT_LOCATION,
     UT_HITPOINTS,
@@ -275,7 +275,7 @@ class CBaseObject {
     virtual void Update(CSocket *mSock = nullptr, bool drawGamePlayer = false,
                         bool sendToSelf = true) = 0;
     virtual void SendToSocket(CSocket *mSock, bool drawGamePlayer = false) = 0;
-    virtual void Dirty(UpdateTypes updateType);
+    virtual void Dirty(updatetypes_t updateType);
     void RemoveFromRefreshQueue(void);
 
     virtual void Delete(void) = 0;

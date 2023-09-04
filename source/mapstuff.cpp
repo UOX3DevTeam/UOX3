@@ -719,7 +719,7 @@ auto CMulHandler::DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8
 // specific flag
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
-                                  std::uint8_t worldNumber, TileFlags toCheck, std::uint16_t &foundtileID,
+                                  std::uint8_t worldNumber, tileflags_t toCheck, std::uint16_t &foundtileID,
                                   bool checkSpawnSurface) -> bool {
     auto rValue = checkSpawnSurface;
     for (const auto &tile : Map->ArtAt(x, y, worldNumber)) {
@@ -752,7 +752,7 @@ auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z,
                                    std::uint8_t worldNumber, std::uint16_t instanceId,
-                                   TileFlags toCheck, std::uint16_t &foundTileId) -> bool {
+                                   tileflags_t toCheck, std::uint16_t &foundTileId) -> bool {
     // Special case for handling multis that cross over between multiple map regions because of size
     CMultiObj *tempMulti = FindMulti(x, y, z, worldNumber, instanceId);
     if (ValidateObject(tempMulti)) {
@@ -824,7 +824,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether given tile ID has a specified flag
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckTileFlag(std::uint16_t itemId, TileFlags flagToCheck) -> bool {
+auto CMulHandler::CheckTileFlag(std::uint16_t itemId, tileflags_t flagToCheck) -> bool {
     if (!SeekTile(itemId).CheckFlag(flagToCheck)) {
         return false;
     }
@@ -1523,7 +1523,7 @@ auto ArtBlock::LoadArtBlock(int length, std::istream &input, const TileInfo *inf
     auto alt = std::int8_t(0);
     for (auto i = 0; i < count; ++i) {
         auto artTile = Tile_st();
-        artTile.type = TileType_t::art;
+        artTile.type = tiletype_t::art;
         input.read(reinterpret_cast<char *>(&artTile.tileId), 2);
         input.read(reinterpret_cast<char *>(&x), 1);
         input.read(reinterpret_cast<char *>(&y), 1);
@@ -1551,7 +1551,7 @@ auto ArtBlock::LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info
     auto y = std::uint8_t(0);
     for (auto i = 0; i < count; ++i) {
         auto artTile = Tile_st();
-        artTile.type = TileType_t::art;
+        artTile.type = tiletype_t::art;
         std::copy(data, data + 2, reinterpret_cast<char *>(&artTile.tileId));
         x = *(data + 2);
         y = *(data + 3);

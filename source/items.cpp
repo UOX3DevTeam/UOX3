@@ -33,7 +33,7 @@ ItemTypes FindItemTypeFromTag(const std::string &strToFind);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load item data from script sections and apply to spawner objects
 // o------------------------------------------------------------------------------------------------o
-bool ApplySpawnItemSection(CSpawnItem *applyTo, const DFNTAGS tag, const std::int32_t ndata,
+bool ApplySpawnItemSection(CSpawnItem *applyTo, const dfntags_t tag, const std::int32_t ndata,
                            const std::int32_t odata, const std::string &cdata) {
     if (!ValidateObject(applyTo))
         return false;

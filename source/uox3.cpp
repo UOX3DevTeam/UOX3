@@ -2226,7 +2226,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 bool reallyOn = false;
                 // time to flush our account status!
                 for (auto &[num, entry] : Account::shared().allAccounts()) {
-                    if (entry.flag.test(AccountEntry::AttributeFlag::ONLINE)) {
+                    if (entry.flag.test(AccountEntry::attributeflag_t::ONLINE)) {
                         reallyOn = false; // to start with, there's no one really on
                         {
                             for (auto &tSock : Network->connClients) {
@@ -2241,7 +2241,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         }
                         if (!reallyOn) {
                             // no one's really on, let's set that
-                            entry.flag.reset(AccountEntry::AttributeFlag::ONLINE);
+                            entry.flag.reset(AccountEntry::attributeflag_t::ONLINE);
                         }
                     }
                 }
@@ -2344,7 +2344,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                                 // Give player a 30 minute temp ban
                                 AccountEntry &myAccount =
                                     Account::shared()[tSock->GetAccount().accountNumber];
-                                myAccount.flag.set(AccountEntry::AttributeFlag::BANNED, true);
+                                myAccount.flag.set(AccountEntry::attributeflag_t::BANNED, true);
                                 myAccount.timeBan =
                                     GetMinutesSinceEpoch() + serverData->NetTrafficTimeban();
                                 Network->Disconnect(tSock);
@@ -2987,7 +2987,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                 CItem *retItem = nullptr;
                 auto hairobject = applyTo->GetItemAtLayer(IL_HAIR);
                 auto beardobject = applyTo->GetItemAtLayer(IL_FACIALHAIR);
-                DFNTAGS tag = DFNTAG_COUNTOFTAGS;
+                auto tag = DFNTAG_COUNTOFTAGS;
                 std::string cdata;
                 std::int32_t ndata = -1, odata = -1;
                 std::uint8_t skillToSet = 0;

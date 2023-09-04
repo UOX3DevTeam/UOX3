@@ -31,7 +31,7 @@
 //on the addmenu  (1) Visible on the addmenu 							ObjectId			: This is the ID number that
 // is added via the addmenu. ADDITEM=ObjectID escentially
 //
-enum DFNTAGS {
+enum dfntags_t {
     DFNTAG_AC = 0,
     DFNTAG_ADDMENUITEM,
     DFNTAG_ADVOBJ,
@@ -296,7 +296,7 @@ class CScriptSection {
         SectData_st() : tag(""), data("") {}
     };
     struct SectDataV2_st {
-        DFNTAGS tag;
+        dfntags_t tag;
         std::string cdata;
         std::int32_t ndata;
         std::int32_t odata;
@@ -328,9 +328,9 @@ class CScriptSection {
     auto Next() -> std::string;
     auto Prev() -> std::string;
     auto AtEnd() -> bool;
-    auto FirstTag() -> DFNTAGS;
-    auto NextTag() -> DFNTAGS;
-    auto PrevTag() -> DFNTAGS;
+    auto FirstTag() -> dfntags_t;
+    auto NextTag() -> dfntags_t;
+    auto PrevTag() -> dfntags_t;
     auto AtEndTags() -> bool;
     auto GrabData() -> std::string;
     auto GrabData(std::int32_t &ndata, std::int32_t &odata) -> std::string;

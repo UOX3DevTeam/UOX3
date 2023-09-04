@@ -13,7 +13,7 @@
 #include "ip4address.hpp"
 #include "stringutility.hpp"
 // o------------------------------------------------------------------------------------------------o
-enum ClientFeatures {
+enum clientfeatures_t {
     CF_BIT_CHAT = 0, // 0x01
     CF_BIT_UOR,      // 0x02
     CF_BIT_TD,       // 0x04
@@ -43,7 +43,7 @@ enum ClientFeatures {
     CF_BIT_COUNT
 };
 
-enum ServerFeatures {
+enum serverfeatures_t {
     SF_BIT_UNKNOWN1 = 0, // 0x01
     SF_BIT_IGR,          // 0x02
     SF_BIT_ONECHAR,      // 0x04 - One char only, Siege-server style
@@ -64,7 +64,7 @@ enum ServerFeatures {
     SF_BIT_COUNT
 };
 
-enum AssistantFeatures : std::uint64_t {
+enum assistantfeatures_t : std::uint64_t {
     AF_NONE = 0,
 
     // Razor/RE/AssistUO
@@ -105,7 +105,7 @@ enum AssistantFeatures : std::uint64_t {
     AF_ALL = 0xFFFFFFFFFFFFFFFF        // Every feature possible
 };
 
-enum cSD_TID {
+enum csd_tid_t {
     tSERVER_ERROR = -1,
     tSERVER_CORPSEDECAY = 0, // Amount of time for a corpse to decay.
     tSERVER_WEATHER,         // Amount of time between changing light levels (day cycles).
@@ -152,7 +152,7 @@ enum cSD_TID {
     tSERVER_COUNT
 };
 
-enum CSDDirectoryPaths {
+enum csddirectorypaths_t {
     CSDDP_ROOT = 0,
     CSDDP_DATA,
     CSDDP_DEFS,
@@ -502,19 +502,19 @@ class CServerData {
 
     auto LookupINIValue(const std::string &tag) -> std::int32_t;
 
-    auto SetServerFeature(ServerFeatures, bool) -> void;
+    auto SetServerFeature(serverfeatures_t, bool) -> void;
     auto SetServerFeatures(size_t) -> void;
-    auto GetServerFeature(ServerFeatures) const -> bool;
+    auto GetServerFeature(serverfeatures_t) const -> bool;
     auto GetServerFeatures() const -> size_t;
 
-    auto SetClientFeature(ClientFeatures, bool) -> void;
+    auto SetClientFeature(clientfeatures_t, bool) -> void;
     auto SetClientFeatures(std::uint32_t) -> void;
-    auto GetClientFeature(ClientFeatures) const -> bool;
+    auto GetClientFeature(clientfeatures_t) const -> bool;
     std::uint32_t GetClientFeatures() const;
 
-    auto SetDisabledAssistantFeature(AssistantFeatures, bool) -> void;
+    auto SetDisabledAssistantFeature(assistantfeatures_t, bool) -> void;
     auto SetDisabledAssistantFeatures(std::uint64_t) -> void;
-    auto GetDisabledAssistantFeature(AssistantFeatures) const -> bool;
+    auto GetDisabledAssistantFeature(assistantfeatures_t) const -> bool;
     std::uint64_t GetDisabledAssistantFeatures() const;
 
     auto SetAssistantNegotiation(bool value) -> void;
@@ -608,9 +608,9 @@ class CServerData {
     std::int16_t MaxStealthMovement() const;
     auto MaxStaminaMovement(std::int16_t value) -> void;
     std::int16_t MaxStaminaMovement() const;
-    auto SystemTimer(cSD_TID timerId, std::uint16_t value) -> void;
-    auto SystemTimer(cSD_TID timerId) const -> std::uint16_t;
-    timerval_t BuildSystemTimeValue(cSD_TID timerId) const;
+    auto SystemTimer(csd_tid_t timerId, std::uint16_t value) -> void;
+    auto SystemTimer(csd_tid_t timerId) const -> std::uint16_t;
+    timerval_t BuildSystemTimeValue(csd_tid_t timerId) const;
     auto SysMsgColour(std::uint16_t value) -> void;
     auto SysMsgColour() const -> std::uint16_t;
 
@@ -666,8 +666,8 @@ class CServerData {
     auto ExtendedStartingSkills() const -> bool;
 
     // Define all Path Get/Set's here please
-    auto Directory(CSDDirectoryPaths dp, std::string value) -> void;
-    std::string Directory(CSDDirectoryPaths dp);
+    auto Directory(csddirectorypaths_t dp, std::string value) -> void;
+    std::string Directory(csddirectorypaths_t dp);
 
     auto CorpseLootDecay(bool value) -> void;
     auto CorpseLootDecay() const -> bool;

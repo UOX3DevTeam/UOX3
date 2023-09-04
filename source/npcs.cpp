@@ -807,7 +807,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
     std::string customTagName;
     std::string customTagStringValue;
     for (const auto &sec : NpcCreation->collection2()) {
-        DFNTAGS tag = sec->tag;
+        auto tag = sec->tag;
         cdata = sec->cdata;
         ndata = sec->ndata;
         odata = sec->odata;

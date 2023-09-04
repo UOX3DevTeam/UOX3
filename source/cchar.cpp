@@ -214,7 +214,7 @@ const std::uint8_t DEFNPC_QUESTTYPE = 0;
 const std::uint8_t DEFNPC_QUESTDESTREGION = 0;
 const std::uint8_t DEFNPC_QUESTORIGREGION = 0;
 const std::int16_t DEFNPC_WANDERAREA = -1;
-const cNPC_FLAG DEFNPC_NPCFLAG = fNPC_NEUTRAL;
+const cnpc_flag_t DEFNPC_NPCFLAG = fNPC_NEUTRAL;
 const std::uint16_t DEFNPC_BOOLFLAG = 0;
 const std::uint16_t DEFNPC_TAMEDHUNGERRATE = 0;
 const std::uint16_t DEFNPC_TAMEDTHIRSTRATE = 0;
@@ -1384,14 +1384,14 @@ void CChar::SetNextAct(std::uint8_t newVal) { nextAct = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets timer values for the character
 // o------------------------------------------------------------------------------------------------o
-timerval_t CChar::GetTimer(cC_TID timerId) const {
+timerval_t CChar::GetTimer(cc_tid_t timerId) const {
     timerval_t rValue = 0;
     if (timerId != tCHAR_COUNT) {
         rValue = charTimers[timerId];
     }
     return rValue;
 }
-void CChar::SetTimer(cC_TID timerId, timerval_t value) {
+void CChar::SetTimer(cc_tid_t timerId, timerval_t value) {
     if (timerId != tCHAR_COUNT) {
         charTimers[timerId] = value;
         if (timerId == tNPC_SUMMONTIME || timerId == tCHAR_MURDERRATE ||
@@ -1967,7 +1967,7 @@ void CChar::CopyData(CChar *target) {
 
     for (std::int32_t mTID = static_cast<std::int32_t>(tCHAR_TIMEOUT); mTID < static_cast<std::int32_t>(tCHAR_COUNT);
          ++mTID) {
-        target->SetTimer(static_cast<cC_TID>(mTID), GetTimer(static_cast<cC_TID>(mTID)));
+        target->SetTimer(static_cast<cc_tid_t>(mTID), GetTimer(static_cast<cc_tid_t>(mTID)));
     }
     target->SetHunger(hunger);
     target->SetThirst(thirst);
@@ -3928,7 +3928,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                 rValue = true;
             }
             else if (UTag == "NPCFLAG") {
-                SetNPCFlag(static_cast<cNPC_FLAG>(
+                SetNPCFlag(static_cast<cnpc_flag_t>(
                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 UpdateFlag(this);
                 rValue = true;
@@ -7148,8 +7148,8 @@ void CChar::SetOrneriness(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's default flag color
 // o------------------------------------------------------------------------------------------------o
-cNPC_FLAG CChar::GetNPCFlag(void) const {
-    cNPC_FLAG retVal = fNPC_NEUTRAL;
+cnpc_flag_t CChar::GetNPCFlag(void) const {
+    cnpc_flag_t retVal = fNPC_NEUTRAL;
 
     if (IsValidNPC()) {
         retVal = mNPC->npcFlag;
@@ -7157,7 +7157,7 @@ cNPC_FLAG CChar::GetNPCFlag(void) const {
 
     return retVal;
 }
-void CChar::SetNPCFlag(cNPC_FLAG flagType) {
+void CChar::SetNPCFlag(cnpc_flag_t flagType) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7752,7 +7752,7 @@ void CChar::SetWeight(std::int32_t newVal, [[maybe_unused]] bool doWeightUpdate)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces the object onto the global refresh queue
 // o------------------------------------------------------------------------------------------------o
-void CChar::Dirty(UpdateTypes updateType) {
+void CChar::Dirty(updatetypes_t updateType) {
     if (IsPostLoaded()) {
         updateTypes.set(updateType, true);
         CBaseObject::Dirty(updateType);
@@ -7778,7 +7778,7 @@ void CChar::UpdateRegion(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if we have set a specific UpdateType
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetUpdate(UpdateTypes updateType) const { return updateTypes.test(updateType); }
+bool CChar::GetUpdate(updatetypes_t updateType) const { return updateTypes.test(updateType); }
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::ClearUpdate()
 //| Date		-	3/20/2006

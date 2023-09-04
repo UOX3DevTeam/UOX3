@@ -625,7 +625,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
             const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,
                                                   x1, x2, y1, y2, dz);
             if (idToPush != INVALIDID) {
-                auto tile = Tile_st(TileType_t::art);
+                auto tile = Tile_st(tiletype_t::art);
                 tile.artInfo = &Map->SeekTile(idToPush);
                 tile.tileId = idToPush;
 

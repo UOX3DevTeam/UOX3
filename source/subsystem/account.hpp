@@ -54,7 +54,7 @@ struct AccountEntry {
     static constexpr auto CHARACTERCOUNT = static_cast<account::charnum_t>(7);
     static constexpr auto INVALID_ACCOUNT = std::numeric_limits<account::acctnum_t>::max();
 
-    enum AttributeFlag {
+    enum attributeflag_t {
         BANNED = 0,
         SUSPENDED,
         PUBLIC,
@@ -77,7 +77,7 @@ struct AccountEntry {
     std::string password;
     std::string contact;
 
-    std::bitset<AttributeFlag::COUNT> flag;
+    std::bitset<attributeflag_t::COUNT> flag;
 
     bool changed;
     account::acctnum_t accountNumber; // Why std::uint16_t ?  why not just an int
@@ -104,8 +104,8 @@ struct AccountEntry {
     auto operator[](account::charnum_t characterSlot) const -> const AccountCharacter &;
     auto operator[](account::charnum_t characterSlot) -> AccountCharacter &;
     // some helper methods
-    auto test(AttributeFlag flag) const -> bool;
-    auto set(AttributeFlag flag, bool state) -> void;
+    auto test(attributeflag_t flag) const -> bool;
+    auto set(attributeflag_t flag, bool state) -> void;
 
     [[maybe_unused]] auto addCharacter(account::charnum_t characterSlot,
                                        const AccountCharacter &accountCharacter) -> bool;

@@ -122,7 +122,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
             if (targSocket != nullptr) {
                 targSocket->SysMessage(488); // You have been banned!
             }
-            actbTemp.flag.set(AccountEntry::AttributeFlag::BANNED, true);
+            actbTemp.flag.set(AccountEntry::attributeflag_t::BANNED, true);
             if (targSocket != nullptr) {
                 Network->Disconnect(targSocket);
             }
@@ -137,7 +137,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
             if (targSocket != nullptr) {
                 targSocket->SysMessage(491); // You have been banned for 24 hours!
             }
-            actbTemp.flag.set(AccountEntry::AttributeFlag::BANNED, true);
+            actbTemp.flag.set(AccountEntry::attributeflag_t::BANNED, true);
             actbTemp.timeBan = GetMinutesSinceEpoch() + static_cast<std::uint32_t>(1440);
 
             if (targSocket != nullptr) {

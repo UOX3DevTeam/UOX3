@@ -3171,7 +3171,7 @@ std::int8_t cScript::OnCommand(CSocket *mSock, std::string command) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 // o------------------------------------------------------------------------------------------------o
-bool cScript::ExistAndVerify(ScriptEvent eventNum, std::string functionName) {
+bool cScript::ExistAndVerify(cScript::event_t eventNum, std::string functionName) {
     if (!EventExists(eventNum))
         return false;
 
@@ -3649,7 +3649,7 @@ std::int16_t cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, std::
     }
     JSEncapsulate damage(targContext, &rval);
 
-    if (damage.isType(JSOT_INT) || damage.isType(JSOT_DOUBLE)) // They returned some sort of value
+    if (damage.isType(JSEncapsulate::JSOT_INT) || damage.isType(JSEncapsulate::JSOT_DOUBLE)) // They returned some sort of value
     {
         return static_cast<std::int16_t>(damage.toInt());
     }
@@ -4145,14 +4145,14 @@ std::int8_t cScript::OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target) {
     return TryParseJSVal(rval);
 }
 
-bool cScript::EventExists(ScriptEvent eventNum) const {
+bool cScript::EventExists(cScript::event_t eventNum) const {
     std::uint32_t index = eventNum / 64;
     if (index > 2)
         return false;
 
     return eventPresence[index].test((eventNum % 64));
 }
-void cScript::SetEventExists(ScriptEvent eventNum, bool status) {
+void cScript::SetEventExists(cScript::event_t eventNum, bool status) {
     std::uint32_t index = eventNum / 64;
     if (index > 2)
         return;
@@ -4160,14 +4160,14 @@ void cScript::SetEventExists(ScriptEvent eventNum, bool status) {
     eventPresence[index].set((eventNum % 64), status);
 }
 
-bool cScript::NeedsChecking(ScriptEvent eventNum) const {
+bool cScript::NeedsChecking(cScript::event_t eventNum) const {
     std::uint32_t index = eventNum / 64;
     if (index > 2)
         return false;
 
     return needsChecking[index].test((eventNum % 64));
 }
-void cScript::SetNeedsChecking(ScriptEvent eventNum, bool status) {
+void cScript::SetNeedsChecking(cScript::event_t eventNum, bool status) {
     std::uint32_t index = eventNum / 64;
     if (index > 2)
         return;

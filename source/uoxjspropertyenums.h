@@ -10,7 +10,7 @@ const uint8 JSPROP_ENUMANDPERM = JSPROP_ENUMERATE | JSPROP_PERMANENT;
 const uint8 JSPROP_ENUMPERMRO = JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY;
 const uint8 JSPROP_ENUMPERMIDX = JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_INDEX;
 
-enum CSpell_Properties {
+enum cspell_properties_t {
     CSP_ID = 0,
     CSP_ACTION,
     CSP_DELAY,
@@ -50,7 +50,7 @@ enum CSpell_Properties {
     CSP_COUNT
 };
 
-enum CGlobalSkill_Properties {
+enum cglobalskill_properties_t {
     CGSKILL_NAME,
     CGSKILL_MADEWORD,
     CGSKILL_STRENGTH,
@@ -61,7 +61,7 @@ enum CGlobalSkill_Properties {
     CGSKILL_COUNT
 };
 
-enum CCreateEntry_Properties {
+enum ccreateentry_properties_t {
     CMAKE_ID = 0,
     CMAKE_NAME,
     CMAKE_ADDITEM,
@@ -78,7 +78,7 @@ enum CCreateEntry_Properties {
     CMAKE_COUNT
 };
 
-enum CTimer_Properties {
+enum ctimer_properties_t {
     // Character timers
     TIMER_TIMEOUT = 0,
     TIMER_INVIS,
@@ -119,7 +119,7 @@ enum CTimer_Properties {
     TIMER_COUNT
 };
 
-enum CRace_Properties {
+enum crace_properties_t {
     CRP_ID = 0,
     CRP_NAME,
     CRP_WEAKTOWEATHER,
@@ -137,7 +137,7 @@ enum CRace_Properties {
     CRP_COUNT
 };
 
-enum CRegion_Properties {
+enum cregion_properties_t {
     CREGP_NAME = 0,
     CREGP_MAYOR,
     CREGP_RACE,
@@ -172,7 +172,7 @@ enum CRegion_Properties {
     CREGP_COUNT
 };
 
-enum CSpawnRegion_Properties {
+enum cspawnregion_properties_t {
     CSPAWNREGP_NAME = 0,
     CSPAWNREGP_REGIONNUM,
     CSPAWNREGP_ITEMLIST,
@@ -199,7 +199,7 @@ enum CSpawnRegion_Properties {
     CSPAWNREGP_COUNT
 };
 
-enum CGuild_Properties {
+enum cguild_properties_t {
     CGP_NAME = 0,
     CGP_TYPE,
     CGP_MASTER,
@@ -214,7 +214,7 @@ enum CGuild_Properties {
     CGP_COUNT
 };
 
-enum CC_Properties {
+enum cc_properties_t {
     CCP_NAME = 0,
     CCP_ORIGNAME,
     CCP_TITLE,
@@ -402,7 +402,7 @@ enum CC_Properties {
     CCP_COUNT
 };
 
-enum CI_Properties {
+enum ci_properties_t {
     CIP_NAME = 0,
     CIP_TITLE,
     CIP_X,
@@ -553,11 +553,11 @@ enum CI_Properties {
     CIP_COUNT
 };
 
-enum CAccount_Properties {
+enum caccount_properties_t {
 
 };
 
-enum CSocket_Properties {
+enum cscket_properties_t {
     CSOCKP_ACCOUNT = 0,
     CSOCKP_CURRENTCHAR,
     CSOCKP_IDLETIMEOUT,
@@ -598,9 +598,9 @@ enum CSocket_Properties {
     CSOCKP_COUNT,
 };
 
-enum CGumpData_Properties { CGumpData_ID = 0, CGumpData_Button };
+enum cgumpdata_properties_t { CGumpData_ID = 0, CGumpData_Button };
 
-enum CAccountProperties {
+enum caccountproperties_t {
     CACCOUNT_ID = 0,
     CACCOUNT_USERNAME,
     CACCOUNT_PASSWORD,
@@ -637,13 +637,13 @@ enum CAccountProperties {
     CACCOUNT_GM
 };
 
-enum CConsoleProperties { CCONSOLE_MODE = 0, CCONSOLE_LOGECHO, CCONSOLE_COUNT };
+enum cconsoleproperties_t { CCONSOLE_MODE = 0, CCONSOLE_LOGECHO, CCONSOLE_COUNT };
 
-enum CScriptSectionProperties { CSS_NUMTAGS = 0, CSS_ATEND, CSS_ATENDTAGS, CSS_COUNT };
+enum cscriptsectionproperties_t { CSS_NUMTAGS = 0, CSS_ATEND, CSS_ATENDTAGS, CSS_COUNT };
 
-enum CScriptProperties { CSCRIPT_SCRIPTID = 0, CSCRIPT_COUNT };
+enum cscriptproperties_t { CSCRIPT_SCRIPTID = 0, CSCRIPT_COUNT };
 
-enum CResourceProperties {
+enum cresourceproperties_t {
     CRESP_LOGAMT = 0,
     CRESP_LOGTIME,
     CRESP_OREAMT,

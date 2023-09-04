@@ -16,9 +16,9 @@ class cScript;
 class CItem;
 class CTownRegion;
 
-enum cNPC_FLAG { fNPC_NEUTRAL = 0, fNPC_INNOCENT, fNPC_EVIL };
+enum cnpc_flag_t { fNPC_NEUTRAL = 0, fNPC_INNOCENT, fNPC_EVIL };
 
-enum cC_TID {
+enum cc_tid_t {
     // Global Character Timers
     tCHAR_TIMEOUT = 0,
     tCHAR_INVIS,
@@ -101,7 +101,7 @@ class CChar : public CBaseObject {
         std::uint8_t questDestRegion;
         std::uint8_t questOrigRegion;
         CBaseObject *petGuarding;
-        cNPC_FLAG npcFlag;
+        cnpc_flag_t npcFlag;
         std::bitset<8> boolFlags;
         std::int16_t peaceing;
         std::int16_t provoing;
@@ -286,9 +286,9 @@ class CChar : public CBaseObject {
 
     virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) override;
 
-    bool GetUpdate(UpdateTypes updateType) const;
+    bool GetUpdate(updatetypes_t updateType) const;
     void ClearUpdate(void);
-    virtual void Dirty(UpdateTypes updateType) override;
+    virtual void Dirty(updatetypes_t updateType) override;
     void UpdateRegion(void);
 
     void UpdateDamageTrack(void);
@@ -444,12 +444,12 @@ class CChar : public CBaseObject {
     std::string GetGuildTitle(void) const;
     void SetGuildTitle(const std::string &newValue);
 
-    timerval_t GetTimer(cC_TID timerId) const;
+    timerval_t GetTimer(cc_tid_t timerId) const;
     timerval_t GetRegen(std::uint8_t part) const;
     timerval_t GetWeathDamage(std::uint8_t part) const;
     std::uint8_t GetNextAct(void) const;
 
-    void SetTimer(cC_TID timerId, timerval_t value);
+    void SetTimer(cc_tid_t timerId, timerval_t value);
     void SetRegen(timerval_t newValue, std::uint8_t part);
     void SetWeathDamage(timerval_t newValue, std::uint8_t part);
     void SetNextAct(std::uint8_t newVal);
@@ -777,8 +777,8 @@ class CChar : public CBaseObject {
     bool StillGotDirs(void) const;
     void FlushPath(void);
 
-    cNPC_FLAG GetNPCFlag(void) const;
-    void SetNPCFlag(cNPC_FLAG flagType);
+    cnpc_flag_t GetNPCFlag(void) const;
+    void SetNPCFlag(cnpc_flag_t flagType);
 
     R32 GetWalkingSpeed(void) const;
     void SetWalkingSpeed(R32 newValue);

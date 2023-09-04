@@ -740,7 +740,7 @@ JSBool SE_RegisterKey(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
         return JS_FALSE;
     }
     std::int32_t toPass = 0;
-    if (encaps.isType(JSOT_STRING)) {
+    if (encaps.isType(JSEncapsulate::JSOT_STRING)) {
         std::string enStr = encaps.toString();
         if (enStr.length() != 0) {
             toPass = enStr[0];
@@ -1636,7 +1636,7 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
 
     JSEncapsulate myClass(cx, &(argv[0]));
     if (myClass.ClassName() == "UOXChar") {
-        if (myClass.isType(JSOT_OBJECT)) {
+        if (myClass.isType(JSEncapsulate::JSOT_OBJECT)) {
             mChar = static_cast<CChar *>(myClass.toObject());
             if (!ValidateObject(mChar)) {
                 mChar = nullptr;
@@ -1644,7 +1644,7 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
         }
     }
     else if (myClass.ClassName() == "UOXSocket") {
-        if (myClass.isType(JSOT_OBJECT)) {
+        if (myClass.isType(JSEncapsulate::JSOT_OBJECT)) {
             mySocket = static_cast<CSocket *>(myClass.toObject());
             if (mySocket != nullptr) {
                 mChar = mySocket->CurrcharObj();
@@ -1748,7 +1748,7 @@ JSBool SE_TriggerTrap(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 
     JSEncapsulate myClass(cx, &(argv[0]));
     if (myClass.ClassName() == "UOXChar") {
-        if (myClass.isType(JSOT_OBJECT)) {
+        if (myClass.isType(JSEncapsulate::JSOT_OBJECT)) {
             mChar = static_cast<CChar *>(myClass.toObject());
             if (!ValidateObject(mChar)) {
                 mChar = nullptr;
@@ -1756,7 +1756,7 @@ JSBool SE_TriggerTrap(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
         }
     }
     else if (myClass.ClassName() == "UOXSocket") {
-        if (myClass.isType(JSOT_OBJECT)) {
+        if (myClass.isType(JSEncapsulate::JSOT_OBJECT)) {
             mySocket = static_cast<CSocket *>(myClass.toObject());
             if (mySocket != nullptr) {
                 mChar = mySocket->CurrcharObj();
@@ -2931,7 +2931,7 @@ JSBool SE_ResourceRegion(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     }
 
     JSObject *jsResource = JS_NewObject(cx, &UOXResource_class, nullptr, obj);
-    JS_DefineProperties(cx, jsResource, CResourceProperties);
+    JS_DefineProperties(cx, jsResource, cresourceproperties_t);
     JS_SetPrivate(cx, jsResource, mRes);
 
     *rval = OBJECT_TO_JSVAL(jsResource);
@@ -2994,7 +2994,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         return JS_FALSE;
     }
 
-    if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL)) {
+    if (attackerClass.isType(JSEncapsulate::JSOT_VOID) || attackerClass.isType(JSEncapsulate::JSOT_NULL)) {
         ScriptError(cx, "ApplyDamageBonuses: Passed an invalid Character");
         return JS_TRUE;
     }
@@ -3013,7 +3013,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         return JS_FALSE;
     }
 
-    if (defenderClass.isType(JSOT_VOID) || defenderClass.isType(JSOT_NULL)) {
+    if (defenderClass.isType(JSEncapsulate::JSOT_VOID) || defenderClass.isType(JSEncapsulate::JSOT_NULL)) {
         ScriptError(cx, "ApplyDamageBonuses: Passed an invalid Character");
         return JS_TRUE;
     }
@@ -3059,7 +3059,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
 
     JSEncapsulate attackerClass(cx, &(argv[1]));
     if (attackerClass.ClassName() == "UOXChar") {
-        if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL)) {
+        if (attackerClass.isType(JSEncapsulate::JSOT_VOID) || attackerClass.isType(JSEncapsulate::JSOT_NULL)) {
             attacker = nullptr;
         }
         else {
@@ -3077,7 +3077,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
         return JS_FALSE;
     }
 
-    if (defenderClass.isType(JSOT_VOID) || defenderClass.isType(JSOT_NULL)) {
+    if (defenderClass.isType(JSEncapsulate::JSOT_VOID) || defenderClass.isType(JSEncapsulate::JSOT_NULL)) {
         ScriptError(cx, "ApplyDefenseModifiers: Passed an invalid Character");
         return JS_TRUE;
     }
@@ -3399,7 +3399,7 @@ JSBool SE_CheckStaticFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
     std::int16_t y = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
-    TileFlags toCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[4]));
+    auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[4]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasStaticFlag = Map->CheckStaticFlag(x, y, z, worldNum, toCheck, ignoreMe, false);
     *rval = BOOLEAN_TO_JSVAL(hasStaticFlag);
@@ -3425,7 +3425,7 @@ JSBool SE_CheckDynamicFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     std::int8_t z = static_cast<std::int8_t>(JSVAL_TO_INT(argv[2]));
     std::uint8_t worldNum = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[3]));
     std::uint8_t instanceId = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
-    TileFlags toCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[5]));
+    auto toCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[5]));
     [[maybe_unused]] std::uint16_t ignoreMe = 0;
     bool hasDynamicFlag = Map->CheckDynamicFlag(x, y, z, worldNum, instanceId, toCheck, ignoreMe);
     *rval = BOOLEAN_TO_JSVAL(hasDynamicFlag);
@@ -3446,7 +3446,7 @@ JSBool SE_CheckTileFlag([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
     }
 
     std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    TileFlags flagToCheck = static_cast<TileFlags>(JSVAL_TO_INT(argv[1]));
+    auto flagToCheck = static_cast<tileflags_t>(JSVAL_TO_INT(argv[1]));
 
     bool tileHasFlag = Map->CheckTileFlag(itemId, flagToCheck);
     *rval = BOOLEAN_TO_JSVAL(tileHasFlag);
@@ -4210,7 +4210,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 150: // PETOFFLINECHECKTIMER
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
-                static_cast<cSD_TID>(tSERVER_PETOFFLINECHECK))));
+                static_cast<csd_tid_t>(tSERVER_PETOFFLINECHECK))));
             break;
         case 152: // ADVANCEDPATHFINDING
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AdvancedPathfinding());
@@ -4436,7 +4436,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 219: // DECAYTIMERINHOUSE
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
-                static_cast<cSD_TID>(tSERVER_DECAYINHOUSE))));
+                static_cast<csd_tid_t>(tSERVER_DECAYINHOUSE))));
             break;
         case 220: // PROTECTPRIVATEHOUSES
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ProtectPrivateHouses());
@@ -4583,7 +4583,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 247: // NPCFLAGUPDATETIMER
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
-                static_cast<cSD_TID>(tSERVER_NPCFLAGUPDATETIMER))));
+                static_cast<csd_tid_t>(tSERVER_NPCFLAGUPDATETIMER))));
             break;
         case 248: // JSENGINESIZE
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetJSEngineSize()));
@@ -4601,7 +4601,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         }
         case 251: // THIRSTRATE
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
-                static_cast<cSD_TID>(tSERVER_THIRSTRATE))));
+                static_cast<csd_tid_t>(tSERVER_THIRSTRATE))));
             break;
         case 252: // THIRSTDRAINVAL
             *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ThirstDrain()));
@@ -4963,7 +4963,7 @@ JSBool SE_GetClientFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         return JS_FALSE;
     }
 
-    ClientFeatures clientFeature = static_cast<ClientFeatures>(JSVAL_TO_INT(argv[0]));
+    auto clientFeature = static_cast<clientfeatures_t>(JSVAL_TO_INT(argv[0]));
     *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetClientFeature(clientFeature));
     return JS_TRUE;
 }
@@ -4980,7 +4980,7 @@ JSBool SE_GetServerFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         return JS_FALSE;
     }
 
-    ServerFeatures serverFeature = static_cast<ServerFeatures>(JSVAL_TO_INT(argv[0]));
+    auto serverFeature = static_cast<serverfeatures_t>(JSVAL_TO_INT(argv[0]));
     *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetServerFeature(serverFeature));
     return JS_TRUE;
 }

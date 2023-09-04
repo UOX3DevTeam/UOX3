@@ -260,10 +260,10 @@ const std::uint8_t dfnDataTypes[DFNTAG_COUNTOFTAGS] = {
 
 struct StrToDFNLookup_st {
     std::string strToAdd;
-    DFNTAGS dfnToAdd;
+    dfntags_t dfnToAdd;
 };
 
-const std::map<std::string, DFNTAGS> strToDFNTag{
+const std::map<std::string, dfntags_t> strToDFNTag{
     {"AC"s, DFNTAG_AC},
     {"ADDMENUITEM"s, DFNTAG_ADDMENUITEM},
     {"ADVOBJ"s, DFNTAG_ADVOBJ},
@@ -522,7 +522,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag{
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a valid DFN tag from a provided string
 // o------------------------------------------------------------------------------------------------o
-auto FindDFNTagFromStr(const std::string &strToFind) -> DFNTAGS {
+auto FindDFNTagFromStr(const std::string &strToFind) -> dfntags_t {
     auto iter = strToDFNTag.find(util::upper(strToFind));
     if (iter != strToDFNTag.end()) {
         return iter->second;
@@ -723,8 +723,8 @@ auto CScriptSection::AtEndTags() -> bool {
     }
     return false;
 }
-auto CScriptSection::PrevTag() -> DFNTAGS {
-    DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
+auto CScriptSection::PrevTag() -> dfntags_t {
+    auto rValue = DFNTAG_COUNTOFTAGS;
     if (currentPos2 != dataV2.begin()) {
         --currentPos2;
         if (!AtEndTags()) {
@@ -733,8 +733,8 @@ auto CScriptSection::PrevTag() -> DFNTAGS {
     }
     return rValue;
 }
-auto CScriptSection::NextTag() -> DFNTAGS {
-    DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
+auto CScriptSection::NextTag() -> dfntags_t {
+    auto rValue = DFNTAG_COUNTOFTAGS;
     if (!AtEndTags()) {
         ++currentPos2;
         if (!AtEndTags()) {
@@ -743,7 +743,7 @@ auto CScriptSection::NextTag() -> DFNTAGS {
     }
     return rValue;
 }
-auto CScriptSection::FirstTag() -> DFNTAGS {
+auto CScriptSection::FirstTag() -> dfntags_t {
     currentPos2 = dataV2.begin();
     if (AtEndTags()) {
         return DFNTAG_COUNTOFTAGS;
@@ -804,7 +804,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
     std::string sLine;
     SectData_st *toAdd = nullptr;
     SectDataV2_st *toAdd2 = nullptr;
-    DFNTAGS mTag;
+    dfntags_t mTag;
     std::string tag, value, localName;
     // Now the reverse comes into play!
     while (!input.eof() && sLine.substr(0, 1) != "}" && !input.fail()) {

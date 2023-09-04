@@ -246,10 +246,10 @@ CPInputBuffer *WhichPacket(std::uint8_t packetId, CSocket *s) {
 void CheckBanTimer(AccountEntry &actbTemp) {
     // Unban player if bantime is up, but don't do anything if bantime is zero - maybe player is
     // permanently banned!
-    if (actbTemp.flag.test(AccountEntry::AttributeFlag::BANNED) &&
+    if (actbTemp.flag.test(AccountEntry::attributeflag_t::BANNED) &&
         (actbTemp.timeBan > 0 && actbTemp.timeBan <= GetMinutesSinceEpoch())) {
         actbTemp.timeBan = 0x0;
-        actbTemp.flag.set(AccountEntry::AttributeFlag::BANNED, false);
+        actbTemp.flag.set(AccountEntry::attributeflag_t::BANNED, false);
     }
 }
 
@@ -281,7 +281,7 @@ void CPIFirstLogin::Log(std::ostream &outStream, bool fullHeader) {
 
 bool CPIFirstLogin::Handle(void) {
     tSock->AcctNo(AccountEntry::INVALID_ACCOUNT);
-    LoginDenyReason t = LDR_NODENY;
+    auto t = LDR_NODENY;
 
     std::string username = Name();
 
@@ -309,7 +309,7 @@ bool CPIFirstLogin::Handle(void) {
         // Check if player's bantime is up, and if so, unban player
         CheckBanTimer(*actbTemp);
 
-        if (actbTemp->flag.test(AccountEntry::AttributeFlag::BANNED)) {
+        if (actbTemp->flag.test(AccountEntry::attributeflag_t::BANNED)) {
             t = LDR_ACCOUNTDISABLED;
         }
         else if (actbTemp->password != pass1) {
@@ -409,7 +409,7 @@ bool CPIFirstLogin::Handle(void) {
         t = LDR_UNKNOWNUSER;
     }
 
-    if (t == LDR_NODENY && actbTemp->flag.test(AccountEntry::AttributeFlag::ONLINE)) {
+    if (t == LDR_NODENY && actbTemp->flag.test(AccountEntry::attributeflag_t::ONLINE)) {
         t = LDR_ACCOUNTINUSE;
     }
     if (t != LDR_NODENY) {
@@ -428,7 +428,7 @@ bool CPIFirstLogin::Handle(void) {
         Console::shared().Log(temp, "server.log");
         messageLoop << temp;
 
-        actbTemp->flag.set(AccountEntry::AttributeFlag::ONLINE, true);
+        actbTemp->flag.set(AccountEntry::attributeflag_t::ONLINE, true);
 
         // Add temp-clientversion info to account here, to be used for second login
         if (actbTemp->lastClientVersion == 0 || tSock->ClientType() != CV_DEFAULT) {
@@ -600,7 +600,7 @@ const std::string CPISecondLogin::Name(void) { return sid; }
 const std::string CPISecondLogin::Pass(void) { return password; }
 
 bool CPISecondLogin::Handle(void) {
-    LoginDenyReason t = LDR_NODENY;
+    auto t = LDR_NODENY;
     tSock->AcctNo(AccountEntry::INVALID_ACCOUNT);
     AccountEntry &actbTemp = Account::shared()[Name()];
     if (actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT) {
@@ -620,7 +620,7 @@ bool CPISecondLogin::Handle(void) {
         // Check if player's bantime is up, and if so, unban player
         CheckBanTimer(actbTemp);
 
-        if (actbTemp.flag.test(AccountEntry::AttributeFlag::BANNED)) {
+        if (actbTemp.flag.test(AccountEntry::attributeflag_t::BANNED)) {
             t = LDR_ACCOUNTDISABLED;
         }
         else if (pass1 != actbTemp.password) {

@@ -2997,7 +2997,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     TagMap localObject;
     if (argc == 2) {
         JSEncapsulate encaps(cx, &(argv[1]));
-        if (encaps.isType(JSOT_STRING)) { // String value handling
+        if (encaps.isType(JSEncapsulate::JSOT_STRING)) { // String value handling
             const std::string stringVal = encaps.toString();
             if (stringVal == "") {
                 localObject.m_Destroy = true;
@@ -3012,7 +3012,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             }
         }
-        else if (encaps.isType(JSOT_BOOL)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_BOOL)) {
             const bool boolVal = encaps.toBool();
             if (!boolVal) {
                 localObject.m_Destroy = true;
@@ -3025,7 +3025,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_BOOL;
             localObject.m_StringValue = "";
         }
-        else if (encaps.isType(JSOT_INT)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_INT)) {
             const std::int32_t intVal = encaps.toInt();
             if (!intVal) {
                 localObject.m_Destroy = true;
@@ -3038,7 +3038,7 @@ JSBool CBase_SetTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
-        else if (encaps.isType(JSOT_NULL)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_NULL)) {
             localObject.m_Destroy = true;
             localObject.m_IntValue = 0;
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
@@ -3122,7 +3122,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     TagMap localObject;
     if (argc == 2) {
         JSEncapsulate encaps(cx, &(argv[1]));
-        if (encaps.isType(JSOT_STRING)) { // String value handling
+        if (encaps.isType(JSEncapsulate::JSOT_STRING)) { // String value handling
             const std::string stringVal = encaps.toString();
             if (stringVal == "") {
                 localObject.m_Destroy = true;
@@ -3137,7 +3137,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 localObject.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
             }
         }
-        else if (encaps.isType(JSOT_BOOL)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_BOOL)) {
             const bool boolVal = encaps.toBool();
             if (!boolVal) {
                 localObject.m_Destroy = true;
@@ -3150,7 +3150,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_BOOL;
             localObject.m_StringValue = "";
         }
-        else if (encaps.isType(JSOT_INT)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_INT)) {
             const std::int32_t intVal = encaps.toInt();
             if (!intVal) {
                 localObject.m_Destroy = true;
@@ -3163,7 +3163,7 @@ JSBool CBase_SetTempTag(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
             localObject.m_StringValue = "";
         }
-        else if (encaps.isType(JSOT_NULL)) {
+        else if (encaps.isType(JSEncapsulate::JSOT_NULL)) {
             localObject.m_Destroy = true;
             localObject.m_IntValue = 0;
             localObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
@@ -7019,7 +7019,7 @@ JSBool CMisc_GetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
             return JS_FALSE;
         }
 
-        JS_NewNumberValue(cx, cMove->GetTimer(static_cast<cC_TID>(encaps.toInt())), rval);
+        JS_NewNumberValue(cx, cMove->GetTimer(static_cast<cc_tid_t>(encaps.toInt())), rval);
     }
     else if (myClass.ClassName() == "UOXSocket") {
         CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
@@ -7062,7 +7062,7 @@ JSBool CMisc_SetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
 
-        cMove->SetTimer(static_cast<cC_TID>(encaps.toInt()), static_cast<timerval_t>(timerVal));
+        cMove->SetTimer(static_cast<cc_tid_t>(encaps.toInt()), static_cast<timerval_t>(timerVal));
     }
     else if (myClass.ClassName() == "UOXSocket") {
         CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
@@ -9117,7 +9117,7 @@ JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
             return JS_FALSE;
         }
 
-        if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL)) {
+        if (attackerClass.isType(JSEncapsulate::JSOT_VOID) || attackerClass.isType(JSEncapsulate::JSOT_NULL)) {
             attacker = nullptr;
         }
         else {
@@ -9175,7 +9175,7 @@ JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
 
-        if (attackerClass.isType(JSOT_VOID) || attackerClass.isType(JSOT_NULL)) {
+        if (attackerClass.isType(JSEncapsulate::JSOT_VOID) || attackerClass.isType(JSEncapsulate::JSOT_NULL)) {
             attacker = nullptr;
         }
         else {
@@ -9678,7 +9678,7 @@ JSBool CChar_Heal(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
 
-        if (healerClass.isType(JSOT_VOID) || healerClass.isType(JSOT_NULL)) {
+        if (healerClass.isType(JSEncapsulate::JSOT_VOID) || healerClass.isType(JSEncapsulate::JSOT_NULL)) {
             healer = nullptr;
         }
         else {

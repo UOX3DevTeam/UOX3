@@ -3154,11 +3154,11 @@ void CPLoginDeny::InternalReset(void) {
     pStream.WriteByte(0, 0x82);
 }
 CPLoginDeny::CPLoginDeny() { InternalReset(); }
-CPLoginDeny::CPLoginDeny(LoginDenyReason reason) {
+CPLoginDeny::CPLoginDeny(logindenyreason_t reason) {
     InternalReset();
     DenyReason(reason);
 }
-void CPLoginDeny::DenyReason(LoginDenyReason reason) { pStream.WriteByte(1, reason); }
+void CPLoginDeny::DenyReason(logindenyreason_t reason) { pStream.WriteByte(1, reason); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPCharDeleteResult()

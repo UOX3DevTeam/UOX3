@@ -3465,7 +3465,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetOrgSkin(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CCP_NPCFLAG:
-            gPriv->SetNPCFlag(static_cast<cNPC_FLAG>(encaps.toInt()));
+            gPriv->SetNPCFlag(static_cast<cnpc_flag_t>(encaps.toInt()));
             UpdateFlag(gPriv);
             break;
         case CCP_NPCGUILD:
@@ -4967,52 +4967,52 @@ JSBool CAccountProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
             break;
         }
         case CACCOUNT_BANNED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::BANNED));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::BANNED));
             break;
         case CACCOUNT_SUSPENDED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::SUSPENDED));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::SUSPENDED));
             break;
         case CACCOUNT_PUBLIC:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::PUBLIC));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::PUBLIC));
             break;
         case CACCOUNT_ONLINE:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::ONLINE));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::ONLINE));
             break;
         case CACCOUNT_CHARSLOT1BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER1));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER1));
             break;
         case CACCOUNT_CHARSLOT2BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER2));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER2));
             break;
         case CACCOUNT_CHARSLOT3BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER3));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER3));
             break;
         case CACCOUNT_CHARSLOT4BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER4));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER4));
             break;
         case CACCOUNT_CHARSLOT5BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER5));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER5));
             break;
         case CACCOUNT_CHARSLOT6BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER6));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER6));
             break;
         case CACCOUNT_CHARSLOT7BLOCKED:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::CHARACTER7));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::CHARACTER7));
             break;
         case CACCOUNT_YOUNG:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::YOUNG));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::YOUNG));
             break;
         case CACCOUNT_UNUSED10:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::UNUSED));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::UNUSED));
             break;
         case CACCOUNT_SEER:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::SEER));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::SEER));
             break;
         case CACCOUNT_COUNSELOR:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::COUNSELOR));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::COUNSELOR));
             break;
         case CACCOUNT_GM:
-            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::AttributeFlag::GM));
+            *vp = BOOLEAN_TO_JSVAL(myAccount->flag.test(AccountEntry::attributeflag_t::GM));
             break;
         default:
             break;
@@ -5069,7 +5069,7 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
         case CACCOUNT_TIMEBAN: {
             std::uint32_t timeBan = static_cast<std::uint32_t>(encaps.toInt());
             if (timeBan > 0) {
-                myAccount->flag.set(AccountEntry::AttributeFlag::BANNED, true);
+                myAccount->flag.set(AccountEntry::attributeflag_t::BANNED, true);
                 myAccount->timeBan = GetMinutesSinceEpoch() + timeBan;
             }
             else {
@@ -5078,49 +5078,49 @@ JSBool CAccountProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *
             break;
         }
         case CACCOUNT_BANNED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::BANNED, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::BANNED, encaps.toBool());
             break;
         case CACCOUNT_SUSPENDED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::SUSPENDED, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::SUSPENDED, encaps.toBool());
             break;
         case CACCOUNT_PUBLIC:
-            myAccount->flag.set(AccountEntry::AttributeFlag::PUBLIC, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::PUBLIC, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT1BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER1, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER1, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT2BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER2, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER2, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT3BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER3, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER3, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT4BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER4, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER4, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT5BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER5, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER5, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT6BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER6, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER6, encaps.toBool());
             break;
         case CACCOUNT_CHARSLOT7BLOCKED:
-            myAccount->flag.set(AccountEntry::AttributeFlag::CHARACTER7, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::CHARACTER7, encaps.toBool());
             break;
         case CACCOUNT_YOUNG:
-            myAccount->flag.set(AccountEntry::AttributeFlag::YOUNG, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::YOUNG, encaps.toBool());
             break;
         case CACCOUNT_UNUSED10:
-            myAccount->flag.set(AccountEntry::AttributeFlag::UNUSED, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::UNUSED, encaps.toBool());
             break;
         case CACCOUNT_SEER:
-            myAccount->flag.set(AccountEntry::AttributeFlag::SEER, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::SEER, encaps.toBool());
             break;
         case CACCOUNT_COUNSELOR:
-            myAccount->flag.set(AccountEntry::AttributeFlag::COUNSELOR, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::COUNSELOR, encaps.toBool());
             break;
         case CACCOUNT_GM:
-            myAccount->flag.set(AccountEntry::AttributeFlag::GM, encaps.toBool());
+            myAccount->flag.set(AccountEntry::attributeflag_t::GM, encaps.toBool());
             break;
         default:
             break;
@@ -5409,7 +5409,7 @@ JSBool CSocket_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
     JSEncapsulate srcObj(cx, obj);
     CSocket *srcSock = static_cast<CSocket *>(srcObj.toObject());
     JSEncapsulate trgObj(cx, &v);
-    if (trgObj.isType(JSOT_OBJECT)) {
+    if (trgObj.isType(JSEncapsulate::JSOT_OBJECT)) {
         if (srcObj.ClassName() != trgObj.ClassName()) {
             *bp = JS_FALSE;
         }
@@ -5419,7 +5419,7 @@ JSBool CSocket_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
         }
     }
     else {
-        *bp = (srcSock == nullptr && trgObj.isType(JSOT_NULL)) ? JS_TRUE : JS_FALSE;
+        *bp = (srcSock == nullptr && trgObj.isType(JSEncapsulate::JSOT_NULL)) ? JS_TRUE : JS_FALSE;
     }
     return JS_TRUE;
 }
@@ -5431,7 +5431,7 @@ JSBool CBaseObject_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
     }
     else {
         JSEncapsulate trgObj(cx, &v);
-        if (trgObj.isType(JSOT_OBJECT)) {
+        if (trgObj.isType(JSEncapsulate::JSOT_OBJECT)) {
             if (srcObj.ClassName() != trgObj.ClassName()) {
                 *bp = JS_FALSE;
             }
@@ -5448,7 +5448,7 @@ JSBool CBaseObject_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
             }
         }
         else {
-            *bp = (src == nullptr && trgObj.isType(JSOT_NULL)) ? JS_TRUE : JS_FALSE;
+            *bp = (src == nullptr && trgObj.isType(JSEncapsulate::JSOT_NULL)) ? JS_TRUE : JS_FALSE;
         }
     }
     return JS_TRUE;
@@ -5457,7 +5457,7 @@ JSBool CParty_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
     JSEncapsulate srcObj(cx, obj);
     Party *srcParty = static_cast<Party *>(srcObj.toObject());
     JSEncapsulate trgObj(cx, &v);
-    if (trgObj.isType(JSOT_OBJECT)) {
+    if (trgObj.isType(JSEncapsulate::JSOT_OBJECT)) {
         if (srcObj.ClassName() != trgObj.ClassName()) {
             *bp = JS_FALSE;
         }
@@ -5467,7 +5467,7 @@ JSBool CParty_equality(JSContext *cx, JSObject *obj, jsval v, JSBool *bp) {
         }
     }
     else {
-        *bp = (srcParty == nullptr && trgObj.isType(JSOT_NULL)) ? JS_TRUE : JS_FALSE;
+        *bp = (srcParty == nullptr && trgObj.isType(JSEncapsulate::JSOT_NULL)) ? JS_TRUE : JS_FALSE;
     }
     return JS_TRUE;
 }

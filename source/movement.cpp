@@ -798,7 +798,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                                                              tItem->GetX(), tItem->GetY()));
 #endif
                         if (tItem->GetX() == x && tItem->GetY() == y) {
-                            auto tile = Tile_st(TileType_t::dyn);
+                            auto tile = Tile_st(tiletype_t::dyn);
                             tile.tileId = tItem->GetId();
                             tile.altitude = tItem->GetZ();
                             tile.artInfo = &Map->SeekTile(tItem->GetId());
@@ -836,7 +836,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
                             for (auto &multi : Map->SeekMulti(multiId).items) {
                                 if (multi.flag && (tItem->GetX() + multi.offsetX) == x &&
                                     (tItem->GetY() + multi.offsetY) == y) {
-                                    auto tile = Tile_st(TileType_t::dyn);
+                                    auto tile = Tile_st(tiletype_t::dyn);
                                     tile.artInfo = &Map->SeekTile(multi.tileId);
                                     tile.altitude = multi.altitude + tItem->GetZ();
                                     xyblock.push_back(tile);
@@ -2597,7 +2597,7 @@ bool CMovement::IsOk(std::vector<Tile_st> &xyblock, [[maybe_unused]] std::uint16
 
         if (tile.CheckFlag(TF_BLOCKING) || tile.CheckFlag(TF_SURFACE)) {
             // If character ignores doors (GMs/Counselors/Ghosts), and this is a door, ignore.
-            if (ignoreDoor && tile.type == TileType_t::dyn &&
+            if (ignoreDoor && tile.type == tiletype_t::dyn &&
                 (tile.CheckFlag(TF_DOOR) || tile.tileId == 0x692 || tile.tileId == 0x846 ||
                  tile.tileId == 0x873 || (tile.tileId >= 0x6F5 && tile.tileId <= 0x6F6)))
                 continue;

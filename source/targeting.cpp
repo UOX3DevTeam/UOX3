@@ -909,12 +909,12 @@ void AttackTarget(CSocket *s) {
         if (!targOwner->IsNpc()) {
             auto mPetOwner = mPet->GetOwnerObj();
             if (ValidateObject(mPetOwner) &&
-                mPetOwner->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                mPetOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 s->SysMessage(
                     18708); // As a Young player, you cannot harm other players, or their followers.
                 return;
             }
-            else if (targOwner->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+            else if (targOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 s->SysMessage(18709); // You cannot harm Young players, or their followers.
                 return;
             }
@@ -1126,14 +1126,14 @@ void TransferTarget(CSocket *s) {
     }
 
     if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
-        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) &&
-            !targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
+            !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18725); // As a young player, you may not transfer pets to older players.
             return;
         }
         else if (!mChar->IsNpc() &&
-                 !mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) &&
-                 targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                 !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
+                 targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18726); // As an older player, you may not transfer pets to young players.
             return;
         }
@@ -1491,14 +1491,14 @@ void FriendTarget(CSocket *s) {
     }
 
     if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
-        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) &&
-            !targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
+            !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18727); // As a young player, you may not friend pets to older players.
             return;
         }
         else if (!mChar->IsNpc() &&
-                 !mChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG) &&
-                 targChar->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                 !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
+                 targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18728); // As an older player, you may not friend pets to young players.
             return;
         }

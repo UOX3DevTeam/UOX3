@@ -163,7 +163,7 @@ AccountEntry::AccountEntry(const std::string &username, const std::string &passw
     : AccountEntry() {
     this->username = util::lower(username);
     this->password = password;
-    flag = std::bitset<AttributeFlag::COUNT>(attribute);
+    flag = std::bitset<attributeflag_t::COUNT>(attribute);
     this->contact = contact;
 }
 //======================================================================
@@ -205,7 +205,7 @@ auto AccountEntry::load(account::acctnum_t accountNumber, std::istream &input) -
                     this->password = value;
                 }
                 else if (key == "flags") {
-                    flag = std::bitset<AttributeFlag::COUNT>(std::stoul(value, nullptr, 0));
+                    flag = std::bitset<attributeflag_t::COUNT>(std::stoul(value, nullptr, 0));
                 }
                 else if (key == "timeban") {
                     this->timeBan = static_cast<std::uint32_t>(std::stoul(value, nullptr, 0));
@@ -245,9 +245,9 @@ auto AccountEntry::operator[](account::charnum_t characterSlot) -> AccountCharac
 }
 
 //====================================================================
-auto AccountEntry::test(AttributeFlag flag) const -> bool { return this->flag.test(flag); }
+auto AccountEntry::test(attributeflag_t flag) const -> bool { return this->flag.test(flag); }
 //====================================================================
-auto AccountEntry::set(AttributeFlag flag, bool state) -> void { this->flag[flag] = state; }
+auto AccountEntry::set(attributeflag_t flag, bool state) -> void { this->flag[flag] = state; }
 
 //====================================================================
 auto AccountEntry::addCharacter(account::charnum_t characterSlot,
@@ -584,7 +584,7 @@ auto Account::importAccounts() -> std::uint16_t {
                                     account.contact = values[3];
                                     [[fallthrough]];
                                 case 3:
-                                    account.flag = std::bitset<AccountEntry::AttributeFlag::COUNT>(
+                                    account.flag = std::bitset<AccountEntry::attributeflag_t::COUNT>(
                                         std::stoul(values[2], nullptr, 0));
                                     [[fallthrough]];
                                 case 2:

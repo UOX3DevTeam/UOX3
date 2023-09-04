@@ -24,9 +24,9 @@
 #define XP 0
 #define YP 1
 
-enum ShipOffsets { PORT_PLANK = 0, STARB_PLANK, HOLD, TILLER };
+enum shipoffsets_t { PORT_PLANK = 0, STARB_PLANK, HOLD, TILLER };
 
-enum ShipItems {
+enum shipitems_t {
     PORT_P_C = 0, // Port Plank Closed
     PORT_P_O,     // Port Plank Opened
     STAR_P_C,     // Starboard Plank Closed

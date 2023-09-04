@@ -69,7 +69,7 @@ JSEncapsulate::JSEncapsulate(JSContext *jsCX, JSObject *jsVP)
     beenParsed[JSOT_OBJECT] = true;
 }
 
-bool JSEncapsulate::isType(JSEncapsObjectType toCheck) { return (nativeType == toCheck); }
+bool JSEncapsulate::isType(JSEncapsulate::type_t toCheck) { return (nativeType == toCheck); }
 
 std::int32_t JSEncapsulate::toInt(void) {
     if (nativeType == JSOT_OBJECT) {
@@ -146,7 +146,7 @@ std::string JSEncapsulate::ClassName(void) {
     }
     return rVal;
 }
-void JSEncapsulate::Parse(JSEncapsObjectType typeConvert) {
+void JSEncapsulate::Parse(JSEncapsulate::type_t typeConvert) {
     jsdouble fvalue;
     std::int32_t ivalue;
     std::string svalue;

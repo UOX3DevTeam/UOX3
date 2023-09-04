@@ -1290,7 +1290,7 @@ auto CServerData::MaxStealthMovement(std::int16_t value) -> void { maxStealthMov
 auto CServerData::MaxStaminaMovement() const -> std::int16_t { return maxStaminaMovement; }
 auto CServerData::MaxStaminaMovement(std::int16_t value) -> void { maxStaminaMovement = value; }
 
-auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> timerval_t {
+auto CServerData::BuildSystemTimeValue(csd_tid_t timerId) const -> timerval_t {
     return BuildTimeValue(static_cast<R32>(SystemTimer(timerId)));
 }
 
@@ -1299,8 +1299,8 @@ auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> timerval_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific server timer
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::SystemTimer(cSD_TID timerid) const -> std::uint16_t { return serverTimers[timerid]; }
-auto CServerData::SystemTimer(cSD_TID timerid, std::uint16_t value) -> void {
+auto CServerData::SystemTimer(csd_tid_t timerid) const -> std::uint16_t { return serverTimers[timerid]; }
+auto CServerData::SystemTimer(csd_tid_t timerid, std::uint16_t value) -> void {
     serverTimers[timerid] = value;
 }
 
@@ -1309,14 +1309,14 @@ auto CServerData::SystemTimer(cSD_TID timerid, std::uint16_t value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets directory paths
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::Directory(CSDDirectoryPaths dp) -> std::string {
+auto CServerData::Directory(csddirectorypaths_t dp) -> std::string {
     std::string rValue;
     if (dp != CSDDP_COUNT) {
         rValue = serverDirectories[dp];
     }
     return rValue;
 }
-auto CServerData::Directory(CSDDirectoryPaths dp, std::string value) -> void {
+auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
     bool create_dir = false;
 
     if (dp != CSDDP_COUNT) {
@@ -3698,10 +3698,10 @@ auto CServerData::AccountFlushTimer(R64 value) -> void { flushTime = value; }
 //|	Purpose		-	Gets/Sets a specific client-side feature
 //|	Notes		-	See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClientFeature(ClientFeatures bitNum) const -> bool {
+auto CServerData::GetClientFeature(clientfeatures_t bitNum) const -> bool {
     return clientFeatures.test(bitNum);
 }
-auto CServerData::SetClientFeature(ClientFeatures bitNum, bool nVal) -> void {
+auto CServerData::SetClientFeature(clientfeatures_t bitNum, bool nVal) -> void {
     clientFeatures.set(bitNum, nVal);
 }
 
@@ -3724,10 +3724,10 @@ auto CServerData::SetClientFeatures(std::uint32_t nVal) -> void { clientFeatures
 //|	Purpose		-	Gets/Sets a specific server-side feature
 //|	Notes		-	See ServerFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetServerFeature(ServerFeatures bitNum) const -> bool {
+auto CServerData::GetServerFeature(serverfeatures_t bitNum) const -> bool {
     return serverFeatures.test(bitNum);
 }
-auto CServerData::SetServerFeature(ServerFeatures bitNum, bool nVal) -> void {
+auto CServerData::SetServerFeature(serverfeatures_t bitNum, bool nVal) -> void {
     serverFeatures.set(bitNum, nVal);
 }
 
@@ -3807,10 +3807,10 @@ auto CServerData::UseUnicodeMessages(bool nVal) -> void {
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetDisabledAssistantFeature(AssistantFeatures bitNum) const -> bool {
+auto CServerData::GetDisabledAssistantFeature(assistantfeatures_t bitNum) const -> bool {
     return 0 != (CServerData::DisabledAssistantFeatures & bitNum);
 }
-auto CServerData::SetDisabledAssistantFeature(AssistantFeatures bitNum, bool nVal) -> void {
+auto CServerData::SetDisabledAssistantFeature(assistantfeatures_t bitNum, bool nVal) -> void {
     if (nVal) {
         CServerData::DisabledAssistantFeatures |= bitNum;
     }

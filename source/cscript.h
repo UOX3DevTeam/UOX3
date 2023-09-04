@@ -23,121 +23,6 @@ struct JSScript;
 struct JSContext;
 struct JSObject;
 
-enum ScriptEvent {
-    seOnCreateDFN = 0,
-    seOnCreateTile,
-    seOnCreatePlayer, //	*	Done for PCs on global script
-    seOnCommand,
-    seOnDelete,     //	**
-    seOnSpeech,     //	*	Missing item response at the moment
-    seInRange,      //	*	Missing character in range
-    seOnCollide,    //	**	Items only
-    seOnMoveDetect, //	***
-    seOnSteal,      //	**
-    seOnDispel,     //	**
-    seOnSkill,
-    seOnStat,
-    seOnTooltip,
-    seOnNameRequest,
-    seOnAttack,
-    seOnDefense,
-    seOnSkillGain,   //	**
-    seOnSkillLoss,   //	**
-    seOnSkillChange, //	**
-    seOnStatGained,  //	**
-    seOnStatGain,    //	**
-    seOnStatLoss,    //	**
-    seOnStatChange,  //	**
-    seOnDrop,
-    seOnPickup,
-    seOnContRemoveItem,
-    seOnSwing,
-    seOnDecay,
-    seOnTransfer,
-    seOnEntrance,       //	**
-    seOnLeaving,        //	**
-    seOnMultiLogout,    //	**
-    seOnEquipAttempt,   //	**
-    seOnEquip,          //	**
-    seOnUnequipAttempt, //	**
-    seOnUnequip,        //	**
-    seOnUseChecked,     //	**  the event that replaces hardcoded use-stuff
-    seOnUseUnChecked,
-    seOutOfRange, //	*	Missing character out of range
-    seOnLogin,    //	**
-    seOnLogout,
-    seOnClick,
-    seOnFall,
-    seOnSell,
-    seOnSellToVendor,
-    seOnBuy,
-    seOnBuyFromVendor,
-    seOnSoldToVendor,
-    seOnBoughtFromVendor,
-    seOnAISliver, //	**
-    seOnSystemSlice,
-    seOnUnknownTrigger,
-    seOnLightChange,
-    seOnWeatherChange,
-    seOnTempChange,
-    seOnTimer,         //	**
-    seOnDeath,         //	**
-    seOnResurrect,     //	**
-    seOnFlagChange,    //	**
-    seOnLoyaltyChange, //	**
-    seOnHungerChange,  //	**
-    seOnThirstChange,  //  **
-    seOnStolenFrom,    //	**
-    seOnSnooped,       //	**
-    seOnSnoopAttempt,  //	**
-    seOnEnterRegion,   //  **
-    seOnLeaveRegion,   //	**
-    seOnSpellTarget,
-    seOnSpellTargetSelect,
-    seOnSpellCast,
-    seOnSpellSuccess,
-    seOnTalk,
-    seOnScrollCast,
-    seOnSpeechInput,
-    seOnSpellGain,
-    seOnSpellLoss,
-    seOnSkillCheck,
-    seOnDropItemOnNpc,
-    seOnStart,
-    seOnStop,
-    seOnIterate,
-    seOnIterateSpawnRegions,
-    seOnPacketReceive,
-    seOnCharDoubleClick, //	**  the event that replaces hardcoded character doubleclick-stuff
-    seOnSkillGump,       //	**	allows overriding client's request to open default skill gump
-    seOnCombatStart,     //	**	allows overriding what happens when combat is initiated
-    seOnAICombatTarget,  //	**	allows overriding target selection taking place for regular
-                         // AI behaviours
-    seOnCombatEnd,       //	**	allows overriding what happens when combat ends
-    seOnDeathBlow,
-    seOnCombatDamageCalc,
-    seOnDamage,
-    seOnDamageDeal,
-    seOnGumpPress,
-    seOnGumpInput,
-    seOnScrollingGumpPress,
-    seOnDropItemOnItem,
-    seOnVirtueGumpPress,
-    seOnUseBandageMacro, //	**	allows overriding what happens when client uses bandage
-                         // macros
-    seOnHouseCommand,    //	**	allows overriding what happens when player speaks house
-                         // commands
-    seOnMakeItem,
-    seOnPathfindEnd,
-    seOnEnterEvadeState,
-    seOnCarveCorpse,
-    seOnDyeTarget,
-    seOnQuestGump,
-    seOnHelpButton,
-    seOnWarModeToggle,
-    seOnSpecialMove,
-    seOnFacetChange
-};
 
 struct SEGump_st {
     std::vector<std::string> *one, *two;
@@ -151,6 +36,123 @@ struct SEGumpData_st {
 };
 
 class cScript {
+public:
+  enum event_t {
+      seOnCreateDFN = 0,
+      seOnCreateTile,
+      seOnCreatePlayer, //    *    Done for PCs on global script
+      seOnCommand,
+      seOnDelete,     //    **
+      seOnSpeech,     //    *    Missing item response at the moment
+      seInRange,      //    *    Missing character in range
+      seOnCollide,    //    **    Items only
+      seOnMoveDetect, //    ***
+      seOnSteal,      //    **
+      seOnDispel,     //    **
+      seOnSkill,
+      seOnStat,
+      seOnTooltip,
+      seOnNameRequest,
+      seOnAttack,
+      seOnDefense,
+      seOnSkillGain,   //    **
+      seOnSkillLoss,   //    **
+      seOnSkillChange, //    **
+      seOnStatGained,  //    **
+      seOnStatGain,    //    **
+      seOnStatLoss,    //    **
+      seOnStatChange,  //    **
+      seOnDrop,
+      seOnPickup,
+      seOnContRemoveItem,
+      seOnSwing,
+      seOnDecay,
+      seOnTransfer,
+      seOnEntrance,       //    **
+      seOnLeaving,        //    **
+      seOnMultiLogout,    //    **
+      seOnEquipAttempt,   //    **
+      seOnEquip,          //    **
+      seOnUnequipAttempt, //    **
+      seOnUnequip,        //    **
+      seOnUseChecked,     //    **  the event that replaces hardcoded use-stuff
+      seOnUseUnChecked,
+      seOutOfRange, //    *    Missing character out of range
+      seOnLogin,    //    **
+      seOnLogout,
+      seOnClick,
+      seOnFall,
+      seOnSell,
+      seOnSellToVendor,
+      seOnBuy,
+      seOnBuyFromVendor,
+      seOnSoldToVendor,
+      seOnBoughtFromVendor,
+      seOnAISliver, //    **
+      seOnSystemSlice,
+      seOnUnknownTrigger,
+      seOnLightChange,
+      seOnWeatherChange,
+      seOnTempChange,
+      seOnTimer,         //    **
+      seOnDeath,         //    **
+      seOnResurrect,     //    **
+      seOnFlagChange,    //    **
+      seOnLoyaltyChange, //    **
+      seOnHungerChange,  //    **
+      seOnThirstChange,  //  **
+      seOnStolenFrom,    //    **
+      seOnSnooped,       //    **
+      seOnSnoopAttempt,  //    **
+      seOnEnterRegion,   //  **
+      seOnLeaveRegion,   //    **
+      seOnSpellTarget,
+      seOnSpellTargetSelect,
+      seOnSpellCast,
+      seOnSpellSuccess,
+      seOnTalk,
+      seOnScrollCast,
+      seOnSpeechInput,
+      seOnSpellGain,
+      seOnSpellLoss,
+      seOnSkillCheck,
+      seOnDropItemOnNpc,
+      seOnStart,
+      seOnStop,
+      seOnIterate,
+      seOnIterateSpawnRegions,
+      seOnPacketReceive,
+      seOnCharDoubleClick, //    **  the event that replaces hardcoded character doubleclick-stuff
+      seOnSkillGump,       //    **    allows overriding client's request to open default skill gump
+      seOnCombatStart,     //    **    allows overriding what happens when combat is initiated
+      seOnAICombatTarget,  //    **    allows overriding target selection taking place for regular
+                           // AI behaviours
+      seOnCombatEnd,       //    **    allows overriding what happens when combat ends
+      seOnDeathBlow,
+      seOnCombatDamageCalc,
+      seOnDamage,
+      seOnDamageDeal,
+      seOnGumpPress,
+      seOnGumpInput,
+      seOnScrollingGumpPress,
+      seOnDropItemOnItem,
+      seOnVirtueGumpPress,
+      seOnUseBandageMacro, //    **    allows overriding what happens when client uses bandage
+                           // macros
+      seOnHouseCommand,    //    **    allows overriding what happens when player speaks house
+                           // commands
+      seOnMakeItem,
+      seOnPathfindEnd,
+      seOnEnterEvadeState,
+      seOnCarveCorpse,
+      seOnDyeTarget,
+      seOnQuestGump,
+      seOnHelpButton,
+      seOnWarModeToggle,
+      seOnSpecialMove,
+      seOnFacetChange
+  };
+
   private:
     JSScript *targScript;
     JSContext *targContext;
@@ -161,17 +163,17 @@ class cScript {
 
     std::bitset<64> eventPresence[3];
     std::bitset<64> needsChecking[3];
-    bool EventExists(ScriptEvent eventNum) const;
-    bool NeedsChecking(ScriptEvent eventNum) const;
-    void SetEventExists(ScriptEvent eventNum, bool status);
-    void SetNeedsChecking(ScriptEvent eventNum, bool status);
-    bool ExistAndVerify(ScriptEvent eventNum, std::string functionName);
+    bool EventExists(cScript::event_t eventNum) const;
+    bool NeedsChecking(cScript::event_t eventNum) const;
+    void SetEventExists(cScript::event_t eventNum, bool status);
+    void SetNeedsChecking(cScript::event_t eventNum, bool status);
+    bool ExistAndVerify(cScript::event_t eventNum, std::string functionName);
 
     std::vector<SEGump_st *> gumpDisplays;
 
     void Cleanup(void);
 
-  public:
+public:
     void CollectGarbage(void);
 
     size_t NewGumpList(void);

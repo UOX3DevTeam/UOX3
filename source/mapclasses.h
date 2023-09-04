@@ -13,7 +13,7 @@
 
 // o------------------------------------------------------------------------------------------------o
 
-enum TileFlags {
+enum tileflags_t {
     // Flag:				Also known as:
     TF_FLOORLEVEL = 0, // "Background"
     TF_HOLDABLE,       // "Weapon"
@@ -103,13 +103,13 @@ class CBaseTile {
     auto Flags() const -> std::bitset<64> { return flags; }
     void Flags(std::bitset<64> newVal) { flags = newVal; }
 
-    bool CheckFlag(TileFlags toCheck) const {
+    bool CheckFlag(tileflags_t toCheck) const {
         if (toCheck >= TF_COUNT) {
             return false;
         }
         return flags.test(toCheck);
     }
-    void SetFlag(TileFlags toSet, bool newVal) {
+    void SetFlag(tileflags_t toSet, bool newVal) {
         if (toSet >= TF_COUNT) {
             return;
         }
@@ -202,13 +202,13 @@ class CLand : public CBaseTile {
     }
 };
 
-enum TileType_t { terrain, art, dyn };
+enum tiletype_t { terrain, art, dyn };
 
 // A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a
 // static tile)
 
 struct Tile_st {
-    TileType_t type;
+    tiletype_t type;
     std::uint16_t tileId; // for instance, this should be a tileid_t , that would make sense!
     std::int8_t altitude;
     std::uint16_t staticHue;
@@ -218,17 +218,17 @@ struct Tile_st {
     };
     constexpr static std::array<std::uint16_t, 11> terrainVoids{430, 431, 432, 433, 434, 475,
                                                                 580, 610, 611, 612, 613};
-    auto CheckFlag(TileFlags toCheck) const -> bool {
-        if (type != TileType_t::terrain) {
+    auto CheckFlag(tileflags_t toCheck) const -> bool {
+        if (type != tiletype_t::terrain) {
             return artInfo->CheckFlag(toCheck);
         }
         return terrainInfo->CheckFlag(toCheck);
     }
-    Tile_st(TileType_t type = TileType_t::terrain)
+    Tile_st(tiletype_t type = tiletype_t::terrain)
         : type(type), tileId(0), altitude(0), staticHue(0), artInfo(nullptr) {}
     auto isVoid() const -> bool {
         auto rValue = false;
-        if (type == TileType_t::terrain) {
+        if (type == tiletype_t::terrain) {
             auto iter =
                 std::find_if(terrainVoids.begin(), terrainVoids.end(),
                              [this](const std::uint16_t &value) { return tileId == value; });
@@ -238,7 +238,7 @@ struct Tile_st {
     }
     auto IsMountain() const -> bool {
         auto rValue = false;
-        if (type != TileType_t::terrain) {
+        if (type != tiletype_t::terrain) {
             rValue =
                 ((tileId >= 431) && (tileId <= 432)) || ((tileId >= 467) && (tileId <= 474)) ||
                 ((tileId >= 543) && (tileId <= 560)) || ((tileId >= 1754) && (tileId <= 1757)) ||
@@ -249,7 +249,7 @@ struct Tile_st {
     }
     auto top() -> std::int16_t {
         auto value = static_cast<int16_t>(altitude);
-        if (type != TileType_t::terrain) {
+        if (type != tiletype_t::terrain) {
             auto temp = artInfo->Height();
             temp = (temp & 0x8 ? (temp & 0xF) >> 1 : temp & 0xF);
 
@@ -258,13 +258,13 @@ struct Tile_st {
         return value;
     }
     auto height() -> std::uint8_t {
-        if (type != TileType_t::terrain) {
+        if (type != tiletype_t::terrain) {
             return artInfo->Height();
         }
         return 0;
     }
     auto name() const -> std::string {
-        if (type != TileType_t::terrain) {
+        if (type != tiletype_t::terrain) {
             return artInfo->Name();
         }
         return terrainInfo->Name();

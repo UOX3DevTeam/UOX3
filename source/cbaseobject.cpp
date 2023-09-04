@@ -2070,7 +2070,7 @@ void CBaseObject::Cleanup(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces the object onto the global refresh queue
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::Dirty([[maybe_unused]] UpdateTypes updateType) {
+void CBaseObject::Dirty([[maybe_unused]] updatetypes_t updateType) {
     if (IsDeleted()) {
         Console::shared().Error(util::format(
             "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!",

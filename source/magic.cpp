@@ -945,7 +945,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
                 shipMulti->GetInstanceId() == caster->GetInstanceId()) {
                 if (shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 &&
                     cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                    caster->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                    caster->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                     sock->SysMessage(18733); //  You decide against traveling to Felucca while you
                                              //  are still young.
                     return false;
@@ -997,7 +997,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
                         shipMulti->GetInstanceId() == caster->GetInstanceId()) {
                         if (shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 &&
                             cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                            caster->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                            caster->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                             sock->SysMessage(18733); //  You decide against traveling to Felucca
                                                      //  while you are still young.
                             return false;
@@ -1055,7 +1055,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
                 if (cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()) {
                     if (worldNum == 0 && caster->WorldNumber() != 0 &&
                         cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                        caster->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                        caster->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         sock->SysMessage(18733); //  You decide against traveling to Felucca while
                                                  //  you are still young.
                         return false;
@@ -1829,7 +1829,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
                         shipMulti->GetInstanceId() == caster->GetInstanceId()) {
                         if (shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 &&
                             cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                            caster->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                            caster->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                             sock->SysMessage(18733); //  You decide against traveling to Felucca
                                                      //  while you are still young.
                             return false;
@@ -1873,7 +1873,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
 
             if (worldNum == 0 && caster->WorldNumber() != 0 &&
                 cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                caster->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                caster->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 sock->SysMessage(
                     18733); //  You decide against traveling to Felucca while you are still young.
                 return false;

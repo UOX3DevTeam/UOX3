@@ -728,7 +728,7 @@ bool CPICreateCharacter::Handle(void) {
 
             AccountEntry &actbTemp2 = mChar->GetAccount();
             if (actbTemp2.accountNumber != AccountEntry::INVALID_ACCOUNT &&
-                actbTemp2.flag.test(AccountEntry::AttributeFlag::GM)) {
+                actbTemp2.flag.test(AccountEntry::attributeflag_t::GM)) {
                 mChar->SetPriv(0xFF);
                 mChar->SetCommandLevel(CL_GM);
             }
@@ -742,7 +742,7 @@ bool CPICreateCharacter::Handle(void) {
             __STARTLOCATIONDATA__ *toGo = nullptr;
             auto useYoungLocations = false;
             if (cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                tSock->GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                tSock->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 // Young player! Let's use young player start locations
                 toGo = cwmWorldState->ServerData()->YoungServerLocation(locationNumber);
                 serverCount = cwmWorldState->ServerData()->NumYoungServerLocations();
@@ -1254,7 +1254,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 
             AccountEntry &actbTemp = mSock->GetAccount();
             if (actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-                actbTemp.flag.set(AccountEntry::AttributeFlag::ONLINE, true);
+                actbTemp.flag.set(AccountEntry::attributeflag_t::ONLINE, true);
             }
 
             mSock->TargetOK(false);
@@ -1525,7 +1525,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
             // Only move player's items from backpack to corpse if young system is disabled OR
             // player is not on a young account
             if (!cwmWorldState->ServerData()->YoungPlayerSystem() ||
-                !mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)) {
+                !mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 std::vector<CItem *> moveItems;
                 auto jCont = j->GetContainsList();
                 for (const auto &k : jCont->collection()) {
@@ -1562,7 +1562,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
             if (packIsValid &&
                 (j->IsNewbie() ||
                  (cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                  mChar.GetAccount().flag.test(AccountEntry::AttributeFlag::YOUNG)))) {
+                  mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)))) {
                 j->SetCont(packItem);
             }
             else {
