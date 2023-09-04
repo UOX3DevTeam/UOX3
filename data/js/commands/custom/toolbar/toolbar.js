@@ -135,28 +135,3 @@ function onGumpPress( pSock, pButton, gumpData )
 }
 
 function _restorecontext_() {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
