@@ -59,6 +59,7 @@ CJSMapping::~CJSMapping() {
 //|	Purpose		-	Resets all parameters of the CJSMapping class to default
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::ResetDefaults(void) {
+    mapSection = std::vector<CJSMappingSection *>(CJSMappingSection::ScriptNames.size(),nullptr);
     for (size_t i= 0 ; i < CJSMappingSection::ScriptNames.size();i++){
         mapSection[i] = new CJSMappingSection(static_cast<CJSMappingSection::type_t>(i));
     }
