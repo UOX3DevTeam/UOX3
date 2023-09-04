@@ -295,6 +295,7 @@
 // Misc Command Gump Scripts [9000-9200]
 //-------------------------------------------
 9000=commands/custom/CommandInfo/InfoA.js
+9001=commands/custom/CommandInfo/InfoB.js
 }
 
 //-------------------------------------------

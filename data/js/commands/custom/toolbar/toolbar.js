@@ -41,7 +41,7 @@ function CommandInfo( pUser )
 	uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
 	uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
 
-	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1  );
+	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1 );
 	uox3gump.AddText( 190, 60, 0, "A" );
 
 	uox3gump.AddPageButton( 160, 90, 2443, 2444, 2 );
@@ -96,13 +96,12 @@ function CommandInfo( pUser )
 	uox3gump.AddText( 190, 570, 0, "S" );
 
 	uox3gump.AddPage( 1 );
-	TriggerEvent( 9000, "InfoA", pUser, uox3gump );
+	TriggerEvent( 9000, "InfoA", uox3gump );
 
 	uox3gump.AddPage( 2 );
-	uox3gump.AddButton( 270, 60, 2446, 2445, 0, 0, 0 );
-	uox3gump.AddText( 340, 60, 0, "Bolt" );
+	TriggerEvent( 9001, "InfoB", uox3gump );
 
-	uox3gump.Send( pUser );
+	uox3gump.Send( pUser);
 	uox3gump.Free();
 }
 
