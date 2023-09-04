@@ -13,6 +13,8 @@ function onLogin( socket, pChar )
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
 			return;
 		}
+		// ToolBar for Admin Account
+		TriggerEvent(1062, "toolbar", pChar);
 	}
 
 	// Attach OnFacetChange to characters logging into the shard

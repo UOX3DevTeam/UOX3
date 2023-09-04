@@ -356,6 +356,7 @@
 1059=commands/decorate.js
 1060=commands/custom/addsign.js
 1061=commands/spawn.js
+1062=commands/custom/toolbar.js
 }
 
 //-------------------------------------------
