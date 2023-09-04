@@ -46,9 +46,9 @@ class CHandleCombat {
 
     void HandleNPCSpellAttack(CChar *mChar, CChar *ourTarg, std::uint16_t playerDistance);
 
-    CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, WeatherType resistType);
+    CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, weathertype_t resistType);
     CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false,
-                       WeatherType resistType = NONE);
+                       weathertype_t resistType = NONE);
 
   public:
     bool StartAttack(CChar *mChar, CChar *ourTarg);
@@ -65,7 +65,7 @@ class CHandleCombat {
 
     void DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLoc, std::int16_t damage);
     std::int8_t CalculateHitLoc(void);
-    std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, WeatherType element = PHYSICAL);
+    std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, weathertype_t element = PHYSICAL);
     std::int16_t CalcAttackPower(CChar *mChar, bool doDamage = false);
     std::int16_t CalcLowDamage(CChar *p);
     std::int16_t CalcHighDamage(CChar *p);
@@ -76,9 +76,9 @@ class CHandleCombat {
     CItem *GetShield(CChar *mChar);
     CItem *GetWeapon(CChar *mChar);
 
-    std::int16_t ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+    std::int16_t ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
                             std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
-    std::int16_t ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+    std::int16_t ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
                                std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage,
                                bool doArmorDamage);
 

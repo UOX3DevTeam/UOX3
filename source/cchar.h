@@ -63,11 +63,11 @@ struct DamageTrackEntry_st {
     DamageTrackEntry_st()
         : damager(INVALIDSERIAL), damageDone(0), lastDamageType(PHYSICAL),
           lastDamageDone(INVALIDSERIAL) {}
-    DamageTrackEntry_st(serial_t dmgr, std::int32_t dmgDn, WeatherType dmgType, timerval_t lstDmgDn)
+    DamageTrackEntry_st(serial_t dmgr, std::int32_t dmgDn, weathertype_t dmgType, timerval_t lstDmgDn)
         : damager(dmgr), damageDone(dmgDn), lastDamageType(dmgType), lastDamageDone(lstDmgDn) {}
     serial_t damager;             // who did the damage?
     std::int32_t damageDone;            // how much damage has been accumulated?
-    WeatherType lastDamageType; // what type of damage was dealt most recently?
+    weathertype_t lastDamageType; // what type of damage was dealt most recently?
     timerval_t lastDamageDone;    // when was the last time that damage was done?
 };
 
@@ -180,7 +180,7 @@ class CChar : public CBaseObject {
         std::uint32_t playTime;      // Character's full playtime
 
         std::uint8_t atrophy[INTELLECT + 1];
-        SkillLock lockState[INTELLECT + 1]; // state of the skill locks
+        skilllock_t lockState[INTELLECT + 1]; // state of the skill locks
 
         // speechMode valid values
         // 0 normal speech
@@ -252,8 +252,8 @@ class CChar : public CBaseObject {
     skillval_t baseskill[ALLSKILLS]; // Base skills without stat modifiers
     skillval_t skill[INTELLECT + 1]; // List of skills (with stat modifiers)
 
-    std::map<ItemLayers, CItem *> itemLayers;
-    std::map<ItemLayers, CItem *>::iterator layerCtr;
+    std::map<itemlayers_t, CItem *> itemLayers;
+    std::map<itemlayers_t, CItem *>::iterator layerCtr;
     std::unordered_map<serial_t, TargetInfo>
         aggressorFlags; // Chars this char is marked as aggressor to, with timestamps
     std::unordered_map<serial_t, TargetInfo>
@@ -570,9 +570,9 @@ class CChar : public CBaseObject {
                         bool sendToSelf = true) override;
     virtual void SendToSocket(CSocket *s, bool drawGamePlayer = false) override;
 
-    CItem *GetItemAtLayer(ItemLayers Layer);
+    CItem *GetItemAtLayer(itemlayers_t Layer);
     bool WearItem(CItem *toWear);
-    bool TakeOffItem(ItemLayers Layer);
+    bool TakeOffItem(itemlayers_t Layer);
 
     CItem *FirstItem(void);
     CItem *NextItem(void);
@@ -650,19 +650,19 @@ class CChar : public CBaseObject {
     bool InDungeon(void);
     bool InBuilding(void);
 
-    void TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer);
-    void TextMessage(CSocket *s, std::int32_t dictEntry, SpeechType msgType, int spamTimer, ...);
+    void TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, bool spamTimer);
+    void TextMessage(CSocket *s, std::int32_t dictEntry, speechtype_t msgType, int spamTimer, ...);
 
     virtual void Cleanup(void) override;
     virtual void Delete(void) override;
     virtual bool CanBeObjType(ObjectType toCompare) const override;
 
-    FlagColors FlagColour(CChar *toCompare);
+    flagcolors_t FlagColour(CChar *toCompare);
     void Heal(std::int16_t healValue, CChar *healer = nullptr);
-    bool Damage(std::int16_t damageValue, WeatherType damageType, CChar *attacker = nullptr,
+    bool Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker = nullptr,
                 bool doRepsys = false);
     std::int16_t GetKarma(void) const;
-    void ReactOnDamage(WeatherType damageType, CChar *attacker = nullptr);
+    void ReactOnDamage(weathertype_t damageType, CChar *attacker = nullptr);
     void Die(CChar *attacker, bool doRepsys);
 
     // Values determining if the character is in a party or not, save us shortcutting in a few
@@ -875,9 +875,9 @@ class CChar : public CBaseObject {
     void SetFixedLight(std::uint8_t newVal);
 
     std::uint8_t GetAtrophy(std::uint8_t skillToGet) const;
-    SkillLock GetSkillLock(std::uint8_t skillToGet) const;
+    skilllock_t GetSkillLock(std::uint8_t skillToGet) const;
     void SetAtrophy(std::uint8_t newValue, std::uint8_t skillToSet);
-    void SetSkillLock(SkillLock newValue, std::uint8_t skillToSet);
+    void SetSkillLock(skilllock_t newValue, std::uint8_t skillToSet);
 
     std::uint32_t CountHousesOwned(bool countCoOwnedHouses);
 };

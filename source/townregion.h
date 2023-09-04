@@ -73,7 +73,7 @@ class CTownRegion {
     weathid_t weather;    // weather system the region belongs to
     std::int32_t goldReserved;  // amount of gold belonging to the town's treasury
 
-    WorldType visualAppearance; // seasonal choice, basically.  Each of the 4 seasons, or "dead"
+    worldtype_t visualAppearance; // seasonal choice, basically.  Each of the 4 seasons, or "dead"
     std::int32_t timeSinceGuardsPaid;   // time since the guards were last paid
     std::int32_t timeSinceTaxedMembers; // time since we last taxed our own members
     std::int32_t timeToElectionClose;   // time since the last election was completed
@@ -154,9 +154,9 @@ class CTownRegion {
     void SetResourceId(std::uint16_t resId);
     void SetHealth(std::int16_t newValue);
     void SetChanceBigOre(std::uint8_t newValue);
-    void SetAppearance(WorldType worldType);
+    void SetAppearance(worldtype_t worldType);
 
-    WorldType GetAppearance(void) const;
+    worldtype_t GetAppearance(void) const;
     std::uint8_t GetChanceBigOre(void) const;
     std::int32_t GetGoodBuy(std::uint8_t index) const;
     std::int32_t GetGoodRnd1(std::uint8_t index) const;

@@ -1598,7 +1598,7 @@ JSBool SE_IsRaceWeakToWeather([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     if (tRace == nullptr || toCheck >= WEATHNUM) {
         return JS_FALSE;
     }
-    *rval = BOOLEAN_TO_JSVAL(tRace->AffectedBy(static_cast<WeatherType>(toCheck)));
+    *rval = BOOLEAN_TO_JSVAL(tRace->AffectedBy(static_cast<weathertype_t>(toCheck)));
     return JS_TRUE;
 }
 
@@ -1702,7 +1702,7 @@ JSBool SE_UseItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsv
 
     // Handle envoke stuff outside for loop, as we only want this to execute once
     if (scriptTriggers.size() == 0 || !scriptExecuted) {
-        ItemTypes iType = myItem->GetType();
+        itemtypes_t iType = myItem->GetType();
         std::uint16_t itemId = myItem->GetId();
         std::uint16_t envTrig = 0;
         cScript *toExecute = nullptr;
@@ -2322,9 +2322,9 @@ JSBool SE_GetDictionaryEntry(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     }
 
     std::int32_t dictEntry = static_cast<std::int32_t>(JSVAL_TO_INT(argv[0]));
-    UnicodeTypes language = ZERO;
+    unicodetypes_t language = ZERO;
     if (argc == 2) {
-        language = static_cast<UnicodeTypes>(JSVAL_TO_INT(argv[1]));
+        language = static_cast<unicodetypes_t>(JSVAL_TO_INT(argv[1]));
     }
     std::string txt = Dictionary->GetEntry(dictEntry, language);
     txt = oldstrutil::stringToWstringToString(txt);
@@ -2375,7 +2375,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(tmpString);
-        unicodeMessage.Font(static_cast<FontType>(myChar->GetFontType()));
+        unicodeMessage.Font(static_cast<fonttype_t>(myChar->GetFontType()));
         if (mySock->GetWord(4) == 0x1700) {
             unicodeMessage.Colour(0x5A);
         }
@@ -2396,7 +2396,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
     else {
         CSpeechEntry &toAdd = SpeechSys->Add();
         toAdd.Speech(tmpString);
-        toAdd.Font(static_cast<FontType>(myChar->GetFontType()));
+        toAdd.Font(static_cast<fonttype_t>(myChar->GetFontType()));
         toAdd.Speaker(INVALIDSERIAL);
         if (mySock->GetWord(4) == 0x1700) {
             toAdd.Colour(0x5A);
@@ -3025,7 +3025,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         }
     }
 
-    damage = Combat->ApplyDamageBonuses(static_cast<WeatherType>(damageType.toInt()), attacker,
+    damage = Combat->ApplyDamageBonuses(static_cast<weathertype_t>(damageType.toInt()), attacker,
                                         defender, static_cast<std::uint8_t>(getFightSkill.toInt()),
                                         static_cast<std::uint8_t>(hitLoc.toInt()),
                                         static_cast<std::int16_t>(baseDamage.toInt()));
@@ -3090,7 +3090,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
     }
 
     damage = Combat->ApplyDefenseModifiers(
-        static_cast<WeatherType>(damageType.toInt()), attacker, defender,
+        static_cast<weathertype_t>(damageType.toInt()), attacker, defender,
         static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()),
         static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
 
@@ -4478,7 +4478,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 231: // CORESHARDERA
         {
             std::string tempString = {cwmWorldState->ServerData()->EraEnumToString(
-                static_cast<ExpansionRuleset>(cwmWorldState->ServerData()->ExpansionCoreShardEra()),
+                static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionCoreShardEra()),
                 true)};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4487,7 +4487,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 232: // ARMORCALCULATION
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionArmorCalculation()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4496,7 +4496,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 233: // STRENGTHDAMAGEBONUS
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionStrengthDamageBonus()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4505,7 +4505,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 234: // TACTICSDAMAGEBONUS
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionTacticsDamageBonus()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4514,7 +4514,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 235: // ANATOMYDAMAGEBONUS
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionAnatomyDamageBonus()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4523,7 +4523,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 236: // LUMBERJACKDAMAGEBONUS
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionLumberjackDamageBonus()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4532,7 +4532,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 237: // RACIALDAMAGEBONUS
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionRacialDamageBonus()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4541,7 +4541,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 238: // DAMAGEBONUSCAP
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionDamageBonusCap()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4550,7 +4550,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 239: // SHIELDPARRY
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionShieldParry()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4809,7 +4809,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 313: // WEAPONPARRY
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionWeaponParry()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4818,7 +4818,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 314: // WRESTLINGPARRY
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionWrestlingParry()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);
@@ -4827,7 +4827,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         case 315: // COMBATHITCHANCE
         {
             std::string tempString = {
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(
+                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(
                     cwmWorldState->ServerData()->ExpansionCombatHitChance()))};
             tString = JS_NewStringCopyZ(cx, tempString.c_str());
             *rval = STRING_TO_JSVAL(tString);

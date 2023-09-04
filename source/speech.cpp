@@ -27,7 +27,7 @@
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system
 // message
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, SpeechType speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
+void ClilocMessage(CSocket *mSock, speechtype_t speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
                    const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
@@ -73,7 +73,7 @@ void ClilocMessage(CSocket *mSock, SpeechType speechType, std::uint16_t hue, std
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if
 // said by srcObj
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, std::uint16_t hue, std::uint16_t font,
+void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, speechtype_t speechType, std::uint16_t hue, std::uint16_t font,
                    std::uint32_t messageNum, bool sendAll, const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
@@ -138,11 +138,11 @@ void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, s
 
 CSpeechQueue *SpeechSys;
 
-std::map<std::string, UnicodeTypes> codeLookup;
+std::map<std::string, unicodetypes_t> codeLookup;
 
 void InitializeLookup() {
     for (std::int32_t i = static_cast<std::int32_t>(ZERO); i < static_cast<std::int32_t>(TOTAL_LANGUAGES); ++i) {
-        codeLookup[LanguageCodes[static_cast<UnicodeTypes>(i)]] = static_cast<UnicodeTypes>(i);
+        codeLookup[LanguageCodes[static_cast<unicodetypes_t>(i)]] = static_cast<unicodetypes_t>(i);
     }
 }
 
@@ -151,7 +151,7 @@ void InitializeLookup() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempt to find language used by client
 // o------------------------------------------------------------------------------------------------o
-UnicodeTypes FindLanguage(CSocket *s, std::uint16_t offset) {
+unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
     if (s == nullptr)
         return ZERO;
 
@@ -164,9 +164,9 @@ UnicodeTypes FindLanguage(CSocket *s, std::uint16_t offset) {
     std::string ulangCode = langCode;
     ulangCode = util::upper(ulangCode);
 
-    UnicodeTypes cLang = s->Language();
+    unicodetypes_t cLang = s->Language();
     if (LanguageCodes[cLang] != ulangCode.c_str()) {
-        std::map<std::string, UnicodeTypes>::const_iterator p = codeLookup.find(ulangCode);
+        std::map<std::string, unicodetypes_t>::const_iterator p = codeLookup.find(ulangCode);
         if (p != codeLookup.end()) {
             return p->second;
         }
@@ -311,7 +311,7 @@ bool CPITalkRequest::Handle(void) {
         if ((Type() == YELL || Type() == ASCIIYELL) && mChar->CanBroadcast()) {
             CSpeechEntry &toAdd = SpeechSys->Add();
             toAdd.Speech(asciiText);
-            toAdd.Font(static_cast<FontType>(mChar->GetFontType()));
+            toAdd.Font(static_cast<fonttype_t>(mChar->GetFontType()));
             toAdd.Speaker(mChar->GetSerial());
             toAdd.SpokenTo(INVALIDSERIAL);
             toAdd.Type(PROMPT);

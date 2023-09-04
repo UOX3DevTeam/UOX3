@@ -235,11 +235,11 @@ class cWeatherAb {
     bool DoStuff(void);
     bool DoPlayerStuff(CSocket *mSock, CChar *p);
     void DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval);
-    bool doWeatherEffect(CSocket *mSock, CChar &mChar, WeatherType element);
+    bool doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t element);
     bool DoLightEffect(CSocket *mSock, CChar &mChar);
     bool DoNPCStuff(CChar *p);
     bool DoItemStuff(CItem *p);
-    void SendJSWeather(CBaseObject *mObj, WeatherType weathType, std::int8_t currentTemp);
+    void SendJSWeather(CBaseObject *mObj, weathertype_t weathType, std::int8_t currentTemp);
 
     CWeather *Weather(weathid_t toCheck);
 };

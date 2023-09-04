@@ -2025,7 +2025,7 @@ bool CPITargetCursor::Handle(void) {
         std::uint8_t a1 = tSock->GetByte(2);
         std::uint8_t a2 = tSock->GetByte(3);
         std::uint8_t a3 = tSock->GetByte(4);
-        TargetIds targetId = static_cast<TargetIds>(tSock->GetByte(5));
+        targetids_t targetId = static_cast<targetids_t>(tSock->GetByte(5));
         tSock->TargetOK(false);
         if (mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().accountNumber != 0) {
             tSock->SysMessage(1008);         // Invalid item!

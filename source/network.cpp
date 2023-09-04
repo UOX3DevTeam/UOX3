@@ -1036,7 +1036,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         6); // it's always 6 so Westy tells me... let's not be intelligent =)
                     std::uint16_t skillNum;
                     skillNum = mSock->GetWord(3);
-                    ourChar->SetSkillLock(static_cast<SkillLock>(buffer[5]),
+                    ourChar->SetSkillLock(static_cast<skilllock_t>(buffer[5]),
                                           static_cast<std::uint8_t>(skillNum));
                     break;
                 case 0x56:

@@ -16,7 +16,7 @@ class Script;
 class CDirectoryListing {
   private:
 
-    auto PushDir(DEFINITIONCATEGORIES toMove) -> bool;
+    auto PushDir(definitioncategories_t toMove) -> bool;
     auto PushDir(std::string toMove) -> bool;
     auto PopDir() -> void;
 
@@ -35,12 +35,12 @@ class CDirectoryListing {
   public:
     CDirectoryListing(bool recurse = true);
     CDirectoryListing(const std::string &dir, const std::string &extent, bool recurse = true);
-    CDirectoryListing(DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true);
+    CDirectoryListing(definitioncategories_t dir, const std::string &extent, bool recurse = true);
     ~CDirectoryListing();
 
     auto Extension(const std::string &extent) -> void;
     auto Retrieve(const std::string &dir) -> void;
-    auto Retrieve(DEFINITIONCATEGORIES dir) -> void;
+    auto Retrieve(definitioncategories_t dir) -> void;
     auto Flatten(bool isParent) -> void;
     auto ClearFlatten() -> void;
 
@@ -57,9 +57,9 @@ class CServerDefinitions {
     std::map<std::string, std::int16_t> priorityMap;
     std::int16_t defaultPriority;
 
-    auto LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void;
+    auto LoadDFNCategory(definitioncategories_t toLoad) -> void;
     auto ReloadScriptObjects() -> void;
-    auto BuildPriorityMap(DEFINITIONCATEGORIES category, std::uint8_t &wasPrioritized) -> void;
+    auto BuildPriorityMap(definitioncategories_t category, std::uint8_t &wasPrioritized) -> void;
     auto CleanPriorityMap() -> void;
 
     auto GetPriority(const char *file) -> std::int16_t;
@@ -73,18 +73,18 @@ class CServerDefinitions {
     ~CServerDefinitions();
     auto Startup() -> void;
     auto Reload() -> bool;
-    auto Dispose(DEFINITIONCATEGORIES toDispose) -> bool;
+    auto Dispose(definitioncategories_t toDispose) -> bool;
 
-    auto FindEntry(const std::string &toFind, DEFINITIONCATEGORIES typeToFind) -> CScriptSection *;
-    auto FindEntrySubStr(const std::string &toFind, DEFINITIONCATEGORIES typeToFind)
+    auto FindEntry(const std::string &toFind, definitioncategories_t typeToFind) -> CScriptSection *;
+    auto FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind)
         -> CScriptSection *;
-    auto CountOfEntries(DEFINITIONCATEGORIES typeToFind) -> size_t;
-    auto CountOfFiles(DEFINITIONCATEGORIES typeToFind) -> size_t;
+    auto CountOfEntries(definitioncategories_t typeToFind) -> size_t;
+    auto CountOfFiles(definitioncategories_t typeToFind) -> size_t;
     auto DisplayPriorityMap() -> void;
 
-    auto FirstScript(DEFINITIONCATEGORIES typeToFind) -> Script *;
-    auto NextScript(DEFINITIONCATEGORIES typeToFind) -> Script *;
-    auto FinishedScripts(DEFINITIONCATEGORIES typeToFind) -> bool;
+    auto FirstScript(definitioncategories_t typeToFind) -> Script *;
+    auto NextScript(definitioncategories_t typeToFind) -> Script *;
+    auto FinishedScripts(definitioncategories_t typeToFind) -> bool;
 };
 
 extern CServerDefinitions *FileLookup;

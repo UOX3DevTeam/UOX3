@@ -1461,7 +1461,7 @@ auto CServerData::ExpansionCoreShardEra(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionArmorCalculation() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionArmorCalculation) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionArmorCalculation) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1471,7 +1471,7 @@ auto CServerData::ExpansionArmorCalculation(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
     }
-    else if (static_cast<ExpansionRuleset>(setting) == ER_CORE) {
+    else if (static_cast<expansionruleset_t>(setting) == ER_CORE) {
         setting = ExpansionCoreShardEra();
     }
     expansionArmorCalculation = setting;
@@ -1495,7 +1495,7 @@ auto CServerData::ExpansionArmorCalculation(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionStrengthDamageBonus() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionStrengthDamageBonus) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionStrengthDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1526,7 +1526,7 @@ auto CServerData::ExpansionStrengthDamageBonus(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionTacticsDamageBonus() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionTacticsDamageBonus) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionTacticsDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1557,7 +1557,7 @@ auto CServerData::ExpansionTacticsDamageBonus(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionAnatomyDamageBonus() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionAnatomyDamageBonus) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionAnatomyDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1588,7 +1588,7 @@ auto CServerData::ExpansionAnatomyDamageBonus(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionLumberjackDamageBonus() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionLumberjackDamageBonus) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionLumberjackDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1619,7 +1619,7 @@ auto CServerData::ExpansionLumberjackDamageBonus(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionRacialDamageBonus() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionRacialDamageBonus) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionRacialDamageBonus) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1650,7 +1650,7 @@ auto CServerData::ExpansionRacialDamageBonus(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionDamageBonusCap() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionDamageBonusCap) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionDamageBonusCap) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1681,7 +1681,7 @@ auto CServerData::ExpansionDamageBonusCap(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionShieldParry() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionShieldParry) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionShieldParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1712,7 +1712,7 @@ auto CServerData::ExpansionShieldParry(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWeaponParry() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionWeaponParry) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionWeaponParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1743,7 +1743,7 @@ auto CServerData::ExpansionWeaponParry(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWrestlingParry() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionWrestlingParry) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionWrestlingParry) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -1774,7 +1774,7 @@ auto CServerData::ExpansionWrestlingParry(std::uint8_t setting) -> void {
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionCombatHitChance() const -> std::uint8_t {
-    if (static_cast<ExpansionRuleset>(expansionCombatHitChance) == ER_CORE) {
+    if (static_cast<expansionruleset_t>(expansionCombatHitChance) == ER_CORE) {
         // Inherit CoreShardEra setting
         return ExpansionCoreShardEra();
     }
@@ -3866,7 +3866,7 @@ auto CServerData::SaveIni() -> bool {
 }
 
 // Map of era enums to era strings, used for conversion between the two types
-static const std::unordered_map<ExpansionRuleset, std::string> eraNames{
+static const std::unordered_map<expansionruleset_t, std::string> eraNames{
     {ER_UO, "uo"s},   {ER_T2A, "t2a"s}, {ER_UOR, "uor"s}, {ER_TD, "td"s},
     {ER_LBR, "lbr"s}, {ER_AOS, "aos"s}, {ER_SE, "se"s},   {ER_ML, "ml"s},
     {ER_SA, "sa"s},   {ER_HS, "hs"s},   {ER_TOL, "tol"s}};
@@ -3876,9 +3876,9 @@ static const std::unordered_map<ExpansionRuleset, std::string> eraNames{
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Pass an era enum in, get an era string back
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::EraEnumToString(ExpansionRuleset eraEnum, bool coreEnum) -> std::string {
+auto CServerData::EraEnumToString(expansionruleset_t eraEnum, bool coreEnum) -> std::string {
     std::string eraName = "lbr"; // default
-    if (!coreEnum && eraEnum == static_cast<ExpansionRuleset>(ExpansionCoreShardEra())) {
+    if (!coreEnum && eraEnum == static_cast<expansionruleset_t>(ExpansionCoreShardEra())) {
         // Enum matches the core shard era setting; return it as "core"
         eraName = "core";
     }
@@ -3900,7 +3900,7 @@ auto CServerData::EraEnumToString(ExpansionRuleset eraEnum, bool coreEnum) -> st
 //|	Purpose		-	Pass an era string in, get an era enum back
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::EraStringToEnum(const std::string &eraString, bool useDefault, bool inheritCore)
-    -> ExpansionRuleset {
+    -> expansionruleset_t {
     auto rValue = ER_CORE;
     if (useDefault) {
         rValue = ER_LBR; // Default era if specified era is not found
@@ -3909,12 +3909,12 @@ auto CServerData::EraStringToEnum(const std::string &eraString, bool useDefault,
     auto searchEra = util::lower(eraString);
     if (inheritCore && searchEra == "core") {
         // Inherit setting from CORESHARDERA setting
-        return static_cast<ExpansionRuleset>(ExpansionCoreShardEra());
+        return static_cast<expansionruleset_t>(ExpansionCoreShardEra());
     }
 
     // Look for string with era name in eras map
     auto iter = std::find_if(eraNames.begin(), eraNames.end(),
-                             [&searchEra](const std::pair<ExpansionRuleset, std::string> &value) {
+                             [&searchEra](const std::pair<expansionruleset_t, std::string> &value) {
                                  return searchEra == std::get<1>(value);
                              });
 
@@ -4092,38 +4092,38 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
                   << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
         ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
         ofsOutput << "CORESHARDERA="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(ExpansionCoreShardEra()), true)
+                  << EraEnumToString(static_cast<expansionruleset_t>(ExpansionCoreShardEra()), true)
                   << '\n';
         ofsOutput << "ARMORCALCULATION="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionArmorCalculation))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionArmorCalculation))
                   << '\n';
         ofsOutput << "STRENGTHDAMAGEBONUS="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionStrengthDamageBonus))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionStrengthDamageBonus))
                   << '\n';
         ofsOutput << "TACTICSDAMAGEBONUS="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionTacticsDamageBonus))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionTacticsDamageBonus))
                   << '\n';
         ofsOutput << "ANATOMYDAMAGEBONUS="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionAnatomyDamageBonus))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionAnatomyDamageBonus))
                   << '\n';
         ofsOutput << "LUMBERJACKDAMAGEBONUS="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionLumberjackDamageBonus))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionLumberjackDamageBonus))
                   << '\n';
         ofsOutput << "RACIALDAMAGEBONUS="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionRacialDamageBonus))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionRacialDamageBonus))
                   << '\n';
         ofsOutput << "DAMAGEBONUSCAP="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionDamageBonusCap))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionDamageBonusCap))
                   << '\n';
         ofsOutput << "SHIELDPARRY="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionShieldParry)) << '\n';
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionShieldParry)) << '\n';
         ofsOutput << "WEAPONPARRY="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionWeaponParry)) << '\n';
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionWeaponParry)) << '\n';
         ofsOutput << "WRESTLINGPARRY="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionWrestlingParry))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionWrestlingParry))
                   << '\n';
         ofsOutput << "COMBATHITCHANCE="
-                  << EraEnumToString(static_cast<ExpansionRuleset>(expansionCombatHitChance))
+                  << EraEnumToString(static_cast<expansionruleset_t>(expansionCombatHitChance))
                   << '\n';
 
         ofsOutput << "}" << '\n';

@@ -1169,13 +1169,13 @@ bool UpdateCharsOnPlane(CSocket *mSock, CChar *mChar, CChar *tChar, std::uint16_
 void MonsterGate(CChar *s, const std::string &scriptEntry);
 void AdvanceObj(CChar *s, std::uint16_t x, bool multiUse);
 void SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate);
-bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType);
+bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtypes_t iType);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	HandleObjectCollisions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle character collision with items of various item types
 // o------------------------------------------------------------------------------------------------o
-void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type) {
+void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, itemtypes_t type) {
     switch (type) {
     case IT_OBJTELEPORTER: // teleporters
         if (itemCheck->GetTempVar(CITV_MOREX) + itemCheck->GetTempVar(CITV_MOREY) +
@@ -1223,7 +1223,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
         if (!mChar->IsNpc()) // world change gate
         {
             if (mSock != nullptr) {
-                CPWorldChange wrldChange(static_cast<WorldType>(itemCheck->GetTempVar(CITV_MOREX)),
+                CPWorldChange wrldChange(static_cast<worldtype_t>(itemCheck->GetTempVar(CITV_MOREX)),
                                          1);
                 mSock->Send(&wrldChange);
             }
@@ -1283,7 +1283,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
     const std::int16_t newy = mChar->GetY();
     const std::uint16_t instanceId = mChar->GetInstanceId();
     std::uint16_t id;
-    ItemTypes type;
+    itemtypes_t type;
     bool EffRange;
     bool inMoveDetectRange = false;
     std::uint8_t moveDetectRange = 1;

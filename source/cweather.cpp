@@ -1461,7 +1461,7 @@ bool cWeatherAb::DoItemStuff(CItem *mItem) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends weather changes to JS engine and triggers relevant JS events
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::SendJSWeather(CBaseObject *mObj, WeatherType weathType, std::int8_t currentTemp) {
+void cWeatherAb::SendJSWeather(CBaseObject *mObj, weathertype_t weathType, std::int8_t currentTemp) {
     // Check for events in specific scripts attached to object
     std::vector<std::uint16_t> scriptTriggers = mObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
@@ -1700,8 +1700,8 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles effects of weather on characters affected by weather
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, WeatherType element) {
-    WeatherType resistElement = element;
+bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t element) {
+    weathertype_t resistElement = element;
 
     if (element == NONE || element == LIGHT || element == WEATHNUM)
         return false;

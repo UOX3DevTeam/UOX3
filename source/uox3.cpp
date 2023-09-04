@@ -536,7 +536,7 @@ auto StartInitialize(CServerData &serverdata) -> void {
     Console::shared().PrintDone();
     generator = std::mt19937(rd()); // Standard mersenne_twister_engine seeded with rd()
 
-    auto packetSection = JSMapping->GetSection(SCPT_PACKET);
+    auto packetSection = JSMapping->GetSection(CJSMappingSection::SCPT_PACKET);
     for (const auto &[id, ourScript] : packetSection->collection()) {
                 if (ourScript) {
                     ourScript->ScriptRegistration("Packet");
@@ -871,7 +871,7 @@ auto DoMessageLoop() -> void {
                             Magic->LoadScript();
                             break; // Reload spells
                         case '5':  // Reload commands
-                            JSMapping->Reload(SCPT_COMMAND);
+                            JSMapping->Reload(CJSMappingSection::SCPT_COMMAND);
                             Commands->Load();
                             break;
                         case '6': // Reload definition files

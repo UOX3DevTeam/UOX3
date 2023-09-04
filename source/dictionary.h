@@ -45,19 +45,19 @@ class CDictionary {
 class CDictionaryContainer {
   private:
     std::array<CDictionary, static_cast<int>(DL_COUNT)> dictList;
-    UnicodeTypes defaultLang;
+    unicodetypes_t defaultLang;
 
   public:
     CDictionaryContainer();
     ~CDictionaryContainer() = default;
     auto LoadDictionaries(const std::string &filepath = "") -> int;
-    auto SetDefaultLang(UnicodeTypes newType) -> void;
+    auto SetDefaultLang(unicodetypes_t newType) -> void;
 
     auto operator[](int message_number) const -> const std::string &; // only default lang
     auto operator[](int message_number) -> std::string &;             // only default lang
-    auto GetEntry(int message_number, const UnicodeTypes toDisp = ZERO) const
+    auto GetEntry(int message_number, const unicodetypes_t toDisp = ZERO) const
         -> const std::string &;
-    auto GetEntry(int message_number, const UnicodeTypes toDisp = ZERO) -> std::string &;
+    auto GetEntry(int message_number, const unicodetypes_t toDisp = ZERO) -> std::string &;
 };
 
 extern CDictionaryContainer *Dictionary;

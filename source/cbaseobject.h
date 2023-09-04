@@ -68,7 +68,7 @@ class CBaseObject {
     std::int16_t dexterity;
     std::int16_t intelligence;
     std::int16_t hitpoints;
-    VisibleTypes visible;
+    visibletypes_t visible;
     std::int16_t hiDamage;
     std::int16_t loDamage;
     std::int32_t weight;
@@ -123,8 +123,8 @@ class CBaseObject {
     TagMap GetTempTag(std::string tempTagName) const;
     void SetTempTag(std::string tempTagName, TagMap tagVal);
 
-    void SetResist(std::uint16_t newValue, WeatherType damage);
-    std::uint16_t GetResist(WeatherType damage) const;
+    void SetResist(std::uint16_t newValue, weathertype_t damage);
+    std::uint16_t GetResist(weathertype_t damage) const;
 
     void SetTitle(std::string newtitle);
     std::string GetTitle(void) const;
@@ -224,8 +224,8 @@ class CBaseObject {
     void SetDir(std::uint8_t newDir, bool sendUpdate = true);
     std::uint8_t GetDir(void) const;
 
-    void SetVisible(VisibleTypes newValue);
-    VisibleTypes GetVisible(void) const;
+    void SetVisible(visibletypes_t newValue);
+    visibletypes_t GetVisible(void) const;
 
     ObjectType GetObjType(void) const;
     virtual bool CanBeObjType(ObjectType toCompare) const;

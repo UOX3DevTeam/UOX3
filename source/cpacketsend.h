@@ -50,10 +50,10 @@ class CPacketSpeech : public CPUOXBuffer {
     virtual void SpeakerSerial(serial_t toPut);
     virtual void SpeakerModel(std::uint16_t toPut);
     virtual void Colour(colour_t toPut);
-    virtual void Font(FontType toPut);
-    virtual void Language(UnicodeTypes toPut);
+    virtual void Font(fonttype_t toPut);
+    virtual void Language(unicodetypes_t toPut);
     virtual void Unicode(bool toPut);
-    virtual void Type(SpeechType toPut);
+    virtual void Type(speechtype_t toPut);
     virtual void Speech(const std::string &toPut);
     virtual void SpeakerName(const std::string &toPut);
     void GhostIt(std::uint8_t method);
@@ -121,8 +121,8 @@ class CPWorldChange : public CPUOXBuffer {
   public:
     CPWorldChange();
     virtual ~CPWorldChange() {}
-    CPWorldChange(WorldType newSeason, std::uint8_t newCursor);
-    virtual void Season(WorldType newSeason);
+    CPWorldChange(worldtype_t newSeason, std::uint8_t newCursor);
+    virtual void Season(worldtype_t newSeason);
     virtual void Cursor(std::uint8_t newCursor);
 };
 
@@ -147,7 +147,7 @@ class CPUpdIndSkill : public CPUOXBuffer {
     virtual void SkillNum(std::uint8_t sNum);
     virtual void Skill(std::int16_t skillval);
     virtual void BaseSkill(std::int16_t skillval);
-    virtual void Lock(SkillLock lockVal);
+    virtual void Lock(skilllock_t lockVal);
     virtual void Cap(std::int16_t capVal);
 };
 
@@ -718,7 +718,7 @@ class CPSkillsValues : public CPUOXBuffer {
     CPSkillsValues(CChar &toCopy);
     virtual void NumSkills(std::uint8_t numSkills);
     virtual void SetCharacter(CChar &toCopy);
-    virtual void SkillEntry(std::int16_t skillId, std::int16_t skillVal, std::int16_t baseSkillVal, SkillLock skillLock);
+    virtual void SkillEntry(std::int16_t skillId, std::int16_t skillVal, std::int16_t baseSkillVal, skilllock_t skillLock);
     CPSkillsValues &operator=(CChar &toCopy);
 };
 

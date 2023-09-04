@@ -69,7 +69,7 @@ inline bool FindString(std::string toCheck, std::string toFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of NPCs that are within a certain distance
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyNPCs(CChar *mChar, distLocs distance) -> std::vector<CChar *> {
+auto FindNearbyNPCs(CChar *mChar, distlocs_t distance) -> std::vector<CChar *> {
     std::vector<CChar *> ourNpcs;
 
     for (auto &CellResponse : MapRegion->PopulateList(mChar)) {
@@ -92,7 +92,7 @@ auto FindNearbyNPCs(CChar *mChar, distLocs distance) -> std::vector<CChar *> {
     return ourNpcs;
 }
 
-auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem *>;
+auto FindNearbyItems(CBaseObject *mObj, distlocs_t distance) -> std::vector<CItem *>;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	DoJSResponse()
 // o------------------------------------------------------------------------------------------------o
@@ -913,7 +913,7 @@ void CBasePetResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-CPetMultiResponse::CPetMultiResponse(const std::string &text, bool restrictVal, TargetIds targVal,
+CPetMultiResponse::CPetMultiResponse(const std::string &text, bool restrictVal, targetids_t targVal,
                                      std::int32_t dictVal, bool saidAll, bool checkControlDifficulty)
     : CBasePetResponse(text) {
     isRestricted = restrictVal;
@@ -1321,7 +1321,7 @@ bool CVendorDismissResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mCha
     return true;
 }
 
-CHouseMultiResponse::CHouseMultiResponse(TargetIds targVal, std::int32_t dictVal) {
+CHouseMultiResponse::CHouseMultiResponse(targetids_t targVal, std::int32_t dictVal) {
     targId = targVal;
     dictEntry = dictVal;
 }
@@ -1363,7 +1363,7 @@ CBoatResponse::CBoatResponse(const std::string &text, std::uint16_t tW) {
 }
 // void CBoatResponse::Handle( CSocket *mSock, CChar *mChar ) in Boats.cpp
 
-CBoatMultiResponse::CBoatMultiResponse(BoatMoveType mType) { moveType = mType; }
+CBoatMultiResponse::CBoatMultiResponse(boatmovetype_t mType) { moveType = mType; }
 CBoatObj *GetBoat(CSocket *s);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatMultiResponse::Handle()

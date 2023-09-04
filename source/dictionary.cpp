@@ -253,7 +253,7 @@ auto CDictionaryContainer::operator[](int message_number) -> std::string & {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const UnicodeTypes toDisp)
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp)
     -> std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
@@ -270,7 +270,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const Uni
 
     auto typetouse = toDisp;
     if ((static_cast<std::int32_t>(toDisp) < 0) ||
-        (static_cast<std::int32_t>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
+        (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {
         typetouse = ZERO;
     }
     try {
@@ -292,7 +292,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const Uni
     }
 }
 //==================================================================================================
-auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const UnicodeTypes toDisp) const
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) const
     -> const std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
@@ -309,7 +309,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const Uni
 
     auto typetouse = toDisp;
     if ((static_cast<std::int32_t>(toDisp) < 0) ||
-        (static_cast<std::int32_t>(toDisp) >= UnicodeTypes::TOTAL_LANGUAGES)) {
+        (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {
         typetouse = ZERO;
     }
     try {
@@ -336,7 +336,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const Uni
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::SetDefaultLang(UnicodeTypes newType) -> void {
+auto CDictionaryContainer::SetDefaultLang(unicodetypes_t newType) -> void {
     if (dictList[LanguageCodesLang[newType]].GetValid()) {
         defaultLang = newType;
     }

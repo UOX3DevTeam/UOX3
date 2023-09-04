@@ -940,7 +940,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
     std::map<guildid_t, GuildRelation>::iterator toCheck;
     std::map<guildid_t, GuildRelation> *ourList;
     s->TempInt(trgGuild);
-    UnicodeTypes sLang = s->Language();
+    unicodetypes_t sLang = s->Language();
 
     std::uint32_t tCounter = 0;
 

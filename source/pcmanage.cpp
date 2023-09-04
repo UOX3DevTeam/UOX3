@@ -432,7 +432,7 @@ bool CPIDeleteCharacter::Handle(void) {
         // For modern clients (?) we need to send packets 0x85 and 0x86 here!
         if (deleteResult != CDR_SUCCESS) {
             // 0x85 - DeleteResult - only send if deletion failed!
-            CPCharDeleteResult pckDelResult(static_cast<CharacterDeletionResult>(deleteResult));
+            CPCharDeleteResult pckDelResult(static_cast<characterdeletionresult_t>(deleteResult));
             tSock->Send(&pckDelResult);
         }
         else {
@@ -568,7 +568,7 @@ auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, colour_t pantsCol
 //|	Purpose		-	Adds newbie items based on characters chosen skills
 // o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::NewbieItems(CChar *mChar) {
-    enum NewbieItems { HAIR = 0, BEARD, PACK, BANK, GOLD, ITOTAL };
+    enum newbieitems_t { HAIR = 0, BEARD, PACK, BANK, GOLD, ITOTAL };
 
     CItem *CreatedItems[ITOTAL] = {nullptr, nullptr, nullptr, nullptr, nullptr};
     std::uint16_t ItemId, ItemColour;
@@ -1498,7 +1498,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
         if (!ValidateObject(j))
             continue;
 
-        ItemLayers iLayer = j->GetLayer();
+        itemlayers_t iLayer = j->GetLayer();
 
         switch (iLayer) {
         case IL_NONE:

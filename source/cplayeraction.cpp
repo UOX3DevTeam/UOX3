@@ -55,7 +55,7 @@ void Bounce(CSocket *bouncer, CItem *bouncing, std::uint8_t mode = 5) {
         return;
 
     CPBounce bounce(mode);
-    PickupLocations from = bouncer->PickupSpot();
+    pickuplocations_t from = bouncer->PickupSpot();
     auto spot = bouncer->PickupSerial();
     switch (from) {
     default:
@@ -680,7 +680,7 @@ bool CPIEquipItem::Handle(void) {
     }
 
     if (i->GetLayer() == IL_NONE) {
-        i->SetLayer(static_cast<ItemLayers>(tSock->GetByte(5)));
+        i->SetLayer(static_cast<itemlayers_t>(tSock->GetByte(5)));
     }
 
     // 1/13/2003 - Fix for equipping an item to more than one hand, or multiple equipping.
@@ -2166,7 +2166,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     CChar *myChar = s->CurrcharObj();
     std::string tempstr;
     CPPaperdoll pd = (*pdoll);
-    UnicodeTypes sLang = s->Language();
+    unicodetypes_t sLang = s->Language();
 
     cScript *toExecute;
     std::vector<std::uint16_t> scriptTriggers = pdoll->GetScriptTriggers();
@@ -2439,7 +2439,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs a switch to match an item type to a function
 // o------------------------------------------------------------------------------------------------o
-bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTypes iType) {
+bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtypes_t iType) {
     CChar *iChar = nullptr;
     CItem *i = nullptr;
     std::uint16_t itemId = iUsed->GetId();
@@ -3026,7 +3026,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, ItemType
     return false;
 }
 
-std::map<std::string, ItemTypes> tagToItemType;
+std::map<std::string, itemtypes_t> tagToItemType;
 
 void InitTagToItemType(void) {
     tagToItemType["CONTAINER"] = IT_CONTAINER;
@@ -3094,12 +3094,12 @@ void InitTagToItemType(void) {
     tagToItemType["HAIRDYE"] = IT_HAIRDYE;
 }
 
-ItemTypes FindItemTypeFromTag(const std::string &strToFind) {
+itemtypes_t FindItemTypeFromTag(const std::string &strToFind) {
     if (tagToItemType.empty()) // if we haven't built our array yet
     {
         InitTagToItemType();
     }
-    std::map<std::string, ItemTypes>::const_iterator toFind =
+    std::map<std::string, itemtypes_t>::const_iterator toFind =
         tagToItemType.find(util::upper(strToFind));
     if (toFind != tagToItemType.end())
         return toFind->second;
@@ -3107,7 +3107,7 @@ ItemTypes FindItemTypeFromTag(const std::string &strToFind) {
     return IT_COUNT;
 }
 
-std::map<std::uint16_t, ItemTypes> idToItemType;
+std::map<std::uint16_t, itemtypes_t> idToItemType;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	InitIdToItemType()
@@ -3118,7 +3118,7 @@ auto InitIdToItemType() -> void {
     auto Itemtypes = FileLookup->FindEntry("ITEMTYPES", items_def);
     if (Itemtypes) {
         std::int32_t sectionCount;
-        ItemTypes iType = IT_COUNT;
+        itemtypes_t iType = IT_COUNT;
         for (const auto &sec : Itemtypes->collection()) {
             auto tag = sec->tag;
             auto data = sec->data;
@@ -3145,12 +3145,12 @@ auto InitIdToItemType() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find an item's type based on its ID
 // o------------------------------------------------------------------------------------------------o
-ItemTypes FindItemTypeFromId(std::uint16_t idToFind) {
+itemtypes_t FindItemTypeFromId(std::uint16_t idToFind) {
     if (idToItemType.empty()) // if we haven't built our array yet
     {
         InitIdToItemType();
     }
-    std::map<std::uint16_t, ItemTypes>::const_iterator toFind = idToItemType.find(idToFind);
+    std::map<std::uint16_t, itemtypes_t>::const_iterator toFind = idToItemType.find(idToFind);
     if (toFind != idToItemType.end()) {
         return toFind->second;
     }
@@ -3164,8 +3164,8 @@ ItemTypes FindItemTypeFromId(std::uint16_t idToFind) {
 //|	Purpose		-	Find an item's type, or try to find it's type from its ID if no type
 // is specified
 // o------------------------------------------------------------------------------------------------o
-ItemTypes FindItemType(CItem *i) {
-    ItemTypes iType = i->GetType();
+itemtypes_t FindItemType(CItem *i) {
+    itemtypes_t iType = i->GetType();
     switch (iType) {
     case IT_NOTYPE:
     case IT_COUNT:
@@ -3183,7 +3183,7 @@ ItemTypes FindItemType(CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if item is usable and if player can actually use it
 // o------------------------------------------------------------------------------------------------o
-bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType) {
+bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iType) {
     if (ourChar->IsDead() && iType != IT_PLANK && iType != IT_HOUSESIGN) {
         if (iType == IT_RESURRECTOBJECT) // Check for a resurrect item type
         {
@@ -3321,7 +3321,7 @@ bool CPIDblClick::Handle(void) {
     if (!ValidateObject(iUsed))
         return true;
 
-    ItemTypes iType = FindItemType(iUsed);
+    itemtypes_t iType = FindItemType(iUsed);
     bool scriptExecuted = false;
     std::vector<std::uint16_t> scriptTriggers = iUsed->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {

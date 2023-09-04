@@ -2075,8 +2075,8 @@ void CChar::CopyData(CChar *target) {
 //| Purpose		-	Return character flag, which determines the color the character
 // highlights in
 // o------------------------------------------------------------------------------------------------o
-FlagColors CChar::FlagColour(CChar *toCompare) {
-    FlagColors retVal = FC_INNOCENT;
+flagcolors_t CChar::FlagColour(CChar *toCompare) {
+    flagcolors_t retVal = FC_INNOCENT;
 
     auto gComp = GR_UNKNOWN;
     RaceRelate rComp = RACE_NEUTRAL;
@@ -2401,7 +2401,7 @@ void CChar::Update(CSocket *mSock, bool drawGamePlayer, bool sendToSelf) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the item at layer Layer on paperdoll
 // o------------------------------------------------------------------------------------------------o
-CItem *CChar::GetItemAtLayer(ItemLayers Layer) {
+CItem *CChar::GetItemAtLayer(itemlayers_t Layer) {
     CItem *rVal = nullptr;
     auto lIter = itemLayers.find(Layer);
     if (lIter != itemLayers.end()) {
@@ -2431,7 +2431,7 @@ bool CChar::WearItem(CItem *toWear) {
     }
 
     bool rValue = true;
-    ItemLayers tLayer = toWear->GetLayer();
+    itemlayers_t tLayer = toWear->GetLayer();
     if (tLayer != IL_NONE) // Layer == 0 is a special case, for things like trade windows and such
     {
         if (ValidateObject(GetItemAtLayer(tLayer))) {
@@ -2482,7 +2482,7 @@ bool CChar::WearItem(CItem *toWear) {
 //|					adjustments are made. Returns true if successfully
 // unequipped
 // o------------------------------------------------------------------------------------------------o
-bool CChar::TakeOffItem(ItemLayers Layer) {
+bool CChar::TakeOffItem(itemlayers_t Layer) {
     bool rValue = false;
     if (ValidateObject(GetItemAtLayer(Layer))) {
         // Run event prior to equipping item, allowing script to prevent equip
@@ -3647,7 +3647,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                         break;
                     }
                     auto skillNum =
-                        static_cast<SkillLock>(std::stoul(secs[0].substr(1), nullptr, 0));
+                        static_cast<skilllock_t>(std::stoul(secs[0].substr(1), nullptr, 0));
                     auto skillValue = static_cast<std::uint16_t>(
                         std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
                     SetBaseSkill(skillValue, skillNum);
@@ -4150,7 +4150,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                         break;
                     }
                     auto skillnum = static_cast<std::uint8_t>(std::stoul(secs[0].substr(1), nullptr, 0));
-                    auto skillvalue = static_cast<SkillLock>(
+                    auto skillvalue = static_cast<skilllock_t>(
                         std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
                     SetSkillLock(skillvalue, skillnum);
                 }
@@ -4431,7 +4431,7 @@ bool CChar::InDungeon(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle server-triggered speech for characters
 // o------------------------------------------------------------------------------------------------o
-void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer) {
+void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, bool spamTimer) {
     bool canSpeak = !spamTimer;
     if (!toSay.empty()) {
         if (spamTimer) {
@@ -4485,7 +4485,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
 
                 CPUnicodeMessage unicodeMessage;
                 unicodeMessage.Message(toSay);
-                unicodeMessage.Font(static_cast<FontType>(GetFontType()));
+                unicodeMessage.Font(static_cast<fonttype_t>(GetFontType()));
                 unicodeMessage.Colour(txtColor);
                 unicodeMessage.Type(msgType);
                 unicodeMessage.Language("ENG");
@@ -4521,7 +4521,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
             }
             else {
                 CSpeechEntry &toAdd = SpeechSys->Add();
-                toAdd.Font(static_cast<FontType>(GetFontType()));
+                toAdd.Font(static_cast<fonttype_t>(GetFontType()));
                 toAdd.Speech(toSay);
                 toAdd.Speaker(GetSerial());
                 toAdd.SpokenTo(speakTo);
@@ -4539,8 +4539,8 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle server-triggered speech for characters
 // o------------------------------------------------------------------------------------------------o
-void CChar::TextMessage(CSocket *s, std::int32_t dictEntry, SpeechType msgType, int spamTimer, ...) {
-    UnicodeTypes dictLang = ZERO;
+void CChar::TextMessage(CSocket *s, std::int32_t dictEntry, speechtype_t msgType, int spamTimer, ...) {
+    unicodetypes_t dictLang = ZERO;
     if (s != nullptr) {
         dictLang = s->Language();
     }
@@ -5115,14 +5115,14 @@ void CChar::SetAtrophy(std::uint8_t newValue, std::uint8_t skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets skill (and stat) lock for character
 // o------------------------------------------------------------------------------------------------o
-SkillLock CChar::GetSkillLock(std::uint8_t skillToGet) const {
-    SkillLock rVal = SKILL_INCREASE;
+skilllock_t CChar::GetSkillLock(std::uint8_t skillToGet) const {
+    skilllock_t rVal = SKILL_INCREASE;
     if (IsValidPlayer() && skillToGet <= INTELLECT) {
         rVal = mPlayer->lockState[skillToGet];
     }
     return rVal;
 }
-void CChar::SetSkillLock(SkillLock newValue, std::uint8_t skillToSet) {
+void CChar::SetSkillLock(skilllock_t newValue, std::uint8_t skillToSet) {
     if (IsValidPlayer() && skillToSet <= INTELLECT) {
         mPlayer->lockState[skillToSet] = newValue;
         UpdateRegion();
@@ -7405,7 +7405,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Lets character react to damage dealt to them
 // o------------------------------------------------------------------------------------------------o
-void CChar::ReactOnDamage([[maybe_unused]] WeatherType damageType, CChar *attacker) {
+void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *attacker) {
     CSocket *mSock = GetSocket();
 
     if (ValidateObject(attacker)) {
@@ -7457,7 +7457,7 @@ void CChar::ReactOnDamage([[maybe_unused]] WeatherType damageType, CChar *attack
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Damage character, and keep track of attacker and damage amount
 // o------------------------------------------------------------------------------------------------o
-bool CChar::Damage(std::int16_t damageValue, WeatherType damageType, CChar *attacker, bool doRepsys) {
+bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker, bool doRepsys) {
     CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
 
     if (ValidateObject(attacker)) {
@@ -7518,7 +7518,7 @@ bool CChar::Damage(std::int16_t damageValue, WeatherType damageType, CChar *atta
         std::uint8_t bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
         bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(RandomNum(0, 99)));
         if (spawnBlood) {
-            BloodTypes bloodType = BLOOD_BLEED;
+            auto bloodType = BLOOD_BLEED;
             if (damageValue >= static_cast<std::int16_t>(floor(GetMaxHP() * 0.2))) {
                 // If damage done is higher than 20% of max health, spawn larger blood splats
                 bloodType = BLOOD_CRITICAL;

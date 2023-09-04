@@ -25,7 +25,7 @@ class CMagic {
 
     void LoadScript(void); // adding function for spell system "cache"
     void SpellBook(CSocket *mSock);
-    void GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type);
+    void GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, itemtypes_t type);
     bool SelectSpell(CSocket *mSock, std::int32_t num);
     void DoMoveEffect(std::int32_t num, CBaseObject *target, CChar *source);
     void DoStaticEffect(CChar *source, std::int32_t num);
@@ -44,7 +44,7 @@ class CMagic {
     bool CheckHealth(CChar *s, std::int32_t num);
     bool CheckMagicReflect(CChar *i);
 
-    void MagicDamage(CChar *p, std::int16_t amount, CChar *attacker = nullptr, WeatherType element = NONE);
+    void MagicDamage(CChar *p, std::int16_t amount, CChar *attacker = nullptr, weathertype_t element = NONE);
     void SpellFail(CSocket *s);
     void SubtractMana(CChar *s, std::int32_t mana);
     void SubtractStamina(CChar *s, std::int32_t stamina);

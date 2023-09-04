@@ -1224,7 +1224,7 @@ std::int16_t CHandleCombat::CalcHighDamage(CChar *p) {
 // value
 // o------------------------------------------------------------------------------------------------o
 CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef,
-                               WeatherType resistType) {
+                               weathertype_t resistType) {
     if (ValidateObject(checkItem) && checkItem->GetResist(resistType) > currDef) {
         currDef = checkItem->GetResist(resistType);
         return checkItem;
@@ -1240,7 +1240,7 @@ CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &
 // and |							returns it along with its def value
 // o------------------------------------------------------------------------------------------------o
 CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal,
-                                  WeatherType resistType) {
+                                  weathertype_t resistType) {
     std::int32_t armorDef = 0;
     CItem *currItem = nullptr;
     switch (bodyLoc) {
@@ -1332,7 +1332,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
 //|	Purpose		-	Finds the defense value of a specific location or the entire
 // character based on hitLoc
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage, WeatherType resistType) {
+std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage, weathertype_t resistType) {
     if (!ValidateObject(mChar))
         return 0;
 
@@ -1805,9 +1805,9 @@ std::int16_t CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem
     CRace *rPtr = Races->Race(defend->GetRace());
     if (rPtr != nullptr) {
         for (std::int32_t i = LIGHT; i < WEATHNUM; ++i) {
-            if (weapon->GetWeatherDamage(static_cast<WeatherType>(i)) &&
-                rPtr->AffectedBy(static_cast<WeatherType>(i))) {
-                amount += ApplyDefenseModifiers(static_cast<WeatherType>(i), attack, defend,
+            if (weapon->GetWeatherDamage(static_cast<weathertype_t>(i)) &&
+                rPtr->AffectedBy(static_cast<weathertype_t>(i))) {
+                amount += ApplyDefenseModifiers(static_cast<weathertype_t>(i), attack, defend,
                                                 getFightSkill, hitLoc, bDamage, false);
             }
         }
@@ -2017,7 +2017,7 @@ std::int8_t CHandleCombat::CalculateHitLoc(void) {
 //|	Purpose		-	Applies damage bonuses based on race/weather weakness and character
 // skills
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+std::int16_t CHandleCombat::ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
                                        std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage) {
     if (!ValidateObject(ourTarg) || !ValidateObject(mChar))
         return baseDamage;
@@ -2262,7 +2262,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(WeatherType damageType, CChar *mC
 //|	Purpose		-	Applies defense modifiers based on shields/parrying, armor values
 // and elemental damage
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CHandleCombat::ApplyDefenseModifiers(WeatherType damageType, CChar *mChar, CChar *ourTarg,
+std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
                                           std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage,
                                           bool doArmorDamage) {
     if (!ValidateObject(ourTarg))

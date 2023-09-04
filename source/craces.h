@@ -81,8 +81,8 @@ class CRace {
     bool RequiresBeard(void) const;
     bool NoBeard(void) const;
     bool IsPlayerRace(void) const;
-    bool AffectedBy(WeatherType iNum) const;
-    void AffectedBy(bool value, WeatherType iNum);
+    bool AffectedBy(weathertype_t iNum) const;
+    void AffectedBy(bool value, weathertype_t iNum);
     bool NoHair(void) const;
     bool CanEquipItem(std::uint16_t itemId) const;
 
@@ -92,8 +92,8 @@ class CRace {
     heatlevel_t HeatLevel(void) const;
     lightlevel_t NightVision(void) const;
     armorclass_t ArmourClassRestriction(void) const;
-    seconds_t WeatherSeconds(WeatherType iNum) const;
-    std::int8_t WeatherDamage(WeatherType iNum) const;
+    seconds_t WeatherSeconds(weathertype_t iNum) const;
+    std::int8_t WeatherDamage(weathertype_t iNum) const;
     R32 MagicResistance(void) const;
     R32 PoisonResistance(void) const;
 
@@ -138,8 +138,8 @@ class CRace {
     void HeatLevel(heatlevel_t newValue);
     void NightVision(lightlevel_t newValue);
     void ArmourClassRestriction(armorclass_t newValue);
-    void WeatherSeconds(seconds_t newValue, WeatherType iNum);
-    void WeatherDamage(std::int8_t newValue, WeatherType iNum);
+    void WeatherSeconds(seconds_t newValue, weathertype_t iNum);
+    void WeatherDamage(std::int8_t newValue, weathertype_t iNum);
     void LanguageMin(skillval_t newValue);
     void VisibilityRange(range_t newValue);
 
@@ -203,9 +203,9 @@ class cRaces {
     CRace *Race(raceid_t x);
 
     // Accessors
-    seconds_t Secs(raceid_t race, WeatherType element) const;
-    std::int8_t Damage(raceid_t race, WeatherType element) const;
-    bool Affect(raceid_t race, WeatherType element) const;
+    seconds_t Secs(raceid_t race, weathertype_t element) const;
+    std::int8_t Damage(raceid_t race, weathertype_t element) const;
+    bool Affect(raceid_t race, weathertype_t element) const;
     const std::string Name(raceid_t race) const; // Returns race name of player
     skillval_t Skill(std::int32_t skill, raceid_t race) const;
     gender_t GenderRestrict(raceid_t race) const;
@@ -233,9 +233,9 @@ class cRaces {
     bool NoBeard(raceid_t x) const;
 
     // Mutators
-    void Secs(raceid_t race, WeatherType element, seconds_t value);
-    void Damage(raceid_t race, WeatherType element, std::int8_t value);
-    void Affect(raceid_t race, WeatherType element, bool value);
+    void Secs(raceid_t race, weathertype_t element, seconds_t value);
+    void Damage(raceid_t race, weathertype_t element, std::int8_t value);
+    void Affect(raceid_t race, weathertype_t element, bool value);
     void Skill(std::int32_t skill, std::int32_t value, raceid_t race);
     void GenderRestrict(gender_t gender, raceid_t race);
     void RequireBeard(bool value, raceid_t race);

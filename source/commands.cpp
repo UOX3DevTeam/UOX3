@@ -375,7 +375,7 @@ void CCommands::Load(void) {
     }
 
     // Now we'll load our JS commands, what fun!
-    CJSMappingSection *commandSection = JSMapping->GetSection(SCPT_COMMAND);
+    CJSMappingSection *commandSection = JSMapping->GetSection(CJSMappingSection::SCPT_COMMAND);
     for (cScript *ourScript = commandSection->First(); !commandSection->Finished();
          ourScript = commandSection->Next()) {
         if (ourScript != nullptr) {

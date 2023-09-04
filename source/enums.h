@@ -1,7 +1,7 @@
 #ifndef __UOX3_ENUMS__
 #define __UOX3_ENUMS__
 
-enum DistinctLanguage {
+enum distinctlanguage_t {
     DL_DEFAULT = 0,
     DL_ENGLISH,
     DL_GERMAN,
@@ -14,7 +14,7 @@ enum DistinctLanguage {
     DL_COUNT
 };
 
-enum UnicodeTypes {
+enum unicodetypes_t {
     ZERO = 0,
     UT_ARA,
     UT_ARI,
@@ -152,7 +152,7 @@ enum UnicodeTypes {
     TOTAL_LANGUAGES
 };
 
-enum SpeechType {
+enum speechtype_t {
     UNKNOWN = -1,
     TALK = 0,         // normal system message
     PROMPT = 1,       // Display as system prompt
@@ -177,7 +177,7 @@ enum SpeechType {
     BROADCAST = 0xFF
 };
 
-enum FontType {
+enum fonttype_t {
     FNT_NULL = -1,
     FNT_BOLD = 0,
     FNT_TEXT_WITH_SHADOW,
@@ -195,7 +195,7 @@ enum FontType {
     FNT_UNKNOWN
 };
 
-enum NameRequestSources {
+enum ramerequestsources_t {
     NRS_SPEECH = 0,
     NRS_GUILD,
     NRS_STATWINDOW_SELF,
@@ -209,7 +209,7 @@ enum NameRequestSources {
     NRS_SCRIPT
 };
 
-enum CharacterDeletionResult {
+enum characterdeletionresult_t {
     CDR_BADPASSWORD = 0x00,
     CDR_CHARNOTFOUND,
     CDR_CHARISBUSY,
@@ -219,9 +219,9 @@ enum CharacterDeletionResult {
     CDR_SUCCESS
 };
 
-enum PickupLocations { PL_NOWHERE = 0, PL_GROUND, PL_OWNPACK, PL_OTHERPACK, PL_PAPERDOLL, PL_BANK };
+enum pickuplocations_t { PL_NOWHERE = 0, PL_GROUND, PL_OWNPACK, PL_OTHERPACK, PL_PAPERDOLL, PL_BANK };
 
-enum WeatherType {
+enum weathertype_t {
     NONE = 0,
     PHYSICAL,
     LIGHT,
@@ -236,7 +236,7 @@ enum WeatherType {
     WEATHNUM
 };
 
-enum WorldType {
+enum worldtype_t {
     WRLD_SPRING = 0,
     WRLD_SUMMER,
     WRLD_AUTUMN,
@@ -247,7 +247,7 @@ enum WorldType {
 };
 
 // EXIT CODES
-enum ErrorCodes {
+enum errorcodes_t {
     FATAL_UOX3_SUCCESS = 0,
     UNKNOWN_ERROR = 666,
     FATAL_UOX3_JAVASCRIPT = 50,
@@ -299,7 +299,7 @@ enum ErrorCodes {
 };
 
 // List of skill numbers (For later implementation)
-enum Skills {
+enum skills_t {
     ALCHEMY = 0,
     ANATOMY,
     ANIMALLORE,
@@ -370,7 +370,7 @@ enum Skills {
 };
 
 // Values for the skill locks
-enum SkillLock { SKILL_INCREASE = 0, SKILL_DECREASE, SKILL_LOCKED };
+enum skilllock_t { SKILL_INCREASE = 0, SKILL_DECREASE, SKILL_LOCKED };
 
 enum ObjectType {
     OT_CBO = 0,
@@ -381,7 +381,7 @@ enum ObjectType {
     OT_SPAWNER,
 };
 
-enum DEFINITIONCATEGORIES {
+enum definitioncategories_t {
     items_def = 0,
     npc_def,
     create_def,
@@ -411,7 +411,7 @@ enum DEFINITIONCATEGORIES {
 
 enum CommandLevels { CL_PLAYER = 0, CL_CNS, CL_GM, CL_ADMIN };
 
-enum AITypes {
+enum aitypes_t {
     AI_NONE = 0,
     AI_HEALER_G = 1,
     AI_EVIL = 2,
@@ -430,7 +430,7 @@ enum AITypes {
     AI_HEALER_E = 666
 };
 
-enum distLocs {
+enum distlocs_t {
     DIST_SAMETILE = 1,
     DIST_NEXTTILE,
     DIST_NEARBY,
@@ -443,9 +443,9 @@ enum distLocs {
     DIST_OUTOFRANGE = 0xFFFF
 };
 
-enum SaveStatus { SS_NOTSAVING = 0, SS_SAVING, SS_JUSTSAVED };
+enum savestatus_t { SS_NOTSAVING = 0, SS_SAVING, SS_JUSTSAVED };
 
-enum ItemTypes {
+enum itemtypes_t {
     IT_NOTYPE = 0,
     IT_CONTAINER = 1,
     IT_CASTLEGATEOPENER = 2,
@@ -551,7 +551,7 @@ enum ItemTypes {
     IT_COUNT = 255
 };
 
-enum ItemLayers {
+enum itemlayers_t {
     IL_NONE = 0x00,
     IL_RIGHTHAND = 0x01,
     IL_LEFTHAND = 0x02,
@@ -586,7 +586,7 @@ enum ItemLayers {
     IL_SECURETRADE = 0x1F
 };
 
-enum TargetIds {
+enum targetids_t {
     TARGET_ADDSCRIPTNPC = 0,
     TARGET_TELE,
     TARGET_DYE,
@@ -639,7 +639,7 @@ enum TargetIds {
     TARGET_NOFUNC
 };
 
-enum VisibleTypes {
+enum visibletypes_t {
     VT_VISIBLE = 0, // Visible to All
     VT_TEMPHIDDEN,  // Hidden (With Skill) / Visible To Item Owner
     VT_INVISIBLE,   // Magically Hidden
@@ -647,15 +647,15 @@ enum VisibleTypes {
     VT_GHOSTHIDDEN  // Hidden because the player is a ghost
 };
 
-enum monsterSound { SND_STARTATTACK = 0, SND_IDLE, SND_ATTACK, SND_DEFEND, SND_DIE, SND_COUNT };
+enum monstersound_t { SND_STARTATTACK = 0, SND_IDLE, SND_ATTACK, SND_DEFEND, SND_DIE, SND_COUNT };
 
-enum BloodTypes {
+enum bloodtypes_t {
     BLOOD_DEATH = 0,
     BLOOD_BLEED,
     BLOOD_CRITICAL,
 };
 
-enum FlagColors {
+enum flagcolors_t {
     FC_INNOCENT = 1,
     FC_FRIEND,
     FC_NEUTRAL,
@@ -665,7 +665,7 @@ enum FlagColors {
     FC_INVULNERABLE
 };
 
-enum WanderTypes {
+enum wandertypes_t {
     WT_NONE = 0,
     WT_FOLLOW,
     WT_FREE,
@@ -678,7 +678,7 @@ enum WanderTypes {
     WT_COUNT
 };
 
-enum BoatMoveType {
+enum boatmovetype_t {
     BOAT_ANCHORED = -1,
     BOAT_STOP,
     BOAT_FORWARD,
@@ -711,7 +711,7 @@ enum RaceRelate { RACE_ENEMY = -1, RACE_NEUTRAL = 0, RACE_ALLY = 1 };
 
 enum BodyType { BT_HUMAN = 0, BT_ELF, BT_GARGOYLE, BT_OTHER, BT_COUNT };
 
-enum ExpansionRuleset {
+enum expansionruleset_t {
     ER_CORE,
     ER_UO,
     ER_T2A,
@@ -727,7 +727,7 @@ enum ExpansionRuleset {
     ER_COUNT
 };
 
-enum Actions // Pre-v7.0.0.0
+enum actions_t // Pre-v7.0.0.0
 {
     ACT_WALK_UNARMED = 0x00,
 
@@ -770,7 +770,7 @@ enum Actions // Pre-v7.0.0.0
     ACT_MOUNT_ATT_2H = 0x1D     // Attacking with 2H weapon while mounted
 };
 
-enum ActionsMonsters {
+enum actionsmonsters_t {
     ACT_MONSTER_WALK = 0x00,       // Walking animation
     ACT_MONSTER_IDLE = 0x01,       // Idle animation
     ACT_MONSTER_DIE_1 = 0x02,      // Backward
@@ -795,7 +795,7 @@ enum ActionsMonsters {
     ACT_MONSTER_DIE_FLIGHT = 0x15  // Die in mid air
 };
 
-enum ActionsAnimals {
+enum actionsanimals_t {
     ACT_ANIMAL_WALK = 0x00,
     ACT_ANIMAL_RUN = 0x01,
     ACT_ANIMAL_IDLE = 0x02,  // Default idle animation
@@ -811,7 +811,7 @@ enum ActionsAnimals {
     ACT_ANIMAL_DIE_2 = 0x0c
 };
 
-enum NewActions // v7.0.0.0+
+enum newactions_t // v7.0.0.0+
 {
     N_ACT_ATT = 0x00, // Variations listed under SubActionsAttack enum
     N_ACT_BLOCK = 0x01,
@@ -831,7 +831,7 @@ enum NewActions // v7.0.0.0+
     N_ACT_RISE = 0x0F      // Used for character creation in Enhanced Client
 };
 
-enum SubActionsAttack // Variations for attack animation, v7.0.0.0+
+enum subactionsattack_t // Variations for attack animation, v7.0.0.0+
 {
     S_ACT_WRESTLE = 0x00,
     S_ACT_BOW = 0x01,
@@ -845,19 +845,19 @@ enum SubActionsAttack // Variations for attack animation, v7.0.0.0+
     S_ACT_THROW = 0x09
 };
 
-enum SubActionsDeath // Variations for death animation, v7.0.0.0+
+enum subactionsdeath_t // Variations for death animation, v7.0.0.0+
 {
     S_ACT_DEATH_FORWARD = 0x00,
     S_ACT_DEATH_BACKWARD = 0x01
 };
 
-enum SubActionsEmote // Variations for emote animation, v7.0.0.0+
+enum subactionsemote_t // Variations for emote animation, v7.0.0.0+
 {
     S_ACT_EMOTE_BOW = 0x00,
     S_ACT_EMOTE_SALUTE = 0x01
 };
 
-enum SubActionsSpells // Variations for spellcast animation, v7.0.0.0+
+enum subactionsspells_t // Variations for spellcast animation, v7.0.0.0+
 {
     S_ACT_SPELL_TARGET = 0x00,
     S_ACT_SPELL_AREA = 0x01

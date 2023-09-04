@@ -14,7 +14,7 @@ class CScriptSection;
 class Script {
   public:
     std::uint32_t lastModTime;
-    Script(const std::string &_filename, DEFINITIONCATEGORIES d, bool disp = true);
+    Script(const std::string &_filename, definitioncategories_t d, bool disp = true);
     ~Script();
 
     CScriptSection *FindEntry(const std::string &section);
@@ -39,7 +39,7 @@ class Script {
     time_t last_modification;
     std::string filename;
     bool errorState;
-    DEFINITIONCATEGORIES dfnCat;
+    definitioncategories_t dfnCat;
     std::ifstream input;
 };
 

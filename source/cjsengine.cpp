@@ -116,7 +116,7 @@ std::uint8_t CJSEngine::FindActiveRuntime(JSRuntime *rT) const {
     return 0;
 }
 
-JSObject *CJSEngine::GetPrototype(std::uint8_t runTime, JSPrototypes protoNum) const {
+JSObject *CJSEngine::GetPrototype(std::uint8_t runTime, jsprototypes_t protoNum) const {
     JSObject *retVal = nullptr;
     if (runTime < runtimeList.size()) {
         retVal = runtimeList[runTime]->GetPrototype(protoNum);
@@ -125,7 +125,7 @@ JSObject *CJSEngine::GetPrototype(std::uint8_t runTime, JSPrototypes protoNum) c
     return retVal;
 }
 
-JSObject *CJSEngine::AcquireObject(IUEEntries iType, void *index, std::uint8_t runTime) {
+JSObject *CJSEngine::AcquireObject(iueentries_t iType, void *index, std::uint8_t runTime) {
     JSObject *retVal = nullptr;
     if (index != nullptr && runTime < runtimeList.size()) {
         retVal = runtimeList[runTime]->AcquireObject(iType, index);
@@ -133,7 +133,7 @@ JSObject *CJSEngine::AcquireObject(IUEEntries iType, void *index, std::uint8_t r
 
     return retVal;
 }
-void CJSEngine::ReleaseObject(IUEEntries iType, void *index) {
+void CJSEngine::ReleaseObject(iueentries_t iType, void *index) {
     for (RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter) {
         if ((*rIter) != nullptr) {
             (*rIter)->ReleaseObject(iType, index);
@@ -252,7 +252,7 @@ void CJSRuntime::InitializePrototypes() {
     protoList[JSP_GUILD] = JS_InitClass(cx, obj, nullptr, &UOXGuild_class, nullptr, 0,
                                         CGuildProperties, CGuild_Methods, nullptr, nullptr);
     protoList[JSP_PARTY] = JS_InitClass(cx, obj, nullptr, &UOXParty_class.base, nullptr, 0,
-                                        CPartyProperties, CParty_Methods, nullptr, nullptr);
+                                        cpartyproperties_t, CParty_Methods, nullptr, nullptr);
     protoList[JSP_PACKET] = JS_InitClass(cx, obj, nullptr, &UOXPacket_class, Packet, 0, nullptr,
                                          nullptr, nullptr, nullptr);
     protoList[JSP_GUMP] =
@@ -287,7 +287,7 @@ JSRuntime *CJSRuntime::GetRuntime(void) const { return jsRuntime; }
 JSContext *CJSRuntime::GetContext(void) const { return jsContext; }
 JSObject *CJSRuntime::GetObject(void) const { return jsGlobal; }
 
-JSObject *CJSRuntime::GetPrototype(JSPrototypes protoNum) const {
+JSObject *CJSRuntime::GetPrototype(jsprototypes_t protoNum) const {
     JSObject *retVal = nullptr;
     if (protoNum != JSP_COUNT) {
         retVal = protoList[protoNum];
@@ -296,7 +296,7 @@ JSObject *CJSRuntime::GetPrototype(JSPrototypes protoNum) const {
     return retVal;
 }
 
-JSObject *CJSRuntime::AcquireObject(IUEEntries iType, void *index) {
+JSObject *CJSRuntime::AcquireObject(iueentries_t iType, void *index) {
     JSObject *retVal = nullptr;
     if (iType != IUE_COUNT && static_cast<size_t>(iType) < objectList.size()) {
         retVal = FindAssociatedObject(iType, index);
@@ -310,7 +310,7 @@ JSObject *CJSRuntime::AcquireObject(IUEEntries iType, void *index) {
     }
     return retVal;
 }
-void CJSRuntime::ReleaseObject(IUEEntries iType, void *index) {
+void CJSRuntime::ReleaseObject(iueentries_t iType, void *index) {
     JSOBJECTMAP_ITERATOR toSearch = objectList[iType].find(index);
     if (toSearch != objectList[iType].end()) {
         JSObject *toRelease = (*toSearch).second;
@@ -320,7 +320,7 @@ void CJSRuntime::ReleaseObject(IUEEntries iType, void *index) {
         objectList[iType].erase(toSearch);
     }
 }
-JSObject *CJSRuntime::FindAssociatedObject(IUEEntries iType, void *index) {
+JSObject *CJSRuntime::FindAssociatedObject(iueentries_t iType, void *index) {
     JSObject *retVal = nullptr;
     JSOBJECTMAP_CITERATOR toSearch = objectList[iType].find(index);
     if (toSearch != objectList[iType].end()) {
@@ -329,7 +329,7 @@ JSObject *CJSRuntime::FindAssociatedObject(IUEEntries iType, void *index) {
 
     return retVal;
 }
-JSObject *CJSRuntime::MakeNewObject(IUEEntries iType) {
+JSObject *CJSRuntime::MakeNewObject(iueentries_t iType) {
     JSObject *toMake = nullptr;
     switch (iType) {
     case IUE_RACE:
@@ -387,7 +387,7 @@ JSObject *CJSRuntime::MakeNewObject(IUEEntries iType) {
         if (toMake == nullptr)
             return nullptr;
         // JS_DefineFunctions( jsContext, toMake, CParty_Methods );
-        // JS_DefineProperties( jsContext, toMake, CPartyProperties );
+        // JS_DefineProperties( jsContext, toMake, cpartyproperties_t );
         break;
     case IUE_ACCOUNT:
         toMake = JS_NewObject(jsContext, &UOXAccount_class, protoList[JSP_ACCOUNT], jsGlobal);

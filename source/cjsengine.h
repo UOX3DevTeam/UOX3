@@ -11,7 +11,7 @@
 
 struct JSObject;
 
-enum IUEEntries {
+enum iueentries_t {
     IUE_RACE = 0,
     IUE_CHAR,
     IUE_ITEM,
@@ -24,7 +24,7 @@ enum IUEEntries {
     IUE_COUNT
 };
 
-enum JSPrototypes {
+enum jsprototypes_t {
     JSP_ITEM = 0,
     JSP_CHAR,
     JSP_SOCK,
@@ -71,8 +71,8 @@ class CJSRuntime {
     JSContext *jsContext;
     JSObject *jsGlobal;
 
-    JSObject *FindAssociatedObject(IUEEntries iType, void *index);
-    JSObject *MakeNewObject(IUEEntries iType);
+    JSObject *FindAssociatedObject(iueentries_t iType, void *index);
+    JSObject *MakeNewObject(iueentries_t iType);
 
     void Cleanup(void);
     void InitializePrototypes(void);
@@ -89,10 +89,10 @@ class CJSRuntime {
     JSContext *GetContext() const;
     JSObject *GetObject() const;
 
-    JSObject *GetPrototype(JSPrototypes protoNum) const;
+    JSObject *GetPrototype(jsprototypes_t protoNum) const;
 
-    JSObject *AcquireObject(IUEEntries iType, void *index);
-    void ReleaseObject(IUEEntries IType, void *index);
+    JSObject *AcquireObject(iueentries_t iType, void *index);
+    void ReleaseObject(iueentries_t IType, void *index);
 };
 
 class CJSEngine {
@@ -115,13 +115,13 @@ class CJSEngine {
 
     std::uint8_t FindActiveRuntime(JSRuntime *rT) const;
 
-    JSObject *GetPrototype(std::uint8_t runTime, JSPrototypes protoNum) const;
+    JSObject *GetPrototype(std::uint8_t runTime, jsprototypes_t protoNum) const;
 
     void Reload(void);
     void CollectGarbage(void);
 
-    JSObject *AcquireObject(IUEEntries iType, void *index, std::uint8_t runTime);
-    void ReleaseObject(IUEEntries IType, void *index);
+    JSObject *AcquireObject(iueentries_t iType, void *index, std::uint8_t runTime);
+    void ReleaseObject(iueentries_t IType, void *index);
 };
 
 extern CJSEngine *JSEngine;

@@ -251,7 +251,7 @@ CItem *FindItem(CChar *toFind, std::uint16_t itemId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific type
 // o------------------------------------------------------------------------------------------------o
-auto SearchSubPackForItemOfType(CItem *toSearch, ItemTypes type) -> CItem * {
+auto SearchSubPackForItemOfType(CItem *toSearch, itemtypes_t type) -> CItem * {
     auto tsCont = toSearch->GetContainsList();
     for (const auto &toCheck : tsCont->collection()) {
         if (ValidateObject(toCheck)) {
@@ -277,7 +277,7 @@ auto SearchSubPackForItemOfType(CItem *toSearch, ItemTypes type) -> CItem * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Look for items of a certain type in character's pack
 // o------------------------------------------------------------------------------------------------o
-CItem *FindItemOfType(CChar *toFind, ItemTypes type) {
+CItem *FindItemOfType(CChar *toFind, itemtypes_t type) {
     for (CItem *toCheck = toFind->FirstItem(); !toFind->FinishedItems();
          toCheck = toFind->NextItem()) {
         if (ValidateObject(toCheck)) {
@@ -530,12 +530,12 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	FindNearbyItems( CBaseObject *mObj, distLocs distance )
+//|	Function	-	FindNearbyItems( CBaseObject *mObj, distlocs_t distance )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a
 // given object
 // o------------------------------------------------------------------------------------------------o
-auto FindNearbyItems(CBaseObject *mObj, distLocs distance) -> std::vector<CItem *> {
+auto FindNearbyItems(CBaseObject *mObj, distlocs_t distance) -> std::vector<CItem *> {
     std::vector<CItem *> ourItems;
     for (auto &CellResponse : MapRegion->PopulateList(mObj)) {
         if (CellResponse == nullptr)

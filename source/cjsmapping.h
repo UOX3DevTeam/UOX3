@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <map>
 #include <string>
+#include <vector>
 
 #include "typedefs.h"
 
@@ -12,31 +13,31 @@ class CEnvoke;
 class Script;
 class cScript;
 
-enum SCRIPTTYPE {
-    SCPT_NORMAL = 0,
-    SCPT_COMMAND,
-    SCPT_MAGIC,
-    SCPT_SKILLUSE,
-    SCPT_PACKET,
-    SCPT_CONSOLE,
-    SCPT_COUNT
-};
 
-const std::string ScriptNames[SCPT_COUNT] = {"SCRIPT_LIST",    "COMMAND_SCRIPTS",
-                                             "MAGIC_SCRIPTS",  "SKILLUSE_SCRIPTS",
-                                             "PACKET_SCRIPTS", "CONSOLE_SCRIPTS"};
 
 class CJSMappingSection {
+public:
+    enum type_t {
+        SCPT_NORMAL = 0,
+        SCPT_COMMAND,
+        SCPT_MAGIC,
+        SCPT_SKILLUSE,
+        SCPT_PACKET,
+        SCPT_CONSOLE,
+        SCPT_COUNT
+    };
+    static const std::vector<std::string> ScriptNames;
+
   private:
     std::map<std::uint16_t, cScript *> scriptIdMap;
     std::map<JSObject *, std::uint16_t> scriptJSMap;
 
     std::map<std::uint16_t, cScript *>::iterator scriptIdIter;
 
-    SCRIPTTYPE scriptType;
+    type_t scriptType;
 
   public:
-    CJSMappingSection(SCRIPTTYPE sT);
+    CJSMappingSection(type_t sT);
     ~CJSMappingSection();
 
     auto jsCollection() const -> const std::map<JSObject *, std::uint16_t> & { return scriptJSMap; }
@@ -60,23 +61,23 @@ class CJSMappingSection {
 
 class CJSMapping {
   private:
-    CJSMappingSection *mapSection[SCPT_COUNT];
+    std::vector<CJSMappingSection *> mapSection ;
 
     CEnvoke *envokeById;
     CEnvoke *envokeByType;
 
     void Cleanup(void);
-    void Parse(SCRIPTTYPE toParse = SCPT_COUNT);
+    void Parse(CJSMappingSection::type_t toParse = CJSMappingSection::SCPT_COUNT);
 
   public:
-    CJSMapping() = default;
+    CJSMapping(){ mapSection = std::vector<CJSMappingSection *>(CJSMappingSection::ScriptNames.size(),nullptr);}
     ~CJSMapping();
     void ResetDefaults(void);
 
     void Reload(std::uint16_t scriptId = 0xFFFF);
-    void Reload(SCRIPTTYPE sectionId);
+    void Reload(CJSMappingSection::type_t sectionId);
 
-    CJSMappingSection *GetSection(SCRIPTTYPE toGet);
+    CJSMappingSection *GetSection(CJSMappingSection::type_t toGet);
 
     std::uint16_t GetScriptId(JSObject *toFind);
 

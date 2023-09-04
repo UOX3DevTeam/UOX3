@@ -247,7 +247,7 @@ public:
     std::int8_t OnAISliver(CChar *pSliver);
     bool OnSystemSlice(void);
     std::int8_t OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel);
-    bool OnWeatherChange(CBaseObject *tObject, WeatherType element);
+    bool OnWeatherChange(CBaseObject *tObject, weathertype_t element);
     bool OnTempChange(CBaseObject *tObject, std::int8_t temp);
     bool OnTimer(CBaseObject *tObject, std::uint16_t timerId);
     std::int8_t OnDeath(CChar *pDead, CItem *iCorpse);
@@ -302,8 +302,8 @@ public:
     std::int8_t OnDeathBlow(CChar *mKilled, CChar *mKiller);
 
     std::int16_t OnCombatDamageCalc(CChar *attacker, CChar *defender, std::uint8_t getFightSkill, std::uint8_t hitLoc);
-    std::int8_t OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, WeatherType damageType);
-    std::int8_t OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue, WeatherType damageType);
+    std::int8_t OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, weathertype_t damageType);
+    std::int8_t OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue, weathertype_t damageType);
     std::int8_t OnBuy(CSocket *targSock, CChar *objVendor);
     std::int8_t OnBuyFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
                          std::uint16_t numItemsBuying);

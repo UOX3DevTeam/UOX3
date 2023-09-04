@@ -809,14 +809,14 @@ void cRaces::SetThirstDrain(raceid_t race, std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether race is affected by a particular element
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::Affect(raceid_t race, WeatherType element) const {
+bool cRaces::Affect(raceid_t race, weathertype_t element) const {
     bool rValue = false;
     if (!InvalidRace(race)) {
         rValue = races[race]->AffectedBy(element);
     }
     return rValue;
 }
-void cRaces::Affect(raceid_t race, WeatherType element, bool value) {
+void cRaces::Affect(raceid_t race, weathertype_t element, bool value) {
     if (!InvalidRace(race)) {
         races[race]->AffectedBy(value, element);
     }
@@ -827,14 +827,14 @@ void cRaces::Affect(raceid_t race, WeatherType element, bool value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set number of seconds between burns for race from element
 // o------------------------------------------------------------------------------------------------o
-seconds_t cRaces::Secs(raceid_t race, WeatherType element) const {
+seconds_t cRaces::Secs(raceid_t race, weathertype_t element) const {
     if (InvalidRace(race))
         return 1;
 
     return races[race]->WeatherSeconds(element);
 }
 
-void cRaces::Secs(raceid_t race, WeatherType element, seconds_t value) {
+void cRaces::Secs(raceid_t race, weathertype_t element, seconds_t value) {
     if (InvalidRace(race))
         return;
 
@@ -846,13 +846,13 @@ void cRaces::Secs(raceid_t race, WeatherType element, seconds_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set damage incurred by race from element when they burn
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cRaces::Damage(raceid_t race, WeatherType element) const {
+std::int8_t cRaces::Damage(raceid_t race, weathertype_t element) const {
     if (InvalidRace(race))
         return 1;
 
     return races[race]->WeatherDamage(element);
 }
-void cRaces::Damage(raceid_t race, WeatherType element, std::int8_t damage) {
+void cRaces::Damage(raceid_t race, weathertype_t element, std::int8_t damage) {
     if (InvalidRace(race))
         return;
 
@@ -1085,8 +1085,8 @@ void CRace::ArmourClassRestriction(armorclass_t newValue) { armourRestrict = new
 //|	Purpose		-	Gets/Sets interval at which members of a race burn from a given
 // weather type
 // o------------------------------------------------------------------------------------------------o
-seconds_t CRace::WeatherSeconds(WeatherType iNum) const { return weathSecs[iNum]; }
-void CRace::WeatherSeconds(seconds_t newValue, WeatherType iNum) { weathSecs[iNum] = newValue; }
+seconds_t CRace::WeatherSeconds(weathertype_t iNum) const { return weathSecs[iNum]; }
+void CRace::WeatherSeconds(seconds_t newValue, weathertype_t iNum) { weathSecs[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::WeatherDamage()
@@ -1094,8 +1094,8 @@ void CRace::WeatherSeconds(seconds_t newValue, WeatherType iNum) { weathSecs[iNu
 //|	Purpose		-	Gets/Sets how much damage members of race take from a given weather
 // type when they burn
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CRace::WeatherDamage(WeatherType iNum) const { return weathDamage[iNum]; }
-void CRace::WeatherDamage(std::int8_t newValue, WeatherType iNum) { weathDamage[iNum] = newValue; }
+std::int8_t CRace::WeatherDamage(weathertype_t iNum) const { return weathDamage[iNum]; }
+void CRace::WeatherDamage(std::int8_t newValue, weathertype_t iNum) { weathDamage[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::LanguageMin()
@@ -1120,8 +1120,8 @@ void CRace::VisibilityRange(range_t newValue) { visDistance = newValue; }
 //|	Purpose		-	Gets/Sets whether members of race are affected by a given weather
 // type
 // o------------------------------------------------------------------------------------------------o
-bool CRace::AffectedBy(WeatherType iNum) const { return weatherAffected.test(iNum); }
-void CRace::AffectedBy(bool value, WeatherType iNum) { weatherAffected.set(iNum, value); }
+bool CRace::AffectedBy(weathertype_t iNum) const { return weatherAffected.test(iNum); }
+void CRace::AffectedBy(bool value, weathertype_t iNum) { weatherAffected.set(iNum, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::GetHungerRate()

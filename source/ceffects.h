@@ -25,7 +25,7 @@ class cEffects {
 
     // Visual Effects
     void DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection);
-    CItem *SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour, BloodTypes bloodType);
+    CItem *SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour, bloodtypes_t bloodType);
     void PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,
                              bool explode = false);
     void PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,

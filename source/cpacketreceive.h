@@ -366,7 +366,7 @@ class CPITalkRequest : public CPInputBuffer {
     std::uint16_t strLen;
     std::uint16_t fontUsed;
     char txtSaid[4096];
-    SpeechType typeUsed;
+    speechtype_t typeUsed;
     bool isUnicode;
     virtual void InternalReset(void);
     bool HandleCommon(void);
@@ -381,7 +381,7 @@ class CPITalkRequest : public CPInputBuffer {
     colour_t TextColour(void) const;
     std::uint16_t Length(void) const;
     std::uint16_t Font(void) const;
-    SpeechType Type(void) const;
+    speechtype_t Type(void) const;
     bool IsUnicode(void) const;
     virtual std::string TextString(void) const;
     virtual char *Text(void) const;
@@ -674,7 +674,7 @@ class CPITrackingArrow : public CPInputBuffer {
 
 class CPIClientLanguage : public CPInputBuffer {
   protected:
-    UnicodeTypes newLang;
+    unicodetypes_t newLang;
 
   public:
     virtual ~CPIClientLanguage() {}

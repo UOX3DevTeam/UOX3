@@ -107,7 +107,7 @@ void Script::Reload(bool disp) {
 //|	Purpose			-	Builds the script, reading in the information from the
 // script file.
 // o------------------------------------------------------------------------------------------------o
-Script::Script(const std::string &_filename, DEFINITIONCATEGORIES d, bool disp)
+Script::Script(const std::string &_filename, definitioncategories_t d, bool disp)
     : errorState(false), dfnCat(d) {
     filename = _filename;
     if (!GetModificationDate(filename, &last_modification)) {

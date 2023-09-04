@@ -1963,7 +1963,7 @@ colour_t CPITalkRequest::TextColour(void) const { return textColour; }
 std::uint16_t CPITalkRequest::Length(void) const { return strLen; }
 std::uint16_t CPITalkRequest::Font(void) const { return fontUsed; }
 
-SpeechType CPITalkRequest::Type(void) const { return typeUsed; }
+speechtype_t CPITalkRequest::Type(void) const { return typeUsed; }
 
 bool CPITalkRequest::IsUnicode(void) const { return isUnicode; }
 
@@ -2253,14 +2253,14 @@ void CPITalkRequestAscii::Receive(void) {
     tSock->Receive(blockLen, false);
 
     strLen = blockLen - 8;
-    typeUsed = static_cast<SpeechType>(tSock->GetByte(3));
+    typeUsed = static_cast<speechtype_t>(tSock->GetByte(3));
     textColour = tSock->GetWord(4);
     fontUsed = tSock->GetWord(6);
 
     strcopy(txtSaid, 4096, (char *)&(tSock->Buffer()[8]));
 }
 
-UnicodeTypes FindLanguage(CSocket *s, std::uint16_t offset);
+unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset);
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITalkRequestUnicode()
 // o------------------------------------------------------------------------------------------------o
@@ -2333,7 +2333,7 @@ void CPITalkRequestUnicode::Receive(void) {
     tSock->Receive(blockLen, false);
     tSock->ClearTrigWords();
 
-    typeUsed = static_cast<SpeechType>(tSock->GetByte(3));
+    typeUsed = static_cast<speechtype_t>(tSock->GetByte(3));
     textColour = tSock->GetWord(4);
     fontUsed = tSock->GetWord(6);
 
@@ -4596,7 +4596,7 @@ void CPIExtendedStats::Receive(void) {
 }
 bool CPIExtendedStats::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
-    ourChar->SetSkillLock(static_cast<SkillLock>(value), statToSet);
+    ourChar->SetSkillLock(static_cast<skilllock_t>(value), statToSet);
     return true;
 }
 void CPIExtendedStats::Log(std::ostream &outStream, bool fullHeader) {

@@ -453,7 +453,7 @@ bool splFireball(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell)
 //|	Purpose		-	Applies effects of Magic Lock spell
 // o------------------------------------------------------------------------------------------------o
 bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std::int8_t curSpell) {
-    ItemTypes type = target->GetType();
+    itemtypes_t type = target->GetType();
     if ((type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT) &&
         (target->GetId(1) != 0x0E || target->GetId(2) != 0x75)) {
         // Don't allow casting this on locks inside multis
@@ -2769,7 +2769,7 @@ void CMagic::SpellBook(CSocket *mSock) {
 //|	Purpose		-	Used when a PLAYER passes through a gate.  Takes the player
 //|						to the other side of the gate-link.
 // o------------------------------------------------------------------------------------------------o
-auto CMagic::GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type) -> void {
+auto CMagic::GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, itemtypes_t type) -> void {
     if (type == IT_GATE) {
         if (!mChar->IsNpc()) {
             auto otherGate = CalcItemObjFromSer(itemCheck->GetTempVar(CITV_MOREX));
@@ -3295,7 +3295,7 @@ std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spell
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate and inflict magic damage.
 // o------------------------------------------------------------------------------------------------o
-void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, WeatherType element) {
+void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, weathertype_t element) {
     if (!ValidateObject(p))
         return;
 
@@ -4882,7 +4882,7 @@ void CMagic::LoadScript(void) {
     Console::shared().Print("Registering spells\n");
 #endif
 
-    CJSMappingSection *spellSection = JSMapping->GetSection(SCPT_MAGIC);
+    CJSMappingSection *spellSection = JSMapping->GetSection(CJSMappingSection::SCPT_MAGIC);
 
     for (cScript *ourScript = spellSection->First(); !spellSection->Finished();
          ourScript = spellSection->Next()) {

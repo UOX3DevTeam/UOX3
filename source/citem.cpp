@@ -84,8 +84,8 @@ const std::int8_t DEFITEM_RANK = 0;
 const std::uint16_t DEFITEM_RESTOCK = 0;
 const std::int8_t DEFITEM_MOVEABLE = 0;
 const timerval_t DEFITEM_DECAYTIME = 0;
-const ItemLayers DEFITEM_LAYER = IL_NONE;
-const ItemTypes DEFITEM_TYPE = IT_NOTYPE;
+const itemlayers_t DEFITEM_LAYER = IL_NONE;
+const itemtypes_t DEFITEM_TYPE = IT_NOTYPE;
 const std::uint16_t DEFITEM_ENTRYMADEFROM = 0;
 const std::uint16_t DEFITEM_AMOUNT = 1;
 const std::uint8_t DEFITEM_GLOWEFFECT = 0;
@@ -698,8 +698,8 @@ auto CItem::GetRegionNum() const -> std::uint16_t { return regionNum; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's layer property
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetLayer() const -> ItemLayers { return layer; }
-auto CItem::SetLayer(ItemLayers newValue) -> void {
+auto CItem::GetLayer() const -> itemlayers_t { return layer; }
+auto CItem::SetLayer(itemlayers_t newValue) -> void {
     CBaseObject *getCont = GetCont();
     if (ValidateObject(getCont) && getCont->GetObjType() == OT_CHAR) // if we're on a char
     {
@@ -724,8 +724,8 @@ auto CItem::SetLayer(ItemLayers newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's type property
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetType() const -> ItemTypes { return type; }
-auto CItem::SetType(ItemTypes newValue) -> void {
+auto CItem::GetType() const -> itemtypes_t { return type; }
+auto CItem::SetType(itemtypes_t newValue) -> void {
     type = newValue;
     UpdateRegion();
 }
@@ -1436,8 +1436,8 @@ auto CItem::CopyData(CItem *target) -> void {
 
     // Set damage types on new item
     for (std::int32_t i = 0; i < WEATHNUM; ++i) {
-        target->SetWeatherDamage(static_cast<WeatherType>(i),
-                                 GetWeatherDamage(static_cast<WeatherType>(i)));
+        target->SetWeatherDamage(static_cast<weathertype_t>(i),
+                                 GetWeatherDamage(static_cast<weathertype_t>(i)));
     }
 
     // Add any script triggers present on object to the new object
@@ -1450,10 +1450,10 @@ auto CItem::CopyData(CItem *target) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets weather damage of item - primarily used by weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetWeatherDamage(WeatherType effectNum) const -> bool {
+auto CItem::GetWeatherDamage(weathertype_t effectNum) const -> bool {
     return weatherBools.test(effectNum);
 }
-auto CItem::SetWeatherDamage(WeatherType effectNum, bool value) -> void {
+auto CItem::SetWeatherDamage(weathertype_t effectNum, bool value) -> void {
     weatherBools.set(effectNum, value);
     UpdateRegion();
 }
@@ -1683,7 +1683,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             break;
         case 'L':
             if (UTag == "LAYER") {
-                layer = static_cast<ItemLayers>(
+                layer = static_cast<itemlayers_t>(
                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
@@ -1945,11 +1945,11 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         case 'T':
             if (UTag == "TYPE") {
                 if (csecs.size() != 1) {
-                    SetType(static_cast<ItemTypes>(
+                    SetType(static_cast<itemtypes_t>(
                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
                 }
                 else {
-                    SetType(static_cast<ItemTypes>(
+                    SetType(static_cast<itemtypes_t>(
                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 }
                 rValue = true;
@@ -2299,7 +2299,7 @@ inline bool operator>(const CItem &x, const CItem &y) { return (x.GetSerial() > 
 //|	Purpose		-	Display "speech" over an item
 // o------------------------------------------------------------------------------------------------o
 auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std::uint16_t Colour) -> void {
-    UnicodeTypes dictLang = ZERO;
+    unicodetypes_t dictLang = ZERO;
     auto speakTo = INVALIDSERIAL;
     SpeechTarget target = SPTRG_PCNPC;
     CChar *mChar = nullptr;
@@ -2480,7 +2480,7 @@ auto CItem::SendPackItemToSocket(CSocket *mSock) -> void {
     CChar *mChar = mSock->CurrcharObj();
     if (mChar != nullptr) {
         bool isGM = mChar->IsGM();
-        ItemLayers iLayer = GetLayer();
+        itemlayers_t iLayer = GetLayer();
         if (!isGM && (iLayer == IL_SELLCONTAINER || iLayer == IL_BOUGHTCONTAINER ||
                       iLayer == IL_BUYCONTAINER))
             return;

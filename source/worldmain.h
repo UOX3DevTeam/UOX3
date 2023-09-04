@@ -116,7 +116,7 @@ class CWorldMain {
     // Worldsave
     std::uint32_t oldTime, newTime;
     bool autoSaved;
-    SaveStatus worldSaveProgress;
+    savestatus_t worldSaveProgress;
 
     // IP Update
     std::uint32_t oldIPtime, newIPtime;
@@ -185,8 +185,8 @@ class CWorldMain {
     std::uint32_t GetOldTime(void) const;
     void SetAutoSaved(bool newVal);
     bool GetAutoSaved(void) const;
-    void SetWorldSaveProgress(SaveStatus newVal);
-    SaveStatus GetWorldSaveProgress(void) const;
+    void SetWorldSaveProgress(savestatus_t newVal);
+    savestatus_t GetWorldSaveProgress(void) const;
 
     // IP update
     std::uint32_t GetNewIPTime(void) const;

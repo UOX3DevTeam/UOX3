@@ -45,7 +45,7 @@ void cEffects::DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection) {
 // caller
 // o------------------------------------------------------------------------------------------------o
 CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour,
-                                  BloodTypes bloodType) {
+                                  bloodtypes_t bloodType) {
     // Use default blood decay timer from ini setting
     R32 bloodDecayTimer =
         static_cast<R32>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY));

@@ -1066,7 +1066,7 @@ void CMultiObj::Cleanup(void) {
     for (CItem *iRemove = itemInMulti.First(); !itemInMulti.Finished();
          iRemove = itemInMulti.Next()) {
         if (ValidateObject(iRemove)) {
-            ItemTypes iType = iRemove->GetType();
+            itemtypes_t iType = iRemove->GetType();
             if (iType == IT_DOOR || iType == IT_LOCKEDDOOR || iType == IT_HOUSESIGN) {
                 iRemove->Delete();
             }

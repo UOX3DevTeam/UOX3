@@ -810,7 +810,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player uses a skill from the skill list
 // o------------------------------------------------------------------------------------------------o
-// void ClilocMessage( CSocket *mSock, SpeechType speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
+// void ClilocMessage( CSocket *mSock, speechtype_t speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
 // const char *types = "", ... );
 void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
     VALIDATESOCKET(s);
@@ -942,7 +942,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
     std::uint8_t MaxTrackingTargets = 0;
     const std::uint16_t distance =
         (cwmWorldState->ServerData()->TrackingBaseRange() + (mChar->GetSkill(TRACKING) / 50));
-    UnicodeTypes mLang = s->Language();
+    unicodetypes_t mLang = s->Language();
 
     if (m == (2 + TRACKINGMENUOFFSET)) {
         creatureType = CT_CREATURE;
@@ -1369,7 +1369,7 @@ void CSkills::Load(void) {
     LoadCreateMenus();
     Console::shared().PrintDone();
 
-    CJSMappingSection *skillSection = JSMapping->GetSection(SCPT_SKILLUSE);
+    CJSMappingSection *skillSection = JSMapping->GetSection(CJSMappingSection::SCPT_SKILLUSE);
     for (cScript *ourScript = skillSection->First(); !skillSection->Finished();
          ourScript = skillSection->Next()) {
         if (ourScript != nullptr) {
@@ -1687,7 +1687,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
     std::int16_t ActualStat[3] = {s->ActualStrength(), s->ActualDexterity(), s->ActualIntelligence()};
     std::uint16_t StatModifier[3] = {cwmWorldState->skill[sk].strength, cwmWorldState->skill[sk].dexterity,
                             cwmWorldState->skill[sk].intelligence};
-    SkillLock StatLocks[3] = {s->GetSkillLock(STRENGTH), s->GetSkillLock(DEXTERITY),
+    skilllock_t StatLocks[3] = {s->GetSkillLock(STRENGTH), s->GetSkillLock(DEXTERITY),
                               s->GetSkillLock(INTELLECT)};
 
     std::vector<std::uint16_t> skillUpdTriggers = s->GetScriptTriggers();

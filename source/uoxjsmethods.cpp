@@ -70,8 +70,8 @@ void ScriptError(JSContext *cx, const char *txt, ...);
 // queue | Notes		-	Copied that here from sefunctions.cpp. Default paramters
 // weren't working !?
 // o------------------------------------------------------------------------------------------------o
-void MethodSpeech(CBaseObject &speaker, char *message, SpeechType sType, colour_t sColour = 0x005A,
-                  FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC,
+void MethodSpeech(CBaseObject &speaker, char *message, speechtype_t sType, colour_t sColour = 0x005A,
+                  fonttype_t fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC,
                   serial_t spokenTo = INVALIDSERIAL, bool useUnicode = false) {
     if (useUnicode) {
         bool sendAll = true;
@@ -1713,14 +1713,14 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         speechTargetSerial = static_cast<serial_t>(JSVAL_TO_INT(argv[4]));
     }
 
-    FontType speechFontType = FNT_NULL;
+    fonttype_t speechFontType = FNT_NULL;
     if (argc == 6) {
-        speechFontType = static_cast<FontType>(JSVAL_TO_INT(argv[5]));
+        speechFontType = static_cast<fonttype_t>(JSVAL_TO_INT(argv[5]));
     }
 
-    SpeechType speechType = UNKNOWN;
+    speechtype_t speechType = UNKNOWN;
     if (argc == 7) {
-        speechType = static_cast<SpeechType>(JSVAL_TO_INT(argv[6]));
+        speechType = static_cast<speechtype_t>(JSVAL_TO_INT(argv[6]));
     }
 
     bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
@@ -1762,7 +1762,7 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
 
         if (speechFontType == FNT_NULL) {
-            speechFontType = static_cast<FontType>(myChar->GetFontType());
+            speechFontType = static_cast<fonttype_t>(myChar->GetFontType());
         }
         if (speechType == UNKNOWN) {
             speechType = SAY;
@@ -2231,7 +2231,7 @@ JSBool CChar_EmoteMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
     bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
-    MethodSpeech(*myChar, trgMessage, EMOTE, txtHue, static_cast<FontType>(myChar->GetFontType()),
+    MethodSpeech(*myChar, trgMessage, EMOTE, txtHue, static_cast<fonttype_t>(myChar->GetFontType()),
                  speechTarget, speechTargetSerial, useUnicode);
     return JS_TRUE;
 }
@@ -2653,7 +2653,7 @@ JSBool CMisc_SoundEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             if (myClass.ClassName() == "UOXChar" && tmpMonsterSound > -1) {
                 CChar *myChar = static_cast<CChar *>(myClass.toObject());
                 std::uint16_t monsterSoundToPlay = cwmWorldState->creatures[myChar->GetId()].GetSound(
-                    static_cast<monsterSound>(tmpMonsterSound));
+                    static_cast<monstersound_t>(tmpMonsterSound));
                 if (monsterSoundToPlay != 0) {
                     Effects->PlaySound(myChar, monsterSoundToPlay, allHear);
                 }
@@ -3479,7 +3479,7 @@ JSBool CChar_OpenLayer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     CSocket *mySock = static_cast<CSocket *>(JS_GetPrivate(cx, JSVAL_TO_OBJECT(argv[0])));
     if (mySock != nullptr) {
-        CItem *iLayer = myChar->GetItemAtLayer(static_cast<ItemLayers>(JSVAL_TO_INT(argv[1])));
+        CItem *iLayer = myChar->GetItemAtLayer(static_cast<itemlayers_t>(JSVAL_TO_INT(argv[1])));
         if (ValidateObject(iLayer)) {
             // Keep track of original script that's executing
             auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
@@ -4149,7 +4149,7 @@ JSBool CChar_FindItemLayer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
     }
 
     if (argc == 1) {
-        myItem = myChar->GetItemAtLayer(static_cast<ItemLayers>(JSVAL_TO_INT(argv[0])));
+        myItem = myChar->GetItemAtLayer(static_cast<itemlayers_t>(JSVAL_TO_INT(argv[0])));
     }
     else {
         ScriptError(cx, "(FindItemLayer) Unknown Count of Arguments: %d, needs: 1", argc);
@@ -4189,7 +4189,7 @@ JSBool CChar_FindItemType(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
     std::uint8_t iType = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
 
-    CItem *myItem = FindItemOfType(myChar, static_cast<ItemTypes>(iType));
+    CItem *myItem = FindItemOfType(myChar, static_cast<itemtypes_t>(iType));
     if (!ValidateObject(myItem)) {
         *rval = JSVAL_NULL;
         return JS_TRUE;
@@ -4574,7 +4574,7 @@ JSBool CChar_SetInvisible(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
     std::uint8_t newVal = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[0]));
 
-    myChar->SetVisible(static_cast<VisibleTypes>(newVal));
+    myChar->SetVisible(static_cast<visibletypes_t>(newVal));
     if (argc == 2) {
         std::uint32_t TimeOut = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[1]));
         myChar->SetTimer(tCHAR_INVIS, BuildTimeValue(static_cast<R32>(TimeOut) / 1000.0f));
@@ -5718,12 +5718,12 @@ JSBool CChar_YellMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
     if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER) {
         MethodSpeech(*myChar, trgMessage, YELL, 0x0026,
-                     static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
+                     static_cast<fonttype_t>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
                      useUnicode);
     }
     else {
         MethodSpeech(*myChar, trgMessage, YELL, myChar->GetSayColour(),
-                     static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
+                     static_cast<fonttype_t>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
                      useUnicode);
     }
 
@@ -5780,12 +5780,12 @@ JSBool CChar_WhisperMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
     if (myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER) {
         MethodSpeech(*myChar, trgMessage, WHISPER, 0x0026,
-                     static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
+                     static_cast<fonttype_t>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
                      useUnicode);
     }
     else {
         MethodSpeech(*myChar, trgMessage, WHISPER, myChar->GetSayColour(),
-                     static_cast<FontType>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
+                     static_cast<fonttype_t>(myChar->GetFontType()), SPTRG_PCNPC, INVALIDSERIAL,
                      useUnicode);
     }
 
@@ -9128,7 +9128,7 @@ JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
             }
         }
     }
-    mChar->ReactOnDamage(static_cast<WeatherType>(damage.toInt()), attacker);
+    mChar->ReactOnDamage(static_cast<weathertype_t>(damage.toInt()), attacker);
     return JS_TRUE;
 }
 
@@ -9162,9 +9162,9 @@ JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     JSEncapsulate damage(cx, &(argv[0]));
 
-    WeatherType element = PHYSICAL;
+    weathertype_t element = PHYSICAL;
     if (argc >= 2) {
-        element = static_cast<WeatherType>(JSVAL_TO_INT(argv[1]));
+        element = static_cast<weathertype_t>(JSVAL_TO_INT(argv[1]));
     }
 
     if (argc >= 3) {
@@ -9760,10 +9760,10 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 
     if (argc == 1) {
         if (ValidateObject(mChar)) {
-            *rval = INT_TO_JSVAL(mChar->GetResist(static_cast<WeatherType>(resistType.toInt())));
+            *rval = INT_TO_JSVAL(mChar->GetResist(static_cast<weathertype_t>(resistType.toInt())));
         }
         else if (ValidateObject(mItem)) {
-            *rval = INT_TO_JSVAL(mItem->GetResist(static_cast<WeatherType>(resistType.toInt())));
+            *rval = INT_TO_JSVAL(mItem->GetResist(static_cast<weathertype_t>(resistType.toInt())));
         }
         else {
             *rval = JS_FALSE;
@@ -9774,11 +9774,11 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
         JSEncapsulate value(cx, &(argv[1]));
         if (ValidateObject(mChar)) {
             mChar->SetResist(static_cast<std::uint16_t>(value.toInt()),
-                             static_cast<WeatherType>(resistType.toInt()));
+                             static_cast<weathertype_t>(resistType.toInt()));
         }
         else if (ValidateObject(mItem)) {
             mItem->SetResist(static_cast<std::uint16_t>(value.toInt()),
-                             static_cast<WeatherType>(resistType.toInt()));
+                             static_cast<weathertype_t>(resistType.toInt()));
         }
         else {
             *rval = JS_FALSE;
@@ -9832,7 +9832,7 @@ JSBool CChar_Defense(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 
     *rval = INT_TO_JSVAL(Combat->CalcDef(mChar, static_cast<std::uint8_t>(hitLoc.toInt()),
                                          doArmorDamage.toBool(),
-                                         static_cast<WeatherType>(resistType.toInt())));
+                                         static_cast<weathertype_t>(resistType.toInt())));
     return JS_TRUE;
 }
 

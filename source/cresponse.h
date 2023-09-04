@@ -177,13 +177,13 @@ class CBasePetResponse : public CBaseResponse {
 class CPetMultiResponse : public CBasePetResponse {
   protected:
     std::int32_t dictEntry;
-    TargetIds targId;
+    targetids_t targId;
     bool isRestricted;
     bool allSaid;
     bool checkDifficulty;
 
   public:
-    CPetMultiResponse(const std::string &text, bool isRestricted, TargetIds targVal, std::int32_t dictVal,
+    CPetMultiResponse(const std::string &text, bool isRestricted, targetids_t targVal, std::int32_t dictVal,
                       bool saidAll, bool checkControlDifficulty);
     virtual ~CPetMultiResponse() {}
     virtual bool Handle(CSocket *mSock, CChar *mChar, CChar *Npc) override;
@@ -290,10 +290,10 @@ class CVendorDismissResponse : public CBaseVendorResponse {
 class CHouseMultiResponse : public CBaseResponse {
   protected:
     std::int32_t dictEntry;
-    TargetIds targId;
+    targetids_t targId;
 
   public:
-    CHouseMultiResponse(TargetIds newTarg, std::int32_t newDict);
+    CHouseMultiResponse(targetids_t newTarg, std::int32_t newDict);
     virtual ~CHouseMultiResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };
@@ -311,10 +311,10 @@ class CBoatResponse : public CBaseResponse {
 
 class CBoatMultiResponse : public CBaseResponse {
   protected:
-    BoatMoveType moveType;
+    boatmovetype_t moveType;
 
   public:
-    CBoatMultiResponse(BoatMoveType mType);
+    CBoatMultiResponse(boatmovetype_t mType);
     virtual ~CBoatMultiResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };

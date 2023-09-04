@@ -721,7 +721,7 @@ inline JSPropertySpec cresourceproperties_t[] = {
     {"fishTime", CRESP_FISHTIME, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {nullptr, static_cast<std::int8_t>(0), static_cast<std::uint8_t>(0), nullptr, nullptr}};
 
-inline JSPropertySpec CPartyProperties[] = {
+inline JSPropertySpec cpartyproperties_t[] = {
     {"leader", CPARTYP_LEADER, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"memberCount", CPARTYP_MEMBERCOUNT, JSPROP_ENUMPERMRO, nullptr, nullptr},
     {"isNPC", CPARTYP_ISNPC, JSPROP_ENUMANDPERM, nullptr, nullptr},

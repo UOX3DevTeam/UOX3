@@ -965,7 +965,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
 
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
 
-    UnicodeTypes mLang = mSock->Language();
+    unicodetypes_t mLang = mSock->Language();
     if (trigWord != TW_SETNAME && trigWord != TW_BOATANCHORRAISE && trigWord != TW_BOATANCHORDROP &&
         boat->GetMoveType() == -1) {
         tiller->TextMessage(mSock, 2024); // Ar, the anchor is down sir!

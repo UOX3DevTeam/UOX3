@@ -51,8 +51,8 @@ class CItem : public CBaseObject {
     std::uint8_t spd;         // The speed of the weapon
     std::uint16_t maxHp;       // Max number of hit points an item can have.
     std::uint16_t amount;      // Amount of items in pile
-    ItemLayers layer; // Layer if equipped on paperdoll
-    ItemTypes type;   // For things that do special things on doubleclicking
+    itemlayers_t layer; // Layer if equipped on paperdoll
+    itemtypes_t type;   // For things that do special things on doubleclicking
     std::int8_t offspell;
     std::uint16_t entryMadeFrom;
     serial_t creator; // Store the serial of the player made this item
@@ -109,8 +109,8 @@ class CItem : public CBaseObject {
     auto EntryMadeFrom() const -> std::uint16_t;
     auto EntryMadeFrom(std::uint16_t newValue) -> void;
 
-    auto GetWeatherDamage(WeatherType effectNum) const -> bool;
-    auto SetWeatherDamage(WeatherType effectNum, bool value) -> void;
+    auto GetWeatherDamage(weathertype_t effectNum) const -> bool;
+    auto SetWeatherDamage(weathertype_t effectNum, bool value) -> void;
 
     auto Dupe(ObjectType itemType = OT_ITEM) -> CItem *;
 
@@ -180,11 +180,11 @@ class CItem : public CBaseObject {
 
     auto InDungeon() -> bool;
 
-    auto GetLayer() const -> ItemLayers;
-    auto SetLayer(ItemLayers newValue) -> void;
+    auto GetLayer() const -> itemlayers_t;
+    auto SetLayer(itemlayers_t newValue) -> void;
 
-    auto GetType() const -> ItemTypes;
-    auto SetType(ItemTypes newValue) -> void;
+    auto GetType() const -> itemtypes_t;
+    auto SetType(itemtypes_t newValue) -> void;
 
     auto GetOffSpell() const -> std::int8_t;
     auto SetOffSpell(std::int8_t newValue) -> void;

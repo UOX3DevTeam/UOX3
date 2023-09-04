@@ -40,11 +40,11 @@ struct CommandMapEntry_st {
 struct TargetMapEntry_st {
     std::uint8_t cmdLevelReq;
     std::uint8_t cmdType;
-    TargetIds targId;
+    targetids_t targId;
     std::int32_t dictEntry;
     TargetMapEntry_st()
         : cmdLevelReq(0), cmdType(CMD_TARGET), targId(TARGET_NOFUNC), dictEntry(0) {}
-    TargetMapEntry_st(std::uint8_t cLR, std::uint8_t cT, TargetIds tID, std::int32_t dE)
+    TargetMapEntry_st(std::uint8_t cLR, std::uint8_t cT, targetids_t tID, std::int32_t dE)
         : cmdLevelReq(cLR), cmdType(cT), targId(tID), dictEntry(dE) {}
 };
 

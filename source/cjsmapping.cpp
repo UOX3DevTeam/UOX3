@@ -13,6 +13,11 @@
 
 using namespace std::string_literals;
 
+
+//================================================================================================
+// CJSMappingSection
+//================================================================================================
+
 CJSMapping *JSMapping = nullptr;
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	cjsmapping.cpp
@@ -54,8 +59,8 @@ CJSMapping::~CJSMapping() {
 //|	Purpose		-	Resets all parameters of the CJSMapping class to default
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::ResetDefaults(void) {
-    for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
-        mapSection[i] = new CJSMappingSection(static_cast<SCRIPTTYPE>(i));
+    for (size_t i= 0 ; i < CJSMappingSection::ScriptNames.size();i++){
+        mapSection[i] = new CJSMappingSection(static_cast<CJSMappingSection::type_t>(i));
     }
 
     envokeById = new CEnvoke("object");
@@ -71,7 +76,7 @@ void CJSMapping::ResetDefaults(void) {
 //|	Purpose		-	Frees all memory used by CJSMapping
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::Cleanup(void) {
-    for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+    for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         if (mapSection[1] != nullptr) {
             delete mapSection[i];
             mapSection[i] = nullptr;
@@ -98,7 +103,7 @@ void CJSMapping::Reload(std::uint16_t scriptId) {
     if (scriptId != 0xFFFF) {
         Console::shared().Print(
             util::format("CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId));
-        for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+        for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
             if (mapSection[i]->IsInMap(scriptId)) {
                 mapSection[i]->Reload(scriptId);
                 return;
@@ -122,7 +127,7 @@ void CJSMapping::Reload(std::uint16_t scriptId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads a specific section of the JS Scripts
 // o------------------------------------------------------------------------------------------------o
-void CJSMapping::Reload(SCRIPTTYPE sectionId) {
+void CJSMapping::Reload(CJSMappingSection::type_t sectionId) {
     Console::shared().Print(util::format("CMD: Attempting Reload of JavaScript (SectionId %u)\n",
                                          static_cast<std::int32_t>(sectionId)));
     if (mapSection[sectionId] != nullptr) {
@@ -140,7 +145,7 @@ void CJSMapping::Reload(SCRIPTTYPE sectionId) {
 //|	Purpose		-	Parses through jse_fileassociations.scp doling out the work
 //|						to each CJSMappingSection Parse() routine.
 // o------------------------------------------------------------------------------------------------o
-void CJSMapping::Parse(SCRIPTTYPE toParse) {
+void CJSMapping::Parse(CJSMappingSection::type_t toParse) {
     Console::shared().Print("Loading JS Scripts\n");
 
     std::string scpFileName =
@@ -152,13 +157,13 @@ void CJSMapping::Parse(SCRIPTTYPE toParse) {
 
     Script *fileAssocData = new Script(scpFileName, NUM_DEFS, false);
     if (fileAssocData != nullptr) {
-        if (toParse != SCPT_COUNT) {
+        if (toParse != CJSMappingSection::ScriptNames.size()) {
             if (mapSection[toParse] != nullptr) {
                 mapSection[toParse]->Parse(fileAssocData);
             }
         }
         else {
-            for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+            for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
                 if (mapSection[i] != nullptr) {
                     mapSection[i]->Parse(fileAssocData);
                 }
@@ -169,13 +174,25 @@ void CJSMapping::Parse(SCRIPTTYPE toParse) {
     }
 }
 
+
+//================================================================================================
+// CJSMappingSection
+//================================================================================================
+const std::vector<std::string> CJSMappingSection::ScriptNames{
+    "SCRIPT_LIST"s,"COMMAND_SCRIPTS"s,
+    "MAGIC_SCRIPTS"s,  "SKILLUSE_SCRIPTS"s,
+    "PACKET_SCRIPTS"s, "CONSOLE_SCRIPTS"s
+    
+};
+
+
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJSMapping::GetSection()
 //|	Date		-	2/7/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the specified JSMappingSection
 // o------------------------------------------------------------------------------------------------o
-CJSMappingSection *CJSMapping::GetSection(SCRIPTTYPE toGet) {
+CJSMappingSection *CJSMapping::GetSection(CJSMappingSection::type_t toGet) {
     if (mapSection[toGet] != nullptr)
         return mapSection[toGet];
 
@@ -191,7 +208,7 @@ CJSMappingSection *CJSMapping::GetSection(SCRIPTTYPE toGet) {
 std::uint16_t CJSMapping::GetScriptId(JSObject *toFind) {
     std::uint16_t retVal = 0xFFFF;
 
-    for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+    for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         retVal = mapSection[i]->GetScriptId(toFind);
         if (retVal != 0xFFFF)
             break;
@@ -209,7 +226,7 @@ cScript *CJSMapping::GetScript(JSObject *toFind) {
     cScript *retVal = nullptr;
     cScript *toCheck = nullptr;
 
-    for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+    for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         toCheck = mapSection[i]->GetScript(toFind);
         if (toCheck != nullptr) {
             retVal = toCheck;
@@ -229,7 +246,7 @@ cScript *CJSMapping::GetScript(std::uint16_t toFind) {
     cScript *retVal = nullptr;
     cScript *toCheck = nullptr;
 
-    for (size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i) {
+    for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         toCheck = mapSection[i]->GetScript(toFind);
         if (toCheck != nullptr) {
             retVal = toCheck;
@@ -260,7 +277,7 @@ CEnvoke *CJSMapping::GetEnvokeByType(void) { return envokeByType; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Class containing the specified section of jse_fileassociations.scp
 // o------------------------------------------------------------------------------------------------o
-CJSMappingSection::CJSMappingSection(SCRIPTTYPE sT) {
+CJSMappingSection::CJSMappingSection(CJSMappingSection::type_t sT) {
     scriptType = sT;
 
     scriptIdMap.clear();

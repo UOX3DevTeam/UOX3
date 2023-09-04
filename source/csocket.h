@@ -127,7 +127,7 @@ class CSocket {
     size_t cliSocket; // client
     std::int16_t walkSequence;
     size_t postAckCount;
-    PickupLocations pSpot;
+    pickuplocations_t pSpot;
     serial_t pFrom;
 
     GenericList<CItem *> contsOpened;
@@ -136,7 +136,7 @@ class CSocket {
     std::int16_t pY;
     std::int8_t pZ;
 
-    UnicodeTypes lang;
+    unicodetypes_t lang;
     ClientTypes cliType;
     ClientVersions cliVerShort;
     std::uint32_t clientVersion;
@@ -211,7 +211,7 @@ class CSocket {
     std::int16_t PickupX(void) const;
     std::int16_t PickupY(void) const;
     std::int8_t PickupZ(void) const;
-    PickupLocations PickupSpot(void) const;
+    pickuplocations_t PickupSpot(void) const;
     serial_t PickupSerial(void) const;
     bool FirstPacket(void) const;
     std::int32_t IdleTimeout(void) const;
@@ -280,7 +280,7 @@ class CSocket {
     void PickupX(std::int16_t x);
     void PickupY(std::int16_t y);
     void PickupZ(std::int8_t z);
-    void PickupSpot(PickupLocations newValue);
+    void PickupSpot(pickuplocations_t newValue);
     void PickupSerial(serial_t pickupSerial);
     void FirstPacket(bool newValue);
     void IdleTimeout(std::int32_t newValue);
@@ -350,8 +350,8 @@ class CSocket {
 
     void Send(CPUOXBuffer *toSend);
 
-    UnicodeTypes Language(void) const;
-    void Language(UnicodeTypes newVal);
+    unicodetypes_t Language(void) const;
+    void Language(unicodetypes_t newVal);
 
     void SysMessage(const std::string txt, ...);
     void SysMessageJS(const std::string &uformat, std::uint16_t txtColor, const std::string &data);

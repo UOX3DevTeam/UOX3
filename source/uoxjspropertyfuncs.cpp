@@ -1052,7 +1052,7 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
         case CIP_ORIGIN:
             tString = JS_NewStringCopyZ(
                 cx, cwmWorldState->ServerData()
-                        ->EraEnumToString(static_cast<ExpansionRuleset>(gPriv->GetOrigin()))
+                        ->EraEnumToString(static_cast<expansionruleset_t>(gPriv->GetOrigin()))
                         .c_str());
             *vp = STRING_TO_JSVAL(tString);
             break;
@@ -1337,7 +1337,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             }
             break;
         case CIP_VISIBLE:
-            gPriv->SetVisible(static_cast<VisibleTypes>(encaps.toInt()));
+            gPriv->SetVisible(static_cast<visibletypes_t>(encaps.toInt()));
             break;
         case CIP_SERIAL:
             break;
@@ -1411,7 +1411,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             }
             break;
         case CIP_TYPE:
-            gPriv->SetType(static_cast<ItemTypes>(encaps.toInt()));
+            gPriv->SetType(static_cast<itemtypes_t>(encaps.toInt()));
             break;
         case CIP_MORE: {
             auto sEncaps = encaps.toString();
@@ -1610,7 +1610,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetHiDamage(static_cast<std::int16_t>(encaps.toInt()));
             break;
         case CIP_LAYER:
-            gPriv->SetLayer(static_cast<ItemLayers>(encaps.toInt()));
+            gPriv->SetLayer(static_cast<itemlayers_t>(encaps.toInt()));
             break;
         case CIP_ITEMSINSIDE:
             break;
@@ -2364,7 +2364,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
         case CCP_ORIGIN:
             tString = JS_NewStringCopyZ(
                 cx, cwmWorldState->ServerData()
-                        ->EraEnumToString(static_cast<ExpansionRuleset>(gPriv->GetOrigin()))
+                        ->EraEnumToString(static_cast<expansionruleset_t>(gPriv->GetOrigin()))
                         .c_str());
             *vp = STRING_TO_JSVAL(tString);
             break;
@@ -2917,7 +2917,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             }
             break;
         case CCP_VISIBLE:
-            gPriv->SetVisible(static_cast<VisibleTypes>(encaps.toInt()));
+            gPriv->SetVisible(static_cast<visibletypes_t>(encaps.toInt()));
             break;
         case CCP_SERIAL:
             break;
@@ -3479,7 +3479,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->SetShop(false);
                 CItem *tPack = nullptr;
                 for (std::uint8_t i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
-                    tPack = gPriv->GetItemAtLayer(static_cast<ItemLayers>(i));
+                    tPack = gPriv->GetItemAtLayer(static_cast<itemlayers_t>(i));
                     if (ValidateObject(tPack)) {
                         tPack->Delete();
                     }
@@ -3774,7 +3774,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->SetReserves(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CREGP_APPEARANCE:
-            gPriv->SetAppearance(static_cast<WorldType>(encaps.toInt()));
+            gPriv->SetAppearance(static_cast<worldtype_t>(encaps.toInt()));
             break;
         case CREGP_MUSIC:
             gPriv->SetMusicList(static_cast<std::uint16_t>(encaps.toInt()));
@@ -4392,12 +4392,12 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->PickupZ(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPSPOT:
-            gPriv->PickupSpot(static_cast<PickupLocations>(encaps.toInt()));
+            gPriv->PickupSpot(static_cast<pickuplocations_t>(encaps.toInt()));
             break;
         case CSOCKP_PICKUPSERIAL:
             break;
         case CSOCKP_LANGUAGE:
-            gPriv->Language(static_cast<UnicodeTypes>(encaps.toInt()));
+            gPriv->Language(static_cast<unicodetypes_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTMAJORVER:
             gPriv->ClientVersionMajor(static_cast<std::uint8_t>(encaps.toInt()));
@@ -4711,11 +4711,11 @@ JSBool CSkillsProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
     else if (myClass.ClassName() == "UOXSkillsLock") {
         if (skillId == ALLSKILLS) {
             for (i = 0; i < ALLSKILLS; ++i) {
-                myChar->SetSkillLock(static_cast<SkillLock>(newSkillValue), i);
+                myChar->SetSkillLock(static_cast<skilllock_t>(newSkillValue), i);
             }
         }
         else {
-            myChar->SetSkillLock(static_cast<SkillLock>(newSkillValue), skillId);
+            myChar->SetSkillLock(static_cast<skilllock_t>(newSkillValue), skillId);
         }
     }
 

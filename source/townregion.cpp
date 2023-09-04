@@ -48,7 +48,7 @@ const std::uint16_t DEFTOWN_TAXEDAMOUNT = 0;
 const std::int32_t DEFTOWN_GOLDRESERVED = 0;
 const std::int16_t DEFTOWN_GUARDSPURCHASED = 0;
 const std::uint32_t DEFTOWN_RESOURCECOLLECTED = 0;
-const WorldType DEFTOWN_VISUALAPPEARANCE = WRLD_SPRING;
+const worldtype_t DEFTOWN_VISUALAPPEARANCE = WRLD_SPRING;
 const std::int16_t DEFTOWN_HEALTH = 30000;
 const std::uint32_t DEFTOWN_ELECTIONCLOSE = 0;
 const std::uint32_t DEFTOWN_NEXTPOLL = 0;
@@ -460,8 +460,8 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             }
             else if (UTag == "APPEARANCE") {
                 visualAppearance = WRLD_COUNT;
-                for (WorldType wt = WRLD_SPRING; wt < WRLD_COUNT;
-                     wt = static_cast<WorldType>(wt + static_cast<WorldType>(1))) {
+                for (worldtype_t wt = WRLD_SPRING; wt < WRLD_COUNT;
+                     wt = static_cast<worldtype_t>(wt + static_cast<worldtype_t>(1))) {
                     if (data == WorldTypeNames[wt]) {
                         visualAppearance = wt;
                         break;
@@ -1025,7 +1025,7 @@ void CTownRegion::SendBasicInfo(CSocket *sock) {
 //|	Purpose		-	Sends Gump menu to client of a potential townregion member
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendPotentialMember(CSocket *sock) {
-    UnicodeTypes sLang = sock->Language();
+    unicodetypes_t sLang = sock->Language();
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
@@ -1078,7 +1078,7 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
 //|	Purpose		-	Sends Gump menu to client with townregion mayor info and functions
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendMayorGump(CSocket *sock) {
-    UnicodeTypes sLang = sock->Language();
+    unicodetypes_t sLang = sock->Language();
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
@@ -1233,7 +1233,7 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
                      cwmWorldState->ServerData()->ButtonRight() + 1)); // view enemy towns
 
     CChar *mChar = sock->CurrcharObj();
-    UnicodeTypes sLang = sock->Language();
+    unicodetypes_t sLang = sock->Language();
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format(Dictionary->GetEntry(1139, sLang), GetPopulation()));
     toSend.addText(Dictionary->GetEntry(1140, sLang));
@@ -1432,7 +1432,7 @@ bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
 //|	Purpose		-	View townregion's budget for guards
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::ViewBudget(CSocket *sock) {
-    UnicodeTypes sLang = sock->Language();
+    unicodetypes_t sLang = sock->Language();
     CGumpDisplay Budget(sock, 300, 300);
     Budget.SetTitle(Dictionary->GetEntry(1161, sLang));                 // Budget
     Budget.AddData(Dictionary->GetEntry(1162, sLang), guardsPurchased); // Guards Bought
@@ -1526,8 +1526,8 @@ bool CTownRegion::PeriodicCheck(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets visual appearance (season) of townregion
 // o------------------------------------------------------------------------------------------------o
-WorldType CTownRegion::GetAppearance(void) const { return visualAppearance; }
-void CTownRegion::SetAppearance(WorldType worldType) { visualAppearance = worldType; }
+worldtype_t CTownRegion::GetAppearance(void) const { return visualAppearance; }
+void CTownRegion::SetAppearance(worldtype_t worldType) { visualAppearance = worldType; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::ViewTaxes()

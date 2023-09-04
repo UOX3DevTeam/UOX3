@@ -124,7 +124,7 @@ void CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff);
 CChar *FindItemOwner(CItem *p);
 CBaseObject *FindItemOwner(CItem *i, ObjectType &objType);
 CItem *FindRootContainer(CItem *i);
-CItem *FindItemOfType(CChar *toFind, ItemTypes type);
+CItem *FindItemOfType(CChar *toFind, itemtypes_t type);
 CItem *FindItemOfSectionId(CChar *toFind, std::string sectionId);
 CItem *FindItem(CChar *toFind, std::uint16_t itemId);
 

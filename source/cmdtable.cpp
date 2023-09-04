@@ -141,7 +141,7 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
     bool retVal = true;
     if (ValidateObject(a)) {
         CItem *i = static_cast<CItem *>(a);
-        ItemTypes iType = i->GetType();
+        itemtypes_t iType = i->GetType();
         if (iType == IT_ITEMSPAWNER || iType == IT_NPCSPAWNER || iType == IT_SPAWNCONT ||
             iType == IT_LOCKEDSPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT ||
             iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) {
@@ -532,7 +532,7 @@ void Command_Tell(CSocket *s) {
         if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
             CPUnicodeMessage unicodeMessage;
             unicodeMessage.Message(temp);
-            unicodeMessage.Font(static_cast<FontType>(mChar->GetFontType()));
+            unicodeMessage.Font(static_cast<fonttype_t>(mChar->GetFontType()));
             if (mChar->GetSayColour() == 0x1700) {
                 unicodeMessage.Colour(0x5A);
             }
@@ -551,7 +551,7 @@ void Command_Tell(CSocket *s) {
         }
         else {
             CSpeechEntry &toAdd = SpeechSys->Add();
-            toAdd.Font(static_cast<FontType>(mChar->GetFontType()));
+            toAdd.Font(static_cast<fonttype_t>(mChar->GetFontType()));
             toAdd.Speech(temp);
             toAdd.Speaker(mChar->GetSerial());
             toAdd.SpokenTo(tChar->GetSerial());
@@ -671,7 +671,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
     bool retVal = true;
     if (ValidateObject(a)) {
         CItem *i = static_cast<CItem *>(a);
-        ItemTypes iType = i->GetType();
+        itemtypes_t iType = i->GetType();
         if (iType == IT_ITEMSPAWNER || iType == IT_NPCSPAWNER || iType == IT_SPAWNCONT ||
             iType == IT_LOCKEDSPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT ||
             iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) {

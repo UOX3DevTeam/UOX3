@@ -25,7 +25,7 @@ using namespace std::string_literals;
 
 cItem *Items = nullptr;
 
-ItemTypes FindItemTypeFromTag(const std::string &strToFind);
+itemtypes_t FindItemTypeFromTag(const std::string &strToFind);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	bool ApplySpawnItemSection( CSpawnItem *applyTo, const DFNTAGS tag,
@@ -456,7 +456,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
             break;
         case DFNTAG_LAYER:
-            applyTo->SetLayer(static_cast<ItemLayers>(ndata));
+            applyTo->SetLayer(static_cast<itemlayers_t>(ndata));
             break;
         case DFNTAG_LIGHT:
             applyTo->SetWeatherDamage(LIGHT, ndata != 0);
@@ -640,7 +640,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             break;
         case DFNTAG_ORIGIN:
             applyTo->SetOrigin(
-                static_cast<ExpansionRuleset>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
+                static_cast<expansionruleset_t>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
             break;
         case DFNTAG_POISONDAMAGE:
             applyTo->SetWeatherDamage(POISON, ndata != 0);
@@ -772,10 +772,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             }
             break;
         case DFNTAG_TYPE:
-            ItemTypes iType;
+            itemtypes_t iType;
             iType = FindItemTypeFromTag(cdata);
             if (iType == IT_COUNT) {
-                iType = static_cast<ItemTypes>(ndata);
+                iType = static_cast<itemtypes_t>(ndata);
             }
             if (iType < IT_COUNT) {
                 applyTo->SetType(iType);
@@ -785,7 +785,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             applyTo->SetUsesLeft(static_cast<std::uint16_t>(ndata));
             break;
         case DFNTAG_VISIBLE:
-            applyTo->SetVisible(static_cast<VisibleTypes>(ndata));
+            applyTo->SetVisible(static_cast<visibletypes_t>(ndata));
             break;
         case DFNTAG_VALUE:
             if (ndata >= 0) {

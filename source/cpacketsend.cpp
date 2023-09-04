@@ -198,7 +198,7 @@ CPacketSpeech::CPacketSpeech(CPITalkRequest &toCopy) {
 
 void CPacketSpeech::CopyData(CPITalkRequest &toCopy) {
     Colour(toCopy.TextColour());
-    Font(static_cast<FontType>(toCopy.Font()));
+    Font(static_cast<fonttype_t>(toCopy.Font()));
     Type(toCopy.Type());
     Speech(toCopy.Text());
 }
@@ -290,10 +290,10 @@ void CPacketSpeech::SpeakerName(const std::string &toPut) {
 void CPacketSpeech::SpeakerSerial(serial_t toPut) { pStream.WriteLong(3, toPut); }
 void CPacketSpeech::SpeakerModel(std::uint16_t toPut) { pStream.WriteShort(7, toPut); }
 void CPacketSpeech::Colour(colour_t toPut) { pStream.WriteShort(10, toPut); }
-void CPacketSpeech::Font(FontType toPut) { pStream.WriteShort(12, toPut); }
-void CPacketSpeech::Language([[maybe_unused]] UnicodeTypes toPut) {}
+void CPacketSpeech::Font(fonttype_t toPut) { pStream.WriteShort(12, toPut); }
+void CPacketSpeech::Language([[maybe_unused]] unicodetypes_t toPut) {}
 void CPacketSpeech::Unicode(bool toPut) { isUnicode = toPut; }
-void CPacketSpeech::Type(SpeechType toPut) { pStream.WriteByte(9, static_cast<std::uint8_t>(toPut)); }
+void CPacketSpeech::Type(speechtype_t toPut) { pStream.WriteByte(9, static_cast<std::uint8_t>(toPut)); }
 void CPacketSpeech::Speech(const std::string &toPut) {
     size_t len = toPut.length();
     const size_t newLen = 44 + len + 1;
@@ -534,13 +534,13 @@ CPWorldChange::CPWorldChange() {
     pStream.ReserveSize(3);
     pStream.WriteByte(0, 0xBC);
 }
-CPWorldChange::CPWorldChange(WorldType newSeason, std::uint8_t newCursor) {
+CPWorldChange::CPWorldChange(worldtype_t newSeason, std::uint8_t newCursor) {
     pStream.ReserveSize(3);
     pStream.WriteByte(0, 0xBC);
     Season(newSeason);
     Cursor(newCursor);
 }
-void CPWorldChange::Season(WorldType newSeason) {
+void CPWorldChange::Season(worldtype_t newSeason) {
     pStream.WriteByte(1, static_cast<std::uint8_t>(newSeason));
 }
 void CPWorldChange::Cursor(std::uint8_t newCursor) { pStream.WriteByte(2, newCursor); }
@@ -606,7 +606,7 @@ void CPUpdIndSkill::CopyData(CChar &i, std::uint8_t sNum) {
     SkillNum(sNum);
     Skill(i.GetSkill(sNum));
     BaseSkill(i.GetBaseSkill(sNum));
-    Lock(static_cast<SkillLock>(i.GetSkillLock(sNum)));
+    Lock(static_cast<skilllock_t>(i.GetSkillLock(sNum)));
     Cap(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSkillCapStatus()));
 }
 CPUpdIndSkill::CPUpdIndSkill() { InternalReset(); }
@@ -618,7 +618,7 @@ void CPUpdIndSkill::Character(CChar &i, std::uint8_t sNum) { CopyData(i, sNum); 
 void CPUpdIndSkill::SkillNum(std::uint8_t sNum) { pStream.WriteShort(4, sNum); }
 void CPUpdIndSkill::Skill(std::int16_t skillval) { pStream.WriteShort(6, skillval); }
 void CPUpdIndSkill::BaseSkill(std::int16_t skillval) { pStream.WriteShort(8, skillval); }
-void CPUpdIndSkill::Lock(SkillLock lockVal) { pStream.WriteByte(10, lockVal); }
+void CPUpdIndSkill::Lock(skilllock_t lockVal) { pStream.WriteByte(10, lockVal); }
 void CPUpdIndSkill::Cap(std::int16_t capVal) { pStream.WriteShort(11, capVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2876,7 +2876,7 @@ CPSkillsValues::CPSkillsValues(CChar &toCopy) {
 }
 
 void CPSkillsValues::SkillEntry(std::int16_t skillId, std::int16_t skillVal, std::int16_t baseSkillVal,
-                                SkillLock skillLock) {
+                                skilllock_t skillLock) {
     std::int32_t offset = (skillId * 9) + 4;
     pStream.WriteShort(offset, skillId + 1);
     pStream.WriteShort(static_cast<size_t>(offset) + 2, skillVal);

@@ -301,7 +301,7 @@ void CWhoList::Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(type);
 
-    UnicodeTypes sLang = toSendTo->Language();
+    unicodetypes_t sLang = toSendTo->Language();
     std::uint16_t lColour = cwmWorldState->ServerData()->LeftTextColour();
     std::uint16_t tColour = cwmWorldState->ServerData()->TitleColour();
     std::uint16_t butRight = cwmWorldState->ServerData()->ButtonRight();

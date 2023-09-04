@@ -326,7 +326,7 @@ auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
 //|	Purpose		-	Creates an npc spawned from an item spawner
 // o------------------------------------------------------------------------------------------------o
 CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
-    const ItemTypes iType = iSpawner->GetType();
+    const itemtypes_t iType = iSpawner->GetType();
     // If the spawner type is 125 and escort quests are not active then abort
     if (iType == IT_ESCORTNPCSPAWNER && !cwmWorldState->ServerData()->EscortsEnabled())
         return nullptr;
@@ -765,13 +765,13 @@ void MakeShop(CChar *c) {
     c->SetShop(true);
     CItem *tPack = nullptr;
     for (std::uint8_t i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
-        tPack = c->GetItemAtLayer(static_cast<ItemLayers>(i));
+        tPack = c->GetItemAtLayer(static_cast<itemlayers_t>(i));
         if (!ValidateObject(tPack)) {
             bool shouldSave = c->ShouldSave();
             tPack = Items->CreateItem(nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false, shouldSave);
             if (ValidateObject(tPack)) {
                 tPack->SetDecayable(false);
-                tPack->SetLayer(static_cast<ItemLayers>(i));
+                tPack->SetLayer(static_cast<itemlayers_t>(i));
                 if (!tPack->SetCont(c)) {
                     tPack->Delete();
                 }
@@ -1620,7 +1620,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             break;
         case DFNTAG_ORIGIN:
             applyTo->SetOrigin(
-                static_cast<ExpansionRuleset>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
+                static_cast<expansionruleset_t>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
             break;
         case DFNTAG_POISONSTRENGTH:
             applyTo->SetPoisonStrength(static_cast<std::uint8_t>(ndata));

@@ -553,9 +553,9 @@ class CServerData {
     auto SaveIni() -> bool;
     auto SaveIni(const std::string &filename) -> bool;
 
-    auto EraEnumToString(ExpansionRuleset eraNum, bool coreEnum = false) -> std::string;
+    auto EraEnumToString(expansionruleset_t eraNum, bool coreEnum = false) -> std::string;
     auto EraStringToEnum(const std::string &eraString, bool useDefault = true,
-                         bool inheritCore = true) -> ExpansionRuleset;
+                         bool inheritCore = true) -> expansionruleset_t;
 
     auto ResetDefaults() -> void;
     auto Startup() -> void;

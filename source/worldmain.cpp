@@ -59,7 +59,7 @@ const size_t DEFWORLD_PLAYERSONLINE = 0;
 const std::uint32_t DEFWORLD_NEWTIME = 0;
 const std::uint32_t DEFWORLD_OLDTIME = 0;
 const bool DEFWORLD_AUTOSAVED = false;
-const SaveStatus DEFWORLD_SAVEPROGRESS = SS_NOTSAVING;
+const savestatus_t DEFWORLD_SAVEPROGRESS = SS_NOTSAVING;
 const bool DEFWORLD_RELOADINGSCRIPTS = false;
 const bool DEFWORLD_CLASSESINITIALIZED = false;
 
@@ -255,8 +255,8 @@ void CWorldMain::SetAutoSaved(bool newVal) { autoSaved = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of World saves (Not Saving, Saving, Just Saved)
 // o------------------------------------------------------------------------------------------------o
-SaveStatus CWorldMain::GetWorldSaveProgress(void) const { return worldSaveProgress; }
-void CWorldMain::SetWorldSaveProgress(SaveStatus newVal) { worldSaveProgress = newVal; }
+savestatus_t CWorldMain::GetWorldSaveProgress(void) const { return worldSaveProgress; }
+void CWorldMain::SetWorldSaveProgress(savestatus_t newVal) { worldSaveProgress = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetPlayersOnline()

@@ -1408,7 +1408,7 @@ auto Console::SetFuncStatus(const std::string &cmdFunc, bool isEnabled) -> void 
 //|	Purpose		-	Registers console script
 // o------------------------------------------------------------------------------------------------o
 auto Console::Registration() -> void {
-    auto spellSection = JSMapping->GetSection(SCPT_CONSOLE);
+    auto spellSection = JSMapping->GetSection(CJSMappingSection::SCPT_CONSOLE);
     for (const auto &[spellname, ourScript] : spellSection->collection()) {
         if (ourScript) {
             ourScript->ScriptRegistration("Console");

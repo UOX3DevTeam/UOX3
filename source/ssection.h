@@ -307,7 +307,7 @@ class CScriptSection {
     std::vector<SectDataV2_st *> dataV2;
     std::vector<SectData_st *>::iterator currentPos;
     std::vector<SectDataV2_st *>::iterator currentPos2;
-    DEFINITIONCATEGORIES dfnCat;
+    definitioncategories_t dfnCat;
 
     bool npcList;
     bool itemList;
@@ -322,7 +322,7 @@ class CScriptSection {
     auto collection2() -> std::vector<SectDataV2_st *> &;
 
     CScriptSection();
-    CScriptSection(std::istream &input, DEFINITIONCATEGORIES d);
+    CScriptSection(std::istream &input, definitioncategories_t d);
     ~CScriptSection();
     auto First() -> std::string;
     auto Next() -> std::string;

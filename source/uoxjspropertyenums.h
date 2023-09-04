@@ -653,6 +653,6 @@ enum cresourceproperties_t {
     CRESP_COUNT
 };
 
-enum CPartyProperties { CPARTYP_LEADER, CPARTYP_MEMBERCOUNT, CPARTYP_ISNPC, CPARTYP_COUNT };
+enum cpartyproperties_t { CPARTYP_LEADER, CPARTYP_MEMBERCOUNT, CPARTYP_ISNPC, CPARTYP_COUNT };
 
 #endif

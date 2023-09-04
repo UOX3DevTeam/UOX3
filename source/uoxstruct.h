@@ -57,8 +57,8 @@ class CCreatures {
         who_am_i.reset();
         memset(soundList, 0x00, SND_COUNT * sizeof(soundList[0]));
     }
-    std::uint16_t GetSound(monsterSound soundType) const { return soundList[static_cast<std::uint8_t>(soundType)]; }
-    void SetSound(monsterSound soundType, std::uint16_t newVal) {
+    std::uint16_t GetSound(monstersound_t soundType) const { return soundList[static_cast<std::uint8_t>(soundType)]; }
+    void SetSound(monstersound_t soundType, std::uint16_t newVal) {
         soundList[static_cast<std::uint8_t>(soundType)] = newVal;
     }
     std::uint16_t Icon(void) const { return icon; }

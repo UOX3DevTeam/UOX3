@@ -159,7 +159,7 @@ const std::string LanguageCodes[TOTAL_LANGUAGES] = {
     "KOK"  // Konkani India
 };
 
-const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] = {
+const distinctlanguage_t LanguageCodesLang[TOTAL_LANGUAGES] = {
     DL_DEFAULT,    // default server language
     DL_DEFAULT,    // Arabic Saudi Arabia
     DL_DEFAULT,    // Arabic Iraq
@@ -300,15 +300,15 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] = {
 
 class CSpeechEntry {
   private:
-    SpeechType typeOfSpeech;
+    speechtype_t typeOfSpeech;
     bool antiSpam;
     bool unicode;
     colour_t speechColour;
     serial_t speaker;
     serial_t spokenTo; // Only in a case of SPTRG_INDIVIDUAL
     SpeechTarget targType;
-    FontType targFont;
-    UnicodeTypes targLanguage;
+    fonttype_t targFont;
+    unicodetypes_t targLanguage;
     std::int32_t timeToSayAt; // time when it should be said
     std::string toSay;
     std::string sName;
@@ -324,29 +324,29 @@ class CSpeechEntry {
     }
     ~CSpeechEntry() {}
 
-    SpeechType Type(void) const { return typeOfSpeech; }
+    speechtype_t Type(void) const { return typeOfSpeech; }
     bool AntiSpam(void) const { return antiSpam; }
     bool Unicode(void) const { return unicode; }
     colour_t Colour(void) const { return speechColour; }
     serial_t Speaker(void) const { return speaker; }
     serial_t SpokenTo(void) const { return spokenTo; }
     SpeechTarget TargType(void) const { return targType; }
-    FontType Font(void) const { return targFont; }
-    UnicodeTypes Language(void) const { return targLanguage; }
+    fonttype_t Font(void) const { return targFont; }
+    unicodetypes_t Language(void) const { return targLanguage; }
     std::int32_t At(void) const { return timeToSayAt; }
     const std::string Speech(void) const { return toSay; }
     const std::string SpeakerName(void) const { return sName; }
     std::uint8_t CmdLevel(void) const { return minCmdLevelToReceive; }
 
-    void Type(SpeechType type) { typeOfSpeech = type; }
+    void Type(speechtype_t type) { typeOfSpeech = type; }
     void AntiSpam(bool value) { antiSpam = value; }
     void Unicode(bool value) { unicode = value; }
     void Colour(colour_t value) { speechColour = value; }
     void Speaker(serial_t value) { speaker = value; }
     void SpokenTo(serial_t value) { spokenTo = value; }
     void TargType(SpeechTarget type) { targType = type; }
-    void Font(FontType type) { targFont = type; }
-    void Language(UnicodeTypes val) { targLanguage = val; }
+    void Font(fonttype_t type) { targFont = type; }
+    void Language(unicodetypes_t val) { targLanguage = val; }
     void At(std::int32_t newTime) { timeToSayAt = newTime; }
     void CmdLevel(std::uint8_t nLevel) { minCmdLevelToReceive = nLevel; }
 

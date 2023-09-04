@@ -447,12 +447,12 @@ const std::int32_t DEFSOCK_OUTLENGTH = 0;
 const std::int32_t DEFSOCK_INLENGTH = 0;
 const bool DEFSOCK_LOGGING = LOGDEFAULT;
 const std::int32_t DEFSOCK_POSTACKCOUNT = 0;
-const PickupLocations DEFSOCK_PSPOT = PL_NOWHERE;
+const pickuplocations_t DEFSOCK_PSPOT = PL_NOWHERE;
 const serial_t DEFSOCK_PFROM = INVALIDSERIAL;
 const std::int16_t DEFSOCK_PX = 0;
 const std::int16_t DEFSOCK_PY = 0;
 const std::int8_t DEFSOCK_PZ = 0;
-const UnicodeTypes DEFSOCK_LANG = UT_ENU;
+const unicodetypes_t DEFSOCK_LANG = UT_ENU;
 const ClientTypes DEFSOCK_CLITYPE = CV_DEFAULT;
 const ClientVersions DEFSOCK_CLIVERSHORT = CVS_DEFAULT;
 const std::uint32_t DEFSOCK_CLIENTVERSION = CalcSerial(4, 0, 0, 0);
@@ -1283,8 +1283,8 @@ void CSocket::Send(CPUOXBuffer *toSend) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the spot item was picked up from
 // o------------------------------------------------------------------------------------------------o
-void CSocket::PickupSpot(PickupLocations newValue) { pSpot = newValue; }
-PickupLocations CSocket::PickupSpot(void) const { return pSpot; }
+void CSocket::PickupSpot(pickuplocations_t newValue) { pSpot = newValue; }
+pickuplocations_t CSocket::PickupSpot(void) const { return pSpot; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::PickupSerial()
@@ -1356,8 +1356,8 @@ CSocket *CPInputBuffer::GetSocket(void) const { return tSock; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets language for socket
 // o------------------------------------------------------------------------------------------------o
-UnicodeTypes CSocket::Language(void) const { return lang; }
-void CSocket::Language(UnicodeTypes newVal) { lang = newVal; }
+unicodetypes_t CSocket::Language(void) const { return lang; }
+void CSocket::Language(unicodetypes_t newVal) { lang = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::ClientVersion()

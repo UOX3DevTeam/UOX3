@@ -84,7 +84,7 @@ const std::int16_t DEFBASE_STR = 0;
 const std::int16_t DEFBASE_DEX = 0;
 const std::int16_t DEFBASE_INT = 0;
 const std::int16_t DEFBASE_HP = 1;
-const VisibleTypes DEFBASE_VISIBLE = VT_VISIBLE;
+const visibletypes_t DEFBASE_VISIBLE = VT_VISIBLE;
 const std::int16_t DEFBASE_HIDAMAGE = 0;
 const std::int16_t DEFBASE_LODAMAGE = 0;
 const std::int32_t DEFBASE_WEIGHT = 0;
@@ -102,7 +102,7 @@ const std::int16_t DEFBASE_FAME = 0;
 const std::int16_t DEFBASE_KILLS = 0;
 const std::uint16_t DEFBASE_RESIST = 0;
 const bool DEFBASE_NAMEREQUESTACTIVE = 0;
-const ExpansionRuleset DEFBASE_ORIGIN = ER_UO;
+const expansionruleset_t DEFBASE_ORIGIN = ER_UO;
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -396,8 +396,8 @@ void CBaseObject::WalkXY(std::int16_t newX, std::int16_t newY) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets object's resistances versus different damage types
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetResist(WeatherType damage) const { return resistances[damage]; }
-void CBaseObject::SetResist(std::uint16_t newValue, WeatherType damage) {
+std::uint16_t CBaseObject::GetResist(weathertype_t damage) const { return resistances[damage]; }
+void CBaseObject::SetResist(std::uint16_t newValue, weathertype_t damage) {
     resistances[damage] = newValue;
 
     if (CanBeObjType(OT_ITEM)) {
@@ -660,7 +660,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     outStream << myLocation;
     outStream << "Title=" << title << newLine;
     outStream << "Origin="
-              << cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(origin))
+              << cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(origin))
               << newLine;
 
     //=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next
@@ -702,7 +702,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
 
     outStream << "Defense=";
     for (std::uint8_t resist = 1; resist < WEATHNUM; ++resist) {
-        outStream << GetResist(static_cast<WeatherType>(resist)) << ",";
+        outStream << GetResist(static_cast<weathertype_t>(resist)) << ",";
     }
     outStream << "[END]" << newLine;
 
@@ -920,8 +920,8 @@ void CBaseObject::SetDir(std::uint8_t newDir, bool sendUpdate) {
 //|						2 = Invisible (Magic Invis)
 //|						3 = Permanent Hidden (GM Hide)
 // o------------------------------------------------------------------------------------------------o
-VisibleTypes CBaseObject::GetVisible(void) const { return visible; }
-void CBaseObject::SetVisible(VisibleTypes newValue) {
+visibletypes_t CBaseObject::GetVisible(void) const { return visible; }
+void CBaseObject::SetVisible(visibletypes_t newValue) {
     visible = newValue;
     Dirty(UT_HIDE);
 
@@ -1528,7 +1528,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                             break;
                         }
                         auto value = static_cast<std::int16_t>(std::stoi(temp, nullptr, 0));
-                        SetResist(value, static_cast<WeatherType>(count));
+                        SetResist(value, static_cast<weathertype_t>(count));
                         count++;
                     }
                 }
@@ -1756,7 +1756,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
         break;
     case 'V':
         if (UTag == "VISIBLE") {
-            visible = static_cast<VisibleTypes>(std::stoul(util::trim(util::strip(data, "//"))));
+            visible = static_cast<visibletypes_t>(std::stoul(util::trim(util::strip(data, "//"))));
         }
         else {
             rValue = false;
@@ -2113,8 +2113,8 @@ void CBaseObject::CopyData(CBaseObject *target) {
     target->SetHiDamage(GetHiDamage());
     target->SetLoDamage(GetLoDamage());
     for (std::uint8_t resist = 0; resist < WEATHNUM; ++resist) {
-        target->SetResist(GetResist(static_cast<WeatherType>(resist)),
-                          static_cast<WeatherType>(resist));
+        target->SetResist(GetResist(static_cast<weathertype_t>(resist)),
+                          static_cast<weathertype_t>(resist));
     }
     target->SetStrength2(GetStrength2());
     target->SetDexterity2(GetDexterity2());
