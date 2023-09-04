@@ -33,7 +33,7 @@ inline bool operator>(const CHelpRequest &x, const CHelpRequest &y) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether position has reached end of queue
 // o------------------------------------------------------------------------------------------------o
-bool PageVector::AtEnd(void) const { return (currentPos == requestQueue.end()); }
+bool PageVector::AtEnd() const { return (currentPos == requestQueue.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	PageVector::PageVector()
@@ -79,7 +79,7 @@ serial_t PageVector::Add(CHelpRequest *toAdd) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes help request from player from queue
 // o------------------------------------------------------------------------------------------------o
-bool PageVector::Remove(void) {
+bool PageVector::Remove() {
     if (AtEnd())
         return false;
     
@@ -93,7 +93,7 @@ bool PageVector::Remove(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets first help request in queue, if any exists
 // o------------------------------------------------------------------------------------------------o
-CHelpRequest *PageVector::First(void) {
+CHelpRequest *PageVector::First() {
     currentPos = requestQueue.begin();
     if (AtEnd())
         return nullptr; // empty queue!
@@ -106,7 +106,7 @@ CHelpRequest *PageVector::First(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets next help request in queue, if any exists
 // o------------------------------------------------------------------------------------------------o
-CHelpRequest *PageVector::Next(void) {
+CHelpRequest *PageVector::Next() {
     ++currentPos;
     if (AtEnd())
         return nullptr; // at end, return nullptr!
@@ -119,14 +119,14 @@ CHelpRequest *PageVector::Next(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of help requests in queue
 // o------------------------------------------------------------------------------------------------o
-size_t PageVector::NumEntries(void) const { return requestQueue.size(); }
+size_t PageVector::NumEntries() const { return requestQueue.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	PageVector::KillQueue()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all help requests from queue
 // o------------------------------------------------------------------------------------------------o
-void PageVector::KillQueue(void) {
+void PageVector::KillQueue() {
     for (size_t counter = 0; counter < requestQueue.size(); ++counter) {
         delete requestQueue[counter];
     }
@@ -194,7 +194,7 @@ bool PageVector::GotoPos(std::int32_t pos) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets current queue position
 // o------------------------------------------------------------------------------------------------o
-std::int32_t PageVector::CurrentPos(void) const {
+std::int32_t PageVector::CurrentPos() const {
     return static_cast<std::int32_t>((currentPos - requestQueue.begin()));
 }
 
@@ -203,7 +203,7 @@ std::int32_t PageVector::CurrentPos(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets call number/help request ID for current position in queue
 // o------------------------------------------------------------------------------------------------o
-serial_t PageVector::GetCallNum(void) const {
+serial_t PageVector::GetCallNum() const {
     if (AtEnd())
         return INVALIDSERIAL;
     
@@ -228,7 +228,7 @@ std::int32_t PageVector::FindCallNum(serial_t callNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets current position in queue
 // o------------------------------------------------------------------------------------------------o
-CHelpRequest *PageVector::Current(void) {
+CHelpRequest *PageVector::Current() {
     if (!AtEnd())
         return (*currentPos);
     else
@@ -286,7 +286,7 @@ CHelpRequest::~CHelpRequest() {}
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who paged
 // o------------------------------------------------------------------------------------------------o
-serial_t CHelpRequest::WhoPaging(void) const { return playerPaging; }
+serial_t CHelpRequest::WhoPaging() const { return playerPaging; }
 void CHelpRequest::WhoPaging(serial_t pPaging) { playerPaging = pPaging; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -295,7 +295,7 @@ void CHelpRequest::WhoPaging(serial_t pPaging) { playerPaging = pPaging; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who is handling the request
 // o------------------------------------------------------------------------------------------------o
-serial_t CHelpRequest::WhoHandling(void) const { return playerHandling; }
+serial_t CHelpRequest::WhoHandling() const { return playerHandling; }
 void CHelpRequest::WhoHandling(serial_t pHandling) { playerHandling = pHandling; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -304,7 +304,7 @@ void CHelpRequest::WhoHandling(serial_t pHandling) { playerHandling = pHandling;
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the priority of the request
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CHelpRequest::Priority(void) const { return priority; }
+std::int8_t CHelpRequest::Priority() const { return priority; }
 void CHelpRequest::Priority(std::int8_t pPriority) { priority = pPriority; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -313,7 +313,7 @@ void CHelpRequest::Priority(std::int8_t pPriority) { priority = pPriority; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets true if the request is being handled
 // o------------------------------------------------------------------------------------------------o
-bool CHelpRequest::IsHandled(void) const { return handled; }
+bool CHelpRequest::IsHandled() const { return handled; }
 void CHelpRequest::IsHandled(bool pHandled) { handled = pHandled; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -323,7 +323,7 @@ void CHelpRequest::IsHandled(bool pHandled) { handled = pHandled; }
 //| Purpose		-	Gets/Sets the number of seconds since Jan 1, 1970 that the
 //|					page was recorded
 // o------------------------------------------------------------------------------------------------o
-time_t CHelpRequest::TimeOfPage(void) const { return timeOfPage; }
+time_t CHelpRequest::TimeOfPage() const { return timeOfPage; }
 void CHelpRequest::TimeOfPage(time_t pTime) { timeOfPage = pTime; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -332,7 +332,7 @@ void CHelpRequest::TimeOfPage(time_t pTime) { timeOfPage = pTime; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the reason that the request was made
 // o------------------------------------------------------------------------------------------------o
-std::string CHelpRequest::Reason(void) const { return reason; }
+std::string CHelpRequest::Reason() const { return reason; }
 void CHelpRequest::Reason(const std::string &pReason) { reason = pReason; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -341,5 +341,5 @@ void CHelpRequest::Reason(const std::string &pReason) { reason = pReason; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID # of the request
 // o------------------------------------------------------------------------------------------------o
-serial_t CHelpRequest::RequestId(void) const { return helpReqId; }
+serial_t CHelpRequest::RequestId() const { return helpReqId; }
 void CHelpRequest::RequestId(serial_t hrid) { helpReqId = hrid; }

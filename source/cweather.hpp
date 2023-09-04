@@ -47,46 +47,46 @@ public:
     R32 Value(std::uint8_t valType, std::uint8_t valOff) const;
     void Value(std::uint8_t valType, std::uint8_t valOff, R32 value);
     
-    std::int8_t SnowIntensityHigh(void) const;
-    std::int8_t SnowIntensityLow(void) const;
-    std::int8_t SnowIntensity(void) const;
-    std::int8_t RainIntensityHigh(void) const;
-    std::int8_t RainIntensityLow(void) const;
-    std::int8_t RainIntensity(void) const;
-    std::int8_t HeatIntensityHigh(void) const;
-    std::int8_t ColdIntensityHigh(void) const;
-    std::int8_t StormIntensityHigh(void) const;
-    std::int8_t StormIntensityLow(void) const;
-    std::int8_t StormIntensity(void) const;
+    std::int8_t SnowIntensityHigh() const;
+    std::int8_t SnowIntensityLow() const;
+    std::int8_t SnowIntensity() const;
+    std::int8_t RainIntensityHigh() const;
+    std::int8_t RainIntensityLow() const;
+    std::int8_t RainIntensity() const;
+    std::int8_t HeatIntensityHigh() const;
+    std::int8_t ColdIntensityHigh() const;
+    std::int8_t StormIntensityHigh() const;
+    std::int8_t StormIntensityLow() const;
+    std::int8_t StormIntensity() const;
     
-    R32 MaxTemp(void) const;
-    R32 MinTemp(void) const;
-    R32 Temp(void) const;
-    R32 MaxWindSpeed(void) const;
-    R32 MinWindSpeed(void) const;
-    R32 WindSpeed(void) const;
-    R32 RainTempDrop(void) const;
-    R32 StormTempDrop(void) const;
+    R32 MaxTemp() const;
+    R32 MinTemp() const;
+    R32 Temp() const;
+    R32 MaxWindSpeed() const;
+    R32 MinWindSpeed() const;
+    R32 WindSpeed() const;
+    R32 RainTempDrop() const;
+    R32 StormTempDrop() const;
     
-    std::int8_t RainChance(void) const;
-    std::int8_t SnowChance(void) const;
-    std::int8_t StormChance(void) const;
-    std::int8_t HeatChance(void) const;
-    std::int8_t ColdChance(void) const;
+    std::int8_t RainChance() const;
+    std::int8_t SnowChance() const;
+    std::int8_t StormChance() const;
+    std::int8_t HeatChance() const;
+    std::int8_t ColdChance() const;
     
-    R32 LightMin(void) const;
-    R32 LightMax(void) const;
-    R32 CurrentLight(void) const;
+    R32 LightMin() const;
+    R32 LightMax() const;
+    R32 CurrentLight() const;
     
-    bool RainActive(void) const;
-    bool SnowActive(void) const;
-    bool StormBrewing(void) const;
-    bool StormActive(void) const;
-    bool HeatActive(void) const;
-    bool ColdActive(void) const;
-    bool StormDelay(void) const;
+    bool RainActive() const;
+    bool SnowActive() const;
+    bool StormBrewing() const;
+    bool StormActive() const;
+    bool HeatActive() const;
+    bool ColdActive() const;
+    bool StormDelay() const;
     
-    R32 SnowThreshold(void) const;
+    R32 SnowThreshold() const;
     
     void WindSpeed(R32 value);
     void MaxWindSpeed(R32 value);
@@ -117,8 +117,8 @@ public:
     void LightMax(R32 value);
     void CurrentLight(R32 value);
     
-    R32 EffectiveMaxTemp(void) const;
-    R32 EffectiveMinTemp(void) const;
+    R32 EffectiveMaxTemp() const;
+    R32 EffectiveMinTemp() const;
     void EffectiveMaxTemp(R32 value);
     void EffectiveMinTemp(R32 value);
     
@@ -130,9 +130,9 @@ public:
     void ColdActive(bool value);
     void StormDelay(bool value);
     
-    void NewDay(void);
-    void NewHour(void);
-    bool PeriodicUpdate(void);
+    void NewDay();
+    void NewHour();
+    bool PeriodicUpdate();
 };
 
 class cWeatherAb {
@@ -152,10 +152,10 @@ private:
 public:
     cWeatherAb();
     ~cWeatherAb();
-    bool Load(void);
-    bool NewDay(void);
-    bool NewHour(void);
-    size_t Count(void) const;
+    bool Load();
+    bool NewDay();
+    bool NewHour();
+    size_t Count() const;
     
     std::int8_t SnowIntensityHigh(weathid_t toCheck);
     std::int8_t SnowIntensityLow(weathid_t toCheck);
@@ -232,7 +232,7 @@ public:
     void StormActive(weathid_t toCheck, bool value);
     void HeatActive(weathid_t toCheck, bool value);
     void ColdActive(weathid_t toCheck, bool value);
-    bool DoStuff(void);
+    bool DoStuff();
     bool DoPlayerStuff(CSocket *mSock, CChar *p);
     void DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval);
     bool doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t element);

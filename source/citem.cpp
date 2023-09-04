@@ -154,14 +154,14 @@ CItem::~CItem() {}
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container object
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetCont(void) const -> CBaseObject * { return contObj; }
+auto CItem::GetCont() const -> CBaseObject * { return contObj; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetContSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container's serial
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetContSerial(void) const -> serial_t {
+auto CItem::GetContSerial() const -> serial_t {
     if (contObj != nullptr)
         return contObj->GetSerial();
     
@@ -175,7 +175,7 @@ auto CItem::GetContSerial(void) const -> serial_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets "Grid Location" - for UOKR
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGridLocation(void) const -> std::int8_t { return gridLoc; }
+auto CItem::GetGridLocation() const -> std::int8_t { return gridLoc; }
 auto CItem::SetGridLocation(std::int8_t newLoc) -> void {
     gridLoc = newLoc;
     UpdateRegion();
@@ -800,7 +800,7 @@ auto CItem::IncAmount(std::int32_t incValue, bool noDelete) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's max hp property
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CItem::GetMaxHP(void) const { return maxHp; }
+std::uint16_t CItem::GetMaxHP() const { return maxHp; }
 void CItem::SetMaxHP(std::uint16_t newValue) {
     maxHp = newValue;
     UpdateRegion();
@@ -915,7 +915,7 @@ auto CItem::SetDecayTime(timerval_t newValue) -> void { decayTime = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets priv settings on item
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CItem::GetPriv(void) const { return static_cast<std::uint8_t>(priv.to_ulong()); }
+std::uint8_t CItem::GetPriv() const { return static_cast<std::uint8_t>(priv.to_ulong()); }
 void CItem::SetPriv(std::uint8_t newValue) {
     priv = newValue;
     UpdateRegion();
@@ -1047,7 +1047,7 @@ auto CItem::SetGlow(serial_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGlowColour(void) const -> colour_t { return glowColour; }
+auto CItem::GetGlowColour() const -> colour_t { return glowColour; }
 auto CItem::SetGlowColour(colour_t newValue) -> void {
     glowColour = newValue;
     UpdateRegion();
@@ -1059,7 +1059,7 @@ auto CItem::SetGlowColour(colour_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGlowEffect(void) const -> std::uint8_t { return glowEffect; }
+auto CItem::GetGlowEffect() const -> std::uint8_t { return glowEffect; }
 auto CItem::SetGlowEffect(std::uint8_t newValue) -> void {
     glowEffect = newValue;
     UpdateRegion();
@@ -1266,7 +1266,7 @@ bool CItem::Save(std::ostream &outStream) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove item (self) from owner it belongs to
 // o------------------------------------------------------------------------------------------------o
-void CItem::RemoveSelfFromOwner(void) {
+void CItem::RemoveSelfFromOwner() {
     CChar *oldOwner = GetOwnerObj();
     if (oldOwner != nullptr) {
         oldOwner->RemoveOwnedItem(this);
@@ -1284,7 +1284,7 @@ void CItem::RemoveSelfFromOwner(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Add item (self) to owner
 // o------------------------------------------------------------------------------------------------o
-void CItem::AddSelfToOwner(void) {
+void CItem::AddSelfToOwner() {
     CChar *newOwner = GetOwnerObj();
     if (!ValidateObject(newOwner))
         return;
@@ -2008,7 +2008,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	After handling data specific load, other parts go here
 // o------------------------------------------------------------------------------------------------o
-bool CItem::LoadRemnants(void) {
+bool CItem::LoadRemnants() {
     SetSerial(serial);
     
     // Tauriel adding region pointers
@@ -2053,7 +2053,7 @@ auto CItem::IsContType() const -> bool {
 //|	Purpose		-	Used to setup any pointers that may need adjustment following the
 // loading of the world
 // o------------------------------------------------------------------------------------------------o
-void CItem::PostLoadProcessing(void) {
+void CItem::PostLoadProcessing() {
     CBaseObject::PostLoadProcessing();
     // Add item weight if item doesn't have it yet
     if (GetWeight() < 0 || GetWeight() > MAX_WEIGHT) {
@@ -2083,7 +2083,7 @@ void CItem::PostLoadProcessing(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Run some integrity checks on item
 // o------------------------------------------------------------------------------------------------o
-void CItem::CheckItemIntegrity(void) {
+void CItem::CheckItemIntegrity() {
     auto getSerial = GetSerial();
     if (getSerial == INVALIDSERIAL) {
         Console::shared().Warning(
@@ -2740,7 +2740,7 @@ auto CItem::SetSpell(std::uint8_t part, std::uint32_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after item
 // o------------------------------------------------------------------------------------------------o
-void CItem::Cleanup(void) {
+void CItem::Cleanup() {
     if (!IsFree()) // We're not the default item in the handler
     {
         MapRegion->RemoveItem(this);
@@ -2889,7 +2889,7 @@ bool CItem::CanBeObjType(CBaseObject::type_t toCompare) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds item to deletion queue
 // o------------------------------------------------------------------------------------------------o
-void CItem::Delete(void) {
+void CItem::Delete() {
     if (cwmWorldState->deletionQueue.count(this) == 0) {
         ++(cwmWorldState->deletionQueue[this]);
         Cleanup();
@@ -3265,7 +3265,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after spawner item
 // o------------------------------------------------------------------------------------------------o
-void CSpawnItem::Cleanup(void) {
+void CSpawnItem::Cleanup() {
     CItem::Cleanup();
     
     for (CBaseObject *mObj = spawnedList.First(); !spawnedList.Finished();

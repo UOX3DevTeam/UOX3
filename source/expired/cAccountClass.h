@@ -64,7 +64,7 @@ typedef struct CAccountBlock_st {
     CAccountBlock_st &CAccountBlock_st::operator=(const CAccountBlock_st &);
 #endif
   public:
-    CAccountBlock_st(void)
+    CAccountBlock_st()
         : sUsername(""), sPassword(""), sPath(""), sContact(""), wAccountIndex(0xFFFF),
           wTimeBan(0x0000), wFirstLogin(0x0000), dwInGame(INVALIDSERIAL), dwLastIP(0x00000000),
           bChanged(false), dwLastClientVer(0), dwLastClientType(0), dwLastClientVerShort(0),
@@ -74,7 +74,7 @@ typedef struct CAccountBlock_st {
             lpCharacters[i] = nullptr;
         }
     }
-    void reset(void) {
+    void reset() {
         sUsername = "";
         sPassword = "";
         sContact = "";
@@ -133,19 +133,19 @@ class cAccountClass {
     // Operator overloads
     cAccountClass &operator++();
     cAccountClass &operator--(std::int32_t);
-    std::uint16_t CreateAccountSystem(void);
-    std::uint16_t ImportAccounts(void);
+    std::uint16_t CreateAccountSystem();
+    std::uint16_t ImportAccounts();
     void WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream &fsOut);
     std::uint16_t AddAccount(std::string sUsername, std::string sPassword,
                     const std::string &sContact = "NONE", std::uint16_t wAttributes = 0x0000);
     bool DelAccount(std::string sUsername);
     bool DelAccount(std::uint16_t wAccountId);
     bool SetPath(const std::string &sPath);
-    std::string GetPath(void);
+    std::string GetPath();
     std::uint16_t Save(bool bForceLoad = false);
-    std::uint16_t Load(void);
-    std::uint32_t size(void);
-    bool clear(void);
+    std::uint16_t Load();
+    std::uint32_t size();
+    bool clear();
     bool IsUser(std::string sUsername);
     bool AddCharacter(std::uint16_t wAccountId, CChar *lpObject);
     bool AddCharacter(std::uint16_t wAccountId, std::uint32_t dwCharacterId, CChar *lpObject);
@@ -153,9 +153,9 @@ class cAccountClass {
     bool TransCharacter(std::uint16_t wSAccountId, std::uint16_t wSSlot, std::uint16_t wDAccountId);
     CAccountBlock_st &GetAccountByName(std::string sUsername);
     CAccountBlock_st &GetAccountById(std::uint16_t wAccountId);
-    MAPUSERNAMEID_ITERATOR &Begin(void);
-    MAPUSERNAMEID_ITERATOR &End(void);
-    MAPUSERNAMEID_ITERATOR &Last(void);
+    MAPUSERNAMEID_ITERATOR &Begin();
+    MAPUSERNAMEID_ITERATOR &End();
+    MAPUSERNAMEID_ITERATOR &Last();
     // Member variables
     MAPUSERNAMEID_ITERATOR I;
 

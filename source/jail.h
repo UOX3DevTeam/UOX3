@@ -34,13 +34,13 @@ private:
 public:
     CJailCell() : x(0), y(0), z(0), world(0), instanceId(0) {}
     ~CJailCell();
-    bool IsEmpty(void) const;
-    size_t JailedPlayers(void) const;
-    std::int16_t X(void) const;
-    std::int16_t Y(void) const;
-    std::int8_t Z(void) const;
-    std::uint8_t World(void) const;
-    std::uint16_t InstanceId(void) const;
+    bool IsEmpty() const;
+    size_t JailedPlayers() const;
+    std::int16_t X() const;
+    std::int16_t Y() const;
+    std::int8_t Z() const;
+    std::uint8_t World() const;
+    std::uint16_t InstanceId() const;
     void X(std::int16_t nVal);
     void Y(std::int16_t nVal);
     void Z(std::int8_t nVal);
@@ -49,7 +49,7 @@ public:
     void AddOccupant(CChar *pAdd, std::int32_t secsFromNow);
     void EraseOccupant(size_t occupantId);
     JailOccupant_st *Occupant(size_t occupantId);
-    void PeriodicCheck(void);
+    void PeriodicCheck();
     void AddOccupant(JailOccupant_st *toAdd);
     void WriteData(std::ostream &outStream, size_t cellNum);
 };
@@ -61,10 +61,10 @@ private:
 public:
     CJailSystem() = default;
     ~CJailSystem() = default;
-    void ReadSetup(void);
-    void ReadData(void);
-    void WriteData(void);
-    void PeriodicCheck(void);
+    void ReadSetup();
+    void ReadData();
+    void WriteData();
+    void PeriodicCheck();
     bool JailPlayer(CChar *toJail, std::int32_t numSecsToJail);
     void ReleasePlayer(CChar *toRelase);
 };

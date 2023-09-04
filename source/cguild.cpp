@@ -56,7 +56,7 @@ CGuild::~CGuild() {
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at war
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuild::FirstWar(void) {
+guildid_t CGuild::FirstWar() {
     warPtr = relationList.begin();
     return NextWar();
 }
@@ -67,7 +67,7 @@ guildid_t CGuild::FirstWar(void) {
 //| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild at war, or -1 if no war
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuild::NextWar(void) {
+guildid_t CGuild::NextWar() {
     while (warPtr != relationList.end()) {
         if (warPtr->second == GR_WAR) {
             return warPtr->first;
@@ -86,7 +86,7 @@ guildid_t CGuild::NextWar(void) {
 //|					Moves back one if it does find something it's at war with
 //|					to ensure pointer integrity
 // o------------------------------------------------------------------------------------------------o
-bool CGuild::FinishedWar(void) {
+bool CGuild::FinishedWar() {
     if (warPtr == relationList.end())
         return true;
     if (NextWar() == -1)
@@ -105,7 +105,7 @@ bool CGuild::FinishedWar(void) {
 //| Purpose		-	Moves to start of the relation list and returns the next
 //|					relation which is at ally
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuild::FirstAlly(void) {
+guildid_t CGuild::FirstAlly() {
     allyPtr = relationList.begin();
     return NextAlly();
 }
@@ -116,7 +116,7 @@ guildid_t CGuild::FirstAlly(void) {
 //| Purpose		-	Moves through relation list, returning guild ID of next
 //|					guild as ally, or -1 if no ally
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuild::NextAlly(void) {
+guildid_t CGuild::NextAlly() {
     while (allyPtr != relationList.end()) {
         if (allyPtr->second == GR_ALLY) {
             return allyPtr->first;
@@ -136,7 +136,7 @@ guildid_t CGuild::NextAlly(void) {
 //|					Moves back one if it does find something it's an ally with
 //|					to ensure pointer integrity
 // o------------------------------------------------------------------------------------------------o
-bool CGuild::FinishedAlly(void) {
+bool CGuild::FinishedAlly() {
     if (allyPtr == relationList.end())
         return true;
     if (NextAlly() == -1)
@@ -155,7 +155,7 @@ bool CGuild::FinishedAlly(void) {
 //| Purpose		-	Gets/Sets the name of the guild.
 //|					Setting also updates name of guildstone, if it exists
 // o------------------------------------------------------------------------------------------------o
-const std::string CGuild::Name(void) const { return name; }
+const std::string CGuild::Name() const { return name; }
 void CGuild::Name(std::string txt) {
     name = txt;
     if (Stone() != INVALIDSERIAL) // we have a guildstone
@@ -190,7 +190,7 @@ auto CGuild::Abbreviation(const std::string &value) -> void {
 //|					 GT_UNKNOWN,
 //|					 GT_COUNT
 // o------------------------------------------------------------------------------------------------o
-GuildType CGuild::Type(void) const { return gType; }
+GuildType CGuild::Type() const { return gType; }
 void CGuild::Type(GuildType nType) { gType = nType; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -198,7 +198,7 @@ void CGuild::Type(GuildType nType) { gType = nType; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the charter of the guild
 // o------------------------------------------------------------------------------------------------o
-const std::string CGuild::Charter(void) const { return charter; }
+const std::string CGuild::Charter() const { return charter; }
 void CGuild::Charter(const std::string &txt) { charter = txt; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -206,7 +206,7 @@ void CGuild::Charter(const std::string &txt) { charter = txt; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the webpage of the guild
 // o------------------------------------------------------------------------------------------------o
-const std::string CGuild::Webpage(void) const { return webpage; }
+const std::string CGuild::Webpage() const { return webpage; }
 void CGuild::Webpage(const std::string &txt) { webpage = txt; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -214,7 +214,7 @@ void CGuild::Webpage(const std::string &txt) { webpage = txt; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild stone
 // o------------------------------------------------------------------------------------------------o
-serial_t CGuild::Stone(void) const { return stone; }
+serial_t CGuild::Stone() const { return stone; }
 void CGuild::Stone(serial_t newStone) { stone = newStone; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -222,7 +222,7 @@ void CGuild::Stone(serial_t newStone) { stone = newStone; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild master (if any)
 // o------------------------------------------------------------------------------------------------o
-serial_t CGuild::Master(void) const { return master; }
+serial_t CGuild::Master() const { return master; }
 void CGuild::Master(serial_t newMaster) { master = newMaster; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -231,7 +231,7 @@ void CGuild::Master(serial_t newMaster) { master = newMaster; }
 //| Purpose		-	Returns the serial of the first recruit in the recruit list
 //|					If no recruits, returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-serial_t CGuild::FirstRecruit(void) {
+serial_t CGuild::FirstRecruit() {
     auto retVal = INVALIDSERIAL;
     recruitPtr = recruits.begin();
     if (!FinishedRecruits()) {
@@ -300,7 +300,7 @@ serial_t CGuild::MemberNumber(size_t rNum) const {
 //| Purpose		-	Returns the serial of the first member of the guild
 //|					If no members, returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-serial_t CGuild::FirstMember(void) {
+serial_t CGuild::FirstMember() {
     auto retVal = INVALIDSERIAL;
     memberPtr = members.begin();
     if (!FinishedMember()) {
@@ -315,7 +315,7 @@ serial_t CGuild::FirstMember(void) {
 //| Purpose		-	Returns the serial of the next member of the guild, if any
 //|					If none, it returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-serial_t CGuild::NextMember(void) {
+serial_t CGuild::NextMember() {
     auto retVal = INVALIDSERIAL;
     if (!FinishedMember()) {
         ++memberPtr; // post ++ forces a copy constructor
@@ -331,7 +331,7 @@ serial_t CGuild::NextMember(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if there are no more members left
 // o------------------------------------------------------------------------------------------------o
-bool CGuild::FinishedMember(void) { return (memberPtr == members.end()); }
+bool CGuild::FinishedMember() { return (memberPtr == members.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CGuild::Stone()
@@ -516,7 +516,7 @@ bool CGuild::IsAtPeace() const {
 void CGuild::SetGuildRelation(guildid_t otherGuild, GuildRelation toSet) {
     relationList[otherGuild] = toSet;
 }
-std::map<guildid_t, GuildRelation>* CGuild::GuildRelationList(void) { return &relationList; }
+std::map<guildid_t, GuildRelation>* CGuild::GuildRelationList() { return &relationList; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::Save()
@@ -636,21 +636,21 @@ void CGuild::Load(CScriptSection *toRead) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of guild members
 // o------------------------------------------------------------------------------------------------o
-size_t CGuild::NumMembers(void) const { return members.size(); }
+size_t CGuild::NumMembers() const { return members.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::NumRecruits()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of guild recruits
 // o------------------------------------------------------------------------------------------------o
-size_t CGuild::NumRecruits(void) const { return recruits.size(); }
+size_t CGuild::NumRecruits() const { return recruits.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::CalcMaster()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate next guild master based on vote count
 // o------------------------------------------------------------------------------------------------o
-void CGuild::CalcMaster(void) {
+void CGuild::CalcMaster() {
     if (members.empty()) {
         Master(INVALIDSERIAL);
         return;
@@ -749,21 +749,21 @@ void CGuild::SetGuildFaction(GuildType newFaction) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets guild type as a string
 // o------------------------------------------------------------------------------------------------o
-const std::string CGuild::TypeName(void) { return GTypeNames[Type()]; }
+const std::string CGuild::TypeName() { return GTypeNames[Type()]; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::NumGuilds()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets number of guilds on the server
 // o------------------------------------------------------------------------------------------------o
-size_t CGuildCollection::NumGuilds(void) const { return gList.size(); }
+size_t CGuildCollection::NumGuilds() const { return gList.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::MaximumGuild()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next available guild ID
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuildCollection::MaximumGuild(void) {
+guildid_t CGuildCollection::MaximumGuild() {
     guildid_t maxVal = -1;
     auto pFind = gList.begin();
     while (pFind != gList.end()) {
@@ -780,7 +780,7 @@ guildid_t CGuildCollection::MaximumGuild(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create a new guild
 // o------------------------------------------------------------------------------------------------o
-guildid_t CGuildCollection::NewGuild(void) {
+guildid_t CGuildCollection::NewGuild() {
     CGuild *toAdd = new CGuild();
     guildid_t gAdd = MaximumGuild();
     gList[gAdd] = toAdd;
@@ -800,7 +800,7 @@ CGuild *CGuildCollection::operator[](guildid_t num) { return Guild(num); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves guild to worldfile
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Save(void) {
+void CGuildCollection::Save() {
     Console::shared() << "Saving guild data.... ";
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
     std::ofstream toSave(filename.c_str());
@@ -817,7 +817,7 @@ void CGuildCollection::Save(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load guilds from worldfile
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Load(void) {
+void CGuildCollection::Load() {
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
     if (FileExists(filename)) {
         Script newScript(filename, NUM_DEFS, false);

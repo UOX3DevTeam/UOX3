@@ -1272,7 +1272,7 @@ CSkills::~CSkills() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load mining resource stuff from scripts
 // o------------------------------------------------------------------------------------------------o
-bool CSkills::LoadMiningData(void) {
+bool CSkills::LoadMiningData() {
     ores.resize(0);
     // Let's first get our ore list, in SECTION ORE_LIST
     CScriptSection *oreList = FileLookup->FindEntry("ORE_LIST", skills_def);
@@ -1355,7 +1355,7 @@ bool CSkills::LoadMiningData(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load mining stuff from scripts
 // o------------------------------------------------------------------------------------------------o
-void CSkills::Load(void) {
+void CSkills::Load() {
     Console::shared() << "Loading custom ore data        ";
     
     if (!LoadMiningData()) {
@@ -1385,7 +1385,7 @@ void CSkills::Load(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of custom ores
 // o------------------------------------------------------------------------------------------------o
-size_t CSkills::GetNumberOfOres(void) { return ores.size(); }
+size_t CSkills::GetNumberOfOres() { return ores.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSkills::GetOre()

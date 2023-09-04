@@ -19,7 +19,7 @@ void cDice::SetDice(std::int32_t newDice) { dice = newDice; }
 void cDice::SetSides(std::int32_t newSides) { sides = newSides; }
 
 void cDice::SetAddition(std::int32_t newAddition) { addition = newAddition; }
-std::int32_t cDice::RollDice(void) {
+std::int32_t cDice::RollDice() {
     std::int32_t sum = 0;
     for (std::int32_t rolls = 0; rolls < dice; ++rolls) {
         sum += RandomNum(1, sides);

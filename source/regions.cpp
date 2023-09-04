@@ -174,14 +174,14 @@ void CMapRegion::SaveToDisk(std::ostream &writeDestination) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Item DataList for iteration
 // o------------------------------------------------------------------------------------------------o
-GenericList<CItem *> *CMapRegion::GetItemList(void) { return &itemData; }
+GenericList<CItem *> *CMapRegion::GetItemList() { return &itemData; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapRegion::GetCharList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the Character DataList for iteration
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CMapRegion::GetCharList(void) { return &charData; }
+GenericList<CChar *> *CMapRegion::GetCharList() { return &charData; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapRegion::GetRegionSerialList()
@@ -196,7 +196,7 @@ RegionSerialList *CMapRegion::GetRegionSerialList() { return &regionSerialData; 
 //|	Purpose		-	Returns a flag that says whether the region has seen any updates
 // since last save
 // o------------------------------------------------------------------------------------------------o
-bool CMapRegion::HasRegionChanged(void) { return hasRegionChanged; }
+bool CMapRegion::HasRegionChanged() { return hasRegionChanged; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapRegion::HasRegionChanged()
@@ -697,7 +697,7 @@ auto CMapHandler::PopulateList(std::int16_t x, std::int16_t y, std::uint8_t worl
 constexpr size_t BUFFERSIZE = 1024 * 1024;
 static auto streamBuffer = std::vector<char>(BUFFERSIZE, 0);
 
-void CMapHandler::Save(void) {
+void CMapHandler::Save() {
     const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
     const std::int16_t AreaY = UpperY / 8;
     std::ofstream writeDestination, houseDestination;
@@ -847,7 +847,7 @@ bool PostLoadFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in worldfile data to MapRegions
 // o------------------------------------------------------------------------------------------------o
-void CMapHandler::Load(void) {
+void CMapHandler::Load() {
     const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
     const std::int16_t AreaY = UpperY / 8;
     std::uint32_t count = 0;

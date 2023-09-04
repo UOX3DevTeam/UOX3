@@ -107,22 +107,22 @@ public:
     bool DonateResource(CSocket *s, std::int32_t amount);
     bool PurchaseGuard(CSocket *sock, std::uint8_t number);
     bool ViewBudget(CSocket *sock);
-    bool PeriodicCheck(void);
+    bool PeriodicCheck();
     bool Load(Script *ss);              // entry is the region #, fp is the file to load from
     bool Save(std::ostream &outStream); // entry is the region #, fp is the file to save in
     bool InitFromScript(CScriptSection *toScan);
     bool AddAsTownMember(CChar &toAdd);  // toAdd is the character to add
     bool RemoveTownMember(CChar &toAdd); // toAdd is the character to remove
-    bool IsGuarded(void) const;
-    bool CanPlaceHouse(void) const;
-    bool CanMark(void) const;
-    bool CanGate(void) const;
-    bool CanRecall(void) const;
-    bool CanTeleport(void) const;
-    bool CanCastAggressive(void) const;
-    bool IsSafeZone(void) const;
-    bool IsDungeon(void) const;
-    bool IsSubRegion(void) const;
+    bool IsGuarded() const;
+    bool CanPlaceHouse() const;
+    bool CanMark() const;
+    bool CanGate() const;
+    bool CanRecall() const;
+    bool CanTeleport() const;
+    bool CanCastAggressive() const;
+    bool IsSafeZone() const;
+    bool IsDungeon() const;
+    bool IsSubRegion() const;
     bool IsMemberOfTown(CChar *player) const;
     bool IsAlliedTown(std::uint16_t townToCheck) const;
     bool MakeAlliedTown(std::uint16_t townToMake);
@@ -142,11 +142,11 @@ public:
     void TellMembers(std::int32_t dictEntry, ...);
     void SendAlliedTowns(CSocket *sock);
     void SendEnemyTowns(CSocket *sock);
-    void ForceEarlyElection(void);
+    void ForceEarlyElection();
     void Possess(CTownRegion *possessorTown);
     void SetTaxesLeft(std::uint32_t newValue);
     void SetReserves(std::uint32_t newValue);
-    void CalcNewMayor(void); // calculates the new mayor
+    void CalcNewMayor(); // calculates the new mayor
     void DisplayTownMembers(CSocket *sock);
     void ViewTaxes(CSocket *s);
     void DoDamage(std::int16_t reduction);
@@ -156,52 +156,52 @@ public:
     void SetChanceBigOre(std::uint8_t newValue);
     void SetAppearance(worldtype_t worldType);
     
-    worldtype_t GetAppearance(void) const;
-    std::uint8_t GetChanceBigOre(void) const;
+    worldtype_t GetAppearance() const;
+    std::uint8_t GetChanceBigOre() const;
     std::int32_t GetGoodBuy(std::uint8_t index) const;
     std::int32_t GetGoodRnd1(std::uint8_t index) const;
     std::int32_t GetGoodRnd2(std::uint8_t index) const;
     std::int32_t GetGoodSell(std::uint8_t index) const;
-    std::int16_t GetHealth(void) const;
-    CChar *GetMayor(void);                 // returns the mayor character
-    serial_t GetMayorSerial(void) const;     // returns the mayor's serial
+    std::int16_t GetHealth() const;
+    CChar *GetMayor();                 // returns the mayor character
+    serial_t GetMayorSerial() const;     // returns the mayor's serial
     void SetMayorSerial(serial_t newvValue); // sets the mayor's serial
-    std::uint16_t GetMusicList(void) const;
+    std::uint16_t GetMusicList() const;
     void SetMusicList(std::uint16_t newValue);
-    std::string GetName(void) const;
-    size_t GetNumOrePreferences(void) const;
+    std::string GetName() const;
+    size_t GetNumOrePreferences() const;
     const OrePref_st *GetOrePreference(size_t targValue) const;
-    std::int32_t GetOreChance(void) const;
-    std::string GetOwner(void) const;
-    size_t GetPopulation(void) const;
-    raceid_t GetRace(void) const;
-    CChar *GetRandomGuard(void); // returns a random guard from guard list
-    std::uint32_t GetReserves(void) const;
-    std::uint16_t GetResourceId(void) const;
-    std::uint32_t GetTaxes(void) const;
-    weathid_t GetWeather(void) const;
+    std::int32_t GetOreChance() const;
+    std::string GetOwner() const;
+    size_t GetPopulation() const;
+    raceid_t GetRace() const;
+    CChar *GetRandomGuard(); // returns a random guard from guard list
+    std::uint32_t GetReserves() const;
+    std::uint16_t GetResourceId() const;
+    std::uint32_t GetTaxes() const;
+    weathid_t GetWeather() const;
     void SetWeather(weathid_t newValue);
-    std::uint16_t NumGuards(void) const;
+    std::uint16_t NumGuards() const;
     void SetNumGuards(std::uint16_t newValue);
-    std::uint16_t TaxedAmount(void) const;
-    std::uint8_t WorldNumber(void) const;
+    std::uint16_t TaxedAmount() const;
+    std::uint8_t WorldNumber() const;
     void WorldNumber(std::uint8_t newValue);
-    std::uint16_t GetInstanceId(void) const;
+    std::uint16_t GetInstanceId() const;
     void SetInstanceId(std::uint16_t newValue);
     
-    std::vector<std::uint16_t> GetScriptTriggers(void);
+    std::vector<std::uint16_t> GetScriptTriggers();
     void AddScriptTrigger(std::uint16_t newValue);
     void RemoveScriptTrigger(std::uint16_t newValue);
-    void ClearScriptTriggers(void);
+    void ClearScriptTriggers();
     
-    std::uint16_t GetRegionNum(void) const;
+    std::uint16_t GetRegionNum() const;
     void SetRegionNum(std::uint16_t newVal);
     
-    size_t GetNumLocations(void) const;
+    size_t GetNumLocations() const;
     const RegLocs_st *GetLocation(size_t locNum) const;
     
-    std::string GetTownMemberSerials(void) const;
-    std::vector<TownPers_st> GetTownMembers(void) const;
+    std::string GetTownMemberSerials() const;
+    std::vector<TownPers_st> GetTownMembers() const;
 };
 
 #endif

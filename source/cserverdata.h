@@ -721,7 +721,7 @@ public:
     auto RankSystemStatus() const -> bool;
     
     void DisplayMakersMark(bool value);
-    bool DisplayMakersMark(void) const;
+    bool DisplayMakersMark() const;
     
     auto CutScrollRequirementStatus(bool value) -> void;
     auto CutScrollRequirementStatus() const -> bool;
@@ -946,7 +946,7 @@ public:
     std::uint8_t CombatWeaponDamageChance() const;
     
     auto CombatWeaponDamageMin(std::uint8_t value) -> void;
-    std::uint8_t CombatWeaponDamageMin(void) const;
+    std::uint8_t CombatWeaponDamageMin() const;
     
     auto CombatWeaponDamageMax(std::uint8_t value) -> void;
     std::uint8_t CombatWeaponDamageMax() const;
@@ -1075,7 +1075,7 @@ public:
     std::int16_t CombatNPCBaseFleeAt() const;
     
     void ExpansionCoreShardEra(std::uint8_t value);
-    std::uint8_t ExpansionCoreShardEra(void) const;
+    std::uint8_t ExpansionCoreShardEra() const;
     
     void ExpansionArmorCalculation(std::uint8_t value);
     std::uint8_t ExpansionArmorCalculation() const;
@@ -1289,7 +1289,7 @@ public:
     
     auto IncMoon(std::int32_t mNumber) -> void;
     
-    auto matchIP(const Ip4Addr_st &ip) const -> Ip4Addr_st;
+    auto matchIP(const IP4Addr &ip) const -> IP4Addr;
     
     PhysicalServer *ServerEntry(std::uint16_t entryNum);
     auto ServerCount() const -> std::uint16_t;

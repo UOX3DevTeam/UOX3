@@ -84,21 +84,21 @@ auto split(const std::string &value, const std::string &identifier = "=")
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Ip4Addr_st
+//|	IP4Addr
 // o------------------------------------------------------------------------------------------------o
-const std::vector<Ip4Addr_st> Ip4Addr_st::lanips{
-    Ip4Addr_st("10.*.*.*"s),   Ip4Addr_st("192.168.*.*"s), Ip4Addr_st("172.16.*.*"s),
-    Ip4Addr_st("172.17.*.*"s), Ip4Addr_st("172.18.*.*"s),  Ip4Addr_st("172.19.*.*"s),
-    Ip4Addr_st("172.20.*.*"s), Ip4Addr_st("172.21.*.*"s),  Ip4Addr_st("172.22.*.*"s),
-    Ip4Addr_st("172.23.*.*"s), Ip4Addr_st("172.241.*.*"s), Ip4Addr_st("172.25.*.*"s),
-    Ip4Addr_st("172.26.*.*"s), Ip4Addr_st("172.27.*.*"s),  Ip4Addr_st("172.28.*.*"s),
-    Ip4Addr_st("172.29.*.*"s), Ip4Addr_st("172.30.*.*"s),  Ip4Addr_st("172.31.*.*"s)};
+const std::vector<IP4Addr> IP4Addr::lanips{
+    IP4Addr("10.*.*.*"s),   IP4Addr("192.168.*.*"s), IP4Addr("172.16.*.*"s),
+    IP4Addr("172.17.*.*"s), IP4Addr("172.18.*.*"s),  IP4Addr("172.19.*.*"s),
+    IP4Addr("172.20.*.*"s), IP4Addr("172.21.*.*"s),  IP4Addr("172.22.*.*"s),
+    IP4Addr("172.23.*.*"s), IP4Addr("172.241.*.*"s), IP4Addr("172.25.*.*"s),
+    IP4Addr("172.26.*.*"s), IP4Addr("172.27.*.*"s),  IP4Addr("172.28.*.*"s),
+    IP4Addr("172.29.*.*"s), IP4Addr("172.30.*.*"s),  IP4Addr("172.31.*.*"s)};
 //==================================================================================================
-const std::vector<Ip4Addr_st> Ip4Addr_st::localips{Ip4Addr_st("127.*.*.*")};
+const std::vector<IP4Addr> IP4Addr::localips{IP4Addr("127.*.*.*")};
 //==================================================================================================
-const std::vector<Ip4Addr_st> Ip4Addr_st::apipaips{Ip4Addr_st("169.254.*.*")};
+const std::vector<IP4Addr> IP4Addr::apipaips{IP4Addr("169.254.*.*")};
 
-auto Ip4Addr_st::exact(const Ip4Addr_st &value) const -> bool {
+auto IP4Addr::exact(const IP4Addr &value) const -> bool {
     auto rValue = true;
     for (auto i = 0; i < 4; ++i) {
         if (components[i] != value.components[i]) {
@@ -110,7 +110,7 @@ auto Ip4Addr_st::exact(const Ip4Addr_st &value) const -> bool {
 }
 
 //==================================================================================================
-auto Ip4Addr_st::match(std::uint32_t value, bool bigendian) const -> int {
+auto IP4Addr::match(std::uint32_t value, bool bigendian) const -> int {
     auto ptr = reinterpret_cast<std::uint8_t *>(&value);
     if (!bigendian) {
         std::reverse(ptr, ptr + 4);
@@ -134,7 +134,7 @@ auto Ip4Addr_st::match(std::uint32_t value, bool bigendian) const -> int {
     return match;
 }
 //==================================================================================================
-auto Ip4Addr_st::match(const Ip4Addr_st &value) const -> int {
+auto IP4Addr::match(const IP4Addr &value) const -> int {
     auto rValue = 0;
     for (auto i = 0; i < 4; ++i) {
         rValue = i + 1;
@@ -150,7 +150,7 @@ auto Ip4Addr_st::match(const Ip4Addr_st &value) const -> int {
     return rValue;
 }
 //==================================================================================================
-Ip4Addr_st::Ip4Addr_st(const std::string &value) {
+IP4Addr::IP4Addr(const std::string &value) {
     components.fill("*"s);
     auto values = parse(value);
     switch (value.size()) {
@@ -172,7 +172,7 @@ Ip4Addr_st::Ip4Addr_st(const std::string &value) {
     }
 }
 //==================================================================================================
-Ip4Addr_st::Ip4Addr_st(std::uint32_t addr, bool bigendian) {
+IP4Addr::IP4Addr(std::uint32_t addr, bool bigendian) {
     components.fill("*"s);
     auto ptr = reinterpret_cast<std::uint8_t *>(&addr);
     if (!bigendian) {
@@ -183,7 +183,7 @@ Ip4Addr_st::Ip4Addr_st(std::uint32_t addr, bool bigendian) {
     }
 }
 //==================================================================================================
-auto Ip4Addr_st::ipaddr(bool bigendian) const -> std::uint32_t {
+auto IP4Addr::ipaddr(bool bigendian) const -> std::uint32_t {
     auto rValue = std::uint32_t(0);
     auto ptr = reinterpret_cast<std::uint8_t *>(&rValue);
     for (auto i = 0; i < 4; ++i) {
@@ -202,27 +202,27 @@ auto Ip4Addr_st::ipaddr(bool bigendian) const -> std::uint32_t {
 }
 //==================================================================================================
 // This assumes the value is in big endian
-auto Ip4Addr_st::operator==(std::uint32_t value) const -> bool { return match(value) == 4; }
+auto IP4Addr::operator==(std::uint32_t value) const -> bool { return match(value) == 4; }
 //==================================================================================================
-auto Ip4Addr_st::operator==(const Ip4Addr_st &value) const -> bool { return match(value) == 4; }
+auto IP4Addr::operator==(const IP4Addr &value) const -> bool { return match(value) == 4; }
 //==================================================================================================
-auto Ip4Addr_st::type() const -> ip4type_t {
+auto IP4Addr::type() const -> ip4type_t {
     auto rValue = ip4type_t::wan;
     try {
         auto iter = std::find_if(lanips.begin(), lanips.end(),
-                                 [this](const Ip4Addr_st &ip) { return *this == ip; });
+                                 [this](const IP4Addr &ip) { return *this == ip; });
         if (iter != lanips.end()) {
             rValue = ip4type_t::lan;
         }
         else {
             auto iter = std::find_if(localips.begin(), localips.end(),
-                                     [this](const Ip4Addr_st &ip) { return *this == ip; });
+                                     [this](const IP4Addr &ip) { return *this == ip; });
             if (iter != localips.end()) {
                 rValue = ip4type_t::local;
             }
             else {
                 auto iter = std::find_if(apipaips.begin(), apipaips.end(),
-                                         [this](const Ip4Addr_st &ip) { return *this == ip; });
+                                         [this](const IP4Addr &ip) { return *this == ip; });
                 if (iter != apipaips.end()) {
                     rValue = ip4type_t::apipa;
                 }
@@ -234,7 +234,7 @@ auto Ip4Addr_st::type() const -> ip4type_t {
     return rValue;
 }
 //==================================================================================================
-auto Ip4Addr_st::description() const -> std::string {
+auto IP4Addr::description() const -> std::string {
     auto ip = std::string();
     for (auto &value : components) {
         ip += value + "."s;
@@ -254,41 +254,41 @@ ip4list_t::ip4list_t(const std::string &filename) {
 }
 
 //==================================================================================================
-auto ip4list_t::bestmatch(const Ip4Addr_st &value) const -> std::pair<Ip4Addr_st, int> {
-    auto matches = std::vector<std::pair<Ip4Addr_st, int>>();
+auto ip4list_t::bestmatch(const IP4Addr &value) const -> std::pair<IP4Addr, int> {
+    auto matches = std::vector<std::pair<IP4Addr, int>>();
     for (const auto &addr : ipaddresses) {
         auto comp = addr.match(value);
         matches.push_back(std::make_pair(addr, comp));
     }
     std::sort(matches.begin(), matches.end(),
-              [](const std::pair<Ip4Addr_st, int> &lhs, const std::pair<Ip4Addr_st, int> &rhs) {
+              [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
                   return lhs.second < rhs.second;
               });
     return *matches.rbegin();
 }
 //==================================================================================================
-auto ip4list_t::bestmatch(std::uint32_t value, bool bigendian) const -> std::pair<Ip4Addr_st, int> {
+auto ip4list_t::bestmatch(std::uint32_t value, bool bigendian) const -> std::pair<IP4Addr, int> {
     auto ptr = reinterpret_cast<std::uint8_t *>(&value);
     if (!bigendian) {
         std::reverse(ptr, ptr + 4);
     }
-    auto matches = std::vector<std::pair<Ip4Addr_st, int>>();
+    auto matches = std::vector<std::pair<IP4Addr, int>>();
     for (const auto &addr : ipaddresses) {
         auto comp = addr.match(value);
         matches.push_back(std::make_pair(addr, comp));
     }
     std::sort(matches.begin(), matches.end(),
-              [](const std::pair<Ip4Addr_st, int> &lhs, const std::pair<Ip4Addr_st, int> &rhs) {
+              [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
                   return lhs.second < rhs.second;
               });
     return *matches.rbegin();
 }
 //==================================================================================================
-auto ip4list_t::add(const Ip4Addr_st &value) -> void { ipaddresses.push_back(value); }
+auto ip4list_t::add(const IP4Addr &value) -> void { ipaddresses.push_back(value); }
 //==================================================================================================
-auto ip4list_t::remove(const Ip4Addr_st &value) -> void {
+auto ip4list_t::remove(const IP4Addr &value) -> void {
     auto iter = std::find_if(ipaddresses.begin(), ipaddresses.end(),
-                             [value](const Ip4Addr_st &entry) { return value.exact(entry); });
+                             [value](const IP4Addr &entry) { return value.exact(entry); });
     if (iter != ipaddresses.end()) {
         ipaddresses.erase(iter);
     }
@@ -335,7 +335,7 @@ auto ip4list_t::load(const std::string &filename) -> bool {
                         if (line[0] != '}') {
                             auto [key, value] = split(line, "=");
                             if ((key == "ip") || (key == "IP") || (key == "Ip") || (key == "iP")) {
-                                ipaddresses.push_back(Ip4Addr_st(value));
+                                ipaddresses.push_back(IP4Addr(value));
                             }
                         }
                         else {
@@ -351,9 +351,9 @@ auto ip4list_t::load(const std::string &filename) -> bool {
 }
 
 //==================================================================================================
-auto ip4list_t::ips() const -> const std::vector<Ip4Addr_st> & { return ipaddresses; }
+auto ip4list_t::ips() const -> const std::vector<IP4Addr> & { return ipaddresses; }
 //==================================================================================================
-auto ip4list_t::ips() -> std::vector<Ip4Addr_st> & { return ipaddresses; }
+auto ip4list_t::ips() -> std::vector<IP4Addr> & { return ipaddresses; }
 
 // Unfortunately, the approach here for the unix/windows is almost totally
 // different, so effectively, two completely different routines
@@ -364,7 +364,7 @@ auto ip4list_t::available() -> ip4list_t {
 
     ip4list_t rValue;
     std::string device;
-    Ip4Addr_st device_address;
+    IP4Addr device_address;
 
     /* Declare and initialize variables */
     DWORD dwSize = 0;
@@ -427,9 +427,9 @@ auto ip4list_t::available() -> ip4list_t {
                         char friendly[friendlen];
                         std::memset(friendly, 0, friendlen);
                         sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
-                        device_address = Ip4Addr_st(sa_in->sin_addr.S_un.S_addr);
+                        device_address = IP4Addr(sa_in->sin_addr.S_un.S_addr);
 
-                        if (device_address.type() != Ip4Addr_st::ip4type_t::apipa) {
+                        if (device_address.type() != IP4Addr::ip4type_t::apipa) {
                             // ourdevice.address = inet_ntop( AF_INET, &( sa_in->sin_addr ), buff,
                             // bufflen );
                             BOOL conv = false;
@@ -474,7 +474,7 @@ auto ip4list_t::available() -> ip4list_t {
     ip4list_t rValue;
     struct ifaddrs *ifAddrStruct = NULL;
     struct ifaddrs *ifa = NULL;
-    Ip4Addr_st device_address;
+    IP4Addr device_address;
 
     getifaddrs(&ifAddrStruct);
 
@@ -486,8 +486,8 @@ auto ip4list_t::available() -> ip4list_t {
         {
             // is a valid IP4 Address
             auto holder = *reinterpret_cast<sockaddr_in *>(ifa->ifa_addr);
-            auto addr = Ip4Addr_st(holder.sin_addr.s_addr);
-            if (addr.type() != Ip4Addr_st::ip4type_t::apipa) {
+            auto addr = IP4Addr(holder.sin_addr.s_addr);
+            if (addr.type() != IP4Addr::ip4type_t::apipa) {
                 rValue.add(addr);
             }
         }

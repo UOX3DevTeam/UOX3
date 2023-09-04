@@ -80,7 +80,7 @@ CWeather::~CWeather() {}
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the weather system is having a heat wave
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::HeatActive(void) const { return weather[HEAT].Active; }
+bool CWeather::HeatActive() const { return weather[HEAT].Active; }
 void CWeather::HeatActive(bool value) { weather[HEAT].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::ColdActive()
@@ -88,7 +88,7 @@ void CWeather::HeatActive(bool value) { weather[HEAT].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/sets whether the weather system is having a cold snap
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::ColdActive(void) const { return weather[COLD].Active; }
+bool CWeather::ColdActive() const { return weather[COLD].Active; }
 void CWeather::ColdActive(bool value) { weather[COLD].Active = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -98,7 +98,7 @@ void CWeather::ColdActive(bool value) { weather[COLD].Active = value; }
 //|	Purpose		-	Gets/Sets the current light level of the system, IF
 //|					 LightMin and LightMax are less than 300
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::CurrentLight(void) const { return light[CURRVAL]; }
+R32 CWeather::CurrentLight() const { return light[CURRVAL]; }
 void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -108,7 +108,7 @@ void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
 //|	Purpose		-	Updates the current light level of the system and the current
 // temperature of |					 the system. Wind is not currently updated
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::PeriodicUpdate(void) {
+bool CWeather::PeriodicUpdate() {
     R32 currTemp;
     
     std::uint8_t hour = cwmWorldState->ServerData()->ServerTimeHours();
@@ -175,7 +175,7 @@ bool CWeather::PeriodicUpdate(void) {
 //|	Purpose		-	Sets the system up for a new day. Heat wave, cold snap are
 // calculated
 // o------------------------------------------------------------------------------------------------o
-void CWeather::NewDay(void) {
+void CWeather::NewDay() {
     bool isHeatWave = false, isColdDay = false;
     
     R32 effTempMax = MaxTemp();
@@ -209,7 +209,7 @@ void CWeather::NewDay(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates rain, snow and storm changes.
 // o------------------------------------------------------------------------------------------------o
-void CWeather::NewHour(void) {
+void CWeather::NewHour() {
     bool isSnowing = false, isRaining = false, isStorm = false;
     if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= StormChance()) {
         isStorm = true;
@@ -293,7 +293,7 @@ void CWeather::Value(std::uint8_t valType, std::uint8_t valOff, R32 value) { ass
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of the snow (if any)
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::SnowIntensityHigh(void) const { return weather[SNOW].IntensityHigh; }
+std::int8_t CWeather::SnowIntensityHigh() const { return weather[SNOW].IntensityHigh; }
 void CWeather::SnowIntensityHigh(std::int8_t value) { weather[SNOW].IntensityHigh = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -302,7 +302,7 @@ void CWeather::SnowIntensityHigh(std::int8_t value) { weather[SNOW].IntensityHig
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of the snow (if any)
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::SnowIntensityLow(void) const { return weather[SNOW].IntensityLow; }
+std::int8_t CWeather::SnowIntensityLow() const { return weather[SNOW].IntensityLow; }
 void CWeather::SnowIntensityLow(std::int8_t value) { weather[SNOW].IntensityLow = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -311,7 +311,7 @@ void CWeather::SnowIntensityLow(std::int8_t value) { weather[SNOW].IntensityLow 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of the snow (if any)
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::SnowIntensity(void) const { return weather[SNOW].Intensity; }
+std::int8_t CWeather::SnowIntensity() const { return weather[SNOW].Intensity; }
 void CWeather::SnowIntensity(std::int8_t value) { weather[SNOW].Intensity = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -320,7 +320,7 @@ void CWeather::SnowIntensity(std::int8_t value) { weather[SNOW].Intensity = valu
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of the rain, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::RainIntensityHigh(void) const { return weather[RAIN].IntensityHigh; }
+std::int8_t CWeather::RainIntensityHigh() const { return weather[RAIN].IntensityHigh; }
 void CWeather::RainIntensityHigh(std::int8_t value) { weather[RAIN].IntensityHigh = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -329,7 +329,7 @@ void CWeather::RainIntensityHigh(std::int8_t value) { weather[RAIN].IntensityHig
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of the rain, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::RainIntensityLow(void) const { return weather[RAIN].IntensityLow; }
+std::int8_t CWeather::RainIntensityLow() const { return weather[RAIN].IntensityLow; }
 void CWeather::RainIntensityLow(std::int8_t value) { weather[RAIN].IntensityLow = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -338,7 +338,7 @@ void CWeather::RainIntensityLow(std::int8_t value) { weather[RAIN].IntensityLow 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of the rain, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::RainIntensity(void) const { return weather[RAIN].Intensity; }
+std::int8_t CWeather::RainIntensity() const { return weather[RAIN].Intensity; }
 void CWeather::RainIntensity(std::int8_t value) { weather[RAIN].Intensity = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -347,7 +347,7 @@ void CWeather::RainIntensity(std::int8_t value) { weather[RAIN].Intensity = valu
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of the storm, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::StormIntensityHigh(void) const { return weather[STORM].IntensityHigh; }
+std::int8_t CWeather::StormIntensityHigh() const { return weather[STORM].IntensityHigh; }
 void CWeather::StormIntensityHigh(std::int8_t value) { weather[STORM].IntensityHigh = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -356,7 +356,7 @@ void CWeather::StormIntensityHigh(std::int8_t value) { weather[STORM].IntensityH
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of the storm, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::StormIntensityLow(void) const { return weather[STORM].IntensityLow; }
+std::int8_t CWeather::StormIntensityLow() const { return weather[STORM].IntensityLow; }
 void CWeather::StormIntensityLow(std::int8_t value) { weather[STORM].IntensityLow = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -365,7 +365,7 @@ void CWeather::StormIntensityLow(std::int8_t value) { weather[STORM].IntensityLo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of the storm, if any
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::StormIntensity(void) const { return weather[STORM].Intensity; }
+std::int8_t CWeather::StormIntensity() const { return weather[STORM].Intensity; }
 void CWeather::StormIntensity(std::int8_t value) { weather[STORM].Intensity = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -374,7 +374,7 @@ void CWeather::StormIntensity(std::int8_t value) { weather[STORM].Intensity = va
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the heat intensity of the weather system
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::HeatIntensityHigh(void) const { return weather[HEAT].IntensityHigh; }
+std::int8_t CWeather::HeatIntensityHigh() const { return weather[HEAT].IntensityHigh; }
 void CWeather::HeatIntensityHigh(std::int8_t value) { weather[HEAT].IntensityHigh = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -383,7 +383,7 @@ void CWeather::HeatIntensityHigh(std::int8_t value) { weather[HEAT].IntensityHig
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the cold intensity of the weather system
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::ColdIntensityHigh(void) const { return weather[COLD].IntensityHigh; }
+std::int8_t CWeather::ColdIntensityHigh() const { return weather[COLD].IntensityHigh; }
 void CWeather::ColdIntensityHigh(std::int8_t value) { weather[COLD].IntensityHigh = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -392,7 +392,7 @@ void CWeather::ColdIntensityHigh(std::int8_t value) { weather[COLD].IntensityHig
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum temperature of the day (non effective)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MaxTemp(void) const { return Value(MAXVAL, TEMP); }
+R32 CWeather::MaxTemp() const { return Value(MAXVAL, TEMP); }
 void CWeather::MaxTemp(R32 value) { Value(MAXVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -401,7 +401,7 @@ void CWeather::MaxTemp(R32 value) { Value(MAXVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum temperature of the day (non effective)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MinTemp(void) const { return Value(MINVAL, TEMP); }
+R32 CWeather::MinTemp() const { return Value(MINVAL, TEMP); }
 void CWeather::MinTemp(R32 value) { Value(MINVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -410,7 +410,7 @@ void CWeather::MinTemp(R32 value) { Value(MINVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the current temperature of the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::Temp(void) const { return Value(CURRVAL, TEMP); }
+R32 CWeather::Temp() const { return Value(CURRVAL, TEMP); }
 void CWeather::Temp(R32 value) { Value(CURRVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -419,7 +419,7 @@ void CWeather::Temp(R32 value) { Value(CURRVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount the temperature drops when it rains
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::RainTempDrop(void) const { return rainTempDrop; }
+R32 CWeather::RainTempDrop() const { return rainTempDrop; }
 void CWeather::RainTempDrop(R32 value) { rainTempDrop = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -428,7 +428,7 @@ void CWeather::RainTempDrop(R32 value) { rainTempDrop = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount the temperature drops when it storms
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::StormTempDrop(void) const { return stormTempDrop; }
+R32 CWeather::StormTempDrop() const { return stormTempDrop; }
 void CWeather::StormTempDrop(R32 value) { stormTempDrop = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -437,7 +437,7 @@ void CWeather::StormTempDrop(R32 value) { stormTempDrop = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum wind speed for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MaxWindSpeed(void) const { return Value(MAXVAL, WIND); }
+R32 CWeather::MaxWindSpeed() const { return Value(MAXVAL, WIND); }
 void CWeather::MaxWindSpeed(R32 value) { Value(MAXVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -446,7 +446,7 @@ void CWeather::MaxWindSpeed(R32 value) { Value(MAXVAL, WIND, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum wind speed for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MinWindSpeed(void) const { return Value(MINVAL, WIND); }
+R32 CWeather::MinWindSpeed() const { return Value(MINVAL, WIND); }
 void CWeather::MinWindSpeed(R32 value) { Value(MINVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -455,7 +455,7 @@ void CWeather::MinWindSpeed(R32 value) { Value(MINVAL, WIND, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the current wind speed
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::WindSpeed(void) const { return Value(CURRVAL, WIND); }
+R32 CWeather::WindSpeed() const { return Value(CURRVAL, WIND); }
 void CWeather::WindSpeed(R32 value) { Value(CURRVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -464,7 +464,7 @@ void CWeather::WindSpeed(R32 value) { Value(CURRVAL, WIND, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of rain for the day
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::RainChance(void) const { return weather[RAIN].Chance; }
+std::int8_t CWeather::RainChance() const { return weather[RAIN].Chance; }
 void CWeather::RainChance(std::int8_t value) { weather[RAIN].Chance = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -473,7 +473,7 @@ void CWeather::RainChance(std::int8_t value) { weather[RAIN].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of snow for the day
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::SnowChance(void) const { return weather[SNOW].Chance; }
+std::int8_t CWeather::SnowChance() const { return weather[SNOW].Chance; }
 void CWeather::SnowChance(std::int8_t value) { weather[SNOW].Chance = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -482,7 +482,7 @@ void CWeather::SnowChance(std::int8_t value) { weather[SNOW].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of storm for the day
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::StormChance(void) const { return weather[STORM].Chance; }
+std::int8_t CWeather::StormChance() const { return weather[STORM].Chance; }
 void CWeather::StormChance(std::int8_t value) { weather[STORM].Chance = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -491,7 +491,7 @@ void CWeather::StormChance(std::int8_t value) { weather[STORM].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of a heat wave for the day
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::HeatChance(void) const { return weather[HEAT].Chance; }
+std::int8_t CWeather::HeatChance() const { return weather[HEAT].Chance; }
 void CWeather::HeatChance(std::int8_t value) { weather[HEAT].Chance = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -500,7 +500,7 @@ void CWeather::HeatChance(std::int8_t value) { weather[HEAT].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of a cold snap for the day
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CWeather::ColdChance(void) const { return weather[COLD].Chance; }
+std::int8_t CWeather::ColdChance() const { return weather[COLD].Chance; }
 void CWeather::ColdChance(std::int8_t value) { weather[COLD].Chance = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -509,7 +509,7 @@ void CWeather::ColdChance(std::int8_t value) { weather[COLD].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum light level for the day (brightest)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::LightMin(void) const { return light[MINVAL]; }
+R32 CWeather::LightMin() const { return light[MINVAL]; }
 void CWeather::LightMin(R32 value) { light[MINVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -518,7 +518,7 @@ void CWeather::LightMin(R32 value) { light[MINVAL] = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum light level for the day (darkest)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::LightMax(void) const { return light[MAXVAL]; }
+R32 CWeather::LightMax() const { return light[MAXVAL]; }
 void CWeather::LightMax(R32 value) { light[MAXVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -527,7 +527,7 @@ void CWeather::LightMax(R32 value) { light[MAXVAL] = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the weather system is raining
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::RainActive(void) const { return weather[RAIN].Active; }
+bool CWeather::RainActive() const { return weather[RAIN].Active; }
 void CWeather::RainActive(bool value) { weather[RAIN].Active = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -536,7 +536,7 @@ void CWeather::RainActive(bool value) { weather[RAIN].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the weather system is snowing
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::SnowActive(void) const { return weather[SNOW].Active; }
+bool CWeather::SnowActive() const { return weather[SNOW].Active; }
 void CWeather::SnowActive(bool value) { weather[SNOW].Active = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -545,7 +545,7 @@ void CWeather::SnowActive(bool value) { weather[SNOW].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the weather system is brewing a storm
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::StormBrewing(void) const { return weather[STORMBREW].Active; }
+bool CWeather::StormBrewing() const { return weather[STORMBREW].Active; }
 void CWeather::StormBrewing(bool value) { weather[STORMBREW].Active = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -554,7 +554,7 @@ void CWeather::StormBrewing(bool value) { weather[STORMBREW].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether a storm is active in the weather system
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::StormActive(void) const { return weather[STORM].Active; }
+bool CWeather::StormActive() const { return weather[STORM].Active; }
 void CWeather::StormActive(bool value) { weather[STORM].Active = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -563,7 +563,7 @@ void CWeather::StormActive(bool value) { weather[STORM].Active = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether there is a storm delay in the weather system
 // o------------------------------------------------------------------------------------------------o
-bool CWeather::StormDelay(void) const { return stormDelay; }
+bool CWeather::StormDelay() const { return stormDelay; }
 void CWeather::StormDelay(bool value) { stormDelay = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -572,7 +572,7 @@ void CWeather::StormDelay(bool value) { stormDelay = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temperature below which snow kicks in
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::SnowThreshold(void) const { return snowThreshold; }
+R32 CWeather::SnowThreshold() const { return snowThreshold; }
 void CWeather::SnowThreshold(R32 value) { snowThreshold = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -581,7 +581,7 @@ void CWeather::SnowThreshold(R32 value) { snowThreshold = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective maximum temperature for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::EffectiveMaxTemp(void) const { return Value(MAXVAL, EFFECTIVE); }
+R32 CWeather::EffectiveMaxTemp() const { return Value(MAXVAL, EFFECTIVE); }
 void CWeather::EffectiveMaxTemp(R32 value) { Value(MAXVAL, EFFECTIVE, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -590,7 +590,7 @@ void CWeather::EffectiveMaxTemp(R32 value) { Value(MAXVAL, EFFECTIVE, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective minimum temperature for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::EffectiveMinTemp(void) const { return Value(MINVAL, EFFECTIVE); }
+R32 CWeather::EffectiveMinTemp() const { return Value(MINVAL, EFFECTIVE); }
 void CWeather::EffectiveMinTemp(R32 value) { Value(MINVAL, EFFECTIVE, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -613,7 +613,7 @@ cWeatherAb::~cWeatherAb() { weather.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns count of weather systems
 // o------------------------------------------------------------------------------------------------o
-size_t cWeatherAb::Count(void) const { return weather.size(); }
+size_t cWeatherAb::Count() const { return weather.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeatherAb::Load()
@@ -1105,7 +1105,7 @@ void cWeatherAb::SnowThreshold(weathid_t toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins a new day in the weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::NewDay(void) {
+bool cWeatherAb::NewDay() {
     std::vector<CWeather>::iterator wIter;
     for (wIter = weather.begin(); wIter != weather.end(); ++wIter) {
         (*wIter).NewDay();
@@ -1118,7 +1118,7 @@ bool cWeatherAb::NewDay(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Begins a new hour in the weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::NewHour(void) {
+bool cWeatherAb::NewHour() {
     std::vector<CWeather>::iterator wIter;
     for (wIter = weather.begin(); wIter != weather.end(); ++wIter) {
         (*wIter).NewHour();
@@ -1151,7 +1151,7 @@ void cWeatherAb::EffectiveMaxTemp(weathid_t toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Periodically called from main loop to update weather types
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::DoStuff(void) {
+bool cWeatherAb::DoStuff() {
     std::vector<CWeather>::iterator wIter;
     for (wIter = weather.begin(); wIter != weather.end(); ++wIter) {
         (*wIter).PeriodicUpdate();

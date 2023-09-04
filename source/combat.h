@@ -64,7 +64,7 @@ public:
     void Kill(CChar *mChar, CChar *ourTarg);
     
     void DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLoc, std::int16_t damage);
-    std::int8_t CalculateHitLoc(void);
+    std::int8_t CalculateHitLoc();
     std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, weathertype_t element = PHYSICAL);
     std::int16_t CalcAttackPower(CChar *mChar, bool doDamage = false);
     std::int16_t CalcLowDamage(CChar *p);

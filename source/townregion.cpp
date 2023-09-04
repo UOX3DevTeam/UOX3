@@ -278,7 +278,7 @@ bool CTownRegion::Save(std::ostream &outStream) {
 //|	Purpose		-	Calculates new town mayor based on votes
 //|	Notes		-	There has got to be a better way than this hideous O(n^2) algy
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::CalcNewMayor(void) {
+void CTownRegion::CalcNewMayor() {
     if (townMember.empty())
         return;
     
@@ -355,14 +355,14 @@ void CTownRegion::CalcNewMayor(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the character who is town mayor
 // o------------------------------------------------------------------------------------------------o
-CChar *CTownRegion::GetMayor(void) { return CalcCharObjFromSer(mayorSerial); }
+CChar *CTownRegion::GetMayor() { return CalcCharObjFromSer(mayorSerial); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetMayorSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the serial of the character who is town mayor
 // o------------------------------------------------------------------------------------------------o
-serial_t CTownRegion::GetMayorSerial(void) const { return mayorSerial; }
+serial_t CTownRegion::GetMayorSerial() const { return mayorSerial; }
 void CTownRegion::SetMayorSerial(serial_t newValue) { mayorSerial = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -729,7 +729,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the townregion is protected by guards
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::IsGuarded(void) const { return priv.test(BIT_GUARDED); }
+bool CTownRegion::IsGuarded() const { return priv.test(BIT_GUARDED); }
 void CTownRegion::IsGuarded(bool value) { priv.set(BIT_GUARDED, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -737,7 +737,7 @@ void CTownRegion::IsGuarded(bool value) { priv.set(BIT_GUARDED, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the townregion allows player houses
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanPlaceHouse(void) const { return priv.test(BIT_HOUSING); }
+bool CTownRegion::CanPlaceHouse() const { return priv.test(BIT_HOUSING); }
 void CTownRegion::CanPlaceHouse(bool value) { priv.set(BIT_HOUSING, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -745,7 +745,7 @@ void CTownRegion::CanPlaceHouse(bool value) { priv.set(BIT_HOUSING, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can cast the Mark spell in the townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanMark(void) const { return priv.test(BIT_MARK); }
+bool CTownRegion::CanMark() const { return priv.test(BIT_MARK); }
 void CTownRegion::CanMark(bool value) { priv.set(BIT_MARK, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -753,7 +753,7 @@ void CTownRegion::CanMark(bool value) { priv.set(BIT_MARK, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can cast the Gate spell in the townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanGate(void) const { return priv.test(BIT_GATE); }
+bool CTownRegion::CanGate() const { return priv.test(BIT_GATE); }
 void CTownRegion::CanGate(bool value) { priv.set(BIT_GATE, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -762,7 +762,7 @@ void CTownRegion::CanGate(bool value) { priv.set(BIT_GATE, value); }
 //|	Purpose		-	Gets/Sets whether players can cast the Recall spell in the
 // townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanRecall(void) const { return priv.test(BIT_RECALL); }
+bool CTownRegion::CanRecall() const { return priv.test(BIT_RECALL); }
 void CTownRegion::CanRecall(bool value) { priv.set(BIT_RECALL, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -771,7 +771,7 @@ void CTownRegion::CanRecall(bool value) { priv.set(BIT_RECALL, value); }
 //|	Purpose		-	Gets/Sets whether players can cast Aggressive spells in the
 // townregion
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanCastAggressive(void) const { return priv.test(BIT_AGGRESSIVE); }
+bool CTownRegion::CanCastAggressive() const { return priv.test(BIT_AGGRESSIVE); }
 void CTownRegion::CanCastAggressive(bool value) { priv.set(BIT_AGGRESSIVE, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -779,7 +779,7 @@ void CTownRegion::CanCastAggressive(bool value) { priv.set(BIT_AGGRESSIVE, value
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the townregion is considered a safe zone or not
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::IsSafeZone(void) const { return priv.test(BIT_SAFEZONE); }
+bool CTownRegion::IsSafeZone() const { return priv.test(BIT_SAFEZONE); }
 void CTownRegion::IsSafeZone(bool value) { priv.set(BIT_SAFEZONE, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -788,7 +788,7 @@ void CTownRegion::IsSafeZone(bool value) { priv.set(BIT_SAFEZONE, value); }
 //|	Purpose		-	Gets/Sets whether the townregion allows use of the Teleport spell or
 // not
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::CanTeleport(void) const { return priv.test(BIT_TELEPORT); }
+bool CTownRegion::CanTeleport() const { return priv.test(BIT_TELEPORT); }
 void CTownRegion::CanTeleport(bool value) { priv.set(BIT_TELEPORT, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -797,7 +797,7 @@ void CTownRegion::CanTeleport(bool value) { priv.set(BIT_TELEPORT, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the name of the townregion
 // o------------------------------------------------------------------------------------------------o
-std::string CTownRegion::GetName(void) const { return name; }
+std::string CTownRegion::GetName() const { return name; }
 void CTownRegion::SetName(std::string toSet) { name = toSet.substr(0, 49); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -805,14 +805,14 @@ void CTownRegion::SetName(std::string toSet) { name = toSet.substr(0, 49); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the name of the guard owner for the townregion
 // o------------------------------------------------------------------------------------------------o
-std::string CTownRegion::GetOwner(void) const { return guardowner; }
+std::string CTownRegion::GetOwner() const { return guardowner; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetWeather()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the weather in the townregion
 // o------------------------------------------------------------------------------------------------o
-weathid_t CTownRegion::GetWeather(void) const { return weather; }
+weathid_t CTownRegion::GetWeather() const { return weather; }
 void CTownRegion::SetWeather(weathid_t newValue) { weather = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -880,7 +880,7 @@ std::int32_t CTownRegion::GetGoodRnd2(std::uint8_t index) const {
 //|	Purpose		-	Gets musicList for the townregion, as originally specified in region
 // DFNs
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CTownRegion::GetMusicList(void) const { return musicList; }
+std::uint16_t CTownRegion::GetMusicList() const { return musicList; }
 void CTownRegion::SetMusicList(std::uint16_t newValue) { musicList = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -888,7 +888,7 @@ void CTownRegion::SetMusicList(std::uint16_t newValue) { musicList = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Spawns and returns a random NPC guard for the townregion
 // o------------------------------------------------------------------------------------------------o
-CChar *CTownRegion::GetRandomGuard(void) {
+CChar *CTownRegion::GetRandomGuard() {
     CChar *ourGuard = Npcs->CreateRandomNPC(guardList);
     ourGuard->SetNPCAiType(AI_GUARD);
     return ourGuard;
@@ -1264,7 +1264,7 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets population of townregion
 // o------------------------------------------------------------------------------------------------o
-size_t CTownRegion::GetPopulation(void) const { return townMember.size(); }
+size_t CTownRegion::GetPopulation() const { return townMember.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::DisplayTownMembers()
@@ -1298,7 +1298,7 @@ void CTownRegion::DisplayTownMembers(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a comma-separated string of town member serials
 // o------------------------------------------------------------------------------------------------o
-std::string CTownRegion::GetTownMemberSerials(void) const {
+std::string CTownRegion::GetTownMemberSerials() const {
     std::string townMemberSerials;
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         CChar const *townMemberChar = CalcCharObjFromSer(townMember[counter].townMember);
@@ -1320,7 +1320,7 @@ std::string CTownRegion::GetTownMemberSerials(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a comma-separated string of town member serials
 // o------------------------------------------------------------------------------------------------o
-std::vector<CTownRegion::TownPers_st> CTownRegion::GetTownMembers(void) const { return townMember; }
+std::vector<CTownRegion::TownPers_st> CTownRegion::GetTownMembers() const { return townMember; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::VoteForMayor()
@@ -1375,7 +1375,7 @@ serial_t CTownRegion::FindPositionOf(CChar &toAdd) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ID of resource taxed in townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CTownRegion::GetResourceId(void) const { return taxedResource; }
+std::uint16_t CTownRegion::GetResourceId() const { return taxedResource; }
 void CTownRegion::SetResourceId(std::uint16_t resId) { taxedResource = resId; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1448,7 +1448,7 @@ bool CTownRegion::ViewBudget(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Perform periodic check of townregion related functions
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::PeriodicCheck(void) {
+bool CTownRegion::PeriodicCheck() {
     time_t now;
     time(&now);
     if (difftime(now, timeSinceTaxedMembers) >= cwmWorldState->ServerData()->TownTaxPeriod()) {
@@ -1526,7 +1526,7 @@ bool CTownRegion::PeriodicCheck(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets visual appearance (season) of townregion
 // o------------------------------------------------------------------------------------------------o
-worldtype_t CTownRegion::GetAppearance(void) const { return visualAppearance; }
+worldtype_t CTownRegion::GetAppearance() const { return visualAppearance; }
 void CTownRegion::SetAppearance(worldtype_t worldType) { visualAppearance = worldType; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1575,7 +1575,7 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the health of townstone in this townregion
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CTownRegion::GetHealth(void) const { return health; }
+std::int16_t CTownRegion::GetHealth() const { return health; }
 void CTownRegion::SetHealth(std::int16_t newValue) { health = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1698,7 +1698,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets race ID associated with townregion
 // o------------------------------------------------------------------------------------------------o
-raceid_t CTownRegion::GetRace(void) const { return race; }
+raceid_t CTownRegion::GetRace() const { return race; }
 void CTownRegion::SetRace(raceid_t newRace) { race = newRace; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1724,7 +1724,7 @@ void CTownRegion::SendAlliedTowns(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces early election for townregion
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::ForceEarlyElection(void) {
+void CTownRegion::ForceEarlyElection() {
     time_t now;
     time(&now);
     CChar *mayor = GetMayor();
@@ -1796,7 +1796,7 @@ void CTownRegion::Possess(CTownRegion *possessorTown) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected resource reserves for townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CTownRegion::GetReserves(void) const { return resourceCollected; }
+std::uint32_t CTownRegion::GetReserves() const { return resourceCollected; }
 void CTownRegion::SetReserves(std::uint32_t newValue) { resourceCollected = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1805,7 +1805,7 @@ void CTownRegion::SetReserves(std::uint32_t newValue) { resourceCollected = newV
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets collected gold reserves for townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CTownRegion::GetTaxes(void) const { return goldReserved; }
+std::uint32_t CTownRegion::GetTaxes() const { return goldReserved; }
 void CTownRegion::SetTaxesLeft(std::uint32_t newValue) { goldReserved = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1814,7 +1814,7 @@ void CTownRegion::SetTaxesLeft(std::uint32_t newValue) { goldReserved = newValue
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets chance to find big ore in the townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CTownRegion::GetChanceBigOre(void) const { return chanceFindBigOre; }
+std::uint8_t CTownRegion::GetChanceBigOre() const { return chanceFindBigOre; }
 void CTownRegion::SetChanceBigOre(std::uint8_t newValue) { chanceFindBigOre = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1832,7 +1832,7 @@ bool CTownRegion::RemoveCharacter(size_t position) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the number of ore preferences present for the townregion
 // o------------------------------------------------------------------------------------------------o
-size_t CTownRegion::GetNumOrePreferences(void) const { return orePreferences.size(); }
+size_t CTownRegion::GetNumOrePreferences() const { return orePreferences.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetOrePreference()
@@ -1851,7 +1851,7 @@ const OrePref_st *CTownRegion::GetOrePreference(size_t targValue) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the chance to find ore when mining in the townregion
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CTownRegion::GetOreChance(void) const {
+std::int32_t CTownRegion::GetOreChance() const {
     std::int32_t sumReturn = 0;
     std::vector<OrePref_st>::const_iterator oIter;
     for (oIter = orePreferences.begin(); oIter != orePreferences.end(); ++oIter) {
@@ -1865,7 +1865,7 @@ std::int32_t CTownRegion::GetOreChance(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether townregion is a dungeon
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::IsDungeon(void) const { return priv.test(BIT_DUNGEON); }
+bool CTownRegion::IsDungeon() const { return priv.test(BIT_DUNGEON); }
 void CTownRegion::IsDungeon(bool value) { priv.set(BIT_DUNGEON, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1873,7 +1873,7 @@ void CTownRegion::IsDungeon(bool value) { priv.set(BIT_DUNGEON, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether townregion is subregion of another region
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::IsSubRegion(void) const { return priv.test(BIT_SUBREGION); }
+bool CTownRegion::IsSubRegion() const { return priv.test(BIT_SUBREGION); }
 void CTownRegion::IsSubRegion(bool value) { priv.set(BIT_SUBREGION, value); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1881,7 +1881,7 @@ void CTownRegion::IsSubRegion(bool value) { priv.set(BIT_SUBREGION, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the number of guards in the townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CTownRegion::NumGuards(void) const { return numGuards; }
+std::uint16_t CTownRegion::NumGuards() const { return numGuards; }
 void CTownRegion::SetNumGuards(std::uint16_t newValue) { numGuards = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1889,7 +1889,7 @@ void CTownRegion::SetNumGuards(std::uint16_t newValue) { numGuards = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the worldnumber of the townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CTownRegion::WorldNumber(void) const { return worldNumber; }
+std::uint8_t CTownRegion::WorldNumber() const { return worldNumber; }
 void CTownRegion::WorldNumber(std::uint8_t newValue) { worldNumber = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1897,7 +1897,7 @@ void CTownRegion::WorldNumber(std::uint8_t newValue) { worldNumber = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the worldnumber of the townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CTownRegion::GetInstanceId(void) const { return instanceId; }
+std::uint16_t CTownRegion::GetInstanceId() const { return instanceId; }
 void CTownRegion::SetInstanceId(std::uint16_t newValue) { instanceId = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1906,14 +1906,14 @@ void CTownRegion::SetInstanceId(std::uint16_t newValue) { instanceId = newValue;
 //|	Purpose		-	Gets/Sets the amount of gold taxed from townregion members
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::TaxedAmount(std::uint16_t amount) { taxedAmount = amount; }
-std::uint16_t CTownRegion::TaxedAmount(void) const { return taxedAmount; }
+std::uint16_t CTownRegion::TaxedAmount() const { return taxedAmount; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetScriptTriggers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of script triggers on object
 // o------------------------------------------------------------------------------------------------o
-std::vector<std::uint16_t> CTownRegion::GetScriptTriggers(void) { return scriptTriggers; }
+std::vector<std::uint16_t> CTownRegion::GetScriptTriggers() { return scriptTriggers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::AddScriptTrigger()
@@ -1947,7 +1947,7 @@ void CTownRegion::RemoveScriptTrigger(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears out all script triggers from object
 // o------------------------------------------------------------------------------------------------o
-void CTownRegion::ClearScriptTriggers(void) {
+void CTownRegion::ClearScriptTriggers() {
     scriptTriggers.clear();
     scriptTriggers.shrink_to_fit();
 }
@@ -1958,7 +1958,7 @@ void CTownRegion::ClearScriptTriggers(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets region number (from region DFNs) for the townregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CTownRegion::GetRegionNum(void) const { return regionNum; }
+std::uint16_t CTownRegion::GetRegionNum() const { return regionNum; }
 void CTownRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1967,7 +1967,7 @@ void CTownRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 //|	Purpose		-	Gets number of locations in townregion as defined in region DFNs via
 // X1/Y1, X2/Y2 pairs
 // o------------------------------------------------------------------------------------------------o
-size_t CTownRegion::GetNumLocations(void) const { return locations.size(); }
+size_t CTownRegion::GetNumLocations() const { return locations.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetLocation()

@@ -169,7 +169,7 @@ bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all items to clear any active trades
 // o------------------------------------------------------------------------------------------------o
-void ClearTrades(void) {
+void ClearTrades() {
     std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &ClearTradesFunctor);
 }
@@ -305,7 +305,7 @@ void CancelTrade(CItem *tradeWindowOne) {
     CompleteTrade(tradeWindowOne, tradeWindowTwo, false);
 }
 
-bool CPITradeMessage::Handle(void) {
+bool CPITradeMessage::Handle() {
     CItem *tradeWindowOne = CalcItemObjFromSer(tSock->GetDWord(4));
     if (ValidateObject(tradeWindowOne)) {
         CItem *tradeWindowTwo = nullptr;

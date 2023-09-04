@@ -27,16 +27,16 @@ public:
     : source(INVALIDSERIAL), dest(INVALIDSERIAL), expiretime(0), num(0), more1(0), more2(0),
     more3(0), dispellable(false), objptr(nullptr), assocScript(0xFFFF) {}
     
-    std::uint16_t AssocScript(void) const { return assocScript; }
-    CBaseObject *ObjPtr(void) const { return objptr; }
-    bool Dispellable(void) const { return dispellable; }
-    std::uint32_t ExpireTime(void) const { return expiretime; }
-    serial_t Source(void) const { return source; }
-    serial_t Destination(void) const { return dest; }
-    std::uint8_t Number(void) const { return num; }
-    std::uint16_t More1(void) const { return more1; }
-    std::uint16_t More2(void) const { return more2; }
-    std::uint16_t More3(void) const { return more3; }
+    std::uint16_t AssocScript() const { return assocScript; }
+    CBaseObject *ObjPtr() const { return objptr; }
+    bool Dispellable() const { return dispellable; }
+    std::uint32_t ExpireTime() const { return expiretime; }
+    serial_t Source() const { return source; }
+    serial_t Destination() const { return dest; }
+    std::uint8_t Number() const { return num; }
+    std::uint16_t More1() const { return more1; }
+    std::uint16_t More2() const { return more2; }
+    std::uint16_t More3() const { return more3; }
     
     void Source(serial_t value) { source = value; }
     void Destination(serial_t value) { dest = value; }

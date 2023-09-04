@@ -1396,8 +1396,8 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
                                 }
                                 if (inMoveDetectRange) {
                                     std::uint8_t rangeToChar = GetDist(
-                                                                       Point3_st(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
-                                                                       Point3_st(newx, newy, mChar->GetZ()));
+                                                                       Point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
+                                                                       Point3(newx, newy, mChar->GetZ()));
                                     
                                     // Script was found, let's check for onMoveDetect event
                                     std::int8_t retVal = toExecute->OnMoveDetect(tItem, mChar, rangeToChar,
@@ -1439,8 +1439,8 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
                             }
                             if (inMoveDetectRange) {
                                 std::uint8_t rangeToChar =
-                                GetDist(Point3_st(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
-                                        Point3_st(newx, newy, mChar->GetZ()));
+                                GetDist(Point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()),
+                                        Point3(newx, newy, mChar->GetZ()));
                                 
                                 // We don't care about the return value from onCollide here, so
                                 // suppress the warning
@@ -3129,7 +3129,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
     if (maxSteps == 0) {
         std::int8_t npcWanderType = mChar->GetNpcWander();
         if (mChar->IsAtWar()) {
-            if (GetDist(mChar->GetLocation(), Point3_st(targX, targY, curZ)) >= 30) {
+            if (GetDist(mChar->GetLocation(), Point3(targX, targY, curZ)) >= 30) {
                 maxSteps = 150;
             }
             else {
@@ -3225,7 +3225,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
         EVENT_TIMER_NOW(mytimer, Time when loopCtr == maxSteps, 1);
         return false;
     }
-    else if (loopCtr == 0 && GetDist(mChar->GetLocation(), Point3_st(targX, targY, curZ)) > 1) {
+    else if (loopCtr == 0 && GetDist(mChar->GetLocation(), Point3(targX, targY, curZ)) > 1) {
 #if defined(UOX_DEBUG_MODE)
         Console::shared().Warning(
                                   "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n");
@@ -3238,7 +3238,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
         return false;
     }
     else if (mChar->GetX() == startX && mChar->GetY() == startY &&
-             GetDist(mChar->GetLocation(), Point3_st(targX, targY, curZ)) > 1) {
+             GetDist(mChar->GetLocation(), Point3(targX, targY, curZ)) > 1) {
         // NPC never moved, and target location is not nearby
         if (!cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
             IgnoreAndEvadeTarget(mChar);
@@ -3253,7 +3253,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
         Console::shared().Print(
                                 util::format("AdvancedPathfinding: %u loops to find path.\n", loopCtr));
 #endif
-        if (GetDist(mChar->GetLocation(), Point3_st(targX, targY, curZ)) > 1) {
+        if (GetDist(mChar->GetLocation(), Point3(targX, targY, curZ)) > 1) {
             mChar->SetPathResult(0); // Partial pathfinding success
         }
         else {

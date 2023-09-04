@@ -43,7 +43,7 @@ private:
     void CommandReset();
     
 public:
-    std::uint8_t NumArguments(void);
+    std::uint8_t NumArguments();
     std::int32_t Argument(std::uint8_t argNum);
     std::string CommandString(std::uint8_t section, std::uint8_t end = 0);
     void CommandString(std::string newValue);
@@ -52,14 +52,14 @@ public:
     CommandLevel_st *GetClearance(std::uint8_t commandLevel);     // return by command level
     std::uint16_t GetColourByLevel(std::uint8_t commandLevel);
     void Command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
-    void Load(void);
+    void Load();
     void Log(const std::string &command, CChar *player1, CChar *player2,
              const std::string &extraInfo);
     
     bool CommandExists(const std::string &cmdName);
-    const std::string FirstCommand(void);
-    const std::string NextCommand(void);
-    bool FinishedCommandList(void);
+    const std::string FirstCommand();
+    const std::string NextCommand();
+    bool FinishedCommandList();
     
     CommandMapEntry_st *CommandDetails(const std::string &cmdName);
     

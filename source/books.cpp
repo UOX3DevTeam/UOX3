@@ -55,7 +55,7 @@ CBooks *Books = nullptr;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the .bok file with changes to the author or title
 // o------------------------------------------------------------------------------------------------o
-bool CPINewBookHeader::Handle(void) {
+bool CPINewBookHeader::Handle() {
     if (tSock != nullptr) {
         const serial_t bookSer = tSock->GetDWord(3);
         CItem *mBook = CalcItemObjFromSer(bookSer);
@@ -305,7 +305,7 @@ auto CBooks::ReadPreDefBook(CSocket *mSock, CItem *i, std::uint16_t p) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the .bok file with changes made on a specific page.
 // o------------------------------------------------------------------------------------------------o
-bool CPIBookPage::Handle(void) {
+bool CPIBookPage::Handle() {
     if (tSock != nullptr) {
         CItem *mBook = CalcItemObjFromSer(tSock->GetDWord(3));
         if (!ValidateObject(mBook))

@@ -74,8 +74,8 @@ class CJSRuntime {
     JSObject *FindAssociatedObject(iueentries_t iType, void *index);
     JSObject *MakeNewObject(iueentries_t iType);
 
-    void Cleanup(void);
-    void InitializePrototypes(void);
+    void Cleanup();
+    void InitializePrototypes();
 
   public:
     CJSRuntime();
@@ -117,8 +117,8 @@ class CJSEngine {
 
     JSObject *GetPrototype(std::uint8_t runTime, jsprototypes_t protoNum) const;
 
-    void Reload(void);
-    void CollectGarbage(void);
+    void Reload();
+    void CollectGarbage();
 
     JSObject *AcquireObject(iueentries_t iType, void *index, std::uint8_t runTime);
     void ReleaseObject(iueentries_t IType, void *index);

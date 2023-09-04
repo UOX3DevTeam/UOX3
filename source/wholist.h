@@ -18,21 +18,21 @@ class CWhoList {
     std::vector<serial_t> whoMenuData;
     std::vector<std::string> one, two; // replacement for entries1, entries2
 
-    void Update(void); // force the list to update
-    void ResetUpdateFlag(void);
+    void Update(); // force the list to update
+    void ResetUpdateFlag();
     void AddSerial(serial_t toAdd);
-    void Delete(void);
+    void Delete();
     void Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed);
 
   public:
     CWhoList(bool trulyOnline = true);
     ~CWhoList();
-    void FlagUpdate(void);
+    void FlagUpdate();
     void SendSocket(CSocket *toSendTo);
-    void GMEnter(void);
-    void GMLeave(void);
+    void GMEnter();
+    void GMLeave();
     void ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std::uint8_t type);
-    void ZeroWho(void);
+    void ZeroWho();
     void SetOnline(bool newValue);
 };
 

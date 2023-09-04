@@ -11,51 +11,51 @@
 #include <iostream>
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::SerialGen_st::SerialGen_st()
+//|	Function	-	ObjectFactory::SerialGen::SerialGen()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor
 // o------------------------------------------------------------------------------------------------o
-ObjectFactory::SerialGen_st::SerialGen_st(std::uint32_t initial) : serialNumber(initial) {}
+ObjectFactory::SerialGen::SerialGen(std::uint32_t initial) : serialNumber(initial) {}
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::SerialGen_st::Next()
+//|	Function	-	ObjectFactory::SerialGen::Next()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return what next serial will be
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::Next() -> std::uint32_t { return serialNumber++; }
+auto ObjectFactory::SerialGen::Next() -> std::uint32_t { return serialNumber++; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::SerialGen_st::RegisterSerial()
+//|	Function	-	ObjectFactory::SerialGen::RegisterSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register next serial number in series
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::RegisterSerial(std::uint32_t serial) -> void {
+auto ObjectFactory::SerialGen::RegisterSerial(std::uint32_t serial) -> void {
     if (serial >= serialNumber) {
         serialNumber = serial + 1;
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::SerialGen_st::UnregisterSerial()
+//|	Function	-	ObjectFactory::SerialGen::UnregisterSerial()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Free up specified serial number if it was the last one registered
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::UnregisterSerial(std::uint32_t serial) -> void {
+auto ObjectFactory::SerialGen::UnregisterSerial(std::uint32_t serial) -> void {
     if (serialNumber == (serial + 1)) {
         serialNumber = serial;
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ObjectFactory::SerialGen_st::operator = ()
+//|	Function	-	ObjectFactory::SerialGen::operator = ()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Override operators
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::operator=(std::uint32_t value) -> SerialGen_st & {
+auto ObjectFactory::SerialGen::operator=(std::uint32_t value) -> SerialGen & {
     serialNumber = value;
     return *this;
 }
-auto ObjectFactory::SerialGen_st::operator=(std::int32_t value) -> SerialGen_st & {
+auto ObjectFactory::SerialGen::operator=(std::int32_t value) -> SerialGen & {
     serialNumber = static_cast<std::uint32_t>(value);
     return *this;
 }

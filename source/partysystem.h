@@ -20,9 +20,9 @@ protected:
     std::bitset<8> settings;
     
 public:
-    CChar *Member(void) const;
-    bool IsLeader(void) const;
-    bool IsLootable(void) const;
+    CChar *Member() const;
+    bool IsLeader() const;
+    bool IsLootable() const;
     
     void Member(CChar *valid);
     void IsLeader(bool value);
@@ -88,13 +88,13 @@ public:
      This returns the character that is considered to be leader of the party
      
      */
-    CChar *Leader(void);
+    CChar *Leader();
     /** Returns the list of party entries
      @remarks
      This returns the list of party entries as it is stored internally.  We
      should try and minimise the amount this gets used, if we can
      */
-    std::vector<CPartyEntry *> *MemberList(void) { return &members; }
+    std::vector<CPartyEntry *> *MemberList() { return &members; }
     /** Returns the party entry associated with a character
      @remarks
      This returns the party entry associated with a character, if they exist
@@ -118,7 +118,7 @@ public:
      This returns true if the party is an NPC party
      
      */
-    bool IsNPC(void) const;
+    bool IsNPC() const;
     /** Sets whether it's an NPC party
      @remarks
      This sets if the party is an NPC one or not.  Please note that this
@@ -167,10 +167,10 @@ public:
     Party *Get(CChar *member);
     void CreateInvite(CSocket *inviter);
     void Kick(CSocket *inviter);
-    bool Load(void);
-    bool Save(void);
+    bool Load();
+    bool Save();
     
-    static PartyFactory &shared(void);
+    static PartyFactory &shared();
 };
 
 #endif

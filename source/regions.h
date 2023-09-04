@@ -52,10 +52,10 @@ private:
     bool hasRegionChanged = false;
     
 public:
-    GenericList<CItem *> *GetItemList(void);
-    GenericList<CChar *> *GetCharList(void);
+    GenericList<CItem *> *GetItemList();
+    GenericList<CChar *> *GetCharList();
     RegionSerialList *GetRegionSerialList();
-    bool HasRegionChanged(void);
+    bool HasRegionChanged();
     void HasRegionChanged(bool newVal);
     
     CMapRegion(){};
@@ -74,9 +74,9 @@ private:
     std::vector<MapResource_st> mapResources;
     
 public:
-    CMapWorld(void);
+    CMapWorld();
     CMapWorld(std::uint8_t worldNum);
-    ~CMapWorld(void);
+    ~CMapWorld();
     
     CMapRegion *GetMapRegion(std::int16_t xOffset, std::int16_t yOffset);
     std::vector<CMapRegion> *GetMapRegions();
@@ -102,8 +102,8 @@ public:
     ~CMapHandler();
     auto Startup() -> void;
     
-    void Save(void);
-    void Load(void);
+    void Save();
+    void Load();
     
     bool AddItem(CItem *nItem);
     bool RemoveItem(CItem *nItem);

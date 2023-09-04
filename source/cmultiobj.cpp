@@ -93,7 +93,7 @@ void CMultiObj::RemoveFromBanList(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears ban list
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::ClearBanList(void) {
+void CMultiObj::ClearBanList() {
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_BANNED) {
@@ -130,7 +130,7 @@ void CMultiObj::RemoveAsOwner(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears co-owner list
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::ClearOwnerList(void) {
+void CMultiObj::ClearOwnerList() {
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_OWNER) {
@@ -168,7 +168,7 @@ void CMultiObj::RemoveAsFriend(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears friend list
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::ClearFriendList(void) {
+void CMultiObj::ClearFriendList() {
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_FRIEND) {
@@ -203,7 +203,7 @@ void CMultiObj::RemoveAsGuest(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears guest list
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::ClearGuestList(void) {
+void CMultiObj::ClearGuestList() {
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_GUEST) {
@@ -345,7 +345,7 @@ void CMultiObj::RemoveFromMulti(CBaseObject *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the locked down items
 // o------------------------------------------------------------------------------------------------o
-size_t CMultiObj::GetLockdownCount(void) const { return lockedList.size(); }
+size_t CMultiObj::GetLockdownCount() const { return lockedList.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetMaxLockdowns()
@@ -353,42 +353,42 @@ size_t CMultiObj::GetLockdownCount(void) const { return lockedList.size(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible lockdowns
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxLockdowns(void) const { return maxLockdowns; }
+std::uint16_t CMultiObj::GetMaxLockdowns() const { return maxLockdowns; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetTrashContainerCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the locked down items
 // o------------------------------------------------------------------------------------------------o
-size_t CMultiObj::GetTrashContainerCount(void) const { return trashContainerList.size(); }
+size_t CMultiObj::GetTrashContainerCount() const { return trashContainerList.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetMaxTrashContainers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible trash containers
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxTrashContainers(void) const { return maxTrashContainers; }
+std::uint16_t CMultiObj::GetMaxTrashContainers() const { return maxTrashContainers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetVendorCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the player vendors in the multi
 // o------------------------------------------------------------------------------------------------o
-size_t CMultiObj::GetVendorCount(void) const { return vendorList.size(); }
+size_t CMultiObj::GetVendorCount() const { return vendorList.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetMaxVendors()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a player vendor from the multi
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxVendors(void) const { return maxVendors; }
+std::uint16_t CMultiObj::GetMaxVendors() const { return maxVendors; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetFriendCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of friends of multi
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetFriendCount(void) {
+std::uint16_t CMultiObj::GetFriendCount() {
     std::uint16_t friendCount = 0;
     for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
@@ -404,14 +404,14 @@ std::uint16_t CMultiObj::GetFriendCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of friends multi can have
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxFriends(void) const { return maxFriends; }
+std::uint16_t CMultiObj::GetMaxFriends() const { return maxFriends; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetGuestCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of guests of multi
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetGuestCount(void) {
+std::uint16_t CMultiObj::GetGuestCount() {
     std::uint16_t guestCount = 0;
     for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
@@ -427,14 +427,14 @@ std::uint16_t CMultiObj::GetGuestCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of guests multi can have
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxGuests(void) const { return maxGuests; }
+std::uint16_t CMultiObj::GetMaxGuests() const { return maxGuests; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetBanCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of banned players of multi
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetBanCount(void) {
+std::uint16_t CMultiObj::GetBanCount() {
     std::uint16_t banCount = 0;
     for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
@@ -450,14 +450,14 @@ std::uint16_t CMultiObj::GetBanCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of banned players multi can have
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxBans(void) const { return maxBans; }
+std::uint16_t CMultiObj::GetMaxBans() const { return maxBans; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetOwnerCount()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of co-owners of multi
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetOwnerCount(void) {
+std::uint16_t CMultiObj::GetOwnerCount() {
     std::uint16_t ownerCount = 0;
     for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
          rIter != housePrivList.end(); ++rIter) {
@@ -476,7 +476,7 @@ std::uint16_t CMultiObj::GetOwnerCount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of co-owners multi can have
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxOwners(void) const { return maxOwners; }
+std::uint16_t CMultiObj::GetMaxOwners() const { return maxOwners; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::LockDownItem()
@@ -580,7 +580,7 @@ void CMultiObj::RemoveVendor(CChar *toRemove) {
 //|	Purpose		-	Gets/Sets the public status of the multi - either true (public) or
 // false (private)
 // o------------------------------------------------------------------------------------------------o
-bool CMultiObj::GetPublicStatus(void) const { return isPublic; }
+bool CMultiObj::GetPublicStatus() const { return isPublic; }
 void CMultiObj::SetPublicStatus(bool newBool) { isPublic = newBool; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -589,7 +589,7 @@ void CMultiObj::SetPublicStatus(bool newBool) { isPublic = newBool; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the timestamp for when the multi was built
 // o------------------------------------------------------------------------------------------------o
-std::string CMultiObj::GetBuildTimestamp(void) const {
+std::string CMultiObj::GetBuildTimestamp() const {
     if (buildTimestamp > 0) {
         char tempTimestamp[100];
         struct tm curtime;
@@ -613,7 +613,7 @@ void CMultiObj::SetBuildTimestamp(time_t newTime) {
 //|	Purpose		-	Gets/Sets the timestamp for when the multi was last traded between
 // players
 // o------------------------------------------------------------------------------------------------o
-std::string CMultiObj::GetTradeTimestamp(void) const {
+std::string CMultiObj::GetTradeTimestamp() const {
     if (tradeTimestamp > 0) {
         char tempTimestamp[100];
         struct tm curtime;
@@ -631,14 +631,14 @@ void CMultiObj::SetTradeTimestamp(time_t newTime) { tradeTimestamp = newTime; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a count of the amount of secure containers in the multi
 // o------------------------------------------------------------------------------------------------o
-size_t CMultiObj::GetSecureContainerCount(void) const { return secureContainerList.size(); }
+size_t CMultiObj::GetSecureContainerCount() const { return secureContainerList.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetMaxSecureContainers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the maximum number of possible secure containers for a house
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CMultiObj::GetMaxSecureContainers(void) const { return maxSecureContainers; }
+std::uint16_t CMultiObj::GetMaxSecureContainers() const { return maxSecureContainers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::IsSecureContainer()
@@ -721,7 +721,7 @@ bool CMultiObj::Save(std::ostream &outStream) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	After handling data specific load, other parts go here
 // o------------------------------------------------------------------------------------------------o
-bool CMultiObj::LoadRemnants(void) {
+bool CMultiObj::LoadRemnants() {
     bool rValue = CItem::LoadRemnants();
     
     // Add item weight if item doesn't have it yet
@@ -1062,7 +1062,7 @@ void CMultiObj::SetOwner(CChar *newOwner) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes sure that any items and chars inside the multi are removed
 // o------------------------------------------------------------------------------------------------o
-void CMultiObj::Cleanup(void) {
+void CMultiObj::Cleanup() {
     for (CItem *iRemove = itemInMulti.First(); !itemInMulti.Finished();
          iRemove = itemInMulti.Next()) {
         if (ValidateObject(iRemove)) {
@@ -1096,7 +1096,7 @@ void CMultiObj::Cleanup(void) {
 //|	Purpose		-	Gets/Sets item ID of multi's deed item, for converting multi to/from
 // deed
 // o------------------------------------------------------------------------------------------------o
-std::string CMultiObj::GetDeed(void) const { return deed; }
+std::string CMultiObj::GetDeed() const { return deed; }
 void CMultiObj::SetDeed(const std::string &newDeed) { deed = newDeed; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1121,7 +1121,7 @@ bool CMultiObj::CanBeObjType(CBaseObject::type_t toCompare) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the X offset for multi's ban location
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CMultiObj::GetBanX(void) const { return banX; }
+std::int16_t CMultiObj::GetBanX() const { return banX; }
 void CMultiObj::SetBanX(std::int16_t newValue) { banX = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMultiObj::GetBanY()
@@ -1129,7 +1129,7 @@ void CMultiObj::SetBanX(std::int16_t newValue) { banX = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Y offset for multi's ban location
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CMultiObj::GetBanY(void) const { return banY; }
+std::int16_t CMultiObj::GetBanY() const { return banY; }
 void CMultiObj::SetBanY(std::int16_t newValue) { banY = newValue; }
 
 GenericList<CChar *> *CMultiObj::GetOwnersOfMultiList(bool clearList) {
@@ -1193,9 +1193,9 @@ GenericList<CChar *> *CMultiObj::GetBannedFromMultiList(bool clearList) {
     return &bannedFromMulti;
 }
 
-GenericList<CChar *> *CMultiObj::GetCharsInMultiList(void) { return &charInMulti; }
+GenericList<CChar *> *CMultiObj::GetCharsInMultiList() { return &charInMulti; }
 
-GenericList<CItem *> *CMultiObj::GetItemsInMultiList(void) { return &itemInMulti; }
+GenericList<CItem *> *CMultiObj::GetItemsInMultiList() { return &itemInMulti; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	CBoatObj
@@ -1312,7 +1312,7 @@ bool CBoatObj::HandleLine(std::string &UTag, std::string &data) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Tiller item reference
 // o------------------------------------------------------------------------------------------------o
-serial_t CBoatObj::GetTiller(void) const { return tiller; }
+serial_t CBoatObj::GetTiller() const { return tiller; }
 void CBoatObj::SetTiller(serial_t newVal) { tiller = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1342,7 +1342,7 @@ void CBoatObj::SetPlank(std::uint8_t plankNum, serial_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Hold item reference
 // o------------------------------------------------------------------------------------------------o
-serial_t CBoatObj::GetHold(void) const { return hold; }
+serial_t CBoatObj::GetHold() const { return hold; }
 void CBoatObj::SetHold(serial_t newVal) { hold = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1352,7 +1352,7 @@ void CBoatObj::SetHold(serial_t newVal) { hold = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's movement type. See BoatMoveType enum for full list
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CBoatObj::GetMoveType(void) const { return moveType; }
+std::int8_t CBoatObj::GetMoveType() const { return moveType; }
 void CBoatObj::SetMoveType(std::int8_t newVal) { moveType = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1362,7 +1362,7 @@ void CBoatObj::SetMoveType(std::int8_t newVal) { moveType = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for when boat will move next
 // o------------------------------------------------------------------------------------------------o
-timerval_t CBoatObj::GetMoveTime(void) const { return nextMoveTime; }
+timerval_t CBoatObj::GetMoveTime() const { return nextMoveTime; }
 void CBoatObj::SetMoveTime(timerval_t newVal) { nextMoveTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::CanBeObjType()

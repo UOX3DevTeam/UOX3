@@ -48,28 +48,28 @@ ByteBufferBounds::ByteBufferBounds(int offset, int amount, int size)
 auto ByteBufferBounds::what() const noexcept -> const char * { return _msg.c_str(); }
 
 // o------------------------------------------------------------------------------------------------o
-//| ByteBuffer_t
+//| ByteBuffer
 // o------------------------------------------------------------------------------------------------o
 //| strutil functions
 // o------------------------------------------------------------------------------------------------o
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ByteBuffer_t::ntos
+//|	Function	-	ByteBuffer::ntos
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Convert a bool to a string
 //|					the true_value/false_value are returned based on the bool
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer_t::ntos(bool value, const std::string &true_value, const std::string &false_value)
+auto ByteBuffer::ntos(bool value, const std::string &true_value, const std::string &false_value)
     -> std::string {
     return (value ? true_value : false_value);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ByteBuffer_t::DumpByteBuffer()
+//|	Function	-	ByteBuffer::DumpByteBuffer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formatted dump of a byte buffer
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer_t::DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer,
+auto ByteBuffer::DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer,
                                   std::size_t length, radix_t radix, std::size_t entries_line)
     -> void {
     // number of characters for entry
@@ -134,12 +134,12 @@ auto ByteBuffer_t::DumpByteBuffer(std::ostream &output, const std::uint8_t *buff
 // o------------------------------------------------------------------------------------------------o
 
 //==================================================================================================
-auto ByteBuffer_t::Exceeds(int offset, int bytelength) const -> bool {
+auto ByteBuffer::Exceeds(int offset, int bytelength) const -> bool {
     auto index = offset + bytelength;
     return static_cast<int>(_bytedata.size()) < index;
 }
 //==================================================================================================
-auto ByteBuffer_t::Exceeds(int offset, int bytelength, bool expand) -> bool {
+auto ByteBuffer::Exceeds(int offset, int bytelength, bool expand) -> bool {
     auto rValue = Exceeds(offset, bytelength);
     if (expand && rValue) {
         this->size(offset + bytelength);
@@ -148,7 +148,7 @@ auto ByteBuffer_t::Exceeds(int offset, int bytelength, bool expand) -> bool {
     return rValue;
 }
 //==================================================================================================
-ByteBuffer_t::ByteBuffer_t(int size, int reserve) : _index(0) {
+ByteBuffer::ByteBuffer(int size, int reserve) : _index(0) {
     if ((reserve > 0) && (size <= 0)) {
         _bytedata.reserve(reserve);
     }
@@ -158,23 +158,23 @@ ByteBuffer_t::ByteBuffer_t(int size, int reserve) : _index(0) {
 }
 
 //==================================================================================================
-auto ByteBuffer_t::size() const -> size_t { return _bytedata.size(); }
+auto ByteBuffer::size() const -> size_t { return _bytedata.size(); }
 //==================================================================================================
-auto ByteBuffer_t::size(int value, std::uint8_t fill) -> void { _bytedata.resize(value, fill); }
+auto ByteBuffer::size(int value, std::uint8_t fill) -> void { _bytedata.resize(value, fill); }
 //==================================================================================================
-auto ByteBuffer_t::index() const -> int { return _index; }
+auto ByteBuffer::index() const -> int { return _index; }
 //==================================================================================================
-auto ByteBuffer_t::index(int value) -> void { _index = value; }
+auto ByteBuffer::index(int value) -> void { _index = value; }
 //==================================================================================================
-auto ByteBuffer_t::raw() const -> const std::uint8_t * { return _bytedata.data(); }
+auto ByteBuffer::raw() const -> const std::uint8_t * { return _bytedata.data(); }
 //==================================================================================================
-auto ByteBuffer_t::raw() -> std::uint8_t * { return _bytedata.data(); }
+auto ByteBuffer::raw() -> std::uint8_t * { return _bytedata.data(); }
 //==================================================================================================
-auto ByteBuffer_t::operator[](int index) const -> const std::uint8_t & { return _bytedata[index]; }
+auto ByteBuffer::operator[](int index) const -> const std::uint8_t & { return _bytedata[index]; }
 //==================================================================================================
-auto ByteBuffer_t::operator[](int index) -> std::uint8_t & { return _bytedata[index]; }
+auto ByteBuffer::operator[](int index) -> std::uint8_t & { return _bytedata[index]; }
 //==================================================================================================
-auto ByteBuffer_t::Fill(std::uint8_t value, int offset, int length) -> void {
+auto ByteBuffer::Fill(std::uint8_t value, int offset, int length) -> void {
     if (offset < 0) {
         offset = _index;
     }
@@ -187,11 +187,11 @@ auto ByteBuffer_t::Fill(std::uint8_t value, int offset, int length) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ByteBuffer_t::log()
+//|	Function	-	ByteBuffer::log()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formatted dump of a byte buffer
 // o------------------------------------------------------------------------------------------------o
-auto ByteBuffer_t::LogByteBuffer(std::ostream &output, radix_t radix, int entries_line) const
+auto ByteBuffer::LogByteBuffer(std::ostream &output, radix_t radix, int entries_line) const
     -> void {
     DumpByteBuffer(output, _bytedata.data(), _bytedata.size(), radix, entries_line);
 }
@@ -213,7 +213,7 @@ void SysBroadcast(const std::string &txt);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends ALL buffered data
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::ClearBuffers(void) {
+void CNetworkStuff::ClearBuffers() {
     std::for_each(connClients.begin(), connClients.end(),
                   [](CSocket *sock) { sock->FlushBuffer(); });
     std::for_each(loggedInClients.begin(), loggedInClients.end(),
@@ -407,7 +407,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initializes and binds sockets during startup
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::sockInit(void) {
+void CNetworkStuff::sockInit() {
     std::int32_t bcode;
 
     cwmWorldState->SetKeepRun(true);
@@ -462,7 +462,7 @@ void CNetworkStuff::sockInit(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes all sockets for shutdown
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::SockClose(void) {
+void CNetworkStuff::SockClose() {
     closesocket(a_socket);
     std::for_each(connClients.begin(), connClients.end(),
                   [](CSocket *sock) { sock->CloseSocket(); });
@@ -484,7 +484,7 @@ void CNetworkStuff::SockClose(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for connection requests
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::CheckConn(void) {
+void CNetworkStuff::CheckConn() {
     FD_ZERO(&conn);
     FD_SET(a_socket, &conn);
     std::int32_t nfds = a_socket + 1;
@@ -504,7 +504,7 @@ void CNetworkStuff::CheckConn(void) {
 #endif
         CSocket *toMake = new CSocket(newClient);
         // set the ip address of the client;
-        toMake->ipaddress = Ip4Addr_st(client_addr.sin_addr.s_addr);
+        toMake->ipaddress = IP4Addr(client_addr.sin_addr.s_addr);
 
         if (newClient < 0) {
 #if defined(_WIN32)
@@ -611,7 +611,7 @@ CNetworkStuff::~CNetworkStuff() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check for messages from the clients
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::CheckMessage(void) {
+void CNetworkStuff::CheckMessage() {
     FD_ZERO(&all);
     FD_ZERO(&errsock);
     std::int32_t nfds = 0;
@@ -1083,7 +1083,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	 Check for messages from the clients
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::CheckLoginMessage(void) {
+void CNetworkStuff::CheckLoginMessage() {
     // fd_set all; // This is already defined globally?
     // fd_set errsock; // This is already defined globally?
     size_t i;
@@ -1424,11 +1424,11 @@ void CNetworkStuff::RegisterPacket(std::uint8_t packet, [[maybe_unused]] std::ui
     packetOverloads[packetId] = scriptId;
 }
 
-void CNetworkStuff::CheckConnections(void) { CheckConn(); }
+void CNetworkStuff::CheckConnections() { CheckConn(); }
 
-void CNetworkStuff::CheckMessages(void) {
+void CNetworkStuff::CheckMessages() {
     CheckLoginMessage();
     CheckMessage();
 }
 
-size_t CNetworkStuff::PeakConnectionCount(void) const { return peakConnectionCount; }
+size_t CNetworkStuff::PeakConnectionCount() const { return peakConnectionCount; }

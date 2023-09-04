@@ -74,7 +74,7 @@ CSpawnRegion::~CSpawnRegion() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets spawn region's name
 // o------------------------------------------------------------------------------------------------o
-const std::string CSpawnRegion::GetName(void) const { return name; }
+const std::string CSpawnRegion::GetName() const { return name; }
 void CSpawnRegion::SetName(const std::string &newName) { name = newName; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -82,7 +82,7 @@ void CSpawnRegion::SetName(const std::string &newName) { name = newName; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Maximum amount of objects a region can spawn
 // o------------------------------------------------------------------------------------------------o
-size_t CSpawnRegion::GetMaxSpawn(void) const { return (maxCharSpawn + maxItemSpawn); }
+size_t CSpawnRegion::GetMaxSpawn() const { return (maxCharSpawn + maxItemSpawn); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetMaxCharSpawn()
@@ -90,7 +90,7 @@ size_t CSpawnRegion::GetMaxSpawn(void) const { return (maxCharSpawn + maxItemSpa
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum amount of characters to spawn
 // o------------------------------------------------------------------------------------------------o
-size_t CSpawnRegion::GetMaxCharSpawn(void) const { return maxCharSpawn; }
+size_t CSpawnRegion::GetMaxCharSpawn() const { return maxCharSpawn; }
 void CSpawnRegion::SetMaxCharSpawn(size_t newVal) { maxCharSpawn = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -99,7 +99,7 @@ void CSpawnRegion::SetMaxCharSpawn(size_t newVal) { maxCharSpawn = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum amount of items to spawn
 // o------------------------------------------------------------------------------------------------o
-size_t CSpawnRegion::GetMaxItemSpawn(void) const { return maxItemSpawn; }
+size_t CSpawnRegion::GetMaxItemSpawn() const { return maxItemSpawn; }
 void CSpawnRegion::SetMaxItemSpawn(size_t newVal) { maxItemSpawn = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -107,7 +107,7 @@ void CSpawnRegion::SetMaxItemSpawn(size_t newVal) { maxItemSpawn = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Current amount of objects spawned
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CSpawnRegion::GetCurrent(void) const { return (curCharSpawn + curItemSpawn); }
+std::int32_t CSpawnRegion::GetCurrent() const { return (curCharSpawn + curItemSpawn); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetCurrentCharAmt()
@@ -115,7 +115,7 @@ std::int32_t CSpawnRegion::GetCurrent(void) const { return (curCharSpawn + curIt
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current amount of characters spawned
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CSpawnRegion::GetCurrentCharAmt(void) const { return curCharSpawn; }
+std::int32_t CSpawnRegion::GetCurrentCharAmt() const { return curCharSpawn; }
 void CSpawnRegion::IncCurrentCharAmt(std::int16_t incAmt) { curCharSpawn += incAmt; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -124,7 +124,7 @@ void CSpawnRegion::IncCurrentCharAmt(std::int16_t incAmt) { curCharSpawn += incA
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current amount of items spawned
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CSpawnRegion::GetCurrentItemAmt(void) const { return curItemSpawn; }
+std::int32_t CSpawnRegion::GetCurrentItemAmt() const { return curItemSpawn; }
 void CSpawnRegion::IncCurrentItemAmt(std::int16_t incAmt) { curItemSpawn += incAmt; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -133,7 +133,7 @@ void CSpawnRegion::IncCurrentItemAmt(std::int16_t incAmt) { curItemSpawn += incA
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets spawn region number
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CSpawnRegion::GetRegionNum(void) const { return regionNum; }
+std::uint16_t CSpawnRegion::GetRegionNum() const { return regionNum; }
 void CSpawnRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -143,7 +143,7 @@ void CSpawnRegion::SetRegionNum(std::uint16_t newVal) { regionNum = newVal; }
 //|	Purpose		-	Gets/Sets minimum amount of time to pass before a spawnregion
 //|					spawns a new object
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CSpawnRegion::GetMinTime(void) const { return minTime; }
+std::uint8_t CSpawnRegion::GetMinTime() const { return minTime; }
 void CSpawnRegion::SetMinTime(std::uint8_t newVal) { minTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -153,7 +153,7 @@ void CSpawnRegion::SetMinTime(std::uint8_t newVal) { minTime = newVal; }
 //|	Purpose		-	Gets/Sets maximum amount of time to pass before a spawnregion
 //|					spawns a new object
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CSpawnRegion::GetMaxTime(void) const { return maxTime; }
+std::uint8_t CSpawnRegion::GetMaxTime() const { return maxTime; }
 void CSpawnRegion::SetMaxTime(std::uint8_t newVal) { maxTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -162,7 +162,7 @@ void CSpawnRegion::SetMaxTime(std::uint8_t newVal) { maxTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for when a spawnregion will next spawn a new object
 // o------------------------------------------------------------------------------------------------o
-timerval_t CSpawnRegion::GetNextTime(void) const { return nextTime; }
+timerval_t CSpawnRegion::GetNextTime() const { return nextTime; }
 void CSpawnRegion::SetNextTime(timerval_t newVal) { nextTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -173,7 +173,7 @@ void CSpawnRegion::SetNextTime(timerval_t newVal) { nextTime = newVal; }
 //|	Purpose		-	Gets/Sets Z Level of the Spawn Region
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::SetPrefZ(std::int8_t newVal) { prefZ = newVal; }
-std::int8_t CSpawnRegion::GetPrefZ(void) const { return prefZ; }
+std::int8_t CSpawnRegion::GetPrefZ() const { return prefZ; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::SetDefZ()
@@ -184,7 +184,7 @@ std::int8_t CSpawnRegion::GetPrefZ(void) const { return prefZ; }
 // spawning objects
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::SetDefZ(std::int8_t newVal) { defZ = newVal; }
-std::int8_t CSpawnRegion::GetDefZ(void) const { return defZ; }
+std::int8_t CSpawnRegion::GetDefZ() const { return defZ; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetY1()
@@ -192,7 +192,7 @@ std::int8_t CSpawnRegion::GetDefZ(void) const { return defZ; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the y pos of the top corner of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CSpawnRegion::GetY1(void) const { return y1; }
+std::int16_t CSpawnRegion::GetY1() const { return y1; }
 void CSpawnRegion::SetY1(std::int16_t newVal) { y1 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -201,7 +201,7 @@ void CSpawnRegion::SetY1(std::int16_t newVal) { y1 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the x pos of the top corner of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CSpawnRegion::GetX1(void) const { return x1; }
+std::int16_t CSpawnRegion::GetX1() const { return x1; }
 void CSpawnRegion::SetX1(std::int16_t newVal) { x1 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -210,7 +210,7 @@ void CSpawnRegion::SetX1(std::int16_t newVal) { x1 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the y pos of the bottom corner of the spawn region
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CSpawnRegion::GetY2(void) const { return y2; }
+std::int16_t CSpawnRegion::GetY2() const { return y2; }
 void CSpawnRegion::SetY2(std::int16_t newVal) { y2 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -219,7 +219,7 @@ void CSpawnRegion::SetY2(std::int16_t newVal) { y2 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the x pos of the bottom corner of the spawn region
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CSpawnRegion::GetX2(void) const { return x2; }
+std::int16_t CSpawnRegion::GetX2() const { return x2; }
 void CSpawnRegion::SetX2(std::int16_t newVal) { x2 = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -228,7 +228,7 @@ void CSpawnRegion::SetX2(std::int16_t newVal) { x2 = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the world number of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CSpawnRegion::WorldNumber(void) const { return worldNumber; }
+std::uint8_t CSpawnRegion::WorldNumber() const { return worldNumber; }
 void CSpawnRegion::WorldNumber(std::uint8_t newVal) { worldNumber = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -237,7 +237,7 @@ void CSpawnRegion::WorldNumber(std::uint8_t newVal) { worldNumber = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the instanceId of the spawnregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CSpawnRegion::GetInstanceId(void) const { return instanceId; }
+std::uint16_t CSpawnRegion::GetInstanceId() const { return instanceId; }
 void CSpawnRegion::SetInstanceId(std::uint16_t newVal) { instanceId = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -246,7 +246,7 @@ void CSpawnRegion::SetInstanceId(std::uint16_t newVal) { instanceId = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether NPCs should only spawn outside buildings
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnRegion::GetOnlyOutside(void) const { return onlyOutside; }
+bool CSpawnRegion::GetOnlyOutside() const { return onlyOutside; }
 void CSpawnRegion::SetOnlyOutside(bool newVal) { onlyOutside = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -254,7 +254,7 @@ void CSpawnRegion::SetOnlyOutside(bool newVal) { onlyOutside = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items spawned from spawnregion is a spawner or not
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnRegion::IsSpawner(void) const { return isSpawner; }
+bool CSpawnRegion::IsSpawner() const { return isSpawner; }
 void CSpawnRegion::IsSpawner(bool newVal) { isSpawner = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -264,7 +264,7 @@ void CSpawnRegion::IsSpawner(bool newVal) { isSpawner = newVal; }
 //|	Purpose		-	Gets/Sets number of objects that should be spawned in each call for
 // a spawnregion
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CSpawnRegion::GetCall(void) const { return call; }
+std::uint16_t CSpawnRegion::GetCall() const { return call; }
 void CSpawnRegion::SetCall(std::uint16_t newVal) { call = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -274,7 +274,7 @@ void CSpawnRegion::SetCall(std::uint16_t newVal) { call = newVal; }
 //|	Purpose		-	Gets/Sets stringlist of individual NPCs to spawn in a spawnregion
 // o------------------------------------------------------------------------------------------------o
 //  WHy isn't this returning a const reference?
-auto CSpawnRegion::GetNPC(void) const -> std::vector<std::string> { return sNpcs; }
+auto CSpawnRegion::GetNPC() const -> std::vector<std::string> { return sNpcs; }
 // Believe this was a bug, it was taking a string?
 // if it is, then it gets cleared each time an entry is set,
 // So it can only have one entry, if you sue SetNPC
@@ -483,7 +483,7 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
                 data = util::simplify(data);
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
-                    validLandPos.push_back(Point3_st(
+                    validLandPos.push_back(Point3(
                                                      static_cast<std::uint16_t>(
                                                                                 std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
                                                      static_cast<std::uint16_t>(
@@ -503,7 +503,7 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
                 data = util::simplify(data);
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
-                    validWaterPos.push_back(Point3_st(
+                    validWaterPos.push_back(Point3(
                                                       static_cast<std::uint16_t>(
                                                                                  std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
                                                       static_cast<std::uint16_t>(
@@ -700,7 +700,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
 bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z, bool &waterCreature,
                                        bool &amphiCreature) {
     bool rValue = false;
-    Point3_st currLoc;
+    Point3 currLoc;
     std::map<std::uint32_t, std::int8_t>::const_iterator checkValid;
     std::int8_t z2 = ILLEGAL_Z;
     const size_t landPosSize = validLandPos.size();
@@ -790,7 +790,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
             if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
                 if (z != ILLEGAL_Z) {
                     rValue = true;
-                    validLandPos.push_back(Point3_st(x, y, z));
+                    validLandPos.push_back(Point3(x, y, z));
                     validLandPosCheck[y + (x << 16)] = z;
                     break;
                 }
@@ -802,7 +802,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
             Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
             if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
-                validWaterPos.push_back(Point3_st(x, y, z));
+                validWaterPos.push_back(Point3(x, y, z));
                 validWaterPosCheck[y + (x << 16)] = z;
                 break;
             }
@@ -865,7 +865,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
 // o------------------------------------------------------------------------------------------------o
 bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z) {
     bool rValue = false;
-    Point3_st currLoc;
+    Point3 currLoc;
     std::int8_t z2 = ILLEGAL_Z;
     std::map<std::uint32_t, std::int8_t>::const_iterator checkValid;
     const size_t landPosSize = validLandPos.size();
@@ -921,7 +921,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId)) {
             if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
-                validLandPos.push_back(Point3_st(x, y, z));
+                validLandPos.push_back(Point3(x, y, z));
                 validLandPosCheck[y + (x << 16)] = z;
                 break;
             }
@@ -959,7 +959,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if an item/npc should be removed from spawnlist and saved
 // o------------------------------------------------------------------------------------------------o
-void CSpawnRegion::CheckSpawned(void) {
+void CSpawnRegion::CheckSpawned() {
     for (CChar *cCheck = spawnedChars.First(); !spawnedChars.Finished();
          cCheck = spawnedChars.Next()) {
         if (ValidateObject(cCheck)) {
@@ -1018,11 +1018,11 @@ void CSpawnRegion::DeleteSpawnedItem(CItem *toDelete) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned Items for spawnregion
 // o------------------------------------------------------------------------------------------------o
-GenericList<CItem *> *CSpawnRegion::GetSpawnedItemsList(void) { return &spawnedItems; }
+GenericList<CItem *> *CSpawnRegion::GetSpawnedItemsList() { return &spawnedItems; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::GetSpawnedCharsList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of spawned NPCs for spawnregion
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CSpawnRegion::GetSpawnedCharsList(void) { return &spawnedChars; }
+GenericList<CChar *> *CSpawnRegion::GetSpawnedCharsList() { return &spawnedChars; }

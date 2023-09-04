@@ -129,7 +129,7 @@ void CGump::AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::st
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Starts a new page and return the new page no.
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CGump::StartPage(void) {
+std::uint16_t CGump::StartPage() {
     TagList.push_back(util::format("page %u", PageCount));
     
     ++PageCount;

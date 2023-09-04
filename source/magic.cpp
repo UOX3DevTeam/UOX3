@@ -1668,7 +1668,7 @@ auto splReveal(CSocket *sock, CChar *caster, std::int16_t x, std::int16_t y, std
                         tempChar->GetInstanceId() == caster->GetInstanceId()) {
                         if (tempChar->GetVisible() == VT_TEMPHIDDEN ||
                             tempChar->GetVisible() == VT_INVISIBLE) {
-                            Point3_st difference = (tempChar->GetLocation() - Point3_st(x, y, z));
+                            Point3 difference = (tempChar->GetLocation() - Point3(x, y, z));
                             if (difference.MagSquared() <=
                                 (revealRange *
                                  revealRange)) // char to reveal is within radius or range
@@ -4521,8 +4521,8 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             
             // Check distance to target location vs CombatMaxSpellRange
             std::uint16_t targDist;
-            Point3_st targLocation = Point3_st(x, y, z);
-            Point3_st difference = caster->GetLocation() - targLocation;
+            Point3 targLocation = Point3(x, y, z);
+            Point3 difference = caster->GetLocation() - targLocation;
             targDist = static_cast<std::uint16_t>(difference.Mag());
             if (targDist > cwmWorldState->ServerData()->CombatMaxSpellRange()) {
                 if (validSocket) {
@@ -4664,7 +4664,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
 //|	Notes		-	Avoid multiple reading of the spell script every time a spell is
 //|					cast to avoid crippling the server when a mage enters combat
 // o------------------------------------------------------------------------------------------------o
-void CMagic::LoadScript(void) {
+void CMagic::LoadScript() {
     spells.resize(0);
     
     // for some strange reason, spells go from index 1 to SPELL_MAX and

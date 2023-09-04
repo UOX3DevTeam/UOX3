@@ -54,9 +54,9 @@ public:
     cScript *GetScript(std::uint16_t toFind);
     cScript *GetScript(JSObject *toFind);
 
-    cScript *First(void);
-    cScript *Next(void);
-    bool Finished(void);
+    cScript *First();
+    cScript *Next();
+    bool Finished();
 };
 
 class CJSMapping {
@@ -66,13 +66,13 @@ class CJSMapping {
     CEnvoke *envokeById;
     CEnvoke *envokeByType;
 
-    void Cleanup(void);
+    void Cleanup();
     void Parse(CJSMappingSection::type_t toParse = CJSMappingSection::SCPT_COUNT);
 
   public:
     CJSMapping(){ mapSection = std::vector<CJSMappingSection *>(CJSMappingSection::ScriptNames.size(),nullptr);}
     ~CJSMapping();
-    void ResetDefaults(void);
+    void ResetDefaults();
 
     void Reload(std::uint16_t scriptId = 0xFFFF);
     void Reload(CJSMappingSection::type_t sectionId);
@@ -84,8 +84,8 @@ class CJSMapping {
     cScript *GetScript(std::uint16_t toFind);
     cScript *GetScript(JSObject *toFind);
 
-    CEnvoke *GetEnvokeById(void);
-    CEnvoke *GetEnvokeByType(void);
+    CEnvoke *GetEnvokeById();
+    CEnvoke *GetEnvokeByType();
 };
 
 class CEnvoke {
@@ -97,7 +97,7 @@ class CEnvoke {
     CEnvoke(const std::string &envokeType);
     ~CEnvoke();
 
-    void Parse(void);
+    void Parse();
     bool Check(std::uint16_t envokeId) const;
     std::uint16_t GetScript(std::uint16_t envokeId) const;
 };

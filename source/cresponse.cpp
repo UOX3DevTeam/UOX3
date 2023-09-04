@@ -567,7 +567,7 @@ void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
     }
 }
 
-CKillsResponse::CKillsResponse(void) {}
+CKillsResponse::CKillsResponse() {}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CKillsResponse::Handle()
 // o------------------------------------------------------------------------------------------------o

@@ -16,9 +16,9 @@
 const size_t BIT_LEADER = 0;
 const size_t BIT_LOOTABLE = 1;
 
-CChar *CPartyEntry::Member(void) const { return member; }
-bool CPartyEntry::IsLeader(void) const { return settings.test(BIT_LEADER); }
-bool CPartyEntry::IsLootable(void) const { return settings.test(BIT_LOOTABLE); }
+CChar *CPartyEntry::Member() const { return member; }
+bool CPartyEntry::IsLeader() const { return settings.test(BIT_LEADER); }
+bool CPartyEntry::IsLootable() const { return settings.test(BIT_LOOTABLE); }
 void CPartyEntry::Member(CChar *valid) { member = valid; }
 void CPartyEntry::IsLeader([[maybe_unused]] bool value) { settings.set(BIT_LEADER, true); }
 void CPartyEntry::IsLootable([[maybe_unused]] bool value) { settings.set(BIT_LOOTABLE, true); }
@@ -176,7 +176,7 @@ void Party::Leader(CChar *member) {
         newLeader->IsLeader(true);
     }
 }
-CChar *Party::Leader(void) { return leader; }
+CChar *Party::Leader() { return leader; }
 
 Party::Party(bool npc) : leader(nullptr), isNPC(npc) {}
 
@@ -215,14 +215,14 @@ void Party::SendList(CSocket *toSendTo) {
     SendPacket(&toSend, toSendTo);
 }
 
-bool Party::IsNPC(void) const { return isNPC; }
+bool Party::IsNPC() const { return isNPC; }
 void Party::IsNPC(bool value) { isNPC = value; }
 
 /** This class is responsible for the creation and destruction of parties
  */
 //-------------------------------------------------------------------------------------------------
 
-PartyFactory &PartyFactory::shared(void) {
+PartyFactory &PartyFactory::shared() {
     std::mutex lock;
     std::scoped_lock scope(lock);
     static PartyFactory instance;

@@ -59,11 +59,11 @@ struct TargetInfo {
     bool isNpc;
 };
 
-struct DamageTrackEntry_st {
-    DamageTrackEntry_st()
+struct DamageTrackEntry {
+    DamageTrackEntry()
     : damager(INVALIDSERIAL), damageDone(0), lastDamageType(PHYSICAL),
     lastDamageDone(INVALIDSERIAL) {}
-    DamageTrackEntry_st(serial_t dmgr, std::int32_t dmgDn, weathertype_t dmgType, timerval_t lstDmgDn)
+    DamageTrackEntry(serial_t dmgr, std::int32_t dmgDn, weathertype_t dmgType, timerval_t lstDmgDn)
     : damager(dmgr), damageDone(dmgDn), lastDamageType(dmgType), lastDamageDone(lstDmgDn) {}
     serial_t damager;             // who did the damage?
     std::int32_t damageDone;            // how much damage has been accumulated?
@@ -71,13 +71,13 @@ struct DamageTrackEntry_st {
     timerval_t lastDamageDone;    // when was the last time that damage was done?
 };
 
-bool DTEgreater(DamageTrackEntry_st &elem1, DamageTrackEntry_st &elem2);
+bool DTEgreater(DamageTrackEntry &elem1, DamageTrackEntry &elem2);
 
 class CChar : public CBaseObject {
 private:
     
-    struct NPCValues_st {
-        NPCValues_st();
+    struct NPCValues {
+        NPCValues();
         void DumpBody(std::ostream &outStream);
         
         std::int8_t wanderMode;    // NPC Wander Mode
@@ -136,8 +136,8 @@ private:
         R32 mountedFleeingSpeed;
     };
     
-    struct PlayerValues_st {
-        PlayerValues_st();
+    struct PlayerValues {
+        PlayerValues();
         void DumpBody(std::ostream &outStream);
         
         serial_t callNum;        // Callnum GM or Counsellor is on
@@ -196,8 +196,8 @@ private:
     };
     // Base Characters
 protected:
-    NPCValues_st *mNPC;
-    PlayerValues_st *mPlayer;
+    NPCValues *mNPC;
+    PlayerValues *mPlayer;
     
     std::bitset<64> bools; // lots of flags
     std::int8_t fontType;         // Speech font to use
@@ -265,41 +265,41 @@ protected:
     std::bitset<32> skillUsed[2]; // no more than 64 skills
     std::bitset<UT_COUNT> updateTypes;
     
-    GenericList<DamageTrackEntry_st *> damageDealt;
-    GenericList<DamageTrackEntry_st *> damageHealed;
+    GenericList<DamageTrackEntry *> damageDealt;
+    GenericList<DamageTrackEntry *> damageHealed;
     
     virtual bool DumpHeader(std::ostream &outStream) const override;
     virtual bool DumpBody(std::ostream &outStream) const override;
     virtual bool HandleLine(std::string &UTag, std::string &data) override;
-    virtual bool LoadRemnants(void) override;
+    virtual bool LoadRemnants() override;
     
     void CopyData(CChar *target);
     
-    void CreateNPC(void);
-    void CreatePlayer(void);
+    void CreateNPC();
+    void CreatePlayer();
     
-    bool IsValidNPC(void) const;
-    bool IsValidPlayer(void) const;
+    bool IsValidNPC() const;
+    bool IsValidPlayer() const;
     
 public:
-    BodyType GetBodyType(void);
+    BodyType GetBodyType();
     
     virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) override;
     
     bool GetUpdate(updatetypes_t updateType) const;
-    void ClearUpdate(void);
+    void ClearUpdate();
     virtual void Dirty(updatetypes_t updateType) override;
-    void UpdateRegion(void);
+    void UpdateRegion();
     
-    void UpdateDamageTrack(void);
+    void UpdateDamageTrack();
     auto CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) -> bool;
     
     void SetPoisonStrength(std::uint8_t value);
-    std::uint8_t GetPoisonStrength(void) const;
+    std::uint8_t GetPoisonStrength() const;
     
-    GenericList<CChar *> *GetPetList(void);
-    GenericList<CChar *> *GetFollowerList(void);
-    GenericList<CChar *> *GetPetOwnerList(void);
+    GenericList<CChar *> *GetPetList();
+    GenericList<CChar *> *GetFollowerList();
+    GenericList<CChar *> *GetPetOwnerList();
     
     auto GetOwnedCorpses() -> GenericList<CItem *> *;
     auto GetOwnedItems() -> std::vector<CItem *> *;
@@ -331,18 +331,18 @@ public:
     void AddOwnedItem(CItem *toAdd);
     void RemoveOwnedItem(CItem *toRemove);
     
-    void DoLoyaltyUpdate(void);
+    void DoLoyaltyUpdate();
     void DoHunger(CSocket *mSock);
     void DoThirst(CSocket *mSock);
-    void CheckPetOfflineTimeout(void);
-    std::int8_t GetHunger(void) const;
-    std::int8_t GetThirst(void) const;
-    std::uint16_t GetTamedHungerRate(void) const;
-    std::uint16_t GetTamedThirstRate(void) const;
-    std::uint8_t GetTamedHungerWildChance(void) const;
-    std::uint8_t GetTamedThirstWildChance(void) const;
-    std::uint16_t GetTown(void) const;
-    std::string GetFood(void) const;
+    void CheckPetOfflineTimeout();
+    std::int8_t GetHunger() const;
+    std::int8_t GetThirst() const;
+    std::uint16_t GetTamedHungerRate() const;
+    std::uint16_t GetTamedThirstRate() const;
+    std::uint8_t GetTamedHungerWildChance() const;
+    std::uint8_t GetTamedThirstWildChance() const;
+    std::uint16_t GetTown() const;
+    std::string GetFood() const;
     
     bool SetHunger(std::int8_t newValue);
     bool SetThirst(std::int8_t newValue);
@@ -353,59 +353,59 @@ public:
     void SetTown(std::uint16_t newValue);
     void SetFood(std::string food);
     
-    std::uint8_t GetBrkPeaceChanceGain(void) const;
+    std::uint8_t GetBrkPeaceChanceGain() const;
     void SetBrkPeaceChanceGain(std::uint8_t newValue);
     
-    std::uint8_t GetBrkPeaceChance(void) const;
+    std::uint8_t GetBrkPeaceChance() const;
     void SetBrkPeaceChance(std::uint8_t newValue);
     
     void SetMounted(bool newValue);
-    bool GetMounted(void) const;
+    bool GetMounted() const;
     
     void SetStabled(bool newValue);
-    bool GetStabled(void) const;
+    bool GetStabled() const;
     void SetFlying(bool newValue);
-    bool IsFlying(void) const;
+    bool IsFlying() const;
     
-    bool ToggleFlying(void);
+    bool ToggleFlying();
     
     void SetMaxHPFixed(bool newValue);
-    bool GetMaxHPFixed(void) const;
+    bool GetMaxHPFixed() const;
     void SetMaxManaFixed(bool newValue);
-    bool GetMaxManaFixed(void) const;
+    bool GetMaxManaFixed() const;
     void SetMaxStamFixed(bool newValue);
-    bool GetMaxStamFixed(void) const;
+    bool GetMaxStamFixed() const;
     
     bool DecHunger(const std::int8_t amt = 1);
     bool DecThirst(const std::int8_t amt = 1);
     
-    bool IsUnicode(void) const;
-    bool IsNpc(void) const;
-    bool IsAwake(void) const;
-    bool IsEvading(void) const;
-    bool IsShop(void) const;
-    bool IsDead(void) const;
-    bool GetCanAttack(void) const;
-    bool IsAtWar(void) const;
-    bool IsPassive(void) const;
+    bool IsUnicode() const;
+    bool IsNpc() const;
+    bool IsAwake() const;
+    bool IsEvading() const;
+    bool IsShop() const;
+    bool IsDead() const;
+    bool GetCanAttack() const;
+    bool IsAtWar() const;
+    bool IsPassive() const;
     auto HasStolen() -> bool;
     auto HasStolen(bool newValue) -> void;
-    bool IsOnHorse(void) const;
-    bool GetTownTitle(void) const;
-    bool GetReactiveArmour(void) const;
-    bool CanTrain(void) const;
-    bool CanBeHired(void) const;
-    bool GetGuildToggle(void) const;
-    bool IsTamed(void) const;
-    bool IsGuarded(void) const;
-    bool CanRun(void) const;
-    bool IsUsingPotion(void) const;
-    bool MayLevitate(void) const;
-    bool WillHunger(void) const;
-    bool WillThirst(void) const;
-    bool IsMeditating(void) const;
-    bool IsCasting(void) const;
-    bool IsJSCasting(void) const;
+    bool IsOnHorse() const;
+    bool GetTownTitle() const;
+    bool GetReactiveArmour() const;
+    bool CanTrain() const;
+    bool CanBeHired() const;
+    bool GetGuildToggle() const;
+    bool IsTamed() const;
+    bool IsGuarded() const;
+    bool CanRun() const;
+    bool IsUsingPotion() const;
+    bool MayLevitate() const;
+    bool WillHunger() const;
+    bool WillThirst() const;
+    bool IsMeditating() const;
+    bool IsCasting() const;
+    bool IsJSCasting() const;
     
     void SetUnicode(bool newVal);
     void SetNpc(bool newVal);
@@ -438,36 +438,36 @@ public:
     void SetTownVote(std::uint32_t newValue);
     void SetGuildFealty(std::uint32_t newValue);
     
-    std::uint32_t GetTownVote(void) const;
-    std::uint32_t GetGuildFealty(void) const;
+    std::uint32_t GetTownVote() const;
+    std::uint32_t GetGuildFealty() const;
     
-    std::string GetGuildTitle(void) const;
+    std::string GetGuildTitle() const;
     void SetGuildTitle(const std::string &newValue);
     
     timerval_t GetTimer(cc_tid_t timerId) const;
     timerval_t GetRegen(std::uint8_t part) const;
     timerval_t GetWeathDamage(std::uint8_t part) const;
-    std::uint8_t GetNextAct(void) const;
+    std::uint8_t GetNextAct() const;
     
     void SetTimer(cc_tid_t timerId, timerval_t value);
     void SetRegen(timerval_t newValue, std::uint8_t part);
     void SetWeathDamage(timerval_t newValue, std::uint8_t part);
     void SetNextAct(std::uint8_t newVal);
     
-    colour_t GetEmoteColour(void) const;
-    colour_t GetSayColour(void) const;
-    std::uint16_t GetSkin(void) const;
+    colour_t GetEmoteColour() const;
+    colour_t GetSayColour() const;
+    std::uint16_t GetSkin() const;
     
     void SetSkin(std::uint16_t value);
     void SetEmoteColour(colour_t newValue);
     void SetSayColour(colour_t newValue);
     
-    std::int8_t GetStealth(void) const;
-    std::int8_t GetCell(void) const;
-    std::uint8_t GetRunning(void) const;
-    std::uint8_t GetStep(void) const;
-    CTownRegion *GetRegion(void) const;
-    std::uint16_t GetRegionNum(void) const;
+    std::int8_t GetStealth() const;
+    std::int8_t GetCell() const;
+    std::uint8_t GetRunning() const;
+    std::uint8_t GetStep() const;
+    CTownRegion *GetRegion() const;
+    std::uint16_t GetRegionNum() const;
     
     void SetCell(std::int8_t newVal);
     void SetStealth(std::int8_t newValue);
@@ -481,11 +481,11 @@ public:
     void WalkZ(std::int8_t newZ);
     void WalkDir(std::int8_t newDir);
     
-    CItem *GetPackItem(void);
-    CChar *GetTarg(void) const;
-    CChar *GetAttacker(void) const;
-    std::uint16_t GetAdvObj(void) const;
-    raceid_t GetRaceGate(void) const;
+    CItem *GetPackItem();
+    CChar *GetTarg() const;
+    CChar *GetAttacker() const;
+    std::uint16_t GetAdvObj() const;
+    raceid_t GetRaceGate() const;
     
     void SetPackItem(CItem *newVal);
     void SetTarg(CChar *newTarg);
@@ -493,27 +493,27 @@ public:
     void SetAdvObj(std::uint16_t newValue);
     void SetRaceGate(raceid_t newValue);
     
-    std::int8_t GetSpellCast(void) const;
+    std::int8_t GetSpellCast() const;
     void SetSpellCast(std::int8_t newValue);
     
-    std::uint16_t GetPriv(void) const;
-    std::int8_t GetTownPriv(void) const;
-    bool IsGM(void) const;
-    bool CanBroadcast(void) const;
-    bool IsInvulnerable(void) const;
-    bool GetSingClickSer(void) const;
-    bool NoSkillTitles(void) const;
-    bool IsGMPageable(void) const;
-    bool CanSnoop(void) const;
-    bool IsCounselor(void) const;
-    bool AllMove(void) const;
-    bool IsFrozen(void) const;
-    bool ViewHouseAsIcon(void) const;
-    bool NoNeedMana(void) const;
-    bool IsDispellable(void) const;
-    bool IsTempReflected(void) const;
-    bool IsPermReflected(void) const;
-    bool NoNeedReags(void) const;
+    std::uint16_t GetPriv() const;
+    std::int8_t GetTownPriv() const;
+    bool IsGM() const;
+    bool CanBroadcast() const;
+    bool IsInvulnerable() const;
+    bool GetSingClickSer() const;
+    bool NoSkillTitles() const;
+    bool IsGMPageable() const;
+    bool CanSnoop() const;
+    bool IsCounselor() const;
+    bool AllMove() const;
+    bool IsFrozen() const;
+    bool ViewHouseAsIcon() const;
+    bool NoNeedMana() const;
+    bool IsDispellable() const;
+    bool IsTempReflected() const;
+    bool IsPermReflected() const;
+    bool NoNeedReags() const;
     
     void SetGM(bool newValue);
     void SetBroadcast(bool newValue);
@@ -541,31 +541,31 @@ public:
     void SetBaseSkill(skillval_t newSkillValue, std::uint8_t skillToSet);
     void SetSkill(skillval_t newSkillValue, std::uint8_t skillToSet);
     
-    std::uint16_t GetDeaths(void) const; // can we die 4 billion times?!
-    std::int16_t GetGuildNumber(void) const;
-    std::uint8_t GetFlag(void) const;
-    std::uint8_t GetControlSlotsUsed(void) const;
+    std::uint16_t GetDeaths() const; // can we die 4 billion times?!
+    std::int16_t GetGuildNumber() const;
+    std::uint8_t GetFlag() const;
+    std::uint8_t GetControlSlotsUsed() const;
     
     void SetDeaths(std::uint16_t newVal);
     void SetFlag(std::uint8_t newValue);
     void SetGuildNumber(std::int16_t newValue);
     void SetControlSlotsUsed(std::uint8_t newValue);
     
-    std::int8_t GetFontType(void) const;
+    std::int8_t GetFontType() const;
     void SetFontType(std::int8_t newType);
     
-    CSocket *GetSocket(void) const;
+    CSocket *GetSocket() const;
     void SetSocket(CSocket *newVal);
     
     CChar();
     virtual ~CChar();
     
-    CChar *Dupe(void);
+    CChar *Dupe();
     virtual void RemoveFromSight(CSocket *mSock = nullptr);
     virtual void RemoveAllObjectsFromSight(CSocket *mSock = nullptr);
     void SendWornItems(CSocket *s);
-    void Teleport(void);
-    void ExposeToView(void);
+    void Teleport();
+    void ExposeToView();
     virtual void Update(CSocket *mSock = nullptr, bool drawGamePlayer = false,
                         bool sendToSelf = true) override;
     virtual void SendToSocket(CSocket *s, bool drawGamePlayer = false) override;
@@ -574,49 +574,49 @@ public:
     bool WearItem(CItem *toWear);
     bool TakeOffItem(itemlayers_t Layer);
     
-    CItem *FirstItem(void);
-    CItem *NextItem(void);
-    bool FinishedItems(void);
+    CItem *FirstItem();
+    CItem *NextItem();
+    bool FinishedItems();
     
     void BreakConcentration(CSocket *sock = nullptr);
     
     virtual bool Save(std::ostream &outStream) override;
-    virtual void PostLoadProcessing(void) override;
+    virtual void PostLoadProcessing() override;
     
-    std::int16_t ActualStrength(void) const;
-    virtual std::int16_t GetStrength(void) const override;
+    std::int16_t ActualStrength() const;
+    virtual std::int16_t GetStrength() const override;
     
-    std::int16_t ActualDexterity(void) const;
-    virtual std::int16_t GetDexterity(void) const override;
+    std::int16_t ActualDexterity() const;
+    virtual std::int16_t GetDexterity() const override;
     
-    std::int16_t ActualIntelligence(void) const;
-    virtual std::int16_t GetIntelligence(void) const override;
+    std::int16_t ActualIntelligence() const;
+    virtual std::int16_t GetIntelligence() const override;
     
     void IncStrength2(std::int16_t toAdd = 1);
     void IncDexterity2(std::int16_t toAdd = 1);
     void IncIntelligence2(std::int16_t toAdd = 1);
     
-    bool IsMurderer(void) const;
-    bool IsCriminal(void) const;
-    bool IsInnocent(void) const;
-    bool IsNeutral(void) const;
+    bool IsMurderer() const;
+    bool IsCriminal() const;
+    bool IsInnocent() const;
+    bool IsNeutral() const;
     
-    void SetFlagRed(void);
-    void SetFlagBlue(void);
-    void SetFlagGray(void);
-    void SetFlagNeutral(void);
+    void SetFlagRed();
+    void SetFlagBlue();
+    void SetFlagGray();
+    void SetFlagNeutral();
     
-    void StopSpell(void);
+    void StopSpell();
     bool SkillUsed(std::uint8_t skillNum) const;
     void SkillUsed(bool value, std::uint8_t skillNum);
     
-    bool IsPolymorphed(void) const;
-    bool IsIncognito(void) const;
-    bool IsDisguised(void) const;
+    bool IsPolymorphed() const;
+    bool IsIncognito() const;
+    bool IsDisguised() const;
     void IsPolymorphed(bool newValue);
     void IsIncognito(bool newValue);
     void IsDisguised(bool newValue);
-    bool IsJailed(void) const;
+    bool IsJailed() const;
     
     void SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, raceid_t newoldrace);
     void SetFixedMaxHP(std::int16_t newmaxhp);
@@ -624,11 +624,11 @@ public:
     void SetFixedMaxMana(std::int16_t newmaxmana);
     void SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, raceid_t newoldrace);
     void SetFixedMaxStam(std::int16_t newmaxstam);
-    virtual std::uint16_t GetMaxHP(void);
-    std::int16_t GetMaxMana(void);
-    std::int16_t GetMaxStam(void);
-    std::uint16_t GetMaxLoyalty(void) const;
-    std::uint16_t GetLoyalty(void) const;
+    virtual std::uint16_t GetMaxHP();
+    std::int16_t GetMaxMana();
+    std::int16_t GetMaxStam();
+    std::uint16_t GetMaxLoyalty() const;
+    std::uint16_t GetLoyalty() const;
     virtual void SetMana(std::int16_t newValue) override;
     virtual void SetHP(std::int16_t newValue) override;
     virtual void SetStamina(std::int16_t newValue) override;
@@ -643,25 +643,25 @@ public:
     void SetMaxLoyalty(std::uint16_t newMaxLoyalty);
     void SetLoyalty(std::uint16_t newLoyalty);
     
-    void ToggleCombat(void);
+    void ToggleCombat();
     
     virtual void SetPoisoned(std::uint8_t newValue) override;
     
-    bool InDungeon(void);
-    bool InBuilding(void);
+    bool InDungeon();
+    bool InBuilding();
     
     void TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, bool spamTimer);
     void TextMessage(CSocket *s, std::int32_t dictEntry, speechtype_t msgType, int spamTimer, ...);
     
-    virtual void Cleanup(void) override;
-    virtual void Delete(void) override;
+    virtual void Cleanup() override;
+    virtual void Delete() override;
     virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
     
     flagcolors_t FlagColour(CChar *toCompare);
     void Heal(std::int16_t healValue, CChar *healer = nullptr);
     bool Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker = nullptr,
                 bool doRepsys = false);
-    std::int16_t GetKarma(void) const;
+    std::int16_t GetKarma() const;
     void ReactOnDamage(weathertype_t damageType, CChar *attacker = nullptr);
     void Die(CChar *attacker, bool doRepsys);
     
@@ -669,18 +669,18 @@ public:
     // places These values don't get saved or loaded, as only NPC parties get rebuilt, and that will
     // be done via the PartyFactory Load/Save routines, and not through here
     void InParty(bool value);
-    bool InParty(void) const;
+    bool InParty() const;
     
     // NPC Characters
 protected:
-    virtual void RemoveSelfFromOwner(void) override;
-    virtual void AddSelfToOwner(void) override;
+    virtual void RemoveSelfFromOwner() override;
+    virtual void AddSelfToOwner() override;
     
 public:
-    void ClearFriendList(void);
+    void ClearFriendList();
     auto GetFriendList() -> std::vector<CChar *> *;
     
-    void ClearPetOwnerList(void);
+    void ClearPetOwnerList();
     bool AddPetOwnerToList(CChar *toAdd);
     bool RemovePetOwnerFromList(CChar *toRemove);
     bool IsOnPetOwnerList(CChar *toCheck);
@@ -695,18 +695,18 @@ public:
     auto ClearCombatIgnore() -> void;
     auto CombatIgnoreMaintenance() -> void;
     
-    std::int16_t GetNpcAiType(void) const;
-    std::uint16_t GetNPCGuild(void) const;
-    std::int16_t GetTaming(void) const;
-    std::int16_t GetPeaceing(void) const;
-    std::int16_t GetProvoing(void) const;
-    std::uint8_t GetTrainingPlayerIn(void) const;
-    std::uint32_t GetHoldG(void) const;
-    std::uint8_t GetSplit(void) const;
-    std::uint8_t GetSplitChance(void) const;
-    std::uint8_t GetOwnerCount(void);
-    std::uint8_t GetControlSlots(void) const;
-    std::uint16_t GetOrneriness(void) const;
+    std::int16_t GetNpcAiType() const;
+    std::uint16_t GetNPCGuild() const;
+    std::int16_t GetTaming() const;
+    std::int16_t GetPeaceing() const;
+    std::int16_t GetProvoing() const;
+    std::uint8_t GetTrainingPlayerIn() const;
+    std::uint32_t GetHoldG() const;
+    std::uint8_t GetSplit() const;
+    std::uint8_t GetSplitChance() const;
+    std::uint8_t GetOwnerCount();
+    std::uint8_t GetControlSlots() const;
+    std::uint16_t GetOrneriness() const;
     
     void SetNPCAiType(std::int16_t newValue);
     void SetNPCGuild(std::uint16_t newValue);
@@ -720,26 +720,26 @@ public:
     void SetControlSlots(std::uint8_t newVal);
     void SetOrneriness(std::uint16_t newVal);
     
-    std::int8_t GetPathFail(void) const;
+    std::int8_t GetPathFail() const;
     void SetPathFail(std::int8_t newValue);
     
-    std::int8_t GetPathResult(void) const;
+    std::int8_t GetPathResult() const;
     void SetPathResult(std::int8_t newValue);
     
-    std::uint16_t GetPathTargX(void) const;
+    std::uint16_t GetPathTargX() const;
     void SetPathTargX(std::uint16_t newValue);
-    std::uint16_t GetPathTargY(void) const;
+    std::uint16_t GetPathTargY() const;
     void SetPathTargY(std::uint16_t newValue);
     
     void SetGuarding(CBaseObject *newValue);
     
-    CBaseObject *GetGuarding(void) const;
+    CBaseObject *GetGuarding() const;
     
     std::int16_t GetFx(std::uint8_t part) const;
     std::int16_t GetFy(std::uint8_t part) const;
-    std::int8_t GetFz(void) const;
-    std::int8_t GetNpcWander(void) const;
-    std::int8_t GetOldNpcWander(void) const;
+    std::int8_t GetFz() const;
+    std::int8_t GetNpcWander() const;
+    std::int8_t GetOldNpcWander() const;
     
     void SetFx(std::int16_t newVal, std::uint8_t part);
     void SetFy(std::int16_t newVal, std::uint8_t part);
@@ -747,131 +747,131 @@ public:
     void SetNpcWander(std::int8_t newValue, bool initArea = false);
     void SetOldNpcWander(std::int8_t newValue);
     
-    CChar *GetFTarg(void) const;
+    CChar *GetFTarg() const;
     void SetFTarg(CChar *newTarg);
     
-    std::int16_t GetSpAttack(void) const;
-    std::int8_t GetSpDelay(void) const;
+    std::int16_t GetSpAttack() const;
+    std::int8_t GetSpDelay() const;
     
     void SetSpAttack(std::int16_t newValue);
     void SetSpDelay(std::int8_t newValue);
     
-    std::uint8_t GetQuestType(void) const;
-    std::uint8_t GetQuestOrigRegion(void) const;
-    std::uint8_t GetQuestDestRegion(void) const;
+    std::uint8_t GetQuestType() const;
+    std::uint8_t GetQuestOrigRegion() const;
+    std::uint8_t GetQuestDestRegion() const;
     
     void SetQuestDestRegion(std::uint8_t newValue);
     void SetQuestType(std::uint8_t newValue);
     void SetQuestOrigRegion(std::uint8_t newValue);
     
-    std::int16_t GetFleeAt(void) const;
-    std::int16_t GetReattackAt(void) const;
-    std::uint8_t GetFleeDistance(void) const;
+    std::int16_t GetFleeAt() const;
+    std::int16_t GetReattackAt() const;
+    std::uint8_t GetFleeDistance() const;
     
     void SetFleeAt(std::int16_t newValue);
     void SetReattackAt(std::int16_t newValue);
     void SetFleeDistance(std::uint8_t newValue);
     
-    std::uint8_t PopDirection(void);
+    std::uint8_t PopDirection();
     void PushDirection(std::uint8_t newDir, bool pushFront = false);
-    bool StillGotDirs(void) const;
-    void FlushPath(void);
+    bool StillGotDirs() const;
+    void FlushPath();
     
-    cnpc_flag_t GetNPCFlag(void) const;
+    cnpc_flag_t GetNPCFlag() const;
     void SetNPCFlag(cnpc_flag_t flagType);
     
-    R32 GetWalkingSpeed(void) const;
+    R32 GetWalkingSpeed() const;
     void SetWalkingSpeed(R32 newValue);
     
-    R32 GetRunningSpeed(void) const;
+    R32 GetRunningSpeed() const;
     void SetRunningSpeed(R32 newValue);
     
-    R32 GetFleeingSpeed(void) const;
+    R32 GetFleeingSpeed() const;
     void SetFleeingSpeed(R32 newValue);
     
-    R32 GetMountedWalkingSpeed(void) const;
+    R32 GetMountedWalkingSpeed() const;
     void SetMountedWalkingSpeed(R32 newValue);
     
-    R32 GetMountedRunningSpeed(void) const;
+    R32 GetMountedRunningSpeed() const;
     void SetMountedRunningSpeed(R32 newValue);
     
-    R32 GetMountedFleeingSpeed(void) const;
+    R32 GetMountedFleeingSpeed() const;
     void SetMountedFleeingSpeed(R32 newValue);
     
     // Player Characters
 public:
     void SetAccount(AccountEntry &actbAccount);
-    AccountEntry &GetAccount(void);
-    std::uint16_t GetAccountNum(void) const;
+    AccountEntry &GetAccount();
+    std::uint16_t GetAccountNum() const;
     void SetAccountNum(std::uint16_t newVal);
     
     void SetRobe(serial_t newValue);
-    serial_t GetRobe(void) const;
+    serial_t GetRobe() const;
     
-    std::uint16_t GetOrgId(void) const;
+    std::uint16_t GetOrgId() const;
     void SetOrgSkin(std::uint16_t value);
     void SetOrgId(std::uint16_t value);
-    std::uint16_t GetOrgSkin(void) const;
-    std::string GetOrgName(void) const;
+    std::uint16_t GetOrgSkin() const;
+    std::string GetOrgName() const;
     void SetOrgName(std::string newName);
     
-    std::uint8_t GetCommandLevel(void) const;
+    std::uint8_t GetCommandLevel() const;
     void SetCommandLevel(std::uint8_t newValue);
-    std::uint8_t GetPostType(void) const;
+    std::uint8_t GetPostType() const;
     void SetPostType(std::uint8_t newValue);
     void SetPlayerCallNum(serial_t newValue);
     void SetCallNum(serial_t newValue);
     
-    serial_t GetCallNum(void) const;
-    serial_t GetPlayerCallNum(void) const;
+    serial_t GetCallNum() const;
+    serial_t GetPlayerCallNum() const;
     
     void SetLastOn(std::string newValue);
-    std::string GetLastOn(void) const;
+    std::string GetLastOn() const;
     void SetLastOnSecs(std::uint32_t newValue);
-    std::uint32_t GetLastOnSecs(void) const;
+    std::uint32_t GetLastOnSecs() const;
     
     auto GetPlayTime() const -> std::uint32_t;
     auto SetPlayTime(std::uint32_t newValue) -> void;
     
     void SetCreatedOn(std::uint32_t newValue);
-    std::uint32_t GetCreatedOn(void) const;
+    std::uint32_t GetCreatedOn() const;
     
     void SetNPCGuildJoined(std::uint32_t newValue);
-    std::uint32_t GetNPCGuildJoined(void) const;
+    std::uint32_t GetNPCGuildJoined() const;
     
-    std::uint32_t LastMoveTime(void) const;
+    std::uint32_t LastMoveTime() const;
     void LastMoveTime(std::uint32_t newValue);
     
-    CChar *GetTrackingTarget(void) const;
+    CChar *GetTrackingTarget() const;
     CChar *GetTrackingTargets(std::uint8_t targetNum) const;
-    serial_t GetTrackingTargetSerial(void) const;
+    serial_t GetTrackingTargetSerial() const;
     void SetTrackingTarget(CChar *newValue);
     void SetTrackingTargets(CChar *newValue, std::uint8_t targetNum);
     
-    std::uint8_t GetSquelched(void) const;
+    std::uint8_t GetSquelched() const;
     void SetSquelched(std::uint8_t newValue);
     
-    CItem *GetSpeechItem(void) const;
-    std::uint8_t GetSpeechMode(void) const;
-    std::uint8_t GetSpeechId(void) const;
-    cScript *GetSpeechCallback(void) const;
+    CItem *GetSpeechItem() const;
+    std::uint8_t GetSpeechMode() const;
+    std::uint8_t GetSpeechId() const;
+    cScript *GetSpeechCallback() const;
     
     void SetSpeechMode(std::uint8_t newValue);
     void SetSpeechId(std::uint8_t newValue);
     void SetSpeechCallback(cScript *newValue);
     void SetSpeechItem(CItem *newValue);
     
-    std::uint16_t GetHairStyle(void) const;
-    std::uint16_t GetBeardStyle(void) const;
-    colour_t GetHairColour(void) const;
-    colour_t GetBeardColour(void) const;
+    std::uint16_t GetHairStyle() const;
+    std::uint16_t GetBeardStyle() const;
+    colour_t GetHairColour() const;
+    colour_t GetBeardColour() const;
     
     void SetHairColour(colour_t value);
     void SetBeardColour(colour_t value);
     void SetHairStyle(std::uint16_t value);
     void SetBeardStyle(std::uint16_t value);
     
-    std::uint8_t GetFixedLight(void) const;
+    std::uint8_t GetFixedLight() const;
     void SetFixedLight(std::uint8_t newVal);
     
     std::uint8_t GetAtrophy(std::uint8_t skillToGet) const;

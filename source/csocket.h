@@ -85,11 +85,11 @@ enum cS_TID {
 class CSocket {
 public:
     // Account Related Member(s)
-    AccountEntry &GetAccount(void);
+    AccountEntry &GetAccount();
     void SetAccount(AccountEntry &actbBlock);
     
-    void InternalReset(void);
-    Ip4Addr_st ipaddress;
+    void InternalReset();
+    IP4Addr ipaddress;
     
 private:
     std::vector<std::uint16_t> trigWords;
@@ -180,7 +180,7 @@ public:
     CSocket(size_t sockNum);
     ~CSocket();
     
-    std::uint32_t ClientVersion(void) const;
+    std::uint32_t ClientVersion() const;
     void ClientVersion(std::uint32_t newVer);
     void ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t sub, std::uint8_t letter);
     
@@ -189,88 +189,88 @@ public:
     void ClientVersionSub(std::uint8_t value);
     void ClientVersionLetter(std::uint8_t value);
     
-    std::uint8_t ClientVersionMajor(void) const;
-    std::uint8_t ClientVersionMinor(void) const;
-    std::uint8_t ClientVersionSub(void) const;
-    std::uint8_t ClientVersionLetter(void) const;
+    std::uint8_t ClientVersionMajor() const;
+    std::uint8_t ClientVersionMinor() const;
+    std::uint8_t ClientVersionSub() const;
+    std::uint8_t ClientVersionLetter() const;
     
-    ClientVersions ClientVerShort(void) const;
+    ClientVersions ClientVerShort() const;
     void ClientVerShort(ClientVersions newVer);
     
-    ClientTypes ClientType(void) const;
+    ClientTypes ClientType() const;
     void ClientType(ClientTypes newVer);
     
-    void ClearPage(void);
+    void ClearPage();
     void AddTrigWord(std::uint16_t);
     // Accessors
     
-    bool LoginComplete(void) const;
+    bool LoginComplete() const;
     
-    CItem *GetCursorItem(void) const;
+    CItem *GetCursorItem() const;
     void SetCursorItem(CItem *newValue);
-    std::int16_t PickupX(void) const;
-    std::int16_t PickupY(void) const;
-    std::int8_t PickupZ(void) const;
-    pickuplocations_t PickupSpot(void) const;
-    serial_t PickupSerial(void) const;
-    bool FirstPacket(void) const;
-    std::int32_t IdleTimeout(void) const;
-    bool WasIdleWarned(void) const;
-    bool ObjDelayMsgShown(void) const;
-    bool SkillDelayMsgShown(void) const;
-    std::int32_t NegotiateTimeout(void) const;
-    bool NegotiatedWithAssistant(void) const;
-    std::uint8_t *Buffer(void);
-    std::uint8_t *OutBuffer(void);
-    std::int16_t WalkSequence(void) const;
-    std::uint16_t AcctNo(void) const;
-    std::string XText(void);
-    std::string XText2(void);
-    bool CryptClient(void) const;
-    size_t CliSocket(void) const;
-    std::uint8_t CurrentSpellType(void) const;
-    std::int32_t OutLength(void) const;
-    std::int32_t InLength(void) const;
-    bool Logging(void) const;
-    CChar *CurrcharObj(void) const;
-    std::uint8_t ClientIP1(void) const;
-    std::uint8_t ClientIP2(void) const;
-    std::uint8_t ClientIP3(void) const;
-    std::uint8_t ClientIP4(void) const;
-    bool NewClient(void) const;
-    bool TargetOK(void) const;
-    std::uint16_t FirstTrigWord(void);
-    std::uint16_t NextTrigWord(void);
-    bool FinishedTrigWords(void);
-    void ClearTrigWords(void);
-    bool ForceOffline(void) const;
+    std::int16_t PickupX() const;
+    std::int16_t PickupY() const;
+    std::int8_t PickupZ() const;
+    pickuplocations_t PickupSpot() const;
+    serial_t PickupSerial() const;
+    bool FirstPacket() const;
+    std::int32_t IdleTimeout() const;
+    bool WasIdleWarned() const;
+    bool ObjDelayMsgShown() const;
+    bool SkillDelayMsgShown() const;
+    std::int32_t NegotiateTimeout() const;
+    bool NegotiatedWithAssistant() const;
+    std::uint8_t *Buffer();
+    std::uint8_t *OutBuffer();
+    std::int16_t WalkSequence() const;
+    std::uint16_t AcctNo() const;
+    std::string XText();
+    std::string XText2();
+    bool CryptClient() const;
+    size_t CliSocket() const;
+    std::uint8_t CurrentSpellType() const;
+    std::int32_t OutLength() const;
+    std::int32_t InLength() const;
+    bool Logging() const;
+    CChar *CurrcharObj() const;
+    std::uint8_t ClientIP1() const;
+    std::uint8_t ClientIP2() const;
+    std::uint8_t ClientIP3() const;
+    std::uint8_t ClientIP4() const;
+    bool NewClient() const;
+    bool TargetOK() const;
+    std::uint16_t FirstTrigWord();
+    std::uint16_t NextTrigWord();
+    bool FinishedTrigWords();
+    void ClearTrigWords();
+    bool ForceOffline() const;
     
     // Temporary Variables
-    CBaseObject *TempObj(void) const;
-    CBaseObject *TempObj2(void) const;
-    std::int32_t TempInt(void) const;
-    std::int32_t TempInt2(void) const;
-    std::uint32_t AddId(void) const;
-    std::uint8_t AddId1(void) const;
-    std::uint8_t AddId2(void) const;
-    std::uint8_t AddId3(void) const;
-    std::uint8_t AddId4(void) const;
-    std::uint8_t DyeAll(void) const;
-    std::int8_t ClickZ(void) const;
+    CBaseObject *TempObj() const;
+    CBaseObject *TempObj2() const;
+    std::int32_t TempInt() const;
+    std::int32_t TempInt2() const;
+    std::uint32_t AddId() const;
+    std::uint8_t AddId1() const;
+    std::uint8_t AddId2() const;
+    std::uint8_t AddId3() const;
+    std::uint8_t AddId4() const;
+    std::uint8_t DyeAll() const;
+    std::int8_t ClickZ() const;
     
-    serial_t FirstPostAck(void);
-    serial_t NextPostAck(void);
-    bool FinishedPostAck(void);
-    serial_t RemovePostAck(void);
+    serial_t FirstPostAck();
+    serial_t NextPostAck();
+    bool FinishedPostAck();
+    serial_t RemovePostAck();
     
-    size_t PostCount(void) const;
-    size_t PostAckCount(void) const;
+    size_t PostCount() const;
+    size_t PostAckCount() const;
     
-    std::int16_t ClickX(void) const;
-    std::int16_t ClickY(void) const;
-    std::uint8_t Range(void) const;
+    std::int16_t ClickX() const;
+    std::int16_t ClickY() const;
+    std::uint8_t Range() const;
     
-    void CloseSocket(void);
+    void CloseSocket();
     
     // Mutators
     
@@ -326,7 +326,7 @@ public:
     
     bool FlushBuffer(bool doLog = true);
     bool FlushLargeBuffer(bool doLog = true);
-    void FlushIncoming(void);
+    void FlushIncoming();
     void Send(const void *point, std::int32_t length);
     std::int32_t Receive(std::int32_t x, bool doLog = true);
     void ReceiveLogging(CPInputBuffer *toLog);
@@ -350,7 +350,7 @@ public:
     
     void Send(CPUOXBuffer *toSend);
     
-    unicodetypes_t Language(void) const;
+    unicodetypes_t Language() const;
     void Language(unicodetypes_t newVal);
     
     void SysMessage(const std::string txt, ...);
@@ -375,21 +375,21 @@ public:
     
     auto GetContsOpenedList() -> GenericList<CItem *> *;
     
-    bool ReceivedVersion(void) const;
+    bool ReceivedVersion() const;
     void ReceivedVersion(bool value);
     
-    std::uint32_t BytesSent(void) const;
+    std::uint32_t BytesSent() const;
     void BytesSent(std::uint32_t newValue);
-    std::uint32_t BytesReceived(void) const;
+    std::uint32_t BytesReceived() const;
     void BytesReceived(std::uint32_t newValue);
-    std::uint16_t BytesReceivedWarning(void) const;
+    std::uint16_t BytesReceivedWarning() const;
     void BytesReceivedWarning(std::uint16_t newValue);
-    std::uint16_t BytesSentWarning(void) const;
+    std::uint16_t BytesSentWarning() const;
     void BytesSentWarning(std::uint16_t newValue);
     
     timerval_t GetTimer(cS_TID timerId) const;
     void SetTimer(cS_TID timerId, timerval_t value);
-    void ClearTimers(void);
+    void ClearTimers();
     colour_t GetFlagColour(CChar *src, CChar *trg);
     auto GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string;
     

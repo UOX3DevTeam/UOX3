@@ -128,14 +128,14 @@ enum TriggerWords {
 
 class CBaseResponse {
   public:
-    CBaseResponse(void) {}
+    CBaseResponse() {}
     virtual ~CBaseResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) = 0;
 };
 
 class CKillsResponse : public CBaseResponse {
   public:
-    CKillsResponse(void);
+    CKillsResponse();
     virtual ~CKillsResponse() {}
     virtual void Handle(CSocket *mSock, CChar *mChar) override;
 };

@@ -258,7 +258,7 @@ const std::uint8_t dfnDataTypes[DFNTAG_COUNTOFTAGS] = {
     DFN_DOUBLENUMERIC  //	DFNTAG_WRESTLING
 };
 
-struct StrToDFNLookup_st {
+struct StrToDFNLookup {
     std::string strToAdd;
     dfntags_t dfnToAdd;
 };
@@ -603,7 +603,7 @@ auto CScriptSection::Next() -> std::string {
 // o------------------------------------------------------------------------------------------------o
 auto CScriptSection::MoveTo(size_t position) -> std::string {
     std::string rValue;
-    std::vector<SectData_st *>::iterator curPos = currentPos;
+    std::vector<SectData *>::iterator curPos = currentPos;
     currentPos = (data.begin() + position);
     if (!AtEnd()) {
         rValue = (*currentPos)->tag;
@@ -698,7 +698,7 @@ auto CScriptSection::Remove(size_t position) -> void {
 //|	Purpose		-	Adds a new tag/data pair at the end of the section
 // o------------------------------------------------------------------------------------------------o
 auto CScriptSection::Append(std::string tagToAdd, std::string dataToAdd) -> void {
-    SectData_st *toAdd = new SectData_st;
+    auto toAdd = new SectData;
     toAdd->tag = tagToAdd;
     toAdd->data = dataToAdd;
     data.push_back(toAdd);
@@ -752,13 +752,13 @@ auto CScriptSection::FirstTag() -> dfntags_t {
 }
 
 //==================================================================================================
-auto CScriptSection::collection() const -> const std::vector<SectData_st *> & { return data; }
+auto CScriptSection::collection() const -> const std::vector<SectData *> & { return data; }
 //==================================================================================================
-auto CScriptSection::collection() -> std::vector<SectData_st *> & { return data; }
+auto CScriptSection::collection() -> std::vector<SectData *> & { return data; }
 //==================================================================================================
-auto CScriptSection::collection2() const -> const std::vector<SectDataV2_st *> & { return dataV2; }
+auto CScriptSection::collection2() const -> const std::vector<SectDataV2 *> & { return dataV2; }
 //==================================================================================================
-auto CScriptSection::collection2() -> std::vector<SectDataV2_st *> & { return dataV2; }
+auto CScriptSection::collection2() -> std::vector<SectDataV2 *> & { return dataV2; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CScriptSection::ItemListExist()
@@ -802,8 +802,8 @@ std::uint32_t itemIndexHolder = 0;
 auto CScriptSection::CreateSection(std::istream &input) -> void {
     char line[2048];
     std::string sLine;
-    SectData_st *toAdd = nullptr;
-    SectDataV2_st *toAdd2 = nullptr;
+    SectData *toAdd = nullptr;
+    SectDataV2 *toAdd2 = nullptr;
     dfntags_t mTag;
     std::string tag, value, localName;
     // Now the reverse comes into play!
@@ -848,7 +848,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                             {
                                 break;
                             }
-                            toAdd2 = new SectDataV2_st;
+                            toAdd2 = new SectDataV2;
                             toAdd2->tag = mTag;
                             
                             switch (dfnDataTypes[mTag]) {
@@ -941,7 +941,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                             dataV2.push_back(toAdd2);
                         }
                         else {
-                            toAdd = new SectData_st;
+                            toAdd = new SectData;
                             toAdd->tag = tag;
                             toAdd->data = value;
                             data.push_back(toAdd);
@@ -966,7 +966,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                         tag = utag;
                         [[fallthrough]]; // Indicate to compiler that fallthrough is intentional
                     default:
-                        toAdd = new SectData_st;
+                        toAdd = new SectData;
                         toAdd->tag = tag;
                         toAdd->data = value;
                         data.push_back(toAdd);

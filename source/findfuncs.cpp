@@ -99,8 +99,8 @@ auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint1
     for (auto &mSock : Network->connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
-            if (GetDist(Point3_st(mChar->GetX(), mChar->GetY(), mChar->GetZ()),
-                        Point3_st(x, y, z)) <= distance) {
+            if (GetDist(Point3(mChar->GetX(), mChar->GetY(), mChar->GetZ()),
+                        Point3(x, y, z)) <= distance) {
                 nearbyChars.push_back(mSock);
             }
         }
@@ -506,7 +506,7 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
     std::uint16_t oldDist = DIST_OUTOFRANGE;
     std::uint16_t currDist;
     CItem *currItem = nullptr;
-    Point3_st targLocation = Point3_st(x, y, z);
+    Point3 targLocation = Point3(x, y, z);
     for (auto &toCheck : MapRegion->PopulateList(x, y, worldNumber)) {
         if (toCheck == nullptr) // no valid region
             continue;
@@ -517,7 +517,7 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
                 continue;
 
             if (itemCheck->GetId() == id && itemCheck->GetZ() == z) {
-                Point3_st difference = itemCheck->GetLocation() - targLocation;
+                Point3 difference = itemCheck->GetLocation() - targLocation;
                 currDist = static_cast<std::uint16_t>(difference.Mag());
                 if (currDist < oldDist) {
                     oldDist = currDist;
@@ -573,7 +573,7 @@ auto FindNearbyItems(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, s
             if (!ValidateObject(Item) || Item->GetInstanceId() != instanceId)
                 continue;
 
-            if (GetDist(Item->GetLocation(), Point3_st(x, y, Item->GetZ())) <= distance) {
+            if (GetDist(Item->GetLocation(), Point3(x, y, Item->GetZ())) <= distance) {
                 ourItems.push_back(Item);
             }
         }
@@ -599,7 +599,7 @@ auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber,
             if (!ValidateObject(item) || item->GetInstanceId() != instanceId)
                 continue;
 
-            if (GetDist(item->GetLocation(), Point3_st(x, y, item->GetZ())) <= distance) {
+            if (GetDist(item->GetLocation(), Point3(x, y, item->GetZ())) <= distance) {
                 ourObjects.push_back(item);
             }
         }
@@ -609,7 +609,7 @@ auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber,
             if (!ValidateObject(character) || character->GetInstanceId() != instanceId)
                 continue;
 
-            if (GetDist(character->GetLocation(), Point3_st(x, y, character->GetZ())) <= distance) {
+            if (GetDist(character->GetLocation(), Point3(x, y, character->GetZ())) <= distance) {
                 ourObjects.push_back(character);
             }
         }

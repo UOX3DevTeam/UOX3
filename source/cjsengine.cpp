@@ -69,14 +69,14 @@ CJSEngine::~CJSEngine() {
     */
 }
 
-void CJSEngine::Reload(void) {
+void CJSEngine::Reload() {
     for (RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter) {
         if ((*rIter) != nullptr) {
             (*rIter)->Reload();
         }
     }
 }
-void CJSEngine::CollectGarbage(void) {
+void CJSEngine::CollectGarbage() {
     for (RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter) {
         if ((*rIter) != nullptr) {
             (*rIter)->CollectGarbage();
@@ -173,7 +173,7 @@ CJSRuntime::CJSRuntime(std::uint32_t engineSize) {
 
     InitializePrototypes();
 }
-CJSRuntime::~CJSRuntime(void) {
+CJSRuntime::~CJSRuntime() {
     Cleanup();
 
     JS_UnlockGCThing(jsContext, spellsObj);
@@ -192,7 +192,7 @@ CJSRuntime::~CJSRuntime(void) {
     JS_DestroyRuntime(jsRuntime);
 }
 
-void CJSRuntime::Cleanup(void) {
+void CJSRuntime::Cleanup() {
     std::vector<JSOBJECTMAP>::iterator oIter;
     for (oIter = objectList.begin(); oIter != objectList.end(); ++oIter) {
         JSOBJECTMAP &ourList = (*oIter);
@@ -283,9 +283,9 @@ void CJSRuntime::InitializePrototypes() {
     }
 }
 
-JSRuntime *CJSRuntime::GetRuntime(void) const { return jsRuntime; }
-JSContext *CJSRuntime::GetContext(void) const { return jsContext; }
-JSObject *CJSRuntime::GetObject(void) const { return jsGlobal; }
+JSRuntime *CJSRuntime::GetRuntime() const { return jsRuntime; }
+JSContext *CJSRuntime::GetContext() const { return jsContext; }
+JSObject *CJSRuntime::GetObject() const { return jsGlobal; }
 
 JSObject *CJSRuntime::GetPrototype(jsprototypes_t protoNum) const {
     JSObject *retVal = nullptr;

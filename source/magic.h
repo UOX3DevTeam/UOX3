@@ -19,10 +19,10 @@ private:
 public:
     CMagicMove() : effect(INVALIDID), speed(0), loop(0), explode(0) {}
     
-    std::uint16_t Effect(void) const { return effect; }
-    std::uint8_t Speed(void) const { return speed; }
-    std::uint8_t Loop(void) const { return loop; }
-    std::uint8_t Explode(void) const { return explode; }
+    std::uint16_t Effect() const { return effect; }
+    std::uint8_t Speed() const { return speed; }
+    std::uint8_t Loop() const { return loop; }
+    std::uint8_t Explode() const { return explode; }
     void Effect(std::uint8_t p1, std::uint8_t p2) { effect = static_cast<std::uint16_t>((p1 << 8) + p2); }
     void Speed(std::uint8_t newVal) { speed = newVal; }
     void Loop(std::uint8_t newVal) { loop = newVal; }
@@ -37,9 +37,9 @@ private:
     
 public:
     CMagicStat() : effect(INVALIDID), speed(0xFF), loop(0xFF) {}
-    std::uint16_t Effect(void) const { return effect; }
-    std::uint8_t Speed(void) const { return speed; }
-    std::uint8_t Loop(void) const { return loop; }
+    std::uint16_t Effect() const { return effect; }
+    std::uint8_t Speed() const { return speed; }
+    std::uint8_t Loop() const { return loop; }
     void Effect(std::uint8_t p1, std::uint8_t p2) { effect = static_cast<std::uint16_t>((p1 << 8) + p2); }
     void Speed(std::uint8_t newVal) { speed = newVal; }
     void Loop(std::uint8_t newVal) { loop = newVal; }
@@ -89,13 +89,13 @@ public:
     mantra(""), strToSay(""), enabled(false), circle(1), flags(0), effect(INVALIDID),
     hiskill(0), loskill(0), sclo(0), schi(0), jsScript(0), baseDmg(0) {}
     
-    std::uint16_t Action(void) const { return action; }
-    R32 Delay(void) const { return delay; }
-    R32 DamageDelay(void) const { return damageDelay; }
-    R32 RecoveryDelay(void) const { return recoveryDelay; }
-    std::int16_t Health(void) const { return health; }
-    std::int16_t Stamina(void) const { return stamina; }
-    std::int16_t Mana(void) const { return mana; }
+    std::uint16_t Action() const { return action; }
+    R32 Delay() const { return delay; }
+    R32 DamageDelay() const { return damageDelay; }
+    R32 RecoveryDelay() const { return recoveryDelay; }
+    std::int16_t Health() const { return health; }
+    std::int16_t Stamina() const { return stamina; }
+    std::int16_t Mana() const { return mana; }
     
     void Action(std::uint16_t newVal) { action = newVal; }
     void Delay(R32 newVal) { delay = newVal; }
@@ -104,27 +104,27 @@ public:
     void Health(std::int16_t newVal) { health = newVal; }
     void Stamina(std::int16_t newVal) { stamina = newVal; }
     void Mana(std::int16_t newVal) { mana = newVal; }
-    std::int16_t BaseDmg(void) const { return baseDmg; }
-    Reag_st Reagants(void) const { return reags; }
-    Reag_st *ReagantsPtr(void) { return &reags; }
-    const std::string Mantra(void) const { return mantra; }
-    const std::string StringToSay(void) const { return strToSay; }
-    std::int16_t ScrollLow(void) const { return sclo; }
-    std::int16_t ScrollHigh(void) const { return schi; }
-    std::int16_t HighSkill(void) const { return hiskill; }
-    std::int16_t LowSkill(void) const { return loskill; }
-    std::uint8_t Circle(void) const { return circle; }
-    bool Enabled(void) const { return enabled; }
-    bool RequireTarget(void) const { return (flags & 0x01) == 0x01; }
-    bool RequireItemTarget(void) const { return (flags & 0x02) == 0x02; }
-    bool RequireLocTarget(void) const { return (flags & 0x04) == 0x04; }
-    bool RequireCharTarget(void) const { return (flags & 0x08) == 0x08; }
-    bool RequireNoTarget(void) const { return (flags & 0x00) == 0x00; }
-    bool TravelSpell(void) const { return (flags & 0x10) == 0x10; }
-    bool FieldSpell(void) const { return (flags & 0x20) == 0x20; }
-    bool SpellReflectable(void) const { return (flags & 0x40) == 0x40; }
-    bool AggressiveSpell(void) const { return (flags & 0x80) == 0x80; }
-    bool Resistable(void) const { return (flags & 0x100) == 0x100; }
+    std::int16_t BaseDmg() const { return baseDmg; }
+    Reag_st Reagants() const { return reags; }
+    Reag_st *ReagantsPtr() { return &reags; }
+    const std::string Mantra() const { return mantra; }
+    const std::string StringToSay() const { return strToSay; }
+    std::int16_t ScrollLow() const { return sclo; }
+    std::int16_t ScrollHigh() const { return schi; }
+    std::int16_t HighSkill() const { return hiskill; }
+    std::int16_t LowSkill() const { return loskill; }
+    std::uint8_t Circle() const { return circle; }
+    bool Enabled() const { return enabled; }
+    bool RequireTarget() const { return (flags & 0x01) == 0x01; }
+    bool RequireItemTarget() const { return (flags & 0x02) == 0x02; }
+    bool RequireLocTarget() const { return (flags & 0x04) == 0x04; }
+    bool RequireCharTarget() const { return (flags & 0x08) == 0x08; }
+    bool RequireNoTarget() const { return (flags & 0x00) == 0x00; }
+    bool TravelSpell() const { return (flags & 0x10) == 0x10; }
+    bool FieldSpell() const { return (flags & 0x20) == 0x20; }
+    bool SpellReflectable() const { return (flags & 0x40) == 0x40; }
+    bool AggressiveSpell() const { return (flags & 0x80) == 0x80; }
+    bool Resistable() const { return (flags & 0x100) == 0x100; }
     void Mantra(const std::string &toPut) { mantra = toPut; }
     void StringToSay(const std::string &toPut) { strToSay = toPut; }
     void BaseDmg(std::int16_t newVal) { baseDmg = newVal; }
@@ -135,14 +135,14 @@ public:
     void Circle(std::uint8_t newVal) { circle = newVal; }
     void Enabled(bool newVal) { enabled = newVal; }
     void Flags(std::uint16_t newVal) { flags = newVal; }
-    std::uint16_t JSScript(void) { return jsScript; }
+    std::uint16_t JSScript() { return jsScript; }
     void JSScript(std::uint16_t scpAssign) { jsScript = scpAssign; }
-    std::uint16_t Effect(void) const { return effect; }
+    std::uint16_t Effect() const { return effect; }
     void Effect(std::uint16_t newVal) { effect = newVal; }
-    CMagicMove MoveEffect(void) const { return moveEffect; }
-    CMagicStat StaticEffect(void) const { return staticEffect; }
-    CMagicMove *MoveEffectPtr(void) { return &moveEffect; }
-    CMagicStat *StaticEffectPtr(void) { return &staticEffect; }
+    CMagicMove MoveEffect() const { return moveEffect; }
+    CMagicStat StaticEffect() const { return staticEffect; }
+    CMagicMove *MoveEffectPtr() { return &moveEffect; }
+    CMagicStat *StaticEffectPtr() { return &staticEffect; }
 };
 
 #define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *, std::int8_t

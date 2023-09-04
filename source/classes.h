@@ -133,7 +133,7 @@ class CCharStuff {
     CChar *GetGuardingFollower(CChar *mChar, CBaseObject *guarded);
     bool CheckPetFriend(CChar *mChar, CChar *pet);
     void StopPetGuarding(CChar *pet);
-    GenericList<CChar *> *GetAlwaysAwakeNPCs(void);
+    GenericList<CChar *> *GetAlwaysAwakeNPCs();
 };
 
 extern cItem *Items;

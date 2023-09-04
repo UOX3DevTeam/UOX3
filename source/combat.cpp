@@ -1999,7 +1999,7 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	calculates where on the body the person was hit and returns that
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CHandleCombat::CalculateHitLoc(void) {
+std::int8_t CHandleCombat::CalculateHitLoc() {
     std::int8_t hitLoc = RandomNum(0, 99); // Determine area of Body Hit
     for (std::uint8_t t = BODYPERCENT; t < TOTALTARGETSPOTS; ++t) {
         hitLoc -= LOCPERCENTAGES[t];

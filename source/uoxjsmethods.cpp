@@ -2431,7 +2431,7 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         else if (JSVAL_IS_INT(argv[0])) {
             std::uint16_t placeNum = JSVAL_TO_INT(argv[0]);
             if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+                GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
                 x = toGoTo.x;
                 y = toGoTo.y;
                 z = toGoTo.z;
@@ -6343,7 +6343,7 @@ JSBool CAccount_SaveAccounts([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 // UOXCFile constructor !
 JSBool UOXCFile(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
                 [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval) {
-    UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
+    UOXFileWrapper *toAdd = new UOXFileWrapper;
     toAdd->mWrap = nullptr;
 
     // JSBool myVal = JS_DefineFunctions( cx, obj, CFile_Methods );
@@ -6367,7 +6367,7 @@ JSBool CFile_Free(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
         ScriptError(cx, "Free: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
     delete mFile;
     JS_UnlockGCThing(cx, obj);
     // JS_RemoveRoot( cx, &obj );
@@ -6389,7 +6389,7 @@ JSBool CFile_Open(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                         "- optionally - folderName and useScriptDataDir bool)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     char *fileName = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
     std::string mode = JS_GetStringBytes(JS_ValueToString(cx, argv[1]));
@@ -6458,7 +6458,7 @@ JSBool CFile_Close(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
         ScriptError(cx, "Open: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     fclose(mFile->mWrap);
     return JS_TRUE;
@@ -6477,7 +6477,7 @@ JSBool CFile_Read(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
         ScriptError(cx, "Read: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap || feof(mFile->mWrap)) {
         ScriptError(cx, "Read: Error reading file, is not opened or has reached EOF");
@@ -6511,7 +6511,7 @@ JSBool CFile_ReadUntil(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
         ScriptError(cx, "ReadUntil: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap || feof(mFile->mWrap)) {
         ScriptError(cx, "ReadUntil: Error reading file, is not opened or has reached EOF");
@@ -6565,7 +6565,7 @@ JSBool CFile_Write(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         ScriptError(cx, "Write: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap || feof(mFile->mWrap)) {
         ScriptError(cx, "Write: Error writing to file, file was not opened sucessfully!");
@@ -6597,7 +6597,7 @@ JSBool CFile_EOF(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsva
         ScriptError(cx, "EOF: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap)
         return JS_FALSE;
@@ -6620,7 +6620,7 @@ JSBool CFile_Length(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] j
         ScriptError(cx, "Length: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap) {
         *rval = INT_TO_JSVAL(-1);
@@ -6652,7 +6652,7 @@ JSBool CFile_Pos(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *r
         ScriptError(cx, "Pos: Invalid number of arguments (takes 0 or 1)");
         return JS_FALSE;
     }
-    UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>(JS_GetPrivate(cx, obj));
+    UOXFileWrapper *mFile = static_cast<UOXFileWrapper *>(JS_GetPrivate(cx, obj));
 
     if (!mFile || !mFile->mWrap)
         return JS_FALSE;
@@ -7283,7 +7283,7 @@ JSBool CChar_Gate(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         else {
             std::uint16_t placeNum = JSVAL_TO_INT(argv[0]);
             if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+                GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
                 destX = toGoTo.x;
                 destY = toGoTo.y;
                 destZ = toGoTo.z;

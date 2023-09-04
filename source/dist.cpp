@@ -128,7 +128,7 @@ bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance)
     if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
         return false;
 
-    Point3_st aOldLoc = a->GetOldLocation();
+    Point3 aOldLoc = a->GetOldLocation();
     auto aX = aOldLoc.x;
     auto aY = aOldLoc.y;
     auto bX = b->GetX();
@@ -174,13 +174,13 @@ std::uint16_t GetDist(CBaseObject *a, CBaseObject *b) {
     return GetDist(a->GetLocation(), b->GetLocation());
 }
 
-std::uint16_t GetDist(Point3_st a, Point3_st b) {
-    Point3_st difference = a - b;
+std::uint16_t GetDist(Point3 a, Point3 b) {
+    Point3 difference = a - b;
     return static_cast<std::uint16_t>(difference.Mag());
 }
 
-std::uint16_t GetDist3D(Point3_st a, Point3_st b) {
-    Point3_st difference = a - b;
+std::uint16_t GetDist3D(Point3 a, Point3 b) {
+    Point3 difference = a - b;
     return static_cast<std::uint16_t>(difference.Mag3D());
 }
 
@@ -194,11 +194,11 @@ std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b) {
     if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
         return DIST_OUTOFRANGE;
 
-    Point3_st distA;
-    Point3_st distB;
+    Point3 distA;
+    Point3 distB;
     distA = a->GetOldLocation();
     distB = b->GetLocation();
-    Point3_st difference = distA - distB;
+    Point3 difference = distA - distB;
     return static_cast<std::uint16_t>(difference.Mag());
 }
 
@@ -212,6 +212,6 @@ std::uint16_t GetDist3D(CBaseObject *a, CBaseObject *b) {
     if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
         return DIST_OUTOFRANGE;
 
-    Point3_st difference = a->GetLocation() - b->GetLocation();
+    Point3 difference = a->GetLocation() - b->GetLocation();
     return static_cast<std::uint16_t>(difference.Mag3D());
 }

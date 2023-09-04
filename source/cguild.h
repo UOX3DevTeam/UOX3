@@ -43,13 +43,13 @@ private:
     std::map<guildid_t, GuildRelation>::iterator allyPtr;
     
 public:
-    guildid_t FirstWar(void);
-    guildid_t NextWar(void);
-    bool FinishedWar(void);
+    guildid_t FirstWar();
+    guildid_t NextWar();
+    bool FinishedWar();
     
-    guildid_t FirstAlly(void);
-    guildid_t NextAlly(void);
-    bool FinishedAlly(void);
+    guildid_t FirstAlly();
+    guildid_t NextAlly();
+    bool FinishedAlly();
     
     CGuild();
     ~CGuild();
@@ -124,13 +124,13 @@ private:
     void ToggleAbbreviation(CSocket *s);
     void TransportGuildStone(CSocket *s, guildid_t guildId);
     void Erase(guildid_t toErase);
-    guildid_t MaximumGuild(void);
+    guildid_t MaximumGuild();
     
 public:
     void Resign(CSocket *s);
     CGuildCollection() = default;
-    size_t NumGuilds(void) const;
-    guildid_t NewGuild(void);
+    size_t NumGuilds() const;
+    guildid_t NewGuild();
     CGuild *Guild(guildid_t num) const;
     CGuild *operator[](guildid_t num);
     void Save();

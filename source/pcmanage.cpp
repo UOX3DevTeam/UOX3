@@ -320,7 +320,7 @@ void StartChar(CSocket *mSock, bool onCreate = false);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when "Play Character" button is hit
 // o------------------------------------------------------------------------------------------------o
-bool CPIPlayCharacter::Handle(void) {
+bool CPIPlayCharacter::Handle() {
     if (tSock != nullptr) {
         if (tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
             bool disconnect = false;
@@ -407,7 +407,7 @@ bool CPIPlayCharacter::Handle(void) {
 //|	Purpose		-	Remove a character from the accounts system, due to an account gump
 // button press
 // o------------------------------------------------------------------------------------------------o
-bool CPIDeleteCharacter::Handle(void) {
+bool CPIDeleteCharacter::Handle() {
     if (tSock != nullptr) {
         std::int8_t deleteResult = -1;
         AccountEntry *actbTemp = &tSock->GetAccount();
@@ -692,7 +692,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character creation stuff
 // o------------------------------------------------------------------------------------------------o
-bool CPICreateCharacter::Handle(void) {
+bool CPICreateCharacter::Handle() {
     // This function needs to be decomposed
     // Way too large from a maintenance perspective
     // --> I split certain things out into a few new functions to make this a bit more manageable

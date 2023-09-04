@@ -39,19 +39,19 @@ private:
 public:
     cHTMLTemplate();
     ~cHTMLTemplate();
-    void Process(void);
-    void Poll(void);
-    void LoadTemplate(void);
-    void UnloadTemplate(void);
+    void Process();
+    void Poll();
+    void LoadTemplate();
+    void UnloadTemplate();
     void Load(CScriptSection *found);
     
     // Some Getters
-    std::string GetName(void) const;
-    std::string GetOutput(void) const;
-    std::string GetInput(void) const;
-    ETemplateType GetTemplateType(void) const;
-    std::uint32_t GetScheduledUpdate(void) const;
-    std::uint32_t GetUpdateTimer(void) const;
+    std::string GetName() const;
+    std::string GetOutput() const;
+    std::string GetInput() const;
+    ETemplateType GetTemplateType() const;
+    std::uint32_t GetScheduledUpdate() const;
+    std::uint32_t GetUpdateTimer() const;
 };
 
 class cHTMLTemplates {
@@ -62,8 +62,8 @@ public:
     cHTMLTemplates() = default;
     ~cHTMLTemplates();
     
-    void Load(void);
-    void Unload(void);
+    void Load();
+    void Unload();
     void Poll(ETemplateType nTemplateId = ETT_ALLTEMPLATES);
     void TemplateInfoGump(CSocket *mySocket);
 };

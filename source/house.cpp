@@ -351,7 +351,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                                 }
                             }
                             
-                            if (GetDist(Point3_st(x, y, z), mItem->GetLocation()) < 2) {
+                            if (GetDist(Point3(x, y, z), mItem->GetLocation()) < 2) {
                                 if (mSock) {
                                     mSock->SysMessage(
                                                       9028); // You cannot place a house-addon adjacent to a door.
@@ -507,7 +507,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     
     if (mSock) {
         if (mSock->GetDWord(7) != INVALIDSERIAL ||
-            GetDist(mChar->GetLocation(), Point3_st(x, y, z)) >= DIST_BUILDRANGE) {
+            GetDist(mChar->GetLocation(), Point3(x, y, z)) >= DIST_BUILDRANGE) {
             mSock->SysMessage(577); // You cannot build your house there!
             return nullptr;
         }

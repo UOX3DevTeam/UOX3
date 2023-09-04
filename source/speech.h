@@ -324,19 +324,19 @@ public:
     }
     ~CSpeechEntry() {}
     
-    speechtype_t Type(void) const { return typeOfSpeech; }
-    bool AntiSpam(void) const { return antiSpam; }
-    bool Unicode(void) const { return unicode; }
-    colour_t Colour(void) const { return speechColour; }
-    serial_t Speaker(void) const { return speaker; }
-    serial_t SpokenTo(void) const { return spokenTo; }
-    SpeechTarget TargType(void) const { return targType; }
-    fonttype_t Font(void) const { return targFont; }
-    unicodetypes_t Language(void) const { return targLanguage; }
-    std::int32_t At(void) const { return timeToSayAt; }
-    const std::string Speech(void) const { return toSay; }
-    const std::string SpeakerName(void) const { return sName; }
-    std::uint8_t CmdLevel(void) const { return minCmdLevelToReceive; }
+    speechtype_t Type() const { return typeOfSpeech; }
+    bool AntiSpam() const { return antiSpam; }
+    bool Unicode() const { return unicode; }
+    colour_t Colour() const { return speechColour; }
+    serial_t Speaker() const { return speaker; }
+    serial_t SpokenTo() const { return spokenTo; }
+    SpeechTarget TargType() const { return targType; }
+    fonttype_t Font() const { return targFont; }
+    unicodetypes_t Language() const { return targLanguage; }
+    std::int32_t At() const { return timeToSayAt; }
+    const std::string Speech() const { return toSay; }
+    const std::string SpeakerName() const { return sName; }
+    std::uint8_t CmdLevel() const { return minCmdLevelToReceive; }
     
     void Type(speechtype_t type) { typeOfSpeech = type; }
     void AntiSpam(bool value) { antiSpam = value; }
@@ -353,7 +353,7 @@ public:
     void Speech(const std::string &said) { toSay = said.substr(0, MAX_SPEECH - 1); }
     void SpeakerName(const std::string &spkName) { sName = spkName.substr(0, MAX_NAME - 1); }
     
-    SpeakerType SpkrType(void) const {
+    SpeakerType SpkrType() const {
         if (speaker == INVALIDSERIAL) {
             return SPK_SYSTEM;
         }
@@ -374,19 +374,19 @@ private:
     bool runAsThread;
     
     void SayIt(CSpeechEntry &toSay);
-    bool InternalPoll(void);
+    bool InternalPoll();
     
 public:
-    CSpeechQueue(void);
+    CSpeechQueue();
     ~CSpeechQueue();
     auto Startup() -> void;
-    bool Poll(void);         // Send out any pending speech, returning true if entries were sent
-    CSpeechEntry &Add(void); // Make space in queue, and return pointer to new entry
-    std::int32_t PollTime(void) const;
+    bool Poll();         // Send out any pending speech, returning true if entries were sent
+    CSpeechEntry &Add(); // Make space in queue, and return pointer to new entry
+    std::int32_t PollTime() const;
     void PollTime(std::int32_t value);
     void RunAsThread(bool newValue);
-    bool RunAsThread(void) const;
-    void DumpInFile(void);
+    bool RunAsThread() const;
+    void DumpInFile();
 };
 
 extern CSpeechQueue *SpeechSys;

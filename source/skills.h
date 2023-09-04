@@ -51,14 +51,14 @@ struct CreateEntry_st {
         resourceNeeded.resize(0);
         skillReqs.resize(0);
     }
-    R32 AverageMinSkill(void) {
+    R32 AverageMinSkill() {
         R32 sum = 0;
         for (size_t i = 0; i < skillReqs.size(); ++i) {
             sum += skillReqs[i].minSkill;
         }
         return sum / skillReqs.size();
     }
-    R32 AverageMaxSkill(void) {
+    R32 AverageMaxSkill() {
         R32 sum = 0;
         for (size_t i = 0; i < skillReqs.size(); ++i) {
             sum += skillReqs[i].maxSkill;
@@ -125,8 +125,8 @@ private:
     void AnvilTarget(CSocket *s, CItem &item, MiningData_st *oreType);
     void HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdvance, bool success);
     
-    bool LoadMiningData(void);
-    void LoadCreateMenus(void);
+    bool LoadMiningData();
+    void LoadCreateMenus();
     bool AdvanceSkill(CChar *s, std::uint8_t sk, bool skillused);
     
 public:
@@ -141,7 +141,7 @@ public:
     TargetFunc Smith;
     TargetFunc StealingTarget;
     
-    void Load(void);
+    void Load();
     
     void NewMakeMenu(CSocket *s, std::int32_t menu, std::uint8_t skill);
     CreateEntry_st *FindItem(std::uint16_t itemNum);
@@ -164,7 +164,7 @@ public:
     void UpdateSkillLevel(CChar *c, std::uint8_t s) const;
     void AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess);
     
-    size_t GetNumberOfOres(void);
+    size_t GetNumberOfOres();
     MiningData_st *GetOre(size_t number);
     MiningData_st *FindOre(std::string const &name);
     MiningData_st *FindOre(std::uint16_t const &colour);

@@ -33,7 +33,7 @@ cHTMLTemplate::cHTMLTemplate()
 
 cHTMLTemplate::~cHTMLTemplate() {}
 
-std::string GetUptime(void) {
+std::string GetUptime() {
     std::uint32_t total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
     std::uint32_t ho = total / 3600;
     total -= ho * 3600;
@@ -79,7 +79,7 @@ bool CountNPCFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ex
 //SEEN!! Written to truely
 //|									handle multiple Templates.
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::Process(void) {
+void cHTMLTemplate::Process() {
     // Need to check to see if the server is actually running, of so we do not want to process the
     // offline template.
     if (cwmWorldState->GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE)
@@ -602,7 +602,7 @@ void cHTMLTemplate::Process(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the page if needed
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::Poll(void) {
+void cHTMLTemplate::Poll() {
     if (scheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun()) {
         Process();
         scheduledUpdate = BuildTimeValue(static_cast<R32>(updateTimer));
@@ -618,7 +618,7 @@ void cHTMLTemplate::Poll(void) {
 //|									loading the different templates for
 //use later.
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::LoadTemplate(void) {
+void cHTMLTemplate::LoadTemplate() {
     content = "";
     
     std::ifstream InputFile1(inputFile.c_str());
@@ -649,7 +649,7 @@ void cHTMLTemplate::LoadTemplate(void) {
 //|								and to unload the correect template, instead
 //of just the |								status template.
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::UnloadTemplate(void) {
+void cHTMLTemplate::UnloadTemplate() {
     content = "";
     loaded = false;
 }
@@ -732,7 +732,7 @@ auto cHTMLTemplates::Load() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unloads all Templates
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplates::Unload(void) {
+void cHTMLTemplates::Unload() {
     if (Templates.empty())
         return;
     
@@ -822,39 +822,39 @@ void cHTMLTemplates::TemplateInfoGump(CSocket *mySocket) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the name of the Template
 // o------------------------------------------------------------------------------------------------o
-std::string cHTMLTemplate::GetName(void) const { return name; }
+std::string cHTMLTemplate::GetName() const { return name; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetOutput()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Output Filename
 // o------------------------------------------------------------------------------------------------o
-std::string cHTMLTemplate::GetOutput(void) const { return outputFile; }
+std::string cHTMLTemplate::GetOutput() const { return outputFile; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetInput()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Input Filename
 // o------------------------------------------------------------------------------------------------o
-std::string cHTMLTemplate::GetInput(void) const { return inputFile; }
+std::string cHTMLTemplate::GetInput() const { return inputFile; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetScheduledUpdate()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the next scheduled Update time
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t cHTMLTemplate::GetScheduledUpdate(void) const { return scheduledUpdate; }
+std::uint32_t cHTMLTemplate::GetScheduledUpdate() const { return scheduledUpdate; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetUpdateTimer()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Update timer
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t cHTMLTemplate::GetUpdateTimer(void) const { return updateTimer; }
+std::uint32_t cHTMLTemplate::GetUpdateTimer() const { return updateTimer; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetTemplateType()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Template Type
 // o------------------------------------------------------------------------------------------------o
-ETemplateType cHTMLTemplate::GetTemplateType(void) const { return type; }
+ETemplateType cHTMLTemplate::GetTemplateType() const { return type; }

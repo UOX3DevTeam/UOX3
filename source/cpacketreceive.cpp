@@ -279,7 +279,7 @@ void CPIFirstLogin::Log(std::ostream &outStream, bool fullHeader) {
     CPInputBuffer::Log(outStream, false);
 }
 
-bool CPIFirstLogin::Handle(void) {
+bool CPIFirstLogin::Handle() {
     tSock->AcctNo(AccountEntry::INVALID_ACCOUNT);
     auto t = LDR_NODENY;
 
@@ -459,7 +459,7 @@ CPIFirstLogin::CPIFirstLogin(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIFirstLogin::Receive(void) {
+void CPIFirstLogin::Receive() {
     tSock->FirstPacket(false);
     tSock->Receive(62, false);
 
@@ -476,15 +476,15 @@ void CPIFirstLogin::Receive(void) {
     unknown = tSock->GetByte(61);
     // Done with our buffer, we can clear it out now
 }
-void CPIFirstLogin::InternalReset(void) {
+void CPIFirstLogin::InternalReset() {
     userId.reserve(30);
     password.reserve(30);
     unknown = 0;
 }
 
-const std::string CPIFirstLogin::Name(void) { return userId; }
-const std::string CPIFirstLogin::Pass(void) { return password; }
-std::uint8_t CPIFirstLogin::Unknown(void) { return unknown; }
+const std::string CPIFirstLogin::Name() { return userId; }
+const std::string CPIFirstLogin::Pass() { return password; }
+std::uint8_t CPIFirstLogin::Unknown() { return unknown; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIServerSelect()
@@ -509,14 +509,14 @@ void CPIServerSelect::Log(std::ostream &outStream, bool fullHeader) {
     CPInputBuffer::Log(outStream, false);
 }
 
-void CPIServerSelect::InternalReset(void) {}
+void CPIServerSelect::InternalReset() {}
 CPIServerSelect::CPIServerSelect() { InternalReset(); }
 CPIServerSelect::CPIServerSelect(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIServerSelect::Receive(void) { tSock->Receive(3, false); }
-std::int16_t CPIServerSelect::ServerNum(void) {
+void CPIServerSelect::Receive() { tSock->Receive(3, false); }
+std::int16_t CPIServerSelect::ServerNum() {
     // Sept 19, 2002
     // Someone said that there was an issue with False logins that request server 0. Default to
     // server 1.
@@ -529,7 +529,7 @@ std::int16_t CPIServerSelect::ServerNum(void) {
     }
 }
 
-bool CPIServerSelect::Handle(void) {
+bool CPIServerSelect::Handle() {
     auto ip = cwmWorldState->ServerData()->matchIP(tSock->ipaddress);
 
     auto name = cwmWorldState->ServerData()->ServerName();
@@ -566,7 +566,7 @@ void CPISecondLogin::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPISecondLogin::InternalReset(void) {
+void CPISecondLogin::InternalReset() {
     sid.reserve(30);
     password.reserve(30);
     keyUsed = 0;
@@ -576,7 +576,7 @@ CPISecondLogin::CPISecondLogin(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPISecondLogin::Receive(void) {
+void CPISecondLogin::Receive() {
     tSock->FirstPacket(false);
     tSock->Receive(65, false);
     tSock->CryptClient(true);
@@ -595,11 +595,11 @@ void CPISecondLogin::Receive(void) {
 
     // Done with our buffer, we can clear it out now
 }
-std::uint32_t CPISecondLogin::Account(void) { return keyUsed; }
-const std::string CPISecondLogin::Name(void) { return sid; }
-const std::string CPISecondLogin::Pass(void) { return password; }
+std::uint32_t CPISecondLogin::Account() { return keyUsed; }
+const std::string CPISecondLogin::Name() { return sid; }
+const std::string CPISecondLogin::Pass() { return password; }
 
-bool CPISecondLogin::Handle(void) {
+bool CPISecondLogin::Handle() {
     auto t = LDR_NODENY;
     tSock->AcctNo(AccountEntry::INVALID_ACCOUNT);
     AccountEntry &actbTemp = Account::shared()[Name()];
@@ -701,7 +701,7 @@ void CPINewClientVersion::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPINewClientVersion::InternalReset(void) {
+void CPINewClientVersion::InternalReset() {
     //	len = 0;
     seed = 0;
     majorVersion = 0;
@@ -715,7 +715,7 @@ CPINewClientVersion::CPINewClientVersion(CSocket *s) : CPInputBuffer(s) {
     Receive();
     //	Handle();
 }
-void CPINewClientVersion::Receive(void) {
+void CPINewClientVersion::Receive() {
     if (tSock->GetByte(0) == 0xC0) {
         tSock->ClientType(CV_T2A);
     }
@@ -810,7 +810,7 @@ void CPINewClientVersion::Receive(void) {
     }
 }
 
-bool CPINewClientVersion::Handle(void) { return true; }
+bool CPINewClientVersion::Handle() { return true; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIClientVersion()
@@ -845,13 +845,13 @@ void CPIClientVersion::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPIClientVersion::InternalReset(void) { len = 0; }
+void CPIClientVersion::InternalReset() { len = 0; }
 CPIClientVersion::CPIClientVersion() { InternalReset(); }
 CPIClientVersion::CPIClientVersion(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIClientVersion::Receive(void) {
+void CPIClientVersion::Receive() {
     tSock->Receive(3, false);
     len = tSock->GetWord(1);
     tSock->Receive(len, false);
@@ -878,8 +878,8 @@ std::uint8_t ShiftValue(std::uint8_t toShift, std::uint8_t base, std::uint8_t up
     }
     return toShift;
 }
-char *CPIClientVersion::Offset(void) { return (char *)&(tSock->Buffer()[3]); }
-bool CPIClientVersion::Handle(void) {
+char *CPIClientVersion::Offset() { return (char *)&(tSock->Buffer()[3]); }
+bool CPIClientVersion::Handle() {
     char *verString = Offset();
     verString[len] = 0;
 
@@ -1130,14 +1130,14 @@ void CPIUpdateRangeChange::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPIUpdateRangeChange::InternalReset(void) {}
+void CPIUpdateRangeChange::InternalReset() {}
 CPIUpdateRangeChange::CPIUpdateRangeChange() { InternalReset(); }
 CPIUpdateRangeChange::CPIUpdateRangeChange(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIUpdateRangeChange::Receive(void) { tSock->Receive(2, false); }
-bool CPIUpdateRangeChange::Handle(void) {
+void CPIUpdateRangeChange::Receive() { tSock->Receive(2, false); }
+bool CPIUpdateRangeChange::Handle() {
     // Byte 0 == 0xC8
     // Byte 1 == 0x0F (by default)  This is the distance, we believe
 
@@ -1189,14 +1189,14 @@ void CPILogoutStatus::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPILogoutStatus::InternalReset(void) {}
+void CPILogoutStatus::InternalReset() {}
 CPILogoutStatus::CPILogoutStatus() { InternalReset(); }
 CPILogoutStatus::CPILogoutStatus(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPILogoutStatus::Receive(void) { tSock->Receive(2, false); }
-bool CPILogoutStatus::Handle(void) {
+void CPILogoutStatus::Receive() { tSock->Receive(2, false); }
+bool CPILogoutStatus::Handle() {
     // Byte 0 == 0xD1
     // Byte 1 == 0x01 in response to logout request sent by server
 
@@ -1221,13 +1221,13 @@ bool CPILogoutStatus::Handle(void) {
 //|							0x00 - tips window
 //|							0x01 - notice window
 // o------------------------------------------------------------------------------------------------o
-void CPITips::InternalReset(void) {}
+void CPITips::InternalReset() {}
 CPITips::CPITips() { InternalReset(); }
 CPITips::CPITips(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPITips::Receive(void) { tSock->Receive(4, false); }
+void CPITips::Receive() { tSock->Receive(4, false); }
 auto CPITips::Handle() -> bool {
     auto tips = FileLookup->FindEntry("TIPS", misc_def);
     if (tips) {
@@ -1283,14 +1283,14 @@ auto CPITips::Handle() -> bool {
 //|						BYTE[4] id
 //|						BYTE[30] new name
 // o------------------------------------------------------------------------------------------------o
-void CPIRename::InternalReset(void) {}
+void CPIRename::InternalReset() {}
 CPIRename::CPIRename() { InternalReset(); }
 CPIRename::CPIRename(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIRename::Receive(void) { tSock->Receive(0x23, false); }
-bool CPIRename::Handle(void) {
+void CPIRename::Receive() { tSock->Receive(0x23, false); }
+bool CPIRename::Handle() {
     serial_t serial = tSock->GetDWord(1);
     if (serial == INVALIDSERIAL)
         return true;
@@ -1316,8 +1316,8 @@ bool CPIRename::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIKeepAlive::CPIKeepAlive() {}
 CPIKeepAlive::CPIKeepAlive(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIKeepAlive::Receive(void) { tSock->Receive(2, false); }
-bool CPIKeepAlive::Handle(void) {
+void CPIKeepAlive::Receive() { tSock->Receive(2, false); }
+bool CPIKeepAlive::Handle() {
     tSock->Send(tSock->Buffer(), 2);
     tSock->FlushBuffer();
     return true;
@@ -1342,7 +1342,7 @@ bool CPIKeepAlive::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIStatusRequest::CPIStatusRequest() {}
 CPIStatusRequest::CPIStatusRequest(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIStatusRequest::Receive(void) {
+void CPIStatusRequest::Receive() {
     tSock->Receive(10, false);
 
     pattern = tSock->GetDWord(1);
@@ -1362,7 +1362,7 @@ void CPIStatusRequest::Log(std::ostream &outStream, bool fullHeader) {
     CPInputBuffer::Log(outStream, false);
 }
 
-bool CPIStatusRequest::Handle(void) {
+bool CPIStatusRequest::Handle() {
     if (getType == 4) {
         if (playerId >= BASEITEMSERIAL) {
             tSock->StatWindow(CalcItemObjFromSer(playerId)); // Item
@@ -1408,8 +1408,8 @@ bool CPIStatusRequest::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPISpy::CPISpy() {}
 CPISpy::CPISpy(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPISpy::Receive(void) { tSock->Receive(0x95, false); }
-bool CPISpy::Handle(void) { return true; }
+void CPISpy::Receive() { tSock->Receive(0x95, false); }
+bool CPISpy::Handle() { return true; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKRSeed()
@@ -1428,12 +1428,12 @@ bool CPISpy::Handle(void) { return true; }
 // o------------------------------------------------------------------------------------------------o
 CPIKRSeed::CPIKRSeed() {}
 CPIKRSeed::CPIKRSeed(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIKRSeed::Receive(void) {
+void CPIKRSeed::Receive() {
     // This would need to be a server option. No way to tell which client is sending this packet
     CPKREncryptionRequest encryptionRequest(tSock);
     tSock->Send(&encryptionRequest);
 }
-bool CPIKRSeed::Handle(void) { return true; }
+bool CPIKRSeed::Handle() { return true; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKREncryptionVerification()
@@ -1453,8 +1453,8 @@ CPIKREncryptionVerification::CPIKREncryptionVerification() {}
 CPIKREncryptionVerification::CPIKREncryptionVerification(CSocket *s) : CPInputBuffer(s) {
     Receive();
 }
-void CPIKREncryptionVerification::Receive(void) { tSock->Receive(23, false); }
-bool CPIKREncryptionVerification::Handle(void) { return true; }
+void CPIKREncryptionVerification::Receive() { tSock->Receive(23, false); }
+bool CPIKREncryptionVerification::Handle() { return true; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGodModeToggle()
@@ -1470,8 +1470,8 @@ bool CPIKREncryptionVerification::Handle(void) { return true; }
 // o------------------------------------------------------------------------------------------------o
 CPIGodModeToggle::CPIGodModeToggle() {}
 CPIGodModeToggle::CPIGodModeToggle(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIGodModeToggle::Receive(void) { tSock->Receive(2, false); }
-bool CPIGodModeToggle::Handle(void) {
+void CPIGodModeToggle::Receive() { tSock->Receive(2, false); }
+bool CPIGodModeToggle::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     if (ourChar->IsGM()) {
         CPGodModeToggle cpgmt = tSock;
@@ -1505,7 +1505,7 @@ bool CPIGodModeToggle::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIDblClick::CPIDblClick() {}
 CPIDblClick::CPIDblClick(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIDblClick::Receive(void) {
+void CPIDblClick::Receive() {
     tSock->Receive(5, false);
 
     objectId = tSock->GetDWord(1);
@@ -1538,7 +1538,7 @@ void CPIDblClick::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPISingleClick::CPISingleClick() {}
 CPISingleClick::CPISingleClick(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPISingleClick::Receive(void) {
+void CPISingleClick::Receive() {
     tSock->Receive(5, false);
 
     objectId = tSock->GetDWord(1);
@@ -1583,8 +1583,8 @@ void CPISingleClick::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIMoveRequest::CPIMoveRequest() {}
 CPIMoveRequest::CPIMoveRequest(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIMoveRequest::Receive(void) { tSock->Receive(7, false); }
-bool CPIMoveRequest::Handle(void) {
+void CPIMoveRequest::Receive() { tSock->Receive(7, false); }
+bool CPIMoveRequest::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     Movement->Walking(tSock, ourChar, tSock->GetByte(1), tSock->GetByte(2));
     ourChar->BreakConcentration(tSock);
@@ -1619,8 +1619,8 @@ void CPIMoveRequest::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIResyncReq::CPIResyncReq() {}
 CPIResyncReq::CPIResyncReq(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIResyncReq::Receive(void) { tSock->Receive(3, false); }
-bool CPIResyncReq::Handle(void) {
+void CPIResyncReq::Receive() { tSock->Receive(3, false); }
+bool CPIResyncReq::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->Dirty(UT_LOCATION);
     return true;
@@ -1643,8 +1643,8 @@ bool CPIResyncReq::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIResMenuChoice::CPIResMenuChoice() {}
 CPIResMenuChoice::CPIResMenuChoice(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIResMenuChoice::Receive(void) { tSock->Receive(2, false); }
-bool CPIResMenuChoice::Handle(void) {
+void CPIResMenuChoice::Receive() { tSock->Receive(2, false); }
+bool CPIResMenuChoice::Handle() {
     std::uint8_t cmd = tSock->GetByte(1);
     if (cmd == 0x02) {
         tSock->SysMessage(766); // You are now a ghost.
@@ -1671,8 +1671,8 @@ bool CPIResMenuChoice::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIAttack::CPIAttack() {}
 CPIAttack::CPIAttack(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIAttack::Receive(void) { tSock->Receive(5, false); }
-bool CPIAttack::Handle(void) {
+void CPIAttack::Receive() { tSock->Receive(5, false); }
+bool CPIAttack::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
     Combat->PlayerAttack(tSock);
@@ -1709,7 +1709,7 @@ bool CPIAttack::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPITargetCursor::CPITargetCursor() {}
 CPITargetCursor::CPITargetCursor(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPITargetCursor::Receive(void) { tSock->Receive(19, false); }
+void CPITargetCursor::Receive() { tSock->Receive(19, false); }
 void CPITargetCursor::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPITargetCursor 0x6C --> Length: 19" << TimeStamp()
@@ -1750,7 +1750,7 @@ void CPITargetCursor::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIEquipItem::CPIEquipItem() {}
 CPIEquipItem::CPIEquipItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIEquipItem::Receive(void) { tSock->Receive(10, false); }
+void CPIEquipItem::Receive() { tSock->Receive(10, false); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGetItem()
@@ -1773,7 +1773,7 @@ void CPIEquipItem::Receive(void) { tSock->Receive(10, false); }
 // o------------------------------------------------------------------------------------------------o
 CPIGetItem::CPIGetItem() {}
 CPIGetItem::CPIGetItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIGetItem::Receive(void) { tSock->Receive(7, false); }
+void CPIGetItem::Receive() { tSock->Receive(7, false); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIDropItem()
@@ -1805,7 +1805,7 @@ void CPIGetItem::Receive(void) { tSock->Receive(7, false); }
 // o------------------------------------------------------------------------------------------------o
 CPIDropItem::CPIDropItem() {}
 CPIDropItem::CPIDropItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIDropItem::Receive(void) {
+void CPIDropItem::Receive() {
     uokrFlag = false;
     if (tSock->ClientVerShort() >= CVS_6017) {
         uokrFlag = true;
@@ -1857,16 +1857,16 @@ void CPIDropItem::Receive(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIGumpMenuSelect::CPIGumpMenuSelect() {}
 CPIGumpMenuSelect::CPIGumpMenuSelect(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIGumpMenuSelect::Receive(void) {
+void CPIGumpMenuSelect::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
 
-serial_t CPIGumpMenuSelect::ButtonId(void) const { return buttonId; }
-serial_t CPIGumpMenuSelect::GumpId(void) const { return gumpId; }
-serial_t CPIGumpMenuSelect::ID(void) const { return id; }
-std::uint32_t CPIGumpMenuSelect::SwitchCount(void) const { return switchCount; }
-std::uint32_t CPIGumpMenuSelect::TextCount(void) const { return textCount; }
+serial_t CPIGumpMenuSelect::ButtonId() const { return buttonId; }
+serial_t CPIGumpMenuSelect::GumpId() const { return gumpId; }
+serial_t CPIGumpMenuSelect::ID() const { return id; }
+std::uint32_t CPIGumpMenuSelect::SwitchCount() const { return switchCount; }
+std::uint32_t CPIGumpMenuSelect::TextCount() const { return textCount; }
 
 std::uint32_t CPIGumpMenuSelect::SwitchValue(std::uint32_t index) const {
     if (index >= switchCount)
@@ -1901,7 +1901,7 @@ std::string CPIGumpMenuSelect::GetTextString(std::uint8_t number) const {
     }
     return toReturn;
 }
-void CPIGumpMenuSelect::BuildTextLocations(void) {
+void CPIGumpMenuSelect::BuildTextLocations() {
     if (textCount > 0) {
         size_t i = static_cast<size_t>(textOffset) +
                    4; // first is textOffset + 4, to walk past the number of text strings
@@ -1950,7 +1950,7 @@ void CPIGumpMenuSelect::BuildTextLocations(void) {
 // o------------------------------------------------------------------------------------------------o
 CPITalkRequest::CPITalkRequest() { InternalReset(); }
 CPITalkRequest::CPITalkRequest(CSocket *s) : CPInputBuffer(s) { InternalReset(); }
-void CPITalkRequest::InternalReset(void) {
+void CPITalkRequest::InternalReset() {
     textColour = 0x3B2;
     strLen = 0;
     fontUsed = 0;
@@ -1959,18 +1959,18 @@ void CPITalkRequest::InternalReset(void) {
     isUnicode = false;
 }
 
-colour_t CPITalkRequest::TextColour(void) const { return textColour; }
-std::uint16_t CPITalkRequest::Length(void) const { return strLen; }
-std::uint16_t CPITalkRequest::Font(void) const { return fontUsed; }
+colour_t CPITalkRequest::TextColour() const { return textColour; }
+std::uint16_t CPITalkRequest::Length() const { return strLen; }
+std::uint16_t CPITalkRequest::Font() const { return fontUsed; }
 
-speechtype_t CPITalkRequest::Type(void) const { return typeUsed; }
+speechtype_t CPITalkRequest::Type() const { return typeUsed; }
 
-bool CPITalkRequest::IsUnicode(void) const { return isUnicode; }
+bool CPITalkRequest::IsUnicode() const { return isUnicode; }
 
-std::string CPITalkRequest::TextString(void) const { return txtSaid; }
-char *CPITalkRequest::Text(void) const { return (char *)&txtSaid[0]; }
+std::string CPITalkRequest::TextString() const { return txtSaid; }
+char *CPITalkRequest::Text() const { return (char *)&txtSaid[0]; }
 
-bool CPITalkRequest::HandleCommon(void) {
+bool CPITalkRequest::HandleCommon() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
     ourChar->SetUnicode(false);
@@ -2247,7 +2247,7 @@ bool CPITalkRequest::HandleCommon(void) {
 // o------------------------------------------------------------------------------------------------o
 CPITalkRequestAscii::CPITalkRequestAscii() : CPITalkRequest() {}
 CPITalkRequestAscii::CPITalkRequestAscii(CSocket *s) : CPITalkRequest(s) { Receive(); }
-void CPITalkRequestAscii::Receive(void) {
+void CPITalkRequestAscii::Receive() {
     tSock->Receive(3, false);
     std::uint16_t blockLen = tSock->GetWord(1);
     tSock->Receive(blockLen, false);
@@ -2327,7 +2327,7 @@ CPITalkRequestUnicode::CPITalkRequestUnicode(CSocket *s) : CPITalkRequest(s) {
     memset(unicodeTxt, 0, 8192);
     Receive();
 }
-void CPITalkRequestUnicode::Receive(void) {
+void CPITalkRequestUnicode::Receive() {
     tSock->Receive(3, false);
     std::uint16_t blockLen = tSock->GetWord(1);
     tSock->Receive(blockLen, false);
@@ -2423,10 +2423,10 @@ void CPITalkRequestUnicode::Receive(void) {
     }
 }
 
-std::string CPITalkRequestUnicode::UnicodeTextString(void) const { return unicodeTxt; }
-char *CPITalkRequestUnicode::UnicodeText(void) const { return (char *)unicodeTxt; }
+std::string CPITalkRequestUnicode::UnicodeTextString() const { return unicodeTxt; }
+char *CPITalkRequestUnicode::UnicodeText() const { return (char *)unicodeTxt; }
 
-char *CPITalkRequestUnicode::Language(void) const { return (char *)langCode; }
+char *CPITalkRequestUnicode::Language() const { return (char *)langCode; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIAllNames3D()
@@ -2457,11 +2457,11 @@ char *CPITalkRequestUnicode::Language(void) const { return (char *)langCode; }
 // o------------------------------------------------------------------------------------------------o
 CPIAllNames3D::CPIAllNames3D() : CPInputBuffer() {}
 CPIAllNames3D::CPIAllNames3D(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIAllNames3D::Receive(void) {
+void CPIAllNames3D::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
-bool CPIAllNames3D::Handle(void) {
+bool CPIAllNames3D::Handle() {
     serial_t objSer = tSock->GetDWord(3);
     CBaseObject *toName = nullptr;
 
@@ -2499,7 +2499,7 @@ bool CPIAllNames3D::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIGumpChoice::CPIGumpChoice() {}
 CPIGumpChoice::CPIGumpChoice(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIGumpChoice::Receive(void) { tSock->Receive(13, false); }
+void CPIGumpChoice::Receive() { tSock->Receive(13, false); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIBuyItem()
@@ -2525,7 +2525,7 @@ void CPIGumpChoice::Receive(void) { tSock->Receive(13, false); }
 // o------------------------------------------------------------------------------------------------o
 CPIBuyItem::CPIBuyItem() {}
 CPIBuyItem::CPIBuyItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIBuyItem::Receive(void) {
+void CPIBuyItem::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -2551,7 +2551,7 @@ void CPIBuyItem::Receive(void) {
 // o------------------------------------------------------------------------------------------------o
 CPISellItem::CPISellItem() {}
 CPISellItem::CPISellItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPISellItem::Receive(void) {
+void CPISellItem::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -2575,7 +2575,7 @@ void CPISellItem::Receive(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIDeleteCharacter::CPIDeleteCharacter() {}
 CPIDeleteCharacter::CPIDeleteCharacter(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIDeleteCharacter::Receive(void) { tSock->Receive(0x27, false); }
+void CPIDeleteCharacter::Receive() { tSock->Receive(0x27, false); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPICreateCharacter()
@@ -2591,7 +2591,7 @@ void CPIDeleteCharacter::Receive(void) { tSock->Receive(0x27, false); }
 // o------------------------------------------------------------------------------------------------o
 CPICreateCharacter::CPICreateCharacter() {}
 CPICreateCharacter::CPICreateCharacter(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPICreateCharacter::Receive(void) {
+void CPICreateCharacter::Receive() {
     if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
         Create3DCharacter();
     }
@@ -2654,7 +2654,7 @@ void CPICreateCharacter::Receive(void) {
 //|						BYTE[2] beard color  // the last two might be
 // reversed |						BYTE[2] beard style/item id*/
 // o------------------------------------------------------------------------------------------------o
-void CPICreateCharacter::Create3DCharacter(void) {
+void CPICreateCharacter::Create3DCharacter() {
     if (ValidateObject(tSock->CurrcharObj())) {
         Console::shared().Error(util::format(
             "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) "
@@ -2755,7 +2755,7 @@ void CPICreateCharacter::Create3DCharacter(void) {
 // 100/102 |						BYTE[2] pants color
 // 102/104
 // o------------------------------------------------------------------------------------------------o
-void CPICreateCharacter::Create2DCharacter(void) {
+void CPICreateCharacter::Create2DCharacter() {
     if (ValidateObject(tSock->CurrcharObj())) {
         Console::shared().Error(util::format(
             "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character "
@@ -2932,7 +2932,7 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIPlayCharacter::CPIPlayCharacter() {}
 CPIPlayCharacter::CPIPlayCharacter(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIPlayCharacter::Receive(void) {
+void CPIPlayCharacter::Receive() {
     tSock->Receive(0x49, false);
     Network->Transfer(tSock);
 
@@ -2989,7 +2989,7 @@ void CPIPlayCharacter::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIGumpInput::CPIGumpInput() {}
 CPIGumpInput::CPIGumpInput(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIGumpInput::Receive(void) {
+void CPIGumpInput::Receive() {
     tSock->Receive(3, false);
     std::uint16_t length = tSock->GetWord(1);
     tSock->Receive(length, false);
@@ -3008,14 +3008,14 @@ void CPIGumpInput::Receive(void) {
     }
 }
 
-std::uint32_t CPIGumpInput::ID(void) const { return id; }
-std::uint8_t CPIGumpInput::Type(void) const { return type; }
-std::uint8_t CPIGumpInput::Index(void) const { return index; }
+std::uint32_t CPIGumpInput::ID() const { return id; }
+std::uint8_t CPIGumpInput::Type() const { return type; }
+std::uint8_t CPIGumpInput::Index() const { return index; }
 std::uint8_t CPIGumpInput::Unk(std::int32_t offset) const {
     assert(offset >= 0 && offset <= 2);
     return unk[offset];
 }
-const std::string CPIGumpInput::Reply(void) const { return reply; }
+const std::string CPIGumpInput::Reply() const { return reply; }
 
 void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
@@ -3048,7 +3048,7 @@ void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 CPIHelpRequest::CPIHelpRequest(CSocket *s, std::uint16_t menuVal) : CPInputBuffer(s) { menuNum = menuVal; }
 CPIHelpRequest::CPIHelpRequest(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIHelpRequest::Receive(void) {
+void CPIHelpRequest::Receive() {
     tSock->Receive(0x102, false);
     menuNum = 1;
 }
@@ -3076,7 +3076,7 @@ void CPIHelpRequest::Receive(void) {
 // o------------------------------------------------------------------------------------------------o
 CPITradeMessage::CPITradeMessage() {}
 CPITradeMessage::CPITradeMessage(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPITradeMessage::Receive(void) {
+void CPITradeMessage::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -3098,7 +3098,7 @@ void CPITradeMessage::Receive(void) {
 // o------------------------------------------------------------------------------------------------o
 CPIDyeWindow::CPIDyeWindow() {}
 CPIDyeWindow::CPIDyeWindow(CSocket *s) : CPInputBuffer(s) { Receive(); }
-void CPIDyeWindow::Receive(void) {
+void CPIDyeWindow::Receive() {
     tSock->Receive(9, false);
 
     changing = tSock->GetDWord(1);
@@ -3117,7 +3117,7 @@ void CPIDyeWindow::Log(std::ostream &outStream, bool fullHeader) {
     CPInputBuffer::Log(outStream, false);
 }
 
-bool CPIDyeWindow::Handle(void) {
+bool CPIDyeWindow::Handle() {
     if (changing >= BASEITEMSERIAL) {
         CItem *i = CalcItemObjFromSer(changing);
         if (ValidateObject(i)) {
@@ -3179,7 +3179,7 @@ CPIMsgBoardEvent::CPIMsgBoardEvent() {}
 CPIMsgBoardEvent::CPIMsgBoardEvent(CSocket *s) : CPInputBuffer(s) { Receive(); }
 CPIMsgBoardEvent::CPIMsgBoardEvent(CSocket *s, [[maybe_unused]] bool receive) : CPInputBuffer(s) {}
 
-void CPIMsgBoardEvent::Receive(void) {
+void CPIMsgBoardEvent::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -3210,7 +3210,7 @@ CPINewBookHeader::CPINewBookHeader() {}
 
 CPINewBookHeader::CPINewBookHeader(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPINewBookHeader::Receive(void) {
+void CPINewBookHeader::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -3253,7 +3253,7 @@ CPIToolTipRequestAoS::CPIToolTipRequestAoS(CSocket *s) : CPInputBuffer(s), getSe
     Receive();
 }
 
-void CPIToolTipRequestAoS::Receive(void) {
+void CPIToolTipRequestAoS::Receive() {
     tSock->Receive(3, false);
 
     std::uint16_t blockLen = tSock->GetWord(1);
@@ -3273,7 +3273,7 @@ void CPIToolTipRequestAoS::Receive(void) {
         }
     }
 }
-bool CPIToolTipRequestAoS::Handle(void) { return true; }
+bool CPIToolTipRequestAoS::Handle() { return true; }
 void CPIToolTipRequestAoS::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : 0xD6 Tooltip Request --> Length: " << tSock->GetWord(1)
@@ -3313,7 +3313,7 @@ CPIBookPage::CPIBookPage() {}
 
 CPIBookPage::CPIBookPage(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIBookPage::Receive(void) {
+void CPIBookPage::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
 }
@@ -3363,7 +3363,7 @@ CPIMetrics::CPIMetrics() {}
 
 CPIMetrics::CPIMetrics(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIMetrics::Receive(void) { tSock->Receive(0x010C, false); }
+void CPIMetrics::Receive() { tSock->Receive(0x010C, false); }
 
 bool CPIMetrics::Handle() {
     // we're going to silently swallow this packet, really
@@ -3505,7 +3505,7 @@ CPISubcommands::CPISubcommands(CSocket *s) : CPInputBuffer(s) {
 //	BYTE[4]	Item Serial
 //	BYTE[4] Target Serial
 
-void CPISubcommands::Receive(void) {
+void CPISubcommands::Receive() {
     tSock->Receive(3, false);
     tSock->Receive(tSock->GetWord(1), false);
     subCmd = tSock->GetWord(3);
@@ -3573,7 +3573,7 @@ void CPISubcommands::Receive(void) {
     } break; // Toggle Flying on/off
     }
 }
-bool CPISubcommands::Handle(void) {
+bool CPISubcommands::Handle() {
     bool retVal = skipOver;
     if (subPacket != nullptr) {
         retVal = subPacket->Handle();
@@ -3650,8 +3650,8 @@ void CPISubcommands::Log(std::ostream &outStream, bool fullHeader) {
 CPIPartyCommand::CPIPartyCommand() {}
 CPIPartyCommand::CPIPartyCommand(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIPartyCommand::Receive(void) {}
-bool CPIPartyCommand::Handle(void) {
+void CPIPartyCommand::Receive() {}
+bool CPIPartyCommand::Handle() {
     std::uint8_t partyCmd = tSock->GetByte(5);
 
     const std::int32_t PARTY_ADD = 1;
@@ -3895,8 +3895,8 @@ void CPIPartyCommand::Log(std::ostream &outStream, bool fullHeader) {
 CPITrackingArrow::CPITrackingArrow() {}
 CPITrackingArrow::CPITrackingArrow(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPITrackingArrow::Receive(void) {}
-bool CPITrackingArrow::Handle(void) {
+void CPITrackingArrow::Receive() {}
+bool CPITrackingArrow::Handle() {
     CChar *mChar = tSock->CurrcharObj();
     if (ValidateObject(mChar) && tSock->GetByte(5) == 0x01) {
         tSock->SetTimer(tPC_TRACKING, 0);
@@ -3952,8 +3952,8 @@ CPIClientLanguage::CPIClientLanguage(CSocket *s) : CPInputBuffer(s) {
     Receive();
 }
 
-void CPIClientLanguage::Receive(void) { newLang = FindLanguage(tSock, 5); }
-bool CPIClientLanguage::Handle(void) {
+void CPIClientLanguage::Receive() { newLang = FindLanguage(tSock, 5); }
+bool CPIClientLanguage::Handle() {
     tSock->Language(newLang);
     return true;
 }
@@ -4013,8 +4013,8 @@ void CPIClientLanguage::Log(std::ostream &outStream, bool fullHeader) {
 CPIUOTDActions::CPIUOTDActions() {}
 CPIUOTDActions::CPIUOTDActions(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIUOTDActions::Receive(void) { action = tSock->GetWord(7); }
-bool CPIUOTDActions::Handle(void) {
+void CPIUOTDActions::Receive() { action = tSock->GetWord(7); }
+bool CPIUOTDActions::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     Effects->PlayCharacterAnimation(ourChar, action, 1);
     return true;
@@ -4050,8 +4050,8 @@ CPIToolTipRequest::CPIToolTipRequest(CSocket *s) : CPInputBuffer(s), getSer(INVA
     Receive();
 }
 
-void CPIToolTipRequest::Receive(void) { getSer = tSock->GetDWord(5); }
-bool CPIToolTipRequest::Handle(void) {
+void CPIToolTipRequest::Receive() { getSer = tSock->GetDWord(5); }
+bool CPIToolTipRequest::Handle() {
     if (getSer != INVALIDSERIAL) {
         // Only send tooltip if server feature for tooltips is enabled
         if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
@@ -4091,8 +4091,8 @@ CPIPopupMenuRequest::CPIPopupMenuRequest(CSocket *s) : CPInputBuffer(s), mSer(IN
     Receive();
 }
 
-void CPIPopupMenuRequest::Receive(void) { mSer = tSock->GetDWord(5); }
-bool CPIPopupMenuRequest::Handle(void) {
+void CPIPopupMenuRequest::Receive() { mSer = tSock->GetDWord(5); }
+bool CPIPopupMenuRequest::Handle() {
     // Only show context menus if enabled in ini
     if (!cwmWorldState->ServerData()->ServerContextMenus())
         return true;
@@ -4147,13 +4147,13 @@ CPIPopupMenuSelect::CPIPopupMenuSelect(CSocket *s)
     Receive();
 }
 
-void CPIPopupMenuSelect::Receive(void) {
+void CPIPopupMenuSelect::Receive() {
     popupEntry = tSock->GetWord(9);
     targChar = CalcCharObjFromSer(tSock->GetDWord(5));
 }
 
 bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr);
-bool CPIPopupMenuSelect::Handle(void) {
+bool CPIPopupMenuSelect::Handle() {
     // Only show context menus if enabled in ini
     if (!cwmWorldState->ServerData()->ServerContextMenus())
         return true;
@@ -4590,11 +4590,11 @@ void CPIPopupMenuSelect::Log(std::ostream &outStream, bool fullHeader) {
 CPIExtendedStats::CPIExtendedStats() {}
 CPIExtendedStats::CPIExtendedStats(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIExtendedStats::Receive(void) {
+void CPIExtendedStats::Receive() {
     statToSet = tSock->GetByte(5) + (ALLSKILLS + 1);
     value = tSock->GetByte(6);
 }
-bool CPIExtendedStats::Handle(void) {
+bool CPIExtendedStats::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->SetSkillLock(static_cast<skilllock_t>(value), statToSet);
     return true;
@@ -4628,8 +4628,8 @@ void CPIExtendedStats::Log(std::ostream &outStream, bool fullHeader) {
 CPIBandageMacro::CPIBandageMacro() {}
 CPIBandageMacro::CPIBandageMacro(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIBandageMacro::Receive(void) { Handle(); }
-bool CPIBandageMacro::Handle(void) {
+void CPIBandageMacro::Receive() { Handle(); }
+bool CPIBandageMacro::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     if (ValidateObject(ourChar)) {
         // Check if onUseBandageMacro event exists
@@ -4695,8 +4695,8 @@ void CPIBandageMacro::Log(std::ostream &outStream, bool fullHeader) {
 CPIClosedStatusGump::CPIClosedStatusGump() {}
 CPIClosedStatusGump::CPIClosedStatusGump(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIClosedStatusGump::Receive(void) { Handle(); }
-bool CPIClosedStatusGump::Handle(void) {
+void CPIClosedStatusGump::Receive() { Handle(); }
+bool CPIClosedStatusGump::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     if (ValidateObject(ourChar)) {
         serial_t statusGumpCharSerial = tSock->GetDWord(5);
@@ -4739,8 +4739,8 @@ void CPIClosedStatusGump::Log(std::ostream &outStream, bool fullHeader) {
 CPIToggleFlying::CPIToggleFlying() {}
 CPIToggleFlying::CPIToggleFlying(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIToggleFlying::Receive(void) { Handle(); }
-bool CPIToggleFlying::Handle(void) {
+void CPIToggleFlying::Receive() { Handle(); }
+bool CPIToggleFlying::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     if (ValidateObject(ourChar)) {
         ourChar->ToggleFlying();
@@ -4793,13 +4793,13 @@ void CPIKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::Log(outStream, false);
 }
-void CPIKrriosClientSpecial::InternalReset(void) {}
+void CPIKrriosClientSpecial::InternalReset() {}
 CPIKrriosClientSpecial::CPIKrriosClientSpecial() { InternalReset(); }
 CPIKrriosClientSpecial::CPIKrriosClientSpecial(CSocket *s) : CPInputBuffer(s) {
     InternalReset();
     Receive();
 }
-void CPIKrriosClientSpecial::Receive(void) {
+void CPIKrriosClientSpecial::Receive() {
     tSock->Receive(4, false);
     blockLen = tSock->GetWord(1);
     tSock->Receive(blockLen, false);
@@ -4812,7 +4812,7 @@ void CPIKrriosClientSpecial::Receive(void) {
         type = tSock->GetByte(3);
     }
 }
-bool CPIKrriosClientSpecial::Handle(void) {
+bool CPIKrriosClientSpecial::Handle() {
     locations = false;
 
     switch (type) {
@@ -4893,8 +4893,8 @@ bool CPIKrriosClientSpecial::Handle(void) {
 CPISpellbookSelect::CPISpellbookSelect() {}
 CPISpellbookSelect::CPISpellbookSelect(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPISpellbookSelect::Receive(void) {}
-bool CPISpellbookSelect::Handle(void) {
+void CPISpellbookSelect::Receive() {}
+bool CPISpellbookSelect::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     CItem *sBook = FindItemOfType(ourChar, IT_SPELLBOOK);
     CItem *p = ourChar->GetPackItem();
@@ -5050,12 +5050,12 @@ void CPISpellbookSelect::Log(std::ostream &outStream, bool fullHeader) {
 CPIAOSCommand::CPIAOSCommand() {}
 CPIAOSCommand::CPIAOSCommand(CSocket *s) : CPInputBuffer(s) { Receive(); }
 
-void CPIAOSCommand::Receive(void) {
+void CPIAOSCommand::Receive() {
     tSock->Receive(3, false);
     std::uint16_t len = tSock->GetWord(1);
     tSock->Receive(len, false);
 }
-bool CPIAOSCommand::Handle(void) {
+bool CPIAOSCommand::Handle() {
     switch (tSock->GetWord(7)) // Which subcommand?
     {
         /*case 0x0002:	break;	//House Customisation :: Backup

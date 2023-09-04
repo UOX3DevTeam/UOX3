@@ -90,12 +90,12 @@ protected:
     // weapon, and does elemental damage to Heat weak races
     
     auto RemoveSelfFromCont() -> void;
-    virtual void RemoveSelfFromOwner(void) override;
-    virtual void AddSelfToOwner(void) override;
+    virtual void RemoveSelfFromOwner() override;
+    virtual void AddSelfToOwner() override;
     
     auto CheckItemIntegrity() -> void;
     virtual bool DumpHeader(std::ostream &outStream) const override;
-    virtual bool LoadRemnants(void) override;
+    virtual bool LoadRemnants() override;
     
     std::uint32_t spells[3]; // For spellbooks (eventually should be a derived class)
     
@@ -198,7 +198,7 @@ public:
     auto SetAmount(std::uint32_t newValue) -> void;
     auto IncAmount(std::int32_t incValue, bool noDelete = false) -> bool;
     
-    virtual std::uint16_t GetMaxHP(void) const;
+    virtual std::uint16_t GetMaxHP() const;
     virtual void SetMaxHP(std::uint16_t newValue);
     
     auto GetSpeed() const -> std::uint8_t;
@@ -221,7 +221,7 @@ public:
     auto SetTempTimer(timerval_t newValue) -> void;
     auto SetDecayTime(timerval_t newValue) -> void;
     
-    virtual std::uint8_t GetPriv(void) const;
+    virtual std::uint8_t GetPriv() const;
     virtual void SetPriv(std::uint8_t newValue);
     
     auto GetBuyValue() const -> std::uint32_t;
@@ -325,9 +325,9 @@ public:
     virtual bool Save(std::ostream &outStream) override;
     virtual bool DumpBody(std::ostream &outStream) const override;
     virtual bool HandleLine(std::string &UTag, std::string &data) override;
-    virtual void PostLoadProcessing(void) override;
-    virtual void Cleanup(void) override;
-    virtual void Delete(void) override;
+    virtual void PostLoadProcessing() override;
+    virtual void Cleanup() override;
+    virtual void Delete() override;
     virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
     
     auto GetSpell(std::uint8_t part) const -> std::uint32_t;
@@ -365,7 +365,7 @@ public:
     auto HandleNPCSpawner() -> bool;
     auto HandleSpawnContainer() -> bool;
     
-    virtual void Cleanup(void) override;
+    virtual void Cleanup() override;
     
     virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
     

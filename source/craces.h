@@ -77,40 +77,40 @@ public:
     ~CRace();
     
     skillval_t Skill(std::int32_t skillNum) const;
-    const std::string Name(void) const;
-    bool RequiresBeard(void) const;
-    bool NoBeard(void) const;
-    bool IsPlayerRace(void) const;
+    const std::string Name() const;
+    bool RequiresBeard() const;
+    bool NoBeard() const;
+    bool IsPlayerRace() const;
     bool AffectedBy(weathertype_t iNum) const;
     void AffectedBy(bool value, weathertype_t iNum);
-    bool NoHair(void) const;
+    bool NoHair() const;
     bool CanEquipItem(std::uint16_t itemId) const;
     
-    gender_t GenderRestriction(void) const;
-    lightlevel_t LightLevel(void) const;
-    coldlevel_t ColdLevel(void) const;
-    heatlevel_t HeatLevel(void) const;
-    lightlevel_t NightVision(void) const;
-    armorclass_t ArmourClassRestriction(void) const;
+    gender_t GenderRestriction() const;
+    lightlevel_t LightLevel() const;
+    coldlevel_t ColdLevel() const;
+    heatlevel_t HeatLevel() const;
+    lightlevel_t NightVision() const;
+    armorclass_t ArmourClassRestriction() const;
     seconds_t WeatherSeconds(weathertype_t iNum) const;
     std::int8_t WeatherDamage(weathertype_t iNum) const;
-    R32 MagicResistance(void) const;
-    R32 PoisonResistance(void) const;
+    R32 MagicResistance() const;
+    R32 PoisonResistance() const;
     
-    skillval_t LanguageMin(void) const;
-    range_t VisibilityRange(void) const;
+    skillval_t LanguageMin() const;
+    range_t VisibilityRange() const;
     RaceRelate RaceRelation(raceid_t race) const;
     
-    std::uint16_t GetHungerRate(void) const;
-    std::uint16_t GetThirstRate(void) const;
+    std::uint16_t GetHungerRate() const;
+    std::uint16_t GetThirstRate() const;
     void SetHungerRate(std::uint16_t newValue);
     void SetThirstRate(std::uint16_t newValue);
-    std::int16_t GetHungerDamage(void) const;
-    std::int16_t GetThirstDrain(void) const;
+    std::int16_t GetHungerDamage() const;
+    std::int16_t GetThirstDrain() const;
     void SetHungerDamage(std::int16_t newValue);
     void SetThirstDrain(std::int16_t newValue);
-    bool DoesHunger(void) const;
-    bool DoesThirst(void) const;
+    bool DoesHunger() const;
+    bool DoesThirst() const;
     void DoesHunger(bool newValue);
     void DoesThirst(bool newValue);
     
@@ -122,11 +122,11 @@ public:
     void NoHair(bool newValue);
     void RestrictGear(bool newValue);
     
-    std::int16_t HPModifier(void) const;
+    std::int16_t HPModifier() const;
     void HPModifier(std::int16_t value);
-    std::int16_t ManaModifier(void) const;
+    std::int16_t ManaModifier() const;
     void ManaModifier(std::int16_t value);
-    std::int16_t StamModifier(void) const;
+    std::int16_t StamModifier() const;
     void StamModifier(std::int16_t value);
     
     void MagicResistance(R32 value);
@@ -146,15 +146,15 @@ public:
     void NumEnemyRaces(std::int32_t iNum);
     void RaceRelation(RaceRelate value, raceid_t race);
     
-    colour_t RandomSkin(void) const;
-    colour_t RandomHair(void) const;
-    colour_t RandomBeard(void) const;
-    colour_t BloodColour(void) const;
+    colour_t RandomSkin() const;
+    colour_t RandomHair() const;
+    colour_t RandomBeard() const;
+    colour_t BloodColour() const;
     void BloodColour(colour_t newValue);
     
-    bool IsSkinRestricted(void) const;
-    bool IsHairRestricted(void) const;
-    bool IsBeardRestricted(void) const;
+    bool IsSkinRestricted() const;
+    bool IsHairRestricted() const;
+    bool IsBeardRestricted() const;
     
     bool IsValidSkin(colour_t val) const;
     bool IsValidHair(colour_t val) const;
@@ -175,7 +175,7 @@ private:
     RACELIST races;
     MODIFIERLIST combat;
     
-    void DefaultInitCombat(void);
+    void DefaultInitCombat();
     
     // functions - accessors
     
@@ -189,7 +189,7 @@ public:
     // Functions
     ~cRaces();
     cRaces();
-    void Load(void); // loads races
+    void Load(); // loads races
     RaceRelate Compare(CChar *player1, CChar *player2) const;
     RaceRelate CompareByRace(raceid_t race1, raceid_t race2) const; // compares chars
     void ApplyRace(CChar *s, raceid_t x, bool always = false);    // Race Gate
@@ -261,9 +261,9 @@ public:
     void IsPlayerRace(raceid_t x, bool value);
     
     void DebugPrint(raceid_t race);
-    void DebugPrintAll(void);
+    void DebugPrintAll();
     
-    size_t Count(void) const;
+    size_t Count() const;
 };
 
 extern cRaces *Races;

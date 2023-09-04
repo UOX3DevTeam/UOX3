@@ -21,7 +21,7 @@ CWhoList *OffList;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disables the WhoList update flag
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::ResetUpdateFlag(void) { needsUpdating = false; }
+void CWhoList::ResetUpdateFlag() { needsUpdating = false; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	CWhoList::CWhoList()
@@ -51,7 +51,7 @@ CWhoList::~CWhoList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Flags the WhoList as needing to be updated
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::FlagUpdate(void) { needsUpdating = true; }
+void CWhoList::FlagUpdate() { needsUpdating = true; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWhoList::SendSocket()
@@ -81,7 +81,7 @@ void CWhoList::SendSocket(CSocket *toSendTo) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increments the GM counter
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::GMEnter(void) { ++gmCount; }
+void CWhoList::GMEnter() { ++gmCount; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWhoList::GMLeave()
@@ -89,7 +89,7 @@ void CWhoList::GMEnter(void) { ++gmCount; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Decrements the GM counter
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::GMLeave(void) {
+void CWhoList::GMLeave() {
     if (gmCount != 0) {
         --gmCount;
     }
@@ -101,7 +101,7 @@ void CWhoList::GMLeave(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes all the entries in the WhoList
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::Delete(void) {
+void CWhoList::Delete() {
     one.resize(0);
     two.resize(0);
     whoMenuData.resize(0);
@@ -363,7 +363,7 @@ void CWhoList::Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     toSendTo->Send(&toSend);
 }
 
-void CWhoList::ZeroWho(void) {
+void CWhoList::ZeroWho() {
     FlagUpdate();
     gmCount = 0;
 }
@@ -380,7 +380,7 @@ void CWhoList::ZeroWho(void) {
 //|						Written to use SendVecsAsGump, as well as making it
 //flexible enough to show offline players
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::Update(void) {
+void CWhoList::Update() {
     /*if( gmCount > 1 )
      {
      return;

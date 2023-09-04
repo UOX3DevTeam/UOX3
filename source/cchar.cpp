@@ -39,7 +39,7 @@
 //and CNPC)
 //|
 //|						1.4		 		27 September, 2005
-//|						Added PlayerValues_st and NPCValues_st to allow saving
+//|						Added PlayerValues and NPCValues to allow saving
 //wasted memory on unnecesarry variables
 //|						Organized many functions to their respective areas and
 //added documentation for them. |						Changed itemLayers
@@ -167,7 +167,7 @@ const std::uint32_t DEFPLAYER_CREATEDON = 0;
 const std::uint32_t DEFPLAYER_NPCGUILDJOINED = 0;
 const std::uint32_t DEFPLAYER_PLAYTIME = 0;
 
-CChar::PlayerValues_st::PlayerValues_st()
+CChar::PlayerValues::PlayerValues()
 : callNum(DEFPLAYER_CALLNUM), playerCallNum(DEFPLAYER_PLAYERCALLNUM),
 trackingTarget(DEFPLAYER_TRACKINGTARGET), squelched(DEFPLAYER_SQUELCHED),
 commandLevel(DEFPLAYER_COMMANDLEVEL), postType(DEFPLAYER_POSTTYPE),
@@ -230,7 +230,7 @@ const std::int8_t DEFNPC_PATHRESULT = 0;
 const std::uint16_t DEFNPC_PATHTARGX = 0;
 const std::uint16_t DEFNPC_PATHTARGY = 0;
 
-CChar::NPCValues_st::NPCValues_st()
+CChar::NPCValues::NPCValues()
 : wanderMode(DEFNPC_WANDER), oldWanderMode(DEFNPC_OLDWANDER), fTarg(DEFNPC_FTARG),
 fz(DEFNPC_FZ1), aiType(DEFNPC_AITYPE), spellAttack(DEFNPC_SPATTACK),
 spellDelay(DEFNPC_SPADELAY), taming(DEFNPC_TAMING), fleeAt(DEFNPC_FLEEAT),
@@ -375,15 +375,15 @@ CChar::~CChar() {
     }
 }
 
-void CChar::CreateNPC(void) {
+void CChar::CreateNPC() {
     if (!IsValidNPC()) {
-        mNPC = new NPCValues_st();
+        mNPC = new NPCValues();
     }
 }
 
-void CChar::CreatePlayer(void) {
+void CChar::CreatePlayer() {
     if (!IsValidPlayer()) {
-        mPlayer = new PlayerValues_st();
+        mPlayer = new PlayerValues();
     }
 }
 
@@ -392,14 +392,14 @@ void CChar::CreatePlayer(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks whether character is an NPC
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsValidNPC(void) const { return (mNPC != nullptr); }
+bool CChar::IsValidNPC() const { return (mNPC != nullptr); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IsValidPlayer()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks whether character is a Player
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsValidPlayer(void) const { return (mPlayer != nullptr); }
+bool CChar::IsValidPlayer() const { return (mPlayer != nullptr); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::GetPathFail()
@@ -408,7 +408,7 @@ bool CChar::IsValidPlayer(void) const { return (mPlayer != nullptr); }
 //|	Purpose		-	Get/Set number of times Pathfinding has failed for an NPC - resets
 // on success
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetPathFail(void) const {
+std::int8_t CChar::GetPathFail() const {
     std::int8_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathFail;
     return rVal;
@@ -426,7 +426,7 @@ void CChar::SetPathFail(std::int8_t newValue) {
 //|	Purpose		-	Get/Set the end result of pathfinding, to pass on to onPathfindEnd
 // event
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetPathResult(void) const {
+std::int8_t CChar::GetPathResult() const {
     std::int8_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathResult;
     return rVal;
@@ -443,7 +443,7 @@ void CChar::SetPathResult(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the final target X location NPC is pathfinding towards
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetPathTargX(void) const {
+std::uint16_t CChar::GetPathTargX() const {
     std::uint16_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathTargX;
     return rVal;
@@ -460,7 +460,7 @@ void CChar::SetPathTargX(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the final target Y location NPC is pathfinding towards
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetPathTargY(void) const {
+std::uint16_t CChar::GetPathTargY() const {
     std::uint16_t rVal = DEFNPC_PATHFAIL;
     rVal = mNPC->pathTargY;
     return rVal;
@@ -477,7 +477,7 @@ void CChar::SetPathTargY(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set hunger level of the character
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetHunger(void) const { return hunger; }
+std::int8_t CChar::GetHunger() const { return hunger; }
 bool CChar::SetHunger(std::int8_t newValue) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
@@ -643,7 +643,7 @@ void CChar::DoHunger(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Get/Set Thirst level of the character
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetThirst(void) const { return thirst; }
+std::int8_t CChar::GetThirst() const { return thirst; }
 
 bool CChar::SetThirst(std::int8_t newValue) {
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
@@ -790,7 +790,7 @@ void CChar::DoThirst(CSocket *mSock) {
 //|	Purpose		-	Check if the owner of the was offline for to long and remove him if
 // so.
 // o------------------------------------------------------------------------------------------------o
-void CChar::CheckPetOfflineTimeout(void) {
+void CChar::CheckPetOfflineTimeout() {
     if (IsTamed() && IsNpc() && GetNpcAiType() != AI_PLAYERVENDOR) {
         if (GetMounted() || GetStabled())
             return;
@@ -826,7 +826,7 @@ void CChar::CheckPetOfflineTimeout(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	The town the character belongs to
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetTown(void) const { return town; }
+std::uint16_t CChar::GetTown() const { return town; }
 void CChar::SetTown(std::uint16_t newValue) {
     town = newValue;
     UpdateRegion();
@@ -837,7 +837,7 @@ void CChar::SetTown(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the body type (human, elf, gargoyle, other) of a character
 // o------------------------------------------------------------------------------------------------o
-BodyType CChar::GetBodyType(void) {
+BodyType CChar::GetBodyType() {
     BodyType retVal = BT_OTHER;
     switch (GetId()) {
         case 0x0190: // Male Human
@@ -878,7 +878,7 @@ BodyType CChar::GetBodyType(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance gain to break peace
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetBrkPeaceChanceGain(void) const {
+std::uint8_t CChar::GetBrkPeaceChanceGain() const {
     if (IsNpc()) {
         return brkPeaceChanceGain;
     }
@@ -898,7 +898,7 @@ void CChar::SetBrkPeaceChanceGain(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the current chance to break peace
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetBrkPeaceChance(void) const { return brkPeaceChance; }
+std::uint8_t CChar::GetBrkPeaceChance() const { return brkPeaceChance; }
 void CChar::SetBrkPeaceChance(std::uint8_t newValue) {
     brkPeaceChance = newValue;
     UpdateRegion();
@@ -910,7 +910,7 @@ void CChar::SetBrkPeaceChance(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is speaking in unicode
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsUnicode(void) const { return bools.test(BIT_UNICODE); }
+bool CChar::IsUnicode() const { return bools.test(BIT_UNICODE); }
 void CChar::SetUnicode(bool newVal) { bools.set(BIT_UNICODE, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -919,7 +919,7 @@ void CChar::SetUnicode(bool newVal) { bools.set(BIT_UNICODE, newVal); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is an npc
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsNpc(void) const { return bools.test(BIT_NPC); }
+bool CChar::IsNpc() const { return bools.test(BIT_NPC); }
 void CChar::SetNpc(bool newVal) {
     bools.set(BIT_NPC, newVal);
     UpdateRegion();
@@ -935,7 +935,7 @@ void CChar::SetNpc(bool newVal) {
 //part of the |					regular region update loop, but in a separate loop
 // directly after
 // o------------------------------------------------------------------------------------------------o
-auto CChar::IsAwake(void) const -> bool {
+auto CChar::IsAwake() const -> bool {
     bool rVal = false;
     if (IsValidNPC()) {
         rVal = mNPC->boolFlags.test(BIT_AWAKE);
@@ -964,7 +964,7 @@ auto CChar::SetAwake(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is evading
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsEvading(void) const { return bools.test(BIT_EVADE); }
+bool CChar::IsEvading() const { return bools.test(BIT_EVADE); }
 void CChar::SetEvadeState(bool newVal) {
     bools.set(BIT_EVADE, newVal);
     UpdateRegion();
@@ -976,7 +976,7 @@ void CChar::SetEvadeState(bool newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is a shopkeeper
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsShop(void) const { return bools.test(BIT_SHOP); }
+bool CChar::IsShop() const { return bools.test(BIT_SHOP); }
 void CChar::SetShop(bool newVal) {
     bools.set(BIT_SHOP, newVal);
     UpdateRegion();
@@ -988,7 +988,7 @@ void CChar::SetShop(bool newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is dead
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsDead(void) const { return bools.test(BIT_DEAD); }
+bool CChar::IsDead() const { return bools.test(BIT_DEAD); }
 void CChar::SetDead(bool newValue) {
     bools.set(BIT_DEAD, newValue);
     UpdateRegion();
@@ -1010,7 +1010,7 @@ void CChar::SetDead(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the char can attack targets
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetCanAttack(void) const { return bools.test(BIT_CANATTACK); }
+bool CChar::GetCanAttack() const { return bools.test(BIT_CANATTACK); }
 void CChar::SetCanAttack(bool newValue) {
     bools.set(BIT_CANATTACK, newValue);
     SetBrkPeaceChance(0);
@@ -1023,7 +1023,7 @@ void CChar::SetCanAttack(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is at war
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsAtWar(void) const { return bools.test(BIT_ATWAR); }
+bool CChar::IsAtWar() const { return bools.test(BIT_ATWAR); }
 void CChar::SetWar(bool newValue) {
     bools.set(BIT_ATWAR, newValue);
     UpdateRegion();
@@ -1047,7 +1047,7 @@ void CChar::SetWar(bool newValue) {
 //|					allow players to "tab out" of combat and not hit back even
 //though someone is |					hitting them
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsPassive(void) const { return bools.test(BIT_ISPASSIVE); }
+bool CChar::IsPassive() const { return bools.test(BIT_ISPASSIVE); }
 void CChar::SetPassive(bool newValue) { bools.set(BIT_ISPASSIVE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1066,7 +1066,7 @@ auto CChar::HasStolen(bool newValue) -> void { bools.set(BIT_HASSTOLEN, newValue
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets whether the character is on a horse
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsOnHorse(void) const { return bools.test(BIT_ONHORSE); }
+bool CChar::IsOnHorse() const { return bools.test(BIT_ONHORSE); }
 void CChar::SetOnHorse(bool newValue) { bools.set(BIT_ONHORSE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1075,7 +1075,7 @@ void CChar::SetOnHorse(bool newValue) { bools.set(BIT_ONHORSE, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the character's town info is displayed
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetTownTitle(void) const { return bools.test(BIT_TOWNTITLE); }
+bool CChar::GetTownTitle() const { return bools.test(BIT_TOWNTITLE); }
 void CChar::SetTownTitle(bool newValue) {
     bools.set(BIT_TOWNTITLE, newValue);
     UpdateRegion();
@@ -1087,7 +1087,7 @@ void CChar::SetTownTitle(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the character has reactive armour
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetReactiveArmour(void) const { return bools.test(BIT_REACTIVEARMOUR); }
+bool CChar::GetReactiveArmour() const { return bools.test(BIT_REACTIVEARMOUR); }
 void CChar::SetReactiveArmour(bool newValue) { bools.set(BIT_REACTIVEARMOUR, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1096,7 +1096,7 @@ void CChar::SetReactiveArmour(bool newValue) { bools.set(BIT_REACTIVEARMOUR, new
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character can train
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanTrain(void) const { return bools.test(BIT_TRAIN); }
+bool CChar::CanTrain() const { return bools.test(BIT_TRAIN); }
 void CChar::SetCanTrain(bool newValue) {
     bools.set(BIT_TRAIN, newValue);
     UpdateRegion();
@@ -1108,7 +1108,7 @@ void CChar::SetCanTrain(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is available for hire
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanBeHired(void) const { return bools.test(BIT_HIRELING); }
+bool CChar::CanBeHired() const { return bools.test(BIT_HIRELING); }
 void CChar::SetCanHire(bool newValue) {
     bools.set(BIT_HIRELING, newValue);
     UpdateRegion();
@@ -1120,7 +1120,7 @@ void CChar::SetCanHire(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets whether the character displays guild information
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetGuildToggle(void) const { return bools.test(BIT_GUILDTOGGLE); }
+bool CChar::GetGuildToggle() const { return bools.test(BIT_GUILDTOGGLE); }
 void CChar::SetGuildToggle(bool newValue) {
     bools.set(BIT_GUILDTOGGLE, newValue);
     UpdateRegion();
@@ -1132,7 +1132,7 @@ void CChar::SetGuildToggle(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is tamed
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsTamed(void) const { return bools.test(BIT_TAMED); }
+bool CChar::IsTamed() const { return bools.test(BIT_TAMED); }
 void CChar::SetTamed(bool newValue) { bools.set(BIT_TAMED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1141,7 +1141,7 @@ void CChar::SetTamed(bool newValue) { bools.set(BIT_TAMED, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is guarded
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsGuarded(void) const { return bools.test(BIT_GUARDED); }
+bool CChar::IsGuarded() const { return bools.test(BIT_GUARDED); }
 void CChar::SetGuarded(bool newValue) { bools.set(BIT_GUARDED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1150,7 +1150,7 @@ void CChar::SetGuarded(bool newValue) { bools.set(BIT_GUARDED, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character can run
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanRun(void) const { return bools.test(BIT_RUN); }
+bool CChar::CanRun() const { return bools.test(BIT_RUN); }
 void CChar::SetRun(bool newValue) {
     bools.set(BIT_RUN, newValue);
     UpdateRegion();
@@ -1162,7 +1162,7 @@ void CChar::SetRun(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is polymorphed
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsPolymorphed(void) const { return bools.test(BIT_POLYMORPHED); }
+bool CChar::IsPolymorphed() const { return bools.test(BIT_POLYMORPHED); }
 void CChar::IsPolymorphed(bool newValue) { bools.set(BIT_POLYMORPHED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1171,7 +1171,7 @@ void CChar::IsPolymorphed(bool newValue) { bools.set(BIT_POLYMORPHED, newValue);
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is incognito
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsIncognito(void) const { return bools.test(BIT_INCOGNITO); }
+bool CChar::IsIncognito() const { return bools.test(BIT_INCOGNITO); }
 void CChar::IsIncognito(bool newValue) { bools.set(BIT_INCOGNITO, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1180,7 +1180,7 @@ void CChar::IsIncognito(bool newValue) { bools.set(BIT_INCOGNITO, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is disguised
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsDisguised(void) const { return bools.test(BIT_DISGUISED); }
+bool CChar::IsDisguised() const { return bools.test(BIT_DISGUISED); }
 void CChar::IsDisguised(bool newValue) { bools.set(BIT_DISGUISED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1190,7 +1190,7 @@ void CChar::IsDisguised(bool newValue) { bools.set(BIT_DISGUISED, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is using a potion
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsUsingPotion(void) const { return bools.test(BIT_USINGPOTION); }
+bool CChar::IsUsingPotion() const { return bools.test(BIT_USINGPOTION); }
 void CChar::SetUsingPotion(bool newVal) { bools.set(BIT_USINGPOTION, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1199,7 +1199,7 @@ void CChar::SetUsingPotion(bool newVal) { bools.set(BIT_USINGPOTION, newVal); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character can levitate - not yet in use
 // o------------------------------------------------------------------------------------------------o
-bool CChar::MayLevitate(void) const { return bools.test(BIT_MAYLEVITATE); }
+bool CChar::MayLevitate() const { return bools.test(BIT_MAYLEVITATE); }
 void CChar::SetLevitate(bool newValue) {
     bools.set(BIT_MAYLEVITATE, newValue);
     UpdateRegion();
@@ -1211,7 +1211,7 @@ void CChar::SetLevitate(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character will get hungry
 // o------------------------------------------------------------------------------------------------o
-bool CChar::WillHunger(void) const { return bools.test(BIT_WILLHUNGER); }
+bool CChar::WillHunger() const { return bools.test(BIT_WILLHUNGER); }
 void CChar::SetHungerStatus(bool newValue) {
     bools.set(BIT_WILLHUNGER, newValue);
     UpdateRegion();
@@ -1223,7 +1223,7 @@ void CChar::SetHungerStatus(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Returns/Sets whether the character will get thirsty
 // o------------------------------------------------------------------------------------------------o
-bool CChar::WillThirst(void) const { return bools.test(BIT_WILLTHIRST); }
+bool CChar::WillThirst() const { return bools.test(BIT_WILLTHIRST); }
 void CChar::SetThirstStatus(bool newValue) { bools.set(BIT_WILLTHIRST, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1232,7 +1232,7 @@ void CChar::SetThirstStatus(bool newValue) { bools.set(BIT_WILLTHIRST, newValue)
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is meditating
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsMeditating(void) const { return bools.test(BIT_MEDITATING); }
+bool CChar::IsMeditating() const { return bools.test(BIT_MEDITATING); }
 void CChar::SetMeditating(bool newValue) { bools.set(BIT_MEDITATING, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1241,7 +1241,7 @@ void CChar::SetMeditating(bool newValue) { bools.set(BIT_MEDITATING, newValue); 
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns/Sets whether the character is casting a spell
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsCasting(void) const { return bools.test(BIT_CASTING); }
+bool CChar::IsCasting() const { return bools.test(BIT_CASTING); }
 void CChar::SetCasting(bool newValue) { bools.set(BIT_CASTING, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1254,7 +1254,7 @@ void CChar::SetCasting(bool newValue) { bools.set(BIT_CASTING, newValue); }
 //|					As it stands, it'll try and auto-direct cast if you set casting
 //and spell timeouts
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsJSCasting(void) const { return bools.test(BIT_JSCASTING); }
+bool CChar::IsJSCasting() const { return bools.test(BIT_JSCASTING); }
 void CChar::SetJSCasting(bool newValue) { bools.set(BIT_JSCASTING, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1263,7 +1263,7 @@ void CChar::SetJSCasting(bool newValue) { bools.set(BIT_JSCASTING, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine if player is inside a building
 // o------------------------------------------------------------------------------------------------o
-bool CChar::InBuilding(void) { return bools.test(BIT_INBUILDING); }
+bool CChar::InBuilding() { return bools.test(BIT_INBUILDING); }
 void CChar::SetInBuilding(bool newValue) { bools.set(BIT_INBUILDING, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1292,7 +1292,7 @@ void CChar::SetPeace(std::uint32_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Removes character from its owner's pet (and follower) list
 // o------------------------------------------------------------------------------------------------o
-void CChar::RemoveSelfFromOwner(void) {
+void CChar::RemoveSelfFromOwner() {
     CChar *oldOwner = GetOwnerObj();
     if (ValidateObject(oldOwner)) {
         oldOwner->GetFollowerList()->Remove(this);
@@ -1307,7 +1307,7 @@ void CChar::RemoveSelfFromOwner(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Adds character to its new owner's pet (and follower) list
 // o------------------------------------------------------------------------------------------------o
-void CChar::AddSelfToOwner(void) {
+void CChar::AddSelfToOwner() {
     CChar *newOwner = GetOwnerObj();
     if (!ValidateObject(newOwner)) {
         SetTamed(false);
@@ -1333,7 +1333,7 @@ void CChar::AddSelfToOwner(void) {
 //| Purpose		-	Gets/Sets a player's guild fealty - essentially, who the player
 //|					votes for as the next guild master
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetGuildFealty(void) const { return guildFealty; }
+std::uint32_t CChar::GetGuildFealty() const { return guildFealty; }
 void CChar::SetGuildFealty(std::uint32_t newValue) {
     guildFealty = newValue;
     UpdateRegion();
@@ -1345,7 +1345,7 @@ void CChar::SetGuildFealty(std::uint32_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets a player's guild title
 // o------------------------------------------------------------------------------------------------o
-std::string CChar::GetGuildTitle(void) const { return guildTitle; }
+std::string CChar::GetGuildTitle() const { return guildTitle; }
 void CChar::SetGuildTitle(const std::string &newValue) {
     guildTitle = newValue;
     UpdateRegion();
@@ -1375,7 +1375,7 @@ void CChar::SetWeathDamage(timerval_t newValue, std::uint8_t part) { weathDamage
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's next spellcasting action
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetNextAct(void) const { return nextAct; }
+std::uint8_t CChar::GetNextAct() const { return nextAct; }
 void CChar::SetNextAct(std::uint8_t newVal) { nextAct = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1409,7 +1409,7 @@ void CChar::SetTimer(cc_tid_t timerId, timerval_t value) {
 //|	Purpose		-	Gets/Sets the poison strength of the character - used to poison
 // others in combat
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetPoisonStrength(void) const { return PoisonStrength; }
+std::uint8_t CChar::GetPoisonStrength() const { return PoisonStrength; }
 void CChar::SetPoisonStrength(std::uint8_t value) {
     PoisonStrength = value;
     UpdateRegion();
@@ -1421,7 +1421,7 @@ void CChar::SetPoisonStrength(std::uint8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's emote text colour
 // o------------------------------------------------------------------------------------------------o
-colour_t CChar::GetEmoteColour(void) const { return emoteColor; }
+colour_t CChar::GetEmoteColour() const { return emoteColor; }
 void CChar::SetEmoteColour(colour_t newValue) {
     emoteColor = newValue;
     UpdateRegion();
@@ -1433,7 +1433,7 @@ void CChar::SetEmoteColour(colour_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's normal speech text colour
 // o------------------------------------------------------------------------------------------------o
-colour_t CChar::GetSayColour(void) const { return sayColor; }
+colour_t CChar::GetSayColour() const { return sayColor; }
 void CChar::SetSayColour(colour_t newValue) {
     sayColor = newValue;
     UpdateRegion();
@@ -1445,7 +1445,7 @@ void CChar::SetSayColour(colour_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's skin colour
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetSkin(void) const { return GetColour(); }
+std::uint16_t CChar::GetSkin() const { return GetColour(); }
 void CChar::SetSkin(std::uint16_t value) {
     SetColour(value);
     UpdateRegion();
@@ -1457,7 +1457,7 @@ void CChar::SetSkin(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's stealth walk counter
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetStealth(void) const { return stealth; }
+std::int8_t CChar::GetStealth() const { return stealth; }
 void CChar::SetStealth(std::int8_t newValue) {
     stealth = newValue;
     UpdateRegion();
@@ -1469,7 +1469,7 @@ void CChar::SetStealth(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the cell in which a character is jailed
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetCell(void) const { return cell; }
+std::int8_t CChar::GetCell() const { return cell; }
 void CChar::SetCell(std::int8_t newVal) {
     cell = newVal;
     UpdateRegion();
@@ -1481,7 +1481,7 @@ void CChar::SetCell(std::int8_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets whether the character is running
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetRunning(void) const { return running; }
+std::uint8_t CChar::GetRunning() const { return running; }
 void CChar::SetRunning(std::uint8_t newValue) { running = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1491,7 +1491,7 @@ void CChar::SetRunning(std::uint8_t newValue) { running = newValue; }
 //| Purpose		-	Gets/Sets the footstep sequence for the character for the purpose of
 // playing |					footstep sounds
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetStep(void) const { return step; }
+std::uint8_t CChar::GetStep() const { return step; }
 void CChar::SetStep(std::uint8_t newValue) { step = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1501,7 +1501,7 @@ void CChar::SetStep(std::uint8_t newValue) { step = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the town region the character is in
 // o------------------------------------------------------------------------------------------------o
-CTownRegion *CChar::GetRegion(void) const {
+CTownRegion *CChar::GetRegion() const {
     if (cwmWorldState->townRegions.find(regionNum) == cwmWorldState->townRegions.end()) {
         return cwmWorldState->townRegions[0xFF];
     }
@@ -1511,7 +1511,7 @@ void CChar::SetRegion(std::uint16_t newValue) {
     regionNum = newValue;
     UpdateRegion();
 }
-std::uint16_t CChar::GetRegionNum(void) const { return regionNum; }
+std::uint16_t CChar::GetRegionNum() const { return regionNum; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetOldLocation()
@@ -1572,7 +1572,7 @@ void CChar::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) 
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the main backpack object of the character
 // o------------------------------------------------------------------------------------------------o
-CItem *CChar::GetPackItem(void) {
+CItem *CChar::GetPackItem() {
     if (packItem == nullptr) {
         CItem *tempItem = GetItemAtLayer(IL_PACKITEM);
         if (ValidateObject(tempItem) && tempItem->GetType() == IT_CONTAINER) {
@@ -1602,7 +1602,7 @@ serial_t CalcSerFromObj(CBaseObject *mObj) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Returns  character's current target
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::GetTarg(void) const { return CalcCharObjFromSer(targ); }
+CChar *CChar::GetTarg() const { return CalcCharObjFromSer(targ); }
 void CChar::SetTarg(CChar *newTarg) { targ = CalcSerFromObj(newTarg); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1611,7 +1611,7 @@ void CChar::SetTarg(CChar *newTarg) { targ = CalcSerFromObj(newTarg); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets character's current attacker
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::GetAttacker(void) const { return CalcCharObjFromSer(attacker); }
+CChar *CChar::GetAttacker() const { return CalcCharObjFromSer(attacker); }
 void CChar::SetAttacker(CChar *newValue) { attacker = CalcSerFromObj(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1621,7 +1621,7 @@ void CChar::SetAttacker(CChar *newValue) { attacker = CalcSerFromObj(newValue); 
 //| Purpose		-	Gets/Sets the "morex" identifier value of the previous advancement
 // used
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetAdvObj(void) const { return advObj; }
+std::uint16_t CChar::GetAdvObj() const { return advObj; }
 void CChar::SetAdvObj(std::uint16_t newValue) {
     advObj = newValue;
     UpdateRegion();
@@ -1633,7 +1633,7 @@ void CChar::SetAdvObj(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the raceId value of a race gate
 // o------------------------------------------------------------------------------------------------o
-raceid_t CChar::GetRaceGate(void) const { return raceGate; }
+raceid_t CChar::GetRaceGate() const { return raceGate; }
 void CChar::SetRaceGate(raceid_t newValue) {
     raceGate = newValue;
     UpdateRegion();
@@ -1645,7 +1645,7 @@ void CChar::SetRaceGate(raceid_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the spell ID of the next spell an NPC will be casting
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetSpellCast(void) const { return spellCast; }
+std::int8_t CChar::GetSpellCast() const { return spellCast; }
 void CChar::SetSpellCast(std::int8_t newValue) { spellCast = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1654,7 +1654,7 @@ void CChar::SetSpellCast(std::int8_t newValue) { spellCast = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the character's special privileges
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetPriv(void) const { return static_cast<std::uint16_t>(priv.to_ulong()); }
+std::uint16_t CChar::GetPriv() const { return static_cast<std::uint16_t>(priv.to_ulong()); }
 void CChar::SetPriv(std::uint16_t newValue) {
     priv = newValue;
     UpdateRegion();
@@ -1712,7 +1712,7 @@ void CChar::SetSkill(skillval_t newSkillValue, std::uint8_t skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets ID of guild character belongs to
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetGuildNumber(void) const { return guildNumber; }
+std::int16_t CChar::GetGuildNumber() const { return guildNumber; }
 void CChar::SetGuildNumber(std::int16_t newValue) {
     guildNumber = newValue;
     UpdateRegion();
@@ -1724,7 +1724,7 @@ void CChar::SetGuildNumber(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets flag for character (criminal, innocent, murderer, etc)
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetFlag(void) const { return flag; }
+std::uint8_t CChar::GetFlag() const { return flag; }
 void CChar::SetFlag(std::uint8_t newValue) { flag = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1733,7 +1733,7 @@ void CChar::SetFlag(std::uint8_t newValue) { flag = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the font type used by the character for speech
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetFontType(void) const { return fontType; }
+std::int8_t CChar::GetFontType() const { return fontType; }
 void CChar::SetFontType(std::int8_t newType) {
     fontType = newType;
     UpdateRegion();
@@ -1745,7 +1745,7 @@ void CChar::SetFontType(std::int8_t newType) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether the character has GM privileges
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsGM(void) const { return priv.test(BIT_GM); }
+bool CChar::IsGM() const { return priv.test(BIT_GM); }
 void CChar::SetGM(bool newValue) { priv.set(BIT_GM, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1755,7 +1755,7 @@ void CChar::SetGM(bool newValue) { priv.set(BIT_GM, newValue); }
 //| Purpose		-	Checks/Sets whether the character is allowed to broadcast messages
 // globally
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanBroadcast(void) const { return priv.test(BIT_BROADCAST); }
+bool CChar::CanBroadcast() const { return priv.test(BIT_BROADCAST); }
 void CChar::SetBroadcast(bool newValue) { priv.set(BIT_BROADCAST, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1764,7 +1764,7 @@ void CChar::SetBroadcast(bool newValue) { priv.set(BIT_BROADCAST, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Set whether the character is invulnerable
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsInvulnerable(void) const { return priv.test(BIT_INVULNERABLE); }
+bool CChar::IsInvulnerable() const { return priv.test(BIT_INVULNERABLE); }
 void CChar::SetInvulnerable(bool newValue) { priv.set(BIT_INVULNERABLE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1774,7 +1774,7 @@ void CChar::SetInvulnerable(bool newValue) { priv.set(BIT_INVULNERABLE, newValue
 //| Purpose		-	Checks/Sets whether player is allowed to see serials of objects
 // clicked
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetSingClickSer(void) const { return priv.test(BIT_SINGCLICKSER); }
+bool CChar::GetSingClickSer() const { return priv.test(BIT_SINGCLICKSER); }
 void CChar::SetSingClickSer(bool newValue) { priv.set(BIT_SINGCLICKSER, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1783,7 +1783,7 @@ void CChar::SetSingClickSer(bool newValue) { priv.set(BIT_SINGCLICKSER, newValue
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether skill titles will show up for character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::NoSkillTitles(void) const { return priv.test(BIT_SKILLTITLES); }
+bool CChar::NoSkillTitles() const { return priv.test(BIT_SKILLTITLES); }
 void CChar::SetSkillTitles(bool newValue) { priv.set(BIT_SKILLTITLES, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1792,7 +1792,7 @@ void CChar::SetSkillTitles(bool newValue) { priv.set(BIT_SKILLTITLES, newValue);
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether character can answer GM pages
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsGMPageable(void) const { return priv.test(BIT_GMPAGEABLE); }
+bool CChar::IsGMPageable() const { return priv.test(BIT_GMPAGEABLE); }
 void CChar::SetGMPageable(bool newValue) { priv.set(BIT_GMPAGEABLE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1802,7 +1802,7 @@ void CChar::SetGMPageable(bool newValue) { priv.set(BIT_GMPAGEABLE, newValue); }
 //| Purpose		-	Checks/Sets whether character can snoop in the backpacks of other
 // players and NPCs
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanSnoop(void) const { return priv.test(BIT_SNOOP); }
+bool CChar::CanSnoop() const { return priv.test(BIT_SNOOP); }
 void CChar::SetSnoop(bool newValue) { priv.set(BIT_SNOOP, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1811,7 +1811,7 @@ void CChar::SetSnoop(bool newValue) { priv.set(BIT_SNOOP, newValue); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether character has Counselor privileges
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsCounselor(void) const { return priv.test(BIT_COUNSELOR); }
+bool CChar::IsCounselor() const { return priv.test(BIT_COUNSELOR); }
 void CChar::SetCounselor(bool newValue) { priv.set(BIT_COUNSELOR, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1821,7 +1821,7 @@ void CChar::SetCounselor(bool newValue) { priv.set(BIT_COUNSELOR, newValue); }
 //| Purpose		-	Checks/Sets character can move all items freely, regardless of their
 // moveable state
 // o------------------------------------------------------------------------------------------------o
-bool CChar::AllMove(void) const { return priv.test(BIT_ALLMOVE); }
+bool CChar::AllMove() const { return priv.test(BIT_ALLMOVE); }
 void CChar::SetAllMove(bool newValue) {
     priv.set(BIT_ALLMOVE, newValue);
     UpdateRegion();
@@ -1833,7 +1833,7 @@ void CChar::SetAllMove(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Checks/Sets whether the character is in frozen state
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsFrozen(void) const { return priv.test(BIT_FROZEN); }
+bool CChar::IsFrozen() const { return priv.test(BIT_FROZEN); }
 void CChar::SetFrozen(bool newValue) { priv.set(BIT_FROZEN, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1843,7 +1843,7 @@ void CChar::SetFrozen(bool newValue) { priv.set(BIT_FROZEN, newValue); }
 //| Purpose		-	Checks/Sets whether the character views icons/deeds instead of
 //actual houses
 // o------------------------------------------------------------------------------------------------o
-bool CChar::ViewHouseAsIcon(void) const { return priv.test(BIT_VIEWHOUSEASICON); }
+bool CChar::ViewHouseAsIcon() const { return priv.test(BIT_VIEWHOUSEASICON); }
 void CChar::SetViewHouseAsIcon(bool newValue) { priv.set(BIT_VIEWHOUSEASICON, newValue); }
 
 // 0x0800 is free
@@ -1854,7 +1854,7 @@ void CChar::SetViewHouseAsIcon(bool newValue) { priv.set(BIT_VIEWHOUSEASICON, ne
 //| Purpose		-	Checks/Sets whether mana is required for spellcasting for this
 // character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::NoNeedMana(void) const { return priv.test(BIT_NONEEDMANA); }
+bool CChar::NoNeedMana() const { return priv.test(BIT_NONEEDMANA); }
 void CChar::SetNoNeedMana(bool newValue) { priv.set(BIT_NONEEDMANA, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1864,7 +1864,7 @@ void CChar::SetNoNeedMana(bool newValue) { priv.set(BIT_NONEEDMANA, newValue); }
 //| Purpose		-	Checks/Sets whether this character is dispellable using dispel spell
 //(i.e. it was summoned)
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsDispellable(void) const { return priv.test(BIT_DISPELLABLE); }
+bool CChar::IsDispellable() const { return priv.test(BIT_DISPELLABLE); }
 void CChar::SetDispellable(bool newValue) { priv.set(BIT_DISPELLABLE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1874,7 +1874,7 @@ void CChar::SetDispellable(bool newValue) { priv.set(BIT_DISPELLABLE, newValue);
 //| Purpose		-	Checks/Sets whether character is temporarily protected by the magic
 // reflect spell
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsTempReflected(void) const { return priv.test(BIT_TEMPREFLECTED); }
+bool CChar::IsTempReflected() const { return priv.test(BIT_TEMPREFLECTED); }
 void CChar::SetTempReflected(bool newValue) { priv.set(BIT_TEMPREFLECTED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1884,7 +1884,7 @@ void CChar::SetTempReflected(bool newValue) { priv.set(BIT_TEMPREFLECTED, newVal
 //| Purpose		-	Checks/Sets whether character is permanently protected by the magic
 // reflect spell
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsPermReflected(void) const { return priv.test(BIT_PERMREFLECTED); }
+bool CChar::IsPermReflected() const { return priv.test(BIT_PERMREFLECTED); }
 void CChar::SetPermReflected(bool newValue) { priv.set(BIT_PERMREFLECTED, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1894,7 +1894,7 @@ void CChar::SetPermReflected(bool newValue) { priv.set(BIT_PERMREFLECTED, newVal
 //| Purpose		-	Checks/Sets whether magical reagents are required for spellcasting
 //for this character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::NoNeedReags(void) const { return priv.test(BIT_NONEEDREAGS); }
+bool CChar::NoNeedReags() const { return priv.test(BIT_NONEEDREAGS); }
 void CChar::SetNoNeedReags(bool newValue) { priv.set(BIT_NONEEDREAGS, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1902,7 +1902,7 @@ void CChar::SetNoNeedReags(bool newValue) { priv.set(BIT_NONEEDREAGS, newValue);
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Duplicate character - used for splitting NPCs when hit in combat
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::Dupe(void) {
+CChar *CChar::Dupe() {
     CChar *target = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
     if (target == nullptr)
         return nullptr;
@@ -2365,7 +2365,7 @@ auto CChar::Teleport() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes character visible
 // o------------------------------------------------------------------------------------------------o
-void CChar::ExposeToView(void) {
+void CChar::ExposeToView() {
     SetVisible(VT_VISIBLE);
     SetStealth(-1);
     
@@ -2534,7 +2534,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the item reference for the first item on paperdoll
 // o------------------------------------------------------------------------------------------------o
-CItem *CChar::FirstItem(void) {
+CItem *CChar::FirstItem() {
     CItem *rVal = nullptr;
     
     layerCtr = itemLayers.begin();
@@ -2550,7 +2550,7 @@ CItem *CChar::FirstItem(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the item reference for the next item on paperdoll
 // o------------------------------------------------------------------------------------------------o
-CItem *CChar::NextItem(void) {
+CItem *CChar::NextItem() {
     CItem *rVal = nullptr;
     ++layerCtr;
     if (!FinishedItems()) {
@@ -2565,13 +2565,13 @@ CItem *CChar::NextItem(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if there are no more items on the paperdoll
 // o------------------------------------------------------------------------------------------------o
-bool CChar::FinishedItems(void) { return (layerCtr == itemLayers.end()); }
+bool CChar::FinishedItems() { return (layerCtr == itemLayers.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::DumpHeader()
 //|					CChar::DumpBody()
-//|					CChar::NPCValues_st::DumpBody()
-//|					CChar::PlayerValues_st::DumpBody()
+//|					CChar::NPCValues::DumpBody()
+//|					CChar::PlayerValues::DumpBody()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Dump character data to worldfile
 // o------------------------------------------------------------------------------------------------o
@@ -2675,7 +2675,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     }
     return true;
 }
-void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
+void CChar::NPCValues::DumpBody(std::ostream &outStream) {
     const char newLine = '\n';
     
     // Hexadecimal Values
@@ -2729,7 +2729,7 @@ void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
         }
     }
 }
-void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
+void CChar::PlayerValues::DumpBody(std::ostream &outStream) {
     const char newLine = '\n';
     
     // Hexadecimal Values
@@ -3098,14 +3098,14 @@ auto CChar::ClearPermaGreyFlags() -> void { permaGreyFlags.clear(); }
 //| Purpose		-	Returns the list of ALL pets the character owns, regardless of where
 // they might be
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CChar::GetPetList(void) { return &petsOwned; }
+GenericList<CChar *> *CChar::GetPetList() { return &petsOwned; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetFollowerList()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of active followers the character has
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CChar::GetFollowerList(void) { return &activeFollowers; }
+GenericList<CChar *> *CChar::GetFollowerList() { return &activeFollowers; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::AddFollower()
@@ -3199,7 +3199,7 @@ auto CChar::RemoveOwnedItem(CItem *toRemove) -> void {
 //|	Purpose		-	Gets/Sets maximum hitpoints (or fixed maximum hitpoints) of the
 // object
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetMaxHP(void) {
+std::uint16_t CChar::GetMaxHP() {
     if ((maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed())
         // if str/race changed since last calculation, recalculate maxHp
     {
@@ -3255,7 +3255,7 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum mana (or fixed maximum mana) of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetMaxMana(void) {
+std::int16_t CChar::GetMaxMana() {
     if ((maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !GetMaxManaFixed())
         // if int/race changed since last calculation, recalculate maxHp
     {
@@ -3311,7 +3311,7 @@ void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum stamina (or fixed maximum stamina) of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetMaxStam(void) {
+std::int16_t CChar::GetMaxStam() {
     // If dex/race changed since last calculation, recalculate maxHp
     if ((maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !GetMaxStamFixed()) {
         CRace *pRace = Races->Race(GetRace());
@@ -3364,7 +3364,7 @@ void CChar::SetFixedMaxStam(std::int16_t newmaxstam) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual strength (minus mods) of the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::ActualStrength(void) const { return CBaseObject::GetStrength(); }
+std::int16_t CChar::ActualStrength() const { return CBaseObject::GetStrength(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetStrength()
@@ -3373,7 +3373,7 @@ std::int16_t CChar::ActualStrength(void) const { return CBaseObject::GetStrength
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the strength (incl mods) of the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetStrength(void) const {
+std::int16_t CChar::GetStrength() const {
     auto tempStr = static_cast<std::int16_t>(CBaseObject::GetStrength() + GetStrength2());
     if (tempStr < 1) {
         tempStr = 1;
@@ -3396,7 +3396,7 @@ void CChar::SetStrength(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual intelligence (minus mods) of the char
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::ActualIntelligence(void) const { return CBaseObject::GetIntelligence(); }
+std::int16_t CChar::ActualIntelligence() const { return CBaseObject::GetIntelligence(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetIntelligence()
@@ -3405,7 +3405,7 @@ std::int16_t CChar::ActualIntelligence(void) const { return CBaseObject::GetInte
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Gets/Sets the intelligence (incl mods) of the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetIntelligence(void) const {
+std::int16_t CChar::GetIntelligence() const {
     auto tempInt = static_cast<std::int16_t>(CBaseObject::GetIntelligence() + GetIntelligence2());
     if (tempInt < 1) {
         tempInt = 1;
@@ -3428,7 +3428,7 @@ void CChar::SetIntelligence(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the actual (minus mods) dexterity of the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::ActualDexterity(void) const { return CBaseObject::GetDexterity(); }
+std::int16_t CChar::ActualDexterity() const { return CBaseObject::GetDexterity(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetDexterity()
@@ -3438,7 +3438,7 @@ std::int16_t CChar::ActualDexterity(void) const { return CBaseObject::GetDexteri
 //| Purpose		-	Gets/Sets the effective dexterity (including modifications) of the
 // player
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetDexterity(void) const {
+std::int16_t CChar::GetDexterity() const {
     auto tempDex = static_cast<std::int16_t>(CBaseObject::GetDexterity() + GetDexterity2());
     if (tempDex < 1) {
         tempDex = 1;
@@ -3487,7 +3487,7 @@ void CChar::IncIntelligence2(std::int16_t toAdd) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if the character is a murderer
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsMurderer(void) const { return (GetFlag() == 0x01); }
+bool CChar::IsMurderer() const { return (GetFlag() == 0x01); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IsCriminal()
@@ -3495,7 +3495,7 @@ bool CChar::IsMurderer(void) const { return (GetFlag() == 0x01); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if the character is a criminal
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsCriminal(void) const { return (GetFlag() == 0x02); }
+bool CChar::IsCriminal() const { return (GetFlag() == 0x02); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IsInnocent()
@@ -3503,7 +3503,7 @@ bool CChar::IsCriminal(void) const { return (GetFlag() == 0x02); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if the character is innocent
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsInnocent(void) const { return (GetFlag() == 0x04); }
+bool CChar::IsInnocent() const { return (GetFlag() == 0x04); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::IsNeutral()
@@ -3511,7 +3511,7 @@ bool CChar::IsInnocent(void) const { return (GetFlag() == 0x04); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if the character is neutral
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsNeutral(void) const { return (GetFlag() == 0x08); }
+bool CChar::IsNeutral() const { return (GetFlag() == 0x08); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetFlagRed()
@@ -3519,7 +3519,7 @@ bool CChar::IsNeutral(void) const { return (GetFlag() == 0x08); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Updates the character's flag to reflect murderer status
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetFlagRed(void) { flag = 0x01; }
+void CChar::SetFlagRed() { flag = 0x01; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetFlagGray()
@@ -3527,7 +3527,7 @@ void CChar::SetFlagRed(void) { flag = 0x01; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Updates the character's flag to reflect criminality
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetFlagGray(void) { flag = 0x02; }
+void CChar::SetFlagGray() { flag = 0x02; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetFlagBlue()
@@ -3535,7 +3535,7 @@ void CChar::SetFlagGray(void) { flag = 0x02; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Updates the character's flag to reflect innocence
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetFlagBlue(void) { flag = 0x04; }
+void CChar::SetFlagBlue() { flag = 0x04; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::SetFlagNeutral()
@@ -3543,7 +3543,7 @@ void CChar::SetFlagBlue(void) { flag = 0x04; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Updates the character's flag to reflect neutrality
 // o------------------------------------------------------------------------------------------------o
-void CChar::SetFlagNeutral(void) { flag = 0x08; }
+void CChar::SetFlagNeutral() { flag = 0x08; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::DecHunger()
@@ -3566,7 +3566,7 @@ bool CChar::DecThirst(const std::int8_t amt) { return SetThirst(static_cast<std:
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Halts spellcasting action for character
 // o------------------------------------------------------------------------------------------------o
-void CChar::StopSpell(void) {
+void CChar::StopSpell() {
     SetTimer(tCHAR_SPELLTIME, 0);
     SetCasting(false);
     SetSpellCast(-1);
@@ -4277,7 +4277,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	After handling data specific load, other parts go here
 // o------------------------------------------------------------------------------------------------o
-bool CChar::LoadRemnants(void) {
+bool CChar::LoadRemnants() {
     bool rValue = true;
     SetSerial(serial);
     
@@ -4380,7 +4380,7 @@ void CChar::SkillUsed(bool value, std::uint8_t skillNum) {
 //|	Purpose		-	Used to setup any pointers that may need adjustment
 //|					following the loading of the world
 // o------------------------------------------------------------------------------------------------o
-void CChar::PostLoadProcessing(void) {
+void CChar::PostLoadProcessing() {
     CBaseObject::PostLoadProcessing();
     if (tempContainerSerial != INVALIDSERIAL) {
         SetPackItem(CalcItemObjFromSer(tempContainerSerial));
@@ -4411,14 +4411,14 @@ void CChar::PostLoadProcessing(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if the character is in a jail cell
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsJailed(void) const { return (GetCell() != -1); }
+bool CChar::IsJailed() const { return (GetCell() != -1); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::InDungeon()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine if player is inside a dungeon
 // o------------------------------------------------------------------------------------------------o
-bool CChar::InDungeon(void) {
+bool CChar::InDungeon() {
     bool rValue = false;
     if (GetRegion() != nullptr) {
         rValue = GetRegion()->IsDungeon();
@@ -4615,7 +4615,7 @@ void CChar::WalkDir(std::int8_t newDir) { dir = newDir; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Cleans up after character
 // o------------------------------------------------------------------------------------------------o
-void CChar::Cleanup(void) {
+void CChar::Cleanup() {
     if (!IsFree()) // We're not the default item in the handler
     {
         MapRegion->RemoveChar(this);
@@ -4877,7 +4877,7 @@ void CChar::IncMana(std::int16_t toInc) { SetMana(GetMana() + toInc); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Toggle combat mode for NPC
 // o------------------------------------------------------------------------------------------------o
-void CChar::ToggleCombat(void) {
+void CChar::ToggleCombat() {
     SetWar(!IsAtWar());
     Movement->CombatWalk(this);
 }
@@ -4905,7 +4905,7 @@ bool CChar::CanBeObjType(CBaseObject::type_t toCompare) const {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Adds character to deletion queue
 // o------------------------------------------------------------------------------------------------o
-void CChar::Delete(void) {
+void CChar::Delete() {
     if (cwmWorldState->deletionQueue.count(this) == 0) {
         ++(cwmWorldState->deletionQueue[this]);
         Cleanup();
@@ -4933,7 +4933,7 @@ void CChar::SetAccount(AccountEntry &actbAccount) {
         mPlayer->accountNum = actbAccount.accountNumber;
     }
 }
-AccountEntry &CChar::GetAccount(void) {
+AccountEntry &CChar::GetAccount() {
     std::uint16_t rVal = AccountEntry::INVALID_ACCOUNT;
     if (IsValidPlayer()) {
         rVal = mPlayer->accountNum;
@@ -4949,7 +4949,7 @@ AccountEntry &CChar::GetAccount(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets and Returns the account number associated with this player
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetAccountNum(void) const {
+std::uint16_t CChar::GetAccountNum() const {
     std::uint16_t rVal = AccountEntry::INVALID_ACCOUNT;
     if (IsValidPlayer()) {
         rVal = mPlayer->accountNum;
@@ -4974,7 +4974,7 @@ void CChar::SetAccountNum(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets player's death robe
 // o------------------------------------------------------------------------------------------------o
-serial_t CChar::GetRobe(void) const {
+serial_t CChar::GetRobe() const {
     auto rVal = DEFPLAYER_ROBE;
     if (IsValidPlayer()) {
         rVal = mPlayer->robe;
@@ -4999,7 +4999,7 @@ void CChar::SetRobe(serial_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp for when player last moved
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::LastMoveTime(void) const { return lastMoveTime; }
+std::uint32_t CChar::LastMoveTime() const { return lastMoveTime; }
 void CChar::LastMoveTime(std::uint32_t newValue) { lastMoveTime = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -5008,7 +5008,7 @@ void CChar::LastMoveTime(std::uint32_t newValue) { lastMoveTime = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in text) for when player was last online
 // o------------------------------------------------------------------------------------------------o
-std::string CChar::GetLastOn(void) const {
+std::string CChar::GetLastOn() const {
     std::string rVal = "";
     if (IsValidPlayer()) {
         rVal = mPlayer->lastOn;
@@ -5033,7 +5033,7 @@ void CChar::SetLastOn(std::string newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player was last online
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetLastOnSecs(void) const {
+std::uint32_t CChar::GetLastOnSecs() const {
     std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->lastOnSecs;
@@ -5054,7 +5054,7 @@ void CChar::SetLastOnSecs(std::uint32_t newValue) {
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character was
 // created
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetCreatedOn(void) const {
+std::uint32_t CChar::GetCreatedOn() const {
     std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->createdOn;
@@ -5136,7 +5136,7 @@ void CChar::SetSkillLock(skilllock_t newValue, std::uint8_t skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets mounted state of character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetMounted(void) const {
+bool CChar::GetMounted() const {
     bool rVal = false;
     if (IsValidNPC()) {
         rVal = mNPC->boolFlags.test(BIT_MOUNTED);
@@ -5158,7 +5158,7 @@ void CChar::SetMounted(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets stabled state of pet
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetStabled(void) const {
+bool CChar::GetStabled() const {
     bool rVal = false;
     if (IsValidNPC()) {
         rVal = mNPC->boolFlags.test(BIT_STABLED);
@@ -5178,14 +5178,14 @@ void CChar::SetStabled(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets flying state of character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::IsFlying(void) const { return bools.test(BIT_FLYING); }
+bool CChar::IsFlying() const { return bools.test(BIT_FLYING); }
 void CChar::SetFlying(bool newValue) {
     if (MayLevitate()) {
         bools.set(BIT_FLYING, newValue);
     }
 }
 
-bool CChar::ToggleFlying(void) {
+bool CChar::ToggleFlying() {
     CSocket *tSock = GetSocket();
     if (MayLevitate()) {
         if (GetTimer(tCHAR_FLYINGTOGGLE) <= cwmWorldState->GetUICurrentTime()) {
@@ -5262,7 +5262,7 @@ bool CChar::ToggleFlying(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the maximum hp (fixed) for the character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetMaxHPFixed(void) const { return bools.test(BIT_MAXHPFIXED); }
+bool CChar::GetMaxHPFixed() const { return bools.test(BIT_MAXHPFIXED); }
 void CChar::SetMaxHPFixed(bool newValue) {
     bools.set(BIT_MAXHPFIXED, newValue);
     UpdateRegion();
@@ -5275,7 +5275,7 @@ void CChar::SetMaxHPFixed(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum mana (fixed) for the character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetMaxManaFixed(void) const { return bools.test(BIT_MAXMANAFIXED); }
+bool CChar::GetMaxManaFixed() const { return bools.test(BIT_MAXMANAFIXED); }
 void CChar::SetMaxManaFixed(bool newValue) {
     bools.set(BIT_MAXMANAFIXED, newValue);
     UpdateRegion();
@@ -5288,7 +5288,7 @@ void CChar::SetMaxManaFixed(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the maximum stamina (fixed) of the character
 // o------------------------------------------------------------------------------------------------o
-bool CChar::GetMaxStamFixed(void) const { return bools.test(BIT_MAXSTAMFIXED); }
+bool CChar::GetMaxStamFixed() const { return bools.test(BIT_MAXSTAMFIXED); }
 void CChar::SetMaxStamFixed(bool newValue) {
     bools.set(BIT_MAXSTAMFIXED, newValue);
     UpdateRegion();
@@ -5300,7 +5300,7 @@ void CChar::SetMaxStamFixed(bool newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's original name
 // o------------------------------------------------------------------------------------------------o
-std::string CChar::GetOrgName(void) const {
+std::string CChar::GetOrgName() const {
     std::string rVal = "";
     if (IsValidPlayer()) {
         rVal = mPlayer->origName;
@@ -5325,7 +5325,7 @@ void CChar::SetOrgName(std::string newName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the player character's original ID
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetOrgId(void) const {
+std::uint16_t CChar::GetOrgId() const {
     std::uint16_t rVal = GetId();
     if (IsValidPlayer()) {
         rVal = mPlayer->origId;
@@ -5350,7 +5350,7 @@ void CChar::SetOrgId(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's original skin
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetOrgSkin(void) const {
+std::uint16_t CChar::GetOrgSkin() const {
     std::uint16_t rVal = GetSkin();
     if (IsValidPlayer()) {
         rVal = mPlayer->origSkin;
@@ -5374,7 +5374,7 @@ void CChar::SetOrgSkin(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default hairstyle
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetHairStyle(void) const {
+std::uint16_t CChar::GetHairStyle() const {
     std::uint16_t rVal = DEFPLAYER_HAIRSTYLE;
     if (IsValidPlayer()) {
         rVal = mPlayer->hairStyle;
@@ -5399,7 +5399,7 @@ void CChar::SetHairStyle(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default beardstyle
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetBeardStyle(void) const {
+std::uint16_t CChar::GetBeardStyle() const {
     std::uint16_t rVal = DEFPLAYER_BEARDSTYLE;
     if (IsValidPlayer()) {
         rVal = mPlayer->beardStyle;
@@ -5424,7 +5424,7 @@ void CChar::SetBeardStyle(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default haircolour
 // o------------------------------------------------------------------------------------------------o
-colour_t CChar::GetHairColour(void) const {
+colour_t CChar::GetHairColour() const {
     colour_t rVal = DEFPLAYER_HAIRCOLOUR;
     if (IsValidPlayer()) {
         rVal = mPlayer->hairColour;
@@ -5448,7 +5448,7 @@ void CChar::SetHairColour(colour_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's default beardcolour
 // o------------------------------------------------------------------------------------------------o
-colour_t CChar::GetBeardColour(void) const {
+colour_t CChar::GetBeardColour() const {
     colour_t rVal = DEFPLAYER_BEARDCOLOUR;
     if (IsValidPlayer()) {
         rVal = mPlayer->beardColour;
@@ -5472,7 +5472,7 @@ void CChar::SetBeardColour(colour_t value) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's tracking target
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::GetTrackingTarget(void) const {
+CChar *CChar::GetTrackingTarget() const {
     CChar *rVal = nullptr;
     if (IsValidPlayer()) {
         rVal = CalcCharObjFromSer(mPlayer->trackingTarget);
@@ -5489,7 +5489,7 @@ void CChar::SetTrackingTarget(CChar *newValue) {
         mPlayer->trackingTarget = CalcSerFromObj(newValue);
     }
 }
-serial_t CChar::GetTrackingTargetSerial(void) const {
+serial_t CChar::GetTrackingTargetSerial() const {
     serial_t rVal = INVALIDSERIAL;
     if (IsValidPlayer()) {
         rVal = mPlayer->trackingTarget;
@@ -5531,7 +5531,7 @@ void CChar::SetTrackingTargets(CChar *newValue, std::uint8_t targetNum) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's command level
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetCommandLevel(void) const {
+std::uint8_t CChar::GetCommandLevel() const {
     std::uint8_t rVal = DEFPLAYER_COMMANDLEVEL;
     if (IsValidPlayer()) {
         rVal = mPlayer->commandLevel;
@@ -5556,7 +5556,7 @@ void CChar::SetCommandLevel(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets player character's messageboard posting level
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetPostType(void) const {
+std::uint8_t CChar::GetPostType() const {
     std::uint8_t rVal = DEFPLAYER_POSTTYPE;
     if (IsValidPlayer()) {
         rVal = mPlayer->postType;
@@ -5580,7 +5580,7 @@ void CChar::SetPostType(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the currently active GM/Counselor call for the character
 // o------------------------------------------------------------------------------------------------o
-serial_t CChar::GetCallNum(void) const {
+serial_t CChar::GetCallNum() const {
     std::int16_t rVal = DEFPLAYER_CALLNUM;
     if (IsValidPlayer()) {
         rVal = mPlayer->callNum;
@@ -5604,7 +5604,7 @@ void CChar::SetCallNum(serial_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's call number in GM/CNS Queue
 // o------------------------------------------------------------------------------------------------o
-serial_t CChar::GetPlayerCallNum(void) const {
+serial_t CChar::GetPlayerCallNum() const {
     serial_t rVal = DEFPLAYER_PLAYERCALLNUM;
     if (IsValidPlayer()) {
         rVal = mPlayer->playerCallNum;
@@ -5628,7 +5628,7 @@ void CChar::SetPlayerCallNum(serial_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the squelched status of the player's character
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetSquelched(void) const {
+std::uint8_t CChar::GetSquelched() const {
     std::uint8_t rVal = DEFPLAYER_SQUELCHED;
     if (IsValidPlayer()) {
         rVal = mPlayer->squelched;
@@ -5655,7 +5655,7 @@ void CChar::SetSquelched(std::uint8_t newValue) {
 //| Purpose		-	Gets/Sets item related to the speech we're working on
 //|					IE the item for name deed if we're renaming ourselves
 // o------------------------------------------------------------------------------------------------o
-CItem *CChar::GetSpeechItem(void) const {
+CItem *CChar::GetSpeechItem() const {
     CItem *rVal = nullptr;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechItem;
@@ -5691,7 +5691,7 @@ void CChar::SetSpeechItem(CItem *newValue) {
 //|						8 Sign renaming
 //|						9 JS Speech
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetSpeechMode(void) const {
+std::uint8_t CChar::GetSpeechMode() const {
     std::uint8_t rVal = DEFPLAYER_SPEECHMODE;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechMode;
@@ -5716,7 +5716,7 @@ void CChar::SetSpeechMode(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID for the JS Speech Input
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetSpeechId(void) const {
+std::uint8_t CChar::GetSpeechId() const {
     std::uint8_t rVal = DEFPLAYER_SPEECHID;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechId;
@@ -5740,7 +5740,7 @@ void CChar::SetSpeechId(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets callback for the onSpeechInput function
 // o------------------------------------------------------------------------------------------------o
-cScript *CChar::GetSpeechCallback(void) const {
+cScript *CChar::GetSpeechCallback() const {
     cScript *rVal = nullptr;
     if (IsValidPlayer()) {
         rVal = mPlayer->speechCallback;
@@ -5764,7 +5764,7 @@ void CChar::SetSpeechCallback(cScript *newValue) {
 //| Purpose		-	Gets/Sets fixed light level of the character
 //|					255 is off
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetFixedLight(void) const {
+std::uint8_t CChar::GetFixedLight() const {
     std::uint8_t rVal = DEFPLAYER_FIXEDLIGHT;
     if (IsValidPlayer()) {
         rVal = mPlayer->fixedLight;
@@ -5789,7 +5789,7 @@ void CChar::SetFixedLight(std::uint8_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the total number of deaths a player has
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetDeaths(void) const {
+std::uint16_t CChar::GetDeaths() const {
     std::uint16_t rVal = DEFPLAYER_DEATHS;
     if (IsValidPlayer()) {
         rVal = mPlayer->deaths;
@@ -5815,7 +5815,7 @@ void CChar::SetDeaths(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets socket attached to the player character
 // o------------------------------------------------------------------------------------------------o
-CSocket *CChar::GetSocket(void) const {
+CSocket *CChar::GetSocket() const {
     CSocket *rVal = nullptr;
     if (IsValidPlayer()) {
         rVal = mPlayer->socket;
@@ -5838,7 +5838,7 @@ void CChar::SetSocket(CSocket *newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets serial of the player a character has voted to be mayor.
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetTownVote(void) const {
+std::uint32_t CChar::GetTownVote() const {
     std::uint32_t retVal = DEFPLAYER_TOWNVOTE;
     if (IsValidPlayer()) {
         retVal = mPlayer->townVote;
@@ -5863,7 +5863,7 @@ void CChar::SetTownVote(std::uint32_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets town member privledges (1 = Resident, 2 = Mayor)
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetTownPriv(void) const {
+std::int8_t CChar::GetTownPriv() const {
     std::int8_t retVal = DEFPLAYER_TOWNPRIV;
     if (IsValidPlayer()) {
         retVal = mPlayer->townPriv;
@@ -5890,7 +5890,7 @@ void CChar::SetTownpriv(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the max loyalty of the NPC
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetMaxLoyalty(void) const {
+std::uint16_t CChar::GetMaxLoyalty() const {
     std::uint16_t retVal = DEFNPC_MAXLOYALTY;
     if (IsValidNPC()) {
         retVal = mNPC->maxLoyalty;
@@ -5915,7 +5915,7 @@ void CChar::SetMaxLoyalty(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the loyalty of the NPC
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetLoyalty(void) const {
+std::uint16_t CChar::GetLoyalty() const {
     std::uint16_t retVal = DEFNPC_LOYALTY;
     if (IsValidNPC()) {
         retVal = mNPC->loyalty;
@@ -5951,7 +5951,7 @@ void CChar::SetLoyalty(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle automatic loyalty change for the NPC character
 // o------------------------------------------------------------------------------------------------o
-void CChar::DoLoyaltyUpdate(void) {
+void CChar::DoLoyaltyUpdate() {
     // Don't continue if pet control difficulty system is disabled
     if (!cwmWorldState->ServerData()->CheckPetControlDifficulty())
         return;
@@ -6042,7 +6042,7 @@ void CChar::DoLoyaltyUpdate(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Set the rate at which a pet hungers
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetTamedHungerRate(void) const {
+std::uint16_t CChar::GetTamedHungerRate() const {
     std::uint16_t retVal = DEFNPC_TAMEDHUNGERRATE;
     if (IsValidNPC()) {
         retVal = mNPC->tamedHungerRate;
@@ -6067,7 +6067,7 @@ void CChar::SetTamedHungerRate(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Get/Set the rate at which a pet thirsts
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetTamedThirstRate(void) const {
+std::uint16_t CChar::GetTamedThirstRate() const {
     std::uint16_t retVal = DEFNPC_TAMEDTHIRSTRATE;
     if (IsValidNPC()) {
         retVal = mNPC->tamedThirstRate;
@@ -6092,7 +6092,7 @@ void CChar::SetTamedThirstRate(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets chance for a hungry pet to go wild
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetTamedHungerWildChance(void) const {
+std::uint8_t CChar::GetTamedHungerWildChance() const {
     std::uint8_t retVal = DEFNPC_HUNGERWILDCHANCE;
     if (IsValidNPC()) {
         retVal = mNPC->hungerWildChance;
@@ -6117,7 +6117,7 @@ void CChar::SetTamedHungerWildChance(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets chance for a thirsty pet to go wild
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetTamedThirstWildChance(void) const {
+std::uint8_t CChar::GetTamedThirstWildChance() const {
     std::uint8_t retVal = DEFNPC_THIRSTWILDCHANCE;
     if (IsValidNPC()) {
         retVal = mNPC->thirstWildChance;
@@ -6142,7 +6142,7 @@ void CChar::SetTamedThirstWildChance(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets FOODLIST entry for feeding tamed pets
 // o------------------------------------------------------------------------------------------------o
-std::string CChar::GetFood(void) const {
+std::string CChar::GetFood() const {
     std::string retVal = "";
     if (IsValidNPC()) {
         retVal = mNPC->foodList;
@@ -6167,7 +6167,7 @@ void CChar::SetFood(std::string food) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the AI type of the NPC
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetNpcAiType(void) const {
+std::int16_t CChar::GetNpcAiType() const {
     std::int16_t rVal = DEFNPC_AITYPE;
     if (IsValidNPC()) {
         rVal = mNPC->aiType;
@@ -6192,7 +6192,7 @@ void CChar::SetNPCAiType(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC Guild the character belongs to
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetNPCGuild(void) const { return npcGuild; }
+std::uint16_t CChar::GetNPCGuild() const { return npcGuild; }
 void CChar::SetNPCGuild(std::uint16_t newValue) {
     npcGuild = newValue;
     UpdateRegion();
@@ -6205,7 +6205,7 @@ void CChar::SetNPCGuild(std::uint16_t newValue) {
 //| Purpose		-	Gets/Sets timestamp (in seconds) for when player character joined
 //NPC guild
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetNPCGuildJoined(void) const {
+std::uint32_t CChar::GetNPCGuildJoined() const {
     std::uint32_t rVal = 0;
     if (IsValidPlayer()) {
         rVal = mPlayer->npcGuildJoined;
@@ -6225,7 +6225,7 @@ void CChar::SetNPCGuildJoined(std::uint32_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the SERIAL of the object the character is guarding
 // o------------------------------------------------------------------------------------------------o
-CBaseObject *CChar::GetGuarding(void) const {
+CBaseObject *CChar::GetGuarding() const {
     CBaseObject *rVal = nullptr;
     if (IsValidNPC()) {
         rVal = mNPC->petGuarding;
@@ -6249,7 +6249,7 @@ void CChar::SetGuarding(CBaseObject *newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to tame the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetTaming(void) const {
+std::int16_t CChar::GetTaming() const {
     std::int16_t rVal = DEFNPC_TAMING;
     if (IsValidNPC()) {
         rVal = mNPC->taming;
@@ -6275,7 +6275,7 @@ void CChar::SetTaming(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to peace the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetPeaceing(void) const {
+std::int16_t CChar::GetPeaceing() const {
     std::int16_t rVal = DEFNPC_PEACEING;
     if (IsValidNPC()) {
         rVal = mNPC->peaceing;
@@ -6304,7 +6304,7 @@ void CChar::SetPeaceing(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets minimum skill required to provocate the character
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetProvoing(void) const {
+std::int16_t CChar::GetProvoing() const {
     std::int16_t rVal = DEFNPC_PROVOING;
     if (IsValidNPC()) {
         rVal = mNPC->provoing;
@@ -6332,7 +6332,7 @@ void CChar::SetProvoing(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets skill the player is being trained in. 255 is no training
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetTrainingPlayerIn(void) const {
+std::uint8_t CChar::GetTrainingPlayerIn() const {
     std::uint8_t rVal = DEFNPC_TRAININGPLAYERIN;
     if (IsValidNPC()) {
         rVal = mNPC->trainingPlayerIn;
@@ -6356,7 +6356,7 @@ void CChar::SetTrainingPlayerIn(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets amount of gold being held by a Player Vendor
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t CChar::GetHoldG(void) const {
+std::uint32_t CChar::GetHoldG() const {
     std::uint32_t rVal = DEFNPC_HOLDG;
     if (IsValidNPC()) {
         rVal = mNPC->goldOnHand;
@@ -6381,7 +6381,7 @@ void CChar::SetHoldG(std::uint32_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets split level of the character
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetSplit(void) const {
+std::uint8_t CChar::GetSplit() const {
     std::uint8_t rVal = DEFNPC_SPLIT;
     if (IsValidNPC()) {
         rVal = mNPC->splitNum;
@@ -6406,7 +6406,7 @@ void CChar::SetSplit(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the chance of an NPC splitting
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetSplitChance(void) const {
+std::uint8_t CChar::GetSplitChance() const {
     std::uint8_t rVal = DEFNPC_SPLITCHANCE;
     if (IsValidNPC()) {
         rVal = mNPC->splitChance;
@@ -6489,7 +6489,7 @@ void CChar::SetFy(std::int16_t newVal, std::uint8_t part) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets z of an npc wander area
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetFz(void) const {
+std::int8_t CChar::GetFz() const {
     std::int8_t rVal = DEFNPC_FZ1;
     if (IsValidNPC()) {
         rVal = mNPC->fz;
@@ -6514,7 +6514,7 @@ void CChar::SetFz(std::int8_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC Wander mode
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetNpcWander(void) const {
+std::int8_t CChar::GetNpcWander() const {
     std::int8_t rVal = DEFNPC_WANDER;
     if (IsValidNPC()) {
         rVal = mNPC->wanderMode;
@@ -6546,7 +6546,7 @@ void CChar::SetNpcWander(std::int8_t newValue, bool initArea) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets previous NPC Wander mode
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetOldNpcWander(void) const {
+std::int8_t CChar::GetOldNpcWander() const {
     std::int8_t rVal = DEFNPC_OLDWANDER;
     if (IsValidNPC()) {
         rVal = mNPC->oldWanderMode;
@@ -6571,7 +6571,7 @@ void CChar::SetOldNpcWander(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC Follow target
 // o------------------------------------------------------------------------------------------------o
-CChar *CChar::GetFTarg(void) const {
+CChar *CChar::GetFTarg() const {
     CChar *rVal = nullptr;
     if (IsValidNPC()) {
         rVal = CalcCharObjFromSer(mNPC->fTarg);
@@ -6595,7 +6595,7 @@ void CChar::SetFTarg(CChar *newTarg) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Spell Attack setting
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetSpAttack(void) const {
+std::int16_t CChar::GetSpAttack() const {
     std::int16_t rVal = DEFNPC_SPATTACK;
     if (IsValidNPC()) {
         rVal = mNPC->spellAttack;
@@ -6620,7 +6620,7 @@ void CChar::SetSpAttack(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Spell Delay setting
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CChar::GetSpDelay(void) const {
+std::int8_t CChar::GetSpDelay() const {
     std::int8_t rVal = DEFNPC_SPADELAY;
     if (IsValidNPC()) {
         rVal = mNPC->spellDelay;
@@ -6645,7 +6645,7 @@ void CChar::SetSpDelay(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Type
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetQuestType(void) const {
+std::uint8_t CChar::GetQuestType() const {
     std::uint8_t rVal = DEFNPC_QUESTTYPE;
     if (IsValidNPC()) {
         rVal = mNPC->questType;
@@ -6670,7 +6670,7 @@ void CChar::SetQuestType(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Origin Region - used for escort quests
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetQuestOrigRegion(void) const {
+std::uint8_t CChar::GetQuestOrigRegion() const {
     std::uint8_t rVal = DEFNPC_QUESTORIGREGION;
     if (IsValidNPC()) {
         rVal = mNPC->questOrigRegion;
@@ -6695,7 +6695,7 @@ void CChar::SetQuestOrigRegion(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets NPC's Quest Destination Region
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetQuestDestRegion(void) const {
+std::uint8_t CChar::GetQuestDestRegion() const {
     std::uint8_t rVal = DEFNPC_QUESTDESTREGION;
     if (IsValidNPC()) {
         rVal = mNPC->questDestRegion;
@@ -6720,7 +6720,7 @@ void CChar::SetQuestDestRegion(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets health value at which an NPC will turn tail and run
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetFleeAt(void) const {
+std::int16_t CChar::GetFleeAt() const {
     std::int16_t rVal = DEFNPC_FLEEAT;
     if (IsValidNPC()) {
         rVal = mNPC->fleeAt;
@@ -6745,7 +6745,7 @@ void CChar::SetFleeAt(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets health value at which an NPC will start fighting again
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetReattackAt(void) const {
+std::int16_t CChar::GetReattackAt() const {
     std::int16_t rVal = DEFNPC_REATTACKAT;
     if (IsValidNPC()) {
         rVal = mNPC->reAttackAt;
@@ -6770,7 +6770,7 @@ void CChar::SetReattackAt(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the distance an NPC has moved since entering flee/scared wander mode
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetFleeDistance(void) const {
+std::uint8_t CChar::GetFleeDistance() const {
     std::uint8_t retVal = DEFNPC_FLEEDISTANCE;
     if (IsValidNPC()) {
         retVal = mNPC->fleeDistance;
@@ -6794,7 +6794,7 @@ void CChar::SetFleeDistance(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets queue of directions for NPC
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::PopDirection(void) {
+std::uint8_t CChar::PopDirection() {
     std::uint8_t rVal = 0;
     if (IsValidNPC()) {
         if (!mNPC->pathToFollow.empty()) {
@@ -6822,7 +6822,7 @@ void CChar::PushDirection(std::uint8_t newDir, bool pushFront) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Check if NPC's Direction Queue is empty
 // o------------------------------------------------------------------------------------------------o
-bool CChar::StillGotDirs(void) const {
+bool CChar::StillGotDirs() const {
     bool rVal = false;
     if (IsValidNPC()) {
         rVal = !mNPC->pathToFollow.empty();
@@ -6835,7 +6835,7 @@ bool CChar::StillGotDirs(void) const {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Empty NPC's Queue of Directions.
 // o------------------------------------------------------------------------------------------------o
-void CChar::FlushPath(void) {
+void CChar::FlushPath() {
     if (IsValidNPC()) {
         while (StillGotDirs()) {
             PopDirection();
@@ -6933,7 +6933,7 @@ auto CChar::ClearCombatIgnore() -> void { mNPC->combatIgnore.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the pet's list of previous owners
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CChar::GetPetOwnerList(void) { return &mNPC->petOwnerList; }
+GenericList<CChar *> *CChar::GetPetOwnerList() { return &mNPC->petOwnerList; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::ClearPetOwnerList()
@@ -7066,7 +7066,7 @@ bool CChar::RemoveFriend(CChar *toRemove) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get the total number of owners a pet/follower has had
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetOwnerCount(void) { return static_cast<std::uint8_t>(GetPetOwnerList()->Num()); }
+std::uint8_t CChar::GetOwnerCount() { return static_cast<std::uint8_t>(GetPetOwnerList()->Num()); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetControlSlotsUsed()
@@ -7075,7 +7075,7 @@ std::uint8_t CChar::GetOwnerCount(void) { return static_cast<std::uint8_t>(GetPe
 //| Purpose		-	Get/Sets the total number of control slots used by a player's active
 // pets/followers
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetControlSlotsUsed(void) const {
+std::uint8_t CChar::GetControlSlotsUsed() const {
     std::uint8_t rVal = DEFPLAYER_CONTROLSLOTSUSED;
     if (IsValidPlayer()) {
         rVal = mPlayer->controlSlotsUsed;
@@ -7101,7 +7101,7 @@ void CChar::SetControlSlotsUsed(std::uint8_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the total number of control slots an NPC takes up
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CChar::GetControlSlots(void) const {
+std::uint8_t CChar::GetControlSlots() const {
     std::uint8_t rVal = DEFNPC_CONTROLSLOTS;
     if (IsValidNPC()) {
         rVal = mNPC->controlSlots;
@@ -7124,7 +7124,7 @@ void CChar::SetControlSlots(std::uint8_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Get/Sets the difficulty of controlling a pet
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CChar::GetOrneriness(void) const {
+std::uint16_t CChar::GetOrneriness() const {
     std::uint16_t rVal = DEFNPC_ORNERINESS;
     if (IsValidNPC()) {
         rVal = mNPC->orneriness;
@@ -7148,7 +7148,7 @@ void CChar::SetOrneriness(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's default flag color
 // o------------------------------------------------------------------------------------------------o
-cnpc_flag_t CChar::GetNPCFlag(void) const {
+cnpc_flag_t CChar::GetNPCFlag() const {
     cnpc_flag_t retVal = fNPC_NEUTRAL;
     
     if (IsValidNPC()) {
@@ -7175,7 +7175,7 @@ void CChar::SetNPCFlag(cnpc_flag_t flagType) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's walking speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetWalkingSpeed(void) const {
+R32 CChar::GetWalkingSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
     
     if (IsValidNPC()) {
@@ -7207,7 +7207,7 @@ void CChar::SetWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's running speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetRunningSpeed(void) const {
+R32 CChar::GetRunningSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
     
     if (IsValidNPC()) {
@@ -7239,7 +7239,7 @@ void CChar::SetRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetFleeingSpeed(void) const {
+R32 CChar::GetFleeingSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
     
     if (IsValidNPC()) {
@@ -7270,7 +7270,7 @@ void CChar::SetFleeingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted walking speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedWalkingSpeed(void) const {
+R32 CChar::GetMountedWalkingSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
     
     if (IsValidNPC()) {
@@ -7301,7 +7301,7 @@ void CChar::SetMountedWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted running speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedRunningSpeed(void) const {
+R32 CChar::GetMountedRunningSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
     
     if (IsValidNPC()) {
@@ -7332,7 +7332,7 @@ void CChar::SetMountedRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedFleeingSpeed(void) const {
+R32 CChar::GetMountedFleeingSpeed() const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
     
     if (IsValidNPC()) {
@@ -7362,7 +7362,7 @@ void CChar::SetMountedFleeingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Compare damage done for two damage entries
 // o------------------------------------------------------------------------------------------------o
-bool DTEgreater(DamageTrackEntry_st *elem1, DamageTrackEntry_st *elem2) {
+bool DTEgreater(DamageTrackEntry *elem1, DamageTrackEntry *elem2) {
     if (elem1 == nullptr)
         return false;
     
@@ -7382,7 +7382,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
     if (healer != nullptr) {
         const auto healerSerial = healer->GetSerial();
         bool persFound = false;
-        for (DamageTrackEntry_st *i = damageHealed.First(); !damageHealed.Finished();
+        for (DamageTrackEntry *i = damageHealed.First(); !damageHealed.Finished();
              i = damageHealed.Next()) {
             if (i->damager == healerSerial) {
                 i->damageDone += healValue;
@@ -7393,7 +7393,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
             }
         }
         if (!persFound) {
-            damageHealed.Add(new DamageTrackEntry_st(healerSerial, healValue, NONE,
+            damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, NONE,
                                                      cwmWorldState->GetUICurrentTime()));
         }
         damageHealed.Sort(DTEgreater);
@@ -7582,7 +7582,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
         // Update Damage tracking
         const auto attackerSerial = attacker->GetSerial();
         bool persFound = false;
-        for (DamageTrackEntry_st *i = damageDealt.First(); !damageDealt.Finished();
+        for (DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished();
              i = damageDealt.Next()) {
             if (i->damager == attackerSerial) {
                 i->damageDone += damageValue;
@@ -7593,7 +7593,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
             }
         }
         if (!persFound) {
-            damageDealt.Add(new DamageTrackEntry_st(attackerSerial, damageValue, damageType,
+            damageDealt.Add(new DamageTrackEntry(attackerSerial, damageValue, damageType,
                                                     cwmWorldState->GetUICurrentTime()));
         }
         damageDealt.Sort(DTEgreater);
@@ -7611,7 +7611,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the character's karma
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CChar::GetKarma(void) const {
+std::int16_t CChar::GetKarma() const {
     if (GetOwnerObj() != nullptr && IsTamed()) {
         if (ValidateObject(GetOwnerObj()) && GetOwnerObj() != this) {
             // Pets inherit the karma of their owner
@@ -7688,7 +7688,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) -> bool {
     timerval_t currentTime = cwmWorldState->GetUICurrentTime();
-    for (DamageTrackEntry_st *i = damageDealt.First(); !damageDealt.Finished();
+    for (DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished();
          i = damageDealt.Next()) {
         if (i->damager == serialToCheck) {
             // Did the last damage dealt happen within the last X seconds?
@@ -7706,9 +7706,9 @@ auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) ->
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Keeps track of damage dealt and healing done to character over time
 // o------------------------------------------------------------------------------------------------o
-void CChar::UpdateDamageTrack(void) {
+void CChar::UpdateDamageTrack() {
     timerval_t currentTime = cwmWorldState->GetUICurrentTime();
-    DamageTrackEntry_st *i = nullptr;
+    DamageTrackEntry *i = nullptr;
     // Update the damage stuff
     for (i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next()) {
         if (i == nullptr) {
@@ -7764,7 +7764,7 @@ void CChar::Dirty(updatetypes_t updateType) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks region character exists in as updated since last save
 // o------------------------------------------------------------------------------------------------o
-void CChar::UpdateRegion(void) {
+void CChar::UpdateRegion() {
     // Make sure to only mark region as changed if this is a character we're supposed to save!
     if (ShouldSave()) {
         CMapRegion *curCell = MapRegion->GetMapRegion(this);
@@ -7785,7 +7785,7 @@ bool CChar::GetUpdate(updatetypes_t updateType) const { return updateTypes.test(
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the UpdateType bitlist, used at the end of our refresh queue
 // o------------------------------------------------------------------------------------------------o
-void CChar::ClearUpdate(void) { updateTypes.reset(); }
+void CChar::ClearUpdate() { updateTypes.reset(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::InParty()
@@ -7794,7 +7794,7 @@ void CChar::ClearUpdate(void) { updateTypes.reset(); }
 //| Purpose		-	Gets/Sets/clears whether the character is in a party or not
 // o------------------------------------------------------------------------------------------------o
 void CChar::InParty(bool value) { bools.set(BIT_INPARTY, value); }
-bool CChar::InParty(void) const { return bools.test(BIT_INPARTY); }
+bool CChar::InParty() const { return bools.test(BIT_INPARTY); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CountHousesOwnedFunctor()

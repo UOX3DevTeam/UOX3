@@ -209,7 +209,7 @@ auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, s
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when a player picks up an item
 // o------------------------------------------------------------------------------------------------o
-bool CPIGetItem::Handle(void) {
+bool CPIGetItem::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     serial_t serial = tSock->GetDWord(1);
     if (serial == INVALIDSERIAL)
@@ -560,7 +560,7 @@ bool CPIGetItem::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped on a players paperdoll
 // o------------------------------------------------------------------------------------------------o
-bool CPIEquipItem::Handle(void) {
+bool CPIEquipItem::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     serial_t cserial = tSock->GetDWord(6);
     serial_t iserial = tSock->GetDWord(1);
@@ -1861,7 +1861,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped
 // o------------------------------------------------------------------------------------------------o
-bool CPIDropItem::Handle(void) {
+bool CPIDropItem::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
 
@@ -3029,7 +3029,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
 
 std::map<std::string, itemtypes_t> tagToItemType;
 
-void InitTagToItemType(void) {
+void InitTagToItemType() {
     tagToItemType["CONTAINER"] = IT_CONTAINER;
     tagToItemType["CASTLEGATEOPENER"] = IT_CASTLEGATEOPENER;
     tagToItemType["CASTLEGATE"] = IT_CASTLEGATE;
@@ -3302,7 +3302,7 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
 //|						fish shouldn't produce cooked ribs, people can cook the
 //fish after filleting with a knife.
 // o------------------------------------------------------------------------------------------------o
-bool CPIDblClick::Handle(void) {
+bool CPIDblClick::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
     std::uint8_t a1 = tSock->GetByte(1);
@@ -3493,7 +3493,7 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
 //|	Purpose		-	Called when an item or character is single-clicked (also used for
 // AllNames macro)
 // o------------------------------------------------------------------------------------------------o
-bool CPISingleClick::Handle(void) {
+bool CPISingleClick::Handle() {
     if (objectId == INVALIDSERIAL) // invalid
         return true;
 

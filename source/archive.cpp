@@ -30,7 +30,7 @@ static void BackupFile(const std::string &filename, std::string backupDir) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes a backup copy of the current world state
 // o------------------------------------------------------------------------------------------------o
-void FileArchive(void) {
+void FileArchive() {
     Console::shared() << "Beginning backup... ";
     auto mytime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     struct tm ttemp;

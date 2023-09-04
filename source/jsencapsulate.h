@@ -32,17 +32,17 @@ class JSEncapsulate {
     JSEncapsulate();
     void SetContext(JSContext *jsCX, jsval *jsVP);
     bool isType(JSEncapsulate::type_t toCheck);
-    std::int32_t toInt(void);
-    bool toBool(void);
-    R32 toFloat(void);
-    std::string toString(void);
-    void *toObject(void);
+    std::int32_t toInt();
+    bool toBool();
+    R32 toFloat();
+    std::string toString();
+    void *toObject();
 
-    std::string ClassName(void);
+    std::string ClassName();
 
   private:
-    void InternalReset(void);
-    void Init(void);
+    void InternalReset();
+    void Init();
     bool beenParsed[JSOT_COUNT + 1];
     JSEncapsulate::type_t nativeType;
 

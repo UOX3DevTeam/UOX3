@@ -58,6 +58,6 @@ void MsgBoardQuestEscortCreate(CChar *mNPC);
 void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC);
 void MsgBoardQuestEscortRemovePost(CChar *mNPC);
 void MsgBoardRemoveFile(const serial_t msgBoardSer);
-void MsgBoardMaintenance(void);
+void MsgBoardMaintenance();
 
 #endif

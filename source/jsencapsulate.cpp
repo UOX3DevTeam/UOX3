@@ -9,7 +9,7 @@
 #include "utility/strutil.hpp"
 // #include "jsutil.h"
 
-void JSEncapsulate::InternalReset(void) {
+void JSEncapsulate::InternalReset() {
     beenParsed[JSOT_INT] = false;
     beenParsed[JSOT_DOUBLE] = false;
     beenParsed[JSOT_BOOL] = false;
@@ -30,7 +30,7 @@ void JSEncapsulate::SetContext(JSContext *jsCX, jsval *jsVP) {
     vp = jsVP;
     Init();
 }
-void JSEncapsulate::Init(void) {
+void JSEncapsulate::Init() {
     if (JSVAL_IS_PRIMITIVE(*vp)) {
         if (JSVAL_IS_DOUBLE((*vp))) {
             nativeType = JSOT_DOUBLE;
@@ -71,7 +71,7 @@ JSEncapsulate::JSEncapsulate(JSContext *jsCX, JSObject *jsVP)
 
 bool JSEncapsulate::isType(JSEncapsulate::type_t toCheck) { return (nativeType == toCheck); }
 
-std::int32_t JSEncapsulate::toInt(void) {
+std::int32_t JSEncapsulate::toInt() {
     if (nativeType == JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert JS Object to an int");
     }
@@ -80,7 +80,7 @@ std::int32_t JSEncapsulate::toInt(void) {
     }
     return intVal;
 }
-bool JSEncapsulate::toBool(void) {
+bool JSEncapsulate::toBool() {
     if (nativeType == JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert JS Object to a bool");
     }
@@ -89,7 +89,7 @@ bool JSEncapsulate::toBool(void) {
     }
     return boolVal;
 }
-float JSEncapsulate::toFloat(void) {
+float JSEncapsulate::toFloat() {
     if (nativeType == JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert JS Object to a float");
     }
@@ -98,7 +98,7 @@ float JSEncapsulate::toFloat(void) {
     }
     return floatVal;
 }
-std::string JSEncapsulate::toString(void) {
+std::string JSEncapsulate::toString() {
     if (nativeType == JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert JS Object to a string");
     }
@@ -107,7 +107,7 @@ std::string JSEncapsulate::toString(void) {
     }
     return stringVal;
 }
-void *JSEncapsulate::toObject(void) {
+void *JSEncapsulate::toObject() {
     if (nativeType != JSOT_OBJECT) {
         throw new std::runtime_error("Cannot convert to JS Object");
     }
@@ -117,7 +117,7 @@ void *JSEncapsulate::toObject(void) {
     return objectVal;
 }
 
-std::string JSEncapsulate::ClassName(void) {
+std::string JSEncapsulate::ClassName() {
     std::string rVal = className;
     if (!classCached) {
         if (nativeType == JSOT_OBJECT) {

@@ -2006,7 +2006,7 @@ void VialTarget(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //| Changes		-	Overhauled to use an enum allowing simple modification
 // o------------------------------------------------------------------------------------------------o
-bool CPITargetCursor::Handle(void) {
+bool CPITargetCursor::Handle() {
     CChar *mChar = tSock->CurrcharObj();
     if (tSock->TargetOK()) {
         if (!tSock->GetByte(1) && !tSock->GetDWord(7) && tSock->GetDWord(11) == INVALIDSERIAL) {

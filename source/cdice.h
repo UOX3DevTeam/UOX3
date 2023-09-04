@@ -18,7 +18,7 @@ class cDice {
     cDice(std::int32_t d, std::int32_t s, std::int32_t a);
     ~cDice();
 
-    std::int32_t RollDice(void);
+    std::int32_t RollDice();
     void SetDice(std::int32_t newDice);
     void SetSides(std::int32_t newSides);
     void SetAddition(std::int32_t newAddition);

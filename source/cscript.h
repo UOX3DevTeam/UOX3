@@ -171,12 +171,12 @@ public:
 
     std::vector<SEGump_st *> gumpDisplays;
 
-    void Cleanup(void);
+    void Cleanup();
 
 public:
-    void CollectGarbage(void);
+    void CollectGarbage();
 
-    size_t NewGumpList(void);
+    size_t NewGumpList();
     SEGump_st *GetGumpList(std::int32_t index);
     void RemoveGumpList(std::int32_t index);
     void SendGumpList(std::int32_t index, CSocket *toSendTo);
@@ -187,12 +187,12 @@ public:
     cScript(std::string targFile, std::uint8_t runTime);
     ~cScript();
 
-    JSObject *Object(void) const; // returns object pointer
+    JSObject *Object() const; // returns object pointer
 
     //|	Modification	-	08162003 - Added these event to handle any script initialization and
     //clean up as the server starts, and is shut down
-    bool OnStart(void);
-    bool OnStop(void);
+    bool OnStart();
+    bool OnStop();
     //
     bool OnPacketReceive(CSocket *mSock, std::uint16_t packetNum);
     bool OnIterate(CBaseObject *a, std::uint32_t &b);
@@ -213,7 +213,7 @@ public:
     std::int8_t OnDyeTarget(CChar *player, CItem *dyeTub, CItem *target);
     std::int8_t OnDispel(CBaseObject *dispelled);
     bool OnSkill(CBaseObject *skillUse, std::int8_t skillUsed);
-    bool OnStat(void);
+    bool OnStat();
     std::string OnTooltip(CBaseObject *myObj, CSocket *pSocket);
     std::string OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std::uint8_t requestSource);
     bool OnAttack(CChar *attacker, CChar *defender);
@@ -245,7 +245,7 @@ public:
     std::int8_t OnClick(CSocket *sockPlayer, CBaseObject *objClicked);
     bool OnFall(CChar *pFall, std::int8_t fallDistance);
     std::int8_t OnAISliver(CChar *pSliver);
-    bool OnSystemSlice(void);
+    bool OnSystemSlice();
     std::int8_t OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel);
     bool OnWeatherChange(CBaseObject *tObject, weathertype_t element);
     bool OnTempChange(CBaseObject *tObject, std::int8_t temp);
@@ -318,9 +318,9 @@ public:
     std::int8_t OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, std::uint16_t createEntryId);
 
     //	Critical handler type stuff
-    bool IsFiring(void);
-    void Firing(void);
-    void Stop(void);
+    bool IsFiring();
+    void Firing();
+    void Stop();
 };
 
 #endif

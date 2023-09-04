@@ -47,10 +47,10 @@ struct ByteBufferBounds : public std::out_of_range {
 enum class radix_t { dec = 10, oct = 8, hex = 16, bin = 2 };
 
 // o------------------------------------------------------------------------------------------------o
-//  ByteBuffer_t
+//  ByteBuffer
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
-class ByteBuffer_t {
+class ByteBuffer {
     // These are compatability to "look" like a the original CPacketStream
     //=============================================================================================
   public:
@@ -201,7 +201,7 @@ class ByteBuffer_t {
     auto Exceeds(int offset, int bytelength, bool expand) -> bool;
 
   public:
-    ByteBuffer_t(int size = 0, int reserve = 0);
+    ByteBuffer(int size = 0, int reserve = 0);
 
     auto size() const -> size_t;
     auto size(int value, std::uint8_t fill = 0) -> void;
@@ -332,7 +332,7 @@ class ByteBuffer_t {
 
     template <typename T>
     auto write(int offset, const T *value, int amount = -1, bool reverse = true, bool expand = true)
-        -> ByteBuffer_t & {
+        -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
@@ -371,8 +371,7 @@ class ByteBuffer_t {
 
     template <typename T>
     auto write(int offset, const T &value, int amount = -1, bool reverse = true, bool expand = true)
-        -> ByteBuffer_t & {
-        (void)amount; // unused variable
+        -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
@@ -488,9 +487,9 @@ class socket_error : public std::runtime_error {
   public:
     socket_error(const std::string &what_arg);
     socket_error(const std::uint32_t errorNumber);
-    socket_error(void);
-    std::uint32_t ErrorNumber(void) const;
-    const char *what(void) const throw();
+    socket_error();
+    std::uint32_t ErrorNumber() const;
+    const char *what() const throw();
 };
 
 class CPUOXBuffer {
@@ -500,9 +499,9 @@ class CPUOXBuffer {
     std::uint32_t packedLength;
 
   protected:
-    ByteBuffer_t pStream;
+    ByteBuffer pStream;
 
-    virtual void InternalReset(void);
+    virtual void InternalReset();
 
   public:
     CPUOXBuffer();
@@ -510,12 +509,12 @@ class CPUOXBuffer {
     CPUOXBuffer(CPUOXBuffer *initBuffer);
     CPUOXBuffer &operator=(CPUOXBuffer &copyFrom);
 
-    std::uint32_t Pack(void);
+    std::uint32_t Pack();
     virtual bool ClientCanReceive(CSocket *mSock);
-    ByteBuffer_t &GetPacketStream(void);
+    ByteBuffer &GetPacketStream();
 
-    std::uint32_t PackedLength(void) const;
-    const std::uint8_t *PackedPointer(void) const;
+    std::uint32_t PackedLength() const;
+    const std::uint8_t *PackedPointer() const;
 
     virtual void Log(std::ostream &outStream, bool fullHeader = true);
 };
@@ -529,11 +528,11 @@ class CPInputBuffer {
     CPInputBuffer(CSocket *input);
     virtual ~CPInputBuffer() {}
 
-    virtual void Receive(void) = 0;
+    virtual void Receive() = 0;
     virtual void Log(std::ostream &outStream, bool fullHeader = true);
-    virtual bool Handle(void);
+    virtual bool Handle();
     void SetSocket(CSocket *toSet);
-    CSocket *GetSocket(void) const;
+    CSocket *GetSocket() const;
 };
 
 class CNetworkStuff {
@@ -544,20 +543,20 @@ class CNetworkStuff {
     auto Startup() -> void;
     void Disconnect(uoxsocket_t s);
     void Disconnect(CSocket *s);
-    void ClearBuffers(void);
-    void CheckLoginMessage(void);
-    void CheckMessage(void);
-    void SockClose(void);
+    void ClearBuffers();
+    void CheckLoginMessage();
+    void CheckMessage();
+    void SockClose();
     void SetLastOn(CSocket *s);
     CSocket *GetSockPtr(uoxsocket_t s);
     uoxsocket_t FindNetworkPtr(CSocket *toFind);
 
-    void CheckConnections(void);
-    void CheckMessages(void);
+    void CheckConnections();
+    void CheckMessages();
 
     void Transfer(CSocket *s);
 
-    size_t PeakConnectionCount(void) const;
+    size_t PeakConnectionCount() const;
 
     // Login Specific
     void LoginDisconnect(uoxsocket_t s);
@@ -589,13 +588,13 @@ class CNetworkStuff {
 
     size_t peakConnectionCount;
 
-    void LoadFirewallEntries(void);
+    void LoadFirewallEntries();
     void GetMsg(uoxsocket_t s);
-    void sockInit(void);
+    void sockInit();
     void GetLoginMsg(uoxsocket_t s);
     uoxsocket_t FindLoginPtr(CSocket *s);
 
-    void CheckConn(void);
+    void CheckConn();
     void LogOut(CSocket *s);
 
     bool IsFirewallBlocked(std::uint8_t part[4]);

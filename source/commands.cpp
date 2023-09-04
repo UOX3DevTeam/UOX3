@@ -37,7 +37,7 @@ CCommands::~CCommands() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Number of arguments in a command
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CCommands::NumArguments(void) {
+std::uint8_t CCommands::NumArguments() {
     auto secs = oldstrutil::sections(commandString, " ");
     return static_cast<std::uint8_t>(secs.size());
 }
@@ -271,7 +271,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the command table
 // o------------------------------------------------------------------------------------------------o
-void CCommands::Load(void) {
+void CCommands::Load() {
     std::int16_t commandCount = 0;
     CScriptSection *commands = FileLookup->FindEntry("COMMAND_OVERRIDE", command_def);
     if (commands == nullptr) {
@@ -461,7 +461,7 @@ std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize command levels
 // o------------------------------------------------------------------------------------------------o
-void CCommands::InitClearance(void) {
+void CCommands::InitClearance() {
     clearance.push_back(new CommandLevel_st); // 0 -> 3
     clearance.push_back(new CommandLevel_st);
     clearance.push_back(new CommandLevel_st);
@@ -551,7 +551,7 @@ bool CCommands::CommandExists(const std::string &cmdName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get first command in cmd_table
 // o------------------------------------------------------------------------------------------------o
-const std::string CCommands::FirstCommand(void) {
+const std::string CCommands::FirstCommand() {
     cmdPointer = CommandMap.begin();
     if (FinishedCommandList())
         return "";
@@ -564,7 +564,7 @@ const std::string CCommands::FirstCommand(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get next command in cmd_table
 // o------------------------------------------------------------------------------------------------o
-const std::string CCommands::NextCommand(void) {
+const std::string CCommands::NextCommand() {
     if (FinishedCommandList())
         return "";
     
@@ -580,7 +580,7 @@ const std::string CCommands::NextCommand(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get end of cmd_table
 // o------------------------------------------------------------------------------------------------o
-bool CCommands::FinishedCommandList(void) { return (cmdPointer == CommandMap.end()); }
+bool CCommands::FinishedCommandList() { return (cmdPointer == CommandMap.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCommands::CommandDetails()

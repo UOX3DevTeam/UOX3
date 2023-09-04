@@ -185,7 +185,7 @@ CScriptSection *Script::FindEntrySubStr(const std::string &section) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the first CScriptSection in the Script (if any)
 // o------------------------------------------------------------------------------------------------o
-CScriptSection *Script::FirstEntry(void) {
+CScriptSection *Script::FirstEntry() {
     CScriptSection *rValue = nullptr;
     iSearch = defEntries.begin();
     if (iSearch != defEntries.end()) {
@@ -199,7 +199,7 @@ CScriptSection *Script::FirstEntry(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the next CScriptSection (if any) in the Script
 // o------------------------------------------------------------------------------------------------o
-CScriptSection *Script::NextEntry(void) {
+CScriptSection *Script::NextEntry() {
     CScriptSection *rValue = nullptr;
     if (iSearch != defEntries.end()) {
         ++iSearch;
@@ -215,7 +215,7 @@ CScriptSection *Script::NextEntry(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Destroys any memory that has been allocated
 // o------------------------------------------------------------------------------------------------o
-void Script::DeleteMap(void) {
+void Script::DeleteMap() {
     for (auto iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest) {
         delete iTest->second;
     }
@@ -227,7 +227,7 @@ void Script::DeleteMap(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns the section name for the current entry (if any)
 // o------------------------------------------------------------------------------------------------o
-std::string Script::EntryName(void) {
+std::string Script::EntryName() {
     std::string rValue;
     if (iSearch != defEntries.end()) {
         rValue = iSearch->first;

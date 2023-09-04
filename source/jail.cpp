@@ -28,21 +28,21 @@ CJailCell::~CJailCell() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if jailcell is empty
 // o------------------------------------------------------------------------------------------------o
-bool CJailCell::IsEmpty(void) const { return playersInJail.empty(); }
+bool CJailCell::IsEmpty() const { return playersInJail.empty(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::JailedPlayers()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of players in jailcell
 // o------------------------------------------------------------------------------------------------o
-size_t CJailCell::JailedPlayers(void) const { return playersInJail.size(); }
+size_t CJailCell::JailedPlayers() const { return playersInJail.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJailCell::X()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets X coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CJailCell::X(void) const { return x; }
+std::int16_t CJailCell::X() const { return x; }
 void CJailCell::X(std::int16_t nVal) { x = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -50,7 +50,7 @@ void CJailCell::X(std::int16_t nVal) { x = nVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Y coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CJailCell::Y(void) const { return y; }
+std::int16_t CJailCell::Y() const { return y; }
 void CJailCell::Y(std::int16_t nVal) { y = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -58,7 +58,7 @@ void CJailCell::Y(std::int16_t nVal) { y = nVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Z coordinate for jailcell
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CJailCell::Z(void) const { return z; }
+std::int8_t CJailCell::Z() const { return z; }
 void CJailCell::Z(std::int8_t nVal) { z = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -66,7 +66,7 @@ void CJailCell::Z(std::int8_t nVal) { z = nVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets world number for jailcell
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CJailCell::World(void) const { return world; }
+std::uint8_t CJailCell::World() const { return world; }
 void CJailCell::World(std::uint8_t nVal) { world = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -74,7 +74,7 @@ void CJailCell::World(std::uint8_t nVal) { world = nVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets instanceId for jailcell
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CJailCell::InstanceId(void) const { return instanceId; }
+std::uint16_t CJailCell::InstanceId() const { return instanceId; }
 void CJailCell::InstanceId(std::uint16_t nVal) { instanceId = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -127,7 +127,7 @@ JailOccupant_st *CJailCell::Occupant(size_t occupantId) {
 //|	Purpose		-	Perform period check of each player in jailcell, and release them if
 // time is up
 // o------------------------------------------------------------------------------------------------o
-void CJailCell::PeriodicCheck(void) {
+void CJailCell::PeriodicCheck() {
     time_t now;
     time(&now);
     for (size_t i = playersInJail.size(); i-- > 0 && i < playersInJail.size();) {
@@ -312,7 +312,7 @@ auto CJailSystem::ReadData() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save out details about jailed players to jails.wsc in shared folder
 // o------------------------------------------------------------------------------------------------o
-void CJailSystem::WriteData(void) {
+void CJailSystem::WriteData() {
     std::string jailsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "jails.wsc";
     std::ofstream jailsDestination(jailsFile.c_str());
     if (!jailsDestination) {
@@ -330,7 +330,7 @@ void CJailSystem::WriteData(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Perform period check of each jailcell
 // o------------------------------------------------------------------------------------------------o
-void CJailSystem::PeriodicCheck(void) {
+void CJailSystem::PeriodicCheck() {
     std::vector<CJailCell>::iterator jIter;
     for (jIter = jails.begin(); jIter != jails.end(); ++jIter) {
         (*jIter).PeriodicCheck();

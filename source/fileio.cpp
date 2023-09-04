@@ -31,7 +31,7 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads players titles (Karma, Fame, Murder, ect)
 // o------------------------------------------------------------------------------------------------o
-void LoadCustomTitle(void) {
+void LoadCustomTitle() {
     size_t titlecount = 0;
     std::string tag;
     std::string data;
@@ -52,7 +52,7 @@ void LoadCustomTitle(void) {
     for (tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
         cwmWorldState->prowessTitles.push_back(
-            TitlePair_st(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
+            TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
 
     CustomTitle = FileLookup->FindEntry("FAME", titles_def);
@@ -76,7 +76,7 @@ void LoadCustomTitle(void) {
     for (tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
         cwmWorldState->murdererTags.push_back(
-            TitlePair_st(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
+            TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
 
     FileLookup->Dispose(titles_def);
@@ -87,7 +87,7 @@ void LoadCustomTitle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load skills from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadSkills(void) {
+void LoadSkills() {
     std::string skEntry;
     std::string tag, data, UTag;
     std::uint8_t i = 0;
@@ -126,7 +126,7 @@ void LoadSkills(void) {
                                     static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "SKILLPOINT") {
-                                Advance_st tempAdvance;
+                                Advance tempAdvance;
                                 data = util::simplify(data);
                                 auto csecs = oldstrutil::sections(data, ",");
                                 tempAdvance.base = static_cast<std::uint16_t>(std::stoul(
@@ -168,7 +168,7 @@ void LoadSkills(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads spawning regions from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadSpawnRegions(void) {
+void LoadSpawnRegions() {
     cwmWorldState->spawnRegions.clear();
     std::uint16_t i = 0;
     for (Script *spnScp = FileLookup->FirstScript(spawn_def);
@@ -205,7 +205,7 @@ void LoadSpawnRegions(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load regions from regions.dfn and townregions from regions.wsc
 // o------------------------------------------------------------------------------------------------o
-void LoadRegions(void) {
+void LoadRegions() {
     cwmWorldState->townRegions.clear();
     std::string regionsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "regions.wsc";
     bool performLoad = false;
@@ -296,7 +296,7 @@ void LoadRegions(void) {
     if (sosAreas == nullptr)
         return;
 
-    SOSLocationEntry_st toAddSOS;
+    SOSLocationEntry toAddSOS;
     for (std::string tag = sosAreas->First(); !sosAreas->AtEnd(); tag = sosAreas->Next()) {
         UTag = util::upper(tag);
         data = sosAreas->GrabData();
@@ -328,7 +328,7 @@ void LoadRegions(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load teleport locations from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadTeleportLocations(void) {
+void LoadTeleportLocations() {
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS) + "teleport.scp";
     cwmWorldState->teleLocs.resize(0);
 
@@ -413,7 +413,7 @@ void LoadTeleportLocations(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads creatures from creature definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadCreatures(void) {
+void LoadCreatures() {
     std::string cEntry;
     std::string tag, data, UTag;
     std::uint16_t i = 0;
@@ -622,10 +622,10 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load locations from location definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadPlaces(void) {
+void LoadPlaces() {
     cwmWorldState->goPlaces.clear();
     std::string data, UTag, entryName;
-    GoPlaces_st *toAdd = nullptr;
+    GoPlaces *toAdd = nullptr;
 
     for (Script *locScp = FileLookup->FirstScript(location_def);
          !FileLookup->FinishedScripts(location_def);

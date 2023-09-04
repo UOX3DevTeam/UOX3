@@ -11,16 +11,16 @@ class CVersionClass {
   public:
     CVersionClass();
     ~CVersionClass();
-    static std::string GetVersion(void);
-    static std::string GetBuild(void);
-    static std::string GetRealBuild(void);
-    static std::string GetScriptVersion(void);
-    static std::string GetCharacterVersion(void);
-    static std::string GetItemVersion(void);
-    static std::string GetProductName(void);
-    static std::string GetName(void);
-    static std::string GetEmail(void);
-    static std::string GetProgrammers(void);
+    static std::string GetVersion();
+    static std::string GetBuild();
+    static std::string GetRealBuild();
+    static std::string GetScriptVersion();
+    static std::string GetCharacterVersion();
+    static std::string GetItemVersion();
+    static std::string GetProductName();
+    static std::string GetName();
+    static std::string GetEmail();
+    static std::string GetProgrammers();
 };
 
 #endif // __CVERSIONCLASS_H__

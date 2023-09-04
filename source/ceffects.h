@@ -19,9 +19,9 @@ public:
     void TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2, std::uint16_t more3,
                     CItem *targItemPtr = nullptr);
     void TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2, std::uint16_t more3);
-    void CheckTempeffects(void);
-    void SaveEffects(void);
-    void LoadEffects(void);
+    void CheckTempeffects();
+    void SaveEffects();
+    void LoadEffects();
     
     // Visual Effects
     void DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection);

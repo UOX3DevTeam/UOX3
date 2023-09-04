@@ -155,19 +155,19 @@ auto aMapRegion = CMapHandler();         // Dependent (Map->) , has startup
 // o------------------------------------------------------------------------------------------------o
 //  FileIO Pre-Declarations
 // o------------------------------------------------------------------------------------------------o
-void LoadCustomTitle(void);
-void LoadSkills(void);
-void LoadSpawnRegions(void);
-void LoadRegions(void);
-void LoadTeleportLocations(void);
-void LoadCreatures(void);
-void LoadPlaces(void);
+void LoadCustomTitle();
+void LoadSkills();
+void LoadSpawnRegions();
+void LoadRegions();
+void LoadTeleportLocations();
+void LoadCreatures();
+void LoadPlaces();
 
 // o------------------------------------------------------------------------------------------------o
 //  Misc Pre-Declarations
 // o------------------------------------------------------------------------------------------------o
 void RestockNPC(CChar &i, bool stockAll);
-void ClearTrades(void);
+void ClearTrades();
 void SysBroadcast(const std::string &txt);
 void MoveBoat(std::uint8_t dir, CBoatObj *boat);
 bool DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, const std::uint32_t nextDecayItemsInHouses);
@@ -653,15 +653,15 @@ auto StartInitialize(CServerData &serverdata) -> void {
     auto deviceIPs = ip4list_t::available();
     for (auto &entry : deviceIPs.ips()) {
                 switch (entry.type()) {
-                case Ip4Addr_st::ip4type_t::lan:
+                case IP4Addr::ip4type_t::lan:
                     Console::shared() << "UOX: listening for incoming connections on LAN IP: "
                                       << entry.description() << myendl;
                     break;
-                case Ip4Addr_st::ip4type_t::local:
+                case IP4Addr::ip4type_t::local:
                     Console::shared() << "UOX: listening for incoming connections on Local IP: "
                                       << entry.description() << myendl;
                     break;
-                case Ip4Addr_st::ip4type_t::wan:
+                case IP4Addr::ip4type_t::wan:
                     Console::shared() << "UOX: listening for incoming connections on WAN IP: "
                                       << entry.description() << myendl;
                     break;

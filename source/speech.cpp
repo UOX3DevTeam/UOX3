@@ -266,7 +266,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
 // BYTE[30] Name										18-47
 // | ·	BYTE[?][2] Msg - Null Terminated (blockSize - 48)	48+?
 // o------------------------------------------------------------------------------------------------o
-bool CPITalkRequest::Handle(void) {
+bool CPITalkRequest::Handle() {
     if (HandleCommon())
         return true;
     
@@ -586,7 +586,7 @@ void CSpeechQueue::SayIt(CSpeechEntry &toSay) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends out any pending speech, returning true if entries were sent
 // o------------------------------------------------------------------------------------------------o
-bool CSpeechQueue::InternalPoll(void) {
+bool CSpeechQueue::InternalPoll() {
     bool retVal = false;
     CSpeechEntry *toCheck = nullptr;
     
@@ -611,7 +611,7 @@ bool CSpeechQueue::InternalPoll(void) {
     return retVal;
 }
 
-bool CSpeechQueue::Poll(void) {
+bool CSpeechQueue::Poll() {
     if (RunAsThread()) {
         while (RunAsThread()) {
             InternalPoll();
@@ -625,22 +625,22 @@ bool CSpeechQueue::Poll(void) {
     }
 }
 
-CSpeechEntry &CSpeechQueue::Add(void) // Make space in queue, and return pointer to new entry
+CSpeechEntry &CSpeechQueue::Add() // Make space in queue, and return pointer to new entry
 {
     size_t iSize = speechList.size();
     speechList.push_back(new CSpeechEntry);
     return (*speechList[iSize]);
 }
 
-std::int32_t CSpeechQueue::PollTime(void) const { return pollTime; }
+std::int32_t CSpeechQueue::PollTime() const { return pollTime; }
 
 void CSpeechQueue::PollTime(std::int32_t value) { pollTime = value; }
 
-bool CSpeechQueue::RunAsThread(void) const { return runAsThread; }
+bool CSpeechQueue::RunAsThread() const { return runAsThread; }
 
 void CSpeechQueue::RunAsThread(bool value) { runAsThread = value; }
 
-void CSpeechQueue::DumpInFile(void) {
+void CSpeechQueue::DumpInFile() {
     std::string speechFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "speechdump.txt";
     std::ofstream speechDestination(speechFile.c_str());
     if (!speechDestination) {

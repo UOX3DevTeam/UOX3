@@ -794,7 +794,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles a mesage board event from the client.
 // o------------------------------------------------------------------------------------------------o
-bool CPIMsgBoardEvent::Handle(void) {
+bool CPIMsgBoardEvent::Handle() {
     std::uint8_t msgType = tSock->GetByte(3);
     
     if (tSock->GetByte(0) == 0x06) {
@@ -1143,7 +1143,7 @@ void MsgBoardRemoveFile(const serial_t msgBoardSer) {
 //|							It will also remove any empty .bbf files if
 // necessary.
 // o------------------------------------------------------------------------------------------------o
-void MsgBoardMaintenance(void) {
+void MsgBoardMaintenance() {
     std::vector<MsgBoardPost_st> mbMessages;
     std::vector<MsgBoardPost_st>::const_iterator mbIter;
     

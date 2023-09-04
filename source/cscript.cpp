@@ -329,7 +329,7 @@ cScript::cScript(std::string targFile, std::uint8_t rT) : isFiring(false), runTi
     }
 }
 
-void cScript::Cleanup(void) {
+void cScript::Cleanup() {
     size_t i = 0;
     for (i = 0; i < gumpDisplays.size(); ++i) {
         delete gumpDisplays[i];
@@ -339,7 +339,7 @@ void cScript::Cleanup(void) {
     JS_UnlockGCThing(targContext, targObject);
     // JS_RemoveRoot( targContext, &targObject );
 }
-void cScript::CollectGarbage(void) {
+void cScript::CollectGarbage() {
     //	if( JS_IsRunning( targContext ) == JS_FALSE )
     //	{
     Cleanup();
@@ -358,9 +358,9 @@ cScript::~cScript() {
     //		JS_DestroyContext( targContext );
 }
 
-bool cScript::IsFiring(void) { return isFiring; }
-void cScript::Firing(void) { isFiring = true; }
-void cScript::Stop(void) { isFiring = false; }
+bool cScript::IsFiring() { return isFiring; }
+void cScript::Firing() { isFiring = true; }
+void cScript::Stop() { isFiring = false; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStart()
@@ -372,7 +372,7 @@ void cScript::Stop(void) { isFiring = false; }
 //|					OnStart event the code that is provided will be executed
 //|					just following the loading of the script.
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnStart(void) { return false; }
+bool cScript::OnStart() { return false; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnStop()
@@ -384,7 +384,7 @@ bool cScript::OnStart(void) { return false; }
 //|					is provided will be executed just prior to the JSE shut
 //|					down.
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnStop(void) { return false; }
+bool cScript::OnStop() { return false; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::DoesEventExist()
@@ -1915,7 +1915,7 @@ std::int8_t cScript::OnAISliver(CChar *pSliver) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnSystemSlice(void) {
+bool cScript::OnSystemSlice() {
     if (!ExistAndVerify(seOnSystemSlice, "onSystemSlice"))
         return false;
 
@@ -2297,7 +2297,7 @@ bool cScript::DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum
     return false;
 }
 
-JSObject *cScript::Object(void) const { return targObject; }
+JSObject *cScript::Object() const { return targObject; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cScript::OnLoyaltyChange()
@@ -2481,7 +2481,7 @@ std::int8_t cScript::OnSnoopAttempt(CChar *snooped, CItem *pack, CChar *snooper)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 // o------------------------------------------------------------------------------------------------o
-size_t cScript::NewGumpList(void) {
+size_t cScript::NewGumpList() {
     size_t retVal = gumpDisplays.size();
     SEGump_st *toAdd = new SEGump_st;
     toAdd->one = new std::vector<std::string>();

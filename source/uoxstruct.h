@@ -39,18 +39,18 @@ private:
     std::bitset<6> who_am_i;
     std::uint16_t icon;
     std::uint16_t mountId;
-    struct CreatureAnim_st {
+    struct CreatureAnim {
         std::uint8_t animId;
         std::uint8_t animLength;
-        CreatureAnim_st() : animId(0), animLength(0) {}
+        CreatureAnim() : animId(0), animLength(0) {}
     };
     
-    CreatureAnim_st castAnimArea;
-    CreatureAnim_st castAnimTarget;
-    CreatureAnim_st castAnim3;
-    CreatureAnim_st attackAnim1;
-    CreatureAnim_st attackAnim2;
-    CreatureAnim_st attackAnim3;
+    CreatureAnim castAnimArea;
+    CreatureAnim castAnimTarget;
+    CreatureAnim castAnim3;
+    CreatureAnim attackAnim1;
+    CreatureAnim attackAnim2;
+    CreatureAnim attackAnim3;
     
 public:
     CCreatures() : creatureId(0), icon(0), mountId(0) {
@@ -61,71 +61,71 @@ public:
     void SetSound(monstersound_t soundType, std::uint16_t newVal) {
         soundList[static_cast<std::uint8_t>(soundType)] = newVal;
     }
-    std::uint16_t Icon(void) const { return icon; }
-    std::uint8_t WhoAmI(void) const { return static_cast<std::uint8_t>(who_am_i.to_ulong()); }
+    std::uint16_t Icon() const { return icon; }
+    std::uint8_t WhoAmI() const { return static_cast<std::uint8_t>(who_am_i.to_ulong()); }
     
     void Icon(std::uint16_t value) { icon = value; }
     
-    std::uint16_t MountId(void) const { return mountId; }
+    std::uint16_t MountId() const { return mountId; }
     void MountId(std::uint16_t value) { mountId = value; }
     
     // Cast Animation (Area-based)
-    std::uint8_t CastAnimAreaId(void) const { return castAnimArea.animId; }
-    std::uint8_t CastAnimAreaLength(void) const { return castAnimArea.animLength; }
+    std::uint8_t CastAnimAreaId() const { return castAnimArea.animId; }
+    std::uint8_t CastAnimAreaLength() const { return castAnimArea.animLength; }
     void CastAnimArea(std::uint8_t value, std::uint8_t length) {
         castAnimArea.animId = value;
         castAnimArea.animLength = length;
     }
     
     // Cast Animation (Target-based)
-    std::uint8_t CastAnimTargetId(void) const { return castAnimTarget.animId; }
-    std::uint8_t CastAnimTargetLength(void) const { return castAnimTarget.animLength; }
+    std::uint8_t CastAnimTargetId() const { return castAnimTarget.animId; }
+    std::uint8_t CastAnimTargetLength() const { return castAnimTarget.animLength; }
     void CastAnimTarget(std::uint8_t value, std::uint8_t length) {
         castAnimTarget.animId = value;
         castAnimTarget.animLength = length;
     }
     
     // Cast Animation #3
-    std::uint8_t CastAnim3Id(void) const { return castAnim3.animId; }
-    std::uint8_t CastAnim3Length(void) const { return castAnim3.animLength; }
+    std::uint8_t CastAnim3Id() const { return castAnim3.animId; }
+    std::uint8_t CastAnim3Length() const { return castAnim3.animLength; }
     void CastAnim3(std::uint8_t value, std::uint8_t length) {
         castAnim3.animId = value;
         castAnim3.animLength = length;
     }
     
     // Attack Animation #1
-    std::uint8_t AttackAnim1Id(void) const { return attackAnim1.animId; }
-    std::uint8_t AttackAnim1Length(void) const { return attackAnim1.animLength; }
+    std::uint8_t AttackAnim1Id() const { return attackAnim1.animId; }
+    std::uint8_t AttackAnim1Length() const { return attackAnim1.animLength; }
     void AttackAnim1(std::uint8_t value, std::uint8_t length) {
         attackAnim1.animId = value;
         attackAnim1.animLength = length;
     }
     
     // Attack Animation #2
-    std::uint8_t AttackAnim2Id(void) const { return attackAnim2.animId; }
-    std::uint8_t AttackAnim2Length(void) const { return attackAnim2.animLength; }
+    std::uint8_t AttackAnim2Id() const { return attackAnim2.animId; }
+    std::uint8_t AttackAnim2Length() const { return attackAnim2.animLength; }
     void AttackAnim2(std::uint8_t value, std::uint8_t length) {
         attackAnim2.animId = value;
         attackAnim2.animLength = length;
     }
     
     // Attack Animation #3
-    std::uint8_t AttackAnim3Id(void) const { return attackAnim3.animId; }
-    std::uint8_t AttackAnim3Length(void) const { return attackAnim3.animLength; }
+    std::uint8_t AttackAnim3Id() const { return attackAnim3.animId; }
+    std::uint8_t AttackAnim3Length() const { return attackAnim3.animLength; }
     void AttackAnim3(std::uint8_t value, std::uint8_t length) {
         attackAnim3.animId = value;
         attackAnim3.animLength = length;
     }
     
-    std::uint16_t CreatureId(void) const { return creatureId; }
+    std::uint16_t CreatureId() const { return creatureId; }
     void CreatureId(std::uint16_t value) { creatureId = value; }
     
-    bool IsAnimal(void) const { return who_am_i.test(BIT_ANIMAL); }
-    bool IsHuman(void) const { return who_am_i.test(BIT_HUMAN); }
-    bool AntiBlink(void) const { return who_am_i.test(BIT_ANTIBLINK); }
-    bool CanFly(void) const { return who_am_i.test(BIT_CANFLY); }
-    bool IsWater(void) const { return who_am_i.test(BIT_WATER); }
-    bool IsAmphibian(void) const { return who_am_i.test(BIT_AMPHI); }
+    bool IsAnimal() const { return who_am_i.test(BIT_ANIMAL); }
+    bool IsHuman() const { return who_am_i.test(BIT_HUMAN); }
+    bool AntiBlink() const { return who_am_i.test(BIT_ANTIBLINK); }
+    bool CanFly() const { return who_am_i.test(BIT_CANFLY); }
+    bool IsWater() const { return who_am_i.test(BIT_WATER); }
+    bool IsAmphibian() const { return who_am_i.test(BIT_AMPHI); }
     void IsAnimal(bool value) { who_am_i.set(BIT_ANIMAL, value); }
     void IsHuman(bool value) { who_am_i.set(BIT_HUMAN, value); }
     void AntiBlink(bool value) { who_am_i.set(BIT_ANTIBLINK, value); }
@@ -134,82 +134,82 @@ public:
     void IsAmphibian(bool value) { who_am_i.set(BIT_AMPHI, value); }
 };
 
-struct Point3_st {
+struct Point3 {
     R32 x, y, z;
-    Point3_st() : x(0), y(0), z(0) {}
-    Point3_st(std::uint16_t X, std::uint16_t Y, std::int8_t Z) : x(X), y(Y), z(Z) {}
-    Point3_st(R32 X, R32 Y, R32 Z) : x(X), y(Y), z(Z) {}
+    Point3() : x(0), y(0), z(0) {}
+    Point3(std::uint16_t X, std::uint16_t Y, std::int8_t Z) : x(X), y(Y), z(Z) {}
+    Point3(R32 X, R32 Y, R32 Z) : x(X), y(Y), z(Z) {}
     void Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z);
     void Assign(R32 X, R32 Y, R32 Z);
-    R64 Mag(void) const;
-    R32 MagSquared(void) const;
-    R64 Mag3D(void) const;
-    R32 MagSquared3D(void) const;
-    void Normalize(void);
+    R64 Mag() const;
+    R32 MagSquared() const;
+    R64 Mag3D() const;
+    R32 MagSquared3D() const;
+    void Normalize();
 };
 
-inline bool operator==(Point3_st const &a, Point3_st const &b) {
+inline bool operator==(Point3 const &a, Point3 const &b) {
     return (a.x == b.x && a.y == b.y && a.z == b.z);
 }
-inline Point3_st operator+(Point3_st const &a, Point3_st const &b) {
-    return (Point3_st(a.x + b.x, a.y + b.y, a.z + b.z));
+inline Point3 operator+(Point3 const &a, Point3 const &b) {
+    return (Point3(a.x + b.x, a.y + b.y, a.z + b.z));
 }
 
-inline Point3_st operator-(Point3_st const &a, Point3_st const &b) {
-    return (Point3_st(a.x - b.x, a.y - b.y, a.z - b.z));
+inline Point3 operator-(Point3 const &a, Point3 const &b) {
+    return (Point3(a.x - b.x, a.y - b.y, a.z - b.z));
 }
-inline Point3_st operator*(Point3_st const &a, R32 const &b) {
-    return Point3_st(a.x * b, a.y * b, a.z * b);
+inline Point3 operator*(Point3 const &a, R32 const &b) {
+    return Point3(a.x * b, a.y * b, a.z * b);
 }
-inline Point3_st operator*(R32 const &a, Point3_st const &b) {
-    return Point3_st(a * b.x, a * b.y, a * b.z);
+inline Point3 operator*(R32 const &a, Point3 const &b) {
+    return Point3(a * b.x, a * b.y, a * b.z);
 }
-inline Point3_st operator/(Point3_st const &a, R32 const &b) {
+inline Point3 operator/(Point3 const &a, R32 const &b) {
     R32 inv = 1.f / b;
-    return Point3_st(a.x * inv, a.y * inv, a.z * inv);
+    return Point3(a.x * inv, a.y * inv, a.z * inv);
 }
-inline void Point3_st::Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z) {
+inline void Point3::Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z) {
     x = X;
     y = Y;
     z = Z;
 }
-inline void Point3_st::Assign(R32 X, R32 Y, R32 Z) {
+inline void Point3::Assign(R32 X, R32 Y, R32 Z) {
     x = X;
     y = Y;
     z = Z;
 }
-inline R64 Point3_st::Mag3D(void) const { return static_cast<R32>(sqrt(x * x + y * y + z * z)); }
-inline R32 Point3_st::MagSquared3D(void) const { return (x * x + y * y + z * z); }
+inline R64 Point3::Mag3D() const { return static_cast<R32>(sqrt(x * x + y * y + z * z)); }
+inline R32 Point3::MagSquared3D() const { return (x * x + y * y + z * z); }
 
-inline R64 Point3_st::Mag(void) const { return static_cast<R32>(sqrt(x * x + y * y)); }
-inline R32 Point3_st::MagSquared(void) const { return (x * x + y * y); }
+inline R64 Point3::Mag() const { return static_cast<R32>(sqrt(x * x + y * y)); }
+inline R32 Point3::MagSquared() const { return (x * x + y * y); }
 
-inline void Point3_st::Normalize(void) {
+inline void Point3::Normalize() {
     R32 foo = static_cast<R32>(1 / Mag3D());
     x *= foo;
     y *= foo;
     z *= foo;
 }
 
-struct UOXFileWrapper_st {
+struct UOXFileWrapper {
     FILE *mWrap;
 };
 
-struct GoPlaces_st {
+struct GoPlaces {
     std::int16_t x;
     std::int16_t y;
     std::int8_t z;
     std::uint8_t worldNum;
     std::uint16_t instanceId;
-    GoPlaces_st() : x(-1), y(-1), z(-1), worldNum(0), instanceId(0) {}
+    GoPlaces() : x(-1), y(-1), z(-1), worldNum(0), instanceId(0) {}
 };
 
 // Teleport Locations
 class CTeleLocationEntry {
 private:
-    Point3_st src;
+    Point3 src;
     std::uint8_t srcWorld;
-    Point3_st trg;
+    Point3 trg;
     std::uint8_t trgWorld;
     
 public:
@@ -217,13 +217,13 @@ public:
         src.Assign(0, 0, ILLEGAL_Z);
         trg.Assign(0, 0, ILLEGAL_Z);
     }
-    Point3_st SourceLocation(void) const { return src; }
+    Point3 SourceLocation() const { return src; }
     void SourceLocation(std::uint16_t x, std::uint16_t y, std::int8_t z) { src.Assign(x, y, z); }
-    std::uint8_t SourceWorld(void) const { return srcWorld; }
+    std::uint8_t SourceWorld() const { return srcWorld; }
     void SourceWorld(std::uint8_t newVal) { srcWorld = newVal; }
-    Point3_st TargetLocation(void) const { return trg; }
+    Point3 TargetLocation() const { return trg; }
     void TargetLocation(std::uint16_t x, std::uint16_t y, std::int8_t z) { trg.Assign(x, y, z); }
-    std::uint8_t TargetWorld(void) const { return trgWorld; }
+    std::uint8_t TargetWorld() const { return trgWorld; }
     void TargetWorld(std::uint8_t newVal) { trgWorld = newVal; }
 };
 
@@ -238,7 +238,7 @@ struct LogoutLocationEntry_st {
 };
 
 // SOS Locations
-struct SOSLocationEntry_st {
+struct SOSLocationEntry {
     std::int16_t x1 = 0;
     std::int16_t y1 = 0;
     std::int16_t x2 = 0;
@@ -247,18 +247,18 @@ struct SOSLocationEntry_st {
     std::uint16_t instanceId = 0;
 };
 
-struct Advance_st {
+struct Advance {
     std::uint16_t base;
     std::uint8_t success;
     std::uint8_t failure;
     std::uint8_t amtToGain;
-    Advance_st() : base(0), success(0), failure(0), amtToGain(1) {}
+    Advance() : base(0), success(0), failure(0), amtToGain(1) {}
 };
 
-struct TitlePair_st {
+struct TitlePair {
     std::int16_t lowBound;
     std::string toDisplay;
-    TitlePair_st() : lowBound(0), toDisplay("") {}
-    TitlePair_st(std::int16_t lB, const std::string &toDisp) : lowBound(lB) { toDisplay = toDisp; }
+    TitlePair() : lowBound(0), toDisplay("") {}
+    TitlePair(std::int16_t lB, const std::string &toDisp) : lowBound(lB) { toDisplay = toDisp; }
 };
 #endif

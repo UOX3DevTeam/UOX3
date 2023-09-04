@@ -52,10 +52,10 @@ class CServerProfile {
   public:
     CServerProfile();
 
-    std::uint32_t NetworkTime(void) const;
-    std::uint32_t TimerTime(void) const;
-    std::uint32_t AutoTime(void) const;
-    std::uint32_t LoopTime(void) const;
+    std::uint32_t NetworkTime() const;
+    std::uint32_t TimerTime() const;
+    std::uint32_t AutoTime() const;
+    std::uint32_t LoopTime() const;
 
     void NetworkTime(std::uint32_t newVal);
     void TimerTime(std::uint32_t newVal);
@@ -67,23 +67,23 @@ class CServerProfile {
     void IncAutoTime(std::uint32_t toInc);
     void IncLoopTime(std::uint32_t toInc);
 
-    std::uint32_t NetworkTimeCount(void) const;
-    std::uint32_t TimerTimeCount(void) const;
-    std::uint32_t AutoTimeCount(void) const;
-    std::uint32_t LoopTimeCount(void) const;
+    std::uint32_t NetworkTimeCount() const;
+    std::uint32_t TimerTimeCount() const;
+    std::uint32_t AutoTimeCount() const;
+    std::uint32_t LoopTimeCount() const;
 
     void NetworkTimeCount(std::uint32_t newVal);
     void TimerTimeCount(std::uint32_t newVal);
     void AutoTimeCount(std::uint32_t newVal);
     void LoopTimeCount(std::uint32_t newVal);
 
-    void IncNetworkTimeCount(void);
-    void IncTimerTimeCount(void);
-    void IncAutoTimeCount(void);
-    void IncLoopTimeCount(void);
+    void IncNetworkTimeCount();
+    void IncTimerTimeCount();
+    void IncAutoTimeCount();
+    void IncLoopTimeCount();
 
-    std::int32_t GlobalReceived(void) const;
-    std::int32_t GlobalSent(void) const;
+    std::int32_t GlobalReceived() const;
+    std::int32_t GlobalSent() const;
 
     void GlobalReceived(std::int32_t newVal);
     void GlobalSent(std::int32_t newVal);
@@ -134,7 +134,7 @@ class CWorldMain {
         std::uint16_t intelligence;
         std::int32_t skillDelay;
         std::string madeWord;
-        std::vector<Advance_st> advancement;
+        std::vector<Advance> advancement;
         std::uint16_t jsScript;
         std::string name;
         Skill_st() { ResetDefaults(); }
@@ -156,69 +156,69 @@ class CWorldMain {
 
     // Console & Program Level Vars
     void SetError(bool newVal);
-    bool GetError(void) const;
+    bool GetError() const;
     void SetKeepRun(bool newVal);
-    bool GetKeepRun(void) const;
+    bool GetKeepRun() const;
     void SetSecure(bool newVal);
-    bool GetSecure(void) const;
+    bool GetSecure() const;
     void SetLoaded(bool newVal);
-    bool GetLoaded(void) const;
+    bool GetLoaded() const;
 
     // Time Functions
     void SetUICurrentTime(std::uint32_t newVal);
-    std::uint32_t GetUICurrentTime(void) const;
+    std::uint32_t GetUICurrentTime() const;
     void SetUOTickCount(std::uint32_t newVal);
-    std::uint32_t GetUOTickCount(void) const;
+    std::uint32_t GetUOTickCount() const;
     void SetOverflow(bool newVal);
-    bool GetOverflow(void) const;
+    bool GetOverflow() const;
     void SetStartTime(std::uint32_t newVal);
-    std::uint32_t GetStartTime(void) const;
+    std::uint32_t GetStartTime() const;
     void SetEndTime(std::uint32_t newVal);
-    std::uint32_t GetEndTime(void) const;
+    std::uint32_t GetEndTime() const;
     void SetLClock(std::uint32_t newVal);
-    std::uint32_t GetLClock(void) const;
+    std::uint32_t GetLClock() const;
 
     // Worldsave
     void SetNewTime(std::uint32_t newVal);
-    std::uint32_t GetNewTime(void) const;
+    std::uint32_t GetNewTime() const;
     void SetOldTime(std::uint32_t newVal);
-    std::uint32_t GetOldTime(void) const;
+    std::uint32_t GetOldTime() const;
     void SetAutoSaved(bool newVal);
-    bool GetAutoSaved(void) const;
+    bool GetAutoSaved() const;
     void SetWorldSaveProgress(savestatus_t newVal);
-    savestatus_t GetWorldSaveProgress(void) const;
+    savestatus_t GetWorldSaveProgress() const;
 
     // IP update
-    std::uint32_t GetNewIPTime(void) const;
+    std::uint32_t GetNewIPTime() const;
     void SetNewIPTime(std::uint32_t newVal);
-    std::uint32_t GetOldIPTime(void) const;
+    std::uint32_t GetOldIPTime() const;
     void SetOldIPTime(std::uint32_t newVal);
     void SetIPUpdated(bool newVal);
-    bool GetIPUpdated(void) const;
+    bool GetIPUpdated() const;
 
     // Misc
     void SetPlayersOnline(size_t newVal);
-    size_t GetPlayersOnline(void) const;
-    void DecPlayersOnline(void);
-    bool GetReloadingScripts(void) const;
+    size_t GetPlayersOnline() const;
+    void DecPlayersOnline();
+    bool GetReloadingScripts() const;
     void SetReloadingScripts(bool newVal);
     void ClassesInitialized(bool newVal);
-    bool ClassesInitialized(void) const;
+    bool ClassesInitialized() const;
 
-    void CheckAutoTimers(void);
+    void CheckAutoTimers();
 
     // Structs
     std::map<std::uint16_t, CCreatures> creatures;
     timeval uoxTimeout;
     Skill_st skill[INTELLECT + 1]; // Skill data
     Title_st title[ALLSKILLS + 1]; // For custom titles reads titles.dfn
-    std::vector<TitlePair_st> prowessTitles;
-    std::vector<TitlePair_st> murdererTags;
+    std::vector<TitlePair> prowessTitles;
+    std::vector<TitlePair> murdererTags;
     std::vector<CTeleLocationEntry> teleLocs;
     std::vector<LogoutLocationEntry_st> logoutLocs;
-    std::vector<SOSLocationEntry_st> sosLocs;
+    std::vector<SOSLocationEntry> sosLocs;
     std::vector<std::uint16_t> escortRegions;
-    std::map<std::uint16_t, GoPlaces_st> goPlaces;
+    std::map<std::uint16_t, GoPlaces> goPlaces;
     std::unordered_map<std::uint16_t, CSpawnRegion *> spawnRegions;
     std::map<std::uint16_t, CTownRegion *> townRegions;
     GenericList<CTEffect *> tempEffects;
@@ -226,8 +226,8 @@ class CWorldMain {
     std::map<CBaseObject *, std::uint32_t> refreshQueue;
     std::map<CBaseObject *, std::uint32_t> deletionQueue;
 
-    void CheckTimers(void);
-    void DoWorldLight(void);
+    void CheckTimers();
+    void DoWorldLight();
     void SaveNewWorld(bool x);
     auto Startup() -> void;
     CWorldMain();
@@ -236,8 +236,8 @@ class CWorldMain {
     auto ServerProfile() -> CServerProfile *;
 
   private:
-    void RegionSave(void);
-    void SaveStatistics(void);
+    void RegionSave();
+    void SaveStatistics();
 
     CServerData *sData;
     CServerProfile sProfile;

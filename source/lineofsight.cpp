@@ -231,7 +231,7 @@ inline auto Line3D_st::dzInDirectionY() const -> R32 {
 }
 
 //==================================================================================================
-inline auto Line3D_st::Projection2D(void) const -> Line2D_st {
+inline auto Line3D_st::Projection2D() const -> Line2D_st {
     if ((dir.x == 0) && (dir.y == 0)) {
         return Line2D_st(Vector2D_st(-1.0f, -1.0f), Vector2D_st(-1.0f, -1.0f));
     }

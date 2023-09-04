@@ -40,7 +40,7 @@
 #include "utility/strutil.hpp"
 #include "wholist.h"
 #include "worldmain.h"
-void CollectGarbage(void);
+void CollectGarbage();
 void EndMessage(std::int32_t x);
 void HandleGumpCommand(CSocket *s, std::string cmd, std::string data);
 void Restock(bool stockAll);
@@ -161,7 +161,7 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
     return retVal;
 }
 
-void command_fixspawn(void) {
+void command_fixspawn() {
     std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &FixSpawnFunctor);
 }
@@ -439,7 +439,7 @@ void Command_Tile(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the current world data into .WSC files
 // o------------------------------------------------------------------------------------------------o
-void Command_Save(void) {
+void Command_Save() {
     if (cwmWorldState->GetWorldSaveProgress() != SS_SAVING) {
         cwmWorldState->SaveNewWorld(true);
     }
@@ -475,7 +475,7 @@ void Command_Dye(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	(d d) Sets the current UO time in hours and minutes.
 // o------------------------------------------------------------------------------------------------o
-void Command_SetTime(void) {
+void Command_SetTime() {
     if (Commands->NumArguments() == 3) {
         std::uint8_t newhours = static_cast<std::uint8_t>(Commands->Argument(1));
         std::uint8_t newminutes = static_cast<std::uint8_t>(Commands->Argument(2));
@@ -498,7 +498,7 @@ void Command_SetTime(void) {
 //|	Purpose		-	(d) Shuts down the server. Argument is how many minutes
 //|					until shutdown.
 // o------------------------------------------------------------------------------------------------o
-void Command_Shutdown(void) {
+void Command_Shutdown() {
     if (Commands->NumArguments() == 2) {
         cwmWorldState->SetEndTime(BuildTimeValue(static_cast<R32>(Commands->Argument(1))));
         if (Commands->Argument(1) == 0) {
@@ -696,7 +696,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces a respawn of all spawn regions
 // o------------------------------------------------------------------------------------------------o
-void Command_Respawn(void) {
+void Command_Respawn() {
     std::uint32_t spawnedItems = 0;
     std::uint32_t spawnedNpcs = 0;
     std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
@@ -770,7 +770,7 @@ void Command_RegSpawn(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the hardcoded server defaults for various settings in uox.ini
 // o------------------------------------------------------------------------------------------------o
-void Command_LoadDefaults(void) { cwmWorldState->ServerData()->ResetDefaults(); }
+void Command_LoadDefaults() { cwmWorldState->ServerData()->ResetDefaults(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	Command_CQ()
@@ -862,7 +862,7 @@ void Command_GQ(CSocket *s) {
 // 1 - mountainsides and cave floors |						2 - mining regions
 // only
 // o------------------------------------------------------------------------------------------------o
-void Command_MineCheck(void) {
+void Command_MineCheck() {
     if (Commands->NumArguments() == 2) {
         cwmWorldState->ServerData()->MineCheck(static_cast<std::uint8_t>(Commands->Argument(1)));
     }
@@ -873,7 +873,7 @@ void Command_MineCheck(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables (ON) or disables (OFF) town guards globally
 // o------------------------------------------------------------------------------------------------o
-void Command_Guards(void) {
+void Command_Guards() {
     if (util::upper(Commands->CommandString(2, 2)) == "ON") {
         cwmWorldState->ServerData()->GuardStatus(true);
         SysBroadcast(Dictionary->GetEntry(61)); // Guards have been reactivated.
@@ -889,7 +889,7 @@ void Command_Guards(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables (ON) or disables (OFF) announcement of world saves
 // o------------------------------------------------------------------------------------------------o
-void Command_Announce(void) {
+void Command_Announce() {
     if (util::upper(Commands->CommandString(2, 2)) == "ON") {
         cwmWorldState->ServerData()->ServerAnnounceSaves(true);
         SysBroadcast(Dictionary->GetEntry(63)); // WorldStat Saves will be displayed.

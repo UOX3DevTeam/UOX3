@@ -34,8 +34,8 @@
 
 using namespace std::string_literals;
 
-void CollectGarbage(void);
-std::string GetUptime(void);
+void CollectGarbage();
+std::string GetUptime();
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	TextEntryGump()
@@ -970,7 +970,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the "Help" Menu from the paperdoll
 // o------------------------------------------------------------------------------------------------o
-bool CPIHelpRequest::Handle(void) {
+bool CPIHelpRequest::Handle() {
     std::uint16_t gmnumber = 0;
     CChar *mChar = tSock->CurrcharObj();
     
@@ -1303,7 +1303,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 std::uint16_t placeNum =
                 static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                    GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
+                    GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
                     
                     if (toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1) {
                         // Stay in same world if already in world 0 or 1
@@ -1773,14 +1773,14 @@ void HandleHowToButton(CSocket *s, std::uint32_t button) { HandleHowTo(s, button
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button press in gumps
 // o------------------------------------------------------------------------------------------------o
-bool CPIGumpMenuSelect::Handle(void) {
+bool CPIGumpMenuSelect::Handle() {
     id = tSock->GetDWord(3);
     gumpId = tSock->GetDWord(7);
     buttonId = tSock->GetDWord(11);
     switchCount = tSock->GetDWord(15);
     
 #if defined(UOX_DEBUG_MODE)
-    Console::shared() << "CPIGumpMenuSelect::Handle(void)" << myendl;
+    Console::shared() << "CPIGumpMenuSelect::Handle()" << myendl;
     Console::shared() << "        GumpId : " << gumpId << myendl;
     Console::shared() << "      ButtonId : " << buttonId << myendl;
     Console::shared() << "   SwitchCount : " << switchCount << myendl;
@@ -1955,7 +1955,7 @@ void CPIGumpInput::HandleTownstoneText(std::uint8_t index) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles new values for gumps
 // o------------------------------------------------------------------------------------------------o
-bool CPIGumpInput::Handle(void) {
+bool CPIGumpInput::Handle() {
     switch (type) {
         case 3:
             HandleTownstoneText(index);
@@ -2004,7 +2004,7 @@ std::string GrabMenuData(std::string sect, size_t entryNum, std::string &tag) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles choice "Help" menu, Tracking Menu, and Polymorph menu
 // o------------------------------------------------------------------------------------------------o
-bool CPIGumpChoice::Handle(void) {
+bool CPIGumpChoice::Handle() {
     std::string sect;
     std::string tag;
     std::string data;
@@ -2178,7 +2178,7 @@ CGumpDisplay::~CGumpDisplay() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Delete all CGumpDisplay entries
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::Delete(void) {
+void CGumpDisplay::Delete() {
     one.resize(0);
     two.resize(0);
 }

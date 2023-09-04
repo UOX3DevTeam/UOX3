@@ -34,7 +34,7 @@ public:
     void AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t ImageUp, std::uint16_t ImageDown, std::uint16_t Behaviour, std::uint16_t Page,
                    std::uint32_t UniqueId);
     void AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string Text);
-    std::uint16_t StartPage(void);
+    std::uint16_t StartPage();
     
     void SetNoMove(bool myNoMove);
     void SetNoClose(bool myNoClose);
@@ -75,7 +75,7 @@ public:
     ~CGumpDisplay();
     void SetTitle(const std::string &newTitle);
     void Send(std::uint32_t gumpNum, bool isMenu, serial_t serial);
-    void Delete(void);
+    void Delete();
 };
 
 #endif

@@ -1080,19 +1080,19 @@ auto CServerData::ExternalIP(const std::string &ip) -> void {
     externalIP = ip;
     // IP4Address::setExternal( externalIP );
 }
-auto CServerData::matchIP(const Ip4Addr_st &ip) const -> Ip4Addr_st {
+auto CServerData::matchIP(const IP4Addr &ip) const -> IP4Addr {
     auto [candidate, match] = availableIPs.bestmatch(ip);
     if (match == 0) {
         if (!externalIP.empty()) {
-            candidate = Ip4Addr_st(externalIP);
+            candidate = IP4Addr(externalIP);
         }
     }
     else {
         // We got some kind of match, see if on same network type?
         if (candidate.type() != ip.type()) {
-            if (ip.type() == Ip4Addr_st::ip4type_t::wan) {
+            if (ip.type() == IP4Addr::ip4type_t::wan) {
                 if (!externalIP.empty()) {
-                    candidate = Ip4Addr_st(externalIP);
+                    candidate = IP4Addr(externalIP);
                 }
             }
         }
@@ -1435,7 +1435,7 @@ auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCoreShardEra(void) const -> std::uint8_t { return coreShardEra; }
+auto CServerData::ExpansionCoreShardEra() const -> std::uint8_t { return coreShardEra; }
 auto CServerData::ExpansionCoreShardEra(std::uint8_t setting) -> void {
     if (setting >= ER_COUNT) {
         setting = ER_COUNT - 1;
@@ -2079,7 +2079,7 @@ auto CServerData::RankSystemStatus(bool newVal) -> void { boolVals.set(BIT_RANKS
 //|	Purpose		-	Gets/Sets whether maker's mark is displayed for crafted items that
 // have this
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::DisplayMakersMark(void) const -> bool {
+auto CServerData::DisplayMakersMark() const -> bool {
     return boolVals.test(BIT_DISPLAYMAKERSMARK);
 }
 auto CServerData::DisplayMakersMark(bool newVal) -> void {

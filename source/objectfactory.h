@@ -19,23 +19,23 @@ class ObjectFactory {
     factory_collection items;
     
     // o--------------------------------------------------------------------------------------------o
-    //  SerialGen_st
+    //  SerialGen
     // o--------------------------------------------------------------------------------------------o
     //  Is is nested as we dont want to pollute the global namespace
     // o--------------------------------------------------------------------------------------------o
-    struct SerialGen_st {
+    struct SerialGen {
         std::uint32_t serialNumber;
-        SerialGen_st(std::uint32_t initial = 0);
+        SerialGen(std::uint32_t initial = 0);
         auto Next() -> std::uint32_t;
         auto RegisterSerial(std::uint32_t serial) -> void;
         // Note, this only frees up the serial number if
         // deregisterd one was the last one created
         auto UnregisterSerial(std::uint32_t serial) -> void;
-        auto operator=(std::uint32_t value) -> SerialGen_st &;
-        auto operator=(std::int32_t value) -> SerialGen_st &;
+        auto operator=(std::uint32_t value) -> SerialGen &;
+        auto operator=(std::int32_t value) -> SerialGen &;
     };
-    SerialGen_st item_serials;
-    SerialGen_st character_serials;
+    SerialGen item_serials;
+    SerialGen character_serials;
     
     auto NextSerial(CBaseObject::type_t type) -> std::uint32_t;
     auto RemoveObject(std::uint32_t serial, factory_collection *collection) -> bool;

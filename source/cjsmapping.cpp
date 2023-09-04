@@ -58,7 +58,7 @@ CJSMapping::~CJSMapping() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets all parameters of the CJSMapping class to default
 // o------------------------------------------------------------------------------------------------o
-void CJSMapping::ResetDefaults(void) {
+void CJSMapping::ResetDefaults() {
     mapSection = std::vector<CJSMappingSection *>(CJSMappingSection::ScriptNames.size(),nullptr);
     for (size_t i= 0 ; i < CJSMappingSection::ScriptNames.size();i++){
         mapSection[i] = new CJSMappingSection(static_cast<CJSMappingSection::type_t>(i));
@@ -76,7 +76,7 @@ void CJSMapping::ResetDefaults(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Frees all memory used by CJSMapping
 // o------------------------------------------------------------------------------------------------o
-void CJSMapping::Cleanup(void) {
+void CJSMapping::Cleanup() {
     for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         if (mapSection[1] != nullptr) {
             delete mapSection[i];
@@ -263,14 +263,14 @@ cScript *CJSMapping::GetScript(std::uint16_t toFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the CEnvoke class handling EnvokeByID
 // o------------------------------------------------------------------------------------------------o
-CEnvoke *CJSMapping::GetEnvokeById(void) { return envokeById; }
+CEnvoke *CJSMapping::GetEnvokeById() { return envokeById; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CJSMapping::GetEnvokeByType()
 //|	Date		-	2/7/2005
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the CEnvoke class handling EnvokeByType
 // o------------------------------------------------------------------------------------------------o
-CEnvoke *CJSMapping::GetEnvokeByType(void) { return envokeByType; }
+CEnvoke *CJSMapping::GetEnvokeByType() { return envokeByType; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	CJSMappingSection::CJSMappingSection()
@@ -508,7 +508,7 @@ cScript *CJSMappingSection::GetScript(JSObject *toFind) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the first cScript in the scriptIdMap
 // o------------------------------------------------------------------------------------------------o
-cScript *CJSMappingSection::First(void) {
+cScript *CJSMappingSection::First() {
     scriptIdIter = scriptIdMap.begin();
     if (!Finished())
         return scriptIdIter->second;
@@ -522,7 +522,7 @@ cScript *CJSMappingSection::First(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the next cScript in the scriptIdMap
 // o------------------------------------------------------------------------------------------------o
-cScript *CJSMappingSection::Next(void) {
+cScript *CJSMappingSection::Next() {
     if (!Finished()) {
         ++scriptIdIter;
         if (!Finished())
@@ -537,7 +537,7 @@ cScript *CJSMappingSection::Next(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Tells us when we have reached the end of the scriptIdMap
 // o------------------------------------------------------------------------------------------------o
-bool CJSMappingSection::Finished(void) { return (scriptIdIter == scriptIdMap.end()); }
+bool CJSMappingSection::Finished() { return (scriptIdIter == scriptIdMap.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	CEnvoke::CEnvoke()

@@ -46,7 +46,7 @@ protected:
     time_t buildTimestamp;
     time_t tradeTimestamp;
     
-    virtual bool LoadRemnants(void) override;
+    virtual bool LoadRemnants() override;
     
     GenericList<CItem *> itemInMulti;
     GenericList<CChar *> charInMulti;
@@ -62,60 +62,60 @@ public:
     // Banlist
     void AddToBanList(CChar *toBan);
     void RemoveFromBanList(CChar *toRemove);
-    void ClearBanList(void);
-    std::uint16_t GetBanCount(void);
-    std::uint16_t GetMaxBans(void) const;
+    void ClearBanList();
+    std::uint16_t GetBanCount();
+    std::uint16_t GetMaxBans() const;
     void SetMaxBans(std::uint16_t newValue);
     
     // Owner/CoOwnerlist
     void AddAsOwner(CChar *newOwner);
     void RemoveAsOwner(CChar *toRemove);
-    void ClearOwnerList(void);
-    std::uint16_t GetOwnerCount(void);
-    std::uint16_t GetMaxOwners(void) const;
+    void ClearOwnerList();
+    std::uint16_t GetOwnerCount();
+    std::uint16_t GetMaxOwners() const;
     void SetMaxOwners(std::uint16_t newValue);
     
     // Friendlist
     void AddAsFriend(CChar *newFriend);
     void RemoveAsFriend(CChar *toRemove);
-    void ClearFriendList(void);
-    std::uint16_t GetFriendCount(void);
-    std::uint16_t GetMaxFriends(void) const;
+    void ClearFriendList();
+    std::uint16_t GetFriendCount();
+    std::uint16_t GetMaxFriends() const;
     void SetMaxFriends(std::uint16_t newValue);
     
     // Guestlist (not saved)
     void AddAsGuest(CChar *newGuest);
     void RemoveAsGuest(CChar *toRemove);
-    void ClearGuestList(void);
-    std::uint16_t GetGuestCount(void);
-    std::uint16_t GetMaxGuests(void) const;
+    void ClearGuestList();
+    std::uint16_t GetGuestCount();
+    std::uint16_t GetMaxGuests() const;
     void SetMaxGuests(std::uint16_t newValue);
     
     // Lockdowns
-    size_t GetLockdownCount(void) const;
-    std::uint16_t GetMaxLockdowns(void) const;
+    size_t GetLockdownCount() const;
+    std::uint16_t GetMaxLockdowns() const;
     void SetMaxLockdowns(std::uint16_t newValue);
     void LockDownItem(CItem *toLock);
     void ReleaseItem(CItem *toRemove);
     
     // Secure Containers
-    size_t GetSecureContainerCount(void) const;
-    std::uint16_t GetMaxSecureContainers(void) const;
+    size_t GetSecureContainerCount() const;
+    std::uint16_t GetMaxSecureContainers() const;
     void SetMaxSecureContainers(std::uint16_t newValue);
     bool IsSecureContainer(CItem *toCheck);
     void SecureContainer(CItem *toSecure);
     void UnsecureContainer(CItem *toUnsecure);
     
     // Trash Containers
-    size_t GetTrashContainerCount(void) const;
-    std::uint16_t GetMaxTrashContainers(void) const;
+    size_t GetTrashContainerCount() const;
+    std::uint16_t GetMaxTrashContainers() const;
     void SetMaxTrashContainers(std::uint16_t newValue);
     void AddTrashContainer(CItem *toAdd);
     void RemoveTrashContainer(CItem *toRemove);
     
     // Player Vendor list
-    size_t GetVendorCount(void) const;
-    std::uint16_t GetMaxVendors(void) const;
+    size_t GetVendorCount() const;
+    std::uint16_t GetMaxVendors() const;
     void SetMaxVendors(std::uint16_t newValue);
     void AddVendor(CChar *toAdd);
     void RemoveVendor(CChar *toRemove);
@@ -130,17 +130,17 @@ public:
     void AddToMulti(CBaseObject *toAdd);
     void RemoveFromMulti(CBaseObject *toRemove);
     
-    bool GetPublicStatus(void) const;
+    bool GetPublicStatus() const;
     void SetPublicStatus(const bool newBool);
     
-    std::int16_t GetBanX(void) const;
+    std::int16_t GetBanX() const;
     void SetBanX(const std::int16_t newVal);
-    std::int16_t GetBanY(void) const;
+    std::int16_t GetBanY() const;
     void SetBanY(const std::int16_t newVal);
     
-    std::string GetBuildTimestamp(void) const;
+    std::string GetBuildTimestamp() const;
     void SetBuildTimestamp(time_t newTime);
-    std::string GetTradeTimestamp(void) const;
+    std::string GetTradeTimestamp() const;
     void SetTradeTimestamp(time_t newTime);
     
     virtual bool Save(std::ostream &outStream) override;
@@ -150,10 +150,10 @@ public:
     
     virtual void SetOwner(CChar *newOwner) override;
     
-    std::string GetDeed(void) const;
+    std::string GetDeed() const;
     void SetDeed(const std::string &newDeed);
     
-    virtual void Cleanup(void) override;
+    virtual void Cleanup() override;
     
     virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
     
@@ -161,8 +161,8 @@ public:
     GenericList<CChar *> *GetFriendsOfMultiList(bool clearList = false);
     GenericList<CChar *> *GetGuestsOfMultiList(bool clearList = false);
     GenericList<CChar *> *GetBannedFromMultiList(bool clearList = false);
-    GenericList<CChar *> *GetCharsInMultiList(void);
-    GenericList<CItem *> *GetItemsInMultiList(void);
+    GenericList<CChar *> *GetCharsInMultiList();
+    GenericList<CItem *> *GetItemsInMultiList();
 };
 
 class CBoatObj : public CMultiObj {
@@ -184,17 +184,17 @@ public:
     CBoatObj();
     virtual ~CBoatObj();
     
-    serial_t GetTiller(void) const;
+    serial_t GetTiller() const;
     serial_t GetPlank(std::uint8_t plankNum) const;
-    serial_t GetHold(void) const;
-    std::int8_t GetMoveType(void) const;
+    serial_t GetHold() const;
+    std::int8_t GetMoveType() const;
     
     void SetPlank(std::uint8_t plankNum, serial_t newVal);
     void SetTiller(serial_t newVal);
     void SetHold(serial_t newVal);
     void SetMoveType(std::int8_t newVal);
     
-    timerval_t GetMoveTime(void) const;
+    timerval_t GetMoveTime() const;
     void SetMoveTime(timerval_t newVal);
     
     virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;

@@ -28,22 +28,22 @@ CVersionClass::CVersionClass() {}
 // o------------------------------------------------------------------------------------------------o
 CVersionClass::~CVersionClass() {}
 
-std::string CVersionClass::GetVersion(void) { return VER; }
+std::string CVersionClass::GetVersion() { return VER; }
 
-std::string CVersionClass::GetBuild(void) { return BUILD; }
+std::string CVersionClass::GetBuild() { return BUILD; }
 
-std::string CVersionClass::GetRealBuild(void) { return REALBUILD; }
+std::string CVersionClass::GetRealBuild() { return REALBUILD; }
 
-std::string CVersionClass::GetScriptVersion(void) { return SVER; }
+std::string CVersionClass::GetScriptVersion() { return SVER; }
 
-std::string CVersionClass::GetCharacterVersion(void) { return CVER; }
+std::string CVersionClass::GetCharacterVersion() { return CVER; }
 
-std::string CVersionClass::GetItemVersion(void) { return IVER; }
+std::string CVersionClass::GetItemVersion() { return IVER; }
 
-std::string CVersionClass::GetProductName(void) { return PRODUCT; }
+std::string CVersionClass::GetProductName() { return PRODUCT; }
 
-std::string CVersionClass::GetName(void) { return NAME; }
+std::string CVersionClass::GetName() { return NAME; }
 
-std::string CVersionClass::GetEmail(void) { return EMAIL; }
+std::string CVersionClass::GetEmail() { return EMAIL; }
 
-std::string CVersionClass::GetProgrammers(void) { return PROGRAMMERS; }
+std::string CVersionClass::GetProgrammers() { return PROGRAMMERS; }

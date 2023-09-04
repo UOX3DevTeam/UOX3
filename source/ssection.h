@@ -290,23 +290,23 @@ class CScriptSection {
     friend class Script;
     
 private:
-    struct SectData_st {
+    struct SectData {
         std::string tag;
         std::string data;
-        SectData_st() : tag(""), data("") {}
+        SectData() : tag(""), data("") {}
     };
-    struct SectDataV2_st {
+    struct SectDataV2 {
         dfntags_t tag;
         std::string cdata;
         std::int32_t ndata;
         std::int32_t odata;
-        SectDataV2_st() : tag(DFNTAG_COUNTOFTAGS), cdata(""), ndata(-1), odata(-1) {}
+        SectDataV2() : tag(DFNTAG_COUNTOFTAGS), cdata(""), ndata(-1), odata(-1) {}
     };
     
-    std::vector<SectData_st *> data;
-    std::vector<SectDataV2_st *> dataV2;
-    std::vector<SectData_st *>::iterator currentPos;
-    std::vector<SectDataV2_st *>::iterator currentPos2;
+    std::vector<SectData *> data;
+    std::vector<SectDataV2 *> dataV2;
+    std::vector<SectData *>::iterator currentPos;
+    std::vector<SectDataV2 *>::iterator currentPos2;
     definitioncategories_t dfnCat;
     
     bool npcList;
@@ -316,10 +316,10 @@ private:
     std::string itemListData;
     
 public:
-    auto collection() const -> const std::vector<SectData_st *> &;
-    auto collection() -> std::vector<SectData_st *> &;
-    auto collection2() const -> const std::vector<SectDataV2_st *> &;
-    auto collection2() -> std::vector<SectDataV2_st *> &;
+    auto collection() const -> const std::vector<SectData *> &;
+    auto collection() -> std::vector<SectData *> &;
+    auto collection2() const -> const std::vector<SectDataV2 *> &;
+    auto collection2() -> std::vector<SectDataV2 *> &;
     
     CScriptSection();
     CScriptSection(std::istream &input, definitioncategories_t d);

@@ -110,7 +110,7 @@ const expansionruleset_t DEFBASE_ORIGIN = ER_UO;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
-CBaseObject::CBaseObject(void)
+CBaseObject::CBaseObject()
 : objType(DEFBASE_OBJTYPE), race(DEFBASE_RACE), x(DEFBASE_X), y(DEFBASE_Y), z(DEFBASE_Z),
 id(DEFBASE_ID), colour(DEFBASE_COLOUR), dir(DEFBASE_DIR), serial(DEFBASE_SERIAL),
 multis(DEFBASE_MULTIS), spawnSerial(DEFBASE_SPAWNSER), owner(DEFBASE_OWNER),
@@ -143,7 +143,7 @@ nameRequestActive(DEFBASE_NAMEREQUESTACTIVE), origin(DEFBASE_ORIGIN) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return the number of tags in an object's tag map
 // o------------------------------------------------------------------------------------------------o
-size_t CBaseObject::GetNumTags(void) const { return tags.size(); }
+size_t CBaseObject::GetNumTags() const { return tags.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetTagMap()
@@ -324,7 +324,7 @@ void CBaseObject::SetTempTag(std::string tempTagName, TagMap tagVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets old target X location for object - used in pathfinding
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetOldTargLocX(void) const { return oldTargLocX; }
+std::int16_t CBaseObject::GetOldTargLocX() const { return oldTargLocX; }
 void CBaseObject::SetOldTargLocX(std::int16_t newValue) { oldTargLocX = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -334,7 +334,7 @@ void CBaseObject::SetOldTargLocX(std::int16_t newValue) { oldTargLocX = newValue
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets old target Y location for object - used in pathfinding
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetOldTargLocY(void) const { return oldTargLocY; }
+std::int16_t CBaseObject::GetOldTargLocY() const { return oldTargLocY; }
 void CBaseObject::SetOldTargLocY(std::int16_t newValue) { oldTargLocY = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -344,7 +344,7 @@ void CBaseObject::SetOldTargLocY(std::int16_t newValue) { oldTargLocY = newValue
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets X location of object, but also stores old location
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetX(void) const { return x; }
+std::int16_t CBaseObject::GetX() const { return x; }
 void CBaseObject::SetX(std::int16_t newValue) {
     oldLocX = x;
     x = newValue;
@@ -357,7 +357,7 @@ void CBaseObject::SetX(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Y location of object, but also stores old location
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetY(void) const { return y; }
+std::int16_t CBaseObject::GetY() const { return y; }
 void CBaseObject::SetY(std::int16_t newValue) {
     oldLocY = y;
     y = newValue;
@@ -371,7 +371,7 @@ void CBaseObject::SetY(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Z location of object, but also stores old location
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CBaseObject::GetZ(void) const { return z; }
+std::int8_t CBaseObject::GetZ() const { return z; }
 void CBaseObject::SetZ(std::int8_t newValue) {
     oldLocZ = z;
     z = newValue;
@@ -415,7 +415,7 @@ void CBaseObject::SetResist(std::uint16_t newValue, weathertype_t damage) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the ID of the object
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetId(void) const { return id; }
+std::uint16_t CBaseObject::GetId() const { return id; }
 void CBaseObject::SetId(std::uint16_t newValue) {
     CBaseObject *checkCont = nullptr;
     if (IsPostLoaded() && CanBeObjType(OT_ITEM)) {
@@ -469,7 +469,7 @@ void CBaseObject::SetId(std::uint8_t newValue, std::uint8_t part) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the colour of the object
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetColour(void) const { return colour; }
+std::uint16_t CBaseObject::GetColour() const { return colour; }
 void CBaseObject::SetColour(std::uint16_t newValue) {
     colour = newValue;
     Dirty(UT_UPDATE);
@@ -497,7 +497,7 @@ std::uint8_t CBaseObject::GetColour(std::uint8_t part) const {
 // o------------------------------------------------------------------------------------------------o
 //|   Purpose     -  Weight of the CHARACTER
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CBaseObject::GetWeight(void) const { return weight; }
+std::int32_t CBaseObject::GetWeight() const { return weight; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetMultiObj()
@@ -505,7 +505,7 @@ std::int32_t CBaseObject::GetWeight(void) const { return weight; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the multi object that the object is inside
 // o------------------------------------------------------------------------------------------------o
-CMultiObj *CBaseObject::GetMultiObj(void) const { return multis; }
+CMultiObj *CBaseObject::GetMultiObj() const { return multis; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetMulti()
@@ -514,7 +514,7 @@ CMultiObj *CBaseObject::GetMultiObj(void) const { return multis; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the serial of the multi the object is inside
 // o------------------------------------------------------------------------------------------------o
-serial_t CBaseObject::GetMulti(void) const {
+serial_t CBaseObject::GetMulti() const {
     auto multiSer = INVALIDSERIAL;
     if (ValidateObject(multis)) {
         multiSer = multis->GetSerial();
@@ -542,7 +542,7 @@ void CBaseObject::SetMulti(serial_t newSerial, bool fireTrigger) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sers serial of the object
 // o------------------------------------------------------------------------------------------------o
-serial_t CBaseObject::GetSerial(void) const { return serial; }
+serial_t CBaseObject::GetSerial() const { return serial; }
 void CBaseObject::SetSerial(serial_t newSerial) {
     if (GetSerial() != INVALIDSERIAL) {
         ObjectFactory::shared().UnregisterObject(this);
@@ -559,7 +559,7 @@ void CBaseObject::SetSerial(serial_t newSerial) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns thing that spawned us - cannot be a character!
 // o------------------------------------------------------------------------------------------------o
-CSpawnItem *CBaseObject::GetSpawnObj(void) const {
+CSpawnItem *CBaseObject::GetSpawnObj() const {
     CSpawnItem *ourSpawner = static_cast<CSpawnItem *>(CalcItemObjFromSer(spawnSerial));
     if (ValidateObject(ourSpawner) && ourSpawner->GetObjType() == OT_SPAWNER) {
         return ourSpawner;
@@ -573,7 +573,7 @@ CSpawnItem *CBaseObject::GetSpawnObj(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns SERIAL of thing that owns us
 // o------------------------------------------------------------------------------------------------o
-serial_t CBaseObject::GetOwner(void) const { return owner; }
+serial_t CBaseObject::GetOwner() const { return owner; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetOwnerObj()
@@ -581,7 +581,7 @@ serial_t CBaseObject::GetOwner(void) const { return owner; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns thing that owns us
 // o------------------------------------------------------------------------------------------------o
-CChar *CBaseObject::GetOwnerObj(void) const { return CalcCharObjFromSer(owner); }
+CChar *CBaseObject::GetOwnerObj() const { return CalcCharObjFromSer(owner); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::SetOwner()
@@ -740,7 +740,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the race ID associaed with the object
 // o------------------------------------------------------------------------------------------------o
-raceid_t CBaseObject::GetRace(void) const { return race; }
+raceid_t CBaseObject::GetRace() const { return race; }
 void CBaseObject::SetRace(raceid_t newValue) {
     race = newValue;
     
@@ -783,7 +783,7 @@ std::string CBaseObject::GetNameRequest(CChar *nameRequester, std::uint8_t reque
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the name of the object
 // o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetName(void) const { return name; }
+std::string CBaseObject::GetName() const { return name; }
 void CBaseObject::SetName(std::string newName) {
     name = newName.substr(0, MAX_NAME - 1);
     Dirty(UT_UPDATE);
@@ -802,7 +802,7 @@ void CBaseObject::SetName(std::string newName) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets reference to Section ID/Header for object from DFNs
 // o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetSectionId(void) const { return sectionId; }
+std::string CBaseObject::GetSectionId() const { return sectionId; }
 void CBaseObject::SetSectionId(std::string newSectionId) {
     sectionId = newSectionId.substr(0, MAX_NAME - 1);
     Dirty(UT_UPDATE);
@@ -822,7 +822,7 @@ void CBaseObject::SetSectionId(std::string newSectionId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the strength of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetStrength(void) const { return strength; }
+std::int16_t CBaseObject::GetStrength() const { return strength; }
 void CBaseObject::SetStrength(std::int16_t newValue) {
     strength = newValue;
     
@@ -838,7 +838,7 @@ void CBaseObject::SetStrength(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the dexterity of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetDexterity(void) const { return dexterity; }
+std::int16_t CBaseObject::GetDexterity() const { return dexterity; }
 void CBaseObject::SetDexterity(std::int16_t newValue) {
     dexterity = newValue;
     
@@ -854,7 +854,7 @@ void CBaseObject::SetDexterity(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the intelligence of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetIntelligence(void) const { return intelligence; }
+std::int16_t CBaseObject::GetIntelligence() const { return intelligence; }
 void CBaseObject::SetIntelligence(std::int16_t newValue) {
     intelligence = newValue;
     
@@ -870,7 +870,7 @@ void CBaseObject::SetIntelligence(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the hitpoints of the object
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetHP(void) const { return hitpoints; }
+std::int16_t CBaseObject::GetHP() const { return hitpoints; }
 void CBaseObject::SetHP(std::int16_t newValue) {
     hitpoints = newValue;
     if (CanBeObjType(OT_ITEM)) {
@@ -893,7 +893,7 @@ void CBaseObject::IncHP(std::int16_t amtToChange) { SetHP(hitpoints + amtToChang
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the direction of the object
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CBaseObject::GetDir(void) const { return dir; }
+std::uint8_t CBaseObject::GetDir() const { return dir; }
 void CBaseObject::SetDir(std::uint8_t newDir, bool sendUpdate) {
     dir = newDir;
     if (sendUpdate) {
@@ -920,7 +920,7 @@ void CBaseObject::SetDir(std::uint8_t newDir, bool sendUpdate) {
 //|						2 = Invisible (Magic Invis)
 //|						3 = Permanent Hidden (GM Hide)
 // o------------------------------------------------------------------------------------------------o
-visibletypes_t CBaseObject::GetVisible(void) const { return visible; }
+visibletypes_t CBaseObject::GetVisible() const { return visible; }
 void CBaseObject::SetVisible(visibletypes_t newValue) {
     visible = newValue;
     Dirty(UT_HIDE);
@@ -939,7 +939,7 @@ void CBaseObject::SetVisible(visibletypes_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns an CBaseObject::type_t that indicates the item's type
 // o------------------------------------------------------------------------------------------------o
-CBaseObject::type_t CBaseObject::GetObjType(void) const { return objType; }
+CBaseObject::type_t CBaseObject::GetObjType() const { return objType; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::CanBeObjType()
@@ -1096,7 +1096,7 @@ std::uint8_t CBaseObject::GetSpawn(std::uint8_t part) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets SERIAL of thing that spawned it
 // o------------------------------------------------------------------------------------------------o
-serial_t CBaseObject::GetSpawn(void) const { return spawnSerial; }
+serial_t CBaseObject::GetSpawn() const { return spawnSerial; }
 void CBaseObject::SetSpawn(serial_t newSpawn) {
     CSpawnItem *ourSpawner = GetSpawnObj();
     if (ourSpawner != nullptr) {
@@ -1147,7 +1147,7 @@ std::uint8_t CBaseObject::GetSerial(std::uint8_t part) const {
 //|	Purpose		-	Gets/Sets the object's high damage value (for randomization
 // purposes)
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetHiDamage(void) const { return hiDamage; }
+std::int16_t CBaseObject::GetHiDamage() const { return hiDamage; }
 void CBaseObject::SetHiDamage(std::int16_t newValue) {
     hiDamage = newValue;
     
@@ -1166,7 +1166,7 @@ void CBaseObject::SetHiDamage(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's low damage value (for randomization purposes)
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetLoDamage(void) const { return loDamage; }
+std::int16_t CBaseObject::GetLoDamage() const { return loDamage; }
 void CBaseObject::SetLoDamage(std::int16_t newValue) {
     loDamage = newValue;
     
@@ -1184,7 +1184,7 @@ void CBaseObject::SetLoDamage(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's file position
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CBaseObject::GetFilePosition(void) const { return FilePosition; }
+std::int32_t CBaseObject::GetFilePosition() const { return FilePosition; }
 std::int32_t CBaseObject::SetFilePosition(std::int32_t filepos) {
     FilePosition = filepos;
     return FilePosition;
@@ -1196,7 +1196,7 @@ std::int32_t CBaseObject::SetFilePosition(std::int32_t filepos) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's stamina
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetStamina(void) const { return stamina; }
+std::int16_t CBaseObject::GetStamina() const { return stamina; }
 void CBaseObject::SetStamina(std::int16_t stam) { stamina = stam; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1205,7 +1205,7 @@ void CBaseObject::SetStamina(std::int16_t stam) { stamina = stam; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's mana
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetMana(void) const { return mana; }
+std::int16_t CBaseObject::GetMana() const { return mana; }
 void CBaseObject::SetMana(std::int16_t mn) { mana = mn; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1214,7 +1214,7 @@ void CBaseObject::SetMana(std::int16_t mn) { mana = mn; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's title
 // o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetTitle(void) const { return title; }
+std::string CBaseObject::GetTitle() const { return title; }
 void CBaseObject::SetTitle(std::string newtitle) { title = newtitle.substr(0, MAX_TITLE - 1); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1244,7 +1244,7 @@ auto CBaseObject::SetOrigin(std::uint8_t setting) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of script triggers on object
 // o------------------------------------------------------------------------------------------------o
-std::vector<std::uint16_t> CBaseObject::GetScriptTriggers(void) { return scriptTriggers; }
+std::vector<std::uint16_t> CBaseObject::GetScriptTriggers() { return scriptTriggers; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::AddScriptTrigger()
@@ -1308,7 +1308,7 @@ bool CBaseObject::HasScriptTrigger(std::uint16_t scriptTrigger) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears out all script triggers from object
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::ClearScriptTriggers(void) {
+void CBaseObject::ClearScriptTriggers() {
     scriptTriggers.clear();
     scriptTriggers.shrink_to_fit();
     
@@ -1323,10 +1323,10 @@ void CBaseObject::ClearScriptTriggers(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetLocation()
 // o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns a Point3_st structure pointing to the object's current
+//|	Purpose		-	Returns a Point3 structure pointing to the object's current
 // location
 // o------------------------------------------------------------------------------------------------o
-Point3_st CBaseObject::GetLocation(void) const { return Point3_st(x, y, z); }
+Point3 CBaseObject::GetLocation() const { return Point3(x, y, z); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetStrength2()
@@ -1335,7 +1335,7 @@ Point3_st CBaseObject::GetLocation(void) const { return Point3_st(x, y, z); }
 //|	Purpose		-	Gets/Sets the second strength var associated with the object. For
 // chars, it's the |					bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetStrength2(void) const { return st2; }
+std::int16_t CBaseObject::GetStrength2() const { return st2; }
 void CBaseObject::SetStrength2(std::int16_t nVal) {
     st2 = nVal;
     
@@ -1351,7 +1351,7 @@ void CBaseObject::SetStrength2(std::int16_t nVal) {
 //|	Purpose		-	Gets/Sets the second dexterity var associated with the object. For
 // chars, it's |					the bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetDexterity2(void) const { return dx2; }
+std::int16_t CBaseObject::GetDexterity2() const { return dx2; }
 void CBaseObject::SetDexterity2(std::int16_t nVal) {
     dx2 = nVal;
     
@@ -1367,7 +1367,7 @@ void CBaseObject::SetDexterity2(std::int16_t nVal) {
 //|	Purpose		-	Gets/Sets the second intelligence var associated with the object.
 // For chars, |					it's the bonuses (via armour and such)
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetIntelligence2(void) const { return in2; }
+std::int16_t CBaseObject::GetIntelligence2() const { return in2; }
 void CBaseObject::SetIntelligence2(std::int16_t nVal) {
     in2 = nVal;
     
@@ -1838,7 +1838,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
 //|	Purpose		-	Used to setup any pointers that may need adjustment
 //|					following the loading of the world
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::PostLoadProcessing(void) {
+void CBaseObject::PostLoadProcessing() {
     auto tmpSerial = INVALIDSERIAL;
     if (multis != nullptr) {
         multis = nullptr;
@@ -1877,7 +1877,7 @@ void CBaseObject::PostLoadProcessing(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the world number that the object is in
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CBaseObject::WorldNumber(void) const { return worldNumber; }
+std::uint8_t CBaseObject::WorldNumber() const { return worldNumber; }
 void CBaseObject::WorldNumber(std::uint8_t value) {
     if (worldNumber != value && CanBeObjType(OT_CHAR)) {
         // WorldNumber has changed, check for onFacetChange JS event (characters only)
@@ -1910,7 +1910,7 @@ void CBaseObject::WorldNumber(std::uint8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the instance ID the object is in
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetInstanceId(void) const { return instanceId; }
+std::uint16_t CBaseObject::GetInstanceId() const { return instanceId; }
 void CBaseObject::SetInstanceId(std::uint16_t value) {
     instanceId = value;
     Dirty(UT_LOCATION);
@@ -1929,7 +1929,7 @@ void CBaseObject::SetInstanceId(std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the subregion the character is in
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetSubRegion(void) const { return subRegion; }
+std::uint16_t CBaseObject::GetSubRegion() const { return subRegion; }
 void CBaseObject::SetSubRegion(std::uint16_t value) { subRegion = value; }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1938,7 +1938,7 @@ void CBaseObject::SetSubRegion(std::uint16_t value) { subRegion = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's poisoned status
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CBaseObject::GetPoisoned(void) const { return poisoned; }
+std::uint8_t CBaseObject::GetPoisoned() const { return poisoned; }
 void CBaseObject::SetPoisoned(std::uint8_t newValue) {
     poisoned = newValue;
     
@@ -1953,7 +1953,7 @@ void CBaseObject::SetPoisoned(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's carve ID from carve DFN
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetCarve(void) const { return carve; }
+std::int16_t CBaseObject::GetCarve() const { return carve; }
 void CBaseObject::SetCarve(std::int16_t newValue) {
     carve = newValue;
     
@@ -1971,7 +1971,7 @@ void CBaseObject::SetCarve(std::int16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether object is free(??)
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsFree(void) const { return objSettings.test(BIT_FREE); }
+bool CBaseObject::IsFree() const { return objSettings.test(BIT_FREE); }
 void CBaseObject::SetFree(bool newVal) { objSettings.set(BIT_FREE, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1980,7 +1980,7 @@ void CBaseObject::SetFree(bool newVal) { objSettings.set(BIT_FREE, newVal); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether object has been marked as deleted
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsDeleted(void) const { return objSettings.test(BIT_DELETED); }
+bool CBaseObject::IsDeleted() const { return objSettings.test(BIT_DELETED); }
 void CBaseObject::SetDeleted(bool newVal) { objSettings.set(BIT_DELETED, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1989,7 +1989,7 @@ void CBaseObject::SetDeleted(bool newVal) { objSettings.set(BIT_DELETED, newVal)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether object has finished loading
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsPostLoaded(void) const { return objSettings.test(BIT_POSTLOADED); }
+bool CBaseObject::IsPostLoaded() const { return objSettings.test(BIT_POSTLOADED); }
 void CBaseObject::SetPostLoaded(bool newVal) { objSettings.set(BIT_POSTLOADED, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1998,7 +1998,7 @@ void CBaseObject::SetPostLoaded(bool newVal) { objSettings.set(BIT_POSTLOADED, n
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether object was spawned
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsSpawned(void) const { return objSettings.test(BIT_SPAWNED); }
+bool CBaseObject::IsSpawned() const { return objSettings.test(BIT_SPAWNED); }
 void CBaseObject::SetSpawned(bool newVal) { objSettings.set(BIT_SPAWNED, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2006,7 +2006,7 @@ void CBaseObject::SetSpawned(bool newVal) { objSettings.set(BIT_SPAWNED, newVal)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should save object
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::ShouldSave(void) const { return objSettings.test(BIT_SAVE); }
+bool CBaseObject::ShouldSave() const { return objSettings.test(BIT_SAVE); }
 void CBaseObject::ShouldSave(bool newVal) { objSettings.set(BIT_SAVE, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2015,7 +2015,7 @@ void CBaseObject::ShouldSave(bool newVal) { objSettings.set(BIT_SAVE, newVal); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether the object is disabled
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsDisabled(void) const { return objSettings.test(BIT_DISABLED); }
+bool CBaseObject::IsDisabled() const { return objSettings.test(BIT_DISABLED); }
 void CBaseObject::SetDisabled(bool newVal) {
     objSettings.set(BIT_DISABLED, newVal);
     
@@ -2031,7 +2031,7 @@ void CBaseObject::SetDisabled(bool newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cleans up after the object
 // o------------------------------------------------------------------------------------------------o
-void CBaseObject::Cleanup(void) {
+void CBaseObject::Cleanup() {
     SetX(7000);
     SetY(7000);
     SetZ(0);
@@ -2129,7 +2129,7 @@ void CBaseObject::CopyData(CBaseObject *target) {
     target->SetDamageable(IsDamageable());
 }
 
-Point3_st CBaseObject::GetOldLocation(void) { return Point3_st(oldLocX, oldLocY, oldLocZ); }
+Point3 CBaseObject::GetOldLocation() { return Point3(oldLocX, oldLocY, oldLocZ); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetKarma()
@@ -2137,7 +2137,7 @@ Point3_st CBaseObject::GetOldLocation(void) { return Point3_st(oldLocX, oldLocY,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's karma
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetKarma(void) const { return karma; }
+std::int16_t CBaseObject::GetKarma() const { return karma; }
 void CBaseObject::SetKarma(std::int16_t value) {
     karma = value;
     
@@ -2155,7 +2155,7 @@ void CBaseObject::SetKarma(std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's fame
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetFame(void) const { return fame; }
+std::int16_t CBaseObject::GetFame() const { return fame; }
 void CBaseObject::SetFame(std::int16_t value) {
     fame = value;
     
@@ -2173,7 +2173,7 @@ void CBaseObject::SetFame(std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets an object's kill/murder count
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CBaseObject::GetKills(void) const { return kills; }
+std::int16_t CBaseObject::GetKills() const { return kills; }
 void CBaseObject::SetKills(std::int16_t value) {
     kills = value;
     
@@ -2191,7 +2191,7 @@ void CBaseObject::SetKills(std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether an item is affected by wipe command or not
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsWipeable(void) const { return objSettings.test(BIT_WIPEABLE); }
+bool CBaseObject::IsWipeable() const { return objSettings.test(BIT_WIPEABLE); }
 void CBaseObject::SetWipeable(bool newValue) { objSettings.set(BIT_WIPEABLE, newValue); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2200,7 +2200,7 @@ void CBaseObject::SetWipeable(bool newValue) { objSettings.set(BIT_WIPEABLE, new
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's damageable state
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::IsDamageable(void) const { return objSettings.test(BIT_DAMAGEABLE); }
+bool CBaseObject::IsDamageable() const { return objSettings.test(BIT_DAMAGEABLE); }
 void CBaseObject::SetDamageable(bool newValue) {
     objSettings.set(BIT_DAMAGEABLE, newValue);
     
@@ -2218,5 +2218,5 @@ void CBaseObject::SetDamageable(bool newValue) {
 //|	Purpose		-	Gets/Sets whether a name request is in process for an item (to
 // prevent infinite loop)
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::NameRequestActive(void) const { return nameRequestActive; }
+bool CBaseObject::NameRequestActive() const { return nameRequestActive; }
 void CBaseObject::NameRequestActive(bool newValue) { nameRequestActive = newValue; }

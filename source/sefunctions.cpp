@@ -46,19 +46,19 @@
 #include "uoxjspropertyspecs.h"
 #include "utility/strutil.hpp"
 
-void LoadTeleportLocations(void);
-void LoadSpawnRegions(void);
-void LoadRegions(void);
-void UnloadRegions(void);
-void UnloadSpawnRegions(void);
-void LoadSkills(void);
+void LoadTeleportLocations();
+void LoadSpawnRegions();
+void LoadRegions();
+void UnloadRegions();
+void UnloadSpawnRegions();
+void LoadSkills();
 void ScriptError(JSContext *cx, const char *txt, ...);
 
 #define __EXTREMELY_VERBOSE__
 
 std::map<std::string, CBaseObject::type_t> stringToObjType;
 
-void InitStringToObjType(void) {
+void InitStringToObjType() {
     stringToObjType["BASEOBJ"] = CBaseObject::OT_CBO;
     stringToObjType["CHARACTER"] = CBaseObject::OT_CHAR;
     stringToObjType["ITEM"] = CBaseObject::OT_ITEM;
@@ -1030,7 +1030,7 @@ JSBool SE_GetRandomSOSArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
 
     // Prepare a vector to hold the areas with correct worldNum and instanceId
-    std::vector<SOSLocationEntry_st> validSOSLocs;
+    std::vector<SOSLocationEntry> validSOSLocs;
 
     // Loop through all SOS areas and cherry-pick the ones with correct worldNum and instanceId
     for (size_t i = 0; i < sosLocs.size(); ++i) {
@@ -1325,7 +1325,7 @@ JSBool SE_CreateBaseMulti(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     std::uint8_t worldNumber = 0;
     std::uint16_t instanceId = 0;
     bool checkLocation = true;
-    (void)checkLocation;
+    
 
     if (argc > 4) {
         worldNumber = static_cast<std::uint8_t>(JSVAL_TO_INT(argv[4]));
@@ -5100,7 +5100,7 @@ JSBool SE_DistanceBetween(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
             // 4 arguments - find distance in 2D
             x2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
             y2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
-            *rval = INT_TO_JSVAL(GetDist(Point3_st(x1, y1, 0), Point3_st(x2, y2, 0)));
+            *rval = INT_TO_JSVAL(GetDist(Point3(x1, y1, 0), Point3(x2, y2, 0)));
         }
         else {
             // 6 arguments - find distance in 3D
@@ -5108,7 +5108,7 @@ JSBool SE_DistanceBetween(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
             x2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
             y2 = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
             std::int8_t z2 = static_cast<std::int8_t>(JSVAL_TO_INT(argv[5]));
-            *rval = INT_TO_JSVAL(GetDist3D(Point3_st(x1, y1, z1), Point3_st(x2, y2, z2)));
+            *rval = INT_TO_JSVAL(GetDist3D(Point3(x1, y1, z1), Point3(x2, y2, z2)));
         }
     }
 

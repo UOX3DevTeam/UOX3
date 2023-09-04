@@ -1659,7 +1659,7 @@ void cEffects::TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uin
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out the TempEffects to effects.wsc
 // o------------------------------------------------------------------------------------------------o
-void cEffects::SaveEffects(void) {
+void cEffects::SaveEffects() {
     std::ofstream effectDestination;
     const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
     std::int32_t s_t = GetClock();
@@ -1697,7 +1697,7 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in Effects from disk
 // o------------------------------------------------------------------------------------------------o
-void cEffects::LoadEffects(void) {
+void cEffects::LoadEffects() {
     std::ifstream input;
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "effects.wsc";
 

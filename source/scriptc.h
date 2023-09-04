@@ -25,12 +25,12 @@ public:
     auto collection() -> std::unordered_map<std::string, CScriptSection *> &;
     
     bool IsInSection(const std::string &section);
-    std::string EntryName(void);
-    size_t NumEntries(void) const { return defEntries.size(); }
-    bool IsErrored(void) const { return errorState; }
+    std::string EntryName();
+    size_t NumEntries() const { return defEntries.size(); }
+    bool IsErrored() const { return errorState; }
     
 private:
-    void DeleteMap(void);
+    void DeleteMap();
     void Reload(bool disp = true);
     bool CreateSection(std::string &name);
     

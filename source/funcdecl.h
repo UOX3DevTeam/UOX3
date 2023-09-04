@@ -41,10 +41,10 @@ bool ObjInOldRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
 bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance);
 bool CharInRange(CChar *a, CChar *b);
 std::uint16_t GetDist(CBaseObject *a, CBaseObject *b);
-std::uint16_t GetDist(Point3_st a, Point3_st b);
+std::uint16_t GetDist(Point3 a, Point3 b);
 std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b);
 std::uint16_t GetDist3D(CBaseObject *a, CBaseObject *b);
-std::uint16_t GetDist3D(Point3_st a, Point3_st b);
+std::uint16_t GetDist3D(Point3 a, Point3 b);
 auto FindPlayersInVisrange(CBaseObject *myObj) -> std::vector<CSocket *>;
 auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *>;
 auto FindNearbyPlayers(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t distance) -> std::vector<CSocket *>;
@@ -152,7 +152,7 @@ inline timerval_t BuildTimeValue(R32 timeFromNow) {
                                    (static_cast<R32>(1000) * timeFromNow));
 }
 
-std::uint32_t GetClock(void);
+std::uint32_t GetClock();
 inline char *RealTime(char *time_str) {
     auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     struct tm curtime;
@@ -176,7 +176,7 @@ inline char *RealTimeDate(char *time_str) {
 }
 
 #if P_TIMESTAMP
-inline std::string TimeStamp(void) {
+inline std::string TimeStamp() {
     auto stamp = []() {
         auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(
                                                                            std::chrono::system_clock::now().time_since_epoch())
@@ -197,7 +197,7 @@ inline std::string TimeStamp(void) {
     return stamp();
 }
 #else
-inline std::string TimeStamp(void) { return ""; }
+inline std::string TimeStamp() { return ""; }
 #endif
 inline void StartMilliTimer(std::uint32_t &Seconds, std::uint32_t &Milliseconds) {
     auto timenow = std::chrono::system_clock::now().time_since_epoch();

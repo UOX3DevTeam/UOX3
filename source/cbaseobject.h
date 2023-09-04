@@ -122,9 +122,9 @@ protected:
     
 public:
     
-    Point3_st GetOldLocation(void);
+    Point3 GetOldLocation();
     
-    size_t GetNumTags(void) const;
+    size_t GetNumTags() const;
     auto GetTagMap() const -> const std::map<std::string, TagMap>;
     auto GetTempTagMap() const -> const std::map<std::string, TagMap>;
     
@@ -138,7 +138,7 @@ public:
     std::uint16_t GetResist(weathertype_t damage) const;
     
     void SetTitle(std::string newtitle);
-    std::string GetTitle(void) const;
+    std::string GetTitle() const;
     
     // void					SetOrigin( std::string newOrigin );
     // std::string				GetOrigin( void ) const;
@@ -147,21 +147,21 @@ public:
     std::uint8_t GetOrigin() const;
     
     virtual void SetMana(std::int16_t mn);
-    std::int16_t GetMana(void) const;
+    std::int16_t GetMana() const;
     virtual void SetStamina(std::int16_t stam);
-    std::int16_t GetStamina(void) const;
-    std::int32_t GetFilePosition(void) const;
+    std::int16_t GetStamina() const;
+    std::int32_t GetFilePosition() const;
     std::int32_t SetFilePosition(std::int32_t filepos);
     
     virtual ~CBaseObject();
-    CBaseObject(void);
+    CBaseObject();
     
-    std::int16_t GetOldTargLocX(void) const;
-    std::int16_t GetOldTargLocY(void) const;
-    std::int16_t GetX(void) const;
-    std::int16_t GetY(void) const;
-    std::int8_t GetZ(void) const;
-    Point3_st GetLocation(void) const;
+    std::int16_t GetOldTargLocX() const;
+    std::int16_t GetOldTargLocY() const;
+    std::int16_t GetX() const;
+    std::int16_t GetY() const;
+    std::int8_t GetZ() const;
+    Point3 GetLocation() const;
     
     void SetOldTargLocX(std::int16_t newvalue);
     void SetOldTargLocY(std::int16_t newvalue);
@@ -174,8 +174,8 @@ public:
     virtual void SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) = 0;
     virtual void SetLocation(const CBaseObject *toSet) = 0;
     
-    std::uint16_t GetId(void) const;
-    std::uint16_t GetColour(void) const;
+    std::uint16_t GetId() const;
+    std::uint16_t GetColour() const;
     std::uint8_t GetId(std::uint8_t part) const;
     std::uint8_t GetColour(std::uint8_t part) const;
     
@@ -183,16 +183,16 @@ public:
     void SetColour(std::uint16_t newValue);
     void SetId(std::uint8_t newValue, std::uint8_t part);
     
-    std::int32_t GetWeight(void) const;
+    std::int32_t GetWeight() const;
     virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) = 0;
     
-    serial_t GetSerial(void) const;
-    serial_t GetSpawn(void) const;
-    serial_t GetOwner(void) const;
-    serial_t GetMulti(void) const;
-    CMultiObj *GetMultiObj(void) const;
-    CSpawnItem *GetSpawnObj(void) const;
-    CChar *GetOwnerObj(void) const;
+    serial_t GetSerial() const;
+    serial_t GetSpawn() const;
+    serial_t GetOwner() const;
+    serial_t GetMulti() const;
+    CMultiObj *GetMultiObj() const;
+    CSpawnItem *GetSpawnObj() const;
+    CChar *GetOwnerObj() const;
     
     std::uint8_t GetSerial(std::uint8_t part) const;
     std::uint8_t GetSpawn(std::uint8_t part) const;
@@ -211,20 +211,20 @@ public:
     
     virtual bool HandleLine(std::string &UTag, std::string &data);
     
-    raceid_t GetRace(void) const;
+    raceid_t GetRace() const;
     void SetRace(raceid_t newValue);
     
     std::string GetNameRequest(CChar *nameRequester, std::uint8_t requestSource);
-    std::string GetName(void) const;
+    std::string GetName() const;
     void SetName(std::string newName);
     
-    std::string GetSectionId(void) const;
+    std::string GetSectionId() const;
     void SetSectionId(std::string newSectionID);
     
-    virtual std::int16_t GetStrength(void) const;
-    virtual std::int16_t GetDexterity(void) const;
-    virtual std::int16_t GetIntelligence(void) const;
-    std::int16_t GetHP(void) const;
+    virtual std::int16_t GetStrength() const;
+    virtual std::int16_t GetDexterity() const;
+    virtual std::int16_t GetIntelligence() const;
+    std::int16_t GetHP() const;
     
     virtual void SetStrength(std::int16_t newValue);
     virtual void SetDexterity(std::int16_t newValue);
@@ -233,29 +233,29 @@ public:
     void IncHP(std::int16_t amtToChange);
     
     void SetDir(std::uint8_t newDir, bool sendUpdate = true);
-    std::uint8_t GetDir(void) const;
+    std::uint8_t GetDir() const;
     
     void SetVisible(visibletypes_t newValue);
-    visibletypes_t GetVisible(void) const;
+    visibletypes_t GetVisible() const;
     
-    type_t GetObjType(void) const;
+    type_t GetObjType() const;
     virtual bool CanBeObjType(type_t toCompare) const;
     
-    std::int16_t GetHiDamage(void) const;
-    std::int16_t GetLoDamage(void) const;
+    std::int16_t GetHiDamage() const;
+    std::int16_t GetLoDamage() const;
     
     void SetHiDamage(std::int16_t newValue);
     void SetLoDamage(std::int16_t newValue);
     
-    std::vector<std::uint16_t> GetScriptTriggers(void);
+    std::vector<std::uint16_t> GetScriptTriggers();
     void AddScriptTrigger(std::uint16_t newValue);
     bool HasScriptTrigger(std::uint16_t newValue);
     void RemoveScriptTrigger(std::uint16_t newValue);
-    void ClearScriptTriggers(void);
+    void ClearScriptTriggers();
     
-    std::int16_t GetStrength2(void) const;
-    std::int16_t GetDexterity2(void) const;
-    std::int16_t GetIntelligence2(void) const;
+    std::int16_t GetStrength2() const;
+    std::int16_t GetDexterity2() const;
+    std::int16_t GetIntelligence2() const;
     
     virtual void SetStrength2(std::int16_t nVal);
     virtual void SetDexterity2(std::int16_t nVal);
@@ -265,45 +265,45 @@ public:
     void IncDexterity(std::int16_t toInc = 1);
     void IncIntelligence(std::int16_t toInc = 1);
     
-    virtual void PostLoadProcessing(void);
-    virtual bool LoadRemnants(void) = 0;
+    virtual void PostLoadProcessing();
+    virtual bool LoadRemnants() = 0;
     
-    std::uint8_t WorldNumber(void) const;
+    std::uint8_t WorldNumber() const;
     void WorldNumber(std::uint8_t value);
     
-    std::uint16_t GetInstanceId(void) const;
+    std::uint16_t GetInstanceId() const;
     void SetInstanceId(std::uint16_t value);
     
-    std::uint16_t GetSubRegion(void) const;
+    std::uint16_t GetSubRegion() const;
     void SetSubRegion(std::uint16_t value);
     
-    std::uint8_t GetPoisoned(void) const;
+    std::uint8_t GetPoisoned() const;
     virtual void SetPoisoned(std::uint8_t newValue);
     
-    std::int16_t GetCarve(void) const;
+    std::int16_t GetCarve() const;
     void SetCarve(std::int16_t newValue);
     
     virtual void Update(CSocket *mSock = nullptr, bool drawGamePlayer = false,
                         bool sendToSelf = true) = 0;
     virtual void SendToSocket(CSocket *mSock, bool drawGamePlayer = false) = 0;
     virtual void Dirty(updatetypes_t updateType);
-    void RemoveFromRefreshQueue(void);
+    void RemoveFromRefreshQueue();
     
-    virtual void Delete(void) = 0;
-    virtual void Cleanup(void);
+    virtual void Delete() = 0;
+    virtual void Cleanup();
     
-    virtual void RemoveSelfFromOwner(void) = 0;
-    virtual void AddSelfToOwner(void) = 0;
+    virtual void RemoveSelfFromOwner() = 0;
+    virtual void AddSelfToOwner() = 0;
     
-    bool IsFree(void) const;
-    bool IsDeleted(void) const;
-    bool IsPostLoaded(void) const;
-    bool IsSpawned(void) const;
-    bool ShouldSave(void) const;
-    bool IsDisabled(void) const;
-    bool IsWipeable(void) const;
-    bool IsDamageable(void) const;
-    bool NameRequestActive(void) const;
+    bool IsFree() const;
+    bool IsDeleted() const;
+    bool IsPostLoaded() const;
+    bool IsSpawned() const;
+    bool ShouldSave() const;
+    bool IsDisabled() const;
+    bool IsWipeable() const;
+    bool IsDamageable() const;
+    bool NameRequestActive() const;
     
     void SetFree(bool newVal);
     void SetDeleted(bool newVal);
@@ -315,12 +315,12 @@ public:
     void SetDamageable(bool newValue);
     void NameRequestActive(bool newValue);
     
-    std::int16_t GetFame(void) const;
+    std::int16_t GetFame() const;
     void SetFame(std::int16_t value);
     void SetKarma(std::int16_t value);
-    std::int16_t GetKarma(void) const;
+    std::int16_t GetKarma() const;
     void SetKills(std::int16_t value);
-    std::int16_t GetKills(void) const;
+    std::int16_t GetKills() const;
 };
 
 #endif

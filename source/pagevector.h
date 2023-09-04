@@ -35,13 +35,13 @@ public:
     }
     ~CHelpRequest();
     
-    serial_t WhoPaging(void) const;
-    serial_t WhoHandling(void) const;
-    std::int8_t Priority(void) const;
-    bool IsHandled(void) const;
-    time_t TimeOfPage(void) const;
-    std::string Reason(void) const;
-    serial_t RequestId(void) const;
+    serial_t WhoPaging() const;
+    serial_t WhoHandling() const;
+    std::int8_t Priority() const;
+    bool IsHandled() const;
+    time_t TimeOfPage() const;
+    std::string Reason() const;
+    serial_t RequestId() const;
     
     void WhoPaging(serial_t pPaging);
     void WhoHandling(serial_t pHandling);
@@ -63,24 +63,24 @@ private:
     [[maybe_unused]] R32 minEntryTime;
     serial_t maxId;
     
-    void KillQueue(void);
+    void KillQueue();
     
 public:
     serial_t Add(CHelpRequest *toAdd);
-    bool Remove(void);
-    CHelpRequest *First(void);
-    CHelpRequest *Next(void);
-    CHelpRequest *Current(void);
-    bool AtEnd(void) const;
-    size_t NumEntries(void) const;
+    bool Remove();
+    CHelpRequest *First();
+    CHelpRequest *Next();
+    CHelpRequest *Current();
+    bool AtEnd() const;
+    size_t NumEntries() const;
     PageVector();
     PageVector(const std::string &newTitle);
     ~PageVector();
     void SendAsGump(CSocket *toSendTo);
     void SetTitle(const std::string &newTitle);
     bool GotoPos(std::int32_t pos);
-    std::int32_t CurrentPos(void) const;
-    serial_t GetCallNum(void) const;
+    std::int32_t CurrentPos() const;
+    serial_t GetCallNum() const;
     std::int32_t FindCallNum(serial_t callNum);
     bool AnswerNextCall(CSocket *mSock, CChar *mChar);
 };

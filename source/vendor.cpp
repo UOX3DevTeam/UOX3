@@ -103,7 +103,7 @@ bool ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player buys an item from a vendor
 // o------------------------------------------------------------------------------------------------o
-bool CPIBuyItem::Handle(void) {
+bool CPIBuyItem::Handle() {
     std::uint16_t i;
     std::uint32_t totalPlayerGold = 0, totalGoldCost = 0;
     bool soldout = false, clear = false;
@@ -375,7 +375,7 @@ bool CPIBuyItem::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Player sells an item to the vendor
 // o------------------------------------------------------------------------------------------------o
-bool CPISellItem::Handle(void) {
+bool CPISellItem::Handle() {
     if (tSock->GetByte(8) != 0) {
         CChar *mChar = tSock->CurrcharObj();
         CChar *n = CalcCharObjFromSer(tSock->GetDWord(3));

@@ -60,7 +60,7 @@ typedef std::map<std::string, CommandMapEntry_st> COMMANDMAP;
 typedef std::map<std::string, CommandMapEntry_st>::iterator COMMANDMAP_ITERATOR;
 extern COMMANDMAP CommandMap;
 
-#define CMD_EXEC void (*)(void)
+#define CMD_EXEC void (*)()
 #define CMD_SOCKEXEC void (*)(CSocket *)
 #define CMD_DEFINE void (*)()
 

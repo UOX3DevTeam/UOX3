@@ -4612,7 +4612,7 @@ Oct 12, 2008 - Maarc
 6/26/2006 - giwo (0.98-3.6g) [3.7 RC]
 	Fixed an issue causing not every instance of skill gain to use the amountToGain specified in skills.dfn.
 	Changed MAX_NAME back to a 60 byte limit (note some Character packets only support 30 bytes).
-	Moved CChar::lockstate and atrophy into PlayerValues_st
+	Moved CChar::lockstate and atrophy into PlayerValues
 	Cleaned up CSkills::Atrophy and renamed it to HandleSkillChange() to better reflect it's functionality.
 
 6/25/2006 - Xuri
@@ -4777,7 +4777,7 @@ Oct 12, 2008 - Maarc
 	Minor changes to cSkills::Fish().
 	Fixed an issue making it impossible to open Elven NPC paperdolls.
 	Removed some typedefs that were no longer used.
-	Moved CChar values townpriv and townvote to PlayerValues_st
+	Moved CChar values townpriv and townvote to PlayerValues
 	Moved CChar values foodList, hungerWildChance and hungerRate to NPCValues_st
 	Removed CChar::inBuilding in favor of using a bools flag.
 	Removed handling code for several unused Character values.
@@ -6139,7 +6139,7 @@ Oct 12, 2008 - Maarc
 	Removed xFTP Server code as UOX3 should be a game server, not an FTP server.
 	Moved spawnregions and regions into CWorldMain. (renaming them to spawnRegions and townRegions).
 	Modified spawnRegions and townRegions to load in based upon the number assigned for them in the scripts.
-	Added a socket variable to PlayerValues_st to remove the need to loop through online sockets looking for a characters socket.
+	Added a socket variable to PlayerValues to remove the need to loop through online sockets looking for a characters socket.
 	Fixed some minor issues with CTEffectContainer.
 	Fixed an issue that could cause a characters murder decay timer to stop counting.
 	Added MURDERTIME to the worldsave to make murder decay time persistent.

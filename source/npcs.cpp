@@ -36,7 +36,7 @@ GenericList<CChar *> alwaysAwakeNPCs;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns list of NPCs that are always awake
 // o------------------------------------------------------------------------------------------------o
-GenericList<CChar *> *CCharStuff::GetAlwaysAwakeNPCs(void) { return &alwaysAwakeNPCs; }
+GenericList<CChar *> *CCharStuff::GetAlwaysAwakeNPCs() { return &alwaysAwakeNPCs; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCharStuff::AddRandomLoot()

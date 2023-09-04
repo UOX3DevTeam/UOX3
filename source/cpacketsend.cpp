@@ -106,7 +106,7 @@ void CPCharLocBody::Log(std::ostream &outStream, bool fullHeader) {
     CPUOXBuffer::Log(outStream, false);
 }
 
-void CPCharLocBody::InternalReset(void) {
+void CPCharLocBody::InternalReset() {
     pStream.ReserveSize(37);
     pStream.WriteByte(0, 0x1B);
 
@@ -182,7 +182,7 @@ void CPCharLocBody::HighlightColour(std::uint8_t color) { pStream.WriteByte(32, 
 //|						BYTE[30] Name
 //|						BYTE[?] Null-Terminated Message (? = blockSize - 44)
 // o------------------------------------------------------------------------------------------------o
-void CPacketSpeech::InternalReset(void) {
+void CPacketSpeech::InternalReset() {
     pStream.ReserveSize(44);
     pStream.WriteByte(0, 0x1C);
 }
@@ -596,7 +596,7 @@ void CPLightLevel::Level(lightlevel_t level) { pStream.WriteByte(1, level); }
 //|							BYTE[2] Skill Cap
 //|						BYTE[2] Null Terminated(0000) (ONLY IF TYPE == 0x00)
 // o------------------------------------------------------------------------------------------------o
-void CPUpdIndSkill::InternalReset(void) {
+void CPUpdIndSkill::InternalReset() {
     pStream.ReserveSize(13);
     pStream.WriteByte(0, 0x3A);
     pStream.WriteShort(1, 0x000D); // Length of message
@@ -653,7 +653,7 @@ CPBuyItem &CPBuyItem::operator=(CBaseObject &toCopy) {
 }
 void CPBuyItem::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 
-void CPBuyItem::InternalReset(void) {
+void CPBuyItem::InternalReset() {
     pStream.ReserveSize(8);
     pStream.WriteByte(0, 0x3B);
     pStream.WriteShort(1, 0x0008);
@@ -688,7 +688,7 @@ CPRelay::CPRelay(std::uint32_t newIP, std::uint16_t newPort) {
 void CPRelay::ServerIP(std::uint32_t newIP) { pStream.WriteLong(1, newIP); }
 void CPRelay::Port(std::uint16_t newPort) { pStream.WriteShort(5, newPort); }
 void CPRelay::SeedIP(std::uint32_t newIP) { pStream.WriteLong(7, newIP); }
-void CPRelay::InternalReset(void) {
+void CPRelay::InternalReset() {
     pStream.ReserveSize(11);
     pStream.WriteByte(0, 0x8C);
     SeedIP(0xFFFFFFFF);
@@ -713,7 +713,7 @@ void CPRelay::InternalReset(void) {
 //Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 // o------------------------------------------------------------------------------------------------o
 CPLogoutResponse::CPLogoutResponse([[maybe_unused]] std::uint8_t extraByte) { InternalReset(); }
-void CPLogoutResponse::InternalReset(void) {
+void CPLogoutResponse::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0xD1);
     pStream.WriteByte(1, 0x01);
@@ -846,7 +846,7 @@ CPCharacterAnimation &CPCharacterAnimation::operator=(CChar &toCopy) {
     CopyData(toCopy);
     return (*this);
 }
-void CPCharacterAnimation::InternalReset(void) {
+void CPCharacterAnimation::InternalReset() {
     pStream.ReserveSize(14);
     pStream.WriteByte(0, 0x6E);
     pStream.WriteByte(7, 0x00);
@@ -889,7 +889,7 @@ CPNewCharacterAnimation &CPNewCharacterAnimation::operator=(CChar &toCopy) {
     CopyData(toCopy);
     return (*this);
 }
-void CPNewCharacterAnimation::InternalReset(void) {
+void CPNewCharacterAnimation::InternalReset() {
     pStream.ReserveSize(10);
     pStream.WriteByte(0, 0xE2);
     pStream.WriteByte(7, 0);
@@ -1000,7 +1000,7 @@ void CPDrawGamePlayer::CopyData(CChar &toCopy) {
 
     pStream.WriteByte(10, static_cast<std::uint8_t>(flag.to_ulong()));
 }
-void CPDrawGamePlayer::InternalReset(void) {
+void CPDrawGamePlayer::InternalReset() {
     pStream.ReserveSize(19);
     pStream.WriteByte(0, 0x20);
     pStream.WriteByte(7, 0x00);
@@ -1022,7 +1022,7 @@ CPDrawGamePlayer::CPDrawGamePlayer() { InternalReset(); }
 //|						BYTE level
 // o------------------------------------------------------------------------------------------------o
 void CPPersonalLightLevel::CopyData(CChar &toCopy) { Serial(toCopy.GetSerial()); }
-void CPPersonalLightLevel::InternalReset(void) {
+void CPPersonalLightLevel::InternalReset() {
     pStream.ReserveSize(6);
     pStream.WriteByte(0, 0x4E);
 }
@@ -1062,7 +1062,7 @@ void CPPlaySoundEffect::Model(std::uint16_t newModel) { pStream.WriteShort(2, ne
 void CPPlaySoundEffect::X(std::int16_t xLoc) { pStream.WriteShort(6, xLoc); }
 void CPPlaySoundEffect::Y(std::int16_t yLoc) { pStream.WriteShort(8, yLoc); }
 void CPPlaySoundEffect::Z(std::int16_t zLoc) { pStream.WriteShort(10, zLoc); }
-void CPPlaySoundEffect::InternalReset(void) {
+void CPPlaySoundEffect::InternalReset() {
     pStream.ReserveSize(12);
     pStream.WriteByte(0, 0x54);
     pStream.WriteByte(1, 1);
@@ -1099,7 +1099,7 @@ CPPlaySoundEffect::CPPlaySoundEffect(CBaseObject &toCopy) {
 //|						BYTE flag byte
 // o------------------------------------------------------------------------------------------------o
 void CPPaperdoll::CopyData(CChar &toCopy) { Serial(toCopy.GetSerial()); }
-void CPPaperdoll::InternalReset(void) {
+void CPPaperdoll::InternalReset() {
     pStream.ReserveSize(66);
     pStream.WriteByte(0, 0x88);
 }
@@ -1155,7 +1155,7 @@ CPPaperdoll &CPPaperdoll::operator=(CChar &toCopy) {
 //|						haven’t checked to be sure (other possibilities, 0x4F
 //or 0x4E)
 // o------------------------------------------------------------------------------------------------o
-void CPWeather::InternalReset(void) {
+void CPWeather::InternalReset() {
     pStream.ReserveSize(4);
     pStream.WriteByte(0, 0x65);
     pStream.WriteByte(1, 0xFF);
@@ -1218,7 +1218,7 @@ void CPWeather::Temperature(std::uint8_t nTemp) { pStream.WriteByte(3, nTemp); }
 //|						BYTE adjust direction during animation (1=no)
 //|						BYTE explode on impact
 // o------------------------------------------------------------------------------------------------o
-void CPGraphicalEffect::InternalReset(void) {
+void CPGraphicalEffect::InternalReset() {
     pStream.ReserveSize(28);
     pStream.WriteByte(0, 0x70);
     pStream.WriteShort(24, 0x0000);
@@ -1296,7 +1296,7 @@ void CPGraphicalEffect::TargetLocation(std::int16_t x, std::int16_t y, std::int8
 //|						BYTE[2] maxHealth/maxMana/maxStamina
 //|						BYTE[2] currentHealth/currentMana/currentStamina
 // o------------------------------------------------------------------------------------------------o
-void CPUpdateStat::InternalReset(void) {
+void CPUpdateStat::InternalReset() {
     pStream.ReserveSize(9);
     pStream.WriteByte(0, 0xA1);
 }
@@ -1395,7 +1395,7 @@ void CPUpdateStat::CurVal(std::int16_t curVal) { pStream.WriteShort(7, curVal); 
 //|						BYTE[4] corpse id
 //|						BYTE[4] unknown (all 0)
 // o------------------------------------------------------------------------------------------------o
-void CPDeathAction::InternalReset(void) {
+void CPDeathAction::InternalReset() {
     pStream.ReserveSize(13);
     pStream.WriteByte(0, 0xAF);
     pStream.WriteByte(9, 0x00);
@@ -1432,7 +1432,7 @@ CPDeathAction &CPDeathAction::operator=(CItem &corpse) {
 //|						BYTE cmd
 //|						BYTE[2] musicID
 // o------------------------------------------------------------------------------------------------o
-void CPPlayMusic::InternalReset(void) {
+void CPPlayMusic::InternalReset() {
     pStream.ReserveSize(3);
     pStream.WriteByte(0, 0x6D);
 }
@@ -1460,7 +1460,7 @@ void CPPlayMusic::MusicId(std::int16_t musicId) { pStream.WriteShort(1, musicId)
 //for vendors, 0x7D |							for spellbooks and
 // containers
 // o------------------------------------------------------------------------------------------------o
-void CPDrawContainer::InternalReset(void) {
+void CPDrawContainer::InternalReset() {
     pStream.ReserveSize(7);
     pStream.WriteByte(0, 0x24);
 }
@@ -1574,8 +1574,8 @@ void CPOpenGump::AddResponse(std::uint16_t modelNum, std::uint16_t colour, std::
     pStream.WriteString((responseOffset + 5), responseText, responseText.length());
     responseOffset += toAdd;
 }
-void CPOpenGump::Finalize(void) { pStream.WriteShort(1, static_cast<std::uint16_t>(pStream.GetSize())); }
-void CPOpenGump::InternalReset(void) {
+void CPOpenGump::Finalize() { pStream.WriteShort(1, static_cast<std::uint16_t>(pStream.GetSize())); }
+void CPOpenGump::InternalReset() {
     responseOffset = 0xFFFFFFFF;
     responseBaseOffset = 0xFFFFFFFF;
     pStream.ReserveSize(9);
@@ -1950,7 +1950,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
         }
     }
 }
-void CPStatWindow::InternalReset(void) {
+void CPStatWindow::InternalReset() {
     pStream.ReserveSize(43);
     pStream.WriteByte(0, 0x11);
     pStream.WriteByte(1, 0x00);
@@ -2096,7 +2096,7 @@ void CPStatWindow::TithingPoints(std::uint32_t value) {
 //currently online in this world. |								You
 // must either log in as that character or wait for it to time out.”
 // o------------------------------------------------------------------------------------------------o
-void CPIdleWarning::InternalReset(void) {
+void CPIdleWarning::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x53);
 }
@@ -2125,7 +2125,7 @@ CPTime::CPTime() { InternalReset(); }
 void CPTime::Hour(std::uint8_t hour) { pStream.WriteByte(1, hour); }
 void CPTime::Minute(std::uint8_t minute) { pStream.WriteByte(2, minute); }
 void CPTime::Second(std::uint8_t second) { pStream.WriteByte(3, second); }
-void CPTime::InternalReset(void) {
+void CPTime::InternalReset() {
     pStream.ReserveSize(4);
     pStream.WriteByte(0, 0x5B);
 }
@@ -2202,7 +2202,7 @@ void CPTextEmoteColour::Unknown(std::int16_t newValue) { pStream.WriteShort(3, n
 CPWarMode::CPWarMode() { InternalReset(); }
 
 void CPWarMode::Flag(std::uint8_t nFlag) { pStream.WriteByte(1, nFlag); }
-void CPWarMode::InternalReset(void) {
+void CPWarMode::InternalReset() {
     pStream.ReserveSize(5);
     pStream.WriteByte(0, 0x72);
     pStream.WriteByte(2, 0x00);
@@ -2226,7 +2226,7 @@ CPWarMode::CPWarMode(std::uint8_t nFlag) {
 //|						BYTE cmd
 //|						BYTE pause/resume (0=pause, 1=resume)
 // o------------------------------------------------------------------------------------------------o
-void CPPauseResume::InternalReset(void) {
+void CPPauseResume::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x33);
 }
@@ -2276,7 +2276,7 @@ bool CPPauseResume::ClientCanReceive(CSocket *mSock) {
 //|						BYTE[2] blockSize
 //|						BYTE[blockSize-3] null terminated full web address
 // o------------------------------------------------------------------------------------------------o
-void CPWebLaunch::InternalReset(void) {
+void CPWebLaunch::InternalReset() {
     pStream.ReserveSize(4);
     pStream.WriteByte(0, 0xA5);
 }
@@ -2312,7 +2312,7 @@ void CPWebLaunch::SetSize(std::int16_t newSize) {
 //|						if HSA client
 //|							BYTE[4] serial
 // o------------------------------------------------------------------------------------------------o
-void CPTrackingArrow::InternalReset(void) {
+void CPTrackingArrow::InternalReset() {
     pStream.ReserveSize(6);
     pStream.WriteByte(0, 0xBA);
 }
@@ -2351,7 +2351,7 @@ CPTrackingArrow::CPTrackingArrow(CBaseObject &toCopy) {
 //|						BYTE cmd
 //|						BYTE unknown1 (0x00)
 // o------------------------------------------------------------------------------------------------o
-void CPBounce::InternalReset(void) {
+void CPBounce::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x27);
 }
@@ -2380,7 +2380,7 @@ void CPBounce::Mode(std::uint8_t mode) { pStream.WriteByte(1, mode); }
 //|
 //|					NOTE: This packet is sent by both the server and client
 // o------------------------------------------------------------------------------------------------o
-void CPDyeVat::InternalReset(void) {
+void CPDyeVat::InternalReset() {
     pStream.ReserveSize(9);
     pStream.WriteByte(0, 0x95);
 }
@@ -2421,7 +2421,7 @@ CPDyeVat &CPDyeVat::operator=(CBaseObject &target) {
 //|						clientVer > 7.0.9.0, 30 byte size packet
 //|							BYTE[4] Hue
 // o------------------------------------------------------------------------------------------------o
-void CPMultiPlacementView::InternalReset(void) {
+void CPMultiPlacementView::InternalReset() {
     pStream.ReserveSize(26);
     pStream.WriteByte(0, 0x99);
     for (std::uint8_t i = 6; i < 18; ++i) {
@@ -2684,7 +2684,7 @@ void CPNegotiateAssistantFeatures::Log(std::ostream &outStream, bool fullHeader)
 //|					NOTE: The backpack grid index exists since 6.0.1.7 2D
 //and 2.45.5.6 KR.
 // o------------------------------------------------------------------------------------------------o
-void CPAddItemToCont::InternalReset(void) {
+void CPAddItemToCont::InternalReset() {
     uokrFlag = false;
     pStream.ReserveSize(20);
     pStream.WriteByte(0, 0x25);
@@ -2733,7 +2733,7 @@ void CPAddItemToCont::Object(CItem &toAdd) { CopyData(toAdd); }
 //|						BYTE cmd
 //|						BYTE[4] serial of GM who issued kick?
 // o------------------------------------------------------------------------------------------------o
-void CPKickPlayer::InternalReset(void) {
+void CPKickPlayer::InternalReset() {
     pStream.ReserveSize(5);
     pStream.WriteByte(0, 0x26);
 }
@@ -2763,7 +2763,7 @@ CPKickPlayer &CPKickPlayer::operator=(CChar &toCopy) {
 //|
 //|					Note: Resurrection menu has been removed from UO.
 // o------------------------------------------------------------------------------------------------o
-void CPResurrectMenu::InternalReset(void) {
+void CPResurrectMenu::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x2C);
 }
@@ -2792,7 +2792,7 @@ void CPResurrectMenu::Action(std::uint8_t action) { pStream.WriteByte(1, action)
 //|					This packet is sent when there is a fight going on somewhere
 //on screen.
 // o------------------------------------------------------------------------------------------------o
-void CPFightOccurring::InternalReset(void) {
+void CPFightOccurring::InternalReset() {
     pStream.ReserveSize(10);
     pStream.WriteByte(0, 0x2F);
     pStream.WriteByte(1, 0);
@@ -2834,7 +2834,7 @@ void CPFightOccurring::Defender(CChar &defender) { Defender(defender.GetSerial()
 //|							BYTE[2] Skill Cap
 //|						Byte[2] Null terminated(0000) - Only if Type == 0x00
 // o------------------------------------------------------------------------------------------------o
-void CPSkillsValues::InternalReset(void) {
+void CPSkillsValues::InternalReset() {
     pStream.ReserveSize(1);
     pStream.WriteByte(0, 0x3A);
 }
@@ -2855,7 +2855,7 @@ void CPSkillsValues::NumSkills(std::uint8_t numSkills) {
     // plus the additional bytes needed for packet details
     BlockSize(6 + (numSkills * 9));
 }
-std::uint8_t CPSkillsValues::NumSkills(void) {
+std::uint8_t CPSkillsValues::NumSkills() {
     std::int32_t size = pStream.GetShort(1);
     size -= 6;
     size /= 9;
@@ -3024,7 +3024,7 @@ void CPUltimaMessenger::ID2(serial_t toSet) { pStream.WriteLong(5, toSet); }
 //max numeric value) |						BYTE[2] text2 length | BYTE[?] text2
 // (label above text entry box)
 // o------------------------------------------------------------------------------------------------o
-void CPGumpTextEntry::InternalReset(void) {
+void CPGumpTextEntry::InternalReset() {
     BlockSize(3);
     pStream.WriteByte(0, 0xAB);
 }
@@ -3072,13 +3072,13 @@ void CPGumpTextEntry::BlockSize(std::int16_t newVal) {
     pStream.WriteShort(1, newVal);
 }
 
-std::int16_t CPGumpTextEntry::CurrentSize(void) { return pStream.GetShort(1); }
+std::int16_t CPGumpTextEntry::CurrentSize() { return pStream.GetShort(1); }
 
-std::int16_t CPGumpTextEntry::Text1Len(void) { return pStream.GetShort(9); }
+std::int16_t CPGumpTextEntry::Text1Len() { return pStream.GetShort(9); }
 
 void CPGumpTextEntry::Text1Len(std::int16_t newVal) { pStream.WriteShort(9, newVal); }
 
-std::int16_t CPGumpTextEntry::Text2Len(void) {
+std::int16_t CPGumpTextEntry::Text2Len() {
     std::int16_t t1Len = Text1Len();
     return pStream.GetShort(static_cast<size_t>(t1Len) + 17);
 }
@@ -3101,7 +3101,7 @@ void CPGumpTextEntry::Text2Len(std::int16_t newVal) {
 //|						BYTE 0/1 For Disable/Enable God Mode in client.
 // o------------------------------------------------------------------------------------------------o
 CPGodModeToggle::CPGodModeToggle() { InternalReset(); }
-void CPGodModeToggle::InternalReset(void) {
+void CPGodModeToggle::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x2B);
 }
@@ -3149,7 +3149,7 @@ void CPGodModeToggle::ToggleStatus(bool toSet) {
 //|						0x06 - The IGR time limit has been met.
 //|						0x07 - General IGR authentication failure.
 // o------------------------------------------------------------------------------------------------o
-void CPLoginDeny::InternalReset(void) {
+void CPLoginDeny::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x82);
 }
@@ -3180,7 +3180,7 @@ void CPLoginDeny::DenyReason(logindenyreason_t reason) { pStream.WriteByte(1, re
 //|						0x04 - Character is queued for deletion
 //|						0x05 - Bad request
 // o------------------------------------------------------------------------------------------------o
-void CPCharDeleteResult::InternalReset(void) {
+void CPCharDeleteResult::InternalReset() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x85);
 }
@@ -3220,7 +3220,7 @@ CharacterListUpdate::CharacterListUpdate(std::uint8_t charCount) {
     numChars = charCount;
     InternalReset();
 }
-void CharacterListUpdate::InternalReset(void) {
+void CharacterListUpdate::InternalReset() {
     std::uint16_t packetLen = 4 + (numChars * 60);
     pStream.ReserveSize(packetLen);
     pStream.WriteByte(0, 0x86);
@@ -3581,7 +3581,7 @@ void CPMapChange::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "  Raw dump     :" << std::endl;
     CPUOXBuffer::Log(outStream, false);
 }
-void CPMapChange::InternalReset(void) {
+void CPMapChange::InternalReset() {
     pStream.ReserveSize(6);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteShort(1, 0x0006);
@@ -3631,7 +3631,7 @@ CPCloseGump::CPCloseGump(std::uint32_t gumpId, std::uint32_t buttonId) {
     _buttonId = buttonId;
     InternalReset();
 }
-void CPCloseGump::InternalReset(void) {
+void CPCloseGump::InternalReset() {
     pStream.ReserveSize(13);
     pStream.WriteByte(0, 0xBF);      // Command: Packet 0xBF - General Information Packet
     pStream.WriteShort(1, 13);       // Packet length
@@ -3672,7 +3672,7 @@ void CPCloseGump::Log(std::ostream &outStream, bool fullHeader) {
 //|							BYTE[4] Container ItemID
 //|							BYTE[2] color
 // o------------------------------------------------------------------------------------------------o
-void CPItemsInContainer::InternalReset(void) {
+void CPItemsInContainer::InternalReset() {
     pStream.ReserveSize(5);
     pStream.WriteByte(0, 0x3C);
     isVendor = false;
@@ -3716,7 +3716,7 @@ void CPItemsInContainer::PlayerVendor(bool value) { isPlayerVendor = value; }
 
 void CPItemsInContainer::VendorSerial(serial_t toSet) { vendorSerial = toSet; }
 
-std::uint16_t CPItemsInContainer::NumberOfItems(void) const { return pStream.GetUShort(3); }
+std::uint16_t CPItemsInContainer::NumberOfItems() const { return pStream.GetUShort(3); }
 
 void CPItemsInContainer::NumberOfItems(std::uint16_t numItems) {
     std::uint16_t packetSize = static_cast<std::uint16_t>((numItems * (uokrFlag ? 20 : 19)) + 5);
@@ -3847,7 +3847,7 @@ void CPItemsInContainer::Log(std::ostream &outStream, bool fullHeader) {
 //|							right. This means we need to sort the items
 //logically before sending packets.
 // o------------------------------------------------------------------------------------------------o
-void CPOpenBuyWindow::InternalReset(void) {
+void CPOpenBuyWindow::InternalReset() {
     pStream.ReserveSize(8); // start big, and work back down
     pStream.WriteByte(0, 0x74);
 }
@@ -3861,7 +3861,7 @@ CPOpenBuyWindow::CPOpenBuyWindow(CItem *container, CChar *vendorId, CPItemsInCon
     }
 }
 
-std::uint8_t CPOpenBuyWindow::NumberOfItems(void) const { return pStream.GetByte(7); }
+std::uint8_t CPOpenBuyWindow::NumberOfItems() const { return pStream.GetByte(7); }
 
 void CPOpenBuyWindow::NumberOfItems(std::uint8_t numItems) {
     // set the number of items
@@ -4154,7 +4154,7 @@ void CPCharAndStartLoc::Log(std::ostream &outStream, bool fullHeader) {
     CPUOXBuffer::Log(outStream, false);
 }
 
-void CPCharAndStartLoc::InternalReset(void) {
+void CPCharAndStartLoc::InternalReset() {
     packetSize = 0;
     numCharacters = 0;
     pStream.ReserveSize(4);
@@ -4328,7 +4328,7 @@ CPKAccept::CPKAccept(std::uint8_t Response) {
 //|
 //|					*Null terminated I think (Gimli)
 // o------------------------------------------------------------------------------------------------o
-void CPUpdScroll::InternalReset(void) {
+void CPUpdScroll::InternalReset() {
     pStream.ReserveSize(10); // 10, not 11
     pStream.WriteByte(0, 0xA6);
     pStream.WriteByte(1, 0x01);
@@ -4356,7 +4356,7 @@ CPUpdScroll::CPUpdScroll(std::uint8_t tType, std::uint8_t tNum) {
 void CPUpdScroll::AddString(const char *toAdd) { mstrcat(tipData, 2048, toAdd); }
 void CPUpdScroll::TipType(std::uint8_t tType) { pStream.WriteByte(3, tType); }
 void CPUpdScroll::TipNumber(std::uint8_t tipNum) { pStream.WriteByte(7, tipNum); }
-void CPUpdScroll::Finalize(void) {
+void CPUpdScroll::Finalize() {
     size_t y = strlen(tipData) + 10;
     SetLength(static_cast<std::uint16_t>(y));
     pStream.WriteString(10, tipData, y - 10);
@@ -4406,7 +4406,7 @@ void CPUpdScroll::SetLength(std::uint16_t len) {
 // reversal |							Seven 	 Invert background "Negapoji
 // Keta"(???)
 // o------------------------------------------------------------------------------------------------o
-void CPGraphicalEffect2::InternalReset(void) {
+void CPGraphicalEffect2::InternalReset() {
     pStream.ReserveSize(36);
     pStream.WriteByte(0, 0xC0);
     pStream.WriteShort(24, 0x0000);
@@ -4453,7 +4453,7 @@ void CPGraphicalEffect2::RenderMode(std::uint32_t mode) { pStream.WriteLong(32, 
 //|						BYTE[2] yet another (unknown) additional effect that's
 //only set for moving effect, 0 otherwise
 // o------------------------------------------------------------------------------------------------o
-void CP3DGraphicalEffect::InternalReset(void) {
+void CP3DGraphicalEffect::InternalReset() {
     pStream.ReserveSize(49);
     pStream.WriteByte(0, 0xC7);
     pStream.WriteShort(24, 0x0000);
@@ -4586,7 +4586,7 @@ CPDrawObject::CPDrawObject(CChar &mChar) {
     CopyData(mChar);
 }
 
-void CPDrawObject::InternalReset(void) {
+void CPDrawObject::InternalReset() {
     SetLength(19);
     pStream.WriteByte(0, 0x78);
 }
@@ -4597,7 +4597,7 @@ void CPDrawObject::SetLength(std::uint16_t len) {
     curLen = len;
 }
 
-void CPDrawObject::Finalize(void) {
+void CPDrawObject::Finalize() {
     std::uint16_t cPos = curLen;
     SetLength(curLen + 4);
     pStream.WriteLong(cPos, static_cast<std::uint32_t>(0));
@@ -4714,7 +4714,7 @@ void CPDrawObject::CopyData(CChar &mChar) {
 //|
 //|					Followed by a 0x3C message with the contents.
 // o------------------------------------------------------------------------------------------------o
-void CPCorpseClothing::InternalReset(void) {
+void CPCorpseClothing::InternalReset() {
     pStream.ReserveSize(7);
     pStream.WriteByte(0, 0x89);
 }
@@ -4790,7 +4790,7 @@ auto CPCorpseClothing::CopyData(CItem &toCopy) -> void {
 //|						Required to to display items with IDs over 0x3FFF (old
 //0x1A packet only works with items up to that ID)
 // o------------------------------------------------------------------------------------------------o
-void CPNewObjectInfo::InternalReset(void) {
+void CPNewObjectInfo::InternalReset() {
     pStream.ReserveSize(24);
     pStream.WriteByte(0, 0xF3);
     pStream.WriteShort(1, 0x1);
@@ -4952,7 +4952,7 @@ void CPNewObjectInfo::Objects(CItem &mItem, CChar &mChar) { CopyData(mItem, mCha
 //|						0x40 - War mode
 //|						0x80 - Hidden
 // o------------------------------------------------------------------------------------------------o
-void CPObjectInfo::InternalReset(void) {
+void CPObjectInfo::InternalReset() {
     pStream.ReserveSize(16);
     pStream.WriteByte(0, 0x1A);
     pStream.WriteShort(1, 16);
@@ -5140,7 +5140,7 @@ void CPUnicodeSpeech::SetLength(std::uint16_t value) {
     pStream.WriteShort(1, value);
 }
 
-void CPUnicodeSpeech::InternalReset(void) {
+void CPUnicodeSpeech::InternalReset() {
     SetLength(48);
     pStream.WriteByte(0, 0xAE);
     Language("ENU");
@@ -5246,7 +5246,7 @@ CPUnicodeMessage::CPUnicodeMessage(CBaseObject &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPUnicodeMessage::InternalReset(void) {
+void CPUnicodeMessage::InternalReset() {
     SetLength(48);
     pStream.WriteByte(0, 0xAE);
     Language("ENU");
@@ -5344,7 +5344,7 @@ void CPUnicodeMessage::ID(std::uint16_t toSet) { pStream.WriteShort(7, toSet); }
 //|					Note: Server IP has to be sent in reverse order. For
 //example, 192.168.0.1 is sent as 0100A8C0.
 // o------------------------------------------------------------------------------------------------o
-void CPGameServerList::InternalReset(void) {
+void CPGameServerList::InternalReset() {
     pStream.ReserveSize(6);
     pStream.WriteByte(0, 0xA8);
     pStream.WriteByte(2, 6);
@@ -5405,7 +5405,7 @@ void CPGameServerList::addEntry(const std::string &name, std::uint32_t addressBi
 //|						If (nameFollowing = 1)
 //|							BYTE[?] charName
 // o------------------------------------------------------------------------------------------------o
-void CPSecureTrading::InternalReset(void) {
+void CPSecureTrading::InternalReset() {
     pStream.ReserveSize(8);
     pStream.WriteByte(0, 0x6F);
     pStream.WriteByte(2, 8);
@@ -5467,7 +5467,7 @@ void CPSecureTrading::Name(const std::string &nameFollowing) {
 //|						Client request has 7 bytes, server-reply 37
 //|						Triggered by Crtl + Shift.
 // o------------------------------------------------------------------------------------------------o
-void CPAllNames3D::InternalReset(void) {
+void CPAllNames3D::InternalReset() {
     pStream.ReserveSize(37);
     pStream.WriteByte(0, 0x98);
     pStream.WriteByte(2, 37);
@@ -5517,7 +5517,7 @@ void CPBookPage::IncLength(std::uint8_t amount) {
     bookLength += amount;
     pStream.ReserveSize(bookLength);
 }
-void CPBookPage::InternalReset(void) {
+void CPBookPage::InternalReset() {
     pStream.ReserveSize(9);
     bookLength = 9;
     pageCount = 0;
@@ -5565,7 +5565,7 @@ void CPBookPage::NewPage(std::int16_t pNum, const std::vector<std::string> *line
     std::for_each(lines->begin(), lines->end(),
                   [this](const std::string &entry) { AddLine(entry); });
 }
-void CPBookPage::Finalize(void) {
+void CPBookPage::Finalize() {
     pStream.WriteShort(1, bookLength);
     pStream.WriteShort(7, pageCount);
 }
@@ -5634,7 +5634,7 @@ void CPSendGumpMenu::addText(const std::string &msg) {
     text.push_back(msg);
 }
 
-void CPSendGumpMenu::Finalize(void) {
+void CPSendGumpMenu::Finalize() {
     std::uint32_t length = 21;
     std::uint16_t increment = 0;
     std::uint16_t lineLen = 0;
@@ -5753,7 +5753,7 @@ void CPSendGumpMenu::Log(std::ostream &outStream, bool fullHeader) {
 //|								first bit of second byte = spell #8,
 // etc
 // o------------------------------------------------------------------------------------------------o
-void CPNewSpellBook::InternalReset(void) {
+void CPNewSpellBook::InternalReset() {
     pStream.ReserveSize(23);
     pStream.WriteByte(0, 0xBF); // Main packet
     pStream.WriteShort(1, 23);
@@ -5818,7 +5818,7 @@ bool CPNewSpellBook::ClientCanReceive(CSocket *mSock) {
 //|
 //|						Note: displays damage above the npc/player’s head.
 // o------------------------------------------------------------------------------------------------o
-void CPDisplayDamage::InternalReset(void) {
+void CPDisplayDamage::InternalReset() {
     pStream.ReserveSize(11);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteByte(1, 0x00);
@@ -5881,7 +5881,7 @@ bool CPDisplayDamage::ClientCanReceive(CSocket *mSock) {
 //|							endloop	Attribute
 //|							BYTE[4] 0xFFFFFFFF
 // o------------------------------------------------------------------------------------------------o
-void CPQueryToolTip::InternalReset(void) {
+void CPQueryToolTip::InternalReset() {
     pStream.ReserveSize(13);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteByte(1, 0x00);
@@ -5943,7 +5943,7 @@ bool CPQueryToolTip::ClientCanReceive(CSocket *mSock) {
 //0 terminated |						End Loop | BYTE[4] 00000000 - Sent
 // as end of packet/loop
 // o------------------------------------------------------------------------------------------------o
-void CPToolTip::InternalReset(void) {
+void CPToolTip::InternalReset() {
     pStream.ReserveSize(15);
     pStream.WriteByte(0, 0xD6);
     pStream.WriteShort(3, 0x0001);
@@ -6617,7 +6617,7 @@ CPToolTip::CPToolTip(serial_t objSer, CSocket *mSock, bool addAmount, bool playe
 //|							BYTE[2] nameLength
 //|							BYTE[?] name
 // o------------------------------------------------------------------------------------------------o
-void CPSellList::InternalReset(void) {
+void CPSellList::InternalReset() {
     pStream.ReserveSize(9);
     pStream.WriteByte(0, 0x9E);
     numItems = 0;
@@ -6730,7 +6730,7 @@ bool CPSellList::CanSellItems(CChar &mChar, CChar &vendor) {
 //the rest nulls) |							BYTE[4] unknown/ID? |
 // BYTE[4] zero (0)
 // o------------------------------------------------------------------------------------------------o
-void CPOpenMessageBoard::InternalReset(void) {
+void CPOpenMessageBoard::InternalReset() {
     pStream.ReserveSize(38);
     pStream.WriteByte(0, 0x71);
     pStream.WriteShort(1, 38);
@@ -6823,7 +6823,7 @@ CPOpenMessageBoard::CPOpenMessageBoard(CSocket *mSock) {
 //For each line: |								BYTE linelen |
 //BYTE[linelen] body (null terminated)
 // o------------------------------------------------------------------------------------------------o
-void CPOpenMsgBoardPost::InternalReset(void) {
+void CPOpenMsgBoardPost::InternalReset() {
     pStream.ReserveSize(4);
     pStream.WriteByte(0, 0x71);
     if (bFullPost) {
@@ -6955,7 +6955,7 @@ CPOpenMsgBoardPost::CPOpenMsgBoardPost(CSocket *mSock, const MsgBoardPost_st &mb
 //|					NOTE: Backpack grid index is only sent for client versions
 // above 6.0.1.7 (2D) |						and 2.45.5.6 (KR)
 // o------------------------------------------------------------------------------------------------o
-void CPSendMsgBoardPosts::InternalReset(void) {
+void CPSendMsgBoardPosts::InternalReset() {
     pStream.ReserveSize(5);
     pStream.WriteByte(0, 0x3C);
     pStream.WriteShort(1, 5);
@@ -6990,7 +6990,7 @@ void CPSendMsgBoardPosts::CopyData(CSocket *mSock, serial_t mSerial, [[maybe_unu
     ++postCount;
 }
 
-void CPSendMsgBoardPosts::Finalize(void) {
+void CPSendMsgBoardPosts::Finalize() {
     pStream.WriteShort(1, static_cast<std::int32_t>(pStream.GetSize()));
     pStream.WriteShort(3, postCount);
 }
@@ -7043,7 +7043,7 @@ CPExtendedStats::CPExtendedStats(CChar &mChar) {
     CopyData(mChar);
 }
 
-void CPExtendedStats::InternalReset(void) {
+void CPExtendedStats::InternalReset() {
     pStream.ReserveSize(12);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteShort(1, 12);
@@ -7108,7 +7108,7 @@ CPHealthBarStatus::CPHealthBarStatus(CChar &mChar, CSocket &tSock, std::uint8_t 
     // CopyData( mChar );
 }
 
-void CPHealthBarStatus::InternalReset(void) { pStream.ReserveSize(9); }
+void CPHealthBarStatus::InternalReset() { pStream.ReserveSize(9); }
 
 void CPHealthBarStatus::SetHBStatusData(CChar &mChar, CSocket &tSock, std::uint8_t healthBarColor) {
     if (tSock.ClientType() == CV_UO3D || tSock.ClientType() == CV_KR3D ||
@@ -7201,7 +7201,7 @@ void CPHealthBarStatus::CopyData(CChar &mChar) {
 //|					Note: Only client versions lower than v7.0.8.2 will load
 //diff files
 // o------------------------------------------------------------------------------------------------o
-void CPEnableMapDiffs::InternalReset(void) {
+void CPEnableMapDiffs::InternalReset() {
     pStream.ReserveSize(6);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteShort(1, 0x0006);
@@ -7212,7 +7212,7 @@ CPEnableMapDiffs::CPEnableMapDiffs() {
     CopyData();
 }
 
-void CPEnableMapDiffs::CopyData(void) {
+void CPEnableMapDiffs::CopyData() {
     std::uint8_t mapCount = Map->MapCount();
     size_t pSize = ((static_cast<size_t>(mapCount) + 1) * 8) + 9;
 
@@ -7270,7 +7270,7 @@ void CPEnableMapDiffs::CopyData(void) {
 // o------------------------------------------------------------------------------------------------o
 CPNewBookHeader::CPNewBookHeader() { InternalReset(); }
 
-void CPNewBookHeader::InternalReset(void) {
+void CPNewBookHeader::InternalReset() {
     pStream.ReserveSize(12);
     pStream.WriteByte(0, 0xD4);
     pStream.WriteShort(1, 12);
@@ -7288,7 +7288,7 @@ void CPNewBookHeader::Author(const std::string &newAuthor) { author = newAuthor;
 
 void CPNewBookHeader::Title(const std::string &newTitle) { title = newTitle; }
 
-void CPNewBookHeader::Finalize(void) {
+void CPNewBookHeader::Finalize() {
     const std::uint16_t authorLen = static_cast<std::uint16_t>(author.size());
     const std::uint16_t titleLen = static_cast<std::uint16_t>(title.size());
     const std::uint16_t totalLen = static_cast<std::uint16_t>(15 + authorLen + titleLen + 2);
@@ -7347,14 +7347,14 @@ void CPNewBookHeader::Finalize(void) {
 // Flags 0x00=enabled, 0x01=disabled, 0x04 = highlighted, 0x20 = color | If (flags &0x20 and 2D
 // client) | BYTE[2] color
 // o------------------------------------------------------------------------------------------------o
-CPPopupMenu::CPPopupMenu(void) { InternalReset(); }
+CPPopupMenu::CPPopupMenu() { InternalReset(); }
 
 CPPopupMenu::CPPopupMenu(CChar &toCopy, CSocket &tSock) {
     InternalReset();
     CopyData(toCopy, tSock);
 }
 
-void CPPopupMenu::InternalReset(void) {
+void CPPopupMenu::InternalReset() {
     pStream.ReserveSize(5);
     pStream.WriteByte(0, 0xBF);
     pStream.WriteShort(1, 5);
@@ -8000,7 +8000,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
 //thousand\t25 hundred", which in turn would modify the string: |
 //"Only 100 thousand gold could be deposited. A check for 25 hundred gold was returned to you."
 // o------------------------------------------------------------------------------------------------o
-CPClilocMessage::CPClilocMessage(void) {
+CPClilocMessage::CPClilocMessage() {
     InternalReset();
     Serial(INVALIDSERIAL);
     Body(INVALIDID);
@@ -8012,7 +8012,7 @@ CPClilocMessage::CPClilocMessage(CBaseObject &toCopy) {
     CopyData(toCopy);
 }
 
-void CPClilocMessage::InternalReset(void) {
+void CPClilocMessage::InternalReset() {
     pStream.ReserveSize(48);
     pStream.WriteByte(0, 0xC1);
     pStream.WriteShort(1, 48);
@@ -8086,9 +8086,9 @@ void CPClilocMessage::ArgumentString(const std::string &arguments) {
 //the party) |							Then, loop for each member in
 // numMembers: |								BYTE[4] serial
 // o------------------------------------------------------------------------------------------------o
-CPPartyMemberList::CPPartyMemberList(void) { InternalReset(); }
+CPPartyMemberList::CPPartyMemberList() { InternalReset(); }
 
-void CPPartyMemberList::InternalReset(void) {
+void CPPartyMemberList::InternalReset() {
     pStream.ReserveSize(7);
     pStream.WriteByte(0, 0xBF); // packet ID
     pStream.WriteShort(1, 7);   // packet length
@@ -8142,9 +8142,9 @@ void CPPartyMemberList::Log(std::ostream &outStream, bool fullHeader) {
 //|							BYTE subsubcommand (0x07)
 //|							BYTE[4] serial (party leader)
 // o------------------------------------------------------------------------------------------------o
-CPPartyInvitation::CPPartyInvitation(void) { InternalReset(); }
+CPPartyInvitation::CPPartyInvitation() { InternalReset(); }
 
-void CPPartyInvitation::InternalReset(void) {
+void CPPartyInvitation::InternalReset() {
     pStream.ReserveSize(7);
     pStream.WriteByte(0, 0xBF); // packet ID
     pStream.WriteShort(1, 10);  // packet length
@@ -8195,7 +8195,7 @@ CPPartyMemberRemove::CPPartyMemberRemove(CChar *removed) {
     pStream.WriteLong(7, removed->GetSerial());
 }
 
-void CPPartyMemberRemove::InternalReset(void) {
+void CPPartyMemberRemove::InternalReset() {
     pStream.ReserveSize(11);
     pStream.WriteByte(0, 0xBF); // packet ID
     pStream.WriteShort(1, 11);  // packet length
@@ -8277,7 +8277,7 @@ CPPartyTell::CPPartyTell(CPIPartyCommand *removed, CSocket *talker) {
     pStream.WriteShort(10 + static_cast<size_t>(messageLength), 0);
 }
 
-void CPPartyTell::InternalReset(void) {
+void CPPartyTell::InternalReset() {
     pStream.ReserveSize(12);
     pStream.WriteByte(0, 0xBF); // packet ID
     pStream.WriteShort(1, 12);  // packet length
@@ -8322,7 +8322,7 @@ void CPPartyTell::Log(std::ostream &outStream, bool fullHeader) {
 //|						Clients sends a client version of this packet ONCE at
 //login (without server request.)
 // o------------------------------------------------------------------------------------------------o
-void CPClientVersion::InternalReset(void) {
+void CPClientVersion::InternalReset() {
     pStream.ReserveSize(3);
     pStream.WriteByte(0, 0xBD);
     pStream.WriteByte(2, 0x03);

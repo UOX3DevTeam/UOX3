@@ -23,7 +23,7 @@ public:
     void AddSpell(CItem *book, std::int32_t spellNum);
     void RemoveSpell(CItem *book, std::int32_t spellNum);
     
-    void LoadScript(void); // adding function for spell system "cache"
+    void LoadScript(); // adding function for spell system "cache"
     void SpellBook(CSocket *mSock);
     void GateCollision(CSocket *mSock, CChar *mChar, CItem *itemCheck, itemtypes_t type);
     bool SelectSpell(CSocket *mSock, std::int32_t num);

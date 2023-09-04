@@ -72,7 +72,7 @@ cAccountClass::~cAccountClass() {}
 //|					unable to locate the respective character ID number when
 //|					converting the world.
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cAccountClass::CreateAccountSystem(void) {
+std::uint16_t cAccountClass::CreateAccountSystem() {
     // Get the system account path. Should have been set at construction.
     std::string sActPath = m_sAccountsDirectory;
     // Check account path to make sure that its at least got data in it.
@@ -890,7 +890,7 @@ std::uint32_t cAccountClass::size() { return static_cast<std::int32_t>(m_mapUser
 //|							general SQL query for MSAccess, MSSQL, and
 // mySQL
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cAccountClass::Load(void) {
+std::uint16_t cAccountClass::Load() {
     // Now we can load the accounts file in and re fill the map.
     std::string sAccountsADM(m_sAccountsDirectory);
     sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
@@ -1372,7 +1372,7 @@ bool cAccountClass::AddCharacter(std::uint16_t wAccountId, std::uint32_t dwChara
 //|	Purpose		-	This function is used to clear out all entries contained
 //|						in both the Username, and UsernameID map structures.
 // o------------------------------------------------------------------------------------------------o
-bool cAccountClass::clear(void) {
+bool cAccountClass::clear() {
     // First we should check to make sure that we can even use the objects, or they are not already
     // cleared
     try {
@@ -1508,7 +1508,7 @@ bool cAccountClass::SetPath(const std::string &sPath) {
 //|	Purpose		-	Return a copy of the current accounts directory stored
 //|						internally
 // o------------------------------------------------------------------------------------------------o
-std::string cAccountClass::GetPath(void) { return m_sAccountsDirectory; }
+std::string cAccountClass::GetPath() { return m_sAccountsDirectory; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cAccountClass::DelCharacter()
@@ -1852,7 +1852,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
 // selfexplanitory.
 //|
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cAccountClass::ImportAccounts(void) {
+std::uint16_t cAccountClass::ImportAccounts() {
     // Prepare to load in the newaccounts.adm file. This file if it exists will contain new accounts
     // to be added to the server.
     std::string sImportAccounts(m_sAccountsDirectory);
@@ -1983,7 +1983,7 @@ std::uint16_t cAccountClass::ImportAccounts(void) {
 //|							internal Iterator to the first record or
 //will indicate |							end().
 // o------------------------------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR &cAccountClass::Begin(void) {
+MAPUSERNAMEID_ITERATOR &cAccountClass::Begin() {
     I = m_mapUsernameIdMap.begin();
     return I;
 }
@@ -1996,7 +1996,7 @@ MAPUSERNAMEID_ITERATOR &cAccountClass::Begin(void) {
 //|						the internal iterator to one past the last record.
 // It |						will also return End() as a result.
 // o------------------------------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR &cAccountClass::End(void) {
+MAPUSERNAMEID_ITERATOR &cAccountClass::End() {
     I = m_mapUsernameIdMap.end();
     return I;
 }
@@ -2015,7 +2015,7 @@ MAPUSERNAMEID_ITERATOR &cAccountClass::End(void) {
 //|						NOTE: This will update the current internal iterator
 // to |						the last record as well.
 // o------------------------------------------------------------------------------------------------o
-MAPUSERNAMEID_ITERATOR &cAccountClass::Last(void) {
+MAPUSERNAMEID_ITERATOR &cAccountClass::Last() {
     I = m_mapUsernameIdMap.end();
     --I;
     return I;

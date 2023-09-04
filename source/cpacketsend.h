@@ -23,7 +23,7 @@ struct __STARTLOCATIONDATA__;
 class CPCharLocBody : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPCharLocBody();
@@ -39,7 +39,7 @@ class CPacketSpeech : public CPUOXBuffer {
   protected:
     bool isUnicode;
 
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void CopyData(CSpeechEntry &toCopy);
     void CopyData(CPITalkRequest &toCopy);
 
@@ -137,7 +137,7 @@ class CPLightLevel : public CPUOXBuffer {
 class CPUpdIndSkill : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &i, std::uint8_t sNum);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPUpdIndSkill();
@@ -153,7 +153,7 @@ class CPUpdIndSkill : public CPUOXBuffer {
 
 class CPBuyItem : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CBaseObject &i);
 
   public:
@@ -166,7 +166,7 @@ class CPBuyItem : public CPUOXBuffer {
 
 class CPRelay : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPRelay();
@@ -197,7 +197,7 @@ class CPWornItem : public CPUOXBuffer {
 class CPCharacterAnimation : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPCharacterAnimation();
@@ -216,7 +216,7 @@ class CPCharacterAnimation : public CPUOXBuffer {
 class CPNewCharacterAnimation : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPNewCharacterAnimation();
@@ -232,7 +232,7 @@ class CPNewCharacterAnimation : public CPUOXBuffer {
 class CPDrawGamePlayer : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPDrawGamePlayer();
@@ -243,7 +243,7 @@ class CPDrawGamePlayer : public CPUOXBuffer {
 class CPPersonalLightLevel : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPersonalLightLevel();
@@ -257,7 +257,7 @@ class CPPersonalLightLevel : public CPUOXBuffer {
 class CPPlaySoundEffect : public CPUOXBuffer {
   protected:
     virtual void CopyData(CBaseObject &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPlaySoundEffect();
@@ -274,7 +274,7 @@ class CPPlaySoundEffect : public CPUOXBuffer {
 class CPPaperdoll : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPaperdoll();
@@ -288,7 +288,7 @@ class CPPaperdoll : public CPUOXBuffer {
 
 class CPWeather : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPWeather();
@@ -303,7 +303,7 @@ class CPWeather : public CPUOXBuffer {
 
 class CPGraphicalEffect : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPGraphicalEffect() {}
@@ -334,7 +334,7 @@ class CPGraphicalEffect : public CPUOXBuffer {
 
 class CPUpdateStat : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPUpdateStat() {}
@@ -346,7 +346,7 @@ class CPUpdateStat : public CPUOXBuffer {
 
 class CPDeathAction : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPDeathAction(CChar &dying, CItem &corpse);
@@ -361,7 +361,7 @@ class CPDeathAction : public CPUOXBuffer {
 
 class CPPlayMusic : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPlayMusic(std::int16_t musicId);
@@ -373,7 +373,7 @@ class CPPlayMusic : public CPUOXBuffer {
 class CPDrawContainer : public CPUOXBuffer {
   protected:
     virtual void CopyData(CItem &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPDrawContainer();
@@ -404,7 +404,7 @@ class CPDrawContainer : public CPUOXBuffer {
 class CPOpenGump : public CPUOXBuffer {
   protected:
     virtual void CopyData(CChar &toCopy);
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     size_t responseOffset;
     size_t responseBaseOffset;
 
@@ -417,7 +417,7 @@ class CPOpenGump : public CPUOXBuffer {
     virtual void Serial(serial_t toSet);
     virtual void Question(std::string toAdd);
     virtual void AddResponse(std::uint16_t modelNum, std::uint16_t colour, std::string responseText);
-    virtual void Finalize(void);
+    virtual void Finalize();
     CPOpenGump &operator=(CChar &toCopy);
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
@@ -439,7 +439,7 @@ class CPStatWindow : public CPUOXBuffer {
     bool extended5;
     bool extended6;
     size_t byteOffset;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPStatWindow();
@@ -491,7 +491,7 @@ class CPIdleWarning : public CPUOXBuffer {
      0x08 (and up?)=Can't Attach
      */
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPIdleWarning();
@@ -502,7 +502,7 @@ class CPIdleWarning : public CPUOXBuffer {
 
 class CPTime : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPTime();
@@ -528,7 +528,7 @@ class CPTextEmoteColour : public CPUOXBuffer {
 
 class CPWarMode : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPWarMode() {}
@@ -539,7 +539,7 @@ class CPWarMode : public CPUOXBuffer {
 
 class CPPauseResume : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPPauseResume() {}
@@ -551,7 +551,7 @@ class CPPauseResume : public CPUOXBuffer {
 
 class CPWebLaunch : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void SetSize(std::int16_t newSize);
 
   public:
@@ -563,7 +563,7 @@ class CPWebLaunch : public CPUOXBuffer {
 
 class CPTrackingArrow : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPTrackingArrow() {}
@@ -578,7 +578,7 @@ class CPTrackingArrow : public CPUOXBuffer {
 
 class CPBounce : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPBounce() {}
@@ -589,7 +589,7 @@ class CPBounce : public CPUOXBuffer {
 
 class CPDyeVat : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CBaseObject &target);
 
   public:
@@ -603,7 +603,7 @@ class CPDyeVat : public CPUOXBuffer {
 
 class CPMultiPlacementView : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &target);
 
   public:
@@ -638,7 +638,7 @@ class CPKrriosClientSpecial : public CPUOXBuffer {
 
 class CPLogoutResponse : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPLogoutResponse();
@@ -648,7 +648,7 @@ class CPLogoutResponse : public CPUOXBuffer {
 class CPAddItemToCont : public CPUOXBuffer {
   protected:
     bool uokrFlag;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &toCopy);
 
   public:
@@ -669,7 +669,7 @@ class CPAddItemToCont : public CPUOXBuffer {
 
 class CPKickPlayer : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CChar &toCopy);
 
   public:
@@ -682,7 +682,7 @@ class CPKickPlayer : public CPUOXBuffer {
 
 class CPResurrectMenu : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPResurrectMenu() {}
@@ -693,7 +693,7 @@ class CPResurrectMenu : public CPUOXBuffer {
 
 class CPFightOccurring : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPFightOccurring() {}
@@ -707,10 +707,10 @@ class CPFightOccurring : public CPUOXBuffer {
 
 class CPSkillsValues : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CChar &toCopy);
     virtual void BlockSize(std::int16_t newValue);
-    virtual std::uint8_t NumSkills(void);
+    virtual std::uint8_t NumSkills();
 
   public:
     virtual ~CPSkillsValues() {}
@@ -765,12 +765,12 @@ class CPUltimaMessenger : public CPUOXBuffer {
 
 class CPGumpTextEntry : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void BlockSize(std::int16_t newVal);
-    virtual std::int16_t CurrentSize(void);
-    virtual std::int16_t Text1Len(void);
+    virtual std::int16_t CurrentSize();
+    virtual std::int16_t Text1Len();
     virtual void Text1Len(std::int16_t newVal);
-    virtual std::int16_t Text2Len(void);
+    virtual std::int16_t Text2Len();
     virtual void Text2Len(std::int16_t newVal);
 
   public:
@@ -790,7 +790,7 @@ class CPGumpTextEntry : public CPUOXBuffer {
 
 class CPMapChange : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPMapChange();
@@ -804,7 +804,7 @@ class CPMapChange : public CPUOXBuffer {
 
 class CPCloseGump : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     std::uint32_t _gumpId;
     std::uint32_t _buttonId;
 
@@ -816,7 +816,7 @@ class CPCloseGump : public CPUOXBuffer {
 
 class CPItemsInContainer : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CSocket *mSock, CItem &toCopy);
     bool isVendor;
     bool isPlayerVendor;
@@ -830,7 +830,7 @@ class CPItemsInContainer : public CPUOXBuffer {
     CPItemsInContainer(CSocket *mSock, CItem *container, std::uint8_t contType = 0x00,
                        bool isPVendor = false);
     virtual void NumberOfItems(std::uint16_t numItems);
-    virtual std::uint16_t NumberOfItems(void) const;
+    virtual std::uint16_t NumberOfItems() const;
     void Type(std::uint8_t contType);
     void UOKRFlag(bool value);
     void PlayerVendor(bool value);
@@ -842,7 +842,7 @@ class CPItemsInContainer : public CPUOXBuffer {
 
 class CPCorpseClothing : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &toCopy);
 
   public:
@@ -856,7 +856,7 @@ class CPCorpseClothing : public CPUOXBuffer {
 
 class CPOpenBuyWindow : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &toCopy, CChar *vendorId, CPItemsInContainer &iic, CSocket *mSock);
 
   public:
@@ -864,14 +864,14 @@ class CPOpenBuyWindow : public CPUOXBuffer {
     CPOpenBuyWindow();
     CPOpenBuyWindow(CItem *container, CChar *vendorId, CPItemsInContainer &iic, CSocket *mSock);
     virtual void NumberOfItems(std::uint8_t numItems);
-    virtual std::uint8_t NumberOfItems(void) const;
+    virtual std::uint8_t NumberOfItems() const;
     virtual void AddItem(CItem *toAdd, CTownRegion *tReg, std::uint16_t &baseOffset);
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPCharAndStartLoc : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(AccountEntry &toCopy);
     std::uint16_t packetSize;
     std::uint8_t numCharacters;
@@ -891,7 +891,7 @@ class CPCharAndStartLoc : public CPUOXBuffer {
 class CPUpdScroll : public CPUOXBuffer {
   protected:
     char tipData[2048];
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void SetLength(std::uint16_t len);
 
   public:
@@ -900,14 +900,14 @@ class CPUpdScroll : public CPUOXBuffer {
     CPUpdScroll(std::uint8_t tType, std::uint8_t tNum);
     virtual ~CPUpdScroll() {}
     void AddString(const char *toAdd);
-    void Finalize(void);
+    void Finalize();
     void TipNumber(std::uint8_t tipNum);
     void TipType(std::uint8_t tType);
 };
 
 class CPGraphicalEffect2 : public CPGraphicalEffect {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPGraphicalEffect2() {}
@@ -920,7 +920,7 @@ class CPGraphicalEffect2 : public CPGraphicalEffect {
 
 class CP3DGraphicalEffect : public CPGraphicalEffect2 {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CP3DGraphicalEffect() {}
@@ -938,7 +938,7 @@ class CP3DGraphicalEffect : public CPGraphicalEffect2 {
 class CPDrawObject : public CPUOXBuffer {
   protected:
     std::uint16_t curLen;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void SetLength(std::uint16_t len);
     void CopyData(CChar &mChar);
 
@@ -946,14 +946,14 @@ class CPDrawObject : public CPUOXBuffer {
     CPDrawObject();
     CPDrawObject(CChar &mChar);
     virtual ~CPDrawObject() {}
-    void Finalize(void);
+    void Finalize();
     void AddItem(CItem *toAdd, bool alwaysSendItemHue);
     void SetRepFlag(std::uint8_t value);
 };
 
 class CPObjectInfo : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void CopyData(CItem &mItem, CChar &mChar);
     void CopyItemData(CItem &mItem, CChar &mChar);
     void CopyMultiData(CMultiObj &mObj, CChar &mChar);
@@ -967,7 +967,7 @@ class CPObjectInfo : public CPUOXBuffer {
 
 class CPNewObjectInfo : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void CopyData(CItem &mItem, CChar &mChar);
     void CopyItemData(CItem &mItem, CChar &mChar);
     void CopyMultiData(CMultiObj &mObj, CChar &mChar);
@@ -981,7 +981,7 @@ class CPNewObjectInfo : public CPUOXBuffer {
 
 class CPGameServerList : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPGameServerList() {}
@@ -994,7 +994,7 @@ class CPGameServerList : public CPUOXBuffer {
 
 class CPSecureTrading : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     void CopyData(CBaseObject &mItem, serial_t mItem2, serial_t mItem3);
 
   public:
@@ -1008,7 +1008,7 @@ class CPSecureTrading : public CPUOXBuffer {
 
 class CPGodModeToggle : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CSocket *s);
 
   public:
@@ -1030,7 +1030,7 @@ enum logindenyreason_t {
 
 class CPLoginDeny : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPLoginDeny() {}
@@ -1041,7 +1041,7 @@ class CPLoginDeny : public CPUOXBuffer {
 
 class CPCharDeleteResult : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPCharDeleteResult() {}
@@ -1053,7 +1053,7 @@ class CPCharDeleteResult : public CPUOXBuffer {
 class CharacterListUpdate : public CPUOXBuffer {
   protected:
     std::uint8_t numChars;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CharacterListUpdate() {}
@@ -1069,7 +1069,7 @@ class CPKREncryptionRequest : public CPUOXBuffer {
 
 class CPClientVersion : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPClientVersion() {}
@@ -1087,7 +1087,7 @@ class CPUnicodeSpeech : public CPUOXBuffer {
     void CopyData(CBaseObject &toCopy);
     void CopyData(CPITalkRequestAscii &talking);
     void CopyData(CPITalkRequestUnicode &talking);
-    void InternalReset(void) override;
+    void InternalReset() override;
     void SetLength(std::uint16_t value);
 
   public:
@@ -1118,7 +1118,7 @@ class CPUnicodeSpeech : public CPUOXBuffer {
 class CPUnicodeMessage : public CPUOXBuffer {
   protected:
     void CopyData(CBaseObject &toCopy);
-    void InternalReset(void) override;
+    void InternalReset() override;
     void SetLength(std::uint16_t value);
 
   public:
@@ -1142,7 +1142,7 @@ class CPUnicodeMessage : public CPUOXBuffer {
 
 class CPAllNames3D : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CBaseObject &obj);
 
   public:
@@ -1156,7 +1156,7 @@ class CPBookPage : public CPUOXBuffer {
   protected:
     std::uint16_t bookLength;
     std::uint8_t pageCount;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &obj);
     void IncLength(std::uint8_t amount);
 
@@ -1169,7 +1169,7 @@ class CPBookPage : public CPUOXBuffer {
     void NewPage(std::int16_t pNum = -1);
     void NewPage(std::int16_t pNum, const std::vector<std::string> *lines);
     void AddLine(const std::string &line);
-    void Finalize(void);
+    void Finalize();
 };
 
 class CPSendGumpMenu : public CPUOXBuffer {
@@ -1187,13 +1187,13 @@ class CPSendGumpMenu : public CPUOXBuffer {
     void addCommand(const std::string &msg);
     void addText(const std::string &msg);
 
-    void Finalize(void);
+    void Finalize();
     virtual void Log(std::ostream &outStream, bool fullHeader) override;
 };
 
 class CPNewSpellBook : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CItem &obj);
 
   public:
@@ -1205,7 +1205,7 @@ class CPNewSpellBook : public CPUOXBuffer {
 
 class CPDisplayDamage : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CChar &ourTarg, std::uint16_t ourDamage);
 
   public:
@@ -1217,7 +1217,7 @@ class CPDisplayDamage : public CPUOXBuffer {
 
 class CPQueryToolTip : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CBaseObject &mObj);
 
   public:
@@ -1243,7 +1243,7 @@ class CPToolTip : public CPUOXBuffer {
     };
     std::vector<ToolTipEntryWide_st> ourWideEntries;
     CSocket *tSock;
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(serial_t objSer, bool addAmount = true, bool playerVendor = false);
     void CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmount = true,
                       bool playerVendor = false);
@@ -1262,7 +1262,7 @@ class CPSellList : public CPUOXBuffer {
   protected:
     std::uint16_t numItems;
 
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CChar &mChar, CChar &vendor);
 
   public:
@@ -1275,7 +1275,7 @@ class CPSellList : public CPUOXBuffer {
 
 class CPOpenMessageBoard : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CSocket *mSock);
 
   public:
@@ -1289,7 +1289,7 @@ class CPOpenMsgBoardPost : public CPUOXBuffer {
   protected:
     bool bFullPost;
 
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     virtual void CopyData(CSocket *mSock, const MsgBoardPost_st &mbPost);
 
   public:
@@ -1301,18 +1301,18 @@ class CPSendMsgBoardPosts : public CPUOXBuffer {
   protected:
     std::uint16_t postCount;
 
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     virtual ~CPSendMsgBoardPosts() {}
     virtual void CopyData(CSocket *msock, serial_t mSerial, std::uint8_t pToggle, serial_t oSerial);
-    void Finalize(void);
+    void Finalize();
     CPSendMsgBoardPosts();
 };
 
 class CPHealthBarStatus : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPHealthBarStatus();
@@ -1325,7 +1325,7 @@ class CPHealthBarStatus : public CPUOXBuffer {
 
 class CPExtendedStats : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPExtendedStats();
@@ -1337,17 +1337,17 @@ class CPExtendedStats : public CPUOXBuffer {
 
 class CPEnableMapDiffs : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPEnableMapDiffs();
     virtual ~CPEnableMapDiffs() {}
-    virtual void CopyData(void);
+    virtual void CopyData();
 };
 
 class CPNewBookHeader : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
     std::string title;
     std::string author;
 
@@ -1360,12 +1360,12 @@ class CPNewBookHeader : public CPUOXBuffer {
     void Pages(std::uint16_t numPages);
     void Author(const std::string &author);
     void Title(const std::string &title);
-    void Finalize(void);
+    void Finalize();
 };
 
 class CPPopupMenu : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPopupMenu();
@@ -1376,7 +1376,7 @@ class CPPopupMenu : public CPUOXBuffer {
 
 class CPClilocMessage : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPClilocMessage();
@@ -1396,7 +1396,7 @@ class CPClilocMessage : public CPUOXBuffer {
 
 class CPPartyMemberList : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPartyMemberList();
@@ -1407,7 +1407,7 @@ class CPPartyMemberList : public CPUOXBuffer {
 
 class CPPartyInvitation : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPartyInvitation();
@@ -1418,7 +1418,7 @@ class CPPartyInvitation : public CPUOXBuffer {
 
 class CPPartyMemberRemove : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPartyMemberRemove(CChar *removed);
@@ -1429,7 +1429,7 @@ class CPPartyMemberRemove : public CPUOXBuffer {
 
 class CPPartyTell : public CPUOXBuffer {
   protected:
-    virtual void InternalReset(void) override;
+    virtual void InternalReset() override;
 
   public:
     CPPartyTell(CPIPartyCommand *told, CSocket *talker);

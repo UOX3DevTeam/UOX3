@@ -53,8 +53,8 @@ private:
     GenericList<CItem *> spawnedItems;
     std::map<std::uint32_t, std::int8_t> validLandPosCheck;
     std::map<std::uint32_t, std::int8_t> validWaterPosCheck;
-    std::vector<Point3_st> validLandPos;
-    std::vector<Point3_st> validWaterPos;
+    std::vector<Point3> validLandPos;
+    std::vector<Point3> validWaterPos;
     
 public:
     CSpawnRegion(std::uint16_t spawnregion);
@@ -63,28 +63,28 @@ public:
     void Load(CScriptSection *toScan);
     void DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned);
     
-    const std::string GetName(void) const;
-    std::uint16_t GetRegionNum(void) const;
-    size_t GetMaxSpawn(void) const;
-    size_t GetMaxCharSpawn(void) const;
-    size_t GetMaxItemSpawn(void) const;
-    std::int32_t GetCurrent(void) const;
-    std::int32_t GetCurrentCharAmt(void) const;
-    std::int32_t GetCurrentItemAmt(void) const;
-    std::uint8_t GetMinTime(void) const;
-    std::uint8_t GetMaxTime(void) const;
-    timerval_t GetNextTime(void) const;
-    std::int16_t GetX1(void) const;
-    std::int16_t GetY1(void) const;
-    std::int16_t GetX2(void) const;
-    std::int16_t GetY2(void) const;
-    std::int8_t GetDefZ(void) const;
-    std::int8_t GetPrefZ(void) const;
-    std::uint16_t GetCall(void) const;
-    bool GetOnlyOutside(void) const;
-    bool IsSpawner(void) const;
-    auto GetNPC(void) const -> std::vector<std::string>;
-    auto GetItem(void) const -> std::vector<std::string>;
+    const std::string GetName() const;
+    std::uint16_t GetRegionNum() const;
+    size_t GetMaxSpawn() const;
+    size_t GetMaxCharSpawn() const;
+    size_t GetMaxItemSpawn() const;
+    std::int32_t GetCurrent() const;
+    std::int32_t GetCurrentCharAmt() const;
+    std::int32_t GetCurrentItemAmt() const;
+    std::uint8_t GetMinTime() const;
+    std::uint8_t GetMaxTime() const;
+    timerval_t GetNextTime() const;
+    std::int16_t GetX1() const;
+    std::int16_t GetY1() const;
+    std::int16_t GetX2() const;
+    std::int16_t GetY2() const;
+    std::int8_t GetDefZ() const;
+    std::int8_t GetPrefZ() const;
+    std::uint16_t GetCall() const;
+    bool GetOnlyOutside() const;
+    bool IsSpawner() const;
+    auto GetNPC() const -> std::vector<std::string>;
+    auto GetItem() const -> std::vector<std::string>;
     
     void SetName(const std::string &newName);
     void SetRegionNum(std::uint16_t newVal);
@@ -109,18 +109,18 @@ public:
     void SetItem(const std::string &newVal);
     void SetItemList(std::string newVal);
     
-    std::uint16_t GetInstanceId(void) const;
+    std::uint16_t GetInstanceId() const;
     void SetInstanceId(std::uint16_t newVal);
     
-    std::uint8_t WorldNumber(void) const;
+    std::uint8_t WorldNumber() const;
     void WorldNumber(std::uint8_t newVal);
     
     void CheckSpawned();
     void DeleteSpawnedChar(CChar *toDelete);
     void DeleteSpawnedItem(CItem *toDelete);
     
-    GenericList<CItem *> *GetSpawnedItemsList(void);
-    GenericList<CChar *> *GetSpawnedCharsList(void);
+    GenericList<CItem *> *GetSpawnedItemsList();
+    GenericList<CChar *> *GetSpawnedCharsList();
     
 private:
     auto RegionSpawnChar() -> CChar *;

@@ -1,4 +1,4 @@
-// Copyright © 2021 Charles Kerr. All rights reserved.
+// Copyright ï¿½ 2021 Charles Kerr. All rights reserved.
 // Created on:  6/1/21
 
 #ifndef UOPData_hpp
@@ -143,16 +143,16 @@
 #include <zlib.h>
 
 //===========================================================
-// UopIndex_st
+// UOPIndex
 //===========================================================
 //===========================================================
-struct UopIndex_st {
+struct UOPIndex {
     std::vector<std::uint64_t> hashes;
     static auto HashLittle2(const std::string &s) -> std::uint64_t;
     static auto HashAdler32(const std::vector<std::uint8_t> &data) -> std::uint32_t;
 
     auto LoadHashes(const std::string &hashstring, size_t max_index) -> void;
-    UopIndex_st(const std::string &hashstring = "", size_t max_index = 0);
+    UOPIndex(const std::string &hashstring = "", size_t max_index = 0);
     auto operator[](std::uint64_t hash) const -> size_t;
     auto clear() -> void;
     //==========================================================

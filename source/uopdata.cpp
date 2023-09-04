@@ -19,7 +19,7 @@ using namespace std::string_literals;
 //  uopindex_t
 // o------------------------------------------------------------------------------------------------o
 
-auto UopIndex_st::HashLittle2(const std::string &s) -> std::uint64_t {
+auto UOPIndex::HashLittle2(const std::string &s) -> std::uint64_t {
     std::uint32_t length = static_cast<std::uint32_t>(s.size());
     std::uint32_t a;
     std::uint32_t b;
@@ -128,7 +128,7 @@ auto UopIndex_st::HashLittle2(const std::string &s) -> std::uint64_t {
     return (static_cast<std::uint64_t>(b) << 32) | static_cast<std::uint64_t>(c);
 }
 //===========================================================
-auto UopIndex_st::HashAdler32(const std::vector<std::uint8_t> &data) -> std::uint32_t {
+auto UOPIndex::HashAdler32(const std::vector<std::uint8_t> &data) -> std::uint32_t {
     std::uint32_t a = 1;
     std::uint32_t b = 0;
     for (const auto &entry : data) {
@@ -139,7 +139,7 @@ auto UopIndex_st::HashAdler32(const std::vector<std::uint8_t> &data) -> std::uin
 }
 
 //===========================================================
-auto UopIndex_st::LoadHashes(const std::string &hashstring, size_t max_index) -> void {
+auto UOPIndex::LoadHashes(const std::string &hashstring, size_t max_index) -> void {
     hashes.clear();
     hashes.reserve(max_index);
     if (!hashstring.empty() && (max_index > 0)) {
@@ -150,13 +150,13 @@ auto UopIndex_st::LoadHashes(const std::string &hashstring, size_t max_index) ->
     }
 }
 //===========================================================
-UopIndex_st::UopIndex_st(const std::string &hashstring, size_t max_index) {
+UOPIndex::UOPIndex(const std::string &hashstring, size_t max_index) {
     if (!hashstring.empty() && (max_index != 0)) {
         LoadHashes(hashstring, max_index);
     }
 }
 //===========================================================
-auto UopIndex_st::operator[](std::uint64_t hash) const -> std::size_t {
+auto UOPIndex::operator[](std::uint64_t hash) const -> std::size_t {
     auto iter = std::find(hashes.cbegin(), hashes.cend(), hash);
     if (iter != hashes.cend()) {
         return std::distance(hashes.cbegin(), iter);
@@ -164,7 +164,7 @@ auto UopIndex_st::operator[](std::uint64_t hash) const -> std::size_t {
     return std::numeric_limits<std::size_t>::max();
 }
 //===========================================================
-auto UopIndex_st::clear() -> void { hashes.clear(); }
+auto UOPIndex::clear() -> void { hashes.clear(); }
 
 //=========================================================
 // TableEntry_st
@@ -282,8 +282,8 @@ auto UopFile::LoadUop(const std::string &filepath, std::size_t max_hashindex,
     if ((version > _uop_version) || (sig != _uop_identifer)) {
         return false;
     }
-    auto hashstorage1 = UopIndex_st(hashformat1, max_hashindex);
-    auto hashstorage2 = UopIndex_st(hashformat2, max_hashindex);
+    auto hashstorage1 = UOPIndex(hashformat1, max_hashindex);
+    auto hashstorage2 = UOPIndex(hashformat2, max_hashindex);
 
     std::uint64_t table_offset = 0;
     std::uint32_t tablesize = 0;
@@ -405,10 +405,10 @@ auto UopFile::WriteUop(const std::string &filepath) -> bool {
             tables[data_entry].compressedLength = sizeOut;
             tables[data_entry].decompressedLength = sizeDecompressed;
             auto hashkey = WriteHash(data_entry + i * tableSize);
-            tables[data_entry].identifer = UopIndex_st::HashLittle2(hashkey);
+            tables[data_entry].identifer = UOPIndex::HashLittle2(hashkey);
 
             if (sizeDecompressed > 0) {
-                tables[data_entry].dataBlockHash = UopIndex_st::HashAdler32(rawdata);
+                tables[data_entry].dataBlockHash = UOPIndex::HashAdler32(rawdata);
                 // write out the data
                 output.write(reinterpret_cast<char *>(rawdata.data()), rawdata.size());
             }
