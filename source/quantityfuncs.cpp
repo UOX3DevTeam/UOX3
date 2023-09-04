@@ -38,7 +38,7 @@ std::uint32_t GetTotalItemCount(CItem *objCont) {
     if (!ValidateObject(objCont) ||
         (objCont->GetType() != IT_CONTAINER && objCont->GetType() != IT_LOCKEDCONTAINER))
         return 0;
-
+    
     return GetSubTotalItemCount(objCont);
 }
 
@@ -49,7 +49,7 @@ std::uint32_t GetTotalItemCount(CItem *objCont) {
 // o------------------------------------------------------------------------------------------------o
 auto GetSubItemAmount(CItem *p, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal,
                       bool colorCheck = false, bool moreCheck = false, std::string sectionId = "")
-    -> std::uint32_t {
+-> std::uint32_t {
     std::uint32_t total = 0;
     auto pCont = p->GetContainsList();
     for (const auto &i : pCont->collection()) {
@@ -81,11 +81,11 @@ auto GetSubItemAmount(CItem *p, std::uint16_t realId, std::uint16_t realColour, 
 //|	Purpose		-	Get the total amount of an item on a character
 // o------------------------------------------------------------------------------------------------o
 std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck,
-                   bool moreCheck, std::string sectionId) {
+                            bool moreCheck, std::string sectionId) {
     CItem *p = s->GetPackItem();
     if (!ValidateObject(p))
         return 0;
-
+    
     return GetSubItemAmount(p, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId);
 }
 
@@ -98,7 +98,7 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
                          bool colorCheck, bool moreCheck, std::string sectionId) -> std::uint32_t {
     if (!ValidateObject(p))
         return 0;
-
+    
     std::uint32_t amtDeleted = 0;
     std::uint32_t total = amount;
     auto pCont = p->GetContainsList();
@@ -106,7 +106,7 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
     for (auto &i : collection) {
         if (!ValidateObject(i))
             continue;
-
+        
         if (i->GetId() != realId &&
             (i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER)) {
             // Is item an pack or container?
@@ -143,7 +143,7 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
                 }
             }
         }
-
+        
         if (amtDeleted >= amount) {
             break;
         }
@@ -151,7 +151,7 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
             total = static_cast<std::uint32_t>(amount - amtDeleted);
         }
     }
-
+    
     return amtDeleted;
 }
 
@@ -165,14 +165,14 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
 //|	Changes		-	09/25/2002	-	Weight Fixes
 // o------------------------------------------------------------------------------------------------o
 std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal,
-                      bool colorCheck, bool moreCheck, std::string sectionId) {
+                               bool colorCheck, bool moreCheck, std::string sectionId) {
     if (!ValidateObject(s))
         return 0;
-
+    
     CItem *p = s->GetPackItem();
     if (!ValidateObject(p))
         return 0;
-
+    
     return DeleteSubItemAmount(p, amount, realId, realColour, realMoreVal, colorCheck, moreCheck,
                                sectionId);
 }
@@ -187,7 +187,7 @@ std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t rea
 std::uint32_t GetBankCount(CChar *p, std::uint16_t itemId, std::uint16_t colour, std::uint32_t moreVal) {
     if (!ValidateObject(p))
         return 0;
-
+    
     std::uint32_t goldCount = 0;
     for (auto &oItem : *p->GetOwnedItems()) {
         if (ValidateObject(oItem)) {
@@ -209,7 +209,7 @@ std::uint32_t GetBankCount(CChar *p, std::uint16_t itemId, std::uint16_t colour,
 std::uint32_t DeleteBankItem(CChar *p, std::uint32_t amt, std::uint16_t itemId, std::uint16_t colour, std::uint32_t moreVal) {
     if (!ValidateObject(p))
         return amt;
-
+    
     for (auto &oItem : *p->GetOwnedItems()) {
         if (ValidateObject(oItem)) {
             if (oItem->GetType() == IT_CONTAINER && oItem->GetTempVar(CITV_MOREX) == 1) {

@@ -280,16 +280,16 @@ struct AddMenuItem {
     std::uint32_t objectFlags;
     std::string objectId;
     AddMenuItem()
-        : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0),
-          objectId("") {}
+    : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0),
+    objectId("") {}
 } ;
 
 extern std::multimap<std::uint32_t, AddMenuItem> g_mmapAddMenuMap;
 
 class CScriptSection {
     friend class Script;
-
-  private:
+    
+private:
     struct SectData_st {
         std::string tag;
         std::string data;
@@ -302,25 +302,25 @@ class CScriptSection {
         std::int32_t odata;
         SectDataV2_st() : tag(DFNTAG_COUNTOFTAGS), cdata(""), ndata(-1), odata(-1) {}
     };
-
+    
     std::vector<SectData_st *> data;
     std::vector<SectDataV2_st *> dataV2;
     std::vector<SectData_st *>::iterator currentPos;
     std::vector<SectDataV2_st *>::iterator currentPos2;
     definitioncategories_t dfnCat;
-
+    
     bool npcList;
     bool itemList;
-
+    
     std::string npcListData;
     std::string itemListData;
-
-  public:
+    
+public:
     auto collection() const -> const std::vector<SectData_st *> &;
     auto collection() -> std::vector<SectData_st *> &;
     auto collection2() const -> const std::vector<SectDataV2_st *> &;
     auto collection2() -> std::vector<SectDataV2_st *> &;
-
+    
     CScriptSection();
     CScriptSection(std::istream &input, definitioncategories_t d);
     ~CScriptSection();

@@ -33,7 +33,7 @@ class CCreatures {
     //
     // icon: used for tracking, to set the appropriate icon
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  private:
+private:
     std::uint16_t creatureId;
     std::uint16_t soundList[SND_COUNT];
     std::bitset<6> who_am_i;
@@ -44,15 +44,15 @@ class CCreatures {
         std::uint8_t animLength;
         CreatureAnim_st() : animId(0), animLength(0) {}
     };
-
+    
     CreatureAnim_st castAnimArea;
     CreatureAnim_st castAnimTarget;
     CreatureAnim_st castAnim3;
     CreatureAnim_st attackAnim1;
     CreatureAnim_st attackAnim2;
     CreatureAnim_st attackAnim3;
-
-  public:
+    
+public:
     CCreatures() : creatureId(0), icon(0), mountId(0) {
         who_am_i.reset();
         memset(soundList, 0x00, SND_COUNT * sizeof(soundList[0]));
@@ -63,12 +63,12 @@ class CCreatures {
     }
     std::uint16_t Icon(void) const { return icon; }
     std::uint8_t WhoAmI(void) const { return static_cast<std::uint8_t>(who_am_i.to_ulong()); }
-
+    
     void Icon(std::uint16_t value) { icon = value; }
-
+    
     std::uint16_t MountId(void) const { return mountId; }
     void MountId(std::uint16_t value) { mountId = value; }
-
+    
     // Cast Animation (Area-based)
     std::uint8_t CastAnimAreaId(void) const { return castAnimArea.animId; }
     std::uint8_t CastAnimAreaLength(void) const { return castAnimArea.animLength; }
@@ -76,7 +76,7 @@ class CCreatures {
         castAnimArea.animId = value;
         castAnimArea.animLength = length;
     }
-
+    
     // Cast Animation (Target-based)
     std::uint8_t CastAnimTargetId(void) const { return castAnimTarget.animId; }
     std::uint8_t CastAnimTargetLength(void) const { return castAnimTarget.animLength; }
@@ -84,7 +84,7 @@ class CCreatures {
         castAnimTarget.animId = value;
         castAnimTarget.animLength = length;
     }
-
+    
     // Cast Animation #3
     std::uint8_t CastAnim3Id(void) const { return castAnim3.animId; }
     std::uint8_t CastAnim3Length(void) const { return castAnim3.animLength; }
@@ -92,7 +92,7 @@ class CCreatures {
         castAnim3.animId = value;
         castAnim3.animLength = length;
     }
-
+    
     // Attack Animation #1
     std::uint8_t AttackAnim1Id(void) const { return attackAnim1.animId; }
     std::uint8_t AttackAnim1Length(void) const { return attackAnim1.animLength; }
@@ -100,7 +100,7 @@ class CCreatures {
         attackAnim1.animId = value;
         attackAnim1.animLength = length;
     }
-
+    
     // Attack Animation #2
     std::uint8_t AttackAnim2Id(void) const { return attackAnim2.animId; }
     std::uint8_t AttackAnim2Length(void) const { return attackAnim2.animLength; }
@@ -108,7 +108,7 @@ class CCreatures {
         attackAnim2.animId = value;
         attackAnim2.animLength = length;
     }
-
+    
     // Attack Animation #3
     std::uint8_t AttackAnim3Id(void) const { return attackAnim3.animId; }
     std::uint8_t AttackAnim3Length(void) const { return attackAnim3.animLength; }
@@ -116,10 +116,10 @@ class CCreatures {
         attackAnim3.animId = value;
         attackAnim3.animLength = length;
     }
-
+    
     std::uint16_t CreatureId(void) const { return creatureId; }
     void CreatureId(std::uint16_t value) { creatureId = value; }
-
+    
     bool IsAnimal(void) const { return who_am_i.test(BIT_ANIMAL); }
     bool IsHuman(void) const { return who_am_i.test(BIT_HUMAN); }
     bool AntiBlink(void) const { return who_am_i.test(BIT_ANTIBLINK); }
@@ -206,13 +206,13 @@ struct GoPlaces_st {
 
 // Teleport Locations
 class CTeleLocationEntry {
-  private:
+private:
     Point3_st src;
     std::uint8_t srcWorld;
     Point3_st trg;
     std::uint8_t trgWorld;
-
-  public:
+    
+public:
     CTeleLocationEntry() : srcWorld(0xFF), trgWorld(0) {
         src.Assign(0, 0, ILLEGAL_Z);
         trg.Assign(0, 0, ILLEGAL_Z);

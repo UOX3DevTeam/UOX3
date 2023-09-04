@@ -31,10 +31,10 @@
 // o------------------------------------------------------------------------------------------------o
 bool GetModificationDate(const std::string &filename, time_t *mod_time) {
     struct stat stat_buf;
-
+    
     if (stat(filename.c_str(), &stat_buf))
         return false;
-
+    
     *mod_time = stat_buf.st_mtime;
     return true;
 }
@@ -90,14 +90,14 @@ void Script::Reload(bool disp) {
         else {
             char buffer[200];
             std::cerr << "Cannot open " << filename << ": "
-                      << std::string(mstrerror(buffer, 200, errno)) << std::endl;
+            << std::string(mstrerror(buffer, 200, errno)) << std::endl;
             errorState = true;
         }
     }
     if (disp) {
         Console::shared().Print(util::format("Reloading %-15s: ", filename.c_str()));
     }
-
+    
     fflush(stdout);
 }
 
@@ -108,12 +108,12 @@ void Script::Reload(bool disp) {
 // script file.
 // o------------------------------------------------------------------------------------------------o
 Script::Script(const std::string &_filename, definitioncategories_t d, bool disp)
-    : errorState(false), dfnCat(d) {
+: errorState(false), dfnCat(d) {
     filename = _filename;
     if (!GetModificationDate(filename, &last_modification)) {
         char buffer[200];
         std::cerr << "Cannot open " << filename << ": "
-                  << std::string(mstrerror(buffer, 200, errno)) << std::endl;
+        << std::string(mstrerror(buffer, 200, errno)) << std::endl;
         errorState = true;
     }
     Reload(disp);
@@ -140,7 +140,7 @@ bool Script::IsInSection(const std::string &section) {
     auto iSearch = defEntries.find(util::upper(temp));
     if (iSearch != defEntries.end())
         return true;
-
+    
     return false;
 }
 

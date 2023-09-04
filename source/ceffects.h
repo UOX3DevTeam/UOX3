@@ -12,17 +12,17 @@ class CSocket;
 class CTEffect;
 
 class cEffects {
-  private:
+private:
     void HandleMakeItemEffect(CTEffect *tMake);
-
-  public:
+    
+public:
     void TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2, std::uint16_t more3,
                     CItem *targItemPtr = nullptr);
     void TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uint16_t more1, std::uint16_t more2, std::uint16_t more3);
     void CheckTempeffects(void);
     void SaveEffects(void);
     void LoadEffects(void);
-
+    
     // Visual Effects
     void DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection);
     CItem *SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour, bloodtypes_t bloodType);
@@ -45,7 +45,7 @@ class cEffects {
     void PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast,
                                    bool areaCastAnim);
     void Bolteffect(CChar *player);
-
+    
     // Sound Effects
     void PlaySound(CSocket *mSock, std::uint16_t soundId, bool allHear);
     void PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHear = true);

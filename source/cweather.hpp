@@ -12,7 +12,7 @@ class CChar;
 class CItem;
 
 class CWeather {
-  private:
+private:
     struct WeathPart_st {
         std::int8_t Chance;
         std::int8_t Intensity;
@@ -20,7 +20,7 @@ class CWeather {
         std::int8_t IntensityHigh;
         bool Active;
     };
-
+    
     [[maybe_unused]] weathid_t ID;
     WeathPart_st weather[WEATHNUM];
     R32 assortVals[3][3];
@@ -29,24 +29,24 @@ class CWeather {
     R32 rainTempDrop;
     R32 stormTempDrop;
     bool stormDelay;
-
-  public:
+    
+public:
     CWeather();
     virtual ~CWeather();
-
+    
     std::int8_t IntensityHigh(std::uint8_t weathType) const;
     void IntensityHigh(std::uint8_t weathType, std::int8_t value);
     std::int8_t IntensityLow(std::uint8_t weathType) const;
     void IntensityLow(std::uint8_t weathType, std::int8_t value);
     std::int8_t Intensity(std::uint8_t weathType) const;
     void Intensity(std::uint8_t weathType, std::int8_t value);
-
+    
     std::int8_t Chance(std::uint8_t weathType) const;
     void Chance(std::uint8_t weathType, std::int8_t value);
-
+    
     R32 Value(std::uint8_t valType, std::uint8_t valOff) const;
     void Value(std::uint8_t valType, std::uint8_t valOff, R32 value);
-
+    
     std::int8_t SnowIntensityHigh(void) const;
     std::int8_t SnowIntensityLow(void) const;
     std::int8_t SnowIntensity(void) const;
@@ -58,7 +58,7 @@ class CWeather {
     std::int8_t StormIntensityHigh(void) const;
     std::int8_t StormIntensityLow(void) const;
     std::int8_t StormIntensity(void) const;
-
+    
     R32 MaxTemp(void) const;
     R32 MinTemp(void) const;
     R32 Temp(void) const;
@@ -67,17 +67,17 @@ class CWeather {
     R32 WindSpeed(void) const;
     R32 RainTempDrop(void) const;
     R32 StormTempDrop(void) const;
-
+    
     std::int8_t RainChance(void) const;
     std::int8_t SnowChance(void) const;
     std::int8_t StormChance(void) const;
     std::int8_t HeatChance(void) const;
     std::int8_t ColdChance(void) const;
-
+    
     R32 LightMin(void) const;
     R32 LightMax(void) const;
     R32 CurrentLight(void) const;
-
+    
     bool RainActive(void) const;
     bool SnowActive(void) const;
     bool StormBrewing(void) const;
@@ -85,9 +85,9 @@ class CWeather {
     bool HeatActive(void) const;
     bool ColdActive(void) const;
     bool StormDelay(void) const;
-
+    
     R32 SnowThreshold(void) const;
-
+    
     void WindSpeed(R32 value);
     void MaxWindSpeed(R32 value);
     void MinWindSpeed(R32 value);
@@ -116,12 +116,12 @@ class CWeather {
     void LightMin(R32 value);
     void LightMax(R32 value);
     void CurrentLight(R32 value);
-
+    
     R32 EffectiveMaxTemp(void) const;
     R32 EffectiveMinTemp(void) const;
     void EffectiveMaxTemp(R32 value);
     void EffectiveMinTemp(R32 value);
-
+    
     void RainActive(bool value);
     void SnowActive(bool value);
     void StormBrewing(bool value);
@@ -129,14 +129,14 @@ class CWeather {
     void HeatActive(bool value);
     void ColdActive(bool value);
     void StormDelay(bool value);
-
+    
     void NewDay(void);
     void NewHour(void);
     bool PeriodicUpdate(void);
 };
 
 class cWeatherAb {
-  private:
+private:
     std::vector<CWeather> weather;
     std::int8_t IntensityHigh(weathid_t toCheck, std::uint8_t weathType);
     void IntensityHigh(weathid_t toCheck, std::uint8_t weathType, std::int8_t value);
@@ -148,15 +148,15 @@ class cWeatherAb {
     void Chance(weathid_t toCheck, std::uint8_t weathType, std::int8_t value);
     R32 Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff);
     void Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value);
-
-  public:
+    
+public:
     cWeatherAb();
     ~cWeatherAb();
     bool Load(void);
     bool NewDay(void);
     bool NewHour(void);
     size_t Count(void) const;
-
+    
     std::int8_t SnowIntensityHigh(weathid_t toCheck);
     std::int8_t SnowIntensityLow(weathid_t toCheck);
     std::int8_t SnowIntensity(weathid_t toCheck);
@@ -190,9 +190,9 @@ class cWeatherAb {
     bool StormActive(weathid_t toCheck);
     bool HeatActive(weathid_t toCheck);
     bool ColdActive(weathid_t toCheck);
-
+    
     R32 SnowThreshold(weathid_t toCheck);
-
+    
     void WindSpeed(weathid_t toCheck, R32 value);
     void MaxWindSpeed(weathid_t toCheck, R32 value);
     void MinWindSpeed(weathid_t toCheck, R32 value);
@@ -221,7 +221,7 @@ class cWeatherAb {
     void LightMin(weathid_t toCheck, R32 newValue);
     void LightMax(weathid_t toCheck, R32 newValue);
     void CurrentLight(weathid_t toCheck, R32 newValue);
-
+    
     R32 EffectiveMaxTemp(weathid_t toCheck);
     R32 EffectiveMinTemp(weathid_t toCheck);
     void EffectiveMaxTemp(weathid_t toCheck, R32 value);
@@ -240,7 +240,7 @@ class cWeatherAb {
     bool DoNPCStuff(CChar *p);
     bool DoItemStuff(CItem *p);
     void SendJSWeather(CBaseObject *mObj, weathertype_t weathType, std::int8_t currentTemp);
-
+    
     CWeather *Weather(weathid_t toCheck);
 };
 

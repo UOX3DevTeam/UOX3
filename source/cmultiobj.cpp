@@ -50,12 +50,12 @@ const std::uint8_t HOUSEPRIV_FRIEND = 2;
 const std::uint8_t HOUSEPRIV_GUEST = 3;
 
 CMultiObj::CMultiObj()
-    : CItem(), deed(""), maxLockdowns(DEFMULTI_MAXLOCKDOWNS),
-      maxSecureContainers(DEFMULTI_MAXSECURECONTAINERS), maxFriends(DEFMULTI_MAXFRIENDS),
-      maxGuests(DEFMULTI_MAXGUESTS), maxOwners(DEFMULTI_MAXOWNERS), maxBans(DEFMULTI_MAXBANS),
-      maxVendors(DEFMULTI_MAXVENDORS), maxTrashContainers(DEFMULTI_MAXTRASHCONTAINERS),
-      banX(DEFMULTI_BANX), banY(DEFMULTI_BANY), isPublic(false),
-      tradeTimestamp(DEFMULTI_TRADETIMESTAMP) {
+: CItem(), deed(""), maxLockdowns(DEFMULTI_MAXLOCKDOWNS),
+maxSecureContainers(DEFMULTI_MAXSECURECONTAINERS), maxFriends(DEFMULTI_MAXFRIENDS),
+maxGuests(DEFMULTI_MAXGUESTS), maxOwners(DEFMULTI_MAXOWNERS), maxBans(DEFMULTI_MAXBANS),
+maxVendors(DEFMULTI_MAXVENDORS), maxTrashContainers(DEFMULTI_MAXTRASHCONTAINERS),
+banX(DEFMULTI_BANX), banY(DEFMULTI_BANY), isPublic(false),
+tradeTimestamp(DEFMULTI_TRADETIMESTAMP) {
     objType = OT_MULTI;
     housePrivList.clear();
 }
@@ -510,7 +510,7 @@ auto CMultiObj::ReleaseItem(CItem *toRemove) -> void {
         lockedList.erase(iter);
         toRemove->SetMovable(1); // Default to "always movable" for released items
         toRemove->SetDecayTime(
-            cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+                               cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
     }
 }
 
@@ -690,7 +690,7 @@ auto CMultiObj::UnsecureContainer(CItem *toUnsecure) -> void {
         {
             toUnsecure->SetMovable(1);
             toUnsecure->SetDecayTime(
-                cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+                                     cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
         }
     }
 }
@@ -723,7 +723,7 @@ bool CMultiObj::Save(std::ostream &outStream) {
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::LoadRemnants(void) {
     bool rValue = CItem::LoadRemnants();
-
+    
     // Add item weight if item doesn't have it yet
     if (GetWeight() <= 0) {
         SetWeight(0);
@@ -806,12 +806,12 @@ bool CMultiObj::DumpHeader(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 bool CMultiObj::DumpBody(std::ostream &outStream) const {
     CItem::DumpBody(outStream);
-
+    
     const char newLine = '\n';
-
+    
     // Hexadecimal Values
     outStream << std::hex;
-
+    
     // Decimal / String Values
     outStream << std::dec;
     std::map<CChar *, std::uint8_t>::const_iterator oIter;
@@ -839,37 +839,37 @@ bool CMultiObj::DumpBody(std::ostream &outStream) const {
     outStream << "MaxBans=" + std::to_string(maxBans) + newLine;
     outStream << "MaxFriends=" + std::to_string(maxFriends) + newLine;
     outStream << "MaxGuests=" + std::to_string(maxGuests) + newLine;
-
+    
     std::for_each(lockedList.begin(), lockedList.end(), [&outStream, &newLine](CItem *entry) {
         if (ValidateObject(entry)) {
             outStream << "LockedItem=" + std::to_string(entry->GetSerial()) + newLine;
         }
     });
-
+    
     std::for_each(secureContainerList.begin(), secureContainerList.end(),
                   [&outStream, &newLine](CItem *entry) {
-                      if (ValidateObject(entry)) {
-                          outStream
-                              << "SecureContainer=" + std::to_string(entry->GetSerial()) + newLine;
-                      }
-                  });
-
+        if (ValidateObject(entry)) {
+            outStream
+            << "SecureContainer=" + std::to_string(entry->GetSerial()) + newLine;
+        }
+    });
+    
     outStream << "MaxLockdowns=" + std::to_string(maxLockdowns) + newLine;
     outStream << "MaxSecureContainers=" + std::to_string(maxSecureContainers) + newLine;
-
+    
     for (auto &vendor : vendorList) {
         if (ValidateObject(vendor)) {
             outStream << "Vendor=" + std::to_string(vendor->GetSerial()) + newLine;
         }
     }
-
+    
     outStream << "MaxVendors=" + std::to_string(maxVendors) + newLine;
-
+    
     // Add deedname= to the save :) We need a way to preserve the name of the item
     outStream << "DeedName=" + deed + newLine;
     outStream << "BuildTime=" + std::to_string(buildTimestamp) + newLine;
     outStream << "TradeTime=" + std::to_string(tradeTimestamp) + newLine;
-
+    
     return true;
 }
 
@@ -882,158 +882,158 @@ bool CMultiObj::DumpBody(std::ostream &outStream) const {
 bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
     bool rValue = CItem::HandleLine(UTag, data);
     auto csecs = oldstrutil::sections(data, ",");
-
+    
     if (!rValue) {
         switch ((UTag.data()[0])) {
-        case 'B':
-            if (UTag == "BANNED") {
-                CChar *bList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(bList)) {
-                    AddToBanList(bList);
+            case 'B':
+                if (UTag == "BANNED") {
+                    CChar *bList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(bList)) {
+                        AddToBanList(bList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            else if (UTag == "BUILDTIME") {
-                time_t buildTime =
+                else if (UTag == "BUILDTIME") {
+                    time_t buildTime =
                     static_cast<std::uint64_t>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
-                if (buildTime > 0) {
-                    SetBuildTimestamp(buildTime);
+                    if (buildTime > 0) {
+                        SetBuildTimestamp(buildTime);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'C':
-            if (UTag == "COOWNER") // Legacy tag for loading older data
-            {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddAsOwner(cList);
+                break;
+            case 'C':
+                if (UTag == "COOWNER") // Legacy tag for loading older data
+                {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddAsOwner(cList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'D':
-            if (UTag == "DEEDNAME") {
-                SetDeed(data);
-                rValue = true;
-            }
-            break;
-        case 'F':
-            if (UTag == "FRIEND") {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddAsFriend(cList);
+                break;
+            case 'D':
+                if (UTag == "DEEDNAME") {
+                    SetDeed(data);
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'G':
-            if (UTag == "GUEST") {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddAsGuest(cList);
+                break;
+            case 'F':
+                if (UTag == "FRIEND") {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddAsFriend(cList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'I':
-            if (UTag == "ISPUBLIC") {
-                SetPublicStatus(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
-                                                             nullptr, 0)) == 1);
-                rValue = true;
-            }
-            break;
-        case 'L':
-            if (UTag == "LOCKEDITEM") {
-                CItem *iList = CalcItemObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(iList)) {
-                    LockDownItem(iList);
+                break;
+            case 'G':
+                if (UTag == "GUEST") {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddAsGuest(cList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'M':
-            if (UTag == "MAXBANS") {
-                maxBans =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXFRIENDS") {
-                maxFriends =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXGUESTS") {
-                maxGuests =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXLOCKDOWNS" || UTag == "MAXLOCKEDDOWN") {
-                maxLockdowns =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXOWNERS") {
-                maxOwners =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXSECURECONTAINERS") {
-                maxSecureContainers =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "MAXVENDORS") {
-                maxVendors =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            break;
-        case 'O':
-            if (UTag == "OWNER") {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddAsOwner(cList);
+                break;
+            case 'I':
+                if (UTag == "ISPUBLIC") {
+                    SetPublicStatus(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
+                                                                          nullptr, 0)) == 1);
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'S':
-            if (UTag == "SECURECONTAINER") {
-                CItem *iList = CalcItemObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(iList)) {
-                    SecureContainer(iList);
+                break;
+            case 'L':
+                if (UTag == "LOCKEDITEM") {
+                    CItem *iList = CalcItemObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(iList)) {
+                        LockDownItem(iList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'T':
-            if (UTag == "TRADETIME") {
-                time_t tradeTime =
+                break;
+            case 'M':
+                if (UTag == "MAXBANS") {
+                    maxBans =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXFRIENDS") {
+                    maxFriends =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXGUESTS") {
+                    maxGuests =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXLOCKDOWNS" || UTag == "MAXLOCKEDDOWN") {
+                    maxLockdowns =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXOWNERS") {
+                    maxOwners =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXSECURECONTAINERS") {
+                    maxSecureContainers =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "MAXVENDORS") {
+                    maxVendors =
+                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                break;
+            case 'O':
+                if (UTag == "OWNER") {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddAsOwner(cList);
+                    }
+                    rValue = true;
+                }
+                break;
+            case 'S':
+                if (UTag == "SECURECONTAINER") {
+                    CItem *iList = CalcItemObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(iList)) {
+                        SecureContainer(iList);
+                    }
+                    rValue = true;
+                }
+                break;
+            case 'T':
+                if (UTag == "TRADETIME") {
+                    time_t tradeTime =
                     static_cast<std::uint64_t>(std::stoll(util::trim(util::strip(data, "//")), nullptr, 0));
-                if (tradeTime > 0) {
-                    SetTradeTimestamp(tradeTime);
+                    if (tradeTime > 0) {
+                        SetTradeTimestamp(tradeTime);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
-        case 'V':
-            if (UTag == "VENDOR") {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddVendor(cList);
+                break;
+            case 'V':
+                if (UTag == "VENDOR") {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddVendor(cList);
+                    }
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            break;
+                break;
         }
     }
     return rValue;
@@ -1135,7 +1135,7 @@ void CMultiObj::SetBanY(std::int16_t newValue) { banY = newValue; }
 GenericList<CChar *> *CMultiObj::GetOwnersOfMultiList(bool clearList) {
     if (clearList) {
         ownersOfMulti.Clear();
-
+        
         for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend();
              it = next_it) {
             ++next_it;
@@ -1144,7 +1144,7 @@ GenericList<CChar *> *CMultiObj::GetOwnersOfMultiList(bool clearList) {
             }
         }
     }
-
+    
     return &ownersOfMulti;
 }
 
@@ -1152,14 +1152,14 @@ GenericList<CChar *> *CMultiObj::GetFriendsOfMultiList(bool clearList) {
     if (clearList) {
         friendsOfMulti.Clear();
     }
-
+    
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_FRIEND) {
             friendsOfMulti.Add(static_cast<CChar *>(it->first));
         }
     }
-
+    
     return &friendsOfMulti;
 }
 
@@ -1167,14 +1167,14 @@ GenericList<CChar *> *CMultiObj::GetGuestsOfMultiList(bool clearList) {
     if (clearList) {
         guestsOfMulti.Clear();
     }
-
+    
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_GUEST) {
             guestsOfMulti.Add(static_cast<CChar *>(it->first));
         }
     }
-
+    
     return &guestsOfMulti;
 }
 
@@ -1182,14 +1182,14 @@ GenericList<CChar *> *CMultiObj::GetBannedFromMultiList(bool clearList) {
     if (clearList) {
         bannedFromMulti.Clear();
     }
-
+    
     for (auto it = housePrivList.cbegin(), next_it = it; it != housePrivList.cend(); it = next_it) {
         ++next_it;
         if (it->second == HOUSEPRIV_BANNED) {
             bannedFromMulti.Add(static_cast<CChar *>(it->first));
         }
     }
-
+    
     return &bannedFromMulti;
 }
 
@@ -1221,8 +1221,8 @@ const std::int8_t DEFBOAT_MOVETYPE = 0;
 const timerval_t DEFBOAT_MOVETIME = 0;
 
 CBoatObj::CBoatObj()
-    : CMultiObj(), tiller(DEFBOAT_TILLER), hold(DEFBOAT_HOLD), moveType(DEFBOAT_MOVETYPE),
-      nextMoveTime(DEFBOAT_MOVETIME) {
+: CMultiObj(), tiller(DEFBOAT_TILLER), hold(DEFBOAT_HOLD), moveType(DEFBOAT_MOVETYPE),
+nextMoveTime(DEFBOAT_MOVETIME) {
     planks[0] = planks[1] = INVALIDSERIAL;
     objType = OT_BOAT;
 }
@@ -1247,16 +1247,16 @@ bool CBoatObj::DumpHeader(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 bool CBoatObj::DumpBody(std::ostream &outStream) const {
     CMultiObj::DumpBody(outStream);
-
+    
     // Hexadecimal Values
     outStream << std::hex;
     outStream << "Hold="
-              << "0x" << hold << '\n';
+    << "0x" << hold << '\n';
     outStream << "Planks="
-              << "0x" << planks[0] << ",0x" << planks[1] << '\n';
+    << "0x" << planks[0] << ",0x" << planks[1] << '\n';
     outStream << "Tiller="
-              << "0x" << tiller << std::dec << '\n';
-
+    << "0x" << tiller << std::dec << '\n';
+    
     // Decimal / String Values
     outStream << std::dec;
     return true;
@@ -1273,33 +1273,33 @@ bool CBoatObj::HandleLine(std::string &UTag, std::string &data) {
     if (!rValue) {
         auto csecs = oldstrutil::sections(data, ",");
         switch ((UTag.data()[0])) {
-        case 'M':
-            if (UTag == "MOVETYPE") {
-                rValue = true;
-            }
-            break;
-        case 'H':
-            if (UTag == "HOLD") {
-                SetHold(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'P':
-            if (UTag == "PLANKS") {
-                SetPlank(0, static_cast<std::uint32_t>(
-                                std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetPlank(1, static_cast<std::uint32_t>(
-                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'T':
-            if (UTag == "TILLER") {
-                SetTiller(util::ston<std::uint32_t>(data));
-                rValue = true;
-            }
-            break;
+            case 'M':
+                if (UTag == "MOVETYPE") {
+                    rValue = true;
+                }
+                break;
+            case 'H':
+                if (UTag == "HOLD") {
+                    SetHold(
+                            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'P':
+                if (UTag == "PLANKS") {
+                    SetPlank(0, static_cast<std::uint32_t>(
+                                                           std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetPlank(1, static_cast<std::uint32_t>(
+                                                           std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'T':
+                if (UTag == "TILLER") {
+                    SetTiller(util::ston<std::uint32_t>(data));
+                    rValue = true;
+                }
+                break;
         }
     }
     return rValue;

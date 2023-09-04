@@ -85,7 +85,7 @@ void CJailCell::InstanceId(std::uint16_t nVal) { instanceId = nVal; }
 void CJailCell::AddOccupant(CChar *pAdd, std::int32_t secsFromNow) {
     if (!ValidateObject(pAdd))
         return;
-
+    
     JailOccupant_st *toAdd = new JailOccupant_st;
     time(&(toAdd->releaseTime));
     toAdd->releaseTime += secsFromNow;
@@ -110,14 +110,14 @@ void CJailCell::AddOccupant(JailOccupant_st *toAdd) { playersInJail.push_back(to
 void CJailCell::EraseOccupant(size_t occupantId) {
     if (occupantId >= playersInJail.size())
         return;
-
+    
     delete playersInJail[occupantId];
     playersInJail.erase(playersInJail.begin() + occupantId);
 }
 JailOccupant_st *CJailCell::Occupant(size_t occupantId) {
     if (occupantId >= playersInJail.size())
         return nullptr;
-
+    
     return playersInJail[occupantId];
 }
 
@@ -221,16 +221,16 @@ auto CJailSystem::ReadSetup() -> void {
             if (!tag.empty()) {
                 data = util::trim(util::strip(data, "//"));
                 switch ((tag.data()[0])) {
-                case 'X':
-                    toAdd.X(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
-                    break;
-                case 'Y':
-                    toAdd.Y(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
-                    break;
-                case 'Z':
-                    toAdd.Z(static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    jails.push_back(toAdd);
-                    break;
+                    case 'X':
+                        toAdd.X(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
+                        break;
+                    case 'Y':
+                        toAdd.Y(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
+                        break;
+                    case 'Z':
+                        toAdd.Z(static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        jails.push_back(toAdd);
+                        break;
                 }
             }
         }
@@ -247,15 +247,15 @@ auto CJailSystem::ReadData() -> void {
         auto temp = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "jails.wsc";
         if (!FileExists(temp))
             return;
-
+        
         auto jailData = std::make_unique<Script>(temp, NUM_DEFS, false);
         if (!jailData)
             return;
-
+        
         for (const auto &[id, prisonerData] : jailData->collection()) {
             if (!prisonerData)
                 continue;
-
+            
             JailOccupant_st toPush;
             std::uint8_t cellNumber = 0;
             for (const auto &sec : prisonerData->collection()) {
@@ -265,35 +265,35 @@ auto CJailSystem::ReadData() -> void {
                     auto data = sec->data;
                     data = util::trim(util::strip(data, "//"));
                     switch ((UTag.data()[0])) {
-                    case 'C':
-                        if (UTag == "CELL") {
-                            cellNumber = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
-                        }
-                        break;
-                    case 'O':
-                        if (UTag == "OLDX") {
-                            toPush.x = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
-                        }
-                        else if (UTag == "OLDY") {
-                            toPush.y = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
-                        }
-                        else if (UTag == "OLDZ") {
-                            toPush.z = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
-                        }
-                        else if (UTag == "WORLD") {
-                            toPush.world = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
-                        }
-                        break;
-                    case 'R':
-                        if (UTag == "RELEASE") {
-                            toPush.releaseTime = std::stoi(data, nullptr, 0);
-                        }
-                        break;
-                    case 'S':
-                        if (UTag == "SERIAL") {
-                            toPush.pSerial = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
-                        }
-                        break;
+                        case 'C':
+                            if (UTag == "CELL") {
+                                cellNumber = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
+                            }
+                            break;
+                        case 'O':
+                            if (UTag == "OLDX") {
+                                toPush.x = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
+                            }
+                            else if (UTag == "OLDY") {
+                                toPush.y = static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
+                            }
+                            else if (UTag == "OLDZ") {
+                                toPush.z = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
+                            }
+                            else if (UTag == "WORLD") {
+                                toPush.world = static_cast<std::int8_t>(std::stoi(data, nullptr, 0));
+                            }
+                            break;
+                        case 'R':
+                            if (UTag == "RELEASE") {
+                                toPush.releaseTime = std::stoi(data, nullptr, 0);
+                            }
+                            break;
+                        case 'S':
+                            if (UTag == "SERIAL") {
+                                toPush.pSerial = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
+                            }
+                            break;
                     }
                 }
             }
@@ -345,16 +345,16 @@ void CJailSystem::PeriodicCheck(void) {
 void CJailSystem::ReleasePlayer(CChar *toRelease) {
     if (!ValidateObject(toRelease))
         return;
-
+    
     std::int8_t cellNum = toRelease->GetCell();
     if (cellNum < 0 || cellNum >= static_cast<std::int8_t>(jails.size()))
         return;
-
+    
     for (size_t iCounter = 0; iCounter < jails[cellNum].JailedPlayers(); ++iCounter) {
         JailOccupant_st *mOccupant = jails[cellNum].Occupant(iCounter);
         if (mOccupant == nullptr)
             continue;
-
+        
         if (mOccupant->pSerial == toRelease->GetSerial()) {
             toRelease->SetLocation(mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world,
                                    mOccupant->instanceId);
@@ -374,7 +374,7 @@ void CJailSystem::ReleasePlayer(CChar *toRelease) {
 bool CJailSystem::JailPlayer(CChar *toJail, std::int32_t numSecsToJail) {
     if (jails.empty() || toJail == nullptr)
         return false;
-
+    
     size_t minCell = 0;
     for (size_t i = 0; i < jails.size(); ++i) {
         if (jails[i].IsEmpty()) {
@@ -385,7 +385,7 @@ bool CJailSystem::JailPlayer(CChar *toJail, std::int32_t numSecsToJail) {
             minCell = i;
         }
     }
-
+    
     jails[minCell].AddOccupant(toJail, numSecsToJail);
     toJail->SetCell(static_cast<std::int8_t>(minCell));
     return true;

@@ -41,7 +41,7 @@ CDictionary::CDictionary(const std::string &filepath, const std::string &languag
 //|	Purpose		-	Set which language to use for dictionary
 // o------------------------------------------------------------------------------------------------o
 auto CDictionary::SetLocationLanguage(const std::string &filepath, const std::string &language)
-    -> void {
+-> void {
     if (language.empty()) {
         dictLanguage = "ZRO";
     }
@@ -97,7 +97,7 @@ auto CDictionary::GetEntry(int message_number) -> std::string & {
 // o------------------------------------------------------------------------------------------------o
 auto CDictionary::ShowList() -> void {
     Console::shared() << "Dictionary Entries for language: " << dictLanguage
-                      << " file: " << pathToDictionary << myendl;
+    << " file: " << pathToDictionary << myendl;
     for (auto &[entrynum, text] : msgdata) {
         Console::shared() << entrynum << " : "s << text << myendl;
     }
@@ -116,7 +116,7 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
         dictLanguage = language;
     }
     msgdata.clear();
-
+    
     auto status = ParseFile(pathToDictionary);
     Console::shared().Print(" ");
     Console::shared().MoveTo(15);
@@ -127,7 +127,7 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
     else {
         Console::shared().PrintSpecial(CRED, "failed");
     }
-
+    
     return static_cast<std::int32_t>(msgdata.size());
 }
 
@@ -153,41 +153,41 @@ auto CDictionary::ParseFile(const std::string &dictionaryfile) -> bool {
                 line = util::trim(line);
                 if (!line.empty()) {
                     switch (static_cast<int>(state)) {
-                    case static_cast<int>(search_t::header): {
-                        if ((line[0] == '[') && (*(line.rbegin()) == ']')) {
-                            // it is a section header!
-                            line = util::upper(util::simplify(line.substr(1, line.size() - 2)));
-                            auto [key, value] = util::split(line, " ");
-                            if ((key == "DICTIONARY") && (value == "CLIENTMSG")) {
-                                // This is a good section start!
-                                state = search_t::startsection;
+                        case static_cast<int>(search_t::header): {
+                            if ((line[0] == '[') && (*(line.rbegin()) == ']')) {
+                                // it is a section header!
+                                line = util::upper(util::simplify(line.substr(1, line.size() - 2)));
+                                auto [key, value] = util::split(line, " ");
+                                if ((key == "DICTIONARY") && (value == "CLIENTMSG")) {
+                                    // This is a good section start!
+                                    state = search_t::startsection;
+                                }
                             }
-                        }
-                        break;
-                    }
-
-                    case static_cast<int>(search_t::startsection): {
-                        if (line == "{") {
-                            state = search_t::endsection;
-                            rValue = true;
-                        }
-                    }
-                        [[fallthrough]];
-                    case static_cast<int>(search_t::endsection): {
-                        if (line != "}") {
-                            auto [key, value] = util::split(line, "=");
-                            try {
-                                auto number = std::stoi(key, nullptr, 0);
-                                msgdata.insert_or_assign(number, value);
-                            } catch (...) {
-                                // just skip this, no idea what it is
-                            }
-                        }
-                        else {
-                            // We dont process more then one section, maybe some day.
                             break;
                         }
-                    }
+                            
+                        case static_cast<int>(search_t::startsection): {
+                            if (line == "{") {
+                                state = search_t::endsection;
+                                rValue = true;
+                            }
+                        }
+                            [[fallthrough]];
+                        case static_cast<int>(search_t::endsection): {
+                            if (line != "}") {
+                                auto [key, value] = util::split(line, "=");
+                                try {
+                                    auto number = std::stoi(key, nullptr, 0);
+                                    msgdata.insert_or_assign(number, value);
+                                } catch (...) {
+                                    // just skip this, no idea what it is
+                                }
+                            }
+                            else {
+                                // We dont process more then one section, maybe some day.
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -254,7 +254,7 @@ auto CDictionaryContainer::operator[](int message_number) -> std::string & {
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
 auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp)
-    -> std::string & {
+-> std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
     {
@@ -267,7 +267,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
             return dictList[LanguageCodesLang[defaultLang]][message_number];
         }
     }
-
+    
     auto typetouse = toDisp;
     if ((static_cast<std::int32_t>(toDisp) < 0) ||
         (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {
@@ -293,7 +293,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
 }
 //==================================================================================================
 auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) const
-    -> const std::string & {
+-> const std::string & {
     if (cwmWorldState->ServerData()->ServerLanguage() !=
         DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
     {
@@ -306,7 +306,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
             return dictList[LanguageCodesLang[defaultLang]][message_number];
         }
     }
-
+    
     auto typetouse = toDisp;
     if ((static_cast<std::int32_t>(toDisp) < 0) ||
         (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {

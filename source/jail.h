@@ -19,19 +19,19 @@ struct JailOccupant_st {
     std::uint16_t instanceId;
     time_t releaseTime;
     JailOccupant_st()
-        : pSerial(INVALIDSERIAL), x(0), y(0), z(0), world(0), instanceId(0), releaseTime(0) {}
+    : pSerial(INVALIDSERIAL), x(0), y(0), z(0), world(0), instanceId(0), releaseTime(0) {}
 };
 
 class CJailCell {
-  private:
+private:
     std::int16_t x;
     std::int16_t y;
     std::int8_t z;
     std::uint8_t world;
     std::uint16_t instanceId;
     std::vector<JailOccupant_st *> playersInJail;
-
-  public:
+    
+public:
     CJailCell() : x(0), y(0), z(0), world(0), instanceId(0) {}
     ~CJailCell();
     bool IsEmpty(void) const;
@@ -55,10 +55,10 @@ class CJailCell {
 };
 
 class CJailSystem {
-  private:
+private:
     std::vector<CJailCell> jails;
-
-  public:
+    
+public:
     CJailSystem() = default;
     ~CJailSystem() = default;
     void ReadSetup(void);

@@ -43,10 +43,10 @@ bool Party::AddMember(CChar *i) {
             members.push_back(toAdd);
             SendList(nullptr);
             retVal = true;
-
+            
             CSocket *newSock = i->GetSocket();
             newSock->SysMessage(9072); // You have been added to the party.
-
+            
             // Send status update to ALL party members
             for (size_t j = 0; j < members.size(); ++j) {
                 CPartyEntry *toFind = members[j];
@@ -56,10 +56,10 @@ bool Party::AddMember(CChar *i) {
                         // If party member is online, send them info on the new member
                         if (IsOnline(*partyMember)) {
                             CSocket *s = partyMember->GetSocket();
-
+                            
                             // Send stat window update for new member to existing party members
                             s->StatWindow(i);
-
+                            
                             // Prepare the stat update packet for new member to existing party
                             // members
                             CPUpdateStat toSendHp((*i), 0, true);
@@ -68,12 +68,12 @@ bool Party::AddMember(CChar *i) {
                             s->Send(&toSendMana);
                             CPUpdateStat toSendStam((*i), 2, true);
                             s->Send(&toSendStam);
-
+                            
                             // Also send info on the existing party member to the new member!
                             // Send stat window update packet for existing member to new party
                             // member
                             newSock->StatWindow(partyMember);
-
+                            
                             // Prepare the stat update packet for existing member to new party
                             // members
                             CPUpdateStat toSendHp2((*partyMember), 0, true);
@@ -82,9 +82,9 @@ bool Party::AddMember(CChar *i) {
                             newSock->Send(&toSendMana2);
                             CPUpdateStat toSendStam2((*partyMember), 2, true);
                             newSock->Send(&toSendStam2);
-
+                            
                             s->SysMessage(9076, i->GetNameRequest(partyMember, NRS_SPEECH)
-                                                    .c_str()); // %s joined the party.
+                                          .c_str()); // %s joined the party.
                         }
                     }
                 }
@@ -129,17 +129,17 @@ bool Party::RemoveMember(CChar *i) {
             delete members[removeSpot];
             members.erase(members.begin() + removeSpot);
             PartyFactory::shared().RemoveLookup(i);
-
+            
             CPPartyMemberRemove toSend(i);
             for (size_t j = 0; j < members.size(); ++j) {
                 CPartyEntry *toFind = members[j];
                 toSend.AddMember(toFind->Member());
                 if (IsOnline(*toFind->Member()) && !toFind->IsLeader()) {
                     toFind->Member()->GetSocket()->SysMessage(
-                        9075); // A player has been removed from your party.
+                                                              9075); // A player has been removed from your party.
                 }
             }
-
+            
             SendPacket(&toSend, nullptr);
             if (i->GetSocket() != nullptr) {
                 SendPacket(&toSend, i->GetSocket());
@@ -317,7 +317,7 @@ void PartyFactory::CreateInvite(CSocket *inviter) {
         toSend.Leader(inviterChar);
         targSock->Send(&toSend);
         targSock->SysMessage(9002); // You have been invited to join a party, type /accept or
-                                    // /decline to deal with the invitation
+        // /decline to deal with the invitation
     }
     else {
         inviter->SysMessage(9042); // That player is not online.

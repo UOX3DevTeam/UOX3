@@ -99,17 +99,17 @@ timerval_t GetPoisonTickTime(std::uint8_t poisonStrength);
 //  Amount related
 // o------------------------------------------------------------------------------------------------o
 std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0,
-                   bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
+                            bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
 std::uint32_t GetTotalItemCount(CItem *objCont);
 std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
-                      std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
-                      std::string sectionId = "");
+                               std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
+                               std::string sectionId = "");
 std::uint32_t DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
-                         std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
-                         std::string sectionId = "");
+                                  std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
+                                  std::string sectionId = "");
 std::uint32_t GetBankCount(CChar *p, std::uint16_t itemId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0);
 std::uint32_t DeleteBankItem(CChar *p, std::uint32_t amt, std::uint16_t itemId, std::uint16_t realColour = 0x0000,
-                    std::uint32_t realMoreVal = 0x0);
+                             std::uint32_t realMoreVal = 0x0);
 
 // o------------------------------------------------------------------------------------------------o
 //  Region related
@@ -149,7 +149,7 @@ void CallGuards(CChar *mChar);
 // o------------------------------------------------------------------------------------------------o
 inline timerval_t BuildTimeValue(R32 timeFromNow) {
     return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() +
-                                 (static_cast<R32>(1000) * timeFromNow));
+                                   (static_cast<R32>(1000) * timeFromNow));
 }
 
 std::uint32_t GetClock(void);
@@ -179,8 +179,8 @@ inline char *RealTimeDate(char *time_str) {
 inline std::string TimeStamp(void) {
     auto stamp = []() {
         auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(
-                         std::chrono::system_clock::now().time_since_epoch())
-                         .count();
+                                                                           std::chrono::system_clock::now().time_since_epoch())
+        .count();
         auto hours = (((milli / 1000) / 60) / 60);
         milli = milli - (hours * 60 * 60 * 1000);
         auto minutes = ((milli / 1000) / 60);
@@ -193,7 +193,7 @@ inline std::string TimeStamp(void) {
         value << " [" << timeStamp << "][" << milli << "]";
         return value.str();
     };
-
+    
     return stamp();
 }
 #else
@@ -203,7 +203,7 @@ inline void StartMilliTimer(std::uint32_t &Seconds, std::uint32_t &Milliseconds)
     auto timenow = std::chrono::system_clock::now().time_since_epoch();
     auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count();
     auto milli =
-        std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
+    std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
     Seconds = static_cast<std::uint32_t>(sec);
     Milliseconds = static_cast<std::uint32_t>(milli);
 }
@@ -211,14 +211,14 @@ inline std::uint32_t CheckMilliTimer(std::uint32_t &Seconds, std::uint32_t &Mill
     auto timenow = std::chrono::system_clock::now().time_since_epoch();
     auto sec = std::chrono::duration_cast<std::chrono::seconds>(timenow).count();
     auto milli =
-        std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
+    std::chrono::duration_cast<std::chrono::milliseconds>(timenow).count() - (1000 * sec);
     return static_cast<std::uint32_t>((1000 * (sec - Seconds)) + (milli - Milliseconds));
 }
 
 inline std::uint32_t GetMinutesSinceEpoch() {
     return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(
-                                 std::chrono::system_clock::now().time_since_epoch())
-                                 .count());
+                                                                                       std::chrono::system_clock::now().time_since_epoch())
+                                      .count());
 }
 
 // o------------------------------------------------------------------------------------------------o

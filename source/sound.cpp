@@ -26,14 +26,14 @@ cEffects *Effects;
 void cEffects::PlaySound(CSocket *mSock, std::uint16_t soundId, bool allHear) {
     if (mSock == nullptr)
         return;
-
+    
     CChar *mChar = mSock->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     CPPlaySoundEffect toSend = (*mChar);
     toSend.Model(soundId);
-
+    
     if (allHear) {
         auto nearbyChars = FindNearbyPlayers(mChar);
         std::for_each(nearbyChars.begin(), nearbyChars.end(),
@@ -51,10 +51,10 @@ void cEffects::PlaySound(CSocket *mSock, std::uint16_t soundId, bool allHear) {
 void cEffects::PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHear) {
     if (!ValidateObject(baseObj))
         return;
-
+    
     CPPlaySoundEffect toSend = (*baseObj);
     toSend.Model(soundId);
-
+    
     if (allHear) {
         auto nearbyChars = FindPlayersInVisrange(baseObj);
         std::for_each(nearbyChars.begin(), nearbyChars.end(),
@@ -96,32 +96,32 @@ void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
             if (getCont->GetObjType() == CBaseObject::OT_ITEM) {
                 CItem *iCont = static_cast<CItem *>(getCont);
                 switch (iCont->GetId()) {
-                case 0x0E75: // backpack
-                case 0x0E76: // leather bag
-                case 0x0E79: // pouch
-                case 0x09B0: // pouch
-                case 0x2AF8: // Shopkeeper buy, sell and sold layers
-                case 0x2256: // bagball
-                case 0x2257: // bagball
-                    effectId = 0x0048;
-                    break;
-                case 0x0E7A: // picnic basket
-                case 0x24D5: // SE basket
-                case 0x24D6: // SE basket
-                case 0x24D9: // SE basket
-                case 0x24DA: // SE basket
-                case 0x0990: // basket
-                case 0x09AC: // bushel
-                case 0x09B1: // basket
-                case 0x24D7: // SE basket
-                case 0x24D8: // SE basket
-                case 0x24DD: // SE basket
-                case 0x24DB: // SE basket
-                case 0x24DC: // SE basket
-                    effectId = 0x004F;
-                    break;
-                default:
-                    break;
+                    case 0x0E75: // backpack
+                    case 0x0E76: // leather bag
+                    case 0x0E79: // pouch
+                    case 0x09B0: // pouch
+                    case 0x2AF8: // Shopkeeper buy, sell and sold layers
+                    case 0x2256: // bagball
+                    case 0x2257: // bagball
+                        effectId = 0x0048;
+                        break;
+                    case 0x0E7A: // picnic basket
+                    case 0x24D5: // SE basket
+                    case 0x24D6: // SE basket
+                    case 0x24D9: // SE basket
+                    case 0x24DA: // SE basket
+                    case 0x0990: // basket
+                    case 0x09AC: // bushel
+                    case 0x09B1: // basket
+                    case 0x24D7: // SE basket
+                    case 0x24D8: // SE basket
+                    case 0x24DD: // SE basket
+                    case 0x24DB: // SE basket
+                    case 0x24DC: // SE basket
+                        effectId = 0x004F;
+                        break;
+                    default:
+                        break;
                 }
             }
             else {
@@ -195,7 +195,7 @@ void cEffects::PlayMusic(CSocket *s, std::uint16_t number) {
 void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
     std::vector<CChar *> inRange;
     inRange.reserve(11);
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
@@ -206,7 +206,7 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
                         CharInRange((&mChar), tempChar)) {
                         inRange.push_back(tempChar);
                     }
-
+                    
                     if (inRange.size() == 11) {
                         break;
                     }
@@ -214,14 +214,14 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
             }
         }
     }
-
+    
     std::uint16_t basesound = 0;
     if (!inRange.empty()) {
         CChar *soundSrc = inRange[RandomNum(static_cast<size_t>(0), inRange.size() - 1)];
         std::uint16_t xx = soundSrc->GetId();
         if (cwmWorldState->creatures.find(xx) == cwmWorldState->creatures.end())
             return;
-
+        
         // Play creature sounds, but add a small chance that they won't, to give players a break
         // every now and then
         std::uint8_t soundChance = static_cast<std::uint8_t>(RandomNum(static_cast<size_t>(0), inRange.size() + 9));
@@ -238,29 +238,29 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
     {
         if (RandomNum(0, 3332) == 33) {
             switch (RandomNum(0, 6)) {
-            case 0:
-                basesound = 595;
-                break; // gnome sound
-            case 1:
-                basesound = 287;
-                break; // bigfoot 1
-            case 2:
-                basesound = 288;
-                break; // bigfoot 2
-            case 3:
-                basesound = 639;
-                break; // old snake sound
-            case 4:
-                basesound = 179;
-                break; // lion sound
-            case 5:
-                basesound = 246;
-                break; // mystic
-            case 6:
-                basesound = 253;
-                break; // mystic II
-            default:
-                break;
+                case 0:
+                    basesound = 595;
+                    break; // gnome sound
+                case 1:
+                    basesound = 287;
+                    break; // bigfoot 1
+                case 2:
+                    basesound = 288;
+                    break; // bigfoot 2
+                case 3:
+                    basesound = 639;
+                    break; // old snake sound
+                case 4:
+                    basesound = 179;
+                    break; // lion sound
+                case 5:
+                    basesound = 246;
+                    break; // mystic
+                case 6:
+                    basesound = 253;
+                    break; // mystic II
+                default:
+                    break;
             }
             if (basesound != 0) {
                 CPPlaySoundEffect toSend = mChar;
@@ -280,15 +280,15 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
     // Return if the socket is not valid
     if (s == nullptr)
         return;
-
+    
     std::int32_t i = 0;
     char musicArray[50];
     std::string sect;
-
+    
     CChar *mChar = s->CurrcharObj();
-
+    
     CTownRegion *mReg = nullptr;
-
+    
     // Fetch subregion player is in, if any
     auto subRegionNum = mChar->GetSubRegion();
     if (subRegionNum != 0) {
@@ -296,14 +296,14 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
             mReg = cwmWorldState->townRegions[subRegionNum];
         }
     }
-
+    
     if (mReg == nullptr) {
         // Otherwise, fetch the actual region player is in
         mReg = mChar->GetRegion();
         if (mReg == nullptr)
             return;
     }
-
+    
     std::uint16_t musicList = mReg->GetMusicList();
     if (musicList != 0) {
         if (mChar->IsDead()) {
@@ -315,7 +315,7 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
         else {
             sect = std::string("MUSICLIST ") + util::ntos(musicList);
         }
-
+        
         auto MusicList = FileLookup->FindEntry(sect, regions_def);
         if (MusicList) {
             for (const auto &sec : MusicList->collection()) {
@@ -339,30 +339,30 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
 auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
     if (!ValidateObject(mChar))
         return;
-
+    
     if (mChar->GetVisible() != VT_VISIBLE || (mChar->IsGM() || mChar->IsCounselor()))
         return;
-
+    
     if (mChar->IsFlying()) // No footstep sounds for flying gargoyles
         return;
-
+    
     enum TileType { TT_NORMAL = 0, TT_WATER, TT_STONE, TT_OTHER, TT_WOODEN, TT_GRASS };
     TileType tileType = TT_NORMAL;
-
+    
     bool onHorse = mChar->IsOnHorse();
     bool isRunning = (mChar->GetRunning() > 0);
     auto artwork = Map->ArtAt(mChar->GetX(), mChar->GetY(), mChar->WorldNumber());
     std::sort(artwork.begin(), artwork.end(), [](const Tile_st &lhs, const Tile_st &rhs) {
         return (lhs.altitude + lhs.artInfo->Height()) < (rhs.altitude + rhs.artInfo->Height());
     });
-
+    
     // now find the static that works for us
     // start from the bottom of the vector, as we want the first one that is below us
     auto alt = mChar->GetZ(); // so we dont keep calling it
     auto iter = std::find_if(artwork.rbegin(), artwork.rend(), [alt](const Tile_st &value) {
         return alt >= (value.altitude + value.artInfo->Height());
     });
-
+    
     if (iter != artwork.rend()) {
         if (iter->artInfo->CheckFlag(TF_WET)) {
             tileType = TT_WATER;
@@ -386,93 +386,93 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
             }
         }
     }
-
+    
     std::uint16_t soundId = 0;
     switch (mChar->GetStep()) // change step info
     {
-    case 0:
-        if ((!isRunning && !onHorse) || (isRunning && onHorse)) {
-            mChar->SetStep(1); // step 2
-        }
-        else if (isRunning || (!isRunning && onHorse)) {
-            mChar->SetStep(2); // Running step 2
-        }
-        switch (tileType) {
-        case TT_NORMAL:
-            if (onHorse) {
-                if (isRunning) {
-                    soundId = 0x012A;
-                }
-                else {
-                    soundId = 0x024C;
-                }
+        case 0:
+            if ((!isRunning && !onHorse) || (isRunning && onHorse)) {
+                mChar->SetStep(1); // step 2
             }
-            else {
-                soundId = 0x012B;
+            else if (isRunning || (!isRunning && onHorse)) {
+                mChar->SetStep(2); // Running step 2
             }
-            break;
-        case TT_WATER: // water
-            break;
-        case TT_STONE: // stone
-            soundId = 0x0130;
-            break;
-        case TT_WOODEN: // wooden
-            soundId = 0x0123;
-            break;
-        case TT_OTHER: // other
-            [[fallthrough]];
-        case TT_GRASS: // grass
-            soundId = 0x012D;
-            break;
-        }
-        break;
-    case 1:
-        if (!isRunning || (isRunning && onHorse)) {
-            mChar->SetStep(0); // step 1
-        }
-        else if (isRunning || (!isRunning && onHorse)) {
-            mChar->SetStep(3); // Running step 4
-        }
-        switch (tileType) {
-        case TT_NORMAL:
-            if (onHorse) {
-                if (isRunning) {
-                    soundId = 0x0129;
-                }
-                else {
-                    soundId = 0x024B;
-                }
-            }
-            else {
-                soundId = 0x012C;
+            switch (tileType) {
+                case TT_NORMAL:
+                    if (onHorse) {
+                        if (isRunning) {
+                            soundId = 0x012A;
+                        }
+                        else {
+                            soundId = 0x024C;
+                        }
+                    }
+                    else {
+                        soundId = 0x012B;
+                    }
+                    break;
+                case TT_WATER: // water
+                    break;
+                case TT_STONE: // stone
+                    soundId = 0x0130;
+                    break;
+                case TT_WOODEN: // wooden
+                    soundId = 0x0123;
+                    break;
+                case TT_OTHER: // other
+                    [[fallthrough]];
+                case TT_GRASS: // grass
+                    soundId = 0x012D;
+                    break;
             }
             break;
-        case TT_WATER: // water
+        case 1:
+            if (!isRunning || (isRunning && onHorse)) {
+                mChar->SetStep(0); // step 1
+            }
+            else if (isRunning || (!isRunning && onHorse)) {
+                mChar->SetStep(3); // Running step 4
+            }
+            switch (tileType) {
+                case TT_NORMAL:
+                    if (onHorse) {
+                        if (isRunning) {
+                            soundId = 0x0129;
+                        }
+                        else {
+                            soundId = 0x024B;
+                        }
+                    }
+                    else {
+                        soundId = 0x012C;
+                    }
+                    break;
+                case TT_WATER: // water
+                    break;
+                case TT_STONE: // stone
+                    soundId = 0x012F;
+                    break;
+                case TT_WOODEN: // wooden
+                    soundId = 0x0122;
+                    break;
+                case TT_OTHER: // other
+                    [[fallthrough]];
+                case TT_GRASS: // grass
+                    soundId = 0x012E;
+                    break;
+            }
             break;
-        case TT_STONE: // stone
-            soundId = 0x012F;
+        case 2:
+            mChar->SetStep(1); // Running step 3
             break;
-        case TT_WOODEN: // wooden
-            soundId = 0x0122;
+        case 3:
+            mChar->SetStep(0); // Running step 0
             break;
-        case TT_OTHER: // other
-            [[fallthrough]];
-        case TT_GRASS: // grass
-            soundId = 0x012E;
+        default:
+            mChar->SetStep(1); // pause
             break;
-        }
-        break;
-    case 2:
-        mChar->SetStep(1); // Running step 3
-        break;
-    case 3:
-        mChar->SetStep(0); // Running step 0
-        break;
-    default:
-        mChar->SetStep(1); // pause
-        break;
     }
-
+    
     if (soundId) // if we have a valid sound
     {
         if (mSock == nullptr && ValidateObject(mChar)) {

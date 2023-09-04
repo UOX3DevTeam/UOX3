@@ -67,16 +67,16 @@ const std::uint16_t DEFTOWN_PARENTREGION = 0;
 //|	Purpose		-	Constructor for CTownRegion class
 // o------------------------------------------------------------------------------------------------o
 CTownRegion::CTownRegion(std::uint16_t region)
-    : regionNum(region), numGuards(DEFTOWN_NUMGUARDS), parentRegion(DEFTOWN_PARENTREGION),
-      musicList(DEFTOWN_MUSICLIST), worldNumber(DEFTOWN_WORLDNUMBER),
-      instanceId(DEFTOWN_INSTANCEID), mayorSerial(DEFTOWN_MAYOR), race(DEFTOWN_RACE),
-      weather(DEFTOWN_WEATHER), goldReserved(DEFTOWN_GOLDRESERVED),
-      visualAppearance(DEFTOWN_VISUALAPPEARANCE), timeSinceGuardsPaid(DEFTOWN_GUARDSPAID),
-      timeSinceTaxedMembers(DEFTOWN_TAXEDMEMBERS), timeToElectionClose(DEFTOWN_ELECTIONCLOSE),
-      timeToNextPoll(DEFTOWN_NEXTPOLL), guardsPurchased(DEFTOWN_GUARDSPURCHASED),
-      resourceCollected(DEFTOWN_RESOURCECOLLECTED), taxedResource(DEFTOWN_TAXEDRESOURCE),
-      taxedAmount(DEFTOWN_TAXEDAMOUNT), health(DEFTOWN_HEALTH),
-      chanceFindBigOre(DEFTOWN_FINDBIGORE), jsScript(DEFTOWN_JSSCRIPT) {
+: regionNum(region), numGuards(DEFTOWN_NUMGUARDS), parentRegion(DEFTOWN_PARENTREGION),
+musicList(DEFTOWN_MUSICLIST), worldNumber(DEFTOWN_WORLDNUMBER),
+instanceId(DEFTOWN_INSTANCEID), mayorSerial(DEFTOWN_MAYOR), race(DEFTOWN_RACE),
+weather(DEFTOWN_WEATHER), goldReserved(DEFTOWN_GOLDRESERVED),
+visualAppearance(DEFTOWN_VISUALAPPEARANCE), timeSinceGuardsPaid(DEFTOWN_GUARDSPAID),
+timeSinceTaxedMembers(DEFTOWN_TAXEDMEMBERS), timeToElectionClose(DEFTOWN_ELECTIONCLOSE),
+timeToNextPoll(DEFTOWN_NEXTPOLL), guardsPurchased(DEFTOWN_GUARDSPURCHASED),
+resourceCollected(DEFTOWN_RESOURCECOLLECTED), taxedResource(DEFTOWN_TAXEDRESOURCE),
+taxedAmount(DEFTOWN_TAXEDAMOUNT), health(DEFTOWN_HEALTH),
+chanceFindBigOre(DEFTOWN_FINDBIGORE), jsScript(DEFTOWN_JSSCRIPT) {
     priv.reset();
     townMember.resize(0);
     alliedTowns.resize(0);
@@ -95,7 +95,7 @@ CTownRegion::CTownRegion(std::uint16_t region)
 // o------------------------------------------------------------------------------------------------o
 CTownRegion::~CTownRegion() {
     JSEngine->ReleaseObject(IUE_REGION, this);
-
+    
     townMember.resize(0);
     alliedTowns.resize(0);
     orePreferences.resize(0);
@@ -116,11 +116,11 @@ bool CTownRegion::Load(Script *ss) {
     std::string sect = std::string("TOWNREGION ") + util::ntos(regionNum);
     if (!ss->IsInSection(sect)) // doesn't exist
         return false;
-
+    
     auto target = ss->FindEntry(sect);
     if (target == nullptr)
         return false;
-
+    
     for (const auto &sec : target->collection()) {
         tag = sec->tag;
         data = sec->data;
@@ -132,100 +132,100 @@ bool CTownRegion::Load(Script *ss) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
-        case 'A':
-            if (UTag == "ALLYTOWN") {
-                alliedTowns.push_back(static_cast<std::uint8_t>(duint));
-            }
-            break;
-        case 'E':
-            if (UTag == "ELECTIONTIME") {
-                timeToElectionClose = static_cast<std::int32_t>(duint);
-            }
-            break;
-        case 'G':
-            if (UTag == "GUARDOWNER") {
-                guardowner = data;
-            }
-            else if (UTag == "GUARD") // load our purchased guard
-            {
-                ++numGuards;
-            }
-            else if (UTag == "GUARDSBOUGHT") // num guards bought
-            {
-                guardsPurchased = static_cast<std::int16_t>(duint);
-            }
-            break;
-        case 'H':
-            if (UTag == "HEALTH") {
-                health = static_cast<std::int16_t>(duint);
-            }
-            break;
-        case 'M':
-            if (UTag == "MEMBER") {
-                location = townMember.size();
-                townMember.resize(location + 1);
-                townMember[location].targVote = INVALIDSERIAL;
-                townMember[location].townMember = duint;
-            }
-            else if (UTag == "MAYOR") {
-                mayorSerial = duint;
-            }
-            break;
-        case 'N':
-            if (UTag == "NAME") {
-                name = data.substr(0, 49);
-            }
-            else if (UTag == "NUMGUARDS") {
-                numGuards = static_cast<std::uint16_t>(duint);
-            }
-            break;
-        case 'P':
-            if (UTag == "PARENTREGION") {
-                if (parentRegion > 0) {
-                    parentRegion = static_cast<std::uint16_t>(duint);
-                    IsSubRegion(true);
+            case 'A':
+                if (UTag == "ALLYTOWN") {
+                    alliedTowns.push_back(static_cast<std::uint8_t>(duint));
                 }
-            }
-            else if (UTag == "PRIV") {
-                // Overwrites privs loaded from regions.dfn, making it impossible to change privs
-                // after initial server startup Currently not used for anything, so we disable until
-                // we find a better solution.
-                // priv = std::bitset<10>( data.toUShort() );
-            }
-            else if (UTag == "POLLTIME") {
-                timeToNextPoll = static_cast<std::int32_t>(duint);
-            }
-            break;
-        case 'R':
-            if (UTag == "RACE") {
-                race = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "RESOURCEAMOUNT") {
-                goldReserved = static_cast<std::int32_t>(duint);
-            }
-            else if (UTag == "RESOURCECOLLECTED") {
-                resourceCollected = static_cast<std::int32_t>(duint);
-            }
-            break;
-        case 'T':
-            if (UTag == "TAXEDID") {
-                taxedResource = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "TAXEDAMOUNT") {
-                taxedAmount = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "TIMET") {
-                timeSinceTaxedMembers = static_cast<std::int32_t>(duint);
-            }
-            else if (UTag == "TIMEG") {
-                timeSinceGuardsPaid = static_cast<std::int32_t>(duint);
-            }
-            break;
-        case 'V':
-            if (UTag == "VOTE" && location != 0xFFFFFFFF) {
-                townMember[location].targVote = duint;
-            }
-            break;
+                break;
+            case 'E':
+                if (UTag == "ELECTIONTIME") {
+                    timeToElectionClose = static_cast<std::int32_t>(duint);
+                }
+                break;
+            case 'G':
+                if (UTag == "GUARDOWNER") {
+                    guardowner = data;
+                }
+                else if (UTag == "GUARD") // load our purchased guard
+                {
+                    ++numGuards;
+                }
+                else if (UTag == "GUARDSBOUGHT") // num guards bought
+                {
+                    guardsPurchased = static_cast<std::int16_t>(duint);
+                }
+                break;
+            case 'H':
+                if (UTag == "HEALTH") {
+                    health = static_cast<std::int16_t>(duint);
+                }
+                break;
+            case 'M':
+                if (UTag == "MEMBER") {
+                    location = townMember.size();
+                    townMember.resize(location + 1);
+                    townMember[location].targVote = INVALIDSERIAL;
+                    townMember[location].townMember = duint;
+                }
+                else if (UTag == "MAYOR") {
+                    mayorSerial = duint;
+                }
+                break;
+            case 'N':
+                if (UTag == "NAME") {
+                    name = data.substr(0, 49);
+                }
+                else if (UTag == "NUMGUARDS") {
+                    numGuards = static_cast<std::uint16_t>(duint);
+                }
+                break;
+            case 'P':
+                if (UTag == "PARENTREGION") {
+                    if (parentRegion > 0) {
+                        parentRegion = static_cast<std::uint16_t>(duint);
+                        IsSubRegion(true);
+                    }
+                }
+                else if (UTag == "PRIV") {
+                    // Overwrites privs loaded from regions.dfn, making it impossible to change privs
+                    // after initial server startup Currently not used for anything, so we disable until
+                    // we find a better solution.
+                    // priv = std::bitset<10>( data.toUShort() );
+                }
+                else if (UTag == "POLLTIME") {
+                    timeToNextPoll = static_cast<std::int32_t>(duint);
+                }
+                break;
+            case 'R':
+                if (UTag == "RACE") {
+                    race = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "RESOURCEAMOUNT") {
+                    goldReserved = static_cast<std::int32_t>(duint);
+                }
+                else if (UTag == "RESOURCECOLLECTED") {
+                    resourceCollected = static_cast<std::int32_t>(duint);
+                }
+                break;
+            case 'T':
+                if (UTag == "TAXEDID") {
+                    taxedResource = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "TAXEDAMOUNT") {
+                    taxedAmount = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "TIMET") {
+                    timeSinceTaxedMembers = static_cast<std::int32_t>(duint);
+                }
+                else if (UTag == "TIMEG") {
+                    timeSinceGuardsPaid = static_cast<std::int32_t>(duint);
+                }
+                break;
+            case 'V':
+                if (UTag == "VOTE" && location != 0xFFFFFFFF) {
+                    townMember[location].targVote = duint;
+                }
+                break;
         }
     }
     return true;
@@ -258,7 +258,7 @@ bool CTownRegion::Save(std::ostream &outStream) {
     outStream << "INSTANCEID=" + std::to_string(instanceId) + newLine;
     outStream << "PARENTREGION=" + std::to_string(parentRegion) + newLine;
     outStream << "NUMGUARDS=" + std::to_string(numGuards) + newLine;
-
+    
     std::vector<TownPers_st>::const_iterator mIter;
     for (mIter = townMember.begin(); mIter != townMember.end(); ++mIter) {
         outStream << "MEMBER=0x" << std::hex << (*mIter).townMember << std::dec << newLine;
@@ -281,7 +281,7 @@ bool CTownRegion::Save(std::ostream &outStream) {
 void CTownRegion::CalcNewMayor(void) {
     if (townMember.empty())
         return;
-
+    
     // if there are no members, there are no new mayors
     std::vector<std::int32_t> votes;
     votes.resize(townMember.size());
@@ -314,7 +314,7 @@ void CTownRegion::CalcNewMayor(void) {
     else {
         mayorSerial = 0xFFFFFFF;
     }
-
+    
     CChar *newMayor = GetMayor();
     if (ValidateObject(oldMayor)) {
         oldMayor->SetTownpriv(1);
@@ -334,7 +334,7 @@ void CTownRegion::CalcNewMayor(void) {
         else if (oldMayorExists && newMayorExists) {
             TellMembers(1122, oldMayor->GetName().c_str(),
                         newMayor->GetName()
-                            .c_str()); // Your old mayor, %s, has retired and your new mayor is %s.
+                        .c_str()); // Your old mayor, %s, has retired and your new mayor is %s.
         }
         else {
             TellMembers(1123); // There's still no mayor for this town.
@@ -342,8 +342,8 @@ void CTownRegion::CalcNewMayor(void) {
     }
     else if (ValidateObject(newMayor)) {
         TellMembers(
-            1124,
-            oldMayor->GetName().c_str()); // Your old mayor, %s, has stayed on for another term.
+                    1124,
+                    oldMayor->GetName().c_str()); // Your old mayor, %s, has stayed on for another term.
     }
     else {
         TellMembers(1123); // There's still no mayor for this town.
@@ -373,7 +373,7 @@ void CTownRegion::SetMayorSerial(serial_t newValue) { mayorSerial = newValue; }
 bool CTownRegion::AddAsTownMember(CChar &toAdd) {
     if (Races->CompareByRace(toAdd.GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false; // we can't have a racial enemy in the town!
-
+    
     for (std::uint32_t counter = 0; counter < townMember.size(); ++counter) // exhaustive error checking
     {
         if (townMember[counter].townMember == toAdd.GetSerial())
@@ -396,7 +396,7 @@ bool CTownRegion::AddAsTownMember(CChar &toAdd) {
 bool CTownRegion::RemoveTownMember(CChar &toAdd) {
     if (toAdd.GetTown() == 0 || toAdd.GetTown() != regionNum)
         return false; // not in our town
-
+    
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         if (toAdd.GetSerial() == townMember[counter].townMember) {
             RemoveCharacter(counter);
@@ -417,10 +417,10 @@ bool CTownRegion::RemoveTownMember(CChar &toAdd) {
 bool oreSkillComparator(OrePref_st o1, OrePref_st o2) {
     if (o1.oreIndex == nullptr)
         return false;
-
+    
     if (o2.oreIndex == nullptr)
         return true;
-
+    
     return o1.oreIndex->minSkill > o2.oreIndex->minSkill;
 }
 
@@ -435,13 +435,13 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
     std::string UTag;
     std::int32_t actgood = -1;
     bool orePrefLoaded = false;
-
+    
     // Some default values
     numGuards = 10;
     chanceFindBigOre = 80;
     CanTeleport(true);
     CanPlaceHouse(false);
-
+    
     RegLocs_st ourLoc;
     for (const auto &sec : toScan->collection()) {
         tag = sec->tag;
@@ -454,261 +454,261 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
-        case 'A':
-            if (UTag == "ABWEATH") {
-                weather = static_cast<std::uint8_t>(duint);
-            }
-            else if (UTag == "APPEARANCE") {
-                visualAppearance = WRLD_COUNT;
-                for (worldtype_t wt = WRLD_SPRING; wt < WRLD_COUNT;
-                     wt = static_cast<worldtype_t>(wt + static_cast<worldtype_t>(1))) {
-                    if (data == WorldTypeNames[wt]) {
-                        visualAppearance = wt;
-                        break;
-                    }
+            case 'A':
+                if (UTag == "ABWEATH") {
+                    weather = static_cast<std::uint8_t>(duint);
                 }
-                if (visualAppearance == WRLD_COUNT) {
-                    visualAppearance = WRLD_UNKNOWN;
-                }
-            }
-            break;
-        case 'B':
-            if (UTag == "BUYABLE") {
-                if (actgood > -1) {
-                    goodList[actgood].buyVal = static_cast<std::int32_t>(duint);
-                }
-                else {
-                    Console::shared().Error(
-                        "regions dfn -> You must write BUYABLE after GOOD <num>!");
-                }
-            }
-            break;
-        case 'C':
-            if (UTag == "CHANCEFORBIGORE") {
-                chanceFindBigOre = static_cast<std::uint8_t>(duint);
-            }
-            break;
-        case 'D':
-            if (UTag == "DUNGEON") {
-                IsDungeon((duint == 1));
-            }
-            break;
-        case 'E':
-            if (UTag == "ESCORTS") {
-                // Load the region number in the global array of valid escortable regions
-                if (duint == 1) {
-                    cwmWorldState->escortRegions.push_back(regionNum);
-                }
-            }
-            break;
-        case 'G':
-            if (UTag == "GUARDNUM") {
-                break;
-            }
-            else if (UTag == "GUARDLIST") {
-                guardList = data;
-            }
-            else if (UTag == "GUARDOWNER") {
-                guardowner = data;
-            }
-            else if (UTag == "GUARDED") {
-                IsGuarded((duint == 1));
-            }
-            else if (UTag == "GATE") {
-                CanGate((duint == 1));
-            }
-            else if (UTag == "GOOD") {
-                actgood = static_cast<int>(duint);
-            }
-            break;
-        case 'H':
-            if (UTag == "HOUSING") {
-                CanPlaceHouse((duint == 1));
-            }
-            break;
-        case 'I':
-            if (UTag == "INSTANCEID") {
-                instanceId = static_cast<std::uint16_t>(duint);
-            }
-            break;
-        case 'M':
-            if (UTag == "MUSICLIST" || UTag == "MIDILIST") {
-                musicList = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "MAGICDAMAGE") {
-                CanCastAggressive((duint == 1));
-            }
-            else if (UTag == "MARK") {
-                CanMark((duint == 1));
-            }
-            break;
-        case 'N':
-            if (UTag == "NAME") {
-                name = data;
-                actgood = -1;
-            }
-            break;
-        case 'O':
-            if (UTag == "OREPREF") {
-                std::string numPart;
-                std::string oreName;
-                OrePref_st toPush;
-                data = util::simplify(data);
-                oreName = oldstrutil::extractSection(data, ",", 0, 0);
-                toPush.oreIndex = Skills->FindOre(oreName);
-                if (toPush.oreIndex != nullptr) {
-                    auto csecs = oldstrutil::sections(data, ",");
-                    if (csecs.size() > 1) {
-                        // Use chance specified in orepref
-                        toPush.percentChance = static_cast<std::uint16_t>(
-                            std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                    }
-                    else if (toPush.oreIndex->oreChance > 0) {
-                        // No chance specified in orepref, use default chance of ore type
-                        toPush.percentChance = toPush.oreIndex->oreChance;
-                    }
-                    else {
-                        // Fallback for older skills.dfn setups
-                        toPush.percentChance = 1000 / static_cast<std::uint16_t>(Skills->GetNumberOfOres());
-                    }
-
-                    orePreferences.push_back(toPush);
-                    orePrefLoaded = true;
-                }
-                else {
-                    Console::shared().Error(util::format(
-                        "Invalid ore preference in region %i as %s", regionNum, oreName.c_str()));
-                }
-            }
-            break;
-        case 'P':
-            if (UTag == "PARENTREGION") {
-                // Region has a parent region! Store reference to parent region...
-                parentRegion = static_cast<std::uint16_t>(duint);
-
-                // ...and mark this region as a subregion
-                IsSubRegion(true);
-            }
-            break;
-        case 'R':
-            if (UTag == "RECALL") {
-                CanRecall((duint == 1));
-            }
-            else if (UTag == "RANDOMVALUE") {
-                if (actgood > -1) {
-                    auto ssecs = oldstrutil::sections(data, " ");
-                    if (ssecs.size() > 1) {
-                        goodList[actgood].rand1 =
-                            std::stoi(util::trim(util::strip(ssecs[0], "//")), nullptr, 0);
-                        goodList[actgood].rand2 =
-                            std::stoi(util::trim(util::strip(ssecs[1], "//")), nullptr, 0);
-                    }
-                    else {
-                        goodList[actgood].rand1 = static_cast<std::int32_t>(duint);
-                        goodList[actgood].rand2 = goodList[actgood].rand1;
-                    }
-                    if (goodList[actgood].rand2 < goodList[actgood].rand1) {
-                        Console::shared().Error(
-                            util::format(" regions dfn -> You must write RANDOMVALUE NUM2[%i] "
-                                         "greater than NUM1[%i].",
-                                         goodList[actgood].rand2, goodList[actgood].rand1));
-                        goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
-                    }
-                }
-                else {
-                    Console::shared().Error(
-                        " regions dfn -> You must write RANDOMVALUE after GOOD <num>!");
-                }
-            }
-            else if (UTag == "RACE") {
-                race = static_cast<std::uint16_t>(duint);
-            }
-            break;
-        case 'S':
-            if (UTag == "SAFEZONE") {
-                IsSafeZone((duint == 1));
-            }
-            else if (UTag == "SELLABLE") {
-                if (actgood > -1) {
-                    goodList[actgood].sellVal = static_cast<std::int32_t>(duint);
-                }
-                else {
-                    Console::shared().Error(
-                        " regions dfn -> You must write SELLABLE after GOOD <num>!");
-                }
-            }
-            else if (UTag == "SPAWN") {
-                std::string sect = "PREDEFINED_SPAWN " + data;
-                CScriptSection *predefSpawn = FileLookup->FindEntry(sect, spawn_def);
-                if (predefSpawn == nullptr) {
-                    Console::shared().Warning(util::format(
-                        "Undefined region spawn %s, check your regions.dfn and spawn.dfn files",
-                        data.c_str()));
-                }
-                else {
-                    for (std::uint16_t i = 0xFFFF; i > 0; --i) {
-                        if (cwmWorldState->spawnRegions.find(i) !=
-                            cwmWorldState->spawnRegions.end()) {
-                            CSpawnRegion *spawnReg = new CSpawnRegion(i);
-                            cwmWorldState->spawnRegions[i] = spawnReg;
-                            if (spawnReg != nullptr) {
-                                spawnReg->SetX1(locations[locations.size() - 1].x1);
-                                spawnReg->SetY1(locations[locations.size() - 1].y1);
-                                spawnReg->SetX2(locations[locations.size() - 1].x2);
-                                spawnReg->SetY2(locations[locations.size() - 1].y2);
-                                spawnReg->Load(predefSpawn);
-                            }
+                else if (UTag == "APPEARANCE") {
+                    visualAppearance = WRLD_COUNT;
+                    for (worldtype_t wt = WRLD_SPRING; wt < WRLD_COUNT;
+                         wt = static_cast<worldtype_t>(wt + static_cast<worldtype_t>(1))) {
+                        if (data == WorldTypeNames[wt]) {
+                            visualAppearance = wt;
                             break;
                         }
                     }
+                    if (visualAppearance == WRLD_COUNT) {
+                        visualAppearance = WRLD_UNKNOWN;
+                    }
                 }
-            }
-            else if (UTag == "SCRIPT") {
-                std::uint16_t scriptId = static_cast<std::uint16_t>(duint);
-                if (scriptId != 0) {
-                    cScript *toExecute = JSMapping->GetScript(scriptId);
-                    if (toExecute == nullptr) {
-                        Console::shared().Warning(
-                            util::format("SCRIPT tag found with invalid script ID (%s) when "
-                                         "loading region data!",
-                                         util::ntos(scriptId).c_str()));
+                break;
+            case 'B':
+                if (UTag == "BUYABLE") {
+                    if (actgood > -1) {
+                        goodList[actgood].buyVal = static_cast<std::int32_t>(duint);
                     }
                     else {
-                        this->AddScriptTrigger(scriptId);
+                        Console::shared().Error(
+                                                "regions dfn -> You must write BUYABLE after GOOD <num>!");
                     }
                 }
-            }
-            break;
-        case 'T':
-            if (UTag == "TELEPORT") {
-                CanTeleport((duint == 1));
-            }
-            break;
-        case 'W':
-            if (UTag == "WORLD") {
-                worldNumber = static_cast<std::uint8_t>(duint);
-            }
-            break;
-        case 'X':
-            if (UTag == "X1") {
-                ourLoc.x1 = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "X2") {
-                ourLoc.x2 = static_cast<std::uint16_t>(duint);
-            }
-            break;
-        case 'Y':
-            if (UTag == "Y1") {
-                ourLoc.y1 = static_cast<std::uint16_t>(duint);
-            }
-            else if (UTag == "Y2") {
-                ourLoc.y2 = static_cast<std::uint16_t>(duint);
-                locations.push_back(ourLoc);
-            }
-            break;
+                break;
+            case 'C':
+                if (UTag == "CHANCEFORBIGORE") {
+                    chanceFindBigOre = static_cast<std::uint8_t>(duint);
+                }
+                break;
+            case 'D':
+                if (UTag == "DUNGEON") {
+                    IsDungeon((duint == 1));
+                }
+                break;
+            case 'E':
+                if (UTag == "ESCORTS") {
+                    // Load the region number in the global array of valid escortable regions
+                    if (duint == 1) {
+                        cwmWorldState->escortRegions.push_back(regionNum);
+                    }
+                }
+                break;
+            case 'G':
+                if (UTag == "GUARDNUM") {
+                    break;
+                }
+                else if (UTag == "GUARDLIST") {
+                    guardList = data;
+                }
+                else if (UTag == "GUARDOWNER") {
+                    guardowner = data;
+                }
+                else if (UTag == "GUARDED") {
+                    IsGuarded((duint == 1));
+                }
+                else if (UTag == "GATE") {
+                    CanGate((duint == 1));
+                }
+                else if (UTag == "GOOD") {
+                    actgood = static_cast<int>(duint);
+                }
+                break;
+            case 'H':
+                if (UTag == "HOUSING") {
+                    CanPlaceHouse((duint == 1));
+                }
+                break;
+            case 'I':
+                if (UTag == "INSTANCEID") {
+                    instanceId = static_cast<std::uint16_t>(duint);
+                }
+                break;
+            case 'M':
+                if (UTag == "MUSICLIST" || UTag == "MIDILIST") {
+                    musicList = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "MAGICDAMAGE") {
+                    CanCastAggressive((duint == 1));
+                }
+                else if (UTag == "MARK") {
+                    CanMark((duint == 1));
+                }
+                break;
+            case 'N':
+                if (UTag == "NAME") {
+                    name = data;
+                    actgood = -1;
+                }
+                break;
+            case 'O':
+                if (UTag == "OREPREF") {
+                    std::string numPart;
+                    std::string oreName;
+                    OrePref_st toPush;
+                    data = util::simplify(data);
+                    oreName = oldstrutil::extractSection(data, ",", 0, 0);
+                    toPush.oreIndex = Skills->FindOre(oreName);
+                    if (toPush.oreIndex != nullptr) {
+                        auto csecs = oldstrutil::sections(data, ",");
+                        if (csecs.size() > 1) {
+                            // Use chance specified in orepref
+                            toPush.percentChance = static_cast<std::uint16_t>(
+                                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                        }
+                        else if (toPush.oreIndex->oreChance > 0) {
+                            // No chance specified in orepref, use default chance of ore type
+                            toPush.percentChance = toPush.oreIndex->oreChance;
+                        }
+                        else {
+                            // Fallback for older skills.dfn setups
+                            toPush.percentChance = 1000 / static_cast<std::uint16_t>(Skills->GetNumberOfOres());
+                        }
+                        
+                        orePreferences.push_back(toPush);
+                        orePrefLoaded = true;
+                    }
+                    else {
+                        Console::shared().Error(util::format(
+                                                             "Invalid ore preference in region %i as %s", regionNum, oreName.c_str()));
+                    }
+                }
+                break;
+            case 'P':
+                if (UTag == "PARENTREGION") {
+                    // Region has a parent region! Store reference to parent region...
+                    parentRegion = static_cast<std::uint16_t>(duint);
+                    
+                    // ...and mark this region as a subregion
+                    IsSubRegion(true);
+                }
+                break;
+            case 'R':
+                if (UTag == "RECALL") {
+                    CanRecall((duint == 1));
+                }
+                else if (UTag == "RANDOMVALUE") {
+                    if (actgood > -1) {
+                        auto ssecs = oldstrutil::sections(data, " ");
+                        if (ssecs.size() > 1) {
+                            goodList[actgood].rand1 =
+                            std::stoi(util::trim(util::strip(ssecs[0], "//")), nullptr, 0);
+                            goodList[actgood].rand2 =
+                            std::stoi(util::trim(util::strip(ssecs[1], "//")), nullptr, 0);
+                        }
+                        else {
+                            goodList[actgood].rand1 = static_cast<std::int32_t>(duint);
+                            goodList[actgood].rand2 = goodList[actgood].rand1;
+                        }
+                        if (goodList[actgood].rand2 < goodList[actgood].rand1) {
+                            Console::shared().Error(
+                                                    util::format(" regions dfn -> You must write RANDOMVALUE NUM2[%i] "
+                                                                 "greater than NUM1[%i].",
+                                                                 goodList[actgood].rand2, goodList[actgood].rand1));
+                            goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
+                        }
+                    }
+                    else {
+                        Console::shared().Error(
+                                                " regions dfn -> You must write RANDOMVALUE after GOOD <num>!");
+                    }
+                }
+                else if (UTag == "RACE") {
+                    race = static_cast<std::uint16_t>(duint);
+                }
+                break;
+            case 'S':
+                if (UTag == "SAFEZONE") {
+                    IsSafeZone((duint == 1));
+                }
+                else if (UTag == "SELLABLE") {
+                    if (actgood > -1) {
+                        goodList[actgood].sellVal = static_cast<std::int32_t>(duint);
+                    }
+                    else {
+                        Console::shared().Error(
+                                                " regions dfn -> You must write SELLABLE after GOOD <num>!");
+                    }
+                }
+                else if (UTag == "SPAWN") {
+                    std::string sect = "PREDEFINED_SPAWN " + data;
+                    CScriptSection *predefSpawn = FileLookup->FindEntry(sect, spawn_def);
+                    if (predefSpawn == nullptr) {
+                        Console::shared().Warning(util::format(
+                                                               "Undefined region spawn %s, check your regions.dfn and spawn.dfn files",
+                                                               data.c_str()));
+                    }
+                    else {
+                        for (std::uint16_t i = 0xFFFF; i > 0; --i) {
+                            if (cwmWorldState->spawnRegions.find(i) !=
+                                cwmWorldState->spawnRegions.end()) {
+                                CSpawnRegion *spawnReg = new CSpawnRegion(i);
+                                cwmWorldState->spawnRegions[i] = spawnReg;
+                                if (spawnReg != nullptr) {
+                                    spawnReg->SetX1(locations[locations.size() - 1].x1);
+                                    spawnReg->SetY1(locations[locations.size() - 1].y1);
+                                    spawnReg->SetX2(locations[locations.size() - 1].x2);
+                                    spawnReg->SetY2(locations[locations.size() - 1].y2);
+                                    spawnReg->Load(predefSpawn);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (UTag == "SCRIPT") {
+                    std::uint16_t scriptId = static_cast<std::uint16_t>(duint);
+                    if (scriptId != 0) {
+                        cScript *toExecute = JSMapping->GetScript(scriptId);
+                        if (toExecute == nullptr) {
+                            Console::shared().Warning(
+                                                      util::format("SCRIPT tag found with invalid script ID (%s) when "
+                                                                   "loading region data!",
+                                                                   util::ntos(scriptId).c_str()));
+                        }
+                        else {
+                            this->AddScriptTrigger(scriptId);
+                        }
+                    }
+                }
+                break;
+            case 'T':
+                if (UTag == "TELEPORT") {
+                    CanTeleport((duint == 1));
+                }
+                break;
+            case 'W':
+                if (UTag == "WORLD") {
+                    worldNumber = static_cast<std::uint8_t>(duint);
+                }
+                break;
+            case 'X':
+                if (UTag == "X1") {
+                    ourLoc.x1 = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "X2") {
+                    ourLoc.x2 = static_cast<std::uint16_t>(duint);
+                }
+                break;
+            case 'Y':
+                if (UTag == "Y1") {
+                    ourLoc.y1 = static_cast<std::uint16_t>(duint);
+                }
+                else if (UTag == "Y2") {
+                    ourLoc.y2 = static_cast<std::uint16_t>(duint);
+                    locations.push_back(ourLoc);
+                }
+                break;
         }
     }
-
+    
     // No ore preference tags found for this region, apply default chance to find ores
     if (!orePrefLoaded) {
         OrePref_st toLoad;
@@ -922,7 +922,7 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
             {
                 if (!AddAsTownMember((*tChar))) {
                     sock->SysMessage(1126); // An error occurred joining you to your rightful town,
-                                            // please call a GM!
+                    // please call a GM!
                     return false;
                 }
                 else {
@@ -940,7 +940,7 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
     else {
         SendDefaultGump(sock);
     }
-
+    
     return true;
 }
 
@@ -952,7 +952,7 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
 bool CTownRegion::IsMemberOfTown(CChar *player) const {
     if (!ValidateObject(player))
         return false;
-
+    
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         if (townMember[counter].townMember == player->GetSerial())
             return true;
@@ -969,19 +969,19 @@ void CTownRegion::SendEnemyGump(CSocket *sock) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
-
+    
     toSend.addCommand("page 0");
     toSend.addCommand(
-        util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
+                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
     toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
                                    cwmWorldState->ServerData()->ButtonCancel(),
                                    cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format(
-        "text 70 10 %u 0",
-        cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
-                                                      // <Length, Color?> <# in order>
+                                   "text 70 10 %u 0",
+                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
-
+    
     toSend.addText("Enemy");
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand(util::format("text 35 51 %u 1",
@@ -989,21 +989,21 @@ void CTownRegion::SendEnemyGump(CSocket *sock) {
     toSend.addCommand(util::format("text 25 71 %u 2",
                                    cwmWorldState->ServerData()->RightTextColour())); // population
     toSend.addCommand(util::format(
-        "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // Seize townstone
+                                   "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // Seize townstone
     toSend.addCommand(util::format(
-        "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour())); // Destroy townstone
-
+                                   "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour())); // Destroy townstone
+    
     toSend.addCommand(
-        util::format("button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // seize townstone
+                      util::format("button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // seize townstone
     toSend.addCommand(
-        util::format("button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // destroy townstone
+                      util::format("button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // destroy townstone
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
     toSend.addText("Seize Townstone");
     toSend.addText("Attack Townstone");
-
+    
     toSend.Finalize();
     sock->Send(&toSend);
 }
@@ -1029,19 +1029,19 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
-
+    
     toSend.addCommand("page 0");
     toSend.addCommand(
-        util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
+                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
     toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
                                    cwmWorldState->ServerData()->ButtonCancel(),
                                    cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format(
-        "text 70 10 %u 0",
-        cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
-                                                      // <Length, Color?> <# in order>
+                                   "text 70 10 %u 0",
+                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
-
+    
     toSend.addText("Outsider");              // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand(util::format("text 35 51 %u 1",
@@ -1051,23 +1051,23 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
     toSend.addCommand(util::format("text 55 91 %u 3",
                                    cwmWorldState->ServerData()->RightTextColour())); // join town
     toSend.addCommand(util::format(
-        "text 55 111 %u 4",
-        cwmWorldState->ServerData()
-            ->RightTextColour())); // view taxes (to help make decisions about joining?)
-
+                                   "text 55 111 %u 4",
+                                   cwmWorldState->ServerData()
+                                   ->RightTextColour())); // view taxes (to help make decisions about joining?)
+    
     toSend.addCommand(util::format("button 25 91 %u %i 1 0 41",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // leave town
     toSend.addCommand(util::format("button 25 111 %u %i 1 0 3",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // view taxes
-
+    
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
-
+    
     toSend.addText(util::format(Dictionary->GetEntry(1127, sLang), GetPopulation()));
     toSend.addText(Dictionary->GetEntry(1128, sLang));
     toSend.addText(Dictionary->GetEntry(1129, sLang));
-
+    
     toSend.Finalize();
     sock->Send(&toSend);
 }
@@ -1082,21 +1082,21 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
-
+    
     toSend.addCommand("page 0");
     toSend.addCommand(
-        util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
+                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
     toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
                                    cwmWorldState->ServerData()->ButtonCancel(),
                                    cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format(
-        "text 70 10 %u 0",
-        cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
-                                                      // <Length, Color?> <# in order>
+                                   "text 70 10 %u 0",
+                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
-
+    
     toSend.addText("Mayor Controls"); // our title
-
+    
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand("gumppic 25 260 1141");
     toSend.addCommand(util::format("text 35 51 %u 1",
@@ -1106,44 +1106,44 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     toSend.addCommand(util::format("text 55 91 %u 3",
                                    cwmWorldState->ServerData()->RightTextColour())); // set taxes
     toSend.addCommand(util::format(
-        "text 55 280 %u 4", cwmWorldState->ServerData()->RightTextColour())); // return to main menu
+                                   "text 55 280 %u 4", cwmWorldState->ServerData()->RightTextColour())); // return to main menu
     toSend.addCommand(util::format(
-        "text 55 111 %u 5", cwmWorldState->ServerData()->RightTextColour())); // list town members
+                                   "text 55 111 %u 5", cwmWorldState->ServerData()->RightTextColour())); // list town members
     toSend.addCommand(
-        util::format("text 55 131 %u 6",
-                     cwmWorldState->ServerData()->RightTextColour())); // force early election
+                      util::format("text 55 131 %u 6",
+                                   cwmWorldState->ServerData()->RightTextColour())); // force early election
     toSend.addCommand(
-        util::format("text 55 151 %u 7",
-                     cwmWorldState->ServerData()->RightTextColour())); // purchase more guards
+                      util::format("text 55 151 %u 7",
+                                   cwmWorldState->ServerData()->RightTextColour())); // purchase more guards
     toSend.addCommand(util::format("text 55 171 %u 8",
                                    cwmWorldState->ServerData()->RightTextColour())); // fire a guard
     toSend.addCommand(util::format(
-        "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour())); // treasury amount
+                                   "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour())); // treasury amount
     toSend.addCommand(util::format("text 55 191 %u 10",
                                    cwmWorldState->ServerData()->RightTextColour())); // make ally
-
+    
     toSend.addCommand(util::format("button 25 91 %u %i 1 0 21",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // set taxes
     toSend.addCommand(
-        util::format("button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // list town members
+                      util::format("button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // list town members
     toSend.addCommand(
-        util::format("button 25 131 %u %i 1 0 23", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // force early election
+                      util::format("button 25 131 %u %i 1 0 23", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // force early election
     toSend.addCommand(
-        util::format("button 25 151 %u %i 1 0 24", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // purchase more guards
+                      util::format("button 25 151 %u %i 1 0 24", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // purchase more guards
     toSend.addCommand(util::format("button 25 171 %u %i 1 0 25",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // fire a guard
     toSend.addCommand(
-        util::format("button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // return to main menu
+                      util::format("button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // return to main menu
     toSend.addCommand(
-        util::format("button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // make ally of other town
-
+                      util::format("button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // make ally of other town
+    
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format(Dictionary->GetEntry(1130, sLang), GetPopulation()));
     toSend.addText(Dictionary->GetEntry(1131, sLang));
@@ -1154,7 +1154,7 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     toSend.addText(Dictionary->GetEntry(1136, sLang));
     toSend.addText(util::format(Dictionary->GetEntry(1137, sLang), goldReserved));
     toSend.addText(Dictionary->GetEntry(1138, sLang));
-
+    
     toSend.Finalize();
     sock->Send(&toSend);
 }
@@ -1168,19 +1168,19 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
-
+    
     toSend.addCommand("page 0");
     toSend.addCommand(
-        util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
+                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
     toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
                                    cwmWorldState->ServerData()->ButtonCancel(),
                                    cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format(
-        "text 70 10 %u 0",
-        cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
-                                                      // <Length, Color?> <# in order>
+                                   "text 70 10 %u 0",
+                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
-
+    
     toSend.addText("Generic View");          // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand(util::format("text 35 51 %u 1",
@@ -1192,21 +1192,21 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     toSend.addCommand(util::format("text 55 111 %u 4",
                                    cwmWorldState->ServerData()->RightTextColour())); // view taxes
     toSend.addCommand(
-        util::format("text 55 131 %u 5",
-                     cwmWorldState->ServerData()->RightTextColour())); // toggle town title on/off
+                      util::format("text 55 131 %u 5",
+                                   cwmWorldState->ServerData()->RightTextColour())); // toggle town title on/off
     toSend.addCommand(util::format(
-        "text 55 151 %u 6", cwmWorldState->ServerData()->RightTextColour())); // vote for mayor
+                                   "text 55 151 %u 6", cwmWorldState->ServerData()->RightTextColour())); // vote for mayor
     toSend.addCommand(util::format(
-        "text 55 171 %u 7", cwmWorldState->ServerData()->RightTextColour())); // donate resource
+                                   "text 55 171 %u 7", cwmWorldState->ServerData()->RightTextColour())); // donate resource
     toSend.addCommand(
-        util::format("tilepic 205 171 %u", GetResourceId())); // picture of the resource
+                      util::format("tilepic 205 171 %u", GetResourceId())); // picture of the resource
     toSend.addCommand(util::format("text 55 191 %u 8",
                                    cwmWorldState->ServerData()->RightTextColour())); // view budget
     toSend.addCommand(util::format(
-        "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour())); // view allied towns
+                                   "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour())); // view allied towns
     toSend.addCommand(util::format(
-        "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour())); // view enemy towns
-
+                                   "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour())); // view enemy towns
+    
     toSend.addCommand(util::format("button 25 91 %u %i 1 0 2",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // leave town
@@ -1217,8 +1217,8 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // toggle title
     toSend.addCommand(
-        util::format("button 25 151 %u %i 1 0 5", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // vote for mayor
+                      util::format("button 25 151 %u %i 1 0 5", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // vote for mayor
     toSend.addCommand(util::format("button 25 171 %u %i 1 0 6",
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // donate gold
@@ -1226,12 +1226,12 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
                                    cwmWorldState->ServerData()->ButtonRight(),
                                    cwmWorldState->ServerData()->ButtonRight() + 1)); // view budget
     toSend.addCommand(
-        util::format("button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // view allied towns
+                      util::format("button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view allied towns
     toSend.addCommand(
-        util::format("button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(),
-                     cwmWorldState->ServerData()->ButtonRight() + 1)); // view enemy towns
-
+                      util::format("button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(),
+                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view enemy towns
+    
     CChar *mChar = sock->CurrcharObj();
     unicodetypes_t sLang = sock->Language();
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
@@ -1239,20 +1239,20 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     toSend.addText(Dictionary->GetEntry(1140, sLang));
     toSend.addText(Dictionary->GetEntry(1141, sLang));
     toSend.addText(
-        util::format(Dictionary->GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
+                   util::format(Dictionary->GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
     toSend.addText(Dictionary->GetEntry(1143, sLang));
     toSend.addText(Dictionary->GetEntry(1144, sLang));
     toSend.addText(Dictionary->GetEntry(1145, sLang));
     toSend.addText(Dictionary->GetEntry(1146, sLang));
     toSend.addText(Dictionary->GetEntry(1147, sLang));
-
+    
     if (mChar->GetTownPriv() == 2 || mChar->IsGM()) // if we've got a mayor (remove isGM check!)
     {
         toSend.addCommand(util::format("button 25 281 %u %i 1 0 20",
                                        cwmWorldState->ServerData()->ButtonRight(),
                                        cwmWorldState->ServerData()->ButtonRight() + 1));
         toSend.addCommand(
-            util::format("text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour()));
+                          util::format("text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour()));
         toSend.addText(Dictionary->GetEntry(1148, sLang));
     }
     toSend.Finalize();
@@ -1308,7 +1308,7 @@ std::string CTownRegion::GetTownMemberSerials(void) const {
             }
             else {
                 townMemberSerials +=
-                    std::string(",") + std::to_string(townMember[counter].townMember);
+                std::string(",") + std::to_string(townMember[counter].townMember);
             }
         }
     }
@@ -1388,8 +1388,8 @@ bool CTownRegion::DonateResource(CSocket *s, std::int32_t amount) {
     CChar *tChar = s->CurrcharObj();
     if (amount > 1000) {
         s->SysMessage(
-            1155,
-            tChar->GetName().c_str()); // Thank you most kindly %s for your most generous donation!
+                      1155,
+                      tChar->GetName().c_str()); // Thank you most kindly %s for your most generous donation!
     }
     else if (amount > 750) {
         s->SysMessage(1156,
@@ -1418,7 +1418,7 @@ bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
         sock->SysMessage(1160); // You cannot afford that many guards!
         return false;
     }
-
+    
     goldReserved -= (number * 10000);
     for (std::uint8_t counter = 0; counter < number; ++counter) {
         ++numGuards;
@@ -1439,7 +1439,7 @@ bool CTownRegion::ViewBudget(CSocket *sock) {
     Budget.AddData(Dictionary->GetEntry(1163, sLang), numGuards);       // Guards Total
     Budget.AddData(Dictionary->GetEntry(1164, sLang), numGuards * 20);  // Guard Upkeep
     Budget.Send(4, false, INVALIDSERIAL);
-
+    
     return true;
 }
 
@@ -1457,7 +1457,7 @@ bool CTownRegion::PeriodicCheck(void) {
             if (ValidateObject(townMem)) {
                 std::uint16_t resourceId = GetResourceId();
                 std::uint32_t numResources = GetItemAmount(townMem, resourceId);
-
+                
                 if (taxedAmount > numResources) {
                     std::uint32_t bankAmount = GetBankCount(townMem, resourceId, 0, 0);
                     if (taxedAmount > (numResources + bankAmount)) {
@@ -1490,27 +1490,27 @@ bool CTownRegion::PeriodicCheck(void) {
         goldReserved -= 20 * numGuards;
         timeSinceGuardsPaid = static_cast<std::int32_t>(now);
     }
-
+    
     if (now > timeToNextPoll && !townMember.empty()) {
         TellMembers(
-            1165); // Time to head to the polling booths again folks, vote for your mayor today!
+                    1165); // Time to head to the polling booths again folks, vote for your mayor today!
         for (size_t counter = 0; counter < townMember.size(); ++counter) {
             townMember[counter].targVote = INVALIDSERIAL;
         }
         timeToElectionClose =
-            static_cast<std::int32_t>(now) +
-            cwmWorldState->ServerData()->TownNumSecsPollOpen(); // 2 days polls are open
+        static_cast<std::int32_t>(now) +
+        cwmWorldState->ServerData()->TownNumSecsPollOpen(); // 2 days polls are open
         timeToNextPoll =
-            timeToElectionClose +
-            cwmWorldState->ServerData()
-                ->TownNumSecsAsMayor(); // secs as mayor over the top of the end of the poll
+        timeToElectionClose +
+        cwmWorldState->ServerData()
+        ->TownNumSecsAsMayor(); // secs as mayor over the top of the end of the poll
         CChar *mayor = GetMayor();
         if (ValidateObject(mayor)) {
             mayor->SetTownpriv(1); // mayor becomes a basic member again, so he can't do anything
-                                   // while the poll is occuring :>
+            // while the poll is occuring :>
         }
     }
-
+    
     if (now > timeToElectionClose && !townMember.empty()) // election finished
     {
         TellMembers(1166); // The voting has finished, thank you for your participation!
@@ -1538,19 +1538,19 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
     toSend.GumpId(3);
-
+    
     toSend.addCommand("page 0");
     toSend.addCommand(
-        util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
+                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
     toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
                                    cwmWorldState->ServerData()->ButtonCancel(),
                                    cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format(
-        "text 70 10 %u 0",
-        cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
-                                                      // <Length, Color?> <# in order>
+                                   "text 70 10 %u 0",
+                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
-
+    
     toSend.addText("Taxes");                 // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand(util::format("text 35 51 %u 1",
@@ -1558,9 +1558,9 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
     toSend.addCommand(util::format("text 35 71 %u 2",
                                    cwmWorldState->ServerData()->RightTextColour())); // population
     toSend.addCommand(util::format(
-        "text 35 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // # of resources
+                                   "text 35 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // # of resources
     toSend.addCommand(util::format("tilepic 5 111 %u", GetResourceId())); // picture of the resource
-
+    
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
     CTile &tile = Map->SeekTile(GetResourceId());
@@ -1625,23 +1625,23 @@ bool CTownRegion::IsAlliedTown(std::uint16_t townToCheck) const {
 bool CTownRegion::MakeAlliedTown(std::uint16_t townToMake) {
     if (regionNum == townToMake)
         return false;
-
+    
     if (IsAlliedTown(townToMake)) // already allied
     {
         TellMembers(1171); // The mayor attempted to ally you with a town you already belong to.
         return false;
     }
-
+    
     if (Races->CompareByRace(cwmWorldState->townRegions[townToMake]->GetRace(), race) <=
         RACE_ENEMY) // if we're racial enemies
         return false;
-
+    
     // let's ally ourselves
     alliedTowns.push_back(townToMake);
     TellMembers(1172, name.c_str(),
                 cwmWorldState->townRegions[townToMake]
-                    ->GetName()
-                    .c_str()); // Your town of %s has now allied itself with %s.
+                ->GetName()
+                .c_str()); // Your town of %s has now allied itself with %s.
     return true;
 }
 
@@ -1655,7 +1655,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
         CChar *targetChar = CalcCharObjFromSer(townMember[memberCounter].townMember);
         if (!ValidateObject(targetChar))
             continue;
-
+        
         CSocket *targetSock = targetChar->GetSocket();
         if (targetSock != nullptr) {
             std::string txt = Dictionary->GetEntry(dictEntry, targetSock->Language());
@@ -1663,7 +1663,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
             va_list argptr;
             va_start(argptr, dictEntry);
             msg += oldstrutil::format(txt, argptr);
-
+            
             if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
                 CPUnicodeMessage unicodeMessage;
                 unicodeMessage.Message(msg);
@@ -1708,14 +1708,14 @@ void CTownRegion::SetRace(raceid_t newRace) { race = newRace; }
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendAlliedTowns(CSocket *sock) {
     CGumpDisplay Ally(sock, 300, 300);
-
+    
     auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(),
                              alliedTowns.size()); // Allied Towns (%i)
     Ally.SetTitle(temp);
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
         Ally.AddData(cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " ");
     }
-
+    
     Ally.Send(4, false, INVALIDSERIAL);
 }
 
@@ -1745,18 +1745,18 @@ void CTownRegion::ForceEarlyElection(void) {
 // o------------------------------------------------------------------------------------------------o
 auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
     auto Enemy = CGumpDisplay(sock, 300, 300);
-
+    
     std::uint8_t enemyCount = 0;
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
                   [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
-                      if ((entry.first != regionNum) &&
-                          (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
-                          ++enemyCount;
-                          Enemy.AddData(entry.second->GetName(),
-                                        Races->Name(entry.second->GetRace()));
-                      }
-                  });
-
+        if ((entry.first != regionNum) &&
+            (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
+            ++enemyCount;
+            Enemy.AddData(entry.second->GetName(),
+                          Races->Name(entry.second->GetRace()));
+        }
+    });
+    
     Enemy.SetTitle(util::format("Enemy Towns (%u)", enemyCount));
     Enemy.Send(4, false, INVALIDSERIAL);
 }
@@ -1770,13 +1770,13 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
 void CTownRegion::Possess(CTownRegion *possessorTown) {
     possessorTown->SetRace(race);
     possessorTown->TellMembers(
-        1175); // There has been an influx of money due to theft of another town's stone!
+                               1175); // There has been an influx of money due to theft of another town's stone!
     possessorTown->SetReserves(possessorTown->GetReserves() + GetReserves() / 3 * 2);
     possessorTown->SetTaxesLeft(possessorTown->GetTaxes() + GetTaxes() / 3 * 2);
     TellMembers(1176); // The town has been destroyed, beware the guards!
     MakeAlliedTown(possessorTown->GetRegionNum());
     possessorTown->MakeAlliedTown(regionNum);
-
+    
     // remove the old members, preparing the way for the new ones
     CChar *targChar;
     for (size_t counter = townMember.size(); counter-- > 0 && counter < townMember.size();) {
@@ -1842,7 +1842,7 @@ size_t CTownRegion::GetNumOrePreferences(void) const { return orePreferences.siz
 const OrePref_st *CTownRegion::GetOrePreference(size_t targValue) const {
     if (targValue >= orePreferences.size())
         return nullptr;
-
+    
     return &orePreferences[targValue];
 }
 
@@ -1925,7 +1925,7 @@ void CTownRegion::AddScriptTrigger(std::uint16_t newValue) {
         // Add scriptId to scriptTriggers if not already present
         scriptTriggers.push_back(newValue);
     }
-
+    
     // Sort vector in ascending order, so order in which scripts are evaluated is predictable
     std::sort(scriptTriggers.begin(), scriptTriggers.end());
 }
@@ -1977,6 +1977,6 @@ size_t CTownRegion::GetNumLocations(void) const { return locations.size(); }
 const RegLocs_st *CTownRegion::GetLocation(size_t locNum) const {
     if (locNum >= locations.size())
         return nullptr;
-
+    
     return &locations[locNum];
 }

@@ -168,26 +168,26 @@ const std::uint32_t DEFPLAYER_NPCGUILDJOINED = 0;
 const std::uint32_t DEFPLAYER_PLAYTIME = 0;
 
 CChar::PlayerValues_st::PlayerValues_st()
-    : callNum(DEFPLAYER_CALLNUM), playerCallNum(DEFPLAYER_PLAYERCALLNUM),
-      trackingTarget(DEFPLAYER_TRACKINGTARGET), squelched(DEFPLAYER_SQUELCHED),
-      commandLevel(DEFPLAYER_COMMANDLEVEL), postType(DEFPLAYER_POSTTYPE),
-      hairStyle(DEFPLAYER_HAIRSTYLE), beardStyle(DEFPLAYER_BEARDSTYLE),
-      hairColour(DEFPLAYER_HAIRCOLOUR), beardColour(DEFPLAYER_BEARDCOLOUR), speechItem(nullptr),
-      speechMode(DEFPLAYER_SPEECHMODE), speechId(DEFPLAYER_SPEECHID), speechCallback(nullptr),
-      robe(DEFPLAYER_ROBE), accountNum(DEFPLAYER_ACCOUNTNUM), origSkin(DEFPLAYER_ORIGSKIN),
-      origId(DEFPLAYER_ORIGID), fixedLight(DEFPLAYER_FIXEDLIGHT), deaths(DEFPLAYER_DEATHS),
-      socket(nullptr), townVote(DEFPLAYER_TOWNVOTE), townPriv(DEFPLAYER_TOWNPRIV),
-      controlSlotsUsed(DEFPLAYER_CONTROLSLOTSUSED), createdOn(DEFPLAYER_CREATEDON),
-      npcGuildJoined(DEFPLAYER_NPCGUILDJOINED), playTime(DEFPLAYER_PLAYTIME) {
+: callNum(DEFPLAYER_CALLNUM), playerCallNum(DEFPLAYER_PLAYERCALLNUM),
+trackingTarget(DEFPLAYER_TRACKINGTARGET), squelched(DEFPLAYER_SQUELCHED),
+commandLevel(DEFPLAYER_COMMANDLEVEL), postType(DEFPLAYER_POSTTYPE),
+hairStyle(DEFPLAYER_HAIRSTYLE), beardStyle(DEFPLAYER_BEARDSTYLE),
+hairColour(DEFPLAYER_HAIRCOLOUR), beardColour(DEFPLAYER_BEARDCOLOUR), speechItem(nullptr),
+speechMode(DEFPLAYER_SPEECHMODE), speechId(DEFPLAYER_SPEECHID), speechCallback(nullptr),
+robe(DEFPLAYER_ROBE), accountNum(DEFPLAYER_ACCOUNTNUM), origSkin(DEFPLAYER_ORIGSKIN),
+origId(DEFPLAYER_ORIGID), fixedLight(DEFPLAYER_FIXEDLIGHT), deaths(DEFPLAYER_DEATHS),
+socket(nullptr), townVote(DEFPLAYER_TOWNVOTE), townPriv(DEFPLAYER_TOWNPRIV),
+controlSlotsUsed(DEFPLAYER_CONTROLSLOTSUSED), createdOn(DEFPLAYER_CREATEDON),
+npcGuildJoined(DEFPLAYER_NPCGUILDJOINED), playTime(DEFPLAYER_PLAYTIME) {
     // memset( &lockState[0],		0, sizeof( std::uint8_t )		* (INTELLECT+1) );
     //  Changed to the following, as only the 15?16? first lockStates would get initialized or
     //  whanot
     memset(&lockState[0], 0, sizeof(lockState));
-
+    
     for (std::uint8_t j = 0; j <= INTELLECT; ++j) {
         atrophy[j] = j;
     }
-
+    
     if (cwmWorldState != nullptr) {
         trackingTargets.resize(cwmWorldState->ServerData()->TrackingMaxTargets());
     }
@@ -231,27 +231,27 @@ const std::uint16_t DEFNPC_PATHTARGX = 0;
 const std::uint16_t DEFNPC_PATHTARGY = 0;
 
 CChar::NPCValues_st::NPCValues_st()
-    : wanderMode(DEFNPC_WANDER), oldWanderMode(DEFNPC_OLDWANDER), fTarg(DEFNPC_FTARG),
-      fz(DEFNPC_FZ1), aiType(DEFNPC_AITYPE), spellAttack(DEFNPC_SPATTACK),
-      spellDelay(DEFNPC_SPADELAY), taming(DEFNPC_TAMING), fleeAt(DEFNPC_FLEEAT),
-      reAttackAt(DEFNPC_REATTACKAT), fleeDistance(DEFNPC_FLEEDISTANCE), splitNum(DEFNPC_SPLIT),
-      splitChance(DEFNPC_SPLITCHANCE), trainingPlayerIn(DEFNPC_TRAININGPLAYERIN),
-      goldOnHand(DEFNPC_HOLDG), questType(DEFNPC_QUESTTYPE),
-      questDestRegion(DEFNPC_QUESTDESTREGION), questOrigRegion(DEFNPC_QUESTORIGREGION),
-      petGuarding(nullptr), npcFlag(DEFNPC_NPCFLAG), boolFlags(DEFNPC_BOOLFLAG),
-      peaceing(DEFNPC_PEACEING), provoing(DEFNPC_PROVOING), tamedHungerRate(DEFNPC_TAMEDHUNGERRATE),
-      tamedThirstRate(DEFNPC_TAMEDTHIRSTRATE), hungerWildChance(DEFNPC_HUNGERWILDCHANCE),
-      thirstWildChance(DEFNPC_THIRSTWILDCHANCE), walkingSpeed(DEFNPC_MOVEMENTSPEED),
-      runningSpeed(DEFNPC_MOVEMENTSPEED), fleeingSpeed(DEFNPC_MOVEMENTSPEED),
-      pathFail(DEFNPC_PATHFAIL), pathResult(DEFNPC_PATHRESULT), pathTargX(DEFNPC_PATHTARGX),
-      pathTargY(DEFNPC_PATHTARGY), controlSlots(DEFNPC_CONTROLSLOTS), maxLoyalty(DEFNPC_MAXLOYALTY),
-      loyalty(DEFNPC_LOYALTY), orneriness(DEFNPC_ORNERINESS),
-      mountedWalkingSpeed(DEFNPC_MOVEMENTSPEED), mountedRunningSpeed(DEFNPC_MOVEMENTSPEED),
-      mountedFleeingSpeed(DEFNPC_MOVEMENTSPEED) {
+: wanderMode(DEFNPC_WANDER), oldWanderMode(DEFNPC_OLDWANDER), fTarg(DEFNPC_FTARG),
+fz(DEFNPC_FZ1), aiType(DEFNPC_AITYPE), spellAttack(DEFNPC_SPATTACK),
+spellDelay(DEFNPC_SPADELAY), taming(DEFNPC_TAMING), fleeAt(DEFNPC_FLEEAT),
+reAttackAt(DEFNPC_REATTACKAT), fleeDistance(DEFNPC_FLEEDISTANCE), splitNum(DEFNPC_SPLIT),
+splitChance(DEFNPC_SPLITCHANCE), trainingPlayerIn(DEFNPC_TRAININGPLAYERIN),
+goldOnHand(DEFNPC_HOLDG), questType(DEFNPC_QUESTTYPE),
+questDestRegion(DEFNPC_QUESTDESTREGION), questOrigRegion(DEFNPC_QUESTORIGREGION),
+petGuarding(nullptr), npcFlag(DEFNPC_NPCFLAG), boolFlags(DEFNPC_BOOLFLAG),
+peaceing(DEFNPC_PEACEING), provoing(DEFNPC_PROVOING), tamedHungerRate(DEFNPC_TAMEDHUNGERRATE),
+tamedThirstRate(DEFNPC_TAMEDTHIRSTRATE), hungerWildChance(DEFNPC_HUNGERWILDCHANCE),
+thirstWildChance(DEFNPC_THIRSTWILDCHANCE), walkingSpeed(DEFNPC_MOVEMENTSPEED),
+runningSpeed(DEFNPC_MOVEMENTSPEED), fleeingSpeed(DEFNPC_MOVEMENTSPEED),
+pathFail(DEFNPC_PATHFAIL), pathResult(DEFNPC_PATHRESULT), pathTargX(DEFNPC_PATHTARGX),
+pathTargY(DEFNPC_PATHTARGY), controlSlots(DEFNPC_CONTROLSLOTS), maxLoyalty(DEFNPC_MAXLOYALTY),
+loyalty(DEFNPC_LOYALTY), orneriness(DEFNPC_ORNERINESS),
+mountedWalkingSpeed(DEFNPC_MOVEMENTSPEED), mountedRunningSpeed(DEFNPC_MOVEMENTSPEED),
+mountedFleeingSpeed(DEFNPC_MOVEMENTSPEED) {
     fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
     petFriends.resize(0);
     foodList.reserve(MAX_NAME);
-
+    
     // Mark all characters as "non-awake" my default. This is used by UOX3 to see which
     // NPCs are permanently awake and need updating outside of region-based checks
     boolFlags.set(BIT_AWAKE, false);
@@ -300,50 +300,50 @@ const std::uint16_t DEFCHAR_NPCGUILD = 0;
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
 CChar::CChar()
-    : CBaseObject(), bools(DEFCHAR_BOOLS), fontType(DEFCHAR_FONTTYPE), maxHP(DEFCHAR_MAXHP),
-      maxHP_oldstr(DEFCHAR_MAXHP_OLDSTR), oldRace(DEFCHAR_OLDRACE), maxMana(DEFCHAR_MAXMANA),
-      maxMana_oldint(DEFCHAR_MAXMANA_OLDINT), maxStam(DEFCHAR_MAXSTAM),
-      maxStam_olddex(DEFCHAR_MAXSTAM_OLDDEX), sayColor(DEFCHAR_SAYCOLOUR),
-      emoteColor(DEFCHAR_EMOTECOLOUR), cell(DEFCHAR_CELL), packItem(nullptr), targ(DEFCHAR_TARG),
-      attacker(DEFCHAR_ATTACKER), hunger(DEFCHAR_HUNGER), thirst(DEFCHAR_THIRST),
-      regionNum(DEFCHAR_REGIONNUM), town(DEFCHAR_TOWN), advObj(DEFCHAR_ADVOBJ),
-      guildFealty(DEFCHAR_GUILDFEALTY), guildNumber(DEFCHAR_GUILDNUMBER), flag(DEFCHAR_FLAG),
-      spellCast(DEFCHAR_SPELLCAST), nextAct(DEFCHAR_NEXTACTION), stealth(DEFCHAR_STEALTH),
-      running(DEFCHAR_RUNNING), raceGate(DEFCHAR_RACEGATE), step(DEFCHAR_STEP), priv(DEFCHAR_PRIV),
-      PoisonStrength(DEFCHAR_POISONSTRENGTH), bodyType(DEFCHAR_BODYTYPE),
-      lastMoveTime(DEFCHAR_LASTMOVETIME), npcGuild(DEFCHAR_NPCGUILD) {
+: CBaseObject(), bools(DEFCHAR_BOOLS), fontType(DEFCHAR_FONTTYPE), maxHP(DEFCHAR_MAXHP),
+maxHP_oldstr(DEFCHAR_MAXHP_OLDSTR), oldRace(DEFCHAR_OLDRACE), maxMana(DEFCHAR_MAXMANA),
+maxMana_oldint(DEFCHAR_MAXMANA_OLDINT), maxStam(DEFCHAR_MAXSTAM),
+maxStam_olddex(DEFCHAR_MAXSTAM_OLDDEX), sayColor(DEFCHAR_SAYCOLOUR),
+emoteColor(DEFCHAR_EMOTECOLOUR), cell(DEFCHAR_CELL), packItem(nullptr), targ(DEFCHAR_TARG),
+attacker(DEFCHAR_ATTACKER), hunger(DEFCHAR_HUNGER), thirst(DEFCHAR_THIRST),
+regionNum(DEFCHAR_REGIONNUM), town(DEFCHAR_TOWN), advObj(DEFCHAR_ADVOBJ),
+guildFealty(DEFCHAR_GUILDFEALTY), guildNumber(DEFCHAR_GUILDNUMBER), flag(DEFCHAR_FLAG),
+spellCast(DEFCHAR_SPELLCAST), nextAct(DEFCHAR_NEXTACTION), stealth(DEFCHAR_STEALTH),
+running(DEFCHAR_RUNNING), raceGate(DEFCHAR_RACEGATE), step(DEFCHAR_STEP), priv(DEFCHAR_PRIV),
+PoisonStrength(DEFCHAR_POISONSTRENGTH), bodyType(DEFCHAR_BODYTYPE),
+lastMoveTime(DEFCHAR_LASTMOVETIME), npcGuild(DEFCHAR_NPCGUILD) {
     ownedItems.clear();
     itemLayers.clear();
     layerCtr = itemLayers.end();
-
+    
     id = 0x0190;
     objType = OT_CHAR;
     name = "Mr. noname";
     sectionId = "UNKNOWN";
-
+    
     memset(&regen[0], 0, sizeof(timerval_t) * 3);
     memset(&weathDamage[0], 0, sizeof(timerval_t) * WEATHNUM);
     memset(&charTimers[0], 0, sizeof(timerval_t) * tCHAR_COUNT);
     memset(&baseskill[0], 0, sizeof(skillval_t) * ALLSKILLS);
     memset(&skill[0], 0, sizeof(skillval_t) * (INTELLECT + 1));
-
+    
     // SetCanTrain( true );
     bools.set(BIT_TRAIN, true);
-
+    
     // SetHungerStatus( true );
     bools.set(BIT_WILLHUNGER, true);
     // SetThirstStatus( true );
     bools.set(BIT_WILLTHIRST, true);
-
+    
     skillUsed[0].reset();
     skillUsed[1].reset();
     updateTypes.reset();
-
+    
     strength = dexterity = intelligence = 1;
-
+    
     mPlayer = nullptr;
     mNPC = nullptr;
-
+    
     // SetMaxHPFixed( false );
     bools.set(BIT_MAXHPFIXED, false);
     // SetMaxManaFixed( false );
@@ -368,7 +368,7 @@ CChar::~CChar() {
         delete mNPC;
         mNPC = nullptr;
     }
-
+    
     if (IsValidPlayer()) {
         delete mPlayer;
         mPlayer = nullptr;
@@ -490,10 +490,10 @@ bool CChar::SetHunger(std::int8_t newValue) {
             }
         }
     }
-
+    
     hunger = newValue;
     UpdateRegion();
-
+    
     return true;
 }
 
@@ -507,7 +507,7 @@ void CChar::DoHunger(CSocket *mSock) {
     // Don't continue if hunger system is disabled
     if (!cwmWorldState->ServerData()->HungerSystemEnabled())
         return;
-
+    
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
     {
         std::uint16_t hungerRate;
@@ -527,32 +527,32 @@ void CChar::DoHunger(CSocket *mSock) {
                         hungerRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE);
                         hungerDamage = cwmWorldState->ServerData()->HungerDamage();
                     }
-
+                    
                     if (GetHunger() > 0) {
                         bool doHungerMessage = !DecHunger();
                         if (doHungerMessage) {
                             switch (GetHunger()) {
-                            default:
-                            case 6:
-                                break;
-                            case 5:
-                                mSock->SysMessage(1222);
-                                break; // You are still stuffed from your last meal.
-                            case 4:
-                                mSock->SysMessage(1223);
-                                break; // You are not very hungry but could eat more.
-                            case 3:
-                                mSock->SysMessage(1224);
-                                break; // You are feeling fairly hungry.
-                            case 2:
-                                mSock->SysMessage(1225);
-                                break; // You are extremely hungry.
-                            case 1:
-                                mSock->SysMessage(1226);
-                                break; // You are very weak from starvation!
-                            case 0:
-                                mSock->SysMessage(1227);
-                                break; // You must eat very soon or you will die!
+                                default:
+                                case 6:
+                                    break;
+                                case 5:
+                                    mSock->SysMessage(1222);
+                                    break; // You are still stuffed from your last meal.
+                                case 4:
+                                    mSock->SysMessage(1223);
+                                    break; // You are not very hungry but could eat more.
+                                case 3:
+                                    mSock->SysMessage(1224);
+                                    break; // You are feeling fairly hungry.
+                                case 2:
+                                    mSock->SysMessage(1225);
+                                    break; // You are extremely hungry.
+                                case 1:
+                                    mSock->SysMessage(1226);
+                                    break; // You are very weak from starvation!
+                                case 0:
+                                    mSock->SysMessage(1227);
+                                    break; // You must eat very soon or you will die!
                             }
                         }
                     }
@@ -572,12 +572,12 @@ void CChar::DoHunger(CSocket *mSock) {
             // Handle hunger for regular non-tame NPCs
             if (!WillHunger() || GetMounted() || GetStabled())
                 return;
-
+            
             if (GetTimer(tCHAR_HUNGER) <= cwmWorldState->GetUICurrentTime() ||
                 cwmWorldState->GetOverflow()) {
                 hungerRate = Races->GetHungerRate(GetRace());
                 hungerDamage = Races->GetHungerDamage(GetRace());
-
+                
                 if (GetHunger() > 0) {
                     DecHunger();
                 }
@@ -591,22 +591,22 @@ void CChar::DoHunger(CSocket *mSock) {
             // Handle hunger for pets
             if (!WillHunger() || GetMounted() || GetStabled())
                 return;
-
+            
             // Pets don't hunger if owner is offline
             if (cwmWorldState->ServerData()->PetHungerOffline() == false) {
                 CChar *owner = GetOwnerObj();
                 if (!ValidateObject(owner))
                     return;
-
+                
                 if (!IsOnline((*owner)))
                     return;
             }
-
+            
             if (GetTimer(tCHAR_HUNGER) <= cwmWorldState->GetUICurrentTime() ||
                 cwmWorldState->GetOverflow()) {
                 // Get hungerrate for tamed creatures
                 hungerRate = GetTamedHungerRate();
-
+                
                 if (GetHunger() > 0) {
                     // Make pet more hungry
                     DecHunger();
@@ -619,9 +619,9 @@ void CChar::DoHunger(CSocket *mSock) {
                         // Reduce player's control slot usage by the amount of control slots taken
                         // up by the pet
                         owner->SetControlSlotsUsed(
-                            std::max(0, owner->GetControlSlotsUsed() - GetControlSlots()));
+                                                   std::max(0, owner->GetControlSlotsUsed() - GetControlSlots()));
                     }
-
+                    
                     // Release the pet
                     Npcs->ReleasePet(this);
                 }
@@ -629,7 +629,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     // Pet is hungry. Reduce loyalty!
                     SetLoyalty(std::max(0, GetLoyalty() - 1));
                 }
-
+                
                 // Set timer for next time pet should grow more hungry
                 SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
             }
@@ -657,10 +657,10 @@ bool CChar::SetThirst(std::int8_t newValue) {
             }
         }
     }
-
+    
     thirst = newValue;
     UpdateRegion();
-
+    
     return true;
 }
 
@@ -674,7 +674,7 @@ void CChar::DoThirst(CSocket *mSock) {
     // Don't continue if thirst system is disabled
     if (!cwmWorldState->ServerData()->ThirstSystemEnabled())
         return;
-
+    
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
     {
         std::uint16_t thirstRate;
@@ -694,33 +694,33 @@ void CChar::DoThirst(CSocket *mSock) {
                         thirstRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE);
                         thirstDrain = cwmWorldState->ServerData()->ThirstDrain();
                     }
-
+                    
                     if (GetThirst() > 0) {
                         bool doThirstMessage = !DecThirst();
                         if (doThirstMessage) {
                             switch (GetThirst()) {
-                            default:
-                            case 6:
-                                break;
-                            case 5:
-                                mSock->SysMessage(2045);
-                                break; // You are still stuffed from your last drink.
-                            case 4:
-                                mSock->SysMessage(2046);
-                                break; // You are not very thirsty, but could drink more.
-                            case 3:
-                                mSock->SysMessage(2047);
-                                break; // You are feeling fairly thirsty.
-                            case 2:
-                                mSock->SysMessage(2048);
-                                break; // You are extremely thirsty.
-                            case 1:
-                                mSock->SysMessage(2049);
-                                break; // You are very weak from dehydration!
-                            case 0:
-                                mSock->SysMessage(2050);
-                                break; // You must drink very soon or you will suffer from
-                                       // dehydration!
+                                default:
+                                case 6:
+                                    break;
+                                case 5:
+                                    mSock->SysMessage(2045);
+                                    break; // You are still stuffed from your last drink.
+                                case 4:
+                                    mSock->SysMessage(2046);
+                                    break; // You are not very thirsty, but could drink more.
+                                case 3:
+                                    mSock->SysMessage(2047);
+                                    break; // You are feeling fairly thirsty.
+                                case 2:
+                                    mSock->SysMessage(2048);
+                                    break; // You are extremely thirsty.
+                                case 1:
+                                    mSock->SysMessage(2049);
+                                    break; // You are very weak from dehydration!
+                                case 0:
+                                    mSock->SysMessage(2050);
+                                    break; // You must drink very soon or you will suffer from
+                                    // dehydration!
                             }
                         }
                     }
@@ -742,7 +742,7 @@ void CChar::DoThirst(CSocket *mSock) {
                     cwmWorldState->GetOverflow()) {
                     thirstRate = Races->GetThirstRate(GetRace());
                     thirstDrain = Races->GetThirstDrain(GetRace());
-
+                    
                     if (GetThirst() > 0) {
                         DecThirst();
                     }
@@ -760,15 +760,15 @@ void CChar::DoThirst(CSocket *mSock) {
                     CChar *owner = GetOwnerObj();
                     if (!ValidateObject(owner))
                         return;
-
+                    
                     if (!IsOnline((*owner)))
                         return;
                 }
-
+                
                 if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() ||
                     cwmWorldState->GetOverflow()) {
                     thirstRate = GetTamedThirstRate();
-
+                    
                     if (GetThirst() > 0) {
                         DecThirst();
                     }
@@ -794,7 +794,7 @@ void CChar::CheckPetOfflineTimeout(void) {
     if (IsTamed() && IsNpc() && GetNpcAiType() != AI_PLAYERVENDOR) {
         if (GetMounted() || GetStabled())
             return;
-
+        
         CChar *owner = GetOwnerObj();
         if (!ValidateObject(owner)) {
             SetOwner(nullptr); // The owner is gone, so remove him
@@ -802,14 +802,14 @@ void CChar::CheckPetOfflineTimeout(void) {
         else {
             if (IsOnline((*owner)))
                 return; // The owner is still online, so leave it alone
-
+            
             time_t currTime, lastOnTime;
             const std::uint32_t offlineTimeout =
-                static_cast<std::uint32_t>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
-
+            static_cast<std::uint32_t>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
+            
             time(&currTime);
             lastOnTime = static_cast<time_t>(GetLastOnSecs());
-
+            
             if (currTime > 0 && lastOnTime > 0) {
                 if (difftime(currTime, lastOnTime) >= offlineTimeout) {
                     SetOwner(nullptr);
@@ -840,33 +840,33 @@ void CChar::SetTown(std::uint16_t newValue) {
 BodyType CChar::GetBodyType(void) {
     BodyType retVal = BT_OTHER;
     switch (GetId()) {
-    case 0x0190: // Male Human
-    case 0x0191: // Female Human
-    case 0x0192: // Male Human Ghost
-    case 0x0193: // Female Human Ghost
-    case 0x00B7: // Male Human Savage
-    case 0x00B9: // Male Human Savage
-    case 0x02EE: // Male Human Savage
-    case 0x00B8: // Female Human Savage
-    case 0x00BA: // Female Human Savage
-    case 0x02EF: // Female Human Savage
-        retVal = BT_HUMAN;
-        break;
-    case 0x025D: // Male Elf
-    case 0x025E: // Female Elf
-    case 0x025F: // Male Elf Ghost
-    case 0x0260: // Female Elf Ghost
-        retVal = BT_ELF;
-        break;
-    case 0x029A: // Male Gargoyle
-    case 0x029B: // Female Gargoyle
-    case 0x02B6: // Male Gargoyle Ghost
-    case 0x02B7: // Female Gargoyle Ghost
-        retVal = BT_GARGOYLE;
-        break;
-    default:
-        retVal = BT_OTHER;
-        break;
+        case 0x0190: // Male Human
+        case 0x0191: // Female Human
+        case 0x0192: // Male Human Ghost
+        case 0x0193: // Female Human Ghost
+        case 0x00B7: // Male Human Savage
+        case 0x00B9: // Male Human Savage
+        case 0x02EE: // Male Human Savage
+        case 0x00B8: // Female Human Savage
+        case 0x00BA: // Female Human Savage
+        case 0x02EF: // Female Human Savage
+            retVal = BT_HUMAN;
+            break;
+        case 0x025D: // Male Elf
+        case 0x025E: // Female Elf
+        case 0x025F: // Male Elf Ghost
+        case 0x0260: // Female Elf Ghost
+            retVal = BT_ELF;
+            break;
+        case 0x029A: // Male Gargoyle
+        case 0x029B: // Female Gargoyle
+        case 0x02B6: // Male Gargoyle Ghost
+        case 0x02B7: // Female Gargoyle Ghost
+            retVal = BT_GARGOYLE;
+            break;
+        default:
+            retVal = BT_OTHER;
+            break;
     }
     return retVal;
 }
@@ -992,7 +992,7 @@ bool CChar::IsDead(void) const { return bools.test(BIT_DEAD); }
 void CChar::SetDead(bool newValue) {
     bools.set(BIT_DEAD, newValue);
     UpdateRegion();
-
+    
     if (!IsNpc()) {
         if (GetVisible() != VT_VISIBLE && newValue == false) {
             SetVisible(VT_VISIBLE);
@@ -1027,7 +1027,7 @@ bool CChar::IsAtWar(void) const { return bools.test(BIT_ATWAR); }
 void CChar::SetWar(bool newValue) {
     bools.set(BIT_ATWAR, newValue);
     UpdateRegion();
-
+    
     if (!IsNpc()) {
         if (IsDead() && newValue == true) {
             SetVisible(VT_VISIBLE);
@@ -1693,8 +1693,8 @@ skillval_t CChar::GetSkill(std::uint8_t skillToGet) const {
         std::int32_t modifier = Races->DamageFromSkill(skillToGet, race);
         if (modifier != 0) {
             auto toAdd =
-                static_cast<skillval_t>(static_cast<R32>(skill[skillToGet]) *
-                                      (static_cast<R32>(modifier) / 1000)); // percentage to add
+            static_cast<skillval_t>(static_cast<R32>(skill[skillToGet]) *
+                                    (static_cast<R32>(modifier) / 1000)); // percentage to add
             rVal += toAdd;                                                  // return the bonus
         }
     }
@@ -1906,10 +1906,10 @@ CChar *CChar::Dupe(void) {
     CChar *target = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
     if (target == nullptr)
         return nullptr;
-
+    
     CBaseObject::CopyData(target);
     CopyData(target);
-
+    
     return target;
 }
 void CChar::CopyData(CChar *target) {
@@ -1941,19 +1941,19 @@ void CChar::CopyData(CChar *target) {
     target->SetHP(hitpoints);
     target->SetStamina(stamina);
     target->SetMana(mana);
-
+    
     target->SetStrength2(st2);
     target->SetDexterity2(dx2);
     target->SetIntelligence2(in2);
-
+    
     target->SetHiDamage(hiDamage);
     target->SetLoDamage(loDamage);
-
+    
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         target->SetBaseSkill(baseskill[i], i);
         target->SetSkill(skill[i], i);
     }
-
+    
     target->SetCell(cell);
     target->SetPackItem(packItem);
     target->SetWeight(weight);
@@ -1964,7 +1964,7 @@ void CChar::CopyData(CChar *target) {
     target->SetRegen(regen[2], 2);
     target->SetAttacker(GetAttacker());
     target->SetVisible(GetVisible());
-
+    
     for (std::int32_t mTID = static_cast<std::int32_t>(tCHAR_TIMEOUT); mTID < static_cast<std::int32_t>(tCHAR_COUNT);
          ++mTID) {
         target->SetTimer(static_cast<cc_tid_t>(mTID), GetTimer(static_cast<cc_tid_t>(mTID)));
@@ -2064,7 +2064,7 @@ void CChar::CopyData(CChar *target) {
         }
         target->SetCreatedOn(GetCreatedOn());
     }
-
+    
     // Add any script triggers present on object to the new object
     target->scriptTriggers = GetScriptTriggers();
 }
@@ -2077,17 +2077,17 @@ void CChar::CopyData(CChar *target) {
 // o------------------------------------------------------------------------------------------------o
 flagcolors_t CChar::FlagColour(CChar *toCompare) {
     flagcolors_t retVal = FC_INNOCENT;
-
+    
     auto gComp = GR_UNKNOWN;
     RaceRelate rComp = RACE_NEUTRAL;
-
+    
     if (ValidateObject(toCompare)) {
         if (!IsIncognito()) {
             gComp = GuildSys->Compare(this, toCompare);
             rComp = Races->Compare(this, toCompare);
         }
     }
-
+    
     if (IsInvulnerable()) {
         retVal = FC_INVULNERABLE;
     }
@@ -2144,7 +2144,7 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
     if (mSock != nullptr) {
         // CChar *myChar = mSock->CurrcharObj();
         // mSock->CurrcharObj();
-
+        
         // Calculate player's visibility range so we can use it to find nearby objects
         std::uint16_t visRange = mSock->Range() + Races->VisRange(GetRace());
         std::uint16_t mCharX = this->GetX();
@@ -2153,21 +2153,21 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
         auto minY = mCharY - visRange;
         auto maxX = mCharX + visRange;
         auto maxY = mCharY + visRange;
-
+        
         for (auto &MapArea : MapRegion->PopulateList(this)) {
             if (MapArea == nullptr)
                 continue;
-
+            
             // First remove nearby characters from sight
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
                 if (!ValidateObject(tempChar) || tempChar->GetInstanceId() != this->GetInstanceId())
                     continue;
-
+                
                 CPRemoveItem charToSend = (*tempChar);
                 auto tempX = tempChar->GetX();
                 auto tempY = tempChar->GetY();
-
+                
                 if (this != tempChar &&
                     (tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY) &&
                     (IsOnline((*tempChar)) || tempChar->IsNpc() ||
@@ -2175,17 +2175,17 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
                     mSock->Send(&charToSend);
                 }
             }
-
+            
             // Now remove nearby items and multis from sight
             auto regItems = MapArea->GetItemList();
             for (const auto &tempItem : regItems->collection()) {
                 if (!ValidateObject(tempItem) || tempItem->GetInstanceId() != this->GetInstanceId())
                     continue;
-
+                
                 CPRemoveItem itemToSend = (*tempItem);
                 auto tempItemX = tempItem->GetX();
                 auto tempItemY = tempItem->GetY();
-
+                
                 if (tempItem->CanBeObjType(OT_MULTI)) {
                     if (tempItemX >= mCharX - DIST_BUILDRANGE &&
                         tempItemX <= mCharX + DIST_BUILDRANGE &&
@@ -2219,7 +2219,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
     if (s != nullptr && s->LoginComplete()) {
         CChar *mCharObj = s->CurrcharObj();
         bool alwaysSendItemHue = false;
-
+        
         if (s->ReceivedVersion()) {
             if (s->ClientVerShort() >= CVS_70331) {
                 alwaysSendItemHue = true;
@@ -2231,13 +2231,13 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
             // No client version received yet. Rely on highest client support enabled in UOX.INI
             alwaysSendItemHue = true;
         }
-
+        
         if (mCharObj == this && drawGamePlayer &&
             (mCharObj->GetVisible() == 0 || mCharObj->IsDead())) {
             // Only send this when updating after a teleport/world change
             CPDrawGamePlayer gpToSend((*this));
             s->Send(&gpToSend);
-
+            
             SendWornItems(s);
         }
         else if (GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() &&
@@ -2249,30 +2249,30 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
                   (!IsNpc() && !IsOnline((*this))))) {
             return;
         }
-
+        
         CPDrawObject toSend((*this));
-
+        
         toSend.SetRepFlag(static_cast<std::uint8_t>(FlagColour(mCharObj)));
-
+        
         for (auto lIter = itemLayers.begin(); lIter != itemLayers.end(); ++lIter) {
             if (ValidateObject(lIter->second)) {
                 toSend.AddItem(lIter->second, alwaysSendItemHue);
             }
         }
-
+        
         toSend.Finalize();
         s->Send(&toSend);
-
+        
         if (s->ClientType() >= CV_SA2D) {
             // Send poison state of healthbar
             CPHealthBarStatus hpBarStatus1((*this), (*s), 1);
             s->Send(&hpBarStatus1);
-
+            
             // Send invulnerable state of healthbar
             CPHealthBarStatus hpBarStatus2((*this), (*s), 2);
             s->Send(&hpBarStatus2);
         }
-
+        
         // Only send tooltip if server feature for tooltips is enabled
         if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
             CPToolTip pSend(GetSerial(), s);
@@ -2296,23 +2296,23 @@ auto CChar::Teleport() -> void {
         std::uint16_t visrange = mSock->Range() + Races->VisRange(GetRace());
         mSock->StatWindow(this);
         mSock->WalkSequence(-1);
-
+        
         std::uint16_t mCharX = this->GetX();
         std::uint16_t mCharY = this->GetY();
         auto minX = mCharX - visrange;
         auto minY = mCharY - visrange;
         auto maxX = mCharX + visrange;
         auto maxY = mCharY + visrange;
-
+        
         for (auto &MapArea : MapRegion->PopulateList(this)) {
             if (MapArea == nullptr)
                 continue;
-
+            
             auto regChars = MapArea->GetCharList();
             for (const auto tempChar : regChars->collection()) {
                 if (!ValidateObject(tempChar) || tempChar->GetInstanceId() != this->GetInstanceId())
                     continue;
-
+                
                 auto tempX = tempChar->GetX();
                 auto tempY = tempChar->GetY();
                 if (this != tempChar &&
@@ -2326,7 +2326,7 @@ auto CChar::Teleport() -> void {
             for (const auto tempItem : regItems->collection()) {
                 if (!ValidateObject(tempItem) || tempItem->GetInstanceId() != this->GetInstanceId())
                     continue;
-
+                
                 auto tempItemX = tempItem->GetX();
                 auto tempItemY = tempItem->GetY();
                 if (tempItem->CanBeObjType(OT_MULTI)) {
@@ -2347,16 +2347,16 @@ auto CChar::Teleport() -> void {
         }
     }
     CheckCharInsideBuilding(this, mSock, false);
-
+    
     bool forceWeatherupdate = true;
-
+    
     if (ValidateObject(GetMultiObj())) {
         if (GetMultiObj()->CanBeObjType(OT_BOAT)) {
             // Don't force a weather update while on boat to prevent spam.
             forceWeatherupdate = false;
         }
     }
-
+    
     CheckRegion(mSock, (*this), forceWeatherupdate);
 }
 
@@ -2368,7 +2368,7 @@ auto CChar::Teleport() -> void {
 void CChar::ExposeToView(void) {
     SetVisible(VT_VISIBLE);
     SetStealth(-1);
-
+    
     // hide it from ourselves, we want to show ourselves to everyone in range
     // now we tell everyone we exist
 }
@@ -2429,7 +2429,7 @@ bool CChar::WearItem(CItem *toWear) {
             }
         }
     }
-
+    
     bool rValue = true;
     itemlayers_t tLayer = toWear->GetLayer();
     if (tLayer != IL_NONE) // Layer == 0 is a special case, for things like trade windows and such
@@ -2438,26 +2438,26 @@ bool CChar::WearItem(CItem *toWear) {
 #if defined(UOX_DEBUG_MODE)
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
             Console::shared().Warning(util::format(
-                "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section "
-                "[%s]) - another item (%s) is already equipped in that layer!",
-                toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial,
-                GetSectionId().c_str(), GetItemAtLayer(tLayer)->GetName().c_str()));
+                                                   "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section "
+                                                   "[%s]) - another item (%s) is already equipped in that layer!",
+                                                   toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial,
+                                                   GetSectionId().c_str(), GetItemAtLayer(tLayer)->GetName().c_str()));
 #endif
             rValue = false;
         }
         else {
             itemLayers[tLayer] = toWear;
-
+            
             IncStrength2(itemLayers[tLayer]->GetStrength2());
             IncDexterity2(itemLayers[tLayer]->GetDexterity2());
             IncIntelligence2(itemLayers[tLayer]->GetIntelligence2());
-
+            
             if (toWear->IsPostLoaded()) {
                 if (itemLayers[tLayer]->GetPoisoned()) {
                     SetPoisoned(GetPoisoned() +
                                 itemLayers[tLayer]->GetPoisoned()); // should be +, not -
                 }
-
+                
                 std::vector<std::uint16_t> scriptTriggers = toWear->GetScriptTriggers();
                 for (auto i : scriptTriggers) {
                     cScript *tScript = JSMapping->GetScript(i);
@@ -2495,7 +2495,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
                 }
             }
         }
-
+        
         if (Layer == IL_PACKITEM) // It's our pack!
         {
             SetPackItem(nullptr);
@@ -2511,7 +2511,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
                 SetPoisoned(GetPoisoned() - itemLayers[Layer]->GetPoisoned());
             }
         }
-
+        
         for (auto i : scriptTriggers) {
             cScript *tScript = JSMapping->GetScript(i);
             if (tScript != nullptr) {
@@ -2521,7 +2521,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
                 }
             }
         }
-
+        
         itemLayers[Layer] = nullptr;
         rValue = true;
     }
@@ -2536,7 +2536,7 @@ bool CChar::TakeOffItem(itemlayers_t Layer) {
 // o------------------------------------------------------------------------------------------------o
 CItem *CChar::FirstItem(void) {
     CItem *rVal = nullptr;
-
+    
     layerCtr = itemLayers.begin();
     if (!FinishedItems()) {
         rVal = layerCtr->second;
@@ -2581,9 +2581,9 @@ bool CChar::DumpHeader(std::ostream &outStream) const {
 }
 bool CChar::DumpBody(std::ostream &outStream) const {
     CBaseObject::DumpBody(outStream); // Make the default save of BaseObject members now
-
+    
     const char newLine = '\n';
-
+    
     // Hexadecimal Values
     outStream << std::hex;
     outStream << "GuildFealty=0x" << GetGuildFealty() << newLine;
@@ -2591,12 +2591,12 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     outStream << "Privileges=0x" << GetPriv() << newLine;
     if (ValidateObject(packItem)) {
         outStream << "PackItem=0x" << packItem->GetSerial()
-                  << newLine; // store something meaningful
+        << newLine; // store something meaningful
     }
     else {
         outStream << "PackItem=0x" << INVALIDSERIAL << newLine;
     }
-
+    
     // Decimal / String Values
     outStream << std::dec;
     outStream << "GuildTitle=" + GetGuildTitle() + newLine;
@@ -2621,7 +2621,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     outStream << "Region=" + std::to_string(GetRegionNum()) + newLine;
     outStream << "AdvanceObject=" + std::to_string(GetAdvObj()) + newLine;
     outStream << "AdvRaceObject=" + std::to_string(GetRaceGate()) + newLine;
-
+    
     // Write out the BaseSkills and the SkillLocks here
     // Format: BaseSkills=[0,34]-[1,255]-[END]
     outStream << "BaseSkills=";
@@ -2629,7 +2629,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
         outStream << "[" + std::to_string(bsc) + "," + std::to_string(GetBaseSkill(bsc)) + "]-";
     }
     outStream << "[END]" << newLine;
-
+    
     outStream << "GuildNumber=" + std::to_string(GetGuildNumber()) + newLine;
     outStream << "NpcGuild=" + std::to_string(GetNPCGuild()) + newLine;
     outStream << "NpcGuildJoined=" + std::to_string(GetNPCGuildJoined()) + newLine;
@@ -2648,7 +2648,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     outStream << "GuildToggle=" + std::to_string((GetGuildToggle() ? 1 : 0)) + newLine;
     outStream << "PoisonStrength=" + std::to_string(GetPoisonStrength()) + newLine;
     outStream << "WillHunger=" + std::to_string((WillHunger() ? 1 : 0)) + newLine;
-
+    
     timerval_t mTime = GetTimer(tCHAR_MURDERRATE);
     outStream << "MurderTimer=";
     if (mTime == 0 || mTime < cwmWorldState->GetUICurrentTime()) {
@@ -2657,7 +2657,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     else {
         outStream << std::to_string(mTime - cwmWorldState->GetUICurrentTime()) + newLine;
     }
-
+    
     timerval_t pTime = GetTimer(tCHAR_PEACETIMER);
     outStream << "PeaceTimer=";
     if (pTime == 0 || pTime < cwmWorldState->GetUICurrentTime()) {
@@ -2666,7 +2666,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     else {
         outStream << std::to_string(pTime - cwmWorldState->GetUICurrentTime()) + newLine;
     }
-
+    
     if (IsValidPlayer()) {
         mPlayer->DumpBody(outStream);
     }
@@ -2677,10 +2677,10 @@ bool CChar::DumpBody(std::ostream &outStream) const {
 }
 void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
     const char newLine = '\n';
-
+    
     // Hexadecimal Values
     outStream << std::hex;
-
+    
     // Decimal / String Values
     outStream << std::dec;
     outStream << "NpcAIType=" + std::to_string(aiType) + newLine;
@@ -2690,15 +2690,15 @@ void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
     outStream << "HoldG=" + std::to_string(goldOnHand) + newLine;
     outStream << "Split=" + std::to_string(splitNum) + "," + std::to_string(splitChance) + newLine;
     outStream << "WanderArea=" + std::to_string(fx[0]) + "," + std::to_string(fy[0]) + "," +
-                     std::to_string(fx[1]) + "," + std::to_string(fy[1]) + "," +
-                     std::to_string(fz) + newLine;
+    std::to_string(fx[1]) + "," + std::to_string(fy[1]) + "," +
+    std::to_string(fz) + newLine;
     outStream << "NpcWander=" + std::to_string(wanderMode) + "," + std::to_string(oldWanderMode) +
-                     newLine;
+    newLine;
     outStream << "SPAttack=" + std::to_string(spellAttack) + "," + std::to_string(spellDelay) +
-                     newLine;
+    newLine;
     outStream << "QuestType=" + std::to_string(questType) + newLine;
     outStream << "QuestRegions=" + std::to_string(questOrigRegion) + "," +
-                     std::to_string(questDestRegion) + newLine;
+    std::to_string(questDestRegion) + newLine;
     outStream << "FleeAt=" + std::to_string(fleeAt) + newLine;
     outStream << "ReAttackAt=" + std::to_string(reAttackAt) + newLine;
     outStream << "NPCFlag=" + std::to_string(npcFlag) + newLine;
@@ -2720,7 +2720,7 @@ void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
     outStream << "Loyalty=" + std::to_string(loyalty) + newLine;
     outStream << "Orneriness=" + std::to_string(orneriness) + newLine;
     outStream << "Awake=" + std::to_string(boolFlags.test(BIT_AWAKE) ? 1 : 0) + newLine;
-
+    
     // Loop through list of previous owners for pet and store a reference to each of those
     for (CChar *tempChar = petOwnerList.First(); !petOwnerList.Finished();
          tempChar = petOwnerList.Next()) {
@@ -2731,7 +2731,7 @@ void CChar::NPCValues_st::DumpBody(std::ostream &outStream) {
 }
 void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
     const char newLine = '\n';
-
+    
     // Hexadecimal Values
     outStream << std::hex;
     outStream << "RobeSerial=0x" << robe << newLine;
@@ -2739,7 +2739,7 @@ void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
     outStream << "Hair=0x" << hairStyle << ",0x" << hairColour << newLine;
     outStream << "Beard=0x" << beardStyle << ",0x" << beardColour << newLine;
     outStream << "TownVote=0x" << townVote << newLine;
-
+    
     // Decimal / String Values
     outStream << std::dec;
     outStream << "Account=" + std::to_string(accountNum) + newLine;
@@ -2755,12 +2755,12 @@ void CChar::PlayerValues_st::DumpBody(std::ostream &outStream) {
     outStream << "FixedLight=" + std::to_string(fixedLight) + newLine;
     outStream << "TownPrivileges=" + std::to_string(townPriv) + newLine;
     outStream << "Atrophy=";
-
+    
     for (std::uint8_t atc = 0; atc <= INTELLECT; ++atc) {
         outStream << std::to_string(atrophy[atc]) + ",";
     }
     outStream << "[END]" << newLine;
-
+    
     // Format: SkillLocks=[0,34]-[1,255]-[END]
     outStream << "SkillLocks=";
     for (std::uint8_t slc = 0; slc <= INTELLECT; ++slc) {
@@ -2792,7 +2792,7 @@ bool CChar::Save(std::ostream &outStream) {
                 DumpHeader(outStream);
                 DumpBody(outStream);
                 DumpFooter(outStream);
-
+                
                 for (auto lIter = itemLayers.begin(); lIter != itemLayers.end();
                      ++lIter) {
                     if (ValidateObject(lIter->second)) {
@@ -2857,7 +2857,7 @@ auto CChar::AddAggressorFlag(serial_t toAdd) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CChar::RemoveAggressorFlag(serial_t toRemove) -> void {
     aggressorFlags.erase(toRemove);
-
+    
     // Aggressor flag removed, so loop through player's corpses so flagging can be updated for
     // those!
     for (auto tempCorpse = GetOwnedCorpses()->First(); !GetOwnedCorpses()->Finished();
@@ -2889,7 +2889,7 @@ auto CChar::CheckAggressorFlag(serial_t toCheck) -> bool {
             RemoveAggressorFlag(toCheck);
         }
     }
-
+    
     return false; // serial not found, or timestamp expired and no longer aggressor
 }
 
@@ -2905,7 +2905,7 @@ auto CChar::IsAggressor(bool checkForPlayersOnly) -> bool {
             // Ignore aggressor flags against NPCs if checking for players only
             if (checkForPlayersOnly && it->second.isNpc)
                 continue;
-
+            
             // Check if any of the entries has a non-expired aggressor timer
             if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
                 isAggressor = true;
@@ -2925,7 +2925,7 @@ auto CChar::UpdateAggressorFlagTimestamp(serial_t toUpdate) -> void {
     auto it = aggressorFlags.find(toUpdate);
     if (it != aggressorFlags.end()) {
         it->second.timestamp =
-            cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_AGGRESSORFLAG);
+        cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_AGGRESSORFLAG);
     }
 }
 
@@ -2943,7 +2943,7 @@ auto CChar::AggressorFlagMaintenance() -> void {
             serialsToRemove.push_back(it->first);
         }
     }
-
+    
     // Then loop through vector of serials with expired timers, and safely remove them from the list
     for (auto toRemove : serialsToRemove) {
         RemoveAggressorFlag(toRemove);
@@ -2991,7 +2991,7 @@ auto CChar::AddPermaGreyFlag(serial_t toAdd) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CChar::RemovePermaGreyFlag(serial_t toRemove) -> void {
     permaGreyFlags.erase(toRemove);
-
+    
     // Permagrey flag removed, so loop through player's corpses so flagging can be updated for
     // those!
     for (auto tempCorpse = GetOwnedCorpses()->First(); !GetOwnedCorpses()->Finished();
@@ -3023,7 +3023,7 @@ auto CChar::CheckPermaGreyFlag(serial_t toCheck) -> bool {
             RemovePermaGreyFlag(toCheck);
         }
     }
-
+    
     return false; // serial not found, or timestamp expired and permagrey flag no longer active
 }
 
@@ -3039,7 +3039,7 @@ auto CChar::IsPermaGrey(bool checkForPlayersOnly) -> bool {
             // Ignore aggressor flags against NPCs if checking for players only
             if (checkForPlayersOnly && it->second.isNpc)
                 continue;
-
+            
             // Check if any of the entries has a non-expired permagrey flag timer
             if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
                 isPermaGrey = true;
@@ -3059,7 +3059,7 @@ auto CChar::UpdatePermaGreyFlagTimestamp(serial_t toUpdate) -> void {
     auto it = permaGreyFlags.find(toUpdate);
     if (it != permaGreyFlags.end()) {
         it->second.timestamp =
-            cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_PERMAGREYFLAG);
+        cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_PERMAGREYFLAG);
     }
 }
 
@@ -3077,7 +3077,7 @@ auto CChar::PermaGreyFlagMaintenance() -> void {
             serialsToRemove.push_back(it->first);
         }
     }
-
+    
     // Then loop through vector of serials with expired timers, and safely remove them from the list
     for (auto toRemove : serialsToRemove) {
         RemovePermaGreyFlag(toRemove);
@@ -3117,7 +3117,7 @@ auto CChar::AddFollower(CChar *npcToAdd) -> bool {
     if (ValidateObject(npcToAdd) && !npcToAdd->GetStabled()) {
         return GetFollowerList()->Add(npcToAdd);
     }
-
+    
     return false;
 }
 
@@ -3201,20 +3201,20 @@ auto CChar::RemoveOwnedItem(CItem *toRemove) -> void {
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CChar::GetMaxHP(void) {
     if ((maxHP_oldstr != GetStrength() || oldRace != GetRace()) && !GetMaxHPFixed())
-    // if str/race changed since last calculation, recalculate maxHp
+        // if str/race changed since last calculation, recalculate maxHp
     {
         CRace *pRace = Races->Race(GetRace());
-
+        
         // if race is invalid just use default race
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         maxHP = static_cast<std::uint16_t>(GetStrength() +
-                                  static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
-                                                    (static_cast<R32>(pRace->HPModifier())) / 100));
+                                           static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
+                                                                      (static_cast<R32>(pRace->HPModifier())) / 100));
         // set max. hitpoints to strength + hpmodifier% of strength
-
+        
         maxHP_oldstr = GetStrength();
         oldRace = GetRace();
     }
@@ -3232,16 +3232,16 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
     }
     else {
         SetMaxHPFixed(false);
-
+        
         CRace *pRace = Races->Race(GetRace());
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         maxHP = static_cast<std::uint16_t>(GetStrength() +
-                                  static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
-                                                    (static_cast<R32>(pRace->HPModifier())) / 100));
-
+                                           static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) *
+                                                                      (static_cast<R32>(pRace->HPModifier())) / 100));
+        
         maxHP_oldstr = GetStrength();
         oldRace = GetRace();
     }
@@ -3257,20 +3257,20 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
 // o------------------------------------------------------------------------------------------------o
 std::int16_t CChar::GetMaxMana(void) {
     if ((maxMana_oldint != GetIntelligence() || oldRace != GetRace()) && !GetMaxManaFixed())
-    // if int/race changed since last calculation, recalculate maxHp
+        // if int/race changed since last calculation, recalculate maxHp
     {
         CRace *pRace = Races->Race(GetRace());
-
+        
         // if race is invalid just use default race
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         maxMana = static_cast<std::int16_t>(
-            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
-                                                  (static_cast<R32>(pRace->ManaModifier())) / 100));
+                                            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
+                                                                                          (static_cast<R32>(pRace->ManaModifier())) / 100));
         // set max. mana to int + manamodifier% of int
-
+        
         maxMana_oldint = GetIntelligence();
         oldRace = GetRace();
     }
@@ -3288,16 +3288,16 @@ void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
     }
     else {
         SetMaxManaFixed(false);
-
+        
         CRace *pRace = Races->Race(GetRace());
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         maxMana = static_cast<std::int16_t>(
-            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
-                                                  (static_cast<R32>(pRace->ManaModifier())) / 100));
-
+                                            GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) *
+                                                                                          (static_cast<R32>(pRace->ManaModifier())) / 100));
+        
         maxMana_oldint = GetIntelligence();
         oldRace = GetRace();
     }
@@ -3315,17 +3315,17 @@ std::int16_t CChar::GetMaxStam(void) {
     // If dex/race changed since last calculation, recalculate maxHp
     if ((maxStam_olddex != GetDexterity() || oldRace != GetRace()) && !GetMaxStamFixed()) {
         CRace *pRace = Races->Race(GetRace());
-
+        
         // if race is invalid just use default race
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         // Set max. stamina to dex + stammodifier% of dex
         maxStam = static_cast<std::int16_t>(
-            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
-                                               (static_cast<R32>(pRace->StamModifier())) / 100));
-
+                                            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
+                                                                                       (static_cast<R32>(pRace->StamModifier())) / 100));
+        
         maxStam_olddex = GetDexterity();
         oldRace = GetRace();
     }
@@ -3343,16 +3343,16 @@ void CChar::SetFixedMaxStam(std::int16_t newmaxstam) {
     }
     else {
         SetMaxStamFixed(false);
-
+        
         CRace *pRace = Races->Race(GetRace());
         if (pRace == nullptr) {
             pRace = Races->Race(0);
         }
-
+        
         maxStam = static_cast<std::int16_t>(
-            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
-                                               (static_cast<R32>(pRace->StamModifier())) / 100));
-
+                                            GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *
+                                                                                       (static_cast<R32>(pRace->StamModifier())) / 100));
+        
         maxStam_olddex = GetDexterity();
         oldRace = GetRace();
     }
@@ -3384,7 +3384,7 @@ void CChar::SetStrength(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
-
+    
     CBaseObject::SetStrength(newValue);
     Dirty(UT_HITPOINTS);
     UpdateRegion();
@@ -3416,7 +3416,7 @@ void CChar::SetIntelligence(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
-
+    
     CBaseObject::SetIntelligence(newValue);
     Dirty(UT_MANA);
     UpdateRegion();
@@ -3449,7 +3449,7 @@ void CChar::SetDexterity(std::int16_t newValue) {
     if (newValue < 1) {
         newValue = 1;
     }
-
+    
     CBaseObject::SetDexterity(newValue);
     Dirty(UT_STAMINA);
     UpdateRegion();
@@ -3581,691 +3581,691 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
     bool rValue = CBaseObject::HandleLine(UTag, data);
     if (!rValue) {
         auto csecs = oldstrutil::sections(data, ",");
-
+        
         switch ((UTag.data()[0])) {
-        case 'A':
-            if (UTag == "ACCOUNT") {
-                SetAccountNum(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ATROPHY") {
-                int count = 0;
-                for (auto &value : csecs) {
-                    value = util::upper(util::trim(util::strip(value, "//")));
-                    if (value == "[END]") {
-                        break;
-                    }
-                    if (value.empty()) {
-                        break;
-                    }
-                    SetAtrophy(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)), count);
-                    count = count + 1;
+            case 'A':
+                if (UTag == "ACCOUNT") {
+                    SetAccountNum(
+                                  static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            else if (UTag == "ADVANCEOBJECT") {
-                SetAdvObj(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ADVRACEOBJECT") {
-                SetRaceGate(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ALLMOVE") {
-                SetAllMove(static_cast<std::uint16_t>(
-                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "AWAKE") {
-                SetAwake(static_cast<std::uint16_t>(
-                             std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            break;
-        case 'B':
-            if (UTag == "BEARDSTYLE") {
-                SetBeardStyle(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "BEARDCOLOUR") {
-                SetBeardColour(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "BASESKILLS") {
-                auto dsecs = oldstrutil::sections(data, "-");
-                for (auto &value : dsecs) {
-                    if (value.empty()) {
-                        break;
+                else if (UTag == "ATROPHY") {
+                    int count = 0;
+                    for (auto &value : csecs) {
+                        value = util::upper(util::trim(util::strip(value, "//")));
+                        if (value == "[END]") {
+                            break;
+                        }
+                        if (value.empty()) {
+                            break;
+                        }
+                        SetAtrophy(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)), count);
+                        count = count + 1;
                     }
-                    auto secs = oldstrutil::sections(value, ",");
-                    if (secs.size() != 2) {
-                        break;
-                    }
-                    auto skillNum =
+                    rValue = true;
+                }
+                else if (UTag == "ADVANCEOBJECT") {
+                    SetAdvObj(
+                              static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "ADVRACEOBJECT") {
+                    SetRaceGate(
+                                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "ALLMOVE") {
+                    SetAllMove(static_cast<std::uint16_t>(
+                                                          std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "AWAKE") {
+                    SetAwake(static_cast<std::uint16_t>(
+                                                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                break;
+            case 'B':
+                if (UTag == "BEARDSTYLE") {
+                    SetBeardStyle(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "BEARDCOLOUR") {
+                    SetBeardColour(
+                                   static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "BASESKILLS") {
+                    auto dsecs = oldstrutil::sections(data, "-");
+                    for (auto &value : dsecs) {
+                        if (value.empty()) {
+                            break;
+                        }
+                        auto secs = oldstrutil::sections(value, ",");
+                        if (secs.size() != 2) {
+                            break;
+                        }
+                        auto skillNum =
                         static_cast<skilllock_t>(std::stoul(secs[0].substr(1), nullptr, 0));
-                    auto skillValue = static_cast<std::uint16_t>(
-                        std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
-                    SetBaseSkill(skillValue, skillNum);
-                }
-                rValue = true;
-            }
-            else if (UTag == "BEARD") {
-                SetBeardStyle(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetBeardColour(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "BRKPEACECHANCEGAIN") {
-                SetBrkPeaceChanceGain(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "BRKPEACECHANCE") {
-                SetBrkPeaceChance(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'C':
-            if (UTag == "COMMANDLEVEL") {
-                SetCommandLevel(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "CANRUN") {
-                SetRun(static_cast<std::uint8_t>(
-                           std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "CANATTACK") {
-                SetCanAttack(static_cast<std::uint8_t>(
-                                 std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "CANTRAIN") {
-                SetCanTrain(static_cast<std::uint8_t>(
-                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "CANBEHIRED") {
-                SetCanHire(static_cast<std::uint8_t>(
-                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "CONTROLSLOTS") {
-                SetControlSlots(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "CONTROLSLOTSUSED") {
-                SetControlSlotsUsed(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "CREATEDON") {
-                SetCreatedOn(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'D':
-            if (UTag == "DEATHS") {
-                SetDeaths(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "DEAD") {
-                SetDead((static_cast<std::uint16_t>(
-                             std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
-                rValue = true;
-            }
-            break;
-        case 'E':
-            if (UTag == "EMOTION") {
-                SetEmoteColour(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'F':
-            if (UTag == "FIXEDLIGHT") {
-                SetFixedLight(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "FX1") {
-                SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
-                      0);
-                rValue = true;
-            }
-            else if (UTag == "FX2") {
-                SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
-                      1);
-                rValue = true;
-            }
-            else if (UTag == "FY1") {
-                SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
-                      0);
-                rValue = true;
-            }
-            else if (UTag == "FY2") {
-                SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
-                      1);
-                rValue = true;
-            }
-            else if (UTag == "FZ1") {
-                SetFz(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "FLEEAT") {
-                SetFleeAt(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "FONTTYPE") {
-                SetFontType(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "FOODLIST") {
-                SetFood(data.substr(0, MAX_NAME - 1));
-                rValue = true;
-            }
-            else if (UTag == "FLEEINGSPEED") {
-                SetFleeingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            else if (UTag == "FLEEINGSPEEDMOUNTED") {
-                SetMountedFleeingSpeed(
-                    static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            break;
-        case 'G':
-            if (UTag == "GUILDFEALTY") {
-                SetGuildFealty(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "GUILDTITLE") {
-                SetGuildTitle(data);
-                rValue = true;
-            }
-            else if (UTag == "GUILDNUMBER") {
-                SetGuildNumber(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "GUILDTOGGLE") {
-                SetGuildToggle(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
-                                                           nullptr, 0)) == 1);
-                rValue = true;
-            }
-            break;
-        case 'H':
-            if (UTag == "HUNGER") {
-                SetHunger(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "HOLDG") {
-                SetHoldG(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "HAIRSTYLE") {
-                SetHairStyle(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "HAIRCOLOUR") {
-                SetHairColour(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "HAIR") {
-                SetHairStyle(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetHairColour(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'I':
-            if (UTag == "ISNPC") {
-                SetNpc((static_cast<std::int16_t>(
-                            std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
-                rValue = true;
-            }
-            else if (UTag == "ISSHOP") {
-                SetShop((static_cast<std::int16_t>(
-                             std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
-                rValue = true;
-            }
-            else if (UTag == "ISWARRING") {
-                SetWar((static_cast<std::int16_t>(
-                            std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
-                rValue = true;
-            }
-            break;
-        case 'L':
-            if (UTag == "LASTON") {
-                SetLastOn(data);
-                rValue = true;
-            }
-            else if (UTag == "LASTONSECS") {
-                SetLastOnSecs(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "LOYALTY") {
-                SetLoyalty(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'M':
-            if (UTag == "MAYLEVITATE") {
-                SetLevitate((static_cast<std::int16_t>(
-                                 std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
-                rValue = true;
-            }
-            else if (UTag == "MURDERTIMER") {
-                SetTimer(tCHAR_MURDERRATE, BuildTimeValue(static_cast<R32>(
-                                               std::stof(util::trim(util::strip(data, "//"))))));
-                rValue = true;
-            }
-            else if (UTag == "MAXHP") {
-                SetFixedMaxHP(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "MAXMANA") {
-                SetFixedMaxMana(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "MAXLOYALTY") {
-                SetMaxLoyalty(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "MAXSTAM") {
-                SetFixedMaxStam(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "MOUNTED") {
-                SetMounted(static_cast<std::uint16_t>(
-                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            break;
-        case 'N':
-            if (UTag == "NPCAITYPE") {
-                SetNPCAiType(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "NPCWANDER") {
-                if (csecs.size() >= 2) {
-                    SetNpcWander(static_cast<std::int8_t>(
-                        std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetOldNpcWander(static_cast<std::int8_t>(
-                        std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                }
-                else {
-                    SetNpcWander(static_cast<std::int8_t>(
-                        std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                }
-                rValue = true;
-            }
-            else if (UTag == "NPCFLAG") {
-                SetNPCFlag(static_cast<cnpc_flag_t>(
-                    std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                UpdateFlag(this);
-                rValue = true;
-            }
-            else if (UTag == "NPCGUILD") {
-                SetNPCGuild(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "NPCGUILDJOINED") {
-                SetNPCGuildJoined(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'O':
-            if (UTag == "ORGNAME") {
-                SetOrgName(data);
-                rValue = true;
-            }
-            else if (UTag == "ORIGINALBODYID") {
-                SetOrgId(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ORIGINALSKINID") {
-                SetOrgSkin(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ORIGINALID") {
-                SetOrgId(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetOrgSkin(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "ORNERINESS") {
-                SetOrneriness(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'P':
-            if (UTag == "PRIVILEGES") {
-                SetPriv(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "PACKITEM") {
-                tempContainerSerial = static_cast<serial_t>(
-                    std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                rValue = true;
-            }
-            else if (UTag == "PETOWNER") {
-                CChar *cList = CalcCharObjFromSer(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                if (ValidateObject(cList)) {
-                    AddPetOwnerToList(cList);
-                }
-                rValue = true;
-            }
-            else if (UTag == "POISON") {
-                SetPoisoned(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "POISONSTRENGTH") {
-                SetPoisonStrength(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "PEACEING") {
-                SetPeaceing(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "PROVOING") {
-                SetProvoing(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "PEACETIMER") {
-                SetTimer(tCHAR_PEACETIMER, BuildTimeValue(static_cast<R32>(
-                                               std::stof(util::trim(util::strip(data, "//"))))));
-                rValue = true;
-            }
-            else if (UTag == "PLAYTIME") {
-                SetPlayTime(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'Q':
-            if (UTag == "QUESTTYPE") {
-                SetQuestType(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "QUESTDESTINATIONREGION") {
-                SetQuestDestRegion(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "QUESTORIGINALREGION") {
-                SetQuestOrigRegion(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "QUESTREGIONS") {
-                SetQuestOrigRegion(static_cast<std::uint8_t>(
-                    std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetQuestDestRegion(static_cast<std::uint8_t>(
-                    std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'R':
-            if (UTag == "ROBESERIAL") {
-                SetRobe(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "RESERVED") {
-                SetCell(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "RUNNING") {
-                rValue = true;
-            }
-            else if (UTag == "REGION") {
-                SetRegion(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "REATTACKAT") {
-                SetReattackAt(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "RUNNINGSPEED") {
-                SetRunningSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            else if (UTag == "RUNNINGSPEEDMOUNTED") {
-                SetMountedRunningSpeed(
-                    static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            break;
-        case 'S':
-            if (UTag == "SPLIT") {
-                if (csecs.size() >= 2) {
-                    SetSplit(static_cast<std::uint8_t>(
-                        std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSplitChance(static_cast<std::uint8_t>(
-                        std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                }
-                else {
-                    SetSplit(static_cast<std::uint8_t>(
-                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                }
-                rValue = true;
-            }
-            else if (UTag == "SPLITCHANCE") {
-                SetSplitChance(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "SUMMONTIMER") {
-                SetTimer(tNPC_SUMMONTIME, static_cast<std::uint32_t>(std::stoul(
-                                              util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "SAY") {
-                SetSayColour(
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "STEALTH") {
-                SetStealth(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "SPATTACK") {
-                if (csecs.size() >= 2) {
-                    SetSpAttack(static_cast<std::uint16_t>(
-                        std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSpDelay(static_cast<std::uint8_t>(
-                        std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                }
-                else {
-                    SetSpAttack(static_cast<std::uint16_t>(
-                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                }
-                rValue = true;
-            }
-            else if (UTag == "SPECIALATTACKDELAY") {
-                SetSpDelay(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "SQUELCHED") {
-                SetSquelched(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "SKILLLOCKS") {
-                // Format: Baselocks=[0,34]-[1,255]-[END]
-                auto dsecs = oldstrutil::sections(data, "-");
-
-                for (auto &value : dsecs) {
-                    if (value.empty()) {
-                        break;
+                        auto skillValue = static_cast<std::uint16_t>(
+                                                                     std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
+                        SetBaseSkill(skillValue, skillNum);
                     }
-                    auto secs = oldstrutil::sections(value, ",");
-                    if (secs.size() != 2) {
-                        break;
-                    }
-                    auto skillnum = static_cast<std::uint8_t>(std::stoul(secs[0].substr(1), nullptr, 0));
-                    auto skillvalue = static_cast<skilllock_t>(
-                        std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
-                    SetSkillLock(skillvalue, skillnum);
+                    rValue = true;
                 }
-                rValue = true;
-            }
-            else if (UTag == "SPEECH") {
-                SetSayColour(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                SetEmoteColour(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "STABLED") {
-                SetStabled(static_cast<std::uint16_t>(
-                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            break;
-        case 'T':
-            if (UTag == "TAMING") {
-                SetTaming(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TAMEDHUNGERRATE") {
-                SetTamedHungerRate(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TAMEDHUNGERWILDCHANCE") {
-                SetTamedHungerWildChance(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TAMEDTHIRSTRATE") {
-                SetTamedThirstRate(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TAMEDTHIRSTWILDCHANCE") {
-                SetTamedThirstWildChance(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TOWN") {
-                SetTown(
-                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TOWNVOTE") {
-                SetTownVote(
-                    static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TOWNPRIVILEGES") {
-                SetTownpriv(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "TOWNTITLE") {
-                SetTownTitle(static_cast<std::int16_t>(
-                                 std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "THIRST") {
-                SetThirst(
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
-        case 'W':
-            if (UTag == "WANDERAREA") {
-                SetFx(static_cast<std::int16_t>(
-                          std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
-                      0);
-                SetFy(static_cast<std::int16_t>(
-                          std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                      0);
-                SetFx(static_cast<std::int16_t>(
-                          std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0)),
-                      1);
-                SetFy(static_cast<std::int16_t>(
-                          std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0)),
-                      1);
-                SetFz(static_cast<std::int8_t>(
-                    std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0)));
-                rValue = true;
-            }
-            else if (UTag == "WILLHUNGER") {
-                SetHungerStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
-                                                            nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "WILLTHIRST") {
-                SetThirstStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
-                                                            nullptr, 0)) == 1);
-                rValue = true;
-            }
-            else if (UTag == "WALKINGSPEED") {
-                SetWalkingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            else if (UTag == "WALKINGSPEEDMOUNTED") {
-                SetMountedWalkingSpeed(
-                    static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
-                rValue = true;
-            }
-            break;
-        case 'X':
-            if (UTag == "XNPCWANDER") {
-                SetOldNpcWander(
-                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
-                rValue = true;
-            }
-            break;
+                else if (UTag == "BEARD") {
+                    SetBeardStyle(static_cast<std::uint16_t>(
+                                                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetBeardColour(static_cast<std::uint16_t>(
+                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "BRKPEACECHANCEGAIN") {
+                    SetBrkPeaceChanceGain(
+                                          static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "BRKPEACECHANCE") {
+                    SetBrkPeaceChance(
+                                      static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'C':
+                if (UTag == "COMMANDLEVEL") {
+                    SetCommandLevel(
+                                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "CANRUN") {
+                    SetRun(static_cast<std::uint8_t>(
+                                                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "CANATTACK") {
+                    SetCanAttack(static_cast<std::uint8_t>(
+                                                           std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "CANTRAIN") {
+                    SetCanTrain(static_cast<std::uint8_t>(
+                                                          std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "CANBEHIRED") {
+                    SetCanHire(static_cast<std::uint8_t>(
+                                                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "CONTROLSLOTS") {
+                    SetControlSlots(
+                                    static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "CONTROLSLOTSUSED") {
+                    SetControlSlotsUsed(
+                                        static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "CREATEDON") {
+                    SetCreatedOn(
+                                 static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'D':
+                if (UTag == "DEATHS") {
+                    SetDeaths(
+                              static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "DEAD") {
+                    SetDead((static_cast<std::uint16_t>(
+                                                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
+                    rValue = true;
+                }
+                break;
+            case 'E':
+                if (UTag == "EMOTION") {
+                    SetEmoteColour(
+                                   static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'F':
+                if (UTag == "FIXEDLIGHT") {
+                    SetFixedLight(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "FX1") {
+                    SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                          0);
+                    rValue = true;
+                }
+                else if (UTag == "FX2") {
+                    SetFx(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                          1);
+                    rValue = true;
+                }
+                else if (UTag == "FY1") {
+                    SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                          0);
+                    rValue = true;
+                }
+                else if (UTag == "FY2") {
+                    SetFy(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
+                          1);
+                    rValue = true;
+                }
+                else if (UTag == "FZ1") {
+                    SetFz(
+                          static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "FLEEAT") {
+                    SetFleeAt(
+                              static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "FONTTYPE") {
+                    SetFontType(
+                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "FOODLIST") {
+                    SetFood(data.substr(0, MAX_NAME - 1));
+                    rValue = true;
+                }
+                else if (UTag == "FLEEINGSPEED") {
+                    SetFleeingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                else if (UTag == "FLEEINGSPEEDMOUNTED") {
+                    SetMountedFleeingSpeed(
+                                           static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                break;
+            case 'G':
+                if (UTag == "GUILDFEALTY") {
+                    SetGuildFealty(
+                                   static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "GUILDTITLE") {
+                    SetGuildTitle(data);
+                    rValue = true;
+                }
+                else if (UTag == "GUILDNUMBER") {
+                    SetGuildNumber(
+                                   static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "GUILDTOGGLE") {
+                    SetGuildToggle(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
+                                                                       nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                break;
+            case 'H':
+                if (UTag == "HUNGER") {
+                    SetHunger(
+                              static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "HOLDG") {
+                    SetHoldG(
+                             static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "HAIRSTYLE") {
+                    SetHairStyle(
+                                 static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "HAIRCOLOUR") {
+                    SetHairColour(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "HAIR") {
+                    SetHairStyle(static_cast<std::uint16_t>(
+                                                            std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetHairColour(static_cast<std::uint16_t>(
+                                                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'I':
+                if (UTag == "ISNPC") {
+                    SetNpc((static_cast<std::int16_t>(
+                                                      std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
+                    rValue = true;
+                }
+                else if (UTag == "ISSHOP") {
+                    SetShop((static_cast<std::int16_t>(
+                                                       std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
+                    rValue = true;
+                }
+                else if (UTag == "ISWARRING") {
+                    SetWar((static_cast<std::int16_t>(
+                                                      std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
+                    rValue = true;
+                }
+                break;
+            case 'L':
+                if (UTag == "LASTON") {
+                    SetLastOn(data);
+                    rValue = true;
+                }
+                else if (UTag == "LASTONSECS") {
+                    SetLastOnSecs(
+                                  static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "LOYALTY") {
+                    SetLoyalty(
+                               static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'M':
+                if (UTag == "MAYLEVITATE") {
+                    SetLevitate((static_cast<std::int16_t>(
+                                                           std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
+                    rValue = true;
+                }
+                else if (UTag == "MURDERTIMER") {
+                    SetTimer(tCHAR_MURDERRATE, BuildTimeValue(static_cast<R32>(
+                                                                               std::stof(util::trim(util::strip(data, "//"))))));
+                    rValue = true;
+                }
+                else if (UTag == "MAXHP") {
+                    SetFixedMaxHP(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "MAXMANA") {
+                    SetFixedMaxMana(
+                                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "MAXLOYALTY") {
+                    SetMaxLoyalty(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "MAXSTAM") {
+                    SetFixedMaxStam(
+                                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "MOUNTED") {
+                    SetMounted(static_cast<std::uint16_t>(
+                                                          std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                break;
+            case 'N':
+                if (UTag == "NPCAITYPE") {
+                    SetNPCAiType(
+                                 static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "NPCWANDER") {
+                    if (csecs.size() >= 2) {
+                        SetNpcWander(static_cast<std::int8_t>(
+                                                              std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetOldNpcWander(static_cast<std::int8_t>(
+                                                                 std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    }
+                    else {
+                        SetNpcWander(static_cast<std::int8_t>(
+                                                              std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    }
+                    rValue = true;
+                }
+                else if (UTag == "NPCFLAG") {
+                    SetNPCFlag(static_cast<cnpc_flag_t>(
+                                                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    UpdateFlag(this);
+                    rValue = true;
+                }
+                else if (UTag == "NPCGUILD") {
+                    SetNPCGuild(
+                                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "NPCGUILDJOINED") {
+                    SetNPCGuildJoined(
+                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'O':
+                if (UTag == "ORGNAME") {
+                    SetOrgName(data);
+                    rValue = true;
+                }
+                else if (UTag == "ORIGINALBODYID") {
+                    SetOrgId(
+                             static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "ORIGINALSKINID") {
+                    SetOrgSkin(
+                               static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "ORIGINALID") {
+                    SetOrgId(static_cast<std::uint16_t>(
+                                                        std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetOrgSkin(static_cast<std::uint16_t>(
+                                                          std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "ORNERINESS") {
+                    SetOrneriness(
+                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'P':
+                if (UTag == "PRIVILEGES") {
+                    SetPriv(
+                            static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "PACKITEM") {
+                    tempContainerSerial = static_cast<serial_t>(
+                                                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    rValue = true;
+                }
+                else if (UTag == "PETOWNER") {
+                    CChar *cList = CalcCharObjFromSer(
+                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    if (ValidateObject(cList)) {
+                        AddPetOwnerToList(cList);
+                    }
+                    rValue = true;
+                }
+                else if (UTag == "POISON") {
+                    SetPoisoned(
+                                static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "POISONSTRENGTH") {
+                    SetPoisonStrength(
+                                      static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "PEACEING") {
+                    SetPeaceing(
+                                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "PROVOING") {
+                    SetProvoing(
+                                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "PEACETIMER") {
+                    SetTimer(tCHAR_PEACETIMER, BuildTimeValue(static_cast<R32>(
+                                                                               std::stof(util::trim(util::strip(data, "//"))))));
+                    rValue = true;
+                }
+                else if (UTag == "PLAYTIME") {
+                    SetPlayTime(
+                                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'Q':
+                if (UTag == "QUESTTYPE") {
+                    SetQuestType(
+                                 static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "QUESTDESTINATIONREGION") {
+                    SetQuestDestRegion(
+                                       static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "QUESTORIGINALREGION") {
+                    SetQuestOrigRegion(
+                                       static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "QUESTREGIONS") {
+                    SetQuestOrigRegion(static_cast<std::uint8_t>(
+                                                                 std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetQuestDestRegion(static_cast<std::uint8_t>(
+                                                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'R':
+                if (UTag == "ROBESERIAL") {
+                    SetRobe(
+                            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "RESERVED") {
+                    SetCell(
+                            static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "RUNNING") {
+                    rValue = true;
+                }
+                else if (UTag == "REGION") {
+                    SetRegion(
+                              static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "REATTACKAT") {
+                    SetReattackAt(
+                                  static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "RUNNINGSPEED") {
+                    SetRunningSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                else if (UTag == "RUNNINGSPEEDMOUNTED") {
+                    SetMountedRunningSpeed(
+                                           static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                break;
+            case 'S':
+                if (UTag == "SPLIT") {
+                    if (csecs.size() >= 2) {
+                        SetSplit(static_cast<std::uint8_t>(
+                                                           std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetSplitChance(static_cast<std::uint8_t>(
+                                                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    }
+                    else {
+                        SetSplit(static_cast<std::uint8_t>(
+                                                           std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    }
+                    rValue = true;
+                }
+                else if (UTag == "SPLITCHANCE") {
+                    SetSplitChance(
+                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "SUMMONTIMER") {
+                    SetTimer(tNPC_SUMMONTIME, static_cast<std::uint32_t>(std::stoul(
+                                                                                    util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "SAY") {
+                    SetSayColour(
+                                 static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "STEALTH") {
+                    SetStealth(
+                               static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "SPATTACK") {
+                    if (csecs.size() >= 2) {
+                        SetSpAttack(static_cast<std::uint16_t>(
+                                                               std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetSpDelay(static_cast<std::uint8_t>(
+                                                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    }
+                    else {
+                        SetSpAttack(static_cast<std::uint16_t>(
+                                                               std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    }
+                    rValue = true;
+                }
+                else if (UTag == "SPECIALATTACKDELAY") {
+                    SetSpDelay(
+                               static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "SQUELCHED") {
+                    SetSquelched(
+                                 static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "SKILLLOCKS") {
+                    // Format: Baselocks=[0,34]-[1,255]-[END]
+                    auto dsecs = oldstrutil::sections(data, "-");
+                    
+                    for (auto &value : dsecs) {
+                        if (value.empty()) {
+                            break;
+                        }
+                        auto secs = oldstrutil::sections(value, ",");
+                        if (secs.size() != 2) {
+                            break;
+                        }
+                        auto skillnum = static_cast<std::uint8_t>(std::stoul(secs[0].substr(1), nullptr, 0));
+                        auto skillvalue = static_cast<skilllock_t>(
+                                                                   std::stoul(secs[1].substr(0, secs[1].size() - 1), nullptr, 0));
+                        SetSkillLock(skillvalue, skillnum);
+                    }
+                    rValue = true;
+                }
+                else if (UTag == "SPEECH") {
+                    SetSayColour(static_cast<std::uint16_t>(
+                                                            std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetEmoteColour(static_cast<std::uint16_t>(
+                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "STABLED") {
+                    SetStabled(static_cast<std::uint16_t>(
+                                                          std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                break;
+            case 'T':
+                if (UTag == "TAMING") {
+                    SetTaming(
+                              static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TAMEDHUNGERRATE") {
+                    SetTamedHungerRate(
+                                       static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TAMEDHUNGERWILDCHANCE") {
+                    SetTamedHungerWildChance(
+                                             static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TAMEDTHIRSTRATE") {
+                    SetTamedThirstRate(
+                                       static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TAMEDTHIRSTWILDCHANCE") {
+                    SetTamedThirstWildChance(
+                                             static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TOWN") {
+                    SetTown(
+                            static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TOWNVOTE") {
+                    SetTownVote(
+                                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TOWNPRIVILEGES") {
+                    SetTownpriv(
+                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "TOWNTITLE") {
+                    SetTownTitle(static_cast<std::int16_t>(
+                                                           std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "THIRST") {
+                    SetThirst(
+                              static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
+            case 'W':
+                if (UTag == "WANDERAREA") {
+                    SetFx(static_cast<std::int16_t>(
+                                                    std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
+                          0);
+                    SetFy(static_cast<std::int16_t>(
+                                                    std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
+                          0);
+                    SetFx(static_cast<std::int16_t>(
+                                                    std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0)),
+                          1);
+                    SetFy(static_cast<std::int16_t>(
+                                                    std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0)),
+                          1);
+                    SetFz(static_cast<std::int8_t>(
+                                                   std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                else if (UTag == "WILLHUNGER") {
+                    SetHungerStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
+                                                                        nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "WILLTHIRST") {
+                    SetThirstStatus(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")),
+                                                                        nullptr, 0)) == 1);
+                    rValue = true;
+                }
+                else if (UTag == "WALKINGSPEED") {
+                    SetWalkingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                else if (UTag == "WALKINGSPEEDMOUNTED") {
+                    SetMountedWalkingSpeed(
+                                           static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    rValue = true;
+                }
+                break;
+            case 'X':
+                if (UTag == "XNPCWANDER") {
+                    SetOldNpcWander(
+                                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    rValue = true;
+                }
+                break;
         }
     }
     return rValue;
@@ -4280,28 +4280,28 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
 bool CChar::LoadRemnants(void) {
     bool rValue = true;
     SetSerial(serial);
-
+    
     if (IsNpc() && IsAtWar()) {
         SetWar(false);
     }
-
+    
     CTownRegion *tRegion = CalcRegionFromXY(GetX(), GetY(), worldNumber, instanceId, this);
     SetRegion((tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF));
     SetTimer(tCHAR_ANTISPAM, 0);
     if (GetId() != GetOrgId() && !IsDead()) {
         SetId(GetOrgId());
     }
-
+    
     const std::uint16_t acct = GetAccount().accountNumber;
-
+    
     // Max body/anim ID supported in default client is 2048 (or 0x800),
     // though custom clients like CUO can be modified to bypass this limit
     if (GetId() > 0x999) {
         if (acct == AccountEntry::INVALID_ACCOUNT) {
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
             Console::shared().Warning(
-                util::format("NPC: %s with serial 0x%X with bugged body found, deleting",
-                             charName.c_str(), GetSerial()));
+                                      util::format("NPC: %s with serial 0x%X with bugged body found, deleting",
+                                                   charName.c_str(), GetSerial()));
             rValue = false;
         }
         else {
@@ -4310,21 +4310,21 @@ bool CChar::LoadRemnants(void) {
     }
     if (rValue) {
         MapRegion->AddChar(this);
-
+        
         const std::int16_t mx = GetX();
         const std::int16_t my = GetY();
-
+        
         auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNumber);
         const bool overRight = (mx > mapWidth);
         const bool overBottom = (my > mapHeight);
-
+        
         if (acct == AccountEntry::INVALID_ACCOUNT &&
             ((overRight && mx < 7000) || (overBottom && my < 7000) || mx < 0 || my < 0)) {
             if (IsNpc()) {
                 std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
                 Console::shared().Warning(util::format(
-                    "NPC: %s with serial 0x%X found outside valid world locations, deleting",
-                    charName.c_str(), GetSerial()));
+                                                       "NPC: %s with serial 0x%X found outside valid world locations, deleting",
+                                                       charName.c_str(), GetSerial()));
                 rValue = false;
             }
             else {
@@ -4336,7 +4336,7 @@ bool CChar::LoadRemnants(void) {
                 auto entry = AccountCharacter(this->GetSerial(), this->GetName());
                 entry.pointer = this;
                 Account::shared()[GetAccountNum()].addCharacter(
-                    entry); // account ID, and account object.
+                                                                entry); // account ID, and account object.
                 Account::shared().save();
             }
         }
@@ -4388,7 +4388,7 @@ void CChar::PostLoadProcessing(void) {
     else {
         SetPackItem(nullptr);
     }
-
+    
     std::int32_t maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
     if (GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight) {
         SetWeight(Weight->CalcCharWeight(this));
@@ -4396,12 +4396,12 @@ void CChar::PostLoadProcessing(void) {
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         Skills->UpdateSkillLevel(this, i);
     }
-
+    
     // If character belongs to a player and doesn't have a created timestamp, add one now
     if (!IsNpc() && GetCreatedOn() == 0) {
         SetCreatedOn(GetMinutesSinceEpoch());
     }
-
+    
     // We need to add things to petlists, so we can cleanup after ourselves properly -
     SetPostLoaded(true);
 }
@@ -4462,7 +4462,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
             if (!txtColor || txtColor == 0x1700) {
                 txtColor = 0x5A;
             }
-
+            
             auto speakTo = INVALIDSERIAL;
             SpeechTarget target = SPTRG_PCNPC;
             CChar *mChar = nullptr;
@@ -4471,18 +4471,18 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 speakTo = mChar->GetSerial();
                 target = SPTRG_INDIVIDUAL;
             }
-
+            
             if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
                 // Doesn't enter the speech-queue, though!
                 bool sendAll = true;
                 if (target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER) {
                     sendAll = false;
                 }
-
+                
                 // Send speech as a unicode-enabled cliloc message (packet 0xC1)
                 // ClilocMessage( s, this, msgType, txtColor, (FontType)GetFontType(), 1114057,
                 // sendAll, "s", toSay.c_str() );
-
+                
                 CPUnicodeMessage unicodeMessage;
                 unicodeMessage.Message(toSay);
                 unicodeMessage.Font(static_cast<fonttype_t>(GetFontType()));
@@ -4492,9 +4492,9 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 unicodeMessage.Name(this->GetNameRequest(mChar, NRS_SPEECH));
                 unicodeMessage.ID(INVALIDID);
                 unicodeMessage.Serial(GetSerial());
-
+                
                 bool sendSock = (s != nullptr);
-
+                
                 if (sendAll) {
                     std::uint16_t searchDistance = DIST_SAMESCREEN;
                     if (msgType == WHISPER || msgType == ASCIIWHISPER) {
@@ -4506,7 +4506,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                     else if (msgType == EMOTE || msgType == ASCIIEMOTE) {
                         searchDistance = DIST_INRANGE;
                     }
-
+                    
                     for (auto &tSock : FindNearbyPlayers(this, searchDistance)) {
                         if ((tSock == s) && sendSock) {
                             sendSock = false;
@@ -4514,7 +4514,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                         tSock->Send(&unicodeMessage);
                     }
                 }
-
+                
                 if (sendSock) {
                     s->Send(&unicodeMessage);
                 }
@@ -4544,7 +4544,7 @@ void CChar::TextMessage(CSocket *s, std::int32_t dictEntry, speechtype_t msgType
     if (s != nullptr) {
         dictLang = s->Language();
     }
-
+    
     std::string txt = Dictionary->GetEntry(dictEntry, dictLang);
     if (!txt.empty()) {
         va_list argptr;
@@ -4590,7 +4590,7 @@ void CChar::WalkZ(std::int8_t newZ) {
     oldLocZ = z;
     z = newZ;
     std::uint8_t fallDistance = oldLocZ - z;
-
+    
     if (fallDistance > MAX_Z_FALL) {
         std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
         for (auto i : scriptTriggers) {
@@ -4619,19 +4619,19 @@ void CChar::Cleanup(void) {
     if (!IsFree()) // We're not the default item in the handler
     {
         MapRegion->RemoveChar(this);
-
+        
         JSEngine->ReleaseObject(IUE_CHAR, this);
-
+        
         CBaseObject::Cleanup();
-
+        
         RemoveFromSight();
-
+        
         for (CItem *tItem = FirstItem(); !FinishedItems(); tItem = NextItem()) {
             if (ValidateObject(tItem)) {
                 tItem->Delete();
             }
         }
-
+        
         // Clear up some stuff for our target in combat
         CChar *tempChar = nullptr;
         tempChar = GetTarg();
@@ -4639,24 +4639,24 @@ void CChar::Cleanup(void) {
             // Clear char as target of target, if set
             if (tempChar->GetTarg() == this) {
                 tempChar->SetTarg(nullptr);
-
+                
                 if (tempChar->IsAtWar() && tempChar->IsNpc()) {
                     // What if target is fighting other characters too?
                     tempChar->ToggleCombat();
                 }
             }
-
+            
             // Remove char as target's attacker, if set
             if (tempChar->GetAttacker() == this) {
                 tempChar->SetAttacker(nullptr);
             }
-
+            
             // Remove char from target's aggressorToList
             tempChar->RemoveAggressorFlag(this->GetSerial());
-
+            
             SetTarg(nullptr);
         }
-
+        
         // Do the same for our attacker (who could be a different character than our target)
         tempChar = GetAttacker();
         if (ValidateObject(tempChar)) {
@@ -4664,7 +4664,7 @@ void CChar::Cleanup(void) {
             if (tempChar->GetAttacker() == this) {
                 tempChar->SetAttacker(nullptr);
             }
-
+            
             // Also clear attacker's target, if it matches this char
             if (tempChar->GetTarg() == this) {
                 tempChar->SetTarg(nullptr);
@@ -4672,30 +4672,30 @@ void CChar::Cleanup(void) {
                     tempChar->ToggleCombat();
                 }
             }
-
+            
             // Remove char from attacker's aggressorToList
             tempChar->RemoveAggressorFlag(this->GetSerial());
-
+            
             SetAttacker(nullptr);
         }
-
+        
         // Clear char's list of aggressor flags
         ClearAggressorFlags();
-
+        
         // If we delete a NPC we should delete his tempeffects as well
         std::vector<CTEffect *> removedEffect;
         for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
             if (Effect->Destination() == GetSerial()) {
                 removedEffect.push_back(Effect);
             }
-
+            
             else if (Effect->Source() == GetSerial()) {
                 Effect->Source(INVALIDSERIAL);
             }
         }
         std::for_each(removedEffect.begin(), removedEffect.end(),
                       [](CTEffect *effect) { cwmWorldState->tempEffects.Remove(effect, true); });
-
+        
         // if we delete a NPC we should delete him from spawnregions
         // this will fix several crashes
         if (IsNpc() && IsSpawned()) {
@@ -4710,7 +4710,7 @@ void CChar::Cleanup(void) {
                 }
             }
         }
-
+        
         if (!IsNpc()) {
             AccountEntry &mAcct = GetAccount();
             if (mAcct.accountNumber != AccountEntry::INVALID_ACCOUNT) {
@@ -4725,11 +4725,11 @@ void CChar::Cleanup(void) {
                 }
             }
         }
-
+        
         if (GetSpawnObj() != nullptr) {
             SetSpawn(INVALIDSERIAL);
         }
-
+        
         if (IsGuarded()) {
             CChar *petGuard = Npcs->GetGuardingFollower(this, this);
             if (ValidateObject(petGuard)) {
@@ -4738,7 +4738,7 @@ void CChar::Cleanup(void) {
             SetGuarded(false);
         }
         Npcs->StopPetGuarding(this);
-
+        
         // Clear out char's followers
         for (tempChar = activeFollowers.First(); !activeFollowers.Finished();
              tempChar = activeFollowers.Next()) {
@@ -4747,14 +4747,14 @@ void CChar::Cleanup(void) {
                 RemoveFollower(tempChar);
             }
         }
-
+        
         // Clear out char's list of owned pets
         for (tempChar = petsOwned.First(); !petsOwned.Finished(); tempChar = petsOwned.Next()) {
             if (ValidateObject(tempChar)) {
                 tempChar->SetOwner(nullptr);
             }
         }
-
+        
         // Clear out char's list of owned corpses
         for (auto tempCorpse = ownedCorpses.First(); !ownedCorpses.Finished();
              tempCorpse = ownedCorpses.Next()) {
@@ -4763,18 +4763,18 @@ void CChar::Cleanup(void) {
                 RemoveCorpse(tempCorpse);
             }
         }
-
+        
         // If a pet/follower, reduce owner's pet control slot usage by amount occupied by
         // pet/follower
         CChar *oldOwner = GetOwnerObj();
         if (ValidateObject(oldOwner)) {
             oldOwner->SetControlSlotsUsed(
-                std::max(0, oldOwner->GetControlSlotsUsed() - GetControlSlots()));
+                                          std::max(0, oldOwner->GetControlSlotsUsed() - GetControlSlots()));
             oldOwner->GetFollowerList()->Remove(this);
         }
-
+        
         RemoveSelfFromOwner(); // Let's remove it from our owner (if any)
-
+        
         // Ensure that object is removed from refreshQueue
         RemoveFromRefreshQueue();
     }
@@ -4787,7 +4787,7 @@ void CChar::Cleanup(void) {
 // o------------------------------------------------------------------------------------------------o
 void CChar::SetHP(std::int16_t newValue) {
     CBaseObject::SetHP(
-        std::min(std::max(static_cast<std::int16_t>(0), newValue), static_cast<std::int16_t>(GetMaxHP())));
+                       std::min(std::max(static_cast<std::int16_t>(0), newValue), static_cast<std::int16_t>(GetMaxHP())));
     Dirty(UT_HITPOINTS);
     UpdateRegion();
 }
@@ -4938,7 +4938,7 @@ AccountEntry &CChar::GetAccount(void) {
     if (IsValidPlayer()) {
         rVal = mPlayer->accountNum;
     }
-
+    
     return Account::shared()[rVal];
 }
 
@@ -5141,7 +5141,7 @@ bool CChar::GetMounted(void) const {
     if (IsValidNPC()) {
         rVal = mNPC->boolFlags.test(BIT_MOUNTED);
     }
-
+    
     return rVal;
 }
 void CChar::SetMounted(bool newValue) {
@@ -5195,17 +5195,17 @@ bool CChar::ToggleFlying(void) {
             else {
                 // Start timer for when flying toggle can be used again
                 SetTimer(tCHAR_FLYINGTOGGLE, BuildTimeValue(1.65));
-
+                
                 // Freeze character until flying anim is over
                 SetFrozen(true);
-
+                
                 // Toggle flying
                 SetFlying(!IsFlying());
-
+                
                 // Refresh our own character
                 CPExtMove toSend = (*this);
                 tSock->Send(&toSend);
-
+                
                 // Play takeoff/landing animation
                 if (!IsFlying()) {
                     Effects->PlayNewCharacterAnimation(this,
@@ -5213,9 +5213,9 @@ bool CChar::ToggleFlying(void) {
                 }
                 else {
                     Effects->PlayNewCharacterAnimation(
-                        this, N_ACT_TAKEOFF); // Action 0x09, subAction 0x00
+                                                       this, N_ACT_TAKEOFF); // Action 0x09, subAction 0x00
                 }
-
+                
                 // Send update to nearby characters
                 for (auto &tSend : Network->connClients) {
                     if (tSend) {
@@ -5225,16 +5225,16 @@ bool CChar::ToggleFlying(void) {
                                 (GetInstanceId() == mChar->GetInstanceId())) {
                                 std::uint16_t effRange = static_cast<std::uint16_t>(tSend->Range());
                                 const std::uint16_t visibleRange = static_cast<std::uint16_t>(
-                                    tSend->Range() + Races->VisRange(mChar->GetRace()));
+                                                                                              tSend->Range() + Races->VisRange(mChar->GetRace()));
                                 if (visibleRange >= effRange) {
                                     effRange = visibleRange;
                                 }
-
+                                
                                 if (this != mChar) {
                                     if (!ObjInRange(this, mChar, effRange))
                                         continue;
                                 }
-
+                                
                                 toSend.FlagColour(static_cast<std::uint8_t>(FlagColour(mChar)));
                                 tSend->Send(&toSend);
                             }
@@ -5940,7 +5940,7 @@ void CChar::SetLoyalty(std::uint16_t newValue) {
                 }
             }
         }
-
+        
         mNPC->loyalty = newValue;
         UpdateRegion();
     }
@@ -5955,14 +5955,14 @@ void CChar::DoLoyaltyUpdate(void) {
     // Don't continue if pet control difficulty system is disabled
     if (!cwmWorldState->ServerData()->CheckPetControlDifficulty())
         return;
-
+    
     // No need to do anything for dead or non-tame NPCs, or player vendors
     if (!IsNpc() || IsDead() || !IsTamed() || GetNpcAiType() == AI_PLAYERVENDOR)
         return;
-
+    
     if (!ValidateObject(GetOwnerObj()))
         return;
-
+    
     if (GetTimer(tNPC_LOYALTYTIME) <= cwmWorldState->GetUICurrentTime() ||
         cwmWorldState->GetOverflow()) {
         std::uint16_t loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
@@ -5970,7 +5970,7 @@ void CChar::DoLoyaltyUpdate(void) {
             // Reduce loyalty by 1, reset timer
             SetLoyalty(std::max(0, GetLoyalty() - 1));
             SetTimer(tNPC_LOYALTYTIME, BuildTimeValue(static_cast<R32>(loyaltyRate)));
-
+            
             // Provide some feedback to the player, if they're online
             CSocket *mSock = GetOwnerObj()->GetSocket();
             if (mSock != nullptr) {
@@ -5978,45 +5978,45 @@ void CChar::DoLoyaltyUpdate(void) {
                     // Round loyalty down to nearest 10
                     auto loyaltyLevel = 10 * (GetLoyalty() / 10);
                     switch (loyaltyLevel) {
-                    case 0:
-                        TextMessage(mSock, 2421, OBJ, true); // Your pet looks confused
-                        break;
-                    case 10:
-                        TextMessage(mSock, 2422, OBJ, true); // Your pet looks extremely unhappy
-                        break;
-                    case 20:
-                        TextMessage(mSock, 2423, OBJ, true); // Your pet looks rather unhappy
-                        break;
-                    case 30:
-                        TextMessage(mSock, 2424, OBJ, true); // Your pet looks unhappy
-                        break;
-                    case 40:
-                        TextMessage(mSock, 2425, OBJ, true); // Your pet looks somewhat content
-                        break;
-                    case 50:
-                        TextMessage(mSock, 2426, OBJ, true); // Your pet looks content
-                        break;
-                    case 60:
-                        TextMessage(mSock, 2427, OBJ, true); // Your pet looks happy
-                        break;
-                    case 70:
-                        TextMessage(mSock, 2428, OBJ, true); // Your pet looks rather happy
-                        break;
-                    case 80:
-                        TextMessage(mSock, 2429, OBJ, true); // Your pet looks very happy
-                        break;
-                    case 90:
-                        TextMessage(mSock, 2430, OBJ, true); // Your pet looks extremely happy
-                        break;
-                    case 100:
-                        TextMessage(mSock, 2431, OBJ, true); // Your pet looks wonderfully happy
-                        break;
-                    default:
-                        break;
+                        case 0:
+                            TextMessage(mSock, 2421, OBJ, true); // Your pet looks confused
+                            break;
+                        case 10:
+                            TextMessage(mSock, 2422, OBJ, true); // Your pet looks extremely unhappy
+                            break;
+                        case 20:
+                            TextMessage(mSock, 2423, OBJ, true); // Your pet looks rather unhappy
+                            break;
+                        case 30:
+                            TextMessage(mSock, 2424, OBJ, true); // Your pet looks unhappy
+                            break;
+                        case 40:
+                            TextMessage(mSock, 2425, OBJ, true); // Your pet looks somewhat content
+                            break;
+                        case 50:
+                            TextMessage(mSock, 2426, OBJ, true); // Your pet looks content
+                            break;
+                        case 60:
+                            TextMessage(mSock, 2427, OBJ, true); // Your pet looks happy
+                            break;
+                        case 70:
+                            TextMessage(mSock, 2428, OBJ, true); // Your pet looks rather happy
+                            break;
+                        case 80:
+                            TextMessage(mSock, 2429, OBJ, true); // Your pet looks very happy
+                            break;
+                        case 90:
+                            TextMessage(mSock, 2430, OBJ, true); // Your pet looks extremely happy
+                            break;
+                        case 100:
+                            TextMessage(mSock, 2431, OBJ, true); // Your pet looks wonderfully happy
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
-
+            
             // Is loyalty already at the lowest threshold from the last time this check ran?
             if (GetLoyalty() == 0) {
                 // Make pet go wild from lack of loyalty
@@ -6025,9 +6025,9 @@ void CChar::DoLoyaltyUpdate(void) {
                     // Reduce player's control slot usage by the amount of control slots taken up by
                     // the pet
                     owner->SetControlSlotsUsed(
-                        std::max(0, owner->GetControlSlotsUsed() - GetControlSlots()));
+                                               std::max(0, owner->GetControlSlotsUsed() - GetControlSlots()));
                 }
-
+                
                 // Release the pet
                 Npcs->ReleasePet(this);
                 return;
@@ -6531,7 +6531,7 @@ void CChar::SetNpcWander(std::int8_t newValue, bool initArea) {
         mNPC->wanderMode = newValue;
         UpdateRegion();
     }
-
+    
     // Make sure the wanderarea is properly initialized
     if (initArea && ((newValue == WT_BOX || newValue == WT_CIRCLE))) {
         if ((mNPC->fx[0] == -1) || (mNPC->fy[0] == -1)) {
@@ -6808,7 +6808,7 @@ void CChar::PushDirection(std::uint8_t newDir, bool pushFront) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (pushFront) {
         mNPC->pathToFollow.push_front(newDir);
     }
@@ -6895,7 +6895,7 @@ auto CChar::CheckCombatIgnore(serial_t toCheck) -> bool {
             RemoveFromCombatIgnore(toCheck);
         }
     }
-
+    
     return false; // serial not found, or timestamp expired and target no longer ignored in combat
 }
 
@@ -6914,7 +6914,7 @@ auto CChar::CombatIgnoreMaintenance() -> void {
             serialsToRemove.push_back(it->first);
         }
     }
-
+    
     // Then loop through vector of serials with expired timers, and safely remove them from the list
     for (auto toRemove : serialsToRemove) {
         RemoveFromCombatIgnore(toRemove);
@@ -6984,13 +6984,13 @@ bool CChar::IsOnPetOwnerList(CChar *toCheck) {
     bool retVal = false;
     if (ValidateObject(toCheck)) {
         auto iter = std::find_if(
-            GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(),
-            [&toCheck](CChar *petChar) { return ValidateObject(petChar) && (petChar == toCheck); });
+                                 GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(),
+                                 [&toCheck](CChar *petChar) { return ValidateObject(petChar) && (petChar == toCheck); });
         if (iter != GetPetOwnerList()->collection().end()) {
             retVal = true;
         }
     }
-
+    
     return retVal;
 }
 
@@ -7150,18 +7150,18 @@ void CChar::SetOrneriness(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 cnpc_flag_t CChar::GetNPCFlag(void) const {
     cnpc_flag_t retVal = fNPC_NEUTRAL;
-
+    
     if (IsValidNPC()) {
         retVal = mNPC->npcFlag;
     }
-
+    
     return retVal;
 }
 void CChar::SetNPCFlag(cnpc_flag_t flagType) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->npcFlag = flagType;
         UpdateRegion();
@@ -7177,13 +7177,13 @@ void CChar::SetNPCFlag(cnpc_flag_t flagType) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetWalkingSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->walkingSpeed > 0) {
             retVal = mNPC->walkingSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7193,7 +7193,7 @@ void CChar::SetWalkingSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->walkingSpeed = newValue;
         UpdateRegion();
@@ -7209,13 +7209,13 @@ void CChar::SetWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetRunningSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->runningSpeed > 0) {
             retVal = mNPC->runningSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7225,7 +7225,7 @@ void CChar::SetRunningSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->runningSpeed = newValue;
         UpdateRegion();
@@ -7241,13 +7241,13 @@ void CChar::SetRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetFleeingSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->fleeingSpeed > 0) {
             retVal = mNPC->fleeingSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7257,7 +7257,7 @@ void CChar::SetFleeingSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->fleeingSpeed = newValue;
         UpdateRegion();
@@ -7272,13 +7272,13 @@ void CChar::SetFleeingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedWalkingSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->mountedWalkingSpeed > 0) {
             retVal = mNPC->mountedWalkingSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7288,7 +7288,7 @@ void CChar::SetMountedWalkingSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->mountedWalkingSpeed = newValue;
         UpdateRegion();
@@ -7303,13 +7303,13 @@ void CChar::SetMountedWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedRunningSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->mountedRunningSpeed > 0) {
             retVal = mNPC->mountedRunningSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7319,7 +7319,7 @@ void CChar::SetMountedRunningSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->mountedRunningSpeed = newValue;
         UpdateRegion();
@@ -7334,13 +7334,13 @@ void CChar::SetMountedRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedFleeingSpeed(void) const {
     R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
-
+    
     if (IsValidNPC()) {
         if (mNPC->mountedFleeingSpeed > 0) {
             retVal = mNPC->mountedFleeingSpeed;
         }
     }
-
+    
 #if defined(UOX_DEBUG_MODE)
     retVal = (retVal * DEBUGMOVEMULTIPLIER);
 #endif
@@ -7350,7 +7350,7 @@ void CChar::SetMountedFleeingSpeed(R32 newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
-
+    
     if (IsValidNPC()) {
         mNPC->mountedFleeingSpeed = newValue;
         UpdateRegion();
@@ -7365,10 +7365,10 @@ void CChar::SetMountedFleeingSpeed(R32 newValue) {
 bool DTEgreater(DamageTrackEntry_st *elem1, DamageTrackEntry_st *elem2) {
     if (elem1 == nullptr)
         return false;
-
+    
     if (elem2 == nullptr)
         return true;
-
+    
     return elem1->damageDone > elem2->damageDone;
 }
 
@@ -7407,7 +7407,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
 // o------------------------------------------------------------------------------------------------o
 void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *attacker) {
     CSocket *mSock = GetSocket();
-
+    
     if (ValidateObject(attacker)) {
         // Let the target react upon damage
         // If attacker is attacking someone who is not already an aggressor to the attacker...
@@ -7425,7 +7425,7 @@ void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *atta
                 attacker->AddAggressorFlag(this->GetSerial());
             }
         }
-
+        
         if (!attacker->IsInvulnerable() &&
             (!ValidateObject(GetTarg()) || !ObjInRange(this, GetTarg(), DIST_INRANGE))) {
             SetAttacker(attacker);
@@ -7433,7 +7433,7 @@ void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *atta
                 if (GetVisible() == VT_TEMPHIDDEN || attacker->GetVisible() == VT_INVISIBLE) {
                     ExposeToView();
                 }
-
+                
                 if (!IsAtWar() && !attacker->IsInvulnerable() && GetNpcAiType() != AI_DUMMY) {
                     SetTarg(attacker);
                     ToggleCombat();
@@ -7459,7 +7459,7 @@ void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *atta
 // o------------------------------------------------------------------------------------------------o
 bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker, bool doRepsys) {
     CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
-
+    
     if (ValidateObject(attacker)) {
         std::vector<std::uint16_t> attScriptTriggers = attacker->GetScriptTriggers();
         for (auto i : attScriptTriggers) {
@@ -7472,7 +7472,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
             }
         }
     }
-
+    
     std::vector<std::uint16_t> scriptTriggers = GetScriptTriggers();
     for (auto i : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(i);
@@ -7483,14 +7483,14 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
                 return false;
         }
     }
-
+    
     if (ValidateObject(attacker)) {
         attSock = attacker->GetSocket();
         if (ValidateObject(attacker->GetOwnerObj())) {
             attOwnerSock = attacker->GetOwnerObj()->GetSocket();
         }
     }
-
+    
     // Display damage numbers
     if (cwmWorldState->ServerData()->CombatDisplayDamageNumbers()) {
         CPDisplayDamage toDisplay((*this), static_cast<std::uint16_t>(damageValue));
@@ -7504,16 +7504,16 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
             attOwnerSock->Send(&toDisplay);
         }
     }
-
+    
     // Apply the damage
     SetHP(hitpoints - damageValue);
-
+    
     // Spawn blood effects
     if (damageValue >=
         std::max(static_cast<std::int16_t>(1),
                  static_cast<std::int16_t>(floor(
-                     GetMaxHP() * 0.01)))) // Only display blood effects if damage done is higher
-                                           // than 1, or 1% of max health - whichever is higher
+                                                 GetMaxHP() * 0.01)))) // Only display blood effects if damage done is higher
+        // than 1, or 1% of max health - whichever is higher
     {
         std::uint8_t bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
         bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(RandomNum(0, 99)));
@@ -7523,22 +7523,22 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
                 // If damage done is higher than 20% of max health, spawn larger blood splats
                 bloodType = BLOOD_CRITICAL;
             }
-
+            
             std::uint16_t bloodColour =
-                Races->BloodColour(GetRace()); // Fetch blood color from race property
+            Races->BloodColour(GetRace()); // Fetch blood color from race property
             if (bloodColour == 0xffff) {
                 // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
                 bloodColour = GetSkin();
             }
             CItem *bloodEffect =
-                Effects->SpawnBloodEffect(WorldNumber(), GetInstanceId(), bloodColour, bloodType);
+            Effects->SpawnBloodEffect(WorldNumber(), GetInstanceId(), bloodColour, bloodType);
             if (ValidateObject(bloodEffect)) {
                 // Finally, set blood's location to match that of the character
                 bloodEffect->SetLocation(this);
             }
         }
     }
-
+    
     // Handle peace state
     if (!GetCanAttack()) {
         const std::uint8_t currentBreakChance = GetBrkPeaceChance();
@@ -7552,7 +7552,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
             SetBrkPeaceChance(currentBreakChance + GetBrkPeaceChanceGain());
         }
     }
-
+    
     if (ValidateObject(attacker)) {
         // Reputation system
         if (doRepsys) {
@@ -7563,7 +7563,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
             {
                 // Update aggressor flag timer
                 attacker->UpdateAggressorFlagTimestamp(this->GetSerial());
-
+                
                 // Flag attacker as criminal
                 MakeCriminal(attacker);
                 bool regionGuarded = (GetRegion()->IsGuarded());
@@ -7578,7 +7578,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
                 }
             }
         }
-
+        
         // Update Damage tracking
         const auto attackerSerial = attacker->GetSerial();
         bool persFound = false;
@@ -7598,11 +7598,11 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
         }
         damageDealt.Sort(DTEgreater);
     }
-
+    
     if (GetHP() <= 0) {
         Die(attacker, doRepsys);
     }
-
+    
     return true;
 }
 
@@ -7632,7 +7632,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
         cScript *toExecute = JSMapping->GetScript(i);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnDeathBlow(this, attacker);
-
+            
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
             // 1 == script returned true or 1
@@ -7640,7 +7640,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
                 return;
         }
     }
-
+    
     if (ValidateObject(attacker)) {
         if (this != attacker && doRepsys) // can't gain fame and karma for suicide :>
         {
@@ -7650,12 +7650,12 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
                 attacker->UpdateAggressorFlagTimestamp(this->GetSerial());
                 attacker->SetKills(attacker->GetKills() + 1);
                 attacker->SetTimer(
-                    tCHAR_MURDERRATE,
-                    cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_MURDERDECAY));
+                                   tCHAR_MURDERRATE,
+                                   cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_MURDERDECAY));
                 if (!attacker->IsNpc()) {
                     if (attSock != nullptr) {
                         attSock->SysMessage(
-                            314, attacker->GetKills()); // You have killed %i innocent people.
+                                            314, attacker->GetKills()); // You have killed %i innocent people.
                         if (attacker->GetKills() ==
                             cwmWorldState->ServerData()->RepMaxKills() + 1) {
                             attSock->SysMessage(315); // You are now a murderer!
@@ -7672,7 +7672,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
                                                attacker->GetName().c_str()),
                                   "PvP.log");
         }
-
+        
         Combat->Kill(attacker, this);
     }
     else {
@@ -7697,7 +7697,7 @@ auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) ->
             }
         }
     }
-
+    
     return false;
 }
 
@@ -7811,10 +7811,10 @@ bool CountHousesOwnedFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) 
         CMultiObj *i = static_cast<CMultiObj *>(a);
         if (i->GetObjType() == CBaseObject::OT_BOAT)
             return false;
-
+        
         if (!ValidateObject(i->GetOwnerObj())) // return false if house has no owner
             return false;
-
+        
         if (trackHousesPerAccount) {
             if (countCoOwnedHouses) {
                 // Count house co-ownership per account

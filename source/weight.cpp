@@ -106,12 +106,12 @@ CWeight *Weight = nullptr;
 std::int32_t CWeight::CalcWeight(CItem *pack) {
     std::int32_t totalWeight = 0;
     std::int32_t contWeight = 0;
-
+    
     GenericList<CItem *> *pCont = pack->GetContainsList();
     for (CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next()) {
         if (!ValidateObject(i))
             continue;
-
+        
         if (i->IsContType()) // Item is a container
         {
             /*			// Code grabs weight of container based on tile-weight to get the "real"
@@ -120,14 +120,14 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
              undefined it defaults to 255 stones!
              // Instead, the code should maybe subtract the weight of all items contained in the
              container before re-adding them?*/
-
+            
             contWeight =
-                i->GetBaseWeight(); // Find the base container weight, stored when item was created
+            i->GetBaseWeight(); // Find the base container weight, stored when item was created
             if (contWeight == 0)    // If they have no weight grab the tiledata weight for the item
             {
                 CTile &tile = Map->SeekTile(i->GetId());
                 contWeight =
-                    static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
+                static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
             }
             contWeight += CalcWeight(i); // Find and add the weight of the items in the container
             i->SetWeight(contWeight, false); // Also update the weight property of the container
@@ -157,23 +157,23 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
 std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
     std::int32_t totalWeight = 0;
     std::int32_t contWeight = 0;
-
+    
     for (CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem()) {
         if (!ValidateObject(i))
             continue;
-
+        
         if (IsWeightedContainer(i)) {
             if (i->GetLayer() == IL_PACKITEM) {
                 contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item
-                                                 // was created
+                // was created
                 if (contWeight == 0) // If they have no weight grab the tiledata weight for the item
                 {
                     CTile &tile = Map->SeekTile(i->GetId());
                     contWeight =
-                        static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
+                    static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
                 }
                 contWeight +=
-                    CalcWeight(i); // Find and add the weight of the items in the container
+                CalcWeight(i); // Find and add the weight of the items in the container
                 i->SetWeight(contWeight, false); // Also update the weight property of the container
                 totalWeight += contWeight;
             }
@@ -203,7 +203,7 @@ bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
         CTile &tile = Map->SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
-
+    
     if (item->GetAmount() > 1) {
         // Stackable items weight is Amount * Weight
         totalWeight += (item->GetAmount() * itemWeight);
@@ -212,10 +212,10 @@ bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
         // Else just the items weight
         totalWeight += itemWeight;
     }
-
+    
     if (totalWeight > MAX_WEIGHT) // Don't let them go over the weight limit
         return false;
-
+    
     return true;
 }
 
@@ -235,7 +235,7 @@ bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
         CTile &tile = Map->SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
-
+    
     if (item->GetAmount() > 1) {
         // Stackable items weight is Amount * Weight
         totalWeight -= (item->GetAmount() * itemWeight);
@@ -244,11 +244,11 @@ bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
         // Else just the items weight
         totalWeight -= itemWeight;
     }
-
+    
     if (totalWeight < 0 ||
         totalWeight > MAX_WEIGHT) // Don't let them go under 0 or over the weight limit
         return false;
-
+    
     return true;
 }
 
@@ -275,7 +275,7 @@ void CWeight::AddItemWeight(CBaseObject *getObj, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 void CWeight::AddItemWeight(CChar *mChar, CItem *item) {
     std::int32_t totalWeight = mChar->GetWeight();
-
+    
     if (item->GetCont() != mChar || IsWeightedContainer(item)) {
         if (CalcAddWeight(item, totalWeight)) {
             mChar->SetWeight(totalWeight);
@@ -295,14 +295,14 @@ void CWeight::AddItemWeight(CChar *mChar, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 void CWeight::AddItemWeight(CItem *pack, CItem *item) {
     std::int32_t totalWeight = pack->GetWeight();
-
+    
     if (CalcAddWeight(item, totalWeight)) {
         pack->SetWeight(totalWeight, false); // why false?
     }
     else {
         pack->SetWeight(MAX_WEIGHT, false);
     }
-
+    
     CBaseObject *pCont = pack->GetCont();
     if (ValidateObject(pCont)) {
         if (pCont->CanBeObjType(CBaseObject::OT_ITEM)) {
@@ -330,17 +330,17 @@ void CWeight::AddItemWeight(CItem *pack, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::IsWeightedContainer(CItem *toCheck) {
     switch (toCheck->GetLayer()) {
-    case IL_NONE:            // Trade Window
-    case IL_HAIR:            // hair
-    case IL_FACIALHAIR:      // beard
-    case IL_MOUNT:           // steed
-    case IL_BANKBOX:         // bank box
-    case IL_BUYCONTAINER:    // Contains items that NPC is interested in buying from
-    case IL_BOUGHTCONTAINER: // Contains items shopkeepers have bought from players
-    case IL_SELLCONTAINER:   // Contains items shopkeepers sell to players
-        return false;        // no weight for any of these
-    default:
-        break;
+        case IL_NONE:            // Trade Window
+        case IL_HAIR:            // hair
+        case IL_FACIALHAIR:      // beard
+        case IL_MOUNT:           // steed
+        case IL_BANKBOX:         // bank box
+        case IL_BUYCONTAINER:    // Contains items that NPC is interested in buying from
+        case IL_BOUGHTCONTAINER: // Contains items shopkeepers have bought from players
+        case IL_SELLCONTAINER:   // Contains items shopkeepers sell to players
+            return false;        // no weight for any of these
+        default:
+            break;
     }
     return true;
 }
@@ -368,7 +368,7 @@ void CWeight::SubtractItemWeight(CBaseObject *getObj, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 void CWeight::SubtractItemWeight(CChar *mChar, CItem *item) {
     std::int32_t totalWeight = mChar->GetWeight();
-
+    
     if (item->GetCont() != mChar || IsWeightedContainer(item)) {
         if (CalcSubtractWeight(item, totalWeight)) {
             mChar->SetWeight(totalWeight);
@@ -388,14 +388,14 @@ void CWeight::SubtractItemWeight(CChar *mChar, CItem *item) {
 // o------------------------------------------------------------------------------------------------o
 void CWeight::SubtractItemWeight(CItem *pack, CItem *item) {
     std::int32_t totalWeight = pack->GetWeight();
-
+    
     if (CalcSubtractWeight(item, totalWeight)) {
         pack->SetWeight(totalWeight, false);
     }
     else {
         pack->SetWeight(0, false);
     }
-
+    
     CBaseObject *pCont = pack->GetCont();
     if (ValidateObject(pCont)) {
         if (pCont->CanBeObjType(CBaseObject::OT_ITEM)) {
@@ -425,7 +425,7 @@ bool CWeight::IsOverloaded(CChar *mChar) const {
     if (static_cast<R32>(mChar->GetWeight() / 100) >
         ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 40))
         return true;
-
+    
     return false;
 }
 
@@ -440,25 +440,25 @@ bool CWeight::IsOverloaded(CChar *mChar) const {
 bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
     if (!ValidateObject(pack))
         return true;
-
+    
     if (pack->GetContSerial() <
         BASEITEMSERIAL) // If the pack's container is a character, (it's his root pack), we don't
-                        // have a container weight limit
+        // have a container weight limit
         return CheckCharWeight(ourChar, static_cast<CChar *>(pack->GetCont()), item);
-
+    
     const std::int32_t packWeight = pack->GetWeight();
     std::int32_t packWeightMax = pack->GetWeightMax();
     std::int32_t itemWeight = item->GetWeight();
     if (item->GetAmount() > 1) {
         itemWeight *= item->GetAmount();
     }
-
+    
     if ((itemWeight + packWeight) <= packWeightMax) // <= MAX_PACKWEIGHT )
     {
         // Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
         if (pack->GetCont() == nullptr) // No container above pack
             return true;
-
+        
         if (pack->GetContSerial() >=
             BASEITEMSERIAL) // pack is in another pack, lets ensure it won't overload that pack
             return CheckPackWeight(ourChar, static_cast<CItem *>(pack->GetCont()), item);
@@ -477,7 +477,7 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
 bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, std::uint16_t amount) {
     if (!ValidateObject(mChar))
         return true;
-
+    
     std::int32_t MAX_CHARWEIGHT = 0;
     if (mChar->IsGM()) {
         MAX_CHARWEIGHT = (MAX_WEIGHT - 1); // Weight on GM maxes only at our logical limit
@@ -485,14 +485,13 @@ bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, std::ui
     else {
         MAX_CHARWEIGHT = 200000; // Normal characters have hardcap of 2,000 stones
     }
-
+    
     const std::int32_t charWeight = mChar->GetWeight();
     std::int32_t itemWeight = 0;
-    if (ourChar != mChar) // Item weight has already been added to the character if we picked it up
-    {
-        itemWeight = item->GetWeight();
+    if (ourChar != mChar) { // Item weight has already been added to the character if we picked it up
+         itemWeight = item->GetWeight();
     }
-
+    
     if (amount > 0) {
         // Calculate weight based on amount of items (supplied as function parameter) picked up from
         // pile
@@ -501,9 +500,9 @@ bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, std::ui
     else if (item->GetAmount() > 1) {
         itemWeight *= item->GetAmount();
     }
-
+    
     if ((itemWeight + charWeight) <= MAX_CHARWEIGHT)
         return true;
-
+    
     return false;
 }

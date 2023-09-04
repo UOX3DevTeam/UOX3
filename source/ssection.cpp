@@ -536,7 +536,7 @@ auto FindDFNTagFromStr(const std::string &strToFind) -> dfntags_t {
 //|	Purpose		-	Default constructor, initializing all variables
 // o------------------------------------------------------------------------------------------------o
 CScriptSection::CScriptSection()
-    : dfnCat(NUM_DEFS), npcList(false), itemList(false), npcListData(""), itemListData("") {
+: dfnCat(NUM_DEFS), npcList(false), itemList(false), npcListData(""), itemListData("") {
     data.resize(0);
     dataV2.resize(0);
     currentPos = data.end();
@@ -551,7 +551,7 @@ CScriptSection::CScriptSection()
 //|						and grabbing a section from the file passed in
 // o------------------------------------------------------------------------------------------------o
 CScriptSection::CScriptSection(std::istream &input, definitioncategories_t d)
-    : dfnCat(d), npcList(false), itemList(false), npcListData(""), itemListData("") {
+: dfnCat(d), npcList(false), itemList(false), npcListData(""), itemListData("") {
     data.resize(0);
     dataV2.resize(0);
     CreateSection(input);
@@ -810,7 +810,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
     while (!input.eof() && sLine.substr(0, 1) != "}" && !input.fail()) {
         input.getline(line, 2047);
         line[input.gcount()] = 0;
-
+        
         sLine = line;
         sLine = util::trim(util::strip(sLine, "//"));
         if (sLine != "}" && !sLine.empty()) {
@@ -835,142 +835,142 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                     }
                 }
                 switch (dfnCat) {
-                case advance_def:
-                case hard_items_def: // as it's the same format as items_def, in essence
-                case npc_def:
-                case items_def: {
-                    mTag = FindDFNTagFromStr(tag);
-                    if (mTag != DFNTAG_COUNTOFTAGS && mTag != DFNTAG_ITEMLIST &&
-                        mTag != DFNTAG_NPCLIST) // we have a validly recognized tag
-                    {
-                        if (dfnDataTypes[mTag] != DFN_NODATA &&
-                            value.empty()) // it's a valid tag, needs data though!
+                    case advance_def:
+                    case hard_items_def: // as it's the same format as items_def, in essence
+                    case npc_def:
+                    case items_def: {
+                        mTag = FindDFNTagFromStr(tag);
+                        if (mTag != DFNTAG_COUNTOFTAGS && mTag != DFNTAG_ITEMLIST &&
+                            mTag != DFNTAG_NPCLIST) // we have a validly recognized tag
                         {
-                            break;
+                            if (dfnDataTypes[mTag] != DFN_NODATA &&
+                                value.empty()) // it's a valid tag, needs data though!
+                            {
+                                break;
+                            }
+                            toAdd2 = new SectDataV2_st;
+                            toAdd2->tag = mTag;
+                            
+                            switch (dfnDataTypes[mTag]) {
+                                case DFN_UPPERSTRING: {
+                                    value = util::upper(value);
+                                    if (utag == "ADDMENUITEM") {
+                                        // Handler for the new AUTO-Addmenu stuff. Each item that contains
+                                        // this tag is added to the list, and assigned to the correct
+                                        // menuitem group Format:
+                                        // ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
+                                        AddMenuItem amiLocalCopy = {};
+                                        amiLocalCopy.itemName = std::string(localName);
+                                        auto csecs = oldstrutil::sections(value, ",");
+                                        amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(
+                                                                                                     util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                        if (amiLocalCopy.groupId != groupHolder) {
+                                            groupHolder = amiLocalCopy.groupId;
+                                            itemIndexHolder = 0;
+                                        }
+                                        else {
+                                            itemIndexHolder += 1;
+                                        }
+                                        amiLocalCopy.itemIndex = itemIndexHolder;
+                                        amiLocalCopy.tileId = static_cast<std::uint16_t>(std::stoul(
+                                                                                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
+                                                                                                            util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                                        amiLocalCopy.objectFlags = static_cast<std::uint32_t>(std::stoul(
+                                                                                                         util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
+                                                                                                            util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+                                        
+                                        // if( amiLocalCopy.tileId == INVALIDSERIAL )
+                                        // amiLocalCopy.tileId = amiLocalCopy.objectId;
+                                        // Need to shove it into the multimap
+                                        g_mmapAddMenuMap.insert(
+                                                                std::make_pair(amiLocalCopy.groupId, amiLocalCopy));
+                                    }
+                                    toAdd2->cdata = value;
+                                    break;
+                                }
+                                case DFN_STRING:
+                                    if (utag == "NAME") {
+                                        localName = value;
+                                    }
+                                    toAdd2->cdata = value;
+                                    break;
+                                case DFN_NUMERIC:
+                                    try {
+                                        toAdd2->ndata = std::stoi(value, nullptr, 0);
+                                    } catch (...) {
+                                        toAdd2->ndata = 0;
+                                        Console::shared().Warning(
+                                                                  util::format("Invalid data (%s) found for %s tag in "
+                                                                               "advance/harditems/item or character DFNs",
+                                                                               value.c_str(), utag.c_str()));
+                                    }
+                                    break;
+                                case DFN_DOUBLENUMERIC: {
+                                    // Best I can tell the seperator here is a space
+                                    value = util::simplify(value);
+                                    auto ssecs = oldstrutil::sections(value, " ");
+                                    if (ssecs.size() >= 2) {
+                                        try {
+                                            toAdd2->ndata = std::stoi(ssecs[0], nullptr, 0);
+                                        } catch (...) {
+                                            toAdd2->ndata = 0;
+                                        }
+                                        try {
+                                            toAdd2->odata = std::stoi(ssecs[1], nullptr, 0);
+                                        } catch (...) {
+                                            toAdd2->odata = 0;
+                                        }
+                                    }
+                                    else {
+                                        try {
+                                            toAdd2->ndata = std::stoi(value, nullptr, 0);
+                                        } catch (...) {
+                                            toAdd2->ndata = 0;
+                                        }
+                                        toAdd2->odata = toAdd2->ndata;
+                                    }
+                                    break;
+                                }
+                                case DFN_NODATA:
+                                case DFN_UNKNOWN:
+                                    toAdd2->cdata = "";
+                                    break;
+                            }
+                            dataV2.push_back(toAdd2);
                         }
-                        toAdd2 = new SectDataV2_st;
-                        toAdd2->tag = mTag;
-
-                        switch (dfnDataTypes[mTag]) {
-                        case DFN_UPPERSTRING: {
-                            value = util::upper(value);
-                            if (utag == "ADDMENUITEM") {
-                                // Handler for the new AUTO-Addmenu stuff. Each item that contains
-                                // this tag is added to the list, and assigned to the correct
-                                // menuitem group Format:
-                                // ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
-                                AddMenuItem amiLocalCopy = {};
-                                amiLocalCopy.itemName = std::string(localName);
-                                auto csecs = oldstrutil::sections(value, ",");
-                                amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(
-                                    util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                                if (amiLocalCopy.groupId != groupHolder) {
-                                    groupHolder = amiLocalCopy.groupId;
-                                    itemIndexHolder = 0;
+                        else {
+                            toAdd = new SectData_st;
+                            toAdd->tag = tag;
+                            toAdd->data = value;
+                            data.push_back(toAdd);
+                            if (dfnCat == items_def) {
+                                if (mTag == DFNTAG_ITEMLIST) {
+                                    itemList = true;
+                                    itemListData = value;
                                 }
-                                else {
-                                    itemIndexHolder += 1;
-                                }
-                                amiLocalCopy.itemIndex = itemIndexHolder;
-                                amiLocalCopy.tileId = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                                amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
-                                    util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-                                amiLocalCopy.objectFlags = static_cast<std::uint32_t>(std::stoul(
-                                    util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-                                amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
-                                    util::trim(util::strip(csecs[4], "//")), nullptr, 0));
-
-                                // if( amiLocalCopy.tileId == INVALIDSERIAL )
-                                // amiLocalCopy.tileId = amiLocalCopy.objectId;
-                                // Need to shove it into the multimap
-                                g_mmapAddMenuMap.insert(
-                                    std::make_pair(amiLocalCopy.groupId, amiLocalCopy));
                             }
-                            toAdd2->cdata = value;
-                            break;
+                            else if (dfnCat == npc_def) {
+                                if (mTag == DFNTAG_NPCLIST) {
+                                    npcList = true;
+                                    npcListData = value;
+                                }
+                            }
                         }
-                        case DFN_STRING:
-                            if (utag == "NAME") {
-                                localName = value;
-                            }
-                            toAdd2->cdata = value;
-                            break;
-                        case DFN_NUMERIC:
-                            try {
-                                toAdd2->ndata = std::stoi(value, nullptr, 0);
-                            } catch (...) {
-                                toAdd2->ndata = 0;
-                                Console::shared().Warning(
-                                    util::format("Invalid data (%s) found for %s tag in "
-                                                 "advance/harditems/item or character DFNs",
-                                                 value.c_str(), utag.c_str()));
-                            }
-                            break;
-                        case DFN_DOUBLENUMERIC: {
-                            // Best I can tell the seperator here is a space
-                            value = util::simplify(value);
-                            auto ssecs = oldstrutil::sections(value, " ");
-                            if (ssecs.size() >= 2) {
-                                try {
-                                    toAdd2->ndata = std::stoi(ssecs[0], nullptr, 0);
-                                } catch (...) {
-                                    toAdd2->ndata = 0;
-                                }
-                                try {
-                                    toAdd2->odata = std::stoi(ssecs[1], nullptr, 0);
-                                } catch (...) {
-                                    toAdd2->odata = 0;
-                                }
-                            }
-                            else {
-                                try {
-                                    toAdd2->ndata = std::stoi(value, nullptr, 0);
-                                } catch (...) {
-                                    toAdd2->ndata = 0;
-                                }
-                                toAdd2->odata = toAdd2->ndata;
-                            }
-                            break;
-                        }
-                        case DFN_NODATA:
-                        case DFN_UNKNOWN:
-                            toAdd2->cdata = "";
-                            break;
-                        }
-                        dataV2.push_back(toAdd2);
+                        break;
                     }
-                    else {
+                    case spawn_def:
+                    case create_def:
+                    case command_def:
+                        tag = utag;
+                        [[fallthrough]]; // Indicate to compiler that fallthrough is intentional
+                    default:
                         toAdd = new SectData_st;
                         toAdd->tag = tag;
                         toAdd->data = value;
                         data.push_back(toAdd);
-                        if (dfnCat == items_def) {
-                            if (mTag == DFNTAG_ITEMLIST) {
-                                itemList = true;
-                                itemListData = value;
-                            }
-                        }
-                        else if (dfnCat == npc_def) {
-                            if (mTag == DFNTAG_NPCLIST) {
-                                npcList = true;
-                                npcListData = value;
-                            }
-                        }
-                    }
-                    break;
-                }
-                case spawn_def:
-                case create_def:
-                case command_def:
-                    tag = utag;
-                    [[fallthrough]]; // Indicate to compiler that fallthrough is intentional
-                default:
-                    toAdd = new SectData_st;
-                    toAdd->tag = tag;
-                    toAdd->data = value;
-                    data.push_back(toAdd);
-                    break;
+                        break;
                 }
             }
         }

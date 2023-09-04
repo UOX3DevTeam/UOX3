@@ -82,7 +82,7 @@ serial_t PageVector::Add(CHelpRequest *toAdd) {
 bool PageVector::Remove(void) {
     if (AtEnd())
         return false;
-
+    
     delete (*currentPos);
     requestQueue.erase(currentPos);
     return true;
@@ -97,7 +97,7 @@ CHelpRequest *PageVector::First(void) {
     currentPos = requestQueue.begin();
     if (AtEnd())
         return nullptr; // empty queue!
-
+    
     return (*currentPos);
 }
 
@@ -110,7 +110,7 @@ CHelpRequest *PageVector::Next(void) {
     ++currentPos;
     if (AtEnd())
         return nullptr; // at end, return nullptr!
-
+    
     return (*currentPos);
 }
 
@@ -142,12 +142,12 @@ void PageVector::KillQueue(void) {
 void PageVector::SendAsGump(CSocket *toSendTo) {
     CGumpDisplay GQueue(toSendTo, 320, 340);
     GQueue.SetTitle(title);
-
+    
     std::vector<CHelpRequest *>::iterator qIter;
     for (qIter = requestQueue.begin(); qIter != requestQueue.end(); ++qIter) {
         if ((*qIter) == nullptr)
             continue;
-
+        
         if (!(*qIter)->IsHandled()) {
             CChar *mChar = CalcCharObjFromSer((*qIter)->WhoPaging());
             if (ValidateObject(mChar)) {
@@ -184,7 +184,7 @@ PageVector::PageVector(const std::string &newTitle) {
 bool PageVector::GotoPos(std::int32_t pos) {
     if (pos < 0 || static_cast<std::uint32_t>(pos) >= requestQueue.size())
         return false;
-
+    
     currentPos = (requestQueue.begin() + pos);
     return true;
 }
@@ -206,7 +206,7 @@ std::int32_t PageVector::CurrentPos(void) const {
 serial_t PageVector::GetCallNum(void) const {
     if (AtEnd())
         return INVALIDSERIAL;
-
+    
     return (*currentPos)->RequestId();
 }
 

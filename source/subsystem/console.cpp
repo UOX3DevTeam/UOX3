@@ -63,9 +63,9 @@ const std::string Console::CSI = Console::ESC + "["s;
 const std::string Console::BEL = "\x07"s;
 //  Command sequences
 const std::string Console::ATTRIBUTE =
-    Console::CSI + "#m"s; // find/replace on # with attribute number
+Console::CSI + "#m"s; // find/replace on # with attribute number
 const std::string Console::MOVE =
-    Console::CSI + "ROW;COLH"s; // we are going to find/replace on ROW/COL
+Console::CSI + "ROW;COLH"s; // we are going to find/replace on ROW/COL
 const std::string Console::HORIZMOVE = Console::CSI + "COLG"s;
 const std::string Console::VERTMOVE = Console::CSI + "ROWd"s;
 const std::string Console::OFFCURSOR = Console::CSI + "?25l"s;
@@ -97,7 +97,7 @@ auto LoadTeleportLocations() -> void;
 //| Purpose		-	Class Constructor and deconstructor
 // o------------------------------------------------------------------------------------------------o
 Console::Console()
-    : width(80), height(25), currentMode(NORMALMODE), previousColour(CNORMAL), logEcho(false) {
+: width(80), height(25), currentMode(NORMALMODE), previousColour(CNORMAL), logEcho(false) {
     is_initialized = false;
 }
 //===============================================================================
@@ -188,7 +188,7 @@ auto Console::SendCMD(const std::string &cmd) -> Console & {
 auto Console::WindowSize() -> std::pair<int, int> {
     int row = 0;
     int col = 0;
-
+    
 #if !defined(_WIN32)
     // Get the window size
     winsize winsz;
@@ -214,7 +214,7 @@ auto Console::DoClearScreen() -> void {
 #if defined(_WIN32)
     unsigned long y;
     COORD xy;
-
+    
     xy.X = 0;
     xy.Y = 0;
     auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -405,18 +405,18 @@ auto Console::Log(const std::string &msg, const std::string &filename) -> void {
         if (cwmWorldState->ServerData()->ServerConsoleLog()) {
             std::ofstream toWrite;
             std::string
-                realFileName; // 022602: in windows a path can be max 512 chars, this at 128 coud
-                              // potentially cause crashes if the path is longer than 128 chars
+            realFileName; // 022602: in windows a path can be max 512 chars, this at 128 coud
+            // potentially cause crashes if the path is longer than 128 chars
             if (cwmWorldState != nullptr) {
                 realFileName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + filename;
             }
             else {
                 realFileName = filename;
             }
-
+            
             char timeStr[256];
             RealTime(timeStr);
-
+            
             toWrite.open(realFileName.c_str(), std::ios::out | std::ios::app);
             if (toWrite.is_open()) {
                 toWrite << "[" << timeStr << "] " << msg << std::endl;
@@ -460,7 +460,7 @@ auto Console::Error(const std::string &msg) -> void {
     } catch (const std::exception &e) {
         std::cerr << "Error print reporting 'error'.  Error was: " << e.what() << std::endl;
         exit(1); // This seems pretty dangerous, as UOX3 starts other threads this doenst let them
-                 // get joined
+        // get joined
     }
 }
 
@@ -577,7 +577,7 @@ auto Console::TurnBrightWhite() -> void {
 #if defined(_WIN32)
     auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hco, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN |
-                                     FOREGROUND_INTENSITY);
+                            FOREGROUND_INTENSITY);
 #else
     std::cout << "\033[1;37m";
 #endif
@@ -660,24 +660,24 @@ auto Console::PrintStartOfLine() -> void {
     TurnBrightWhite();
     std::cout << "| ";
     switch (previousColour) {
-    case CBLUE:
-        TurnBlue();
-        break;
-    case CRED:
-        TurnRed();
-        break;
-    case CGREEN:
-        TurnGreen();
-        break;
-    case CYELLOW:
-        TurnYellow();
-        break;
-    case CBWHITE:
-        break; // current colour
-    case CNORMAL:
-    default:
-        TurnNormal();
-        break;
+        case CBLUE:
+            TurnBlue();
+            break;
+        case CRED:
+            TurnRed();
+            break;
+        case CGREEN:
+            TurnGreen();
+            break;
+        case CYELLOW:
+            TurnYellow();
+            break;
+        case CBWHITE:
+            break; // current colour
+        case CNORMAL:
+        default:
+            TurnNormal();
+            break;
     }
 }
 
@@ -692,7 +692,7 @@ auto Console::MoveTo(std::int32_t x, std::int32_t y) -> void {
     COORD Pos;
     if (y == -1) {
         CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
-
+        
         GetConsoleScreenBufferInfo(hco, &ScrBuffInfo);
         Pos.Y = ScrBuffInfo.dwCursorPosition.Y;
         Pos.X = static_cast<std::uint16_t>(x);
@@ -752,24 +752,24 @@ auto Console::PrintSpecial(std::uint8_t colour, const std::string &msg) -> void 
     TurnNormal();
     (*this) << "[";
     switch (colour) {
-    default:
-    case CNORMAL:
-        break;
-    case CBLUE:
-        TurnBlue();
-        break;
-    case CRED:
-        TurnRed();
-        break;
-    case CGREEN:
-        TurnGreen();
-        break;
-    case CYELLOW:
-        TurnYellow();
-        break;
-    case CBWHITE:
-        TurnBrightWhite();
-        break;
+        default:
+        case CNORMAL:
+            break;
+        case CBLUE:
+            TurnBlue();
+            break;
+        case CRED:
+            TurnRed();
+            break;
+        case CGREEN:
+            TurnGreen();
+            break;
+        case CYELLOW:
+            TurnYellow();
+            break;
+        case CBWHITE:
+            TurnBrightWhite();
+            break;
     }
     (*this) << msg;
     TurnNormal();
@@ -858,7 +858,7 @@ auto Console::cl_getch() -> std::int32_t {
     else {
         return -1;
     }
-
+    
 #else
     // uox is not wrapped simply use the kbhit routine
     if (_kbhit()) {
@@ -910,7 +910,7 @@ auto Console::Process(std::int32_t c) -> void {
             messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
             return;
         }
-
+        
         auto toFind = JSKeyHandler.find(c);
         if (toFind != JSKeyHandler.end()) {
             if (toFind->second.isEnabled) {
@@ -924,7 +924,7 @@ auto Console::Process(std::int32_t c) -> void {
 #endif
                     jsval eventRetVal;
                     [[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent(
-                        toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal);
+                                                                                    toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal);
                 }
                 return;
             }
@@ -936,355 +936,355 @@ auto Console::Process(std::int32_t c) -> void {
         bool kill = false;
         std::int32_t j = 0;
         switch (c) {
-        case '!':
-            // Force server to save accounts file
-            messageLoop << "CMD: Saving Accounts... ";
-            Account::shared().save();
-            messageLoop << MSG_PRINTDONE;
-            break;
-        case '@':
-            // Force server to save all files.(Manual save)
-            messageLoop << MSG_WORLDSAVE;
-            break;
-        case 'Y':
-            std::int32_t keyresp;
-            std::cout << "System: ";
-            std::cout.flush();
-            while (!kill) {
-                keyresp = cl_getch();
-                switch (keyresp) {
-                case -1: // no key pressed
-                case 0:
-                    break;
-                case 0x1B:
-                    outputline = "";
-                    indexcount = 0;
-                    kill = true;
-                    std::cout << std::endl;
-                    messageLoop << "CMD: System broadcast canceled.";
-                    break;
-                case 0x08:
-                    --indexcount;
-                    if (indexcount < 0) {
-                        indexcount = 0;
+            case '!':
+                // Force server to save accounts file
+                messageLoop << "CMD: Saving Accounts... ";
+                Account::shared().save();
+                messageLoop << MSG_PRINTDONE;
+                break;
+            case '@':
+                // Force server to save all files.(Manual save)
+                messageLoop << MSG_WORLDSAVE;
+                break;
+            case 'Y':
+                std::int32_t keyresp;
+                std::cout << "System: ";
+                std::cout.flush();
+                while (!kill) {
+                    keyresp = cl_getch();
+                    switch (keyresp) {
+                        case -1: // no key pressed
+                        case 0:
+                            break;
+                        case 0x1B:
+                            outputline = "";
+                            indexcount = 0;
+                            kill = true;
+                            std::cout << std::endl;
+                            messageLoop << "CMD: System broadcast canceled.";
+                            break;
+                        case 0x08:
+                            --indexcount;
+                            if (indexcount < 0) {
+                                indexcount = 0;
+                            }
+                            else {
+                                std::cout << "\b \b";
+                            }
+                            break;
+                        case 0x0A:
+                        case 0x0D:
+                            outputline[indexcount] = 0;
+                            messageLoop.NewMessage(MSG_CONSOLEBCAST, outputline.c_str());
+                            indexcount = 0;
+                            kill = true;
+                            std::cout << std::endl;
+                            temp = util::format("CMD: System broadcast sent message \"%s\"",
+                                                outputline.c_str());
+                            outputline = "";
+                            messageLoop << temp;
+                            break;
+                        default:
+                            outputline = outputline + std::string(1, static_cast<std::int8_t>(keyresp));
+                            indexcount = indexcount + 1;
+                            std::cout << static_cast<std::int8_t>(keyresp);
+                            std::cout.flush();
+                            break;
                     }
-                    else {
-                        std::cout << "\b \b";
-                    }
-                    break;
-                case 0x0A:
-                case 0x0D:
-                    outputline[indexcount] = 0;
-                    messageLoop.NewMessage(MSG_CONSOLEBCAST, outputline.c_str());
-                    indexcount = 0;
-                    kill = true;
-                    std::cout << std::endl;
-                    temp = util::format("CMD: System broadcast sent message \"%s\"",
-                                        outputline.c_str());
-                    outputline = "";
-                    messageLoop << temp;
-                    break;
-                default:
-                    outputline = outputline + std::string(1, static_cast<std::int8_t>(keyresp));
-                    indexcount = indexcount + 1;
-                    std::cout << static_cast<std::int8_t>(keyresp);
-                    std::cout.flush();
-                    break;
+                    keyresp = 0x00;
                 }
-                keyresp = 0x00;
-            }
-            break;
-        case '[': {
-            // We want to group all the contents of the multimap container numerically by group. We
-            // rely on the self ordering in the multimap implementation to do this.
-            messageLoop << "  ";
-            messageLoop << "Auto-AddMenu Statistics";
-            messageLoop << "  ";
-            std::string szBuffer;
-            // We need to get an iteration into the map first of all the top level ULONGs then we
-            // can get an equal range.
-            std::map<std::uint32_t, std::uint8_t> localMap;
-            localMap.clear();
-            for (auto CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end();
-                 CJ++) {
-                // check to see if the group id has been checked already
-                if (localMap.find(CJ->first) == localMap.end()) {
-                    localMap.insert(std::make_pair(CJ->first, 0));
-                    szBuffer = "";
-                    szBuffer = util::format("AddMenuGroup %u:", CJ->first);
-                    messageLoop << szBuffer;
-                    auto pairRange =
+                break;
+            case '[': {
+                // We want to group all the contents of the multimap container numerically by group. We
+                // rely on the self ordering in the multimap implementation to do this.
+                messageLoop << "  ";
+                messageLoop << "Auto-AddMenu Statistics";
+                messageLoop << "  ";
+                std::string szBuffer;
+                // We need to get an iteration into the map first of all the top level ULONGs then we
+                // can get an equal range.
+                std::map<std::uint32_t, std::uint8_t> localMap;
+                localMap.clear();
+                for (auto CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end();
+                     CJ++) {
+                    // check to see if the group id has been checked already
+                    if (localMap.find(CJ->first) == localMap.end()) {
+                        localMap.insert(std::make_pair(CJ->first, 0));
+                        szBuffer = "";
+                        szBuffer = util::format("AddMenuGroup %u:", CJ->first);
+                        messageLoop << szBuffer;
+                        auto pairRange =
                         g_mmapAddMenuMap.equal_range(CJ->first);
-                    std::int32_t count = 0;
-                    for (auto CI = pairRange.first; CI != pairRange.second; CI++) {
-                        count++;
+                        std::int32_t count = 0;
+                        for (auto CI = pairRange.first; CI != pairRange.second; CI++) {
+                            count++;
+                        }
+                        szBuffer = "";
+                        szBuffer = util::format("   Found %i Auto-AddMenu Item(s).", count);
+                        messageLoop << szBuffer;
                     }
-                    szBuffer = "";
-                    szBuffer = util::format("   Found %i Auto-AddMenu Item(s).", count);
-                    messageLoop << szBuffer;
                 }
+                messageLoop << MSG_SECTIONBEGIN;
+                break;
             }
-            messageLoop << MSG_SECTIONBEGIN;
-            break;
-        }
-        case '<':
-            messageLoop << "Function not implemented.";
-            break;
-        case '>':
-            messageLoop << "Function not implemented.";
-            break;
-        case 0x1B:
-        case 'Q':
-            messageLoop << MSG_SECTIONBEGIN;
-            messageLoop << "CMD: Immediate Shutdown initialized!";
-            messageLoop << MSG_SHUTDOWN;
-            break;
-        case '0':
-            if (!cwmWorldState->GetReloadingScripts()) {
-                cwmWorldState->SetReloadingScripts(true);
-                // Reload all the files. If there are issues with these files change the order
-                // reloaded from here first.
-                cwmWorldState->ServerData()->Load();
-                messageLoop << "CMD: Loading All";
-                messageLoop << "     Server INI... ";
-                // Reload accounts, and update Access.adm if new accounts available.
-                messageLoop << "     Loading Accounts... ";
-                Account::shared().load();
-                messageLoop << MSG_PRINTDONE;
-                // Reload Region Files
-                messageLoop << "     Loading Regions... ";
-                UnloadRegions();
-                LoadRegions();
-                messageLoop << MSG_PRINTDONE;
-                messageLoop << "     Loading Teleport Locations... ";
-                LoadTeleportLocations();
-                messageLoop << MSG_PRINTDONE;
-                // Reload the serve spawn regions
-                messageLoop << "     Loading Spawn Regions... ";
-                UnloadSpawnRegions();
-                LoadSpawnRegions();
-                messageLoop << MSG_PRINTDONE;
-                // Reload the server command list
-                messageLoop << "     Loading commands... ";
-                Commands->Load();
-                messageLoop << MSG_PRINTDONE;
-                // Reload DFN's
-                messageLoop << "     Loading Server DFN... ";
-                FileLookup->Reload();
-                messageLoop << MSG_PRINTDONE;
-                // messageLoop access is REQUIRED, as this function is executing in a different
-                // thread, so we need thread safety
-                messageLoop << "     Loading JSE Scripts... ";
-
-                // Reload the current Spells
-                messageLoop << "     Loading spells... ";
-                Magic->LoadScript();
-                messageLoop << MSG_PRINTDONE;
-                // Reload the HTML output templates
-                messageLoop << "     Loading HTML Templates... ";
-                HTMLTemplates->Unload();
-                HTMLTemplates->Load();
-                cwmWorldState->SetReloadingScripts(false);
-                messageLoop << MSG_PRINTDONE;
-            }
-            else {
-                messageLoop << "Server can only load one script at a time";
-            }
-            break;
-        case 'T':
-            // Timed shut down(10 minutes)
-            messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-            cwmWorldState->SetEndTime(BuildTimeValue(600));
-            EndMessage(0);
-            break;
-        case 'D':
-            // Disconnect account 0 (useful when client crashes)
-            for (auto &tSock : Network->connClients) {
-                if (tSock->AcctNo() == 0) {
+            case '<':
+                messageLoop << "Function not implemented.";
+                break;
+            case '>':
+                messageLoop << "Function not implemented.";
+                break;
+            case 0x1B:
+            case 'Q':
+                messageLoop << MSG_SECTIONBEGIN;
+                messageLoop << "CMD: Immediate Shutdown initialized!";
+                messageLoop << MSG_SHUTDOWN;
+                break;
+            case '0':
+                if (!cwmWorldState->GetReloadingScripts()) {
+                    cwmWorldState->SetReloadingScripts(true);
+                    // Reload all the files. If there are issues with these files change the order
+                    // reloaded from here first.
+                    cwmWorldState->ServerData()->Load();
+                    messageLoop << "CMD: Loading All";
+                    messageLoop << "     Server INI... ";
+                    // Reload accounts, and update Access.adm if new accounts available.
+                    messageLoop << "     Loading Accounts... ";
+                    Account::shared().load();
+                    messageLoop << MSG_PRINTDONE;
+                    // Reload Region Files
+                    messageLoop << "     Loading Regions... ";
+                    UnloadRegions();
+                    LoadRegions();
+                    messageLoop << MSG_PRINTDONE;
+                    messageLoop << "     Loading Teleport Locations... ";
+                    LoadTeleportLocations();
+                    messageLoop << MSG_PRINTDONE;
+                    // Reload the serve spawn regions
+                    messageLoop << "     Loading Spawn Regions... ";
+                    UnloadSpawnRegions();
+                    LoadSpawnRegions();
+                    messageLoop << MSG_PRINTDONE;
+                    // Reload the server command list
+                    messageLoop << "     Loading commands... ";
+                    Commands->Load();
+                    messageLoop << MSG_PRINTDONE;
+                    // Reload DFN's
+                    messageLoop << "     Loading Server DFN... ";
+                    FileLookup->Reload();
+                    messageLoop << MSG_PRINTDONE;
+                    // messageLoop access is REQUIRED, as this function is executing in a different
+                    // thread, so we need thread safety
+                    messageLoop << "     Loading JSE Scripts... ";
+                    
+                    // Reload the current Spells
+                    messageLoop << "     Loading spells... ";
+                    Magic->LoadScript();
+                    messageLoop << MSG_PRINTDONE;
+                    // Reload the HTML output templates
+                    messageLoop << "     Loading HTML Templates... ";
+                    HTMLTemplates->Unload();
+                    HTMLTemplates->Load();
+                    cwmWorldState->SetReloadingScripts(false);
+                    messageLoop << MSG_PRINTDONE;
+                }
+                else {
+                    messageLoop << "Server can only load one script at a time";
+                }
+                break;
+            case 'T':
+                // Timed shut down(10 minutes)
+                messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
+                cwmWorldState->SetEndTime(BuildTimeValue(600));
+                EndMessage(0);
+                break;
+            case 'D':
+                // Disconnect account 0 (useful when client crashes)
+                for (auto &tSock : Network->connClients) {
+                    if (tSock->AcctNo() == 0) {
+                        Network->Disconnect(tSock);
+                    }
+                }
+                messageLoop << "CMD: Socket Disconnected(Account 0).";
+                break;
+            case 'K': {
+                for (auto &tSock : Network->connClients) {
                     Network->Disconnect(tSock);
                 }
+                messageLoop << "CMD: All Connections Closed.";
+            } break;
+            case 'P': {
+                std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
+                std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
+                std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
+                std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+                // 1/13/2003 - Dreoth - Log Performance Information enhancements
+                LogEcho(true);
+                Log("--- Starting Performance Dump ---", "performance.log");
+                Log("\tPerformance Dump:", "performance.log");
+                Log(util::format("\tNetwork code: %.2fmsec [%i samples]",
+                                 static_cast<R32>(
+                                                  static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
+                                                  static_cast<R32>(networkTimeCount)),
+                                 networkTimeCount),
+                    "performance.log");
+                Log(util::format(
+                                 "\tTimer code: %.2fmsec [%i samples]",
+                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) /
+                                                  static_cast<R32>(timerTimeCount)),
+                                 timerTimeCount),
+                    "performance.log");
+                Log(util::format(
+                                 "\tAuto code: %.2fmsec [%i samples]",
+                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) /
+                                                  static_cast<R32>(autoTimeCount)),
+                                 autoTimeCount),
+                    "performance.log");
+                Log(util::format(
+                                 "\tLoop Time: %.2fmsec [%i samples]",
+                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
+                                                  static_cast<R32>(loopTimeCount)),
+                                 loopTimeCount),
+                    "performance.log");
+                
+                Log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)",
+                                 ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR),
+                                 ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR),
+                                 ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
+                                 ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)),
+                    "performance.log");
+                Log(util::format("\tSimulation Cycles: %f per sec",
+                                 (1000.0 * (1.0 / static_cast<R32>(
+                                                                   static_cast<R32>(
+                                                                                    cwmWorldState->ServerProfile()->LoopTime()) /
+                                                                   static_cast<R32>(loopTimeCount))))),
+                    "performance.log");
+                Log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()),
+                    "performance.log");
+                Log(util::format("\tBytes Received: %i",
+                                 cwmWorldState->ServerProfile()->GlobalReceived()),
+                    "performance.log");
+                Log("--- Performance Dump Complete ---", "performance.log");
+                LogEcho(false);
+                break;
             }
-            messageLoop << "CMD: Socket Disconnected(Account 0).";
-            break;
-        case 'K': {
-            for (auto &tSock : Network->connClients) {
-                Network->Disconnect(tSock);
-            }
-            messageLoop << "CMD: All Connections Closed.";
-        } break;
-        case 'P': {
-            std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-            std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-            std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-            std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
-            // 1/13/2003 - Dreoth - Log Performance Information enhancements
-            LogEcho(true);
-            Log("--- Starting Performance Dump ---", "performance.log");
-            Log("\tPerformance Dump:", "performance.log");
-            Log(util::format("\tNetwork code: %.2fmsec [%i samples]",
-                             static_cast<R32>(
-                                 static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
-                                 static_cast<R32>(networkTimeCount)),
-                             networkTimeCount),
-                "performance.log");
-            Log(util::format(
-                    "\tTimer code: %.2fmsec [%i samples]",
-                    static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) /
-                                     static_cast<R32>(timerTimeCount)),
-                    timerTimeCount),
-                "performance.log");
-            Log(util::format(
-                    "\tAuto code: %.2fmsec [%i samples]",
-                    static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) /
-                                     static_cast<R32>(autoTimeCount)),
-                    autoTimeCount),
-                "performance.log");
-            Log(util::format(
-                    "\tLoop Time: %.2fmsec [%i samples]",
-                    static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
-                                     static_cast<R32>(loopTimeCount)),
-                    loopTimeCount),
-                "performance.log");
-
-            Log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)",
-                             ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR),
-                             ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR),
-                             ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
-                             ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)),
-                "performance.log");
-            Log(util::format("\tSimulation Cycles: %f per sec",
-                             (1000.0 * (1.0 / static_cast<R32>(
-                                                  static_cast<R32>(
-                                                      cwmWorldState->ServerProfile()->LoopTime()) /
-                                                  static_cast<R32>(loopTimeCount))))),
-                "performance.log");
-            Log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()),
-                "performance.log");
-            Log(util::format("\tBytes Received: %i",
-                             cwmWorldState->ServerProfile()->GlobalReceived()),
-                "performance.log");
-            Log("--- Performance Dump Complete ---", "performance.log");
-            LogEcho(false);
-            break;
-        }
-        case 'W': {
-            // Display logged in chars
-            messageLoop << "CMD: Current Users in the World:";
-            {
-                for (auto &iSock : Network->connClients) {
-                    ++j;
-                    CChar *mChar = iSock->CurrcharObj();
-
-                    temp =
+            case 'W': {
+                // Display logged in chars
+                messageLoop << "CMD: Current Users in the World:";
+                {
+                    for (auto &iSock : Network->connClients) {
+                        ++j;
+                        CChar *mChar = iSock->CurrcharObj();
+                        
+                        temp =
                         util::format("     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(),
                                      mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3),
                                      mChar->GetSerial(4));
-                    messageLoop << temp;
-                }
-            }
-
-            temp = util::format("     Total users online: %i", j);
-            messageLoop << temp;
-            break;
-        }
-        case 'M':
-            std::uint32_t tmp, total;
-            total = 0;
-            tmp = 0;
-            messageLoop << "CMD: UOX Memory Information:";
-            std::uint32_t m, n;
-            m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR));
-            total += tmp = m + m * sizeof(CTEffect) + m * sizeof(std::int8_t) + m * sizeof(intptr_t) * 5;
-            temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
-                                ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), m);
-            messageLoop << temp;
-            n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM));
-            total += tmp = n + n * sizeof(intptr_t) * 4;
-            temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp,
-                                ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), n);
-            messageLoop << temp;
-            temp = util::format(
-                "        You save I: %lu & C: %lu bytes!",
-                m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
-                m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
-            total += tmp = 69 * sizeof(CSpellInfo);
-            temp = util::format(temp, "     Spells: %i bytes", tmp);
-            messageLoop << "     Sizes:";
-            temp = util::format("        CItem  : %lu bytes", sizeof(CItem));
-            messageLoop << temp;
-            temp = util::format("        CChar  : %lu bytes", sizeof(CChar));
-            messageLoop << temp;
-            temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect),
-                                sizeof(CTEffect) * cwmWorldState->tempEffects.Num());
-            messageLoop << temp;
-            temp = util::format("        Approximate Total: %i bytes", total);
-            messageLoop << temp;
-            break;
-        case '?':
-            messageLoop << MSG_SECTIONBEGIN;
-            messageLoop << "Console commands:";
-            messageLoop << MSG_SECTIONBEGIN;
-            messageLoop << " ShardOP:";
-            messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
-            messageLoop << "    C - Configuration       H - Unused";
-            messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
-            messageLoop << " Load Commands:";
-            messageLoop << "    1 - Ini                 2 - Accounts";
-            messageLoop << "    3 - Regions             4 - Spawn Regions";
-            messageLoop << "    5 - Spells              6 - Commands";
-            messageLoop << "    7 - Dfn's               8 - JavaScript";
-            messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
-            messageLoop << " Save Commands:";
-            messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
-            messageLoop << "    # - Unused              $ - Unused";
-            messageLoop << "    % - Unused              ^ - Unused";
-            messageLoop << "    & - Unused              ( - Unused";
-            messageLoop << "    ) - Unused";
-            messageLoop << " Server Maintenence:";
-            messageLoop << "    P - Performance         W - Characters Online";
-            messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
-            messageLoop << "    F - Display Priority Maps";
-            messageLoop << " Network Maintenence:";
-            messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
-            messageLoop << "    Z - Socket Logging      ";
-            messageLoop << MSG_SECTIONBEGIN;
-            break;
-        case 'z':
-        case 'Z': {
-            auto loggingEnabled = false;
-            {
-                for (auto &snSock : Network->connClients) {
-                    if (snSock) {
-                        snSock->Logging(!snSock->Logging());
+                        messageLoop << temp;
                     }
                 }
-                auto iter = Network->connClients.begin();
-                if (iter != Network->connClients.end()) {
-                    loggingEnabled = (*iter)->Logging();
+                
+                temp = util::format("     Total users online: %i", j);
+                messageLoop << temp;
+                break;
+            }
+            case 'M':
+                std::uint32_t tmp, total;
+                total = 0;
+                tmp = 0;
+                messageLoop << "CMD: UOX Memory Information:";
+                std::uint32_t m, n;
+                m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR));
+                total += tmp = m + m * sizeof(CTEffect) + m * sizeof(std::int8_t) + m * sizeof(intptr_t) * 5;
+                temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
+                                    ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), m);
+                messageLoop << temp;
+                n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM));
+                total += tmp = n + n * sizeof(intptr_t) * 4;
+                temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp,
+                                    ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), n);
+                messageLoop << temp;
+                temp = util::format(
+                                    "        You save I: %lu & C: %lu bytes!",
+                                    m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
+                                    m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
+                total += tmp = 69 * sizeof(CSpellInfo);
+                temp = util::format(temp, "     Spells: %i bytes", tmp);
+                messageLoop << "     Sizes:";
+                temp = util::format("        CItem  : %lu bytes", sizeof(CItem));
+                messageLoop << temp;
+                temp = util::format("        CChar  : %lu bytes", sizeof(CChar));
+                messageLoop << temp;
+                temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect),
+                                    sizeof(CTEffect) * cwmWorldState->tempEffects.Num());
+                messageLoop << temp;
+                temp = util::format("        Approximate Total: %i bytes", total);
+                messageLoop << temp;
+                break;
+            case '?':
+                messageLoop << MSG_SECTIONBEGIN;
+                messageLoop << "Console commands:";
+                messageLoop << MSG_SECTIONBEGIN;
+                messageLoop << " ShardOP:";
+                messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
+                messageLoop << "    C - Configuration       H - Unused";
+                messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
+                messageLoop << " Load Commands:";
+                messageLoop << "    1 - Ini                 2 - Accounts";
+                messageLoop << "    3 - Regions             4 - Spawn Regions";
+                messageLoop << "    5 - Spells              6 - Commands";
+                messageLoop << "    7 - Dfn's               8 - JavaScript";
+                messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
+                messageLoop << " Save Commands:";
+                messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
+                messageLoop << "    # - Unused              $ - Unused";
+                messageLoop << "    % - Unused              ^ - Unused";
+                messageLoop << "    & - Unused              ( - Unused";
+                messageLoop << "    ) - Unused";
+                messageLoop << " Server Maintenence:";
+                messageLoop << "    P - Performance         W - Characters Online";
+                messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
+                messageLoop << "    F - Display Priority Maps";
+                messageLoop << " Network Maintenence:";
+                messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
+                messageLoop << "    Z - Socket Logging      ";
+                messageLoop << MSG_SECTIONBEGIN;
+                break;
+            case 'z':
+            case 'Z': {
+                auto loggingEnabled = false;
+                {
+                    for (auto &snSock : Network->connClients) {
+                        if (snSock) {
+                            snSock->Logging(!snSock->Logging());
+                        }
+                    }
+                    auto iter = Network->connClients.begin();
+                    if (iter != Network->connClients.end()) {
+                        loggingEnabled = (*iter)->Logging();
+                    }
                 }
+                if (loggingEnabled) {
+                    messageLoop << "CMD: Network Logging Enabled.";
+                }
+                else {
+                    messageLoop << "CMD: Network Logging Disabled.";
+                }
+                break;
             }
-            if (loggingEnabled) {
-                messageLoop << "CMD: Network Logging Enabled.";
-            }
-            else {
-                messageLoop << "CMD: Network Logging Disabled.";
-            }
-            break;
-        }
-        case 'c':
-        case 'C':
-            // Shows a configuration header
-            DisplaySettings();
-            break;
-        case 'f':
-        case 'F':
-            FileLookup->DisplayPriorityMap();
-            break;
-        default:
-            temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c),
-                                c);
-            messageLoop << temp;
-            break;
+            case 'c':
+            case 'C':
+                // Shows a configuration header
+                DisplaySettings();
+                break;
+            case 'f':
+            case 'F':
+                FileLookup->DisplayPriorityMap();
+                break;
+            default:
+                temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c),
+                                    c);
+                messageLoop << temp;
+                break;
         }
     }
 }
@@ -1303,53 +1303,53 @@ auto Console::DisplaySettings() -> void {
     std::map<bool, std::string> activeMap;
     activeMap[true] = "Activated!";
     activeMap[false] = "Disabled!";
-
+    
     // UOX.ini status
     (*this) << "Server Settings:" << myendl;
-
+    
     (*this) << "   -Archiving[";
     if (cwmWorldState->ServerData()->ServerBackupStatus())
         (*this) << "Enabled]. (" << cwmWorldState->ServerData()->Directory(CSDDP_BACKUP) << ")"
-                << myendl;
+        << myendl;
     else
         (*this) << "Disabled]" << myendl;
-
+    
     (*this) << "   -Weapons & Armour Rank System: ";
     (*this) << activeMap[cwmWorldState->ServerData()->RankSystemStatus()] << myendl;
-
+    
     (*this) << "   -Vendors buy by item name: ";
     (*this) << activeMap[cwmWorldState->ServerData()->SellByNameStatus()] << myendl;
-
+    
     (*this) << "   -Adv. Trade System: ";
     (*this) << activeMap[cwmWorldState->ServerData()->TradeSystemStatus()] << myendl;
-
+    
     (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
     (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;
     (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR)
-            << myendl;
+    << myendl;
     (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM)
-            << myendl;
+    << myendl;
     (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size())
-            << myendl;
+    << myendl;
     (*this) << "   Directories: " << myendl;
     (*this) << "   -Shared:          " << cwmWorldState->ServerData()->Directory(CSDDP_SHARED)
-            << myendl;
+    << myendl;
     (*this) << "   -Archive:         " << cwmWorldState->ServerData()->Directory(CSDDP_BACKUP)
-            << myendl;
+    << myendl;
     (*this) << "   -Data:            " << cwmWorldState->ServerData()->Directory(CSDDP_DATA)
-            << myendl;
+    << myendl;
     (*this) << "   -Defs:            " << cwmWorldState->ServerData()->Directory(CSDDP_DEFS)
-            << myendl;
+    << myendl;
     (*this) << "   -Scripts:         " << cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS)
-            << myendl;
+    << myendl;
     (*this) << "   -ScriptData:      " << cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTDATA)
-            << myendl;
+    << myendl;
     (*this) << "   -HTML:            " << cwmWorldState->ServerData()->Directory(CSDDP_HTML)
-            << myendl;
+    << myendl;
     (*this) << "   -Books:           " << cwmWorldState->ServerData()->Directory(CSDDP_BOOKS)
-            << myendl;
+    << myendl;
     (*this) << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD)
-            << myendl;
+    << myendl;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1382,7 +1382,7 @@ auto Console::SetKeyStatus(std::int32_t key, bool isEnabled) -> void {
 //|	Purpose		-	Registers console function
 // o------------------------------------------------------------------------------------------------o
 auto Console::RegisterFunc(const std::string &cmdFunc, const std::string &cmdName, std::uint16_t scriptId)
-    -> void {
+-> void {
 #if defined(UOX_DEBUG_MODE)
     Print(util::format("         Registering console func \"%s\"\n", cmdFunc.c_str()));
 #endif

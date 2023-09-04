@@ -36,7 +36,7 @@ auto CThreadQueue::GrabMessage() -> MessagePassed_st {
     std::scoped_lock lock(queuelock);
     MessagePassed_st toReturn = internalQueue.front();
     internalQueue.pop();
-
+    
     return toReturn;
 }
 //=============================================================

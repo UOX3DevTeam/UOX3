@@ -26,7 +26,7 @@ enum ETemplateType {
 };
 
 class cHTMLTemplate {
-  private:
+private:
     std::uint32_t updateTimer;
     std::string inputFile;
     bool loaded;
@@ -35,8 +35,8 @@ class cHTMLTemplate {
     std::string outputFile;
     std::string name;
     std::uint32_t scheduledUpdate;
-
-  public:
+    
+public:
     cHTMLTemplate();
     ~cHTMLTemplate();
     void Process(void);
@@ -44,7 +44,7 @@ class cHTMLTemplate {
     void LoadTemplate(void);
     void UnloadTemplate(void);
     void Load(CScriptSection *found);
-
+    
     // Some Getters
     std::string GetName(void) const;
     std::string GetOutput(void) const;
@@ -55,13 +55,13 @@ class cHTMLTemplate {
 };
 
 class cHTMLTemplates {
-  private:
+private:
     std::vector<cHTMLTemplate *> Templates;
-
-  public:
+    
+public:
     cHTMLTemplates() = default;
     ~cHTMLTemplates();
-
+    
     void Load(void);
     void Unload(void);
     void Poll(ETemplateType nTemplateId = ETT_ALLTEMPLATES);

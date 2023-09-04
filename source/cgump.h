@@ -12,7 +12,7 @@ class CSocket;
 void MultiGumpCallback(CSocket *mySocket, serial_t GumpSerial, std::uint32_t Button);
 
 class CGump {
-  private:
+private:
     std::vector<std::string> TagList;
     std::vector<std::string> TextList;
     bool NoMove;
@@ -20,14 +20,14 @@ class CGump {
     std::uint32_t Serial;
     std::uint16_t PageCount; // Shouldn't have more than 65535 pages
     std::uint32_t Type;
-
-  public:
+    
+public:
     CGump(bool myNoMove, bool myNoClose);
     ~CGump();
-
+    
     void Add(const std::string &Tag, const std::string &Text);
     void Send(CSocket *target);
-
+    
     // Common add functions
     void AddBackground(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId, std::uint16_t width, std::uint16_t height);
     void AddGump(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId);
@@ -35,16 +35,16 @@ class CGump {
                    std::uint32_t UniqueId);
     void AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string Text);
     std::uint16_t StartPage(void);
-
+    
     void SetNoMove(bool myNoMove);
     void SetNoClose(bool myNoClose);
-
+    
     void SetType(std::uint32_t newType);
     void SetSerial(std::uint32_t newSerial);
 };
 
 class CGumpDisplay {
-  private:
+private:
     struct GumpInfo_st {
         std::string name;
         std::uint32_t value;
@@ -59,14 +59,14 @@ class CGumpDisplay {
         // 5 -> 2 byte hex display
         // 6 -> 2 byte decimal display
     };
-
+    
     std::vector<GumpInfo_st *> gumpData;
     std::uint16_t width, height; // gump width / height
     CSocket *toSendTo;
     std::vector<std::string> one, two;
     std::string title;
-
-  public:
+    
+public:
     void AddData(GumpInfo_st *toAdd);
     void AddData(std::string toAdd, std::uint32_t value, std::uint8_t type = 0);
     void AddData(std::string toAdd, const std::string &toSet, std::uint8_t type = 4);

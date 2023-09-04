@@ -43,12 +43,12 @@ struct MsgBoardPost_st {
     std::uint8_t lines;
     std::uint32_t parentSerial;
     std::uint8_t toggle;
-
+    
     std::vector<std::string> msgBoardLine;
-
+    
     MsgBoardPost_st()
-        : serial(0), size(0), posterLen(0), subjectLen(0), dateLen(0), lines(0), parentSerial(0),
-          toggle(0) {
+    : serial(0), size(0), posterLen(0), subjectLen(0), dateLen(0), lines(0), parentSerial(0),
+    toggle(0) {
         msgBoardLine.resize(0);
     }
 };

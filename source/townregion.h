@@ -30,25 +30,25 @@ struct RegLocs_st {
 };
 
 const std::string WorldTypeNames[WRLD_COUNT] = {"Spring", "Summer",     "Autumn",
-                                                "Winter", "Desolation", "Unknown"};
+    "Winter", "Desolation", "Unknown"};
 
 class CTownRegion {
-  private:
+private:
     struct TownPers_st {
         serial_t townMember;
         serial_t targVote;
         CItem *PlayerBank;
     };
-
+    
     struct GoodData_st {
         std::int32_t sellVal;
         std::int32_t buyVal;
         std::int32_t rand1;
         std::int32_t rand2;
-
+        
         GoodData_st() : sellVal(0), buyVal(0), rand1(0), rand2(0) {}
     };
-
+    
     std::uint16_t regionNum;
     std::uint16_t numGuards;
     std::uint16_t parentRegion; // reference to parent region
@@ -64,7 +64,7 @@ class CTownRegion {
     std::vector<OrePref_st> orePreferences;
     std::vector<TownPers_st> townMember;
     std::vector<std::uint16_t>
-        alliedTowns; // allied towns are ones taken over, or ones allied to.  Share resources
+    alliedTowns; // allied towns are ones taken over, or ones allied to.  Share resources
     std::vector<RegLocs_st> locations;
     std::map<std::int32_t, GoodData_st> goodList;
     std::string guardList;
@@ -72,7 +72,7 @@ class CTownRegion {
     raceid_t race;        // town's race property, guards will be racially based
     weathid_t weather;    // weather system the region belongs to
     std::int32_t goldReserved;  // amount of gold belonging to the town's treasury
-
+    
     worldtype_t visualAppearance; // seasonal choice, basically.  Each of the 4 seasons, or "dead"
     std::int32_t timeSinceGuardsPaid;   // time since the guards were last paid
     std::int32_t timeSinceTaxedMembers; // time since we last taxed our own members
@@ -82,26 +82,26 @@ class CTownRegion {
     std::int32_t resourceCollected; // how much we have gotten from taxes
     std::uint16_t taxedResource;     // item # of the taxed resource
     std::uint16_t taxedAmount;       // how much to tax
-
+    
     std::int16_t health;           // health of the town
     std::uint8_t chanceFindBigOre; // chance of finding big ore
-
+    
     [[maybe_unused]] std::uint16_t jsScript;
     std::vector<std::uint16_t> scriptTriggers;
-
+    
     void SendEnemyGump(CSocket *sock);
     void SendBasicInfo(CSocket *sock);
     void SendPotentialMember(CSocket *sock);
     void SendMayorGump(CSocket *sock);
     void SendDefaultGump(CSocket *sock);
     serial_t FindPositionOf(CChar &toAdd);
-
+    
     bool RemoveCharacter(size_t position);
-
-  public:
+    
+public:
     CTownRegion(std::uint16_t region);
     ~CTownRegion();
-
+    
     bool DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag = -1);
     bool VoteForMayor(CSocket *sock);
     bool DonateResource(CSocket *s, std::int32_t amount);
@@ -126,7 +126,7 @@ class CTownRegion {
     bool IsMemberOfTown(CChar *player) const;
     bool IsAlliedTown(std::uint16_t townToCheck) const;
     bool MakeAlliedTown(std::uint16_t townToMake);
-
+    
     void IsGuarded(bool value);
     void CanPlaceHouse(bool value);
     void CanMark(bool value);
@@ -155,7 +155,7 @@ class CTownRegion {
     void SetHealth(std::int16_t newValue);
     void SetChanceBigOre(std::uint8_t newValue);
     void SetAppearance(worldtype_t worldType);
-
+    
     worldtype_t GetAppearance(void) const;
     std::uint8_t GetChanceBigOre(void) const;
     std::int32_t GetGoodBuy(std::uint8_t index) const;
@@ -188,18 +188,18 @@ class CTownRegion {
     void WorldNumber(std::uint8_t newValue);
     std::uint16_t GetInstanceId(void) const;
     void SetInstanceId(std::uint16_t newValue);
-
+    
     std::vector<std::uint16_t> GetScriptTriggers(void);
     void AddScriptTrigger(std::uint16_t newValue);
     void RemoveScriptTrigger(std::uint16_t newValue);
     void ClearScriptTriggers(void);
-
+    
     std::uint16_t GetRegionNum(void) const;
     void SetRegionNum(std::uint16_t newVal);
-
+    
     size_t GetNumLocations(void) const;
     const RegLocs_st *GetLocation(size_t locNum) const;
-
+    
     std::string GetTownMemberSerials(void) const;
     std::vector<TownPers_st> GetTownMembers(void) const;
 };

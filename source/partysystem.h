@@ -15,30 +15,30 @@ class CPUOXBuffer;
 class CSocket;
 
 class CPartyEntry {
-  protected:
+protected:
     CChar *member;
     std::bitset<8> settings;
-
-  public:
+    
+public:
     CChar *Member(void) const;
     bool IsLeader(void) const;
     bool IsLootable(void) const;
-
+    
     void Member(CChar *valid);
     void IsLeader(bool value);
     void IsLootable(bool value);
-
+    
     CPartyEntry();
     CPartyEntry(CChar *m, bool isLeader = false, bool isLootable = false);
 };
 
 class Party {
-  protected:
+protected:
     std::vector<CPartyEntry *> members;
     CChar *leader;
     bool isNPC;
-
-  public:
+    
+public:
     /** Sends a generic packet to an individual or the entire party
      @remarks
      This allows for easier simplification of some code, such as
@@ -86,7 +86,7 @@ class Party {
     /** Returns the character that is the party's leader
      @remarks
      This returns the character that is considered to be leader of the party
-
+     
      */
     CChar *Leader(void);
     /** Returns the list of party entries
@@ -116,7 +116,7 @@ class Party {
     /** Returns whether it's an NPC party
      @remarks
      This returns true if the party is an NPC party
-
+     
      */
     bool IsNPC(void) const;
     /** Sets whether it's an NPC party
@@ -146,11 +146,11 @@ class Party {
  */
 class PartyFactory {
     friend class Party;
-
-  protected:
+    
+protected:
     GenericList<Party *> parties;
     std::map<serial_t, Party *> partyQuickLook;
-
+    
     void AddLookup(Party *toQuickLook, CChar *toSave);
     void RemoveLookup(CChar *toRemove);
     PartyFactory();
@@ -158,8 +158,8 @@ class PartyFactory {
     // private, and delete the copy/move constructors
     PartyFactory(const PartyFactory &) = delete;
     PartyFactory &operator=(const PartyFactory &) = delete;
-
-  public:
+    
+public:
     ~PartyFactory();
     Party *Create(CChar *leader);
     void Destroy(CChar *member);
@@ -169,7 +169,7 @@ class PartyFactory {
     void Kick(CSocket *inviter);
     bool Load(void);
     bool Save(void);
-
+    
     static PartyFactory &shared(void);
 };
 

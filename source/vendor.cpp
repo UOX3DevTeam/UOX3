@@ -38,14 +38,14 @@ std::uint32_t CalcValue(CItem *i, std::uint32_t value) {
         }
         value = (value * mod) / 10;
     }
-
+    
     if (i->GetRank() > 0 && i->GetRank() < 10 && cwmWorldState->ServerData()->RankSystemStatus()) {
         value = static_cast<std::uint32_t>(i->GetRank() * value) / 10;
     }
     if (value < 1) {
         value = 1;
     }
-
+    
     if (!i->GetRndValueRate()) {
         i->SetRndValueRate(0);
     }
@@ -66,34 +66,34 @@ std::uint32_t CalcValue(CItem *i, std::uint32_t value) {
 std::uint32_t CalcGoodValue(CTownRegion *tReg, CItem *i, std::uint32_t value, bool isSelling) {
     if (tReg == nullptr)
         return value;
-
+    
     std::int16_t good = i->GetGood();
     std::int32_t regvalue = 0;
-
+    
     if (good <= -1) {
         return value;
     }
-
+    
     if (isSelling) {
         regvalue = tReg->GetGoodSell(static_cast<std::uint8_t>(i->GetGood()));
     }
     else {
         regvalue = tReg->GetGoodBuy(static_cast<std::uint8_t>(i->GetGood()));
     }
-
+    
     std::uint32_t x = static_cast<std::uint32_t>(value * abs(regvalue)) / 1000;
-
+    
     if (regvalue < 0) {
         value -= x;
     }
     else {
         value += x;
     }
-
+    
     if (value < 1) {
         value = 1;
     }
-
+    
     return value;
 }
 
@@ -111,20 +111,20 @@ bool CPIBuyItem::Handle(void) {
     CItem *p = mChar->GetPackItem();
     if (!ValidateObject(p))
         return true;
-
+    
     std::vector<CItem *> bItems;
     std::vector<std::uint8_t> layer;
     std::vector<std::uint16_t> amount;
-
+    
     // vector for storing all objects that actually end up in user backpack
     std::vector<CItem *> boughtItems;
     std::vector<std::uint16_t> boughtItemAmounts;
-
+    
     CChar *npc = CalcCharObjFromSer(tSock->GetDWord(3));
     std::uint16_t itemTotal = static_cast<std::uint16_t>((tSock->GetWord(1) - 8) / 7);
     if (itemTotal > 511)
         return true;
-
+    
     boughtItems.reserve(itemTotal);
     boughtItemAmounts.reserve(itemTotal);
     bItems.resize(itemTotal);
@@ -138,29 +138,29 @@ bool CPIBuyItem::Handle(void) {
         amount[i] = tSock->GetWord(13 + static_cast<size_t>(baseOffset));
         totalGoldCost += (amount[i] * (bItems[i]->GetBuyValue()));
     }
-
+    
     bool didUseBank = true;
     bool tryUsingBank =
-        (totalGoldCost >= static_cast<std::uint32_t>(cwmWorldState->ServerData()->BuyThreshold()));
+    (totalGoldCost >= static_cast<std::uint32_t>(cwmWorldState->ServerData()->BuyThreshold()));
     if (tryUsingBank) {
         // Count gold in bank if amount is higher than threshold
         totalPlayerGold = GetBankCount(mChar, 0x0EED);
     }
-
+    
     if (!tryUsingBank || totalPlayerGold < totalGoldCost) {
         // Count gold in backpack if amount is NOT higher than threshold,
         // or if bank doesn't have enough gold
         totalPlayerGold = GetItemAmount(mChar, 0x0EED);
         didUseBank = false;
     }
-
+    
     if (mChar->IsGM() || ((tryUsingBank && totalPlayerGold >= totalGoldCost) ||
                           (!tryUsingBank && totalPlayerGold >= totalGoldCost))) {
         for (i = 0; i < itemTotal; ++i) {
             if (bItems[i]->GetAmount() < amount[i]) {
                 soldout = true;
             }
-
+            
             // Check if onBuyFromVendor JS event is present for each item being purchased
             // If return false or 0 has been returned from the script, halt the purchase
             for (auto scriptTrig : bItems[i]->GetScriptTriggers()) {
@@ -173,7 +173,7 @@ bool CPIBuyItem::Handle(void) {
                     }
                 }
             }
-
+            
             // Also run the event on the vendor itself. If purchase didn't get blocked on the item
             // side, maybe vendor has a script with something to say about it instead
             for (auto scriptTrig : npc->GetScriptTriggers()) {
@@ -190,31 +190,31 @@ bool CPIBuyItem::Handle(void) {
         if (soldout) {
             npc->TextMessage(tSock, 1336, TALK,
                              false); // Alas, I no longer have all those goods in stock.  Let me
-                                     // know if there is something else thou wouldst buy.
+            // know if there is something else thou wouldst buy.
             clear = true;
         }
         else {
             if (mChar->IsGM()) {
                 npc->TextMessage(
-                    nullptr, 1337, TALK, 0,
-                    mChar->GetName().c_str()); // Here you are, %s. Someone as special as thee will
-                                               // receive my wares for free of course.
+                                 nullptr, 1337, TALK, 0,
+                                 mChar->GetName().c_str()); // Here you are, %s. Someone as special as thee will
+                // receive my wares for free of course.
             }
             else {
                 if (totalGoldCost == 1) {
                     npc->TextMessage(nullptr, 1338, TALK, 0, mChar->GetName().c_str(),
                                      totalGoldCost); // Here you are, %s. That will be %d gold coin.
-                                                     // I thank thee for thy business.
+                    // I thank thee for thy business.
                 }
                 else {
                     npc->TextMessage(nullptr, 1339, TALK, 0, mChar->GetName().c_str(),
                                      totalGoldCost); // Here you are, %s. That will be %d gold
-                                                     // coins.  I thank thee for thy business.
+                    // coins.  I thank thee for thy business.
                 }
-
+                
                 Effects->GoldSound(tSock, totalGoldCost);
             }
-
+            
             clear = true;
             if (!mChar->IsGM()) {
                 if (didUseBank) {
@@ -254,7 +254,7 @@ bool CPIBuyItem::Handle(void) {
                                     if (iMadeMaxHP > iMadeHP) {
                                         // Randomize the item's HP from HP to MaxHP
                                         iMade->SetHP(
-                                            static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                                     static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
                                     }
                                 }
                                 iMade->SetCont(p);
@@ -270,63 +270,63 @@ bool CPIBuyItem::Handle(void) {
                 else {
                     CItem *biTempCont = static_cast<CItem *>(biTemp->GetCont());
                     switch (biTempCont->GetLayer()) {
-                    case 0x1A: // Sell Container
-                        if (biTemp->IsPileable()) {
-                            iMade = Items->DupeItem(tSock, biTemp, amount[i]);
-                            if (iMade != nullptr) {
-                                iMade->SetCont(p);
-                                iMade->PlaceInPack();
-                                boughtItems.push_back(iMade);
-                                boughtItemAmounts.push_back(amount[i]);
-                            }
-                        }
-                        else {
-                            for (j = 0; j < amount[i]; ++j) {
-                                iMade = Items->DupeItem(tSock, biTemp, 1);
+                        case 0x1A: // Sell Container
+                            if (biTemp->IsPileable()) {
+                                iMade = Items->DupeItem(tSock, biTemp, amount[i]);
                                 if (iMade != nullptr) {
-                                    std::int16_t iMadeHP = iMade->GetHP();
-                                    std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
-                                    if (iMadeMaxHP > iMadeHP) {
-                                        // Randomize the item's HP from HP to MaxHP
-                                        iMade->SetHP(
-                                            static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                    iMade->SetCont(p);
+                                    iMade->PlaceInPack();
+                                    boughtItems.push_back(iMade);
+                                    boughtItemAmounts.push_back(amount[i]);
+                                }
+                            }
+                            else {
+                                for (j = 0; j < amount[i]; ++j) {
+                                    iMade = Items->DupeItem(tSock, biTemp, 1);
+                                    if (iMade != nullptr) {
+                                        std::int16_t iMadeHP = iMade->GetHP();
+                                        std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
+                                        if (iMadeMaxHP > iMadeHP) {
+                                            // Randomize the item's HP from HP to MaxHP
+                                            iMade->SetHP(
+                                                         static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                        }
+                                        iMade->SetCont(p);
+                                        iMade->PlaceInPack();
+                                        boughtItems.push_back(iMade);
+                                        boughtItemAmounts.push_back(1);
                                     }
-                                    iMade->SetCont(p);
-                                    iMade->PlaceInPack();
-                                    boughtItems.push_back(iMade);
-                                    boughtItemAmounts.push_back(1);
                                 }
                             }
-                        }
-                        biTemp->IncAmount(-amount[i], true);
-                        biTemp->SetRestock(biTemp->GetRestock() + amount[i]);
-                        break;
-                    case 0x1B: // Bought Container
-                        if (biTemp->IsPileable()) {
-                            boughtItemAmounts.push_back(biTemp->GetAmount());
-                            biTemp->SetCont(p);
-                            boughtItems.push_back(biTemp);
-                        }
-                        else {
-                            for (j = 0; j < amount[i] - 1; ++j) {
-                                iMade = Items->DupeItem(tSock, biTemp, 1);
-                                if (iMade != nullptr) {
-                                    iMade->SetCont(p);
-                                    iMade->PlaceInPack();
-                                    boughtItems.push_back(iMade);
-                                    boughtItemAmounts.push_back(1);
-                                }
+                            biTemp->IncAmount(-amount[i], true);
+                            biTemp->SetRestock(biTemp->GetRestock() + amount[i]);
+                            break;
+                        case 0x1B: // Bought Container
+                            if (biTemp->IsPileable()) {
+                                boughtItemAmounts.push_back(biTemp->GetAmount());
+                                biTemp->SetCont(p);
+                                boughtItems.push_back(biTemp);
                             }
-                            biTemp->SetCont(p);
-                            biTemp->SetAmount(1);
-                            boughtItems.push_back(biTemp);
-                            boughtItemAmounts.push_back(1);
-                        }
-                        break;
-                    default:
-                        Console::shared().Error(
-                            " Fallout of switch statement without default. vendor.cpp, buyItem()");
-                        break;
+                            else {
+                                for (j = 0; j < amount[i] - 1; ++j) {
+                                    iMade = Items->DupeItem(tSock, biTemp, 1);
+                                    if (iMade != nullptr) {
+                                        iMade->SetCont(p);
+                                        iMade->PlaceInPack();
+                                        boughtItems.push_back(iMade);
+                                        boughtItemAmounts.push_back(1);
+                                    }
+                                }
+                                biTemp->SetCont(p);
+                                biTemp->SetAmount(1);
+                                boughtItems.push_back(biTemp);
+                                boughtItemAmounts.push_back(1);
+                            }
+                            break;
+                        default:
+                            Console::shared().Error(
+                                                    " Fallout of switch statement without default. vendor.cpp, buyItem()");
+                            break;
                     }
                 }
             }
@@ -342,7 +342,7 @@ bool CPIBuyItem::Handle(void) {
                             }
                         }
                     }
-
+                    
                     for (auto scriptTrig : npc->GetScriptTriggers()) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
@@ -361,7 +361,7 @@ bool CPIBuyItem::Handle(void) {
         npc->TextMessage(nullptr, 1340, TALK,
                          false); // Alas, thou dost not possess sufficient gold for this purchase!
     }
-
+    
     if (clear) {
         CPBuyItem clrSend;
         clrSend.Serial(tSock->GetDWord(3));
@@ -381,13 +381,13 @@ bool CPISellItem::Handle(void) {
         CChar *n = CalcCharObjFromSer(tSock->GetDWord(3));
         if (!ValidateObject(n) || !ValidateObject(mChar))
             return true;
-
+        
         CItem *buyPack = n->GetItemAtLayer(IL_BUYCONTAINER);
         CItem *boughtPack = n->GetItemAtLayer(IL_BOUGHTCONTAINER);
         CItem *sellPack = n->GetItemAtLayer(IL_SELLCONTAINER);
         if (!ValidateObject(buyPack) || !ValidateObject(sellPack) || !ValidateObject(boughtPack))
             return true;
-
+        
         CItem *j = nullptr, *k = nullptr, *l = nullptr;
         std::uint16_t amt = 0, maxsell = 0;
         std::uint8_t i = 0;
@@ -397,15 +397,15 @@ bool CPISellItem::Handle(void) {
             amt = tSock->GetWord(13 + (6 * static_cast<size_t>(i)));
             maxsell += amt;
         }
-
+        
         if (maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus()) {
             n->TextMessage(
-                nullptr, 1342, TALK, 0, mChar->GetName().c_str(),
-                cwmWorldState->ServerData()
-                    ->SellMaxItemsStatus()); // Sorry %s, but I can only buy %i items at a time!
+                           nullptr, 1342, TALK, 0, mChar->GetName().c_str(),
+                           cwmWorldState->ServerData()
+                           ->SellMaxItemsStatus()); // Sorry %s, but I can only buy %i items at a time!
             return true;
         }
-
+        
         // Loop through each item being sold
         for (i = 0; i < tSock->GetByte(8); ++i) {
             j = CalcItemObjFromSer(tSock->GetDWord(9 + (6 * static_cast<size_t>(i))));
@@ -416,7 +416,7 @@ bool CPISellItem::Handle(void) {
                                    false); // Cheating scum! Leave now, before I call the guards!
                     return true;
                 }
-
+                
                 // Check if onSellToVendor JS event is present for item being sold
                 // If present and a value of "false" or 0 was returned from the script, halt the
                 // sale
@@ -432,7 +432,7 @@ bool CPISellItem::Handle(void) {
                         }
                     }
                 }
-
+                
                 // Also check for same event on vendor itself, for broader usecases that doesn't
                 // require scripts on every item sold Only run this check if the sale was not halted
                 // by a script on the item itself, though
@@ -449,12 +449,12 @@ bool CPISellItem::Handle(void) {
                         }
                     }
                 }
-
+                
                 // If sale was halted by onSellToVendor event, continue to next item
                 if (saleHalted) {
                     continue;
                 }
-
+                
                 CItem *join = nullptr;
                 GenericList<CItem *> *pCont = boughtPack->GetContainsList();
                 for (k = pCont->First(); !pCont->Finished(); k = pCont->Next()) {
@@ -480,13 +480,13 @@ bool CPISellItem::Handle(void) {
                         }
                     }
                 }
-
+                
                 // If an object already exist in the boughtPack that this one can be joined to...
                 if (ValidateObject(join)) {
                     join->IncAmount(amt);
                     join->SetRestock(join->GetRestock() - amt);
                     l = join;
-
+                    
                     totgold += (amt * value);
                     if (j->GetAmount() == amt) {
                         j->Delete();
@@ -498,7 +498,7 @@ bool CPISellItem::Handle(void) {
                 else {
                     // Otherwise, move this item to the vendor's boughtPack
                     totgold += (amt * value);
-
+                    
                     if (j->GetAmount() != amt) {
                         l = Items->DupeItem(tSock, j, amt);
                         j->SetAmount(j->GetAmount() - amt);
@@ -506,7 +506,7 @@ bool CPISellItem::Handle(void) {
                     else {
                         l = j;
                     }
-
+                    
                     if (ValidateObject(l)) {
                         l->SetCont(boughtPack);
                         l->RemoveFromSight();
@@ -525,7 +525,7 @@ bool CPISellItem::Handle(void) {
                             }
                         }
                     }
-
+                    
                     // Check for onSoldToVendor event on vendor
                     std::vector<std::uint16_t> nScriptTriggers = n->GetScriptTriggers();
                     for (auto scriptTrig : nScriptTriggers) {
@@ -541,7 +541,7 @@ bool CPISellItem::Handle(void) {
                 }
             }
         }
-
+        
         Effects->GoldSound(tSock, totgold);
         while (totgold > MAX_STACK) {
             Items->CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, CBaseObject::OT_ITEM, true);
@@ -551,7 +551,7 @@ bool CPISellItem::Handle(void) {
             Items->CreateScriptItem(tSock, mChar, "0x0EED", totgold, CBaseObject::OT_ITEM, true);
         }
     }
-
+    
     CPBuyItem clrSend;
     clrSend.Serial(tSock->GetDWord(3));
     tSock->Send(&clrSend);
@@ -566,7 +566,7 @@ bool CPISellItem::Handle(void) {
 void RestockNPC(CChar &i, bool stockAll) {
     if (!i.IsShop())
         return; // if we aren't a shopkeeper, why bother?
-
+    
     CItem *ci = i.GetItemAtLayer(IL_SELLCONTAINER);
     if (ValidateObject(ci)) {
         GenericList<CItem *> *ciCont = ci->GetContainsList();
@@ -578,13 +578,13 @@ void RestockNPC(CChar &i, bool stockAll) {
                 }
                 else if (c->GetRestock()) {
                     std::uint16_t stockAmt =
-                        std::min(c->GetRestock(), static_cast<std::uint16_t>((c->GetRestock() / 2) + 1));
+                    std::min(c->GetRestock(), static_cast<std::uint16_t>((c->GetRestock() / 2) + 1));
                     c->IncAmount(stockAmt);
                     c->SetRestock(c->GetRestock() - stockAmt);
                 }
                 if (cwmWorldState->ServerData()->TradeSystemStatus()) {
                     CTownRegion *tReg =
-                        CalcRegionFromXY(i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceId());
+                    CalcRegionFromXY(i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceId());
                     Items->StoreItemRandomValue(c, tReg);
                 }
             }
@@ -598,7 +598,7 @@ bool RestockFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ext
     if (ValidateObject(c)) {
         RestockNPC((*c), (b == 1));
     }
-
+    
     return retVal;
 }
 // o------------------------------------------------------------------------------------------------o

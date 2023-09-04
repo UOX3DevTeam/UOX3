@@ -45,7 +45,7 @@ auto CServerDefinitions::Startup() -> void {
     Console::shared().PrintSectionBegin();
     Console::shared() << "Loading server scripts..." << myendl;
     Console::shared() << "   o Clearing AddMenuMap entries("
-                      << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
+    << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
     g_mmapAddMenuMap.clear();
     ScriptListings.resize(NUM_DEFS);
     ReloadScriptObjects();
@@ -74,7 +74,7 @@ auto CServerDefinitions::Reload() -> bool {
 
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void {
-   
+    
     for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
         auto &toDel = (*slIter);
         for (size_t j = 0; j < toDel.size(); ++j) {
@@ -112,12 +112,12 @@ auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
 //|	Purpose		-	Find a specific CScriptSection from the DFNs in memory
 // o------------------------------------------------------------------------------------------------o
 auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategories_t typeToFind)
-    -> CScriptSection * {
+-> CScriptSection * {
     CScriptSection *rValue = nullptr;
-
+    
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
         auto tUFind = util::upper(toFind);
-
+        
         auto &toDel = ScriptListings[typeToFind];
         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
             Script *toCheck = (*dIter);
@@ -134,7 +134,7 @@ auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategori
 
 //==================================================================================================
 auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind)
-    -> CScriptSection * {
+-> CScriptSection * {
     CScriptSection *rValue = nullptr;
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
         auto &toDel = ScriptListings[typeToFind];
@@ -186,23 +186,23 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
     defaultPriority = 0;
     std::uint8_t wasPriod = 2;
     BuildPriorityMap(toLoad, wasPriod);
-
+    
     CDirectoryListing fileList(toLoad, defExt);
     fileList.Flatten(true);
     std::vector<std::string> *shortListing = fileList.FlattenedShortList();
     std::vector<std::string> *longListing = fileList.FlattenedList();
-
+    
     std::vector<PrioScan> mSort;
     for (size_t i = 0; i < shortListing->size(); ++i) {
         mSort.push_back(
-            PrioScan((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
+                        PrioScan((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
     }
     if (!mSort.empty()) {
         std::sort(mSort.begin(), mSort.end());
         Console::shared().Print(util::format("Section %20s : %6i", dirNames[toLoad].c_str(), 0));
         size_t iTotal = 0;
         Console::shared().TurnYellow();
-
+        
         std::vector<PrioScan>::const_iterator mIter;
         for (mIter = mSort.begin(); mIter != mSort.end(); ++mIter) {
             Console::shared().Print("\b\b\b\b\b\b");
@@ -210,21 +210,21 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
             iTotal += ScriptListings[toLoad].back()->NumEntries();
             Console::shared().Print(util::format("%6i", iTotal));
         }
-
+        
         Console::shared().Print(util::format("\b\b\b\b\b\b%6i", CountOfEntries(toLoad)));
         Console::shared().TurnNormal();
         Console::shared().Print(" entries");
         switch (wasPriod) {
-        case 0:
-            Console::shared().PrintSpecial(CGREEN, "prioritized");
-            break; // prioritized
-        case 1:
-            Console::shared().PrintSpecial(CGREEN, "done");
-            break; // file exist, no section
-        default:
-        case 2:
-            Console::shared().PrintSpecial(CBLUE, "done");
-            break; // no file
+            case 0:
+                Console::shared().PrintSpecial(CGREEN, "prioritized");
+                break; // prioritized
+            case 1:
+                Console::shared().PrintSpecial(CGREEN, "done");
+                break; // file exist, no section
+            default:
+            case 2:
+                Console::shared().PrintSpecial(CBLUE, "done");
+                break; // no file
         };
     }
 }
@@ -236,7 +236,7 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
 // o------------------------------------------------------------------------------------------------o
 auto CServerDefinitions::ReloadScriptObjects() -> void {
     Console::shared() << myendl;
-
+    
     for (std::int32_t sCtr = 0; sCtr < NUM_DEFS; ++sCtr) {
         LoadDFNCategory(static_cast<definitioncategories_t>(sCtr));
     }
@@ -293,7 +293,7 @@ auto CServerDefinitions::CleanPriorityMap() -> void { priorityMap.clear(); }
 //|	Purpose		-	Build DFN priority map based on entires from priority.nfo
 // o------------------------------------------------------------------------------------------------o
 auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::uint8_t &wasPrioritized)
-    -> void {
+-> void {
     CDirectoryListing priorityFile(category, "priority.nfo", false);
     std::vector<std::string> *longList = priorityFile.List();
     if (!longList->empty()) {
@@ -302,7 +302,7 @@ auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::
         if (FileExists(filename)) // the file exists, so perhaps we do
         {
             auto prio =
-                std::make_unique<Script>(filename, category, false); // generate a script for it
+            std::make_unique<Script>(filename, category, false); // generate a script for it
             if (prio)                                                // successfully made a script
             {
                 auto prioInfo = prio->FindEntry("PRIORITY"); // find the priority entry
@@ -316,7 +316,7 @@ auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::
                         else {
                             std::string filenametemp = util::lower(tag);
                             priorityMap[filenametemp] =
-                                static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
+                            static_cast<std::int16_t>(std::stoi(data, nullptr, 0));
                         }
                     }
                     wasPrioritized = 0;
@@ -393,7 +393,7 @@ auto CDirectoryListing::PopDir() -> void {
     }
     else {
         auto path = std::filesystem::path(dirs.top());
-
+        
         if (std::filesystem::exists(path)) {
             std::filesystem::current_path(path);
         }
@@ -405,14 +405,14 @@ CDirectoryListing::CDirectoryListing(bool recurse) : extension(".dfn"), doRecurs
 //==================================================================================================
 CDirectoryListing::CDirectoryListing(const std::string &dir, const std::string &extent,
                                      bool recurse)
-    : doRecursion(recurse) {
+: doRecursion(recurse) {
     Extension(extent);
     Retrieve(dir);
 }
 //==================================================================================================
 CDirectoryListing::CDirectoryListing(definitioncategories_t dir, const std::string &extent,
                                      bool recurse)
-    : doRecursion(recurse) {
+: doRecursion(recurse) {
     Extension(extent);
     Retrieve(dir);
 }
@@ -420,7 +420,7 @@ CDirectoryListing::CDirectoryListing(definitioncategories_t dir, const std::stri
 CDirectoryListing::~CDirectoryListing() {
     while (!dirs.empty()) {
         auto path = std::filesystem::path(dirs.top());
-
+        
         if (std::filesystem::exists(path)) {
             std::filesystem::current_path(path);
         }
@@ -500,16 +500,16 @@ auto CDirectoryListing::Flatten(bool isParent) -> void {
     ClearFlatten();
     std::for_each(filenameList.begin(), filenameList.end(),
                   [isParent, this](const std::string &entry) {
-                      flattenedFull.push_back(entry);
-                      auto temp = std::string();
-                      if (!isParent) {
-                          temp = shortCurrentDir + "/"s;
-                      }
-                      temp += entry;
-                      flattenedShort.push_back(temp);
-                  });
+        flattenedFull.push_back(entry);
+        auto temp = std::string();
+        if (!isParent) {
+            temp = shortCurrentDir + "/"s;
+        }
+        temp += entry;
+        flattenedShort.push_back(temp);
+    });
     std::string temp;
-   
+    
     for (auto dIter = subdirectories.begin(); dIter != subdirectories.end(); ++dIter) {
         (*dIter).Flatten(false);
         auto shortFlat = (*dIter).FlattenedShortList();

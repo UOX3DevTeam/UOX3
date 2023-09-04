@@ -24,7 +24,7 @@
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate()
-    : updateTimer(60), loaded(false), type(ETT_INVALIDTEMPLATE), scheduledUpdate(0) {
+: updateTimer(60), loaded(false), type(ETT_INVALIDTEMPLATE), scheduledUpdate(0) {
     name = "";
     content = "";
     outputFile.reserve(MAX_PATH);
@@ -84,17 +84,17 @@ void cHTMLTemplate::Process(void) {
     // offline template.
     if (cwmWorldState->GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE)
         return;
-
+    
     // Only read the Status Page if it's not already loaded
     if (!loaded) {
         LoadTemplate();
     }
-
+    
     // Parse the Content...
     std::string ParsedContent = content;
-
+    
     // Replacing Placeholders
-
+    
     // Account-Count
     std::string AccountCount = util::ntos((Account::shared().size()));
     size_t Pos = ParsedContent.find("%accounts");
@@ -102,7 +102,7 @@ void cHTMLTemplate::Process(void) {
         ParsedContent.replace(Pos, 9, AccountCount);
         Pos = ParsedContent.find("%accounts");
     }
-
+    
     // Version
     std::string Version = UOXVersion::version;
     Version += ".";
@@ -110,7 +110,7 @@ void cHTMLTemplate::Process(void) {
     Version += " [";
     Version += OS_STR;
     Version += "]";
-
+    
     Pos = ParsedContent.find("%version");
     while (Pos != std::string::npos) {
         ParsedContent.replace(Pos, 8, Version);
@@ -123,7 +123,7 @@ void cHTMLTemplate::Process(void) {
         ParsedContent.replace(Pos, 10, CharacterCount);
         Pos = ParsedContent.find("%charcount");
     }
-
+    
     // Item Count
     std::string ItemCount = util::ntos(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
     Pos = ParsedContent.find("%itemcount");
@@ -131,11 +131,11 @@ void cHTMLTemplate::Process(void) {
         ParsedContent.replace(Pos, 10, ItemCount);
         Pos = ParsedContent.find("%itemcount");
     }
-
+    
     // Connection Count (GMs, Counselors, Player)
     std::uint32_t gm = 0, cns = 0, ccount = 0;
     CChar *tChar = nullptr;
-
+    
     // Get all Network Connections
     {
         for (auto &tSock : Network->connClients) {
@@ -153,62 +153,62 @@ void cHTMLTemplate::Process(void) {
             }
         }
     }
-
+    
     // GMs
     std::string GMCount = util::ntos(gm);
     Pos = ParsedContent.find("%online_gms");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, GMCount)
-                                      : ParsedContent.replace(Pos, 11, "0");
+        : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%online_gms");
     }
-
+    
     // Counselor
     std::string CounsiCount = util::ntos(cns);
     Pos = ParsedContent.find("%online_couns");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 13, CounsiCount)
-                                      : ParsedContent.replace(Pos, 13, "0");
+        : ParsedContent.replace(Pos, 13, "0");
         Pos = ParsedContent.find("%online_couns");
     }
-
+    
     // Player
     std::string PlayerCount = util::ntos(ccount);
     Pos = ParsedContent.find("%online_player");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 14, PlayerCount)
-                                      : ParsedContent.replace(Pos, 14, "0");
+        : ParsedContent.replace(Pos, 14, "0");
         Pos = ParsedContent.find("%online_player");
     }
-
+    
     // Total
     std::string AllCount = util::ntos((ccount + gm + cns));
     Pos = ParsedContent.find("%online_all");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, AllCount)
-                                      : ParsedContent.replace(Pos, 11, "0");
+        : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%online_all");
     }
-
+    
     // Time
     char time_str[256];
     RealTime(time_str);
     Pos = ParsedContent.find("%time");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 5, time_str)
-                                      : ParsedContent.replace(Pos, 5, "Down");
+        : ParsedContent.replace(Pos, 5, "Down");
         Pos = ParsedContent.find("%time");
     }
-
+    
     // 24Time
     RealTime24(time_str);
     Pos = ParsedContent.find("%24time");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 7, time_str)
-                                      : ParsedContent.replace(Pos, 7, "Down");
+        : ParsedContent.replace(Pos, 7, "Down");
         Pos = ParsedContent.find("%24time");
     }
-
+    
     // Timestamp
     time_t currTime;
     time(&currTime);
@@ -218,37 +218,37 @@ void cHTMLTemplate::Process(void) {
     Pos = ParsedContent.find("%tstamp");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 7, timestamp)
-                                      : ParsedContent.replace(Pos, 7, "Down");
+        : ParsedContent.replace(Pos, 7, "Down");
         Pos = ParsedContent.find("%tstamp");
     }
-
+    
     // Server Name
     auto serverName = cwmWorldState->ServerData()->ServerName();
     Pos = ParsedContent.find("%servername");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, serverName)
-                                      : ParsedContent.replace(Pos, 11, "Unnamed UOX3 Server");
+        : ParsedContent.replace(Pos, 11, "Unnamed UOX3 Server");
         Pos = ParsedContent.find("%servername");
     }
-
+    
     // External/WAN ServerIP
     auto serverIP = cwmWorldState->ServerData()->ExternalIP();
     Pos = ParsedContent.find("%serverip");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 9, serverIP)
-                                      : ParsedContent.replace(Pos, 9, "127.0.0.1");
+        : ParsedContent.replace(Pos, 9, "127.0.0.1");
         Pos = ParsedContent.find("%serverip");
     }
-
+    
     // Server Port
     auto serverPort = cwmWorldState->ServerData()->ServerPort();
     Pos = ParsedContent.find("%serverport");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, util::ntos(serverPort))
-                                      : ParsedContent.replace(Pos, 11, "127.0.0.1");
+        : ParsedContent.replace(Pos, 11, "127.0.0.1");
         Pos = ParsedContent.find("%serverport");
     }
-
+    
     // Playerlist
     Pos = ParsedContent.find("%playerlist%");
     while (Pos != std::string::npos) {
@@ -268,11 +268,11 @@ void cHTMLTemplate::Process(void) {
                             if (this->GetTemplateType() == ETT_ONLINE &&
                                 (tChar->IsGM() || tChar->IsCounselor()))
                                 continue;
-
+                            
                             std::string parsedInline = myInline;
                             parsedInline.replace(0, 12, "");
                             parsedInline.replace(parsedInline.length() - 12, 12, "");
-
+                            
                             //					Tokens for the PlayerList
                             //					%playername
                             //					%playertitle
@@ -283,16 +283,16 @@ void cHTMLTemplate::Process(void) {
                             //					%playerz
                             //					%playerrace
                             //					%playerregion
-
+                            
                             // PlayerName
                             size_t sPos = parsedInline.find("%playername");
                             while (sPos != std::string::npos) {
                                 (cwmWorldState->GetKeepRun())
-                                    ? parsedInline.replace(sPos, 11, tChar->GetName())
-                                    : parsedInline.replace(sPos, 11, "");
+                                ? parsedInline.replace(sPos, 11, tChar->GetName())
+                                : parsedInline.replace(sPos, 11, "");
                                 sPos = parsedInline.find("%playername");
                             }
-
+                            
                             // PlayerTitle
                             auto playerTitle = tChar->GetTitle();
                             if (!playerTitle.empty()) {
@@ -301,113 +301,113 @@ void cHTMLTemplate::Process(void) {
                             sPos = parsedInline.find("%playertitle");
                             while (sPos != std::string::npos) {
                                 (cwmWorldState->GetKeepRun())
-                                    ? parsedInline.replace(sPos, 12, tChar->GetTitle())
-                                    : parsedInline.replace(sPos, 12, "");
+                                ? parsedInline.replace(sPos, 12, tChar->GetTitle())
+                                : parsedInline.replace(sPos, 12, "");
                                 sPos = parsedInline.find("%playertitle");
                             }
-
+                            
                             // PlayerIP
                             sPos = parsedInline.find("%playerip");
                             while (sPos != std::string::npos) {
                                 CSocket *mySock = tChar->GetSocket();
-
+                                
                                 auto ClientIP = util::format(
-                                    "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(),
-                                    mySock->ClientIP3(), mySock->ClientIP1());
+                                                             "%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(),
+                                                             mySock->ClientIP3(), mySock->ClientIP1());
                                 (cwmWorldState->GetKeepRun())
-                                    ? parsedInline.replace(sPos, 9, ClientIP)
-                                    : parsedInline.replace(sPos, 9, "");
+                                ? parsedInline.replace(sPos, 9, ClientIP)
+                                : parsedInline.replace(sPos, 9, "");
                                 sPos = parsedInline.find("%playerip");
                             }
-
+                            
                             // PlayerAccount
                             sPos = parsedInline.find("%playeraccount");
                             while (sPos != std::string::npos) {
                                 AccountEntry &toScan = tChar->GetAccount();
                                 if (toScan.accountNumber != AccountEntry::INVALID_ACCOUNT) {
                                     (cwmWorldState->GetKeepRun())
-                                        ? parsedInline.replace(sPos, 14, toScan.username)
-                                        : parsedInline.replace(sPos, 14, "");
+                                    ? parsedInline.replace(sPos, 14, toScan.username)
+                                    : parsedInline.replace(sPos, 14, "");
                                 }
                                 sPos = parsedInline.find("%playeraccount");
                             }
-
+                            
                             // PlayerX
                             sPos = parsedInline.find("%playerx");
                             while (sPos != std::string::npos) {
                                 std::string myX = util::ntos(tChar->GetX());
                                 (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myX)
-                                                              : parsedInline.replace(sPos, 8, "");
+                                : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playerx");
                             }
-
+                            
                             // PlayerY
                             sPos = parsedInline.find("%playery");
                             while (sPos != std::string::npos) {
                                 std::string myY = util::ntos(tChar->GetY());
                                 (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myY)
-                                                              : parsedInline.replace(sPos, 8, "");
+                                : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playery");
                             }
-
+                            
                             // PlayerZ
                             sPos = parsedInline.find("%playerz");
                             while (sPos != std::string::npos) {
                                 std::string myZ = util::ntos(tChar->GetZ());
                                 (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myZ)
-                                                              : parsedInline.replace(sPos, 8, "");
+                                : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playerz");
                             }
-
+                            
                             // PlayerRace -- needs testing
                             sPos = parsedInline.find("%playerrace");
                             while (sPos != std::string::npos) {
                                 raceid_t myRace = tChar->GetRace();
                                 const std::string rName = Races->Name(myRace);
                                 size_t raceLenName = rName.length();
-
+                                
                                 if (raceLenName > 0) {
                                     (cwmWorldState->GetKeepRun())
-                                        ? parsedInline.replace(sPos, 11, rName)
-                                        : parsedInline.replace(sPos, 11, "");
+                                    ? parsedInline.replace(sPos, 11, rName)
+                                    : parsedInline.replace(sPos, 11, "");
                                 }
                                 sPos = parsedInline.find("%playerrace");
                             }
-
+                            
                             // PlayerRegion
                             sPos = parsedInline.find("%playerregion");
                             while (sPos != std::string::npos) {
                                 (cwmWorldState->GetKeepRun())
-                                    ? parsedInline.replace(sPos, 13, tChar->GetRegion()->GetName())
-                                    : parsedInline.replace(sPos, 13, "");
+                                ? parsedInline.replace(sPos, 13, tChar->GetRegion()->GetName())
+                                : parsedInline.replace(sPos, 13, "");
                                 sPos = parsedInline.find("%playerregion");
                             }
-
+                            
                             PlayerList += parsedInline;
                         }
                     }
                 } catch (...) {
                     Console::shared()
-                        << "| EXCEPTION: Invalid character/socket pointer found. Ignored."
-                        << myendl;
+                    << "| EXCEPTION: Invalid character/socket pointer found. Ignored."
+                    << myendl;
                 }
             }
         }
-
+        
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), PlayerList)
-                                      : ParsedContent.replace(Pos, myInline.length(), "");
+        : ParsedContent.replace(Pos, myInline.length(), "");
         Pos = ParsedContent.find("%playerlist%");
     }
-
+    
     // GuildCount
     std::string GuildCount = util::ntos(static_cast<std::int32_t>(GuildSys->NumGuilds()));
     Pos = ParsedContent.find("%guildcount");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, GuildCount)
-                                      : ParsedContent.replace(Pos, 11, "");
+        : ParsedContent.replace(Pos, 11, "");
         Pos = ParsedContent.find("%guildcount");
     }
-
+    
     // GUILDLIST
     Pos = ParsedContent.find("%guildlist%");
     while (Pos != std::string::npos) {
@@ -416,68 +416,68 @@ void cHTMLTemplate::Process(void) {
             break;
         std::string myInline = ParsedContent.substr(Pos, SecondPos - Pos + 11);
         std::string GuildList;
-
+        
         for (std::int16_t i = 0; i < static_cast<std::int16_t>(GuildSys->NumGuilds()); ++i) {
             std::string parsedInline = myInline;
             parsedInline.replace(0, 11, "");
             parsedInline.replace(parsedInline.length() - 11, 11, "");
-
+            
             //			Tokens for the GuildList
             //			%guildid
             //			%guildname
             //			%guildmembercount
-
+            
             // GuildId
             size_t sPos;
             CGuild *myGuild = GuildSys->Guild(i);
-
+            
             std::string GuildId = util::ntos(i);
             sPos = parsedInline.find("%guildid");
             while (sPos != std::string::npos) {
                 (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, GuildId)
-                                              : parsedInline.replace(sPos, 8, "");
+                : parsedInline.replace(sPos, 8, "");
                 sPos = parsedInline.find("%guildid");
             }
-
+            
             // GuildName
             sPos = parsedInline.find("%guildname");
             while (sPos != std::string::npos) {
                 (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 10, myGuild->Name())
-                                              : parsedInline.replace(sPos, 10, "");
+                : parsedInline.replace(sPos, 10, "");
                 sPos = parsedInline.find("%guildname");
             }
-
+            
             // Guild Member Count
             sPos = parsedInline.find("%guildmembercount");
             while (sPos != std::string::npos) {
                 (cwmWorldState->GetKeepRun())
-                    ? parsedInline.replace(sPos, 17, util::ntos(myGuild->NumMembers()))
-                    : parsedInline.replace(sPos, 10, "");
+                ? parsedInline.replace(sPos, 17, util::ntos(myGuild->NumMembers()))
+                : parsedInline.replace(sPos, 10, "");
                 sPos = parsedInline.find("%guildmembercount");
             }
-
+            
             GuildList += parsedInline;
         }
-
+        
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), GuildList)
-                                      : ParsedContent.replace(Pos, myInline.length(), "");
+        : ParsedContent.replace(Pos, myInline.length(), "");
         Pos = ParsedContent.find("%guildlist%");
     }
-
+    
     // NPCCount
     std::uint32_t npccount = 0;
     std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(CBaseObject::OT_CHAR, b, nullptr, &CountNPCFunctor);
     npccount = b;
-
+    
     std::string npcs = util::ntos(npccount);
     Pos = ParsedContent.find("%npcs");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 5, npcs)
-                                      : ParsedContent.replace(Pos, 5, "0");
+        : ParsedContent.replace(Pos, 5, "0");
         Pos = ParsedContent.find("%npcs");
     }
-
+    
     // Performance Dump
     R64 eps = 0.00000000001;
     Pos = ParsedContent.find("%performance");
@@ -490,32 +490,32 @@ void cHTMLTemplate::Process(void) {
             std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
             std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
             myStream << "Network code: "
-                     << static_cast<R32>(
-                            static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
-                            static_cast<R32>(networkTimeCount))
-                     << "msec [" << networkTimeCount << " samples] <BR>";
+            << static_cast<R32>(
+                                static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
+                                static_cast<R32>(networkTimeCount))
+            << "msec [" << networkTimeCount << " samples] <BR>";
             myStream << "Timer code: "
-                     << static_cast<R32>(
-                            static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) /
-                            static_cast<R32>(timerTimeCount))
-                     << "msec [" << timerTimeCount << " samples] <BR>";
+            << static_cast<R32>(
+                                static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) /
+                                static_cast<R32>(timerTimeCount))
+            << "msec [" << timerTimeCount << " samples] <BR>";
             myStream << "Auto code: "
-                     << static_cast<R32>(
-                            static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) /
-                            static_cast<R32>(autoTimeCount))
-                     << "msec [" << autoTimeCount << " samples] <BR>";
+            << static_cast<R32>(
+                                static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) /
+                                static_cast<R32>(autoTimeCount))
+            << "msec [" << autoTimeCount << " samples] <BR>";
             myStream << "Loop Time: "
-                     << static_cast<R32>(
-                            static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
-                            static_cast<R32>(loopTimeCount))
-                     << "msec [" << loopTimeCount << " samples] <BR>";
+            << static_cast<R32>(
+                                static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
+                                static_cast<R32>(loopTimeCount))
+            << "msec [" << loopTimeCount << " samples] <BR>";
             if (!(cwmWorldState->ServerProfile()->LoopTime() < eps || loopTimeCount < eps)) {
                 myStream << "Simulation Cycles: "
-                         << (1000.0 * (1.0 / static_cast<R32>(
-                                                 static_cast<R32>(
-                                                     cwmWorldState->ServerProfile()->LoopTime()) /
-                                                 static_cast<R32>(loopTimeCount))))
-                         << " per sec <BR>";
+                << (1000.0 * (1.0 / static_cast<R32>(
+                                                     static_cast<R32>(
+                                                                      cwmWorldState->ServerProfile()->LoopTime()) /
+                                                     static_cast<R32>(loopTimeCount))))
+                << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -523,19 +523,19 @@ void cHTMLTemplate::Process(void) {
         }
         else {
             myStream << "Network code: 0"
-                     << "<BR>";
+            << "<BR>";
             myStream << "Timer code: 0"
-                     << "<BR>";
+            << "<BR>";
             myStream << "Auto code: 0"
-                     << "<BR>";
+            << "<BR>";
             myStream << "Loop Time: 0"
-                     << "<BR>";
+            << "<BR>";
             myStream << "Simulation Cycles: 0<BR>";
         }
         ParsedContent.replace(Pos, 12, myStream.str());
         Pos = ParsedContent.find("%performance");
     }
-
+    
     // Uptime
     Pos = ParsedContent.find("%uptime");
     while (Pos != std::string::npos) {
@@ -543,24 +543,24 @@ void cHTMLTemplate::Process(void) {
         ParsedContent.replace(Pos, 7, builtString);
         Pos = ParsedContent.find("%uptime");
     }
-
+    
     // Simulation Cycles (whatever that may be...)
     Pos = ParsedContent.find("%simcycles");
     while (Pos != std::string::npos) {
         std::string simcycles;
         std::ostringstream myStream(simcycles);
-
+        
         if (cwmWorldState->GetKeepRun()) {
             if (!(cwmWorldState->ServerProfile()->LoopTime() < eps ||
                   cwmWorldState->ServerProfile()->LoopTimeCount() < eps)) {
                 myStream << "Simulation Cycles: "
-                         << (1000.0 *
-                             (1.0 /
-                              static_cast<R32>(
-                                  static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
-                                  static_cast<R32>(
-                                      cwmWorldState->ServerProfile()->LoopTimeCount()))))
-                         << " per sec <BR>";
+                << (1000.0 *
+                    (1.0 /
+                     static_cast<R32>(
+                                      static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
+                                      static_cast<R32>(
+                                                       cwmWorldState->ServerProfile()->LoopTimeCount()))))
+                << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -572,18 +572,18 @@ void cHTMLTemplate::Process(void) {
         ParsedContent.replace(Pos, 10, myStream.str());
         Pos = ParsedContent.find("%simcycles");
     }
-
+    
     // Update Time in SECONDS
     Pos = ParsedContent.find("%updatetime");
     while (Pos != std::string::npos) {
         std::string strUpdateTimer = util::ntos(updateTimer);
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, strUpdateTimer)
-                                      : ParsedContent.replace(Pos, 11, "0");
+        : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%updatetime");
     }
-
+    
     // End Replacing Placeholders
-
+    
     // Print the Content out to the new file...
     std::ofstream Output;
     Output.open(outputFile.c_str(), std::ios::out);
@@ -593,7 +593,7 @@ void cHTMLTemplate::Process(void) {
     }
     else {
         Console::shared().Error(
-            util::format(" Couldn't open the template file %s for writing", outputFile.c_str()));
+                                util::format(" Couldn't open the template file %s for writing", outputFile.c_str()));
     }
 }
 
@@ -620,23 +620,23 @@ void cHTMLTemplate::Poll(void) {
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplate::LoadTemplate(void) {
     content = "";
-
+    
     std::ifstream InputFile1(inputFile.c_str());
-
+    
     if (!InputFile1.is_open()) {
         Console::shared().Error(
-            util::format("Couldn't open HTML Template File %s", inputFile.c_str()));
+                                util::format("Couldn't open HTML Template File %s", inputFile.c_str()));
         return;
     }
-
+    
     while (!InputFile1.eof() && !InputFile1.fail()) {
         std::string Line;
         std::getline(InputFile1, Line);
         content += Line;
     }
-
+    
     InputFile1.close();
-
+    
     loaded = true;
 }
 
@@ -664,7 +664,7 @@ void cHTMLTemplate::Load(CScriptSection *found) {
         auto tag = sec->tag;
         auto data = sec->data;
         auto UTag = util::upper(tag);
-
+        
         if (UTag == "UPDATE") {
             updateTimer = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
         }
@@ -700,7 +700,7 @@ void cHTMLTemplate::Load(CScriptSection *found) {
             name = data;
         }
     }
-
+    
     scheduledUpdate = 0;
     loaded = false;
 }
@@ -735,7 +735,7 @@ auto cHTMLTemplates::Load() -> void {
 void cHTMLTemplates::Unload(void) {
     if (Templates.empty())
         return;
-
+    
     for (size_t i = 0; i < Templates.size(); ++i) {
         delete Templates[i];
         Templates[i] = nullptr;
@@ -767,53 +767,53 @@ void cHTMLTemplates::Poll(ETemplateType nTemplateId) {
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplates::TemplateInfoGump(CSocket *mySocket) {
     CGump InfoGump = CGump(false, false);
-
+    
     InfoGump.SetSerial(1); // Serial for the HTML Status Callback
-
+    
     InfoGump.StartPage();
     // Add an exit button
     InfoGump.AddButton(40, 300, cwmWorldState->ServerData()->ButtonCancel(),
                        static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonCancel() + 1), 1, 0, 0);
-
+    
     InfoGump.AddBackground(0, 0, cwmWorldState->ServerData()->BackgroundPic(), 350, 350);
-
+    
     // 10 Max Templates per page
     std::uint32_t Entries = 0;     // Entries per page
     std::uint16_t CurrentPage = 0; // Page
-
+    
     for (std::uint32_t i = 0; i < Templates.size(); ++i) {
         if (Entries == 0) {
             // We should add a next button if we're not starting the first page
             if (CurrentPage != 0) {
                 InfoGump.AddButton(
-                    300, 250, cwmWorldState->ServerData()->ButtonRight(),
-                    static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonRight() + 1), 0,
-                    static_cast<std::uint16_t>(CurrentPage + 1), 0);
+                                   300, 250, cwmWorldState->ServerData()->ButtonRight(),
+                                   static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonRight() + 1), 0,
+                                   static_cast<std::uint16_t>(CurrentPage + 1), 0);
             }
-
+            
             CurrentPage = InfoGump.StartPage();
         }
-
+        
         // If we're not on the first page add the "back" button
         if (CurrentPage > 1) {
             InfoGump.AddButton(30, 250, cwmWorldState->ServerData()->ButtonLeft(),
                                static_cast<std::uint16_t>(cwmWorldState->ServerData()->ButtonLeft() + 1), 0,
                                static_cast<std::uint16_t>(CurrentPage - 1), 0);
         }
-
+        
         ++Entries;
-
+        
         // ~25 pixel per entry
-
+        
         InfoGump.AddText(40, static_cast<std::uint16_t>(40 + (Entries - 1) * 25),
                          cwmWorldState->ServerData()->LeftTextColour(),
                          util::format("%s (%i)", Templates[i]->GetName().c_str(), i));
-
+        
         if (Entries == 5) {
             Entries = 0;
         }
     }
-
+    
     InfoGump.Send(mySocket);
 }
 

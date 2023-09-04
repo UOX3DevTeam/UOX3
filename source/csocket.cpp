@@ -469,20 +469,20 @@ const bool DEFSOCK_LOGINCOMPLETE = false;
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
 CSocket::CSocket(size_t sockNum)
-    : currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX),
-      clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE),
-      outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING),
-      range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum),
-      walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT),
-      pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG),
-      cliType(DEFSOCK_CLITYPE), cliVerShort(DEFSOCK_CLIVERSHORT),
-      clientVersion(DEFSOCK_CLIENTVERSION), bytesReceived(DEFSOCK_BYTESRECEIVED),
-      bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr),
-      tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL),
-      newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET),
-      loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr),
-      bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT),
-      bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
+: currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX),
+clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE),
+outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING),
+range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum),
+walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT),
+pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG),
+cliType(DEFSOCK_CLITYPE), cliVerShort(DEFSOCK_CLIVERSHORT),
+clientVersion(DEFSOCK_CLIENTVERSION), bytesReceived(DEFSOCK_BYTESRECEIVED),
+bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr),
+tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL),
+newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET),
+loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr),
+bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT),
+bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
     InternalReset();
 }
 
@@ -493,7 +493,7 @@ CSocket::CSocket(size_t sockNum)
 // o------------------------------------------------------------------------------------------------o
 CSocket::~CSocket() {
     JSEngine->ReleaseObject(IUE_SOCK, this);
-
+    
     if (ValidateObject(currCharObj)) {
         currCharObj->SetSocket(nullptr);
     }
@@ -562,23 +562,23 @@ bool CSocket::FlushBuffer(bool doLog) {
             std::uint8_t xoutbuffer[MAXBUFFER * 2];
             len = Pack(outbuffer, xoutbuffer, outlength);
             [[maybe_unused]] auto sendResult =
-                send(static_cast<uoxsocket_t>(cliSocket), (char *)xoutbuffer, len, 0);
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)xoutbuffer, len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr
-                    << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747"
-                    << std::endl;
+                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747"
+                << std::endl;
             }
 #endif
         }
         else {
             [[maybe_unused]] auto sendResult =
-                send(static_cast<uoxsocket_t>(cliSocket), (char *)&outbuffer[0], outlength, 0);
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)&outbuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr
-                    << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757"
-                    << std::endl;
+                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757"
+                << std::endl;
             }
 #endif
         }
@@ -591,19 +591,19 @@ bool CSocket::FlushBuffer(bool doLog) {
                 toPrint = currCharObj->GetSerial();
             }
             std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-                                  util::ntos(toPrint) + std::string(".snd");
+            util::ntos(toPrint) + std::string(".snd");
             std::ofstream logDestination;
             logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
             if (logDestination.is_open()) {
                 logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex
-                               << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
-                               << outlength << TimeStamp() << std::endl;
+                << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
+                << outlength << TimeStamp() << std::endl;
                 DoPacketLogging(logDestination, outlength, outbuffer);
                 logDestination.close();
             }
             else {
                 Console::shared().Error(
-                    util::format("Failed to open socket log %s", logFile.c_str()));
+                                        util::format("Failed to open socket log %s", logFile.c_str()));
             }
             bytesSent += outlength;
         }
@@ -625,23 +625,23 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             largePackBuffer.resize(static_cast<size_t>(outlength) * static_cast<size_t>(2));
             std::int32_t len = Pack(&largeBuffer[0], &largePackBuffer[0], outlength);
             [[maybe_unused]] auto sendResult =
-                send(static_cast<uoxsocket_t>(cliSocket), (char *)&largePackBuffer[0], len, 0);
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)&largePackBuffer[0], len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr
-                    << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811"
-                    << std::endl;
+                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811"
+                << std::endl;
             }
 #endif
         }
         else {
             [[maybe_unused]] auto sendResult =
-                send(static_cast<uoxsocket_t>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr
-                    << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821"
-                    << std::endl;
+                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821"
+                << std::endl;
             }
 #endif
         }
@@ -654,19 +654,19 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
                 toPrint = currCharObj->GetSerial();
             }
             std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-                                  util::ntos(toPrint) + std::string(".snd");
+            util::ntos(toPrint) + std::string(".snd");
             std::ofstream logDestination;
             logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
             if (logDestination.is_open()) {
                 logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex
-                               << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
-                               << outlength << TimeStamp() << std::endl;
+                << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
+                << outlength << TimeStamp() << std::endl;
                 DoPacketLogging(logDestination, outlength, largeBuffer);
                 logDestination.close();
             }
             else {
                 Console::shared().Error(
-                    util::format("Failed to open socket log %s", logFile.c_str()));
+                                        util::format("Failed to open socket log %s", logFile.c_str()));
             }
             bytesSent += outlength;
         }
@@ -734,35 +734,35 @@ std::uint32_t DoPack(std::uint8_t *pIn, std::uint8_t *pOut, std::int32_t len) {
     std::int32_t bitByte = 0;
     std::int32_t nrBits;
     std::uint32_t value;
-
+    
     while (len--) {
         nrBits = bit_table[*pIn][0];
         value = bit_table[*pIn++][1];
-
+        
         while (nrBits--) {
             pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) |
-                                                   static_cast<std::uint8_t>((value >> nrBits) & 0x1));
-
+                                                           static_cast<std::uint8_t>((value >> nrBits) & 0x1));
+            
             bitByte = (bitByte + 1) & 0x07;
             if (!bitByte) {
                 ++packedLength;
             }
         }
     }
-
+    
     nrBits = bit_table[256][0];
     value = bit_table[256][1];
-
+    
     while (nrBits--) {
         pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) |
-                                               static_cast<std::uint8_t>((value >> nrBits) & 0x1));
-
+                                                       static_cast<std::uint8_t>((value >> nrBits) & 0x1));
+        
         bitByte = (bitByte + 1) & 0x07;
         if (!bitByte) {
             ++packedLength;
         }
     }
-
+    
     if (bitByte) {
         while (bitByte < 8) {
             pOut[packedLength] <<= 1;
@@ -776,7 +776,7 @@ std::uint32_t DoPack(std::uint8_t *pIn, std::uint8_t *pOut, std::int32_t len) {
 std::uint32_t CSocket::Pack(void *pvIn, void *pvOut, std::int32_t len) {
     std::uint8_t *pIn = static_cast<std::uint8_t *>(pvIn);
     std::uint8_t *pOut = static_cast<std::uint8_t *>(pvOut);
-
+    
     return DoPack(pIn, pOut, len);
 }
 
@@ -806,7 +806,7 @@ void CSocket::Send(const void *point, std::int32_t length) {
     else {
         memcpy(&outbuffer[outlength], point, length);
     }
-
+    
     outlength += length;
 }
 
@@ -839,7 +839,7 @@ void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
             toPrint = currCharObj->GetSerial();
         }
         std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-                              util::ntos(toPrint) + std::string(".rcv");
+        util::ntos(toPrint) + std::string(".rcv");
         std::ofstream logDestination;
         logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
@@ -851,8 +851,8 @@ void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
         }
         else {
             logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10 ? "0" : "")
-                           << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec
-                           << inlength << TimeStamp() << std::endl;
+            << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec
+            << inlength << TimeStamp() << std::endl;
             DoPacketLogging(logDestination, inlength, buffer);
         }
         logDestination.close();
@@ -871,7 +871,7 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
     std::uint32_t nexTime = curTime;
     do {
         count = static_cast<int>(
-            recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
+                                 recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
         if (count > 0) {
             inlength += count;
         }
@@ -880,9 +880,9 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
 #if !defined(_WIN32)
             if (lastError != EWOULDBLOCK)
 #else
-            if (lastError != WSAEWOULDBLOCK)
+                if (lastError != WSAEWOULDBLOCK)
 #endif
-                throw socket_error(lastError);
+                    throw socket_error(lastError);
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
         }
         ++recvAttempts;
@@ -891,8 +891,8 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
         // NETRETRYCOUNT respectively
         if (recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() ||
             (nexTime - curTime) >
-                static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout() *
-                                  1000)) { // looks like we're not going to get it!
+            static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout() *
+                                       1000)) { // looks like we're not going to get it!
             // April 3, 2004 - If we have some data, then we need to return it. Some of the network
             // logic is looking at count size. this way we can also validate on the calling side so
             // we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it,
@@ -1021,11 +1021,11 @@ std::uint32_t CSocket::GetDWord(size_t offset) {
     std::uint32_t retVal = 0;
     if (offset + 3 >= MAXBUFFER) {
         Console::shared().Error(
-            util::format("GetDWord was passed an invalid offset value 0x%X", offset));
+                                util::format("GetDWord was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal =
-            CalcSerial(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
+        CalcSerial(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
     }
     return retVal;
 }
@@ -1039,7 +1039,7 @@ std::uint16_t CSocket::GetWord(size_t offset) {
     std::uint16_t retVal = 0;
     if (offset + 1 >= MAXBUFFER) {
         Console::shared().Error(
-            util::format("GetWord was passed an invalid offset value 0x%X", offset));
+                                util::format("GetWord was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal = static_cast<std::uint16_t>((buffer[offset] << 8) + buffer[offset + 1]);
@@ -1056,7 +1056,7 @@ std::uint8_t CSocket::GetByte(size_t offset) {
     std::uint8_t retVal = 0;
     if (offset >= MAXBUFFER) {
         Console::shared().Error(
-            util::format("GetByte was passed an invalid offset value 0x%X", offset));
+                                util::format("GetByte was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal = buffer[offset];
@@ -1225,38 +1225,38 @@ void CSocket::PostAcked(serial_t newValue) { postAcked.push_back(newValue); }
 void CSocket::Send(CPUOXBuffer *toSend) {
     if (toSend == nullptr)
         return;
-
+    
     // If the client cannot receive it validly, abort, abort!
     if (!toSend->ClientCanReceive(this))
         return;
-
+    
     std::uint32_t len = 0;
     if (cryptclient) {
         len = toSend->Pack();
         [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
+        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
             std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553"
-                      << std::endl;
+            << std::endl;
         }
 #endif
     }
     else {
         len = static_cast<std::uint32_t>(toSend->GetPacketStream().GetSize());
         [[maybe_unused]] auto sendResult =
-            send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(),
-                 len, 0);
+        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(),
+             len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
             std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564"
-                      << std::endl;
+            << std::endl;
         }
 #endif
     }
-
+    
     bytesSent += len;
-
+    
     if (cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) {
         serial_t toPrint;
         if (!ValidateObject(currCharObj)) {
@@ -1266,7 +1266,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
             toPrint = currCharObj->GetSerial();
         }
         std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-                              util::ntos(toPrint) + std::string(".snd");
+        util::ntos(toPrint) + std::string(".snd");
         std::ofstream logDestination;
         logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
@@ -1442,12 +1442,12 @@ std::uint8_t CSocket::Range(void) const { return range; }
 void CSocket::Range(std::uint8_t value) {
     if (ClientVerShort() < CVS_705527) {
         range = std::min(
-            value, static_cast<std::uint8_t>(18)); // 18 is max range for 2D clients prior to 7.0.55.27
+                         value, static_cast<std::uint8_t>(18)); // 18 is max range for 2D clients prior to 7.0.55.27
     }
     else {
         range = std::min(
-            value,
-            static_cast<std::uint8_t>(24)); // 24 is max range for 2D clients after that, or enhanced client
+                         value,
+                         static_cast<std::uint8_t>(24)); // 24 is max range for 2D clients after that, or enhanced client
     }
 }
 
@@ -1461,17 +1461,17 @@ void CSocket::SysMessage(const std::string txt, ...) {
     va_list argptr;
     if (txt.empty())
         return;
-
+    
     CChar *mChar = CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     va_start(argptr, txt);
     auto msg = oldstrutil::format(txt, argptr);
     if (msg.size() > 512) {
         msg = msg.substr(0, 512);
     }
-
+    
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
@@ -1482,7 +1482,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         unicodeMessage.Name("System");
         unicodeMessage.ID(INVALIDID);
         unicodeMessage.Serial(INVALIDSERIAL);
-
+        
         Send(&unicodeMessage);
     }
     else {
@@ -1508,16 +1508,16 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
     CChar *mChar = CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     auto msg = oldstrutil::formatMessage(uformat, data);
     if (msg.size() > 512) {
         msg = msg.substr(0, 512);
     }
-
+    
     if (txtColor == 0) {
         txtColor = cwmWorldState->ServerData()->SysMsgColour();
     }
-
+    
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
@@ -1528,7 +1528,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
         unicodeMessage.Name("System");
         unicodeMessage.ID(INVALIDID);
         unicodeMessage.Serial(INVALIDSERIAL);
-
+        
         Send(&unicodeMessage);
     }
     else {
@@ -1554,18 +1554,18 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
     CChar *mChar = CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     va_list argptr;
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
-
+    
     va_start(argptr, dictEntry);
     auto msg = oldstrutil::format(txt, argptr);
     if (msg.size() > 512) {
         msg = msg.substr(0, 512);
     }
-
+    
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
@@ -1576,7 +1576,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         unicodeMessage.Name("System");
         unicodeMessage.ID(INVALIDID);
         unicodeMessage.Serial(INVALIDSERIAL);
-
+        
         Send(&unicodeMessage);
     }
     else {
@@ -1603,14 +1603,14 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
 void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFromNow, std::uint32_t Colour, ...) {
     if (!ValidateObject(getObj))
         return;
-
+    
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
-
+    
     va_list argptr;
     va_start(argptr, Colour);
-
+    
     ObjMessage(oldstrutil::format(txt, argptr).c_str(), getObj, secsFromNow, Colour);
 }
 
@@ -1624,16 +1624,16 @@ void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFr
 void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFromNow,
                          std::uint16_t Colour) {
     std::uint16_t targColour = Colour;
-
+    
     if (txt.empty())
         return;
-
+    
     auto temp = txt;
     if (temp.size() >= 512) {
         temp = txt.substr(0, 512);
     }
     CChar *mChar = CurrcharObj();
-
+    
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(temp);
@@ -1644,7 +1644,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
         unicodeMessage.Name("System");
         unicodeMessage.ID(INVALIDID);
         unicodeMessage.Serial(getObj->GetSerial());
-
+        
         if (getObj->GetObjType() == CBaseObject::OT_ITEM) {
             CItem *getItem = static_cast<CItem *>(getObj);
             if (getItem->IsCorpse()) {
@@ -1654,32 +1654,32 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
                 }
                 else {
                     std::uint8_t flag = getItem->GetTempVar(
-                        CITV_MOREZ); // Get flag, to help determine color of corpse
+                                                            CITV_MOREZ); // Get flag, to help determine color of corpse
                     switch (flag) {
-                    case 0x01:
-                        targColour = 0x0026;
-                        break; // Murderer, red
-                    case 0x02: // Criminal, gray
-                        [[fallthrough]];
-                    case 0x08:
-                        targColour = 0x03B2;
-                        break; // Neutral, gray
-                    default:
-                    case 0x04:
-                        targColour = 0x005A;
-                        break; // Innocent, blue
+                        case 0x01:
+                            targColour = 0x0026;
+                            break; // Murderer, red
+                        case 0x02: // Criminal, gray
+                            [[fallthrough]];
+                        case 0x08:
+                            targColour = 0x03B2;
+                            break; // Neutral, gray
+                        default:
+                        case 0x04:
+                            targColour = 0x005A;
+                            break; // Innocent, blue
                     }
                 }
             }
         }
-
+        
         if (targColour == 0x0 || targColour == 0x1700) {
             unicodeMessage.Colour(0x03B2);
         }
         else {
             unicodeMessage.Colour(targColour);
         }
-
+        
         Send(&unicodeMessage);
     }
     else {
@@ -1691,7 +1691,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
         toAdd.Type(SYSTEM);
         toAdd.At(BuildTimeValue(secsFromNow));
         toAdd.TargType(SPTRG_ONLYRECEIVER);
-
+        
         if (getObj->GetObjType() == CBaseObject::OT_ITEM) {
             CItem *getItem = static_cast<CItem *>(getObj);
             if (getItem->IsCorpse()) {
@@ -1701,25 +1701,25 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
                 }
                 else {
                     std::uint8_t flag = getItem->GetTempVar(
-                        CITV_MOREZ); // Get flag, to help determine color of corpse
+                                                            CITV_MOREZ); // Get flag, to help determine color of corpse
                     switch (flag) {
-                    case 0x01:
-                        targColour = 0x0026;
-                        break; // Murderer, red
-                    case 0x02: // Criminal, gray
-                        [[fallthrough]];
-                    case 0x08:
-                        targColour = 0x03B2;
-                        break; // Neutral, gray
-                    default:
-                    case 0x04:
-                        targColour = 0x005A;
-                        break; // Innocent, blue
+                        case 0x01:
+                            targColour = 0x0026;
+                            break; // Murderer, red
+                        case 0x02: // Criminal, gray
+                            [[fallthrough]];
+                        case 0x08:
+                            targColour = 0x03B2;
+                            break; // Neutral, gray
+                        default:
+                        case 0x04:
+                            targColour = 0x005A;
+                            break; // Innocent, blue
                     }
                 }
             }
         }
-
+        
         if (targColour == 0x0 || targColour == 0x1700) {
             toAdd.Colour(0x03B2);
         }
@@ -1753,12 +1753,12 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         {
             if (i->GetId(2) == 0x91) {
                 charName =
-                    util::format(Dictionary->GetEntry(1740, Language()).c_str(),
-                                 charName.c_str()); // Morrolan, added Lord/Lady to title overhead
+                util::format(Dictionary->GetEntry(1740, Language()).c_str(),
+                             charName.c_str()); // Morrolan, added Lord/Lady to title overhead
             }
             else if (i->GetId(1) == 0x90) {
                 charName =
-                    util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
+                util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
             }
         }
         if (cwmWorldState->ServerData()->ShowRaceWithName() && i->GetRace() != 0 &&
@@ -1770,7 +1770,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         }
         if (i->GetTownPriv() == 2) {
             charName =
-                util::format(Dictionary->GetEntry(1738, Language()).c_str(), charName.c_str());
+            util::format(Dictionary->GetEntry(1738, Language()).c_str(), charName.c_str());
         }
         if (!IsOnline((*i))) {
             charName += " (OFF)";
@@ -1781,14 +1781,14 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
             !cwmWorldState->creatures[i->GetId()].IsHuman()) {
             charName += " (tame) ";
         }
-
+        
         // Show NPC title over their head?
         auto npcTitle = GetNpcDictTitle(i, this);
         if (cwmWorldState->ServerData()->ShowNpcTitlesOverhead() && npcTitle != "") {
             charName += " " + npcTitle;
         }
     }
-
+    
     // Show (invulnerable) tags over the heads of invulnerable characters?
     if (i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead()) {
         charName += " (invulnerable)";
@@ -1802,7 +1802,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
     if (i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised()) {
         GuildSys->DisplayTitle(this, i);
     }
-
+    
     if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(charName);
@@ -1836,7 +1836,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
 colour_t CSocket::GetFlagColour(CChar *src, CChar *trg) {
     colour_t retVal = 0x0058;
     auto flagColour = trg->FlagColour(src);
-
+    
     if (trg->CheckAggressorFlag(src->GetSerial())) {
         // trg char is an aggressor to src, and should appear grey
         flagColour = FC_NEUTRAL;
@@ -1849,30 +1849,30 @@ colour_t CSocket::GetFlagColour(CChar *src, CChar *trg) {
         // trg char has stolen recently. Appear grey!
         flagColour = FC_CRIMINAL;
     }
-
+    
     switch (flagColour) {
-    case FC_INNOCENT:
-        retVal = 0x0059;
-        break; // Blue
-    case FC_NEUTRAL:
-    case FC_CRIMINAL:
-    default:
-        retVal = 0x03B2;
-        break; // Gray
-    case FC_MURDERER:
-        retVal = 0x0022;
-        break; // Red
-    case FC_FRIEND:
-        retVal = 0x003F;
-        break; // Green
-    case FC_ENEMY:
-        retVal = 0x0090;
-        break; // Orange
-    case FC_INVULNERABLE:
-        retVal = 0x0035;
-        break; // Yellow
+        case FC_INNOCENT:
+            retVal = 0x0059;
+            break; // Blue
+        case FC_NEUTRAL:
+        case FC_CRIMINAL:
+        default:
+            retVal = 0x03B2;
+            break; // Gray
+        case FC_MURDERER:
+            retVal = 0x0022;
+            break; // Red
+        case FC_FRIEND:
+            retVal = 0x003F;
+            break; // Green
+        case FC_ENEMY:
+            retVal = 0x0090;
+            break; // Orange
+        case FC_INVULNERABLE:
+            retVal = 0x0035;
+            break; // Yellow
     }
-
+    
     return retVal;
 }
 
@@ -1884,7 +1884,7 @@ colour_t CSocket::GetFlagColour(CChar *src, CChar *trg) {
 auto CSocket::GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string {
     std::string retVal = "#00FFFF";
     auto flagColour = trg->FlagColour(src);
-
+    
     if (trg->CheckAggressorFlag(src->GetSerial())) {
         // trg char is an aggressor to src, and should appear grey
         flagColour = FC_NEUTRAL;
@@ -1897,30 +1897,30 @@ auto CSocket::GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string {
         // trg char has stolen recently. Appear grey!
         flagColour = FC_CRIMINAL;
     }
-
+    
     switch (flagColour) {
-    case FC_INNOCENT:
-        retVal = "#00FFFF";
-        break; // Blue
-    case FC_NEUTRAL:
-    case FC_CRIMINAL:
-    default:
-        retVal = "#808080";
-        break; // Gray
-    case FC_MURDERER:
-        retVal = "#FF0000";
-        break; // Red
-    case FC_FRIEND:
-        retVal = "#00FF00";
-        break; // Green
-    case FC_ENEMY:
-        retVal = "#FFA500";
-        break; // Orange
-    case FC_INVULNERABLE:
-        retVal = "#FFFF00";
-        break; // Yellow
+        case FC_INNOCENT:
+            retVal = "#00FFFF";
+            break; // Blue
+        case FC_NEUTRAL:
+        case FC_CRIMINAL:
+        default:
+            retVal = "#808080";
+            break; // Gray
+        case FC_MURDERER:
+            retVal = "#FF0000";
+            break; // Red
+        case FC_FRIEND:
+            retVal = "#00FF00";
+            break; // Green
+        case FC_ENEMY:
+            retVal = "#FFA500";
+            break; // Orange
+        case FC_INVULNERABLE:
+            retVal = "#FFFF00";
+            break; // Yellow
     }
-
+    
     return retVal;
 }
 
@@ -1950,7 +1950,7 @@ void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, std::
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
-
+    
     va_list argptr;
     va_start(argptr, dictEntry);
     auto msg = oldstrutil::format(txt, argptr);
@@ -1970,15 +1970,15 @@ void CSocket::mtarget(std::uint16_t itemId, std::int32_t dictEntry) {
     std::string txt = Dictionary->GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
-
+    
     CPMultiPlacementView toSend(CalcSerial(0, 1, 0, TARGET_BUILDHOUSE));
     toSend.MultiModel(itemId);
     toSend.RequestType(1);
-
+    
     if (ClientVersion() >= CV_HS2D && ClientVerShort() >= CVS_7090) {
         toSend.SetHue(0);
     }
-
+    
     SysMessage(txt.c_str());
     TargetOK(true);
     Send(&toSend);
@@ -2035,36 +2035,36 @@ void CSocket::BytesSentWarning(std::uint16_t newValue) { bytesSentWarningCount =
 void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
     if (!ValidateObject(targObj))
         return;
-
+    
     if (!LoginComplete())
         return;
-
+    
     CChar *mChar = CurrcharObj();
-
+    
     if (targObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         // Character specific
         CChar *targChar = static_cast<CChar *>(targObj);
-
+        
         if (mChar->GetCommandLevel() < CL_CNS &&
             ((mChar != targChar && targChar->GetVisible() != VT_VISIBLE) ||
              (!targChar->IsNpc() && !IsOnline(*targChar))))
             return;
-
+        
         if (!CharInRange(mChar, targChar))
             return;
-
+        
         if (ClientType() >= CV_SA2D) {
             // Send poison state of healthbar
             CPHealthBarStatus hpBarStatus1((*targChar), ((*this)), 1);
             Send(&hpBarStatus1);
-
+            
             // Send invulnerable state of healthbar
             CPHealthBarStatus hpBarStatus2((*targChar), ((*this)), 2);
             Send(&hpBarStatus2);
         }
-
+        
         CPStatWindow toSend((*targObj), (*this));
-
+        
         // 9/17/01 : fixed bug of your name on your own stat window
         toSend.NameChange(mChar != targChar &&
                           (mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar));
@@ -2072,17 +2072,17 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
             toSend.Gold(GetItemAmount(targChar, 0x0EED));
             toSend.AC(Combat->CalcDef(targChar, 0, false));
         }
-
+        
         Send(&toSend);
-
+        
         if (!targChar->IsNpc() && mChar == targChar) {
             CPExtendedStats exStats((*targChar));
             Send(&exStats);
         }
-
+        
         if (!updateParty)
             return;
-
+        
         // If targObj is a party member, also send their updated mana and stamina!
         Party *myParty = PartyFactory::shared().Get(mChar);
         if (myParty != nullptr && IsOnline(*mChar)) {
@@ -2092,20 +2092,20 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
                 for (size_t j = 0; j < mList->size(); ++j) {
                     CPartyEntry *mEntry = (*mList)[j];
                     CChar *partyMember = mEntry->Member();
-
+                    
                     if (!IsOnline(*partyMember) || !IsOnline(*mChar) ||
                         partyMember->GetSerial() == mChar->GetSerial())
                         continue;
-
+                    
                     // If partyMember is online, send their info to each other
                     if (targObj->GetSerial() == partyMember->GetSerial()) {
                         CSocket *s = partyMember->GetSocket();
                         if (s == nullptr)
                             break;
-
+                        
                         // Send stat window update for new member to existing party members
                         s->StatWindow(mChar, false);
-
+                        
                         // Prepare the stat update packet for new member to existing party members
                         CPUpdateStat toSendHp((*mChar), 0, true);
                         s->Send(&toSendHp);
@@ -2113,11 +2113,11 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
                         s->Send(&toSendMana);
                         CPUpdateStat toSendStam((*mChar), 2, true);
                         s->Send(&toSendStam);
-
+                        
                         // Also send info on the existing party member to the new member!
                         // Send stat window update packet for existing member to new party member
                         StatWindow(partyMember, false);
-
+                        
                         // Prepare the stat update packet for existing member to new party members
                         CPUpdateStat toSendHp2((*partyMember), 0, true);
                         Send(&toSendHp2);
@@ -2140,12 +2140,12 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
         else {
             visRange += Races->VisRange(mChar->GetRace());
         }
-
+        
         if (mChar->GetCommandLevel() < CL_CNS &&
             (targObj->GetVisible() != VT_VISIBLE ||
              !ObjInRange(mChar, targObj, static_cast<std::uint16_t>(visRange))))
             return;
-
+        
         CPStatWindow toSend((*targObj), (*this));
         Send(&toSend);
     }
@@ -2174,164 +2174,164 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
     }
     CPDrawContainer contSend = (*i);
     contSend.Model(0x3C);
-
+    
     if (i->GetId(1) == 0x3E) // boats
     {
         contSend.Model(0x4C);
     }
     else {
         switch (Items->GetPackType(i)) {
-        case PT_COFFIN:
-            contSend.Model(0x09);
-            break;
-        case PT_PACK:
-        case PT_PACK2:
-            contSend.Model(0x3C);
-            break;
-        case PT_BAG:
-            contSend.Model(0x3D);
-            break;
-        case PT_BARREL:
-            contSend.Model(0x3E);
-            break;
-        case PT_SQBASKET:
-            contSend.Model(0x3F);
-            break;
-        case PT_RBASKET:
-            contSend.Model(0x41);
-            break;
-        case PT_GCHEST:
-            contSend.Model(0x42);
-            break;
-        case PT_WBOX:
-            contSend.Model(0x43);
-            break;
-        case PT_CRATE:
-            contSend.Model(0x44);
-            break;
-        case PT_SHOPPACK:
-            contSend.Model(0x47);
-            break;
-        case PT_DRAWER:
-            contSend.Model(0x48);
-            break;
-        case PT_WCHEST:
-            contSend.Model(0x49);
-            break;
-        case PT_MBOX:
-            contSend.Model(0x4B);
-            break;
-        case PT_SCHEST:
-        case PT_BANK:
-            contSend.Model(0x4A);
-            break;
-        case PT_BOOKCASE:
-            contSend.Model(0x4D);
-            break;
-        case PT_FARMOIRE:
-            contSend.Model(0x4E);
-            break;
-        case PT_WARMOIRE:
-            contSend.Model(0x4F);
-            break;
-        case PT_DRESSER:
-            contSend.Model(0x51);
-            break;
-        case PT_STOCKING:
-            contSend.Model(0x103);
-            break;
-        case PT_GIFTBOX1:
-            contSend.Model(0x102);
-            break;
-        case PT_GIFTBOX2:
-            contSend.Model(0x11E);
-            break;
-        case PT_GIFTBOX3:
-            contSend.Model(0x11B);
-            break;
-        case PT_GIFTBOX4:
-            contSend.Model(0x11C);
-            break;
-        case PT_GIFTBOX5:
-            contSend.Model(0x11D);
-            break;
-        case PT_GIFTBOX6:
-            contSend.Model(0x11F);
-            break;
-        case PT_SEBASKET:
-            contSend.Model(0x108);
-            break;
-        case PT_SEARMOIRE1:
-            contSend.Model(0x105);
-            break;
-        case PT_SEARMOIRE2:
-            contSend.Model(0x106);
-            break;
-        case PT_SEARMOIRE3:
-            contSend.Model(0x107);
-            break;
-        case PT_SECHEST1:
-            contSend.Model(0x109);
-            break;
-        case PT_SECHEST2:
-            contSend.Model(0x10B);
-            break;
-        case PT_SECHEST3:
-            contSend.Model(0x10A);
-            break;
-        case PT_SECHEST4:
-            contSend.Model(0x10C);
-            break;
-        case PT_SECHEST5:
-            contSend.Model(0x10D);
-            break;
-        case PT_GAME_BACKGAMMON:
-            contSend.Model(0x92E); // Backgammon board
-            break;
-        case PT_GAME_CHESS:
-            contSend.Model(0x91A); // Chess board
-            break;
-        case PT_MAILBOX1:
-            contSend.Model(0x6D3); // Dolphin mailbox
-            break;
-        case PT_MAILBOX2:
-            contSend.Model(0x6D4); // Squirrel mailbox
-            break;
-        case PT_MAILBOX3:
-            contSend.Model(0x6D5); // Barrel mailbox
-            break;
-        case PT_MAILBOX4:
-            contSend.Model(0x6D6); // Light mailbox
-            break;
-        case PT_MAILBOX5:
-            contSend.Model(0x9D37); // Sitting kitten mailbox
-            break;
-        case PT_MAILBOX6:
-            contSend.Model(0x9D38); // Standing kitten mailbox
-            break;
-        case PT_MAILBOX7:
-            contSend.Model(0x9D39); // Scarecrow mailbox
-            break;
-        case PT_MAILBOX8:
-            contSend.Model(0x9D3A); // Lion mailbox
-            break;
-        case PT_MAILBOX9:
-            contSend.Model(0x11A); // Square gray mailbox
-            break;
-        case PT_UNKNOWN:
-            Console::shared().Warning(
-                util::format("OpenPack() passed an invalid container type: 0x%X", i->GetSerial()));
-            return;
+            case PT_COFFIN:
+                contSend.Model(0x09);
+                break;
+            case PT_PACK:
+            case PT_PACK2:
+                contSend.Model(0x3C);
+                break;
+            case PT_BAG:
+                contSend.Model(0x3D);
+                break;
+            case PT_BARREL:
+                contSend.Model(0x3E);
+                break;
+            case PT_SQBASKET:
+                contSend.Model(0x3F);
+                break;
+            case PT_RBASKET:
+                contSend.Model(0x41);
+                break;
+            case PT_GCHEST:
+                contSend.Model(0x42);
+                break;
+            case PT_WBOX:
+                contSend.Model(0x43);
+                break;
+            case PT_CRATE:
+                contSend.Model(0x44);
+                break;
+            case PT_SHOPPACK:
+                contSend.Model(0x47);
+                break;
+            case PT_DRAWER:
+                contSend.Model(0x48);
+                break;
+            case PT_WCHEST:
+                contSend.Model(0x49);
+                break;
+            case PT_MBOX:
+                contSend.Model(0x4B);
+                break;
+            case PT_SCHEST:
+            case PT_BANK:
+                contSend.Model(0x4A);
+                break;
+            case PT_BOOKCASE:
+                contSend.Model(0x4D);
+                break;
+            case PT_FARMOIRE:
+                contSend.Model(0x4E);
+                break;
+            case PT_WARMOIRE:
+                contSend.Model(0x4F);
+                break;
+            case PT_DRESSER:
+                contSend.Model(0x51);
+                break;
+            case PT_STOCKING:
+                contSend.Model(0x103);
+                break;
+            case PT_GIFTBOX1:
+                contSend.Model(0x102);
+                break;
+            case PT_GIFTBOX2:
+                contSend.Model(0x11E);
+                break;
+            case PT_GIFTBOX3:
+                contSend.Model(0x11B);
+                break;
+            case PT_GIFTBOX4:
+                contSend.Model(0x11C);
+                break;
+            case PT_GIFTBOX5:
+                contSend.Model(0x11D);
+                break;
+            case PT_GIFTBOX6:
+                contSend.Model(0x11F);
+                break;
+            case PT_SEBASKET:
+                contSend.Model(0x108);
+                break;
+            case PT_SEARMOIRE1:
+                contSend.Model(0x105);
+                break;
+            case PT_SEARMOIRE2:
+                contSend.Model(0x106);
+                break;
+            case PT_SEARMOIRE3:
+                contSend.Model(0x107);
+                break;
+            case PT_SECHEST1:
+                contSend.Model(0x109);
+                break;
+            case PT_SECHEST2:
+                contSend.Model(0x10B);
+                break;
+            case PT_SECHEST3:
+                contSend.Model(0x10A);
+                break;
+            case PT_SECHEST4:
+                contSend.Model(0x10C);
+                break;
+            case PT_SECHEST5:
+                contSend.Model(0x10D);
+                break;
+            case PT_GAME_BACKGAMMON:
+                contSend.Model(0x92E); // Backgammon board
+                break;
+            case PT_GAME_CHESS:
+                contSend.Model(0x91A); // Chess board
+                break;
+            case PT_MAILBOX1:
+                contSend.Model(0x6D3); // Dolphin mailbox
+                break;
+            case PT_MAILBOX2:
+                contSend.Model(0x6D4); // Squirrel mailbox
+                break;
+            case PT_MAILBOX3:
+                contSend.Model(0x6D5); // Barrel mailbox
+                break;
+            case PT_MAILBOX4:
+                contSend.Model(0x6D6); // Light mailbox
+                break;
+            case PT_MAILBOX5:
+                contSend.Model(0x9D37); // Sitting kitten mailbox
+                break;
+            case PT_MAILBOX6:
+                contSend.Model(0x9D38); // Standing kitten mailbox
+                break;
+            case PT_MAILBOX7:
+                contSend.Model(0x9D39); // Scarecrow mailbox
+                break;
+            case PT_MAILBOX8:
+                contSend.Model(0x9D3A); // Lion mailbox
+                break;
+            case PT_MAILBOX9:
+                contSend.Model(0x11A); // Square gray mailbox
+                break;
+            case PT_UNKNOWN:
+                Console::shared().Warning(
+                                          util::format("OpenPack() passed an invalid container type: 0x%X", i->GetSerial()));
+                return;
         }
     }
     if (ClientType() >= CV_HS2D && ClientVerShort() >= CVS_7090) {
         contSend.ContType(0x7D);
     }
-
+    
     Send(&contSend);
     CPItemsInContainer itemsIn(this, i, 0x0, isPlayerVendor);
     Send(&itemsIn);
-
+    
     // Add player's socket to list of players who have opened container,
     // and also add container to player's list of opened containers
     i->GetContOpenedByList()->Add(this);
@@ -2354,7 +2354,7 @@ void CSocket::OpenBank(CChar *i) {
             return;
         }
     }
-
+    
     // No bankbox was found, so let's create one!
     auto temp = oldstrutil::format(1024, Dictionary->GetEntry(1283).c_str(),
                                    i->GetName().c_str()); // %s's bank box.
@@ -2366,10 +2366,10 @@ void CSocket::OpenBank(CChar *i) {
     bankBox->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerBankItems());
     if (!bankBox->SetCont(i))
         return;
-
+    
     bankBox->SetTempVar(CITV_MOREX, 1);
     bankBox->SetType(IT_CONTAINER);
-
+    
     // Make another attempt to open bank box
     CPWornItem toWear = (*bankBox);
     Send(&toWear);
@@ -2464,16 +2464,16 @@ bool CPUOXBuffer::ClientCanReceive([[maybe_unused]] CSocket *mSock) {
 std::uint32_t CPUOXBuffer::Pack(void) {
     if (isPacked)
         return packedLength;
-
+    
     packedBuffer.resize(pStream.GetSize() * 2);
-
+    
     size_t len = pStream.GetSize();
-
+    
     std::uint8_t *pIn = (std::uint8_t *)pStream.GetBuffer();
     std::uint8_t *pOut = (std::uint8_t *)&packedBuffer[0];
-
+    
     isPacked = true;
-
+    
     packedLength = DoPack(pIn, pOut, static_cast<std::int32_t>(len));
     return packedLength;
 }
@@ -2490,8 +2490,8 @@ std::uint32_t CPUOXBuffer::PackedLength(void) const { return packedLength; }
 void CPUOXBuffer::Log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet: 0x" << (pStream.GetByte(0) < 16 ? "0" : "") << std::hex
-                  << static_cast<std::uint16_t>(pStream.GetByte(0)) << "--> Length:" << std::dec
-                  << pStream.GetSize() << TimeStamp() << std::endl;
+        << static_cast<std::uint16_t>(pStream.GetByte(0)) << "--> Length:" << std::dec
+        << pStream.GetSize() << TimeStamp() << std::endl;
     }
     DoPacketLogging(outStream, pStream.GetSize(), pStream.GetBuffer());
 }
@@ -2509,8 +2509,8 @@ void CPInputBuffer::Log(std::ostream &outStream, bool fullHeader) {
     const std::uint32_t len = tSock->InLength();
     if (fullHeader) {
         outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10 ? "0" : "")
-                  << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec << len
-                  << TimeStamp() << std::endl;
+        << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec << len
+        << TimeStamp() << std::endl;
     }
     DoPacketLogging(outStream, len, buffer);
 }

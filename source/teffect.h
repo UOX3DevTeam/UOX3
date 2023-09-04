@@ -10,7 +10,7 @@
 class CBaseObject;
 
 class CTEffect {
-  private:
+private:
     serial_t source;
     serial_t dest;
     std::uint32_t expiretime;
@@ -21,12 +21,12 @@ class CTEffect {
     bool dispellable;
     CBaseObject *objptr;
     std::uint16_t assocScript;
-
-  public:
+    
+public:
     CTEffect()
-        : source(INVALIDSERIAL), dest(INVALIDSERIAL), expiretime(0), num(0), more1(0), more2(0),
-          more3(0), dispellable(false), objptr(nullptr), assocScript(0xFFFF) {}
-
+    : source(INVALIDSERIAL), dest(INVALIDSERIAL), expiretime(0), num(0), more1(0), more2(0),
+    more3(0), dispellable(false), objptr(nullptr), assocScript(0xFFFF) {}
+    
     std::uint16_t AssocScript(void) const { return assocScript; }
     CBaseObject *ObjPtr(void) const { return objptr; }
     bool Dispellable(void) const { return dispellable; }
@@ -37,7 +37,7 @@ class CTEffect {
     std::uint16_t More1(void) const { return more1; }
     std::uint16_t More2(void) const { return more2; }
     std::uint16_t More3(void) const { return more3; }
-
+    
     void Source(serial_t value) { source = value; }
     void Destination(serial_t value) { dest = value; }
     void ExpireTime(std::uint32_t value) { expiretime = value; }
@@ -48,7 +48,7 @@ class CTEffect {
     void Dispellable(bool value) { dispellable = value; }
     void ObjPtr(CBaseObject *value) { objptr = value; }
     void AssocScript(std::uint16_t value) { assocScript = value; }
-
+    
     bool Save(std::ostream &effectDestination) const; // saves the current effect
 };
 

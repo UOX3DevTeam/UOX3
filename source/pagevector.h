@@ -18,7 +18,7 @@
 class CChar;
 
 class CHelpRequest {
-  private:
+private:
     serial_t helpReqId;
     serial_t playerPaging;   // player who is paging
     serial_t playerHandling; // player who is handling it
@@ -26,15 +26,15 @@ class CHelpRequest {
     bool handled;          // has it been handled?
     time_t timeOfPage;     // when was the page reported?
     std::string reason;    // reason for the page
-
-  public:
+    
+public:
     CHelpRequest()
-        : helpReqId(INVALIDSERIAL), playerPaging(INVALIDSERIAL), playerHandling(INVALIDSERIAL),
-          priority(0), handled(false), timeOfPage(0) {
+    : helpReqId(INVALIDSERIAL), playerPaging(INVALIDSERIAL), playerHandling(INVALIDSERIAL),
+    priority(0), handled(false), timeOfPage(0) {
         reason = "";
     }
     ~CHelpRequest();
-
+    
     serial_t WhoPaging(void) const;
     serial_t WhoHandling(void) const;
     std::int8_t Priority(void) const;
@@ -42,7 +42,7 @@ class CHelpRequest {
     time_t TimeOfPage(void) const;
     std::string Reason(void) const;
     serial_t RequestId(void) const;
-
+    
     void WhoPaging(serial_t pPaging);
     void WhoHandling(serial_t pHandling);
     void Priority(std::int8_t pPriority);
@@ -53,19 +53,19 @@ class CHelpRequest {
 };
 
 class PageVector {
-  private:
+private:
     std::vector<CHelpRequest *> requestQueue;
     std::vector<CHelpRequest *>::iterator currentPos;
     std::string title; // GM/Counselor Queue
-
+    
     [[maybe_unused]] R32 avgEntryTime;
     [[maybe_unused]] R32 maxEntryTime;
     [[maybe_unused]] R32 minEntryTime;
     serial_t maxId;
-
+    
     void KillQueue(void);
-
-  public:
+    
+public:
     serial_t Add(CHelpRequest *toAdd);
     bool Remove(void);
     CHelpRequest *First(void);

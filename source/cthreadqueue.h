@@ -27,11 +27,11 @@ struct MessagePassed_st {
 
 // o------------------------------------------------------------------------------------------------o
 class CThreadQueue {
-  private:
+private:
     std::queue<MessagePassed_st> internalQueue;
     std::mutex queuelock;
-
-  public:
+    
+public:
     CThreadQueue() = default;
     auto NewMessage(MessageType toAdd, const std::string &data = "") -> void;
     auto GrabMessage() -> MessagePassed_st;

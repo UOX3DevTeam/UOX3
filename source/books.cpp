@@ -61,45 +61,45 @@ bool CPINewBookHeader::Handle(void) {
         CItem *mBook = CalcItemObjFromSer(bookSer);
         if (!ValidateObject(mBook))
             return true;
-
+        
         const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-                                     util::ntos(bookSer, 16) + std::string(".bok");
-
+        util::ntos(bookSer, 16) + std::string(".bok");
+        
         if (!FileExists(fileName)) {
             Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
-
+        
         std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
-
+        
         if (file.is_open()) // If it isn't open now, our create and open failed
         {
             const size_t titleLen = tSock->GetWord(11);
             const size_t authorLen = tSock->GetWord(13 + titleLen);
-
+            
             char titleBuff[62];
             char authBuff[32];
-
+            
             memset(titleBuff, 0x00, 62);
             memset(authBuff, 0x00, 32);
-
+            
             memcpy(titleBuff, &tSock->Buffer()[13], (titleLen > 61 ? 61 : titleLen));
             memcpy(authBuff, &tSock->Buffer()[15 + titleLen], (authorLen > 31 ? 31 : authorLen));
-
+            
             mBook->SetName(titleBuff);
-
+            
             file.seekp(0, std::ios::beg);
             if (!file.fail()) {
                 file.write(titleBuff, 62);
                 file.write(authBuff, 32);
-
+                
                 if (file.fail()) {
                     Console::shared().Error(
-                        util::format("Couldn't write to book file %s", fileName.c_str()));
+                                            util::format("Couldn't write to book file %s", fileName.c_str()));
                 }
             }
             else {
                 Console::shared().Error(
-                    util::format("Failed to seek to book file %s", fileName.c_str()));
+                                        util::format("Failed to seek to book file %s", fileName.c_str()));
             }
             file.close();
         }
@@ -126,7 +126,7 @@ auto CBooks::OpenPreDefBook(CSocket *mSock, CItem *i) -> void {
             toSend.Serial(i->GetSerial());
             toSend.Flag1(0);
             toSend.Flag2(0);
-
+            
             bool part1 = false, part2 = false, part3 = false;
             for (const auto &sec : book->collection()) {
                 auto tag = sec->tag;
@@ -151,7 +151,7 @@ auto CBooks::OpenPreDefBook(CSocket *mSock, CItem *i) -> void {
             toSend.Finalize();
             mSock->Send(&toSend);
         }
-
+        
         ReadPreDefBook(mSock, i, 1);
     }
 }
@@ -167,32 +167,32 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         CPBookPage cpbpToSend;
         CPNewBookHeader bInfo;
         bInfo.Serial(mBook->GetSerial());
-
+        
         std::uint16_t numPages = 0;
-
+        
         std::string bookTitle, bookAuthor;
         const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-                                     util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
-
+        util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
+        
         std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
-
+        
         bool bookExists = (file.is_open());
         if (bookExists) {
             file.seekg(0, std::ios::beg);
-
+            
             if (!file.fail()) {
                 char rBuffer[2];
                 char tempString[62];
-
+                
                 file.read(tempString, 62);
                 bookTitle = tempString;
-
+                
                 file.read(tempString, 32);
                 bookAuthor = tempString;
-
+                
                 file.read(rBuffer, 2);
                 numPages = static_cast<std::uint16_t>((rBuffer[0] << 8) + rBuffer[1]);
-
+                
                 cpbpToSend.Serial(mBook->GetSerial());
                 for (std::uint16_t pageNum = 0; pageNum < numPages; ++pageNum) {
                     std::uint8_t blankLineCtr = 0;
@@ -214,19 +214,19 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
             }
             else {
                 Console::shared().Error(
-                    util::format("Failed to seek to book file %s", fileName.c_str()));
+                                        util::format("Failed to seek to book file %s", fileName.c_str()));
             }
-
+            
             file.close();
         }
         else {
             numPages = static_cast<std::uint16_t>(
-                mBook->GetTempVar(CITV_MOREY)); // if new book get number of maxpages ...
+                                                  mBook->GetTempVar(CITV_MOREY)); // if new book get number of maxpages ...
             if (numPages < 1 || numPages > 255) {
                 numPages = 16;
             }
         }
-
+        
         if (bookAuthor.empty()) {
             CChar *mChar = mSock->CurrcharObj();
             if (ValidateObject(mChar)) {
@@ -236,9 +236,9 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         if (bookTitle.empty()) {
             bookTitle = "a book";
         }
-
+        
         bInfo.Pages(numPages);
-
+        
         if (isWriteable) {
             bInfo.Flag1(1);
             bInfo.Flag2(1);
@@ -247,13 +247,13 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
             bInfo.Flag1(0);
             bInfo.Flag2(0);
         }
-
+        
         bInfo.Author(bookAuthor);
         bInfo.Title(bookTitle);
-
+        
         bInfo.Finalize();
         mSock->Send(&bInfo);
-
+        
         if (bookExists) // dont send book contents if the file doesnt exist (yet)!
         {
             mSock->Send(&cpbpToSend);
@@ -310,9 +310,9 @@ bool CPIBookPage::Handle(void) {
         CItem *mBook = CalcItemObjFromSer(tSock->GetDWord(3));
         if (!ValidateObject(mBook))
             return true;
-
+        
         const std::uint16_t pageNum = tSock->GetWord(9);
-
+        
         if (mBook->GetTempVar(CITV_MOREX) != 666) // Just incase, make sure it is a writable book
         {
             if (mBook->GetTempVar(CITV_MOREX) != 999) {
@@ -320,23 +320,23 @@ bool CPIBookPage::Handle(void) {
             }
             return true;
         }
-
+        
         const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-                                     util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
+        util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
         std::uint16_t totalLines = tSock->GetWord(11);
-
+        
         // Cap amount of lines sent in one go at 8 per page
         if (totalLines > 8) {
             totalLines = 8;
         }
-
+        
         // Each page has 8 lines of 34 bytes for each line
         char tempLines[8][34];
-
+        
         std::uint16_t bufferCount = 0;
         for (std::uint8_t lineNum = 0; lineNum < totalLines; ++lineNum) {
             memset(tempLines[lineNum], 0x00, 34);
-
+            
             std::uint8_t i = 0;
             for (i = 0; i < 34; ++i) {
                 tempLines[lineNum][i] = tSock->Buffer()[13 + bufferCount];
@@ -348,11 +348,11 @@ bool CPIBookPage::Handle(void) {
                 tempLines[lineNum][i] = 0x00;
             }
         }
-
+        
         if (!FileExists(fileName)) {
             Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
-
+        
         std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
         if (file.is_open()) {
             file.seekp((((static_cast<size_t>(pageNum) - 1) * 272) + 32 + 62 + 2), std::ios::beg);
@@ -363,13 +363,13 @@ bool CPIBookPage::Handle(void) {
             }
             else {
                 Console::shared().Error(
-                    util::format("Failed to seek to book file %s", fileName.c_str()));
+                                        util::format("Failed to seek to book file %s", fileName.c_str()));
             }
             file.close();
         }
         else {
             Console::shared().Error(
-                util::format("Couldn't write to book file %s", fileName.c_str()));
+                                    util::format("Couldn't write to book file %s", fileName.c_str()));
         }
     }
     return true;
@@ -383,7 +383,7 @@ bool CPIBookPage::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 void CBooks::DeleteBook(CItem *id) {
     std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-                           util::ntos(id->GetSerial(), 16) + std::string(".bok");
+    util::ntos(id->GetSerial(), 16) + std::string(".bok");
     [[maybe_unused]] int removeResult = remove(fileName.c_str());
 }
 
@@ -399,38 +399,38 @@ void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook)
     char line[34];
     char titleBuff[62];
     char authBuff[32];
-
+    
     std::uint16_t maxpages = static_cast<std::uint16_t>(mBook->GetTempVar(CITV_MOREY));
     if (maxpages < 1 || maxpages > 255) {
         maxpages = 16;
     }
-
+    
     const std::string author = mChar->GetName();
     const std::string title = "a book";
-
+    
     memset(line, 0x00, 34);
     memset(titleBuff, 0x00, 62);
     memset(authBuff, 0x00, 32);
-
+    
     strncopy(titleBuff, 62, title.c_str(), 61);
     strncopy(authBuff, 32, author.c_str(), 31);
-
+    
     std::ofstream file(fileName.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
-
+    
     file.seekp(0, std::ios::beg);
-
+    
     file.write(titleBuff, 62);
     file.write(authBuff, 32);
-
+    
     wBuffer[0] = static_cast<std::int8_t>(maxpages >> 8);
     wBuffer[1] = static_cast<std::int8_t>(maxpages % 256);
     file.write((const char *)&wBuffer, 2);
-
+    
     for (std::uint16_t i = 0; i < maxpages; ++i) {
         for (std::uint8_t lineNum = 0; lineNum < 8; ++lineNum) {
             file.write((const char *)&line, 34);
         }
     }
-
+    
     file.close();
 }

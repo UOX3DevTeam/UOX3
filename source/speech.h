@@ -20,7 +20,7 @@ enum SpeechTarget {
 enum SpeakerType { SPK_NULL = -1, SPK_SYSTEM = 0, SPK_CHARACTER, SPK_ITEM, SPK_UNKNOWN };
 
 const std::string DistinctLanguageNames[DL_COUNT] = {"ZRO", "ENG", "GER", "SPA", "FRE",
-                                                     "PTG", "ITA", "CSY", "POL"};
+    "PTG", "ITA", "CSY", "POL"};
 
 const std::string LanguageCodes[TOTAL_LANGUAGES] = {
     "ZRO", // default server language
@@ -299,7 +299,7 @@ const distinctlanguage_t LanguageCodesLang[TOTAL_LANGUAGES] = {
 #define MAX_SPEECH 255
 
 class CSpeechEntry {
-  private:
+private:
     speechtype_t typeOfSpeech;
     bool antiSpam;
     bool unicode;
@@ -313,17 +313,17 @@ class CSpeechEntry {
     std::string toSay;
     std::string sName;
     std::uint8_t minCmdLevelToReceive;
-
-  public:
+    
+public:
     CSpeechEntry()
-        : typeOfSpeech(TALK), antiSpam(true), unicode(true), speechColour(0),
-          speaker(INVALIDSERIAL), spokenTo(INVALIDSERIAL), targType(SPTRG_PCS),
-          targFont(FNT_NORMAL), targLanguage(UT_ENU), timeToSayAt(-1), minCmdLevelToReceive(0) {
+    : typeOfSpeech(TALK), antiSpam(true), unicode(true), speechColour(0),
+    speaker(INVALIDSERIAL), spokenTo(INVALIDSERIAL), targType(SPTRG_PCS),
+    targFont(FNT_NORMAL), targLanguage(UT_ENU), timeToSayAt(-1), minCmdLevelToReceive(0) {
         toSay.reserve(MAX_SPEECH);
         sName.reserve(MAX_NAME);
     }
     ~CSpeechEntry() {}
-
+    
     speechtype_t Type(void) const { return typeOfSpeech; }
     bool AntiSpam(void) const { return antiSpam; }
     bool Unicode(void) const { return unicode; }
@@ -337,7 +337,7 @@ class CSpeechEntry {
     const std::string Speech(void) const { return toSay; }
     const std::string SpeakerName(void) const { return sName; }
     std::uint8_t CmdLevel(void) const { return minCmdLevelToReceive; }
-
+    
     void Type(speechtype_t type) { typeOfSpeech = type; }
     void AntiSpam(bool value) { antiSpam = value; }
     void Unicode(bool value) { unicode = value; }
@@ -349,10 +349,10 @@ class CSpeechEntry {
     void Language(unicodetypes_t val) { targLanguage = val; }
     void At(std::int32_t newTime) { timeToSayAt = newTime; }
     void CmdLevel(std::uint8_t nLevel) { minCmdLevelToReceive = nLevel; }
-
+    
     void Speech(const std::string &said) { toSay = said.substr(0, MAX_SPEECH - 1); }
     void SpeakerName(const std::string &spkName) { sName = spkName.substr(0, MAX_NAME - 1); }
-
+    
     SpeakerType SpkrType(void) const {
         if (speaker == INVALIDSERIAL) {
             return SPK_SYSTEM;
@@ -368,15 +368,15 @@ class CSpeechEntry {
 
 
 class CSpeechQueue {
-  private:
+private:
     std::int32_t pollTime; // MILLISECONDS How often to poll the queue
     std::vector<CSpeechEntry *> speechList;
     bool runAsThread;
-
+    
     void SayIt(CSpeechEntry &toSay);
     bool InternalPoll(void);
-
-  public:
+    
+public:
     CSpeechQueue(void);
     ~CSpeechQueue();
     auto Startup() -> void;

@@ -13,28 +13,28 @@
 class CChar;
 
 class CRace {
-  private:
+private:
     struct ColourPair {
         colour_t cMin;
         colour_t cMax;
         ColourPair(colour_t a, colour_t b) : cMin(a), cMax(b) {}
         ColourPair() : cMin(0), cMax(0) {}
     };
-
+    
     typedef std::vector<ColourPair> COLOURLIST;
     typedef std::vector<RaceRelate> RACEIDLIST;
     typedef std::unordered_set<std::uint16_t> ALLOWEQUIPLIST;
     typedef std::unordered_set<std::uint16_t> BANEQUIPLIST;
-
+    
     std::int16_t HPMod;
     std::int16_t ManaMod;
     std::int16_t StamMod;
-
-  private:
+    
+private:
     std::array<skillval_t, SKILLS> iSkills;
     // SKILLVAL			iSkills[SKILLS];
     std::string raceName;
-
+    
     std::bitset<8> bools;
     range_t visDistance;
     lightlevel_t nightVision;
@@ -44,38 +44,38 @@ class CRace {
     skillval_t languageMin;
     R32 poisonResistance; // % of poison to cancel
     R32 magicResistance;  // % of magic to cancel
-
+    
     COLOURLIST beardColours;
     COLOURLIST hairColours;
     COLOURLIST skinColours;
     colour_t bloodColour;
-
+    
     RACEIDLIST racialEnemies;
-
+    
     coldlevel_t coldLevel;
     heatlevel_t heatLevel;
-
+    
     ALLOWEQUIPLIST allowedEquipment;
     BANEQUIPLIST bannedEquipment;
-
+    
     std::bitset<WEATHNUM> weatherAffected;
     std::array<seconds_t, WEATHNUM> weathSecs;
     // SECONDS					weathSecs[WEATHNUM];
     std::array<std::int8_t, WEATHNUM> weathDamage;
     // std::int8_t					weathDamage[WEATHNUM];
-
+    
     bool doesHunger;
     bool doesThirst;
     std::uint16_t hungerRate;
     std::uint16_t thirstRate;
     std::int16_t hungerDamage;
     std::int16_t thirstDrain;
-
-  public:
+    
+public:
     CRace();
     CRace(std::int32_t numRaces);
     ~CRace();
-
+    
     skillval_t Skill(std::int32_t skillNum) const;
     const std::string Name(void) const;
     bool RequiresBeard(void) const;
@@ -85,7 +85,7 @@ class CRace {
     void AffectedBy(bool value, weathertype_t iNum);
     bool NoHair(void) const;
     bool CanEquipItem(std::uint16_t itemId) const;
-
+    
     gender_t GenderRestriction(void) const;
     lightlevel_t LightLevel(void) const;
     coldlevel_t ColdLevel(void) const;
@@ -96,11 +96,11 @@ class CRace {
     std::int8_t WeatherDamage(weathertype_t iNum) const;
     R32 MagicResistance(void) const;
     R32 PoisonResistance(void) const;
-
+    
     skillval_t LanguageMin(void) const;
     range_t VisibilityRange(void) const;
     RaceRelate RaceRelation(raceid_t race) const;
-
+    
     std::uint16_t GetHungerRate(void) const;
     std::uint16_t GetThirstRate(void) const;
     void SetHungerRate(std::uint16_t newValue);
@@ -113,7 +113,7 @@ class CRace {
     bool DoesThirst(void) const;
     void DoesHunger(bool newValue);
     void DoesThirst(bool newValue);
-
+    
     void Skill(skillval_t newValue, std::int32_t iNum);
     void Name(const std::string &newName);
     void RequiresBeard(bool newValue);
@@ -121,17 +121,17 @@ class CRace {
     void IsPlayerRace(bool newValue);
     void NoHair(bool newValue);
     void RestrictGear(bool newValue);
-
+    
     std::int16_t HPModifier(void) const;
     void HPModifier(std::int16_t value);
     std::int16_t ManaModifier(void) const;
     void ManaModifier(std::int16_t value);
     std::int16_t StamModifier(void) const;
     void StamModifier(std::int16_t value);
-
+    
     void MagicResistance(R32 value);
     void PoisonResistance(R32 value);
-
+    
     void GenderRestriction(gender_t newValue);
     void LightLevel(lightlevel_t newValue);
     void ColdLevel(coldlevel_t newValue);
@@ -142,30 +142,30 @@ class CRace {
     void WeatherDamage(std::int8_t newValue, weathertype_t iNum);
     void LanguageMin(skillval_t newValue);
     void VisibilityRange(range_t newValue);
-
+    
     void NumEnemyRaces(std::int32_t iNum);
     void RaceRelation(RaceRelate value, raceid_t race);
-
+    
     colour_t RandomSkin(void) const;
     colour_t RandomHair(void) const;
     colour_t RandomBeard(void) const;
     colour_t BloodColour(void) const;
     void BloodColour(colour_t newValue);
-
+    
     bool IsSkinRestricted(void) const;
     bool IsHairRestricted(void) const;
     bool IsBeardRestricted(void) const;
-
+    
     bool IsValidSkin(colour_t val) const;
     bool IsValidHair(colour_t val) const;
     bool IsValidBeard(colour_t val) const;
-
+    
     void Load(size_t sectNum, std::int32_t modCount);
     CRace &operator=(CRace &trgRace);
 };
 
 class cRaces {
-  private:
+private:
     struct CombatModifiers_st {
         std::uint8_t value;
     };
@@ -174,18 +174,18 @@ class cRaces {
     // data
     RACELIST races;
     MODIFIERLIST combat;
-
+    
     void DefaultInitCombat(void);
-
+    
     // functions - accessors
-
+    
     // Mutators
     void RacialInfo(raceid_t race, raceid_t toSet, RaceRelate value);
-
+    
     bool InvalidRace(raceid_t x) const;
     bool initialized;
-
-  public:
+    
+public:
     // Functions
     ~cRaces();
     cRaces();
@@ -199,9 +199,9 @@ class cRaces {
     bool BeardRestricted(raceid_t x) const;
     bool HairRestricted(raceid_t x) const;
     bool SkinRestricted(raceid_t x) const;
-
+    
     CRace *Race(raceid_t x);
-
+    
     // Accessors
     seconds_t Secs(raceid_t race, weathertype_t element) const;
     std::int8_t Damage(raceid_t race, weathertype_t element) const;
@@ -231,7 +231,7 @@ class cRaces {
     lightlevel_t VisLevel(raceid_t x) const;
     range_t VisRange(raceid_t x) const;
     bool NoBeard(raceid_t x) const;
-
+    
     // Mutators
     void Secs(raceid_t race, weathertype_t element, seconds_t value);
     void Damage(raceid_t race, weathertype_t element, std::int8_t value);
@@ -255,14 +255,14 @@ class cRaces {
     void RacialNeutral(raceid_t race, raceid_t neutral);
     void LanguageMin(skillval_t toSetTo, raceid_t race);
     void BloodColour(raceid_t race, colour_t newValue);
-
+    
     void VisLevel(raceid_t x, lightlevel_t bonus);
     void VisRange(raceid_t x, range_t range);
     void IsPlayerRace(raceid_t x, bool value);
-
+    
     void DebugPrint(raceid_t race);
     void DebugPrintAll(void);
-
+    
     size_t Count(void) const;
 };
 

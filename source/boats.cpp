@@ -42,31 +42,31 @@ enum shipitems_t {
 //[4]=Which Item (PT Plank, SB Plank, Hatch, TMan)
 //[2]=Coord (x,y) offsets
 const std::int16_t iSmallShipOffsets[4][4][2] =
-    //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-    {{{-2, 0}, {2, 0}, {0, -4}, {1, 4}}, // Dir
-     {{0, -2}, {0, 2}, {4, 0}, {-4, 0}},
-     {{2, 0}, {-2, 0}, {0, 4}, {0, -4}},
-     {{0, 2}, {0, -2}, {-4, 0}, {4, 0}}};
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{{{-2, 0}, {2, 0}, {0, -4}, {1, 4}}, // Dir
+    {{0, -2}, {0, 2}, {4, 0}, {-4, 0}},
+    {{2, 0}, {-2, 0}, {0, 4}, {0, -4}},
+    {{0, 2}, {0, -2}, {-4, 0}, {4, 0}}};
 //  P1    P2   Hold  Tiller
 const std::int16_t iMediumShipOffsets[4][4][2] =
-    //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-    {{{-2, 0}, {2, 0}, {0, -4}, {1, 5}},
-     {{0, -2}, {0, 2}, {4, 0}, {-5, 0}},
-     {{2, 0}, {-2, 0}, {0, 4}, {0, -5}},
-     {{0, 2}, {0, -2}, {-4, 0}, {5, 0}}};
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{{{-2, 0}, {2, 0}, {0, -4}, {1, 5}},
+    {{0, -2}, {0, 2}, {4, 0}, {-5, 0}},
+    {{2, 0}, {-2, 0}, {0, 4}, {0, -5}},
+    {{0, 2}, {0, -2}, {-4, 0}, {5, 0}}};
 const std::int16_t iLargeShipOffsets[4][4][2] =
-    //	 X	 Y	 X	 Y	 X	 Y	 X	 Y
-    {{{-2, -1}, {2, -1}, {0, -5}, {1, 5}},
-     {{1, -2}, {1, 2}, {5, 0}, {-5, 0}},
-     {{2, 1}, {-2, 1}, {0, 5}, {0, -5}},
-     {{-1, 2}, {-1, -2}, {-5, 0}, {5, 0}}};
+//	 X	 Y	 X	 Y	 X	 Y	 X	 Y
+{{{-2, -1}, {2, -1}, {0, -5}, {1, 5}},
+    {{1, -2}, {1, 2}, {5, 0}, {-5, 0}},
+    {{2, 1}, {-2, 1}, {0, 5}, {0, -5}},
+    {{-1, 2}, {-1, -2}, {-5, 0}, {5, 0}}};
 // Ship Items
 //[4] = direction
 //[6] = Which Item (PT Plank Up,PT Plank Down, SB Plank Up, SB Plank Down, Hatch, TMan)
 const std::uint8_t cShipItems[4][6] = {{0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
-                               {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
-                               {0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
-                               {0x85, 0x84, 0x8A, 0x89, 0x93, 0x50}};
+    {0x8A, 0x89, 0x85, 0x84, 0x65, 0x53},
+    {0xB2, 0xD4, 0xB1, 0xD5, 0xB9, 0x4B},
+    {0x85, 0x84, 0x8A, 0x89, 0x93, 0x50}};
 //============================================================================================
 
 // o------------------------------------------------------------------------------------------------o
@@ -76,10 +76,10 @@ const std::uint8_t cShipItems[4][6] = {{0xB1, 0xD5, 0xB2, 0xD4, 0xAE, 0x4E},
 // o------------------------------------------------------------------------------------------------o
 CBoatObj *GetBoat(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
-
+    
     if (ValidateObject(mChar->GetMultiObj()))
         return static_cast<CBoatObj *>(mChar->GetMultiObj());
-
+    
     return static_cast<CBoatObj *>(FindMulti(mChar));
 }
 
@@ -93,7 +93,7 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     CBoatObj *boat = GetBoat(s);
     if (!ValidateObject(boat))
         return false;
-
+    
     const std::int16_t x2 = p->GetX();
     const std::int16_t y2 = p->GetY();
     CChar *mChar = s->CurrcharObj();
@@ -105,11 +105,11 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
             if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) &&
                 !FindMulti(x, y, z, worldNumber, instanceId)) {
                 mChar->SetLocation(x, y, z, worldNumber, instanceId);
-
+                
                 // Freeze player temporarily after teleporting
                 Effects->TempEffect(nullptr, mChar, 1, 1, 1,
                                     5); // 1 second, divided by 5 for 0.2s duration freeze
-
+                
                 auto myFollowers = mChar->GetFollowerList();
                 for (const auto &follower : myFollowers->collection()) {
                     if (ValidateObject(follower)) {
@@ -141,11 +141,11 @@ void PlankStuff(CSocket *s, CItem *p) {
     CBoatObj *boat = GetBoat(s);
     if (!ValidateObject(boat)) {
         mChar->SetLocation(p->GetX(), p->GetY(), p->GetZ() + 3);
-
+        
         // Freeze player temporarily after teleporting
         Effects->TempEffect(nullptr, mChar, 1, 1, 1,
                             5); // 1 second, divided by 5 for 0.2s duration freeze
-
+        
         CMultiObj *boat2 = p->GetMultiObj();
         if (ValidateObject(boat2)) {
             auto myFollowers = mChar->GetFollowerList();
@@ -159,7 +159,7 @@ void PlankStuff(CSocket *s, CItem *p) {
                 }
             }
         }
-
+        
         if (ValidateObject(boat2)) {
             s->SysMessage(1); // You board the boat.
         }
@@ -179,39 +179,39 @@ void PlankStuff(CSocket *s, CItem *p) {
 // o------------------------------------------------------------------------------------------------o
 void OpenPlank(CItem *p) {
     switch (p->GetId(2)) {
-        // Open plank->
-    case 0xE9:
-        p->SetId(0x84, 2);
-        break;
-    case 0xB1:
-        p->SetId(0xD5, 2);
-        break;
-    case 0xB2:
-        p->SetId(0xD4, 2);
-        break;
-    case 0x8A:
-        p->SetId(0x89, 2);
-        break;
-    case 0x85:
-        p->SetId(0x84, 2);
-        break;
-        // Close Plank->
-    case 0x84:
-        p->SetId(0xE9, 2);
-        break;
-    case 0xD5:
-        p->SetId(0xB1, 2);
-        break;
-    case 0xD4:
-        p->SetId(0xB2, 2);
-        break;
-    case 0x89:
-        p->SetId(0x8A, 2);
-        break;
-    default:
-        Console::shared().Warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]",
-                                               p->GetSerial(), p->GetName().c_str(), p->GetId()));
-        break;
+            // Open plank->
+        case 0xE9:
+            p->SetId(0x84, 2);
+            break;
+        case 0xB1:
+            p->SetId(0xD5, 2);
+            break;
+        case 0xB2:
+            p->SetId(0xD4, 2);
+            break;
+        case 0x8A:
+            p->SetId(0x89, 2);
+            break;
+        case 0x85:
+            p->SetId(0x84, 2);
+            break;
+            // Close Plank->
+        case 0x84:
+            p->SetId(0xE9, 2);
+            break;
+        case 0xD5:
+            p->SetId(0xB1, 2);
+            break;
+        case 0xD4:
+            p->SetId(0xB2, 2);
+            break;
+        case 0x89:
+            p->SetId(0x8A, 2);
+            break;
+        default:
+            Console::shared().Warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]",
+                                                   p->GetSerial(), p->GetName().c_str(), p->GetId()));
+            break;
     }
 }
 
@@ -226,196 +226,196 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
     const std::int8_t cz = b->GetZ();
     std::int16_t x1 = 0, y1 = 0, x2 = 0, y2 = 0;
     std::uint8_t type = 0;
-
+    
     cx += xmove;
     cy += ymove;
-
+    
     switch (b->GetId(2)) {
-    case 0:
-    case 1:
-    case 2:
-    case 3: // small
-    case 4:
-    case 5:
-    case 6:
-    case 7: // small dragon
-        type = 1;
-        break;
-
-    case 8:
-    case 9:
-    case 10:
-    case 11: // medium
-    case 12:
-    case 13:
-    case 14:
-    case 15: // medium dragon
-        type = 2;
-        break;
-    case 16:
-    case 17:
-    case 18:
-    case 19: // large
-    case 20:
-    case 21:
-    case 22:
-    case 23: // large dragon
-        type = 3;
-        break;
-    default:
-        return true;
+        case 0:
+        case 1:
+        case 2:
+        case 3: // small
+        case 4:
+        case 5:
+        case 6:
+        case 7: // small dragon
+            type = 1;
+            break;
+            
+        case 8:
+        case 9:
+        case 10:
+        case 11: // medium
+        case 12:
+        case 13:
+        case 14:
+        case 15: // medium dragon
+            type = 2;
+            break;
+        case 16:
+        case 17:
+        case 18:
+        case 19: // large
+        case 20:
+        case 21:
+        case 22:
+        case 23: // large dragon
+            type = 3;
+            break;
+        default:
+            return true;
     }
-
+    
     // If boat-movement includes turning, boat-direction needs to be switched around
     if (turnBoat) {
         switch (boatDir & 0x0F) {
+            case NORTHEAST: // U
+            case SOUTHWEST: // D
+            case NORTH:     // N
+            case SOUTH:     // S
+                boatDir = 2;
+                break;
+            case EAST:      // E
+            case WEST:      // W
+            case SOUTHEAST: // E
+            case NORTHWEST: // W
+                boatDir = 0;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    // small = 5,11
+    // medium = 5, 13
+    // large = 5, 15
+    switch (moveDir & 0x0F) {
         case NORTHEAST: // U
         case SOUTHWEST: // D
         case NORTH:     // N
         case SOUTH:     // S
-            boatDir = 2;
+            switch (boatDir & 0x0F) {
+                case NORTHEAST:  // U
+                case SOUTHWEST:  // D
+                case NORTH:      // N
+                case SOUTH:      // S
+                    x1 = cx - 2; // Width of N/S ship as it moves N/S
+                    x2 = cx + 3; // Width of N/S ship as it moves N/S
+                    switch (type) {
+                        case 1:
+                            y1 = cy - 6;
+                            y2 = cy + 6;
+                            break; // Length of N/S ship as it moves N/S
+                        case 2:
+                            y1 = cy - 7;
+                            y2 = cy + 7;
+                            break; // Length of N/S ship as it moves N/S
+                        case 3:
+                            y1 = cy - 8;
+                            y2 = cy + 8;
+                            break; // Length of N/S ship as it moves N/S
+                        default:
+                            Console::shared().Error(
+                                                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
+                            break;
+                    }
+                    break;
+                case EAST:       // E
+                case WEST:       // W
+                case SOUTHEAST:  // E
+                case NORTHWEST:  // W
+                    y1 = cy - 2; // Width of E/W ship as it moves N/S
+                    y2 = cy + 3; // Width of E/W ship as it moves N/S
+                    switch (type) {
+                        case 1:
+                            x1 = cx - 6;
+                            x2 = cx + 6;
+                            break; // Length of E/W ship as it moves N/S
+                        case 2:
+                            x1 = cx - 7;
+                            x2 = cx + 7;
+                            break; // Length of E/W ship as it moves N/S
+                        case 3:
+                            x1 = cx - 8;
+                            x2 = cx + 8;
+                            break; // Length of E/W ship as it moves N/S
+                        default:
+                            Console::shared().Error(
+                                                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
+                            break;
+                    }
+                    break;
+                default:
+                    Console::shared().Error(
+                                            " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
+                    break;
+            }
             break;
         case EAST:      // E
         case WEST:      // W
         case SOUTHEAST: // E
         case NORTHWEST: // W
-            boatDir = 0;
+            switch (boatDir & 0x0F) {
+                case EAST:       // E
+                case WEST:       // W
+                case SOUTHEAST:  // E
+                case NORTHWEST:  // W
+                    y1 = cy - 2; // Width of E/W ship as it moves E/W
+                    y2 = cy + 3; // Width of E/W ship as it moves E/W
+                    switch (type) {
+                        case 1:
+                            x1 = cx - 6;
+                            x2 = cx + 6;
+                            break; // Length of E/W ship as it moves E/W
+                        case 2:
+                            x1 = cx - 7;
+                            x2 = cx + 7;
+                            break; // Length of E/W ship as it moves E/W
+                        case 3:
+                            x1 = cx - 8;
+                            x2 = cx + 8;
+                            break; // Length of E/W ship as it moves E/W
+                        default:
+                            Console::shared().Error(
+                                                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
+                            break;
+                    }
+                    break;
+                case NORTHEAST:  // U
+                case SOUTHWEST:  // D
+                case NORTH:      // N
+                case SOUTH:      // S
+                    x1 = cx - 2; // Width of N/S ship as it moves E/W
+                    x2 = cx + 3; // Width of N/S ship as it moves E/W
+                    switch (type) {
+                        case 1:
+                            y1 = cy - 6;
+                            y2 = cy + 6;
+                            break; // Length of N/S ship as it moves E/W
+                        case 2:
+                            y1 = cy - 7;
+                            y2 = cy + 7;
+                            break; // Length of N/S ship as it moves E/W
+                        case 3:
+                            y1 = cy - 8;
+                            y2 = cy + 8;
+                            break; // Length of N/S ship as it moves E/W
+                        default:
+                            Console::shared().Error(
+                                                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
+                            break;
+                    }
+                    break;
+                default:
+                    Console::shared().Error(
+                                            " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
+                    break;
+            }
             break;
         default:
-            break;
-        }
+            return true;
     }
-
-    // small = 5,11
-    // medium = 5, 13
-    // large = 5, 15
-    switch (moveDir & 0x0F) {
-    case NORTHEAST: // U
-    case SOUTHWEST: // D
-    case NORTH:     // N
-    case SOUTH:     // S
-        switch (boatDir & 0x0F) {
-        case NORTHEAST:  // U
-        case SOUTHWEST:  // D
-        case NORTH:      // N
-        case SOUTH:      // S
-            x1 = cx - 2; // Width of N/S ship as it moves N/S
-            x2 = cx + 3; // Width of N/S ship as it moves N/S
-            switch (type) {
-            case 1:
-                y1 = cy - 6;
-                y2 = cy + 6;
-                break; // Length of N/S ship as it moves N/S
-            case 2:
-                y1 = cy - 7;
-                y2 = cy + 7;
-                break; // Length of N/S ship as it moves N/S
-            case 3:
-                y1 = cy - 8;
-                y2 = cy + 8;
-                break; // Length of N/S ship as it moves N/S
-            default:
-                Console::shared().Error(
-                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
-                break;
-            }
-            break;
-        case EAST:       // E
-        case WEST:       // W
-        case SOUTHEAST:  // E
-        case NORTHWEST:  // W
-            y1 = cy - 2; // Width of E/W ship as it moves N/S
-            y2 = cy + 3; // Width of E/W ship as it moves N/S
-            switch (type) {
-            case 1:
-                x1 = cx - 6;
-                x2 = cx + 6;
-                break; // Length of E/W ship as it moves N/S
-            case 2:
-                x1 = cx - 7;
-                x2 = cx + 7;
-                break; // Length of E/W ship as it moves N/S
-            case 3:
-                x1 = cx - 8;
-                x2 = cx + 8;
-                break; // Length of E/W ship as it moves N/S
-            default:
-                Console::shared().Error(
-                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
-                break;
-            }
-            break;
-        default:
-            Console::shared().Error(
-                " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
-            break;
-        }
-        break;
-    case EAST:      // E
-    case WEST:      // W
-    case SOUTHEAST: // E
-    case NORTHWEST: // W
-        switch (boatDir & 0x0F) {
-        case EAST:       // E
-        case WEST:       // W
-        case SOUTHEAST:  // E
-        case NORTHWEST:  // W
-            y1 = cy - 2; // Width of E/W ship as it moves E/W
-            y2 = cy + 3; // Width of E/W ship as it moves E/W
-            switch (type) {
-            case 1:
-                x1 = cx - 6;
-                x2 = cx + 6;
-                break; // Length of E/W ship as it moves E/W
-            case 2:
-                x1 = cx - 7;
-                x2 = cx + 7;
-                break; // Length of E/W ship as it moves E/W
-            case 3:
-                x1 = cx - 8;
-                x2 = cx + 8;
-                break; // Length of E/W ship as it moves E/W
-            default:
-                Console::shared().Error(
-                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
-                break;
-            }
-            break;
-        case NORTHEAST:  // U
-        case SOUTHWEST:  // D
-        case NORTH:      // N
-        case SOUTH:      // S
-            x1 = cx - 2; // Width of N/S ship as it moves E/W
-            x2 = cx + 3; // Width of N/S ship as it moves E/W
-            switch (type) {
-            case 1:
-                y1 = cy - 6;
-                y2 = cy + 6;
-                break; // Length of N/S ship as it moves E/W
-            case 2:
-                y1 = cy - 7;
-                y2 = cy + 7;
-                break; // Length of N/S ship as it moves E/W
-            case 3:
-                y1 = cy - 8;
-                y2 = cy + 8;
-                break; // Length of N/S ship as it moves E/W
-            default:
-                Console::shared().Error(
-                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
-                break;
-            }
-            break;
-        default:
-            Console::shared().Error(
-                " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
-            break;
-        }
-        break;
-    default:
-        return true;
-    }
-
+    
     std::uint8_t worldNumber = b->WorldNumber();
     std::uint16_t instanceId = b->GetInstanceId();
     std::int8_t boatZ = b->GetZ();
@@ -425,7 +425,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
             CMultiObj *tempBoat = FindMulti(x, y, boatZ, worldNumber, instanceId);
             if (ValidateObject(tempBoat) && tempBoat->GetSerial() != b->GetSerial())
                 return true;
-
+            
             // Look for blocking dynamic items at boat's Z level
             CItem *tempItem = GetItemAtXYZ(x, y, boatZ, worldNumber, instanceId);
             if (ValidateObject(tempItem)) {
@@ -437,9 +437,9 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                         return true;
                 }
             }
-
+            
             std::int8_t sz = Map->StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
-
+            
             if (sz == ILLEGAL_Z) // map tile
             {
                 auto map = Map->SeekMap(x, y, worldNumber);
@@ -474,21 +474,21 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
         return false;
     }
     switch (id2) {
-    case 0x00:
-    case 0x04:
-    case 0x08:
-    case 0x0C:
-    case 0x10:
-    case 0x14:
-    case 0x18:
-        break;
-    default:
-        if (s != nullptr) {
-            s->SysMessage(6); // The deed is broken, please contact a Game Master
-        }
-        return false;
+        case 0x00:
+        case 0x04:
+        case 0x08:
+        case 0x0C:
+        case 0x10:
+        case 0x14:
+        case 0x18:
+            break;
+        default:
+            if (s != nullptr) {
+                s->SysMessage(6); // The deed is broken, please contact a Game Master
+            }
+            return false;
     }
-
+    
     const auto serial = b->GetSerial();
     const std::uint8_t worldNumber = b->WorldNumber();
     const std::uint16_t instanceId = b->GetInstanceId();
@@ -500,10 +500,10 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     if (maxItems == 0) {
         maxItems = 125; // Default if nothing else is defined
     }
-
+    
     const std::int16_t x = b->GetX(), y = b->GetY();
     std::int8_t z = Map->MapElevation(x, y, worldNumber);
-
+    
     const std::int8_t dynz = Map->DynamicElevation(x, y, z, worldNumber, instanceId, 20);
     if (ILLEGAL_Z != dynz) {
         z = dynz;
@@ -518,24 +518,24 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     b->SetTempVar(CITV_MOREZ, CalcSerial(id2, id2 + 3, b->GetTempVar(CITV_MOREZ, 3),
                                          b->GetTempVar(CITV_MOREZ, 4)));
     b->SetMoveType(BOAT_ANCHORED);
-
+    
     CChar *mChar = nullptr;
     if (s != nullptr) {
         mChar = s->CurrcharObj();
     }
-
+    
     CItem *tiller = Items->CreateItem(nullptr, mChar, 0x3E4E, 1, 0, CBaseObject::OT_ITEM, false, true,
                                       worldNumber, instanceId, x, y, z);
     if (tiller == nullptr)
         return false;
-
+    
     std::string dictName =
-        s != nullptr ? Dictionary->GetEntry(2035, s->Language()) : Dictionary->GetEntry(2035);
+    s != nullptr ? Dictionary->GetEntry(2035, s->Language()) : Dictionary->GetEntry(2035);
     if (b->GetName().length() > 0 && b->GetName() != dictName) // a ship
     {
         std::string tillerNameDict = s != nullptr
-                                         ? Dictionary->GetEntry(2033, s->Language())
-                                         : Dictionary->GetEntry(2033); // The tiller man of %s
+        ? Dictionary->GetEntry(2033, s->Language())
+        : Dictionary->GetEntry(2033); // The tiller man of %s
         auto sPos = tillerNameDict.find("%s");
         tiller->SetName(tillerNameDict.replace(sPos, 2, b->GetName()));
     }
@@ -545,15 +545,15 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tiller->SetType(IT_TILLER);
     tiller->SetTempVar(CITV_MOREX, boattype);
     tiller->SetDecayable(false);
-
+    
     CItem *p2 = Items->CreateItem(nullptr, mChar, 0x3EB2, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                   instanceId, x, y, z); // Plank2 is on the RIGHT side of the boat
     if (p2 == nullptr)
         return false;
-
+    
     p2->SetType(IT_PLANK);
     p2->SetDecayable(false);
-
+    
     // Lock the plank
     TagMap tagvalObject;
     tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
@@ -561,99 +561,99 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tagvalObject.m_Destroy = false;
     tagvalObject.m_StringValue = "";
     p2->SetTag("plankLocked", tagvalObject);
-
+    
     CItem *p1 = Items->CreateItem(nullptr, mChar, 0x3EB1, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                   instanceId, x, y, z); // Plank1 is on the LEFT side of the boat
     if (p1 == nullptr)
         return false;
-
+    
     p1->SetType(IT_PLANK); // Boat type
     p1->SetDecayable(false);
-
+    
     // Lock the plank
     tagvalObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
     tagvalObject.m_IntValue = 1;
     tagvalObject.m_Destroy = false;
     tagvalObject.m_StringValue = "";
     p1->SetTag("plankLocked", tagvalObject);
-
+    
     CItem *hold = Items->CreateItem(nullptr, mChar, 0x3EAE, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                     instanceId, x, y, z);
     if (hold == nullptr)
         return false;
-
+    
     hold->SetType(IT_CONTAINER); // Conatiner
     hold->SetDecayable(false);
     hold->SetWeightMax(maxWeight);
     hold->SetMaxItems(maxItems);
-
+    
     p2->SetTempVar(CITV_MORE, serial);
     p1->SetTempVar(CITV_MORE, serial);
-
+    
     b->SetTiller(tiller->GetSerial());
     b->SetPlank(0, p1->GetSerial()); // Store the other stuff anywhere it will fit :-)
     b->SetPlank(1, p2->GetSerial());
     b->SetHold(hold->GetSerial());
-
+    
     switch (id2) // Give everything the right Z for it size boat
     {
-    case 0x00:
-    case 0x04:
-        tiller->SetLocation(x + 1, y + 4, z);
-        p1->SetLocation(x - 2, y, z);
-        p2->SetLocation(x + 2, y, z);
-        hold->SetLocation(x, y - 4, z);
-        break;
-    case 0x08:
-    case 0x0C:
-        tiller->SetLocation(x + 1, y + 5, z);
-        p1->SetLocation(x - 2, y, z);
-        p2->SetLocation(x + 2, y, z);
-        hold->SetLocation(x, y - 4, z);
-        break;
-    case 0x10:
-    case 0x14:
-        tiller->SetLocation(x + 1, y + 5, z);
-        p1->SetLocation(x - 2, y - 1, z);
-        p2->SetLocation(x + 2, y - 1, z);
-        hold->SetLocation(x, y - 5, z);
-        break;
+        case 0x00:
+        case 0x04:
+            tiller->SetLocation(x + 1, y + 4, z);
+            p1->SetLocation(x - 2, y, z);
+            p2->SetLocation(x + 2, y, z);
+            hold->SetLocation(x, y - 4, z);
+            break;
+        case 0x08:
+        case 0x0C:
+            tiller->SetLocation(x + 1, y + 5, z);
+            p1->SetLocation(x - 2, y, z);
+            p2->SetLocation(x + 2, y, z);
+            hold->SetLocation(x, y - 4, z);
+            break;
+        case 0x10:
+        case 0x14:
+            tiller->SetLocation(x + 1, y + 5, z);
+            p1->SetLocation(x - 2, y - 1, z);
+            p2->SetLocation(x + 2, y - 1, z);
+            hold->SetLocation(x, y - 5, z);
+            break;
     }
     return true;
 }
 
 void CheckDirection(std::uint8_t dir, std::int16_t &tx, std::int16_t &ty) {
     switch (dir) {
-    case NORTH:
-        --ty;
-        break;
-    case NORTHEAST:
-        ++tx;
-        --ty;
-        break;
-    case EAST:
-        ++tx;
-        break;
-    case SOUTHEAST:
-        ++tx;
-        ++ty;
-        break;
-    case SOUTH:
-        ++ty;
-        break;
-    case SOUTHWEST:
-        --tx;
-        ++ty;
-        break;
-    case WEST:
-        --tx;
-        break;
-    case NORTHWEST:
-        --tx;
-        --ty;
-        break;
-    default:
-        break;
+        case NORTH:
+            --ty;
+            break;
+        case NORTHEAST:
+            ++tx;
+            --ty;
+            break;
+        case EAST:
+            ++tx;
+            break;
+        case SOUTHEAST:
+            ++tx;
+            ++ty;
+            break;
+        case SOUTH:
+            ++ty;
+            break;
+        case SOUTHWEST:
+            --tx;
+            ++ty;
+            break;
+        case WEST:
+            --tx;
+            break;
+        case NORTHWEST:
+            --tx;
+            --ty;
+            break;
+        default:
+            break;
     }
 }
 
@@ -667,25 +667,25 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
     CItem *p1 = CalcItemObjFromSer(boat->GetPlank(0));
     CItem *p2 = CalcItemObjFromSer(boat->GetPlank(1));
     CItem *hold = CalcItemObjFromSer(boat->GetHold());
-
+    
     if (!ValidateObject(boat))
         return;
-
+    
     if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
         !ValidateObject(hold))
         return;
-
+    
     CPPauseResume prSend(0);
     auto nearbyChars = FindNearbyPlayers(boat, DIST_BUILDRANGE);
     for (auto &tSock : nearbyChars) {
         tSock->Send(&prSend);
     }
-
+    
     std::int16_t tx = 0, ty = 0;
     CheckDirection(dir & 0x0F, tx, ty);
-
+    
     std::int16_t x = boat->GetX(), y = boat->GetY();
-
+    
     auto worldNumber = boat->WorldNumber();
     bool teleportBoat = false;
     if (worldNumber <= 1 && (x + tx) < 5100) {
@@ -711,7 +711,7 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
             teleportBoat = true;
         }
     }
-
+    
     // Check if anything blocks boat from moving to new location
     if (BlockBoat(boat, tx, ty, dir, boat->GetDir(), false)) {
         boat->SetMoveType(0);
@@ -721,14 +721,14 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
         }
         return;
     }
-
+    
     // Move all the special items along with the boat
     boat->IncLocation(tx, ty);
     tiller->IncLocation(tx, ty);
     p1->IncLocation(tx, ty);
     p2->IncLocation(tx, ty);
     hold->IncLocation(tx, ty);
-
+    
     // If boat got teleported due to wrapping of map, make sure to
     // remove the boat and everything on it from sight of nearby players
     if (teleportBoat) {
@@ -743,14 +743,14 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
         hold->RemoveFromSight();
         hold->Update();
     }
-
+    
     // Move all items aboard the boat along with the boat
     auto itemList = boat->GetItemsInMultiList();
     for (const auto &bItem : itemList->collection()) {
         if (ValidateObject(bItem)) {
             if (!(bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold)) {
                 bItem->IncLocation(tx, ty);
-
+                
                 // Remember to remove any items on board from sight of nearby players if boat got
                 // teleported
                 if (teleportBoat) {
@@ -760,7 +760,7 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
             }
         }
     }
-
+    
     // Move all characters aboard the boat along with the boat
     auto charList = boat->GetCharsInMultiList();
     for (const auto &bChar : charList->collection()) {
@@ -784,10 +784,10 @@ void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
 void TurnStuff(CBoatObj *b, CBaseObject *i, bool rightTurn) {
     if (!ValidateObject(b))
         return;
-
+    
     std::int16_t dx = static_cast<std::int16_t>(i->GetX() - b->GetX()); // get their distance x
     std::int16_t dy = static_cast<std::int16_t>(i->GetY() - b->GetY()); // and distance Y
-
+    
     if (rightTurn) {
         i->SetLocation(static_cast<std::int16_t>(b->GetX() - dy), static_cast<std::int16_t>(b->GetY() + dx),
                        i->GetZ());
@@ -806,25 +806,25 @@ void TurnStuff(CBoatObj *b, CBaseObject *i, bool rightTurn) {
 void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     if (!ValidateObject(b))
         return;
-
+    
     std::int16_t id2 = b->GetId(2);
     std::uint8_t olddir = b->GetDir();
-
+    
     CPPauseResume prSend(0);
     auto nearbyChars = FindNearbyPlayers(b, DIST_BUILDRANGE);
     for (auto &tSock : nearbyChars) {
         tSock->Send(&prSend);
     }
-
+    
     CItem *tiller = CalcItemObjFromSer(b->GetTiller());
     CItem *p1 = CalcItemObjFromSer(b->GetPlank(0));
     CItem *p2 = CalcItemObjFromSer(b->GetPlank(1));
     CItem *hold = CalcItemObjFromSer(b->GetHold());
-
+    
     if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
         !ValidateObject(hold))
         return;
-
+    
     if (rightTurn) {
         b->SetDir(olddir + 2);
         ++id2;
@@ -839,14 +839,14 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     if (b->GetDir() > NORTHWEST) {
         b->SetDir(b->GetDir() - 4); // Make sure we dont have any DIR errors
     }
-
+    
     if (id2 < b->GetTempVar(CITV_MOREZ, 1)) {
         id2 += 4; // make sure we don't have any id errors either
     }
     if (id2 > b->GetTempVar(CITV_MOREZ, 2)) {
         id2 -= 4; // Now you know what the min/max id is for :-)
     }
-
+    
     prSend.Mode(0);
     if (!disableChecks) {
         if (BlockBoat(b, 0, 0, b->GetDir(), olddir, true)) {
@@ -858,16 +858,16 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
             return;
         }
     }
-
+    
     b->SetId(static_cast<std::uint8_t>(id2), 2); // set the id
-
+    
     if (b->GetId(2) == b->GetTempVar(CITV_MOREZ, 1)) {
         b->SetDir(NORTH); // extra DIR error checking
     }
     if (b->GetId(2) == b->GetTempVar(CITV_MOREZ, 2)) {
         b->SetDir(WEST);
     }
-
+    
     auto itemList = b->GetItemsInMultiList();
     for (const auto &bItem : itemList->collection()) {
         if (ValidateObject(bItem)) {
@@ -880,56 +880,56 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
             TurnStuff(b, bChar, rightTurn);
         }
     }
-
+    
     std::uint8_t dir = (b->GetDir() & 0x0F) / 2;
-
+    
     p1->SetLocation(b);
     p1->SetId(cShipItems[dir][PORT_P_C], 2); // change the ID
-
+    
     p2->SetLocation(b);
     p2->SetId(cShipItems[dir][STAR_P_C], 2);
-
+    
     tiller->SetLocation(b);
     tiller->SetId(cShipItems[dir][TILLERID], 2);
-
+    
     hold->SetLocation(b);
     hold->SetId(cShipItems[dir][HOLDID], 2);
-
+    
     switch (b->GetTempVar(CITV_MOREZ, 1)) // Now set what size boat it is and move the specail items
     {
-    case 0x00:
-    case 0x04:
-        p1->IncLocation(iSmallShipOffsets[dir][PORT_PLANK][XP],
-                        iSmallShipOffsets[dir][PORT_PLANK][YP]);
-        p2->IncLocation(iSmallShipOffsets[dir][STARB_PLANK][XP],
-                        iSmallShipOffsets[dir][STARB_PLANK][YP]);
-        tiller->IncLocation(iSmallShipOffsets[dir][TILLER][XP], iSmallShipOffsets[dir][TILLER][YP]);
-        hold->IncLocation(iSmallShipOffsets[dir][HOLD][XP], iSmallShipOffsets[dir][HOLD][YP]);
-        break;
-    case 0x08:
-    case 0x0C:
-        p1->IncLocation(iMediumShipOffsets[dir][PORT_PLANK][XP],
-                        iMediumShipOffsets[dir][PORT_PLANK][YP]);
-        p2->IncLocation(iMediumShipOffsets[dir][STARB_PLANK][XP],
-                        iMediumShipOffsets[dir][STARB_PLANK][YP]);
-        tiller->IncLocation(iMediumShipOffsets[dir][TILLER][XP],
-                            iMediumShipOffsets[dir][TILLER][YP]);
-        hold->IncLocation(iMediumShipOffsets[dir][HOLD][XP], iMediumShipOffsets[dir][HOLD][YP]);
-        break;
-    case 0x10:
-    case 0x14:
-        p1->IncLocation(iLargeShipOffsets[dir][PORT_PLANK][XP],
-                        iLargeShipOffsets[dir][PORT_PLANK][YP]);
-        p2->IncLocation(iLargeShipOffsets[dir][STARB_PLANK][XP],
-                        iLargeShipOffsets[dir][STARB_PLANK][YP]);
-        tiller->IncLocation(iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP]);
-        hold->IncLocation(iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP]);
-        break;
-    default:
-        Console::shared().Error(util::format("TurnBoat() more1 error! more1 = %c not found!",
-                                             b->GetTempVar(CITV_MOREZ, 1)));
+        case 0x00:
+        case 0x04:
+            p1->IncLocation(iSmallShipOffsets[dir][PORT_PLANK][XP],
+                            iSmallShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iSmallShipOffsets[dir][STARB_PLANK][XP],
+                            iSmallShipOffsets[dir][STARB_PLANK][YP]);
+            tiller->IncLocation(iSmallShipOffsets[dir][TILLER][XP], iSmallShipOffsets[dir][TILLER][YP]);
+            hold->IncLocation(iSmallShipOffsets[dir][HOLD][XP], iSmallShipOffsets[dir][HOLD][YP]);
+            break;
+        case 0x08:
+        case 0x0C:
+            p1->IncLocation(iMediumShipOffsets[dir][PORT_PLANK][XP],
+                            iMediumShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iMediumShipOffsets[dir][STARB_PLANK][XP],
+                            iMediumShipOffsets[dir][STARB_PLANK][YP]);
+            tiller->IncLocation(iMediumShipOffsets[dir][TILLER][XP],
+                                iMediumShipOffsets[dir][TILLER][YP]);
+            hold->IncLocation(iMediumShipOffsets[dir][HOLD][XP], iMediumShipOffsets[dir][HOLD][YP]);
+            break;
+        case 0x10:
+        case 0x14:
+            p1->IncLocation(iLargeShipOffsets[dir][PORT_PLANK][XP],
+                            iLargeShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iLargeShipOffsets[dir][STARB_PLANK][XP],
+                            iLargeShipOffsets[dir][STARB_PLANK][YP]);
+            tiller->IncLocation(iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP]);
+            hold->IncLocation(iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP]);
+            break;
+        default:
+            Console::shared().Error(util::format("TurnBoat() more1 error! more1 = %c not found!",
+                                                 b->GetTempVar(CITV_MOREZ, 1)));
     }
-
+    
     for (auto &tSock : nearbyChars) {
         tSock->Send(&prSend);
     }
@@ -938,7 +938,7 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
 void TurnBoat(CSocket *mSock, CBoatObj *myBoat, CItem *tiller, std::uint8_t dir, bool rightTurn) {
     std::int16_t tx = 0, ty = 0;
     CheckDirection(dir & 0x0F, tx, ty);
-
+    
     if (!BlockBoat(myBoat, tx, ty, dir, myBoat->GetDir(), true)) {
         tiller->TextMessage(mSock, 10);
         TurnBoat(myBoat, rightTurn, false);
@@ -956,15 +956,15 @@ void TurnBoat(CSocket *mSock, CBoatObj *myBoat, CItem *tiller, std::uint8_t dir,
 void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
     if (mSock == nullptr)
         return;
-
+    
     CBoatObj *boat = GetBoat(mSock);
     if (!ValidateObject(boat))
         return;
-
+    
     std::uint8_t dir = boat->GetDir() & 0x0F;
-
+    
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
-
+    
     unicodetypes_t mLang = mSock->Language();
     if (trigWord != TW_SETNAME && trigWord != TW_BOATANCHORRAISE && trigWord != TW_BOATANCHORDROP &&
         boat->GetMoveType() == -1) {
@@ -973,103 +973,103 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
         return;
     }
     switch (trigWord) {
-    case TW_BOATANCHORDROP:
-        if (boat->GetMoveType() != BOAT_ANCHORED) {
-            boat->SetMoveType(BOAT_ANCHORED);
-            tiller->TextMessage(mSock, 2025); // Ar, anchor dropped sir.
+        case TW_BOATANCHORDROP:
+            if (boat->GetMoveType() != BOAT_ANCHORED) {
+                boat->SetMoveType(BOAT_ANCHORED);
+                tiller->TextMessage(mSock, 2025); // Ar, anchor dropped sir.
+            }
+            else {
+                tiller->TextMessage(mSock, 2026); // Ar, the anchor was already dropped sir.
+            }
+            break;
+        case TW_BOATANCHORRAISE:
+            if (boat->GetMoveType() == BOAT_ANCHORED) {
+                boat->SetMoveType(BOAT_STOP);
+                tiller->TextMessage(mSock, 2027); // Ar, anchor raised sir.
+            }
+            else {
+                tiller->TextMessage(mSock, 2028); // Ar, the anchor has not been dropped sir.
+            }
+            break;
+        case TW_BOATTURNRIGHT:
+        case TW_BOATSTARBOARD:
+            if (dir >= 2) {
+                dir -= 2;
+            }
+            else {
+                dir += 6;
+            }
+            TurnBoat(mSock, boat, tiller, dir, true);
+            break;
+        case TW_BOATTURNLEFT:
+        case TW_BOATPORT:
+            dir += 2;
+            if (dir > 7) {
+                dir -= 8;
+            }
+            TurnBoat(mSock, boat, tiller, dir, false);
+            break;
+        case TW_BOATTURNAROUND:
+            tiller->TextMessage(mSock, 10); // Aye, sir.
+            TurnBoat(boat, true, true);
+            TurnBoat(boat, true, true);
+            break;
+        case TW_SETNAME: {
+            // Check if player trying to rename the boat is actually the owner
+            if (mChar->GetSerial() != boat->GetOwner()) {
+                tiller->TextMessage(mSock,
+                                    2034); // Arr! Only the owner of the ship may change its name!
+                return;
+            }
+            
+            // Check if player provided anything after the actual set name command
+            std::string cmdString = util::upper(Dictionary->GetEntry(1425, mLang)); // SET NAME
+            if (util::upper(ourText).size() == cmdString.size()) {
+                tiller->TextMessage(mSock, 12); // Can ya say that again with an actual name, sir?
+                return;
+            }
+            
+            // Check if we can find the dictionary-based command string in the player's speech
+            std::string upperOurText = util::upper(ourText);
+            size_t cmdStringPos = upperOurText.find(cmdString);
+            if (cmdStringPos == std::string::npos) {
+                // Command string not found in text, something went wrong!
+                tiller->TextMessage(mSock, 11); // What be that, sir?
+                return;
+            }
+            
+            // Erase cmdString from ourText, leaving us with just the new name of the boat
+            size_t pos = upperOurText.find(cmdString);
+            if (pos != std::string::npos) {
+                ourText.erase(pos, cmdString.size());
+            }
+            
+            // Trim spaces from start and end of player provided name, and see if there's actually a
+            // name there and not just empty spaces!
+            ourText = util::trim(ourText);
+            if (ourText.size() == 0) {
+                boat->SetName(Dictionary->GetEntry(2035, mLang));   // a ship
+                tiller->SetName(Dictionary->GetEntry(1409, mLang)); // a tiller man
+                tiller->TextMessage(mSock, 2030);                   // This ship now has no name.
+                return;
+            }
+            
+            std::string tillerNameDict = Dictionary->GetEntry(2033, mLang); // The tiller man of %s
+            if (tillerNameDict.size() + ourText.size() > MAX_NAME - 1) {
+                mSock->SysMessage(1944); // That name is too long.
+                return;
+            }
+            
+            // Give boat the new name
+            boat->SetName(ourText);
+            
+            // Give tiller man a fitting name as well
+            auto sPos = tillerNameDict.find("%s");
+            tiller->SetName(tillerNameDict.replace(sPos, 2, ourText));
+            break;
         }
-        else {
-            tiller->TextMessage(mSock, 2026); // Ar, the anchor was already dropped sir.
-        }
-        break;
-    case TW_BOATANCHORRAISE:
-        if (boat->GetMoveType() == BOAT_ANCHORED) {
-            boat->SetMoveType(BOAT_STOP);
-            tiller->TextMessage(mSock, 2027); // Ar, anchor raised sir.
-        }
-        else {
-            tiller->TextMessage(mSock, 2028); // Ar, the anchor has not been dropped sir.
-        }
-        break;
-    case TW_BOATTURNRIGHT:
-    case TW_BOATSTARBOARD:
-        if (dir >= 2) {
-            dir -= 2;
-        }
-        else {
-            dir += 6;
-        }
-        TurnBoat(mSock, boat, tiller, dir, true);
-        break;
-    case TW_BOATTURNLEFT:
-    case TW_BOATPORT:
-        dir += 2;
-        if (dir > 7) {
-            dir -= 8;
-        }
-        TurnBoat(mSock, boat, tiller, dir, false);
-        break;
-    case TW_BOATTURNAROUND:
-        tiller->TextMessage(mSock, 10); // Aye, sir.
-        TurnBoat(boat, true, true);
-        TurnBoat(boat, true, true);
-        break;
-    case TW_SETNAME: {
-        // Check if player trying to rename the boat is actually the owner
-        if (mChar->GetSerial() != boat->GetOwner()) {
-            tiller->TextMessage(mSock,
-                                2034); // Arr! Only the owner of the ship may change its name!
-            return;
-        }
-
-        // Check if player provided anything after the actual set name command
-        std::string cmdString = util::upper(Dictionary->GetEntry(1425, mLang)); // SET NAME
-        if (util::upper(ourText).size() == cmdString.size()) {
-            tiller->TextMessage(mSock, 12); // Can ya say that again with an actual name, sir?
-            return;
-        }
-
-        // Check if we can find the dictionary-based command string in the player's speech
-        std::string upperOurText = util::upper(ourText);
-        size_t cmdStringPos = upperOurText.find(cmdString);
-        if (cmdStringPos == std::string::npos) {
-            // Command string not found in text, something went wrong!
-            tiller->TextMessage(mSock, 11); // What be that, sir?
-            return;
-        }
-
-        // Erase cmdString from ourText, leaving us with just the new name of the boat
-        size_t pos = upperOurText.find(cmdString);
-        if (pos != std::string::npos) {
-            ourText.erase(pos, cmdString.size());
-        }
-
-        // Trim spaces from start and end of player provided name, and see if there's actually a
-        // name there and not just empty spaces!
-        ourText = util::trim(ourText);
-        if (ourText.size() == 0) {
-            boat->SetName(Dictionary->GetEntry(2035, mLang));   // a ship
-            tiller->SetName(Dictionary->GetEntry(1409, mLang)); // a tiller man
-            tiller->TextMessage(mSock, 2030);                   // This ship now has no name.
-            return;
-        }
-
-        std::string tillerNameDict = Dictionary->GetEntry(2033, mLang); // The tiller man of %s
-        if (tillerNameDict.size() + ourText.size() > MAX_NAME - 1) {
-            mSock->SysMessage(1944); // That name is too long.
-            return;
-        }
-
-        // Give boat the new name
-        boat->SetName(ourText);
-
-        // Give tiller man a fitting name as well
-        auto sPos = tillerNameDict.find("%s");
-        tiller->SetName(tillerNameDict.replace(sPos, 2, ourText));
-        break;
-    }
-    default:
-        break;
+        default:
+            break;
     }
 }
 
@@ -1082,21 +1082,21 @@ void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL);
 void ModelBoat(CSocket *s, CBoatObj *i) {
     if (s == nullptr)
         return;
-
+    
     CItem *tiller = CalcItemObjFromSer(i->GetTiller());
     CItem *p1 = CalcItemObjFromSer(i->GetPlank(0));
     CItem *p2 = CalcItemObjFromSer(i->GetPlank(1));
     CItem *hold = CalcItemObjFromSer(i->GetHold());
-
+    
     CChar *mChar = s->CurrcharObj();
-
+    
     if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
         !ValidateObject(hold)) {
         s->SysMessage(9014); // Something is not right - unable to find tiller, planks or hold! This
-                             // boat might be bugged...
+        // boat might be bugged...
         return;
     }
-
+    
     auto serial = i->GetSerial();
     if (i->GetOwnerObj() == mChar) {
         // Check if character's backpack can hold more items
@@ -1110,46 +1110,46 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
                 return;
             }
         }
-
+        
         if (p1->GetId(2) == 0x84 || p1->GetId(2) == 0xD5 || p1->GetId(2) == 0xD4 ||
             p1->GetId(2) == 0x89 || p2->GetId(2) == 0x84 || p2->GetId(2) == 0xD5 ||
             p2->GetId(2) == 0xD4 || p2->GetId(2) == 0x89) {
             s->SysMessage(9015); // Planks must be closed before you pack up your ship!
             return;
         }
-
+        
         if (hold->GetContainsList()->Num() > 0) {
             s->SysMessage(9016); // Make sure your hold is empty, and try again!
             return;
         }
-
+        
         if (i->GetItemsInMultiList()->Num() > 4 || i->GetCharsInMultiList()->Num() > 0) {
             s->SysMessage(9017); // This boat must be empty before it can be converted to a model!
             return;
         }
-
+        
         CItem *model = Items->CreateItem(s, mChar, 0x14f3, 1, 0, CBaseObject::OT_ITEM, true);
         if (model == nullptr)
             return;
-
+        
         model->SetTempVar(CITV_MOREX, tiller->GetTempVar(CITV_MOREX));
         Weight->SubtractItemWeight(mChar, model);
         model->SetWeight(0);
         Weight->AddItemWeight(mChar, model);
         model->SetType(IT_MODELMULTI);
         model->SetMovable(0);
-
+        
         if (i->GetName().length() > 0) {
             // Apply boat's name to the ship model
             std::string shipModelNameDict =
-                Dictionary->GetEntry(2037, s->Language()); // %s [Dry Docked]
+            Dictionary->GetEntry(2037, s->Language()); // %s [Dry Docked]
             auto sPos = shipModelNameDict.find("%s");
             model->SetName(shipModelNameDict.replace(sPos, 2, i->GetName()));
-
+            
             // Also store the original name in the item's title
             model->SetTitle(i->GetName());
         }
-
+        
         tiller->Delete();
         p1->Delete();
         p2->Delete();

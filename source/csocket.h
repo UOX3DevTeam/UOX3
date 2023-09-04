@@ -26,12 +26,12 @@ enum ClientTypes {
     CV_KR2D, // From 6.0.0.0+ to 6.0.14.1, first packet sent is 0xEF.
     CV_KR3D,
     CV_SA2D, // From 6.0.14.2 to 7.0.8.2, Stygian Abyss expansion client. First patcket sent is
-             // 0xEF, requires 0xB9 size-change from 3 to 5, new 0xF3 packet replacex 0x1A
+    // 0xEF, requires 0xB9 size-change from 3 to 5, new 0xF3 packet replacex 0x1A
     CV_SA3D,
     CV_HS2D, // From 7.0.9.0 to 7.0.45.89, High Seas expansion client
     CV_HS3D,
     CV_TOL2D, // From 7.0.46.0 to infinity, Time of Legends expansion client (Endless Journey
-              // "started" at 7.0.61.0, but it's not an expansion)
+    // "started" at 7.0.61.0, but it's not an expansion)
     CV_TOL3D,
     CV_COUNT
 };
@@ -48,19 +48,19 @@ enum ClientVersions {
     CVS_5082,
     CVS_6000,  // Felucca/Trammel no longer both use map0.mul, Trammel gets its own: map1.mul
     CVS_6017,  // Packet updates to support container-grid in KR client, support implemented so it
-               // (in theory) will have no effect on lower versions
+    // (in theory) will have no effect on lower versions
     CVS_6050,  // 21 extra bytes of data added prior to initial 0x80 packet, in the form of a new
-               // clientversion packet: 0xEF
+    // clientversion packet: 0xEF
     CVS_25302, // UOKR3D 2.53.0.2
     CVS_60142,
     CVS_7000, // animation packet 0xE2 replaces 0x6E, packet 0xF3 is sent instead of 0x1A (object
-              // information packet)
+    // information packet)
     CVS_7090,
     CVS_70130, // Packet 0xA9 updated with extra information and longer City/Building names
     CVS_70151,
     CVS_70160, // Packet 0xF8 (New Character Creation) replaces 0x00 (Character Creation)
     CVS_70240, // Map#.mul files are now wrapped in .uop headers. This means incompability with
-               // tools, and updated emulators needed to read map correctly.
+    // tools, and updated emulators needed to read map correctly.
     CVS_70300,
     CVS_70331,
     CVS_704565,
@@ -83,19 +83,19 @@ enum cS_TID {
 };
 
 class CSocket {
-  public:
+public:
     // Account Related Member(s)
     AccountEntry &GetAccount(void);
     void SetAccount(AccountEntry &actbBlock);
-
+    
     void InternalReset(void);
     Ip4Addr_st ipaddress;
-
-  private:
+    
+private:
     std::vector<std::uint16_t> trigWords;
     std::vector<std::uint16_t>::iterator twIter;
     std::uint16_t accountNum;
-
+    
     CChar *currCharObj;
     std::int32_t idleTimeout;
     bool wasIdleWarned;
@@ -103,7 +103,7 @@ class CSocket {
     bool skillDelayMsgShown;
     std::int32_t negotiateTimeout;
     bool negotiatedWithAssistant;
-
+    
     std::uint8_t buffer[MAXBUFFER];
     std::uint8_t outbuffer[MAXBUFFER];
     // These vectors are for dealing with packets that are larger than the buffer size
@@ -112,7 +112,7 @@ class CSocket {
     // compatability
     std::vector<std::uint8_t> largeBuffer;
     std::vector<std::uint8_t> largePackBuffer;
-
+    
     std::string xtext;
     std::string xtext2;
     std::int16_t clickx;
@@ -129,18 +129,18 @@ class CSocket {
     size_t postAckCount;
     pickuplocations_t pSpot;
     serial_t pFrom;
-
+    
     GenericList<CItem *> contsOpened;
-
+    
     std::int16_t pX;
     std::int16_t pY;
     std::int8_t pZ;
-
+    
     unicodetypes_t lang;
     ClientTypes cliType;
     ClientVersions cliVerShort;
     std::uint32_t clientVersion;
-
+    
     std::uint32_t bytesReceived;
     std::uint32_t bytesSent;
     bool receivedVersion;
@@ -151,61 +151,61 @@ class CSocket {
     std::int32_t tempint2;
     std::uint8_t dyeall;
     std::uint8_t addid[4];
-
+    
     bool newClient;
     bool firstPacket;
-
+    
     bool forceOffline;
-
+    
     std::uint8_t clientip[4];
-
+    
     bool loginComplete;
     CItem *cursorItem; // pointer to item held on mouse cursor
-
+    
     std::uint16_t bytesRecvWarningCount;
     std::uint16_t bytesSentWarningCount;
-
+    
     bool targetok;
-
+    
     std::vector<serial_t> postAcked;
     std::vector<serial_t>::iterator ackIter;
-
+    
     std::uint32_t Pack(void *pvIn, void *pvOut, std::int32_t len);
-
+    
     // Timer Vals moved here from CChar due to their inherently temporary nature and to reduce
     // wasted memory
     timerval_t pcTimers[tPC_COUNT];
-
-  public:
+    
+public:
     CSocket(size_t sockNum);
     ~CSocket();
-
+    
     std::uint32_t ClientVersion(void) const;
     void ClientVersion(std::uint32_t newVer);
     void ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t sub, std::uint8_t letter);
-
+    
     void ClientVersionMajor(std::uint8_t value);
     void ClientVersionMinor(std::uint8_t value);
     void ClientVersionSub(std::uint8_t value);
     void ClientVersionLetter(std::uint8_t value);
-
+    
     std::uint8_t ClientVersionMajor(void) const;
     std::uint8_t ClientVersionMinor(void) const;
     std::uint8_t ClientVersionSub(void) const;
     std::uint8_t ClientVersionLetter(void) const;
-
+    
     ClientVersions ClientVerShort(void) const;
     void ClientVerShort(ClientVersions newVer);
-
+    
     ClientTypes ClientType(void) const;
     void ClientType(ClientTypes newVer);
-
+    
     void ClearPage(void);
     void AddTrigWord(std::uint16_t);
     // Accessors
-
+    
     bool LoginComplete(void) const;
-
+    
     CItem *GetCursorItem(void) const;
     void SetCursorItem(CItem *newValue);
     std::int16_t PickupX(void) const;
@@ -244,7 +244,7 @@ class CSocket {
     bool FinishedTrigWords(void);
     void ClearTrigWords(void);
     bool ForceOffline(void) const;
-
+    
     // Temporary Variables
     CBaseObject *TempObj(void) const;
     CBaseObject *TempObj2(void) const;
@@ -257,25 +257,25 @@ class CSocket {
     std::uint8_t AddId4(void) const;
     std::uint8_t DyeAll(void) const;
     std::int8_t ClickZ(void) const;
-
+    
     serial_t FirstPostAck(void);
     serial_t NextPostAck(void);
     bool FinishedPostAck(void);
     serial_t RemovePostAck(void);
-
+    
     size_t PostCount(void) const;
     size_t PostAckCount(void) const;
-
+    
     std::int16_t ClickX(void) const;
     std::int16_t ClickY(void) const;
     std::uint8_t Range(void) const;
-
+    
     void CloseSocket(void);
-
+    
     // Mutators
-
+    
     void LoginComplete(bool newVal);
-
+    
     void PickupLocation(std::int16_t x, std::int16_t y, std::int8_t z);
     void PickupX(std::int16_t x);
     void PickupY(std::int16_t y);
@@ -305,13 +305,13 @@ class CSocket {
     void NewClient(bool newValue);
     void Range(std::uint8_t value);
     void ForceOffline(bool newValue);
-
+    
     //	Temporary Variables
-
+    
     // Under protest I add, NEVER NEVER Do this
     cScript *scriptForCallBack;
     // Get rid of above as soon as possible, horible.
-
+    
     void TempObj(CBaseObject *newValue);
     void TempObj2(CBaseObject *newValue);
     void TempInt(std::int32_t newValue);
@@ -323,18 +323,18 @@ class CSocket {
     void AddId4(std::uint8_t newValue);
     void DyeAll(std::uint8_t newValue);
     void ClickZ(std::int8_t newValue);
-
+    
     bool FlushBuffer(bool doLog = true);
     bool FlushLargeBuffer(bool doLog = true);
     void FlushIncoming(void);
     void Send(const void *point, std::int32_t length);
     std::int32_t Receive(std::int32_t x, bool doLog = true);
     void ReceiveLogging(CPInputBuffer *toLog);
-
+    
     std::uint32_t GetDWord(size_t offset);
     std::uint16_t GetWord(size_t offset);
     std::uint8_t GetByte(size_t offset);
-
+    
     void SetDWord(size_t offset, std::uint32_t newValue);
     void SetWord(size_t offset, std::uint16_t newValue);
     void SetByte(size_t offset, std::uint8_t newValue);
@@ -347,12 +347,12 @@ class CSocket {
     void PostClear();
     void XText(const std::string &newValue);
     void XText2(const std::string &newValue);
-
+    
     void Send(CPUOXBuffer *toSend);
-
+    
     unicodetypes_t Language(void) const;
     void Language(unicodetypes_t newVal);
-
+    
     void SysMessage(const std::string txt, ...);
     void SysMessageJS(const std::string &uformat, std::uint16_t txtColor, const std::string &data);
     void SysMessage(std::int32_t dictEntry, ...);
@@ -360,24 +360,24 @@ class CSocket {
                     std::uint16_t Color = 0x03B2);
     void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f,
                     std::uint32_t Color = 0x03B2, ...);
-
+    
     void ShowCharName(CChar *i, bool showSer);
-
+    
     void SendTargetCursor(std::uint8_t targType, std::uint8_t targId, const std::string &txt, std::uint8_t cursorType = 0);
     void SendTargetCursor(std::uint8_t targType, std::uint8_t targId, std::uint8_t cursorType, std::int32_t dictEntry, ...);
     void mtarget(std::uint16_t itemId, std::int32_t dictEntry);
-
+    
     void StatWindow(CBaseObject *i, bool updateParty = true);
     void UpdateSkill(std::uint8_t skillnum);
     void OpenPack(CItem *i, bool isPlayerVendor = false);
     void OpenBank(CChar *i);
     void OpenURL(const std::string &txt);
-
+    
     auto GetContsOpenedList() -> GenericList<CItem *> *;
-
+    
     bool ReceivedVersion(void) const;
     void ReceivedVersion(bool value);
-
+    
     std::uint32_t BytesSent(void) const;
     void BytesSent(std::uint32_t newValue);
     std::uint32_t BytesReceived(void) const;
@@ -386,13 +386,13 @@ class CSocket {
     void BytesReceivedWarning(std::uint16_t newValue);
     std::uint16_t BytesSentWarning(void) const;
     void BytesSentWarning(std::uint16_t newValue);
-
+    
     timerval_t GetTimer(cS_TID timerId) const;
     void SetTimer(cS_TID timerId, timerval_t value);
     void ClearTimers(void);
     colour_t GetFlagColour(CChar *src, CChar *trg);
     auto GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string;
-
-  private:
+    
+private:
 };
 #endif

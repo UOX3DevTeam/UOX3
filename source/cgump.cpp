@@ -13,7 +13,7 @@
 CGump::CGump(bool myNoMove, bool myNoClose) {
     NoMove = myNoMove;
     NoClose = myNoClose;
-
+    
     Type = 21;  // Default Type
     Serial = 0; // Do nothing on close
     PageCount = 0;
@@ -26,7 +26,7 @@ void CGump::Add(const std::string &Tag, const std::string &Text) {
     if (!Tag.empty()) {
         TagList.push_back(Tag);
     }
-
+    
     if (!Text.empty()) {
         TextList.push_back(Text);
     }
@@ -40,17 +40,17 @@ void CGump::Add(const std::string &Tag, const std::string &Text) {
 void CGump::Send(CSocket *target) {
     if (target == nullptr)
         return;
-
+    
     CPSendGumpMenu toSend;
     toSend.GumpId(Type);
     toSend.UserId(Serial);
-
+    
     std::for_each(TagList.begin(), TagList.end(),
                   [&toSend](const std::string &entry) { toSend.addCommand(entry); });
-
+    
     std::for_each(TextList.begin(), TextList.end(),
                   [&toSend](const std::string &entry) { toSend.addCommand(entry); });
-
+    
     toSend.Finalize();
     target->Send(&toSend);
 }
@@ -119,7 +119,7 @@ void CGump::AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t imageUp, s
 // o------------------------------------------------------------------------------------------------o
 void CGump::AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string text) {
     std::uint32_t textId = static_cast<std::uint32_t>(TextList.size());
-
+    
     TextList.push_back(text);
     TagList.push_back(util::format("text %u %u %u %u", x, y, hue, textId));
 }
@@ -131,7 +131,7 @@ void CGump::AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::st
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CGump::StartPage(void) {
     TagList.push_back(util::format("page %u", PageCount));
-
+    
     ++PageCount;
     return PageCount - 1;
 }
@@ -145,10 +145,10 @@ void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, serial_t gumpSerial,
                        [[maybe_unused]] std::uint32_t button) {
     if (gumpSerial == 0) // Do nothing on close gump
         return;
-
+    
     switch (gumpSerial) {
-        // Custom Gump Callbacks
-    case 1: {
-    }
+            // Custom Gump Callbacks
+        case 1: {
+        }
     };
 }

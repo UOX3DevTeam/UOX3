@@ -92,11 +92,11 @@ auto ObjectFactory::NextSerial(CBaseObject::type_t type) -> std::uint32_t {
         case CBaseObject::OT_MULTI:
         case CBaseObject::OT_BOAT:
         case CBaseObject::OT_SPAWNER:
-        return item_serials.Next();
+            return item_serials.Next();
         case CBaseObject::OT_CHAR:
-        return character_serials.Next();
-    default:
-        return std::numeric_limits<std::uint32_t>::max();
+            return character_serials.Next();
+        default:
+            return std::numeric_limits<std::uint32_t>::max();
     }
 }
 
@@ -110,18 +110,18 @@ auto ObjectFactory::CollectionForType(CBaseObject::type_t type) -> factory_colle
     switch (type) {
         case CBaseObject::OT_MULTI:
         case CBaseObject::OT_BOAT:
-        collection = &multis;
-        break;
+            collection = &multis;
+            break;
         case CBaseObject::OT_SPAWNER:
         case CBaseObject::OT_ITEM:
-        collection = &items;
-        break;
+            collection = &items;
+            break;
         case CBaseObject::OT_CHAR:
-        collection = &chars;
-        break;
-
-    default:
-        break;
+            collection = &chars;
+            break;
+            
+        default:
+            break;
     }
     return collection;
 }
@@ -136,18 +136,18 @@ auto ObjectFactory::CollectionForType(CBaseObject::type_t type) const -> const f
     switch (type) {
         case CBaseObject::OT_MULTI:
         case CBaseObject::OT_BOAT:
-        collection = &multis;
-        break;
+            collection = &multis;
+            break;
         case CBaseObject::OT_SPAWNER:
         case CBaseObject::OT_ITEM:
-        collection = &items;
-        break;
+            collection = &items;
+            break;
         case CBaseObject::OT_CHAR:
-        collection = &chars;
-        break;
-
-    default:
-        break;
+            collection = &chars;
+            break;
+            
+        default:
+            break;
     }
     return collection;
 }
@@ -226,24 +226,24 @@ auto ObjectFactory::RegisterObject(CBaseObject *object, std::uint32_t serial) ->
         switch (object->GetObjType()) {
             case CBaseObject::OT_MULTI:
             case CBaseObject::OT_BOAT:
-            rValue = true;
-            item_serials.RegisterSerial(serial);
-            multis.insert_or_assign(serial, object);
-            break;
+                rValue = true;
+                item_serials.RegisterSerial(serial);
+                multis.insert_or_assign(serial, object);
+                break;
             case CBaseObject::OT_SPAWNER:
             case CBaseObject::OT_ITEM:
-            rValue = true;
-            item_serials.RegisterSerial(serial);
-            items.insert_or_assign(serial, object);
-            break;
+                rValue = true;
+                item_serials.RegisterSerial(serial);
+                items.insert_or_assign(serial, object);
+                break;
             case CBaseObject::OT_CHAR:
-            rValue = true;
-            character_serials.RegisterSerial(serial);
-            chars.insert_or_assign(serial, object);
-            break;
-
-        default:
-            break;
+                rValue = true;
+                character_serials.RegisterSerial(serial);
+                chars.insert_or_assign(serial, object);
+                break;
+                
+            default:
+                break;
         }
     }
     return rValue;
@@ -270,7 +270,7 @@ auto ObjectFactory::UnregisterObject(CBaseObject *object) -> bool {
 // o------------------------------------------------------------------------------------------------o
 auto ObjectFactory::IterateOver(CBaseObject::type_t type, std::uint32_t &b, void *extra,
                                 std::function<bool(CBaseObject *, std::uint32_t &, void *)> function)
-    -> std::uint32_t {
+-> std::uint32_t {
     auto collection = CollectionForType(type);
     if (collection) {
         // less safe way
@@ -327,22 +327,22 @@ auto ObjectFactory::CreateBlankObject(CBaseObject::type_t type) -> CBaseObject *
     CBaseObject *object = nullptr;
     switch (type) {
         case CBaseObject::OT_ITEM:
-        object = new CItem();
-        break;
+            object = new CItem();
+            break;
         case CBaseObject::OT_MULTI:
-        object = new CMultiObj();
-        break;
+            object = new CMultiObj();
+            break;
         case CBaseObject::OT_BOAT:
-        object = new CBoatObj();
-        break;
+            object = new CBoatObj();
+            break;
         case CBaseObject::OT_SPAWNER:
-        object = new CSpawnItem();
-        break;
+            object = new CSpawnItem();
+            break;
         case CBaseObject::OT_CHAR:
-        object = new CChar();
-        break;
-    default:
-        break;
+            object = new CChar();
+            break;
+        default:
+            break;
     }
     return object;
 }
@@ -388,17 +388,17 @@ auto ObjectFactory::SizeOfObjects(CBaseObject::type_t type) const -> size_t {
     switch (type) {
         case CBaseObject::OT_ITEM:
         case CBaseObject::OT_SPAWNER:
-        size = sizeof(CItem);
-        break;
+            size = sizeof(CItem);
+            break;
         case CBaseObject::OT_MULTI:
         case CBaseObject::OT_BOAT:
-        size = sizeof(CMultiObj);
-        break;
+            size = sizeof(CMultiObj);
+            break;
         case CBaseObject::OT_CHAR:
-        size = sizeof(CChar);
-        break;
-    default:
-        break;
+            size = sizeof(CChar);
+            break;
+        default:
+            break;
     }
     return collection->size() * size;
 }
@@ -412,8 +412,8 @@ auto ObjectFactory::SizeOfObjects(CBaseObject::type_t type) const -> size_t {
 auto ObjectFactory::ValidObject(CBaseObject *object, CBaseObject::type_t type) -> bool {
     auto findObject = [](CBaseObject *object, factory_collection &collect) {
         auto iter = std::find_if(
-            collect.begin(), collect.end(),
-            [object](std::pair<std::uint32_t, CBaseObject *> entry) { return entry.second = object; });
+                                 collect.begin(), collect.end(),
+                                 [object](std::pair<std::uint32_t, CBaseObject *> entry) { return entry.second = object; });
         if (iter != collect.end()) {
             return true;
         }

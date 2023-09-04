@@ -49,7 +49,7 @@ CWeather::CWeather() {
     LightMin(300);
     LightMax(300);
     CurrentLight(300);
-
+    
     MaxTemp(30);
     MinTemp(5);
     RainTempDrop(5);
@@ -110,25 +110,25 @@ void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
 // o------------------------------------------------------------------------------------------------o
 bool CWeather::PeriodicUpdate(void) {
     R32 currTemp;
-
+    
     std::uint8_t hour = cwmWorldState->ServerData()->ServerTimeHours();
     std::uint8_t minute = cwmWorldState->ServerData()->ServerTimeMinutes();
     bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
-
+    
     if (StormDelay() && StormBrewing()) {
         StormActive(true);
     }
     else if (StormBrewing()) {
         StormDelay(true);
     }
-
+    
     if (LightMin() < 300 && LightMax() < 300) {
         R32 hourIncrement = static_cast<R32>(fabs(
-            (LightMax() - LightMin()) / 12.0f)); // we want the amount to subtract from LightMax in
-                                                 // the morning / add to LightMin in evening
+                                                  (LightMax() - LightMin()) / 12.0f)); // we want the amount to subtract from LightMax in
+        // the morning / add to LightMin in evening
         R32 minuteIncrement = hourIncrement / 60.0f;
         R32 tempLight =
-            hourIncrement * static_cast<R32>(hour) + minuteIncrement * static_cast<R32>(minute);
+        hourIncrement * static_cast<R32>(hour) + minuteIncrement * static_cast<R32>(minute);
         if (ampm) {
             CurrentLight(LightMin() + tempLight);
         }
@@ -136,22 +136,22 @@ bool CWeather::PeriodicUpdate(void) {
             CurrentLight(LightMax() - tempLight);
         }
     }
-
+    
     R32 effTempMax = EffectiveMaxTemp();
     R32 effTempMin = EffectiveMinTemp();
     R32 tempHourIncrement = static_cast<R32>(fabs((effTempMax - effTempMin) / 12.0f));
     R32 tempMinuteIncrement = tempHourIncrement / 60.0f;
-
+    
     R32 tempLightChange =
-        tempHourIncrement * static_cast<R32>(hour) + tempMinuteIncrement * static_cast<R32>(minute);
-
+    tempHourIncrement * static_cast<R32>(hour) + tempMinuteIncrement * static_cast<R32>(minute);
+    
     if (ampm) {
         currTemp = effTempMax - tempLightChange; // maximum temperature minus time
     }
     else {
         currTemp = effTempMin + tempLightChange; // minimum temperature plus time
     }
-
+    
     if (StormActive()) {
         currTemp -= StormTempDrop();
         if (currTemp < 0) {
@@ -177,28 +177,28 @@ bool CWeather::PeriodicUpdate(void) {
 // o------------------------------------------------------------------------------------------------o
 void CWeather::NewDay(void) {
     bool isHeatWave = false, isColdDay = false;
-
+    
     R32 effTempMax = MaxTemp();
     R32 effTempMin = MinTemp();
     R32 currentTemp;
-
+    
     if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= HeatChance()) {
         isHeatWave = true;
         currentTemp =
-            RandomNum(static_cast<std::int32_t>(effTempMax), static_cast<std::int32_t>(HeatIntensityHigh()));
+        RandomNum(static_cast<std::int32_t>(effTempMax), static_cast<std::int32_t>(HeatIntensityHigh()));
         effTempMax = currentTemp;
         effTempMin = currentTemp;
     }
     else if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= ColdChance()) {
         isColdDay = true;
         currentTemp =
-            RandomNum(static_cast<std::int32_t>(ColdIntensityHigh()), static_cast<std::int32_t>(effTempMin));
+        RandomNum(static_cast<std::int32_t>(ColdIntensityHigh()), static_cast<std::int32_t>(effTempMin));
         effTempMax = currentTemp;
         effTempMin = currentTemp;
     }
     HeatActive(isHeatWave);
     ColdActive(isColdDay);
-
+    
     EffectiveMaxTemp(effTempMax);
     EffectiveMinTemp(effTempMin);
 }
@@ -224,15 +224,15 @@ void CWeather::NewHour(void) {
         StormDelay(false);
         StormActive(false);
     }
-
+    
     // Calculate intensity values for the weather types
     RainIntensity(static_cast<std::int8_t>(
-        RandomNum(static_cast<std::int16_t>(RainIntensityLow()), static_cast<std::int16_t>(RainIntensityHigh()))));
+                                           RandomNum(static_cast<std::int16_t>(RainIntensityLow()), static_cast<std::int16_t>(RainIntensityHigh()))));
     SnowIntensity(static_cast<std::int8_t>(
-        RandomNum(static_cast<std::int16_t>(SnowIntensityLow()), static_cast<std::int16_t>(SnowIntensityHigh()))));
+                                           RandomNum(static_cast<std::int16_t>(SnowIntensityLow()), static_cast<std::int16_t>(SnowIntensityHigh()))));
     StormIntensity(static_cast<std::int8_t>(RandomNum(static_cast<std::int16_t>(StormIntensityLow()),
-                                               static_cast<std::int16_t>(StormIntensityHigh()))));
-
+                                                      static_cast<std::int16_t>(StormIntensityHigh()))));
+    
     SnowActive(isSnowing);
     RainActive(isRaining);
     StormBrewing(isStorm);
@@ -627,12 +627,12 @@ auto cWeatherAb::Load() -> bool {
     for (auto &weathScp : FileLookup->ScriptListings[weathab_def]) {
         if (weathScp == nullptr)
             continue;
-
+        
         for (auto &[entryName, WeatherStuff] : weathScp->collection()) {
             if (WeatherStuff == nullptr) {
                 continue;
             }
-
+            
             auto ssecs = oldstrutil::sections(entryName, " ");
             i = static_cast<std::uint32_t>(std::stoul(ssecs[1], nullptr, 0));
             if (i >= weather.size()) {
@@ -643,154 +643,154 @@ auto cWeatherAb::Load() -> bool {
                 data = sec->data;
                 UTag = util::upper(tag);
                 switch (tag[0]) {
-                case 'c':
-                case 'C':
-                    if (UTag == "COLDCHANCE") // chance for a cold day
-                    {
-                        ColdChance(static_cast<weathid_t>(i),
-                                   static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    else if (UTag == "COLDINTENSITY") // cold intensity
-                    {
-                        ColdIntensityHigh(static_cast<weathid_t>(i),
+                    case 'c':
+                    case 'C':
+                        if (UTag == "COLDCHANCE") // chance for a cold day
+                        {
+                            ColdChance(static_cast<weathid_t>(i),
+                                       static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        else if (UTag == "COLDINTENSITY") // cold intensity
+                        {
+                            ColdIntensityHigh(static_cast<weathid_t>(i),
+                                              static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        break;
+                    case 'h':
+                    case 'H':
+                        if (UTag == "HEATCHANCE") // chance for a hot day
+                        {
+                            HeatChance(static_cast<weathid_t>(i),
+                                       static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        else if (UTag == "HEATINTENSITY") // heat intensity
+                        {
+                            HeatIntensityHigh(static_cast<weathid_t>(i),
+                                              static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        break;
+                    case 'l':
+                    case 'L':
+                        if (UTag == "LIGHTMIN") // minimum light level
+                        {
+                            LightMin(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        else if (UTag == "LIGHTMAX") // maximum light level
+                        {
+                            LightMax(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        break;
+                    case 'm':
+                    case 'M':
+                        if (UTag == "MAXTEMP") // maximum temperature
+                        {
+                            MaxTemp(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        else if (UTag == "MINTEMP") // minimum temperature
+                        {
+                            MinTemp(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        else if (UTag == "MAXWIND") // maximum wind speed
+                        {
+                            MaxWindSpeed(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        else if (UTag == "MINWIND") // minimum wind speed
+                        {
+                            MinWindSpeed(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        break;
+                    case 'r':
+                    case 'R':
+                        if (UTag == "RAINCHANCE") // chance of rain
+                        {
+                            RainChance(static_cast<weathid_t>(i),
+                                       static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        else if (UTag == "RAININTENSITY") // intensity of rain
+                        {
+                            auto csecs = oldstrutil::sections(data, ",");
+                            if (csecs.size() > 1) {
+                                RainIntensityLow(
+                                                 static_cast<weathid_t>(i),
+                                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
+                                                                                    nullptr, 0)));
+                                RainIntensityHigh(
+                                                  static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
+                                                                                     nullptr, 0)));
+                            }
+                            else {
+                                RainIntensityLow(static_cast<weathid_t>(i), 0);
+                                RainIntensityHigh(static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                            }
+                        }
+                        else if (UTag == "RAINTEMPDROP") // temp drop of rain
+                        {
+                            RainTempDrop(static_cast<weathid_t>(i),
+                                         static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        break;
+                    case 's':
+                    case 'S':
+                        if (UTag == "SNOWCHANCE") // chance of snow
+                        {
+                            SnowChance(static_cast<weathid_t>(i),
+                                       static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        else if (UTag == "SNOWINTENSITY") // intensity of snow
+                        {
+                            auto csecs = oldstrutil::sections(data, ",");
+                            if (csecs.size() > 1) {
+                                SnowIntensityLow(
+                                                 static_cast<weathid_t>(i),
+                                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
+                                                                                    nullptr, 0)));
+                                SnowIntensityHigh(
+                                                  static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
+                                                                                     nullptr, 0)));
+                            }
+                            else {
+                                SnowIntensityLow(static_cast<weathid_t>(i), 0);
+                                SnowIntensityHigh(static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                            }
+                        }
+                        else if (UTag == "SNOWTHRESHOLD") // temperature at which snow kicks in
+                        {
+                            SnowThreshold(static_cast<weathid_t>(i), std::stof(data));
+                        }
+                        else if (UTag == "STORMCHANCE") // chance of a storm
+                        {
+                            StormChance(static_cast<weathid_t>(i),
+                                        static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                        }
+                        else if (UTag == "STORMINTENSITY") // chance of a storm
+                        {
+                            auto csecs = oldstrutil::sections(data, ",");
+                            if (csecs.size() > 1) {
+                                SnowIntensityLow(
+                                                 static_cast<weathid_t>(i),
+                                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
+                                                                                    nullptr, 0)));
+                                SnowIntensityHigh(
+                                                  static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
+                                                                                     nullptr, 0)));
+                            }
+                            else {
+                                SnowIntensityLow(static_cast<weathid_t>(i), 0);
+                                SnowIntensityHigh(static_cast<weathid_t>(i),
+                                                  static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
+                            }
+                        }
+                        else if (UTag == "STORMTEMPDROP") // temp drop of storm
+                        {
+                            StormTempDrop(static_cast<weathid_t>(i),
                                           static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    break;
-                case 'h':
-                case 'H':
-                    if (UTag == "HEATCHANCE") // chance for a hot day
-                    {
-                        HeatChance(static_cast<weathid_t>(i),
-                                   static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    else if (UTag == "HEATINTENSITY") // heat intensity
-                    {
-                        HeatIntensityHigh(static_cast<weathid_t>(i),
-                                          static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    break;
-                case 'l':
-                case 'L':
-                    if (UTag == "LIGHTMIN") // minimum light level
-                    {
-                        LightMin(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    else if (UTag == "LIGHTMAX") // maximum light level
-                    {
-                        LightMax(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    break;
-                case 'm':
-                case 'M':
-                    if (UTag == "MAXTEMP") // maximum temperature
-                    {
-                        MaxTemp(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    else if (UTag == "MINTEMP") // minimum temperature
-                    {
-                        MinTemp(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    else if (UTag == "MAXWIND") // maximum wind speed
-                    {
-                        MaxWindSpeed(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    else if (UTag == "MINWIND") // minimum wind speed
-                    {
-                        MinWindSpeed(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    break;
-                case 'r':
-                case 'R':
-                    if (UTag == "RAINCHANCE") // chance of rain
-                    {
-                        RainChance(static_cast<weathid_t>(i),
-                                   static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    else if (UTag == "RAININTENSITY") // intensity of rain
-                    {
-                        auto csecs = oldstrutil::sections(data, ",");
-                        if (csecs.size() > 1) {
-                            RainIntensityLow(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
-                                                            nullptr, 0)));
-                            RainIntensityHigh(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
-                                                            nullptr, 0)));
                         }
-                        else {
-                            RainIntensityLow(static_cast<weathid_t>(i), 0);
-                            RainIntensityHigh(static_cast<weathid_t>(i),
-                                              static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                        }
-                    }
-                    else if (UTag == "RAINTEMPDROP") // temp drop of rain
-                    {
-                        RainTempDrop(static_cast<weathid_t>(i),
-                                     static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    break;
-                case 's':
-                case 'S':
-                    if (UTag == "SNOWCHANCE") // chance of snow
-                    {
-                        SnowChance(static_cast<weathid_t>(i),
-                                   static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    else if (UTag == "SNOWINTENSITY") // intensity of snow
-                    {
-                        auto csecs = oldstrutil::sections(data, ",");
-                        if (csecs.size() > 1) {
-                            SnowIntensityLow(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
-                                                            nullptr, 0)));
-                            SnowIntensityHigh(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
-                                                            nullptr, 0)));
-                        }
-                        else {
-                            SnowIntensityLow(static_cast<weathid_t>(i), 0);
-                            SnowIntensityHigh(static_cast<weathid_t>(i),
-                                              static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                        }
-                    }
-                    else if (UTag == "SNOWTHRESHOLD") // temperature at which snow kicks in
-                    {
-                        SnowThreshold(static_cast<weathid_t>(i), std::stof(data));
-                    }
-                    else if (UTag == "STORMCHANCE") // chance of a storm
-                    {
-                        StormChance(static_cast<weathid_t>(i),
-                                    static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    else if (UTag == "STORMINTENSITY") // chance of a storm
-                    {
-                        auto csecs = oldstrutil::sections(data, ",");
-                        if (csecs.size() > 1) {
-                            SnowIntensityLow(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
-                                                            nullptr, 0)));
-                            SnowIntensityHigh(
-                                static_cast<weathid_t>(i),
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
-                                                            nullptr, 0)));
-                        }
-                        else {
-                            SnowIntensityLow(static_cast<weathid_t>(i), 0);
-                            SnowIntensityHigh(static_cast<weathid_t>(i),
-                                              static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                        }
-                    }
-                    else if (UTag == "STORMTEMPDROP") // temp drop of storm
-                    {
-                        StormTempDrop(static_cast<weathid_t>(i),
-                                      static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
-                    }
-                    break;
+                        break;
                 }
             }
         }
@@ -1217,7 +1217,7 @@ void cWeatherAb::StormActive(weathid_t toCheck, bool value) { weather[toCheck].S
 bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     if (!ValidateObject(p) || p->IsNpc())
         return true;
-
+    
     std::int8_t defaultTemp = 20;
     weathid_t currval = p->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty() || p->InBuilding()) {
@@ -1243,18 +1243,18 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
         }
         return false;
     }
-
+    
     bool isStorm = StormActive(currval);
     bool brewStorm = StormBrewing(currval);
     bool isSnowing = SnowActive(currval);
     bool isRaining = RainActive(currval);
     std::int8_t temp = static_cast<std::int8_t>(Temp(currval));
-
+    
     if (isStorm) {
         DoPlayerWeather(s, 5, temp, currval);
         if (p->GetWeathDamage(STORM) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), STORM)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), STORM)))),
                               STORM);
         }
         if (p->GetWeathDamage(SNOW) != 0) {
@@ -1272,7 +1272,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
         DoPlayerWeather(s, 2, temp, currval);
         if (p->GetWeathDamage(SNOW) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), SNOW)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), SNOW)))),
                               SNOW);
         }
         if (p->GetWeathDamage(STORM) != 0) {
@@ -1287,7 +1287,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
         DoPlayerWeather(s, 1, temp, currval);
         if (p->GetWeathDamage(RAIN) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), RAIN)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), RAIN)))),
                               RAIN);
         }
         if (p->GetWeathDamage(SNOW) != 0) {
@@ -1311,19 +1311,19 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
         }
         SendJSWeather(p, STORM, temp);
     }
-
+    
     if ((Races->Affect(p->GetRace(), HEAT)) && p->GetWeathDamage(HEAT) == 0) {
         p->SetWeathDamage(
-            static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), HEAT)))),
-            HEAT);
+                          static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), HEAT)))),
+                          HEAT);
     }
-
+    
     if ((Races->Affect(p->GetRace(), COLD)) && p->GetWeathDamage(COLD) == 0) {
         p->SetWeathDamage(
-            static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), COLD)))),
-            COLD);
+                          static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), COLD)))),
+                          COLD);
     }
-
+    
     return true;
 }
 
@@ -1337,23 +1337,23 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
 bool cWeatherAb::DoNPCStuff(CChar *p) {
     if (!ValidateObject(p))
         return true;
-
+    
     weathid_t currval = p->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty() || p->InBuilding()) {
         SendJSWeather(p, LIGHT, 0);
         return false;
     }
-
+    
     bool isStorm = StormActive(currval);
     bool isSnowing = SnowActive(currval);
     bool isRaining = RainActive(currval);
     std::int8_t temp = static_cast<std::int8_t>(Temp(currval));
-
+    
     if (isStorm) {
         SendJSWeather(p, STORM, temp);
         if (p->GetWeathDamage(STORM) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), STORM)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), STORM)))),
                               STORM);
         }
         if (p->GetWeathDamage(SNOW) != 0) {
@@ -1367,7 +1367,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
         SendJSWeather(p, SNOW, temp);
         if (p->GetWeathDamage(SNOW) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), SNOW)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), SNOW)))),
                               SNOW);
         }
         if (p->GetWeathDamage(STORM) != 0) {
@@ -1381,7 +1381,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
         SendJSWeather(p, RAIN, temp);
         if (p->GetWeathDamage(RAIN) == 0) {
             p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                  static_cast<R32>(Races->Secs(p->GetRace(), RAIN)))),
+                                                                        static_cast<R32>(Races->Secs(p->GetRace(), RAIN)))),
                               RAIN);
         }
         if (p->GetWeathDamage(SNOW) != 0) {
@@ -1403,19 +1403,19 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
             p->SetWeathDamage(0, RAIN);
         }
     }
-
+    
     if ((Races->Affect(p->GetRace(), HEAT)) && p->GetWeathDamage(HEAT) == 0) {
         p->SetWeathDamage(
-            static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), HEAT)))),
-            HEAT);
+                          static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), HEAT)))),
+                          HEAT);
     }
-
+    
     if ((Races->Affect(p->GetRace(), COLD)) && p->GetWeathDamage(COLD) == 0) {
         p->SetWeathDamage(
-            static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), COLD)))),
-            COLD);
+                          static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), COLD)))),
+                          COLD);
     }
-
+    
     return true;
 }
 
@@ -1427,19 +1427,19 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
 bool cWeatherAb::DoItemStuff(CItem *mItem) {
     if (!ValidateObject(mItem))
         return true;
-
+    
     weathid_t currval = mItem->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty()) {
         SendJSWeather(mItem, LIGHT, 0);
         return true;
     }
-
+    
     bool isStorm = StormActive(currval);
     // bool brewStorm = StormBrewing( currval );
     bool isSnowing = SnowActive(currval);
     bool isRaining = RainActive(currval);
     std::int8_t temp = static_cast<std::int8_t>(Temp(currval));
-
+    
     if (isStorm) {
         SendJSWeather(mItem, STORM, temp);
     }
@@ -1452,7 +1452,7 @@ bool cWeatherAb::DoItemStuff(CItem *mItem) {
     else {
         SendJSWeather(mItem, LIGHT, temp);
     }
-
+    
     return true;
 }
 
@@ -1471,7 +1471,7 @@ void cWeatherAb::SendJSWeather(CBaseObject *mObj, weathertype_t weathType, std::
             toExecute->OnTempChange(mObj, currentTemp);
         }
     }
-
+    
     // Check global script as well
     cScript *toExecuteGlobal = JSMapping->GetScript(static_cast<std::uint16_t>(0));
     if (toExecuteGlobal != nullptr) {
@@ -1497,44 +1497,44 @@ void cWeatherAb::DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t
     //	Byte 1 - 0x65 (Weather)
     //	Byte 2 - Weather Type(  0, rain, 1, fierce storm, 2, snow, 3 a storm is brewing, and 0xFF
     // none ) 	Byte 3 - Particle count (upper limit of 70) 	Byte 4 - Temperature
-
+    
     if (s == nullptr)
         return;
-
+    
     CPWeather dry(0xFF, 0x00, currentTemp);
     CPWeather rain(0x00, static_cast<std::uint8_t>(RainIntensity(currval)), currentTemp);
     CPWeather storm(0x01, static_cast<std::uint8_t>(StormIntensity(currval)), currentTemp);
     CPWeather snow(0x02, static_cast<std::uint8_t>(SnowIntensity(currval)), currentTemp);
     CPWeather strmbrw(0x03, static_cast<std::uint8_t>((StormIntensity(currval) / 2)), currentTemp);
-
+    
     CChar *mChar = s->CurrcharObj();
     s->Send(&dry);
-
+    
     switch (weathType) {
-    case 0:
-        break;
-    case 1:
-        s->Send(&rain);
-        break;
-    case 2:
-        Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
-        s->Send(&snow);
-        break;
-    case 3:
-        s->Send(&rain);
-        Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
-        s->Send(&snow);
-        break;
-    case 4:
-        Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
-        s->Send(&strmbrw);
-        break;
-    case 5:
-        Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
-        s->Send(&storm);
-        break;
-    default:
-        break;
+        case 0:
+            break;
+        case 1:
+            s->Send(&rain);
+            break;
+        case 2:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&snow);
+            break;
+        case 3:
+            s->Send(&rain);
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&snow);
+            break;
+        case 4:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&strmbrw);
+            break;
+        case 5:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&storm);
+            break;
+        default:
+            break;
     }
 }
 
@@ -1580,11 +1580,11 @@ CWeather *cWeatherAb::Weather(weathid_t toCheck) {
 // o------------------------------------------------------------------------------------------------o
 bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
     bool didDamage = false;
-
+    
     if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), LIGHT) ||
         mChar.InBuilding())
         return false;
-
+    
     if (mChar.GetWeathDamage(LIGHT) != 0 &&
         mChar.GetWeathDamage(LIGHT) <= cwmWorldState->GetUICurrentTime()) {
         R32 damageModifier = 0;
@@ -1596,12 +1596,12 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
         R32 lightMax = 255;
         std::int32_t message = 0;
         bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
-
+        
         weathid_t weatherSys = mChar.GetRegion()->GetWeather();
         if (!weather.empty() && weatherSys < weather.size()) {
             lightMin = LightMin(weatherSys);
             lightMax = LightMax(weatherSys);
-
+            
             if (lightMin < 300 && lightMax < 300) {
                 currentLight = CurrentLight(weatherSys);
             }
@@ -1616,11 +1616,11 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
             lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
             lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
         }
-
+        
         if (mChar.InDungeon()) {
             R32 dungeonLight = 255;
             dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
-
+            
             if (lightLevel > dungeonLight) {
                 if (lightLevel > 0) {
                     damageModifier = (dungeonLight / lightLevel);
@@ -1628,9 +1628,9 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 else {
                     damageModifier = 0;
                 }
-
+                
                 damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
-
+                
                 if (RoundNumber(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
@@ -1655,9 +1655,9 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 else {
                     damageModifier = 0;
                 }
-
+                
                 damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
-
+                
                 if (RoundNumber(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
@@ -1674,22 +1674,22 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 }
             }
         }
-
+        
         damage = Combat->ApplyDefenseModifiers(LIGHT, nullptr, &mChar, 0, 0, damage, true);
-
+        
         if (damage > 0) {
             if (mChar.Damage(damage, LIGHT)) {
                 Effects->PlayStaticAnimation((&mChar), 0x3709, 0x09, 0x19);
                 Effects->PlaySound((&mChar), 0x0208);
                 didDamage = true;
-
+                
                 if (message != 0 && mSock != nullptr) {
                     mSock->SysMessage(message);
                 }
             }
         }
         mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                 static_cast<R32>(Races->Secs(mChar.GetRace(), LIGHT)))),
+                                                                       static_cast<R32>(Races->Secs(mChar.GetRace(), LIGHT)))),
                              LIGHT);
     }
     return didDamage;
@@ -1702,14 +1702,14 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
 // o------------------------------------------------------------------------------------------------o
 bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t element) {
     weathertype_t resistElement = element;
-
+    
     if (element == NONE || element == LIGHT || element == WEATHNUM)
         return false;
-
+    
     if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), element) ||
         mChar.InBuilding())
         return false;
-
+    
     bool didDamage = false;
     weathid_t weatherSys = mChar.GetRegion()->GetWeather();
     if (!(weatherSys > weather.size() || weather.empty()) && mChar.GetWeathDamage(element) != 0 &&
@@ -1720,23 +1720,23 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
         // const R32 tempSnowMax	= SnowThreshold( weatherSys );
         const R32 tempEffMax = EffectiveMaxTemp(weatherSys);
         const R32 tempEffMin = EffectiveMinTemp(weatherSys);
-
+        
         R32 damageModifier = 0;
         std::int32_t damage = 0;
         R32 baseDamage = static_cast<R32>(Races->Damage(mChar.GetRace(), element));
         R32 heatLevel = static_cast<R32>(Races->HeatLevel(mChar.GetRace()));
         R32 coldLevel = static_cast<R32>(Races->ColdLevel(mChar.GetRace()));
-
+        
         std::int32_t damageMessage = 0;
         std::uint16_t damageAnim = 0x373A;
-
+        
         if (element == RAIN) {
             damageModifier = static_cast<R32>(RainIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
             damageMessage = 1219;
             resistElement = NONE;
         }
-
+        
         if (element == SNOW) {
             damageModifier = static_cast<R32>(SnowIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
@@ -1744,13 +1744,13 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
             // Snow is also cold damage when it comes to resistance values
             resistElement = COLD;
         }
-
+        
         if (element == STORM) {
             damageModifier = static_cast<R32>(StormIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
             damageMessage = 1775;
             resistElement = NONE;
-
+            
             if (Races->Affect(mChar.GetRace(), LIGHTNING)) {
                 if (static_cast<std::uint8_t>(RandomNum(1, 100)) <=
                     Races->Secs(mChar.GetRace(), LIGHTNING)) {
@@ -1762,7 +1762,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
                 }
             }
         }
-
+        
         if (element == COLD && tempCurrent <= coldLevel) {
             if ((coldLevel - tempEffMin) != 0) {
                 damageModifier = ((tempCurrent - tempEffMin) / (coldLevel - tempEffMin));
@@ -1770,11 +1770,11 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
             else {
                 damageModifier = 0;
             }
-
+            
             damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
             damageMessage = 1776; // The freezing cold hurts you!
         }
-
+        
         if (element == HEAT && tempCurrent >= heatLevel) {
             if ((tempEffMax - heatLevel) != 0) {
                 damageModifier = ((tempCurrent - heatLevel) / (tempEffMax - heatLevel));
@@ -1782,14 +1782,14 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
             else {
                 damageModifier = 0;
             }
-
+            
             damage = static_cast<std::int32_t>(RoundNumber(baseDamage * damageModifier));
             damageMessage = 1221; // The sheer heat sucks at your body, draining it of moisture!
             damageAnim = 0x3709;
         }
-
+        
         damage = Combat->ApplyDefenseModifiers(resistElement, nullptr, &mChar, 0, 0, damage, true);
-
+        
         if (damage > 0) {
             if (mChar.Damage(damage, element)) {
                 mChar.SetStamina(mChar.GetStamina() - 2);
@@ -1804,7 +1804,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, weathertype_t ele
             }
         }
         mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(
-                                 static_cast<R32>(Races->Secs(mChar.GetRace(), element)))),
+                                                                       static_cast<R32>(Races->Secs(mChar.GetRace(), element)))),
                              element);
     }
     return didDamage;

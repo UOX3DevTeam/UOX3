@@ -372,7 +372,7 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"YOUNGPLAYERSYSTEM"s, 344},
     {"YOUNGLOCATION"s, 345},
     {"SECRETSHARDKEY"s, 346}
-
+    
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
 constexpr auto SKILLTOTALCAP = 7000;
@@ -608,22 +608,22 @@ auto CServerData::LookupINIValue(const std::string &tag) -> std::int32_t {
 auto CServerData::ResetDefaults() -> void {
     resettingDefaults = true;
     serverList.resize(1); // Set the initial count to hold one server.
-
+    
     ServerIP("127.0.0.1");
     ServerPort(2593);
     ExternalIP("127.0.0.1");
     serverList[0].SetPort(2593);
     ServerName("My UOX3 Shard");
     SecretShardKey("None");
-
+    
     // Set default gcMaxBytes limit in MB per JS runtime
     // If set too low, UOX3 might crash when reloading (full) JS engine
     // JS API references describe it as "Maximum nominal heap before last ditch GC"
     SetJSEngineSize(256);
-
+    
     // Send server-originating messages in Unicode format, if possible
     UseUnicodeMessages(true);
-
+    
     ServerLanguage(DL_DEFAULT);
     SystemTimer(tSERVER_POTION, 10);
     ServerMoon(0, 0);
@@ -632,34 +632,34 @@ auto CServerData::ResetDefaults() -> void {
     WorldLightCurrentLevel(0);
     WorldLightBrightLevel(0);
     WorldLightDarkLevel(12);
-
+    
     ServerNetRcvTimeout(3);
     ServerNetSndTimeout(3);
     ServerNetRetryCount(3);
     MaxClientBytesIn(25000);
     MaxClientBytesOut(100000);
     NetTrafficTimeban(30);
-
+    
     // Adaptive Performance System
     APSPerfThreshold(50); // Default to 50 simulation cycles as performance threshold
     APSInterval(100);     // Default to APS checking performance at 250 ms intervals
     APSDelayStep(50); // Default to 25 ms as the value at which APS gradually increments the delay
-                      // to NPC AI/movement checking
+    // to NPC AI/movement checking
     APSDelayMaxCap(2000); // Default to 1500 ms as max cap on delay APS can introduce to NPC
-                          // AI/movement checking
-
+    // AI/movement checking
+    
     ServerSecondsPerUOMinute(5);
     ServerTimeDay(0);
     ServerTimeHours(0);
     ServerTimeMinutes(0);
     ServerTimeSeconds(0);
     ServerTimeAMPM(0);
-
+    
     InternalAccountStatus(true);
     YoungPlayerSystem(true);
     CombatMaxRange(10);
     CombatMaxSpellRange(10);
-
+    
     // load defaults values
     SystemTimer(tSERVER_SHOPSPAWN, 300);
     SystemTimer(tSERVER_POISON, 180);
@@ -671,7 +671,7 @@ auto CServerData::ResetDefaults() -> void {
     StatsAffectSkillChecks(false);
     CorpseLootDecay(true);
     ServerSavesTimer(600);
-
+    
     // Enable login-support only for latest available client by default
     ClientSupport4000(false);
     ClientSupport5000(false);
@@ -685,16 +685,16 @@ auto CServerData::ResetDefaults() -> void {
     ClientSupport70331(false);
     ClientSupport704565(false);
     ClientSupport70610(true);
-
+    
     SystemTimer(tSERVER_INVISIBILITY, 60);
     SystemTimer(tSERVER_HUNGERRATE, 6000);
     HungerDamage(2);
     HungerSystemEnabled(true);
-
+    
     SystemTimer(tSERVER_THIRSTRATE, 6000);
     ThirstDrain(2);
     ThirstSystemEnabled(false);
-
+    
     ServerSkillDelay(5);
     SystemTimer(tSERVER_OBJECTUSAGE, 1);
     SystemTimer(tSERVER_HITPOINTREGEN, 8);
@@ -722,7 +722,7 @@ auto CServerData::ResetDefaults() -> void {
     FreeshardServerPoll(true);
     ServerContextMenus(true);
     SysMsgColour(0x0048);
-
+    
     CombatMonstersVsAnimals(true);
     CombatAnimalsAttackChance(2);
     CombatAnimalsGuarded(false);
@@ -757,15 +757,15 @@ auto CServerData::ResetDefaults() -> void {
     HirelingCombatTraining(true);
     NpcCombatTraining(false);
     WeaponDamageBonusType(2);
-
+    
     CheckPetControlDifficulty(true);
     SetPetLoyaltyGainOnSuccess(1);
     SetPetLoyaltyLossOnFailure(3);
     SystemTimer(tSERVER_LOYALTYRATE, 900);
     ItemsInterruptCasting(true);
-
+    
     auto curWorkingDir = std::filesystem::current_path().string();
-
+    
     auto wDir = oldstrutil::fixDirectory(curWorkingDir);
     std::string tDir;
     Directory(CSDDP_ROOT, wDir);
@@ -794,7 +794,7 @@ auto CServerData::ResetDefaults() -> void {
     Directory(CSDDP_DICTIONARIES, tDir);
     tDir = wDir + std::string("logs/");
     Directory(CSDDP_LOGS, tDir);
-
+    
     // Expansion settings
     ExpansionCoreShardEra(ER_LBR); // Default to LBR expansion
     ExpansionArmorCalculation(ER_CORE);
@@ -808,7 +808,7 @@ auto CServerData::ResetDefaults() -> void {
     ExpansionWeaponParry(ER_CORE);
     ExpansionWrestlingParry(ER_CORE);
     ExpansionCombatHitChance(ER_CORE);
-
+    
     BuyThreshold(2000);
     GuardStatus(true);
     ServerAnnounceSaves(true);
@@ -858,13 +858,13 @@ auto CServerData::ResetDefaults() -> void {
     ShowGuildInfoInTooltip(true);
     EnableNPCGuildDiscounts(true);
     EnableNPCGuildPremiums(true);
-
+    
     CheckBoatSpeed(0.65);
     CheckNpcAISpeed(1);
     CutScrollRequirementStatus(true);
     PlayerPersecutionStatus(false);
     HtmlStatsStatus(-1);
-
+    
     MsgBoardPostingLevel(0);
     MsgBoardPostRemovalLevel(0);
     // No replacement I can see
@@ -883,7 +883,7 @@ auto CServerData::ResetDefaults() -> void {
     SystemTimer(tSERVER_ESCORTDONE, 600);
     AmbientFootsteps(false);
     ServerCommandPrefix('\'');
-
+    
     CheckSpawnRegionSpeed(30);
     CheckItemsSpeed(1.5);
     NPCWalkingSpeed(0.6);
@@ -893,7 +893,7 @@ auto CServerData::ResetDefaults() -> void {
     NPCMountedRunningSpeed(0.12);
     NPCMountedFleeingSpeed(0.2);
     AccountFlushTimer(5.0);
-
+    
     // RESOURCES
     ResourceAreaSize(8);
     ResLogs(3);
@@ -902,7 +902,7 @@ auto CServerData::ResetDefaults() -> void {
     ResOreTime(600);
     ResFish(10);
     ResFishTime(600);
-
+    
     // REPSYS
     SystemTimer(tSERVER_CRIMINAL, 120);
     RepMaxKills(4);
@@ -911,17 +911,17 @@ auto CServerData::ResetDefaults() -> void {
     SystemTimer(tSERVER_PERMAGREYFLAG, 0); // No duration by default
     SystemTimer(tSERVER_STEALINGFLAG, 120);
     SystemTimer(tSERVER_COMBATIGNORE, 20); // Not in ini
-
+    
     // RepSys ---^
     TrackingBaseRange(10);
     TrackingMaxTargets(20);
     TrackingBaseTimer(30);
     TrackingRedisplayTime(30);
-
+    
     SystemTimer(tSERVER_FISHINGBASE, 10);
     SystemTimer(tSERVER_FISHINGRANDOM, 5);
     SystemTimer(tSERVER_SPIRITSPEAK, 30);
-
+    
     TitleColour(0);
     LeftTextColour(0);
     RightTextColour(0);
@@ -929,7 +929,7 @@ auto CServerData::ResetDefaults() -> void {
     ButtonLeft(4014);
     ButtonRight(4005);
     BackgroundPic(5054);
-
+    
     // Houses
     ItemDecayInHouses(true);
     ProtectPrivateHouses(true);
@@ -945,20 +945,20 @@ auto CServerData::ResetDefaults() -> void {
     KeylessCoOwnerAccess(true);
     KeylessFriendAccess(true);
     KeylessGuestAccess(false);
-
+    
     // Bulk Order Deeds
     OfferBODsFromItemSales(true);
     OfferBODsFromContextMenu(false);
     BODsFromCraftedItemsOnly(false);
     BODGoldRewardMultiplier(1.0);
     BODFameRewardMultiplier(1.0);
-
+    
     // Towns
     TownNumSecsPollOpen(3600); // one hour
     TownNumSecsAsMayor(36000); // 10 hours as mayor
     TownTaxPeriod(1800);       // taxed every 30 minutes
     TownGuardPayment(3600);    // guards paid every hour
-
+    
     SetClientFeature(CF_BIT_CHAT, true);
     SetClientFeature(CF_BIT_UOR, true);
     SetClientFeature(CF_BIT_TD, true);
@@ -968,22 +968,22 @@ auto CServerData::ResetDefaults() -> void {
     SetClientFeature(CF_BIT_SE, true);
     SetClientFeature(CF_BIT_ML, true);
     SetClientFeature(CF_BIT_EXPANSION, true);
-
+    
     SetServerFeature(SF_BIT_CONTEXTMENUS, true);
     SetServerFeature(SF_BIT_AOS, true);
     SetServerFeature(SF_BIT_SIXCHARS, true);
     SetServerFeature(SF_BIT_SE, true);
     SetServerFeature(SF_BIT_ML, true);
-
+    
     // Disable spawn regions for all facets by default
     SetSpawnRegionsFacetStatus(0);
-
+    
     // Set no assistant features as disabled by default
     SetDisabledAssistantFeature(AF_ALL, false);
-
+    
     ExtendedStartingStats(true);
     ExtendedStartingSkills(true);
-
+    
     ServerRandomStartingLocation(false);
     ServerStartGold(1000);
     ServerStartPrivs(0);
@@ -1318,82 +1318,82 @@ auto CServerData::Directory(csddirectorypaths_t dp) -> std::string {
 }
 auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
     bool create_dir = false;
-
+    
     if (dp != CSDDP_COUNT) {
         std::string verboseDirectory;
         switch (dp) {
-        case CSDDP_ROOT:
-            verboseDirectory = "Root directory";
-            break;
-        case CSDDP_DATA:
-            verboseDirectory = "Data directory";
-            break;
-        case CSDDP_DEFS:
-            verboseDirectory = "DFNs directory";
-            break;
-        case CSDDP_ACCESS:
-            verboseDirectory = "Access directory";
-            break;
-        case CSDDP_ACCOUNTS:
-            verboseDirectory = "Accounts directory";
-            break;
-        case CSDDP_SCRIPTS:
-            verboseDirectory = "Scripts directory";
-            break;
-        case CSDDP_SCRIPTDATA:
-            verboseDirectory = "ScriptData directory";
-            create_dir = true;
-            break;
-        case CSDDP_BACKUP:
-            verboseDirectory = "Backup directory";
-            break;
-        case CSDDP_MSGBOARD:
-            verboseDirectory = "Messageboard directory";
-            break;
-        case CSDDP_SHARED:
-            verboseDirectory = "Shared directory";
-            create_dir = true;
-            break;
-        case CSDDP_HTML:
-            verboseDirectory = "HTML directory";
-            break;
-        case CSDDP_LOGS:
-            verboseDirectory = "Logs directory";
-            break;
-        case CSDDP_DICTIONARIES:
-            verboseDirectory = "Dictionary directory";
-            break;
-        case CSDDP_BOOKS:
-            verboseDirectory = "Books directory";
-            break;
-        case CSDDP_COUNT:
-        default:
-            verboseDirectory = "Unknown directory";
-            break;
+            case CSDDP_ROOT:
+                verboseDirectory = "Root directory";
+                break;
+            case CSDDP_DATA:
+                verboseDirectory = "Data directory";
+                break;
+            case CSDDP_DEFS:
+                verboseDirectory = "DFNs directory";
+                break;
+            case CSDDP_ACCESS:
+                verboseDirectory = "Access directory";
+                break;
+            case CSDDP_ACCOUNTS:
+                verboseDirectory = "Accounts directory";
+                break;
+            case CSDDP_SCRIPTS:
+                verboseDirectory = "Scripts directory";
+                break;
+            case CSDDP_SCRIPTDATA:
+                verboseDirectory = "ScriptData directory";
+                create_dir = true;
+                break;
+            case CSDDP_BACKUP:
+                verboseDirectory = "Backup directory";
+                break;
+            case CSDDP_MSGBOARD:
+                verboseDirectory = "Messageboard directory";
+                break;
+            case CSDDP_SHARED:
+                verboseDirectory = "Shared directory";
+                create_dir = true;
+                break;
+            case CSDDP_HTML:
+                verboseDirectory = "HTML directory";
+                break;
+            case CSDDP_LOGS:
+                verboseDirectory = "Logs directory";
+                break;
+            case CSDDP_DICTIONARIES:
+                verboseDirectory = "Dictionary directory";
+                break;
+            case CSDDP_BOOKS:
+                verboseDirectory = "Books directory";
+                break;
+            case CSDDP_COUNT:
+            default:
+                verboseDirectory = "Unknown directory";
+                break;
         };
         // First, let's normalize the path name and fix common errors
         // remove all trailing and leading spaces...
         auto sText = util::trim(value);
-
+        
         if (sText.empty()) {
             Console::shared().Error(
-                util::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str()));
+                                    util::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str()));
             Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
         }
         else {
             // Make sure we're terminated with a directory separator
             // Just incase it's not set in the .ini
             // and convert the windows backward slashes to forward slashes
-
+            
             sText = oldstrutil::fixDirectory(sText);
-
+            
             bool error = false;
             if (!resettingDefaults) {
                 error = true;
                 // auto curWorkingDir = fixDirectory( std::filesystem::current_path().string() );
-
+                
                 auto npath = std::filesystem::path(sText);
-
+                
                 if (std::filesystem::exists(npath)) {
                     error = false;
                 }
@@ -1403,10 +1403,10 @@ auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
                     error = false;
                 }
             }
-
+            
             if (error) {
                 Console::shared().Error(
-                    util::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()));
+                                        util::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()));
                 Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
             }
             else {
@@ -2105,7 +2105,7 @@ auto CServerData::CutScrollRequirementStatus(bool newVal) -> void {
 //|	Purpose		-	Gets/Sets whether pet control difficulty is enabled or not
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::CheckPetControlDifficulty() const -> bool {
-
+    
     return boolVals.test(BIT_CHECKPETCONTROLDIFFICULTY);
 }
 auto CServerData::CheckPetControlDifficulty(bool newVal) -> void {
@@ -3887,10 +3887,10 @@ auto CServerData::EraEnumToString(expansionruleset_t eraEnum, bool coreEnum) -> 
             eraName = eraNames.at(eraEnum);
         } catch (const std::out_of_range &e) {
             Console::shared().Error(
-                util::format("Unknown era enum detected, exception thrown: %s", e.what()));
+                                    util::format("Unknown era enum detected, exception thrown: %s", e.what()));
         }
     }
-
+    
     return eraName;
 }
 
@@ -3900,28 +3900,28 @@ auto CServerData::EraEnumToString(expansionruleset_t eraEnum, bool coreEnum) -> 
 //|	Purpose		-	Pass an era string in, get an era enum back
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::EraStringToEnum(const std::string &eraString, bool useDefault, bool inheritCore)
-    -> expansionruleset_t {
+-> expansionruleset_t {
     auto rValue = ER_CORE;
     if (useDefault) {
         rValue = ER_LBR; // Default era if specified era is not found
     }
-
+    
     auto searchEra = util::lower(eraString);
     if (inheritCore && searchEra == "core") {
         // Inherit setting from CORESHARDERA setting
         return static_cast<expansionruleset_t>(ExpansionCoreShardEra());
     }
-
+    
     // Look for string with era name in eras map
     auto iter = std::find_if(eraNames.begin(), eraNames.end(),
                              [&searchEra](const std::pair<expansionruleset_t, std::string> &value) {
-                                 return searchEra == std::get<1>(value);
-                             });
-
+        return searchEra == std::get<1>(value);
+    });
+    
     if (iter != eraNames.end()) {
         rValue = iter->first;
     }
-
+    
     return rValue;
 }
 
@@ -3972,8 +3972,8 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
     if (ofsOutput.is_open()) {
         ofsOutput << "// UOX Initialization File. V";
         ofsOutput << (static_cast<std::uint16_t>(1) << 8 | static_cast<std::uint16_t>(2)) << '\n'
-                  << "//================================" << '\n'
-                  << '\n';
+        << "//================================" << '\n'
+        << '\n';
         ofsOutput << "[system]" << '\n' << "{" << '\n';
         ofsOutput << "SERVERNAME=" << ServerName() << '\n';
         ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
@@ -3993,7 +3993,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
         ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
         ofsOutput << "ACCOUNTISOLATION="
-                  << "1" << '\n';
+        << "1" << '\n';
         ofsOutput << "UOGENABLED=" << (ServerUOGEnabled() ? 1 : 0) << '\n';
         ofsOutput << "FREESHARDSERVERPOLL=" << (FreeshardServerPoll() ? 1 : 0) << '\n';
         ofsOutput << "RANDOMSTARTINGLOCATION=" << (ServerRandomStartingLocation() ? 1 : 0) << '\n';
@@ -4012,7 +4012,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "APSDELAYSTEP=" << static_cast<std::uint16_t>(APSDelayStep()) << '\n';
         ofsOutput << "APSDELAYMAXCAP=" << static_cast<std::uint16_t>(APSDelayMaxCap()) << '\n';
         ofsOutput << "}" << '\n' << '\n';
-
+        
         ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
         ofsOutput << "CLIENTSUPPORT4000=" << (ClientSupport4000() ? 1 : 0) << '\n';
         ofsOutput << "CLIENTSUPPORT5000=" << (ClientSupport5000() ? 1 : 0) << '\n';
@@ -4027,7 +4027,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "CLIENTSUPPORT704565=" << (ClientSupport704565() ? 1 : 0) << '\n';
         ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
         ofsOutput << "DIRECTORY=" << Directory(CSDDP_ROOT) << '\n';
         ofsOutput << "DATADIRECTORY=" << Directory(CSDDP_DATA) << '\n';
@@ -4044,7 +4044,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "LOGSDIRECTORY=" << Directory(CSDDP_LOGS) << '\n';
         ofsOutput << "DICTIONARYDIRECTORY=" << Directory(CSDDP_DICTIONARIES) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
         ofsOutput << "SKILLLEVEL=" << static_cast<std::uint16_t>(SkillLevel()) << '\n';
         ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
@@ -4059,7 +4059,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "SNOOPAWARENESS=" << (SnoopAwareness() ? 1 : 0) << '\n';
         ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
         ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer(tSERVER_CORPSEDECAY) << '\n';
         ofsOutput << "NPCCORPSEDECAYTIMER=" << SystemTimer(tSERVER_NPCCORPSEDECAY) << '\n';
@@ -4083,51 +4083,51 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "BLOODDECAYTIMER=" << SystemTimer(tSERVER_BLOODDECAY) << '\n';
         ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer(tSERVER_BLOODDECAYCORPSE) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput
-            << '\n'
-            << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol"
-            << '\n';
+        << '\n'
+        << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol"
+        << '\n';
         ofsOutput << '\n'
-                  << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
+        << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
         ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
         ofsOutput << "CORESHARDERA="
-                  << EraEnumToString(static_cast<expansionruleset_t>(ExpansionCoreShardEra()), true)
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(ExpansionCoreShardEra()), true)
+        << '\n';
         ofsOutput << "ARMORCALCULATION="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionArmorCalculation))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionArmorCalculation))
+        << '\n';
         ofsOutput << "STRENGTHDAMAGEBONUS="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionStrengthDamageBonus))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionStrengthDamageBonus))
+        << '\n';
         ofsOutput << "TACTICSDAMAGEBONUS="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionTacticsDamageBonus))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionTacticsDamageBonus))
+        << '\n';
         ofsOutput << "ANATOMYDAMAGEBONUS="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionAnatomyDamageBonus))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionAnatomyDamageBonus))
+        << '\n';
         ofsOutput << "LUMBERJACKDAMAGEBONUS="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionLumberjackDamageBonus))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionLumberjackDamageBonus))
+        << '\n';
         ofsOutput << "RACIALDAMAGEBONUS="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionRacialDamageBonus))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionRacialDamageBonus))
+        << '\n';
         ofsOutput << "DAMAGEBONUSCAP="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionDamageBonusCap))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionDamageBonusCap))
+        << '\n';
         ofsOutput << "SHIELDPARRY="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionShieldParry)) << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionShieldParry)) << '\n';
         ofsOutput << "WEAPONPARRY="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionWeaponParry)) << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionWeaponParry)) << '\n';
         ofsOutput << "WRESTLINGPARRY="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionWrestlingParry))
-                  << '\n';
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionWrestlingParry))
+        << '\n';
         ofsOutput << "COMBATHITCHANCE="
-                  << EraEnumToString(static_cast<expansionruleset_t>(expansionCombatHitChance))
-                  << '\n';
-
+        << EraEnumToString(static_cast<expansionruleset_t>(expansionCombatHitChance))
+        << '\n';
+        
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
         ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay() ? 1 : 0) << '\n';
         ofsOutput << "GUARDSACTIVE=" << (GuardsStatus() ? 1 : 0) << '\n';
@@ -4160,12 +4160,12 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime() ? 1 : 0) << '\n';
         ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly() ? 1 : 0) << '\n';
         ofsOutput << "SHOWREPUTATIONTITLEINTOOLTIP=" << (ShowReputationTitleInTooltip() ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "SHOWGUILDINFOINTOOLTIP=" << (ShowGuildInfoInTooltip() ? 1 : 0) << '\n';
         ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << (ShowNpcTitlesInTooltips() ? 1 : 0) << '\n';
         ofsOutput << "SHOWNPCTITLESOVERHEAD=" << (ShowNpcTitlesOverhead() ? 1 : 0) << '\n';
         ofsOutput << "SHOWINVULNERABLETAGOVERHEAD=" << (ShowInvulnerableTagOverhead() ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "SHOWRACEWITHNAME=" << (ShowRaceWithName() ? 1 : 0) << '\n';
         ofsOutput << "SHOWRACEINPAPERDOLL=" << (ShowRaceInPaperdoll() ? 1 : 0) << '\n';
         ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay() ? 1 : 0) << '\n';
@@ -4185,27 +4185,27 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
         ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
         ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<std::uint16_t>(MaxSafeTeleportsPerDay())
-                  << '\n';
+        << '\n';
         ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation() ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "ALLOWAWAKENPCS=" << (AllowAwakeNPCs() ? 1 : 0) << '\n';
         ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << (EnableNPCGuildDiscounts() ? 1 : 0) << '\n';
         ofsOutput << "ENABLENPCGUILDPREMIUMS=" << (EnableNPCGuildPremiums() ? 1 : 0) << '\n';
         ofsOutput << "YOUNGPLAYERSYSTEM=" << (YoungPlayerSystem() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
         ofsOutput << "MAXCONTROLSLOTS=" << static_cast<std::uint16_t>(MaxControlSlots()) << '\n';
         ofsOutput << "MAXFOLLOWERS=" << static_cast<std::uint16_t>(MaxFollowers()) << '\n';
         ofsOutput << "MAXPETOWNERS=" << static_cast<std::uint16_t>(MaxPetOwners()) << '\n';
         ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << (CheckPetControlDifficulty() ? 1 : 0) << '\n';
         ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<std::uint16_t>(GetPetLoyaltyGainOnSuccess())
-                  << '\n';
+        << '\n';
         ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<std::uint16_t>(GetPetLoyaltyLossOnFailure())
-                  << '\n';
+        << '\n';
         ofsOutput << "PETLOYALTYRATE=" << SystemTimer(tSERVER_LOYALTYRATE) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
         ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
         ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
@@ -4220,33 +4220,33 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
         ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
         ofsOutput << "POSTINGLEVEL=" << static_cast<std::uint16_t>(MsgBoardPostingLevel()) << '\n';
         ofsOutput << "REMOVALLEVEL=" << static_cast<std::uint16_t>(MsgBoardPostRemovalLevel()) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
         ofsOutput << "ESCORTENABLED=" << (EscortsEnabled() ? 1 : 0) << '\n';
         ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer(tSERVER_ESCORTWAIT) << '\n';
         ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer(tSERVER_ESCORTACTIVE) << '\n';
         ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer(tSERVER_ESCORTDONE) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
         ofsOutput << "DUNGEONLEVEL=" << static_cast<std::uint16_t>(DungeonLightLevel()) << '\n';
         ofsOutput << "BRIGHTLEVEL=" << static_cast<std::uint16_t>(WorldLightBrightLevel()) << '\n';
         ofsOutput << "DARKLEVEL=" << static_cast<std::uint16_t>(WorldLightDarkLevel()) << '\n';
         ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
         ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
         ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
         ofsOutput << "MAXTARGETS=" << static_cast<std::uint16_t>(TrackingMaxTargets()) << '\n';
         ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
         ofsOutput << "MURDERDECAYTIMER=" << SystemTimer(tSERVER_MURDERDECAY) << '\n';
         ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
@@ -4255,7 +4255,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "PERMAGREYFLAGTIMER=" << SystemTimer(tSERVER_PERMAGREYFLAG) << '\n';
         ofsOutput << "STEALINGFLAGTIMER=" << SystemTimer(tSERVER_STEALINGFLAG) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
         ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
         ofsOutput << "MINECHECK=" << static_cast<std::uint16_t>(MineCheck()) << '\n';
@@ -4266,7 +4266,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
         ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
         ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled() ? 1 : 0) << '\n';
         ofsOutput << "HUNGERRATE=" << SystemTimer(tSERVER_HUNGERRATE) << '\n';
@@ -4274,14 +4274,14 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline() ? 1 : 0) << '\n';
         ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
         ofsOutput << "THIRSTENABLED=" << (ThirstSystemEnabled() ? 1 : 0) << '\n';
         ofsOutput << "THIRSTRATE=" << SystemTimer(tSERVER_THIRSTRATE) << '\n';
         ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
         ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
         ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
         ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
@@ -4289,7 +4289,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers() ? 1 : 0) << '\n';
         ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals() ? 1 : 0) << '\n';
         ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<std::uint16_t>(CombatAnimalsAttackChance())
-                  << '\n';
+        << '\n';
         ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded() ? 1 : 0) << '\n';
         ofsOutput << "NPCDAMAGERATE=" << CombatNpcDamageRate() << '\n';
         ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
@@ -4311,7 +4311,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "ARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus() ? 1 : 0) << '\n';
         ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled() ? 1 : 0) << '\n';
         ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<std::uint16_t>(AlchemyDamageBonusModifier())
-                  << '\n';
+        << '\n';
         ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<std::uint16_t>(CombatBloodEffectChance()) << '\n';
         ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting() ? 1 : 0) << '\n';
         ofsOutput << "PETCOMBATTRAINING=" << (PetCombatTraining() ? 1 : 0) << '\n';
@@ -4320,47 +4320,47 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "SHOWITEMRESISTSTATS=" << (ShowItemResistStats() ? 1 : 0) << '\n';
         ofsOutput << "SHOWWEAPONDAMAGETYPES=" << (ShowWeaponDamageTypes() ? 1 : 0) << '\n';
         ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<std::uint16_t>(WeaponDamageBonusType()) << '\n';
-
+        
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
         ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << (TravelSpellsFromBoatKeys() ? 1 : 0) << '\n';
         ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << (TravelSpellsWhileOverweight() ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "MARKRUNESINMULTIS=" << (MarkRunesInMultis() ? 1 : 0) << '\n';
         ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << (TravelSpellsBetweenWorlds() ? 1 : 0) << '\n';
         ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << (TravelSpellsWhileAggressor() ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
         ofsOutput << "CASTSPELLSWHILEMOVING=" << (CastSpellsWhileMoving() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
         for (size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr) {
             ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << ","
-                      << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << ","
-                      << startlocations[lCtr].y << "," << startlocations[lCtr].z << ","
-                      << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceId
-                      << "," << startlocations[lCtr].clilocDesc << '\n';
+            << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << ","
+            << startlocations[lCtr].y << "," << startlocations[lCtr].z << ","
+            << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceId
+            << "," << startlocations[lCtr].clilocDesc << '\n';
         }
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[young start locations]" << '\n' << "{" << '\n';
         for (size_t lCtr = 0; lCtr < youngStartlocations.size(); ++lCtr) {
             ofsOutput << "YOUNGLOCATION=" << youngStartlocations[lCtr].newTown << ","
-                      << youngStartlocations[lCtr].newDescription << ","
-                      << youngStartlocations[lCtr].x << "," << youngStartlocations[lCtr].y << ","
-                      << youngStartlocations[lCtr].z << "," << youngStartlocations[lCtr].worldNum
-                      << "," << youngStartlocations[lCtr].instanceId << ","
-                      << youngStartlocations[lCtr].clilocDesc << '\n';
+            << youngStartlocations[lCtr].newDescription << ","
+            << youngStartlocations[lCtr].x << "," << youngStartlocations[lCtr].y << ","
+            << youngStartlocations[lCtr].z << "," << youngStartlocations[lCtr].worldNum
+            << "," << youngStartlocations[lCtr].instanceId << ","
+            << youngStartlocations[lCtr].clilocDesc << '\n';
         }
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
         ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
         ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
         ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
         ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
@@ -4370,7 +4370,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
         ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[houses]" << '\n' << "{" << '\n';
         ofsOutput << "TRACKHOUSESPERACCOUNT=" << (TrackHousesPerAccount() ? 1 : 0) << '\n';
         ofsOutput << "CANOWNANDCOOWNHOUSES=" << (CanOwnAndCoOwnHouses() ? 1 : 0) << '\n';
@@ -4387,7 +4387,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "KEYLESSFRIENDACCESS=" << (KeylessFriendAccess() ? 1 : 0) << '\n';
         ofsOutput << "KEYLESSGUESTACCESS=" << (KeylessGuestAccess() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
         ofsOutput << "OFFERBODSFROMITEMSALES=" << (OfferBODsFromItemSales() ? 1 : 0) << '\n';
         ofsOutput << "OFFERBODSFROMCONTEXTMENU=" << (OfferBODsFromContextMenu() ? 1 : 0) << '\n';
@@ -4395,75 +4395,75 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "BODGOLDREWARDMULTIPLIER=" << BODGoldRewardMultiplier() << '\n';
         ofsOutput << "BODFAMEREWARDMULTIPLIER=" << BODFameRewardMultiplier() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
         ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
         ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
         ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
         ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
         ofsOutput << "AF_FILTERWEATHER=" << (GetDisabledAssistantFeature(AF_FILTERWEATHER) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_FILTERLIGHT=" << (GetDisabledAssistantFeature(AF_FILTERLIGHT) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_SMARTTARGET=" << (GetDisabledAssistantFeature(AF_SMARTTARGET) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_RANGEDTARGET=" << (GetDisabledAssistantFeature(AF_RANGEDTARGET) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_AUTOOPENDOORS=" << (GetDisabledAssistantFeature(AF_AUTOOPENDOORS) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_DEQUIPONCAST=" << (GetDisabledAssistantFeature(AF_DEQUIPONCAST) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_AUTOPOTIONEQUIP="
-                  << (GetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP) ? 1 : 0) << '\n';
         ofsOutput << "AF_POISONEDCHECKS="
-                  << (GetDisabledAssistantFeature(AF_POISONEDCHECKS) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_POISONEDCHECKS) ? 1 : 0) << '\n';
         ofsOutput << "AF_LOOPEDMACROS=" << (GetDisabledAssistantFeature(AF_LOOPEDMACROS) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_USEONCEAGENT=" << (GetDisabledAssistantFeature(AF_USEONCEAGENT) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_RESTOCKAGENT=" << (GetDisabledAssistantFeature(AF_RESTOCKAGENT) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_SELLAGENT=" << (GetDisabledAssistantFeature(AF_SELLAGENT) ? 1 : 0) << '\n';
         ofsOutput << "AF_BUYAGENT=" << (GetDisabledAssistantFeature(AF_BUYAGENT) ? 1 : 0) << '\n';
         ofsOutput << "AF_POTIONHOTKEYS=" << (GetDisabledAssistantFeature(AF_POTIONHOTKEYS) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_RANDOMTARGETS=" << (GetDisabledAssistantFeature(AF_RANDOMTARGETS) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_CLOSESTTARGETS="
-                  << (GetDisabledAssistantFeature(AF_CLOSESTTARGETS) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_CLOSESTTARGETS) ? 1 : 0) << '\n';
         ofsOutput << "AF_OVERHEADHEALTH="
-                  << (GetDisabledAssistantFeature(AF_OVERHEADHEALTH) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_OVERHEADHEALTH) ? 1 : 0) << '\n';
         ofsOutput << "AF_AUTOLOOTAGENT=" << (GetDisabledAssistantFeature(AF_AUTOLOOTAGENT) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_BONECUTTERAGENT="
-                  << (GetDisabledAssistantFeature(AF_BONECUTTERAGENT) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_BONECUTTERAGENT) ? 1 : 0) << '\n';
         ofsOutput << "AF_JSCRIPTMACROS=" << (GetDisabledAssistantFeature(AF_JSCRIPTMACROS) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_AUTOREMOUNT=" << (GetDisabledAssistantFeature(AF_AUTOREMOUNT) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_AUTOBANDAGE=" << (GetDisabledAssistantFeature(AF_AUTOBANDAGE) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_ENEMYTARGETSHARE="
-                  << (GetDisabledAssistantFeature(AF_ENEMYTARGETSHARE) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_ENEMYTARGETSHARE) ? 1 : 0) << '\n';
         ofsOutput << "AF_FILTERSEASON=" << (GetDisabledAssistantFeature(AF_FILTERSEASON) ? 1 : 0)
-                  << '\n';
+        << '\n';
         ofsOutput << "AF_SPELLTARGETSHARE="
-                  << (GetDisabledAssistantFeature(AF_SPELLTARGETSHARE) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_SPELLTARGETSHARE) ? 1 : 0) << '\n';
         ofsOutput << "AF_HUMANOIDHEALTHCHECKS="
-                  << (GetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS) ? 1 : 0) << '\n';
         ofsOutput << "AF_SPEECHJOURNALCHECKS="
-                  << (GetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS) ? 1 : 0) << '\n';
+        << (GetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS) ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-
+        
         ofsOutput.close();
         rValue = true;
     }
     else {
         Console::shared().Error(
-            util::format("Unable to open file %s for writing", filename.c_str()));
+                                util::format("Unable to open file %s for writing", filename.c_str()));
     }
     return rValue;
 }
@@ -4568,41 +4568,41 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
                 auto line = util::trim(util::strip(std::string(input_buffer), "//"));
                 if (!line.empty()) {
                     switch (static_cast<int>(state)) {
-                    case static_cast<int>(search_t::header): {
-                        if (line[0] == '[') {
-                            auto contents = retrieveContents(line);
-                            if (contents.has_value()) {
-                                state = search_t::startsection;
-                            }
-                        }
-                    }
-                        [[fallthrough]];
-                    case static_cast<int>(search_t::startsection): {
-                        if (line[0] == '{') {
-                            state = search_t::endsection;
-                        }
-                    }
-                        [[fallthrough]];
-                    case static_cast<int>(search_t::endsection): {
-                        if (line[0] != '}') {
-                            auto [key, value] = util::split(line, "=");
-                            try {
-                                if (HandleLine(key, value)) {
-                                    rValue = true;
+                        case static_cast<int>(search_t::header): {
+                            if (line[0] == '[') {
+                                auto contents = retrieveContents(line);
+                                if (contents.has_value()) {
+                                    state = search_t::startsection;
                                 }
-                            } catch (const std::exception &e) {
-                                Console::shared().Error("Error parsing ini file");
-                                Console::shared().Error(
-                                    util::format("Entry was: %s = %s", key.c_str(), value.c_str()));
-                                Console::shared().Error(
-                                    util::format("Exception was: %s", e.what()));
-                                exit(1);
                             }
                         }
-                        else {
-                            state = search_t::header;
+                            [[fallthrough]];
+                        case static_cast<int>(search_t::startsection): {
+                            if (line[0] == '{') {
+                                state = search_t::endsection;
+                            }
                         }
-                    }
+                            [[fallthrough]];
+                        case static_cast<int>(search_t::endsection): {
+                            if (line[0] != '}') {
+                                auto [key, value] = util::split(line, "=");
+                                try {
+                                    if (HandleLine(key, value)) {
+                                        rValue = true;
+                                    }
+                                } catch (const std::exception &e) {
+                                    Console::shared().Error("Error parsing ini file");
+                                    Console::shared().Error(
+                                                            util::format("Entry was: %s = %s", key.c_str(), value.c_str()));
+                                    Console::shared().Error(
+                                                            util::format("Exception was: %s", e.what()));
+                                    exit(1);
+                                }
+                            }
+                            else {
+                                state = search_t::header;
+                            }
+                        }
                     }
                 }
             }
@@ -4612,12 +4612,12 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
     /*
      bool rValue = false;
      if( !filename.empty() ) {
-
- Console::shared() << "Processing INI Settings  ";
-
+     
+     Console::shared() << "Processing INI Settings  ";
+     
      Script toParse( filename, NUM_DEFS, false );
      // Lock this file tight, No access at anytime when open(should only be open and closed anyhow.
- For Thread blocking) if( !toParse.IsErrored() ) {
+     For Thread blocking) if( !toParse.IsErrored() ) {
      //serverList.clear();
      startlocations.clear();
      for (auto &[id,section] : toParse.collection() ){
@@ -4626,18 +4626,18 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
      auto tag = sec->tag;
      auto data = util::simplify( sec->data );
      if( !HandleLine( tag, data )) {
- Console::shared().Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
+     Console::shared().Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
      }
      }
      }
      }
- Console::shared().PrintDone();
+     Console::shared().PrintDone();
      rValue = true;
      }
      else
      {
- Console::shared().Warning( util::format( "%s File not found, Using default settings.",
- filename.c_str() )); cwmWorldState->ServerData()->save();
+     Console::shared().Warning( util::format( "%s File not found, Using default settings.",
+     filename.c_str() )); cwmWorldState->ServerData()->save();
      }
      }
      return rValue;
@@ -4651,1071 +4651,1071 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
     if (titer == uox3IniCaseValue.end()) {
         return false;
     }
-
+    
     switch (titer->second) {
-    case 1: // SERVERNAME
-        ServerName(value);
-        break;
-    case 2: // CONSOLELOG
-        ServerConsoleLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 3: // COMMANDPREFIX
-        ServerCommandPrefix(
-            (value.data()[0])); // return the first character of the return string only
-        break;
-    case 4: // ANNOUNCEWORLDSAVES
-        ServerAnnounceSaves((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
-        break;
-    case 26: // JOINPARTMSGS
-        ServerJoinPartAnnouncements(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
-        break;
-    case 5: // BACKUPSENABLED
-        ServerBackups((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
-        break;
-    case 6: // SAVESTIMER
-        ServerSavesTimer(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 7: // SKILLCAP
-        ServerSkillTotalCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 8: // SKILLDELAY
-        ServerSkillDelay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 9: // STATCAP
-        ServerStatCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 10: // MAXSTEALTHMOVEMENTS
-        MaxStealthMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 11: // MAXSTAMINAMOVEMENTS
-        MaxStaminaMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 12: // ARMORAFFECTMANAREGEN
-        ArmorAffectManaRegen((static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
-        break;
-    case 13: // CORPSEDECAYTIMER
-        SystemTimer(tSERVER_CORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 14: // WEATHERTIMER
-        SystemTimer(tSERVER_WEATHER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 15: // SHOPSPAWNTIMER
-        SystemTimer(tSERVER_SHOPSPAWN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 16: // DECAYTIMER
-        SystemTimer(tSERVER_DECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 17: // INVISIBILITYTIMER
-        SystemTimer(tSERVER_INVISIBILITY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 18: // OBJECTUSETIMER
-        SystemTimer(tSERVER_OBJECTUSAGE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 19: // GATETIMER
-        SystemTimer(tSERVER_GATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 20: // POISONTIMER
-        SystemTimer(tSERVER_POISON, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 21: // LOGINTIMEOUT
-        SystemTimer(tSERVER_LOGINTIMEOUT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 22: // HITPOINTREGENTIMER
-        SystemTimer(tSERVER_HITPOINTREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 23: // STAMINAREGENTIMER
-        SystemTimer(tSERVER_STAMINAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 24: // BASEFISHINGTIMER
-        SystemTimer(tSERVER_FISHINGBASE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 34: // MAXPETOWNERS
-        MaxPetOwners(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 35: // MAXFOLLOWERS
-        MaxFollowers(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 36: // MAXCONTROLSLOTS
-        MaxControlSlots(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 37: // MANAREGENTIMER
-        SystemTimer(tSERVER_MANAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 38: // RANDOMFISHINGTIMER
-        SystemTimer(tSERVER_FISHINGRANDOM, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 39: // SPIRITSPEAKTIMER
-        SystemTimer(tSERVER_SPIRITSPEAK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 40: // DIRECTORY
-    {
-        Directory(CSDDP_ROOT, value);
-        break;
-    }
-    case 41: // DATADIRECTORY
-    {
-        Directory(CSDDP_DATA, value);
-        break;
-    }
-    case 42: // DEFSDIRECTORY
-    {
-        Directory(CSDDP_DEFS, value);
-        break;
-    }
-    case 43: // ACTSDIRECTORY
-    {
-        Directory(CSDDP_ACCOUNTS, value);
-        break;
-    }
-    case 25: // SCRIPTSDIRECTORY
-    {
-        Directory(CSDDP_SCRIPTS, value);
-        break;
-    }
-    case 44: // BACKUPDIRECTORY
-    {
-        Directory(CSDDP_BACKUP, value);
-        break;
-    }
-    case 45: // MSGBOARDDIRECTORY
-    {
-        Directory(CSDDP_MSGBOARD, value);
-        break;
-    }
-    case 46: // SHAREDDIRECTORY
-    {
-        Directory(CSDDP_SHARED, value);
-        break;
-    }
-    case 47: // LOOTDECAYSWITHCORPSE
-        CorpseLootDecay(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 49: // GUARDSACTIVE
-        GuardStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 27: // DEATHANIMATION
-        DeathAnimationStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 50: // AMBIENTSOUNDS
-        WorldAmbientSounds(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 51: // AMBIENTFOOTSTEPS
-        AmbientFootsteps(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 52: // INTERNALACCOUNTCREATION
-        InternalAccountStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 53: // SHOWOFFLINEPCS
-        ShowOfflinePCs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 54: // ROGUESENABLED
-        RogueStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 55: // PLAYERPERSECUTION
-        PlayerPersecutionStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 56: // ACCOUNTFLUSH
-        AccountFlushTimer(std::stod(value));
-        break;
-    case 57: // HTMLSTATUSENABLED
-        HtmlStatsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 58: // SELLBYNAME
-        SellByNameStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 59: // SELLMAXITEMS
-        SellMaxItemsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 60: // TRADESYSTEM
-        TradeSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 61: // RANKSYSTEM
-        RankSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 62: // CUTSCROLLREQUIREMENTS
-        CutScrollRequirementStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 63: // CHECKITEMS
-        CheckItemsSpeed(std::stod(value));
-        break;
-    case 64: // CHECKBOATS
-        CheckBoatSpeed(std::stod(value));
-        break;
-    case 65: // CHECKNPCAI
-        CheckNpcAISpeed(std::stod(value));
-        break;
-    case 66: // CHECKSPAWNREGIONS
-        CheckSpawnRegionSpeed(std::stod(value));
-        break;
-    case 67: // POSTINGLEVEL
-        MsgBoardPostingLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 68: // REMOVALLEVEL
-        MsgBoardPostRemovalLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 69: // ESCORTENABLED
-        EscortsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 70: // ESCORTINITEXPIRE
-        SystemTimer(tSERVER_ESCORTWAIT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 71: // ESCORTACTIVEEXPIRE
-        SystemTimer(tSERVER_ESCORTACTIVE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 72: // MOON1
-        ServerMoon(0, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 73: // MOON2
-        ServerMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 74: // DUNGEONLEVEL
-        DungeonLightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 75: // CURRENTLEVEL
-        WorldLightCurrentLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 76: // BRIGHTLEVEL
-        WorldLightBrightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 77: // BASERANGE
-        TrackingBaseRange(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 78: // BASETIMER
-        TrackingBaseTimer(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 79: // MAXTARGETS
-        TrackingMaxTargets(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 80: // MSGREDISPLAYTIME
-        TrackingRedisplayTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 81: // MURDERDECAYTIMER
-        SystemTimer(tSERVER_MURDERDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 82: // MAXKILLS
-        RepMaxKills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 83: // CRIMINALTIMER
-        SystemTimer(tSERVER_CRIMINAL, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 84: // MINECHECK
-        MineCheck(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 85: // OREPERAREA
-        ResOre(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 86: // ORERESPAWNTIMER
-        ResOreTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 87: // RESOURCEAREASIZE
-        ResourceAreaSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 88: // LOGSPERAREA
-        ResLogs(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 89: // LOGSRESPAWNTIMER
-        ResLogTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 90: // STATSAFFECTSKILLCHECKS
-        StatsAffectSkillChecks(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 91: // HUNGERRATE
-        SystemTimer(tSERVER_HUNGERRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 92: // HUNGERDMGVAL
-        HungerDamage(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 93: // MAXRANGE
-        CombatMaxRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 94: // SPELLMAXRANGE
-        CombatMaxSpellRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 95: // DISPLAYHITMSG
-        CombatDisplayHitMessage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 96: // MONSTERSVSANIMALS
-        CombatMonstersVsAnimals(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 97: // ANIMALATTACKCHANCE
-        CombatAnimalsAttackChance(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 98: // ANIMALSGUARDED
-        CombatAnimalsGuarded(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 99: // NPCDAMAGERATE
-        CombatNpcDamageRate(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 100: // NPCBASEFLEEAT
-        CombatNPCBaseFleeAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 101: // NPCBASEREATTACKAT
-        CombatNPCBaseReattackAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 102: // ATTACKSTAMINA
-        CombatAttackStamina(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 103: // LOCATION
-        ServerLocation(value);
-        break;
-    case 104: // STARTGOLD
-        ServerStartGold(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 105: // STARTPRIVS
-        ServerStartPrivs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 106: // ESCORTDONEEXPIRE
-        SystemTimer(tSERVER_ESCORTDONE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 107: // DARKLEVEL
-        WorldLightDarkLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 108: // TITLECOLOUR
-        TitleColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 109: // LEFTTEXTCOLOUR
-        LeftTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 110: // RIGHTTEXTCOLOUR
-        RightTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 111: // BUTTONCANCEL
-        ButtonCancel(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 112: // BUTTONLEFT
-        ButtonLeft(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 113: // BUTTONRIGHT
-        ButtonRight(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 114: // BACKGROUNDPIC
-        BackgroundPic(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 115: // POLLTIME
-        TownNumSecsPollOpen(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 116: // MAYORTIME
-        TownNumSecsAsMayor(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 117: // TAXPERIOD
-        TownTaxPeriod(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 118: // GUARDSPAID
-        TownGuardPayment(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 119: // DAY
-        ServerTimeDay(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 120: // HOURS
-        ServerTimeHours(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 121: // MINUTES
-        ServerTimeMinutes(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 122: // SECONDS
-        ServerTimeSeconds(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 123: // AMPM
-        ServerTimeAMPM(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 124: // SKILLLEVEL
-        SkillLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 125: // SNOOPISCRIME
-        SnoopIsCrime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 126: // BOOKSDIRECTORY
-        Directory(CSDDP_BOOKS, value);
-        break;
-    case 127: // SERVERLIST
-        break;
-    case 128: // PORT
-        ServerPort(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 129: // ACCESSDIRECTORY
-        Directory(CSDDP_ACCESS, value);
-        break;
-    case 130: // LOGSDIRECTORY
-        Directory(CSDDP_LOGS, value);
-        break;
-    case 131: // ACCOUNTISOLATION
-        break;
-    case 132: // HTMLDIRECTORY
-        Directory(CSDDP_HTML, value);
-        break;
-    case 133: // SHOOTONANIMALBACK
-        ShootOnAnimalBack(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 134: // NPCTRAININGENABLED
-        NPCTrainingStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 135: // DICTIONARYDIRECTORY
-        Directory(CSDDP_DICTIONARIES, value);
-        break;
-    case 136: // BACKUPSAVERATIO
-        BackupRatio(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 137: // HIDEWHILEMOUNTED
-        CharHideWhileMounted(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 138: // SECONDSPERUOMINUTE
-        ServerSecondsPerUOMinute(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 139: // WEIGHTPERSTR
-        // WeightPerStr( value.toUByte() );
-        WeightPerStr(std::stof(value));
-        break;
-    case 140: // POLYDURATION
-        SystemTimer(tSERVER_POLYMORPH, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 141: // UOGENABLED
-        ServerUOGEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 142: // NETRCVTIMEOUT
-        ServerNetRcvTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 143: // NETSNDTIMEOUT
-        ServerNetSndTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 144: // NETRETRYCOUNT
-        ServerNetRetryCount(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 145: // CLIENTFEATURES
-        SetClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 146: // PACKETOVERLOADS
-        ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 147: // NPCMOVEMENTSPEED
-        NPCWalkingSpeed(std::stof(value));
-        break;
-    case 148: // PETHUNGEROFFLINE
-        PetHungerOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 149: // PETOFFLINETIMEOUT
-        PetOfflineTimeout(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 150: // PETOFFLINECHECKTIMER
-        SystemTimer(tSERVER_PETOFFLINECHECK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 152: // ADVANCEDPATHFINDING
-        AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 153: // SERVERFEATURES
-        SetServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 154: // LOOTINGISCRIME
-        LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 155: // NPCRUNNINGSPEED
-        NPCRunningSpeed(std::stof(value));
-        break;
-    case 156: // NPCFLEEINGSPEED
-        NPCFleeingSpeed(std::stof(value));
-        break;
-    case 157: // BASICTOOLTIPSONLY
-        BasicTooltipsOnly((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 158: // GLOBALITEMDECAY
-        GlobalItemDecay((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 159: // SCRIPTITEMSDECAYABLE
-        ScriptItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 160: // BASEITEMSDECAYABLE
-        BaseItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 161: // ITEMDECAYINHOUSES
-        ItemDecayInHouses((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 162: // SPAWNREGIONSFACETS
-        SetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 163: // PAPERDOLLGUILDBUTTON
-        PaperdollGuildButton(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 164: // ATTACKSPEEDFROMSTAMINA
-        CombatAttackSpeedFromStamina(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 169: // DISPLAYDAMAGENUMBERS
-        CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 170: // CLIENTSUPPORT4000
-        ClientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 171: // CLIENTSUPPORT5000
-        ClientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 172: // CLIENTSUPPORT6000
-        ClientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 173: // CLIENTSUPPORT6050
-        ClientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 174: // CLIENTSUPPORT7000
-        ClientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 175: // CLIENTSUPPORT7090
-        ClientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 176: // CLIENTSUPPORT70160
-        ClientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 177: // CLIENTSUPPORT70240
-        ClientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 178: // CLIENTSUPPORT70300
-        ClientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 179: // CLIENTSUPPORT70331
-        ClientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 180: // CLIENTSUPPORT704565
-        ClientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 181: // CLIENTSUPPORT70610
-        ClientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 182: // EXTENDEDSTARTINGSTATS
-        ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 183: // EXTENDEDSTARTINGSKILLS
-        ExtendedStartingSkills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 184: // WEAPONDAMAGECHANCE
-        CombatWeaponDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 185: // ARMORDAMAGECHANCE
-        CombatArmorDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 186: // WEAPONDAMAGEMIN
-        CombatWeaponDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 187: // WEAPONDAMAGEMAX
-        CombatWeaponDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 188: // ARMORDAMAGEMIN
-        CombatArmorDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 189: // ARMORDAMAGEMAX
-        CombatArmorDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 190: // GLOBALATTACKSPEED
-        GlobalAttackSpeed(std::stof(value));
-        break;
-    case 191: // NPCSPELLCASTSPEED
-        NPCSpellCastSpeed(std::stof(value));
-        break;
-    case 192: // FISHINGSTAMINALOSS
-        FishingStaminaLoss(std::stof(value));
-        break;
-    case 193: // RANDOMSTARTINGLOCATION
-        ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 194: // ASSISTANTNEGOTIATION
-        SetAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 195: // KICKONASSISTANTSILENCE
-        KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 196: // AF_FILTERWEATHER
-        SetDisabledAssistantFeature(AF_FILTERWEATHER,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 197: // AF_FILTERLIGHT
-        SetDisabledAssistantFeature(AF_FILTERLIGHT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 198: // AF_SMARTTARGET
-        SetDisabledAssistantFeature(AF_SMARTTARGET,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 199: // AF_RANGEDTARGET
-        SetDisabledAssistantFeature(AF_RANGEDTARGET,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 200: // AF_AUTOOPENDOORS
-        SetDisabledAssistantFeature(AF_AUTOOPENDOORS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 201: // AF_DEQUIPONCAST
-        SetDisabledAssistantFeature(AF_DEQUIPONCAST,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 202: // AF_AUTOPOTIONEQUIP
-        SetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 203: // AF_POISONEDCHECKS
-        SetDisabledAssistantFeature(AF_POISONEDCHECKS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 204: // AF_LOOPEDMACROS
-        SetDisabledAssistantFeature(AF_LOOPEDMACROS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 205: // AF_USEONCEAGENT
-        SetDisabledAssistantFeature(AF_USEONCEAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 206: // AF_RESTOCKAGENT
-        SetDisabledAssistantFeature(AF_RESTOCKAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 207: // AF_SELLAGENT
-        SetDisabledAssistantFeature(AF_SELLAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 208: // AF_BUYAGENT
-        SetDisabledAssistantFeature(AF_BUYAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 209: // AF_POTIONHOTKEYS
-        SetDisabledAssistantFeature(AF_POTIONHOTKEYS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 210: // AF_RANDOMTARGETS
-        SetDisabledAssistantFeature(AF_RANDOMTARGETS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 211: // AF_CLOSESTTARGETS
-        SetDisabledAssistantFeature(AF_CLOSESTTARGETS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 212: // AF_OVERHEADHEALTH
-        SetDisabledAssistantFeature(AF_OVERHEADHEALTH,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 213: // AF_AUTOLOOTAGENT
-        SetDisabledAssistantFeature(AF_AUTOLOOTAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 214: // AF_BONECUTTERAGENT
-        SetDisabledAssistantFeature(AF_BONECUTTERAGENT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 215: // AF_JSCRIPTMACROS
-        SetDisabledAssistantFeature(AF_JSCRIPTMACROS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 216: // AF_AUTOREMOUNT
-        SetDisabledAssistantFeature(AF_AUTOREMOUNT,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 218: // CLASSICUOMAPTRACKER
-        SetClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 219: // DECAYTIMERINHOUSE
-        SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 220: // PROTECTPRIVATEHOUSES
-        ProtectPrivateHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 221: // TRACKHOUSESPERACCOUNT
-        TrackHousesPerAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 222: // MAXHOUSESOWNABLE
-        MaxHousesOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 223: // MAXHOUSESCOOWNABLE
-        MaxHousesCoOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 224: // CANOWNANDCOOWNHOUSES
-        CanOwnAndCoOwnHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 225: // COOWNHOUSESONSAMEACCOUNT
-        CoOwnHousesOnSameAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 226: // ITEMSDETECTSPEECH
-        ItemsDetectSpeech(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 227: // MAXPLAYERPACKITEMS
-        MaxPlayerPackItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 228: // MAXPLAYERBANKITEMS
-        MaxPlayerBankItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 229: // FORCENEWANIMATIONPACKET
-        ForceNewAnimationPacket(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 230: // MAPDIFFSENABLED
-        MapDiffsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 231: // CORESHARDERA
-        ExpansionCoreShardEra(EraStringToEnum(util::trim(value)));
-        break;
-    case 232: // ARMORCALCULATION
-        ExpansionArmorCalculation(EraStringToEnum(util::trim(value)));
-        break;
-    case 233: // STRENGTHDAMAGEBONUS
-        ExpansionStrengthDamageBonus(EraStringToEnum(util::trim(value)));
-        break;
-    case 234: // TACTICSDAMAGEBONUS
-        ExpansionTacticsDamageBonus(EraStringToEnum(util::trim(value)));
-        break;
-    case 235: // ANATOMYDAMAGEBONUS
-        ExpansionAnatomyDamageBonus(EraStringToEnum(util::trim(value)));
-        break;
-    case 236: // LUMBERJACKDAMAGEBONUS
-        ExpansionLumberjackDamageBonus(EraStringToEnum(util::trim(value)));
-        break;
-    case 237: // RACIALDAMAGEBONUS
-        ExpansionRacialDamageBonus(EraStringToEnum(util::trim(value)));
-        break;
-    case 238: // DAMAGEBONUSCAP
-        ExpansionDamageBonusCap(EraStringToEnum(util::trim(value)));
-        break;
-    case 239: // SHIELDPARRY
-        ExpansionShieldParry(EraStringToEnum(util::trim(value)));
-        break;
-    case 240: // PARRYDAMAGECHANCE
-        CombatParryDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 241: // PARRYDAMAGEMIN
-        CombatParryDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 242: // PARRYDAMAGEMAX
-        CombatParryDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 243: // ARMORCLASSDAMAGEBONUS
-        CombatArmorClassDamageBonus(static_cast<std::int8_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 244: // FREESHARDSERVERPOLL
-        FreeshardServerPoll((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 245: // ALCHEMYBONUSENABLED
-        AlchemyDamageBonusEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 246: // ALCHEMYBONUSMODIFIER
-        AlchemyDamageBonusModifier(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 247: // NPCFLAGUPDATETIMER
-        SystemTimer(tSERVER_NPCFLAGUPDATETIMER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 248: // JSENGINESIZE
-        SetJSEngineSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 249: // USEUNICODEMESSAGES
-        UseUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-        break;
-    case 250: // SCRIPTDATADIRECTORY
-    {
-        Directory(CSDDP_SCRIPTDATA, value);
-        break;
-    }
-    case 251: // THIRSTRATE
-        SystemTimer(tSERVER_THIRSTRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 252: // THIRSTDRAINVAL
-        ThirstDrain(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 253: // PETTHIRSTOFFLINE
-        PetThirstOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 254: // ExternalIP
-        ExternalIP(value);
-        break;
-    case 255: // BLOODDECAYTIMER
-        SystemTimer(tSERVER_BLOODDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 256: // BLOODDECAYCORPSETIMER
-        SystemTimer(tSERVER_BLOODDECAYCORPSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 257: // BLOODEFFECTCHANCE
-        CombatBloodEffectChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 258: // NPCCORPSEDECAYTIMER
-        SystemTimer(tSERVER_NPCCORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 259: // HUNGERENABLED
-        HungerSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 260: // THIRSTENABLED
-        ThirstSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 261: // TRAVELSPELLSFROMBOATKEYS
-        TravelSpellsFromBoatKeys((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 262: // TRAVELSPELLSWHILEOVERWEIGHT
-        TravelSpellsWhileOverweight((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 263: // MARKRUNESINMULTIS
-        MarkRunesInMultis((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 264: // TRAVELSPELLSBETWEENWORLD
-        TravelSpellsBetweenWorlds((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 265: // TRAVELSPELLSWHILEAGGRESSOR
-        TravelSpellsWhileAggressor((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 266: // BUYBANKTHRESHOLD
-        BuyThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 267: // NETWORKLOG
-        ServerNetworkLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 268: // SPEECHLOG
-        ServerSpeechLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 269: // NPCMOUNTEDWALKINGSPEED
-        NPCMountedWalkingSpeed(std::stof(value));
-        break;
-    case 270: // NPCMOUNTEDRUNNINGSPEED
-        NPCMountedRunningSpeed(std::stof(value));
-        break;
-    case 271: // NPCMOUNTEDFLEEINGSPEED
-        NPCMountedFleeingSpeed(std::stof(value));
-        break;
-    case 272: // CONTEXTMENUS
-        ServerContextMenus((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 273: // SERVERLANGUAGE
-        ServerLanguage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 274: // CHECKPETCONTROLDIFFICULTY
-        CheckPetControlDifficulty(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 275: // PETLOYALTYGAINONSUCCESS
-        SetPetLoyaltyGainOnSuccess(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 276: // PETLOYALTYLOSSONFAILURE
-        SetPetLoyaltyLossOnFailure(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 277: // LOYALTYRATE
-        SystemTimer(tSERVER_LOYALTYRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 278: // SHOWNPCTITLESINTOOLTIPS
-        ShowNpcTitlesInTooltips(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 279: // FISHPERAREA
-        ResFish(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 280: // FISHRESPAWNTIMER
-        ResFishTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 281: // ARCHERYHITBONUS
-        CombatArcheryHitBonus(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 282: // ITEMSINTERRUPTCASTING
-        ItemsInterruptCasting((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 283: // SYSMESSAGECOLOUR
-        SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 284: // AF_AUTOBANDAGE
-        SetDisabledAssistantFeature(AF_AUTOBANDAGE,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 285: // AF_ENEMYTARGETSHARE
-        SetDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 286: // AF_FILTERSEASON
-        SetDisabledAssistantFeature(AF_FILTERSEASON,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 287: // AF_SPELLTARGETSHARE
-        SetDisabledAssistantFeature(AF_SPELLTARGETSHARE,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 288: // AF_HUMANOIDHEALTHCHECKS
-        SetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 289: // AF_SPEECHJOURNALCHECKS
-        SetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
-                                    static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-        break;
-    case 290: // ARCHERYSHOOTDELAY
-        CombatArcheryShootDelay(std::stof(value));
-        break;
-    case 291: // MAXCLIENTBYTESIN
-        MaxClientBytesIn(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 292: // MAXCLIENTBYTESOUT
-        MaxClientBytesOut(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 293: // NETTRAFFICTIMEBAN
-        NetTrafficTimeban(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 294: // TOOLUSELIMIT
-        ToolUseLimit((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 295: // TOOLUSEBREAK
-        ToolUseBreak((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 296: // ITEMREPAIRDURABILITYLOSS
-        ItemRepairDurabilityLoss((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 297: // HIDESTATSFORUNKNOWNMAGICITEMS
-        HideStatsForUnknownMagicItems((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 298: // CRAFTCOLOUREDWEAPONS
-        CraftColouredWeapons((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 299: // MAXSAFETELEPORTSPERDAY
-        MaxSafeTeleportsPerDay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 300: // TELEPORTONEARESTSAFELOCATION
-        TeleportToNearestSafeLocation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 301: // ALLOWAWAKENPCS
-        AllowAwakeNPCs((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-        break;
-    case 302: // DISPLAYMAKERSMARK
-        DisplayMakersMark(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 303: // SHOWNPCTITLESOVERHEAD
-        ShowNpcTitlesOverhead(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 304: // SHOWINVULNERABLETAGOVERHEAD
-        ShowInvulnerableTagOverhead(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 305: // PETCOMBATTRAINING
-        PetCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 306: // HIRELINGCOMBATTRAINING
-        HirelingCombatTraining(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 307: // NPCCOMBATTRAINING
-        NpcCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 308: // GLOBALRESTOCKMULTIPLIER
-        GlobalRestockMultiplier(std::stof(value));
-        break;
-    case 309: // SHOWITEMRESISTSTATS
-        ShowItemResistStats((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 310: // SHOWWEAPONDAMAGETYPES
-        ShowWeaponDamageTypes(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 311: // SHOWRACEWITHNAME
-        ShowRaceWithName((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 312: // SHOWRACEINPAPERDOLL
-        ShowRaceInPaperdoll((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 313: // WEAPONPARRY
-        ExpansionWeaponParry(EraStringToEnum(util::trim(value)));
-        break;
-    case 314: // WRESTLINGPARRY
-        ExpansionWrestlingParry(EraStringToEnum(util::trim(value)));
-        break;
-    case 315: // COMBATHITCHANCE
-        ExpansionCombatHitChance(EraStringToEnum(util::trim(value)));
-        break;
-    case 316: // CASTSPELLSWHILEMOVING
-        CastSpellsWhileMoving(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 317: // SHOWREPUTATIONTITLEINTOOLTIP
-        ShowReputationTitleInTooltip(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 318: // SHOWGUILDINFOINTOOLTIP
-        ShowGuildInfoInTooltip(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 319: // MAXPLAYERPACKWEIGHT
-        MaxPlayerPackWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 320: // MAXPLAYERBANKWEIGHT
-        MaxPlayerBankWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
-        break;
-    case 321: // SAFECOOWNERLOGOUT
-        SafeCoOwnerLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 322: // SAFEFRIENDLOGOUT
-        SafeFriendLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 323: // SAFEGUESTLOGOUT
-        SafeGuestLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 324: // KEYLESSOWNERACCESS
-        KeylessOwnerAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 325: // KEYLESSCOOWNERACCESS
-        KeylessCoOwnerAccess(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 326: // KEYLESSFRIENDACCESS
-        KeylessFriendAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 327: // KEYLESSGUESTACCESS
-        KeylessGuestAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 328: // WEAPONDAMAGEBONUSTYPE
-        WeaponDamageBonusType(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 329: // OFFERBODSFROMITEMSALES
-        OfferBODsFromItemSales(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 330: // OFFERBODSFROMCONTEXTMENU
-        OfferBODsFromContextMenu(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 331: // BODSFROMCRAFTEDITEMSONLY
-        BODsFromCraftedItemsOnly(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 332: // BODGOLDREWARDMULTIPLIER
-        BODGoldRewardMultiplier(std::stof(value));
-        break;
-    case 333: // BODFAMEREWARDMULTIPLIER
-        BODFameRewardMultiplier(std::stof(value));
-        break;
-    case 334: // ENABLENPCGUILDDISCOUNTS
-        EnableNPCGuildDiscounts(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 335: // ENABLENPCGUILDPREMIUMS
-        EnableNPCGuildPremiums(
-            (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-        break;
-    case 336: // AGGRESSORFLAGTIMER
-        SystemTimer(tSERVER_AGGRESSORFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 337: // PERMAGREYFLAGTIMER
-        SystemTimer(tSERVER_PERMAGREYFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 338: // STEALINGFLAGTIMER
-        SystemTimer(tSERVER_STEALINGFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 339: // SNOOPAWARENESS
-        SnoopAwareness(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 340: // APSPERFTHRESHOLD
-        APSPerfThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 341: // APSINTERVAL
-        APSInterval(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 342: // APSDELAYSTEP
-        APSDelayStep(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 343: // APSDELAYMAXCAP
-        APSDelayMaxCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-        break;
-    case 344: // YOUNGPLAYERSYSTEM
-        YoungPlayerSystem(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-        break;
-    case 345: // YOUNGLOCATION
-        YoungServerLocation(value);
-        break;
-    case 346: // SECRETSHARDKEY
-        SecretShardKey(value);
-        break;
-    default:
-        rValue = false;
-        break;
+        case 1: // SERVERNAME
+            ServerName(value);
+            break;
+        case 2: // CONSOLELOG
+            ServerConsoleLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 3: // COMMANDPREFIX
+            ServerCommandPrefix(
+                                (value.data()[0])); // return the first character of the return string only
+            break;
+        case 4: // ANNOUNCEWORLDSAVES
+            ServerAnnounceSaves((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
+            break;
+        case 26: // JOINPARTMSGS
+            ServerJoinPartAnnouncements(
+                                        (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
+            break;
+        case 5: // BACKUPSENABLED
+            ServerBackups((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
+            break;
+        case 6: // SAVESTIMER
+            ServerSavesTimer(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 7: // SKILLCAP
+            ServerSkillTotalCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 8: // SKILLDELAY
+            ServerSkillDelay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 9: // STATCAP
+            ServerStatCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 10: // MAXSTEALTHMOVEMENTS
+            MaxStealthMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 11: // MAXSTAMINAMOVEMENTS
+            MaxStaminaMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 12: // ARMORAFFECTMANAREGEN
+            ArmorAffectManaRegen((static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
+            break;
+        case 13: // CORPSEDECAYTIMER
+            SystemTimer(tSERVER_CORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 14: // WEATHERTIMER
+            SystemTimer(tSERVER_WEATHER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 15: // SHOPSPAWNTIMER
+            SystemTimer(tSERVER_SHOPSPAWN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 16: // DECAYTIMER
+            SystemTimer(tSERVER_DECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 17: // INVISIBILITYTIMER
+            SystemTimer(tSERVER_INVISIBILITY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 18: // OBJECTUSETIMER
+            SystemTimer(tSERVER_OBJECTUSAGE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 19: // GATETIMER
+            SystemTimer(tSERVER_GATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 20: // POISONTIMER
+            SystemTimer(tSERVER_POISON, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 21: // LOGINTIMEOUT
+            SystemTimer(tSERVER_LOGINTIMEOUT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 22: // HITPOINTREGENTIMER
+            SystemTimer(tSERVER_HITPOINTREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 23: // STAMINAREGENTIMER
+            SystemTimer(tSERVER_STAMINAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 24: // BASEFISHINGTIMER
+            SystemTimer(tSERVER_FISHINGBASE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 34: // MAXPETOWNERS
+            MaxPetOwners(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 35: // MAXFOLLOWERS
+            MaxFollowers(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 36: // MAXCONTROLSLOTS
+            MaxControlSlots(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 37: // MANAREGENTIMER
+            SystemTimer(tSERVER_MANAREGEN, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 38: // RANDOMFISHINGTIMER
+            SystemTimer(tSERVER_FISHINGRANDOM, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 39: // SPIRITSPEAKTIMER
+            SystemTimer(tSERVER_SPIRITSPEAK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 40: // DIRECTORY
+        {
+            Directory(CSDDP_ROOT, value);
+            break;
+        }
+        case 41: // DATADIRECTORY
+        {
+            Directory(CSDDP_DATA, value);
+            break;
+        }
+        case 42: // DEFSDIRECTORY
+        {
+            Directory(CSDDP_DEFS, value);
+            break;
+        }
+        case 43: // ACTSDIRECTORY
+        {
+            Directory(CSDDP_ACCOUNTS, value);
+            break;
+        }
+        case 25: // SCRIPTSDIRECTORY
+        {
+            Directory(CSDDP_SCRIPTS, value);
+            break;
+        }
+        case 44: // BACKUPDIRECTORY
+        {
+            Directory(CSDDP_BACKUP, value);
+            break;
+        }
+        case 45: // MSGBOARDDIRECTORY
+        {
+            Directory(CSDDP_MSGBOARD, value);
+            break;
+        }
+        case 46: // SHAREDDIRECTORY
+        {
+            Directory(CSDDP_SHARED, value);
+            break;
+        }
+        case 47: // LOOTDECAYSWITHCORPSE
+            CorpseLootDecay(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 49: // GUARDSACTIVE
+            GuardStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 27: // DEATHANIMATION
+            DeathAnimationStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 50: // AMBIENTSOUNDS
+            WorldAmbientSounds(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 51: // AMBIENTFOOTSTEPS
+            AmbientFootsteps(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 52: // INTERNALACCOUNTCREATION
+            InternalAccountStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 53: // SHOWOFFLINEPCS
+            ShowOfflinePCs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 54: // ROGUESENABLED
+            RogueStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 55: // PLAYERPERSECUTION
+            PlayerPersecutionStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 56: // ACCOUNTFLUSH
+            AccountFlushTimer(std::stod(value));
+            break;
+        case 57: // HTMLSTATUSENABLED
+            HtmlStatsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 58: // SELLBYNAME
+            SellByNameStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 59: // SELLMAXITEMS
+            SellMaxItemsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 60: // TRADESYSTEM
+            TradeSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 61: // RANKSYSTEM
+            RankSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 62: // CUTSCROLLREQUIREMENTS
+            CutScrollRequirementStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 63: // CHECKITEMS
+            CheckItemsSpeed(std::stod(value));
+            break;
+        case 64: // CHECKBOATS
+            CheckBoatSpeed(std::stod(value));
+            break;
+        case 65: // CHECKNPCAI
+            CheckNpcAISpeed(std::stod(value));
+            break;
+        case 66: // CHECKSPAWNREGIONS
+            CheckSpawnRegionSpeed(std::stod(value));
+            break;
+        case 67: // POSTINGLEVEL
+            MsgBoardPostingLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 68: // REMOVALLEVEL
+            MsgBoardPostRemovalLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 69: // ESCORTENABLED
+            EscortsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 70: // ESCORTINITEXPIRE
+            SystemTimer(tSERVER_ESCORTWAIT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 71: // ESCORTACTIVEEXPIRE
+            SystemTimer(tSERVER_ESCORTACTIVE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 72: // MOON1
+            ServerMoon(0, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 73: // MOON2
+            ServerMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 74: // DUNGEONLEVEL
+            DungeonLightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 75: // CURRENTLEVEL
+            WorldLightCurrentLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 76: // BRIGHTLEVEL
+            WorldLightBrightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 77: // BASERANGE
+            TrackingBaseRange(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 78: // BASETIMER
+            TrackingBaseTimer(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 79: // MAXTARGETS
+            TrackingMaxTargets(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 80: // MSGREDISPLAYTIME
+            TrackingRedisplayTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 81: // MURDERDECAYTIMER
+            SystemTimer(tSERVER_MURDERDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 82: // MAXKILLS
+            RepMaxKills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 83: // CRIMINALTIMER
+            SystemTimer(tSERVER_CRIMINAL, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 84: // MINECHECK
+            MineCheck(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 85: // OREPERAREA
+            ResOre(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 86: // ORERESPAWNTIMER
+            ResOreTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 87: // RESOURCEAREASIZE
+            ResourceAreaSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 88: // LOGSPERAREA
+            ResLogs(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 89: // LOGSRESPAWNTIMER
+            ResLogTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 90: // STATSAFFECTSKILLCHECKS
+            StatsAffectSkillChecks(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 91: // HUNGERRATE
+            SystemTimer(tSERVER_HUNGERRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 92: // HUNGERDMGVAL
+            HungerDamage(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 93: // MAXRANGE
+            CombatMaxRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 94: // SPELLMAXRANGE
+            CombatMaxSpellRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 95: // DISPLAYHITMSG
+            CombatDisplayHitMessage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 96: // MONSTERSVSANIMALS
+            CombatMonstersVsAnimals(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 97: // ANIMALATTACKCHANCE
+            CombatAnimalsAttackChance(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 98: // ANIMALSGUARDED
+            CombatAnimalsGuarded(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 99: // NPCDAMAGERATE
+            CombatNpcDamageRate(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 100: // NPCBASEFLEEAT
+            CombatNPCBaseFleeAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 101: // NPCBASEREATTACKAT
+            CombatNPCBaseReattackAt(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 102: // ATTACKSTAMINA
+            CombatAttackStamina(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 103: // LOCATION
+            ServerLocation(value);
+            break;
+        case 104: // STARTGOLD
+            ServerStartGold(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 105: // STARTPRIVS
+            ServerStartPrivs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 106: // ESCORTDONEEXPIRE
+            SystemTimer(tSERVER_ESCORTDONE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 107: // DARKLEVEL
+            WorldLightDarkLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 108: // TITLECOLOUR
+            TitleColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 109: // LEFTTEXTCOLOUR
+            LeftTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 110: // RIGHTTEXTCOLOUR
+            RightTextColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 111: // BUTTONCANCEL
+            ButtonCancel(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 112: // BUTTONLEFT
+            ButtonLeft(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 113: // BUTTONRIGHT
+            ButtonRight(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 114: // BACKGROUNDPIC
+            BackgroundPic(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 115: // POLLTIME
+            TownNumSecsPollOpen(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 116: // MAYORTIME
+            TownNumSecsAsMayor(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 117: // TAXPERIOD
+            TownTaxPeriod(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 118: // GUARDSPAID
+            TownGuardPayment(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 119: // DAY
+            ServerTimeDay(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 120: // HOURS
+            ServerTimeHours(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 121: // MINUTES
+            ServerTimeMinutes(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 122: // SECONDS
+            ServerTimeSeconds(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 123: // AMPM
+            ServerTimeAMPM(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 124: // SKILLLEVEL
+            SkillLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 125: // SNOOPISCRIME
+            SnoopIsCrime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 126: // BOOKSDIRECTORY
+            Directory(CSDDP_BOOKS, value);
+            break;
+        case 127: // SERVERLIST
+            break;
+        case 128: // PORT
+            ServerPort(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 129: // ACCESSDIRECTORY
+            Directory(CSDDP_ACCESS, value);
+            break;
+        case 130: // LOGSDIRECTORY
+            Directory(CSDDP_LOGS, value);
+            break;
+        case 131: // ACCOUNTISOLATION
+            break;
+        case 132: // HTMLDIRECTORY
+            Directory(CSDDP_HTML, value);
+            break;
+        case 133: // SHOOTONANIMALBACK
+            ShootOnAnimalBack(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 134: // NPCTRAININGENABLED
+            NPCTrainingStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 135: // DICTIONARYDIRECTORY
+            Directory(CSDDP_DICTIONARIES, value);
+            break;
+        case 136: // BACKUPSAVERATIO
+            BackupRatio(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 137: // HIDEWHILEMOUNTED
+            CharHideWhileMounted(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 138: // SECONDSPERUOMINUTE
+            ServerSecondsPerUOMinute(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 139: // WEIGHTPERSTR
+            // WeightPerStr( value.toUByte() );
+            WeightPerStr(std::stof(value));
+            break;
+        case 140: // POLYDURATION
+            SystemTimer(tSERVER_POLYMORPH, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 141: // UOGENABLED
+            ServerUOGEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 142: // NETRCVTIMEOUT
+            ServerNetRcvTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 143: // NETSNDTIMEOUT
+            ServerNetSndTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 144: // NETRETRYCOUNT
+            ServerNetRetryCount(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 145: // CLIENTFEATURES
+            SetClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 146: // PACKETOVERLOADS
+            ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 147: // NPCMOVEMENTSPEED
+            NPCWalkingSpeed(std::stof(value));
+            break;
+        case 148: // PETHUNGEROFFLINE
+            PetHungerOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 149: // PETOFFLINETIMEOUT
+            PetOfflineTimeout(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 150: // PETOFFLINECHECKTIMER
+            SystemTimer(tSERVER_PETOFFLINECHECK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 152: // ADVANCEDPATHFINDING
+            AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 153: // SERVERFEATURES
+            SetServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 154: // LOOTINGISCRIME
+            LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 155: // NPCRUNNINGSPEED
+            NPCRunningSpeed(std::stof(value));
+            break;
+        case 156: // NPCFLEEINGSPEED
+            NPCFleeingSpeed(std::stof(value));
+            break;
+        case 157: // BASICTOOLTIPSONLY
+            BasicTooltipsOnly((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 158: // GLOBALITEMDECAY
+            GlobalItemDecay((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 159: // SCRIPTITEMSDECAYABLE
+            ScriptItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 160: // BASEITEMSDECAYABLE
+            BaseItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 161: // ITEMDECAYINHOUSES
+            ItemDecayInHouses((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 162: // SPAWNREGIONSFACETS
+            SetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 163: // PAPERDOLLGUILDBUTTON
+            PaperdollGuildButton(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 164: // ATTACKSPEEDFROMSTAMINA
+            CombatAttackSpeedFromStamina(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 169: // DISPLAYDAMAGENUMBERS
+            CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 170: // CLIENTSUPPORT4000
+            ClientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 171: // CLIENTSUPPORT5000
+            ClientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 172: // CLIENTSUPPORT6000
+            ClientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 173: // CLIENTSUPPORT6050
+            ClientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 174: // CLIENTSUPPORT7000
+            ClientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 175: // CLIENTSUPPORT7090
+            ClientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 176: // CLIENTSUPPORT70160
+            ClientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 177: // CLIENTSUPPORT70240
+            ClientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 178: // CLIENTSUPPORT70300
+            ClientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 179: // CLIENTSUPPORT70331
+            ClientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 180: // CLIENTSUPPORT704565
+            ClientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 181: // CLIENTSUPPORT70610
+            ClientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 182: // EXTENDEDSTARTINGSTATS
+            ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 183: // EXTENDEDSTARTINGSKILLS
+            ExtendedStartingSkills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 184: // WEAPONDAMAGECHANCE
+            CombatWeaponDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 185: // ARMORDAMAGECHANCE
+            CombatArmorDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 186: // WEAPONDAMAGEMIN
+            CombatWeaponDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 187: // WEAPONDAMAGEMAX
+            CombatWeaponDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 188: // ARMORDAMAGEMIN
+            CombatArmorDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 189: // ARMORDAMAGEMAX
+            CombatArmorDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 190: // GLOBALATTACKSPEED
+            GlobalAttackSpeed(std::stof(value));
+            break;
+        case 191: // NPCSPELLCASTSPEED
+            NPCSpellCastSpeed(std::stof(value));
+            break;
+        case 192: // FISHINGSTAMINALOSS
+            FishingStaminaLoss(std::stof(value));
+            break;
+        case 193: // RANDOMSTARTINGLOCATION
+            ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 194: // ASSISTANTNEGOTIATION
+            SetAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 195: // KICKONASSISTANTSILENCE
+            KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 196: // AF_FILTERWEATHER
+            SetDisabledAssistantFeature(AF_FILTERWEATHER,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 197: // AF_FILTERLIGHT
+            SetDisabledAssistantFeature(AF_FILTERLIGHT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 198: // AF_SMARTTARGET
+            SetDisabledAssistantFeature(AF_SMARTTARGET,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 199: // AF_RANGEDTARGET
+            SetDisabledAssistantFeature(AF_RANGEDTARGET,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 200: // AF_AUTOOPENDOORS
+            SetDisabledAssistantFeature(AF_AUTOOPENDOORS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 201: // AF_DEQUIPONCAST
+            SetDisabledAssistantFeature(AF_DEQUIPONCAST,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 202: // AF_AUTOPOTIONEQUIP
+            SetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 203: // AF_POISONEDCHECKS
+            SetDisabledAssistantFeature(AF_POISONEDCHECKS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 204: // AF_LOOPEDMACROS
+            SetDisabledAssistantFeature(AF_LOOPEDMACROS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 205: // AF_USEONCEAGENT
+            SetDisabledAssistantFeature(AF_USEONCEAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 206: // AF_RESTOCKAGENT
+            SetDisabledAssistantFeature(AF_RESTOCKAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 207: // AF_SELLAGENT
+            SetDisabledAssistantFeature(AF_SELLAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 208: // AF_BUYAGENT
+            SetDisabledAssistantFeature(AF_BUYAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 209: // AF_POTIONHOTKEYS
+            SetDisabledAssistantFeature(AF_POTIONHOTKEYS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 210: // AF_RANDOMTARGETS
+            SetDisabledAssistantFeature(AF_RANDOMTARGETS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 211: // AF_CLOSESTTARGETS
+            SetDisabledAssistantFeature(AF_CLOSESTTARGETS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 212: // AF_OVERHEADHEALTH
+            SetDisabledAssistantFeature(AF_OVERHEADHEALTH,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 213: // AF_AUTOLOOTAGENT
+            SetDisabledAssistantFeature(AF_AUTOLOOTAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 214: // AF_BONECUTTERAGENT
+            SetDisabledAssistantFeature(AF_BONECUTTERAGENT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 215: // AF_JSCRIPTMACROS
+            SetDisabledAssistantFeature(AF_JSCRIPTMACROS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 216: // AF_AUTOREMOUNT
+            SetDisabledAssistantFeature(AF_AUTOREMOUNT,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 218: // CLASSICUOMAPTRACKER
+            SetClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 219: // DECAYTIMERINHOUSE
+            SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 220: // PROTECTPRIVATEHOUSES
+            ProtectPrivateHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 221: // TRACKHOUSESPERACCOUNT
+            TrackHousesPerAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 222: // MAXHOUSESOWNABLE
+            MaxHousesOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 223: // MAXHOUSESCOOWNABLE
+            MaxHousesCoOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 224: // CANOWNANDCOOWNHOUSES
+            CanOwnAndCoOwnHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 225: // COOWNHOUSESONSAMEACCOUNT
+            CoOwnHousesOnSameAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 226: // ITEMSDETECTSPEECH
+            ItemsDetectSpeech(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 227: // MAXPLAYERPACKITEMS
+            MaxPlayerPackItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 228: // MAXPLAYERBANKITEMS
+            MaxPlayerBankItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 229: // FORCENEWANIMATIONPACKET
+            ForceNewAnimationPacket(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 230: // MAPDIFFSENABLED
+            MapDiffsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 231: // CORESHARDERA
+            ExpansionCoreShardEra(EraStringToEnum(util::trim(value)));
+            break;
+        case 232: // ARMORCALCULATION
+            ExpansionArmorCalculation(EraStringToEnum(util::trim(value)));
+            break;
+        case 233: // STRENGTHDAMAGEBONUS
+            ExpansionStrengthDamageBonus(EraStringToEnum(util::trim(value)));
+            break;
+        case 234: // TACTICSDAMAGEBONUS
+            ExpansionTacticsDamageBonus(EraStringToEnum(util::trim(value)));
+            break;
+        case 235: // ANATOMYDAMAGEBONUS
+            ExpansionAnatomyDamageBonus(EraStringToEnum(util::trim(value)));
+            break;
+        case 236: // LUMBERJACKDAMAGEBONUS
+            ExpansionLumberjackDamageBonus(EraStringToEnum(util::trim(value)));
+            break;
+        case 237: // RACIALDAMAGEBONUS
+            ExpansionRacialDamageBonus(EraStringToEnum(util::trim(value)));
+            break;
+        case 238: // DAMAGEBONUSCAP
+            ExpansionDamageBonusCap(EraStringToEnum(util::trim(value)));
+            break;
+        case 239: // SHIELDPARRY
+            ExpansionShieldParry(EraStringToEnum(util::trim(value)));
+            break;
+        case 240: // PARRYDAMAGECHANCE
+            CombatParryDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 241: // PARRYDAMAGEMIN
+            CombatParryDamageMin(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 242: // PARRYDAMAGEMAX
+            CombatParryDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 243: // ARMORCLASSDAMAGEBONUS
+            CombatArmorClassDamageBonus(static_cast<std::int8_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 244: // FREESHARDSERVERPOLL
+            FreeshardServerPoll((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 245: // ALCHEMYBONUSENABLED
+            AlchemyDamageBonusEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 246: // ALCHEMYBONUSMODIFIER
+            AlchemyDamageBonusModifier(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 247: // NPCFLAGUPDATETIMER
+            SystemTimer(tSERVER_NPCFLAGUPDATETIMER, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 248: // JSENGINESIZE
+            SetJSEngineSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 249: // USEUNICODEMESSAGES
+            UseUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            break;
+        case 250: // SCRIPTDATADIRECTORY
+        {
+            Directory(CSDDP_SCRIPTDATA, value);
+            break;
+        }
+        case 251: // THIRSTRATE
+            SystemTimer(tSERVER_THIRSTRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 252: // THIRSTDRAINVAL
+            ThirstDrain(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 253: // PETTHIRSTOFFLINE
+            PetThirstOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 254: // ExternalIP
+            ExternalIP(value);
+            break;
+        case 255: // BLOODDECAYTIMER
+            SystemTimer(tSERVER_BLOODDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 256: // BLOODDECAYCORPSETIMER
+            SystemTimer(tSERVER_BLOODDECAYCORPSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 257: // BLOODEFFECTCHANCE
+            CombatBloodEffectChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 258: // NPCCORPSEDECAYTIMER
+            SystemTimer(tSERVER_NPCCORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 259: // HUNGERENABLED
+            HungerSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 260: // THIRSTENABLED
+            ThirstSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 261: // TRAVELSPELLSFROMBOATKEYS
+            TravelSpellsFromBoatKeys((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 262: // TRAVELSPELLSWHILEOVERWEIGHT
+            TravelSpellsWhileOverweight((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 263: // MARKRUNESINMULTIS
+            MarkRunesInMultis((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 264: // TRAVELSPELLSBETWEENWORLD
+            TravelSpellsBetweenWorlds((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 265: // TRAVELSPELLSWHILEAGGRESSOR
+            TravelSpellsWhileAggressor((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 266: // BUYBANKTHRESHOLD
+            BuyThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 267: // NETWORKLOG
+            ServerNetworkLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 268: // SPEECHLOG
+            ServerSpeechLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 269: // NPCMOUNTEDWALKINGSPEED
+            NPCMountedWalkingSpeed(std::stof(value));
+            break;
+        case 270: // NPCMOUNTEDRUNNINGSPEED
+            NPCMountedRunningSpeed(std::stof(value));
+            break;
+        case 271: // NPCMOUNTEDFLEEINGSPEED
+            NPCMountedFleeingSpeed(std::stof(value));
+            break;
+        case 272: // CONTEXTMENUS
+            ServerContextMenus((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 273: // SERVERLANGUAGE
+            ServerLanguage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 274: // CHECKPETCONTROLDIFFICULTY
+            CheckPetControlDifficulty(
+                                      (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 275: // PETLOYALTYGAINONSUCCESS
+            SetPetLoyaltyGainOnSuccess(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 276: // PETLOYALTYLOSSONFAILURE
+            SetPetLoyaltyLossOnFailure(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 277: // LOYALTYRATE
+            SystemTimer(tSERVER_LOYALTYRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 278: // SHOWNPCTITLESINTOOLTIPS
+            ShowNpcTitlesInTooltips(
+                                    (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 279: // FISHPERAREA
+            ResFish(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 280: // FISHRESPAWNTIMER
+            ResFishTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 281: // ARCHERYHITBONUS
+            CombatArcheryHitBonus(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 282: // ITEMSINTERRUPTCASTING
+            ItemsInterruptCasting((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 283: // SYSMESSAGECOLOUR
+            SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 284: // AF_AUTOBANDAGE
+            SetDisabledAssistantFeature(AF_AUTOBANDAGE,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 285: // AF_ENEMYTARGETSHARE
+            SetDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 286: // AF_FILTERSEASON
+            SetDisabledAssistantFeature(AF_FILTERSEASON,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 287: // AF_SPELLTARGETSHARE
+            SetDisabledAssistantFeature(AF_SPELLTARGETSHARE,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 288: // AF_HUMANOIDHEALTHCHECKS
+            SetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 289: // AF_SPEECHJOURNALCHECKS
+            SetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
+                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
+            break;
+        case 290: // ARCHERYSHOOTDELAY
+            CombatArcheryShootDelay(std::stof(value));
+            break;
+        case 291: // MAXCLIENTBYTESIN
+            MaxClientBytesIn(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 292: // MAXCLIENTBYTESOUT
+            MaxClientBytesOut(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 293: // NETTRAFFICTIMEBAN
+            NetTrafficTimeban(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 294: // TOOLUSELIMIT
+            ToolUseLimit((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 295: // TOOLUSEBREAK
+            ToolUseBreak((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 296: // ITEMREPAIRDURABILITYLOSS
+            ItemRepairDurabilityLoss((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 297: // HIDESTATSFORUNKNOWNMAGICITEMS
+            HideStatsForUnknownMagicItems((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 298: // CRAFTCOLOUREDWEAPONS
+            CraftColouredWeapons((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 299: // MAXSAFETELEPORTSPERDAY
+            MaxSafeTeleportsPerDay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 300: // TELEPORTONEARESTSAFELOCATION
+            TeleportToNearestSafeLocation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 301: // ALLOWAWAKENPCS
+            AllowAwakeNPCs((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            break;
+        case 302: // DISPLAYMAKERSMARK
+            DisplayMakersMark(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 303: // SHOWNPCTITLESOVERHEAD
+            ShowNpcTitlesOverhead(
+                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 304: // SHOWINVULNERABLETAGOVERHEAD
+            ShowInvulnerableTagOverhead(
+                                        (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 305: // PETCOMBATTRAINING
+            PetCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 306: // HIRELINGCOMBATTRAINING
+            HirelingCombatTraining(
+                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 307: // NPCCOMBATTRAINING
+            NpcCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 308: // GLOBALRESTOCKMULTIPLIER
+            GlobalRestockMultiplier(std::stof(value));
+            break;
+        case 309: // SHOWITEMRESISTSTATS
+            ShowItemResistStats((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 310: // SHOWWEAPONDAMAGETYPES
+            ShowWeaponDamageTypes(
+                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 311: // SHOWRACEWITHNAME
+            ShowRaceWithName((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 312: // SHOWRACEINPAPERDOLL
+            ShowRaceInPaperdoll((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 313: // WEAPONPARRY
+            ExpansionWeaponParry(EraStringToEnum(util::trim(value)));
+            break;
+        case 314: // WRESTLINGPARRY
+            ExpansionWrestlingParry(EraStringToEnum(util::trim(value)));
+            break;
+        case 315: // COMBATHITCHANCE
+            ExpansionCombatHitChance(EraStringToEnum(util::trim(value)));
+            break;
+        case 316: // CASTSPELLSWHILEMOVING
+            CastSpellsWhileMoving(
+                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 317: // SHOWREPUTATIONTITLEINTOOLTIP
+            ShowReputationTitleInTooltip(
+                                         (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 318: // SHOWGUILDINFOINTOOLTIP
+            ShowGuildInfoInTooltip(
+                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 319: // MAXPLAYERPACKWEIGHT
+            MaxPlayerPackWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 320: // MAXPLAYERBANKWEIGHT
+            MaxPlayerBankWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
+            break;
+        case 321: // SAFECOOWNERLOGOUT
+            SafeCoOwnerLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 322: // SAFEFRIENDLOGOUT
+            SafeFriendLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 323: // SAFEGUESTLOGOUT
+            SafeGuestLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 324: // KEYLESSOWNERACCESS
+            KeylessOwnerAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 325: // KEYLESSCOOWNERACCESS
+            KeylessCoOwnerAccess(
+                                 (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 326: // KEYLESSFRIENDACCESS
+            KeylessFriendAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 327: // KEYLESSGUESTACCESS
+            KeylessGuestAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 328: // WEAPONDAMAGEBONUSTYPE
+            WeaponDamageBonusType(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 329: // OFFERBODSFROMITEMSALES
+            OfferBODsFromItemSales(
+                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 330: // OFFERBODSFROMCONTEXTMENU
+            OfferBODsFromContextMenu(
+                                     (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 331: // BODSFROMCRAFTEDITEMSONLY
+            BODsFromCraftedItemsOnly(
+                                     (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 332: // BODGOLDREWARDMULTIPLIER
+            BODGoldRewardMultiplier(std::stof(value));
+            break;
+        case 333: // BODFAMEREWARDMULTIPLIER
+            BODFameRewardMultiplier(std::stof(value));
+            break;
+        case 334: // ENABLENPCGUILDDISCOUNTS
+            EnableNPCGuildDiscounts(
+                                    (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 335: // ENABLENPCGUILDPREMIUMS
+            EnableNPCGuildPremiums(
+                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
+            break;
+        case 336: // AGGRESSORFLAGTIMER
+            SystemTimer(tSERVER_AGGRESSORFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 337: // PERMAGREYFLAGTIMER
+            SystemTimer(tSERVER_PERMAGREYFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 338: // STEALINGFLAGTIMER
+            SystemTimer(tSERVER_STEALINGFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 339: // SNOOPAWARENESS
+            SnoopAwareness(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 340: // APSPERFTHRESHOLD
+            APSPerfThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 341: // APSINTERVAL
+            APSInterval(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 342: // APSDELAYSTEP
+            APSDelayStep(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 343: // APSDELAYMAXCAP
+            APSDelayMaxCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            break;
+        case 344: // YOUNGPLAYERSYSTEM
+            YoungPlayerSystem(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
+            break;
+        case 345: // YOUNGLOCATION
+            YoungServerLocation(value);
+            break;
+        case 346: // SECRETSHARDKEY
+            SecretShardKey(value);
+            break;
+        default:
+            rValue = false;
+            break;
     }
     return rValue;
 }
@@ -5811,7 +5811,7 @@ auto CServerData::PostLoadDefaults() -> void {
         ServerLocation("Skara Brae,Docks,639,2236,0,0,0,1075079");
         ServerLocation("Vesper,Ironwood Inn,2771,977,0,0,0,1075080");
     }
-
+    
     // Also load young player start locations, which default to same as normal players
     if (YoungPlayerSystem() && youngStartlocations.empty()) {
         YoungServerLocation("Yew,Center,545,982,0,0,0,1075072");
@@ -5843,28 +5843,28 @@ auto CServerData::ServerLocation(std::string toSet) -> void {
     auto temp = toSet;
     temp = util::trim(util::strip(temp, "//"));
     auto csecs = oldstrutil::sections(temp, ",");
-
+    
     __STARTLOCATIONDATA__ toAdd;
     if (csecs.size() >= 7) {
         toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
         toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
         toAdd.newTown = toAdd.oldTown;
         toAdd.newDescription = toAdd.oldDescription;
-
+        
         toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
         toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
         toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
         toAdd.worldNum =
-            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
+        static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
         if (csecs.size() == 7) {
             toAdd.clilocDesc =
-                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
         }
         else {
             toAdd.instanceId =
-                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
             toAdd.clilocDesc =
-                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
+            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
         }
         startlocations.push_back(toAdd);
     }
@@ -5892,28 +5892,28 @@ auto CServerData::YoungServerLocation(std::string toSet) -> void {
     auto temp = toSet;
     temp = util::trim(util::strip(temp, "//"));
     auto csecs = oldstrutil::sections(temp, ",");
-
+    
     __STARTLOCATIONDATA__ toAdd;
     if (csecs.size() >= 7) {
         toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
         toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
         toAdd.newTown = toAdd.oldTown;
         toAdd.newDescription = toAdd.oldDescription;
-
+        
         toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
         toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
         toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
         toAdd.worldNum =
-            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
+        static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
         if (csecs.size() == 7) {
             toAdd.clilocDesc =
-                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
         }
         else {
             toAdd.instanceId =
-                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
+            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
             toAdd.clilocDesc =
-                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
+            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
         }
         youngStartlocations.push_back(toAdd);
     }
@@ -6040,7 +6040,7 @@ auto CServerData::SaveTime() -> void {
         Console::shared().Error(util::format("Failed to open %s for writing", timeFile.c_str()));
         return;
     }
-
+    
     timeDestination << "[TIME]" << '\n' << "{" << '\n';
     timeDestination << "CURRENTLIGHT=" << static_cast<std::uint16_t>(WorldLightCurrentLevel()) << '\n';
     timeDestination << "DAY=" << ServerTimeDay() << '\n';
@@ -6049,7 +6049,7 @@ auto CServerData::SaveTime() -> void {
     timeDestination << "AMPM=" << (ServerTimeAMPM() ? 1 : 0) << '\n';
     timeDestination << "MOON=" << ServerMoon(0) << "," << ServerMoon(1) << '\n';
     timeDestination << "}" << '\n' << '\n';
-
+    
     timeDestination.close();
 }
 
@@ -6063,10 +6063,10 @@ auto ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 auto CServerData::LoadTime() -> void {
     std::ifstream input;
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "time.wsc";
-
+    
     input.open(filename.c_str(), std::ios_base::in);
     input.seekg(0, std::ios::beg);
-
+    
     if (input.is_open()) {
         char line[1024];
         while (!input.eof() && !input.fail()) {
@@ -6091,7 +6091,7 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
         ReadWorldTagData(input, tag, data);
         if (tag != "o---o") {
             UTag = util::upper(tag);
-
+            
             if (UTag == "AMPM") {
                 ServerTimeAMPM((std::stoi(data, nullptr, 0) == 1));
             }
@@ -6111,9 +6111,9 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
                     ServerMoon(0, static_cast<std::int16_t>(std::stoi(
-                                      util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                                                                      util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
                     ServerMoon(1, static_cast<std::int16_t>(std::stoi(
-                                      util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                                                                      util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
             }
         }
@@ -6169,7 +6169,7 @@ auto CServerData::IncMinute() -> bool {
     if (minutes % 3 == 0) {
         IncMoon(1);
     }
-
+    
     if (minutes == 60) {
         minutes = 0;
         rValue = IncHour();

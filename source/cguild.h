@@ -24,7 +24,7 @@ const std::int16_t BasePage = 8000;
 
 
 class CGuild {
-  private:
+private:
     std::string name;
     std::string abbreviation;
     GuildType gType;
@@ -35,22 +35,22 @@ class CGuild {
     std::vector<serial_t> recruits;
     std::vector<serial_t> members;
     std::map<guildid_t, GuildRelation> relationList;
-
+    
     std::vector<serial_t>::iterator recruitPtr;
     std::vector<serial_t>::iterator memberPtr;
-
+    
     std::map<guildid_t, GuildRelation>::iterator warPtr;
     std::map<guildid_t, GuildRelation>::iterator allyPtr;
-
-  public:
+    
+public:
     guildid_t FirstWar(void);
     guildid_t NextWar(void);
     bool FinishedWar(void);
-
+    
     guildid_t FirstAlly(void);
     guildid_t NextAlly(void);
     bool FinishedAlly(void);
-
+    
     CGuild();
     ~CGuild();
     const std::string Name() const;
@@ -68,7 +68,7 @@ class CGuild {
     serial_t NextMember();
     bool FinishedMember();
     serial_t MemberNumber(size_t rNum) const;
-
+    
     void Name(std::string txt);
     auto Abbreviation(const std::string &value) -> void;
     void Type(GuildType nType);
@@ -88,29 +88,29 @@ class CGuild {
     void RemoveMember(serial_t newMember);
     void RecruitToMember(CChar &newMember);
     void RecruitToMember(serial_t newMember);
-
+    
     size_t NumMembers() const;
     size_t NumRecruits() const;
-
+    
     GuildRelation RelatedToGuild(guildid_t otherGuild) const;
     bool IsAtWar(guildid_t otherGuild) const;
     bool IsNeutral(guildid_t otherGuild) const;
     bool IsAlly(guildid_t otherGuild) const;
     bool IsAtPeace() const;
-
+    
     void SetGuildFaction(GuildType newFaction);
     void SetGuildRelation(guildid_t otherGuild, GuildRelation toSet);
     void Save(std::ostream &toSave, guildid_t gNum);
     void Load(CScriptSection *toRead);
-
+    
     std::map<guildid_t, GuildRelation>* GuildRelationList(); // NOTE: This is aimed ONLY at menu stuff
-
+    
     void CalcMaster();
-
+    
     void TellMembers(std::int32_t dictEntry, ...);
-
+    
     const std::string TypeName();
-
+    
     bool IsRecruit(serial_t toCheck) const;
     bool IsMember(serial_t toCheck) const;
     bool IsRecruit(CChar &toCheck) const;
@@ -118,15 +118,15 @@ class CGuild {
 };
 
 class CGuildCollection {
-  private:
+private:
     std::map<guildid_t, CGuild *> gList;
-
+    
     void ToggleAbbreviation(CSocket *s);
     void TransportGuildStone(CSocket *s, guildid_t guildId);
     void Erase(guildid_t toErase);
     guildid_t MaximumGuild(void);
-
-  public:
+    
+public:
     void Resign(CSocket *s);
     CGuildCollection() = default;
     size_t NumGuilds(void) const;

@@ -55,11 +55,11 @@ std::int32_t CCommands::Argument(std::uint8_t argNum) {
             retVal = std::stoi(tempString, nullptr, 0);
         } catch (const std::invalid_argument &e) {
             Console::shared().Error(
-                util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(),
-                             tempString.c_str()));
+                                    util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(),
+                                                 tempString.c_str()));
         }
     }
-
+    
     return retVal;
 }
 
@@ -94,10 +94,10 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
     CommandString(util::simplify(text));
     if (NumArguments() < 1)
         return;
-
+    
     // Discard the leading command prefix
     std::string command = util::upper(CommandString(1, 1));
-
+    
     JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find(command);
     if (toFind != JSCommandMap.end()) {
         if (toFind->second.isEnabled) {
@@ -123,7 +123,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             }
             cScript *toExecute = JSMapping->GetScript(toFind->second.scriptId);
             if (toExecute != nullptr) { // All commands that execute are of the form:
-                                        // command_commandname (to avoid possible clashes)
+                // command_commandname (to avoid possible clashes)
 #if defined(UOX_DEBUG_MODE)
                 Console::shared().Print(util::format("Executing JS command %s\n", command.c_str()));
 #endif
@@ -138,7 +138,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             return;
         }
     }
-
+    
     TARGETMAP_ITERATOR findTarg = TargetMap.find(command);
     if (findTarg != TargetMap.end()) {
         bool plClearance = false;
@@ -167,38 +167,38 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             Log(command, mChar, nullptr, "Cleared");
         }
         switch (findTarg->second.cmdType) {
-        case CMD_TARGET:
-            s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
-            break;
-        case CMD_TARGETXYZ:
-            if (NumArguments() == 4) {
-                s->ClickX(static_cast<std::int16_t>(Argument(1)));
-                s->ClickY(static_cast<std::int16_t>(Argument(2)));
-                s->ClickZ(static_cast<std::int8_t>(Argument(3)));
+            case CMD_TARGET:
                 s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
-            }
-            else {
-                s->SysMessage(340); // This command takes three numbers as arguments.
-            }
-            break;
-        case CMD_TARGETINT:
-            if (NumArguments() == 2) {
-                s->TempInt(Argument(1));
-                s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
-            }
-            else {
-                s->SysMessage(338); // This command takes one number as an argument.
-            }
-            break;
-        case CMD_TARGETTXT:
-            if (NumArguments() > 1) {
-                s->XText(CommandString(2));
-                s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
-            }
-            else {
-                s->SysMessage(9026); // This command requires more arguments!
-            }
-            break;
+                break;
+            case CMD_TARGETXYZ:
+                if (NumArguments() == 4) {
+                    s->ClickX(static_cast<std::int16_t>(Argument(1)));
+                    s->ClickY(static_cast<std::int16_t>(Argument(2)));
+                    s->ClickZ(static_cast<std::int8_t>(Argument(3)));
+                    s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
+                }
+                else {
+                    s->SysMessage(340); // This command takes three numbers as arguments.
+                }
+                break;
+            case CMD_TARGETINT:
+                if (NumArguments() == 2) {
+                    s->TempInt(Argument(1));
+                    s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
+                }
+                else {
+                    s->SysMessage(338); // This command takes one number as an argument.
+                }
+                break;
+            case CMD_TARGETTXT:
+                if (NumArguments() > 1) {
+                    s->XText(CommandString(2));
+                    s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
+                }
+                else {
+                    s->SysMessage(9026); // This command requires more arguments!
+                }
+                break;
         }
     }
     else {
@@ -217,7 +217,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
                     }
                 }
             }
-
+            
             if (!cmdHandled) {
                 s->SysMessage(336); // Unrecognized command.
             }
@@ -250,17 +250,17 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             else {
                 Log(command, mChar, nullptr, "Cleared");
             }
-
+            
             switch (toFind->second.cmdType) {
-            case CMD_FUNC:
-                (*((CMD_EXEC)toFind->second.cmd_extra))();
-                break;
-            case CMD_SOCKFUNC:
-                (*((CMD_SOCKEXEC)toFind->second.cmd_extra))(s);
-                break;
-            default:
-                s->SysMessage(346); // BUG: Command has a bad command type set!
-                break;
+                case CMD_FUNC:
+                    (*((CMD_EXEC)toFind->second.cmd_extra))();
+                    break;
+                case CMD_SOCKFUNC:
+                    (*((CMD_SOCKEXEC)toFind->second.cmd_extra))(s);
+                    break;
+                default:
+                    s->SysMessage(346); // BUG: Command has a bad command type set!
+                    break;
             }
         }
     }
@@ -278,11 +278,11 @@ void CCommands::Load(void) {
         InitClearance();
         return;
     }
-
+    
     std::string tag;
     std::string data;
     std::string UTag;
-
+    
     std::vector<std::string> badCommands;
     for (tag = commands->First(); !commands->AtEnd(); tag = commands->Next()) {
         data = commands->GrabData();
@@ -306,10 +306,10 @@ void CCommands::Load(void) {
         Console::shared() << myendl;
         std::for_each(badCommands.begin(), badCommands.end(), [](const std::string &entry) {
             Console::shared() << "Invalid command '" << entry.c_str() << "' found in commands.dfn!"
-                              << myendl;
+            << myendl;
         });
     }
-
+    
     Console::shared() << "   o Loading command levels";
 #if defined(UOX_DEBUG_MODE)
     Console::shared() << myendl;
@@ -327,7 +327,7 @@ void CCommands::Load(void) {
             clearance.push_back(new CommandLevel_st);
             clearance[currentWorking]->name = tag;
             clearance[currentWorking]->commandLevel =
-                static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
+            static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
         }
         std::vector<CommandLevel_st *>::const_iterator cIter;
         for (cIter = clearance.begin(); cIter != clearance.end(); ++cIter) {
@@ -353,7 +353,7 @@ void CCommands::Load(void) {
                         }
                         else if (UTag == "ALLSKILL") {
                             ourClear->allSkillVals =
-                                static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
+                            static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "BODYCOLOUR") {
                             ourClear->bodyColour = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
@@ -366,14 +366,14 @@ void CCommands::Load(void) {
                         }
                         else {
                             Console::shared() << myendl << "Unknown tag in " << ourClear->name
-                                              << ": " << tag << " with data of " << data << myendl;
+                            << ": " << tag << " with data of " << data << myendl;
                         }
                     }
                 }
             }
         }
     }
-
+    
     // Now we'll load our JS commands, what fun!
     CJSMappingSection *commandSection = JSMapping->GetSection(CJSMappingSection::SCPT_COMMAND);
     for (cScript *ourScript = commandSection->First(); !commandSection->Finished();
@@ -396,20 +396,20 @@ void CCommands::Log(const std::string &command, CChar *player1, CChar *player2,
     logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
         Console::shared().Error(
-            util::format("Unable to open command log file %s!", logName.c_str()));
+                                util::format("Unable to open command log file %s!", logName.c_str()));
         return;
     }
     char dateTime[1024];
     RealTime(dateTime);
-
+    
     logDestination << "[" << dateTime << "] ";
     logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial()
-                   << ") ";
+    << ") ";
     logDestination << "used command <" << command << (CommandString(2) != "" ? " " : "")
-                   << CommandString(2) << "> ";
+    << CommandString(2) << "> ";
     if (ValidateObject(player2)) {
         logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial()
-                       << " )";
+        << " )";
     }
     logDestination << "Extra Info: " << extraInfo << std::endl;
     logDestination.close();
@@ -444,10 +444,10 @@ std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return 0x005A;
-
+    
     if (commandLevel > clearance[0]->commandLevel)
         return clearance[0]->nickColour;
-
+    
     for (size_t counter = 0; counter < (clearanceSize - 1); ++counter) {
         if (commandLevel <= clearance[counter]->commandLevel &&
             commandLevel > clearance[counter + 1]->commandLevel)
@@ -466,46 +466,46 @@ void CCommands::InitClearance(void) {
     clearance.push_back(new CommandLevel_st);
     clearance.push_back(new CommandLevel_st);
     clearance.push_back(new CommandLevel_st);
-
+    
     clearance[0]->name = "ADMIN";
     clearance[1]->name = "GM";
     clearance[2]->name = "COUNSELOR";
     clearance[3]->name = "PLAYER";
-
+    
     clearance[0]->title = "Admin";
     clearance[1]->title = "GM";
     clearance[2]->title = "Counselor";
     clearance[3]->title = "";
-
+    
     clearance[0]->commandLevel = 5;
     clearance[1]->commandLevel = 2;
     clearance[2]->commandLevel = 1;
     clearance[3]->commandLevel = 0;
-
+    
     clearance[0]->targBody = 0x03DB;
     clearance[1]->targBody = 0x03DB;
     clearance[2]->targBody = 0x03DB;
     clearance[3]->targBody = 0;
-
+    
     clearance[0]->bodyColour = 0x8001;
     clearance[1]->bodyColour = 0x8021;
     clearance[2]->bodyColour = 0x8002;
-
+    
     clearance[0]->defaultPriv = 0x786F;
     clearance[1]->defaultPriv = 0x786F;
     clearance[2]->defaultPriv = 0x0094;
     clearance[3]->defaultPriv = 0;
-
+    
     clearance[0]->nickColour = 0x1332;
     clearance[1]->nickColour = 0x03;
     clearance[2]->nickColour = 0x03;
     clearance[3]->nickColour = 0x005A;
-
+    
     clearance[0]->allSkillVals = 1000;
     clearance[1]->allSkillVals = 1000;
     clearance[2]->allSkillVals = 0;
     clearance[3]->allSkillVals = 0;
-
+    
     // Strip Everything for Admins, GMs and Counselors
     clearance[0]->stripOff.set(BIT_STRIPHAIR, true);
     clearance[0]->stripOff.set(BIT_STRIPITEMS, true);
@@ -524,10 +524,10 @@ CommandLevel_st *CCommands::GetClearance(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return nullptr;
-
+    
     if (commandLevel > clearance[0]->commandLevel)
         return clearance[0];
-
+    
     for (size_t counter = 0; counter < (clearanceSize - 1); ++counter) {
         if (commandLevel <= clearance[counter]->commandLevel &&
             commandLevel > clearance[counter + 1]->commandLevel)
@@ -555,7 +555,7 @@ const std::string CCommands::FirstCommand(void) {
     cmdPointer = CommandMap.begin();
     if (FinishedCommandList())
         return "";
-
+    
     return cmdPointer->first;
 }
 
@@ -567,11 +567,11 @@ const std::string CCommands::FirstCommand(void) {
 const std::string CCommands::NextCommand(void) {
     if (FinishedCommandList())
         return "";
-
+    
     ++cmdPointer;
     if (FinishedCommandList())
         return "";
-
+    
     return cmdPointer->first;
 }
 
@@ -590,10 +590,10 @@ bool CCommands::FinishedCommandList(void) { return (cmdPointer == CommandMap.end
 CommandMapEntry_st *CCommands::CommandDetails(const std::string &cmdName) {
     if (!CommandExists(cmdName))
         return nullptr;
-
+    
     COMMANDMAP_ITERATOR toFind = CommandMap.find(cmdName);
     if (toFind == CommandMap.end())
         return nullptr;
-
+    
     return &(toFind->second);
 }

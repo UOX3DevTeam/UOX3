@@ -41,41 +41,41 @@ bool CheckItemRange(CChar *mChar, CItem *i);
 // o------------------------------------------------------------------------------------------------o
 void PlayerVendorBuy(CSocket *s) {
     VALIDATESOCKET(s);
-
+    
     CChar *vChar = static_cast<CChar *>(s->TempObj());
     s->TempObj(nullptr);
     if (!ValidateObject(vChar) || vChar->IsFree())
         return;
-
+    
     CChar *mChar = s->CurrcharObj();
     std::uint32_t goldLeft = GetItemAmount(mChar, 0x0EED);
-
+    
     CItem *p = mChar->GetPackItem();
     if (!ValidateObject(p)) {
         s->SysMessage(773); // Time to buy a backpack.
         return;
     }
-
+    
     CItem *i = CalcItemObjFromSer(s->GetDWord(7));
     if (!ValidateObject(i) || i->GetCont() == nullptr)
         return;
-
+    
     if (FindItemOwner(i) != vChar)
         return;
-
+    
     if (vChar->GetNpcAiType() != AI_PLAYERVENDOR)
         return;
-
+    
     if (mChar == vChar->GetOwnerObj()) {
         vChar->TextMessage(s, 999, TALK, false); // I work for you, you need not buy things from me!
         return;
     }
-
+    
     if (i->GetVendorPrice() <= 0) {
         vChar->TextMessage(s, 9182, TALK, false); // This item is not for sale.
         return;
     }
-
+    
     if (goldLeft < i->GetVendorPrice()) {
         vChar->TextMessage(s, 1000, TALK, false); // You cannot afford that.
         return;
@@ -85,10 +85,10 @@ void PlayerVendorBuy(CSocket *s) {
         // tAmount > 0 indicates there wasn't enough money...
         // could be expanded to take money from bank too...
     }
-
+    
     vChar->TextMessage(s, 1001, TALK, false); // Thank you.
     vChar->SetHoldG(vChar->GetHoldG() + i->GetVendorPrice());
-
+    
     // Move the bought item to player's backpack
     i->SetCont(p);
 }
@@ -105,146 +105,146 @@ void HandleGuildTarget(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     CGuild *mGuild = nullptr, *tGuild = nullptr;
     switch (s->GetByte(5)) {
-    case 0: // recruit character
-        trgChar = CalcCharObjFromSer(s->GetDWord(7));
-        if (ValidateObject(trgChar)) {
-            if (trgChar->GetGuildNumber() == -1) // no existing guild
-            {
-                mGuild = GuildSys->Guild(mChar->GetGuildNumber());
-                if (mGuild != nullptr) {
-                    auto trgSock = trgChar->GetSocket();
-                    if (mGuild->Master() == mChar->GetSerial()) {
-                        // Guild Master can skip the "sponsor a candidate" stage and just recruit
-                        // people as new members directly
-                        mGuild->NewMember((*trgChar));
-                        trgChar->SetGuildNumber(mChar->GetGuildNumber());
-                        if (mGuild->Type() != GT_STANDARD) {
-                            trgChar->SetGuildToggle(true);
-                        }
-                        s->SysMessage(1687,
-                                      trgChar->GetName()
+        case 0: // recruit character
+            trgChar = CalcCharObjFromSer(s->GetDWord(7));
+            if (ValidateObject(trgChar)) {
+                if (trgChar->GetGuildNumber() == -1) // no existing guild
+                {
+                    mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                    if (mGuild != nullptr) {
+                        auto trgSock = trgChar->GetSocket();
+                        if (mGuild->Master() == mChar->GetSerial()) {
+                            // Guild Master can skip the "sponsor a candidate" stage and just recruit
+                            // people as new members directly
+                            mGuild->NewMember((*trgChar));
+                            trgChar->SetGuildNumber(mChar->GetGuildNumber());
+                            if (mGuild->Type() != GT_STANDARD) {
+                                trgChar->SetGuildToggle(true);
+                            }
+                            s->SysMessage(1687,
+                                          trgChar->GetName()
                                           .c_str()); // You have recruited %s as a new guild member!
-                        if (trgSock) {
-                            trgSock->SysMessage(
-                                1688,
-                                mGuild->Name()
-                                    .c_str()); // You have been recruited to join the guild %s!
+                            if (trgSock) {
+                                trgSock->SysMessage(
+                                                    1688,
+                                                    mGuild->Name()
+                                                    .c_str()); // You have been recruited to join the guild %s!
+                            }
                         }
+                        else {
+                            mGuild->NewRecruit((*trgChar));
+                            s->SysMessage(1985,
+                                          trgChar->GetName().c_str()); // You have sponsored %s as a
+                            // candidate to join the guild!
+                            if (trgSock) {
+                                trgSock->SysMessage(
+                                                    1986, mChar->GetName().c_str(),
+                                                    mGuild->Name()
+                                                    .c_str()); // You have been invited by %s to join the guild: %s
+                            }
+                        }
+                        trgChar->Dirty(UT_UPDATE);
+                    }
+                }
+                else {
+                    s->SysMessage(1002); // They are already in a guild!
+                }
+            }
+            break;
+        case 1: // declare fealty
+            trgChar = CalcCharObjFromSer(s->GetDWord(7));
+            if (ValidateObject(trgChar)) {
+                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // same guild
+                {
+                    mChar->SetGuildFealty(trgChar->GetSerial());
+                    s->SysMessage(1987, trgChar->GetName().c_str()); // You have declared fealty to %s!
+                    auto trgSock = trgChar->GetSocket();
+                    if (trgSock != nullptr) {
+                        trgSock->SysMessage(1988,
+                                            mChar->GetName().c_str()); // %s has declared fealty to you!
+                    }
+                }
+                else {
+                    s->SysMessage(1003); // They are not in your guild!
+                }
+            }
+            break;
+        case 2: // declare war
+            trgChar = CalcCharObjFromSer(s->GetDWord(7));
+            if (ValidateObject(trgChar)) {
+                if (trgChar->GetGuildNumber() != mChar->GetGuildNumber()) {
+                    if (trgChar->GetGuildNumber() == -1) {
+                        s->SysMessage(1004); // They're not in a guild!
                     }
                     else {
-                        mGuild->NewRecruit((*trgChar));
-                        s->SysMessage(1985,
-                                      trgChar->GetName().c_str()); // You have sponsored %s as a
-                                                                   // candidate to join the guild!
-                        if (trgSock) {
-                            trgSock->SysMessage(
-                                1986, mChar->GetName().c_str(),
-                                mGuild->Name()
-                                    .c_str()); // You have been invited by %s to join the guild: %s
+                        mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                        if (mGuild != nullptr) {
+                            mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_WAR);
+                            tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
+                            if (tGuild != nullptr) {
+                                mGuild->TellMembers(
+                                                    1989, tGuild->Name()
+                                                    .c_str()); // Your guild has declared war on the guild %s!
+                                tGuild->TellMembers(
+                                                    1005,
+                                                    mGuild->Name().c_str()); // The guild %s has declared war upon you!
+                            }
                         }
                     }
-                    trgChar->Dirty(UT_UPDATE);
-                }
-            }
-            else {
-                s->SysMessage(1002); // They are already in a guild!
-            }
-        }
-        break;
-    case 1: // declare fealty
-        trgChar = CalcCharObjFromSer(s->GetDWord(7));
-        if (ValidateObject(trgChar)) {
-            if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // same guild
-            {
-                mChar->SetGuildFealty(trgChar->GetSerial());
-                s->SysMessage(1987, trgChar->GetName().c_str()); // You have declared fealty to %s!
-                auto trgSock = trgChar->GetSocket();
-                if (trgSock != nullptr) {
-                    trgSock->SysMessage(1988,
-                                        mChar->GetName().c_str()); // %s has declared fealty to you!
-                }
-            }
-            else {
-                s->SysMessage(1003); // They are not in your guild!
-            }
-        }
-        break;
-    case 2: // declare war
-        trgChar = CalcCharObjFromSer(s->GetDWord(7));
-        if (ValidateObject(trgChar)) {
-            if (trgChar->GetGuildNumber() != mChar->GetGuildNumber()) {
-                if (trgChar->GetGuildNumber() == -1) {
-                    s->SysMessage(1004); // They're not in a guild!
                 }
                 else {
-                    mGuild = GuildSys->Guild(mChar->GetGuildNumber());
-                    if (mGuild != nullptr) {
-                        mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_WAR);
-                        tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
-                        if (tGuild != nullptr) {
-                            mGuild->TellMembers(
-                                1989, tGuild->Name()
-                                          .c_str()); // Your guild has declared war on the guild %s!
-                            tGuild->TellMembers(
-                                1005,
-                                mGuild->Name().c_str()); // The guild %s has declared war upon you!
-                        }
-                    }
+                    s->SysMessage(1006); // They are in your guild!
                 }
             }
-            else {
-                s->SysMessage(1006); // They are in your guild!
-            }
-        }
-        break;
-    case 3: // declare ally
-        trgChar = CalcCharObjFromSer(s->GetDWord(7));
-        if (ValidateObject(trgChar)) {
-            if (trgChar->GetGuildNumber() != mChar->GetGuildNumber()) {
-                if (trgChar->GetGuildNumber() == -1) {
-                    s->SysMessage(1004); // They're not in a guild!
+            break;
+        case 3: // declare ally
+            trgChar = CalcCharObjFromSer(s->GetDWord(7));
+            if (ValidateObject(trgChar)) {
+                if (trgChar->GetGuildNumber() != mChar->GetGuildNumber()) {
+                    if (trgChar->GetGuildNumber() == -1) {
+                        s->SysMessage(1004); // They're not in a guild!
+                    }
+                    else {
+                        mGuild = GuildSys->Guild(mChar->GetGuildNumber());
+                        if (mGuild != nullptr) {
+                            mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_ALLY);
+                            tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
+                            if (tGuild != nullptr) {
+                                mGuild->TellMembers(
+                                                    1990,
+                                                    tGuild->Name()
+                                                    .c_str()); // Your guild has declared the guild %s as an ally!
+                                tGuild->TellMembers(
+                                                    1007, mGuild->Name()
+                                                    .c_str()); // The guild %s has declared you to be an ally!
+                            }
+                        }
+                    }
                 }
                 else {
+                    s->SysMessage(1006); // They are in your guild!
+                }
+            }
+            break;
+        case 4: // select member to grant title to
+            trgChar = CalcCharObjFromSer(s->GetDWord(7));
+            if (ValidateObject(trgChar)) {
+                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // In same guild
+                {
                     mGuild = GuildSys->Guild(mChar->GetGuildNumber());
                     if (mGuild != nullptr) {
-                        mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_ALLY);
-                        tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
-                        if (tGuild != nullptr) {
-                            mGuild->TellMembers(
-                                1990,
-                                tGuild->Name()
-                                    .c_str()); // Your guild has declared the guild %s as an ally!
-                            tGuild->TellMembers(
-                                1007, mGuild->Name()
-                                          .c_str()); // The guild %s has declared you to be an ally!
-                        }
+                        s->TempInt2(trgChar->GetSerial());
+                        TextEntryGump(s, mChar->GetSerial(), 100, 6, 15, 1684);
+                        break; // grant title to another member
                     }
                 }
-            }
-            else {
-                s->SysMessage(1006); // They are in your guild!
-            }
-        }
-        break;
-    case 4: // select member to grant title to
-        trgChar = CalcCharObjFromSer(s->GetDWord(7));
-        if (ValidateObject(trgChar)) {
-            if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // In same guild
-            {
-                mGuild = GuildSys->Guild(mChar->GetGuildNumber());
-                if (mGuild != nullptr) {
-                    s->TempInt2(trgChar->GetSerial());
-                    TextEntryGump(s, mChar->GetSerial(), 100, 6, 15, 1684);
-                    break; // grant title to another member
+                else {
+                    s->SysMessage(1003); // They are not in your guild!
                 }
             }
-            else {
-                s->SysMessage(1003); // They are not in your guild!
-            }
-        }
-        break;
-    default:
-        break;
+            break;
+        default:
+            break;
     }
 }
 
@@ -259,7 +259,7 @@ void BuildHouseTarget(CSocket *s) {
     VALIDATESOCKET(s);
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
-
+    
     // Check if item used to initialize target cursor is still within range
     CChar *mChar = s->CurrcharObj();
     CItem *deedObj = mChar->GetSpeechItem();
@@ -270,10 +270,10 @@ void BuildHouseTarget(CSocket *s) {
             return;
         }
     }
-
+    
     [[maybe_unused]] CMultiObj *newMulti = BuildHouse(
-        s, static_cast<std::uint16_t>(s->AddId())); // If its a valid house, send it to buildhouse!
-
+                                                      s, static_cast<std::uint16_t>(s->AddId())); // If its a valid house, send it to buildhouse!
+    
     s->AddId(0);
 }
 
@@ -290,7 +290,7 @@ void AddScriptNpc(CSocket *s) {
     VALIDATESOCKET(s);
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
-
+    
     CChar *mChar = s->CurrcharObj();
     const std::int16_t coreX = s->GetWord(11);
     const std::int16_t coreY = s->GetWord(13);
@@ -308,9 +308,9 @@ void TeleTarget(CSocket *s) {
     VALIDATESOCKET(s);
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
-
+    
     const serial_t serial = s->GetDWord(7);
-
+    
     CBaseObject *mObj = nullptr;
     if (serial >= BASEITEMSERIAL) {
         mObj = CalcItemObjFromSer(serial);
@@ -318,7 +318,7 @@ void TeleTarget(CSocket *s) {
     else {
         mObj = CalcCharObjFromSer(serial);
     }
-
+    
     std::int16_t targX, targY;
     std::int8_t targZ;
     if (ValidateObject(mObj)) {
@@ -332,7 +332,7 @@ void TeleTarget(CSocket *s) {
         targZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
     }
     CChar *mChar = s->CurrcharObj();
-
+    
     if (mChar->IsGM() || LineOfSight(s, mChar, targX, targY, targZ,
                                      WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false)) {
         if (s->CurrentSpellType() != 2) // not a wand cast
@@ -346,15 +346,15 @@ void TeleTarget(CSocket *s) {
                 Magic->DelReagents(mChar, toDel);
             }
         }
-
+        
         Effects->PlaySound(s, 0x01FE, true);
-
+        
         mChar->SetLocation(targX, targY, targZ);
         Effects->PlayStaticAnimation(mChar, 0x372A, 0x09, 0x06);
     }
     else if (s != nullptr) {
         s->SysMessage(687); // You would like to see if anything was there, but there is too much
-                            // stuff in the way.
+        // stuff in the way.
     }
 }
 
@@ -396,14 +396,14 @@ void DyeTarget(CSocket *s) {
             i = CalcItemObjFromSer(serial);
             if (!ValidateObject(i))
                 return;
-
+            
             std::uint16_t colour = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
             if (!s->DyeAll()) {
                 if (colour < 0x0002 || colour > 0x03E9) {
                     colour = 0x03E9;
                 }
             }
-
+            
             std::int32_t b = ((colour & 0x4000) >> 14) + ((colour & 0x8000) >> 15);
             if (!b) {
                 i->SetColour(colour);
@@ -414,15 +414,15 @@ void DyeTarget(CSocket *s) {
             c = CalcCharObjFromSer(serial);
             if (!ValidateObject(c))
                 return;
-
+            
             std::uint16_t body = c->GetId();
             std::uint16_t k = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
-
+            
             if ((k & 0x4000) == 0x4000 && (body >= 0x0190 && body <= 0x03E1)) {
                 k = 0xF000; // but assigning the only "transparent" value that works, namly
-                            // semi-trasnparency.
+                // semi-trasnparency.
             }
-
+            
             if (k != 0x8000) // 0x8000 also crashes client ...
             {
                 c->SetSkin(k);
@@ -442,14 +442,14 @@ void WStatsTarget(CSocket *s) {
     CChar *i = CalcCharObjFromSer(s->GetDWord(7));
     if (!ValidateObject(i))
         return;
-
+    
     CGumpDisplay wStat(s, 300, 300);
     wStat.SetTitle("Walking Stats");
     serial_t charSerial = i->GetSerial();
     std::uint16_t charId = i->GetId();
     wStat.AddData("Serial", charSerial, 3);
     wStat.AddData("Body ID", charId, 5);
-
+    
     std::string iName = GetNpcDictName(i, s, NRS_SYSTEM);
     wStat.AddData("Name", iName);
     wStat.AddData("X", i->GetX());
@@ -472,7 +472,7 @@ void WStatsTarget(CSocket *s) {
 void ColorsTarget(CSocket *s) {
     VALIDATESOCKET(s);
     CChar *mChar = s->CurrcharObj();
-
+    
     // Check if item used to initialize target cursor is still within range
     CItem *tempObj = static_cast<CItem *>(s->TempObj());
     s->TempObj(nullptr);
@@ -482,17 +482,17 @@ void ColorsTarget(CSocket *s) {
             return;
         }
     }
-
+    
     CItem *i = CalcItemObjFromSer(s->GetDWord(7));
     if (!ValidateObject(i))
         return;
-
+    
     if (i->IsHeldOnCursor() || (FindItemOwner(i) != nullptr && FindItemOwner(i) != mChar) ||
         !CheckItemRange(mChar, i)) {
         s->SysMessage(400); // That is too far away!
         return;
     }
-
+    
     if (i->GetId() == 0x0FAB || i->GetId() == 0x0EFF || i->GetId() == 0x0E27) // dye vat, hair dye
     {
         CPDyeVat toSend = (*i);
@@ -510,9 +510,9 @@ void ColorsTarget(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void DVatTarget(CSocket *s) {
     VALIDATESOCKET(s);
-
+    
     CChar *mChar = s->CurrcharObj();
-
+    
     // Check if item used to initialize target cursor is still within range
     CItem *tempObj = static_cast<CItem *>(s->TempObj());
     s->TempObj(nullptr);
@@ -522,17 +522,17 @@ void DVatTarget(CSocket *s) {
             return;
         }
     }
-
+    
     serial_t serial = s->GetDWord(7);
     CItem *i = CalcItemObjFromSer(serial);
     if (!ValidateObject(i))
         return;
-
+    
     if (i->IsHeldOnCursor() || !CheckItemRange(mChar, i)) {
         s->SysMessage(400); // That is too far away!
         return;
     }
-
+    
     // Look for onDyeTarget event on dye tub
     std::vector<std::uint16_t> scriptTriggers = tempObj->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
@@ -545,7 +545,7 @@ void DVatTarget(CSocket *s) {
             }
         }
     }
-
+    
     if (i->IsDyeable()) {
         if (i->IsLockedDown()) {
             CMultiObj *iMulti = i->GetMultiObj();
@@ -561,7 +561,7 @@ void DVatTarget(CSocket *s) {
                 return;
             }
         }
-
+        
         i->SetColour(((s->AddId1()) << 8) + s->AddId2());
         Effects->PlaySound(s, 0x023E, true);
     }
@@ -579,16 +579,16 @@ void InfoTarget(CSocket *s) {
     VALIDATESOCKET(s);
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
-
+    
     if (!s->GetByte(1) && s->GetDWord(7) < BASEITEMSERIAL) {
         s->SysMessage(9039); // This command can not be used on characters.
         return;
     }
-
+    
     const std::int16_t x = s->GetWord(11);
     const std::int16_t y = s->GetWord(13);
     const std::uint16_t tileId = s->GetWord(17);
-
+    
     if (tileId == 0) {
         // Map Tile
         std::uint8_t worldNumber = 0;
@@ -596,7 +596,7 @@ void InfoTarget(CSocket *s) {
         if (ValidateObject(mChar)) {
             worldNumber = mChar->WorldNumber();
         }
-
+        
         // manually calculating the ID's if it's a maptype
         auto map1 = Map->SeekMap(x, y, worldNumber);
         CGumpDisplay mapStat(s, 300, 300);
@@ -609,10 +609,10 @@ void InfoTarget(CSocket *s) {
     else {
         // Static Tile
         CTile &tile = Map->SeekTile(tileId);
-
+        
         CGumpDisplay statTile(s, 300, 300);
         statTile.SetTitle("Map Tile");
-
+        
         statTile.AddData("Tilenum", tileId, 5);
         statTile.AddData("Weight", tile.Weight(), 0);
         statTile.AddData("Layer", tile.Layer(), 1);
@@ -653,9 +653,9 @@ void InfoTarget(CSocket *s) {
         statTile.AddData("--> Light", tile.CheckFlag(TF_LIGHT));
         statTile.AddData("--> Animated", tile.CheckFlag(TF_ANIMATED));
         statTile.AddData(
-            "--> NoDiagonal",
-            tile.CheckFlag(TF_NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
-                                            // tiles can be moved on by flying gargoyle
+                         "--> NoDiagonal",
+                         tile.CheckFlag(TF_NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
+        // tiles can be moved on by flying gargoyle
         statTile.AddData("--> Unknown3", tile.CheckFlag(TF_UNKNOWN3));
         statTile.AddData("--> Armor", tile.CheckFlag(TF_ARMOR));
         statTile.AddData("--> Roof", tile.CheckFlag(TF_ROOF));
@@ -684,21 +684,21 @@ void Tiling(CSocket *s) {
     VALIDATESOCKET(s);
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
-
+    
     if (s->ClickX() == -1 && s->ClickY() == -1) {
         s->ClickX(s->GetWord(11));
         s->ClickY(s->GetWord(13));
         s->SendTargetCursor(0, TARGET_TILING, 0, 1038); // Select second corner of bounding box.
         return;
     }
-
+    
     std::int16_t x1 = s->ClickX(), x2 = s->GetWord(11);
     std::int16_t y1 = s->ClickY(), y2 = s->GetWord(13);
     std::int16_t j;
-
+    
     s->ClickX(-1);
     s->ClickY(-1);
-
+    
     if (x1 > x2) {
         j = x1;
         x1 = x2;
@@ -709,12 +709,12 @@ void Tiling(CSocket *s) {
         y1 = y2;
         y2 = j;
     }
-
+    
     std::uint16_t addId = static_cast<std::uint16_t>(((s->AddId1()) << 8) + s->AddId2());
     std::int32_t rndVal = s->TempInt2();
     s->TempInt2(0);
     std::uint16_t rndId = 0;
-
+    
     CItem *c = nullptr;
     for (std::int16_t x = x1; x <= x2; ++x) {
         for (std::int16_t y = y1; y <= y2; ++y) {
@@ -722,7 +722,7 @@ void Tiling(CSocket *s) {
             c = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
             if (!ValidateObject(c))
                 return;
-
+            
             c->SetDecayable(false);
             c->SetLocation(x, y, s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
         }
@@ -740,9 +740,9 @@ bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_
     CItem *toCreate = Items->CreateScriptItem(nullptr, mChar, partId, 1, CBaseObject::OT_ITEM, false, 0x0);
     if (!ValidateObject(toCreate))
         return false;
-
+    
     toCreate->SetName(
-        util::format(Dictionary->GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
+                      util::format(Dictionary->GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
     toCreate->SetLocation(corpse);
     toCreate->SetOwner(corpse->GetOwnerObj());
     toCreate->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
@@ -766,11 +766,11 @@ bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_
 // o------------------------------------------------------------------------------------------------o
 auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     VALIDATESOCKET_WITH_RETURN(s);
-
+    
     auto mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return false;
-
+    
     // Look for onCarveCorpse event on item
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
@@ -783,7 +783,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
             }
         }
     }
-
+    
     // Look for onCarveCorpse in global script
     cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0)); // Global script
     if (toExecute != nullptr) {
@@ -793,16 +793,16 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
             return false;
         }
     }
-
+    
     auto c = Items->CreateItem(nullptr, mChar, 0x122A, 1, 0, CBaseObject::OT_ITEM); // add the blood puddle
     if (c == nullptr)
         return false;
-
+    
     // Place blood on ground
     c->SetLocation(i);
     c->SetMovable(2);
     c->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
-
+    
     // if it's a human corpse
     // Sept 22, 2002 - Corrected the alignment of body parts that are carved.
     if (i->GetTempVar(CITV_MOREY, 2)) {
@@ -816,17 +816,17 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
                         if (!CreateBodyPart(
-                                mChar, i, util::trim(util::strip(csecs[0], "//")),
-                                static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0)))) {
-                            return false;
-                        }
+                                            mChar, i, util::trim(util::strip(csecs[0], "//")),
+                                            static_cast<std::uint16_t>(std::stoul(
+                                                                                  util::trim(util::strip(csecs[1], "//")), nullptr, 0)))) {
+                                                                                      return false;
+                                                                                  }
                     }
                 }
             }
-
+            
             MakeCriminal(mChar);
-
+            
             std::vector<CItem *> corpseItems;
             auto iCont = i->GetContainsList();
             for (const auto &c : iCont->collection()) {
@@ -837,15 +837,15 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     }
                 }
             }
-
+            
             // Loop through the items we want to move out of corpse
             std::for_each(corpseItems.begin(), corpseItems.end(), [i](CItem *corpseItem) {
                 corpseItem->SetCont(nullptr);
                 corpseItem->SetLocation(i);
                 corpseItem->SetDecayTime(
-                    cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+                                         cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
             });
-
+            
             i->Delete();
         }
     }
@@ -861,9 +861,9 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
                         Items->CreateScriptItem(
-                            s, mChar, util::trim(util::strip(csecs[0], "//")),
-                            static_cast<std::uint16_t>(
-                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
+                                                s, mChar, util::trim(util::strip(csecs[0], "//")),
+                                                static_cast<std::uint16_t>(
+                                                                           std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
                                                 CBaseObject::OT_ITEM, true);
                     }
                     else {
@@ -873,7 +873,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
             }
         }
     }
-
+    
     return true;
 }
 
@@ -887,31 +887,31 @@ void AttackTarget(CSocket *s) {
     CChar *mPet = static_cast<CChar *>(s->TempObj());
     CChar *target = CalcCharObjFromSer(s->GetDWord(7));
     s->TempObj(nullptr);
-
+    
     if (!ValidateObject(target) || !ValidateObject(mPet))
         return;
-
+    
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar) || mChar == nullptr)
         return;
-
+    
     // Don't allow attacking offline characters
     if (!target->IsNpc() && !IsOnline(*target))
         return;
-
+    
     // Don't allow fighting between Young/Non-Young players or their pets
     if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
         auto targOwner = target->GetOwnerObj();
         if (!ValidateObject(targOwner)) {
             targOwner = target;
         }
-
+        
         if (!targOwner->IsNpc()) {
             auto mPetOwner = mPet->GetOwnerObj();
             if (ValidateObject(mPetOwner) &&
                 mPetOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 s->SysMessage(
-                    18708); // As a Young player, you cannot harm other players, or their followers.
+                              18708); // As a Young player, you cannot harm other players, or their followers.
                 return;
             }
             else if (targOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -920,7 +920,7 @@ void AttackTarget(CSocket *s) {
             }
         }
     }
-
+    
     // Check if combat is disallowed in attacker's OR mPet's regions
     if (mChar->GetRegion()->IsSafeZone() || mPet->GetRegion()->IsSafeZone() ||
         target->GetRegion()->IsSafeZone()) {
@@ -928,7 +928,7 @@ void AttackTarget(CSocket *s) {
         s->SysMessage(1799); // Hostile actions are not permitted in this safe area.
         return;
     }
-
+    
     // Check if the command was applied to all pets
     if (s->TempInt() == 1) {
         s->TempInt(0);
@@ -938,23 +938,23 @@ void AttackTarget(CSocket *s) {
             // Make sure pet returned from petList is still a valid character
             if (!ValidateObject(myPet))
                 continue;
-
+            
             // Make sure pet cannot attack itself
             if (target == myPet) {
                 s->SysMessage(1073); // Your pet cannot attack itself!
                 continue;
             }
-
+            
             // Make sure only nearby pets can respond
             if (!ObjInRange(mChar, myPet, 12))
                 continue;
-
+            
             // Make sure pets can only attack nearby targets
             if (!ObjInRange(mChar, target, 12)) {
                 s->SysMessage(393); // That is too far away
                 continue;
             }
-
+            
             if (myPet->GetOwnerObj() == mChar) {
                 myPet->FlushPath();
                 Combat->AttackTarget(myPet, target);
@@ -972,23 +972,23 @@ void AttackTarget(CSocket *s) {
             s->SysMessage(1073); // Your pet cannot attack itself!
             return;
         }
-
+        
         // Make sure only nearby pets can respond
         if (!ObjInRange(mChar, mPet, 12))
             return;
-
+        
         // Make sure pet can only attack nearby targets
         if (!ObjInRange(mChar, target, 12)) {
             s->SysMessage(393); // That is too far away
             return;
         }
-
+        
         // Make sure a friend cannot order a pet to attack its owner
         if (target == mPet->GetOwnerObj() && mChar != target) {
             s->SysMessage(2408); // They are unwilling to attack their own master.
             return;
         }
-
+        
         mPet->FlushPath();
         Combat->AttackTarget(mPet, target);
         if (target->IsInnocent() && target != mChar) {
@@ -1011,35 +1011,35 @@ void FollowTarget(CSocket *s) {
     s->TempObj(nullptr);
     if (!ValidateObject(mPet) || !ValidateObject(target))
         return;
-
+    
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     if (s->TempInt() == 1) {
         s->TempInt(0);
-
+        
         GenericList<CChar *> *myFollowers = mChar->GetFollowerList();
         for (CChar *myPet = myFollowers->First(); !myFollowers->Finished();
              myPet = myFollowers->Next()) {
             // Make sure pet returned from followerList is still a valid character
             if (!ValidateObject(myPet))
                 continue;
-
+            
             if (myPet == target) {
                 s->SysMessage(2388); // Your pet cannot follow itself!
                 continue;
             }
-
+            
             // Make sure only nearby pets can respond
             if (!ObjInRange(mChar, myPet, 12))
                 continue;
-
+            
             if (!ObjInRange(mChar, target, 12)) {
                 s->SysMessage(393); // That is too far away
                 continue;
             }
-
+            
             if (myPet->GetOwnerObj() == mChar) {
                 myPet->SetFTarg(target);
                 myPet->FlushPath();
@@ -1052,16 +1052,16 @@ void FollowTarget(CSocket *s) {
             s->SysMessage(2388); // Your pet cannot follow itself!
             return;
         }
-
+        
         // Make sure only nearby pets can respond
         if (!ObjInRange(mChar, mPet, 12))
             return;
-
+        
         if (!ObjInRange(mChar, target, 12)) {
             s->SysMessage(393); // That is too far away
             return;
         }
-
+        
         mPet->SetFTarg(target);
         mPet->FlushPath();
         mPet->SetNpcWander(WT_FOLLOW);
@@ -1080,51 +1080,51 @@ void TransferTarget(CSocket *s) {
     CChar *petChar = static_cast<CChar *>(s->TempObj());
     CChar *targChar = CalcCharObjFromSer(s->GetDWord(7));
     s->TempObj(nullptr);
-
+    
     if (!ValidateObject(petChar))
         return;
-
+    
     if (petChar->IsDispellable()) {
         s->SysMessage(2386); // You cannot transfer ownership of a summoned creature.
         return;
     }
-
+    
     if (!ValidateObject(targChar)) {
         s->SysMessage(1066); // That is not a valid person!
         return;
     }
-
+    
     if (petChar == targChar) {
         s->SysMessage(2371); // Ownership can only be transferred to other players.
         return;
     }
-
+    
     if (petChar->IsAtWar()) {
         s->SysMessage(2414); // You may not transfer a pet that has recently been in combat.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2415); //  The pet may not be transfered to you
-                                                     //  because it has recently been in combat.
+            //  because it has recently been in combat.
         }
         return;
     }
-
+    
     CChar *mChar = s->CurrcharObj();
-
+    
     if (targChar == mChar) {
         s->SysMessage(2409); // That would be pointless - you are already their master!
         return;
     }
-
+    
     if (targChar->IsDead()) {
         s->SysMessage(2384); // You cannot transfer to someone that is dead.
         return;
     }
-
+    
     if (targChar->IsNpc()) {
         s->SysMessage(2371); // Ownership can only be transferred to other players!
         return;
     }
-
+    
     if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
         if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
             !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -1138,30 +1138,30 @@ void TransferTarget(CSocket *s) {
             return;
         }
     }
-
+    
     // Don't allow transfer of pet if either party is a criminal
     if (mChar->IsCriminal()) {
         s->SysMessage(
-            2379); // The pet refuses to be transferred because it will not obey you sufficiently.
+                      2379); // The pet refuses to be transferred because it will not obey you sufficiently.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2382,
                                               mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                                  .c_str()); // The pet will not accept you as a
-                                                             // master because it does not trust %s.
+                                              .c_str()); // The pet will not accept you as a
+            // master because it does not trust %s.
         }
         return;
     }
     else if (targChar->IsCriminal()) {
         s->SysMessage(
-            2380, targChar->GetNameRequest(mChar, NRS_SPEECH)
+                      2380, targChar->GetNameRequest(mChar, NRS_SPEECH)
                       .c_str()); // The pet refuses to be transferred because it will not obey %s.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2381); // The pet will not accept you as a master because it does not trust you.
+                                              2381); // The pet will not accept you as a master because it does not trust you.
         }
         return;
     }
-
+    
     std::uint8_t maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
     std::uint8_t maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
     if (maxControlSlots > 0) {
@@ -1169,7 +1169,7 @@ void TransferTarget(CSocket *s) {
             s->SysMessage(2391); // That would exceed the other player's maximum pet control slots.
             if (targChar->GetSocket() != nullptr) {
                 targChar->GetSocket()->SysMessage(
-                    2390); // That would exceed your maximum pet control slots.
+                                                  2390); // That would exceed your maximum pet control slots.
             }
             return;
         }
@@ -1179,66 +1179,66 @@ void TransferTarget(CSocket *s) {
         s->SysMessage(2779); // That would exceed the other player's maximum follower count.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2780); // That would exceed your maximum follower count.
+                                              2780); // That would exceed your maximum follower count.
         }
         return;
     }
-
+    
     std::uint8_t maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
     if (petChar->IsOnPetOwnerList(targChar) && maxPetOwners > 0 &&
         (petChar->GetPetOwnerList()->Num() >= maxPetOwners)) {
         s->SysMessage(2402); // The creature has had too many masters and is not willing to do the
-                             // bidding of another one!
+        // bidding of another one!
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2402); // The creature has had too many masters and is not willing to do the bidding
-                       // of another one!
+                                              2402); // The creature has had too many masters and is not willing to do the bidding
+            // of another one!
         }
         return;
     }
-
+    
     // Check loyalty of pet to old master
     if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
         !Npcs->CanControlPet(mChar, petChar, true, false, false, true)) {
         s->SysMessage(
-            2379); // The pet refuses to be transferred because it will not obey you sufficiently.
+                      2379); // The pet refuses to be transferred because it will not obey you sufficiently.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2382,
                                               mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                                  .c_str()); // The pet will not accept you as a
-                                                             // master because it does not trust %s.
+                                              .c_str()); // The pet will not accept you as a
+            // master because it does not trust %s.
         }
         return;
     }
-
+    
     // Check loyalty of pet to new master
     if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
         !Npcs->CanControlPet(targChar, petChar, true, true, true, true)) {
         s->SysMessage(2380); // The pet refuses to be transferred because it will not obey %s.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2381, mChar->GetNameRequest(targChar, NRS_SPEECH)
-                          .c_str()); // The pet will not accept you as a master because it does not
-                                     // trust you.
+                                              2381, mChar->GetNameRequest(targChar, NRS_SPEECH)
+                                              .c_str()); // The pet will not accept you as a master because it does not
+            // trust you.
         }
         return;
     }
-
+    
     if (targChar->GetSocket() != nullptr) {
         // Create a pet transfer deed
         CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
             petTransferDeed->SetName(util::format(
-                "a transfer deed for %s (%s)", petName.c_str(),
-                Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language())
-                    .c_str())); // cwmWorldState->creatures[petChar->GetId()].CreatureType().c_str()
-                                // ));
+                                                  "a transfer deed for %s (%s)", petName.c_str(),
+                                                  Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language())
+                                                  .c_str())); // cwmWorldState->creatures[petChar->GetId()].CreatureType().c_str()
+            // ));
             petTransferDeed->SetTempVar(CITV_MORE, petChar->GetSerial());
             petTransferDeed->SetMovable(2); // Disallow moving the deed out of the trade window
             petTransferDeed->SetType(IT_PETTRANSFERDEED); // Set a type to let us identify it later
-                                                          // when trade is accepted
-
+            // when trade is accepted
+            
             // Open a trade window, and place the petTransferDeed in the window
             CItem *j = StartTrade(s, targChar);
             if (ValidateObject(j)) {
@@ -1259,10 +1259,10 @@ void TransferTarget(CSocket *s) {
 bool BuyShop(CSocket *s, CChar *c) {
     if (s == nullptr)
         return false;
-
+    
     if (!ValidateObject(c))
         return false;
-
+    
     std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
@@ -1271,13 +1271,13 @@ bool BuyShop(CSocket *s, CChar *c) {
                 return false;
         }
     }
-
+    
     CItem *sellPack = c->GetItemAtLayer(IL_SELLCONTAINER);
     CItem *boughtPack = c->GetItemAtLayer(IL_BOUGHTCONTAINER);
-
+    
     if (!ValidateObject(sellPack) || !ValidateObject(boughtPack))
         return false;
-
+    
     CPItemsInContainer iic;
     if (s->ClientVerShort() >= CVS_6017) {
         iic.UOKRFlag(true);
@@ -1285,7 +1285,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     iic.Type(0x02);
     iic.VendorSerial(sellPack->GetSerial());
     CPOpenBuyWindow obw(sellPack, c, iic, s);
-
+    
     CPItemsInContainer iic2;
     if (s->ClientVerShort() >= CVS_6017) {
         iic2.UOKRFlag(true);
@@ -1293,20 +1293,20 @@ bool BuyShop(CSocket *s, CChar *c) {
     iic2.Type(0x02);
     iic2.VendorSerial(boughtPack->GetSerial());
     CPOpenBuyWindow obw2(boughtPack, c, iic2, s);
-
+    
     CPDrawContainer toSend;
     toSend.Model(0x0030);
     toSend.Serial(c->GetSerial());
     if (s->ClientType() >= CV_HS2D && s->ClientVerShort() >= CVS_7090) {
         toSend.ContType(0x00);
     }
-
+    
     s->Send(&iic);
     s->Send(&iic2);
     s->Send(&obw);
     s->Send(&obw2);
     s->Send(&toSend);
-
+    
     s->StatWindow(s->CurrcharObj()); // Make sure the gold total has been sent.
     return true;
 }
@@ -1323,10 +1323,10 @@ bool BuyShop(CSocket *s, CChar *c) {
 void NpcResurrectTarget(CChar *i) {
     if (!ValidateObject(i))
         return;
-
+    
     if (i->IsNpc()) {
         Console::shared().Error(
-            util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
+                                util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
         return;
     }
     CSocket *mSock = i->GetSocket();
@@ -1342,44 +1342,44 @@ void NpcResurrectTarget(CChar *i) {
                         return;
                 }
             }
-
+            
             Fame(i, 0);
             Effects->PlaySound(i, 0x0214);
             i->SetId(i->GetOrgId());
             i->SetSkin(i->GetOrgSkin());
             i->SetDead(false);
-
+            
             // Restore hair
             std::uint16_t hairStyleId = i->GetHairStyle();
             std::uint16_t hairStyleColor = i->GetHairColour();
             CItem *hairItem = Items->CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, CBaseObject::OT_ITEM);
-
+            
             if (hairItem != nullptr) {
                 hairItem->SetDecayable(false);
                 hairItem->SetLayer(IL_HAIR);
                 hairItem->SetCont(i);
             }
-
+            
             // Restore beard
             std::uint16_t beardStyleId = i->GetBeardStyle();
             std::uint16_t beardStyleColor = i->GetBeardColour();
             CItem *beardItem =
-                Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, CBaseObject::OT_ITEM);
-
+            Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, CBaseObject::OT_ITEM);
+            
             if (beardItem != nullptr) {
                 beardItem->SetDecayable(false);
                 beardItem->SetLayer(IL_FACIALHAIR);
                 beardItem->SetCont(i);
             }
-
+            
             i->SetHP(i->GetMaxHP() / 10);
             i->SetStamina(i->GetMaxStam() / 10);
             i->SetMana(i->GetMaxMana() / 10);
             i->SetAttacker(nullptr);
-
+            
             // Clear list of characters our char is marked as aggressor against
             i->ClearAggressorFlags();
-
+            
             if (i->IsAtWar() && i->IsNpc()) {
                 i->ToggleCombat();
             }
@@ -1393,7 +1393,7 @@ void NpcResurrectTarget(CChar *i) {
                     }
                     if (j->GetSerial() == i->GetRobe()) {
                         j->Delete();
-
+                        
                         c = Items->CreateScriptItem(nullptr, i, "resurrection_robe", 1, CBaseObject::OT_ITEM);
                         if (c != nullptr) {
                             c->SetCont(i);
@@ -1408,7 +1408,7 @@ void NpcResurrectTarget(CChar *i) {
     }
     else {
         Console::shared().Warning(util::format(
-            "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()));
+                                               "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()));
     }
 }
 
@@ -1424,10 +1424,10 @@ void ShowSkillTarget(CSocket *s) {
         s->SysMessage(1103); // Not a valid target!
         return;
     }
-
+    
     std::int32_t dispType = s->TempInt();
     std::uint16_t skillVal;
-
+    
     CGumpDisplay showSkills(s, 300, 300);
     showSkills.SetTitle("Skills Info");
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
@@ -1437,7 +1437,7 @@ void ShowSkillTarget(CSocket *s) {
         else {
             skillVal = mChar->GetSkill(i);
         }
-
+        
         if (skillVal > 0 || dispType % 2 == 0) {
             showSkills.AddData(cwmWorldState->skill[i].name,
                                std::to_string(static_cast<R32>(skillVal) / 10), 8);
@@ -1456,7 +1456,7 @@ void FriendTarget(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     CChar *targChar = CalcCharObjFromSer(s->GetDWord(7));
     if (!ValidateObject(targChar)) {
         s->SysMessage(1103); // Not a valid target!
@@ -1466,30 +1466,30 @@ void FriendTarget(CSocket *s) {
         s->SysMessage(1622); // That person cannot be made a friend of this creature.
         return;
     }
-
+    
     CChar *pet = static_cast<CChar *>(s->TempObj());
     s->TempObj(nullptr);
-
+    
     if (!ValidateObject(pet)) {
         s->SysMessage(1999); // Object not found
         return;
     }
-
+    
     if (targChar == mChar) {
         s->SysMessage(2409); // That would be pointless - you are already their master!
         return;
     }
-
+    
     if (pet->IsDispellable()) {
         s->SysMessage(2385); // Summoned creatures are loyal only to their summoners.
         return;
     }
-
+    
     if (Npcs->CheckPetFriend(targChar, pet)) {
         s->SysMessage(1621); // That person is already a friend of this creature!
         return;
     }
-
+    
     if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
         if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
             !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -1503,7 +1503,7 @@ void FriendTarget(CSocket *s) {
             return;
         }
     }
-
+    
     auto petFriends = pet->GetFriendList();
     // Make sure to cover the STL response
     if (petFriends != nullptr) {
@@ -1512,39 +1512,39 @@ void FriendTarget(CSocket *s) {
             return;
         }
     }
-
+    
     // Check loyalty of pet to master
     if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
         !Npcs->CanControlPet(mChar, pet, false, true, true)) {
         s->SysMessage(2417); // The pet refuses to accept a new friend because it will not obey you
-                             // sufficiently.
+        // sufficiently.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2418,
-                mChar->GetNameRequest(targChar, 0).c_str()); // The pet will not accept you as a
-                                                             // friend because it does not trust %s.
+                                              2418,
+                                              mChar->GetNameRequest(targChar, 0).c_str()); // The pet will not accept you as a
+            // friend because it does not trust %s.
         }
         return;
     }
-
+    
     // Check loyalty of pet to new friend
     if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
         !Npcs->CanControlPet(targChar, pet, false, true, true)) {
         s->SysMessage(2419, targChar->GetNameRequest(mChar, NRS_SPEECH)
-                                .c_str()); // The pet refuses to accept %s as a friend because it
-                                           // will not obey them.
+                      .c_str()); // The pet refuses to accept %s as a friend because it
+        // will not obey them.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(
-                2420); // The pet will not accept you as a friend because it does not trust you.
+                                              2420); // The pet will not accept you as a friend because it does not trust you.
         }
         return;
     }
-
+    
     if (pet->AddFriend(targChar)) {
         // %s will now treat %s as a friend.
         std::string petName = GetNpcDictName(pet, s, NRS_SPEECH);
         s->SysMessage(1624, petName.c_str(), targChar->GetNameRequest(mChar, NRS_SPEECH).c_str());
-
+        
         // Inform the player added as friend
         CSocket *targSock = targChar->GetSocket();
         if (targSock != nullptr) {
@@ -1571,7 +1571,7 @@ void RemoveFriendTarget(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     // Get targeted character from socket
     CChar *targChar = CalcCharObjFromSer(s->GetDWord(7));
     if (!ValidateObject(targChar)) {
@@ -1582,24 +1582,24 @@ void RemoveFriendTarget(CSocket *s) {
         s->SysMessage(1103); // Not a valid target!
         return;
     }
-
+    
     CChar *pet = static_cast<CChar *>(s->TempObj());
     s->TempObj(nullptr);
     if (!Npcs->CheckPetFriend(targChar, pet)) {
         s->SysMessage(1856); // That player is not on the friend list!
         return;
     }
-
+    
     if (pet->RemoveFriend(targChar)) {
         // %s has been removed from %s's friend list.
         std::string petName = GetNpcDictName(pet, s, NRS_SPEECH);
         s->SysMessage(2300, targChar->GetNameRequest(mChar, NRS_SPEECH).c_str(), petName.c_str());
-
+        
         // Inform the player removed as friend
         CSocket *targSock = targChar->GetSocket();
         if (targSock != nullptr) {
             petName = GetNpcDictName(pet, targSock, NRS_SPEECH);
-
+            
             // You have been removed from %s's friend list.
             targSock->SysMessage(2301, petName.c_str());
         }
@@ -1622,20 +1622,20 @@ void GuardTarget(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     CChar *petGuarding = static_cast<CChar *>(s->TempObj());
     s->TempObj(nullptr);
     if (!ValidateObject(petGuarding))
         return;
-
+    
     Npcs->StopPetGuarding(petGuarding);
-
+    
     CChar *charToGuard = CalcCharObjFromSer(s->GetDWord(7));
     if (ValidateObject(charToGuard)) {
         if (charToGuard != petGuarding->GetOwnerObj() &&
             !Npcs->CheckPetFriend(charToGuard, petGuarding)) {
             s->SysMessage(
-                1628); // Your pet may only guard you, his friends, and items in your house!
+                          1628); // Your pet may only guard you, his friends, and items in your house!
             return;
         }
         petGuarding->SetNPCAiType(AI_PET_GUARD); // 32 is guard mode
@@ -1644,19 +1644,19 @@ void GuardTarget(CSocket *s) {
         petGuarding->SetFTarg(charToGuard);
         petGuarding->FlushPath();
         petGuarding->SetNpcWander(WT_FOLLOW);
-
+        
         if (charToGuard == mChar) {
             s->SysMessage(1321); // Your pet is now guarding you.
         }
         else {
             if (charToGuard->GetSocket() != nullptr) {
                 std::string petName =
-                    GetNpcDictName(petGuarding, charToGuard->GetSocket(), NRS_SPEECH);
+                GetNpcDictName(petGuarding, charToGuard->GetSocket(), NRS_SPEECH);
                 charToGuard->GetSocket()->SysMessage(
-                    2374, petName.c_str()); // ~1_PETNAME~ is now guarding you.
+                                                     2374, petName.c_str()); // ~1_PETNAME~ is now guarding you.
             }
         }
-
+        
         return;
     }
     CItem *itemToGuard = CalcItemObjFromSer(s->GetDWord(7));
@@ -1671,7 +1671,7 @@ void GuardTarget(CSocket *s) {
         }
         else {
             s->SysMessage(
-                1628); // Your pet may only guard you, his friends, and items in your house!
+                          1628); // Your pet may only guard you, his friends, and items in your house!
         }
     }
 }
@@ -1686,7 +1686,7 @@ void MakeTownAlly(CSocket *s) {
     CChar *mChar = s->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     CChar *targetChar = CalcCharObjFromSer(s->GetDWord(7));
     if (!ValidateObject(targetChar)) {
         s->SysMessage(1110); // No such character exists!
@@ -1694,11 +1694,11 @@ void MakeTownAlly(CSocket *s) {
     }
     std::uint16_t srcTown = mChar->GetTown();
     std::uint16_t trgTown = targetChar->GetTown();
-
+    
     if (srcTown == 0 || trgTown == 0) {
         return;
     }
-
+    
     if (!cwmWorldState->townRegions[srcTown]->MakeAlliedTown(trgTown)) {
         s->SysMessage(1111); // You were unable to do that.
     }
@@ -1725,23 +1725,23 @@ void MakeStatusTarget(CSocket *sock) {
     std::uint8_t origCommand = targetChar->GetCommandLevel();
     CommandLevel_st *targLevel = Commands->GetClearance(sock->XText());
     CommandLevel_st *origLevel = Commands->GetClearance(origCommand);
-
+    
     if (targLevel == nullptr) {
         sock->SysMessage(1112); // No such clearance level!
         return;
     }
     CChar *mChar = sock->CurrcharObj();
     // char temp[1024], temp2[1024];
-
+    
     std::uint8_t targetCommand = targLevel->commandLevel;
     auto temp = util::format("account%i.log", mChar->GetAccount().accountNumber);
     auto temp2 = util::format("%s has made %s a %s.\n", mChar->GetName().c_str(),
                               targetChar->GetName().c_str(), targLevel->name.c_str());
-
+    
     Console::shared().Log(temp2, temp);
-
+    
     DismountCreature(targetChar);
-
+    
     if (targLevel->targBody != 0) {
         targetChar->SetId(targLevel->targBody);
         targetChar->SetOrgId(targLevel->targBody);
@@ -1750,10 +1750,10 @@ void MakeStatusTarget(CSocket *sock) {
         targetChar->SetSkin(targLevel->bodyColour);
         targetChar->SetOrgSkin(targLevel->bodyColour);
     }
-
+    
     targetChar->SetPriv(targLevel->defaultPriv);
     targetChar->SetCommandLevel(targetCommand);
-
+    
     if (targLevel->allSkillVals != 0) {
         for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
             targetChar->SetBaseSkill(targLevel->allSkillVals, j);
@@ -1766,7 +1766,7 @@ void MakeStatusTarget(CSocket *sock) {
         targetChar->SetHP(100);
         targetChar->SetMana(100);
     }
-
+    
     std::string playerName = targetChar->GetName();
     if (targetCommand != origCommand && origLevel != nullptr) {
         const size_t position = playerName.find(origLevel->title);
@@ -1776,54 +1776,54 @@ void MakeStatusTarget(CSocket *sock) {
     }
     if (targetCommand != 0 && targetCommand != origCommand) {
         targetChar->SetName(util::trim(
-            util::format("%s %s", targLevel->title.c_str(), util::trim(playerName).c_str())));
+                                       util::format("%s %s", targLevel->title.c_str(), util::trim(playerName).c_str())));
     }
     else if (origCommand != 0) {
         targetChar->SetName(util::trim(playerName));
     }
-
+    
     CItem *mypack = targetChar->GetPackItem();
-
+    
     if (targLevel->stripOff.any()) {
         for (CItem *z = targetChar->FirstItem(); !targetChar->FinishedItems();
              z = targetChar->NextItem()) {
             if (ValidateObject(z)) {
                 switch (z->GetLayer()) {
-                case IL_HAIR:
-                case IL_FACIALHAIR:
-                    if (targLevel->stripOff.test(BIT_STRIPHAIR)) {
-                        z->Delete();
-                    }
-                    break;
-                case IL_NONE:
-                case IL_MOUNT:
-                case IL_PACKITEM:
-                case IL_BANKBOX:
-                    break;
-                default:
-                    if (targLevel->stripOff.test(BIT_STRIPITEMS)) {
-                        if (!ValidateObject(mypack)) {
-                            mypack = targetChar->GetPackItem();
+                    case IL_HAIR:
+                    case IL_FACIALHAIR:
+                        if (targLevel->stripOff.test(BIT_STRIPHAIR)) {
+                            z->Delete();
                         }
-                        if (!ValidateObject(mypack)) {
-                            CItem *iMade =
-                                Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
-                            if (!ValidateObject(iMade))
-                                return;
-
-                            targetChar->SetPackItem(iMade);
-                            iMade->SetDecayable(false);
-                            iMade->SetLayer(IL_PACKITEM);
-                            if (iMade->SetCont(targetChar)) {
-                                iMade->SetType(IT_CONTAINER);
-                                iMade->SetDye(true);
-                                mypack = iMade;
+                        break;
+                    case IL_NONE:
+                    case IL_MOUNT:
+                    case IL_PACKITEM:
+                    case IL_BANKBOX:
+                        break;
+                    default:
+                        if (targLevel->stripOff.test(BIT_STRIPITEMS)) {
+                            if (!ValidateObject(mypack)) {
+                                mypack = targetChar->GetPackItem();
                             }
+                            if (!ValidateObject(mypack)) {
+                                CItem *iMade =
+                                Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
+                                if (!ValidateObject(iMade))
+                                    return;
+                                
+                                targetChar->SetPackItem(iMade);
+                                iMade->SetDecayable(false);
+                                iMade->SetLayer(IL_PACKITEM);
+                                if (iMade->SetCont(targetChar)) {
+                                    iMade->SetType(IT_CONTAINER);
+                                    iMade->SetDye(true);
+                                    mypack = iMade;
+                                }
+                            }
+                            z->SetCont(mypack);
+                            z->PlaceInPack();
                         }
-                        z->SetCont(mypack);
-                        z->PlaceInPack();
-                    }
-                    break;
+                        break;
                 }
             }
         }
@@ -1838,7 +1838,7 @@ void MakeStatusTarget(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 void SmeltTarget(CSocket *s) {
     VALIDATESOCKET(s);
-
+    
     CChar *mChar = s->CurrcharObj();
     // Check if item used to initialize target cursor is still within range
     CItem *tempObj = static_cast<CItem *>(s->TempObj());
@@ -1849,40 +1849,40 @@ void SmeltTarget(CSocket *s) {
             return;
         }
     }
-
+    
     CItem *i = CalcItemObjFromSer(s->GetDWord(7));
     if (!ValidateObject(i) || i->GetCont() == nullptr)
         return;
-
+    
     if (i->IsHeldOnCursor() || !CheckItemRange(mChar, i)) {
         s->SysMessage(400); // That is too far away!
         return;
     }
-
+    
     if (i->GetCreator() == INVALIDSERIAL) {
         s->SysMessage(1113); // You can melt only player made items.
         return;
     }
-
+    
     std::uint16_t iMadeFrom = i->EntryMadeFrom();
-
+    
     CreateEntry_st *ourCreateEntry = Skills->FindItem(iMadeFrom);
     if (iMadeFrom == 0 || ourCreateEntry == nullptr) {
         s->SysMessage(1114); // You have no knowledge on how to melt that.
         return;
     }
-
+    
     R32 avgMin = ourCreateEntry->AverageMinSkill();
     if (mChar->GetSkill(MINING) < avgMin) {
         s->SysMessage(1115); // You aren't skilled enough to melt this.
         return;
     }
     R32 avgMax = ourCreateEntry->AverageMaxSkill();
-
+    
     Skills->CheckSkill(mChar, MINING, static_cast<std::int16_t>(avgMin), static_cast<std::int16_t>(avgMax));
-
+    
     std::uint8_t sumAmountRestored = 0;
-
+    
     for (std::uint32_t skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr) {
         std::uint16_t amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
         std::string itemId = util::ntos(ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16);
@@ -1890,7 +1890,7 @@ void SmeltTarget(CSocket *s) {
         sumAmountRestored += amtToRestore;
         Items->CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, CBaseObject::OT_ITEM, true, itemColour);
     }
-
+    
     s->SysMessage(1116, sumAmountRestored); // You melt the item and place %i ingots in your pack.
     i->Delete();
 }
@@ -1903,24 +1903,24 @@ void SmeltTarget(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void VialTarget(CSocket *mSock) {
     VALIDATESOCKET(mSock);
-
+    
     CItem *nVialId = static_cast<CItem *>(mSock->TempObj());
     mSock->TempObj(nullptr);
-
+    
     serial_t targSerial = mSock->GetDWord(7);
     if (targSerial == INVALIDSERIAL)
         return;
-
+    
     CChar *mChar = mSock->CurrcharObj();
     if (!ValidateObject(mChar))
         return;
-
+    
     if (ValidateObject(nVialId)) {
         if (nVialId->IsHeldOnCursor() || !CheckItemRange(mChar, nVialId)) {
             mSock->SysMessage(400); // That is too far away!
             return;
         }
-
+        
         CItem *nDagger = Combat->GetWeapon(mChar);
         if (!ValidateObject(nDagger)) {
             mSock->SysMessage(742); // You do not have a dagger in your hands!
@@ -1930,7 +1930,7 @@ void VialTarget(CSocket *mSock) {
             mSock->SysMessage(743); // That is not a dagger!
             return;
         }
-
+        
         nVialId->SetTempVar(CITV_MORE, 1, 0);
         if (targSerial >= BASEITEMSERIAL) // it's an item
         {
@@ -1943,7 +1943,7 @@ void VialTarget(CSocket *mSock) {
                     mSock->SysMessage(400); // That is too far away!
                     return;
                 }
-
+                
                 nVialId->SetTempVar(CITV_MORE, 1, targItem->GetTempVar(CITV_MORE, 1));
                 Karma(mChar, nullptr, -1000);
                 if (targItem->GetTempVar(CITV_MORE, 2) < 4) {
@@ -1953,7 +1953,7 @@ void VialTarget(CSocket *mSock) {
                 }
                 else {
                     mSock->SysMessage(751); // You examine the corpse, but decide any further blood
-                                            // samples would be too contaminated.
+                    // samples would be too contaminated.
                 }
             }
         }
@@ -1979,9 +1979,9 @@ void VialTarget(CSocket *mSock) {
                 else {
                     CSocket *nCharSocket = targChar->GetSocket();
                     nCharSocket->SysMessage(
-                        746,
-                        mChar->GetNameRequest(targChar, NRS_SPEECH)
-                            .c_str()); // %s has pricked you with a dagger and sampled your blood
+                                            746,
+                                            mChar->GetNameRequest(targChar, NRS_SPEECH)
+                                            .c_str()); // %s has pricked you with a dagger and sampled your blood
                 }
                 if (WillResultInCriminal(mChar, targChar)) {
                     MakeCriminal(mChar);
@@ -2018,10 +2018,10 @@ bool CPITargetCursor::Handle(void) {
         }
         if (tSock->GetByte(1) == 1 && !tSock->GetDWord(7)) {
             tSock->SetDWord(
-                7, INVALIDSERIAL); // Client sends TargSer as 0 when we target an XY/Static, use
-                                   // INVALIDSERIAL as 0 could be a valid Serial -
+                            7, INVALIDSERIAL); // Client sends TargSer as 0 when we target an XY/Static, use
+            // INVALIDSERIAL as 0 could be a valid Serial -
         }
-
+        
         std::uint8_t a1 = tSock->GetByte(2);
         std::uint8_t a2 = tSock->GetByte(3);
         std::uint8_t a3 = tSock->GetByte(4);
@@ -2053,100 +2053,100 @@ bool CPITargetCursor::Handle(void) {
             }
             else if (a3 == 0) {
                 switch (targetId) {
-                case TARGET_ADDSCRIPTNPC:
-                    AddScriptNpc(tSock);
-                    break;
-                case TARGET_BUILDHOUSE:
-                    BuildHouseTarget(tSock);
-                    break;
-                case TARGET_TELE:
-                    TeleTarget(tSock);
-                    break;
-                case TARGET_DYE:
-                    DyeTarget(tSock);
-                    break;
-                case TARGET_DYEALL:
-                    ColorsTarget(tSock);
-                    break;
-                case TARGET_DVAT:
-                    DVatTarget(tSock);
-                    break;
-                case TARGET_INFO:
-                    InfoTarget(tSock);
-                    break;
-                case TARGET_WSTATS:
-                    WStatsTarget(tSock);
-                    break;
-                case TARGET_NPCRESURRECT:
-                    NpcResurrectTarget(mChar);
-                    break;
-                case TARGET_MAKESTATUS:
-                    MakeStatusTarget(tSock);
-                    break;
-                case TARGET_VIAL:
-                    VialTarget(tSock);
-                    break;
-                case TARGET_TILING:
-                    Tiling(tSock);
-                    break;
-                case TARGET_SHOWSKILLS:
-                    ShowSkillTarget(tSock);
-                    break;
-                    // Vendors
-                case TARGET_PLVBUY:
-                    PlayerVendorBuy(tSock);
-                    break;
-                    // Town Stuff
-                case TARGET_TOWNALLY:
-                    MakeTownAlly(tSock);
-                    break;
-                case TARGET_VOTEFORMAYOR:
-                    cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor(tSock);
-                    break;
-                    // Pets
-                case TARGET_FOLLOW:
-                    FollowTarget(tSock);
-                    break;
-                case TARGET_ATTACK:
-                    AttackTarget(tSock);
-                    break;
-                case TARGET_TRANSFER:
-                    TransferTarget(tSock);
-                    break;
-                case TARGET_GUARD:
-                    GuardTarget(tSock);
-                    break;
-                case TARGET_FRIEND:
-                    FriendTarget(tSock);
-                    break;
-                case TARGET_REMOVEFRIEND:
-                    RemoveFriendTarget(tSock);
-                    break;
-                    // Magic
-                case TARGET_CASTSPELL:
-                    Magic->CastSpell(tSock, mChar);
-                    break;
-                    // Skills Functions
-                case TARGET_SMITH:
-                    Skills->Smith(tSock);
-                    break;
-                case TARGET_SMELTORE:
-                    Skills->SmeltOre(tSock);
-                    break;
-                case TARGET_REPAIRMETAL:
-                    Skills->RepairMetal(tSock);
-                    break;
-                case TARGET_SMELT:
-                    SmeltTarget(tSock);
-                    break;
-                case TARGET_PARTYADD:
-                    PartyFactory::shared().CreateInvite(tSock);
-                    break;
-                case TARGET_PARTYREMOVE:
-                    PartyFactory::shared().Kick(tSock);
-                    break;
-                default:
-                    break;
+                    case TARGET_ADDSCRIPTNPC:
+                        AddScriptNpc(tSock);
+                        break;
+                    case TARGET_BUILDHOUSE:
+                        BuildHouseTarget(tSock);
+                        break;
+                    case TARGET_TELE:
+                        TeleTarget(tSock);
+                        break;
+                    case TARGET_DYE:
+                        DyeTarget(tSock);
+                        break;
+                    case TARGET_DYEALL:
+                        ColorsTarget(tSock);
+                        break;
+                    case TARGET_DVAT:
+                        DVatTarget(tSock);
+                        break;
+                    case TARGET_INFO:
+                        InfoTarget(tSock);
+                        break;
+                    case TARGET_WSTATS:
+                        WStatsTarget(tSock);
+                        break;
+                    case TARGET_NPCRESURRECT:
+                        NpcResurrectTarget(mChar);
+                        break;
+                    case TARGET_MAKESTATUS:
+                        MakeStatusTarget(tSock);
+                        break;
+                    case TARGET_VIAL:
+                        VialTarget(tSock);
+                        break;
+                    case TARGET_TILING:
+                        Tiling(tSock);
+                        break;
+                    case TARGET_SHOWSKILLS:
+                        ShowSkillTarget(tSock);
+                        break;
+                        // Vendors
+                    case TARGET_PLVBUY:
+                        PlayerVendorBuy(tSock);
+                        break;
+                        // Town Stuff
+                    case TARGET_TOWNALLY:
+                        MakeTownAlly(tSock);
+                        break;
+                    case TARGET_VOTEFORMAYOR:
+                        cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor(tSock);
+                        break;
+                        // Pets
+                    case TARGET_FOLLOW:
+                        FollowTarget(tSock);
+                        break;
+                    case TARGET_ATTACK:
+                        AttackTarget(tSock);
+                        break;
+                    case TARGET_TRANSFER:
+                        TransferTarget(tSock);
+                        break;
+                    case TARGET_GUARD:
+                        GuardTarget(tSock);
+                        break;
+                    case TARGET_FRIEND:
+                        FriendTarget(tSock);
+                        break;
+                    case TARGET_REMOVEFRIEND:
+                        RemoveFriendTarget(tSock);
+                        break;
+                        // Magic
+                    case TARGET_CASTSPELL:
+                        Magic->CastSpell(tSock, mChar);
+                        break;
+                        // Skills Functions
+                    case TARGET_SMITH:
+                        Skills->Smith(tSock);
+                        break;
+                    case TARGET_SMELTORE:
+                        Skills->SmeltOre(tSock);
+                        break;
+                    case TARGET_REPAIRMETAL:
+                        Skills->RepairMetal(tSock);
+                        break;
+                    case TARGET_SMELT:
+                        SmeltTarget(tSock);
+                        break;
+                    case TARGET_PARTYADD:
+                        PartyFactory::shared().CreateInvite(tSock);
+                        break;
+                    case TARGET_PARTYREMOVE:
+                        PartyFactory::shared().Kick(tSock);
+                        break;
+                    default:
+                        break;
                 }
             }
         }

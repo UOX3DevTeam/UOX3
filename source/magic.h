@@ -10,15 +10,15 @@ class CChar;
 class CItem;
 
 class CMagicMove {
-  private:
+private:
     std::uint16_t effect;
     std::uint8_t speed;
     std::uint8_t loop;
     std::uint8_t explode;
-
-  public:
+    
+public:
     CMagicMove() : effect(INVALIDID), speed(0), loop(0), explode(0) {}
-
+    
     std::uint16_t Effect(void) const { return effect; }
     std::uint8_t Speed(void) const { return speed; }
     std::uint8_t Loop(void) const { return loop; }
@@ -30,12 +30,12 @@ class CMagicMove {
 };
 
 class CMagicStat {
-  private:
+private:
     std::uint16_t effect;
     std::uint8_t speed;
     std::uint8_t loop;
-
-  public:
+    
+public:
     CMagicStat() : effect(INVALIDID), speed(0xFF), loop(0xFF) {}
     std::uint16_t Effect(void) const { return effect; }
     std::uint8_t Speed(void) const { return speed; }
@@ -58,13 +58,13 @@ struct Reag_st {
 };
 
 class CSpellInfo {
-  private:
+private:
     std::int16_t mana;
     std::int16_t stamina;
     std::int16_t health;
     R32 delay;         // Casting time of spell
     R32 damageDelay;   // Minimum delay between targeting of a damage spell and the application of
-                       // damage
+    // damage
     R32 recoveryDelay; // Minimum delay between the end of one spellcast and the start of another
     std::uint16_t action;
     Reag_st reags;
@@ -82,13 +82,13 @@ class CSpellInfo {
     std::int16_t schi;
     std::uint16_t jsScript;
     std::int16_t baseDmg;
-
-  public:
+    
+public:
     CSpellInfo()
-        : mana(0), stamina(0), health(0), delay(0), damageDelay(0), recoveryDelay(1.0f), action(0),
-          mantra(""), strToSay(""), enabled(false), circle(1), flags(0), effect(INVALIDID),
-          hiskill(0), loskill(0), sclo(0), schi(0), jsScript(0), baseDmg(0) {}
-
+    : mana(0), stamina(0), health(0), delay(0), damageDelay(0), recoveryDelay(1.0f), action(0),
+    mantra(""), strToSay(""), enabled(false), circle(1), flags(0), effect(INVALIDID),
+    hiskill(0), loskill(0), sclo(0), schi(0), jsScript(0), baseDmg(0) {}
+    
     std::uint16_t Action(void) const { return action; }
     R32 Delay(void) const { return delay; }
     R32 DamageDelay(void) const { return damageDelay; }
@@ -96,7 +96,7 @@ class CSpellInfo {
     std::int16_t Health(void) const { return health; }
     std::int16_t Stamina(void) const { return stamina; }
     std::int16_t Mana(void) const { return mana; }
-
+    
     void Action(std::uint16_t newVal) { action = newVal; }
     void Delay(R32 newVal) { delay = newVal; }
     void DamageDelay(R32 newVal) { damageDelay = newVal; }

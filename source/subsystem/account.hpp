@@ -109,8 +109,7 @@ struct AccountEntry {
 
     [[maybe_unused]] auto addCharacter(account::charnum_t characterSlot,
                                        const AccountCharacter &accountCharacter) -> bool;
-    [[maybe_unused]] auto addCharacter(const AccountCharacter &accountCharacter)
-        -> account::charnum_t;
+    [[maybe_unused]] auto addCharacter(const AccountCharacter &accountCharacter)-> account::charnum_t;
     [[maybe_unused]] auto delCharacter(account::charnum_t characterSlot) -> bool;
 };
 
