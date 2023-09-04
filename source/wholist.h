@@ -15,12 +15,12 @@ class CWhoList {
     std::int32_t gmCount;       // number of GMs already in it
     bool online;
 
-    std::vector<SERIAL> whoMenuData;
+    std::vector<serial_t> whoMenuData;
     std::vector<std::string> one, two; // replacement for entries1, entries2
 
     void Update(void); // force the list to update
     void ResetUpdateFlag(void);
-    void AddSerial(SERIAL toAdd);
+    void AddSerial(serial_t toAdd);
     void Delete(void);
     void Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed);
 

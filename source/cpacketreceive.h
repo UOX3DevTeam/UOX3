@@ -178,7 +178,7 @@ class CPIKeepAlive : public CPInputBuffer {
 class CPIStatusRequest : public CPInputBuffer {
     std::uint32_t pattern;
     std::uint8_t getType;
-    SERIAL playerId;
+    serial_t playerId;
 
   public:
     virtual ~CPIStatusRequest() {}
@@ -227,7 +227,7 @@ class CPIGodModeToggle : public CPInputBuffer {
 
 class CPIDblClick : public CPInputBuffer {
   protected:
-    SERIAL objectId;
+    serial_t objectId;
 
   public:
     virtual ~CPIDblClick() {}
@@ -240,7 +240,7 @@ class CPIDblClick : public CPInputBuffer {
 
 class CPISingleClick : public CPInputBuffer {
   protected:
-    SERIAL objectId;
+    serial_t objectId;
 
   public:
     virtual ~CPISingleClick() {}
@@ -321,7 +321,7 @@ class CPIDropItem : public CPInputBuffer {
     bool uokrFlag;
     std::int16_t x, y;
     std::int8_t z, gridLoc;
-    SERIAL item, dest;
+    serial_t item, dest;
 
   public:
     virtual ~CPIDropItem() {}
@@ -339,9 +339,9 @@ class CPIGumpMenuSelect : public CPInputBuffer {
     virtual void Receive(void) override;
     virtual bool Handle(void) override;
 
-    SERIAL ButtonId(void) const;
-    SERIAL GumpId(void) const;
-    SERIAL ID(void) const;
+    serial_t ButtonId(void) const;
+    serial_t GumpId(void) const;
+    serial_t ID(void) const;
     std::uint32_t SwitchCount(void) const;
     std::uint32_t TextCount(void) const;
     std::uint32_t SwitchValue(std::uint32_t index) const;
@@ -351,7 +351,7 @@ class CPIGumpMenuSelect : public CPInputBuffer {
     std::string GetTextString(std::uint8_t number) const;
 
   protected:
-    SERIAL id, buttonId, gumpId;
+    serial_t id, buttonId, gumpId;
     std::uint32_t switchCount, textCount;
     std::uint32_t textOffset;
 
@@ -579,7 +579,7 @@ class CPITradeMessage : public CPInputBuffer {
 
 class CPIDyeWindow : public CPInputBuffer {
   protected:
-    SERIAL changing;
+    serial_t changing;
     colour_t newValue;
     std::uint16_t modelId;
 
@@ -702,7 +702,7 @@ class CPIUOTDActions : public CPInputBuffer {
 
 class CPIToolTipRequestAoS : public CPInputBuffer {
   protected:
-    SERIAL getSer;
+    serial_t getSer;
 
   public:
     virtual ~CPIToolTipRequestAoS() {}
@@ -716,7 +716,7 @@ class CPIToolTipRequestAoS : public CPInputBuffer {
 
 class CPIToolTipRequest : public CPInputBuffer {
   protected:
-    SERIAL getSer;
+    serial_t getSer;
 
   public:
     virtual ~CPIToolTipRequest() {}
@@ -730,7 +730,7 @@ class CPIToolTipRequest : public CPInputBuffer {
 
 class CPIPopupMenuRequest : public CPInputBuffer {
   protected:
-    SERIAL mSer;
+    serial_t mSer;
 
   public:
     virtual ~CPIPopupMenuRequest() {}

@@ -1291,7 +1291,7 @@ CPIRename::CPIRename(CSocket *s) : CPInputBuffer(s) {
 }
 void CPIRename::Receive(void) { tSock->Receive(0x23, false); }
 bool CPIRename::Handle(void) {
-    SERIAL serial = tSock->GetDWord(1);
+    serial_t serial = tSock->GetDWord(1);
     if (serial == INVALIDSERIAL)
         return true;
 
@@ -1862,9 +1862,9 @@ void CPIGumpMenuSelect::Receive(void) {
     tSock->Receive(tSock->GetWord(1), false);
 }
 
-SERIAL CPIGumpMenuSelect::ButtonId(void) const { return buttonId; }
-SERIAL CPIGumpMenuSelect::GumpId(void) const { return gumpId; }
-SERIAL CPIGumpMenuSelect::ID(void) const { return id; }
+serial_t CPIGumpMenuSelect::ButtonId(void) const { return buttonId; }
+serial_t CPIGumpMenuSelect::GumpId(void) const { return gumpId; }
+serial_t CPIGumpMenuSelect::ID(void) const { return id; }
 std::uint32_t CPIGumpMenuSelect::SwitchCount(void) const { return switchCount; }
 std::uint32_t CPIGumpMenuSelect::TextCount(void) const { return textCount; }
 
@@ -2462,7 +2462,7 @@ void CPIAllNames3D::Receive(void) {
     tSock->Receive(tSock->GetWord(1), false);
 }
 bool CPIAllNames3D::Handle(void) {
-    SERIAL objSer = tSock->GetDWord(3);
+    serial_t objSer = tSock->GetDWord(3);
     CBaseObject *toName = nullptr;
 
     if (objSer >= BASEITEMSERIAL) {
@@ -3665,7 +3665,7 @@ bool CPIPartyCommand::Handle(void) {
     const std::int32_t BASE_OFFSET = 6;
     switch (partyCmd) {
     case PARTY_ADD: {
-        SERIAL charToAdd = tSock->GetDWord(BASE_OFFSET);
+        serial_t charToAdd = tSock->GetDWord(BASE_OFFSET);
         if (charToAdd != 0) { // it really is a serial
             tSock->SetDWord(7, charToAdd);
             PartyFactory::shared().CreateInvite(tSock);
@@ -3681,7 +3681,7 @@ bool CPIPartyCommand::Handle(void) {
     case PARTY_REMOVE: {
         Party *ourParty = PartyFactory::shared().Get(tSock->CurrcharObj());
         if (ourParty != nullptr) {
-            SERIAL charToRemove = tSock->GetDWord(BASE_OFFSET);
+            serial_t charToRemove = tSock->GetDWord(BASE_OFFSET);
             if ((ourParty->Leader() == tSock->CurrcharObj()) ||
                 (tSock->CurrcharObj()->GetSerial() == charToRemove)) {
                 if (charToRemove != 0) { // it really is a serial
@@ -3709,7 +3709,7 @@ bool CPIPartyCommand::Handle(void) {
         Party *toTellTo = PartyFactory::shared().Get(tSock->CurrcharObj());
         if (toTellTo != nullptr) {
             CPPartyTell toTell(this, tSock);
-            SERIAL personToTell = tSock->GetDWord(BASE_OFFSET);
+            serial_t personToTell = tSock->GetDWord(BASE_OFFSET);
             CChar *charToTell = CalcCharObjFromSer(personToTell);
             CSocket *charTell = charToTell->GetSocket();
             if (charTell != nullptr) {
@@ -3746,7 +3746,7 @@ bool CPIPartyCommand::Handle(void) {
         break;
     }
     case PARTY_ACCEPT: {
-        SERIAL leaderSerial = tSock->GetDWord(BASE_OFFSET);
+        serial_t leaderSerial = tSock->GetDWord(BASE_OFFSET);
         Party *toAddTo = PartyFactory::shared().Get(CalcCharObjFromSer(leaderSerial));
         if (toAddTo != nullptr) {
             toAddTo->AddMember(tSock->CurrcharObj());
@@ -3757,7 +3757,7 @@ bool CPIPartyCommand::Handle(void) {
         break;
     }
     case PARTY_DECLINE: {
-        SERIAL leaderSerial = tSock->GetDWord(BASE_OFFSET);
+        serial_t leaderSerial = tSock->GetDWord(BASE_OFFSET);
         CChar *leader = CalcCharObjFromSer(leaderSerial);
         if (leader != nullptr) {
             CSocket *leaderSock = leader->GetSocket();
@@ -4637,8 +4637,8 @@ bool CPIBandageMacro::Handle(void) {
         for (auto i : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(i);
             if (toExecute != nullptr) {
-                SERIAL bandageSerial = tSock->GetDWord(5);
-                SERIAL targetSerial = tSock->GetDWord(9);
+                serial_t bandageSerial = tSock->GetDWord(5);
+                serial_t targetSerial = tSock->GetDWord(9);
 
                 if (bandageSerial == INVALIDSERIAL) {
                     Console::shared() << "Bandage Macro detected, but no bandage found!\n";
@@ -4699,7 +4699,7 @@ void CPIClosedStatusGump::Receive(void) { Handle(); }
 bool CPIClosedStatusGump::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
     if (ValidateObject(ourChar)) {
-        SERIAL statusGumpCharSerial = tSock->GetDWord(5);
+        serial_t statusGumpCharSerial = tSock->GetDWord(5);
         CChar *statusGumpChar = CalcCharObjFromSer(statusGumpCharSerial);
         if (ValidateObject(statusGumpChar)) {
             // tSock->StatWindow( statusGumpChar ); // Send statwindow update on closing the gump?

@@ -19,9 +19,9 @@ class CChar;
 
 class CHelpRequest {
   private:
-    SERIAL helpReqId;
-    SERIAL playerPaging;   // player who is paging
-    SERIAL playerHandling; // player who is handling it
+    serial_t helpReqId;
+    serial_t playerPaging;   // player who is paging
+    serial_t playerHandling; // player who is handling it
     std::int8_t priority;         // priority of the page
     bool handled;          // has it been handled?
     time_t timeOfPage;     // when was the page reported?
@@ -35,21 +35,21 @@ class CHelpRequest {
     }
     ~CHelpRequest();
 
-    SERIAL WhoPaging(void) const;
-    SERIAL WhoHandling(void) const;
+    serial_t WhoPaging(void) const;
+    serial_t WhoHandling(void) const;
     std::int8_t Priority(void) const;
     bool IsHandled(void) const;
     time_t TimeOfPage(void) const;
     std::string Reason(void) const;
-    SERIAL RequestId(void) const;
+    serial_t RequestId(void) const;
 
-    void WhoPaging(SERIAL pPaging);
-    void WhoHandling(SERIAL pHandling);
+    void WhoPaging(serial_t pPaging);
+    void WhoHandling(serial_t pHandling);
     void Priority(std::int8_t pPriority);
     void IsHandled(bool pHandled);
     void TimeOfPage(time_t pTime);
     void Reason(const std::string &pReason);
-    void RequestId(SERIAL hrid);
+    void RequestId(serial_t hrid);
 };
 
 class PageVector {
@@ -61,12 +61,12 @@ class PageVector {
     [[maybe_unused]] R32 avgEntryTime;
     [[maybe_unused]] R32 maxEntryTime;
     [[maybe_unused]] R32 minEntryTime;
-    SERIAL maxId;
+    serial_t maxId;
 
     void KillQueue(void);
 
   public:
-    SERIAL Add(CHelpRequest *toAdd);
+    serial_t Add(CHelpRequest *toAdd);
     bool Remove(void);
     CHelpRequest *First(void);
     CHelpRequest *Next(void);
@@ -80,8 +80,8 @@ class PageVector {
     void SetTitle(const std::string &newTitle);
     bool GotoPos(std::int32_t pos);
     std::int32_t CurrentPos(void) const;
-    SERIAL GetCallNum(void) const;
-    std::int32_t FindCallNum(SERIAL callNum);
+    serial_t GetCallNum(void) const;
+    std::int32_t FindCallNum(serial_t callNum);
     bool AnswerNextCall(CSocket *mSock, CChar *mChar);
 };
 

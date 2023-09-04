@@ -29,15 +29,15 @@
 #include "typedefs.h"
 
 // o------------------------------------------------------------------------------------------------o
-//  ByteBufferBounds_st
+//  ByteBufferBounds
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
-struct ByteBufferBounds_st : public std::out_of_range {
+struct ByteBufferBounds : public std::out_of_range {
     int offset;
     int amount;
     int buffersize;
     std::string _msg;
-    explicit ByteBufferBounds_st(int offset, int amount, int size);
+    explicit ByteBufferBounds(int offset, int amount, int size);
     auto what() const noexcept -> const char * override;
 };
 
@@ -232,7 +232,7 @@ class ByteBuffer_t {
                 size = 1;
             }
             if (Exceeds(offset, size)) {
-                throw ByteBufferBounds_st(offset, size, static_cast<int>(_bytedata.size()));
+                throw ByteBufferBounds(offset, size, static_cast<int>(_bytedata.size()));
             }
             T value(0);
             std::copy(_bytedata.data() + offset, _bytedata.data() + offset + size,
@@ -256,7 +256,7 @@ class ByteBuffer_t {
                 auto requested_size = entry_size * amount;
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size)) {
-                    throw ByteBufferBounds_st(offset, requested_size,
+                    throw ByteBufferBounds(offset, requested_size,
                                               static_cast<int>(_bytedata.size()));
                 }
                 // we need to loop through and read a "character" at a time
@@ -308,7 +308,7 @@ class ByteBuffer_t {
             }
             if (amount > 0) {
                 if (Exceeds(offset, size)) {
-                    throw ByteBufferBounds_st(offset, size, static_cast<int>(_bytedata.size()));
+                    throw ByteBufferBounds(offset, size, static_cast<int>(_bytedata.size()));
                 }
                 // We now get to read
                 T input;
@@ -348,7 +348,7 @@ class ByteBuffer_t {
             }
             if (amount > 0) {
                 if (Exceeds(offset, size, expand)) {
-                    throw ByteBufferBounds_st(offset, size, static_cast<int>(_bytedata.size()));
+                    throw ByteBufferBounds(offset, size, static_cast<int>(_bytedata.size()));
                 }
                 // we need to write it
                 for (auto i = 0; i < amount; ++i) {
@@ -385,7 +385,7 @@ class ByteBuffer_t {
             }
             if (Exceeds(offset, size, expand)) {
 
-                throw ByteBufferBounds_st(offset, size, static_cast<int>(_bytedata.size()));
+                throw ByteBufferBounds(offset, size, static_cast<int>(_bytedata.size()));
             }
             // we need to write it
             T temp = value;
@@ -422,7 +422,7 @@ class ByteBuffer_t {
                 auto requested_size = (write_size + fill_size) * entry_size;
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size, expand)) {
-                    throw ByteBufferBounds_st(offset, requested_size,
+                    throw ByteBufferBounds(offset, requested_size,
                                               static_cast<int>(_bytedata.size()));
                 }
                 // Ok, so now we get to go and do our thing
@@ -458,7 +458,7 @@ class ByteBuffer_t {
                 auto requested_size = amount * entry_size;
 
                 if (Exceeds(offset, requested_size, expand)) {
-                    throw ByteBufferBounds_st(offset, requested_size,
+                    throw ByteBufferBounds(offset, requested_size,
                                               static_cast<int>(_bytedata.size()));
                 }
                 // We need to check and loop through if we are reversing;
@@ -542,15 +542,15 @@ class CNetworkStuff {
     CNetworkStuff();
     ~CNetworkStuff();
     auto Startup() -> void;
-    void Disconnect(UOXSOCKET s);
+    void Disconnect(uoxsocket_t s);
     void Disconnect(CSocket *s);
     void ClearBuffers(void);
     void CheckLoginMessage(void);
     void CheckMessage(void);
     void SockClose(void);
     void SetLastOn(CSocket *s);
-    CSocket *GetSockPtr(UOXSOCKET s);
-    UOXSOCKET FindNetworkPtr(CSocket *toFind);
+    CSocket *GetSockPtr(uoxsocket_t s);
+    uoxsocket_t FindNetworkPtr(CSocket *toFind);
 
     void CheckConnections(void);
     void CheckMessages(void);
@@ -560,7 +560,7 @@ class CNetworkStuff {
     size_t PeakConnectionCount(void) const;
 
     // Login Specific
-    void LoginDisconnect(UOXSOCKET s);
+    void LoginDisconnect(uoxsocket_t s);
     void LoginDisconnect(CSocket *s);
 
     void RegisterPacket(std::uint8_t packet, std::uint8_t subCmd, std::uint16_t scriptId);
@@ -590,10 +590,10 @@ class CNetworkStuff {
     size_t peakConnectionCount;
 
     void LoadFirewallEntries(void);
-    void GetMsg(UOXSOCKET s);
+    void GetMsg(uoxsocket_t s);
     void sockInit(void);
-    void GetLoginMsg(UOXSOCKET s);
-    UOXSOCKET FindLoginPtr(CSocket *s);
+    void GetLoginMsg(uoxsocket_t s);
+    uoxsocket_t FindLoginPtr(CSocket *s);
 
     void CheckConn(void);
     void LogOut(CSocket *s);

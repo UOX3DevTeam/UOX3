@@ -18,7 +18,7 @@
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the character object based on the calling serial
 // o------------------------------------------------------------------------------------------------o
-CChar *CalcCharObjFromSer(SERIAL targSerial) {
+CChar *CalcCharObjFromSer(serial_t targSerial) {
     CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CChar *toRet = nullptr;
     if (findItem != nullptr) {
@@ -34,7 +34,7 @@ CChar *CalcCharObjFromSer(SERIAL targSerial) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the item object based on the calling serial
 // o------------------------------------------------------------------------------------------------o
-CItem *CalcItemObjFromSer(SERIAL targSerial) {
+CItem *CalcItemObjFromSer(serial_t targSerial) {
     CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CItem *toRet = nullptr;
     if (findItem != nullptr) {
@@ -45,7 +45,7 @@ CItem *CalcItemObjFromSer(SERIAL targSerial) {
     return toRet;
 }
 
-CMultiObj *CalcMultiFromSer(SERIAL targSerial) {
+CMultiObj *CalcMultiFromSer(serial_t targSerial) {
     CBaseObject *findMulti = ObjectFactory::shared().FindObject(targSerial);
     CMultiObj *toRet = nullptr;
     if (findMulti != nullptr) {

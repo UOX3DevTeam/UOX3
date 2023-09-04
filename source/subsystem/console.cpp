@@ -1361,7 +1361,7 @@ auto Console::RegisterKey(std::int32_t key, std::string cmdName, std::uint16_t s
 #if defined(UOX_DEBUG_MODE)
     messageLoop << util::format("         Registering key \"%c\"", key);
 #endif
-    JSKeyHandler[key] = JSConsoleEntry_st(scriptId, cmdName);
+    JSKeyHandler[key] = JSConsoleEntry(scriptId, cmdName);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1386,7 +1386,7 @@ auto Console::RegisterFunc(const std::string &cmdFunc, const std::string &cmdNam
 #if defined(UOX_DEBUG_MODE)
     Print(util::format("         Registering console func \"%s\"\n", cmdFunc.c_str()));
 #endif
-    JSConsoleFunctions[util::upper(cmdFunc)] = JSConsoleEntry_st(scriptId, cmdName);
+    JSConsoleFunctions[util::upper(cmdFunc)] = JSConsoleEntry(scriptId, cmdName);
 }
 
 // o------------------------------------------------------------------------------------------------o

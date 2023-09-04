@@ -135,7 +135,7 @@ void CSocket::CliSocket(size_t newValue) {
     cliSocket = newValue;
     unsigned long mode = 1;
     // set the socket to nonblocking
-    ioctlsocket(static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode);
+    ioctlsocket(static_cast<uoxsocket_t>(cliSocket), FIONBIO, &mode);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -271,7 +271,7 @@ void CSocket::DyeAll(std::uint8_t newValue) { dyeall = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes the open socket
 // o------------------------------------------------------------------------------------------------o
-void CSocket::CloseSocket(void) { closesocket(static_cast<UOXSOCKET>(cliSocket)); }
+void CSocket::CloseSocket(void) { closesocket(static_cast<uoxsocket_t>(cliSocket)); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::FirstPacket()
@@ -448,7 +448,7 @@ const std::int32_t DEFSOCK_INLENGTH = 0;
 const bool DEFSOCK_LOGGING = LOGDEFAULT;
 const std::int32_t DEFSOCK_POSTACKCOUNT = 0;
 const PickupLocations DEFSOCK_PSPOT = PL_NOWHERE;
-const SERIAL DEFSOCK_PFROM = INVALIDSERIAL;
+const serial_t DEFSOCK_PFROM = INVALIDSERIAL;
 const std::int16_t DEFSOCK_PX = 0;
 const std::int16_t DEFSOCK_PY = 0;
 const std::int8_t DEFSOCK_PZ = 0;
@@ -497,7 +497,7 @@ CSocket::~CSocket() {
     if (ValidateObject(currCharObj)) {
         currCharObj->SetSocket(nullptr);
     }
-    closesocket(static_cast<UOXSOCKET>(cliSocket));
+    closesocket(static_cast<uoxsocket_t>(cliSocket));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -514,7 +514,7 @@ void CSocket::InternalReset(void) {
     clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
     // set the socket to nonblocking
     unsigned long mode = 1;
-    ioctlsocket(static_cast<UOXSOCKET>(cliSocket), FIONBIO, &mode);
+    ioctlsocket(static_cast<uoxsocket_t>(cliSocket), FIONBIO, &mode);
     for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT);
          ++mTID) {
         pcTimers[mTID] = 0;
@@ -562,7 +562,7 @@ bool CSocket::FlushBuffer(bool doLog) {
             std::uint8_t xoutbuffer[MAXBUFFER * 2];
             len = Pack(outbuffer, xoutbuffer, outlength);
             [[maybe_unused]] auto sendResult =
-                send(static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0);
+                send(static_cast<uoxsocket_t>(cliSocket), (char *)xoutbuffer, len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr
@@ -573,7 +573,7 @@ bool CSocket::FlushBuffer(bool doLog) {
         }
         else {
             [[maybe_unused]] auto sendResult =
-                send(static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0);
+                send(static_cast<uoxsocket_t>(cliSocket), (char *)&outbuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr
@@ -583,7 +583,7 @@ bool CSocket::FlushBuffer(bool doLog) {
 #endif
         }
         if ((cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog) {
-            SERIAL toPrint;
+            serial_t toPrint;
             if (!ValidateObject(currCharObj)) {
                 toPrint = INVALIDSERIAL;
             }
@@ -625,7 +625,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             largePackBuffer.resize(static_cast<size_t>(outlength) * static_cast<size_t>(2));
             std::int32_t len = Pack(&largeBuffer[0], &largePackBuffer[0], outlength);
             [[maybe_unused]] auto sendResult =
-                send(static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0);
+                send(static_cast<uoxsocket_t>(cliSocket), (char *)&largePackBuffer[0], len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
                 std::cerr
@@ -636,7 +636,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
         }
         else {
             [[maybe_unused]] auto sendResult =
-                send(static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
+                send(static_cast<uoxsocket_t>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
                 std::cerr
@@ -646,7 +646,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
 #endif
         }
         if ((cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog) {
-            SERIAL toPrint;
+            serial_t toPrint;
             if (!ValidateObject(currCharObj)) {
                 toPrint = INVALIDSERIAL;
             }
@@ -819,7 +819,7 @@ std::int32_t GrabLastError(void) { return WSAGetLastError(); }
 void CSocket::FlushIncoming(void) {
     std::int32_t count = 0;
     do {
-        count = static_cast<int>(recv(static_cast<UOXSOCKET>(cliSocket),
+        count = static_cast<int>(recv(static_cast<uoxsocket_t>(cliSocket),
                                       (char *)&buffer[static_cast<int>(inlength)], 1, 0));
     } while (count > 0);
 }
@@ -831,7 +831,7 @@ void CSocket::FlushIncoming(void) {
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
     if (cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) {
-        SERIAL toPrint;
+        serial_t toPrint;
         if (!ValidateObject(currCharObj)) {
             toPrint = INVALIDSERIAL;
         }
@@ -871,7 +871,7 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
     std::uint32_t nexTime = curTime;
     do {
         count = static_cast<int>(
-            recv(static_cast<UOXSOCKET>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
+            recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
         if (count > 0) {
             inlength += count;
         }
@@ -1136,8 +1136,8 @@ std::int16_t CSocket::ClickY(void) const { return clicky; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to the start of the post ack list
 // o------------------------------------------------------------------------------------------------o
-SERIAL CSocket::FirstPostAck(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CSocket::FirstPostAck(void) {
+    auto retVal = INVALIDSERIAL;
     ackIter = postAcked.begin();
     if (!FinishedPostAck()) {
         retVal = (*ackIter);
@@ -1151,8 +1151,8 @@ SERIAL CSocket::FirstPostAck(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to the next post to ack in the list
 // o------------------------------------------------------------------------------------------------o
-SERIAL CSocket::NextPostAck(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CSocket::NextPostAck(void) {
+    auto retVal = INVALIDSERIAL;
     if (!FinishedPostAck()) {
         ++ackIter;
         if (!FinishedPostAck()) {
@@ -1176,8 +1176,8 @@ bool CSocket::FinishedPostAck(void) { return (ackIter == postAcked.end()); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-  Removes post from the queue
 // o------------------------------------------------------------------------------------------------o
-SERIAL CSocket::RemovePostAck(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CSocket::RemovePostAck(void) {
+    auto retVal = INVALIDSERIAL;
     if (!FinishedPostAck()) {
         ackIter = postAcked.erase(ackIter);
         if (!FinishedPostAck()) {
@@ -1215,7 +1215,7 @@ void CSocket::PostClear(void) { postAcked.clear(); }
 //|	Purpose		-	Adds serial of messageboard post to list of posts waiting
 //|					to be acknowledged by the client
 // o------------------------------------------------------------------------------------------------o
-void CSocket::PostAcked(SERIAL newValue) { postAcked.push_back(newValue); }
+void CSocket::PostAcked(serial_t newValue) { postAcked.push_back(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::Send()
@@ -1234,7 +1234,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     if (cryptclient) {
         len = toSend->Pack();
         [[maybe_unused]] auto sendResult =
-            send(static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
             std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553"
@@ -1245,7 +1245,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     else {
         len = static_cast<std::uint32_t>(toSend->GetPacketStream().GetSize());
         [[maybe_unused]] auto sendResult =
-            send(static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(),
+            send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(),
                  len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
@@ -1258,7 +1258,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     bytesSent += len;
 
     if (cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) {
-        SERIAL toPrint;
+        serial_t toPrint;
         if (!ValidateObject(currCharObj)) {
             toPrint = INVALIDSERIAL;
         }
@@ -1291,8 +1291,8 @@ PickupLocations CSocket::PickupSpot(void) const { return pSpot; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the serial of the object item was picked up from
 // o------------------------------------------------------------------------------------------------o
-SERIAL CSocket::PickupSerial(void) const { return pFrom; }
-void CSocket::PickupSerial(SERIAL pickupSerial) { pFrom = pickupSerial; }
+serial_t CSocket::PickupSerial(void) const { return pFrom; }
+void CSocket::PickupSerial(serial_t pickupSerial) { pFrom = pickupSerial; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::PickupX()
@@ -2386,14 +2386,14 @@ auto CSocket::GetContsOpenedList() -> GenericList<CItem *> * { return &contsOpen
 //|	Purpose		-	Gets/Sets temporary Timer values associated with character connected
 // to the socket
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CSocket::GetTimer(cS_TID timerId) const {
-    TIMERVAL rValue = 0;
+timerval_t CSocket::GetTimer(cS_TID timerId) const {
+    timerval_t rValue = 0;
     if (timerId != tPC_COUNT) {
         rValue = pcTimers[timerId];
     }
     return rValue;
 }
-void CSocket::SetTimer(cS_TID timerId, TIMERVAL value) {
+void CSocket::SetTimer(cS_TID timerId, timerval_t value) {
     if (timerId != tPC_COUNT) {
         pcTimers[timerId] = value;
     }

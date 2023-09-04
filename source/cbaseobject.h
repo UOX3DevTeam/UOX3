@@ -51,17 +51,17 @@ class CBaseObject {
     std::map<std::string, TagMap> tempTags;
     std::string title;
     ObjectType objType;
-    RACEID race;
+    raceid_t race;
     std::int16_t x;
     std::int16_t y;
     std::int8_t z;
     std::uint16_t id;
     std::uint16_t colour;
     std::uint8_t dir;
-    SERIAL serial;
+    serial_t serial;
     CMultiObj *multis;
-    SERIAL spawnSerial;
-    SERIAL owner;
+    serial_t spawnSerial;
+    serial_t owner;
     std::uint8_t worldNumber;
     std::uint16_t instanceId;
     std::int16_t strength;
@@ -79,7 +79,7 @@ class CBaseObject {
     std::int16_t dx2;
     std::int16_t in2;
     mutable std::int32_t FilePosition;
-    SERIAL tempMulti;
+    serial_t tempMulti;
     std::string name;
     std::string sectionId;
     std::vector<std::uint16_t> scriptTriggers;
@@ -102,7 +102,7 @@ class CBaseObject {
 
     std::uint16_t resistances[WEATHNUM];
 
-    SERIAL tempContainerSerial;
+    serial_t tempContainerSerial;
 
     bool nameRequestActive;
     // std::string	origin;	// Stores expansion item originates from
@@ -175,10 +175,10 @@ class CBaseObject {
     std::int32_t GetWeight(void) const;
     virtual void SetWeight(std::int32_t newVal, bool doWeightUpdate = true) = 0;
 
-    SERIAL GetSerial(void) const;
-    SERIAL GetSpawn(void) const;
-    SERIAL GetOwner(void) const;
-    SERIAL GetMulti(void) const;
+    serial_t GetSerial(void) const;
+    serial_t GetSpawn(void) const;
+    serial_t GetOwner(void) const;
+    serial_t GetMulti(void) const;
     CMultiObj *GetMultiObj(void) const;
     CSpawnItem *GetSpawnObj(void) const;
     CChar *GetOwnerObj(void) const;
@@ -186,10 +186,10 @@ class CBaseObject {
     std::uint8_t GetSerial(std::uint8_t part) const;
     std::uint8_t GetSpawn(std::uint8_t part) const;
 
-    void SetMulti(SERIAL newSerial, bool fireTrigger = true);
+    void SetMulti(serial_t newSerial, bool fireTrigger = true);
     void SetMulti(CMultiObj *newMulti, bool fireTrigger = true);
-    void SetSerial(SERIAL newSerial);
-    void SetSpawn(SERIAL newSpawn);
+    void SetSerial(serial_t newSerial);
+    void SetSpawn(serial_t newSpawn);
     virtual void SetOwner(CChar *newOwner);
 
     virtual bool Save(std::ostream &outStream) = 0;
@@ -200,8 +200,8 @@ class CBaseObject {
 
     virtual bool HandleLine(std::string &UTag, std::string &data);
 
-    RACEID GetRace(void) const;
-    void SetRace(RACEID newValue);
+    raceid_t GetRace(void) const;
+    void SetRace(raceid_t newValue);
 
     std::string GetNameRequest(CChar *nameRequester, std::uint8_t requestSource);
     std::string GetName(void) const;

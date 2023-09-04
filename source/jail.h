@@ -11,7 +11,7 @@
 class CChar;
 
 struct JailOccupant_st {
-    SERIAL pSerial;
+    serial_t pSerial;
     std::int16_t x;
     std::int16_t y;
     std::int8_t z;

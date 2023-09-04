@@ -34,16 +34,16 @@ const std::uint32_t BIT_NOBEARD = 1;
 const std::uint32_t BIT_PLAYERRACE = 2;
 const std::uint32_t BIT_NOHAIR = 3;
 
-bool cRaces::InvalidRace(RACEID x) const { return (x >= races.size()); }
+bool cRaces::InvalidRace(raceid_t x) const { return (x >= races.size()); }
 
-const std::string cRaces::Name(RACEID race) const
+const std::string cRaces::Name(raceid_t race) const
 // PRE:	race is a valid race
 // POST:	returns pointer to a string
 {
     return races[race]->Name();
 }
 
-CRace *cRaces::Race(RACEID x) {
+CRace *cRaces::Race(raceid_t x) {
     if (InvalidRace(x))
         return nullptr;
 
@@ -159,8 +159,8 @@ RaceRelate cRaces::Compare(CChar *player1, CChar *player2) const {
     if (!ValidateObject(player1) || !ValidateObject(player2))
         return RACE_NEUTRAL;
 
-    RACEID r1 = player1->GetRace();
-    RACEID r2 = player2->GetRace();
+    raceid_t r1 = player1->GetRace();
+    raceid_t r2 = player2->GetRace();
     if (r1 >= races.size() || r2 >= races.size())
         return RACE_NEUTRAL;
 
@@ -173,7 +173,7 @@ RaceRelate cRaces::Compare(CChar *player1, CChar *player2) const {
 //|	Purpose		-	Compare and return the relation between two races
 //|	Notes		-	Returns 0 if no enemy or ally, -1 if enemy or 1 if ally
 // o------------------------------------------------------------------------------------------------o
-RaceRelate cRaces::CompareByRace(RACEID race1, RACEID race2) const {
+RaceRelate cRaces::CompareByRace(raceid_t race1, raceid_t race2) const {
     if (race1 >= races.size()) // invalid race?
     {
         return RACE_NEUTRAL;
@@ -193,7 +193,7 @@ RaceRelate cRaces::CompareByRace(RACEID race1, RACEID race2) const {
 //|	Purpose		-	Apply race (and all the consequences of that) to a character
 //|	Notes		-	Primarily used by race gates
 // o------------------------------------------------------------------------------------------------o
-void cRaces::ApplyRace(CChar *s, RACEID x, bool always) {
+void cRaces::ApplyRace(CChar *s, raceid_t x, bool always) {
     if (!ValidateObject(s))
         return;
 
@@ -335,7 +335,7 @@ void cRaces::ApplyRace(CChar *s, RACEID x, bool always) {
 //|	Purpose		-	Checks if specified colour is a valid beard colour for specified
 // race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::BeardInRange(colour_t color, RACEID x) const {
+bool cRaces::BeardInRange(colour_t color, raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -347,7 +347,7 @@ bool cRaces::BeardInRange(colour_t color, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified colour is a valid skin colour for specified race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::SkinInRange(colour_t color, RACEID x) const {
+bool cRaces::SkinInRange(colour_t color, raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -359,7 +359,7 @@ bool cRaces::SkinInRange(colour_t color, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified colour is a valid hair colour for specified race
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::HairInRange(colour_t color, RACEID x) const {
+bool cRaces::HairInRange(colour_t color, raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -371,13 +371,13 @@ bool cRaces::HairInRange(colour_t color, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets skill bonus associated with race
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL cRaces::Skill(std::int32_t skill, RACEID race) const {
+skillval_t cRaces::Skill(std::int32_t skill, raceid_t race) const {
     if (InvalidRace(race) || skill >= ALLSKILLS)
         return 0;
 
     return races[race]->Skill(skill);
 }
-void cRaces::Skill(std::int32_t skill, std::int32_t value, RACEID race) {
+void cRaces::Skill(std::int32_t skill, std::int32_t value, raceid_t race) {
     if (InvalidRace(race))
         return;
 
@@ -390,13 +390,13 @@ void cRaces::Skill(std::int32_t skill, std::int32_t value, RACEID race) {
 //|	Purpose		-	Gets/Sets race's gender restriction
 //|	Purpose		-	0 = none, 1 = male, 2 = female
 // o------------------------------------------------------------------------------------------------o
-gender_t cRaces::GenderRestrict(RACEID race) const {
+gender_t cRaces::GenderRestrict(raceid_t race) const {
     if (InvalidRace(race))
         return MALE;
 
     return races[race]->GenderRestriction();
 }
-void cRaces::GenderRestrict(gender_t gender, RACEID race) {
+void cRaces::GenderRestrict(gender_t gender, raceid_t race) {
     if (InvalidRace(race))
         return;
 
@@ -408,13 +408,13 @@ void cRaces::GenderRestrict(gender_t gender, RACEID race) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether race members must have a beard
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::RequireBeard(RACEID race) const {
+bool cRaces::RequireBeard(raceid_t race) const {
     if (InvalidRace(race))
         return false;
 
     return races[race]->RequiresBeard();
 }
-void cRaces::RequireBeard(bool value, RACEID race) {
+void cRaces::RequireBeard(bool value, raceid_t race) {
     if (InvalidRace(race))
         return;
 
@@ -426,13 +426,13 @@ void cRaces::RequireBeard(bool value, RACEID race) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets armor class of race
 // o------------------------------------------------------------------------------------------------o
-void cRaces::ArmorRestrict(RACEID race, ARMORCLASS value) {
+void cRaces::ArmorRestrict(raceid_t race, armorclass_t value) {
     if (InvalidRace(race))
         return;
 
     races[race]->ArmourClassRestriction(value);
 }
-ARMORCLASS cRaces::ArmorRestrict(RACEID race) const {
+armorclass_t cRaces::ArmorRestrict(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -444,7 +444,7 @@ ARMORCLASS cRaces::ArmorRestrict(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid skin colour for specified race
 // o------------------------------------------------------------------------------------------------o
-colour_t cRaces::RandomSkin(RACEID x) const {
+colour_t cRaces::RandomSkin(raceid_t x) const {
     if (InvalidRace(x))
         return 0000;
 
@@ -456,7 +456,7 @@ colour_t cRaces::RandomSkin(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid hair colour for specified race
 // o------------------------------------------------------------------------------------------------o
-colour_t cRaces::RandomHair(RACEID x) const {
+colour_t cRaces::RandomHair(raceid_t x) const {
     if (InvalidRace(x))
         return 0000;
 
@@ -468,7 +468,7 @@ colour_t cRaces::RandomHair(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a random, valid beard colour for specified race
 // o------------------------------------------------------------------------------------------------o
-colour_t cRaces::RandomBeard(RACEID x) const {
+colour_t cRaces::RandomBeard(raceid_t x) const {
     if (InvalidRace(x))
         return 0;
 
@@ -480,13 +480,13 @@ colour_t cRaces::RandomBeard(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets blood colour for members of specified race
 // o------------------------------------------------------------------------------------------------o
-colour_t cRaces::BloodColour(RACEID x) const {
+colour_t cRaces::BloodColour(raceid_t x) const {
     if (InvalidRace(x))
         return 0000;
 
     return races[x]->BloodColour();
 }
-void cRaces::BloodColour(RACEID x, colour_t newValue) {
+void cRaces::BloodColour(raceid_t x, colour_t newValue) {
     if (InvalidRace(x))
         return;
 
@@ -498,7 +498,7 @@ void cRaces::BloodColour(RACEID x, colour_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if race's beard color is restricted
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::BeardRestricted(RACEID x) const {
+bool cRaces::BeardRestricted(raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -510,7 +510,7 @@ bool cRaces::BeardRestricted(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if race's hair color is restricted
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::HairRestricted(RACEID x) const {
+bool cRaces::HairRestricted(raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -522,7 +522,7 @@ bool cRaces::HairRestricted(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if race's skin color is restricted
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::SkinRestricted(RACEID x) const {
+bool cRaces::SkinRestricted(raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
@@ -534,15 +534,15 @@ bool cRaces::SkinRestricted(RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns bonus percentage modifier for damage based on skill and race
 // o------------------------------------------------------------------------------------------------o
-std::int32_t cRaces::DamageFromSkill(std::int32_t skill, RACEID x) const {
+std::int32_t cRaces::DamageFromSkill(std::int32_t skill, raceid_t x) const {
     if (InvalidRace(x))
         return 0;
 
     if (skill >= ALLSKILLS)
         return 0;
 
-    SKILLVAL modifier = races[x]->Skill(skill);
-    if (modifier >= static_cast<SKILLVAL>(combat.size())) {
+    auto modifier = races[x]->Skill(skill);
+    if (modifier >= static_cast<skillval_t>(combat.size())) {
         return -(combat[modifier].value);
     }
     else {
@@ -557,11 +557,11 @@ std::int32_t cRaces::DamageFromSkill(std::int32_t skill, RACEID x) const {
 //|	Purpose		-	Returns positive/negative fight damage bonus for race x with skill
 // skill
 // o------------------------------------------------------------------------------------------------o
-std::int32_t cRaces::FightPercent(std::int32_t skill, RACEID x) const {
+std::int32_t cRaces::FightPercent(std::int32_t skill, raceid_t x) const {
     if (InvalidRace(x))
         return 100;
 
-    SKILLVAL modifier = races[x]->Skill(skill);
+    auto modifier = races[x]->Skill(skill);
     std::int32_t divValue = combat[modifier].value / 10;
     divValue = divValue / 10;
     if (divValue == 0)
@@ -581,7 +581,7 @@ std::int32_t cRaces::FightPercent(std::int32_t skill, RACEID x) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set the relation between two races to a specified value
 // o------------------------------------------------------------------------------------------------o
-void cRaces::RacialInfo(RACEID race, RACEID toSet, RaceRelate value) {
+void cRaces::RacialInfo(raceid_t race, raceid_t toSet, RaceRelate value) {
     if (InvalidRace(race))
         return;
 
@@ -593,7 +593,7 @@ void cRaces::RacialInfo(RACEID race, RACEID toSet, RaceRelate value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets up two races as racial enemies
 // o------------------------------------------------------------------------------------------------o
-void cRaces::RacialEnemy(RACEID race, RACEID enemy) {
+void cRaces::RacialEnemy(raceid_t race, raceid_t enemy) {
     if (InvalidRace(race))
         return;
 
@@ -605,7 +605,7 @@ void cRaces::RacialEnemy(RACEID race, RACEID enemy) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets up two races as racial allies
 // o------------------------------------------------------------------------------------------------o
-void cRaces::RacialAlly(RACEID race, RACEID ally) {
+void cRaces::RacialAlly(raceid_t race, raceid_t ally) {
     if (InvalidRace(race))
         return;
 
@@ -617,7 +617,7 @@ void cRaces::RacialAlly(RACEID race, RACEID ally) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets up two races as neutral to each other
 // o------------------------------------------------------------------------------------------------o
-void cRaces::RacialNeutral(RACEID race, RACEID neutral) {
+void cRaces::RacialNeutral(raceid_t race, raceid_t neutral) {
     if (InvalidRace(race))
         return;
 
@@ -630,8 +630,8 @@ void cRaces::RacialNeutral(RACEID race, RACEID neutral) {
 //|	Purpose		-	Gets/Sets minimum (spirit speak?) skill required to understand
 // race's language
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL cRaces::LanguageMin(RACEID x) const { return races[x]->LanguageMin(); }
-void cRaces::LanguageMin(SKILLVAL toSetTo, RACEID race) {
+skillval_t cRaces::LanguageMin(raceid_t x) const { return races[x]->LanguageMin(); }
+void cRaces::LanguageMin(skillval_t toSetTo, raceid_t race) {
     if (InvalidRace(race))
         return;
 
@@ -643,13 +643,13 @@ void cRaces::LanguageMin(SKILLVAL toSetTo, RACEID race) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the light level the race burns (takes damage) at
 // o------------------------------------------------------------------------------------------------o
-void cRaces::LightLevel(RACEID race, LIGHTLEVEL value) {
+void cRaces::LightLevel(raceid_t race, lightlevel_t value) {
     if (InvalidRace(race))
         return;
 
     races[race]->LightLevel(value);
 }
-LIGHTLEVEL cRaces::LightLevel(RACEID race) const {
+lightlevel_t cRaces::LightLevel(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -661,13 +661,13 @@ LIGHTLEVEL cRaces::LightLevel(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the cold level the race burns (takes damage) at
 // o------------------------------------------------------------------------------------------------o
-void cRaces::ColdLevel(RACEID race, COLDLEVEL value) {
+void cRaces::ColdLevel(raceid_t race, coldlevel_t value) {
     if (InvalidRace(race))
         return;
 
     races[race]->ColdLevel(value);
 }
-COLDLEVEL cRaces::ColdLevel(RACEID race) const {
+coldlevel_t cRaces::ColdLevel(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -679,13 +679,13 @@ COLDLEVEL cRaces::ColdLevel(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the heat level the race burns (takes damage) at
 // o------------------------------------------------------------------------------------------------o
-void cRaces::HeatLevel(RACEID race, HEATLEVEL value) {
+void cRaces::HeatLevel(raceid_t race, heatlevel_t value) {
     if (InvalidRace(race))
         return;
 
     races[race]->HeatLevel(value);
 }
-HEATLEVEL cRaces::HeatLevel(RACEID race) const {
+heatlevel_t cRaces::HeatLevel(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -697,13 +697,13 @@ HEATLEVEL cRaces::HeatLevel(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether members of race will grow hungry
 // o------------------------------------------------------------------------------------------------o
-void cRaces::DoesHunger(RACEID race, bool value) {
+void cRaces::DoesHunger(raceid_t race, bool value) {
     if (InvalidRace(race))
         return;
 
     races[race]->DoesHunger(value);
 }
-bool cRaces::DoesHunger(RACEID race) const {
+bool cRaces::DoesHunger(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -715,13 +715,13 @@ bool cRaces::DoesHunger(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether members of race will grow thirsty
 // o------------------------------------------------------------------------------------------------o
-void cRaces::DoesThirst(RACEID race, bool value) {
+void cRaces::DoesThirst(raceid_t race, bool value) {
     if (InvalidRace(race))
         return;
 
     races[race]->DoesThirst(value);
 }
-bool cRaces::DoesThirst(RACEID race) const {
+bool cRaces::DoesThirst(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
@@ -734,13 +734,13 @@ bool cRaces::DoesThirst(RACEID race) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set rate at which members of race will grow hungry
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cRaces::GetHungerRate(RACEID race) const {
+std::uint16_t cRaces::GetHungerRate(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
     return races[race]->GetHungerRate();
 }
-void cRaces::SetHungerRate(RACEID race, std::uint16_t value) {
+void cRaces::SetHungerRate(raceid_t race, std::uint16_t value) {
     if (InvalidRace(race))
         return;
 
@@ -753,13 +753,13 @@ void cRaces::SetHungerRate(RACEID race, std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set rate at which members of race will grow thirsty
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cRaces::GetThirstRate(RACEID race) const {
+std::uint16_t cRaces::GetThirstRate(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
     return races[race]->GetThirstRate();
 }
-void cRaces::SetThirstRate(RACEID race, std::uint16_t value) {
+void cRaces::SetThirstRate(raceid_t race, std::uint16_t value) {
     if (InvalidRace(race))
         return;
 
@@ -772,13 +772,13 @@ void cRaces::SetThirstRate(RACEID race, std::uint16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set damage that members of race will take when hungry
 // o------------------------------------------------------------------------------------------------o
-std::int16_t cRaces::GetHungerDamage(RACEID race) const {
+std::int16_t cRaces::GetHungerDamage(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
     return races[race]->GetHungerDamage();
 }
-void cRaces::SetHungerDamage(RACEID race, std::int16_t value) {
+void cRaces::SetHungerDamage(raceid_t race, std::int16_t value) {
     if (InvalidRace(race))
         return;
 
@@ -791,13 +791,13 @@ void cRaces::SetHungerDamage(RACEID race, std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set stamina drain that members of race will suffer when thirsty
 // o------------------------------------------------------------------------------------------------o
-std::int16_t cRaces::GetThirstDrain(RACEID race) const {
+std::int16_t cRaces::GetThirstDrain(raceid_t race) const {
     if (InvalidRace(race))
         return 0;
 
     return races[race]->GetThirstDrain();
 }
-void cRaces::SetThirstDrain(RACEID race, std::int16_t value) {
+void cRaces::SetThirstDrain(raceid_t race, std::int16_t value) {
     if (InvalidRace(race))
         return;
 
@@ -809,14 +809,14 @@ void cRaces::SetThirstDrain(RACEID race, std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether race is affected by a particular element
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::Affect(RACEID race, WeatherType element) const {
+bool cRaces::Affect(raceid_t race, WeatherType element) const {
     bool rValue = false;
     if (!InvalidRace(race)) {
         rValue = races[race]->AffectedBy(element);
     }
     return rValue;
 }
-void cRaces::Affect(RACEID race, WeatherType element, bool value) {
+void cRaces::Affect(raceid_t race, WeatherType element, bool value) {
     if (!InvalidRace(race)) {
         races[race]->AffectedBy(value, element);
     }
@@ -827,14 +827,14 @@ void cRaces::Affect(RACEID race, WeatherType element, bool value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set number of seconds between burns for race from element
 // o------------------------------------------------------------------------------------------------o
-SECONDS cRaces::Secs(RACEID race, WeatherType element) const {
+seconds_t cRaces::Secs(raceid_t race, WeatherType element) const {
     if (InvalidRace(race))
         return 1;
 
     return races[race]->WeatherSeconds(element);
 }
 
-void cRaces::Secs(RACEID race, WeatherType element, SECONDS value) {
+void cRaces::Secs(raceid_t race, WeatherType element, seconds_t value) {
     if (InvalidRace(race))
         return;
 
@@ -846,13 +846,13 @@ void cRaces::Secs(RACEID race, WeatherType element, SECONDS value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set damage incurred by race from element when they burn
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cRaces::Damage(RACEID race, WeatherType element) const {
+std::int8_t cRaces::Damage(raceid_t race, WeatherType element) const {
     if (InvalidRace(race))
         return 1;
 
     return races[race]->WeatherDamage(element);
 }
-void cRaces::Damage(RACEID race, WeatherType element, std::int8_t damage) {
+void cRaces::Damage(raceid_t race, WeatherType element, std::int8_t damage) {
     if (InvalidRace(race))
         return;
 
@@ -864,13 +864,13 @@ void cRaces::Damage(RACEID race, WeatherType element, std::int8_t damage) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set light level bonus for race
 // o------------------------------------------------------------------------------------------------o
-LIGHTLEVEL cRaces::VisLevel(RACEID x) const {
+lightlevel_t cRaces::VisLevel(raceid_t x) const {
     if (InvalidRace(x))
         return 0;
 
     return races[x]->NightVision();
 }
-void cRaces::VisLevel(RACEID x, LIGHTLEVEL bonus) {
+void cRaces::VisLevel(raceid_t x, lightlevel_t bonus) {
     if (InvalidRace(x))
         return;
 
@@ -882,13 +882,13 @@ void cRaces::VisLevel(RACEID x, LIGHTLEVEL bonus) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set distance that race can see objects at
 // o------------------------------------------------------------------------------------------------o
-RANGE cRaces::VisRange(RACEID x) const {
+range_t cRaces::VisRange(raceid_t x) const {
     if (InvalidRace(x))
         return 0;
 
     return races[x]->VisibilityRange();
 }
-void cRaces::VisRange(RACEID x, RANGE range) {
+void cRaces::VisRange(raceid_t x, range_t range) {
     if (InvalidRace(x))
         return;
 
@@ -900,13 +900,13 @@ void cRaces::VisRange(RACEID x, RANGE range) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether race requires members to not have beards
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::NoBeard(RACEID x) const {
+bool cRaces::NoBeard(raceid_t x) const {
     if (InvalidRace(x))
         return false;
 
     return races[x]->NoBeard();
 }
-void cRaces::NoBeard(bool value, RACEID race) {
+void cRaces::NoBeard(bool value, raceid_t race) {
     if (InvalidRace(race))
         return;
 
@@ -918,7 +918,7 @@ void cRaces::NoBeard(bool value, RACEID race) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dump info about a particular race to Console
 // o------------------------------------------------------------------------------------------------o
-void cRaces::DebugPrint(RACEID x) {
+void cRaces::DebugPrint(raceid_t x) {
     if (InvalidRace(x))
         return;
 
@@ -956,7 +956,7 @@ void cRaces::DebugPrint(RACEID x) {
 //|	Purpose		-	Dump info about all races to Console
 // o------------------------------------------------------------------------------------------------o
 void cRaces::DebugPrintAll(void) {
-    for (RACEID x = 0; x < races.size(); ++x) {
+    for (raceid_t x = 0; x < races.size(); ++x) {
         DebugPrint(x);
     }
 }
@@ -966,13 +966,13 @@ void cRaces::DebugPrintAll(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether race is a player race or not
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::IsPlayerRace(RACEID race) const {
+bool cRaces::IsPlayerRace(raceid_t race) const {
     if (InvalidRace(race))
         return false;
 
     return races[race]->IsPlayerRace();
 }
-void cRaces::IsPlayerRace(RACEID x, bool value) {
+void cRaces::IsPlayerRace(raceid_t x, bool value) {
     if (InvalidRace(x))
         return;
 
@@ -988,8 +988,8 @@ void cRaces::IsPlayerRace(RACEID x, bool value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets skill bonus associated with race (?)
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CRace::Skill(std::int32_t skillNum) const { return iSkills[skillNum]; }
-void CRace::Skill(SKILLVAL newValue, std::int32_t iNum) { iSkills[iNum] = newValue; }
+skillval_t CRace::Skill(std::int32_t skillNum) const { return iSkills[skillNum]; }
+void CRace::Skill(skillval_t newValue, std::int32_t iNum) { iSkills[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::Name()
@@ -1044,40 +1044,40 @@ void CRace::GenderRestriction(gender_t newValue) { restrictGender = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light level at which members of race will burn
 // o------------------------------------------------------------------------------------------------o
-LIGHTLEVEL CRace::LightLevel(void) const { return lightLevel; }
-void CRace::LightLevel(LIGHTLEVEL newValue) { lightLevel = newValue; }
+lightlevel_t CRace::LightLevel(void) const { return lightLevel; }
+void CRace::LightLevel(lightlevel_t newValue) { lightLevel = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::ColdLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the cold level at which members of race will burn
 // o------------------------------------------------------------------------------------------------o
-COLDLEVEL CRace::ColdLevel(void) const { return coldLevel; }
-void CRace::ColdLevel(COLDLEVEL newValue) { coldLevel = newValue; }
+coldlevel_t CRace::ColdLevel(void) const { return coldLevel; }
+void CRace::ColdLevel(coldlevel_t newValue) { coldLevel = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::HeatLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the heat level at which members of race will burn
 // o------------------------------------------------------------------------------------------------o
-HEATLEVEL CRace::HeatLevel(void) const { return heatLevel; }
-void CRace::HeatLevel(HEATLEVEL newValue) { heatLevel = newValue; }
+heatlevel_t CRace::HeatLevel(void) const { return heatLevel; }
+void CRace::HeatLevel(heatlevel_t newValue) { heatLevel = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::NightVision()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets bonus the race gets to lightlevels
 // o------------------------------------------------------------------------------------------------o
-LIGHTLEVEL CRace::NightVision(void) const { return nightVision; }
-void CRace::NightVision(LIGHTLEVEL newValue) { nightVision = newValue; }
+lightlevel_t CRace::NightVision(void) const { return nightVision; }
+void CRace::NightVision(lightlevel_t newValue) { nightVision = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::ArmourClassRestriction()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets which armour classes race is restricted from wearing
 // o------------------------------------------------------------------------------------------------o
-ARMORCLASS CRace::ArmourClassRestriction(void) const { return armourRestrict; }
-void CRace::ArmourClassRestriction(ARMORCLASS newValue) { armourRestrict = newValue; }
+armorclass_t CRace::ArmourClassRestriction(void) const { return armourRestrict; }
+void CRace::ArmourClassRestriction(armorclass_t newValue) { armourRestrict = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::WeatherSeconds()
@@ -1085,8 +1085,8 @@ void CRace::ArmourClassRestriction(ARMORCLASS newValue) { armourRestrict = newVa
 //|	Purpose		-	Gets/Sets interval at which members of a race burn from a given
 // weather type
 // o------------------------------------------------------------------------------------------------o
-SECONDS CRace::WeatherSeconds(WeatherType iNum) const { return weathSecs[iNum]; }
-void CRace::WeatherSeconds(SECONDS newValue, WeatherType iNum) { weathSecs[iNum] = newValue; }
+seconds_t CRace::WeatherSeconds(WeatherType iNum) const { return weathSecs[iNum]; }
+void CRace::WeatherSeconds(seconds_t newValue, WeatherType iNum) { weathSecs[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::WeatherDamage()
@@ -1103,16 +1103,16 @@ void CRace::WeatherDamage(std::int8_t newValue, WeatherType iNum) { weathDamage[
 //|	Purpose		-	Gets/Sets minimum language skill (spirit speak?) required to
 // understand race's language
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CRace::LanguageMin(void) const { return languageMin; }
-void CRace::LanguageMin(SKILLVAL newValue) { languageMin = newValue; }
+skillval_t CRace::LanguageMin(void) const { return languageMin; }
+void CRace::LanguageMin(skillval_t newValue) { languageMin = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::VisibilityRange()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ???
 // o------------------------------------------------------------------------------------------------o
-RANGE CRace::VisibilityRange(void) const { return visDistance; }
-void CRace::VisibilityRange(RANGE newValue) { visDistance = newValue; }
+range_t CRace::VisibilityRange(void) const { return visDistance; }
+void CRace::VisibilityRange(range_t newValue) { visDistance = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::AffectedBy()
@@ -1203,7 +1203,7 @@ CRace::CRace()
     iSkills.fill(0);
     weathDamage.fill(0);
     weathSecs.fill(60);
-    // memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
+    // memset( &iSkills[0], 0, sizeof( skillval_t ) * SKILLS );
     // memset( &weathDamage[0], 0, sizeof( std::int8_t ) * WEATHNUM );
     // memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
 
@@ -1245,7 +1245,7 @@ CRace::CRace(std::int32_t numRaces)
     weatherAffected.reset();
 }
 void CRace::NumEnemyRaces(std::int32_t iNum) { racialEnemies.resize(iNum); }
-RaceRelate CRace::RaceRelation(RACEID race) const { return racialEnemies[race]; }
+RaceRelate CRace::RaceRelation(raceid_t race) const { return racialEnemies[race]; }
 
 colour_t CRace::RandomSkin(void) const {
     if (!IsSkinRestricted())
@@ -1334,7 +1334,7 @@ bool CRace::IsValidBeard(colour_t val) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets race's ractial relations with another race
 // o------------------------------------------------------------------------------------------------o
-void CRace::RaceRelation(RaceRelate value, RACEID race) { racialEnemies[race] = value; }
+void CRace::RaceRelation(RaceRelate value, raceid_t race) { racialEnemies[race] = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CRace::HPModifier()
@@ -1708,7 +1708,7 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
                                       << ", invalid enemy race " << raceDiff << myendl;
                 }
                 else {
-                    RaceRelation(RACE_ENEMY, static_cast<RACEID>(raceDiff));
+                    RaceRelation(RACE_ENEMY, static_cast<raceid_t>(raceDiff));
                 }
             }
             else if (UTag == "RACIALAID") {
@@ -1718,7 +1718,7 @@ void CRace::Load(size_t sectNum, std::int32_t modCount) {
                                       << ", invalid ally race " << raceDiff << myendl;
                 }
                 else {
-                    RaceRelation(RACE_ALLY, static_cast<RACEID>(raceDiff));
+                    RaceRelation(RACE_ALLY, static_cast<raceid_t>(raceDiff));
                 }
             }
             break;
@@ -1834,7 +1834,7 @@ void CRace::PoisonResistance(R32 value) { poisonResistance = value; }
 
 CRace &CRace::operator=(CRace &trgRace) {
     iSkills = trgRace.iSkills;
-    // memcpy( iSkills, trgRace.iSkills, sizeof( SKILLVAL ) * SKILLS );
+    // memcpy( iSkills, trgRace.iSkills, sizeof( skillval_t ) * SKILLS );
     raceName = trgRace.raceName;
 
     beardColours.resize(trgRace.beardColours.size());

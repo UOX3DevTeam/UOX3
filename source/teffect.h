@@ -11,8 +11,8 @@ class CBaseObject;
 
 class CTEffect {
   private:
-    SERIAL source;
-    SERIAL dest;
+    serial_t source;
+    serial_t dest;
     std::uint32_t expiretime;
     std::uint8_t num;
     std::uint16_t more1;
@@ -31,15 +31,15 @@ class CTEffect {
     CBaseObject *ObjPtr(void) const { return objptr; }
     bool Dispellable(void) const { return dispellable; }
     std::uint32_t ExpireTime(void) const { return expiretime; }
-    SERIAL Source(void) const { return source; }
-    SERIAL Destination(void) const { return dest; }
+    serial_t Source(void) const { return source; }
+    serial_t Destination(void) const { return dest; }
     std::uint8_t Number(void) const { return num; }
     std::uint16_t More1(void) const { return more1; }
     std::uint16_t More2(void) const { return more2; }
     std::uint16_t More3(void) const { return more3; }
 
-    void Source(SERIAL value) { source = value; }
-    void Destination(SERIAL value) { dest = value; }
+    void Source(serial_t value) { source = value; }
+    void Destination(serial_t value) { dest = value; }
     void ExpireTime(std::uint32_t value) { expiretime = value; }
     void Number(std::uint8_t value) { num = value; }
     void More1(std::uint16_t value) { more1 = value; }

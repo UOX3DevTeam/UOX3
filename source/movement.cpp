@@ -1197,7 +1197,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
         MonsterGate(mChar, itemCheck->GetDesc());
         break;
     case IT_RACEGATE: // race gates
-        Races->ApplyRace(mChar, static_cast<RACEID>(itemCheck->GetTempVar(CITV_MOREX)),
+        Races->ApplyRace(mChar, static_cast<raceid_t>(itemCheck->GetTempVar(CITV_MOREX)),
                          itemCheck->GetTempVar(CITV_MOREY) != 0);
         break;
     case IT_DAMAGEOBJECT: // damage objects

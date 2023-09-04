@@ -646,7 +646,7 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
           << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
     fsOut << "CONTACT " << (actbTemp.sContact.length() ? actbTemp.sContact : "NA") << std::endl;
     for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
-        SERIAL charSer = INVALIDSERIAL;
+        auto charSer = INVALIDSERIAL;
         std::string charName = "UNKNOWN";
         if (actbTemp.lpCharacters[ii] != nullptr && actbTemp.dwCharacters[ii] != INVALIDSERIAL) {
             charSer = actbTemp.dwCharacters[ii];

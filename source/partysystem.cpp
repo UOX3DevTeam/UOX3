@@ -237,7 +237,7 @@ void PartyFactory::AddLookup(Party *toQuickLook, CChar *toSave) {
 }
 void PartyFactory::RemoveLookup(CChar *toRemove) {
     if (ValidateObject(toRemove)) {
-        std::map<SERIAL, Party *>::iterator toFind = partyQuickLook.find(toRemove->GetSerial());
+        std::map<serial_t, Party *>::iterator toFind = partyQuickLook.find(toRemove->GetSerial());
         if (toFind != partyQuickLook.end()) {
             partyQuickLook.erase(toFind);
         }
@@ -277,7 +277,7 @@ void PartyFactory::Destroy(Party *toRemove) {
 }
 Party *PartyFactory::Get(CChar *member) {
     if (ValidateObject(member)) {
-        std::map<SERIAL, Party *>::iterator toFind = partyQuickLook.find(member->GetSerial());
+        std::map<serial_t, Party *>::iterator toFind = partyQuickLook.find(member->GetSerial());
         if (toFind != partyQuickLook.end()) {
             return toFind->second;
         }
@@ -295,7 +295,7 @@ Party *PartyFactory::Get(CChar *member) {
 //|	Purpose		-	Invite a player to the party
 // o------------------------------------------------------------------------------------------------o
 void PartyFactory::CreateInvite(CSocket *inviter) {
-    SERIAL serial = inviter->GetDWord(7);
+    serial_t serial = inviter->GetDWord(7);
     CChar *toInvite = CalcCharObjFromSer(serial);
     if (!ValidateObject(toInvite) || toInvite->IsNpc()) {
         inviter->SysMessage(9040); // You cannot invite an NPC or unknown player.
@@ -330,7 +330,7 @@ void PartyFactory::CreateInvite(CSocket *inviter) {
 //|	Purpose		-	Kick a member from the party
 // o------------------------------------------------------------------------------------------------o
 void PartyFactory::Kick(CSocket *inviter) {
-    SERIAL serial = inviter->GetDWord(7);
+    serial_t serial = inviter->GetDWord(7);
     CChar *toRemove = CalcCharObjFromSer(serial);
     if (!ValidateObject(toRemove) || toRemove->IsNpc()) {
         inviter->SysMessage(9043); // You cannot kick an NPC or unknown player.

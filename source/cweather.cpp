@@ -647,12 +647,12 @@ auto cWeatherAb::Load() -> bool {
                 case 'C':
                     if (UTag == "COLDCHANCE") // chance for a cold day
                     {
-                        ColdChance(static_cast<WEATHID>(i),
+                        ColdChance(static_cast<weathid_t>(i),
                                    static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     else if (UTag == "COLDINTENSITY") // cold intensity
                     {
-                        ColdIntensityHigh(static_cast<WEATHID>(i),
+                        ColdIntensityHigh(static_cast<weathid_t>(i),
                                           static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     break;
@@ -660,12 +660,12 @@ auto cWeatherAb::Load() -> bool {
                 case 'H':
                     if (UTag == "HEATCHANCE") // chance for a hot day
                     {
-                        HeatChance(static_cast<WEATHID>(i),
+                        HeatChance(static_cast<weathid_t>(i),
                                    static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     else if (UTag == "HEATINTENSITY") // heat intensity
                     {
-                        HeatIntensityHigh(static_cast<WEATHID>(i),
+                        HeatIntensityHigh(static_cast<weathid_t>(i),
                                           static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     break;
@@ -673,37 +673,37 @@ auto cWeatherAb::Load() -> bool {
                 case 'L':
                     if (UTag == "LIGHTMIN") // minimum light level
                     {
-                        LightMin(static_cast<WEATHID>(i), std::stof(data));
+                        LightMin(static_cast<weathid_t>(i), std::stof(data));
                     }
                     else if (UTag == "LIGHTMAX") // maximum light level
                     {
-                        LightMax(static_cast<WEATHID>(i), std::stof(data));
+                        LightMax(static_cast<weathid_t>(i), std::stof(data));
                     }
                     break;
                 case 'm':
                 case 'M':
                     if (UTag == "MAXTEMP") // maximum temperature
                     {
-                        MaxTemp(static_cast<WEATHID>(i), std::stof(data));
+                        MaxTemp(static_cast<weathid_t>(i), std::stof(data));
                     }
                     else if (UTag == "MINTEMP") // minimum temperature
                     {
-                        MinTemp(static_cast<WEATHID>(i), std::stof(data));
+                        MinTemp(static_cast<weathid_t>(i), std::stof(data));
                     }
                     else if (UTag == "MAXWIND") // maximum wind speed
                     {
-                        MaxWindSpeed(static_cast<WEATHID>(i), std::stof(data));
+                        MaxWindSpeed(static_cast<weathid_t>(i), std::stof(data));
                     }
                     else if (UTag == "MINWIND") // minimum wind speed
                     {
-                        MinWindSpeed(static_cast<WEATHID>(i), std::stof(data));
+                        MinWindSpeed(static_cast<weathid_t>(i), std::stof(data));
                     }
                     break;
                 case 'r':
                 case 'R':
                     if (UTag == "RAINCHANCE") // chance of rain
                     {
-                        RainChance(static_cast<WEATHID>(i),
+                        RainChance(static_cast<weathid_t>(i),
                                    static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     else if (UTag == "RAININTENSITY") // intensity of rain
@@ -711,23 +711,23 @@ auto cWeatherAb::Load() -> bool {
                         auto csecs = oldstrutil::sections(data, ",");
                         if (csecs.size() > 1) {
                             RainIntensityLow(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                             RainIntensityHigh(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                         }
                         else {
-                            RainIntensityLow(static_cast<WEATHID>(i), 0);
-                            RainIntensityHigh(static_cast<WEATHID>(i),
+                            RainIntensityLow(static_cast<weathid_t>(i), 0);
+                            RainIntensityHigh(static_cast<weathid_t>(i),
                                               static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                         }
                     }
                     else if (UTag == "RAINTEMPDROP") // temp drop of rain
                     {
-                        RainTempDrop(static_cast<WEATHID>(i),
+                        RainTempDrop(static_cast<weathid_t>(i),
                                      static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     break;
@@ -735,7 +735,7 @@ auto cWeatherAb::Load() -> bool {
                 case 'S':
                     if (UTag == "SNOWCHANCE") // chance of snow
                     {
-                        SnowChance(static_cast<WEATHID>(i),
+                        SnowChance(static_cast<weathid_t>(i),
                                    static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     else if (UTag == "SNOWINTENSITY") // intensity of snow
@@ -743,27 +743,27 @@ auto cWeatherAb::Load() -> bool {
                         auto csecs = oldstrutil::sections(data, ",");
                         if (csecs.size() > 1) {
                             SnowIntensityLow(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                             SnowIntensityHigh(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                         }
                         else {
-                            SnowIntensityLow(static_cast<WEATHID>(i), 0);
-                            SnowIntensityHigh(static_cast<WEATHID>(i),
+                            SnowIntensityLow(static_cast<weathid_t>(i), 0);
+                            SnowIntensityHigh(static_cast<weathid_t>(i),
                                               static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                         }
                     }
                     else if (UTag == "SNOWTHRESHOLD") // temperature at which snow kicks in
                     {
-                        SnowThreshold(static_cast<WEATHID>(i), std::stof(data));
+                        SnowThreshold(static_cast<weathid_t>(i), std::stof(data));
                     }
                     else if (UTag == "STORMCHANCE") // chance of a storm
                     {
-                        StormChance(static_cast<WEATHID>(i),
+                        StormChance(static_cast<weathid_t>(i),
                                     static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     else if (UTag == "STORMINTENSITY") // chance of a storm
@@ -771,23 +771,23 @@ auto cWeatherAb::Load() -> bool {
                         auto csecs = oldstrutil::sections(data, ",");
                         if (csecs.size() > 1) {
                             SnowIntensityLow(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[0], "//")),
                                                             nullptr, 0)));
                             SnowIntensityHigh(
-                                static_cast<WEATHID>(i),
+                                static_cast<weathid_t>(i),
                                 static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[1], "//")),
                                                             nullptr, 0)));
                         }
                         else {
-                            SnowIntensityLow(static_cast<WEATHID>(i), 0);
-                            SnowIntensityHigh(static_cast<WEATHID>(i),
+                            SnowIntensityLow(static_cast<weathid_t>(i), 0);
+                            SnowIntensityHigh(static_cast<weathid_t>(i),
                                               static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                         }
                     }
                     else if (UTag == "STORMTEMPDROP") // temp drop of storm
                     {
-                        StormTempDrop(static_cast<WEATHID>(i),
+                        StormTempDrop(static_cast<weathid_t>(i),
                                       static_cast<std::int8_t>(std::stoi(data, nullptr, 0)));
                     }
                     break;
@@ -799,63 +799,63 @@ auto cWeatherAb::Load() -> bool {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::IntensityHigh( WEATHID toCheck, std::uint8_t weathType )
-//|					cWeatherAb::IntensityLow( WEATHID toCheck, std::uint8_t weathType )
-//|					cWeatherAb::Intensity( WEATHID toCheck, std::uint8_t weathType )
+//|	Function	-	cWeatherAb::IntensityHigh( weathid_t toCheck, std::uint8_t weathType )
+//|					cWeatherAb::IntensityLow( weathid_t toCheck, std::uint8_t weathType )
+//|					cWeatherAb::Intensity( weathid_t toCheck, std::uint8_t weathType )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to return intensity of a weather type
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::IntensityHigh(WEATHID toCheck, std::uint8_t weathType) {
+std::int8_t cWeatherAb::IntensityHigh(weathid_t toCheck, std::uint8_t weathType) {
     return weather[toCheck].IntensityHigh(weathType);
 }
-std::int8_t cWeatherAb::IntensityLow(WEATHID toCheck, std::uint8_t weathType) {
+std::int8_t cWeatherAb::IntensityLow(weathid_t toCheck, std::uint8_t weathType) {
     return weather[toCheck].IntensityLow(weathType);
 }
-std::int8_t cWeatherAb::Intensity(WEATHID toCheck, std::uint8_t weathType) {
+std::int8_t cWeatherAb::Intensity(weathid_t toCheck, std::uint8_t weathType) {
     return weather[toCheck].Intensity(weathType);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	IntensityHigh( WEATHID toCheck, std::uint8_t weathType, std::int8_t value )
-//|					IntensityLow( WEATHID toCheck, std::uint8_t weathType, std::int8_t value )
-//|					Intensity( WEATHID toCheck, std::uint8_t weathType, std::int8_t value )
+//|	Function	-	IntensityHigh( weathid_t toCheck, std::uint8_t weathType, std::int8_t value )
+//|					IntensityLow( weathid_t toCheck, std::uint8_t weathType, std::int8_t value )
+//|					Intensity( weathid_t toCheck, std::uint8_t weathType, std::int8_t value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to set the intensity of a particular weather type
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::IntensityHigh(WEATHID toCheck, std::uint8_t weathType, std::int8_t value) {
+void cWeatherAb::IntensityHigh(weathid_t toCheck, std::uint8_t weathType, std::int8_t value) {
     weather[toCheck].IntensityHigh(weathType, value);
 }
-void cWeatherAb::IntensityLow(WEATHID toCheck, std::uint8_t weathType, std::int8_t value) {
+void cWeatherAb::IntensityLow(weathid_t toCheck, std::uint8_t weathType, std::int8_t value) {
     weather[toCheck].IntensityLow(weathType, value);
 }
-void cWeatherAb::Intensity(WEATHID toCheck, std::uint8_t weathType, std::int8_t value) {
+void cWeatherAb::Intensity(weathid_t toCheck, std::uint8_t weathType, std::int8_t value) {
     weather[toCheck].Intensity(weathType, value);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::Chance( WEATHID toCheck, std::uint8_t weathType )
+//|	Function	-	cWeatherAb::Chance( weathid_t toCheck, std::uint8_t weathType )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to return chance of a weather type
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::Chance(WEATHID toCheck, std::uint8_t weathType) {
+std::int8_t cWeatherAb::Chance(weathid_t toCheck, std::uint8_t weathType) {
     return weather[toCheck].Chance(weathType);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::Chance( WEATHID toCheck, std::uint8_t weathType, std::int8_t value )
+//|	Function	-	cWeatherAb::Chance( weathid_t toCheck, std::uint8_t weathType, std::int8_t value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to set the chance of finding a weather type
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::Chance(WEATHID toCheck, std::uint8_t weathType, std::int8_t value) {
+void cWeatherAb::Chance(weathid_t toCheck, std::uint8_t weathType, std::int8_t value) {
     weather[toCheck].Chance(weathType, value);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::Value( WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff )
+//|	Function	-	cWeatherAb::Value( weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to return value of some weather types
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff)
+R32 cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff)
 // PRE:		toCheck is valid, valType is valid, valOff is valid
 // POST:	returns value of valType and valOff in toCheck
 {
@@ -863,12 +863,12 @@ R32 cWeatherAb::Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::Value( WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff, R32
+//|	Function	-	cWeatherAb::Value( weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32
 // value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to set the value of a particular weather type
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value)
+void cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value)
 // PRE:		toCheck is valid, valType and valOff is valid, value is valid
 // POST:	value of valType and valOff in toCheck is value
 {
@@ -880,8 +880,8 @@ void cWeatherAb::Value(WEATHID toCheck, std::uint8_t valType, std::uint8_t valOf
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of toCheck's snow
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::SnowIntensityHigh(WEATHID toCheck) { return IntensityHigh(toCheck, SNOW); }
-void cWeatherAb::SnowIntensityHigh(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::SnowIntensityHigh(weathid_t toCheck) { return IntensityHigh(toCheck, SNOW); }
+void cWeatherAb::SnowIntensityHigh(weathid_t toCheck, std::int8_t value) {
     IntensityHigh(toCheck, SNOW, value);
 }
 
@@ -890,8 +890,8 @@ void cWeatherAb::SnowIntensityHigh(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of toCheck's snow
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::SnowIntensityLow(WEATHID toCheck) { return IntensityLow(toCheck, SNOW); }
-void cWeatherAb::SnowIntensityLow(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::SnowIntensityLow(weathid_t toCheck) { return IntensityLow(toCheck, SNOW); }
+void cWeatherAb::SnowIntensityLow(weathid_t toCheck, std::int8_t value) {
     IntensityLow(toCheck, SNOW, value);
 }
 
@@ -900,8 +900,8 @@ void cWeatherAb::SnowIntensityLow(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of toCheck's snow
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::SnowIntensity(WEATHID toCheck) { return Intensity(toCheck, SNOW); }
-void cWeatherAb::SnowIntensity(WEATHID toCheck, std::int8_t value) { Intensity(toCheck, SNOW, value); }
+std::int8_t cWeatherAb::SnowIntensity(weathid_t toCheck) { return Intensity(toCheck, SNOW); }
+void cWeatherAb::SnowIntensity(weathid_t toCheck, std::int8_t value) { Intensity(toCheck, SNOW, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormIntensityHigh()
@@ -909,8 +909,8 @@ void cWeatherAb::SnowIntensity(WEATHID toCheck, std::int8_t value) { Intensity(t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of toCheck's storm
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::StormIntensityHigh(WEATHID toCheck) { return IntensityHigh(toCheck, STORM); }
-void cWeatherAb::StormIntensityHigh(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::StormIntensityHigh(weathid_t toCheck) { return IntensityHigh(toCheck, STORM); }
+void cWeatherAb::StormIntensityHigh(weathid_t toCheck, std::int8_t value) {
     IntensityHigh(toCheck, STORM, value);
 }
 
@@ -920,8 +920,8 @@ void cWeatherAb::StormIntensityHigh(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of toCheck's storm
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::StormIntensityLow(WEATHID toCheck) { return IntensityLow(toCheck, STORM); }
-void cWeatherAb::StormIntensityLow(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::StormIntensityLow(weathid_t toCheck) { return IntensityLow(toCheck, STORM); }
+void cWeatherAb::StormIntensityLow(weathid_t toCheck, std::int8_t value) {
     IntensityLow(toCheck, STORM, value);
 }
 
@@ -931,16 +931,16 @@ void cWeatherAb::StormIntensityLow(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of toCheck's storm
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::StormIntensity(WEATHID toCheck) { return Intensity(toCheck, STORM); }
-void cWeatherAb::StormIntensity(WEATHID toCheck, std::int8_t value) { Intensity(toCheck, STORM, value); }
+std::int8_t cWeatherAb::StormIntensity(weathid_t toCheck) { return Intensity(toCheck, STORM); }
+void cWeatherAb::StormIntensity(weathid_t toCheck, std::int8_t value) { Intensity(toCheck, STORM, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainIntensityHigh()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the high intensity of toCheck's rain
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::RainIntensityHigh(WEATHID toCheck) { return IntensityHigh(toCheck, RAIN); }
-void cWeatherAb::RainIntensityHigh(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::RainIntensityHigh(weathid_t toCheck) { return IntensityHigh(toCheck, RAIN); }
+void cWeatherAb::RainIntensityHigh(weathid_t toCheck, std::int8_t value) {
     IntensityHigh(toCheck, RAIN, value);
 }
 
@@ -949,8 +949,8 @@ void cWeatherAb::RainIntensityHigh(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the low intensity of toCheck's rain
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::RainIntensityLow(WEATHID toCheck) { return IntensityLow(toCheck, RAIN); }
-void cWeatherAb::RainIntensityLow(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::RainIntensityLow(weathid_t toCheck) { return IntensityLow(toCheck, RAIN); }
+void cWeatherAb::RainIntensityLow(weathid_t toCheck, std::int8_t value) {
     IntensityLow(toCheck, RAIN, value);
 }
 
@@ -959,16 +959,16 @@ void cWeatherAb::RainIntensityLow(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set the intensity of toCheck's rain
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::RainIntensity(WEATHID toCheck) { return Intensity(toCheck, RAIN); }
-void cWeatherAb::RainIntensity(WEATHID toCheck, std::int8_t value) { Intensity(toCheck, RAIN, value); }
+std::int8_t cWeatherAb::RainIntensity(weathid_t toCheck) { return Intensity(toCheck, RAIN); }
+void cWeatherAb::RainIntensity(weathid_t toCheck, std::int8_t value) { Intensity(toCheck, RAIN, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::HeatIntensityHigh()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the high intensity of toCheck's heat
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::HeatIntensityHigh(WEATHID toCheck) { return IntensityHigh(toCheck, HEAT); }
-void cWeatherAb::HeatIntensityHigh(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::HeatIntensityHigh(weathid_t toCheck) { return IntensityHigh(toCheck, HEAT); }
+void cWeatherAb::HeatIntensityHigh(weathid_t toCheck, std::int8_t value) {
     IntensityHigh(toCheck, HEAT, value);
 }
 
@@ -977,8 +977,8 @@ void cWeatherAb::HeatIntensityHigh(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the high intensity of toCheck's cold
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::ColdIntensityHigh(WEATHID toCheck) { return IntensityHigh(toCheck, COLD); }
-void cWeatherAb::ColdIntensityHigh(WEATHID toCheck, std::int8_t value) {
+std::int8_t cWeatherAb::ColdIntensityHigh(weathid_t toCheck) { return IntensityHigh(toCheck, COLD); }
+void cWeatherAb::ColdIntensityHigh(weathid_t toCheck, std::int8_t value) {
     IntensityHigh(toCheck, COLD, value);
 }
 
@@ -987,24 +987,24 @@ void cWeatherAb::ColdIntensityHigh(WEATHID toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MaxTemp(WEATHID toCheck) { return Value(toCheck, MAXVAL, TEMP); }
-void cWeatherAb::MaxTemp(WEATHID toCheck, R32 value) { Value(toCheck, MAXVAL, TEMP, value); }
+R32 cWeatherAb::MaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, TEMP); }
+void cWeatherAb::MaxTemp(weathid_t toCheck, R32 value) { Value(toCheck, MAXVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::MinTemp()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MinTemp(WEATHID toCheck) { return Value(toCheck, MINVAL, TEMP); }
-void cWeatherAb::MinTemp(WEATHID toCheck, R32 value) { Value(toCheck, MINVAL, TEMP, value); }
+R32 cWeatherAb::MinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, TEMP); }
+void cWeatherAb::MinTemp(weathid_t toCheck, R32 value) { Value(toCheck, MINVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::Temp()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::Temp(WEATHID toCheck) { return Value(toCheck, CURRVAL, TEMP); }
-void cWeatherAb::Temp(WEATHID toCheck, R32 value) { Value(toCheck, CURRVAL, TEMP, value); }
+R32 cWeatherAb::Temp(weathid_t toCheck) { return Value(toCheck, CURRVAL, TEMP); }
+void cWeatherAb::Temp(weathid_t toCheck, R32 value) { Value(toCheck, CURRVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainTempDrop()
@@ -1012,8 +1012,8 @@ void cWeatherAb::Temp(WEATHID toCheck, R32 value) { Value(toCheck, CURRVAL, TEMP
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the rain temperature drop of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::RainTempDrop(WEATHID toCheck) { return weather[toCheck].RainTempDrop(); }
-void cWeatherAb::RainTempDrop(WEATHID toCheck, R32 value) { weather[toCheck].RainTempDrop(value); }
+R32 cWeatherAb::RainTempDrop(weathid_t toCheck) { return weather[toCheck].RainTempDrop(); }
+void cWeatherAb::RainTempDrop(weathid_t toCheck, R32 value) { weather[toCheck].RainTempDrop(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormTempDrop()
@@ -1021,8 +1021,8 @@ void cWeatherAb::RainTempDrop(WEATHID toCheck, R32 value) { weather[toCheck].Rai
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the storm temperature drop of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::StormTempDrop(WEATHID toCheck) { return weather[toCheck].StormTempDrop(); }
-void cWeatherAb::StormTempDrop(WEATHID toCheck, R32 value) {
+R32 cWeatherAb::StormTempDrop(weathid_t toCheck) { return weather[toCheck].StormTempDrop(); }
+void cWeatherAb::StormTempDrop(weathid_t toCheck, R32 value) {
     weather[toCheck].StormTempDrop(value);
 }
 
@@ -1031,72 +1031,72 @@ void cWeatherAb::StormTempDrop(WEATHID toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MaxWindSpeed(WEATHID toCheck) { return Value(toCheck, MAXVAL, WIND); }
-void cWeatherAb::MaxWindSpeed(WEATHID toCheck, R32 value) { Value(toCheck, MAXVAL, WIND, value); }
+R32 cWeatherAb::MaxWindSpeed(weathid_t toCheck) { return Value(toCheck, MAXVAL, WIND); }
+void cWeatherAb::MaxWindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, MAXVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::MinWindSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MinWindSpeed(WEATHID toCheck) { return Value(toCheck, MINVAL, WIND); }
-void cWeatherAb::MinWindSpeed(WEATHID toCheck, R32 value) { Value(toCheck, MINVAL, WIND, value); }
+R32 cWeatherAb::MinWindSpeed(weathid_t toCheck) { return Value(toCheck, MINVAL, WIND); }
+void cWeatherAb::MinWindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, MINVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::WindSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::WindSpeed(WEATHID toCheck) { return Value(toCheck, CURRVAL, WIND); }
-void cWeatherAb::WindSpeed(WEATHID toCheck, R32 value) { Value(toCheck, CURRVAL, WIND, value); }
+R32 cWeatherAb::WindSpeed(weathid_t toCheck) { return Value(toCheck, CURRVAL, WIND); }
+void cWeatherAb::WindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, CURRVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's rain chance
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::RainChance(WEATHID toCheck) { return Chance(toCheck, RAIN); }
-void cWeatherAb::RainChance(WEATHID toCheck, std::int8_t value) { Chance(toCheck, RAIN, value); }
+std::int8_t cWeatherAb::RainChance(weathid_t toCheck) { return Chance(toCheck, RAIN); }
+void cWeatherAb::RainChance(weathid_t toCheck, std::int8_t value) { Chance(toCheck, RAIN, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::SnowChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's snow chance
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::SnowChance(WEATHID toCheck) { return Chance(toCheck, SNOW); }
-void cWeatherAb::SnowChance(WEATHID toCheck, std::int8_t value) { Chance(toCheck, SNOW, value); }
+std::int8_t cWeatherAb::SnowChance(weathid_t toCheck) { return Chance(toCheck, SNOW); }
+void cWeatherAb::SnowChance(weathid_t toCheck, std::int8_t value) { Chance(toCheck, SNOW, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's storm chance
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::StormChance(WEATHID toCheck) { return Chance(toCheck, STORM); }
-void cWeatherAb::StormChance(WEATHID toCheck, std::int8_t value) { Chance(toCheck, STORM, value); }
+std::int8_t cWeatherAb::StormChance(weathid_t toCheck) { return Chance(toCheck, STORM); }
+void cWeatherAb::StormChance(weathid_t toCheck, std::int8_t value) { Chance(toCheck, STORM, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::HeatChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's heat chance
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::HeatChance(WEATHID toCheck) { return Chance(toCheck, HEAT); }
-void cWeatherAb::HeatChance(WEATHID toCheck, std::int8_t value) { Chance(toCheck, HEAT, value); }
+std::int8_t cWeatherAb::HeatChance(weathid_t toCheck) { return Chance(toCheck, HEAT); }
+void cWeatherAb::HeatChance(weathid_t toCheck, std::int8_t value) { Chance(toCheck, HEAT, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::ColdChance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's cold chance
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cWeatherAb::ColdChance(WEATHID toCheck) { return Chance(toCheck, COLD); }
-void cWeatherAb::ColdChance(WEATHID toCheck, std::int8_t value) { Chance(toCheck, COLD, value); }
+std::int8_t cWeatherAb::ColdChance(weathid_t toCheck) { return Chance(toCheck, COLD); }
+void cWeatherAb::ColdChance(weathid_t toCheck, std::int8_t value) { Chance(toCheck, COLD, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::SnowThreshold()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's snow threshold
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::SnowThreshold(WEATHID toCheck) { return weather[toCheck].SnowThreshold(); }
-void cWeatherAb::SnowThreshold(WEATHID toCheck, R32 value) {
+R32 cWeatherAb::SnowThreshold(weathid_t toCheck) { return weather[toCheck].SnowThreshold(); }
+void cWeatherAb::SnowThreshold(weathid_t toCheck, R32 value) {
     weather[toCheck].SnowThreshold(value);
 }
 
@@ -1131,8 +1131,8 @@ bool cWeatherAb::NewHour(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective min temperature of a weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::EffectiveMinTemp(WEATHID toCheck) { return Value(toCheck, MINVAL, EFFECTIVE); }
-void cWeatherAb::EffectiveMinTemp(WEATHID toCheck, R32 value) {
+R32 cWeatherAb::EffectiveMinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, EFFECTIVE); }
+void cWeatherAb::EffectiveMinTemp(weathid_t toCheck, R32 value) {
     Value(toCheck, MINVAL, EFFECTIVE, value);
 }
 
@@ -1141,8 +1141,8 @@ void cWeatherAb::EffectiveMinTemp(WEATHID toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective max temperature of a weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::EffectiveMaxTemp(WEATHID toCheck) { return Value(toCheck, MAXVAL, EFFECTIVE); }
-void cWeatherAb::EffectiveMaxTemp(WEATHID toCheck, R32 value) {
+R32 cWeatherAb::EffectiveMaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, EFFECTIVE); }
+void cWeatherAb::EffectiveMaxTemp(weathid_t toCheck, R32 value) {
     Value(toCheck, MAXVAL, EFFECTIVE, value);
 }
 
@@ -1164,48 +1164,48 @@ bool cWeatherAb::DoStuff(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets heat in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::HeatActive(WEATHID toCheck) { return weather[toCheck].HeatActive(); }
-void cWeatherAb::HeatActive(WEATHID toCheck, bool value) { weather[toCheck].HeatActive(value); }
+bool cWeatherAb::HeatActive(weathid_t toCheck) { return weather[toCheck].HeatActive(); }
+void cWeatherAb::HeatActive(weathid_t toCheck, bool value) { weather[toCheck].HeatActive(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::ColdActive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets cold in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::ColdActive(WEATHID toCheck) { return weather[toCheck].ColdActive(); }
-void cWeatherAb::ColdActive(WEATHID toCheck, bool value) { weather[toCheck].ColdActive(value); }
+bool cWeatherAb::ColdActive(weathid_t toCheck) { return weather[toCheck].ColdActive(); }
+void cWeatherAb::ColdActive(weathid_t toCheck, bool value) { weather[toCheck].ColdActive(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainActive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets rain in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::RainActive(WEATHID toCheck) { return weather[toCheck].RainActive(); }
-void cWeatherAb::RainActive(WEATHID toCheck, bool value) { weather[toCheck].RainActive(value); }
+bool cWeatherAb::RainActive(weathid_t toCheck) { return weather[toCheck].RainActive(); }
+void cWeatherAb::RainActive(weathid_t toCheck, bool value) { weather[toCheck].RainActive(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::SnowActive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets snow in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::SnowActive(WEATHID toCheck) { return weather[toCheck].SnowActive(); }
-void cWeatherAb::SnowActive(WEATHID toCheck, bool value) { weather[toCheck].SnowActive(value); }
+bool cWeatherAb::SnowActive(weathid_t toCheck) { return weather[toCheck].SnowActive(); }
+void cWeatherAb::SnowActive(weathid_t toCheck, bool value) { weather[toCheck].SnowActive(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormBrewing()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether a storm is brewing in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::StormBrewing(WEATHID toCheck) { return weather[toCheck].StormBrewing(); }
-void cWeatherAb::StormBrewing(WEATHID toCheck, bool value) { weather[toCheck].StormBrewing(value); }
+bool cWeatherAb::StormBrewing(weathid_t toCheck) { return weather[toCheck].StormBrewing(); }
+void cWeatherAb::StormBrewing(weathid_t toCheck, bool value) { weather[toCheck].StormBrewing(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormActive()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether a storm is active in specified weather system
 // o------------------------------------------------------------------------------------------------o
-bool cWeatherAb::StormActive(WEATHID toCheck) { return weather[toCheck].StormActive(); }
-void cWeatherAb::StormActive(WEATHID toCheck, bool value) { weather[toCheck].StormActive(value); }
+bool cWeatherAb::StormActive(weathid_t toCheck) { return weather[toCheck].StormActive(); }
+void cWeatherAb::StormActive(weathid_t toCheck, bool value) { weather[toCheck].StormActive(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::DoPlayerStuff()
@@ -1219,7 +1219,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
         return true;
 
     std::int8_t defaultTemp = 20;
-    WEATHID currval = p->GetRegion()->GetWeather();
+    weathid_t currval = p->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty() || p->InBuilding()) {
         if (s != nullptr) {
             CPWeather dry(0xFF, 0x00, defaultTemp);
@@ -1338,7 +1338,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
     if (!ValidateObject(p))
         return true;
 
-    WEATHID currval = p->GetRegion()->GetWeather();
+    weathid_t currval = p->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty() || p->InBuilding()) {
         SendJSWeather(p, LIGHT, 0);
         return false;
@@ -1428,7 +1428,7 @@ bool cWeatherAb::DoItemStuff(CItem *mItem) {
     if (!ValidateObject(mItem))
         return true;
 
-    WEATHID currval = mItem->GetRegion()->GetWeather();
+    weathid_t currval = mItem->GetRegion()->GetWeather();
     if (currval > weather.size() || weather.empty()) {
         SendJSWeather(mItem, LIGHT, 0);
         return true;
@@ -1485,7 +1485,7 @@ void cWeatherAb::SendJSWeather(CBaseObject *mObj, WeatherType weathType, std::in
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends weather effects to player's client
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, WEATHID currval)
+void cWeatherAb::DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval)
 // Weather Types
 // 0 - dry
 // 1 - rain
@@ -1543,28 +1543,28 @@ void cWeatherAb::DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (min) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::LightMin(WEATHID toCheck) { return weather[toCheck].LightMin(); }
-void cWeatherAb::LightMin(WEATHID toCheck, R32 newValue) { weather[toCheck].LightMin(newValue); }
+R32 cWeatherAb::LightMin(weathid_t toCheck) { return weather[toCheck].LightMin(); }
+void cWeatherAb::LightMin(weathid_t toCheck, R32 newValue) { weather[toCheck].LightMin(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::LightMax()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (max) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::LightMax(WEATHID toCheck) { return weather[toCheck].LightMax(); }
-void cWeatherAb::LightMax(WEATHID toCheck, R32 newValue) { weather[toCheck].LightMax(newValue); }
+R32 cWeatherAb::LightMax(weathid_t toCheck) { return weather[toCheck].LightMax(); }
+void cWeatherAb::LightMax(weathid_t toCheck, R32 newValue) { weather[toCheck].LightMax(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::CurrentLight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (current) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::CurrentLight(WEATHID toCheck) { return weather[toCheck].CurrentLight(); }
-void cWeatherAb::CurrentLight(WEATHID toCheck, R32 newValue) {
+R32 cWeatherAb::CurrentLight(weathid_t toCheck) { return weather[toCheck].CurrentLight(); }
+void cWeatherAb::CurrentLight(weathid_t toCheck, R32 newValue) {
     weather[toCheck].CurrentLight(newValue);
 }
 
-CWeather *cWeatherAb::Weather(WEATHID toCheck) {
+CWeather *cWeatherAb::Weather(weathid_t toCheck) {
     if (toCheck >= weather.size()) {
         return nullptr;
     }
@@ -1597,7 +1597,7 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
         std::int32_t message = 0;
         bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
 
-        WEATHID weatherSys = mChar.GetRegion()->GetWeather();
+        weathid_t weatherSys = mChar.GetRegion()->GetWeather();
         if (!weather.empty() && weatherSys < weather.size()) {
             lightMin = LightMin(weatherSys);
             lightMax = LightMax(weatherSys);
@@ -1711,7 +1711,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, WeatherType eleme
         return false;
 
     bool didDamage = false;
-    WEATHID weatherSys = mChar.GetRegion()->GetWeather();
+    weathid_t weatherSys = mChar.GetRegion()->GetWeather();
     if (!(weatherSys > weather.size() || weather.empty()) && mChar.GetWeathDamage(element) != 0 &&
         mChar.GetWeathDamage(element) <= cwmWorldState->GetUICurrentTime()) {
         const R32 tempCurrent = Temp(weatherSys);

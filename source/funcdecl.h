@@ -67,9 +67,9 @@ CItem *FindItemNearXYZ(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8
 // o------------------------------------------------------------------------------------------------o
 //  Calculation functions (socket, char, item and so forth)
 // o------------------------------------------------------------------------------------------------o
-CItem *CalcItemObjFromSer(SERIAL targSerial);
-CChar *CalcCharObjFromSer(SERIAL targSerial);
-CMultiObj *CalcMultiFromSer(SERIAL targSerial);
+CItem *CalcItemObjFromSer(serial_t targSerial);
+CChar *CalcCharObjFromSer(serial_t targSerial);
+CMultiObj *CalcMultiFromSer(serial_t targSerial);
 inline std::uint32_t CalcSerial(std::uint8_t a1, std::uint8_t a2, std::uint8_t a3, std::uint8_t a4) {
     return ((a1 << 24) + (a2 << 16) + (a3 << 8) + a4);
 }
@@ -78,7 +78,7 @@ inline std::uint32_t CalcSerial(std::uint8_t a1, std::uint8_t a2, std::uint8_t a
 //  Socket stuff
 // o------------------------------------------------------------------------------------------------o
 auto SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    std::uint32_t type, SERIAL serial) -> void;
+                    std::uint32_t type, serial_t serial) -> void;
 void SendMapChange(std::uint8_t worldNumber, CSocket *sock, bool initialLogin = false);
 bool IsOnline(CChar &mChar);
 
@@ -92,8 +92,8 @@ void DoLight(CItem *mItem, std::uint8_t level);
 // o------------------------------------------------------------------------------------------------o
 //  Poison related functions
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL GetPoisonDuration(std::uint8_t poisonStrength);
-TIMERVAL GetPoisonTickTime(std::uint8_t poisonStrength);
+timerval_t GetPoisonDuration(std::uint8_t poisonStrength);
+timerval_t GetPoisonTickTime(std::uint8_t poisonStrength);
 
 // o------------------------------------------------------------------------------------------------o
 //  Amount related
@@ -147,8 +147,8 @@ void CallGuards(CChar *mChar);
 // o------------------------------------------------------------------------------------------------o
 //  Time Functions
 // o------------------------------------------------------------------------------------------------o
-inline TIMERVAL BuildTimeValue(R32 timeFromNow) {
-    return static_cast<TIMERVAL>(cwmWorldState->GetUICurrentTime() +
+inline timerval_t BuildTimeValue(R32 timeFromNow) {
+    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() +
                                  (static_cast<R32>(1000) * timeFromNow));
 }
 

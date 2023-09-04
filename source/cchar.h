@@ -63,12 +63,12 @@ struct DamageTrackEntry_st {
     DamageTrackEntry_st()
         : damager(INVALIDSERIAL), damageDone(0), lastDamageType(PHYSICAL),
           lastDamageDone(INVALIDSERIAL) {}
-    DamageTrackEntry_st(SERIAL dmgr, std::int32_t dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn)
+    DamageTrackEntry_st(serial_t dmgr, std::int32_t dmgDn, WeatherType dmgType, timerval_t lstDmgDn)
         : damager(dmgr), damageDone(dmgDn), lastDamageType(dmgType), lastDamageDone(lstDmgDn) {}
-    SERIAL damager;             // who did the damage?
+    serial_t damager;             // who did the damage?
     std::int32_t damageDone;            // how much damage has been accumulated?
     WeatherType lastDamageType; // what type of damage was dealt most recently?
-    TIMERVAL lastDamageDone;    // when was the last time that damage was done?
+    timerval_t lastDamageDone;    // when was the last time that damage was done?
 };
 
 bool DTEgreater(DamageTrackEntry_st &elem1, DamageTrackEntry_st &elem2);
@@ -82,7 +82,7 @@ class CChar : public CBaseObject {
 
         std::int8_t wanderMode;    // NPC Wander Mode
         std::int8_t oldWanderMode; // Used for fleeing npcs
-        SERIAL fTarg;       // NPC Follow Target
+        serial_t fTarg;       // NPC Follow Target
         std::int16_t fx[2];         // NPC Wander Point x
         std::int16_t fy[2];         // NPC Wander Point y
         std::int8_t fz;            // NPC Wander Point z
@@ -123,7 +123,7 @@ class CChar : public CBaseObject {
         std::uint8_t controlSlots;                 // Amount of control slots taken up by a particular NPC
         std::vector<CChar *> petFriends;   // Temporary list of friends a pet has
         GenericList<CChar *> petOwnerList; // Persistent list of owners a pet has previously had
-        std::unordered_map<SERIAL, TargetInfo>
+        std::unordered_map<serial_t, TargetInfo>
             combatIgnore; // Chars this char ignores as targets in combat, with timestamps
         std::uint16_t maxLoyalty;  // Pet's maximum loyalty to its master
         std::uint16_t loyalty;     // Pet's current loyalty to its master
@@ -140,9 +140,9 @@ class CChar : public CBaseObject {
         PlayerValues_st();
         void DumpBody(std::ostream &outStream);
 
-        SERIAL callNum;        // Callnum GM or Counsellor is on
-        SERIAL playerCallNum;  // Players call number in GM or Counsellor requestQueue
-        SERIAL trackingTarget; // Tracking target ID
+        serial_t callNum;        // Callnum GM or Counsellor is on
+        serial_t playerCallNum;  // Players call number in GM or Counsellor requestQueue
+        serial_t trackingTarget; // Tracking target ID
         std::uint8_t squelched;        // Squelching
         std::uint8_t commandLevel;     // 0 = player, 1 = counselor, 2 = GM
         std::uint8_t postType;
@@ -154,7 +154,7 @@ class CChar : public CBaseObject {
         std::uint8_t speechMode;
         std::uint8_t speechId;
         cScript *speechCallback;
-        SERIAL robe;
+        serial_t robe;
         std::uint16_t accountNum;
         std::uint16_t origSkin;
         std::uint16_t origId;     // Backup of body type for polymorph
@@ -170,7 +170,7 @@ class CChar : public CBaseObject {
         std::string lastOn; // Last time a character was on
         std::uint32_t lastOnSecs;    // Last time a character was on in seconds.
 
-        SERIAL townVote;
+        serial_t townVote;
         std::int8_t townPriv; // 0=non resident (Other privledges added as more functionality added)
         std::uint8_t controlSlotsUsed; // The total number of control slots currently taken up by
                                // followers/pets
@@ -203,7 +203,7 @@ class CChar : public CBaseObject {
     std::int8_t fontType;         // Speech font to use
     std::uint16_t maxHP;
     std::uint16_t maxHP_oldstr;
-    RACEID oldRace;
+    raceid_t oldRace;
     std::int16_t maxMana;
     std::uint16_t maxMana_oldint;
     std::int16_t maxStam;
@@ -212,8 +212,8 @@ class CChar : public CBaseObject {
     colour_t emoteColor;
     std::int8_t cell;       // Reserved for jailing players
     CItem *packItem; // Characters backpack
-    SERIAL targ;     // Current combat target
-    SERIAL attacker; // Character who attacked this character
+    serial_t targ;     // Current combat target
+    serial_t attacker; // Character who attacked this character
     std::int8_t hunger;     // Level of hungerness, 6 = full, 0 = "empty"
     std::int8_t thirst;     // Level of thirstiness, 6 = full, 0 = "empty"
     std::uint16_t regionNum;
@@ -222,7 +222,7 @@ class CChar : public CBaseObject {
     std::uint8_t brkPeaceChanceGain;
     std::uint8_t brkPeaceChance;
     std::uint16_t advObj;        // Has used advance gate?
-    SERIAL guildFealty; // Serial of player you are loyal to (default=yourself) (DasRaetsel)
+    serial_t guildFealty; // Serial of player you are loyal to (default=yourself) (DasRaetsel)
     std::int16_t guildNumber;   // Number of guild player is in (0=no guild)     (DasRaetsel)
 
     std::uint8_t flag; // 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like
@@ -231,7 +231,7 @@ class CChar : public CBaseObject {
     std::uint8_t nextAct;    // time to next spell action..
     std::int8_t stealth;    // stealth ( steps already done, -1=not using )
     std::uint8_t running;    // Stamina Loose while running
-    RACEID raceGate; // Race gate that has been used
+    raceid_t raceGate; // Race gate that has been used
     std::uint8_t step;       // 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
     std::bitset<16> priv;
@@ -239,24 +239,24 @@ class CChar : public CBaseObject {
     std::string guildTitle; // Title Guildmaster granted player
                             // (DasRaetsel)
 
-    TIMERVAL charTimers[tCHAR_COUNT];
+    timerval_t charTimers[tCHAR_COUNT];
 
-    TIMERVAL regen[3];
-    TIMERVAL weathDamage[WEATHNUM]; // Light Damage timer
+    timerval_t regen[3];
+    timerval_t weathDamage[WEATHNUM]; // Light Damage timer
 
     std::uint8_t PoisonStrength;
     BodyType bodyType;
     std::uint32_t lastMoveTime; // Timestamp for when character moved last
     std::uint16_t npcGuild;     // ID of NPC guild character is in (0=no NPC guild)
 
-    SKILLVAL baseskill[ALLSKILLS]; // Base skills without stat modifiers
-    SKILLVAL skill[INTELLECT + 1]; // List of skills (with stat modifiers)
+    skillval_t baseskill[ALLSKILLS]; // Base skills without stat modifiers
+    skillval_t skill[INTELLECT + 1]; // List of skills (with stat modifiers)
 
     std::map<ItemLayers, CItem *> itemLayers;
     std::map<ItemLayers, CItem *>::iterator layerCtr;
-    std::unordered_map<SERIAL, TargetInfo>
+    std::unordered_map<serial_t, TargetInfo>
         aggressorFlags; // Chars this char is marked as aggressor to, with timestamps
-    std::unordered_map<SERIAL, TargetInfo>
+    std::unordered_map<serial_t, TargetInfo>
         permaGreyFlags; // Chars this char is marked as permanent grey to, with timestamps
     GenericList<CChar *> petsOwned;
     GenericList<CChar *> activeFollowers;
@@ -292,7 +292,7 @@ class CChar : public CBaseObject {
     void UpdateRegion(void);
 
     void UpdateDamageTrack(void);
-    auto CheckDamageTrack(SERIAL serialToCheck, TIMERVAL lastXSeconds) -> bool;
+    auto CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) -> bool;
 
     void SetPoisonStrength(std::uint8_t value);
     std::uint8_t GetPoisonStrength(void) const;
@@ -310,20 +310,20 @@ class CChar : public CBaseObject {
     auto AddFollower(CChar *npcToAdd) -> bool;
     auto RemoveFollower(CChar *followerToRemove) -> bool;
 
-    auto GetAggressorFlags() const -> const std::unordered_map<SERIAL, TargetInfo>;
-    auto AddAggressorFlag(SERIAL toAdd) -> void;
-    auto RemoveAggressorFlag(SERIAL toRemove) -> void;
-    auto CheckAggressorFlag(SERIAL toCheck) -> bool;
-    auto UpdateAggressorFlagTimestamp(SERIAL toUpdate) -> void;
+    auto GetAggressorFlags() const -> const std::unordered_map<serial_t, TargetInfo>;
+    auto AddAggressorFlag(serial_t toAdd) -> void;
+    auto RemoveAggressorFlag(serial_t toRemove) -> void;
+    auto CheckAggressorFlag(serial_t toCheck) -> bool;
+    auto UpdateAggressorFlagTimestamp(serial_t toUpdate) -> void;
     auto ClearAggressorFlags() -> void;
     auto IsAggressor(bool checkForPlayersOnly) -> bool;
     auto AggressorFlagMaintenance() -> void;
 
-    auto GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, TargetInfo>;
-    auto AddPermaGreyFlag(SERIAL toAdd) -> void;
-    auto RemovePermaGreyFlag(SERIAL toRemove) -> void;
-    auto CheckPermaGreyFlag(SERIAL toCheck) -> bool;
-    auto UpdatePermaGreyFlagTimestamp(SERIAL toUpdate) -> void;
+    auto GetPermaGreyFlags() const -> const std::unordered_map<serial_t, TargetInfo>;
+    auto AddPermaGreyFlag(serial_t toAdd) -> void;
+    auto RemovePermaGreyFlag(serial_t toRemove) -> void;
+    auto CheckPermaGreyFlag(serial_t toCheck) -> bool;
+    auto UpdatePermaGreyFlagTimestamp(serial_t toUpdate) -> void;
     auto ClearPermaGreyFlags() -> void;
     auto IsPermaGrey(bool checkForPlayersOnly) -> bool;
     auto PermaGreyFlagMaintenance() -> void;
@@ -444,14 +444,14 @@ class CChar : public CBaseObject {
     std::string GetGuildTitle(void) const;
     void SetGuildTitle(const std::string &newValue);
 
-    TIMERVAL GetTimer(cC_TID timerId) const;
-    TIMERVAL GetRegen(std::uint8_t part) const;
-    TIMERVAL GetWeathDamage(std::uint8_t part) const;
+    timerval_t GetTimer(cC_TID timerId) const;
+    timerval_t GetRegen(std::uint8_t part) const;
+    timerval_t GetWeathDamage(std::uint8_t part) const;
     std::uint8_t GetNextAct(void) const;
 
-    void SetTimer(cC_TID timerId, TIMERVAL value);
-    void SetRegen(TIMERVAL newValue, std::uint8_t part);
-    void SetWeathDamage(TIMERVAL newValue, std::uint8_t part);
+    void SetTimer(cC_TID timerId, timerval_t value);
+    void SetRegen(timerval_t newValue, std::uint8_t part);
+    void SetWeathDamage(timerval_t newValue, std::uint8_t part);
     void SetNextAct(std::uint8_t newVal);
 
     colour_t GetEmoteColour(void) const;
@@ -485,13 +485,13 @@ class CChar : public CBaseObject {
     CChar *GetTarg(void) const;
     CChar *GetAttacker(void) const;
     std::uint16_t GetAdvObj(void) const;
-    RACEID GetRaceGate(void) const;
+    raceid_t GetRaceGate(void) const;
 
     void SetPackItem(CItem *newVal);
     void SetTarg(CChar *newTarg);
     void SetAttacker(CChar *newValue);
     void SetAdvObj(std::uint16_t newValue);
-    void SetRaceGate(RACEID newValue);
+    void SetRaceGate(raceid_t newValue);
 
     std::int8_t GetSpellCast(void) const;
     void SetSpellCast(std::int8_t newValue);
@@ -538,8 +538,8 @@ class CChar : public CBaseObject {
     std::uint16_t GetBaseSkill(std::uint8_t skillToGet) const;
     std::uint16_t GetSkill(std::uint8_t skillToGet) const;
 
-    void SetBaseSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet);
-    void SetSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet);
+    void SetBaseSkill(skillval_t newSkillValue, std::uint8_t skillToSet);
+    void SetSkill(skillval_t newSkillValue, std::uint8_t skillToSet);
 
     std::uint16_t GetDeaths(void) const; // can we die 4 billion times?!
     std::int16_t GetGuildNumber(void) const;
@@ -618,11 +618,11 @@ class CChar : public CBaseObject {
     void IsDisguised(bool newValue);
     bool IsJailed(void) const;
 
-    void SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, RACEID newoldrace);
+    void SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, raceid_t newoldrace);
     void SetFixedMaxHP(std::int16_t newmaxhp);
-    void SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, RACEID newoldrace);
+    void SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, raceid_t newoldrace);
     void SetFixedMaxMana(std::int16_t newmaxmana);
-    void SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, RACEID newoldrace);
+    void SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, raceid_t newoldrace);
     void SetFixedMaxStam(std::int16_t newmaxstam);
     virtual std::uint16_t GetMaxHP(void);
     std::int16_t GetMaxMana(void);
@@ -688,10 +688,10 @@ class CChar : public CBaseObject {
     bool AddFriend(CChar *toAdd);
     bool RemoveFriend(CChar *toRemove);
 
-    auto GetCombatIgnore() const -> const std::unordered_map<SERIAL, TargetInfo>;
-    auto AddToCombatIgnore(SERIAL toAdd, bool isNpc) -> void;
-    auto RemoveFromCombatIgnore(SERIAL toRemove) -> void;
-    auto CheckCombatIgnore(SERIAL toCheck) -> bool;
+    auto GetCombatIgnore() const -> const std::unordered_map<serial_t, TargetInfo>;
+    auto AddToCombatIgnore(serial_t toAdd, bool isNpc) -> void;
+    auto RemoveFromCombatIgnore(serial_t toRemove) -> void;
+    auto CheckCombatIgnore(serial_t toCheck) -> bool;
     auto ClearCombatIgnore() -> void;
     auto CombatIgnoreMaintenance() -> void;
 
@@ -805,8 +805,8 @@ class CChar : public CBaseObject {
     std::uint16_t GetAccountNum(void) const;
     void SetAccountNum(std::uint16_t newVal);
 
-    void SetRobe(SERIAL newValue);
-    SERIAL GetRobe(void) const;
+    void SetRobe(serial_t newValue);
+    serial_t GetRobe(void) const;
 
     std::uint16_t GetOrgId(void) const;
     void SetOrgSkin(std::uint16_t value);
@@ -819,11 +819,11 @@ class CChar : public CBaseObject {
     void SetCommandLevel(std::uint8_t newValue);
     std::uint8_t GetPostType(void) const;
     void SetPostType(std::uint8_t newValue);
-    void SetPlayerCallNum(SERIAL newValue);
-    void SetCallNum(SERIAL newValue);
+    void SetPlayerCallNum(serial_t newValue);
+    void SetCallNum(serial_t newValue);
 
-    SERIAL GetCallNum(void) const;
-    SERIAL GetPlayerCallNum(void) const;
+    serial_t GetCallNum(void) const;
+    serial_t GetPlayerCallNum(void) const;
 
     void SetLastOn(std::string newValue);
     std::string GetLastOn(void) const;
@@ -844,7 +844,7 @@ class CChar : public CBaseObject {
 
     CChar *GetTrackingTarget(void) const;
     CChar *GetTrackingTargets(std::uint8_t targetNum) const;
-    SERIAL GetTrackingTargetSerial(void) const;
+    serial_t GetTrackingTargetSerial(void) const;
     void SetTrackingTarget(CChar *newValue);
     void SetTrackingTargets(CChar *newValue, std::uint8_t targetNum);
 

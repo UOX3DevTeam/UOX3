@@ -30,14 +30,14 @@ class CGuild {
     GuildType gType;
     std::string charter;
     std::string webpage;
-    SERIAL stone;
-    SERIAL master;
-    std::vector<SERIAL> recruits;
-    std::vector<SERIAL> members;
+    serial_t stone;
+    serial_t master;
+    std::vector<serial_t> recruits;
+    std::vector<serial_t> members;
     std::map<guildid_t, GuildRelation> relationList;
 
-    std::vector<SERIAL>::iterator recruitPtr;
-    std::vector<SERIAL>::iterator memberPtr;
+    std::vector<serial_t>::iterator recruitPtr;
+    std::vector<serial_t>::iterator memberPtr;
 
     std::map<guildid_t, GuildRelation>::iterator warPtr;
     std::map<guildid_t, GuildRelation>::iterator allyPtr;
@@ -58,36 +58,36 @@ class CGuild {
     GuildType Type() const;
     const std::string Charter() const;
     const std::string Webpage() const;
-    SERIAL Stone() const;
-    SERIAL Master() const;
-    SERIAL FirstRecruit();
-    SERIAL NextRecruit();
+    serial_t Stone() const;
+    serial_t Master() const;
+    serial_t FirstRecruit();
+    serial_t NextRecruit();
     bool FinishedRecruits();
-    SERIAL RecruitNumber(size_t rNum) const;
-    SERIAL FirstMember();
-    SERIAL NextMember();
+    serial_t RecruitNumber(size_t rNum) const;
+    serial_t FirstMember();
+    serial_t NextMember();
     bool FinishedMember();
-    SERIAL MemberNumber(size_t rNum) const;
+    serial_t MemberNumber(size_t rNum) const;
 
     void Name(std::string txt);
     auto Abbreviation(const std::string &value) -> void;
     void Type(GuildType nType);
     void Charter(const std::string &txt);
     void Webpage(const std::string &txt);
-    void Stone(SERIAL newStone);
+    void Stone(serial_t newStone);
     void Stone(CItem &newStone);
-    void Master(SERIAL newMaster);
+    void Master(serial_t newMaster);
     void Master(CChar &newMaster);
     void NewRecruit(CChar &newRecruit);
-    void NewRecruit(SERIAL newRecruit);
+    void NewRecruit(serial_t newRecruit);
     void NewMember(CChar &newMember);
-    void NewMember(SERIAL newMember);
+    void NewMember(serial_t newMember);
     void RemoveRecruit(CChar &newRecruit);
-    void RemoveRecruit(SERIAL newRecruit);
+    void RemoveRecruit(serial_t newRecruit);
     void RemoveMember(CChar &newMember);
-    void RemoveMember(SERIAL newMember);
+    void RemoveMember(serial_t newMember);
     void RecruitToMember(CChar &newMember);
-    void RecruitToMember(SERIAL newMember);
+    void RecruitToMember(serial_t newMember);
 
     size_t NumMembers() const;
     size_t NumRecruits() const;
@@ -111,8 +111,8 @@ class CGuild {
 
     const std::string TypeName();
 
-    bool IsRecruit(SERIAL toCheck) const;
-    bool IsMember(SERIAL toCheck) const;
+    bool IsRecruit(serial_t toCheck) const;
+    bool IsMember(serial_t toCheck) const;
     bool IsRecruit(CChar &toCheck) const;
     bool IsMember(CChar &toCheck) const;
 };
@@ -137,7 +137,7 @@ class CGuildCollection {
     void Load();
     GuildRelation Compare(guildid_t srcGuild, guildid_t trgGuild) const;
     GuildRelation Compare(CChar *src, CChar *trg) const;
-    void Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild = -1, SERIAL plID = INVALIDSERIAL);
+    void Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild = -1, serial_t plID = INVALIDSERIAL);
     void GumpInput(CPIGumpInput *gi);
     void GumpChoice(CSocket *s);
     void PlaceStone(CSocket *s, CItem *deed);

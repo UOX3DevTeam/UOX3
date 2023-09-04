@@ -113,7 +113,7 @@ void CWhoList::Delete(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds an entry into the whoMenuData array
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::AddSerial(SERIAL toAdd) { whoMenuData.push_back(toAdd); }
+void CWhoList::AddSerial(serial_t toAdd) { whoMenuData.push_back(toAdd); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWhoList::ButtonSelect()
@@ -135,13 +135,13 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
     }
 
     GMLeave();
-    SERIAL ser = toSendTo->AddId();
+    serial_t ser = toSendTo->AddId();
     if (ser == INVALIDSERIAL) {
         toSendTo->SysMessage(1387); // Selected character not found.
         return;
     }
 
-    SERIAL charSerial = whoMenuData[ser];
+    serial_t charSerial = whoMenuData[ser];
 
     CChar *targetChar = CalcCharObjFromSer(charSerial); // find selected char ...
     if (!ValidateObject(targetChar)) {
@@ -289,7 +289,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
 //|	Purpose		-	Builds the WhoList gump and sends it to the player
 // o------------------------------------------------------------------------------------------------o
 void CWhoList::Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed) {
-    SERIAL serial = whoMenuData[buttonPressed];
+    serial_t serial = whoMenuData[buttonPressed];
     CChar *targetChar = CalcCharObjFromSer(serial); // find selected char ...
 
     if (!ValidateObject(targetChar)) {

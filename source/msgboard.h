@@ -57,7 +57,7 @@ struct MsgBoardPost_st {
 void MsgBoardQuestEscortCreate(CChar *mNPC);
 void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC);
 void MsgBoardQuestEscortRemovePost(CChar *mNPC);
-void MsgBoardRemoveFile(const SERIAL msgBoardSer);
+void MsgBoardRemoveFile(const serial_t msgBoardSer);
 void MsgBoardMaintenance(void);
 
 #endif

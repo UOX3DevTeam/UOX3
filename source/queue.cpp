@@ -58,7 +58,7 @@ PageVector::~PageVector() { KillQueue(); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds help request from player to page queue
 // o------------------------------------------------------------------------------------------------o
-SERIAL PageVector::Add(CHelpRequest *toAdd) {
+serial_t PageVector::Add(CHelpRequest *toAdd) {
     CHelpRequest *adding = new CHelpRequest;
 #if defined(UOX_DEBUG_MODE)
     if (adding == nullptr)
@@ -203,7 +203,7 @@ std::int32_t PageVector::CurrentPos(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets call number/help request ID for current position in queue
 // o------------------------------------------------------------------------------------------------o
-SERIAL PageVector::GetCallNum(void) const {
+serial_t PageVector::GetCallNum(void) const {
     if (AtEnd())
         return INVALIDSERIAL;
 
@@ -215,7 +215,7 @@ SERIAL PageVector::GetCallNum(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets position of page with specified call number/help request ID
 // o------------------------------------------------------------------------------------------------o
-std::int32_t PageVector::FindCallNum(SERIAL callNum) {
+std::int32_t PageVector::FindCallNum(serial_t callNum) {
     for (size_t counter = 0; counter < requestQueue.size(); ++counter) {
         if (requestQueue[counter]->RequestId() == callNum)
             return static_cast<std::int32_t>(counter);
@@ -286,8 +286,8 @@ CHelpRequest::~CHelpRequest() {}
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who paged
 // o------------------------------------------------------------------------------------------------o
-SERIAL CHelpRequest::WhoPaging(void) const { return playerPaging; }
-void CHelpRequest::WhoPaging(SERIAL pPaging) { playerPaging = pPaging; }
+serial_t CHelpRequest::WhoPaging(void) const { return playerPaging; }
+void CHelpRequest::WhoPaging(serial_t pPaging) { playerPaging = pPaging; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHelpRequest::WhoHandling()
@@ -295,8 +295,8 @@ void CHelpRequest::WhoPaging(SERIAL pPaging) { playerPaging = pPaging; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the player who is handling the request
 // o------------------------------------------------------------------------------------------------o
-SERIAL CHelpRequest::WhoHandling(void) const { return playerHandling; }
-void CHelpRequest::WhoHandling(SERIAL pHandling) { playerHandling = pHandling; }
+serial_t CHelpRequest::WhoHandling(void) const { return playerHandling; }
+void CHelpRequest::WhoHandling(serial_t pHandling) { playerHandling = pHandling; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CHelpRequest::Priority()
@@ -341,5 +341,5 @@ void CHelpRequest::Reason(const std::string &pReason) { reason = pReason; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the ID # of the request
 // o------------------------------------------------------------------------------------------------o
-SERIAL CHelpRequest::RequestId(void) const { return helpReqId; }
-void CHelpRequest::RequestId(SERIAL hrid) { helpReqId = hrid; }
+serial_t CHelpRequest::RequestId(void) const { return helpReqId; }
+void CHelpRequest::RequestId(serial_t hrid) { helpReqId = hrid; }

@@ -59,26 +59,26 @@ typedef void *va_list;
 using R32 = float;
 using R64 = double;
 
-using SERIAL = std::uint32_t;
+using serial_t = std::uint32_t;
 using gender_t = std::uint8_t;
-using LIGHTLEVEL = std::uint8_t;
-using COLDLEVEL = std::uint8_t;
-using HEATLEVEL = std::uint8_t;
-using SECONDS = std::uint8_t;
-using ARMORCLASS = std::uint8_t;
-using RACEREL = std::int8_t;
-using RANGE = std::int8_t;
-using RACEID = std::uint16_t;
+using lightlevel_t = std::uint8_t;
+using coldlevel_t = std::uint8_t;
+using heatlevel_t = std::uint8_t;
+using seconds_t = std::uint8_t;
+using armorclass_t = std::uint8_t;
+using racerel_t = std::int8_t;
+using range_t = std::int8_t;
+using raceid_t = std::uint16_t;
 using colour_t = std::uint16_t;
-using SKILLVAL = std::uint16_t;
-using WEATHID = std::uint16_t;
+using skillval_t = std::uint16_t;
+using weathid_t = std::uint16_t;
 using guildid_t = std::int16_t;
-using TIMERVAL = std::uint32_t;
+using timerval_t = std::uint32_t;
 
 #if defined(_WIN32)
-using UOXSOCKET = std::uint32_t;
+using uoxsocket_t = std::uint32_t;
 #else
-using UOXSOCKET = std::int32_t;
+using uoxsocket_t = std::int32_t;
 #endif
 
 //==================================================================================================
@@ -90,10 +90,10 @@ constexpr auto TRACKINGMENUOFFSET = 4096;
 constexpr auto POLYMORPHMENUOFFSET = 8192;
 constexpr auto JSGUMPMENUOFFSET = 16384;
 
-constexpr auto INVALIDSERIAL = SERIAL(0xFFFFFFFF);
+constexpr auto INVALIDSERIAL = serial_t(0xFFFFFFFF);
 constexpr auto INVALIDID = std::uint16_t(0xFFFF);
 constexpr auto INVALIDCOLOUR = std::uint16_t(0xFFFF);
-constexpr auto BASEITEMSERIAL = SERIAL(0x40000000);
+constexpr auto BASEITEMSERIAL = serial_t(0x40000000);
 #if !defined(_WIN32)
 constexpr auto MAX_PATH = 268;
 #endif

@@ -1215,10 +1215,10 @@ GenericList<CItem *> *CMultiObj::GetItemsInMultiList(void) { return &itemInMulti
 //|					Changed Plank1() and Plank2() to Plank() using an array
 // o------------------------------------------------------------------------------------------------o
 
-const SERIAL DEFBOAT_TILLER = INVALIDSERIAL;
-const SERIAL DEFBOAT_HOLD = INVALIDSERIAL;
+const serial_t DEFBOAT_TILLER = INVALIDSERIAL;
+const serial_t DEFBOAT_HOLD = INVALIDSERIAL;
 const std::int8_t DEFBOAT_MOVETYPE = 0;
-const TIMERVAL DEFBOAT_MOVETIME = 0;
+const timerval_t DEFBOAT_MOVETIME = 0;
 
 CBoatObj::CBoatObj()
     : CMultiObj(), tiller(DEFBOAT_TILLER), hold(DEFBOAT_HOLD), moveType(DEFBOAT_MOVETYPE),
@@ -1312,8 +1312,8 @@ bool CBoatObj::HandleLine(std::string &UTag, std::string &data) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Tiller item reference
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBoatObj::GetTiller(void) const { return tiller; }
-void CBoatObj::SetTiller(SERIAL newVal) { tiller = newVal; }
+serial_t CBoatObj::GetTiller(void) const { return tiller; }
+void CBoatObj::SetTiller(serial_t newVal) { tiller = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::GetPlank()
@@ -1322,14 +1322,14 @@ void CBoatObj::SetTiller(SERIAL newVal) { tiller = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Plank item reference
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBoatObj::GetPlank(std::uint8_t plankNum) const {
-    SERIAL rValue = INVALIDSERIAL;
+serial_t CBoatObj::GetPlank(std::uint8_t plankNum) const {
+    auto rValue = INVALIDSERIAL;
     if (plankNum < 2) {
         rValue = planks[plankNum];
     }
     return rValue;
 }
-void CBoatObj::SetPlank(std::uint8_t plankNum, SERIAL newVal) {
+void CBoatObj::SetPlank(std::uint8_t plankNum, serial_t newVal) {
     if (plankNum < 2) {
         planks[plankNum] = newVal;
     }
@@ -1342,8 +1342,8 @@ void CBoatObj::SetPlank(std::uint8_t plankNum, SERIAL newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets boat's Hold item reference
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBoatObj::GetHold(void) const { return hold; }
-void CBoatObj::SetHold(SERIAL newVal) { hold = newVal; }
+serial_t CBoatObj::GetHold(void) const { return hold; }
+void CBoatObj::SetHold(serial_t newVal) { hold = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::GetMoveType()
@@ -1362,8 +1362,8 @@ void CBoatObj::SetMoveType(std::int8_t newVal) { moveType = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for when boat will move next
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CBoatObj::GetMoveTime(void) const { return nextMoveTime; }
-void CBoatObj::SetMoveTime(TIMERVAL newVal) { nextMoveTime = newVal; }
+timerval_t CBoatObj::GetMoveTime(void) const { return nextMoveTime; }
+void CBoatObj::SetMoveTime(timerval_t newVal) { nextMoveTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::CanBeObjType()
 //|	Date		-	24 June, 2004

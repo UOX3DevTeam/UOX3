@@ -72,7 +72,7 @@ void ScriptError(JSContext *cx, const char *txt, ...);
 // o------------------------------------------------------------------------------------------------o
 void MethodSpeech(CBaseObject &speaker, char *message, SpeechType sType, colour_t sColour = 0x005A,
                   FontType fType = FNT_NORMAL, SpeechTarget spTrg = SPTRG_PCNPC,
-                  SERIAL spokenTo = INVALIDSERIAL, bool useUnicode = false) {
+                  serial_t spokenTo = INVALIDSERIAL, bool useUnicode = false) {
     if (useUnicode) {
         bool sendAll = true;
         if (spTrg == SPTRG_INDIVIDUAL || spTrg == SPTRG_ONLYRECEIVER) {
@@ -1281,7 +1281,7 @@ JSBool CGump_AddItemProperty(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
         return JS_FALSE;
     }
 
-    SERIAL trgSer = trgObj->GetSerial();
+    auto trgSer = trgObj->GetSerial();
 
     SEGump_st *gList = static_cast<SEGump_st *>(JS_GetPrivate(cx, obj));
     if (gList == nullptr) {
@@ -1708,9 +1708,9 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         speechTarget = SPTRG_PCNPC;
     }
 
-    SERIAL speechTargetSerial = INVALIDSERIAL;
+    auto speechTargetSerial = INVALIDSERIAL;
     if (argc >= 5) {
-        speechTargetSerial = static_cast<SERIAL>(JSVAL_TO_INT(argv[4]));
+        speechTargetSerial = static_cast<serial_t>(JSVAL_TO_INT(argv[4]));
     }
 
     FontType speechFontType = FNT_NULL;
@@ -1825,7 +1825,7 @@ JSBool CBase_KillTimers(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         triggerNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     }
 
-    SERIAL mySer = myObj->GetSerial();
+    auto mySer = myObj->GetSerial();
     std::vector<CTEffect *> removeEffect;
 
     for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
@@ -1868,7 +1868,7 @@ JSBool CBase_GetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     std::uint16_t timerId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
 
-    SERIAL myObjSerial = myObj->GetSerial();
+    auto myObjSerial = myObj->GetSerial();
     for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
         // We only want results that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
@@ -1922,7 +1922,7 @@ JSBool CBase_SetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     std::uint32_t expireTime = BuildTimeValue(JSVAL_TO_INT(argv[1]) / 1000.0f);
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
 
-    SERIAL myObjSerial = myObj->GetSerial();
+    auto myObjSerial = myObj->GetSerial();
     for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
         // We only want to modify the Effect that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
@@ -1972,7 +1972,7 @@ JSBool CBase_KillJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     std::uint16_t timerId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
 
-    SERIAL myObjSerial = myObj->GetSerial();
+    auto myObjSerial = myObj->GetSerial();
     CTEffect *removeEffect = nullptr;
 
     for (auto &Effect : cwmWorldState->tempEffects.collection()) {
@@ -2220,9 +2220,9 @@ JSBool CChar_EmoteMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         speechTarget = SPTRG_PCNPC;
     }
 
-    SERIAL speechTargetSerial = INVALIDSERIAL;
+    auto speechTargetSerial = INVALIDSERIAL;
     if (argc >= 5) {
-        speechTargetSerial = static_cast<SERIAL>(JSVAL_TO_INT(argv[4]));
+        speechTargetSerial = static_cast<serial_t>(JSVAL_TO_INT(argv[4]));
     }
 
     if (argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN(argv[1]) != JS_TRUE) {
@@ -5893,8 +5893,8 @@ JSBool CRace_CanWearArmour(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
         return JS_TRUE;
     }
 
-    ARMORCLASS srcClass = myRace->ArmourClassRestriction();
-    ARMORCLASS trgClass = toFind->GetArmourClass();
+    armorclass_t srcClass = myRace->ArmourClassRestriction();
+    armorclass_t trgClass = toFind->GetArmourClass();
     *rval = BOOLEAN_TO_JSVAL((trgClass == 0) ||
                              ((srcClass & trgClass) != 0)); // they have a matching class
     return JS_TRUE;
@@ -7062,7 +7062,7 @@ JSBool CMisc_SetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
 
-        cMove->SetTimer(static_cast<cC_TID>(encaps.toInt()), static_cast<TIMERVAL>(timerVal));
+        cMove->SetTimer(static_cast<cC_TID>(encaps.toInt()), static_cast<timerval_t>(timerVal));
     }
     else if (myClass.ClassName() == "UOXSocket") {
         CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
@@ -7071,7 +7071,7 @@ JSBool CMisc_SetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             return JS_FALSE;
         }
 
-        mSock->SetTimer(static_cast<cS_TID>(encaps.toInt()), static_cast<TIMERVAL>(timerVal));
+        mSock->SetTimer(static_cast<cS_TID>(encaps.toInt()), static_cast<timerval_t>(timerVal));
     }
 
     return JS_TRUE;
@@ -8702,7 +8702,7 @@ JSBool CMulti_RemoveTrashCont(JSContext *cx, JSObject *obj, uintN argc, jsval *a
     return JS_TRUE;
 }
 
-void KillKeys(SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL);
+void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulti_KillKeys()
 //|	Prototype	-	void KillKeys()

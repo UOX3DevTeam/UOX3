@@ -213,16 +213,16 @@ void CGuild::Webpage(const std::string &txt) { webpage = txt; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild stone
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::Stone(void) const { return stone; }
-void CGuild::Stone(SERIAL newStone) { stone = newStone; }
+serial_t CGuild::Stone(void) const { return stone; }
+void CGuild::Stone(serial_t newStone) { stone = newStone; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CGuild::Master()
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the serial of the guild master (if any)
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::Master(void) const { return master; }
-void CGuild::Master(SERIAL newMaster) { master = newMaster; }
+serial_t CGuild::Master(void) const { return master; }
+void CGuild::Master(serial_t newMaster) { master = newMaster; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CGuild::FirstRecruit()
@@ -230,8 +230,8 @@ void CGuild::Master(SERIAL newMaster) { master = newMaster; }
 //| Purpose		-	Returns the serial of the first recruit in the recruit list
 //|					If no recruits, returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::FirstRecruit(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CGuild::FirstRecruit(void) {
+    auto retVal = INVALIDSERIAL;
     recruitPtr = recruits.begin();
     if (!FinishedRecruits()) {
         retVal = (*recruitPtr);
@@ -245,8 +245,8 @@ SERIAL CGuild::FirstRecruit(void) {
 //| Purpose		-	Returns the serial of the next recruit in the recruit list
 //|					If there are no more, it returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::NextRecruit() {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CGuild::NextRecruit() {
+    auto retVal = INVALIDSERIAL;
     if (!FinishedRecruits()) {
         ++recruitPtr;
         if (!FinishedRecruits()) {
@@ -269,7 +269,7 @@ bool CGuild::FinishedRecruits() { return (recruitPtr == recruits.end()); }
 //| Purpose		-	Returns the serial of the recruit in slot rNum
 //|					If rNum is invalid, it returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::RecruitNumber(size_t rNum) const {
+serial_t CGuild::RecruitNumber(size_t rNum) const {
     if (rNum >= recruits.size()) {
         return INVALIDSERIAL;
     }
@@ -284,7 +284,7 @@ SERIAL CGuild::RecruitNumber(size_t rNum) const {
 //| Purpose		-	Returns the serial of the member in slot rNum
 //|					If rNum is invalid, it returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::MemberNumber(size_t rNum) const {
+serial_t CGuild::MemberNumber(size_t rNum) const {
     if (rNum >= members.size()) {
         return INVALIDSERIAL;
     }
@@ -299,8 +299,8 @@ SERIAL CGuild::MemberNumber(size_t rNum) const {
 //| Purpose		-	Returns the serial of the first member of the guild
 //|					If no members, returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::FirstMember(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CGuild::FirstMember(void) {
+    auto retVal = INVALIDSERIAL;
     memberPtr = members.begin();
     if (!FinishedMember()) {
         retVal = (*memberPtr);
@@ -314,8 +314,8 @@ SERIAL CGuild::FirstMember(void) {
 //| Purpose		-	Returns the serial of the next member of the guild, if any
 //|					If none, it returns INVALIDSERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL CGuild::NextMember(void) {
-    SERIAL retVal = INVALIDSERIAL;
+serial_t CGuild::NextMember(void) {
+    auto retVal = INVALIDSERIAL;
     if (!FinishedMember()) {
         ++memberPtr; // post ++ forces a copy constructor
         if (!FinishedMember()) {
@@ -352,7 +352,7 @@ void CGuild::Master(CChar &newMaster) { master = newMaster.GetSerial(); }
 //|	Purpose		-	Add new recruit to guild
 // o------------------------------------------------------------------------------------------------o
 void CGuild::NewRecruit(CChar &newRecruit) { NewRecruit(newRecruit.GetSerial()); }
-void CGuild::NewRecruit(SERIAL newRecruit) {
+void CGuild::NewRecruit(serial_t newRecruit) {
     if (IsMember(newRecruit)) {
         RemoveMember(newRecruit);
     }
@@ -365,7 +365,7 @@ void CGuild::NewRecruit(SERIAL newRecruit) {
 //|	Purpose		-	Add new member to guild
 // o------------------------------------------------------------------------------------------------o
 void CGuild::NewMember(CChar &newMember) { NewMember(newMember.GetSerial()); }
-void CGuild::NewMember(SERIAL newMember) {
+void CGuild::NewMember(serial_t newMember) {
     if (IsRecruit(newMember)) {
         RemoveRecruit(newMember);
     }
@@ -378,9 +378,9 @@ void CGuild::NewMember(SERIAL newMember) {
 //|	Purpose		-	Remove recruit from guild
 // o------------------------------------------------------------------------------------------------o
 void CGuild::RemoveRecruit(CChar &newRecruit) { RemoveRecruit(newRecruit.GetSerial()); }
-void CGuild::RemoveRecruit(SERIAL newRecruit) {
+void CGuild::RemoveRecruit(serial_t newRecruit) {
     auto iter = std::find_if(recruits.begin(), recruits.end(),
-                             [newRecruit](SERIAL &entry) { return entry == newRecruit; });
+                             [newRecruit](serial_t &entry) { return entry == newRecruit; });
     if (iter != recruits.end()) {
         recruits.erase(iter);
     }
@@ -392,9 +392,9 @@ void CGuild::RemoveRecruit(SERIAL newRecruit) {
 //|	Purpose		-	Remove member from guild
 // o------------------------------------------------------------------------------------------------o
 void CGuild::RemoveMember(CChar &newMember) { RemoveMember(newMember.GetSerial()); }
-void CGuild::RemoveMember(SERIAL newMember) {
+void CGuild::RemoveMember(serial_t newMember) {
     auto iter = std::find_if(members.begin(), members.end(),
-                             [newMember](SERIAL &entry) { return entry == newMember; });
+                             [newMember](serial_t &entry) { return entry == newMember; });
     if (iter != members.end()) {
         members.erase(iter);
     }
@@ -409,7 +409,7 @@ void CGuild::RecruitToMember(CChar &newMember) {
     RemoveRecruit(newMember);
     NewMember(newMember);
 }
-void CGuild::RecruitToMember(SERIAL newMember) {
+void CGuild::RecruitToMember(serial_t newMember) {
     RemoveRecruit(newMember);
     NewMember(newMember);
 }
@@ -422,10 +422,10 @@ void CGuild::RecruitToMember(SERIAL newMember) {
 bool CGuild::IsRecruit(CChar &toCheck) const { return IsRecruit(toCheck.GetSerial()); }
 
 //============================================================================================
-auto CGuild::IsRecruit(SERIAL toCheck) const -> bool {
+auto CGuild::IsRecruit(serial_t toCheck) const -> bool {
     auto rValue = false;
     auto iter = std::find_if(recruits.begin(), recruits.end(),
-                             [toCheck](const SERIAL &entry) { return toCheck == entry; });
+                             [toCheck](const serial_t &entry) { return toCheck == entry; });
     if (iter != recruits.end()) {
         rValue = true;
     }
@@ -438,10 +438,10 @@ auto CGuild::IsRecruit(SERIAL toCheck) const -> bool {
 // o------------------------------------------------------------------------------------------------o
 bool CGuild::IsMember(CChar &toCheck) const { return IsMember(toCheck.GetSerial()); }
 //============================================================================================
-auto CGuild::IsMember(SERIAL toCheck) const -> bool {
+auto CGuild::IsMember(serial_t toCheck) const -> bool {
     auto rValue = false;
     auto iter = std::find_if(members.begin(), members.end(),
-                             [toCheck](const SERIAL &entry) { return toCheck == entry; });
+                             [toCheck](const serial_t &entry) { return toCheck == entry; });
     if (iter != members.end()) {
         rValue = true;
     }
@@ -532,9 +532,9 @@ void CGuild::Save(std::ostream &toSave, guildid_t gNum) {
     toSave << "STONE=" << stone << '\n';
     toSave << "MASTER=" << master << '\n';
     std::for_each(recruits.begin(), recruits.end(),
-                  [&toSave](SERIAL entry) { toSave << "RECRUIT=" << entry << '\n'; });
+                  [&toSave](serial_t entry) { toSave << "RECRUIT=" << entry << '\n'; });
     std::for_each(members.begin(), members.end(),
-                  [&toSave](SERIAL entry) { toSave << "MEMBER=" << entry << '\n'; });
+                  [&toSave](serial_t entry) { toSave << "MEMBER=" << entry << '\n'; });
     auto relly = relationList.begin();
     while (relly != relationList.end()) {
         toSave << GRelationNames[relly->second] << " " << relly->first << '\n';
@@ -880,7 +880,7 @@ GuildRelation CGuildCollection::Compare(CChar *src, CChar *trg) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send guild menu to player
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, SERIAL plId) {
+void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, serial_t plId) {
     if (s == nullptr)
         return;
     if (trgGuild >= static_cast<std::int32_t>(NumGuilds()))
@@ -899,7 +899,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, S
     toSend.addCommand(util::format("text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour()));
     toSend.addCommand("page 1");
 
-    SERIAL gMaster = gList[trgGuild]->Master();
+    auto gMaster = gList[trgGuild]->Master();
     CChar *mChar = s->CurrcharObj();
     CChar *gMstr = CalcCharObjFromSer(gMaster);
     std::uint16_t numButtons = 0, numText = 0, numColumns = 1;
@@ -936,7 +936,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, S
 
     std::string gName = gList[trgGuild]->Name();
     std::uint16_t tCtr = 0;
-    SERIAL tChar = 0;
+    serial_t tChar = 0;
     std::map<guildid_t, GuildRelation>::iterator toCheck;
     std::map<guildid_t, GuildRelation> *ourList;
     s->TempInt(trgGuild);
@@ -1306,7 +1306,7 @@ void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
     }
 }
 
-void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
+void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuildCollection::GumpChoice()
 // o------------------------------------------------------------------------------------------------o
@@ -1323,7 +1323,7 @@ void CGuildCollection::GumpChoice(CSocket *s) {
     if (!ValidateObject(mChar))
         return;
 
-    SERIAL ser = mChar->GetSerial();
+    auto ser = mChar->GetSerial();
     std::uint16_t tCtr = 0;
     std::map<guildid_t, GuildRelation>::iterator toCheck;
     std::map<guildid_t, GuildRelation> *ourList;
@@ -1643,7 +1643,7 @@ void CGuildCollection::Resign(CSocket *s) {
     }
 
     if (nGuild->NumMembers() == 0) {
-        SERIAL stone = nGuild->Stone();
+        auto stone = nGuild->Stone();
         if (stone != INVALIDSERIAL) {
             CItem *gStone = CalcItemObjFromSer(stone);
             if (ValidateObject(gStone)) {
@@ -1672,14 +1672,14 @@ void CGuildCollection::Erase(guildid_t toErase) {
         return;
     }
     for (size_t iCounter = 0; iCounter < gErase->NumMembers(); ++iCounter) {
-        SERIAL iMember = gErase->MemberNumber(iCounter);
+        auto iMember = gErase->MemberNumber(iCounter);
         CChar *member = CalcCharObjFromSer(iMember);
         if (ValidateObject(member)) {
             member->SetGuildNumber(-1);
         }
     }
     for (size_t iC = 0; iC < gErase->NumRecruits(); ++iC) {
-        SERIAL iRecruit = gErase->RecruitNumber(iC);
+        auto iRecruit = gErase->RecruitNumber(iC);
         CChar *recruit = CalcCharObjFromSer(iRecruit);
         if (ValidateObject(recruit)) {
             recruit->SetGuildNumber(-1);

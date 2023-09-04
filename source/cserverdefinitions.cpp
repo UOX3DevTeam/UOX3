@@ -154,25 +154,25 @@ auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, DEFINITIONCA
 const std::string defExt = ".dfn";
 
 //==================================================================================================
-struct PrioScan_st {
+struct PrioScan {
     std::string filename;
     std::int16_t priority;
-    PrioScan_st() : filename(""), priority(0) {}
-    PrioScan_st(const char *toUse, std::int16_t mPrio) : filename(toUse), priority(mPrio) {}
+    PrioScan() : filename(""), priority(0) {}
+    PrioScan(const char *toUse, std::int16_t mPrio) : filename(toUse), priority(mPrio) {}
 };
 
 //==================================================================================================
-inline auto operator==(const PrioScan_st &x, const PrioScan_st &y) -> bool {
+inline auto operator==(const PrioScan &x, const PrioScan &y) -> bool {
     return (x.priority == y.priority);
 }
 
 //==================================================================================================
-inline auto operator<(const PrioScan_st &x, const PrioScan_st &y) -> bool {
+inline auto operator<(const PrioScan &x, const PrioScan &y) -> bool {
     return (x.priority < y.priority);
 }
 
 //==================================================================================================
-inline auto operator>(const PrioScan_st &x, const PrioScan_st &y) -> bool {
+inline auto operator>(const PrioScan &x, const PrioScan &y) -> bool {
     return (x.priority > y.priority);
 }
 
@@ -192,10 +192,10 @@ auto CServerDefinitions::LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void {
     std::vector<std::string> *shortListing = fileList.FlattenedShortList();
     std::vector<std::string> *longListing = fileList.FlattenedList();
 
-    std::vector<PrioScan_st> mSort;
+    std::vector<PrioScan> mSort;
     for (size_t i = 0; i < shortListing->size(); ++i) {
         mSort.push_back(
-            PrioScan_st((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
+            PrioScan((*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str())));
     }
     if (!mSort.empty()) {
         std::sort(mSort.begin(), mSort.end());
@@ -203,7 +203,7 @@ auto CServerDefinitions::LoadDFNCategory(DEFINITIONCATEGORIES toLoad) -> void {
         size_t iTotal = 0;
         Console::shared().TurnYellow();
 
-        std::vector<PrioScan_st>::const_iterator mIter;
+        std::vector<PrioScan>::const_iterator mIter;
         for (mIter = mSort.begin(); mIter != mSort.end(); ++mIter) {
             Console::shared().Print("\b\b\b\b\b\b");
             ScriptListings[toLoad].push_back(new Script((*mIter).filename, toLoad, false));

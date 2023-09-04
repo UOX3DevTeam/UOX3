@@ -93,7 +93,7 @@ void PlayerVendorBuy(CSocket *s) {
     i->SetCont(p);
 }
 
-void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
+void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	HandleGuildTarget()
 // o------------------------------------------------------------------------------------------------o
@@ -309,7 +309,7 @@ void TeleTarget(CSocket *s) {
     if (s->GetDWord(11) == INVALIDSERIAL)
         return;
 
-    const SERIAL serial = s->GetDWord(7);
+    const serial_t serial = s->GetDWord(7);
 
     CBaseObject *mObj = nullptr;
     if (serial >= BASEITEMSERIAL) {
@@ -367,7 +367,7 @@ void DyeTarget(CSocket *s) {
     VALIDATESOCKET(s);
     CItem *i = nullptr;
     CChar *c = nullptr;
-    SERIAL serial = s->GetDWord(7);
+    serial_t serial = s->GetDWord(7);
     if (s->AddId1() == 0xFF && s->AddId2() == 0xFF) {
         // Dye with no specific color - show hue gump
         CPDyeVat toSend;
@@ -445,7 +445,7 @@ void WStatsTarget(CSocket *s) {
 
     CGumpDisplay wStat(s, 300, 300);
     wStat.SetTitle("Walking Stats");
-    SERIAL charSerial = i->GetSerial();
+    serial_t charSerial = i->GetSerial();
     std::uint16_t charId = i->GetId();
     wStat.AddData("Serial", charSerial, 3);
     wStat.AddData("Body ID", charId, 5);
@@ -523,7 +523,7 @@ void DVatTarget(CSocket *s) {
         }
     }
 
-    SERIAL serial = s->GetDWord(7);
+    serial_t serial = s->GetDWord(7);
     CItem *i = CalcItemObjFromSer(serial);
     if (!ValidateObject(i))
         return;
@@ -1907,7 +1907,7 @@ void VialTarget(CSocket *mSock) {
     CItem *nVialId = static_cast<CItem *>(mSock->TempObj());
     mSock->TempObj(nullptr);
 
-    SERIAL targSerial = mSock->GetDWord(7);
+    serial_t targSerial = mSock->GetDWord(7);
     if (targSerial == INVALIDSERIAL)
         return;
 

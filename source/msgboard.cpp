@@ -52,7 +52,7 @@ using namespace std::string_literals;
 //|	Purpose		-	Creates the proper MessageBoard filename based on the messageType
 // and board Serial
 // o------------------------------------------------------------------------------------------------o
-std::string GetMsgBoardFile(const SERIAL msgBoardSer, const std::uint8_t msgType) {
+std::string GetMsgBoardFile(const serial_t msgBoardSer, const std::uint8_t msgType) {
     std::string fileName;
     switch (msgType) {
     case PT_GLOBAL:
@@ -84,7 +84,7 @@ std::string GetMsgBoardFile(const SERIAL msgBoardSer, const std::uint8_t msgType
 //|	Purpose		-	Opens the Messageboard and Advises the client of the messages
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardOpen(CSocket *mSock) {
-    const SERIAL boardSer = mSock->GetDWord(1);
+    const serial_t boardSer = mSock->GetDWord(1);
 
     CItem *msgBoard = CalcItemObjFromSer(boardSer);
     if (!ValidateObject(msgBoard)) {
@@ -114,10 +114,10 @@ void MsgBoardOpen(CSocket *mSock) {
 
             file.seekg(0, std::ios::beg);
             while (file && mSock->PostCount() < MAXPOSTS) {
-                SERIAL tmpSerial = 0;
+                serial_t tmpSerial = 0;
                 std::uint8_t tmpToggle = 0;
                 std::uint16_t tmpSize = 0;
-                [[maybe_unused]] SERIAL repliedTo = 0;
+                [[maybe_unused]] serial_t repliedTo = 0;
 
                 file.read(buffer, 2);
                 tmpSize = static_cast<std::uint16_t>((buffer[0] << 8) + buffer[1]);
@@ -187,7 +187,7 @@ void MsgBoardList(CSocket *mSock) {
 
                 file.read(buffer, 4);
                 msgBoardPost.serial = CalcSerial(buffer[0], buffer[1], buffer[2], buffer[3]);
-                for (SERIAL postAck = mSock->FirstPostAck(); !mSock->FinishedPostAck();) {
+                for (serial_t postAck = mSock->FirstPostAck(); !mSock->FinishedPostAck();) {
                     if (msgBoardPost.serial == postAck) {
                         postAck = mSock->RemovePostAck();
 
@@ -258,7 +258,7 @@ void MsgBoardList(CSocket *mSock) {
 //|	Purpose		-	Updates nextMsgId with the next available message serial.
 // o------------------------------------------------------------------------------------------------o
 bool GetMaxSerial(const std::string &fileName, std::uint8_t *nextMsgId, const PostTypes msgType) {
-    SERIAL msgIdSer = (CalcSerial(nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3]));
+    serial_t msgIdSer = (CalcSerial(nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3]));
     if (msgIdSer == INVALIDSERIAL) {
         switch (msgType) {
         case PT_GLOBAL:
@@ -356,9 +356,9 @@ void MsgBoardWritePost(std::ostream &mFile, const MsgBoardPost_st &msgBoardPost)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file, returning the messages SERIAL
 // o------------------------------------------------------------------------------------------------o
-SERIAL MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fileName,
+serial_t MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fileName,
                          const PostTypes msgType) {
-    SERIAL msgId = INVALIDSERIAL;
+    serial_t msgId = INVALIDSERIAL;
 
     std::string fullFile;
     if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
@@ -429,7 +429,7 @@ void MsgBoardPost(CSocket *tSock) {
         return;
     }
 
-    SERIAL repliedTo = tSock->GetDWord(8);
+    serial_t repliedTo = tSock->GetDWord(8);
     if ((repliedTo & BASEITEMSERIAL) == BASEITEMSERIAL) {
         repliedTo -= BASEITEMSERIAL;
     }
@@ -489,7 +489,7 @@ void MsgBoardPost(CSocket *tSock) {
         j++;
     }
 
-    const SERIAL msgId = MsgBoardWritePost(msgBoardPost, fileName, msgType);
+    const serial_t msgId = MsgBoardWritePost(msgBoardPost, fileName, msgType);
     if (msgId != INVALIDSERIAL) {
         CPAddItemToCont toAdd;
         if (tSock->ClientVerShort() >= CVS_6017) {
@@ -511,7 +511,7 @@ void MsgBoardPost(CSocket *tSock) {
 //|	Purpose		-	Reads in a post from its specified file.
 // o------------------------------------------------------------------------------------------------o
 bool MsgBoardReadPost(std::istream &file, MsgBoardPost_st &msgBoardPost,
-                      SERIAL msgSerial = INVALIDSERIAL) {
+                      serial_t msgSerial = INVALIDSERIAL) {
     char buffer[4];
 
     // Read two first bytes of post, which contains total size
@@ -602,7 +602,7 @@ void MsgBoardOpenPost(CSocket *mSock) {
     MsgBoardPost_st msgBoardPost;
     bool foundEntry = false;
 
-    const SERIAL msgSerial = (mSock->GetDWord(8) - BASEITEMSERIAL);
+    const serial_t msgSerial = (mSock->GetDWord(8) - BASEITEMSERIAL);
     std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
@@ -666,7 +666,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
     bool foundPost = false;
 
     // Fetch the serial of the messageboard post in need of removal
-    const SERIAL msgSer = (mSock->GetDWord(8) - BASEITEMSERIAL);
+    const serial_t msgSer = (mSock->GetDWord(8) - BASEITEMSERIAL);
 
     // Let's grab the size of the file so we can use it later
     std::size_t fileSize = 0;
@@ -690,7 +690,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
     // Open a filestream in binary mode to read in data from the messageboard file
     std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
     if (file.is_open()) {
-        SERIAL tmpSerial = 0;
+        serial_t tmpSerial = 0;
         size_t totalSize = 0;
         std::uint16_t tmpSize = 0;
         char rBuffer[4];
@@ -1074,7 +1074,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
     std::fstream file;
     file.open(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
     if (file.is_open()) {
-        SERIAL tmpSerial = 0;
+        serial_t tmpSerial = 0;
         size_t totalSize = 0;
         std::uint16_t tmpSize = 0;
         char rBuffer[4];
@@ -1119,7 +1119,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes the MessageBoard .bbf file attached to the specified serial
 // o------------------------------------------------------------------------------------------------o
-void MsgBoardRemoveFile(const SERIAL msgBoardSer) {
+void MsgBoardRemoveFile(const serial_t msgBoardSer) {
     std::string fileName;
 
     if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {

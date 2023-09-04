@@ -167,12 +167,12 @@ class CMultiObj : public CItem {
 
 class CBoatObj : public CMultiObj {
   protected:
-    SERIAL tiller;
-    SERIAL planks[2];
-    SERIAL hold;
+    serial_t tiller;
+    serial_t planks[2];
+    serial_t hold;
     std::int8_t moveType;
 
-    TIMERVAL nextMoveTime;
+    timerval_t nextMoveTime;
 
   private:
     virtual bool DumpHeader(std::ostream &outStream) const override;
@@ -184,18 +184,18 @@ class CBoatObj : public CMultiObj {
     CBoatObj();
     virtual ~CBoatObj();
 
-    SERIAL GetTiller(void) const;
-    SERIAL GetPlank(std::uint8_t plankNum) const;
-    SERIAL GetHold(void) const;
+    serial_t GetTiller(void) const;
+    serial_t GetPlank(std::uint8_t plankNum) const;
+    serial_t GetHold(void) const;
     std::int8_t GetMoveType(void) const;
 
-    void SetPlank(std::uint8_t plankNum, SERIAL newVal);
-    void SetTiller(SERIAL newVal);
-    void SetHold(SERIAL newVal);
+    void SetPlank(std::uint8_t plankNum, serial_t newVal);
+    void SetTiller(serial_t newVal);
+    void SetHold(serial_t newVal);
     void SetMoveType(std::int8_t newVal);
 
-    TIMERVAL GetMoveTime(void) const;
-    void SetMoveTime(TIMERVAL newVal);
+    timerval_t GetMoveTime(void) const;
+    void SetMoveTime(timerval_t newVal);
 
     virtual bool CanBeObjType(ObjectType toCompare) const override;
 };

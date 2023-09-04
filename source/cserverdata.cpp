@@ -1290,7 +1290,7 @@ auto CServerData::MaxStealthMovement(std::int16_t value) -> void { maxStealthMov
 auto CServerData::MaxStaminaMovement() const -> std::int16_t { return maxStaminaMovement; }
 auto CServerData::MaxStaminaMovement(std::int16_t value) -> void { maxStaminaMovement = value; }
 
-auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> TIMERVAL {
+auto CServerData::BuildSystemTimeValue(cSD_TID timerId) const -> timerval_t {
     return BuildTimeValue(static_cast<R32>(SystemTimer(timerId)));
 }
 
@@ -4870,13 +4870,13 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         ServerMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
         break;
     case 74: // DUNGEONLEVEL
-        DungeonLightLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
+        DungeonLightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
         break;
     case 75: // CURRENTLEVEL
-        WorldLightCurrentLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
+        WorldLightCurrentLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
         break;
     case 76: // BRIGHTLEVEL
-        WorldLightBrightLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
+        WorldLightBrightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
         break;
     case 77: // BASERANGE
         TrackingBaseRange(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4969,7 +4969,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         SystemTimer(tSERVER_ESCORTDONE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
         break;
     case 107: // DARKLEVEL
-        WorldLightDarkLevel(static_cast<LIGHTLEVEL>(std::stoul(value, nullptr, 0)));
+        WorldLightDarkLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
         break;
     case 108: // TITLECOLOUR
         TitleColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -5763,8 +5763,8 @@ auto CServerData::ServerMoon(std::int16_t slot, std::int16_t value) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for dungeons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::DungeonLightLevel() const -> LIGHTLEVEL { return dungeonLightLevel; }
-auto CServerData::DungeonLightLevel(LIGHTLEVEL value) -> void { dungeonLightLevel = value; }
+auto CServerData::DungeonLightLevel() const -> lightlevel_t { return dungeonLightLevel; }
+auto CServerData::DungeonLightLevel(lightlevel_t value) -> void { dungeonLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::WorldLightCurrentLevel()
@@ -5772,8 +5772,8 @@ auto CServerData::DungeonLightLevel(LIGHTLEVEL value) -> void { dungeonLightLeve
 //|	Purpose		-	Gets/Sets the default, global current light level outside of
 // dungeons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightCurrentLevel() const -> LIGHTLEVEL { return currentLightLevel; }
-auto CServerData::WorldLightCurrentLevel(LIGHTLEVEL value) -> void { currentLightLevel = value; }
+auto CServerData::WorldLightCurrentLevel() const -> lightlevel_t { return currentLightLevel; }
+auto CServerData::WorldLightCurrentLevel(lightlevel_t value) -> void { currentLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::WorldLightBrightLevel()
@@ -5781,8 +5781,8 @@ auto CServerData::WorldLightCurrentLevel(LIGHTLEVEL value) -> void { currentLigh
 //|	Purpose		-	Gets/Sets the default, global light level for the brightest time of
 // day
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightBrightLevel() const -> LIGHTLEVEL { return brightnessLightLevel; }
-auto CServerData::WorldLightBrightLevel(LIGHTLEVEL value) -> void { brightnessLightLevel = value; }
+auto CServerData::WorldLightBrightLevel() const -> lightlevel_t { return brightnessLightLevel; }
+auto CServerData::WorldLightBrightLevel(lightlevel_t value) -> void { brightnessLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::WorldLightDarkLevel()
@@ -5790,8 +5790,8 @@ auto CServerData::WorldLightBrightLevel(LIGHTLEVEL value) -> void { brightnessLi
 //|	Purpose		-	Gets/Sets the default, global light level for the darkest time of
 // day
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightDarkLevel() const -> LIGHTLEVEL { return darknessLightLevel; }
-auto CServerData::WorldLightDarkLevel(LIGHTLEVEL value) -> void { darknessLightLevel = value; }
+auto CServerData::WorldLightDarkLevel() const -> lightlevel_t { return darknessLightLevel; }
+auto CServerData::WorldLightDarkLevel(lightlevel_t value) -> void { darknessLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::PostLoadDefaults()

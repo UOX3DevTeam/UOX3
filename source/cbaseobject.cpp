@@ -66,17 +66,17 @@ CBaseObject::~CBaseObject() {
 }
 
 const ObjectType DEFBASE_OBJTYPE = OT_CBO;
-const RACEID DEFBASE_RACE = 0;
+const raceid_t DEFBASE_RACE = 0;
 const std::int16_t DEFBASE_X = 100;
 const std::int16_t DEFBASE_Y = 100;
 const std::int8_t DEFBASE_Z = 0;
 const std::uint16_t DEFBASE_ID = 1;
 const std::uint16_t DEFBASE_COLOUR = 0;
 const std::uint8_t DEFBASE_DIR = 0;
-const SERIAL DEFBASE_SERIAL = INVALIDSERIAL;
+const serial_t DEFBASE_SERIAL = INVALIDSERIAL;
 CMultiObj *DEFBASE_MULTIS = nullptr;
-const SERIAL DEFBASE_SPAWNSER = INVALIDSERIAL;
-const SERIAL DEFBASE_OWNER = INVALIDSERIAL;
+const serial_t DEFBASE_SPAWNSER = INVALIDSERIAL;
+const serial_t DEFBASE_OWNER = INVALIDSERIAL;
 const std::uint8_t DEFBASE_WORLD = 0;
 const std::uint16_t DEFBASE_INSTANCEID = 0;
 const std::uint16_t DEFBASE_SUBREGION = 0;
@@ -514,15 +514,15 @@ CMultiObj *CBaseObject::GetMultiObj(void) const { return multis; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the serial of the multi the object is inside
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBaseObject::GetMulti(void) const {
-    SERIAL multiSer = INVALIDSERIAL;
+serial_t CBaseObject::GetMulti(void) const {
+    auto multiSer = INVALIDSERIAL;
     if (ValidateObject(multis)) {
         multiSer = multis->GetSerial();
     }
 
     return multiSer;
 }
-void CBaseObject::SetMulti(SERIAL newSerial, bool fireTrigger) {
+void CBaseObject::SetMulti(serial_t newSerial, bool fireTrigger) {
     RemoveFromMulti(fireTrigger);
     if (newSerial >= BASEITEMSERIAL) {
         CMultiObj *newMulti = CalcMultiFromSer(newSerial);
@@ -542,8 +542,8 @@ void CBaseObject::SetMulti(SERIAL newSerial, bool fireTrigger) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sers serial of the object
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBaseObject::GetSerial(void) const { return serial; }
-void CBaseObject::SetSerial(SERIAL newSerial) {
+serial_t CBaseObject::GetSerial(void) const { return serial; }
+void CBaseObject::SetSerial(serial_t newSerial) {
     if (GetSerial() != INVALIDSERIAL) {
         ObjectFactory::shared().UnregisterObject(this);
     }
@@ -573,7 +573,7 @@ CSpawnItem *CBaseObject::GetSpawnObj(void) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns SERIAL of thing that owns us
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBaseObject::GetOwner(void) const { return owner; }
+serial_t CBaseObject::GetOwner(void) const { return owner; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetOwnerObj()
@@ -740,8 +740,8 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the race ID associaed with the object
 // o------------------------------------------------------------------------------------------------o
-RACEID CBaseObject::GetRace(void) const { return race; }
-void CBaseObject::SetRace(RACEID newValue) {
+raceid_t CBaseObject::GetRace(void) const { return race; }
+void CBaseObject::SetRace(raceid_t newValue) {
     race = newValue;
 
     if (CanBeObjType(OT_ITEM)) {
@@ -1096,8 +1096,8 @@ std::uint8_t CBaseObject::GetSpawn(std::uint8_t part) const {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns/Sets SERIAL of thing that spawned it
 // o------------------------------------------------------------------------------------------------o
-SERIAL CBaseObject::GetSpawn(void) const { return spawnSerial; }
-void CBaseObject::SetSpawn(SERIAL newSpawn) {
+serial_t CBaseObject::GetSpawn(void) const { return spawnSerial; }
+void CBaseObject::SetSpawn(serial_t newSpawn) {
     CSpawnItem *ourSpawner = GetSpawnObj();
     if (ourSpawner != nullptr) {
         ourSpawner->spawnedList.Remove(this);
@@ -1839,7 +1839,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
 //|					following the loading of the world
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::PostLoadProcessing(void) {
-    SERIAL tmpSerial = INVALIDSERIAL;
+    auto tmpSerial = INVALIDSERIAL;
     if (multis != nullptr) {
         multis = nullptr;
         SetMulti(tempMulti, false);

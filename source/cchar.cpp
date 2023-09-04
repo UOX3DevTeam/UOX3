@@ -144,7 +144,7 @@ const std::uint32_t BIT_AWAKE = 2;
 
 const std::int16_t DEFPLAYER_CALLNUM = -1;
 const std::int16_t DEFPLAYER_PLAYERCALLNUM = -1;
-const SERIAL DEFPLAYER_TRACKINGTARGET = INVALIDSERIAL;
+const serial_t DEFPLAYER_TRACKINGTARGET = INVALIDSERIAL;
 const std::uint8_t DEFPLAYER_SQUELCHED = 0;
 const std::uint8_t DEFPLAYER_COMMANDLEVEL = CL_PLAYER;
 const std::uint8_t DEFPLAYER_POSTTYPE = PT_LOCAL;
@@ -154,13 +154,13 @@ const colour_t DEFPLAYER_HAIRCOLOUR = INVALIDCOLOUR;
 const colour_t DEFPLAYER_BEARDCOLOUR = INVALIDCOLOUR;
 const std::uint8_t DEFPLAYER_SPEECHMODE = 0;
 const std::uint8_t DEFPLAYER_SPEECHID = 0;
-const SERIAL DEFPLAYER_ROBE = INVALIDSERIAL;
+const serial_t DEFPLAYER_ROBE = INVALIDSERIAL;
 const std::uint16_t DEFPLAYER_ACCOUNTNUM = AccountEntry::INVALID_ACCOUNT;
 const std::uint16_t DEFPLAYER_ORIGSKIN = 0;
 const std::uint16_t DEFPLAYER_ORIGID = 0x0190;
 const std::uint8_t DEFPLAYER_FIXEDLIGHT = 255;
 const std::uint16_t DEFPLAYER_DEATHS = 0;
-const SERIAL DEFPLAYER_TOWNVOTE = INVALIDSERIAL;
+const serial_t DEFPLAYER_TOWNVOTE = INVALIDSERIAL;
 const std::int8_t DEFPLAYER_TOWNPRIV = 0;
 const std::uint16_t DEFPLAYER_CONTROLSLOTSUSED = 0;
 const std::uint32_t DEFPLAYER_CREATEDON = 0;
@@ -195,7 +195,7 @@ CChar::PlayerValues_st::PlayerValues_st()
 
 const std::int8_t DEFNPC_WANDER = 0;
 const std::int8_t DEFNPC_OLDWANDER = 0;
-const SERIAL DEFNPC_FTARG = INVALIDSERIAL;
+const serial_t DEFNPC_FTARG = INVALIDSERIAL;
 const std::int8_t DEFNPC_FZ1 = -1;
 const std::int16_t DEFNPC_AITYPE = 0;
 const std::int16_t DEFNPC_SPATTACK = 0;
@@ -260,7 +260,7 @@ CChar::NPCValues_st::NPCValues_st()
 const std::uint32_t DEFCHAR_BOOLS = 0;
 // const std::int8_t			DEFCHAR_DISPZ 				= 0;
 const std::int8_t DEFCHAR_FONTTYPE = 3;
-const RACEID DEFCHAR_OLDRACE = 0;
+const raceid_t DEFCHAR_OLDRACE = 0;
 const std::uint16_t DEFCHAR_MAXHP = 0;
 const std::uint16_t DEFCHAR_MAXHP_OLDSTR = 0;
 const std::uint16_t DEFCHAR_MAXMANA = 0;
@@ -270,21 +270,21 @@ const std::uint16_t DEFCHAR_MAXSTAM_OLDDEX = 0;
 const colour_t DEFCHAR_SAYCOLOUR = 0x0058;
 const colour_t DEFCHAR_EMOTECOLOUR = 0x0023;
 const std::int8_t DEFCHAR_CELL = -1;
-const SERIAL DEFCHAR_TARG = INVALIDSERIAL;
-const SERIAL DEFCHAR_ATTACKER = INVALIDSERIAL;
+const serial_t DEFCHAR_TARG = INVALIDSERIAL;
+const serial_t DEFCHAR_ATTACKER = INVALIDSERIAL;
 const std::int8_t DEFCHAR_HUNGER = 6;
 const std::int8_t DEFCHAR_THIRST = 6;
 const std::uint16_t DEFCHAR_REGIONNUM = 255;
 const std::uint16_t DEFCHAR_TOWN = 0;
 const std::uint16_t DEFCHAR_ADVOBJ = 0;
-const SERIAL DEFCHAR_GUILDFEALTY = INVALIDSERIAL;
+const serial_t DEFCHAR_GUILDFEALTY = INVALIDSERIAL;
 const std::int16_t DEFCHAR_GUILDNUMBER = -1;
 const std::uint8_t DEFCHAR_FLAG = 0x04;
 const std::int8_t DEFCHAR_SPELLCAST = -1;
 const std::uint8_t DEFCHAR_NEXTACTION = 0;
 const std::int8_t DEFCHAR_STEALTH = -1;
 const std::uint8_t DEFCHAR_RUNNING = 0;
-const RACEID DEFCHAR_RACEGATE = INVALIDID;
+const raceid_t DEFCHAR_RACEGATE = INVALIDID;
 const std::uint8_t DEFCHAR_STEP = 1;
 const std::uint16_t DEFCHAR_PRIV = 0;
 const std::uint32_t DEFCHAR_LASTMOVETIME = 0;
@@ -321,11 +321,11 @@ CChar::CChar()
     name = "Mr. noname";
     sectionId = "UNKNOWN";
 
-    memset(&regen[0], 0, sizeof(TIMERVAL) * 3);
-    memset(&weathDamage[0], 0, sizeof(TIMERVAL) * WEATHNUM);
-    memset(&charTimers[0], 0, sizeof(TIMERVAL) * tCHAR_COUNT);
-    memset(&baseskill[0], 0, sizeof(SKILLVAL) * ALLSKILLS);
-    memset(&skill[0], 0, sizeof(SKILLVAL) * (INTELLECT + 1));
+    memset(&regen[0], 0, sizeof(timerval_t) * 3);
+    memset(&weathDamage[0], 0, sizeof(timerval_t) * WEATHNUM);
+    memset(&charTimers[0], 0, sizeof(timerval_t) * tCHAR_COUNT);
+    memset(&baseskill[0], 0, sizeof(skillval_t) * ALLSKILLS);
+    memset(&skill[0], 0, sizeof(skillval_t) * (INTELLECT + 1));
 
     // SetCanTrain( true );
     bools.set(BIT_TRAIN, true);
@@ -1357,8 +1357,8 @@ void CChar::SetGuildTitle(const std::string &newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets regeneration timers for player's health, mana and stamina
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CChar::GetRegen(std::uint8_t part) const { return regen[part]; }
-void CChar::SetRegen(TIMERVAL newValue, std::uint8_t part) { regen[part] = newValue; }
+timerval_t CChar::GetRegen(std::uint8_t part) const { return regen[part]; }
+void CChar::SetRegen(timerval_t newValue, std::uint8_t part) { regen[part] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetWeathDamage()
@@ -1366,8 +1366,8 @@ void CChar::SetRegen(TIMERVAL newValue, std::uint8_t part) { regen[part] = newVa
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets timers for weather damage effects on character
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CChar::GetWeathDamage(std::uint8_t part) const { return weathDamage[part]; }
-void CChar::SetWeathDamage(TIMERVAL newValue, std::uint8_t part) { weathDamage[part] = newValue; }
+timerval_t CChar::GetWeathDamage(std::uint8_t part) const { return weathDamage[part]; }
+void CChar::SetWeathDamage(timerval_t newValue, std::uint8_t part) { weathDamage[part] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::GetNextAct()
@@ -1384,14 +1384,14 @@ void CChar::SetNextAct(std::uint8_t newVal) { nextAct = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets timer values for the character
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CChar::GetTimer(cC_TID timerId) const {
-    TIMERVAL rValue = 0;
+timerval_t CChar::GetTimer(cC_TID timerId) const {
+    timerval_t rValue = 0;
     if (timerId != tCHAR_COUNT) {
         rValue = charTimers[timerId];
     }
     return rValue;
 }
-void CChar::SetTimer(cC_TID timerId, TIMERVAL value) {
+void CChar::SetTimer(cC_TID timerId, timerval_t value) {
     if (timerId != tCHAR_COUNT) {
         charTimers[timerId] = value;
         if (timerId == tNPC_SUMMONTIME || timerId == tCHAR_MURDERRATE ||
@@ -1588,8 +1588,8 @@ void CChar::SetPackItem(CItem *newVal) { packItem = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Return the serial of an object
 // o------------------------------------------------------------------------------------------------o
-SERIAL CalcSerFromObj(CBaseObject *mObj) {
-    SERIAL toReturn = INVALIDSERIAL;
+serial_t CalcSerFromObj(CBaseObject *mObj) {
+    auto toReturn = INVALIDSERIAL;
     if (ValidateObject(mObj)) {
         toReturn = mObj->GetSerial();
     }
@@ -1633,8 +1633,8 @@ void CChar::SetAdvObj(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the raceId value of a race gate
 // o------------------------------------------------------------------------------------------------o
-RACEID CChar::GetRaceGate(void) const { return raceGate; }
-void CChar::SetRaceGate(RACEID newValue) {
+raceid_t CChar::GetRaceGate(void) const { return raceGate; }
+void CChar::SetRaceGate(raceid_t newValue) {
     raceGate = newValue;
     UpdateRegion();
 }
@@ -1666,14 +1666,14 @@ void CChar::SetPriv(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets a character's specified baseskill (without modifiers)
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CChar::GetBaseSkill(std::uint8_t skillToGet) const {
-    SKILLVAL rVal = 0;
+skillval_t CChar::GetBaseSkill(std::uint8_t skillToGet) const {
+    skillval_t rVal = 0;
     if (skillToGet < ALLSKILLS) {
         rVal = baseskill[skillToGet];
     }
     return rVal;
 }
-void CChar::SetBaseSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet) {
+void CChar::SetBaseSkill(skillval_t newSkillValue, std::uint8_t skillToSet) {
     if (skillToSet < ALLSKILLS) {
         baseskill[skillToSet] = newSkillValue;
         UpdateRegion();
@@ -1686,21 +1686,21 @@ void CChar::SetBaseSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets a character's specified skill (with modifiers)
 // o------------------------------------------------------------------------------------------------o
-SKILLVAL CChar::GetSkill(std::uint8_t skillToGet) const {
-    SKILLVAL rVal = 0;
+skillval_t CChar::GetSkill(std::uint8_t skillToGet) const {
+    skillval_t rVal = 0;
     if (skillToGet <= INTELLECT) {
         rVal = skill[skillToGet];
         std::int32_t modifier = Races->DamageFromSkill(skillToGet, race);
         if (modifier != 0) {
-            SKILLVAL toAdd =
-                static_cast<SKILLVAL>(static_cast<R32>(skill[skillToGet]) *
+            auto toAdd =
+                static_cast<skillval_t>(static_cast<R32>(skill[skillToGet]) *
                                       (static_cast<R32>(modifier) / 1000)); // percentage to add
             rVal += toAdd;                                                  // return the bonus
         }
     }
     return rVal;
 }
-void CChar::SetSkill(SKILLVAL newSkillValue, std::uint8_t skillToSet) {
+void CChar::SetSkill(skillval_t newSkillValue, std::uint8_t skillToSet) {
     if (skillToSet <= INTELLECT) {
         skill[skillToSet] = newSkillValue;
     }
@@ -2649,7 +2649,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     outStream << "PoisonStrength=" + std::to_string(GetPoisonStrength()) + newLine;
     outStream << "WillHunger=" + std::to_string((WillHunger() ? 1 : 0)) + newLine;
 
-    TIMERVAL mTime = GetTimer(tCHAR_MURDERRATE);
+    timerval_t mTime = GetTimer(tCHAR_MURDERRATE);
     outStream << "MurderTimer=";
     if (mTime == 0 || mTime < cwmWorldState->GetUICurrentTime()) {
         outStream << std::to_string(0) + newLine;
@@ -2658,7 +2658,7 @@ bool CChar::DumpBody(std::ostream &outStream) const {
         outStream << std::to_string(mTime - cwmWorldState->GetUICurrentTime()) + newLine;
     }
 
-    TIMERVAL pTime = GetTimer(tCHAR_PEACETIMER);
+    timerval_t pTime = GetTimer(tCHAR_PEACETIMER);
     outStream << "PeaceTimer=";
     if (pTime == 0 || pTime < cwmWorldState->GetUICurrentTime()) {
         outStream << std::to_string(0) + newLine;
@@ -2830,7 +2830,7 @@ void CChar::BreakConcentration(CSocket *sock) {
 //| Purpose		-	Returns the list of characters the player is marked as aggressor
 // towards
 // o------------------------------------------------------------------------------------------------o
-auto CChar::GetAggressorFlags() const -> const std::unordered_map<SERIAL, TargetInfo> {
+auto CChar::GetAggressorFlags() const -> const std::unordered_map<serial_t, TargetInfo> {
     return aggressorFlags;
 }
 
@@ -2842,7 +2842,7 @@ auto CChar::GetAggressorFlags() const -> const std::unordered_map<SERIAL, Target
 //|					for when aggressor flag will timeout for that particular
 // serial
 // o------------------------------------------------------------------------------------------------o
-auto CChar::AddAggressorFlag(SERIAL toAdd) -> void {
+auto CChar::AddAggressorFlag(serial_t toAdd) -> void {
     if (aggressorFlags.count(toAdd) == 0) {
         // Not found in list already, add to list
         aggressorFlags[toAdd] = {
@@ -2855,7 +2855,7 @@ auto CChar::AddAggressorFlag(SERIAL toAdd) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Removes character serial from list of characters player is aggressor to
 // o------------------------------------------------------------------------------------------------o
-auto CChar::RemoveAggressorFlag(SERIAL toRemove) -> void {
+auto CChar::RemoveAggressorFlag(serial_t toRemove) -> void {
     aggressorFlags.erase(toRemove);
 
     // Aggressor flag removed, so loop through player's corpses so flagging can be updated for
@@ -2876,7 +2876,7 @@ auto CChar::RemoveAggressorFlag(SERIAL toRemove) -> void {
 //|					or false if it is not, or if the timestamp has expired (at
 //which point it also |					removes the entry from the list)
 // o------------------------------------------------------------------------------------------------o
-auto CChar::CheckAggressorFlag(SERIAL toCheck) -> bool {
+auto CChar::CheckAggressorFlag(serial_t toCheck) -> bool {
     auto it = aggressorFlags.find(toCheck);
     if (it != aggressorFlags.end()) {
         // Serial found, but timestamp might be out of date!
@@ -2921,7 +2921,7 @@ auto CChar::IsAggressor(bool checkForPlayersOnly) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates aggressor timestamp if serial is found in list
 // o------------------------------------------------------------------------------------------------o
-auto CChar::UpdateAggressorFlagTimestamp(SERIAL toUpdate) -> void {
+auto CChar::UpdateAggressorFlagTimestamp(serial_t toUpdate) -> void {
     auto it = aggressorFlags.find(toUpdate);
     if (it != aggressorFlags.end()) {
         it->second.timestamp =
@@ -2937,7 +2937,7 @@ auto CChar::UpdateAggressorFlagTimestamp(SERIAL toUpdate) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CChar::AggressorFlagMaintenance() -> void {
     // Loop through list of aggressor flags and add any serials with expired timers to a vector
-    std::vector<SERIAL> serialsToRemove;
+    std::vector<serial_t> serialsToRemove;
     for (auto it = aggressorFlags.begin(); it != aggressorFlags.end(); ++it) {
         if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
@@ -2945,7 +2945,7 @@ auto CChar::AggressorFlagMaintenance() -> void {
     }
 
     // Then loop through vector of serials with expired timers, and safely remove them from the list
-    for (SERIAL toRemove : serialsToRemove) {
+    for (auto toRemove : serialsToRemove) {
         RemoveAggressorFlag(toRemove);
         if (ValidateObject(GetTarg()) && GetTarg()->GetSerial() == toRemove) {
             Combat->InvalidateAttacker(this);
@@ -2965,7 +2965,7 @@ auto CChar::ClearAggressorFlags() -> void { aggressorFlags.clear(); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of permagrey flags for player
 // o------------------------------------------------------------------------------------------------o
-auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, TargetInfo> {
+auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<serial_t, TargetInfo> {
     return permaGreyFlags;
 }
 
@@ -2976,7 +2976,7 @@ auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, Target
 // along |					with timestamp for when permagrey flag will timeout
 // for that particular serial (if ever)
 // o------------------------------------------------------------------------------------------------o
-auto CChar::AddPermaGreyFlag(SERIAL toAdd) -> void {
+auto CChar::AddPermaGreyFlag(serial_t toAdd) -> void {
     if (permaGreyFlags.count(toAdd) == 0) {
         // Not found in list already, add to list
         permaGreyFlags[toAdd] = {
@@ -2989,7 +2989,7 @@ auto CChar::AddPermaGreyFlag(SERIAL toAdd) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Removes character from list of characters player is permagrey for
 // o------------------------------------------------------------------------------------------------o
-auto CChar::RemovePermaGreyFlag(SERIAL toRemove) -> void {
+auto CChar::RemovePermaGreyFlag(serial_t toRemove) -> void {
     permaGreyFlags.erase(toRemove);
 
     // Permagrey flag removed, so loop through player's corpses so flagging can be updated for
@@ -3010,7 +3010,7 @@ auto CChar::RemovePermaGreyFlag(SERIAL toRemove) -> void {
 //|					or false if it is not, or if the timestamp has expired (at
 //which point it also |					removes the entry from the list)
 // o------------------------------------------------------------------------------------------------o
-auto CChar::CheckPermaGreyFlag(SERIAL toCheck) -> bool {
+auto CChar::CheckPermaGreyFlag(serial_t toCheck) -> bool {
     auto it = permaGreyFlags.find(toCheck);
     if (it != permaGreyFlags.end()) {
         // Serial found, but timestamp might be out of date!
@@ -3055,7 +3055,7 @@ auto CChar::IsPermaGrey(bool checkForPlayersOnly) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates aggressor timestamp if serial is found in list
 // o------------------------------------------------------------------------------------------------o
-auto CChar::UpdatePermaGreyFlagTimestamp(SERIAL toUpdate) -> void {
+auto CChar::UpdatePermaGreyFlagTimestamp(serial_t toUpdate) -> void {
     auto it = permaGreyFlags.find(toUpdate);
     if (it != permaGreyFlags.end()) {
         it->second.timestamp =
@@ -3071,7 +3071,7 @@ auto CChar::UpdatePermaGreyFlagTimestamp(SERIAL toUpdate) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CChar::PermaGreyFlagMaintenance() -> void {
     // Loop through list of permagrey flags and add any serials with expired timers to a vector
-    std::vector<SERIAL> serialsToRemove;
+    std::vector<serial_t> serialsToRemove;
     for (auto it = permaGreyFlags.begin(); it != permaGreyFlags.end(); ++it) {
         if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
@@ -3079,7 +3079,7 @@ auto CChar::PermaGreyFlagMaintenance() -> void {
     }
 
     // Then loop through vector of serials with expired timers, and safely remove them from the list
-    for (SERIAL toRemove : serialsToRemove) {
+    for (auto toRemove : serialsToRemove) {
         RemovePermaGreyFlag(toRemove);
     }
 }
@@ -3220,7 +3220,7 @@ std::uint16_t CChar::GetMaxHP(void) {
     }
     return maxHP;
 }
-void CChar::SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, RACEID newoldrace) {
+void CChar::SetMaxHP(std::uint16_t newmaxhp, std::uint16_t newoldstr, raceid_t newoldrace) {
     maxHP = newmaxhp;
     maxHP_oldstr = newoldstr;
     oldRace = newoldrace;
@@ -3276,7 +3276,7 @@ std::int16_t CChar::GetMaxMana(void) {
     }
     return maxMana;
 }
-void CChar::SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, RACEID newoldrace) {
+void CChar::SetMaxMana(std::int16_t newmaxmana, std::uint16_t newoldint, raceid_t newoldrace) {
     maxMana = newmaxmana;
     maxMana_oldint = newoldint;
     oldRace = newoldrace;
@@ -3331,7 +3331,7 @@ std::int16_t CChar::GetMaxStam(void) {
     }
     return maxStam;
 }
-void CChar::SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, RACEID newoldrace) {
+void CChar::SetMaxStam(std::int16_t newmaxstam, std::uint16_t newolddex, raceid_t newoldrace) {
     maxStam = newmaxstam;
     maxStam_olddex = newolddex;
     oldRace = newoldrace;
@@ -3979,7 +3979,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                 rValue = true;
             }
             else if (UTag == "PACKITEM") {
-                tempContainerSerial = static_cast<SERIAL>(
+                tempContainerSerial = static_cast<serial_t>(
                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
@@ -4463,7 +4463,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, SpeechType msgType, bool 
                 txtColor = 0x5A;
             }
 
-            SERIAL speakTo = INVALIDSERIAL;
+            auto speakTo = INVALIDSERIAL;
             SpeechTarget target = SPTRG_PCNPC;
             CChar *mChar = nullptr;
             if (s != nullptr) {
@@ -4974,14 +4974,14 @@ void CChar::SetAccountNum(std::uint16_t newVal) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets player's death robe
 // o------------------------------------------------------------------------------------------------o
-SERIAL CChar::GetRobe(void) const {
-    SERIAL rVal = DEFPLAYER_ROBE;
+serial_t CChar::GetRobe(void) const {
+    auto rVal = DEFPLAYER_ROBE;
     if (IsValidPlayer()) {
         rVal = mPlayer->robe;
     }
     return rVal;
 }
-void CChar::SetRobe(SERIAL newValue) {
+void CChar::SetRobe(serial_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != DEFPLAYER_ROBE) {
             CreatePlayer();
@@ -5489,8 +5489,8 @@ void CChar::SetTrackingTarget(CChar *newValue) {
         mPlayer->trackingTarget = CalcSerFromObj(newValue);
     }
 }
-SERIAL CChar::GetTrackingTargetSerial(void) const {
-    SERIAL rVal = INVALIDSERIAL;
+serial_t CChar::GetTrackingTargetSerial(void) const {
+    serial_t rVal = INVALIDSERIAL;
     if (IsValidPlayer()) {
         rVal = mPlayer->trackingTarget;
     }
@@ -5580,14 +5580,14 @@ void CChar::SetPostType(std::uint8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the currently active GM/Counselor call for the character
 // o------------------------------------------------------------------------------------------------o
-SERIAL CChar::GetCallNum(void) const {
+serial_t CChar::GetCallNum(void) const {
     std::int16_t rVal = DEFPLAYER_CALLNUM;
     if (IsValidPlayer()) {
         rVal = mPlayer->callNum;
     }
     return rVal;
 }
-void CChar::SetCallNum(SERIAL newValue) {
+void CChar::SetCallNum(serial_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != INVALIDSERIAL) {
             CreatePlayer();
@@ -5604,14 +5604,14 @@ void CChar::SetCallNum(SERIAL newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the player character's call number in GM/CNS Queue
 // o------------------------------------------------------------------------------------------------o
-SERIAL CChar::GetPlayerCallNum(void) const {
-    SERIAL rVal = DEFPLAYER_PLAYERCALLNUM;
+serial_t CChar::GetPlayerCallNum(void) const {
+    serial_t rVal = DEFPLAYER_PLAYERCALLNUM;
     if (IsValidPlayer()) {
         rVal = mPlayer->playerCallNum;
     }
     return rVal;
 }
-void CChar::SetPlayerCallNum(SERIAL newValue) {
+void CChar::SetPlayerCallNum(serial_t newValue) {
     if (!IsValidPlayer()) {
         if (newValue != INVALIDSERIAL) {
             CreatePlayer();
@@ -6848,7 +6848,7 @@ void CChar::FlushPath(void) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of targets ignored by NPC in combat
 // o------------------------------------------------------------------------------------------------o
-auto CChar::GetCombatIgnore() const -> const std::unordered_map<SERIAL, TargetInfo> {
+auto CChar::GetCombatIgnore() const -> const std::unordered_map<serial_t, TargetInfo> {
     return mNPC->combatIgnore;
 }
 
@@ -6858,7 +6858,7 @@ auto CChar::GetCombatIgnore() const -> const std::unordered_map<SERIAL, TargetIn
 //| Purpose		-  Adds serial to list of targets being ignored by NPC in combat, along
 //|					with timestamp for when the ignoring of that serial expires
 // o------------------------------------------------------------------------------------------------o
-auto CChar::AddToCombatIgnore(SERIAL toAdd, bool isNpc) -> void {
+auto CChar::AddToCombatIgnore(serial_t toAdd, bool isNpc) -> void {
     if (mNPC->combatIgnore.count(toAdd) == 0) {
         // Not found in list already, add to list
         mNPC->combatIgnore[toAdd] = {
@@ -6871,7 +6871,7 @@ auto CChar::AddToCombatIgnore(SERIAL toAdd, bool isNpc) -> void {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-  Removes serial from list of targets being ignored by NPC in combat
 // o------------------------------------------------------------------------------------------------o
-auto CChar::RemoveFromCombatIgnore(SERIAL toRemove) -> void { mNPC->combatIgnore.erase(toRemove); }
+auto CChar::RemoveFromCombatIgnore(serial_t toRemove) -> void { mNPC->combatIgnore.erase(toRemove); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar::CheckCombatIgnore()
@@ -6882,7 +6882,7 @@ auto CChar::RemoveFromCombatIgnore(SERIAL toRemove) -> void { mNPC->combatIgnore
 // has expired |					(at which point it also removes the entry from
 // the list)
 // o------------------------------------------------------------------------------------------------o
-auto CChar::CheckCombatIgnore(SERIAL toCheck) -> bool {
+auto CChar::CheckCombatIgnore(serial_t toCheck) -> bool {
     auto it = mNPC->combatIgnore.find(toCheck);
     if (it != mNPC->combatIgnore.end()) {
         // Serial found, but timestamp might be out of date!
@@ -6908,7 +6908,7 @@ auto CChar::CheckCombatIgnore(SERIAL toCheck) -> bool {
 auto CChar::CombatIgnoreMaintenance() -> void {
     // Loop through list of ignored targets in combat and add any serials with expired timers to a
     // vector
-    std::vector<SERIAL> serialsToRemove;
+    std::vector<serial_t> serialsToRemove;
     for (auto it = mNPC->combatIgnore.begin(); it != mNPC->combatIgnore.end(); ++it) {
         if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
@@ -6916,7 +6916,7 @@ auto CChar::CombatIgnoreMaintenance() -> void {
     }
 
     // Then loop through vector of serials with expired timers, and safely remove them from the list
-    for (SERIAL toRemove : serialsToRemove) {
+    for (auto toRemove : serialsToRemove) {
         RemoveFromCombatIgnore(toRemove);
     }
 }
@@ -7380,7 +7380,7 @@ bool DTEgreater(DamageTrackEntry_st *elem1, DamageTrackEntry_st *elem2) {
 void CChar::Heal(std::int16_t healValue, CChar *healer) {
     SetHP(hitpoints + healValue);
     if (healer != nullptr) {
-        const SERIAL healerSerial = healer->GetSerial();
+        const auto healerSerial = healer->GetSerial();
         bool persFound = false;
         for (DamageTrackEntry_st *i = damageHealed.First(); !damageHealed.Finished();
              i = damageHealed.Next()) {
@@ -7580,7 +7580,7 @@ bool CChar::Damage(std::int16_t damageValue, WeatherType damageType, CChar *atta
         }
 
         // Update Damage tracking
-        const SERIAL attackerSerial = attacker->GetSerial();
+        const auto attackerSerial = attacker->GetSerial();
         bool persFound = false;
         for (DamageTrackEntry_st *i = damageDealt.First(); !damageDealt.Finished();
              i = damageDealt.Next()) {
@@ -7686,8 +7686,8 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
 //| Purpose		-	Check if char with specified serial dealt damage to character within
 // last X secs
 // o------------------------------------------------------------------------------------------------o
-auto CChar::CheckDamageTrack(SERIAL serialToCheck, TIMERVAL lastXSeconds) -> bool {
-    TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
+auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) -> bool {
+    timerval_t currentTime = cwmWorldState->GetUICurrentTime();
     for (DamageTrackEntry_st *i = damageDealt.First(); !damageDealt.Finished();
          i = damageDealt.Next()) {
         if (i->damager == serialToCheck) {
@@ -7707,7 +7707,7 @@ auto CChar::CheckDamageTrack(SERIAL serialToCheck, TIMERVAL lastXSeconds) -> boo
 //| Purpose		-	Keeps track of damage dealt and healing done to character over time
 // o------------------------------------------------------------------------------------------------o
 void CChar::UpdateDamageTrack(void) {
-    TIMERVAL currentTime = cwmWorldState->GetUICurrentTime();
+    timerval_t currentTime = cwmWorldState->GetUICurrentTime();
     DamageTrackEntry_st *i = nullptr;
     // Update the damage stuff
     for (i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next()) {

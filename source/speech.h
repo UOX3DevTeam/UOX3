@@ -304,8 +304,8 @@ class CSpeechEntry {
     bool antiSpam;
     bool unicode;
     colour_t speechColour;
-    SERIAL speaker;
-    SERIAL spokenTo; // Only in a case of SPTRG_INDIVIDUAL
+    serial_t speaker;
+    serial_t spokenTo; // Only in a case of SPTRG_INDIVIDUAL
     SpeechTarget targType;
     FontType targFont;
     UnicodeTypes targLanguage;
@@ -328,8 +328,8 @@ class CSpeechEntry {
     bool AntiSpam(void) const { return antiSpam; }
     bool Unicode(void) const { return unicode; }
     colour_t Colour(void) const { return speechColour; }
-    SERIAL Speaker(void) const { return speaker; }
-    SERIAL SpokenTo(void) const { return spokenTo; }
+    serial_t Speaker(void) const { return speaker; }
+    serial_t SpokenTo(void) const { return spokenTo; }
     SpeechTarget TargType(void) const { return targType; }
     FontType Font(void) const { return targFont; }
     UnicodeTypes Language(void) const { return targLanguage; }
@@ -342,8 +342,8 @@ class CSpeechEntry {
     void AntiSpam(bool value) { antiSpam = value; }
     void Unicode(bool value) { unicode = value; }
     void Colour(colour_t value) { speechColour = value; }
-    void Speaker(SERIAL value) { speaker = value; }
-    void SpokenTo(SERIAL value) { spokenTo = value; }
+    void Speaker(serial_t value) { speaker = value; }
+    void SpokenTo(serial_t value) { spokenTo = value; }
     void TargType(SpeechTarget type) { targType = type; }
     void Font(FontType type) { targFont = type; }
     void Language(UnicodeTypes val) { targLanguage = val; }

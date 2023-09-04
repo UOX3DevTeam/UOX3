@@ -141,7 +141,7 @@ std::uint16_t CGump::StartPage(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Callback for gumps.cpp
 // o------------------------------------------------------------------------------------------------o
-void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, SERIAL gumpSerial,
+void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, serial_t gumpSerial,
                        [[maybe_unused]] std::uint32_t button) {
     if (gumpSerial == 0) // Do nothing on close gump
         return;

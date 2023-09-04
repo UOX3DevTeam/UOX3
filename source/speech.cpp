@@ -438,7 +438,7 @@ bool CPITalkRequest::Handle(void) {
                     }
                     else if (tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() &&
                              !tChar->IsCounselor()) {
-                        SKILLVAL raceLangMin = Races->LanguageMin(mChar->GetRace());
+                        auto raceLangMin = Races->LanguageMin(mChar->GetRace());
                         if (raceLangMin > 0 &&
                             Skills->CheckSkill(tChar, SPIRITSPEAK,
                                                Races->LanguageMin(mChar->GetRace()), 1000) != 1) {

@@ -56,7 +56,7 @@ void Bounce(CSocket *bouncer, CItem *bouncing, std::uint8_t mode = 5) {
 
     CPBounce bounce(mode);
     PickupLocations from = bouncer->PickupSpot();
-    SERIAL spot = bouncer->PickupSerial();
+    auto spot = bouncer->PickupSerial();
     switch (from) {
     default:
     case PL_NOWHERE:
@@ -160,7 +160,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
             Weight->SubtractItemWeight(mChar, iToStack);
         }
         const std::uint16_t itId = iToStack->GetId();
-        const SERIAL itSer = iToStack->GetSerial();
+        const auto itSer = iToStack->GetSerial();
         const std::uint16_t itCol = iToStack->GetColour();
         const std::uint32_t itMore = iToStack->GetTempVar(CITV_MORE);
         const std::uint32_t itMoreX = iToStack->GetTempVar(CITV_MOREX);
@@ -210,7 +210,7 @@ auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, s
 // o------------------------------------------------------------------------------------------------o
 bool CPIGetItem::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
-    SERIAL serial = tSock->GetDWord(1);
+    serial_t serial = tSock->GetDWord(1);
     if (serial == INVALIDSERIAL)
         return true;
 
@@ -561,8 +561,8 @@ bool CPIGetItem::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 bool CPIEquipItem::Handle(void) {
     CChar *ourChar = tSock->CurrcharObj();
-    SERIAL cserial = tSock->GetDWord(6);
-    SERIAL iserial = tSock->GetDWord(1);
+    serial_t cserial = tSock->GetDWord(6);
+    serial_t iserial = tSock->GetDWord(1);
     if (cserial == INVALIDSERIAL || iserial == INVALIDSERIAL)
         return true;
 
@@ -623,7 +623,7 @@ bool CPIEquipItem::Handle(void) {
     if (!ValidateObject(k))
         return true;
 
-    RACEID raceId = k->GetRace();
+    auto raceId = k->GetRace();
     CRace *race = Races->Race(raceId);
     if (!race->CanEquipItem(i->GetId())) {
         tSock->SysMessage(1981, race->Name().c_str()); // Members of the %s race cannot wear this
@@ -631,8 +631,8 @@ bool CPIEquipItem::Handle(void) {
         return true;
     }
 
-    ARMORCLASS ac1 = Races->ArmorRestrict(raceId);
-    ARMORCLASS ac2 = i->GetArmourClass();
+    armorclass_t ac1 = Races->ArmorRestrict(raceId);
+    armorclass_t ac2 = i->GetArmourClass();
 
     if (ac1 != 0 &&
         ((ac1 & ac2) == 0)) // bit comparison, if they have ANYTHING in common, they can wear it
@@ -1157,7 +1157,7 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Item is dropped on the ground or on a character
 // o------------------------------------------------------------------------------------------------o
-void Drop(CSocket *mSock, SERIAL item, SERIAL dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
+void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
     CChar *nChar = mSock->CurrcharObj();
     CItem *i = CalcItemObjFromSer(item);
     bool stackDeleted = false;
@@ -1706,7 +1706,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when an item is dropped in a container or on another item
 // o------------------------------------------------------------------------------------------------o
-void DropOnItem(CSocket *mSock, SERIAL item, SERIAL dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
+void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int16_t y, std::int8_t z, std::int8_t gridLoc) {
     CChar *mChar = mSock->CurrcharObj();
     CItem *nCont = CalcItemObjFromSer(dest);
     if (!ValidateObject(nCont) || !ValidateObject(mChar))
@@ -1897,7 +1897,7 @@ bool CPIDropItem::Handle(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return characters highest skill
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t BestSkill(CChar *mChar, SKILLVAL &skillLevel) {
+std::uint8_t BestSkill(CChar *mChar, skillval_t &skillLevel) {
     std::uint8_t retSkill = 0;
     std::vector<cSkillClass> vecSkills;
     for (std::uint8_t sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
@@ -1922,7 +1922,7 @@ void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
     if (cwmWorldState->prowessTitles.empty())
         return;
 
-    SKILLVAL skillLevel = 0;
+    skillval_t skillLevel = 0;
     std::uint8_t bestSkill = BestSkill(mChar, skillLevel);
     if (skillLevel <= cwmWorldState->prowessTitles[0].lowBound) {
         SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
@@ -2336,7 +2336,7 @@ void MountCreature(CSocket *mSock, CChar *s, CChar *x);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles double-clicks on a character
 // o------------------------------------------------------------------------------------------------o
-void handleCharDoubleClick(CSocket *mSock, SERIAL serial, bool keyboard) {
+void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
     CChar *mChar = mSock->CurrcharObj();
     CChar *c = CalcCharObjFromSer(serial);
     if (!ValidateObject(c))

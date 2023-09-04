@@ -2249,7 +2249,7 @@ std::int8_t cScript::OnFlagChange(CChar *pChanging, std::uint8_t newStatus, std:
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles callbacks for custom target cursors triggered from scripts
 // o------------------------------------------------------------------------------------------------o
-bool cScript::DoCallback(CSocket *tSock, SERIAL targeted, std::uint8_t callNum) {
+bool cScript::DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum) {
     if (tSock == nullptr)
         return false;
 

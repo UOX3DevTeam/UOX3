@@ -32,7 +32,7 @@ class CSpawnRegion // Regionspawns
 
     std::uint8_t minTime;      // Minimum spawn time
     std::uint8_t maxTime;      // Maximum spawn time
-    TIMERVAL nextTime; // Nextspawn time for this region
+    timerval_t nextTime; // Nextspawn time for this region
 
     // Box values
     std::int16_t x1; // Top left X
@@ -73,7 +73,7 @@ class CSpawnRegion // Regionspawns
     std::int32_t GetCurrentItemAmt(void) const;
     std::uint8_t GetMinTime(void) const;
     std::uint8_t GetMaxTime(void) const;
-    TIMERVAL GetNextTime(void) const;
+    timerval_t GetNextTime(void) const;
     std::int16_t GetX1(void) const;
     std::int16_t GetY1(void) const;
     std::int16_t GetX2(void) const;
@@ -94,7 +94,7 @@ class CSpawnRegion // Regionspawns
     void IncCurrentItemAmt(std::int16_t incAmt = 1);
     void SetMinTime(std::uint8_t newVal);
     void SetMaxTime(std::uint8_t newVal);
-    void SetNextTime(TIMERVAL newVal);
+    void SetNextTime(timerval_t newVal);
     void SetX1(std::int16_t newVal);
     void SetY1(std::int16_t newVal);
     void SetX2(std::int16_t newVal);

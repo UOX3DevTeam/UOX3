@@ -39,10 +39,10 @@ const std::uint32_t BIT_TELEPORT = 9;
 const std::uint32_t BIT_HOUSING = 10;
 const std::uint32_t BIT_SUBREGION = 11;
 
-const RACEID DEFTOWN_RACE = 0;
-const WEATHID DEFTOWN_WEATHER = 255;
+const raceid_t DEFTOWN_RACE = 0;
+const weathid_t DEFTOWN_WEATHER = 255;
 const std::int32_t DEFTOWN_MUSICLIST = 0;
-const SERIAL DEFTOWN_MAYOR = INVALIDSERIAL;
+const serial_t DEFTOWN_MAYOR = INVALIDSERIAL;
 const std::uint16_t DEFTOWN_TAXEDRESOURCE = 0x0EED;
 const std::uint16_t DEFTOWN_TAXEDAMOUNT = 0;
 const std::int32_t DEFTOWN_GOLDRESERVED = 0;
@@ -362,8 +362,8 @@ CChar *CTownRegion::GetMayor(void) { return CalcCharObjFromSer(mayorSerial); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the serial of the character who is town mayor
 // o------------------------------------------------------------------------------------------------o
-SERIAL CTownRegion::GetMayorSerial(void) const { return mayorSerial; }
-void CTownRegion::SetMayorSerial(SERIAL newValue) { mayorSerial = newValue; }
+serial_t CTownRegion::GetMayorSerial(void) const { return mayorSerial; }
+void CTownRegion::SetMayorSerial(serial_t newValue) { mayorSerial = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::AddAsTownMember()
@@ -812,8 +812,8 @@ std::string CTownRegion::GetOwner(void) const { return guardowner; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the weather in the townregion
 // o------------------------------------------------------------------------------------------------o
-WEATHID CTownRegion::GetWeather(void) const { return weather; }
-void CTownRegion::SetWeather(WEATHID newValue) { weather = newValue; }
+weathid_t CTownRegion::GetWeather(void) const { return weather; }
+void CTownRegion::SetWeather(weathid_t newValue) { weather = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::GetGoodSell()
@@ -1328,7 +1328,7 @@ std::vector<CTownRegion::TownPers_st> CTownRegion::GetTownMembers(void) const { 
 //|	Purpose		-	Submits player's vote for mayor
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::VoteForMayor(CSocket *sock) {
-    SERIAL serial = sock->GetDWord(7);
+    serial_t serial = sock->GetDWord(7);
     CChar *srcChar = sock->CurrcharObj();
     CChar *target = CalcCharObjFromSer(serial);
     if (ValidateObject(target)) {
@@ -1337,7 +1337,7 @@ bool CTownRegion::VoteForMayor(CSocket *sock) {
             sock->SysMessage(1150); // The person you have voted for is not of your town.
             return false;
         }
-        SERIAL serialPos = FindPositionOf((*srcChar));
+        serial_t serialPos = FindPositionOf((*srcChar));
         if (serialPos == INVALIDSERIAL) {
             sock->SysMessage(1151); // An error occurred finding you in the town roster!
             return false;
@@ -1361,8 +1361,8 @@ bool CTownRegion::VoteForMayor(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find position of specified player in townregion's member list
 // o------------------------------------------------------------------------------------------------o
-SERIAL CTownRegion::FindPositionOf(CChar &toAdd) {
-    for (SERIAL counter = 0; counter < townMember.size(); ++counter) {
+serial_t CTownRegion::FindPositionOf(CChar &toAdd) {
+    for (serial_t counter = 0; counter < townMember.size(); ++counter) {
         if (townMember[counter].townMember == toAdd.GetSerial())
             return counter;
     }
@@ -1698,8 +1698,8 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets race ID associated with townregion
 // o------------------------------------------------------------------------------------------------o
-RACEID CTownRegion::GetRace(void) const { return race; }
-void CTownRegion::SetRace(RACEID newRace) { race = newRace; }
+raceid_t CTownRegion::GetRace(void) const { return race; }
+void CTownRegion::SetRace(raceid_t newRace) { race = newRace; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CTownRegion::SendAlliedTowns()

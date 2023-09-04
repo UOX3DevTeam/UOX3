@@ -232,7 +232,7 @@ void Command_GetLight(CSocket *s) {
             }
             else {
                 s->SysMessage(
-                    1632, static_cast<LIGHTLEVEL>(RoundNumber(
+                    1632, static_cast<lightlevel_t>(RoundNumber(
                               i - Races->VisLevel(mChar->GetRace())))); // Current light level is %i
             }
         }
@@ -1293,7 +1293,7 @@ void Command_Temp(CSocket *s) {
         return;
 
     CTownRegion *reg = mChar->GetRegion();
-    WEATHID toGrab = reg->GetWeather();
+    auto toGrab = reg->GetWeather();
     if (toGrab != 0xFF) {
         R32 curTemp = Weather->Temp(toGrab);
         s->SysMessage(1751, curTemp); // It is currently %f degrees

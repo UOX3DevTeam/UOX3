@@ -104,14 +104,14 @@ auto CWorldMain::SetServerData(CServerData &server_data) -> void { sData = &serv
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles all the world timers (next time we check NPC AI, etc)
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CWorldMain::GetTimer(CWM_TID timerId) const {
-    TIMERVAL rValue = 0;
+timerval_t CWorldMain::GetTimer(CWM_TID timerId) const {
+    timerval_t rValue = 0;
     if (timerId != tWORLD_COUNT) {
         rValue = worldTimers[timerId];
     }
     return rValue;
 }
-void CWorldMain::SetTimer(CWM_TID timerId, TIMERVAL newVal) {
+void CWorldMain::SetTimer(CWM_TID timerId, timerval_t newVal) {
     if (timerId != tWORLD_COUNT) {
         worldTimers[timerId] = newVal;
     }

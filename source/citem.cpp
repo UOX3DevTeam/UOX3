@@ -83,22 +83,22 @@ const std::int16_t DEFITEM_GOOD = -1;
 const std::int8_t DEFITEM_RANK = 0;
 const std::uint16_t DEFITEM_RESTOCK = 0;
 const std::int8_t DEFITEM_MOVEABLE = 0;
-const TIMERVAL DEFITEM_DECAYTIME = 0;
+const timerval_t DEFITEM_DECAYTIME = 0;
 const ItemLayers DEFITEM_LAYER = IL_NONE;
 const ItemTypes DEFITEM_TYPE = IT_NOTYPE;
 const std::uint16_t DEFITEM_ENTRYMADEFROM = 0;
 const std::uint16_t DEFITEM_AMOUNT = 1;
 const std::uint8_t DEFITEM_GLOWEFFECT = 0;
-const SERIAL DEFITEM_GLOW = INVALIDSERIAL;
+const serial_t DEFITEM_GLOW = INVALIDSERIAL;
 const colour_t DEFITEM_GLOWCOLOUR = INVALIDCOLOUR;
 const std::int8_t DEFITEM_MADEWITH = 0;
-const ARMORCLASS DEFITEM_ARMORCLASS = 0;
-const TIMERVAL DEFITEM_TEMPTIMER = 0;
+const armorclass_t DEFITEM_ARMORCLASS = 0;
+const timerval_t DEFITEM_TEMPTIMER = 0;
 const std::uint8_t DEFITEM_SPEED = 0;
 const std::uint16_t DEFITEM_MAXHP = 0;
 const std::int8_t DEFITEM_OFFSPELL = 0;
 const std::int8_t DEFITEM_GRIDLOC = 0;
-const SERIAL DEFITEM_CREATOR = INVALIDSERIAL;
+const serial_t DEFITEM_CREATOR = INVALIDSERIAL;
 const std::int32_t DEFITEM_WEIGHTMAX = 0;
 const std::int32_t DEFITEM_BASEWEIGHT = 0;
 const std::uint16_t DEFITEM_MAXITEMS = 0;
@@ -161,7 +161,7 @@ auto CItem::GetCont(void) const -> CBaseObject * { return contObj; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container's serial
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetContSerial(void) const -> SERIAL {
+auto CItem::GetContSerial(void) const -> serial_t {
     if (contObj != nullptr)
         return contObj->GetSerial();
 
@@ -273,7 +273,7 @@ auto CItem::SetTempVar(CITempVars whichVar, std::uint8_t part, std::uint8_t newV
 // region
 //|						Returns false if item needs deleting, true if fine
 // o------------------------------------------------------------------------------------------------o
-auto CItem::SetContSerial(SERIAL newSerial) -> bool {
+auto CItem::SetContSerial(serial_t newSerial) -> bool {
     if (newSerial != INVALIDSERIAL) {
         if (newSerial >= BASEITEMSERIAL) {
             return SetCont(CalcItemObjFromSer(newSerial));
@@ -531,8 +531,8 @@ auto CItem::SetName2(const std::string &value) -> void {
 //|	Purpose		-	Gets/Sets serial of item's creator - used for crafting and maker's
 // marks
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetCreator() const -> SERIAL { return creator; }
-auto CItem::SetCreator(SERIAL newValue) -> void {
+auto CItem::GetCreator() const -> serial_t { return creator; }
+auto CItem::SetCreator(serial_t newValue) -> void {
     creator = newValue;
     UpdateRegion();
 }
@@ -888,8 +888,8 @@ auto CItem::SetMovable(std::int8_t newValue) -> void {
 //|	Purpose		-	Gets/Sets timestamp for when item was last traded using secure trade
 // window (not saved)
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetTempLastTraded() const -> TIMERVAL { return tempLastTraded; }
-auto CItem::SetTempLastTraded(TIMERVAL newValue) -> void { tempLastTraded = newValue; }
+auto CItem::GetTempLastTraded() const -> timerval_t { return tempLastTraded; }
+auto CItem::SetTempLastTraded(timerval_t newValue) -> void { tempLastTraded = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetTempTimer()
@@ -897,8 +897,8 @@ auto CItem::SetTempLastTraded(TIMERVAL newValue) -> void { tempLastTraded = newV
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's temptimer
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetTempTimer() const -> TIMERVAL { return tempTimer; }
-auto CItem::SetTempTimer(TIMERVAL newValue) -> void { tempTimer = newValue; }
+auto CItem::GetTempTimer() const -> timerval_t { return tempTimer; }
+auto CItem::SetTempTimer(timerval_t newValue) -> void { tempTimer = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetDecayTime()
@@ -906,8 +906,8 @@ auto CItem::SetTempTimer(TIMERVAL newValue) -> void { tempTimer = newValue; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's decay timer
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetDecayTime() const -> TIMERVAL { return decayTime; }
-auto CItem::SetDecayTime(TIMERVAL newValue) -> void { decayTime = newValue; }
+auto CItem::GetDecayTime() const -> timerval_t { return decayTime; }
+auto CItem::SetDecayTime(timerval_t newValue) -> void { decayTime = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetPriv()
@@ -978,8 +978,8 @@ auto CItem::SetRestock(std::uint16_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's armour class
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetArmourClass() const -> ARMORCLASS { return armorClass; }
-auto CItem::SetArmourClass(ARMORCLASS newValue) -> void {
+auto CItem::GetArmourClass() const -> armorclass_t { return armorClass; }
+auto CItem::SetArmourClass(armorclass_t newValue) -> void {
     armorClass = newValue;
     UpdateRegion();
 }
@@ -1035,8 +1035,8 @@ auto CItem::SetMadeWith(std::int8_t newValue) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets serial of glow item attached to item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetGlow() const -> SERIAL { return glow; }
-auto CItem::SetGlow(SERIAL newValue) -> void {
+auto CItem::GetGlow() const -> serial_t { return glow; }
+auto CItem::SetGlow(serial_t newValue) -> void {
     glow = newValue;
     UpdateRegion();
 }
@@ -1600,7 +1600,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
             break;
         case 'C':
             if (UTag == "CONT") {
-                tempContainerSerial = static_cast<SERIAL>(
+                tempContainerSerial = static_cast<serial_t>(
                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 rValue = true;
             }
@@ -2084,7 +2084,7 @@ void CItem::PostLoadProcessing(void) {
 //|	Purpose		-	Run some integrity checks on item
 // o------------------------------------------------------------------------------------------------o
 void CItem::CheckItemIntegrity(void) {
-    SERIAL getSerial = GetSerial();
+    auto getSerial = GetSerial();
     if (getSerial == INVALIDSERIAL) {
         Console::shared().Warning(
             util::format("Item (%s, from DFN section [%s]) has an invalid serial number, Deleting",
@@ -2300,7 +2300,7 @@ inline bool operator>(const CItem &x, const CItem &y) { return (x.GetSerial() > 
 // o------------------------------------------------------------------------------------------------o
 auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std::uint16_t Colour) -> void {
     UnicodeTypes dictLang = ZERO;
-    SERIAL speakTo = INVALIDSERIAL;
+    auto speakTo = INVALIDSERIAL;
     SpeechTarget target = SPTRG_PCNPC;
     CChar *mChar = nullptr;
     if (s != nullptr) {

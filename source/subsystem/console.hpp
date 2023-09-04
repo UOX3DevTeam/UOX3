@@ -118,18 +118,18 @@ class Console {
     auto Process(std::int32_t c) -> void;
     auto DisplaySettings() -> void;
 
-    struct JSConsoleEntry_st {
+    struct JSConsoleEntry {
         std::uint16_t scriptId;
         bool isEnabled;
         std::string cmdName;
-        JSConsoleEntry_st() : scriptId(0), isEnabled(true), cmdName("") {}
-        JSConsoleEntry_st(std::uint16_t id, const std::string &cName)
+        JSConsoleEntry() : scriptId(0), isEnabled(true), cmdName("") {}
+        JSConsoleEntry(std::uint16_t id, const std::string &cName)
             : scriptId(id), isEnabled(true), cmdName(cName) {}
     };
 
 
-    std::map<std::int32_t, JSConsoleEntry_st> JSKeyHandler;
-    std::map<std::string, JSConsoleEntry_st> JSConsoleFunctions;
+    std::map<std::int32_t, JSConsoleEntry> JSKeyHandler;
+    std::map<std::string, JSConsoleEntry> JSConsoleFunctions;
     std::uint16_t width, height; // for differing windows
     std::uint16_t curLeft, curTop;
     std::bitset<16> filterSettings;

@@ -551,7 +551,7 @@ JSBool CCreateEntryProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsv
 
 JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
     CItem *gPriv = static_cast<CItem *>(JS_GetPrivate(cx, obj));
-    SERIAL TempSerial = INVALIDSERIAL;
+    auto TempSerial = INVALIDSERIAL;
 
     if (!ValidateObject(gPriv))
         return JS_FALSE;
@@ -1301,7 +1301,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
 
     JSEncapsulate encaps(cx, vp);
     if (JSVAL_IS_INT(id)) {
-        TIMERVAL newTime;
+        timerval_t newTime;
         switch (JSVAL_TO_INT(id)) {
         case CIP_SECTIONID:
             gPriv->SetSectionId(encaps.toString());
@@ -1685,7 +1685,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetName2(encaps.toString());
             break;
         case CIP_RACE:
-            gPriv->SetRace(static_cast<RACEID>(encaps.toInt()));
+            gPriv->SetRace(static_cast<raceid_t>(encaps.toInt()));
             break;
         case CIP_MAXHP:
             gPriv->SetMaxHP(static_cast<std::int16_t>(encaps.toInt()));
@@ -1700,7 +1700,7 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
             gPriv->SetRank(static_cast<std::int8_t>(encaps.toInt()));
             break;
         case CIP_CREATOR:
-            gPriv->SetCreator(static_cast<SERIAL>(encaps.toInt()));
+            gPriv->SetCreator(static_cast<serial_t>(encaps.toInt()));
             break;
         case CIP_POISON:
             gPriv->SetPoisoned(static_cast<std::uint8_t>(encaps.toInt()));
@@ -3050,7 +3050,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             gPriv->SetCommandLevel(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CCP_RACE:
-            Races->ApplyRace(gPriv, static_cast<RACEID>(encaps.toInt()), true);
+            Races->ApplyRace(gPriv, static_cast<raceid_t>(encaps.toInt()), true);
             break;
         case CCP_MAXHP:
             gPriv->SetFixedMaxHP(static_cast<std::int16_t>(encaps.toInt()));
@@ -3301,7 +3301,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             }
             break;
         case CCP_RACEGATE:
-            gPriv->SetRaceGate(static_cast<RACEID>(encaps.toInt()));
+            gPriv->SetRaceGate(static_cast<raceid_t>(encaps.toInt()));
             break;
         case CCP_SKILLLOCK:
             break;
@@ -3687,7 +3687,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->SetMayorSerial(static_cast<std::uint32_t>(encaps.toInt()));
             break;
         case CREGP_RACE:
-            gPriv->SetRace(static_cast<RACEID>(encaps.toInt()));
+            gPriv->SetRace(static_cast<raceid_t>(encaps.toInt()));
             break;
         case CREGP_TAX:
             gPriv->TaxedAmount(static_cast<std::int16_t>(encaps.toInt()));
@@ -3780,7 +3780,7 @@ JSBool CRegionProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->SetMusicList(static_cast<std::uint16_t>(encaps.toInt()));
             break;
         case CREGP_WEATHER:
-            gPriv->SetWeather(static_cast<WEATHID>(encaps.toInt()));
+            gPriv->SetWeather(static_cast<weathid_t>(encaps.toInt()));
             break;
         case CREGP_WORLDNUMBER:
             gPriv->WorldNumber(static_cast<std::uint8_t>(encaps.toInt()));
@@ -4598,7 +4598,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             *vp = INT_TO_JSVAL(gPriv->ClientType());
             break;
         case CSOCKP_TARGET: {
-            SERIAL mySerial = gPriv->GetDWord(7);
+            serial_t mySerial = gPriv->GetDWord(7);
             // Item
             if (mySerial >= BASEITEMSERIAL) {
                 CItem *myItem = CalcItemObjFromSer(mySerial);

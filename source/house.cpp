@@ -1020,8 +1020,8 @@ CMultiObj *BuildBaseMulti(std::uint16_t multiId, std::int16_t xLoc = -1, std::in
 // o------------------------------------------------------------------------------------------------o
 bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *extraData) {
     std::uint32_t *ourData = (std::uint32_t *)extraData;
-    SERIAL targSerial = ourData[0];
-    SERIAL charSerial = ourData[1];
+    serial_t targSerial = ourData[0];
+    serial_t charSerial = ourData[1];
 
     if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
         CItem *i = static_cast<CItem *>(a);
@@ -1042,7 +1042,7 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
                     for (std::int32_t j = 1; j < keyCount + 1; j++) {
                         std::string keyTag = "key" + std::to_string(j) + "more";
                         auto keyMore = i->GetTag(keyTag);
-                        if (util::ston<SERIAL>(keyMore.m_StringValue) == targSerial) {
+                        if (util::ston<serial_t>(keyMore.m_StringValue) == targSerial) {
                             // More value of key in keyring matches house serial
                             TagMap localObject;
                             localObject.m_Destroy = false;
@@ -1102,7 +1102,7 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
                         for (std::int32_t j = 1; j < keyCount + 1; j++) {
                             std::string keyTag = "key" + std::to_string(j) + "more";
                             auto keyMore = i->GetTag(keyTag);
-                            if (util::ston<SERIAL>(keyMore.m_StringValue) == targSerial) {
+                            if (util::ston<serial_t>(keyMore.m_StringValue) == targSerial) {
                                 // More value of key in keyring matches house serial
                                 TagMap localObject;
                                 localObject.m_Destroy = false;
@@ -1119,7 +1119,7 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
     }
     return true;
 }
-void KillKeys(SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL) {
+void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL) {
     if (charSerial == INVALIDSERIAL) {
         // if no character serial is provided, just kill ALL keys that match the target serial
         std::uint32_t toPass[1];

@@ -39,13 +39,13 @@ using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 // o------------------------------------------------------------------------------------------------o
 
-ByteBufferBounds_st::ByteBufferBounds_st(int offset, int amount, int size)
+ByteBufferBounds::ByteBufferBounds(int offset, int amount, int size)
     : std::out_of_range(""), offset(offset), amount(amount), buffersize(size) {
     _msg = "Offset : "s + std::to_string(offset) + " Amount: "s + std::to_string(amount) +
            " exceeds buffer size of: "s + std::to_string(size);
 }
 //=========================================================
-auto ByteBufferBounds_st::what() const noexcept -> const char * { return _msg.c_str(); }
+auto ByteBufferBounds::what() const noexcept -> const char * { return _msg.c_str(); }
 
 // o------------------------------------------------------------------------------------------------o
 //| ByteBuffer_t
@@ -250,7 +250,7 @@ void CNetworkStuff::SetLastOn(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces player to disconnect/instalog
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::Disconnect(UOXSOCKET s) {
+void CNetworkStuff::Disconnect(uoxsocket_t s) {
     SetLastOn(connClients[s]);
     CChar *currChar = connClients[s]->CurrcharObj();
     Console::shared() << "Client " << static_cast<std::uint32_t>(s) << " disconnected. [Total:"
@@ -498,7 +498,7 @@ void CNetworkStuff::CheckConn(void) {
         newClient = accept(a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len);
         if (newClient >= FD_SETSIZE) {
             Console::shared().Error("accept() returning unselectable fd!");
-            closesocket(static_cast<UOXSOCKET>(newClient));
+            closesocket(static_cast<uoxsocket_t>(newClient));
             return;
         }
 #endif
@@ -540,7 +540,7 @@ void CNetworkStuff::CheckConn(void) {
         if (IsFirewallBlocked(part)) {
             messageLoop << util::format("FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!",
                                         part[0], part[1], part[2], part[3]);
-            closesocket(static_cast<UOXSOCKET>(newClient));
+            closesocket(static_cast<uoxsocket_t>(newClient));
             delete toMake;
             return;
         }
@@ -600,7 +600,7 @@ CNetworkStuff::~CNetworkStuff() {
 
     loggedInClients.resize(0);
     connClients.resize(0);
-    closesocket(static_cast<UOXSOCKET>(s));
+    closesocket(static_cast<uoxsocket_t>(s));
 #if defined(_WIN32)
     WSACleanup();
 #endif
@@ -616,7 +616,7 @@ void CNetworkStuff::CheckMessage(void) {
     FD_ZERO(&errsock);
     std::int32_t nfds = 0;
     for (auto &tSock : connClients) {
-        auto clientSock = static_cast<UOXSOCKET>(tSock->CliSocket());
+        auto clientSock = static_cast<uoxsocket_t>(tSock->CliSocket());
         FD_SET(clientSock, &all);
         FD_SET(clientSock, &errsock);
         if (static_cast<int>(clientSock) + 1 > nfds) {
@@ -628,12 +628,12 @@ void CNetworkStuff::CheckMessage(void) {
         size_t oldnow = cwmWorldState->GetPlayersOnline();
         for (size_t i = 0; i < cwmWorldState->GetPlayersOnline(); ++i) {
             if (FD_ISSET(connClients[i]->CliSocket(), &errsock)) {
-                Disconnect(static_cast<UOXSOCKET>(i));
+                Disconnect(static_cast<uoxsocket_t>(i));
             }
             if ((FD_ISSET(connClients[i]->CliSocket(), &all)) &&
                 (oldnow == cwmWorldState->GetPlayersOnline())) {
                 try {
-                    GetMsg(static_cast<UOXSOCKET>(i));
+                    GetMsg(static_cast<uoxsocket_t>(i));
                 } catch (socket_error &blah) {
 #if !defined(_WIN32)
                     Console::shared() << "Client disconnected" << myendl;
@@ -646,7 +646,7 @@ void CNetworkStuff::CheckMessage(void) {
                             << "Socket error: " << static_cast<std::int32_t>(blah.ErrorNumber()) << myendl;
                     }
 #endif
-                    Disconnect(static_cast<UOXSOCKET>(i)); // abnormal error
+                    Disconnect(static_cast<uoxsocket_t>(i)); // abnormal error
                 }
             }
         }
@@ -663,7 +663,7 @@ auto CNetworkStuff::Startup() -> void {
     sockInit();
     LoadFirewallEntries();
 }
-CSocket *CNetworkStuff::GetSockPtr(UOXSOCKET s) {
+CSocket *CNetworkStuff::GetSockPtr(uoxsocket_t s) {
     if (static_cast<unsigned>(s) >= connClients.size())
         return nullptr;
 
@@ -677,7 +677,7 @@ CPInputBuffer *WhichLoginPacket(std::uint8_t packetId, CSocket *s);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Receive message from client
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::GetMsg(UOXSOCKET s) {
+void CNetworkStuff::GetMsg(uoxsocket_t s) {
     if (static_cast<unsigned>(s) >= connClients.size())
         return;
 
@@ -967,7 +967,7 @@ void CNetworkStuff::GetMsg(UOXSOCKET s) {
                         mSock->SysMessage(768); // You cannot set your profile currently.
                     }
                     else {
-                        SERIAL targSerial = mSock->GetDWord(4);
+                        serial_t targSerial = mSock->GetDWord(4);
                         CChar *player = CalcCharObjFromSer(targSerial);
                         if (!ValidateObject(player)) {
                             mSock->SysMessage(769); // This player no longer exists.
@@ -1097,7 +1097,7 @@ void CNetworkStuff::CheckLoginMessage(void) {
 
     std::int32_t nfds = 0;
     for (auto &tSock : loggedInClients) {
-        auto clientSock = static_cast<UOXSOCKET>(tSock->CliSocket());
+        auto clientSock = static_cast<uoxsocket_t>(tSock->CliSocket());
         FD_SET(clientSock, &all);
         FD_SET(clientSock, &errsock);
         if (static_cast<int>(clientSock) + 1 > nfds) {
@@ -1110,13 +1110,13 @@ void CNetworkStuff::CheckLoginMessage(void) {
         size_t oldnow = loggedInClients.size();
         for (i = 0; i < loggedInClients.size(); ++i) {
             if (FD_ISSET(loggedInClients[i]->CliSocket(), &errsock)) {
-                LoginDisconnect(static_cast<UOXSOCKET>(i));
+                LoginDisconnect(static_cast<uoxsocket_t>(i));
                 continue;
             }
             if ((FD_ISSET(loggedInClients[i]->CliSocket(), &all)) &&
                 (oldnow == loggedInClients.size())) {
                 try {
-                    GetLoginMsg(static_cast<UOXSOCKET>(i));
+                    GetLoginMsg(static_cast<uoxsocket_t>(i));
                 } catch (socket_error &blah) {
 #if !defined(_WIN32)
                     messageLoop << "Client disconnected";
@@ -1128,7 +1128,7 @@ void CNetworkStuff::CheckLoginMessage(void) {
                         messageLoop << util::format("Socket error: %i", blah.ErrorNumber());
                     }
 #endif
-                    LoginDisconnect(static_cast<UOXSOCKET>(i)); // abnormal error
+                    LoginDisconnect(static_cast<uoxsocket_t>(i)); // abnormal error
                 }
             }
         }
@@ -1148,7 +1148,7 @@ void CNetworkStuff::CheckLoginMessage(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Force disconnection of player //Instalog
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::LoginDisconnect(UOXSOCKET s) {
+void CNetworkStuff::LoginDisconnect(uoxsocket_t s) {
     messageLoop << util::format("LoginClient %u disconnected.", s);
     loggedInClients[s]->FlushBuffer();
     loggedInClients[s]->CloseSocket();
@@ -1167,18 +1167,18 @@ void CNetworkStuff::LoginDisconnect(UOXSOCKET s) {
 
 void CNetworkStuff::LoginDisconnect(CSocket *s) // Force disconnection of player //Instalog
 {
-    UOXSOCKET i = FindLoginPtr(s);
+    uoxsocket_t i = FindLoginPtr(s);
     LoginDisconnect(i);
 }
 
 void CNetworkStuff::Disconnect(CSocket *s) // Force disconnection of player //Instalog
 {
-    UOXSOCKET i = FindNetworkPtr(s);
+    uoxsocket_t i = FindNetworkPtr(s);
     Disconnect(i);
 }
 
-UOXSOCKET CNetworkStuff::FindLoginPtr(CSocket *s) {
-    for (UOXSOCKET i = 0; static_cast<unsigned>(i) < loggedInClients.size(); ++i) {
+uoxsocket_t CNetworkStuff::FindLoginPtr(CSocket *s) {
+    for (uoxsocket_t i = 0; static_cast<unsigned>(i) < loggedInClients.size(); ++i) {
         if (loggedInClients[i] == s)
             return i;
     }
@@ -1194,7 +1194,7 @@ UOXSOCKET CNetworkStuff::FindLoginPtr(CSocket *s) {
 // world queue |					REQUIRES THREAD SAFETY
 // o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::Transfer(CSocket *mSock) {
-    UOXSOCKET s = FindLoginPtr(mSock);
+    uoxsocket_t s = FindLoginPtr(mSock);
     if (static_cast<unsigned>(s) >= loggedInClients.size())
         return;
 
@@ -1213,7 +1213,7 @@ void CNetworkStuff::Transfer(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets login message from socket
 // o------------------------------------------------------------------------------------------------o
-void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
+void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
     CSocket *mSock = loggedInClients[s];
     if (mSock == nullptr)
         return;
@@ -1336,7 +1336,7 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
                     fd_set all;
                     FD_ZERO(&all);
                     FD_SET(mSock->CliSocket(), &all);
-                    nfds = static_cast<UOXSOCKET>(mSock->CliSocket()) + 1;
+                    nfds = static_cast<uoxsocket_t>(mSock->CliSocket()) + 1;
                     if (select(nfds, &all, nullptr, nullptr, &cwmWorldState->uoxTimeout) > 0) {
                         mSock->Receive(MAXBUFFER);
                     }
@@ -1353,8 +1353,8 @@ void CNetworkStuff::GetLoginMsg(UOXSOCKET s) {
     }
 }
 
-UOXSOCKET CNetworkStuff::FindNetworkPtr(CSocket *toFind) {
-    for (UOXSOCKET i = 0; static_cast<unsigned>(i) < connClients.size(); ++i) {
+uoxsocket_t CNetworkStuff::FindNetworkPtr(CSocket *toFind) {
+    for (uoxsocket_t i = 0; static_cast<unsigned>(i) < connClients.size(); ++i) {
         if (connClients[i] == toFind)
             return i;
     }

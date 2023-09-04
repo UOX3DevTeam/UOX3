@@ -261,7 +261,7 @@ class cScript {
     bool OnLeaveRegion(CChar *entering, std::uint16_t region);
     std::int8_t OnSpellTarget(CBaseObject *target, CChar *caster, std::uint8_t spellNum);
     std::int8_t OnSpellTargetSelect(CChar *caster, CBaseObject *target, std::uint8_t spellNum);
-    bool DoCallback(CSocket *tSock, SERIAL targeted, std::uint8_t callNum);
+    bool DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum);
     std::int16_t OnSpellCast(CChar *tChar, std::uint8_t SpellId);
     std::int16_t OnScrollCast(CChar *tChar, std::uint8_t SpellId);
     std::int8_t OnSpellSuccess(CChar *tChar, std::uint8_t SpellId);

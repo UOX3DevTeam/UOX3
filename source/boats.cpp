@@ -489,7 +489,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
         return false;
     }
 
-    const SERIAL serial = b->GetSerial();
+    const auto serial = b->GetSerial();
     const std::uint8_t worldNumber = b->WorldNumber();
     const std::uint16_t instanceId = b->GetInstanceId();
     std::int32_t maxWeight = b->GetWeightMax();
@@ -1073,7 +1073,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-void KillKeys(SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL);
+void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ModelBoat()
 // o------------------------------------------------------------------------------------------------o
@@ -1097,7 +1097,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
         return;
     }
 
-    SERIAL serial = i->GetSerial();
+    auto serial = i->GetSerial();
     if (i->GetOwnerObj() == mChar) {
         // Check if character's backpack can hold more items
         // By default, CreateItem drops item at character's feet if it cannot hold more items, but

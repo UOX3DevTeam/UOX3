@@ -99,7 +99,7 @@ class CWorldMain {
     };
 
     // Timers
-    TIMERVAL worldTimers[tWORLD_COUNT];
+    timerval_t worldTimers[tWORLD_COUNT];
 
     // Console & Program Level Vars
     bool error;
@@ -151,8 +151,8 @@ class CWorldMain {
     };
 
     // Timers
-    void SetTimer(CWM_TID timerId, TIMERVAL newVal);
-    TIMERVAL GetTimer(CWM_TID timerId) const;
+    void SetTimer(CWM_TID timerId, timerval_t newVal);
+    timerval_t GetTimer(CWM_TID timerId) const;
 
     // Console & Program Level Vars
     void SetError(bool newVal);

@@ -191,10 +191,10 @@ JSBool SE_CalcItemFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CalcItemFromSer: Invalid number of arguments (takes 1 or 4)");
         return JS_FALSE;
     }
-    SERIAL targSerial;
+    serial_t targSerial;
     if (argc == 1) {
         std::string str = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-        targSerial = util::ston<SERIAL>(str);
+        targSerial = util::ston<serial_t>(str);
     }
     else {
         targSerial = CalcSerial(
@@ -225,9 +225,9 @@ JSBool SE_CalcMultiFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         ScriptError(cx, "CalcMultiFromSer: Invalid number of arguments (takes 1 or 4)");
         return JS_FALSE;
     }
-    SERIAL targSerial;
+    serial_t targSerial;
     if (argc == 1) {
-        targSerial = static_cast<SERIAL>(JSVAL_TO_INT(argv[0]));
+        targSerial = static_cast<serial_t>(JSVAL_TO_INT(argv[0]));
     }
     else {
         targSerial = CalcSerial(
@@ -258,9 +258,9 @@ JSBool SE_CalcCharFromSer(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CalcCharFromSer: Invalid number of arguments (takes 1 or 4)");
         return JS_FALSE;
     }
-    SERIAL targSerial = INVALIDSERIAL;
+    auto targSerial = INVALIDSERIAL;
     if (argc == 1) {
-        targSerial = static_cast<SERIAL>(JSVAL_TO_INT(argv[0]));
+        targSerial = static_cast<serial_t>(JSVAL_TO_INT(argv[0]));
     }
     else {
         targSerial = CalcSerial(
@@ -1410,8 +1410,8 @@ JSBool SE_RaceCompareByRace([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
     if (argc != 2) {
         return JS_FALSE;
     }
-    RACEID r0 = static_cast<RACEID>(JSVAL_TO_INT(argv[0]));
-    RACEID r1 = static_cast<RACEID>(JSVAL_TO_INT(argv[1]));
+    auto r0 = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
+    auto r1 = static_cast<raceid_t>(JSVAL_TO_INT(argv[1]));
     *rval = INT_TO_JSVAL(Races->CompareByRace(r0, r1));
 
     return JS_TRUE;
@@ -1592,8 +1592,8 @@ JSBool SE_IsRaceWeakToWeather([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     if (argc != 2) {
         return JS_FALSE;
     }
-    RACEID race = static_cast<RACEID>(JSVAL_TO_INT(argv[0]));
-    WEATHID toCheck = static_cast<WEATHID>(JSVAL_TO_INT(argv[1]));
+    auto race = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
+    auto toCheck = static_cast<weathid_t>(JSVAL_TO_INT(argv[1]));
     CRace *tRace = Races->Race(race);
     if (tRace == nullptr || toCheck >= WEATHNUM) {
         return JS_FALSE;
@@ -1612,7 +1612,7 @@ JSBool SE_GetRaceSkillAdjustment([[maybe_unused]] JSContext *cx, [[maybe_unused]
     if (argc != 2) {
         return JS_FALSE;
     }
-    RACEID race = static_cast<RACEID>(JSVAL_TO_INT(argv[0]));
+    auto race = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
     std::int32_t skill = JSVAL_TO_INT(argv[1]);
     *rval = INT_TO_JSVAL(Races->DamageFromSkill(skill, race));
     return JS_TRUE;
@@ -2642,7 +2642,7 @@ JSBool SE_WorldBrightLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         return JS_FALSE;
     }
     else if (argc == 1) {
-        LIGHTLEVEL brightLevel = static_cast<LIGHTLEVEL>(JSVAL_TO_INT(argv[0]));
+        auto brightLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
         cwmWorldState->ServerData()->WorldLightBrightLevel(brightLevel);
     }
     *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->WorldLightBrightLevel());
@@ -2664,7 +2664,7 @@ JSBool SE_WorldDarkLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
         return JS_FALSE;
     }
     else if (argc == 1) {
-        LIGHTLEVEL darkLevel = static_cast<LIGHTLEVEL>(JSVAL_TO_INT(argv[0]));
+        auto darkLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
         cwmWorldState->ServerData()->WorldLightDarkLevel(darkLevel);
     }
     *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->WorldLightDarkLevel());
@@ -2685,7 +2685,7 @@ JSBool SE_WorldDungeonLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
         return JS_FALSE;
     }
     else if (argc == 1) {
-        LIGHTLEVEL dungeonLevel = static_cast<LIGHTLEVEL>(JSVAL_TO_INT(argv[0]));
+        auto dungeonLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
         cwmWorldState->ServerData()->DungeonLightLevel(dungeonLevel);
     }
     *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->DungeonLightLevel());
@@ -2758,7 +2758,7 @@ JSBool SE_GetSocketFromIndex(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         ScriptError(cx, "GetSocketFromIndex: Invalid number of arguments (takes 1)");
         return JS_FALSE;
     }
-    UOXSOCKET index = static_cast<UOXSOCKET>(JSVAL_TO_INT(argv[0]));
+    auto index = static_cast<uoxsocket_t>(JSVAL_TO_INT(argv[0]));
 
     CSocket *mSock = Network->GetSockPtr(index);
     CChar *mChar = nullptr;
@@ -3945,15 +3945,15 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 74: // DUNGEONLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->DungeonLightLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->DungeonLightLevel()));
             break;
         case 75: // CURRENTLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightCurrentLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightCurrentLevel()));
             break;
         case 76: // BRIGHTLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightBrightLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightBrightLevel()));
             break;
         case 77: // BASERANGE
             *rval =
@@ -4062,7 +4062,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 107: // DARKLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<LIGHTLEVEL>(cwmWorldState->ServerData()->WorldLightDarkLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightDarkLevel()));
             break;
         case 108: // TITLECOLOUR
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TitleColour()));

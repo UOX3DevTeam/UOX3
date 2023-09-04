@@ -252,7 +252,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         return;
     }
 
-    SERIAL serial = s->GetDWord(1);
+    serial_t serial = s->GetDWord(1);
     if (serial == INVALIDSERIAL) {
         ourChar->SetTarg(nullptr);
         return;

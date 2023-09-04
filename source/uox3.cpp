@@ -199,7 +199,7 @@ auto AdjustInterval(std::chrono::milliseconds interval, std::chrono::millisecond
 auto main(std::int32_t argc, char *argv[]) -> int {
     std::uint32_t tempSecs, tempMilli, tempTime;
     std::uint32_t loopSecs, loopMilli;
-    TIMERVAL uiNextCheckConn = 0;
+    timerval_t uiNextCheckConn = 0;
 
     // We are going to do some fundmental checks, that if fail, we will bail out before
     // setting up
@@ -1630,7 +1630,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
     if (!mChar.IsDead()) {
                 if (doWeather) {
                     const std::uint8_t curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-                    LIGHTLEVEL toShow;
+                    lightlevel_t toShow;
                     if (Races->VisLevel(mChar.GetRace()) > curLevel) {
                         toShow = 0;
                     }
@@ -2632,7 +2632,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                         else if (charCheck->GetTimer(tPC_LOGOUT)) {
                             AccountEntry &actbTemp = charCheck->GetAccount();
                             if (actbTemp.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-                                SERIAL oaiw = actbTemp.inGame;
+                                serial_t oaiw = actbTemp.inGame;
                                 if (oaiw == INVALIDSERIAL) {
                                     charCheck->SetTimer(tPC_LOGOUT, 0);
                                     charCheck->Update();
@@ -2818,7 +2818,7 @@ auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe
                                   (objToCheck->GetId() == 0x1f28) ||
                                   (objToCheck->GetId() == 0x1f29))) {
                             // Reunite house signs with their multis
-                            SERIAL houseSerial =
+                            serial_t houseSerial =
                                 static_cast<CItem *>(objToCheck)->GetTempVar(CITV_MORE);
                             CMultiObj *multi = CalcMultiFromSer(houseSerial);
                             if (ValidateObject(multi)) {
@@ -3354,7 +3354,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
                         toShow = 0;
                     }
                     else {
-                        toShow = static_cast<LIGHTLEVEL>(
+                        toShow = static_cast<lightlevel_t>(
                             RoundNumber(i - Races->VisLevel(mChar->GetRace())));
                     }
                     toSend.Level(toShow);
@@ -3369,7 +3369,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
                         toShow = 0;
                     }
                     else {
-                        toShow = static_cast<LIGHTLEVEL>(
+                        toShow = static_cast<lightlevel_t>(
                             RoundNumber(dunLevel - Races->VisLevel(mChar->GetRace())));
                     }
                     toSend.Level(toShow);
@@ -3416,8 +3416,8 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     auto curRegion = mChar->GetRegion();
     auto wSys = Weather->Weather(curRegion->GetWeather());
 
-    LIGHTLEVEL toShow = level;
-    LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+    lightlevel_t toShow = level;
+    lightlevel_t dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 
     // we have a valid weather system
     if (wSys) {
@@ -3429,7 +3429,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
                         toShow = 0;
                     }
                     else {
-                        toShow = static_cast<LIGHTLEVEL>(
+                        toShow = static_cast<lightlevel_t>(
                             RoundNumber(i - Races->VisLevel(mChar->GetRace())));
                     }
                 }
@@ -3440,7 +3440,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
                         toShow = 0;
                     }
                     else {
-                        toShow = static_cast<LIGHTLEVEL>(
+                        toShow = static_cast<lightlevel_t>(
                             RoundNumber(dunLevel - Races->VisLevel(mChar->GetRace())));
                     }
                 }
@@ -3479,15 +3479,15 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     auto curRegion = mItem->GetRegion();
     auto wSys = Weather->Weather(curRegion->GetWeather());
 
-    LIGHTLEVEL toShow = level;
-    LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+    lightlevel_t toShow = level;
+    lightlevel_t dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 
     // we have a valid weather system
     if (wSys) {
                 const R32 lightMin = wSys->LightMin();
                 const R32 lightMax = wSys->LightMax();
                 if ((lightMin < 300) && (lightMax < 300)) {
-                    toShow = static_cast<LIGHTLEVEL>(wSys->CurrentLight());
+                    toShow = static_cast<lightlevel_t>(wSys->CurrentLight());
                 }
     }
     else {
@@ -3525,9 +3525,9 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates the duration of poison based on its strength
 // o------------------------------------------------------------------------------------------------o
-auto GetPoisonDuration(std::uint8_t poisonStrength) -> TIMERVAL {
+auto GetPoisonDuration(std::uint8_t poisonStrength) -> timerval_t {
     // Calculate duration of poison, based on the strength of the poison
-    auto poisonDuration = TIMERVAL(0);
+    auto poisonDuration = timerval_t(0);
     switch (poisonStrength) {
     case 1: // Lesser poison - 9 to 13 pulses, 2 second frequency
                 poisonDuration = RandomNum(9, 13) * 2;
@@ -3554,9 +3554,9 @@ auto GetPoisonDuration(std::uint8_t poisonStrength) -> TIMERVAL {
 //|	Purpose		-	Calculates the time between each tick of a poison, based on its
 // strength
 // o------------------------------------------------------------------------------------------------o
-auto GetPoisonTickTime(std::uint8_t poisonStrength) -> TIMERVAL {
+auto GetPoisonTickTime(std::uint8_t poisonStrength) -> timerval_t {
     // Calculate duration of poison, based on the strength of the poison
-    auto poisonTickTime = TIMERVAL(0);
+    auto poisonTickTime = timerval_t(0);
     switch (poisonStrength) {
     case 1: // Lesser poison - 2 second frequency
                 poisonTickTime = 2;

@@ -173,18 +173,18 @@ template <typename T> class GenericList {
 // o------------------------------------------------------------------------------------------------o
 class RegionSerialList {
   private:
-    std::unordered_set<SERIAL> objSerials;
+    std::unordered_set<serial_t> objSerials;
 
   public:
     RegionSerialList() = default;
     ~RegionSerialList() = default;
 
-    auto Add(SERIAL toAdd) -> bool {
+    auto Add(serial_t toAdd) -> bool {
         auto insertResult = objSerials.insert(toAdd);
         return insertResult.second;
     }
 
-    auto Remove(SERIAL toRemove) -> size_t { return objSerials.erase(toRemove); }
+    auto Remove(serial_t toRemove) -> size_t { return objSerials.erase(toRemove); }
 };
 
 #endif // __GENERICLIST_H__

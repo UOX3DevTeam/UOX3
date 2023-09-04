@@ -35,8 +35,8 @@ const std::string WorldTypeNames[WRLD_COUNT] = {"Spring", "Summer",     "Autumn"
 class CTownRegion {
   private:
     struct TownPers_st {
-        SERIAL townMember;
-        SERIAL targVote;
+        serial_t townMember;
+        serial_t targVote;
         CItem *PlayerBank;
     };
 
@@ -68,9 +68,9 @@ class CTownRegion {
     std::vector<RegLocs_st> locations;
     std::map<std::int32_t, GoodData_st> goodList;
     std::string guardList;
-    SERIAL mayorSerial; // serial of the mayor, calculated on startup always
-    RACEID race;        // town's race property, guards will be racially based
-    WEATHID weather;    // weather system the region belongs to
+    serial_t mayorSerial; // serial of the mayor, calculated on startup always
+    raceid_t race;        // town's race property, guards will be racially based
+    weathid_t weather;    // weather system the region belongs to
     std::int32_t goldReserved;  // amount of gold belonging to the town's treasury
 
     WorldType visualAppearance; // seasonal choice, basically.  Each of the 4 seasons, or "dead"
@@ -94,7 +94,7 @@ class CTownRegion {
     void SendPotentialMember(CSocket *sock);
     void SendMayorGump(CSocket *sock);
     void SendDefaultGump(CSocket *sock);
-    SERIAL FindPositionOf(CChar &toAdd);
+    serial_t FindPositionOf(CChar &toAdd);
 
     bool RemoveCharacter(size_t position);
 
@@ -138,7 +138,7 @@ class CTownRegion {
     void IsDungeon(bool value);
     void IsSubRegion(bool value);
     void SetName(std::string toSet);
-    void SetRace(RACEID newRace);
+    void SetRace(raceid_t newRace);
     void TellMembers(std::int32_t dictEntry, ...);
     void SendAlliedTowns(CSocket *sock);
     void SendEnemyTowns(CSocket *sock);
@@ -164,8 +164,8 @@ class CTownRegion {
     std::int32_t GetGoodSell(std::uint8_t index) const;
     std::int16_t GetHealth(void) const;
     CChar *GetMayor(void);                 // returns the mayor character
-    SERIAL GetMayorSerial(void) const;     // returns the mayor's serial
-    void SetMayorSerial(SERIAL newvValue); // sets the mayor's serial
+    serial_t GetMayorSerial(void) const;     // returns the mayor's serial
+    void SetMayorSerial(serial_t newvValue); // sets the mayor's serial
     std::uint16_t GetMusicList(void) const;
     void SetMusicList(std::uint16_t newValue);
     std::string GetName(void) const;
@@ -174,13 +174,13 @@ class CTownRegion {
     std::int32_t GetOreChance(void) const;
     std::string GetOwner(void) const;
     size_t GetPopulation(void) const;
-    RACEID GetRace(void) const;
+    raceid_t GetRace(void) const;
     CChar *GetRandomGuard(void); // returns a random guard from guard list
     std::uint32_t GetReserves(void) const;
     std::uint16_t GetResourceId(void) const;
     std::uint32_t GetTaxes(void) const;
-    WEATHID GetWeather(void) const;
-    void SetWeather(WEATHID newValue);
+    weathid_t GetWeather(void) const;
+    void SetWeather(weathid_t newValue);
     std::uint16_t NumGuards(void) const;
     void SetNumGuards(std::uint16_t newValue);
     std::uint16_t TaxedAmount(void) const;

@@ -1141,11 +1141,11 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
 
     bool spellResisted = false;
     CTEffect *toAdd = new CTEffect;
-    SERIAL sourceSerial = 0;
+    serial_t sourceSerial = 0;
     if (source != nullptr) {
         sourceSerial = source->GetSerial();
     }
-    SERIAL targSer = dest->GetSerial();
+    auto targSer = dest->GetSerial();
     toAdd->Source(sourceSerial);
     toAdd->Destination(targSer);
     std::vector<CTEffect *> removeEffect;
@@ -1755,7 +1755,7 @@ void cEffects::LoadEffects(void) {
                                 break;
                             case 'I':
                                 if (UTag == "ITEMPTR") {
-                                    SERIAL objSer = static_cast<std::uint32_t>(std::stoul(
+                                    auto objSer = static_cast<serial_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0));
                                     if (objSer != INVALIDSERIAL) {
                                         if (objSer < BASEITEMSERIAL) {
@@ -1792,7 +1792,7 @@ void cEffects::LoadEffects(void) {
                                 break;
                             case 'O':
                                 if (UTag == "OBJPTR") {
-                                    SERIAL objSer = static_cast<std::uint32_t>(std::stoul(
+                                    auto objSer = static_cast<serial_t>(std::stoul(
                                         util::trim(util::strip(data, "//")), nullptr, 0));
                                     if (objSer != INVALIDSERIAL) {
                                         if (objSer < BASEITEMSERIAL) {

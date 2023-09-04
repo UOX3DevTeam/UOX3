@@ -988,7 +988,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
         // Check if rune was marked in a multi - if so, try to take user directly there
         auto runeMore = i->GetTag("multiSerial");
         if (runeMore.m_StringValue != "") {
-            SERIAL mSerial = util::ston<SERIAL>(runeMore.m_StringValue);
+            auto mSerial = util::ston<serial_t>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {
                 CMultiObj *shipMulti = CalcMultiFromSer(mSerial);
                 if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(OT_BOAT)) {
@@ -1820,7 +1820,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
         // Check if rune was marked in a multi - if so, try to take user directly there
         auto runeMore = i->GetTag("multiSerial");
         if (runeMore.m_StringValue != "") {
-            SERIAL mSerial = util::ston<SERIAL>(runeMore.m_StringValue);
+            auto mSerial = util::ston<serial_t>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {
                 CMultiObj *shipMulti = CalcMultiFromSer(mSerial);
                 if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(OT_BOAT)) {
@@ -2674,7 +2674,7 @@ void CMagic::RemoveSpell(CItem *book, std::int32_t spellNum) {
 void CMagic::SpellBook(CSocket *mSock) {
     std::uint8_t spellsList[70];
 
-    SERIAL serial = (mSock->GetDWord(1) & 0x7FFFFFFF);
+    serial_t serial = (mSock->GetDWord(1) & 0x7FFFFFFF);
     CChar *mChar = mSock->CurrcharObj();
     CItem *spellBook = CalcItemObjFromSer(serial);
 
@@ -2751,7 +2751,7 @@ void CMagic::SpellBook(CSocket *mSock) {
             }
             mItems.NumberOfItems(scount);
             std::uint16_t runningCounter = 0;
-            const SERIAL CONTSER = spellBook->GetSerial();
+            const auto CONTSER = spellBook->GetSerial();
             for (i = 0; i < 65; ++i) {
                 if (spellsList[i]) {
                     mItems.Add(runningCounter++, 0x41000000 + i, CONTSER, i + 1);
@@ -4467,7 +4467,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             CBaseObject *getTarg = nullptr;
             if (!caster->IsNpc()) {
                 if (s->GetDWord(7) != INVALIDSERIAL) {
-                    SERIAL targSer = s->GetDWord(7);
+                    serial_t targSer = s->GetDWord(7);
                     if (targSer >= BASEITEMSERIAL) {
                         getTarg = CalcItemObjFromSer(targSer);
                     }

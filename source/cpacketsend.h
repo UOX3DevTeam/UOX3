@@ -47,7 +47,7 @@ class CPacketSpeech : public CPUOXBuffer {
     CPacketSpeech();
     CPacketSpeech(CSpeechEntry &toCopy);
     CPacketSpeech(CPITalkRequest &toCopy);
-    virtual void SpeakerSerial(SERIAL toPut);
+    virtual void SpeakerSerial(serial_t toPut);
     virtual void SpeakerModel(std::uint16_t toPut);
     virtual void Colour(colour_t toPut);
     virtual void Font(FontType toPut);
@@ -101,7 +101,7 @@ class CPAttackOK : public CPUOXBuffer {
     CPAttackOK();
     virtual ~CPAttackOK() {}
     CPAttackOK(CChar &toCopy);
-    virtual void Serial(SERIAL newSerial);
+    virtual void Serial(serial_t newSerial);
     CPAttackOK &operator=(CChar &toCopy);
 };
 
@@ -113,7 +113,7 @@ class CPRemoveItem : public CPUOXBuffer {
     CPRemoveItem();
     virtual ~CPRemoveItem() {}
     CPRemoveItem(CBaseObject &toCopy);
-    virtual void Serial(SERIAL newSerial);
+    virtual void Serial(serial_t newSerial);
     CPRemoveItem &operator=(CBaseObject &toCopy);
 };
 
@@ -130,8 +130,8 @@ class CPLightLevel : public CPUOXBuffer {
   public:
     CPLightLevel();
     virtual ~CPLightLevel() {}
-    CPLightLevel(LIGHTLEVEL level);
-    virtual void Level(LIGHTLEVEL level);
+    CPLightLevel(lightlevel_t level);
+    virtual void Level(lightlevel_t level);
 };
 
 class CPUpdIndSkill : public CPUOXBuffer {
@@ -161,7 +161,7 @@ class CPBuyItem : public CPUOXBuffer {
     virtual ~CPBuyItem() {}
     CPBuyItem(CBaseObject &i);
     CPBuyItem &operator=(CBaseObject &toCopy);
-    void Serial(SERIAL toSet);
+    void Serial(serial_t toSet);
 };
 
 class CPRelay : public CPUOXBuffer {
@@ -186,10 +186,10 @@ class CPWornItem : public CPUOXBuffer {
     CPWornItem();
     virtual ~CPWornItem() {}
     CPWornItem(CItem &toCopy);
-    virtual void ItemSerial(SERIAL itemSer);
+    virtual void ItemSerial(serial_t itemSer);
     virtual void Model(std::int16_t newModel);
     virtual void Layer(std::uint8_t layer);
-    virtual void CharSerial(SERIAL chSer);
+    virtual void CharSerial(serial_t chSer);
     virtual void Colour(std::int16_t newColour);
     CPWornItem &operator=(CItem &toCopy);
 };
@@ -203,7 +203,7 @@ class CPCharacterAnimation : public CPUOXBuffer {
     CPCharacterAnimation();
     virtual ~CPCharacterAnimation() {}
     CPCharacterAnimation(CChar &toCopy);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Action(std::uint16_t model);
     virtual void FrameCount(std::uint8_t frameCount);
     virtual void Repeat(std::int16_t repeatValue);
@@ -222,7 +222,7 @@ class CPNewCharacterAnimation : public CPUOXBuffer {
     CPNewCharacterAnimation();
     virtual ~CPNewCharacterAnimation() {}
     CPNewCharacterAnimation(CChar &toCopy);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Action(std::uint16_t action);
     virtual void SubAction(std::uint16_t subAction);
     virtual void SubSubAction(std::uint8_t subSubAction);
@@ -249,7 +249,7 @@ class CPPersonalLightLevel : public CPUOXBuffer {
     CPPersonalLightLevel();
     virtual ~CPPersonalLightLevel() {}
     CPPersonalLightLevel(CChar &toCopy);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Level(std::uint8_t lightLevel);
     CPPersonalLightLevel &operator=(CChar &toCopy);
 };
@@ -280,7 +280,7 @@ class CPPaperdoll : public CPUOXBuffer {
     CPPaperdoll();
     virtual ~CPPaperdoll() {}
     CPPaperdoll(CChar &toCopy);
-    virtual void Serial(SERIAL tSerial);
+    virtual void Serial(serial_t tSerial);
     virtual void FlagByte(std::uint8_t fVal);
     virtual void Text(const std::string &toPut);
     CPPaperdoll &operator=(CChar &toCopy);
@@ -312,9 +312,9 @@ class CPGraphicalEffect : public CPUOXBuffer {
     CPGraphicalEffect(std::uint8_t effectType, CBaseObject &src);
     virtual void Effect(std::uint8_t effectType);
     virtual void SourceSerial(CBaseObject &toSet);
-    virtual void SourceSerial(SERIAL toSet);
+    virtual void SourceSerial(serial_t toSet);
     virtual void TargetSerial(CBaseObject &toSet);
-    virtual void TargetSerial(SERIAL toSet);
+    virtual void TargetSerial(serial_t toSet);
     virtual void Model(std::int16_t nModel);
     virtual void X(std::int16_t nX);
     virtual void Y(std::int16_t nY);
@@ -339,7 +339,7 @@ class CPUpdateStat : public CPUOXBuffer {
   public:
     virtual ~CPUpdateStat() {}
     CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool normalizeStats);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void MaxVal(std::int16_t maxVal);
     virtual void CurVal(std::int16_t curVal);
 };
@@ -352,8 +352,8 @@ class CPDeathAction : public CPUOXBuffer {
     CPDeathAction(CChar &dying, CItem &corpse);
     CPDeathAction();
     virtual ~CPDeathAction() {}
-    virtual void Player(SERIAL toSet);
-    virtual void Corpse(SERIAL toSet);
+    virtual void Player(serial_t toSet);
+    virtual void Corpse(serial_t toSet);
     virtual void FallDirection(std::uint8_t toFall);
     CPDeathAction &operator=(CChar &dying);
     CPDeathAction &operator=(CItem &corpse);
@@ -381,7 +381,7 @@ class CPDrawContainer : public CPUOXBuffer {
     CPDrawContainer(CItem &toCopy);
     virtual void Model(std::uint16_t newModel);
     virtual void ContType(std::uint16_t contType);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     CPDrawContainer &operator=(CItem &toCopy);
 };
 
@@ -414,7 +414,7 @@ class CPOpenGump : public CPUOXBuffer {
     CPOpenGump(CChar &toCopy);
     virtual void Length(std::int32_t TotalLines);
     virtual void GumpIndex(std::int32_t index);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Question(std::string toAdd);
     virtual void AddResponse(std::uint16_t modelNum, std::uint16_t colour, std::string responseText);
     virtual void Finalize(void);
@@ -427,7 +427,7 @@ class CPTargetCursor : public CPUOXBuffer {
     CPTargetCursor();
     virtual ~CPTargetCursor() {}
     virtual void Type(std::uint8_t nType);
-    virtual void ID(SERIAL toSet);
+    virtual void ID(serial_t toSet);
     virtual void CursorType(
         std::uint8_t nType); // There is more to this packet, but it's only valid when sent by the CLIENT
 };
@@ -445,7 +445,7 @@ class CPStatWindow : public CPUOXBuffer {
     CPStatWindow();
     virtual ~CPStatWindow() {}
     CPStatWindow(CBaseObject &toCopy, CSocket &target);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Name(const std::string &nName);
     virtual void CurrentHP(std::int16_t nValue);
     virtual void MaxHP(std::int16_t nValue);
@@ -572,7 +572,7 @@ class CPTrackingArrow : public CPUOXBuffer {
     CPTrackingArrow(CBaseObject &toCopy);
     virtual void Location(std::int16_t x, std::int16_t y);
     virtual void Active(std::uint8_t value);
-    virtual void AddSerial(SERIAL targetSerial);
+    virtual void AddSerial(serial_t targetSerial);
     CPTrackingArrow &operator=(CBaseObject &toCopy);
 };
 
@@ -596,7 +596,7 @@ class CPDyeVat : public CPUOXBuffer {
     virtual ~CPDyeVat() {}
     CPDyeVat();
     CPDyeVat(CBaseObject &target);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Model(std::int16_t toSet);
     CPDyeVat &operator=(CBaseObject &target);
 };
@@ -610,9 +610,9 @@ class CPMultiPlacementView : public CPUOXBuffer {
     virtual ~CPMultiPlacementView() {}
     CPMultiPlacementView();
     CPMultiPlacementView(CItem &target);
-    CPMultiPlacementView(SERIAL toSet);
+    CPMultiPlacementView(serial_t toSet);
     virtual void RequestType(std::uint8_t rType);
-    virtual void DeedSerial(SERIAL toSet);
+    virtual void DeedSerial(serial_t toSet);
     virtual void MultiModel(std::int16_t toSet);
     virtual void SetHue(std::uint16_t hueValue);
     CPMultiPlacementView &operator=(CItem &target);
@@ -655,13 +655,13 @@ class CPAddItemToCont : public CPUOXBuffer {
     virtual ~CPAddItemToCont() {}
     CPAddItemToCont();
     CPAddItemToCont(CItem &toAdd);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void Model(std::int16_t toSet);
     virtual void NumItems(std::int16_t toSet);
     virtual void X(std::int16_t x);
     virtual void Y(std::int16_t y);
     virtual void GridLocation(std::int8_t gridLoc);
-    virtual void Container(SERIAL toAdd);
+    virtual void Container(serial_t toAdd);
     virtual void Colour(std::int16_t toSet);
     void UOKRFlag(bool newVal);
     void Object(CItem &toAdd);
@@ -676,7 +676,7 @@ class CPKickPlayer : public CPUOXBuffer {
     virtual ~CPKickPlayer() {}
     CPKickPlayer();
     CPKickPlayer(CChar &toCopy);
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     CPKickPlayer &operator=(CChar &toCopy);
 };
 
@@ -699,9 +699,9 @@ class CPFightOccurring : public CPUOXBuffer {
     virtual ~CPFightOccurring() {}
     CPFightOccurring();
     CPFightOccurring(CChar &attacker, CChar &defender);
-    virtual void Attacker(SERIAL toSet);
+    virtual void Attacker(serial_t toSet);
     virtual void Attacker(CChar &attacker);
-    virtual void Defender(SERIAL toSet);
+    virtual void Defender(serial_t toSet);
     virtual void Defender(CChar &defender);
 };
 
@@ -740,14 +740,14 @@ class CPMapRelated : public CPUOXBuffer {
     virtual void PlotState(std::uint8_t pState);
     virtual void Location(std::int16_t x, std::int16_t y);
     virtual void Command(std::uint8_t cmd);
-    virtual void ID(SERIAL key);
+    virtual void ID(serial_t key);
 };
 
 class CPBookTitlePage : public CPUOXBuffer {
   public:
     virtual ~CPBookTitlePage() {}
     CPBookTitlePage();
-    virtual void Serial(SERIAL toSet);
+    virtual void Serial(serial_t toSet);
     virtual void WriteFlag(std::uint8_t flag);
     virtual void NewFlag(std::uint8_t flag);
     virtual void Pages(std::int16_t pages);
@@ -759,8 +759,8 @@ class CPUltimaMessenger : public CPUOXBuffer {
   public:
     virtual ~CPUltimaMessenger() {}
     CPUltimaMessenger();
-    virtual void ID1(SERIAL toSet);
-    virtual void ID2(SERIAL toSet);
+    virtual void ID1(serial_t toSet);
+    virtual void ID2(serial_t toSet);
 };
 
 class CPGumpTextEntry : public CPUOXBuffer {
@@ -778,12 +778,12 @@ class CPGumpTextEntry : public CPUOXBuffer {
     CPGumpTextEntry();
     CPGumpTextEntry(const std::string &text);
     CPGumpTextEntry(const std::string &text1, const std::string &text2);
-    virtual void Serial(SERIAL id);
+    virtual void Serial(serial_t id);
     virtual void ParentId(std::uint8_t newVal);
     virtual void ButtonId(std::uint8_t newVal);
     virtual void Cancel(std::uint8_t newVal); // 0 = disable, 1 = enable
     virtual void Style(std::uint8_t newVal);  // 0 = disable, 1 = normal, 2 = numerical
-    virtual void Format(SERIAL id);   // if style 1, max text len, if style 2, max num len
+    virtual void Format(serial_t id);   // if style 1, max text len, if style 2, max num len
     virtual void Text1(const std::string &txt);
     virtual void Text2(const std::string &txt);
 };
@@ -821,7 +821,7 @@ class CPItemsInContainer : public CPUOXBuffer {
     bool isVendor;
     bool isPlayerVendor;
     bool isCorpse;
-    SERIAL vendorSerial;
+    serial_t vendorSerial;
     bool uokrFlag;
 
   public:
@@ -834,9 +834,9 @@ class CPItemsInContainer : public CPUOXBuffer {
     void Type(std::uint8_t contType);
     void UOKRFlag(bool value);
     void PlayerVendor(bool value);
-    void VendorSerial(SERIAL toSet);
+    void VendorSerial(serial_t toSet);
     virtual void AddItem(CItem *toAdd, std::uint16_t itemNum, CSocket *mSock);
-    void Add(std::uint16_t itemNum, SERIAL toAdd, SERIAL cont, std::uint8_t amount);
+    void Add(std::uint16_t itemNum, serial_t toAdd, serial_t cont, std::uint8_t amount);
     virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
@@ -930,7 +930,7 @@ class CP3DGraphicalEffect : public CPGraphicalEffect2 {
     virtual void EffectId3D(std::uint16_t effectId3D);
     virtual void ExplodeEffectId(std::uint16_t explodeEffectId);
     virtual void MovingEffectId(std::uint16_t movingEffectId);
-    virtual void TargetObjSerial(SERIAL targetObjSerial);
+    virtual void TargetObjSerial(serial_t targetObjSerial);
     virtual void LayerId(std::uint8_t layerId);
     virtual void Unknown(std::uint16_t unknown);
 };
@@ -995,12 +995,12 @@ class CPGameServerList : public CPUOXBuffer {
 class CPSecureTrading : public CPUOXBuffer {
   protected:
     virtual void InternalReset(void) override;
-    void CopyData(CBaseObject &mItem, SERIAL mItem2, SERIAL mItem3);
+    void CopyData(CBaseObject &mItem, serial_t mItem2, serial_t mItem3);
 
   public:
     CPSecureTrading();
     CPSecureTrading(CBaseObject &mItem);
-    CPSecureTrading(CBaseObject &mItem, SERIAL mItem2, SERIAL mItem3);
+    CPSecureTrading(CBaseObject &mItem, serial_t mItem2, serial_t mItem3);
     virtual ~CPSecureTrading() {}
     void Action(std::uint8_t value);
     void Name(const std::string &nameFollowing);
@@ -1097,7 +1097,7 @@ class CPUnicodeSpeech : public CPUOXBuffer {
     CPUnicodeSpeech(CPITalkRequestAscii &talking);
     CPUnicodeSpeech(CPITalkRequestUnicode &talking);
     void ID(std::uint16_t toSet);
-    void Serial(SERIAL toSet);
+    void Serial(serial_t toSet);
     void Object(CPITalkRequestAscii &tSaid);
     void Object(CPITalkRequestUnicode &tSaid);
     void Object(CBaseObject &toCopy);
@@ -1126,7 +1126,7 @@ class CPUnicodeMessage : public CPUOXBuffer {
     virtual ~CPUnicodeMessage() {}
     CPUnicodeMessage(CBaseObject &toCopy);
     void ID(std::uint16_t toSet);
-    void Serial(SERIAL toSet);
+    void Serial(serial_t toSet);
     void Object(CBaseObject &toCopy);
     void Language(char *value);
     void Language(const char *value);
@@ -1165,7 +1165,7 @@ class CPBookPage : public CPUOXBuffer {
     CPBookPage();
     CPBookPage(CItem &obj);
     void Object(CItem &obj);
-    void Serial(SERIAL value);
+    void Serial(serial_t value);
     void NewPage(std::int16_t pNum = -1);
     void NewPage(std::int16_t pNum, const std::vector<std::string> *lines);
     void AddLine(const std::string &line);
@@ -1179,8 +1179,8 @@ class CPSendGumpMenu : public CPUOXBuffer {
   public:
     virtual ~CPSendGumpMenu() {}
     CPSendGumpMenu();
-    void UserId(SERIAL value);
-    void GumpId(SERIAL value);
+    void UserId(serial_t value);
+    void GumpId(serial_t value);
     void X(std::uint32_t value);
     void Y(std::uint32_t value);
 
@@ -1244,7 +1244,7 @@ class CPToolTip : public CPUOXBuffer {
     std::vector<ToolTipEntryWide_st> ourWideEntries;
     CSocket *tSock;
     virtual void InternalReset(void) override;
-    virtual void CopyData(SERIAL objSer, bool addAmount = true, bool playerVendor = false);
+    virtual void CopyData(serial_t objSer, bool addAmount = true, bool playerVendor = false);
     void CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmount = true,
                       bool playerVendor = false);
     void CopyCharData(CChar &mChar, size_t &totalStringLen);
@@ -1254,7 +1254,7 @@ class CPToolTip : public CPUOXBuffer {
   public:
     virtual ~CPToolTip() {}
     CPToolTip();
-    CPToolTip(SERIAL objSer, CSocket *mSock = nullptr, bool addAmount = true,
+    CPToolTip(serial_t objSer, CSocket *mSock = nullptr, bool addAmount = true,
               bool playerVendor = false);
 };
 
@@ -1305,7 +1305,7 @@ class CPSendMsgBoardPosts : public CPUOXBuffer {
 
   public:
     virtual ~CPSendMsgBoardPosts() {}
-    virtual void CopyData(CSocket *msock, SERIAL mSerial, std::uint8_t pToggle, SERIAL oSerial);
+    virtual void CopyData(CSocket *msock, serial_t mSerial, std::uint8_t pToggle, serial_t oSerial);
     void Finalize(void);
     CPSendMsgBoardPosts();
 };
@@ -1384,7 +1384,7 @@ class CPClilocMessage : public CPUOXBuffer {
     virtual ~CPClilocMessage() {}
     virtual void CopyData(CBaseObject &toCopy);
 
-    void Serial(SERIAL sourceSer);
+    void Serial(serial_t sourceSer);
     void Body(std::uint16_t toSet);
     void Type(std::uint8_t toSet);
     void Hue(std::uint16_t hueColor);

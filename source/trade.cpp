@@ -98,8 +98,8 @@ CItem *StartTrade(CSocket *mSock, CChar *nChar) {
         return nullptr;
     }
 
-    const SERIAL tw1Serial = tradeWindowOne->GetSerial();
-    const SERIAL tw2Serial = tradeWindowTwo->GetSerial();
+    const serial_t tw1Serial = tradeWindowOne->GetSerial();
+    const serial_t tw2Serial = tradeWindowTwo->GetSerial();
 
     tradeWindowOne->SetTempVar(CITV_MOREX, tw2Serial);
     tradeWindowTwo->SetTempVar(CITV_MOREX, tw1Serial);
@@ -209,7 +209,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                 if (tradeSuccess) {
                     if (i->GetType() == IT_PETTRANSFERDEED) {
                         // Find serial of pet
-                        SERIAL petSerial = i->GetTempVar(CITV_MORE);
+                        serial_t petSerial = i->GetTempVar(CITV_MORE);
                         if (petSerial != INVALIDSERIAL) {
                             CChar *petChar = CalcCharObjFromSer(petSerial);
                             if (ValidateObject(petChar)) {
@@ -248,7 +248,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                 if (tradeSuccess) {
                     if (i->GetType() == IT_PETTRANSFERDEED) {
                         // Find serial of pet
-                        SERIAL petSerial = i->GetTempVar(CITV_MORE);
+                        serial_t petSerial = i->GetTempVar(CITV_MORE);
                         if (petSerial != INVALIDSERIAL) {
                             CChar *petChar = CalcCharObjFromSer(petSerial);
                             if (ValidateObject(petChar)) {

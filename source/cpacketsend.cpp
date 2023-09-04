@@ -287,7 +287,7 @@ void CPacketSpeech::SpeakerName(const std::string &toPut) {
     else
         pStream.WriteString(14, toPut, toPut.length());
 }
-void CPacketSpeech::SpeakerSerial(SERIAL toPut) { pStream.WriteLong(3, toPut); }
+void CPacketSpeech::SpeakerSerial(serial_t toPut) { pStream.WriteLong(3, toPut); }
 void CPacketSpeech::SpeakerModel(std::uint16_t toPut) { pStream.WriteShort(7, toPut); }
 void CPacketSpeech::Colour(colour_t toPut) { pStream.WriteShort(10, toPut); }
 void CPacketSpeech::Font(FontType toPut) { pStream.WriteShort(12, toPut); }
@@ -474,7 +474,7 @@ CPAttackOK::CPAttackOK(CChar &toCopy) {
     pStream.WriteByte(0, 0xAA);
     CopyData(toCopy);
 }
-void CPAttackOK::Serial(SERIAL newSerial) { pStream.WriteLong(1, newSerial); }
+void CPAttackOK::Serial(serial_t newSerial) { pStream.WriteLong(1, newSerial); }
 CPAttackOK &CPAttackOK::operator=(CChar &toCopy) {
     CopyData(toCopy);
     return (*this);
@@ -502,7 +502,7 @@ CPRemoveItem::CPRemoveItem(CBaseObject &toCopy) {
     pStream.WriteByte(0, 0x1D);
     CopyData(toCopy);
 }
-void CPRemoveItem::Serial(SERIAL newSerial) { pStream.WriteLong(1, newSerial); }
+void CPRemoveItem::Serial(serial_t newSerial) { pStream.WriteLong(1, newSerial); }
 CPRemoveItem &CPRemoveItem::operator=(CBaseObject &toCopy) {
     CopyData(toCopy);
     return (*this);
@@ -566,13 +566,13 @@ CPLightLevel::CPLightLevel() {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x4F);
 }
-CPLightLevel::CPLightLevel(LIGHTLEVEL level) {
+CPLightLevel::CPLightLevel(lightlevel_t level) {
     pStream.ReserveSize(2);
     pStream.WriteByte(0, 0x4F);
     Level(level);
 }
 
-void CPLightLevel::Level(LIGHTLEVEL level) { pStream.WriteByte(1, level); }
+void CPLightLevel::Level(lightlevel_t level) { pStream.WriteByte(1, level); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPUpdIndSkill()
@@ -651,7 +651,7 @@ CPBuyItem &CPBuyItem::operator=(CBaseObject &toCopy) {
     CopyData(toCopy);
     return (*this);
 }
-void CPBuyItem::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPBuyItem::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 
 void CPBuyItem::InternalReset(void) {
     pStream.ReserveSize(8);
@@ -742,10 +742,10 @@ CPWornItem::CPWornItem() {
     pStream.WriteByte(0, 0x2E);
     pStream.WriteByte(7, 0x00);
 }
-void CPWornItem::ItemSerial(SERIAL itemSer) { pStream.WriteLong(1, itemSer); }
+void CPWornItem::ItemSerial(serial_t itemSer) { pStream.WriteLong(1, itemSer); }
 void CPWornItem::Model(std::int16_t newModel) { pStream.WriteShort(5, newModel); }
 void CPWornItem::Layer(std::uint8_t layer) { pStream.WriteByte(8, layer); }
-void CPWornItem::CharSerial(SERIAL chSer) { pStream.WriteLong(9, chSer); }
+void CPWornItem::CharSerial(serial_t chSer) { pStream.WriteLong(9, chSer); }
 void CPWornItem::Colour(std::int16_t newColour) { pStream.WriteShort(13, newColour); }
 
 CPWornItem::CPWornItem(CItem &toCopy) {
@@ -831,7 +831,7 @@ CPCharacterAnimation::CPCharacterAnimation(CChar &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPCharacterAnimation::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPCharacterAnimation::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPCharacterAnimation::Action(std::uint16_t model) { pStream.WriteShort(5, model); }
 void CPCharacterAnimation::FrameCount(std::uint8_t frameCount) { pStream.WriteByte(8, frameCount); }
 void CPCharacterAnimation::Repeat(std::int16_t repeatValue) { pStream.WriteShort(9, repeatValue); }
@@ -879,7 +879,7 @@ CPNewCharacterAnimation::CPNewCharacterAnimation(CChar &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPNewCharacterAnimation::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPNewCharacterAnimation::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPNewCharacterAnimation::Action(std::uint16_t action) { pStream.WriteShort(5, action); }
 void CPNewCharacterAnimation::SubAction(std::uint16_t subAction) { pStream.WriteShort(7, subAction); }
 void CPNewCharacterAnimation::SubSubAction(std::uint8_t subSubAction) {
@@ -1031,8 +1031,8 @@ CPPersonalLightLevel::CPPersonalLightLevel(CChar &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPPersonalLightLevel::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
-void CPPersonalLightLevel::Level(LIGHTLEVEL lightLevel) { pStream.WriteByte(5, lightLevel); }
+void CPPersonalLightLevel::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
+void CPPersonalLightLevel::Level(lightlevel_t lightLevel) { pStream.WriteByte(5, lightLevel); }
 
 CPPersonalLightLevel &CPPersonalLightLevel::operator=(CChar &toCopy) {
     CopyData(toCopy);
@@ -1108,7 +1108,7 @@ CPPaperdoll::CPPaperdoll(CChar &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPPaperdoll::Serial(SERIAL tSerial) { pStream.WriteLong(1, tSerial); }
+void CPPaperdoll::Serial(serial_t tSerial) { pStream.WriteLong(1, tSerial); }
 void CPPaperdoll::FlagByte(std::uint8_t fVal) { pStream.WriteByte(65, fVal); }
 void CPPaperdoll::Text(const std::string &toPut) {
     if (toPut.length() > 60) {
@@ -1229,9 +1229,9 @@ CPGraphicalEffect::CPGraphicalEffect(std::uint8_t effectType) {
 }
 void CPGraphicalEffect::Effect(std::uint8_t effectType) { pStream.WriteByte(1, effectType); }
 void CPGraphicalEffect::SourceSerial(CBaseObject &toSet) { SourceSerial(toSet.GetSerial()); }
-void CPGraphicalEffect::SourceSerial(SERIAL toSet) { pStream.WriteLong(2, toSet); }
+void CPGraphicalEffect::SourceSerial(serial_t toSet) { pStream.WriteLong(2, toSet); }
 void CPGraphicalEffect::TargetSerial(CBaseObject &toSet) { TargetSerial(toSet.GetSerial()); }
-void CPGraphicalEffect::TargetSerial(SERIAL toSet) { pStream.WriteLong(6, toSet); }
+void CPGraphicalEffect::TargetSerial(serial_t toSet) { pStream.WriteLong(6, toSet); }
 void CPGraphicalEffect::Model(std::int16_t nModel) { pStream.WriteShort(10, nModel); }
 void CPGraphicalEffect::X(std::int16_t nX) { pStream.WriteShort(12, nX); }
 void CPGraphicalEffect::Y(std::int16_t nY) { pStream.WriteShort(14, nY); }
@@ -1377,7 +1377,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
 
     pStream.WriteByte(0, (pStream.GetByte(0) + statNum));
 }
-void CPUpdateStat::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPUpdateStat::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPUpdateStat::MaxVal(std::int16_t maxVal) { pStream.WriteShort(5, maxVal); }
 void CPUpdateStat::CurVal(std::int16_t curVal) { pStream.WriteShort(7, curVal); }
 
@@ -1408,8 +1408,8 @@ CPDeathAction::CPDeathAction(CChar &dying, CItem &corpse) {
     Corpse(corpse.GetSerial());
 }
 CPDeathAction::CPDeathAction() { InternalReset(); }
-void CPDeathAction::Player(SERIAL toSet) { pStream.WriteLong(1, toSet); }
-void CPDeathAction::Corpse(SERIAL toSet) { pStream.WriteLong(5, toSet); }
+void CPDeathAction::Player(serial_t toSet) { pStream.WriteLong(1, toSet); }
+void CPDeathAction::Corpse(serial_t toSet) { pStream.WriteLong(5, toSet); }
 void CPDeathAction::FallDirection(std::uint8_t toFall) { pStream.WriteByte(12, toFall); }
 CPDeathAction &CPDeathAction::operator=(CChar &dying) {
     Player(dying.GetSerial());
@@ -1481,7 +1481,7 @@ CPDrawContainer &CPDrawContainer::operator=(CItem &toCopy) {
     return (*this);
 }
 void CPDrawContainer::CopyData(CItem &toCopy) { Serial(toCopy.GetSerial()); }
-void CPDrawContainer::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPDrawContainer::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPOpenGump()
@@ -1599,7 +1599,7 @@ CPOpenGump &CPOpenGump::operator=(CChar &toCopy) {
     return (*this);
 }
 void CPOpenGump::CopyData(CChar &toCopy) { Serial(toCopy.GetSerial()); }
-void CPOpenGump::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPOpenGump::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPTargetCursor()
@@ -1636,7 +1636,7 @@ CPTargetCursor::CPTargetCursor() {
     CursorType(0);
 }
 void CPTargetCursor::Type(std::uint8_t nType) { pStream.WriteByte(1, nType); }
-void CPTargetCursor::ID(SERIAL toSet) { pStream.WriteLong(2, toSet); }
+void CPTargetCursor::ID(serial_t toSet) { pStream.WriteLong(2, toSet); }
 void CPTargetCursor::CursorType(std::uint8_t nType) { pStream.WriteByte(6, nType); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1989,7 +1989,7 @@ CPStatWindow::CPStatWindow(CBaseObject &toCopy, CSocket &target) {
         Flag(0);
     }
 }
-void CPStatWindow::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPStatWindow::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 void CPStatWindow::Name(const std::string &nName) {
     if (nName.length() >= 30) {
         pStream.WriteString(7, nName, 29);
@@ -2330,7 +2330,7 @@ CPTrackingArrow &CPTrackingArrow::operator=(CBaseObject &toCopy) {
     return (*this);
 }
 void CPTrackingArrow::Active(std::uint8_t value) { pStream.WriteByte(1, value); }
-void CPTrackingArrow::AddSerial(SERIAL targetSerial) {
+void CPTrackingArrow::AddSerial(serial_t targetSerial) {
     pStream.ReserveSize(10);
     pStream.WriteLong(6, targetSerial);
 }
@@ -2393,7 +2393,7 @@ CPDyeVat::CPDyeVat(CBaseObject &target) {
     InternalReset();
     CopyData(target);
 }
-void CPDyeVat::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPDyeVat::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPDyeVat::Model(std::int16_t toSet) { pStream.WriteShort(7, toSet); }
 CPDyeVat &CPDyeVat::operator=(CBaseObject &target) {
     CopyData(target);
@@ -2438,7 +2438,7 @@ CPMultiPlacementView::CPMultiPlacementView(CItem &target) {
     CopyData(target);
 }
 void CPMultiPlacementView::RequestType(std::uint8_t rType) { pStream.WriteByte(1, rType); }
-void CPMultiPlacementView::DeedSerial(SERIAL toSet) { pStream.WriteLong(2, toSet); }
+void CPMultiPlacementView::DeedSerial(serial_t toSet) { pStream.WriteLong(2, toSet); }
 void CPMultiPlacementView::MultiModel(std::int16_t toSet) { pStream.WriteShort(18, toSet); }
 void CPMultiPlacementView::SetHue(std::uint16_t hueValue) {
     pStream.ReserveSize(30);
@@ -2449,7 +2449,7 @@ CPMultiPlacementView &CPMultiPlacementView::operator=(CItem &target) {
     return (*this);
 }
 
-CPMultiPlacementView::CPMultiPlacementView(SERIAL toSet) {
+CPMultiPlacementView::CPMultiPlacementView(serial_t toSet) {
     InternalReset();
     DeedSerial(toSet);
 }
@@ -2711,13 +2711,13 @@ void CPAddItemToCont::UOKRFlag(bool newVal) {
     uokrFlag = newVal;
     pStream.ReserveSize((uokrFlag ? 21 : 20));
 }
-void CPAddItemToCont::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPAddItemToCont::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPAddItemToCont::Model(std::int16_t toSet) { pStream.WriteShort(5, toSet); }
 void CPAddItemToCont::NumItems(std::int16_t toSet) { pStream.WriteShort(8, toSet); }
 void CPAddItemToCont::X(std::int16_t x) { pStream.WriteShort(10, x); }
 void CPAddItemToCont::Y(std::int16_t y) { pStream.WriteShort(12, y); }
 void CPAddItemToCont::GridLocation(std::int8_t gridLoc) { pStream.WriteByte(14, gridLoc); }
-void CPAddItemToCont::Container(SERIAL toAdd) { pStream.WriteLong((uokrFlag ? 15 : 14), toAdd); }
+void CPAddItemToCont::Container(serial_t toAdd) { pStream.WriteLong((uokrFlag ? 15 : 14), toAdd); }
 void CPAddItemToCont::Colour(std::int16_t toSet) { pStream.WriteShort((uokrFlag ? 19 : 18), toSet); }
 void CPAddItemToCont::Object(CItem &toAdd) { CopyData(toAdd); }
 
@@ -2743,7 +2743,7 @@ CPKickPlayer::CPKickPlayer(CChar &toCopy) {
     InternalReset();
     CopyData(toCopy);
 }
-void CPKickPlayer::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPKickPlayer::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 CPKickPlayer &CPKickPlayer::operator=(CChar &toCopy) {
     CopyData(toCopy);
     return (*this);
@@ -2804,9 +2804,9 @@ CPFightOccurring::CPFightOccurring(CChar &attacker, CChar &defender) {
     Attacker(attacker);
     Defender(defender);
 }
-void CPFightOccurring::Attacker(SERIAL toSet) { pStream.WriteLong(2, toSet); }
+void CPFightOccurring::Attacker(serial_t toSet) { pStream.WriteLong(2, toSet); }
 void CPFightOccurring::Attacker(CChar &attacker) { Attacker(attacker.GetSerial()); }
-void CPFightOccurring::Defender(SERIAL toSet) { pStream.WriteLong(6, toSet); }
+void CPFightOccurring::Defender(serial_t toSet) { pStream.WriteLong(6, toSet); }
 void CPFightOccurring::Defender(CChar &defender) { Defender(defender.GetSerial()); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2958,7 +2958,7 @@ CPBookTitlePage::CPBookTitlePage() {
     pStream.ReserveSize(99);
     pStream.WriteByte(0, 0x93);
 }
-void CPBookTitlePage::Serial(SERIAL toSet) { pStream.WriteLong(1, toSet); }
+void CPBookTitlePage::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 void CPBookTitlePage::WriteFlag(std::uint8_t flag) { pStream.WriteByte(5, flag); }
 void CPBookTitlePage::NewFlag(std::uint8_t flag) { pStream.WriteByte(6, flag); }
 void CPBookTitlePage::Pages(std::int16_t pages) { pStream.WriteShort(7, pages); }
@@ -2998,8 +2998,8 @@ CPUltimaMessenger::CPUltimaMessenger() {
     pStream.ReserveSize(9);
     pStream.WriteByte(0, 0xBB);
 }
-void CPUltimaMessenger::ID1(SERIAL toSet) { pStream.WriteLong(1, toSet); }
-void CPUltimaMessenger::ID2(SERIAL toSet) { pStream.WriteLong(5, toSet); }
+void CPUltimaMessenger::ID1(serial_t toSet) { pStream.WriteLong(1, toSet); }
+void CPUltimaMessenger::ID2(serial_t toSet) { pStream.WriteLong(5, toSet); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPGumpTextEntry()
@@ -3038,7 +3038,7 @@ CPGumpTextEntry::CPGumpTextEntry(const std::string &text1, const std::string &te
     Text1(text1);
     Text2(text2);
 }
-void CPGumpTextEntry::Serial(SERIAL id) { pStream.WriteLong(3, id); }
+void CPGumpTextEntry::Serial(serial_t id) { pStream.WriteLong(3, id); }
 void CPGumpTextEntry::ParentId(std::uint8_t newVal) { pStream.WriteByte(7, newVal); }
 void CPGumpTextEntry::ButtonId(std::uint8_t newVal) { pStream.WriteByte(8, newVal); }
 void CPGumpTextEntry::Cancel(std::uint8_t newVal) {
@@ -3049,7 +3049,7 @@ void CPGumpTextEntry::Style(std::uint8_t newVal) {
     std::int16_t t1Len = Text1Len();
     pStream.WriteByte(static_cast<size_t>(t1Len) + 12, newVal);
 }
-void CPGumpTextEntry::Format(SERIAL id) {
+void CPGumpTextEntry::Format(serial_t id) {
     std::int16_t t1Len = Text1Len();
     pStream.WriteLong(static_cast<size_t>(t1Len) + 13, id);
 }
@@ -3444,7 +3444,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, std::
 
             // First, look up the recruits to see who's online
             for (size_t i = 0; i < numRecruits; i++) {
-                SERIAL recruitSerial = mGuild->RecruitNumber(i);
+                auto recruitSerial = mGuild->RecruitNumber(i);
                 CChar *guildRecruit = CalcCharObjFromSer(recruitSerial);
                 if (guildRecruit != nullptr && guildRecruit->GetSocket() != nullptr) {
                     if (guildRecruit->GetSerial() == mChar->GetSerial())
@@ -3476,7 +3476,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, std::
 
             // Then, look up the guild members to see who's online
             for (size_t i = 0; i < numMembers; i++) {
-                SERIAL memberSerial = mGuild->MemberNumber(i);
+                auto memberSerial = mGuild->MemberNumber(i);
                 CChar *guildMember = CalcCharObjFromSer(memberSerial);
                 if (guildMember != nullptr && guildMember->GetSocket() != nullptr) {
                     if (guildMember->GetSerial() == mChar->GetSerial())
@@ -3714,7 +3714,7 @@ void CPItemsInContainer::Type(std::uint8_t contType) {
 void CPItemsInContainer::UOKRFlag(bool value) { uokrFlag = value; }
 void CPItemsInContainer::PlayerVendor(bool value) { isPlayerVendor = value; }
 
-void CPItemsInContainer::VendorSerial(SERIAL toSet) { vendorSerial = toSet; }
+void CPItemsInContainer::VendorSerial(serial_t toSet) { vendorSerial = toSet; }
 
 std::uint16_t CPItemsInContainer::NumberOfItems(void) const { return pStream.GetUShort(3); }
 
@@ -3755,7 +3755,7 @@ void CPItemsInContainer::AddItem(CItem *toAdd, std::uint16_t itemNum, CSocket *m
     }
 }
 
-void CPItemsInContainer::Add(std::uint16_t itemNum, SERIAL toAdd, SERIAL cont, std::uint8_t amount) {
+void CPItemsInContainer::Add(std::uint16_t itemNum, serial_t toAdd, serial_t cont, std::uint8_t amount) {
     std::uint16_t baseOffset = static_cast<std::uint16_t>((itemNum * (uokrFlag ? 20 : 19)) + 5);
 
     pStream.WriteLong(baseOffset + 0, toAdd);
@@ -4481,7 +4481,7 @@ void CP3DGraphicalEffect::ExplodeEffectId(std::uint16_t explodeEffectId) {
 void CP3DGraphicalEffect::MovingEffectId(std::uint16_t movingEffectId) {
     pStream.WriteShort(40, movingEffectId);
 }
-void CP3DGraphicalEffect::TargetObjSerial(SERIAL targetObjSerial) {
+void CP3DGraphicalEffect::TargetObjSerial(serial_t targetObjSerial) {
     pStream.WriteLong(42, targetObjSerial);
 }
 void CP3DGraphicalEffect::LayerId(std::uint8_t layerId) { pStream.WriteByte(46, layerId); }
@@ -4525,7 +4525,7 @@ void CPMapRelated::Location(std::int16_t x, std::int16_t y) {
     pStream.WriteShort(9, y);
 }
 void CPMapRelated::Command(std::uint8_t cmd) { pStream.WriteByte(5, cmd); }
-void CPMapRelated::ID(SERIAL key) { pStream.WriteLong(1, key); }
+void CPMapRelated::ID(serial_t key) { pStream.WriteLong(1, key); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPDrawObject()
@@ -5194,7 +5194,7 @@ void CPUnicodeSpeech::CopyData(CPITalkRequestUnicode &talking) {
     SetLength(48 + (2 * length));
     pStream.WriteArray(48, (std::uint8_t *)uniTxt, (2 * static_cast<size_t>(length)));
 }
-void CPUnicodeSpeech::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPUnicodeSpeech::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 void CPUnicodeSpeech::ID(std::uint16_t toSet) { pStream.WriteShort(7, toSet); }
 
 void CPUnicodeSpeech::GhostIt([[maybe_unused]] std::uint8_t method) {
@@ -5311,7 +5311,7 @@ void CPUnicodeMessage::SetLength(std::uint16_t value) {
     pStream.ReserveSize(value);
     pStream.WriteShort(1, value);
 }
-void CPUnicodeMessage::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPUnicodeMessage::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 void CPUnicodeMessage::ID(std::uint16_t toSet) { pStream.WriteShort(7, toSet); }
 
 // o------------------------------------------------------------------------------------------------o
@@ -5410,7 +5410,7 @@ void CPSecureTrading::InternalReset(void) {
     pStream.WriteByte(0, 0x6F);
     pStream.WriteByte(2, 8);
 }
-void CPSecureTrading::CopyData(CBaseObject &mItem, SERIAL mItem2, SERIAL mItem3) {
+void CPSecureTrading::CopyData(CBaseObject &mItem, serial_t mItem2, serial_t mItem3) {
     pStream.ReserveSize(16);
     pStream.WriteByte(2, 16);
     pStream.WriteLong(4, mItem.GetSerial());
@@ -5422,7 +5422,7 @@ CPSecureTrading::CPSecureTrading(CBaseObject &mItem) {
     InternalReset();
     pStream.WriteLong(4, mItem.GetSerial());
 }
-CPSecureTrading::CPSecureTrading(CBaseObject &mItem, SERIAL mItem2, SERIAL mItem3) {
+CPSecureTrading::CPSecureTrading(CBaseObject &mItem, serial_t mItem2, serial_t mItem3) {
     InternalReset();
     CopyData(mItem, mItem2, mItem3);
 }
@@ -5569,7 +5569,7 @@ void CPBookPage::Finalize(void) {
     pStream.WriteShort(1, bookLength);
     pStream.WriteShort(7, pageCount);
 }
-void CPBookPage::Serial(SERIAL value) { pStream.WriteLong(3, value); }
+void CPBookPage::Serial(serial_t value) { pStream.WriteLong(3, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPSendGumpMenu()
@@ -5598,8 +5598,8 @@ CPSendGumpMenu::CPSendGumpMenu() {
     pStream.WriteByte(14, 0x6E); // default x
     pStream.WriteByte(18, 0x46); // default y
 }
-void CPSendGumpMenu::UserId(SERIAL value) { pStream.WriteLong(3, value); }
-void CPSendGumpMenu::GumpId(SERIAL value) { pStream.WriteLong(7, value); }
+void CPSendGumpMenu::UserId(serial_t value) { pStream.WriteLong(3, value); }
+void CPSendGumpMenu::GumpId(serial_t value) { pStream.WriteLong(7, value); }
 void CPSendGumpMenu::X(std::uint32_t value) { pStream.WriteLong(11, value); }
 void CPSendGumpMenu::Y(std::uint32_t value) { pStream.WriteLong(15, value); }
 void CPSendGumpMenu::addCommand(const std::string &msg) {
@@ -6546,7 +6546,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     }
 }
 
-void CPToolTip::CopyData(SERIAL objSer, bool addAmount, bool playerVendor) {
+void CPToolTip::CopyData(serial_t objSer, bool addAmount, bool playerVendor) {
     size_t totalStringLen = 0; // total string length
 
     if (objSer < BASEITEMSERIAL) {
@@ -6589,7 +6589,7 @@ void CPToolTip::CopyData(SERIAL objSer, bool addAmount, bool playerVendor) {
 }
 
 CPToolTip::CPToolTip() { InternalReset(); }
-CPToolTip::CPToolTip(SERIAL objSer, CSocket *mSock, bool addAmount, bool playerVendor) {
+CPToolTip::CPToolTip(serial_t objSer, CSocket *mSock, bool addAmount, bool playerVendor) {
     tSock = mSock;
     InternalReset();
     CopyData(objSer, addAmount, playerVendor);
@@ -6844,7 +6844,7 @@ void CPOpenMsgBoardPost::CopyData(CSocket *mSock, const MsgBoardPost_st &mbPost)
         pStream.WriteShort(1, static_cast<std::uint16_t>(totSize));      // packetSize
         pStream.WriteLong(4, mSock->GetDWord(4));               // board serial
         pStream.WriteLong(8, (mbPost.serial + BASEITEMSERIAL)); // message serial
-        SERIAL pSerial = mbPost.parentSerial;                   // thread serial
+        auto pSerial = mbPost.parentSerial;                   // thread serial
         if (pSerial) {
             pSerial += BASEITEMSERIAL;
         }
@@ -6961,8 +6961,8 @@ void CPSendMsgBoardPosts::InternalReset(void) {
     pStream.WriteShort(1, 5);
 }
 
-void CPSendMsgBoardPosts::CopyData(CSocket *mSock, SERIAL mSerial, [[maybe_unused]] std::uint8_t pToggle,
-                                   SERIAL oSerial) {
+void CPSendMsgBoardPosts::CopyData(CSocket *mSock, serial_t mSerial, [[maybe_unused]] std::uint8_t pToggle,
+                                   serial_t oSerial) {
     size_t byteOffset = pStream.GetSize();
     if (mSock->ClientVerShort() >= CVS_6017) {
         pStream.ReserveSize(byteOffset + 20);
@@ -8031,7 +8031,7 @@ void CPClilocMessage::CopyData(CBaseObject &toCopy) {
     Name(toCopyName);
 }
 
-void CPClilocMessage::Serial(SERIAL toSet) { pStream.WriteLong(3, toSet); }
+void CPClilocMessage::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 
 void CPClilocMessage::Body(std::uint16_t toSet) { pStream.WriteShort(7, toSet); }
 

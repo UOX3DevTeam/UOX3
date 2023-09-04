@@ -42,7 +42,7 @@ std::string GetUptime(void);
 //|	Purpose		-	Open entry gump with specified dictionary message and max value
 // length
 // o------------------------------------------------------------------------------------------------o
-void TextEntryGump(CSocket *s, SERIAL ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry) {
+void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t index, std::int16_t maxlength, std::int32_t dictEntry) {
     if (s == nullptr)
         return;
 
@@ -166,7 +166,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in townstone gump
 // o------------------------------------------------------------------------------------------------o
-void HandleTownstoneButton(CSocket *s, SERIAL button, SERIAL ser, SERIAL type) {
+void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t type) {
     CChar *mChar = s->CurrcharObj();
     CTownRegion *targetRegion;
     CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
@@ -1032,7 +1032,7 @@ void CPage(CSocket *s, const std::string &reason) {
     pageToAdd.IsHandled(false);
     pageToAdd.TimeOfPage(time(nullptr));
 
-    SERIAL callNum = CounselorQueue->Add(&pageToAdd);
+    serial_t callNum = CounselorQueue->Add(&pageToAdd);
     if (callNum != INVALIDSERIAL) {
         mChar->SetPlayerCallNum(callNum);
         if (reason == "OTHER") {
@@ -1082,7 +1082,7 @@ void GMPage(CSocket *s, const std::string &reason) {
     pageToAdd.WhoPaging(mChar->GetSerial());
     pageToAdd.IsHandled(false);
     pageToAdd.TimeOfPage(time(nullptr));
-    SERIAL callNum = GMQueue->Add(&pageToAdd);
+    serial_t callNum = GMQueue->Add(&pageToAdd);
     if (callNum != INVALIDSERIAL) {
         mChar->SetPlayerCallNum(callNum);
         if (reason == "OTHER") {
@@ -1790,7 +1790,7 @@ bool CPIGumpMenuSelect::Handle(void) {
         CChar *targChar = nullptr;
         if (buttonId == 1 && switchCount > 0) // Clicked on a players Virtue Gump icon
         {
-            SERIAL targSer = tSock->GetDWord(19);
+            serial_t targSer = tSock->GetDWord(19);
             targChar = CalcCharObjFromSer(targSer);
         }
         else // Clicked an item on the virtue gump
@@ -2196,7 +2196,7 @@ void CGumpDisplay::SetTitle(const std::string &newTitle) { title = newTitle; }
 // is data
 // o------------------------------------------------------------------------------------------------o
 void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    std::uint32_t type, SERIAL serial) {
+                    std::uint32_t type, serial_t serial) {
     CPSendGumpMenu toSend;
     toSend.GumpId(type);
     toSend.UserId(serial);
@@ -2219,7 +2219,7 @@ void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<st
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump data to the socket
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, SERIAL serial) {
+void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
     constexpr auto maxsize = 512;
     std::string temp;
     size_t i;

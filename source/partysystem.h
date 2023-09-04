@@ -149,7 +149,7 @@ class PartyFactory {
 
   protected:
     GenericList<Party *> parties;
-    std::map<SERIAL, Party *> partyQuickLook;
+    std::map<serial_t, Party *> partyQuickLook;
 
     void AddLookup(Party *toQuickLook, CChar *toSave);
     void RemoveLookup(CChar *toRemove);

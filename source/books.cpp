@@ -57,7 +57,7 @@ CBooks *Books = nullptr;
 // o------------------------------------------------------------------------------------------------o
 bool CPINewBookHeader::Handle(void) {
     if (tSock != nullptr) {
-        const SERIAL bookSer = tSock->GetDWord(3);
+        const serial_t bookSer = tSock->GetDWord(3);
         CItem *mBook = CalcItemObjFromSer(bookSer);
         if (!ValidateObject(mBook))
             return true;

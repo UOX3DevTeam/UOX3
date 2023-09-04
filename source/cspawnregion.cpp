@@ -19,7 +19,7 @@
 
 using namespace std::string_literals;
 
-const TIMERVAL DEFSPAWN_NEXTTIME = 0;
+const timerval_t DEFSPAWN_NEXTTIME = 0;
 const std::uint16_t DEFSPAWN_CALL = 1;
 const std::int16_t DEFSPAWN_X1 = 0;
 const std::int16_t DEFSPAWN_X2 = 0;
@@ -162,8 +162,8 @@ void CSpawnRegion::SetMaxTime(std::uint8_t newVal) { maxTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for when a spawnregion will next spawn a new object
 // o------------------------------------------------------------------------------------------------o
-TIMERVAL CSpawnRegion::GetNextTime(void) const { return nextTime; }
-void CSpawnRegion::SetNextTime(TIMERVAL newVal) { nextTime = newVal; }
+timerval_t CSpawnRegion::GetNextTime(void) const { return nextTime; }
+void CSpawnRegion::SetNextTime(timerval_t newVal) { nextTime = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSpawnRegion::SetPrefZ()

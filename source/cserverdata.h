@@ -389,14 +389,12 @@ class CServerData {
     std::uint8_t msgRemovalLevel; //	If not 0, then players can remove posts
 
     // WorldLight
-    LIGHTLEVEL dungeonLightLevel; //	Default light level for a dungeon, if not subject to a
+    lightlevel_t dungeonLightLevel; //	Default light level for a dungeon, if not subject to a
                                   // weather system
-    LIGHTLEVEL
-    currentLightLevel; //	Default current light level if not subject to a weather system
-    LIGHTLEVEL brightnessLightLevel; //	Default brightest light level if not subject to a weather
+    lightlevel_t currentLightLevel; //	Default current light level if not subject to a weather system
+    lightlevel_t brightnessLightLevel; //	Default brightest light level if not subject to a weather
                                      // system
-    LIGHTLEVEL
-    darknessLightLevel; //	Default darkest light level if not subject to a weather system
+    lightlevel_t darknessLightLevel; //	Default darkest light level if not subject to a weather system
 
     // WorldTimer								//	days/hours/minutes/seconds to it's
     // own file?
@@ -534,18 +532,18 @@ class CServerData {
     auto UseUnicodeMessages() const -> bool;
 
     std::int16_t ServerMoon(std::int16_t slot) const;
-    LIGHTLEVEL WorldLightDarkLevel() const;
-    LIGHTLEVEL WorldLightBrightLevel() const;
-    LIGHTLEVEL WorldLightCurrentLevel() const;
-    LIGHTLEVEL DungeonLightLevel() const;
+    lightlevel_t WorldLightDarkLevel() const;
+    lightlevel_t WorldLightBrightLevel() const;
+    lightlevel_t WorldLightCurrentLevel() const;
+    lightlevel_t DungeonLightLevel() const;
     auto ServerStartPrivs() const -> std::uint16_t;
     std::int16_t ServerStartGold() const;
 
     auto ServerMoon(std::int16_t slot, std::int16_t value) -> void;
-    auto WorldLightDarkLevel(LIGHTLEVEL value) -> void;
-    auto WorldLightBrightLevel(LIGHTLEVEL value) -> void;
-    auto WorldLightCurrentLevel(LIGHTLEVEL value) -> void;
-    auto DungeonLightLevel(LIGHTLEVEL value) -> void;
+    auto WorldLightDarkLevel(lightlevel_t value) -> void;
+    auto WorldLightBrightLevel(lightlevel_t value) -> void;
+    auto WorldLightCurrentLevel(lightlevel_t value) -> void;
+    auto DungeonLightLevel(lightlevel_t value) -> void;
     auto ServerStartPrivs(std::uint16_t value) -> void;
     auto ServerStartGold(std::int16_t value) -> void;
     auto ParseIni(const std::string &filename) -> bool;
@@ -612,7 +610,7 @@ class CServerData {
     std::int16_t MaxStaminaMovement() const;
     auto SystemTimer(cSD_TID timerId, std::uint16_t value) -> void;
     auto SystemTimer(cSD_TID timerId) const -> std::uint16_t;
-    TIMERVAL BuildSystemTimeValue(cSD_TID timerId) const;
+    timerval_t BuildSystemTimeValue(cSD_TID timerId) const;
     auto SysMsgColour(std::uint16_t value) -> void;
     auto SysMsgColour() const -> std::uint16_t;
 

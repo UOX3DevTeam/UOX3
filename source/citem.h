@@ -29,7 +29,7 @@ class CItem : public CBaseObject {
 
     CBaseObject *contObj;
     std::uint8_t glowEffect;
-    SERIAL glow; // identifies glowing objects
+    serial_t glow; // identifies glowing objects
     colour_t glowColour;
     std::int8_t madeWith;     // Store the skills used to make this item
     std::int32_t rndValueRate; // Store the value calculated base on RANDOMVALUE in region.dfn
@@ -42,12 +42,12 @@ class CItem : public CBaseObject {
     // select RANKSYSTEM 0. Vars: LODAMAGE, HIDAMAGE, ATT, DEF, HP, MAXHP
     std::int8_t rank; // for rank system, this value is the LEVEL of the item from 1 to 10.  Simply
                // multiply t he rank*10 and calculate the MALUS this item has from the original.
-    ARMORCLASS armorClass;
+    armorclass_t armorClass;
     std::uint16_t restock; // Number up to which shopkeeper should restock this item
     std::int8_t movable; // 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner
                   // movable.
-    TIMERVAL tempTimer;
-    TIMERVAL decayTime;
+    timerval_t tempTimer;
+    timerval_t decayTime;
     std::uint8_t spd;         // The speed of the weapon
     std::uint16_t maxHp;       // Max number of hit points an item can have.
     std::uint16_t amount;      // Amount of items in pile
@@ -55,7 +55,7 @@ class CItem : public CBaseObject {
     ItemTypes type;   // For things that do special things on doubleclicking
     std::int8_t offspell;
     std::uint16_t entryMadeFrom;
-    SERIAL creator; // Store the serial of the player made this item
+    serial_t creator; // Store the serial of the player made this item
     std::int8_t gridLoc;
     std::int32_t weightMax;  // Maximum weight a container can hold
     std::int32_t baseWeight; // Base weight of item. Applied when item is created for the first time, based
@@ -66,7 +66,7 @@ class CItem : public CBaseObject {
     std::uint16_t maxUses;    // Max number of uses an item can have
     std::uint16_t usesLeft;   // Current number of uses left on an item
     std::uint16_t regionNum;
-    TIMERVAL tempLastTraded; // Temporary timestamp for when item was last traded between players
+    timerval_t tempLastTraded; // Temporary timestamp for when item was last traded between players
                              // via secure trade window (not saved)
     std::uint8_t stealable; // 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town
                     // rares, etc)
@@ -115,10 +115,10 @@ class CItem : public CBaseObject {
     auto Dupe(ObjectType itemType = OT_ITEM) -> CItem *;
 
     auto GetCont() const -> CBaseObject *;
-    auto GetContSerial() const -> SERIAL;
+    auto GetContSerial() const -> serial_t;
 
     auto SetCont(CBaseObject *newCont, bool removeFromView = false) -> bool;
-    auto SetContSerial(SERIAL newSerial) -> bool;
+    auto SetContSerial(serial_t newSerial) -> bool;
 
     auto GetGridLocation() const -> std::int8_t;
     auto SetGridLocation(std::int8_t newLoc) -> void;
@@ -155,12 +155,12 @@ class CItem : public CBaseObject {
     auto SetDivineLock(bool newValue) -> void;
 
     auto GetName2() const -> const std::string &;
-    auto GetCreator() const -> SERIAL;
+    auto GetCreator() const -> serial_t;
     auto GetDesc() const -> std::string;
     auto GetEvent() const -> std::string;
 
     auto SetName2(const std::string &value) -> void;
-    auto SetCreator(SERIAL newValue) -> void;
+    auto SetCreator(serial_t newValue) -> void;
     auto SetDesc(std::string newValue) -> void;
     auto SetEvent(std::string newValue) -> void;
 
@@ -213,13 +213,13 @@ class CItem : public CBaseObject {
     auto GetMovable() const -> std::int8_t;
     auto SetMovable(std::int8_t newValue) -> void;
 
-    auto GetTempLastTraded() const -> TIMERVAL;
-    auto GetTempTimer() const -> TIMERVAL;
-    auto GetDecayTime() const -> TIMERVAL;
+    auto GetTempLastTraded() const -> timerval_t;
+    auto GetTempTimer() const -> timerval_t;
+    auto GetDecayTime() const -> timerval_t;
 
-    auto SetTempLastTraded(TIMERVAL newValue) -> void;
-    auto SetTempTimer(TIMERVAL newValue) -> void;
-    auto SetDecayTime(TIMERVAL newValue) -> void;
+    auto SetTempLastTraded(timerval_t newValue) -> void;
+    auto SetTempTimer(timerval_t newValue) -> void;
+    auto SetDecayTime(timerval_t newValue) -> void;
 
     virtual std::uint8_t GetPriv(void) const;
     virtual void SetPriv(std::uint8_t newValue);
@@ -240,8 +240,8 @@ class CItem : public CBaseObject {
     auto GetUsesLeft() const -> std::uint16_t;
     auto SetUsesLeft(std::uint16_t newValue) -> void;
 
-    auto GetArmourClass() const -> ARMORCLASS;
-    auto SetArmourClass(ARMORCLASS newValue) -> void;
+    auto GetArmourClass() const -> armorclass_t;
+    auto SetArmourClass(armorclass_t newValue) -> void;
 
     auto GetRank() const -> std::int8_t;
     auto SetRank(std::int8_t newValue) -> void;
@@ -292,8 +292,8 @@ class CItem : public CBaseObject {
     // creator. A negative value if the play is not skilled
     // enough!
 
-    auto GetGlow() const -> SERIAL;
-    auto SetGlow(SERIAL newValue) -> void;
+    auto GetGlow() const -> serial_t;
+    auto SetGlow(serial_t newValue) -> void;
 
     auto GetGlowColour() const -> colour_t;
     auto SetGlowColour(colour_t newValue) -> void;

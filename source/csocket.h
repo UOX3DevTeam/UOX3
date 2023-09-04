@@ -128,7 +128,7 @@ class CSocket {
     std::int16_t walkSequence;
     size_t postAckCount;
     PickupLocations pSpot;
-    SERIAL pFrom;
+    serial_t pFrom;
 
     GenericList<CItem *> contsOpened;
 
@@ -167,14 +167,14 @@ class CSocket {
 
     bool targetok;
 
-    std::vector<SERIAL> postAcked;
-    std::vector<SERIAL>::iterator ackIter;
+    std::vector<serial_t> postAcked;
+    std::vector<serial_t>::iterator ackIter;
 
     std::uint32_t Pack(void *pvIn, void *pvOut, std::int32_t len);
 
     // Timer Vals moved here from CChar due to their inherently temporary nature and to reduce
     // wasted memory
-    TIMERVAL pcTimers[tPC_COUNT];
+    timerval_t pcTimers[tPC_COUNT];
 
   public:
     CSocket(size_t sockNum);
@@ -212,7 +212,7 @@ class CSocket {
     std::int16_t PickupY(void) const;
     std::int8_t PickupZ(void) const;
     PickupLocations PickupSpot(void) const;
-    SERIAL PickupSerial(void) const;
+    serial_t PickupSerial(void) const;
     bool FirstPacket(void) const;
     std::int32_t IdleTimeout(void) const;
     bool WasIdleWarned(void) const;
@@ -258,10 +258,10 @@ class CSocket {
     std::uint8_t DyeAll(void) const;
     std::int8_t ClickZ(void) const;
 
-    SERIAL FirstPostAck(void);
-    SERIAL NextPostAck(void);
+    serial_t FirstPostAck(void);
+    serial_t NextPostAck(void);
     bool FinishedPostAck(void);
-    SERIAL RemovePostAck(void);
+    serial_t RemovePostAck(void);
 
     size_t PostCount(void) const;
     size_t PostAckCount(void) const;
@@ -281,7 +281,7 @@ class CSocket {
     void PickupY(std::int16_t y);
     void PickupZ(std::int8_t z);
     void PickupSpot(PickupLocations newValue);
-    void PickupSerial(SERIAL pickupSerial);
+    void PickupSerial(serial_t pickupSerial);
     void FirstPacket(bool newValue);
     void IdleTimeout(std::int32_t newValue);
     void WasIdleWarned(bool value);
@@ -342,7 +342,7 @@ class CSocket {
     void TargetOK(bool newValue);
     void ClickX(std::int16_t newValue);
     void ClickY(std::int16_t newValue);
-    void PostAcked(SERIAL newValue);
+    void PostAcked(serial_t newValue);
     void PostAckCount(size_t newValue);
     void PostClear();
     void XText(const std::string &newValue);
@@ -387,8 +387,8 @@ class CSocket {
     std::uint16_t BytesSentWarning(void) const;
     void BytesSentWarning(std::uint16_t newValue);
 
-    TIMERVAL GetTimer(cS_TID timerId) const;
-    void SetTimer(cS_TID timerId, TIMERVAL value);
+    timerval_t GetTimer(cS_TID timerId) const;
+    void SetTimer(cS_TID timerId, timerval_t value);
     void ClearTimers(void);
     colour_t GetFlagColour(CChar *src, CChar *trg);
     auto GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string;

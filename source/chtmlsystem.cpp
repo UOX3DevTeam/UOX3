@@ -362,7 +362,7 @@ void cHTMLTemplate::Process(void) {
                             // PlayerRace -- needs testing
                             sPos = parsedInline.find("%playerrace");
                             while (sPos != std::string::npos) {
-                                RACEID myRace = tChar->GetRace();
+                                raceid_t myRace = tChar->GetRace();
                                 const std::string rName = Races->Name(myRace);
                                 size_t raceLenName = rName.length();
 
