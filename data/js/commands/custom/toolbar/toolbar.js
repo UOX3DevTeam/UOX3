@@ -32,7 +32,7 @@ function toolbar( pUser )
 	uox3gump.Free();
 }
 
-function CommandInfo( pUser )
+function CommandInfo( pUser ) 
 {
 	var socket = pUser.socket;
 	var uox3gump = new Gump;
@@ -40,7 +40,13 @@ function CommandInfo( pUser )
 	uox3gump.AddPage( 0 );
 	uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
 	uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
+	page0( pUser, uox3gump );
+	uox3gump.Send( pUser );
+	uox3gump.Free();
+}
 
+function page0( pUser, uox3gump )
+{
 	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1 );
 	uox3gump.AddText( 190, 60, 0, "A" );
 
@@ -92,16 +98,52 @@ function CommandInfo( pUser )
 	uox3gump.AddPageButton( 160, 540, 2443, 2444, 16 );
 	uox3gump.AddText( 190, 540, 0, "R" );
 
-	uox3gump.AddPageButton( 160, 570, 2443, 2444, 17 );
-	uox3gump.AddText( 190, 570, 0, "S" );
+	uox3gump.AddButton( 210, 570, 1543, 1544, 1, 0, 20 );
+	uox3gump.AddText( 170, 570, 0, "Next" );
 
 	uox3gump.AddPage( 1 );
 	TriggerEvent( 9000, "InfoA", uox3gump );
 
 	uox3gump.AddPage( 2 );
 	TriggerEvent( 9001, "InfoB", uox3gump );
+}
 
-	uox3gump.Send( pUser);
+function page20( pUser )
+{
+	var uox3gump = new Gump;
+	var socket = pUser.socket;
+	uox3gump.AddPage( 0 );
+	uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
+	uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
+
+	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1 );
+	uox3gump.AddText( 190, 60, 0, "S" );
+
+	uox3gump.AddPageButton( 160, 90, 2443, 2444, 2 );
+	uox3gump.AddText( 190, 90, 0, "T" );
+
+	uox3gump.AddPageButton( 160, 120, 2443, 2444, 3 );
+	uox3gump.AddText( 190, 120, 0, "U" );
+
+	uox3gump.AddPageButton( 160, 150, 2443, 2444, 4 );
+	uox3gump.AddText( 190, 150, 0, "V" );
+
+	uox3gump.AddPageButton( 160, 180, 2443, 2444, 5 );
+	uox3gump.AddText( 190, 180, 0, "W" );
+
+	uox3gump.AddPageButton( 160, 210, 2443, 2444, 6 );
+	uox3gump.AddText( 190, 210, 0, "X" );
+
+	uox3gump.AddPageButton( 160, 240, 2443, 2444, 7 );
+	uox3gump.AddText( 190, 240, 0, "Y" );
+
+	uox3gump.AddPageButton( 160, 270, 2443, 2444, 8 );
+	uox3gump.AddText( 190, 270, 0, "Z" );
+
+	uox3gump.AddButton( 210, 570, 1545, 1546, 1, 0, 1 );
+	uox3gump.AddText( 170, 570, 0, "Back" );
+
+	uox3gump.Send( pUser );
 	uox3gump.Free();
 }
 
@@ -131,6 +173,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.ExecuteCommand( "Add" );
 			pUser.ExecuteCommand( "toolbar" );
 			break;
+		case 20: page20(pUser);
+		break;
 	}
 }
 
