@@ -290,6 +290,11 @@
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
 15007=server/house/houseAddonUse.js
+
+//-------------------------------------------
+// Misc Command Gump Scripts [9000-9200]
+//-------------------------------------------
+9000=commands/custom/CommandInfo/InfoA.js
 }
 
 //-------------------------------------------
@@ -360,6 +365,7 @@
 1060=commands/custom/addsign.js
 1061=commands/spawn.js
 1062=commands/playtime.js
+1063=commands/custom/toolbar.js
 }
 
 //-------------------------------------------

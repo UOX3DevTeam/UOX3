@@ -13,6 +13,8 @@ function onLogin( socket, pChar )
 			TriggerEvent( 1, "DisplayAdminWelcomeGump", socket, pChar );
 			return;
 		}
+
+		TriggerEvent( 1063, "toolbar", pChar );
 	}
 
 	// Store login timestamp (in minutes) in temp tag
