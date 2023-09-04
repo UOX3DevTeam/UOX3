@@ -792,7 +792,7 @@ auto CMovement::GetBlockingDynamics(std::int16_t x, std::int16_t y, std::vector<
             auto regItems = MapArea->GetItemList();
             for (const auto &tItem : regItems->collection()) {
                 if (ValidateObject(tItem) && tItem->GetInstanceId() == instanceId) {
-                    if (!tItem->CanBeObjType(OT_MULTI)) {
+                    if (!tItem->CanBeObjType(CBaseObject::OT_MULTI)) {
 #if DEBUG_WALKING
                         Console::shared().Print(util::format("DEBUG: Item X: %i\nItem Y: %i\n",
                                                              tItem->GetX(), tItem->GetY()));
@@ -1375,7 +1375,7 @@ void CMovement::HandleItemCollision(CChar *mChar, CSocket *mSock, std::int16_t o
 
             if (EffRange || inMoveDetectRange) {
                 if (!Magic->HandleFieldEffects(mChar, tItem, id)) {
-                    if (!tItem->CanBeObjType(OT_MULTI)) {
+                    if (!tItem->CanBeObjType(CBaseObject::OT_MULTI)) {
                         bool scriptExecuted = false;
                         auto scriptTriggers = tItem->GetScriptTriggers();
                         for (auto i : scriptTriggers) {

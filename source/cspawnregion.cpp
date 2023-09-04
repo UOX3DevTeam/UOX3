@@ -673,9 +673,9 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
     std::int16_t x, y;
     std::int8_t z;
     if (FindItemSpotToSpawn(x, y, z)) {
-        auto objType = OT_ITEM;
+        auto objType = CBaseObject::OT_ITEM;
         if (isSpawner) {
-            objType = OT_SPAWNER;
+            objType = CBaseObject::OT_SPAWNER;
         }
 
         ISpawn = Items->CreateBaseScriptItem(

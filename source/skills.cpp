@@ -413,7 +413,7 @@ void CSkills::SmeltOre(CSocket *s) {
                     break;
                 }
 
-                CItem *ingot = Items->CreateScriptItem(s, chr, "0x1BF2", ingotNum, OT_ITEM, true,
+                CItem *ingot = Items->CreateScriptItem(s, chr, "0x1BF2", ingotNum, CBaseObject::OT_ITEM, true,
                                                        oreType->colour);
                 if (ingot != nullptr) {
                     ingot->SetName(util::format("%s Ingot", oreType->name.c_str()));
@@ -2369,7 +2369,7 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
         Effects->TempEffect(iCharId, iCharId, 9, 0, 3, 0);
         Effects->TempEffect(iCharId, iCharId, 9, 0, 6, 0);
         Effects->TempEffect(iCharId, iCharId, 9, 0, 9, 0);
-        iItem = Items->CreateItem(nSocket, iCharId, 0x0F8F, 1, 0, OT_ITEM, true);
+        iItem = Items->CreateItem(nSocket, iCharId, 0x0F8F, 1, 0, CBaseObject::OT_ITEM, true);
         if (iItem == nullptr)
             return;
 
@@ -2383,7 +2383,7 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
     if (itemId == 0x0E24) // Make vial of blood.
     {
         if (nItem->GetTempVar(CITV_MORE, 1) == 1) {
-            iItem = Items->CreateItem(nSocket, iCharId, 0x0F82, 1, 0, OT_ITEM, true);
+            iItem = Items->CreateItem(nSocket, iCharId, 0x0F82, 1, 0, CBaseObject::OT_ITEM, true);
             if (iItem == nullptr)
                 return;
 
@@ -2391,7 +2391,7 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
             iItem->SetTempVar(CITV_MOREX, 666);
         }
         else {
-            iItem = Items->CreateItem(nSocket, iCharId, 0x0F7D, 1, 0, OT_ITEM, true);
+            iItem = Items->CreateItem(nSocket, iCharId, 0x0F7D, 1, 0, CBaseObject::OT_ITEM, true);
             if (iItem == nullptr)
                 return;
 

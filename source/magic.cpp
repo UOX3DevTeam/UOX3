@@ -3,6 +3,7 @@
 
 #include <algorithm>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
@@ -119,7 +120,7 @@ const MagicTable_st magic_table[] = {{593, (MAGIC_DEFN)&splClumsy},
 // o------------------------------------------------------------------------------------------------o
 void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY,
                std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId) {
-    CItem *g1 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, OT_ITEM);
+    CItem *g1 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
     if (ValidateObject(g1)) {
         g1->SetDecayable(true);
         g1->SetType(IT_GATE);
@@ -127,7 +128,7 @@ void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t 
         g1->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_GATE));
         g1->SetDir(1);
 
-        CItem *g2 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, OT_ITEM);
+        CItem *g2 = Items->CreateItem(nullptr, caster, 0x0F6C, 1, 0, CBaseObject::OT_ITEM);
         if (ValidateObject(g2)) {
             g2->SetDecayable(true);
             g2->SetType(IT_GATE);
@@ -175,7 +176,7 @@ bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y,
     {
         if (id != 0x0080 ||
             (id == 0x0080 && !Movement->CheckForCharacterAtXYZ(caster, fx[j], fy[j], z))) {
-            i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
+            i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -495,7 +496,7 @@ bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
         CMagicStat temp = Magic->spells[19].StaticEffect();
         if (temp.Effect() != INVALIDID) {
             auto iCont = target->GetCont();
-            if (ValidateObject(iCont) && iCont->CanBeObjType(OT_CHAR)) {
+            if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_CHAR)) {
                 // If container is a character, play lock FX on character
                 Effects->PlayStaticAnimation(iCont, temp.Effect(), temp.Speed(), temp.Loop());
             }
@@ -705,7 +706,7 @@ bool splUnlock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] std
         CMagicStat temp = Magic->spells[23].StaticEffect();
         if (temp.Effect() != INVALIDID) {
             auto iCont = target->GetCont();
-            if (ValidateObject(iCont) && iCont->CanBeObjType(OT_CHAR)) {
+            if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_CHAR)) {
                 // If container is a character, play lock FX on character
                 Effects->PlayStaticAnimation(iCont, temp.Effect(), temp.Speed(), temp.Loop());
             }
@@ -939,7 +940,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
     else if (i->GetType() == 7) {
         // Player recalled off a key
         CMultiObj *shipMulti = CalcMultiFromSer(i->GetTempVar(CITV_MORE));
-        if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(OT_BOAT)) {
+        if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(CBaseObject::OT_BOAT)) {
             if ((shipMulti->WorldNumber() == caster->WorldNumber() ||
                  cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()) &&
                 shipMulti->GetInstanceId() == caster->GetInstanceId()) {
@@ -991,7 +992,7 @@ auto splRecall(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int
             auto mSerial = util::ston<serial_t>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {
                 CMultiObj *shipMulti = CalcMultiFromSer(mSerial);
-                if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(OT_BOAT)) {
+                if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(CBaseObject::OT_BOAT)) {
                     if ((shipMulti->WorldNumber() == caster->WorldNumber() ||
                          cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()) &&
                         shipMulti->GetInstanceId() == caster->GetInstanceId()) {
@@ -1823,7 +1824,7 @@ bool splGateTravel(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std:
             auto mSerial = util::ston<serial_t>(runeMore.m_StringValue);
             if (mSerial != 0 && mSerial != INVALIDSERIAL) {
                 CMultiObj *shipMulti = CalcMultiFromSer(mSerial);
-                if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(OT_BOAT)) {
+                if (ValidateObject(shipMulti) && shipMulti->CanBeObjType(CBaseObject::OT_BOAT)) {
                     if ((shipMulti->WorldNumber() == caster->WorldNumber() ||
                          cwmWorldState->ServerData()->TravelSpellsBetweenWorlds()) &&
                         shipMulti->GetInstanceId() == caster->GetInstanceId()) {
@@ -2432,7 +2433,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
     std::uint16_t instanceId = caster->GetInstanceId();
     for (j = 0; j < 4; ++j) // Draw the corners of our diamond
     {
-        i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
+        i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
         if (i != nullptr) {
             i->SetDispellable(true);
             i->SetDecayable(true);
@@ -2449,7 +2450,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
     for (j = -1; j < 2; j = j + 2) {
         for (std::int8_t counter2 = -1; counter2 < 2; counter2 += 2) {
             for (std::int32_t counter3 = 1; counter3 < yOffset; ++counter3) {
-                i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
+                i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
                 if (i != nullptr) {
                     i->SetDispellable(true);
                     i->SetDecayable(true);
@@ -2497,7 +2498,7 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id
     for (std::uint8_t j = 0; j < 4; ++j) // Draw the corners of our diamond
     {
         for (std::int32_t counter = fx[j]; counter < fy[j]; ++counter) {
-            i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
+            i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -2546,7 +2547,7 @@ bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id,
     std::uint16_t instanceId = caster->GetInstanceId();
     for (std::int32_t counter1 = minX; counter1 <= maxX; ++counter1) {
         for (std::int32_t counter2 = minY; counter2 <= maxY; ++counter2) {
-            CItem *i = Items->CreateItem(nullptr, caster, id, 1, 0, OT_ITEM);
+            CItem *i = Items->CreateItem(nullptr, caster, id, 1, 0, CBaseObject::OT_ITEM);
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
@@ -4486,7 +4487,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
             }
 
             if (ValidateObject(getTarg)) {
-                if (!getTarg->CanBeObjType(OT_ITEM) ||
+                if (!getTarg->CanBeObjType(CBaseObject::OT_ITEM) ||
                     (static_cast<CItem *>(getTarg))->GetCont() == nullptr) {
                     x = getTarg->GetX();
                     y = getTarg->GetY();

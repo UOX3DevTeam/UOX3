@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <vector>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "citem.h"
 #include "classes.h"
@@ -45,7 +46,7 @@ std::int32_t FileSize(std::string filename) {
 //|	Purpose		-	Creates a new character object based on data loaded from worldfiles
 // o------------------------------------------------------------------------------------------------o
 void LoadChar(std::istream &readDestination) {
-    CChar *x = static_cast<CChar *>(ObjectFactory::shared().CreateBlankObject(OT_CHAR));
+    CChar *x = static_cast<CChar *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_CHAR));
     if (x == nullptr)
         return;
 
@@ -61,7 +62,7 @@ void LoadChar(std::istream &readDestination) {
 //|	Purpose		-	Creates a new item object based on data loaded from worldfiles
 // o------------------------------------------------------------------------------------------------o
 void LoadItem(std::istream &readDestination) {
-    CItem *x = static_cast<CItem *>(ObjectFactory::shared().CreateBlankObject(OT_ITEM));
+    CItem *x = static_cast<CItem *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_ITEM));
     if (x == nullptr)
         return;
 
@@ -79,7 +80,7 @@ void LoadItem(std::istream &readDestination) {
 // o------------------------------------------------------------------------------------------------o
 void LoadMulti(std::istream &readDestination) {
     CMultiObj *ourHouse =
-        static_cast<CMultiObj *>(ObjectFactory::shared().CreateBlankObject(OT_MULTI));
+        static_cast<CMultiObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_MULTI));
     if (!ourHouse->Load(readDestination)) // if no load, DELETE
     {
         ourHouse->Cleanup();
@@ -94,7 +95,7 @@ void LoadMulti(std::istream &readDestination) {
 // o------------------------------------------------------------------------------------------------o
 void LoadBoat(std::istream &readDestination) {
     CBoatObj *ourBoat =
-        static_cast<CBoatObj *>(ObjectFactory::shared().CreateBlankObject(OT_BOAT));
+        static_cast<CBoatObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_BOAT));
     if (!ourBoat->Load(readDestination)) // if no load, DELETE
     {
         ourBoat->Cleanup();
@@ -109,7 +110,7 @@ void LoadBoat(std::istream &readDestination) {
 // o------------------------------------------------------------------------------------------------o
 void LoadSpawnItem(std::istream &readDestination) {
     CSpawnItem *ourSpawner =
-        static_cast<CSpawnItem *>(ObjectFactory::shared().CreateBlankObject(OT_SPAWNER));
+        static_cast<CSpawnItem *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_SPAWNER));
     if (!ourSpawner->Load(readDestination)) // if no load, DELETE
     {
         ourSpawner->Cleanup();
@@ -150,11 +151,11 @@ void CMapRegion::SaveToDisk(std::ostream &writeDestination) {
         }
         else {
             if (itemToWrite->ShouldSave()) {
-                if (itemToWrite->GetObjType() == OT_MULTI) {
+                if (itemToWrite->GetObjType() == CBaseObject::OT_MULTI) {
                     CMultiObj *iMulti = static_cast<CMultiObj *>(itemToWrite);
                     iMulti->Save(writeDestination);
                 }
-                else if (itemToWrite->GetObjType() == OT_BOAT) {
+                else if (itemToWrite->GetObjType() == CBaseObject::OT_BOAT) {
                     CBoatObj *iBoat = static_cast<CBoatObj *>(itemToWrite);
                     iBoat->Save(writeDestination);
                 }
@@ -924,9 +925,9 @@ void CMapHandler::Load(void) {
     LoadFromDisk(houseDestination, -1, -1, -1);
 
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &PostLoadFunctor);
-    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &PostLoadFunctor);
-    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_MULTI, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &PostLoadFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_CHAR, b, nullptr, &PostLoadFunctor);
     houseDestination.close();
 
     std::uint32_t e_t = GetClock();

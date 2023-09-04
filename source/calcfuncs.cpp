@@ -22,7 +22,7 @@ CChar *CalcCharObjFromSer(serial_t targSerial) {
     CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CChar *toRet = nullptr;
     if (findItem != nullptr) {
-        if (findItem->CanBeObjType(OT_CHAR)) {
+        if (findItem->CanBeObjType(CBaseObject::OT_CHAR)) {
             toRet = static_cast<CChar *>(findItem);
         }
     }
@@ -38,7 +38,7 @@ CItem *CalcItemObjFromSer(serial_t targSerial) {
     CBaseObject *findItem = ObjectFactory::shared().FindObject(targSerial);
     CItem *toRet = nullptr;
     if (findItem != nullptr) {
-        if (findItem->CanBeObjType(OT_ITEM)) {
+        if (findItem->CanBeObjType(CBaseObject::OT_ITEM)) {
             toRet = static_cast<CItem *>(findItem);
         }
     }
@@ -49,7 +49,7 @@ CMultiObj *CalcMultiFromSer(serial_t targSerial) {
     CBaseObject *findMulti = ObjectFactory::shared().FindObject(targSerial);
     CMultiObj *toRet = nullptr;
     if (findMulti != nullptr) {
-        if (findMulti->CanBeObjType(OT_MULTI)) {
+        if (findMulti->CanBeObjType(CBaseObject::OT_MULTI)) {
             toRet = static_cast<CMultiObj *>(findMulti);
         }
     }
@@ -70,7 +70,7 @@ CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t world
         mObj->SetSubRegion(0);
 
         // Check if object is an item, and if it's in a container
-        if (mObj->GetObjType() == OT_ITEM &&
+        if (mObj->GetObjType() == CBaseObject::OT_ITEM &&
             static_cast<CItem *>(mObj)->GetContSerial() != INVALIDSERIAL) {
             // Item is in a container, so find the root container (whether character or item) and
             // use its coordinates to calculate region

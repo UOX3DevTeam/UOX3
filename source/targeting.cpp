@@ -1,5 +1,5 @@
 
-
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
@@ -719,7 +719,7 @@ void Tiling(CSocket *s) {
     for (std::int16_t x = x1; x <= x2; ++x) {
         for (std::int16_t y = y1; y <= y2; ++y) {
             rndId = addId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
-            c = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, OT_ITEM);
+            c = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
             if (!ValidateObject(c))
                 return;
 
@@ -737,7 +737,7 @@ void Tiling(CSocket *s) {
 //|	Purpose		-	Create body parts after carving up a corpse
 // o------------------------------------------------------------------------------------------------o
 bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_t dictEntry) {
-    CItem *toCreate = Items->CreateScriptItem(nullptr, mChar, partId, 1, OT_ITEM, false, 0x0);
+    CItem *toCreate = Items->CreateScriptItem(nullptr, mChar, partId, 1, CBaseObject::OT_ITEM, false, 0x0);
     if (!ValidateObject(toCreate))
         return false;
 
@@ -794,7 +794,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
         }
     }
 
-    auto c = Items->CreateItem(nullptr, mChar, 0x122A, 1, 0, OT_ITEM); // add the blood puddle
+    auto c = Items->CreateItem(nullptr, mChar, 0x122A, 1, 0, CBaseObject::OT_ITEM); // add the blood puddle
     if (c == nullptr)
         return false;
 
@@ -864,10 +864,10 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                             s, mChar, util::trim(util::strip(csecs[0], "//")),
                             static_cast<std::uint16_t>(
                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                            OT_ITEM, true);
+                                                CBaseObject::OT_ITEM, true);
                     }
                     else {
-                        Items->CreateScriptItem(s, mChar, data, 0, OT_ITEM, true);
+                        Items->CreateScriptItem(s, mChar, data, 0, CBaseObject::OT_ITEM, true);
                     }
                 }
             }
@@ -1226,7 +1226,7 @@ void TransferTarget(CSocket *s) {
 
     if (targChar->GetSocket() != nullptr) {
         // Create a pet transfer deed
-        CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, OT_ITEM, false, 0);
+        CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
             petTransferDeed->SetName(util::format(
@@ -1352,7 +1352,7 @@ void NpcResurrectTarget(CChar *i) {
             // Restore hair
             std::uint16_t hairStyleId = i->GetHairStyle();
             std::uint16_t hairStyleColor = i->GetHairColour();
-            CItem *hairItem = Items->CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, OT_ITEM);
+            CItem *hairItem = Items->CreateItem(mSock, i, hairStyleId, 1, hairStyleColor, CBaseObject::OT_ITEM);
 
             if (hairItem != nullptr) {
                 hairItem->SetDecayable(false);
@@ -1364,7 +1364,7 @@ void NpcResurrectTarget(CChar *i) {
             std::uint16_t beardStyleId = i->GetBeardStyle();
             std::uint16_t beardStyleColor = i->GetBeardColour();
             CItem *beardItem =
-                Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, OT_ITEM);
+                Items->CreateItem(mSock, i, beardStyleId, 1, beardStyleColor, CBaseObject::OT_ITEM);
 
             if (beardItem != nullptr) {
                 beardItem->SetDecayable(false);
@@ -1394,7 +1394,7 @@ void NpcResurrectTarget(CChar *i) {
                     if (j->GetSerial() == i->GetRobe()) {
                         j->Delete();
 
-                        c = Items->CreateScriptItem(nullptr, i, "resurrection_robe", 1, OT_ITEM);
+                        c = Items->CreateScriptItem(nullptr, i, "resurrection_robe", 1, CBaseObject::OT_ITEM);
                         if (c != nullptr) {
                             c->SetCont(i);
                         }
@@ -1807,7 +1807,7 @@ void MakeStatusTarget(CSocket *sock) {
                         }
                         if (!ValidateObject(mypack)) {
                             CItem *iMade =
-                                Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, OT_ITEM);
+                                Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
                             if (!ValidateObject(iMade))
                                 return;
 
@@ -1888,7 +1888,7 @@ void SmeltTarget(CSocket *s) {
         std::string itemId = util::ntos(ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16);
         std::uint16_t itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
         sumAmountRestored += amtToRestore;
-        Items->CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, OT_ITEM, true, itemColour);
+        Items->CreateScriptItem(s, mChar, "0x" + itemId, amtToRestore, CBaseObject::OT_ITEM, true, itemColour);
     }
 
     s->SysMessage(1116, sumAmountRestored); // You melt the item and place %i ingots in your pack.
@@ -2025,7 +2025,7 @@ bool CPITargetCursor::Handle(void) {
         std::uint8_t a1 = tSock->GetByte(2);
         std::uint8_t a2 = tSock->GetByte(3);
         std::uint8_t a3 = tSock->GetByte(4);
-        targetids_t targetId = static_cast<targetids_t>(tSock->GetByte(5));
+        auto targetId = static_cast<targetids_t>(tSock->GetByte(5));
         tSock->TargetOK(false);
         if (mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().accountNumber != 0) {
             tSock->SysMessage(1008);         // Invalid item!

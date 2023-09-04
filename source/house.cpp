@@ -1,6 +1,7 @@
 // House code for deed creation
 #include <algorithm>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "classes.h"
 #include "cmultiobj.h"
@@ -84,7 +85,7 @@ void CreateHouseKey(CSocket *mSock, CChar *mChar, CMultiObj *house, std::uint16_
             scriptName = "house_key";
         }
 
-        CItem *key = Items->CreateScriptItem(mSock, mChar, scriptName, 1, OT_ITEM, true);
+        CItem *key = Items->CreateScriptItem(mSock, mChar, scriptName, 1, CBaseObject::OT_ITEM, true);
         if (ValidateObject(key)) {
             key->SetTempVar(CITV_MORE, house->GetSerial());
             key->SetType(IT_KEY);
@@ -136,7 +137,7 @@ auto CreateHouseItems(CChar *mChar, std::vector<std::string> houseItems, CItem *
                             hItem->SetOwner(mChar);
                         }
 
-                        if (house->GetObjType() == OT_ITEM) {
+                        if (house->GetObjType() == CBaseObject::OT_ITEM) {
                             // House is not actually a house, but a house addon! Store reference to
                             // addon on item
                             hItem->SetTempVar(CITV_MORE, house->GetSerial());
@@ -821,8 +822,8 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
 
         // Move items out of the way
         for (auto &ourItem : FindNearbyItems(x, y, worldNumber, instanceId, std::max(sx, sy))) {
-            if (ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI &&
-                ourItem->GetObjType() != OT_BOAT) {
+            if (ourItem->GetVisible() == 0 && ourItem->GetObjType() != CBaseObject::OT_MULTI &&
+                ourItem->GetObjType() != CBaseObject::OT_BOAT) {
                 if ((ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2) &&
                     (ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2) &&
                     (ourItem->GetZ() >= house->GetZ() - 16)) {
@@ -835,10 +836,10 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     else {
         // House addon
         if (ValidateObject(mChar)) {
-            fakeHouse = Items->CreateItem(mSock, mChar, houseId, 1, 0, OT_ITEM);
+            fakeHouse = Items->CreateItem(mSock, mChar, houseId, 1, 0, CBaseObject::OT_ITEM);
         }
         else {
-            fakeHouse = Items->CreateItem(nullptr, nullptr, houseId, 1, 0, OT_ITEM, false, true,
+            fakeHouse = Items->CreateItem(nullptr, nullptr, houseId, 1, 0, CBaseObject::OT_ITEM, false, true,
                                           worldNumber, instanceId, xLoc, yLoc, zLoc);
         }
         if (fakeHouse == nullptr) {
@@ -994,8 +995,8 @@ CMultiObj *BuildBaseMulti(std::uint16_t multiId, std::int16_t xLoc = -1, std::in
 
     // Move items out of the way
     for (auto &ourItem : FindNearbyItems(xLoc, yLoc, worldNumber, instanceId, std::max(sx, sy))) {
-        if (ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI &&
-            ourItem->GetObjType() != OT_BOAT) {
+        if (ourItem->GetVisible() == 0 && ourItem->GetObjType() != CBaseObject::OT_MULTI &&
+            ourItem->GetObjType() != CBaseObject::OT_BOAT) {
             if ((ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2) &&
                 (ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2) &&
                 (ourItem->GetZ() >= iMulti->GetZ() - 16)) {
@@ -1023,7 +1024,7 @@ bool KillKeysFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, void *ex
     serial_t targSerial = ourData[0];
     serial_t charSerial = ourData[1];
 
-    if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
+    if (ValidateObject(a) && a->CanBeObjType(CBaseObject::OT_ITEM)) {
         CItem *i = static_cast<CItem *>(a);
         if (!charSerial) {
             if (i->GetType() == IT_KEY && i->GetTempVar(CITV_MORE) == targSerial) {
@@ -1125,7 +1126,7 @@ void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL) {
         std::uint32_t toPass[1];
         toPass[0] = targSerial;
         std::uint32_t b = 0;
-        ObjectFactory::shared().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
+        ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, toPass, &KillKeysFunctor);
     }
     else {
         // if character serial is provided, kill only keys belonging to said character, if key
@@ -1134,6 +1135,6 @@ void KillKeys(serial_t targSerial, serial_t charSerial = INVALIDSERIAL) {
         toPass[0] = targSerial;
         toPass[1] = charSerial;
         std::uint32_t b = 0;
-        ObjectFactory::shared().IterateOver(OT_ITEM, b, toPass, &KillKeysFunctor);
+        ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, toPass, &KillKeysFunctor);
     }
 }

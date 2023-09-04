@@ -1334,7 +1334,7 @@ auto CItem::RemoveSelfFromCont() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Make a copy of item and copy all properties from old item to new
 // o------------------------------------------------------------------------------------------------o
-auto CItem::Dupe(ObjectType itemType) -> CItem * {
+auto CItem::Dupe(CBaseObject::type_t itemType) -> CItem * {
     CItem *target = static_cast<CItem *>(ObjectFactory::shared().CreateObject(itemType));
     if (target == nullptr)
         return nullptr;
@@ -2410,7 +2410,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
     else {
         CItem *itemCont = static_cast<CItem *>(iCont);
         if (itemCont != nullptr) {
-            ObjectType oType = OT_CBO;
+            auto oType = CBaseObject::OT_CBO;
             for (auto &tSock : FindNearbyPlayers(FindItemOwner(this, oType), DIST_NEARBY)) {
                 if (tSock->LoginComplete()) {
                     SendPackItemToSocket(tSock);
@@ -2513,7 +2513,7 @@ void CItem::RemoveFromSight(CSocket *mSock) {
     CPRemoveItem toRemove = (*this);
     CBaseObject *iCont = GetCont();
 
-    ObjectType oType = OT_CBO;
+    auto oType = CBaseObject::OT_CBO;
     CBaseObject *iOwner = nullptr;
     if (this->GetOwner() != INVALIDSERIAL) {
         iOwner = FindItemOwner(this, oType);
@@ -2873,7 +2873,7 @@ auto CItem::UpdateRegion() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 // o------------------------------------------------------------------------------------------------o
-bool CItem::CanBeObjType(ObjectType toCompare) const {
+bool CItem::CanBeObjType(CBaseObject::type_t toCompare) const {
     bool rValue = CBaseObject::CanBeObjType(toCompare);
     if (!rValue) {
         if (toCompare == OT_ITEM) {
@@ -3282,7 +3282,7 @@ void CSpawnItem::Cleanup(void) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::CanBeObjType(ObjectType toCompare) const {
+bool CSpawnItem::CanBeObjType(CBaseObject::type_t toCompare) const {
     bool rValue = CItem::CanBeObjType(toCompare);
     if (!rValue) {
         if (toCompare == OT_SPAWNER) {

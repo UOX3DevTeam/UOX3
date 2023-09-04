@@ -1306,7 +1306,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
     auto maxHP = 0;
     auto maxStam = 0;
     auto maxMana = 0;
-    if (toUpdate.CanBeObjType(OT_CHAR)) {
+    if (toUpdate.CanBeObjType(CBaseObject::OT_CHAR)) {
         // For characters,
         auto objChar = CalcCharObjFromSer(toUpdate.GetSerial());
         maxHP = objChar->GetMaxHP();
@@ -1317,7 +1317,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
         // For items and multis, only health is relevant, as not only does
         // client not display anything relevant for stamina/mana for items,
         // but items also have no mana/stamina values to send!
-        if (toUpdate.CanBeObjType(OT_MULTI)) {
+        if (toUpdate.CanBeObjType(CBaseObject::OT_MULTI)) {
             auto objMulti = CalcMultiFromSer(toUpdate.GetSerial());
             maxHP = objMulti->GetMaxHP();
         }
@@ -1965,7 +1965,7 @@ void CPStatWindow::InternalReset(void) {
 CPStatWindow::CPStatWindow() { InternalReset(); }
 CPStatWindow::CPStatWindow(CBaseObject &toCopy, CSocket &target) {
     InternalReset();
-    if (toCopy.CanBeObjType(OT_CHAR)) {
+    if (toCopy.CanBeObjType(CBaseObject::OT_CHAR)) {
         auto charObj = CalcCharObjFromSer(toCopy.GetSerial());
         SetCharacter(*charObj, target);
     }
@@ -4796,10 +4796,10 @@ void CPNewObjectInfo::InternalReset(void) {
     pStream.WriteShort(1, 0x1);
 }
 void CPNewObjectInfo::CopyData(CItem &mItem, CChar &mChar) {
-    if (mItem.CanBeObjType(OT_MULTI)) {
+    if (mItem.CanBeObjType(CBaseObject::OT_MULTI)) {
         CopyMultiData(static_cast<CMultiObj &>(mItem), mChar);
     }
-    else if (mItem.CanBeObjType(OT_ITEM)) {
+    else if (mItem.CanBeObjType(CBaseObject::OT_ITEM)) {
         CopyItemData(mItem, mChar);
     }
 }
@@ -4960,10 +4960,10 @@ void CPObjectInfo::InternalReset(void) {
 void CPObjectInfo::CopyData(CItem &mItem, CChar &mChar) {
     pStream.WriteLong(3, mItem.GetSerial());
 
-    if (mItem.CanBeObjType(OT_MULTI)) {
+    if (mItem.CanBeObjType(CBaseObject::OT_MULTI)) {
         CopyMultiData(static_cast<CMultiObj &>(mItem), mChar);
     }
-    else if (mItem.CanBeObjType(OT_ITEM)) {
+    else if (mItem.CanBeObjType(CBaseObject::OT_ITEM)) {
         CopyItemData(mItem, mChar);
     }
 }
@@ -6406,10 +6406,10 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     }
 
     // Address refresh issue when items in player vendor packs received updated pricing and name
-    if (cItem.GetCont() != nullptr && cItem.GetCont()->CanBeObjType(OT_ITEM)) {
-        ObjectType oType = OT_CBO;
+    if (cItem.GetCont() != nullptr && cItem.GetCont()->CanBeObjType(CBaseObject::OT_ITEM)) {
+        auto oType = CBaseObject::OT_CBO;
         CBaseObject *iOwner = FindItemOwner(&cItem, oType);
-        if (ValidateObject(iOwner) && iOwner->CanBeObjType(OT_CHAR)) {
+        if (ValidateObject(iOwner) && iOwner->CanBeObjType(CBaseObject::OT_CHAR)) {
             if (static_cast<CChar *>(iOwner)->GetNpcAiType() == AI_PLAYERVENDOR) {
                 playerVendor = true;
             }
@@ -8024,7 +8024,7 @@ void CPClilocMessage::CopyData(CBaseObject &toCopy) {
 
     std::string toCopyName = toCopy.GetName();
 
-    if (toCopy.CanBeObjType(OT_CHAR)) {
+    if (toCopy.CanBeObjType(CBaseObject::OT_CHAR)) {
         CChar *toCopyChar = CalcCharObjFromSer(toCopy.GetSerial());
         toCopyName = GetNpcDictName(toCopyChar, nullptr, NRS_SPEECH);
     }

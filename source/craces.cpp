@@ -286,7 +286,7 @@ void cRaces::ApplyRace(CChar *s, raceid_t x, bool always) {
             else {
                 hairColor = 0x0480;
             }
-            CItem *n = Items->CreateItem(nullptr, s, 0x204C, 1, hairColor, OT_ITEM);
+            CItem *n = Items->CreateItem(nullptr, s, 0x204C, 1, hairColor, CBaseObject::OT_ITEM);
             if (n != nullptr) {
                 n->SetDecayable(false);
                 n->SetLayer(IL_FACIALHAIR);

@@ -53,7 +53,7 @@ CItem *CreateTradeWindow(CSocket *mSock, CSocket *nSock, CChar *mChar) {
         return nullptr;
     }
 
-    CItem *tradeWindow = Items->CreateItem(nullptr, mChar, 0x1E5E, 1, 0, OT_ITEM, false);
+    CItem *tradeWindow = Items->CreateItem(nullptr, mChar, 0x1E5E, 1, 0, CBaseObject::OT_ITEM, false);
     if (!ValidateObject(tradeWindow))
         return nullptr;
 
@@ -125,7 +125,7 @@ CItem *StartTrade(CSocket *mSock, CChar *nChar) {
 
 bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *extraData) {
     bool retVal = true;
-    if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
+    if (ValidateObject(a) && a->CanBeObjType(CBaseObject::OT_ITEM)) {
         // Body of the functor goes here
         CItem *i = static_cast<CItem *>(a);
         if (ValidateObject(i)) {
@@ -171,7 +171,7 @@ bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void 
 // o------------------------------------------------------------------------------------------------o
 void ClearTrades(void) {
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &ClearTradesFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &ClearTradesFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -337,7 +337,7 @@ bool CPITradeMessage::Handle(void) {
 
 bool KillTradesFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) {
     bool retVal = true;
-    if (ValidateObject(a) && a->CanBeObjType(OT_ITEM)) {
+    if (ValidateObject(a) && a->CanBeObjType(CBaseObject::OT_ITEM)) {
         // Body of the functor goes here
         CItem *i = static_cast<CItem *>(a);
         if (ValidateObject(i)) {
@@ -363,5 +363,5 @@ bool KillTradesFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) {
 // o------------------------------------------------------------------------------------------------o
 void KillTrades(CChar *i) {
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_ITEM, b, i, &KillTradesFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, i, &KillTradesFunctor);
 }

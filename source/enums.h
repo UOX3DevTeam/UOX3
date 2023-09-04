@@ -372,14 +372,6 @@ enum skills_t {
 // Values for the skill locks
 enum skilllock_t { SKILL_INCREASE = 0, SKILL_DECREASE, SKILL_LOCKED };
 
-enum ObjectType {
-    OT_CBO = 0,
-    OT_CHAR,
-    OT_ITEM,
-    OT_MULTI,
-    OT_BOAT,
-    OT_SPAWNER,
-};
 
 enum definitioncategories_t {
     items_def = 0,

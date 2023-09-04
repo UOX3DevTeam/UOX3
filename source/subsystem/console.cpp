@@ -1147,10 +1147,10 @@ auto Console::Process(std::int32_t c) -> void {
                 "performance.log");
 
             Log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)",
-                             ObjectFactory::shared().CountOfObjects(OT_CHAR),
-                             ObjectFactory::shared().SizeOfObjects(OT_CHAR),
-                             ObjectFactory::shared().CountOfObjects(OT_ITEM),
-                             ObjectFactory::shared().SizeOfObjects(OT_ITEM)),
+                             ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR),
+                             ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR),
+                             ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
+                             ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)),
                 "performance.log");
             Log(util::format("\tSimulation Cycles: %f per sec",
                              (1000.0 * (1.0 / static_cast<R32>(
@@ -1193,20 +1193,20 @@ auto Console::Process(std::int32_t c) -> void {
             tmp = 0;
             messageLoop << "CMD: UOX Memory Information:";
             std::uint32_t m, n;
-            m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(OT_CHAR));
+            m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR));
             total += tmp = m + m * sizeof(CTEffect) + m * sizeof(std::int8_t) + m * sizeof(intptr_t) * 5;
             temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
-                                ObjectFactory::shared().CountOfObjects(OT_CHAR), m);
+                                ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), m);
             messageLoop << temp;
-            n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(OT_ITEM));
+            n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM));
             total += tmp = n + n * sizeof(intptr_t) * 4;
             temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp,
-                                ObjectFactory::shared().CountOfObjects(OT_ITEM), n);
+                                ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), n);
             messageLoop << temp;
             temp = util::format(
                 "        You save I: %lu & C: %lu bytes!",
-                m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(OT_ITEM),
-                m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(OT_CHAR));
+                m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
+                m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
             total += tmp = 69 * sizeof(CSpellInfo);
             temp = util::format(temp, "     Spells: %i bytes", tmp);
             messageLoop << "     Sizes:";
@@ -1325,9 +1325,9 @@ auto Console::DisplaySettings() -> void {
 
     (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
     (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;
-    (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(OT_CHAR)
+    (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR)
             << myendl;
-    (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(OT_ITEM)
+    (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM)
             << myendl;
     (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size())
             << myendl;

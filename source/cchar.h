@@ -655,7 +655,7 @@ class CChar : public CBaseObject {
 
     virtual void Cleanup(void) override;
     virtual void Delete(void) override;
-    virtual bool CanBeObjType(ObjectType toCompare) const override;
+    virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
 
     flagcolors_t FlagColour(CChar *toCompare);
     void Heal(std::int16_t healValue, CChar *healer = nullptr);

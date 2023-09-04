@@ -497,11 +497,11 @@ void CWorldMain::SaveStatistics(void) {
         return;
     }
     statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
-    statsDestination << "PLAYERCOUNT=" << ObjectFactory::shared().CountOfObjects(OT_CHAR)
+    statsDestination << "PLAYERCOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR)
                      << '\n';
-    statsDestination << "ITEMCOUNT=" << ObjectFactory::shared().CountOfObjects(OT_ITEM)
+    statsDestination << "ITEMCOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM)
                      << '\n';
-    statsDestination << "MULTICOUNT=" << ObjectFactory::shared().CountOfObjects(OT_MULTI)
+    statsDestination << "MULTICOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_MULTI)
                      << '\n';
     statsDestination << "}" << '\n' << '\n';
 

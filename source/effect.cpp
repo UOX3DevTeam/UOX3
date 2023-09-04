@@ -1,6 +1,7 @@
 
 #include <algorithm>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
@@ -79,7 +80,7 @@ CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceI
     }
 
     // Spawn the blood effect item
-    CItem *blood = Items->CreateBaseItem(worldNum, OT_ITEM, instanceId, false);
+    CItem *blood = Items->CreateBaseItem(worldNum, CBaseObject::OT_ITEM, instanceId, false);
     if (ValidateObject(blood)) {
         blood->SetId(bloodEffectId);
         blood->SetColour(bloodColour);
@@ -335,7 +336,7 @@ void cEffects::PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, st
         return;
 
     CPGraphicalEffect toSend(3, (*target));
-    if (target->GetObjType() != OT_CHAR) {
+    if (target->GetObjType() != CBaseObject::OT_CHAR) {
         toSend.TargetSerial((*target));
     }
     else {
@@ -343,7 +344,7 @@ void cEffects::PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, st
     }
     toSend.Model(effect);
     toSend.SourceLocation((*target));
-    if (target->GetObjType() != OT_CHAR) {
+    if (target->GetObjType() != CBaseObject::OT_CHAR) {
         toSend.TargetLocation((*target));
     }
     else {
@@ -534,7 +535,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
     }
 
     // Create the actual item
-    CItem *targItem = Items->CreateScriptItem(sock, src, addItem, amount, OT_ITEM, true, iColour);
+    CItem *targItem = Items->CreateScriptItem(sock, src, addItem, amount, CBaseObject::OT_ITEM, true, iColour);
     for (size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter) {
         src->SkillUsed(false, toMake->skillReqs[skCounter].skillNumber);
     }
@@ -1007,7 +1008,7 @@ auto cEffects::CheckTempeffects() -> void {
                     CMagicStat temp = Magic->spells[23].StaticEffect();
                     if (temp.Effect() != INVALIDID) {
                         auto iCont = lockedItem->GetCont();
-                        if (ValidateObject(iCont) && iCont->CanBeObjType(OT_CHAR)) {
+                        if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_CHAR)) {
                             // Play unlock FX on character holding object
                             Effects->PlayStaticAnimation(iCont, temp.Effect(), temp.Speed(),
                                                          temp.Loop());

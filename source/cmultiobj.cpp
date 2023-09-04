@@ -1105,10 +1105,10 @@ void CMultiObj::SetDeed(const std::string &newDeed) { deed = newDeed; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 // o------------------------------------------------------------------------------------------------o
-bool CMultiObj::CanBeObjType(ObjectType toCompare) const {
+bool CMultiObj::CanBeObjType(CBaseObject::type_t toCompare) const {
     bool rValue = CItem::CanBeObjType(toCompare);
     if (!rValue) {
-        if (toCompare == OT_MULTI) {
+        if (toCompare == CBaseObject::OT_MULTI) {
             rValue = true;
         }
     }
@@ -1370,10 +1370,10 @@ void CBoatObj::SetMoveTime(timerval_t newVal) { nextMoveTime = newVal; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 // o------------------------------------------------------------------------------------------------o
-bool CBoatObj::CanBeObjType(ObjectType toCompare) const {
+bool CBoatObj::CanBeObjType(CBaseObject::type_t toCompare) const {
     bool rValue = CMultiObj::CanBeObjType(toCompare);
     if (!rValue) {
-        if (toCompare == OT_BOAT) {
+        if (toCompare == CBaseObject::OT_BOAT) {
             rValue = true;
         }
     }

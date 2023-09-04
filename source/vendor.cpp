@@ -544,11 +544,11 @@ bool CPISellItem::Handle(void) {
 
         Effects->GoldSound(tSock, totgold);
         while (totgold > MAX_STACK) {
-            Items->CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, OT_ITEM, true);
+            Items->CreateScriptItem(tSock, mChar, "0x0EED", MAX_STACK, CBaseObject::OT_ITEM, true);
             totgold -= MAX_STACK;
         }
         if (totgold > 0) {
-            Items->CreateScriptItem(tSock, mChar, "0x0EED", totgold, OT_ITEM, true);
+            Items->CreateScriptItem(tSock, mChar, "0x0EED", totgold, CBaseObject::OT_ITEM, true);
         }
     }
 
@@ -609,5 +609,5 @@ bool RestockFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ext
 // o------------------------------------------------------------------------------------------------o
 void Restock(bool stockAll) {
     std::uint32_t b = (stockAll ? 1 : 0);
-    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &RestockFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_CHAR, b, nullptr, &RestockFunctor);
 }

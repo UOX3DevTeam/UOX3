@@ -524,7 +524,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
         mChar = s->CurrcharObj();
     }
 
-    CItem *tiller = Items->CreateItem(nullptr, mChar, 0x3E4E, 1, 0, OT_ITEM, false, true,
+    CItem *tiller = Items->CreateItem(nullptr, mChar, 0x3E4E, 1, 0, CBaseObject::OT_ITEM, false, true,
                                       worldNumber, instanceId, x, y, z);
     if (tiller == nullptr)
         return false;
@@ -546,7 +546,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tiller->SetTempVar(CITV_MOREX, boattype);
     tiller->SetDecayable(false);
 
-    CItem *p2 = Items->CreateItem(nullptr, mChar, 0x3EB2, 1, 0, OT_ITEM, false, true, worldNumber,
+    CItem *p2 = Items->CreateItem(nullptr, mChar, 0x3EB2, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                   instanceId, x, y, z); // Plank2 is on the RIGHT side of the boat
     if (p2 == nullptr)
         return false;
@@ -562,7 +562,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tagvalObject.m_StringValue = "";
     p2->SetTag("plankLocked", tagvalObject);
 
-    CItem *p1 = Items->CreateItem(nullptr, mChar, 0x3EB1, 1, 0, OT_ITEM, false, true, worldNumber,
+    CItem *p1 = Items->CreateItem(nullptr, mChar, 0x3EB1, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                   instanceId, x, y, z); // Plank1 is on the LEFT side of the boat
     if (p1 == nullptr)
         return false;
@@ -577,7 +577,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tagvalObject.m_StringValue = "";
     p1->SetTag("plankLocked", tagvalObject);
 
-    CItem *hold = Items->CreateItem(nullptr, mChar, 0x3EAE, 1, 0, OT_ITEM, false, true, worldNumber,
+    CItem *hold = Items->CreateItem(nullptr, mChar, 0x3EAE, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
                                     instanceId, x, y, z);
     if (hold == nullptr)
         return false;
@@ -1128,7 +1128,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
             return;
         }
 
-        CItem *model = Items->CreateItem(s, mChar, 0x14f3, 1, 0, OT_ITEM, true);
+        CItem *model = Items->CreateItem(s, mChar, 0x14f3, 1, 0, CBaseObject::OT_ITEM, true);
         if (model == nullptr)
             return;
 

@@ -1241,7 +1241,7 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
                 }
             }
             if (give) {
-                Items->CreateScriptItem(mSock, mChar, "0x0EED", give, OT_ITEM, true);
+                Items->CreateScriptItem(mSock, mChar, "0x0EED", give, CBaseObject::OT_ITEM, true);
             }
 
             // Today's purchases total %i gold. I am keeping %i gold for my self. Here is the
@@ -1332,8 +1332,8 @@ CHouseMultiResponse::CHouseMultiResponse(targetids_t targVal, std::int32_t dictV
 // o------------------------------------------------------------------------------------------------o
 void CHouseMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
     CMultiObj *realHouse = FindMulti(mChar);
-    if (ValidateObject(realHouse) && !realHouse->CanBeObjType(OT_BOAT)) {
-        if (realHouse->CanBeObjType(OT_MULTI)) {
+    if (ValidateObject(realHouse) && !realHouse->CanBeObjType(CBaseObject::OT_BOAT)) {
+        if (realHouse->CanBeObjType(CBaseObject::OT_MULTI)) {
             std::vector<std::uint16_t> scriptTriggers = realHouse->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);

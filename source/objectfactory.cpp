@@ -86,14 +86,14 @@ auto ObjectFactory::shared() -> ObjectFactory & {
 //|	Purpose		-	Finds the next free serial to use when creating an object of a given
 // type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::NextSerial(ObjectType type) -> std::uint32_t {
+auto ObjectFactory::NextSerial(CBaseObject::type_t type) -> std::uint32_t {
     switch (type) {
-    case OT_ITEM:
-    case OT_MULTI:
-    case OT_BOAT:
-    case OT_SPAWNER:
+        case CBaseObject::OT_ITEM:
+        case CBaseObject::OT_MULTI:
+        case CBaseObject::OT_BOAT:
+        case CBaseObject::OT_SPAWNER:
         return item_serials.Next();
-    case OT_CHAR:
+        case CBaseObject::OT_CHAR:
         return character_serials.Next();
     default:
         return std::numeric_limits<std::uint32_t>::max();
@@ -105,18 +105,18 @@ auto ObjectFactory::NextSerial(ObjectType type) -> std::uint32_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return collection of objects of specific type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CollectionForType(ObjectType type) -> factory_collection * {
+auto ObjectFactory::CollectionForType(CBaseObject::type_t type) -> factory_collection * {
     factory_collection *collection = nullptr;
     switch (type) {
-    case OT_MULTI:
-    case OT_BOAT:
+        case CBaseObject::OT_MULTI:
+        case CBaseObject::OT_BOAT:
         collection = &multis;
         break;
-    case OT_SPAWNER:
-    case OT_ITEM:
+        case CBaseObject::OT_SPAWNER:
+        case CBaseObject::OT_ITEM:
         collection = &items;
         break;
-    case OT_CHAR:
+        case CBaseObject::OT_CHAR:
         collection = &chars;
         break;
 
@@ -131,18 +131,18 @@ auto ObjectFactory::CollectionForType(ObjectType type) -> factory_collection * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return const collection of objects of specific type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CollectionForType(ObjectType type) const -> const factory_collection * {
+auto ObjectFactory::CollectionForType(CBaseObject::type_t type) const -> const factory_collection * {
     const factory_collection *collection = nullptr;
     switch (type) {
-    case OT_MULTI:
-    case OT_BOAT:
+        case CBaseObject::OT_MULTI:
+        case CBaseObject::OT_BOAT:
         collection = &multis;
         break;
-    case OT_SPAWNER:
-    case OT_ITEM:
+        case CBaseObject::OT_SPAWNER:
+        case CBaseObject::OT_ITEM:
         collection = &items;
         break;
-    case OT_CHAR:
+        case CBaseObject::OT_CHAR:
         collection = &chars;
         break;
 
@@ -224,19 +224,19 @@ auto ObjectFactory::RegisterObject(CBaseObject *object, std::uint32_t serial) ->
     auto rValue = false;
     if (object) {
         switch (object->GetObjType()) {
-        case OT_MULTI:
-        case OT_BOAT:
+            case CBaseObject::OT_MULTI:
+            case CBaseObject::OT_BOAT:
             rValue = true;
             item_serials.RegisterSerial(serial);
             multis.insert_or_assign(serial, object);
             break;
-        case OT_SPAWNER:
-        case OT_ITEM:
+            case CBaseObject::OT_SPAWNER:
+            case CBaseObject::OT_ITEM:
             rValue = true;
             item_serials.RegisterSerial(serial);
             items.insert_or_assign(serial, object);
             break;
-        case OT_CHAR:
+            case CBaseObject::OT_CHAR:
             rValue = true;
             character_serials.RegisterSerial(serial);
             chars.insert_or_assign(serial, object);
@@ -268,7 +268,7 @@ auto ObjectFactory::UnregisterObject(CBaseObject *object) -> bool {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Iterate over all objects of a specified object type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::IterateOver(ObjectType type, std::uint32_t &b, void *extra,
+auto ObjectFactory::IterateOver(CBaseObject::type_t type, std::uint32_t &b, void *extra,
                                 std::function<bool(CBaseObject *, std::uint32_t &, void *)> function)
     -> std::uint32_t {
     auto collection = CollectionForType(type);
@@ -309,7 +309,7 @@ auto ObjectFactory::DestroyObject(CBaseObject *object) -> bool {
 //|	Purpose		-	Create a new object with a serial number, and return it back to the
 // creator |					From DFNs, or a PC, by and large.
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CreateObject(ObjectType type) -> CBaseObject * {
+auto ObjectFactory::CreateObject(CBaseObject::type_t type) -> CBaseObject * {
     auto object = CreateBlankObject(type);
     if (object) {
         object->SetSerial(NextSerial(type));
@@ -323,22 +323,22 @@ auto ObjectFactory::CreateObject(ObjectType type) -> CBaseObject * {
 //|	Purpose		-	Create a new blank object without a serial number. Serial will be
 // provided |					when loading object from worldfiles
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CreateBlankObject(ObjectType type) -> CBaseObject * {
+auto ObjectFactory::CreateBlankObject(CBaseObject::type_t type) -> CBaseObject * {
     CBaseObject *object = nullptr;
     switch (type) {
-    case OT_ITEM:
+        case CBaseObject::OT_ITEM:
         object = new CItem();
         break;
-    case OT_MULTI:
+        case CBaseObject::OT_MULTI:
         object = new CMultiObj();
         break;
-    case OT_BOAT:
+        case CBaseObject::OT_BOAT:
         object = new CBoatObj();
         break;
-    case OT_SPAWNER:
+        case CBaseObject::OT_SPAWNER:
         object = new CSpawnItem();
         break;
-    case OT_CHAR:
+        case CBaseObject::OT_CHAR:
         object = new CChar();
         break;
     default:
@@ -368,7 +368,7 @@ auto ObjectFactory::FindObject(std::uint32_t serial) -> CBaseObject * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of objects that exist of a given object type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CountOfObjects(ObjectType type) const -> std::uint32_t {
+auto ObjectFactory::CountOfObjects(CBaseObject::type_t type) const -> std::uint32_t {
     auto rValue = std::uint32_t(0);
     auto collection = CollectionForType(type);
     if (collection) {
@@ -382,19 +382,19 @@ auto ObjectFactory::CountOfObjects(ObjectType type) const -> std::uint32_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the size of memory allocated to given object type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SizeOfObjects(ObjectType type) const -> size_t {
+auto ObjectFactory::SizeOfObjects(CBaseObject::type_t type) const -> size_t {
     auto collection = CollectionForType(type);
     auto size = size_t(0);
     switch (type) {
-    case OT_ITEM:
-    case OT_SPAWNER:
+        case CBaseObject::OT_ITEM:
+        case CBaseObject::OT_SPAWNER:
         size = sizeof(CItem);
         break;
-    case OT_MULTI:
-    case OT_BOAT:
+        case CBaseObject::OT_MULTI:
+        case CBaseObject::OT_BOAT:
         size = sizeof(CMultiObj);
         break;
-    case OT_CHAR:
+        case CBaseObject::OT_CHAR:
         size = sizeof(CChar);
         break;
     default:
@@ -409,7 +409,7 @@ auto ObjectFactory::SizeOfObjects(ObjectType type) const -> size_t {
 //|	Purpose		-	(Unused) Checks if specified object is a valid object of specified
 // type
 // o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::ValidObject(CBaseObject *object, ObjectType type) -> bool {
+auto ObjectFactory::ValidObject(CBaseObject *object, CBaseObject::type_t type) -> bool {
     auto findObject = [](CBaseObject *object, factory_collection &collect) {
         auto iter = std::find_if(
             collect.begin(), collect.end(),
@@ -420,13 +420,13 @@ auto ObjectFactory::ValidObject(CBaseObject *object, ObjectType type) -> bool {
         return false;
     };
     auto rValue = false;
-    if (type == ObjectType::OT_CHAR) {
+    if (type == CBaseObject::OT_CHAR) {
         rValue = findObject(object, chars);
     }
-    else if ((type == ObjectType::OT_BOAT) || (type == ObjectType::OT_MULTI)) {
+    else if ((type == CBaseObject::OT_BOAT) || (type == CBaseObject::OT_MULTI)) {
         rValue = findObject(object, multis);
     }
-    else if ((type == ObjectType::OT_ITEM) || (type == ObjectType::OT_SPAWNER)) {
+    else if ((type == CBaseObject::OT_ITEM) || (type == CBaseObject::OT_SPAWNER)) {
         rValue = findObject(object, items);
     }
     else {

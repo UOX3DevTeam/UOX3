@@ -361,7 +361,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
     const std::int8_t curZ = toCheck->GetZ();
     std::int32_t i = 0;
     Vector3D_st *checkLoc = nullptr;
-    if (!toCheck->CanBeObjType(OT_MULTI)) {
+    if (!toCheck->CanBeObjType(CBaseObject::OT_MULTI)) {
         if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 &&
             curY <= y2) {
             CTile &iTile = Map->SeekTile(toCheck->GetId());
@@ -704,7 +704,7 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
     if (i->GetCont() !=
         nullptr) // It's inside another container, we need root container to calculate the lof
     {
-        ObjectType objType = OT_CBO;
+        auto objType = CBaseObject::OT_CBO;
         CBaseObject *iOwner = FindItemOwner(i, objType);
         if (iOwner != nullptr) {
             itemOwner = iOwner;

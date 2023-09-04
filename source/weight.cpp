@@ -259,7 +259,7 @@ bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
 //|	Purpose		-	Adds an items weight to the total weight of the object
 // o------------------------------------------------------------------------------------------------o
 void CWeight::AddItemWeight(CBaseObject *getObj, CItem *item) {
-    if (getObj->GetObjType() == OT_CHAR) {
+    if (getObj->GetObjType() == CBaseObject::OT_CHAR) {
         AddItemWeight(static_cast<CChar *>(getObj), item);
     }
     else {
@@ -305,7 +305,7 @@ void CWeight::AddItemWeight(CItem *pack, CItem *item) {
 
     CBaseObject *pCont = pack->GetCont();
     if (ValidateObject(pCont)) {
-        if (pCont->CanBeObjType(OT_ITEM)) {
+        if (pCont->CanBeObjType(CBaseObject::OT_ITEM)) {
             CItem *pPack = static_cast<CItem *>(pCont);
             if (ValidateObject(pPack)) {
                 AddItemWeight(pPack, item);
@@ -352,7 +352,7 @@ bool CWeight::IsWeightedContainer(CItem *toCheck) {
 //|	Purpose		-	Subtracts an items weight from the total weight of the object
 // o------------------------------------------------------------------------------------------------o
 void CWeight::SubtractItemWeight(CBaseObject *getObj, CItem *item) {
-    if (getObj->GetObjType() == OT_CHAR) {
+    if (getObj->GetObjType() == CBaseObject::OT_CHAR) {
         SubtractItemWeight(static_cast<CChar *>(getObj), item);
     }
     else {
@@ -398,7 +398,7 @@ void CWeight::SubtractItemWeight(CItem *pack, CItem *item) {
 
     CBaseObject *pCont = pack->GetCont();
     if (ValidateObject(pCont)) {
-        if (pCont->CanBeObjType(OT_ITEM)) {
+        if (pCont->CanBeObjType(CBaseObject::OT_ITEM)) {
             CItem *pPack = static_cast<CItem *>(pCont);
             if (ValidateObject(pPack)) {
                 SubtractItemWeight(pPack, item);

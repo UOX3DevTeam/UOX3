@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "citem.h"
 #include "cmultiobj.h"
@@ -483,7 +484,7 @@ auto CMulHandler::MultiHeight(CItem *i, std::int16_t x, std::int16_t y, std::int
 auto CMulHandler::MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldz,
                             bool checkVisible) -> std::uint16_t {
     auto rValue = std::uint16_t();
-    if (!i->CanBeObjType(OT_MULTI))
+    if (!i->CanBeObjType(CBaseObject::OT_MULTI))
         return 0;
 
     std::uint16_t multiId = static_cast<std::uint16_t>(i->GetId() - 0x4000);
@@ -545,7 +546,7 @@ auto CMulHandler::DynTile(std::int16_t x, std::int16_t y, std::int8_t z, std::ui
 
             if (!checkOnlyNonMultis) {
                 if (item->GetId(1) >= 0x40 &&
-                    (item->GetObjType() == OT_MULTI || item->CanBeObjType(OT_MULTI))) {
+                    (item->GetObjType() == CBaseObject::OT_MULTI || item->CanBeObjType(CBaseObject::OT_MULTI))) {
                     auto multiTileId = MultiTile(item, x, y, z, false);
                     if (multiTileId > 0) {
                         rValue = item;
@@ -782,7 +783,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
                     continue;
 
                 if ((item->GetId(1) >= 0x40) &&
-                    ((item->GetObjType() == OT_MULTI) || (item->CanBeObjType(OT_MULTI)))) {
+                    ((item->GetObjType() == CBaseObject::OT_MULTI) || (item->CanBeObjType(CBaseObject::OT_MULTI)))) {
                     // Found a multi
                     // Look for a multi item at specific location
                     auto multiId = static_cast<std::uint16_t>(item->GetId() - 0x4000);
@@ -884,7 +885,7 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
             auto regItems = MapArea->GetItemList();
             for (const auto tempItem : regItems->collection()) {
                 if (ValidateObject(tempItem) || tempItem->GetInstanceId() != instanceId) {
-                    if (tempItem->GetId(1) >= 0x40 && tempItem->CanBeObjType(OT_MULTI)) {
+                    if (tempItem->GetId(1) >= 0x40 && tempItem->CanBeObjType(CBaseObject::OT_MULTI)) {
                         dynZ = MultiHeight(tempItem, x, y, z, maxZ);
                     }
                     else if (tempItem->GetX() == x && tempItem->GetY() == y) {

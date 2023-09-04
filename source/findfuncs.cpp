@@ -24,7 +24,7 @@ auto FindPlayersInOldVisrange(CBaseObject *myObj) -> std::vector<CSocket *> {
     for (auto &mSock : Network->connClients) {
         auto mChar = mSock->CurrcharObj();
         if (ValidateObject(mChar)) {
-            if (myObj->GetObjType() == OT_MULTI) {
+            if (myObj->GetObjType() == CBaseObject::OT_MULTI) {
                 if (ObjInOldRangeSquare(myObj, mChar, static_cast<std::uint16_t>(DIST_BUILDRANGE))) {
                     nearbyChars.push_back(mSock);
                 }
@@ -139,20 +139,20 @@ auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, s
 //|	Purpose		-	Finds the root container object, returns it, and sets objType
 //|					to the objects type
 // o------------------------------------------------------------------------------------------------o
-CBaseObject *FindItemOwner(CItem *i, ObjectType &objType) {
+CBaseObject *FindItemOwner(CItem *i, CBaseObject::type_t &objType) {
     if (!ValidateObject(i) || i->GetCont() == nullptr) // Item has no containing item
         return nullptr;
 
     while (i->GetCont() != nullptr) {
         if (i->GetContSerial() < BASEITEMSERIAL) {
-            objType = OT_CHAR;
+            objType = CBaseObject::OT_CHAR;
             return i->GetCont();
         }
         else {
             i = static_cast<CItem *>(i->GetCont());
         }
     }
-    objType = OT_ITEM;
+    objType = CBaseObject::OT_ITEM;
     return i;
 }
 
@@ -185,9 +185,9 @@ CChar *FindItemOwner(CItem *p) {
     if (!ValidateObject(p) || p->GetCont() == nullptr)
         return nullptr;
 
-    ObjectType oType = OT_CBO;
+    auto oType = CBaseObject::OT_CBO;
     CBaseObject *iOwner = FindItemOwner(p, oType);
-    if (oType == OT_CHAR) {
+    if (oType == CBaseObject::OT_CHAR) {
         return static_cast<CChar *>(iOwner);
     }
     return nullptr;
@@ -388,7 +388,7 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
         }
     }
     else {
-        std::uint8_t zOff = m->CanBeObjType(OT_BOAT) ? 3 : 20;
+        std::uint8_t zOff = m->CanBeObjType(CBaseObject::OT_BOAT) ? 3 : 20;
         const std::int16_t baseX = m->GetX();
         const std::int16_t baseY = m->GetY();
         const std::int8_t baseZ = m->GetZ();
@@ -402,7 +402,7 @@ bool InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) {
             if ((baseX + multi.offsetX) == x && (baseY + multi.offsetY) == y) {
                 // Find the top Z level of the multi section being examined
                 const std::int8_t multiZ = (baseZ + multi.altitude + Map->TileHeight(multi.tileId));
-                if (m->GetObjType() == OT_BOAT) {
+                if (m->GetObjType() == CBaseObject::OT_BOAT) {
                     // We're on a boat!
                     if (abs(multiZ - z) <= zOff)
                         return true;
@@ -455,7 +455,7 @@ auto FindMulti(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t world
             if (!ValidateObject(itemCheck) || itemCheck->GetInstanceId() != instanceId)
                 continue;
 
-            if (itemCheck->GetId(1) >= 0x40 && itemCheck->CanBeObjType(OT_MULTI)) {
+            if (itemCheck->GetId(1) >= 0x40 && itemCheck->CanBeObjType(CBaseObject::OT_MULTI)) {
                 dx = abs(x - itemCheck->GetX());
                 dy = abs(y - itemCheck->GetY());
                 ret = static_cast<std::int32_t>(hypotenuse(dx, dy));

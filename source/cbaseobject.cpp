@@ -65,7 +65,7 @@ CBaseObject::~CBaseObject() {
     tags.clear();
 }
 
-const ObjectType DEFBASE_OBJTYPE = OT_CBO;
+const auto DEFBASE_OBJTYPE = CBaseObject::OT_CBO;
 const raceid_t DEFBASE_RACE = 0;
 const std::int16_t DEFBASE_X = 100;
 const std::int16_t DEFBASE_Y = 100;
@@ -937,9 +937,9 @@ void CBaseObject::SetVisible(visibletypes_t newValue) {
 //|	Function	-	CBaseObject::GetObjType()
 //|	Date		-	28 July, 2000
 // o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns an ObjectType that indicates the item's type
+//|	Purpose		-	Returns an CBaseObject::type_t that indicates the item's type
 // o------------------------------------------------------------------------------------------------o
-ObjectType CBaseObject::GetObjType(void) const { return objType; }
+CBaseObject::type_t CBaseObject::GetObjType(void) const { return objType; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::CanBeObjType()
@@ -947,7 +947,7 @@ ObjectType CBaseObject::GetObjType(void) const { return objType; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Indicates whether an object can behave as a particular type
 // o------------------------------------------------------------------------------------------------o
-bool CBaseObject::CanBeObjType(ObjectType toCompare) const {
+bool CBaseObject::CanBeObjType(type_t toCompare) const {
     if (toCompare == OT_CBO) {
         return true;
     }

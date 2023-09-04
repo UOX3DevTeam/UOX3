@@ -78,20 +78,20 @@ class cItem {
     PackTypes GetPackType(CItem *i);
 
     CItem *CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,
-                      const std::uint16_t iColour, const ObjectType itemType, bool inPack = false,
+                      const std::uint16_t iColour, const CBaseObject::type_t itemType, bool inPack = false,
                       bool shouldSave = true, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0,
                       std::int16_t xLoc = -1, std::int16_t yLoc = -1, std::int8_t zLoc = 127);
     CItem *CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,
-                            const std::uint16_t iAmount, const ObjectType itemType, bool inPack = false,
+                            const std::uint16_t iAmount, const CBaseObject::type_t itemType, bool inPack = false,
                             const std::uint16_t iColor = 0xFFFF, bool shouldSave = true);
     CItem *CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNumber,
                                 const std::uint16_t iAmount, const std::uint16_t instanceId = 0,
-                                const ObjectType itemType = OT_ITEM, const std::uint16_t iColor = 0xFFFF,
+                                const CBaseObject::type_t itemType = CBaseObject::OT_ITEM, const std::uint16_t iColor = 0xFFFF,
                                 bool shouldSave = true);
     CMultiObj *CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat,
                            const std::uint16_t worldNum, const std::uint16_t instanceId, bool isBaseMulti = false);
     CItem *CreateRandomItem(CSocket *mSock, const std::string &itemList);
-    CItem *CreateBaseItem(const std::uint8_t worldNumber, const ObjectType itemType = OT_ITEM,
+    CItem *CreateBaseItem(const std::uint8_t worldNumber, const CBaseObject::type_t itemType = CBaseObject::OT_ITEM,
                           const std::uint16_t instanceId = 0, bool shouldSave = true);
     CItem *CreateRandomItem(CItem *mCont, const std::string &sItemList, const std::uint8_t worldNumber,
                             const std::uint16_t instanceId = 0, bool shouldSave = true,

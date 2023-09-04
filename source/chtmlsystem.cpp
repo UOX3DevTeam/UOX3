@@ -117,7 +117,7 @@ void cHTMLTemplate::Process(void) {
         Pos = ParsedContent.find("%version");
     }
     // Character Count
-    std::string CharacterCount = util::ntos(ObjectFactory::shared().CountOfObjects(OT_CHAR));
+    std::string CharacterCount = util::ntos(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
     Pos = ParsedContent.find("%charcount");
     while (Pos != std::string::npos) {
         ParsedContent.replace(Pos, 10, CharacterCount);
@@ -125,7 +125,7 @@ void cHTMLTemplate::Process(void) {
     }
 
     // Item Count
-    std::string ItemCount = util::ntos(ObjectFactory::shared().CountOfObjects(OT_ITEM));
+    std::string ItemCount = util::ntos(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
     Pos = ParsedContent.find("%itemcount");
     while (Pos != std::string::npos) {
         ParsedContent.replace(Pos, 10, ItemCount);
@@ -467,7 +467,7 @@ void cHTMLTemplate::Process(void) {
     // NPCCount
     std::uint32_t npccount = 0;
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_CHAR, b, nullptr, &CountNPCFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_CHAR, b, nullptr, &CountNPCFunctor);
     npccount = b;
 
     std::string npcs = util::ntos(npccount);

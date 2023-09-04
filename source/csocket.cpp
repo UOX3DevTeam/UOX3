@@ -1645,7 +1645,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
         unicodeMessage.ID(INVALIDID);
         unicodeMessage.Serial(getObj->GetSerial());
 
-        if (getObj->GetObjType() == OT_ITEM) {
+        if (getObj->GetObjType() == CBaseObject::OT_ITEM) {
             CItem *getItem = static_cast<CItem *>(getObj);
             if (getItem->IsCorpse()) {
                 CChar *targChar = getItem->GetOwnerObj();
@@ -1692,7 +1692,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
         toAdd.At(BuildTimeValue(secsFromNow));
         toAdd.TargType(SPTRG_ONLYRECEIVER);
 
-        if (getObj->GetObjType() == OT_ITEM) {
+        if (getObj->GetObjType() == CBaseObject::OT_ITEM) {
             CItem *getItem = static_cast<CItem *>(getObj);
             if (getItem->IsCorpse()) {
                 CChar *targChar = getItem->GetOwnerObj();
@@ -2041,7 +2041,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
 
     CChar *mChar = CurrcharObj();
 
-    if (targObj->CanBeObjType(OT_CHAR)) {
+    if (targObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         // Character specific
         CChar *targChar = static_cast<CChar *>(targObj);
 
@@ -2358,7 +2358,7 @@ void CSocket::OpenBank(CChar *i) {
     // No bankbox was found, so let's create one!
     auto temp = oldstrutil::format(1024, Dictionary->GetEntry(1283).c_str(),
                                    i->GetName().c_str()); // %s's bank box.
-    bankBox = Items->CreateItem(nullptr, i, 0x09AB, 1, 0, OT_ITEM);
+    bankBox = Items->CreateItem(nullptr, i, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     bankBox->SetName(temp);
     bankBox->SetLayer(IL_BANKBOX);
     bankBox->SetOwner(i);

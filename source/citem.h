@@ -112,7 +112,7 @@ class CItem : public CBaseObject {
     auto GetWeatherDamage(weathertype_t effectNum) const -> bool;
     auto SetWeatherDamage(weathertype_t effectNum, bool value) -> void;
 
-    auto Dupe(ObjectType itemType = OT_ITEM) -> CItem *;
+    auto Dupe(CBaseObject::type_t itemType = CBaseObject::OT_ITEM) -> CItem *;
 
     auto GetCont() const -> CBaseObject *;
     auto GetContSerial() const -> serial_t;
@@ -328,7 +328,7 @@ class CItem : public CBaseObject {
     virtual void PostLoadProcessing(void) override;
     virtual void Cleanup(void) override;
     virtual void Delete(void) override;
-    virtual bool CanBeObjType(ObjectType toCompare) const override;
+    virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
 
     auto GetSpell(std::uint8_t part) const -> std::uint32_t;
     auto SetSpell(std::uint8_t part, std::uint32_t newValue) -> void;
@@ -367,7 +367,7 @@ class CSpawnItem : public CItem {
 
     virtual void Cleanup(void) override;
 
-    virtual bool CanBeObjType(ObjectType toCompare) const override;
+    virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
 
     auto Dupe() -> CSpawnItem *;
 };

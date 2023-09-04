@@ -1,4 +1,5 @@
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
@@ -80,7 +81,7 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
                             std::stoul(util::trim(util::strip(tcsecs[1], "//")), nullptr, 0));
                         retItem = Items->CreateBaseScriptItem(
                             s, util::trim(util::strip(tcsecs[0], "//")), s->WorldNumber(), iAmount,
-                            s->GetInstanceId(), OT_ITEM, 0xFFFF, shouldSave);
+                            s->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                         if (retItem) {
                             retItem->SetCont(s);
                             retItem->PlaceInPack();
@@ -88,7 +89,7 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
                     }
                     else {
                         retItem = Items->CreateBaseScriptItem(s, tag, s->WorldNumber(), 1,
-                                                              s->GetInstanceId(), OT_ITEM, 0xFFFF,
+                                                              s->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
                                                               shouldSave);
                         if (retItem) {
                             retItem->SetCont(s);
@@ -122,7 +123,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         cCreated = CreateRandomNPC(npcCreate->NpcListData());
     }
     else {
-        cCreated = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
+        cCreated = static_cast<CChar *>(ObjectFactory::shared().CreateObject(CBaseObject::OT_CHAR));
         if (cCreated == nullptr)
             return nullptr;
 
@@ -626,7 +627,7 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
             if (ValidateObject(buyLayer)) {
                 retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
-                                                c->GetInstanceId(), OT_ITEM, 0xFFFF, shouldSave);
+                                                c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                 if (retItem) {
                     retItem->SetCont(buyLayer);
                     retItem->PlaceInPack();
@@ -645,7 +646,7 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
             if (ValidateObject(sellLayer)) {
                 retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
-                                                c->GetInstanceId(), OT_ITEM, 0xFFFF, shouldSave);
+                                                c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                 if (retItem) {
                     retItem->SetCont(sellLayer);
                     // retitem->SetSellValue( retitem->GetBuyValue() / 2 );
@@ -669,7 +670,7 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
             if (ValidateObject(boughtLayer)) {
                 retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
-                                                c->GetInstanceId(), OT_ITEM, 0xFFFF, shouldSave);
+                                                c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                 if (retItem) {
                     retItem->SetCont(boughtLayer);
                     retItem->PlaceInPack();
@@ -768,7 +769,7 @@ void MakeShop(CChar *c) {
         tPack = c->GetItemAtLayer(static_cast<itemlayers_t>(i));
         if (!ValidateObject(tPack)) {
             bool shouldSave = c->ShouldSave();
-            tPack = Items->CreateItem(nullptr, c, 0x2AF8, 1, 0, OT_ITEM, false, shouldSave);
+            tPack = Items->CreateItem(nullptr, c, 0x2AF8, 1, 0, CBaseObject::OT_ITEM, false, shouldSave);
             if (ValidateObject(tPack)) {
                 tPack->SetDecayable(false);
                 tPack->SetLayer(static_cast<itemlayers_t>(i));
@@ -860,7 +861,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 }
                 if (mypack == nullptr) {
                     bool shouldSave = applyTo->ShouldSave();
-                    mypack = Items->CreateItem(nullptr, applyTo, 0x0E75, 1, 0, OT_ITEM, false,
+                    mypack = Items->CreateItem(nullptr, applyTo, 0x0E75, 1, 0, CBaseObject::OT_ITEM, false,
                                                shouldSave);
                     if (ValidateObject(mypack)) {
                         mypack->SetDecayable(false);
@@ -1092,7 +1093,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             if (!isGate) {
                 bool shouldSave = applyTo->ShouldSave();
                 retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                      applyTo->GetInstanceId(), OT_ITEM, 0xFFFF,
+                                                      applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
                                                       shouldSave);
                 if (retitem != nullptr) {
                     if (retitem->GetLayer() == IL_NONE) {
@@ -1337,11 +1338,11 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                             retitem =
                                 Items->CreateScriptItem(nullptr, applyTo, "0x0EED",
                                                         static_cast<std::uint16_t>(RandomNum(ndata, odata)),
-                                                        OT_ITEM, true, 0xFFFF, shouldSave);
+                                                        CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
                         }
                         else {
                             retitem = Items->CreateScriptItem(nullptr, applyTo, "0x0EED", ndata,
-                                                              OT_ITEM, true, 0xFFFF, shouldSave);
+                                                              CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
                         }
                     }
                     else {
@@ -1771,7 +1772,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 if (ValidateObject(sellPack)) {
                     bool shouldSave = applyTo->ShouldSave();
                     retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                          applyTo->GetInstanceId(), OT_ITEM, 0xFFFF,
+                                                          applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
                                                           shouldSave);
                     if (retitem != nullptr) {
                         retitem->SetCont(sellPack);
@@ -1796,7 +1797,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 if (ValidateObject(boughtPack)) {
                     bool shouldSave = applyTo->ShouldSave();
                     retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                          applyTo->GetInstanceId(), OT_ITEM, 0xFFFF,
+                                                          applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
                                                           shouldSave);
                     if (retitem != nullptr) {
                         retitem->SetCont(boughtPack);
@@ -2259,7 +2260,7 @@ void CCharStuff::StopPetGuarding(CChar *pet) {
     if (!ValidateObject(petGuarding))
         return;
 
-    if (petGuarding->GetObjType() == OT_ITEM) {
+    if (petGuarding->GetObjType() == CBaseObject::OT_ITEM) {
         CItem *itemGuard = static_cast<CItem *>(petGuarding);
         if (ValidateObject(itemGuard)) {
             itemGuard->SetGuarded(false);
@@ -2306,7 +2307,7 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
                     mypack = s->GetPackItem();
                 }
                 if (mypack == nullptr) {
-                    n = Items->CreateItem(nullptr, s, 0x0E75, 1, 0, OT_ITEM);
+                    n = Items->CreateItem(nullptr, s, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
                     if (!ValidateObject(n))
                         return;
 

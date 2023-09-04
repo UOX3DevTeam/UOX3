@@ -2830,7 +2830,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             if (getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !RandomNum(0, 2)) {
                 std::uint16_t ammoId = mWeapon->GetAmmoId();
                 std::uint16_t ammoHue = mWeapon->GetAmmoHue();
-                Items->CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, OT_ITEM, false);
+                Items->CreateItem(nullptr, ourTarg, ammoId, 1, ammoHue, CBaseObject::OT_ITEM, false);
             }
 
             PlayMissedSoundEffect(&mChar);

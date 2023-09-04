@@ -4889,7 +4889,7 @@ void CChar::ToggleCombat(void) {
 //|	Purpose		-	Indicates whether an object can behave as a	particular type
 //(Char, in this case)
 // o------------------------------------------------------------------------------------------------o
-bool CChar::CanBeObjType(ObjectType toCompare) const {
+bool CChar::CanBeObjType(CBaseObject::type_t toCompare) const {
     bool rValue = CBaseObject::CanBeObjType(toCompare);
     if (!rValue) {
         if (toCompare == OT_CHAR) {
@@ -7807,9 +7807,9 @@ bool CountHousesOwnedFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) 
     CChar *mChar = CalcCharObjFromSer(ourData[0]);
     bool trackHousesPerAccount = ourData[1];
     bool countCoOwnedHouses = ourData[2];
-    if (ValidateObject(mChar) && ValidateObject(a) && a->CanBeObjType(OT_MULTI)) {
+    if (ValidateObject(mChar) && ValidateObject(a) && a->CanBeObjType(CBaseObject::OT_MULTI)) {
         CMultiObj *i = static_cast<CMultiObj *>(a);
-        if (i->GetObjType() == OT_BOAT)
+        if (i->GetObjType() == CBaseObject::OT_BOAT)
             return false;
 
         if (!ValidateObject(i->GetOwnerObj())) // return false if house has no owner

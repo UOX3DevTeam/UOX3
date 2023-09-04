@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "typedefs.h"
-class CBaseObject;
+#include "cbaseobject.h"
 using factory_collection = std::unordered_map<std::uint32_t, CBaseObject *>;
 
 // o------------------------------------------------------------------------------------------------o
@@ -37,14 +37,14 @@ class ObjectFactory {
     SerialGen_st item_serials;
     SerialGen_st character_serials;
 
-    auto NextSerial(ObjectType type) -> std::uint32_t;
+    auto NextSerial(CBaseObject::type_t type) -> std::uint32_t;
     auto RemoveObject(std::uint32_t serial, factory_collection *collection) -> bool;
     ObjectFactory();
 
     auto FindCharacter(std::uint32_t serial) -> CBaseObject *;
     auto FindItem(std::uint32_t serial) -> CBaseObject *;
-    auto CollectionForType(ObjectType type) -> factory_collection *;
-    auto CollectionForType(ObjectType type) const -> const factory_collection *;
+    auto CollectionForType(CBaseObject::type_t type) -> factory_collection *;
+    auto CollectionForType(CBaseObject::type_t type) const -> const factory_collection *;
 
   public:
     ObjectFactory(const ObjectFactory &) = delete;                      // remove copy constructor
@@ -70,7 +70,7 @@ class ObjectFactory {
     // o--------------------------------------------------------------------------------------------o
     //  Iterate over objects
     // o--------------------------------------------------------------------------------------------o
-    auto IterateOver(ObjectType type, std::uint32_t &b, void *extra,
+    auto IterateOver(CBaseObject::type_t type, std::uint32_t &b, void *extra,
                      std::function<bool(CBaseObject *, std::uint32_t &, void *)> function) -> std::uint32_t;
 
     // o--------------------------------------------------------------------------------------------o
@@ -81,18 +81,18 @@ class ObjectFactory {
     // o--------------------------------------------------------------------------------------------o
     //  Create objects, Blank object doesn't get a serial number
     // o--------------------------------------------------------------------------------------------o
-    auto CreateObject(ObjectType type) -> CBaseObject *;
-    auto CreateBlankObject(ObjectType type) -> CBaseObject *;
+    auto CreateObject(CBaseObject::type_t type) -> CBaseObject *;
+    auto CreateBlankObject(CBaseObject::type_t type) -> CBaseObject *;
 
     auto FindObject(std::uint32_t toFind) -> CBaseObject *;
-    auto ValidObject(CBaseObject *object, ObjectType type = ObjectType::OT_CBO) -> bool;
+    auto ValidObject(CBaseObject *object, CBaseObject::type_t type = CBaseObject::OT_CBO) -> bool;
 
     // o--------------------------------------------------------------------------------------------o
     //  Probably should be a size_t return, but uo can only handle a uint32
     // o--------------------------------------------------------------------------------------------o
-    auto CountOfObjects(ObjectType type) const -> std::uint32_t;
+    auto CountOfObjects(CBaseObject::type_t type) const -> std::uint32_t;
 
-    auto SizeOfObjects(ObjectType type) const -> size_t;
+    auto SizeOfObjects(CBaseObject::type_t type) const -> size_t;
 };
 
 #endif /* ObjectFactory_hpp */

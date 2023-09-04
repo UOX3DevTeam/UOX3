@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
@@ -1135,13 +1136,13 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
     case 'A':
         if (!data.empty()) {
             bool runCommand = false;
-            ObjectType itemType = OT_ITEM;
+            auto itemType = CBaseObject::OT_ITEM;
             if (cmd == "ADDITEM") {
                 runCommand = true;
             }
             else if (cmd == "ADDSPAWNER") {
                 runCommand = true;
-                itemType = OT_SPAWNER;
+                itemType = CBaseObject::OT_SPAWNER;
             }
             auto reopenMenu = mChar->GetTag("reopenMenu");
             if (runCommand) {
@@ -1159,7 +1160,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     if (addAtLoc.m_IntValue == 1) {
                         std::string addCmd = "";
                         if (repeatAdd.m_IntValue == 1) {
-                            if (itemType == OT_SPAWNER) {
+                            if (itemType == CBaseObject::OT_SPAWNER) {
                                 addCmd = util::format("raddspawner %s", tmp.c_str());
                             }
                             else {
@@ -1167,7 +1168,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             }
                         }
                         else {
-                            if (itemType == OT_SPAWNER) {
+                            if (itemType == CBaseObject::OT_SPAWNER) {
                                 addCmd = util::format("add spawner %s", tmp.c_str());
                             }
                             else {
@@ -1178,7 +1179,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     }
                     else if (repeatAdd.m_IntValue == 1) {
                         std::string addCmd = "";
-                        if (itemType == OT_SPAWNER) {
+                        if (itemType == CBaseObject::OT_SPAWNER) {
                             addCmd = util::format("raddspawner %s", tmp.c_str());
                         }
                         else {
@@ -1213,7 +1214,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     if (addAtLoc.m_IntValue == 1) {
                         std::string addCmd = "";
                         if (repeatAdd.m_IntValue == 1) {
-                            if (itemType == OT_SPAWNER) {
+                            if (itemType == CBaseObject::OT_SPAWNER) {
                                 addCmd = util::format("raddspawner %s", data.c_str());
                             }
                             else {
@@ -1221,7 +1222,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             }
                         }
                         else {
-                            if (itemType == OT_SPAWNER) {
+                            if (itemType == CBaseObject::OT_SPAWNER) {
                                 addCmd = util::format("add spawner %s", data.c_str());
                             }
                             else {
@@ -1232,7 +1233,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     }
                     else if (repeatAdd.m_IntValue == 1) {
                         std::string addCmd = "";
-                        if (itemType == OT_SPAWNER) {
+                        if (itemType == CBaseObject::OT_SPAWNER) {
                             addCmd = util::format("raddspawner %s", data.c_str());
                         }
                         else {
@@ -1332,8 +1333,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             guiInfo.AddData("Compiled By", UOXVersion::name);
             guiInfo.AddData("Uptime", builtString);
             guiInfo.AddData("Accounts", static_cast<std::uint32_t>(Account::shared().size()));
-            guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(OT_ITEM));
-            guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(OT_CHAR));
+            guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
+            guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
             guiInfo.AddData("Players in world",
                             static_cast<std::uint32_t>(cwmWorldState->GetPlayersOnline()));
             guiInfo.Send(0, false, INVALIDSERIAL);
@@ -1351,8 +1352,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             builtString = GetUptime();
             s->SysMessage(1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(),
                           Account::shared().size(),
-                          ObjectFactory::shared().CountOfObjects(OT_ITEM),
-                          ObjectFactory::shared().CountOfObjects(OT_CHAR));
+                          ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
+                          ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
         }
         break;
     case 'M':

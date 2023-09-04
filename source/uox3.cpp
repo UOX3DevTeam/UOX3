@@ -1049,7 +1049,7 @@ auto MountCreature(CSocket *sockPtr, CChar *s, CChar *x) -> void {
                 }
 
                 s->SetOnHorse(true);
-                auto c = Items->CreateItem(nullptr, s, 0x0915, 1, x->GetSkin(), OT_ITEM);
+                auto c = Items->CreateItem(nullptr, s, 0x0915, 1, x->GetSkin(), CBaseObject::OT_ITEM);
 
                 auto xName = GetNpcDictName(x, sockPtr, NRS_SYSTEM);
                 c->SetName(xName);
@@ -2011,7 +2011,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                     case IT_PLANK: {
                         if ((itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime()) ||
                             cwmWorldState->GetOverflow()) {
-                            if (itemCheck->GetObjType() == OT_SPAWNER) {
+                            if (itemCheck->GetObjType() == CBaseObject::OT_SPAWNER) {
                                 CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
                                 if (spawnItem->DoRespawn()) {
                                     continue;
@@ -2020,7 +2020,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                                     static_cast<R32>(RandomNum(spawnItem->GetInterval(0) * 60,
                                                                spawnItem->GetInterval(1) * 60))));
                             }
-                            else if (itemCheck->GetObjType() == OT_ITEM &&
+                            else if (itemCheck->GetObjType() == CBaseObject::OT_ITEM &&
                                      itemCheck->GetType() == IT_PLANK) {
                                 // Automatically close the plank if it's still open, and still
                                 // locked
@@ -2074,7 +2074,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                         break;
                     }
                 }
-                if (itemCheck->CanBeObjType(OT_BOAT)) {
+                if (itemCheck->CanBeObjType(CBaseObject::OT_BOAT)) {
                     CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
                     std::int8_t boatMoveType = mBoat->GetMoveType();
                     if (ValidateObject(mBoat) && boatMoveType &&
@@ -2698,7 +2698,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     std::for_each(cwmWorldState->refreshQueue.begin(), cwmWorldState->refreshQueue.end(),
                   [](std::pair<CBaseObject *, std::uint32_t> entry) {
                       if (ValidateObject(entry.first)) {
-                          if (entry.first->CanBeObjType(OT_CHAR)) {
+                          if (entry.first->CanBeObjType(CBaseObject::OT_CHAR)) {
                               auto uChar = static_cast<CChar *>(entry.first);
 
                               if (uChar->GetUpdate(UT_HITPOINTS)) {
@@ -2803,7 +2803,7 @@ auto InMulti(std::int16_t x, std::int16_t y, std::int8_t z, CMultiObj *m) -> boo
 auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_unused]] void *extraData)
     -> bool {
     if (ValidateObject(a)) {
-                if (a->CanBeObjType(OT_MULTI)) {
+                if (a->CanBeObjType(CBaseObject::OT_MULTI)) {
                     auto aMulti = static_cast<CMultiObj *>(a);
                     for (auto &objToCheck :
                          FindNearbyObjects(aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(),
@@ -2812,7 +2812,7 @@ auto FindMultiFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe
                                     aMulti)) {
                             objToCheck->SetMulti(aMulti);
                         }
-                        else if ((objToCheck->GetObjType() == OT_ITEM) &&
+                        else if ((objToCheck->GetObjType() == CBaseObject::OT_ITEM) &&
                                  (((objToCheck->GetId() >= 0x0b95) &&
                                    (objToCheck->GetId() <= 0x0c0e)) ||
                                   (objToCheck->GetId() == 0x1f28) ||
@@ -2847,7 +2847,7 @@ auto InitMultis() -> void {
     Console::shared() << "Initializing multis            ";
 
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_MULTI, b, nullptr, &FindMultiFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_MULTI, b, nullptr, &FindMultiFunctor);
 
     Console::shared().PrintDone();
 }
@@ -3188,11 +3188,11 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                                     retItem = Items->CreateScriptItem(
                                         nullptr, applyTo, util::trim(util::strip(csecs[0], "//")),
                                         util::ston<std::uint16_t>(util::trim(util::strip(csecs[1], "//"))),
-                                        OT_ITEM, true);
+                                                                      CBaseObject::OT_ITEM, true);
                                 }
                                 else {
                                     retItem = Items->CreateScriptItem(nullptr, applyTo, cdata, 1,
-                                                                      OT_ITEM, true);
+                                                                      CBaseObject::OT_ITEM, true);
                                 }
                             }
                         }

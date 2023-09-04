@@ -1,5 +1,6 @@
 #include "cguild.h"
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "citem.h"
 #include "classes.h"
@@ -1288,7 +1289,7 @@ void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
 
     // Make sure this is the guild master
     if (gList[guildId]->Master() == mChar->GetSerial()) {
-        CItem *gTransportStone = Items->CreateItem(s, mChar, 0x1869, 1, 0, OT_ITEM, true);
+        CItem *gTransportStone = Items->CreateItem(s, mChar, 0x1869, 1, 0, CBaseObject::OT_ITEM, true);
         if (ValidateObject(gTransportStone)) {
             gTransportStone->SetTempVar(CITV_MORE, guildId);
             gTransportStone->SetNewbie(true);
@@ -1732,7 +1733,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         mChar->SetGuildNumber(gNum);
         s->TempInt(gNum);
         nGuild->NewMember((*mChar));
-        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM);
+        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
             s->ObjMessage(176,
                           deed); // Critical error, unable to spawn guildstone, please contact a GM!
@@ -1778,7 +1779,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
                                                  mChar->GetSerial()));
             return;
         }
-        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM);
+        CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
             s->ObjMessage(176,
                           deed); // Critical error, unable to spawn guildstone, please contact a GM!

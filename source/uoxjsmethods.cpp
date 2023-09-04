@@ -18,6 +18,7 @@
 #include <filesystem>
 #include <variant>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
@@ -81,7 +82,7 @@ void MethodSpeech(CBaseObject &speaker, char *message, speechtype_t sType, colou
 
         std::string fromChar(message);
         std::string speakerName = "";
-        if (speaker.CanBeObjType(OT_CHAR)) {
+        if (speaker.CanBeObjType(CBaseObject::OT_CHAR)) {
             CChar *speakerChar = CalcCharObjFromSer(speaker.GetSerial());
             speakerName = GetNpcDictName(speakerChar, nullptr, NRS_SPEECH);
         }
@@ -4017,7 +4018,7 @@ JSBool CBase_InRange(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
         return JS_FALSE;
     }
 
-    if ((them->GetObjType() == OT_ITEM) && (me->GetObjType() == OT_CHAR)) {
+    if ((them->GetObjType() == CBaseObject::OT_ITEM) && (me->GetObjType() == CBaseObject::OT_CHAR)) {
         CItem *myItem = static_cast<CItem *>(them);
         if (myItem->GetCont() != nullptr) {
             *rval = BOOLEAN_TO_JSVAL(FindItemOwner(myItem) == me);
@@ -4451,7 +4452,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-    if (myObj->CanBeObjType(OT_MULTI) || myObj->CanBeObjType(OT_ITEM)) {
+    if (myObj->CanBeObjType(CBaseObject::OT_MULTI) || myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
         if (statType != 0) {
             ScriptError(cx, "UpdateStatus: For Items/Multis, only the Health stat (type 0) can be "
                             "sent as an update to the client");
@@ -4500,7 +4501,7 @@ JSBool CChar_SetPoisoned(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
     CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myChar) || myChar->GetObjType() != OT_CHAR) {
+    if (!ValidateObject(myChar) || myChar->GetObjType() != CBaseObject::OT_CHAR) {
         ScriptError(cx, "(SetPoisoned) Invalid object assigned");
         return JS_FALSE;
     }
@@ -4542,7 +4543,7 @@ JSBool CChar_ExplodeItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     JSObject *tObj = JSVAL_TO_OBJECT(argv[0]);
     CBaseObject *trgObj = static_cast<CBaseObject *>(JS_GetPrivate(cx, tObj));
 
-    if (!ValidateObject(trgObj) || trgObj->GetObjType() != OT_ITEM ||
+    if (!ValidateObject(trgObj) || trgObj->GetObjType() != CBaseObject::OT_ITEM ||
         myChar->GetSocket() == nullptr) {
         ScriptError(cx, "(ExplodeItem) Invalid object");
         return JS_FALSE;
@@ -4645,7 +4646,7 @@ JSBool CItem_IsMulti(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
         return JS_TRUE;
     }
 
-    *rval = BOOLEAN_TO_JSVAL(myItem->CanBeObjType(OT_MULTI));
+    *rval = BOOLEAN_TO_JSVAL(myItem->CanBeObjType(CBaseObject::OT_MULTI));
     return JS_TRUE;
 }
 
@@ -4671,7 +4672,7 @@ JSBool CBase_IsBoat(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] j
         return JS_TRUE;
     }
 
-    *rval = BOOLEAN_TO_JSVAL(myObject->CanBeObjType(OT_BOAT));
+    *rval = BOOLEAN_TO_JSVAL(myObject->CanBeObjType(CBaseObject::OT_BOAT));
     return JS_TRUE;
 }
 
@@ -4690,7 +4691,7 @@ JSBool CMulti_IsInMulti(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsInMulti) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4721,7 +4722,7 @@ JSBool CMulti_IsOnBanList(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsOnBanList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4752,7 +4753,7 @@ JSBool CMulti_IsOnFriendList(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsOnFriendList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4783,7 +4784,7 @@ JSBool CMulti_IsOnGuestList(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsOnGuestList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4814,7 +4815,7 @@ JSBool CMulti_IsOnOwnerList(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsOnOwnerList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4845,7 +4846,7 @@ JSBool CMulti_IsOwner(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsOwner) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4875,7 +4876,7 @@ JSBool CMulti_AddToBanList(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(AddToBanList) Invalid object assigned");
         return JS_FALSE;
     }
@@ -4905,7 +4906,7 @@ JSBool CMulti_AddToFriendList(JSContext *cx, JSObject *obj, uintN argc, jsval *a
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(AddToFriendList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4937,7 +4938,7 @@ JSBool CMulti_AddToGuestList(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(AddToGuestList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -4969,7 +4970,7 @@ JSBool CMulti_AddToOwnerList(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(AddToOwnerList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5002,7 +5003,7 @@ JSBool CMulti_RemoveFromBanList(JSContext *cx, JSObject *obj, uintN argc, jsval 
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(RemoveFromBanList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5035,7 +5036,7 @@ JSBool CMulti_RemoveFromFriendList(JSContext *cx, JSObject *obj, uintN argc, jsv
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(RemoveFromFriendList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5068,7 +5069,7 @@ JSBool CMulti_RemoveFromGuestList(JSContext *cx, JSObject *obj, uintN argc, jsva
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(RemoveFromGuestList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5101,7 +5102,7 @@ JSBool CMulti_RemoveFromOwnerList(JSContext *cx, JSObject *obj, uintN argc, jsva
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(RemoveFromOwnerList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5134,7 +5135,7 @@ JSBool CMulti_ClearBanList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(ClearBanList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5161,7 +5162,7 @@ JSBool CMulti_ClearFriendList(JSContext *cx, JSObject *obj, uintN argc,
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(ClearFriendList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5188,7 +5189,7 @@ JSBool CMulti_ClearGuestList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_u
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(ClearGuestList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5215,7 +5216,7 @@ JSBool CMulti_ClearOwnerList(JSContext *cx, JSObject *obj, uintN argc, [[maybe_u
 
     CMultiObj *myItem = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(ClearOwnerList) Invalid object assigned");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -5242,7 +5243,7 @@ JSBool CItem_PlaceInPack(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         return JS_FALSE;
     }
     CItem *myItem = static_cast<CItem *>(JS_GetPrivate(cx, obj));
-    if (!ValidateObject(myItem) || !myItem->CanBeObjType(OT_ITEM)) {
+    if (!ValidateObject(myItem) || !myItem->CanBeObjType(CBaseObject::OT_ITEM)) {
         ScriptError(cx, "(PlaceInPack) Invalid object assigned");
         return JS_FALSE;
     }
@@ -6110,13 +6111,13 @@ JSBool CBase_Refresh(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     auto origScriptID = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
 
-    if (myObj->CanBeObjType(OT_CHAR)) {
+    if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         CChar *myChar = static_cast<CChar *>(JS_GetPrivate(cx, obj));
         if (ValidateObject(myChar)) {
             myChar->Update();
         }
     }
-    else if (myObj->CanBeObjType(OT_ITEM)) {
+    else if (myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
         CItem *myItem = static_cast<CItem *>(JS_GetPrivate(cx, obj));
         if (ValidateObject(myItem)) {
             myItem->Update();
@@ -6684,13 +6685,13 @@ JSBool CBase_FirstItem(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
         return JS_FALSE;
     }
     CItem *firstItem = nullptr;
-    if (myObj->GetObjType() == OT_CHAR) {
+    if (myObj->GetObjType() == CBaseObject::OT_CHAR) {
         firstItem = (static_cast<CChar *>(myObj))->FirstItem();
     }
-    else if (myObj->GetObjType() == OT_ITEM) {
+    else if (myObj->GetObjType() == CBaseObject::OT_ITEM) {
         firstItem = (static_cast<CItem *>(myObj))->GetContainsList()->First();
     }
-    else if (myObj->GetObjType() == OT_MULTI) {
+    else if (myObj->GetObjType() == CBaseObject::OT_MULTI) {
         firstItem = (static_cast<CMultiObj *>(myObj))->GetItemsInMultiList()->First();
     }
     else {
@@ -6728,13 +6729,13 @@ JSBool CBase_NextItem(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
         return JS_FALSE;
     }
     CItem *nextItem = nullptr;
-    if (myObj->GetObjType() == OT_CHAR) {
+    if (myObj->GetObjType() == CBaseObject::OT_CHAR) {
         nextItem = (static_cast<CChar *>(myObj))->NextItem();
     }
-    else if (myObj->GetObjType() == OT_ITEM) {
+    else if (myObj->GetObjType() == CBaseObject::OT_ITEM) {
         nextItem = (static_cast<CItem *>(myObj))->GetContainsList()->Next();
     }
-    else if (myObj->GetObjType() == OT_MULTI) {
+    else if (myObj->GetObjType() == CBaseObject::OT_MULTI) {
         nextItem = (static_cast<CMultiObj *>(myObj))->GetItemsInMultiList()->Next();
     }
     else {
@@ -6771,13 +6772,13 @@ JSBool CBase_FinishedItems(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
         ScriptError(cx, "NextItem: Invalid object assigned.");
         return JS_FALSE;
     }
-    if (myObj->GetObjType() == OT_CHAR) {
+    if (myObj->GetObjType() == CBaseObject::OT_CHAR) {
         *rval = BOOLEAN_TO_JSVAL((static_cast<CChar *>(myObj))->FinishedItems());
     }
-    else if (myObj->GetObjType() == OT_ITEM) {
+    else if (myObj->GetObjType() == CBaseObject::OT_ITEM) {
         *rval = BOOLEAN_TO_JSVAL((static_cast<CItem *>(myObj))->GetContainsList()->Finished());
     }
-    else if (myObj->GetObjType() == OT_MULTI) {
+    else if (myObj->GetObjType() == CBaseObject::OT_MULTI) {
         *rval =
             BOOLEAN_TO_JSVAL((static_cast<CMultiObj *>(myObj))->GetItemsInMultiList()->Finished());
     }
@@ -7143,7 +7144,7 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
     mItem->SetGlowColour(mItem->GetColour());
 
     CItem *glowItem =
-        Items->CreateItem(mySock, mChar, 0x1647, 1, 0, OT_ITEM); // spawn light emitting object
+        Items->CreateItem(mySock, mChar, 0x1647, 1, 0, CBaseObject::OT_ITEM); // spawn light emitting object
     if (glowItem == nullptr)
         return JS_FALSE;
 
@@ -8409,7 +8410,7 @@ JSBool CMulti_GetMultiCorner(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(GetMultiCorner) Invalid object referenced - multi required");
         *rval = JSVAL_FALSE;
         return JS_TRUE;
@@ -8463,7 +8464,7 @@ JSBool CMulti_SecureContainer(JSContext *cx, JSObject *obj, uintN argc, jsval *a
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(SecureContainer) Invalid object referenced - multi required");
         return JS_FALSE;
     }
@@ -8500,7 +8501,7 @@ JSBool CMulti_UnsecureContainer(JSContext *cx, JSObject *obj, uintN argc, jsval 
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(UnsecureContainer) Invalid object referenced - multi required");
         return JS_FALSE;
     }
@@ -8537,7 +8538,7 @@ JSBool CMulti_IsSecureContainer(JSContext *cx, JSObject *obj, uintN argc, jsval 
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(IsSecureContainer) Invalid object referenced - multi required");
         return JS_FALSE;
     }
@@ -8573,7 +8574,7 @@ JSBool CMulti_LockDownItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(LockDownItem) Invalid multi object referenced");
         return JS_FALSE;
     }
@@ -8609,7 +8610,7 @@ JSBool CMulti_ReleaseItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(ReleaseItem) Invalid multi object referenced");
         return JS_FALSE;
     }
@@ -8645,7 +8646,7 @@ JSBool CMulti_AddTrashCont(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(AddTrashCont) Invalid multi object referenced");
         return JS_FALSE;
     }
@@ -8681,7 +8682,7 @@ JSBool CMulti_RemoveTrashCont(JSContext *cx, JSObject *obj, uintN argc, jsval *a
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(RemoveTrashCont) Invalid multi object referenced");
         return JS_FALSE;
     }
@@ -8718,7 +8719,7 @@ JSBool CMulti_KillKeys(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
     *rval = JSVAL_FALSE;
     CMultiObj *multiObject = static_cast<CMultiObj *>(JS_GetPrivate(cx, obj));
 
-    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(OT_MULTI)) {
+    if (!ValidateObject(multiObject) || !multiObject->CanBeObjType(CBaseObject::OT_MULTI)) {
         ScriptError(cx, "(KillKeys) Invalid multi object referenced");
         return JS_FALSE;
     }
@@ -9011,7 +9012,7 @@ JSBool CBase_CanSee(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
                 *rval = JSVAL_FALSE;
                 return JS_TRUE;
             }
-            if (tObj->CanBeObjType(OT_ITEM)) {
+            if (tObj->CanBeObjType(CBaseObject::OT_ITEM)) {
                 if ((static_cast<CItem *>(tObj))->GetCont() != nullptr) {
                     ScriptError(cx, "CanSee: Object to look at cannot be in a container");
                     *rval = JSVAL_FALSE;

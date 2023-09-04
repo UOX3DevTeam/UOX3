@@ -3,6 +3,7 @@
 
 #include <filesystem>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "cdice.h"
 #include "ceffects.h"
@@ -55,15 +56,15 @@ void ScriptError(JSContext *cx, const char *txt, ...);
 
 #define __EXTREMELY_VERBOSE__
 
-std::map<std::string, ObjectType> stringToObjType;
+std::map<std::string, CBaseObject::type_t> stringToObjType;
 
 void InitStringToObjType(void) {
-    stringToObjType["BASEOBJ"] = OT_CBO;
-    stringToObjType["CHARACTER"] = OT_CHAR;
-    stringToObjType["ITEM"] = OT_ITEM;
-    stringToObjType["SPAWNER"] = OT_SPAWNER;
-    stringToObjType["MULTI"] = OT_MULTI;
-    stringToObjType["BOAT"] = OT_BOAT;
+    stringToObjType["BASEOBJ"] = CBaseObject::OT_CBO;
+    stringToObjType["CHARACTER"] = CBaseObject::OT_CHAR;
+    stringToObjType["ITEM"] = CBaseObject::OT_ITEM;
+    stringToObjType["SPAWNER"] = CBaseObject::OT_SPAWNER;
+    stringToObjType["MULTI"] = CBaseObject::OT_MULTI;
+    stringToObjType["BOAT"] = CBaseObject::OT_BOAT;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -72,17 +73,17 @@ void InitStringToObjType(void) {
 //|	Purpose		-	Determine object type (ITEM, CHARACTER, MULTI, etc) based on
 // provided string
 // o------------------------------------------------------------------------------------------------o
-ObjectType FindObjTypeFromString(std::string strToFind) {
+CBaseObject::type_t FindObjTypeFromString(std::string strToFind) {
     if (stringToObjType.empty()) // if we haven't built our array yet
     {
         InitStringToObjType();
     }
-    std::map<std::string, ObjectType>::const_iterator toFind =
+    std::map<std::string, CBaseObject::type_t>::const_iterator toFind =
         stringToObjType.find(util::upper(strToFind));
     if (toFind != stringToObjType.end()) {
         return toFind->second;
     }
-    return OT_CBO;
+    return CBaseObject::OT_CBO;
 }
 
 // Effect related functions
@@ -1131,7 +1132,7 @@ JSBool SE_CreateDFNItem(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     std::string bpSectNumber = JS_GetStringBytes(JS_ValueToString(cx, argv[2]));
     bool bInPack = true;
     std::uint16_t iAmount = 1;
-    ObjectType itemType = OT_ITEM;
+    auto itemType = CBaseObject::OT_ITEM;
     std::uint16_t iColor = 0xFFFF;
     std::uint8_t worldNumber = 0;
     std::uint16_t instanceId = 0;
@@ -1215,7 +1216,7 @@ JSBool SE_CreateBlankItem(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
     std::uint16_t itemId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[4]));
     std::uint16_t colour = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[5]));
     std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[6]));
-    ObjectType itemType = FindObjTypeFromString(objType);
+    auto itemType = FindObjTypeFromString(objType);
     bool inPack = (JSVAL_TO_BOOLEAN(argv[7]) == JS_TRUE);
 
     // Store original script context and object, in case NPC spawned has some event that triggers on
@@ -2583,7 +2584,7 @@ JSBool SE_IterateOver(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 
     std::uint32_t b = 0;
     std::string objType = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    ObjectType toCheck = FindObjTypeFromString(objType);
+    auto toCheck = FindObjTypeFromString(objType);
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     if (myScript != nullptr) {
         ObjectFactory::shared().IterateOver(toCheck, b, myScript, &SE_IterateFunctor);
@@ -5014,7 +5015,7 @@ JSBool SE_GetPlayerCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetItemCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                        [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_ITEM));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
     return JS_TRUE;
 }
 
@@ -5025,7 +5026,7 @@ JSBool SE_GetItemCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMultiCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                         [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_MULTI));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_MULTI));
     return JS_TRUE;
 }
 
@@ -5037,7 +5038,7 @@ JSBool SE_GetMultiCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 JSBool SE_GetCharacterCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                             [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                             jsval *rval) {
-    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(OT_CHAR));
+    *rval = INT_TO_JSVAL(ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
     return JS_TRUE;
 }
 

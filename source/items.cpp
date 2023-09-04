@@ -67,7 +67,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 
     std::string cdata;
     std::int32_t ndata = -1, odata = -1;
-    bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
+    bool isSpawner = (applyTo->GetObjType() == CBaseObject::OT_SPAWNER);
 
     TagMap customTag;
     std::string customTagName;
@@ -951,7 +951,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
 // location (be it in |					a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemId, const std::uint16_t iAmount,
-                         const std::uint16_t iColour, const ObjectType itemType, bool inPack,
+                         const std::uint16_t iColour, const CBaseObject::type_t itemType, bool inPack,
                          bool shouldSave, std::uint8_t worldNumber, std::uint16_t instanceId, std::int16_t xLoc, std::int16_t yLoc,
                          std::int8_t zLoc) {
     if (ValidateObject(mChar)) {
@@ -1023,7 +1023,7 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemI
 //|					its location (be it in a pack or on the ground).
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &item,
-                               const std::uint16_t iAmount, const ObjectType itemType, bool inPack,
+                               const std::uint16_t iAmount, const CBaseObject::type_t itemType, bool inPack,
                                const std::uint16_t iColor, bool shouldSave) {
     if (inPack && !ValidateObject(mChar->GetPackItem())) {
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
@@ -1258,14 +1258,14 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
                 else {
                     // Finally, we have an item! Spawn it!
                     iCreated = CreateBaseScriptItem(nullptr, k, worldNum, amountToSpawn, instanceId,
-                                                    OT_ITEM, 0xFFFF, shouldSave);
+                                                    CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
 
                     // However, we have a valid container, and the amount is larger than 1, and the
                     // item is not stackable, let's spawn some more items!
                     if (ValidateObject(mCont) && amountToSpawn > 1 && !iCreated->IsPileable()) {
                         for (int i = 1; i < amountToSpawn; i++) {
                             CItem *iCreated2 = CreateBaseScriptItem(
-                                mCont, k, worldNum, 1, instanceId, OT_ITEM, 0xFFFF, shouldSave);
+                                mCont, k, worldNum, 1, instanceId, CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                             if (ValidateObject(iCreated2)) {
                                 // Place item in container and randomize location
                                 iCreated2->SetCont(mCont);
@@ -1289,7 +1289,7 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
 CMultiObj *cItem::CreateMulti(const std::string &cName, const std::uint16_t itemId, const bool isBoat,
                               const std::uint16_t worldNum, const std::uint16_t instanceId, const bool isBaseMulti) {
     CMultiObj *mCreated = static_cast<CMultiObj *>(
-        ObjectFactory::shared().CreateObject((isBoat) ? OT_BOAT : OT_MULTI));
+        ObjectFactory::shared().CreateObject((isBoat) ? CBaseObject::OT_BOAT : CBaseObject::OT_MULTI));
     if (mCreated == nullptr)
         return nullptr;
 
@@ -1313,9 +1313,9 @@ CMultiObj *cItem::CreateMulti(const std::string &cName, const std::uint16_t item
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a basic item
 // o------------------------------------------------------------------------------------------------o
-CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const ObjectType itemType, const std::uint16_t instanceId,
+CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const CBaseObject::type_t itemType, const std::uint16_t instanceId,
                              bool shouldSave) {
-    if (itemType != OT_ITEM && itemType != OT_SPAWNER)
+    if (itemType != CBaseObject::OT_ITEM && itemType != CBaseObject::OT_SPAWNER)
         return nullptr;
 
     CItem *iCreated = static_cast<CItem *>(ObjectFactory::shared().CreateObject(itemType));
@@ -1338,7 +1338,7 @@ CItem *cItem::CreateBaseItem(const std::uint8_t worldNum, const ObjectType itemT
 // o------------------------------------------------------------------------------------------------o
 CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std::uint8_t worldNum,
                                    const std::uint16_t iAmount, const std::uint16_t instanceId,
-                                   const ObjectType itemType, const std::uint16_t iColor, bool shouldSave) {
+                                   const CBaseObject::type_t itemType, const std::uint16_t iColor, bool shouldSave) {
     ourItem = util::trim(util::strip(ourItem, "//"));
 
     if (ourItem == "blank") // The lootlist-entry is just a blank filler item
@@ -1523,7 +1523,7 @@ auto DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t
         }
     }
 
-    if (toDecay.CanBeObjType(OT_MULTI)) {
+    if (toDecay.CanBeObjType(CBaseObject::OT_MULTI)) {
         toDecay.SetDecayTime(nextDecayItems);
         Console::shared().Warning(util::format(
             "Warning: Prevented multi (serial: 0x%X) from decaying!", toDecay.GetSerial()));
@@ -1900,7 +1900,7 @@ void cItem::GlowItem(CItem *i) {
             j->SetDir(29);
             j->SetLocation(i);
         }
-        else if (getCont->GetObjType() == OT_ITEM) // In a pack
+        else if (getCont->GetObjType() == CBaseObject::OT_ITEM) // In a pack
         {
             j->SetCont(getCont);
             j->SetDir(99); // gives no light in backpacks
@@ -2024,7 +2024,7 @@ CItem *cItem::DupeItem(CSocket *s, CItem *i, std::uint32_t amount) {
         return nullptr;
 
     c->IncLocation(2, 2);
-    if ((!ValidateObject(iCont) || iCont->GetObjType() != OT_ITEM) && ValidateObject(charPack)) {
+    if ((!ValidateObject(iCont) || iCont->GetObjType() != CBaseObject::OT_ITEM) && ValidateObject(charPack)) {
         c->SetCont(charPack);
     }
 

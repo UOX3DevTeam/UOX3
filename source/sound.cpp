@@ -61,7 +61,7 @@ void cEffects::PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHe
                       [&toSend](CSocket *entry) { entry->Send(&toSend); });
     }
     else {
-        if (baseObj->GetObjType() == OT_CHAR) {
+        if (baseObj->GetObjType() == CBaseObject::OT_CHAR) {
             CSocket *mSock = (static_cast<CChar *>(baseObj))->GetSocket();
             if (mSock != nullptr) {
                 mSock->Send(&toSend);
@@ -93,7 +93,7 @@ void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
         std::uint16_t effectId = 0x0042;
         CBaseObject *getCont = item->GetCont();
         if (getCont != nullptr) {
-            if (getCont->GetObjType() == OT_ITEM) {
+            if (getCont->GetObjType() == CBaseObject::OT_ITEM) {
                 CItem *iCont = static_cast<CItem *>(getCont);
                 switch (iCont->GetId()) {
                 case 0x0E75: // backpack

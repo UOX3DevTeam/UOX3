@@ -433,7 +433,7 @@ bool cScript::OnCreate(CBaseObject *thingCreated, bool dfnCreated, bool isPlayer
     jsval rval, params[2];
     std::uint8_t paramType = 0;
     JSObject *myObj;
-    if (thingCreated->GetObjType() == OT_CHAR) {
+    if (thingCreated->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, thingCreated, runTime);
         paramType = 1;
     }
@@ -475,7 +475,7 @@ bool cScript::OnDelete(CBaseObject *thingDestroyed) {
     jsval rval, params[2];
     std::uint8_t paramType = 0;
     JSObject *myObj;
-    if (thingDestroyed->GetObjType() != OT_CHAR) {
+    if (thingDestroyed->GetObjType() != CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_ITEM, thingDestroyed, runTime);
     }
     else {
@@ -525,10 +525,10 @@ std::int8_t cScript::OnSpeech(const char *speech, CChar *personTalking, CBaseObj
 
     JSObject *ptObj = JSEngine->AcquireObject(IUE_CHAR, personTalking, runTime);
     JSObject *ttObj = nullptr;
-    if (talkingTo->CanBeObjType(OT_CHAR)) {
+    if (talkingTo->CanBeObjType(CBaseObject::OT_CHAR)) {
         ttObj = JSEngine->AcquireObject(IUE_CHAR, talkingTo, runTime);
     }
-    else if (talkingTo->CanBeObjType(OT_ITEM)) {
+    else if (talkingTo->CanBeObjType(CBaseObject::OT_ITEM)) {
         ttObj = JSEngine->AcquireObject(IUE_ITEM, talkingTo, runTime);
     }
 
@@ -575,7 +575,7 @@ bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
 
     jsval params[3], rval;
     JSObject *myObj;
-    if (srcObj->CanBeObjType(OT_CHAR)) {
+    if (srcObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, srcObj, runTime);
     }
     else {
@@ -583,7 +583,7 @@ bool cScript::InRange(CBaseObject *srcObj, CBaseObject *objInRange) {
     }
 
     JSObject *myObj2;
-    if (objInRange->CanBeObjType(OT_CHAR)) {
+    if (objInRange->CanBeObjType(CBaseObject::OT_CHAR)) {
         myObj2 = JSEngine->AcquireObject(IUE_CHAR, objInRange, runTime);
     }
     else {
@@ -620,7 +620,7 @@ std::int8_t cScript::OnCollide(CSocket *tSock, CChar *objColliding, CBaseObject 
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
     JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objColliding, runTime);
     JSObject *myObj2 = nullptr;
-    if (objCollideWith->GetObjType() == OT_CHAR) {
+    if (objCollideWith->GetObjType() == CBaseObject::OT_CHAR) {
         myObj2 = JSEngine->AcquireObject(IUE_CHAR, objCollideWith, runTime);
     }
     else {
@@ -656,7 +656,7 @@ std::int8_t cScript::OnMoveDetect(CBaseObject *sourceObj, CChar *charInRange, st
 
     jsval rval, params[5];
     JSObject *myObj = nullptr;
-    if (sourceObj->GetObjType() == OT_CHAR) {
+    if (sourceObj->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, sourceObj, runTime);
     }
     else {
@@ -725,7 +725,7 @@ std::int8_t cScript::OnDispel(CBaseObject *dispelled) {
 
     jsval params[2], rval;
     JSObject *myObj;
-    if (dispelled->GetObjType() == OT_CHAR) {
+    if (dispelled->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, dispelled, runTime);
         params[1] = INT_TO_JSVAL(0);
     }
@@ -767,7 +767,7 @@ bool cScript::OnSkill(CBaseObject *skillUse, std::int8_t skillUsed) {
 
     jsval rval, params[3];
     JSObject *myObj;
-    if (skillUse->GetObjType() == OT_CHAR) {
+    if (skillUse->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, skillUse, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
@@ -800,10 +800,10 @@ std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
 
     jsval rval, params[2];
     JSObject *tooltipObj = nullptr;
-    if (myObj->CanBeObjType(OT_CHAR)) {
+    if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
         tooltipObj = JSEngine->AcquireObject(IUE_CHAR, myObj, runTime);
     }
-    else if (myObj->CanBeObjType(OT_ITEM)) {
+    else if (myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
         tooltipObj = JSEngine->AcquireObject(IUE_ITEM, myObj, runTime);
     }
     JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, pSocket, runTime);
@@ -858,10 +858,10 @@ std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std
 
         // Create JS object reference for myObj, based on whether it's an item or character
         JSObject *nameRequestObj = nullptr;
-        if (myObj->CanBeObjType(OT_CHAR)) {
+        if (myObj->CanBeObjType(CBaseObject::OT_CHAR)) {
             nameRequestObj = JSEngine->AcquireObject(IUE_CHAR, myObj, runTime);
         }
-        else if (myObj->CanBeObjType(OT_ITEM)) {
+        else if (myObj->CanBeObjType(CBaseObject::OT_ITEM)) {
             nameRequestObj = JSEngine->AcquireObject(IUE_ITEM, myObj, runTime);
         }
 
@@ -1281,7 +1281,7 @@ std::int8_t cScript::OnPickup(CItem *item, CChar *pickerUpper, CBaseObject *objC
     JSObject *itemObj = JSEngine->AcquireObject(IUE_ITEM, item, runTime);
     JSObject *objContObj = nullptr;
     if (objCont != nullptr) {
-        if (objCont->GetObjType() == OT_CHAR) {
+        if (objCont->GetObjType() == CBaseObject::OT_CHAR) {
             objContObj = JSEngine->AcquireObject(IUE_CHAR, objCont, runTime);
         }
         else {
@@ -1404,7 +1404,7 @@ std::int8_t cScript::OnLeaving(CMultiObj *left, CBaseObject *leaving) {
     jsval params[3], rval;
     JSObject *myObj;
     JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, left, runTime);
-    if (leaving->GetObjType() == OT_CHAR) {
+    if (leaving->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, leaving, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
@@ -1707,7 +1707,7 @@ std::int8_t cScript::OnEntrance(CMultiObj *left, CBaseObject *leaving) {
     jsval params[3], rval;
     JSObject *myObj;
     JSObject *myItem = JSEngine->AcquireObject(IUE_ITEM, left, runTime);
-    if (leaving->GetObjType() == OT_CHAR) {
+    if (leaving->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, leaving, runTime);
         params[2] = INT_TO_JSVAL(0);
     }
@@ -1744,7 +1744,7 @@ bool cScript::OutOfRange(CBaseObject *srcObj, CBaseObject *objVanish) {
     jsval params[2], rval;
 
     JSObject *myObj;
-    if (srcObj->GetObjType() == OT_CHAR) {
+    if (srcObj->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, srcObj, runTime);
     }
     else {
@@ -1752,7 +1752,7 @@ bool cScript::OutOfRange(CBaseObject *srcObj, CBaseObject *objVanish) {
     }
 
     JSObject *myObj2;
-    if (objVanish->GetObjType() == OT_CHAR) {
+    if (objVanish->GetObjType() == CBaseObject::OT_CHAR) {
         myObj2 = JSEngine->AcquireObject(IUE_CHAR, objVanish, runTime);
     }
     else {
@@ -1841,7 +1841,7 @@ std::int8_t cScript::OnClick(CSocket *sockPlayer, CBaseObject *objClicked) {
 
     JSObject *sockObj = JSEngine->AcquireObject(IUE_SOCK, sockPlayer, runTime);
     JSObject *myObj;
-    if (objClicked->GetObjType() == OT_CHAR) {
+    if (objClicked->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, objClicked, runTime);
     }
     else {
@@ -1944,7 +1944,7 @@ std::int8_t cScript::OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel
 
     jsval rval, params[2];
     JSObject *myObj;
-    if (tObject->GetObjType() == OT_CHAR) {
+    if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
@@ -1977,7 +1977,7 @@ bool cScript::OnWeatherChange(CBaseObject *tObject, weathertype_t element) {
 
     jsval rval, params[2];
     JSObject *myObj;
-    if (tObject->GetObjType() == OT_CHAR) {
+    if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
@@ -2010,7 +2010,7 @@ bool cScript::OnTempChange(CBaseObject *tObject, std::int8_t temp) {
 
     jsval rval, params[2];
     JSObject *myObj;
-    if (tObject->GetObjType() == OT_CHAR) {
+    if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
@@ -2042,7 +2042,7 @@ bool cScript::OnTimer(CBaseObject *tObject, std::uint16_t timerId) {
 
     jsval rval, params[2];
     JSObject *myObj;
-    if (tObject->GetObjType() == OT_CHAR) {
+    if (tObject->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, tObject, runTime);
     }
     else {
@@ -2732,7 +2732,7 @@ std::int8_t cScript::OnSpellTargetSelect(CChar *caster, CBaseObject *target, std
     jsval params[4], rval;
     JSObject *castObj = JSEngine->AcquireObject(IUE_CHAR, caster, runTime);
     JSObject *targObj;
-    if (target->CanBeObjType(OT_CHAR)) {
+    if (target->CanBeObjType(CBaseObject::OT_CHAR)) {
         targObj = JSEngine->AcquireObject(IUE_CHAR, target, runTime);
     }
     else {
@@ -2768,7 +2768,7 @@ std::int8_t cScript::OnSpellTarget(CBaseObject *target, CChar *caster, std::uint
     jsval params[4], rval;
     JSObject *castObj = JSEngine->AcquireObject(IUE_CHAR, caster, runTime);
     JSObject *targObj;
-    if (target->CanBeObjType(OT_CHAR)) {
+    if (target->CanBeObjType(CBaseObject::OT_CHAR)) {
         targObj = JSEngine->AcquireObject(IUE_CHAR, target, runTime);
     }
     else {
@@ -3094,17 +3094,17 @@ bool cScript::AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *t
     if (srcObject == nullptr || tmpObject == nullptr)
         return false;
 
-    if (srcObject->CanBeObjType(OT_ITEM)) {
+    if (srcObject->CanBeObjType(CBaseObject::OT_ITEM)) {
         srcObj = JSEngine->AcquireObject(IUE_ITEM, srcObject, runTime);
     }
-    else if (srcObject->CanBeObjType(OT_CHAR)) {
+    else if (srcObject->CanBeObjType(CBaseObject::OT_CHAR)) {
         srcObj = JSEngine->AcquireObject(IUE_CHAR, srcObject, runTime);
     }
 
-    if (tmpObject->CanBeObjType(OT_ITEM)) {
+    if (tmpObject->CanBeObjType(CBaseObject::OT_ITEM)) {
         tmpObj = JSEngine->AcquireObject(IUE_ITEM, tmpObject, runTime);
     }
-    else if (tmpObject->CanBeObjType(OT_CHAR)) {
+    else if (tmpObject->CanBeObjType(CBaseObject::OT_CHAR)) {
         tmpObj = JSEngine->AcquireObject(IUE_CHAR, tmpObject, runTime);
     }
 
@@ -3285,7 +3285,7 @@ bool cScript::OnIterate(CBaseObject *a, std::uint32_t &b) {
     jsval params[1], rval;
 
     JSObject *myObj = nullptr;
-    if (a->GetObjType() == OT_CHAR) {
+    if (a->GetObjType() == CBaseObject::OT_CHAR) {
         myObj = JSEngine->AcquireObject(IUE_CHAR, a, runTime);
     }
     else {
@@ -3816,7 +3816,7 @@ std::int8_t cScript::OnBuyFromVendor(CSocket *tSock, CChar *objVendor, CBaseObje
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
     JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
-    if (objItemBought->GetObjType() == OT_ITEM) {
+    if (objItemBought->GetObjType() == CBaseObject::OT_ITEM) {
         myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemBought, runTime);
     }
 
@@ -3858,7 +3858,7 @@ std::int8_t cScript::OnSellToVendor(CSocket *tSock, CChar *objVendor, CBaseObjec
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
     JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
-    if (objItemSold->GetObjType() == OT_ITEM) {
+    if (objItemSold->GetObjType() == CBaseObject::OT_ITEM) {
         myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemSold, runTime);
     }
 
@@ -3898,7 +3898,7 @@ std::int8_t cScript::OnBoughtFromVendor(CSocket *tSock, CChar *objVendor, CBaseO
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
     JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
-    if (objItemBought->GetObjType() == OT_ITEM) {
+    if (objItemBought->GetObjType() == CBaseObject::OT_ITEM) {
         myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemBought, runTime);
     }
 
@@ -3938,7 +3938,7 @@ std::int8_t cScript::OnSoldToVendor(CSocket *tSock, CChar *objVendor, CBaseObjec
     JSObject *myObj = JSEngine->AcquireObject(IUE_SOCK, tSock, runTime);
     JSObject *charObj = JSEngine->AcquireObject(IUE_CHAR, objVendor, runTime);
     JSObject *myObj2 = nullptr;
-    if (objItemSold->GetObjType() == OT_ITEM) {
+    if (objItemSold->GetObjType() == CBaseObject::OT_ITEM) {
         myObj2 = JSEngine->AcquireObject(IUE_ITEM, objItemSold, runTime);
     }
 

@@ -1,6 +1,7 @@
 
 #include "books.h"
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cguild.h"
@@ -234,7 +235,7 @@ bool CPIGetItem::Handle(void) {
 
     CPBounce bounce(0);
 
-    ObjectType oType = OT_CBO;
+    auto oType = CBaseObject::OT_CBO;
     CBaseObject *iOwner = nullptr;
     CItem *x = i;
     CBaseObject *iCont = i->GetCont();
@@ -242,8 +243,8 @@ bool CPIGetItem::Handle(void) {
     {
         iOwner = FindItemOwner(i, oType);
         tSock->PickupSerial(i->GetContSerial());
-        if (oType == OT_CHAR) {
-            if (iCont->GetObjType() == OT_CHAR) {
+        if (oType == CBaseObject::OT_CHAR) {
+            if (iCont->GetObjType() == CBaseObject::OT_CHAR) {
                 tSock->PickupSpot(PL_PAPERDOLL);
             }
             else {
@@ -269,7 +270,7 @@ bool CPIGetItem::Handle(void) {
                 }
             }
             if (otherPackCheck || !ObjInRange(ourChar, iOwner, DIST_NEARBY)) {
-                if (iOwner->CanBeObjType(OT_CHAR) &&
+                if (iOwner->CanBeObjType(CBaseObject::OT_CHAR) &&
                     static_cast<CChar *>(iOwner)->GetNpcAiType() == AI_PLAYERVENDOR) {
                     tSock->SysMessage(9175); // If you'd like to purchase an item, just say so.
                 }
@@ -280,7 +281,7 @@ bool CPIGetItem::Handle(void) {
                 Bounce(tSock, i);
                 return true;
             }
-            if (iCont->CanBeObjType(OT_ITEM)) {
+            if (iCont->CanBeObjType(CBaseObject::OT_ITEM)) {
                 CItem *contItem = static_cast<CItem *>(iCont);
                 if (contItem->GetType() == IT_TRADEWINDOW) // Trade Window
                 {
@@ -311,7 +312,7 @@ bool CPIGetItem::Handle(void) {
                 }
             }
         }
-        else if (oType == OT_ITEM) {
+        else if (oType == CBaseObject::OT_ITEM) {
             // Picking up item from non-character container
             tSock->PickupSpot(PL_OTHERPACK);
             CItem *x = static_cast<CItem *>(iOwner);
@@ -476,7 +477,7 @@ bool CPIGetItem::Handle(void) {
         }
     }
 
-    if (i->GetAmount() > 1 && i->GetObjType() != OT_SPAWNER) {
+    if (i->GetAmount() > 1 && i->GetObjType() != CBaseObject::OT_SPAWNER) {
         std::uint16_t amount = tSock->GetWord(5);
         if (amount > i->GetAmount()) {
             amount = i->GetAmount();
@@ -539,7 +540,7 @@ bool CPIGetItem::Handle(void) {
     }
 
     if (iCont != nullptr) {
-        if (ValidateObject(iCont) && iCont->CanBeObjType(OT_ITEM)) {
+        if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_ITEM)) {
             std::vector<std::uint16_t> contScriptTriggers = iCont->GetScriptTriggers();
             for (auto scriptTrig : contScriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
@@ -573,9 +574,9 @@ bool CPIEquipItem::Handle(void) {
         return true;
 
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_PAPERDOLL) {
-        ObjectType pOType;
+        CBaseObject::type_t pOType;
         CBaseObject *pOwner = FindItemOwner(i, pOType);
-        if (pOType == OT_CHAR) {
+        if (pOType == CBaseObject::OT_CHAR) {
             CChar *pOChar = static_cast<CChar *>(pOwner);
             if (((pOChar != ourChar) &&
                  ((!ourChar->IsGM() && (pOChar->GetOwnerObj() != ourChar)))) ||
@@ -585,7 +586,7 @@ bool CPIEquipItem::Handle(void) {
                 return true;
             }
         }
-        else if (pOType == OT_ITEM) {
+        else if (pOType == CBaseObject::OT_ITEM) {
             if (!ObjInRange(ourChar, pOwner, DIST_NEARBY)) {
                 tSock->SysMessage(393); // That is too far away
                 Bounce(tSock, i);
@@ -1562,7 +1563,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         if (contOwner == &mChar) {
             CBaseObject *recurseCont = droppedOn.GetCont();
             while (ValidateObject(recurseCont)) {
-                if (recurseCont->CanBeObjType(OT_ITEM)) {
+                if (recurseCont->CanBeObjType(CBaseObject::OT_ITEM)) {
                     CItem *recurseItem = static_cast<CItem *>(recurseCont);
                     if (recurseItem->GetType() == IT_TRADEWINDOW) {
                         CItem *tradeWindowTwo =
@@ -2460,13 +2461,13 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
         bool packOpened;
         packOpened = false;
         CBaseObject *baseCont;
-        ObjectType objType;
+        CBaseObject::type_t objType;
         baseCont = FindItemOwner(iUsed, objType);
         if (!ValidateObject(baseCont)) {
             baseCont = iUsed;
         }
         if (ValidateObject(baseCont)) {
-            if (baseCont->CanBeObjType(OT_ITEM)) {
+            if (baseCont->CanBeObjType(CBaseObject::OT_ITEM)) {
                 CMultiObj *baseContMultiObj = baseCont->GetMultiObj();
 
                 if (baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj) {
@@ -2611,7 +2612,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
             if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
                 return true;
 
-            Items->CreateScriptItem(nullptr, mChar, "townstone", 1, OT_ITEM);
+            Items->CreateScriptItem(nullptr, mChar, "townstone", 1, CBaseObject::OT_ITEM);
             iUsed->Delete();
         }
         else // Display Townstone gump

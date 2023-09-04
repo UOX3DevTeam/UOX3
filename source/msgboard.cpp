@@ -29,6 +29,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
@@ -1017,7 +1018,7 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
     }
     else // Otherwise pay the poor sod for his time
     {
-        Items->CreateScriptItem(mSock, mChar, "0x0EED", questReward, OT_ITEM, true);
+        Items->CreateScriptItem(mSock, mChar, "0x0EED", questReward, CBaseObject::OT_ITEM, true);
         Effects->GoldSound(mSock, questReward);
 
         // Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.

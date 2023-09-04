@@ -12,6 +12,7 @@
 
 #include <fstream>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "cgump.h"
@@ -145,8 +146,8 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
         if (iType == IT_ITEMSPAWNER || iType == IT_NPCSPAWNER || iType == IT_SPAWNCONT ||
             iType == IT_LOCKEDSPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT ||
             iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) {
-            if (i->GetObjType() != OT_SPAWNER) {
-                CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i->Dupe(OT_SPAWNER));
+            if (i->GetObjType() != CBaseObject::OT_SPAWNER) {
+                CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i->Dupe(CBaseObject::OT_SPAWNER));
                 if (ValidateObject(spawnItem)) {
                     spawnItem->SetInterval(0, static_cast<std::uint8_t>(i->GetTempVar(CITV_MOREY)));
                     spawnItem->SetInterval(1, static_cast<std::uint8_t>(i->GetTempVar(CITV_MOREX)));
@@ -162,7 +163,7 @@ bool FixSpawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
 
 void command_fixspawn(void) {
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &FixSpawnFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &FixSpawnFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -390,7 +391,7 @@ void Command_Tile(CSocket *s) {
         for (std::int16_t x = x1; x <= x2; ++x) {
             for (std::int16_t y = y1; y <= y2; ++y) {
                 rndId = targId + RandomNum(static_cast<std::uint16_t>(0), static_cast<std::uint16_t>(rndVal));
-                CItem *a = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, OT_ITEM);
+                CItem *a = Items->CreateItem(nullptr, s->CurrcharObj(), rndId, 1, 0, CBaseObject::OT_ITEM);
                 if (ValidateObject(a)) // crash prevention
                 {
                     a->SetLocation(x, y, z);
@@ -604,8 +605,8 @@ void Command_Command(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_MemStats(CSocket *s) {
     VALIDATESOCKET(s);
-    size_t charsSize = ObjectFactory::shared().SizeOfObjects(OT_CHAR);
-    size_t itemsSize = ObjectFactory::shared().SizeOfObjects(OT_ITEM);
+    size_t charsSize = ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR);
+    size_t itemsSize = ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM);
     size_t spellsSize = 69 * sizeof(CSpellInfo);
     size_t teffectsSize = sizeof(CTEffect) * cwmWorldState->tempEffects.Num();
     size_t regionsSize = sizeof(CTownRegion) * cwmWorldState->townRegions.size();
@@ -615,10 +616,10 @@ void Command_MemStats(CSocket *s) {
     CGumpDisplay cacheStats(s, 350, 345);
     cacheStats.SetTitle("UOX Memory Information (sizes in bytes)");
     cacheStats.AddData("Total Memory Usage: ", static_cast<std::uint32_t>(total));
-    cacheStats.AddData(" Characters: ", ObjectFactory::shared().CountOfObjects(OT_CHAR));
+    cacheStats.AddData(" Characters: ", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(charsSize));
     cacheStats.AddData("  CChar: ", sizeof(CChar));
-    cacheStats.AddData(" Items: ", ObjectFactory::shared().CountOfObjects(OT_ITEM));
+    cacheStats.AddData(" Items: ", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(itemsSize));
     cacheStats.AddData("  CItem: ", sizeof(CItem));
     cacheStats.AddData(" Spells Size: ", static_cast<std::uint32_t>(spellsSize));
@@ -675,7 +676,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
         if (iType == IT_ITEMSPAWNER || iType == IT_NPCSPAWNER || iType == IT_SPAWNCONT ||
             iType == IT_LOCKEDSPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT ||
             iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) {
-            if (i->GetObjType() == OT_SPAWNER) {
+            if (i->GetObjType() == CBaseObject::OT_SPAWNER) {
                 CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
                 if (!spawnItem->DoRespawn()) {
                     spawnItem->SetTempTimer(BuildTimeValue(static_cast<R32>(RandomNum(
@@ -706,7 +707,7 @@ void Command_Respawn(void) {
                   });
 
     std::uint32_t b = 0;
-    ObjectFactory::shared().IterateOver(OT_ITEM, b, nullptr, &RespawnFunctor);
+    ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &RespawnFunctor);
 }
 
 // o------------------------------------------------------------------------------------------------o

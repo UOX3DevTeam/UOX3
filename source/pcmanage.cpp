@@ -1,6 +1,7 @@
 
 #include <algorithm>
 
+#include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
@@ -490,10 +491,10 @@ auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, colour_t pantsCol
                     std::uint16_t nAmount = static_cast<std::uint16_t>(
                         std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                     n = Items->CreateScriptItem(socket, c, util::trim(util::strip(csecs[0], "//")),
-                                                nAmount, OT_ITEM, true);
+                                                nAmount, CBaseObject::OT_ITEM, true);
                 }
                 else {
-                    n = Items->CreateScriptItem(socket, c, data.c_str(), 1, OT_ITEM, true);
+                    n = Items->CreateScriptItem(socket, c, data.c_str(), 1, CBaseObject::OT_ITEM, true);
                 }
             }
             else if (UTag == "EQUIPITEM") {
@@ -509,7 +510,7 @@ auto AddNewbieItem(CSocket *socket, CChar *c, const char *str, colour_t pantsCol
                     itemSection = data;
                 }
 
-                n = Items->CreateScriptItem(socket, c, itemSection.c_str(), 1, OT_ITEM, true,
+                n = Items->CreateScriptItem(socket, c, itemSection.c_str(), 1, CBaseObject::OT_ITEM, true,
                                             itemHue);
                 if (n != nullptr && n->GetLayer() != IL_NONE) {
                     bool conflictItem = true;
@@ -575,7 +576,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     if (ValidHairStyle(hairStyle, mChar->GetId())) {
         ItemId = hairStyle;
         ItemColour = ValidHairColour(hairColour, mChar->GetId());
-        CreatedItems[HAIR] = Items->CreateItem(tSock, mChar, ItemId, 1, ItemColour, OT_ITEM);
+        CreatedItems[HAIR] = Items->CreateItem(tSock, mChar, ItemId, 1, ItemColour, CBaseObject::OT_ITEM);
         if (CreatedItems[HAIR] != nullptr) {
             CreatedItems[HAIR]->SetDecayable(false);
             CreatedItems[HAIR]->SetLayer(IL_HAIR);
@@ -598,7 +599,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
             ItemColour =
                 Capped(facialHairColour, static_cast<std::uint16_t>(0x044E), static_cast<std::uint16_t>(0x04AD));
         }
-        CreatedItems[BEARD] = Items->CreateItem(tSock, mChar, ItemId, 1, ItemColour, OT_ITEM);
+        CreatedItems[BEARD] = Items->CreateItem(tSock, mChar, ItemId, 1, ItemColour, CBaseObject::OT_ITEM);
         if (CreatedItems[BEARD] != nullptr) {
             CreatedItems[BEARD]->SetDecayable(false);
             CreatedItems[BEARD]->SetLayer(IL_FACIALHAIR);
@@ -607,7 +608,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
             mChar->SetBeardColour(ItemColour);
         }
     }
-    CreatedItems[PACK] = Items->CreateItem(tSock, mChar, 0x0E75, 1, 0, OT_ITEM);
+    CreatedItems[PACK] = Items->CreateItem(tSock, mChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
     if (CreatedItems[PACK] != nullptr) {
         mChar->SetPackItem(CreatedItems[PACK]);
         CreatedItems[PACK]->SetWeightMax(cwmWorldState->ServerData()->MaxPlayerPackWeight());
@@ -618,7 +619,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
         CreatedItems[PACK]->SetType(IT_CONTAINER);
         CreatedItems[PACK]->SetDye(true);
     }
-    CreatedItems[BANK] = Items->CreateItem(tSock, mChar, 0x09AB, 1, 0, OT_ITEM);
+    CreatedItems[BANK] = Items->CreateItem(tSock, mChar, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     if (CreatedItems[BANK] != nullptr) {
         CreatedItems[BANK]->SetName(
             oldstrutil::format(1024, Dictionary->GetEntry(1283), mChar->GetName().c_str()));
@@ -679,7 +680,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     // Give the character some gold
     if (cwmWorldState->ServerData()->ServerStartGold() > 0) {
         CreatedItems[GOLD] = Items->CreateScriptItem(
-            tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true);
+            tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), CBaseObject::OT_ITEM, true);
     }
     else {
         CreatedItems[GOLD] = 0;
@@ -701,7 +702,7 @@ bool CPICreateCharacter::Handle(void) {
     }
 
     if (tSock != nullptr) {
-        CChar *mChar = static_cast<CChar *>(ObjectFactory::shared().CreateObject(OT_CHAR));
+        CChar *mChar = static_cast<CChar *>(ObjectFactory::shared().CreateObject(CBaseObject::OT_CHAR));
         if (mChar != nullptr) {
             CPClientVersion verCheck;
             tSock->Send(&verCheck);
@@ -1424,7 +1425,7 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     bool shouldSave = mChar.ShouldSave();
 
     iCorpse =
-        Items->CreateItem(nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), OT_ITEM, false, shouldSave);
+        Items->CreateItem(nullptr, &mChar, 0x2006, 1, mChar.GetSkin(), CBaseObject::OT_ITEM, false, shouldSave);
     if (!ValidateObject(iCorpse))
         return nullptr;
 
@@ -1714,7 +1715,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
             break; // savage female
         }
 
-        CItem *c = Items->CreateItem(nullptr, mChar, 0x204E, 1, 0, OT_ITEM);
+        CItem *c = Items->CreateItem(nullptr, mChar, 0x204E, 1, 0, CBaseObject::OT_ITEM);
         if (c == nullptr)
             return;
 

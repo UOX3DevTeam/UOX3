@@ -155,7 +155,7 @@ class CMultiObj : public CItem {
 
     virtual void Cleanup(void) override;
 
-    virtual bool CanBeObjType(ObjectType toCompare) const override;
+    virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
 
     GenericList<CChar *> *GetOwnersOfMultiList(bool clearList = false);
     GenericList<CChar *> *GetFriendsOfMultiList(bool clearList = false);
@@ -197,7 +197,7 @@ class CBoatObj : public CMultiObj {
     timerval_t GetMoveTime(void) const;
     void SetMoveTime(timerval_t newVal);
 
-    virtual bool CanBeObjType(ObjectType toCompare) const override;
+    virtual bool CanBeObjType(CBaseObject::type_t toCompare) const override;
 };
 
 #endif
