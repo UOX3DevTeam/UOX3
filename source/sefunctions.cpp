@@ -4258,40 +4258,40 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatDisplayDamageNumbers());
             break;
         case 170: // CLIENTSUPPORT4000
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport4000());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport4000());
             break;
         case 171: // CLIENTSUPPORT5000
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport5000());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport5000());
             break;
         case 172: // CLIENTSUPPORT6000
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport6000());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport6000());
             break;
         case 173: // CLIENTSUPPORT6050
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport6050());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport6050());
             break;
         case 174: // CLIENTSUPPORT7000
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport7000());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport7000());
             break;
         case 175: // CLIENTSUPPORT7090
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport7090());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport7090());
             break;
         case 176: // CLIENTSUPPORT70160
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport70160());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70160());
             break;
         case 177: // CLIENTSUPPORT70240
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport70240());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70240());
             break;
         case 178: // CLIENTSUPPORT70300
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport70300());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70300());
             break;
         case 179: // CLIENTSUPPORT70331
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport70331());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70331());
             break;
         case 180: // CLIENTSUPPORT704565
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport704565());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport704565());
             break;
         case 181: // CLIENTSUPPORT70610
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ClientSupport70610());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70610());
             break;
         case 182: // EXTENDEDSTARTINGSTATS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ExtendedStartingStats());

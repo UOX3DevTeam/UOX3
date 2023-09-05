@@ -673,18 +673,18 @@ auto CServerData::ResetDefaults() -> void {
     ServerSavesTimer(600);
     
     // Enable login-support only for latest available client by default
-    ClientSupport4000(false);
-    ClientSupport5000(false);
-    ClientSupport6000(false);
-    ClientSupport6050(false);
-    ClientSupport7000(false);
-    ClientSupport7090(false);
-    ClientSupport70160(false);
-    ClientSupport70240(false);
-    ClientSupport70300(false);
-    ClientSupport70331(false);
-    ClientSupport704565(false);
-    ClientSupport70610(true);
+    clientSupport4000(false);
+    clientSupport5000(false);
+    clientSupport6000(false);
+    clientSupport6050(false);
+    clientSupport7000(false);
+    clientSupport7090(false);
+    clientSupport70160(false);
+    clientSupport70240(false);
+    clientSupport70300(false);
+    clientSupport70331(false);
+    clientSupport704565(false);
+    clientSupport70610(true);
     
     SystemTimer(tSERVER_INVISIBILITY, 60);
     SystemTimer(tSERVER_HUNGERRATE, 6000);
@@ -2409,7 +2409,7 @@ auto CServerData::ForceNewAnimationPacket() const -> bool {
     return boolVals.test(BIT_FORCENEWANIMATIONPACKET);
 }
 auto CServerData::ForceNewAnimationPacket(bool newVal) -> void {
-    if (ClientSupport4000() || ClientSupport5000() || ClientSupport6000() || ClientSupport6050()) {
+    if (clientSupport4000() || clientSupport5000() || clientSupport6000() || clientSupport6050()) {
         boolVals.set(BIT_FORCENEWANIMATIONPACKET, false);
         Console::shared().warning("FORCENEWANIMATIONPACKET setting not compatible with support for "
                                   "client versions below 7.0.0.0. Setting disabled!");
@@ -4014,18 +4014,18 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n' << '\n';
         
         ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
-        ofsOutput << "CLIENTSUPPORT4000=" << (ClientSupport4000() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT5000=" << (ClientSupport5000() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT6000=" << (ClientSupport6000() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT6050=" << (ClientSupport6050() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT7000=" << (ClientSupport7000() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT7090=" << (ClientSupport7090() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT70160=" << (ClientSupport70160() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT70240=" << (ClientSupport70240() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT70300=" << (ClientSupport70300() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT70331=" << (ClientSupport70331() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT704565=" << (ClientSupport704565() ? 1 : 0) << '\n';
-        ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT4000=" << (clientSupport4000() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT5000=" << (clientSupport5000() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT6000=" << (clientSupport6000() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT6050=" << (clientSupport6050() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT7000=" << (clientSupport7000() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT7090=" << (clientSupport7090() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT70160=" << (clientSupport70160() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT70240=" << (clientSupport70240() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT70300=" << (clientSupport70300() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT70331=" << (clientSupport70331() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT704565=" << (clientSupport704565() ? 1 : 0) << '\n';
+        ofsOutput << "CLIENTSUPPORT70610=" << (clientSupport70610() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
@@ -5142,40 +5142,40 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 170: // CLIENTSUPPORT4000
-            ClientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 171: // CLIENTSUPPORT5000
-            ClientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 172: // CLIENTSUPPORT6000
-            ClientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 173: // CLIENTSUPPORT6050
-            ClientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 174: // CLIENTSUPPORT7000
-            ClientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 175: // CLIENTSUPPORT7090
-            ClientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 176: // CLIENTSUPPORT70160
-            ClientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 177: // CLIENTSUPPORT70240
-            ClientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 178: // CLIENTSUPPORT70300
-            ClientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 179: // CLIENTSUPPORT70331
-            ClientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 180: // CLIENTSUPPORT704565
-            ClientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 181: // CLIENTSUPPORT70610
-            ClientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            clientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 182: // EXTENDEDSTARTINGSTATS
             ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);

@@ -320,9 +320,9 @@ bool CPIFirstLogin::Handle() {
             // Client-versions below 6.0.5.0 can only be verified after they're ingame, so can only
             // be blocked in FirstLogin if _all_ client versions below 6.0.5.0 are blocked
             if (tSock->ClientType() == CV_T2A) {
-                if (!cwmWorldState->ServerData()->ClientSupport4000() &&
-                    !cwmWorldState->ServerData()->ClientSupport5000() &&
-                    !cwmWorldState->ServerData()->ClientSupport6000()) {
+                if (!cwmWorldState->ServerData()->clientSupport4000() &&
+                    !cwmWorldState->ServerData()->clientSupport5000() &&
+                    !cwmWorldState->ServerData()->clientSupport6000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..."
@@ -330,7 +330,7 @@ bool CPIFirstLogin::Handle() {
                 }
             }
             else if (tSock->ClientType() <= CV_KR3D && tSock->ClientType() != CV_DEFAULT) {
-                if (!cwmWorldState->ServerData()->ClientSupport6050()) {
+                if (!cwmWorldState->ServerData()->clientSupport6050()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..."
@@ -338,7 +338,7 @@ bool CPIFirstLogin::Handle() {
                 }
             }
             else if (tSock->ClientType() <= CV_SA3D && tSock->ClientType() != CV_DEFAULT) {
-                if (!cwmWorldState->ServerData()->ClientSupport7000()) {
+                if (!cwmWorldState->ServerData()->clientSupport7000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..."
@@ -347,7 +347,7 @@ bool CPIFirstLogin::Handle() {
             }
             else if (tSock->ClientType() <= CV_HS3D && tSock->ClientType() != CV_DEFAULT) {
                 if (tSock->ClientVerShort() < CVS_70160) {
-                    if (!cwmWorldState->ServerData()->ClientSupport7090()) {
+                    if (!cwmWorldState->ServerData()->clientSupport7090()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.9.0 - "
                                              "7.0.15.1). See UOX.INI..."
@@ -355,7 +355,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70240) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70160()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70160()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.16.0 - "
                                              "7.0.23.1). See UOX.INI..."
@@ -363,7 +363,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70300) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70240()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70240()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..."
@@ -371,7 +371,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70331) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70300()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70300()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..."
@@ -379,7 +379,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_704565) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70331()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70331()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..."
@@ -387,7 +387,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70610) {
-                    if (!cwmWorldState->ServerData()->ClientSupport704565()) {
+                    if (!cwmWorldState->ServerData()->clientSupport704565()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..."
@@ -395,7 +395,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() >= CVS_70610) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70610()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70610()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..."
@@ -971,7 +971,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             {
                 tSock->ClientVerShort(CVS_4011c);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport4000()) {
+            if (!cwmWorldState->ServerData()->clientSupport4000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,
@@ -993,7 +993,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             else if (CliVerSub > 8 || (CliVerSub == 8 && CliVerLetter >= 2)) {
                 tSock->ClientVerShort(CVS_5082);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport5000()) {
+            if (!cwmWorldState->ServerData()->clientSupport5000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,
@@ -1017,7 +1017,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             else if (CliVerSub < 5) {
                 tSock->ClientVerShort(CVS_6017);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport6000()) {
+            if (!cwmWorldState->ServerData()->clientSupport6000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,

@@ -265,18 +265,18 @@ private:
     // format
     
     // Client Support
-    bool Clients4000Enabled;  // Allow client connections from 4.0.0 to 4.0.11f
-    bool Clients5000Enabled;  // Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
-    bool Clients6000Enabled;  // Allow client connections from 6.0.0.0 to 6.0.4.0
-    bool Clients6050Enabled;  // Allow client connections from 6.0.5.0 to 6.0.14.2
-    bool Clients7000Enabled;  // Allow client connections from 7.0.0.0 to 7.0.8.2
-    bool Clients7090Enabled;  // Allow client connections from 7.0.9.0 to 7.0.15.1 (High Seas)
-    bool Clients70160Enabled; // Allow client connections from 7.0.16.0 to 7.0.23.1
-    bool Clients70240Enabled; // Allow client connections from 7.0.24.0+
-    bool Clients70300Enabled; // Allow client connections from 7.0.30.0+
-    bool Clients70331Enabled; // Allow client connections from 7.0.33.1+
-    bool Clients704565Enabled; // Allow client connections from 7.0.45.65+ (Time of Legends)
-    bool Clients70610Enabled;  // Allow client connections from 7.0.61.0+ (Endless Journey)
+    bool isClients4000Enabled;  // Allow client connections from 4.0.0 to 4.0.11f
+    bool isClients5000Enabled;  // Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
+    bool isClients6000Enabled;  // Allow client connections from 6.0.0.0 to 6.0.4.0
+    bool isClients6050Enabled;  // Allow client connections from 6.0.5.0 to 6.0.14.2
+    bool isClients7000Enabled;  // Allow client connections from 7.0.0.0 to 7.0.8.2
+    bool isClients7090Enabled;  // Allow client connections from 7.0.9.0 to 7.0.15.1 (High Seas)
+    bool isClients70160Enabled; // Allow client connections from 7.0.16.0 to 7.0.23.1
+    bool isClients70240Enabled; // Allow client connections from 7.0.24.0+
+    bool isClients70300Enabled; // Allow client connections from 7.0.30.0+
+    bool isClients70331Enabled; // Allow client connections from 7.0.33.1+
+    bool isClients704565Enabled; // Allow client connections from 7.0.45.65+ (Time of Legends)
+    bool isClients70610Enabled;  // Allow client connections from 7.0.61.0+ (Endless Journey)
     
     // facet block
     bool useFacetSaves;
@@ -630,30 +630,30 @@ public:
     auto ServerNetSndTimeout(std::uint32_t timeoutValue) -> void { netSndTimeout = timeoutValue; }
     
     // ClientSupport used to determine login-restrictions
-    auto ClientSupport4000() const -> bool { return Clients4000Enabled; }
-    auto ClientSupport4000(bool cliSuppValue) -> void { Clients4000Enabled = cliSuppValue; }
-    auto ClientSupport5000() const -> bool { return Clients5000Enabled; }
-    auto ClientSupport5000(bool cliSuppValue) -> void { Clients5000Enabled = cliSuppValue; }
-    auto ClientSupport6000() const -> bool { return Clients6000Enabled; }
-    auto ClientSupport6000(bool cliSuppValue) -> void { Clients6000Enabled = cliSuppValue; }
-    auto ClientSupport6050() const -> bool { return Clients6050Enabled; }
-    auto ClientSupport6050(bool cliSuppValue) -> void { Clients6050Enabled = cliSuppValue; }
-    auto ClientSupport7000() const -> bool { return Clients7000Enabled; }
-    auto ClientSupport7000(bool cliSuppValue) -> void { Clients7000Enabled = cliSuppValue; }
-    auto ClientSupport7090() const -> bool { return Clients7090Enabled; }
-    auto ClientSupport7090(bool cliSuppValue) -> void { Clients7090Enabled = cliSuppValue; }
-    auto ClientSupport70160() const -> bool { return Clients70160Enabled; }
-    auto ClientSupport70160(bool cliSuppValue) -> void { Clients70160Enabled = cliSuppValue; }
-    auto ClientSupport70240() const -> bool { return Clients70240Enabled; }
-    auto ClientSupport70240(bool cliSuppValue) -> void { Clients70240Enabled = cliSuppValue; }
-    auto ClientSupport70300() const -> bool { return Clients70300Enabled; }
-    auto ClientSupport70300(bool cliSuppValue) -> void { Clients70300Enabled = cliSuppValue; }
-    auto ClientSupport70331() const -> bool { return Clients70331Enabled; }
-    auto ClientSupport70331(bool cliSuppValue) -> void { Clients70331Enabled = cliSuppValue; }
-    auto ClientSupport704565() const -> bool { return Clients704565Enabled; }
-    auto ClientSupport704565(bool cliSuppValue) -> void { Clients704565Enabled = cliSuppValue; }
-    auto ClientSupport70610() const -> bool { return Clients70610Enabled; }
-    auto ClientSupport70610(bool cliSuppValue) -> void { Clients70610Enabled = cliSuppValue; }
+    auto clientSupport4000() const -> bool { return isClients4000Enabled; }
+    auto clientSupport4000(bool cliSuppValue) -> void { isClients4000Enabled = cliSuppValue; }
+    auto clientSupport5000() const -> bool { return isClients5000Enabled; }
+    auto clientSupport5000(bool cliSuppValue) -> void { isClients5000Enabled = cliSuppValue; }
+    auto clientSupport6000() const -> bool { return isClients6000Enabled; }
+    auto clientSupport6000(bool cliSuppValue) -> void { isClients6000Enabled = cliSuppValue; }
+    auto clientSupport6050() const -> bool { return isClients6050Enabled; }
+    auto clientSupport6050(bool cliSuppValue) -> void { isClients6050Enabled = cliSuppValue; }
+    auto clientSupport7000() const -> bool { return isClients7000Enabled; }
+    auto clientSupport7000(bool cliSuppValue) -> void { isClients7000Enabled = cliSuppValue; }
+    auto clientSupport7090() const -> bool { return isClients7090Enabled; }
+    auto clientSupport7090(bool cliSuppValue) -> void { isClients7090Enabled = cliSuppValue; }
+    auto clientSupport70160() const -> bool { return isClients70160Enabled; }
+    auto clientSupport70160(bool cliSuppValue) -> void { isClients70160Enabled = cliSuppValue; }
+    auto clientSupport70240() const -> bool { return isClients70240Enabled; }
+    auto clientSupport70240(bool cliSuppValue) -> void { isClients70240Enabled = cliSuppValue; }
+    auto clientSupport70300() const -> bool { return isClients70300Enabled; }
+    auto clientSupport70300(bool cliSuppValue) -> void { isClients70300Enabled = cliSuppValue; }
+    auto clientSupport70331() const -> bool { return isClients70331Enabled; }
+    auto clientSupport70331(bool cliSuppValue) -> void { isClients70331Enabled = cliSuppValue; }
+    auto clientSupport704565() const -> bool { return isClients704565Enabled; }
+    auto clientSupport704565(bool cliSuppValue) -> void { isClients704565Enabled = cliSuppValue; }
+    auto clientSupport70610() const -> bool { return isClients70610Enabled; }
+    auto clientSupport70610(bool cliSuppValue) -> void { isClients70610Enabled = cliSuppValue; }
     
     auto StatsAffectSkillChecks(bool setting) -> void;
     auto StatsAffectSkillChecks() const -> bool;

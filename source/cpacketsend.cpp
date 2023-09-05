@@ -391,14 +391,14 @@ void CPExtMove::FlagColour(std::uint8_t newValue) { pStream.WriteByte(16, newVal
 void CPExtMove::SetFlags(CChar &toCopy) {
     std::bitset<8> flag(0);
 
-    if (cwmWorldState->ServerData()->ClientSupport7000() ||
-        cwmWorldState->ServerData()->ClientSupport7090() ||
-        cwmWorldState->ServerData()->ClientSupport70160() ||
-        cwmWorldState->ServerData()->ClientSupport70240() ||
-        cwmWorldState->ServerData()->ClientSupport70300() ||
-        cwmWorldState->ServerData()->ClientSupport70331() ||
-        cwmWorldState->ServerData()->ClientSupport704565() ||
-        cwmWorldState->ServerData()->ClientSupport70610()) {
+    if (cwmWorldState->ServerData()->clientSupport7000() ||
+        cwmWorldState->ServerData()->clientSupport7090() ||
+        cwmWorldState->ServerData()->clientSupport70160() ||
+        cwmWorldState->ServerData()->clientSupport70240() ||
+        cwmWorldState->ServerData()->clientSupport70300() ||
+        cwmWorldState->ServerData()->clientSupport70331() ||
+        cwmWorldState->ServerData()->clientSupport704565() ||
+        cwmWorldState->ServerData()->clientSupport70610()) {
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, female flag
@@ -958,14 +958,14 @@ void CPDrawGamePlayer::CopyData(CChar &toCopy) {
 
     std::bitset<8> flag(0);
 
-    if (cwmWorldState->ServerData()->ClientSupport7000() ||
-        cwmWorldState->ServerData()->ClientSupport7090() ||
-        cwmWorldState->ServerData()->ClientSupport70160() ||
-        cwmWorldState->ServerData()->ClientSupport70240() ||
-        cwmWorldState->ServerData()->ClientSupport70300() ||
-        cwmWorldState->ServerData()->ClientSupport70331() ||
-        cwmWorldState->ServerData()->ClientSupport704565() ||
-        cwmWorldState->ServerData()->ClientSupport70610()) {
+    if (cwmWorldState->ServerData()->clientSupport7000() ||
+        cwmWorldState->ServerData()->clientSupport7090() ||
+        cwmWorldState->ServerData()->clientSupport70160() ||
+        cwmWorldState->ServerData()->clientSupport70240() ||
+        cwmWorldState->ServerData()->clientSupport70300() ||
+        cwmWorldState->ServerData()->clientSupport70331() ||
+        cwmWorldState->ServerData()->clientSupport704565() ||
+        cwmWorldState->ServerData()->clientSupport70610()) {
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, should be female flag
@@ -4651,14 +4651,14 @@ void CPDrawObject::CopyData(CChar &mChar) {
 
     std::bitset<8> flag(0);
 
-    if (cwmWorldState->ServerData()->ClientSupport7000() ||
-        cwmWorldState->ServerData()->ClientSupport7090() ||
-        cwmWorldState->ServerData()->ClientSupport70160() ||
-        cwmWorldState->ServerData()->ClientSupport70240() ||
-        cwmWorldState->ServerData()->ClientSupport70300() ||
-        cwmWorldState->ServerData()->ClientSupport70331() ||
-        cwmWorldState->ServerData()->ClientSupport704565() ||
-        cwmWorldState->ServerData()->ClientSupport70610()) {
+    if (cwmWorldState->ServerData()->clientSupport7000() ||
+        cwmWorldState->ServerData()->clientSupport7090() ||
+        cwmWorldState->ServerData()->clientSupport70160() ||
+        cwmWorldState->ServerData()->clientSupport70240() ||
+        cwmWorldState->ServerData()->clientSupport70300() ||
+        cwmWorldState->ServerData()->clientSupport70331() ||
+        cwmWorldState->ServerData()->clientSupport704565() ||
+        cwmWorldState->ServerData()->clientSupport70610()) {
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, female

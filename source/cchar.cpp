@@ -2225,9 +2225,9 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
                 alwaysSendItemHue = true;
             }
         }
-        else if (cwmWorldState->ServerData()->ClientSupport70331() ||
-                 cwmWorldState->ServerData()->ClientSupport704565() ||
-                 cwmWorldState->ServerData()->ClientSupport70610()) {
+        else if (cwmWorldState->ServerData()->clientSupport70331() ||
+                 cwmWorldState->ServerData()->clientSupport704565() ||
+                 cwmWorldState->ServerData()->clientSupport70610()) {
             // No client version received yet. Rely on highest client support enabled in UOX.INI
             alwaysSendItemHue = true;
         }
