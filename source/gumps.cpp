@@ -1175,7 +1175,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                                     addCmd = util::format("add item %s", tmp.c_str());
                                 }
                             }
-                            Commands.command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else if (repeatAdd.m_IntValue == 1) {
                             std::string addCmd = "";
@@ -1185,7 +1185,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             else {
                                 addCmd = util::format("radditem %s", tmp.c_str());
                             }
-                            Commands.command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else {
                             CItem *newItem =
@@ -1229,7 +1229,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                                     addCmd = util::format("add item %s", data.c_str());
                                 }
                             }
-                            Commands.command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else if (repeatAdd.m_IntValue == 1) {
                             std::string addCmd = "";
@@ -1239,7 +1239,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             else {
                                 addCmd = util::format("radditem %s", data.c_str());
                             }
-                            Commands.command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else {
                             CItem *newItem = Items->CreateScriptItem(s, mChar, data, 0, itemType, true);
@@ -1266,7 +1266,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 }
                 if (reopenMenu.m_IntValue == 1) {
                     std::string menuString = util::format("itemmenu %d", s->TempInt());
-                    Commands.command(s, mChar, menuString);
+                    serverCommands.command(s, mChar, menuString);
                 }
             }
             break;
@@ -1371,12 +1371,12 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     return;
                 
                 std::string menuString = util::format("itemmenu %d", s->TempInt());
-                Commands.command(s, mChar, menuString);
+                serverCommands.command(s, mChar, menuString);
                 
                 auto repeatAdd = mChar->GetTag("repeatAdd");
                 if (repeatAdd.m_IntValue == 1) {
                     std::string addCmd = util::format("raddnpc %s", data.c_str());
-                    Commands.command(s, mChar, addCmd);
+                    serverCommands.command(s, mChar, addCmd);
                 }
                 else {
                     s->XText(data);
@@ -1492,7 +1492,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         else if (button == 50002) {
             // Return to home page of menu
-            Commands.command(s, mChar, "add");
+            serverCommands.command(s, mChar, "add");
             return;
         }
         else if (button == 50003) // Automatically reopen menu after adding objects
@@ -1592,36 +1592,36 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         else if (button == 50008) {
             // Show command list
-            Commands.command(s, mChar, "howto");
+            serverCommands.command(s, mChar, "howto");
             return;
         }
         else if (button == 50009) {
             // Show wholist online
-            Commands.command(s, mChar, "wholist on");
+            serverCommands.command(s, mChar, "wholist on");
             return;
         }
         else if (button == 50010) {
             // Show wholist offline
-            Commands.command(s, mChar, "wholist off");
+            serverCommands.command(s, mChar, "wholist off");
             return;
         }
         else if (button == 50011) {
             // Reload DFNs
-            Commands.command(s, mChar, "reloaddefs");
+            serverCommands.command(s, mChar, "reloaddefs");
             return;
         }
         else if (button == 50012) {
             // Shutdown Server
             if (mChar->GetCommandLevel() >= CL_ADMIN)
-                Commands.command(s, mChar, "shutdown 1");
+                serverCommands.command(s, mChar, "shutdown 1");
             return;
         }
         else if (button == 50020) {
             // Browse UOX3 Docs online
-            Commands.command(s, mChar, "browse https://www.uox3.org/docs");
+            serverCommands.command(s, mChar, "browse https://www.uox3.org/docs");
             
             // Reopen menu
-            Commands.command(s, mChar, sect);
+            serverCommands.command(s, mChar, sect);
             return;
         }
         customTag.m_Destroy = false;
@@ -1636,7 +1636,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         
         // Reopen menu
-        Commands.command(s, mChar, sect);
+        serverCommands.command(s, mChar, sect);
         return;
     }
     

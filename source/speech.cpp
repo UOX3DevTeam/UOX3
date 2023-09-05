@@ -192,7 +192,7 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
 // o------------------------------------------------------------------------------------------------o
 void sysBroadcast(const std::string &txt) {
     if (!txt.empty()) {
-        /*if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+        /*if( cwmWorldState->ServerData()->useUnicodeMessages() )
          {
          Network->pushConn();
          for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock =
@@ -292,7 +292,7 @@ bool CPITalkRequest::Handle() {
     
     if ((asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix()) ||
         ((asciiText[0] == '.') && (asciiText[1] != '.'))) {
-        Commands.command(tSock, mChar, &asciiText[1]);
+        serverCommands.command(tSock, mChar, &asciiText[1]);
     }
     else {
         if (mChar->IsDead()) {

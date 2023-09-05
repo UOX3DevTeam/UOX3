@@ -2314,7 +2314,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std
     if (txt.empty())
         return;
     
-    if (s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (s != nullptr && cwmWorldState->ServerData()->useUnicodeMessages()) {
         [[maybe_unused]] bool sendAll = true;
         if (target == SPTRG_INDIVIDUAL) {
             sendAll = false;
@@ -2398,7 +2398,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
                     tSock->Send(&toWear);
                     
                     // Only send tooltip if server feature for tooltips is enabled
-                    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                         CPToolTip pSend(GetSerial(), tSock);
                         tSock->Send(&pSend);
                     }
@@ -2462,7 +2462,7 @@ void CItem::SendToSocket(CSocket *mSock, [[maybe_unused]] bool drawGamePlayer) {
         }
         if (!CanBeObjType(OT_MULTI)) {
             // Only send tooltip if server feature for tooltips is enabled
-            if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+            if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                 CPToolTip pSend(GetSerial(), mSock);
                 mSock->Send(&pSend);
             }
@@ -2496,7 +2496,7 @@ auto CItem::SendPackItemToSocket(CSocket *mSock) -> void {
         }
         mSock->Send(&itemSend);
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip pSend(GetSerial(), mSock);
             mSock->Send(&pSend);
         }
@@ -2828,7 +2828,7 @@ void CItem::Cleanup() {
                 CSocket *ownerSocket = rootOwner->GetSocket();
                 if (ownerSocket != nullptr) {
                     // Only send tooltip if server feature for tooltips is enabled
-                    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                         // Refresh container tooltip
                         CPToolTip pSend(iCont->GetSerial(), ownerSocket);
                         ownerSocket->Send(&pSend);
@@ -2839,7 +2839,7 @@ void CItem::Cleanup() {
                 for (auto &tSock : FindNearbyPlayers(iCont, DIST_NEARBY)) {
                     if (tSock->LoginComplete()) {
                         // Only send tooltip if server feature for tooltips is enabled
-                        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                             // Refresh container tooltip
                             CPToolTip pSend(iCont->GetSerial(), tSock);
                             tSock->Send(&pSend);

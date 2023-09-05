@@ -1472,7 +1472,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         msg = msg.substr(0, 512);
     }
     
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1518,7 +1518,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
         txtColor = cwmWorldState->ServerData()->SysMsgColour();
     }
     
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1566,7 +1566,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         msg = msg.substr(0, 512);
     }
     
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1634,7 +1634,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
     }
     CChar *mChar = CurrcharObj();
     
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(temp);
         unicodeMessage.Font(FNT_NORMAL);
@@ -1803,7 +1803,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         GuildSys->DisplayTitle(this, i);
     }
     
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(charName);
         unicodeMessage.Font(FNT_NORMAL);

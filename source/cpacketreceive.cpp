@@ -1944,7 +1944,7 @@ void CPIGumpMenuSelect::BuildTextLocations() {
 //|						0x0D - Guild Chat
 //|						0x0E - Alliance Chat
 //|						0x0F - Command Prompts
-//|						0xC0 - Encoded Commands
+//|						0xC0 - Encoded serverCommands
 //|
 //|					NOTE: bool CPITalkRequest::Handle() is located in speech.cpp
 // o------------------------------------------------------------------------------------------------o
@@ -3267,7 +3267,7 @@ void CPIToolTipRequestAoS::Receive() {
     for (std::uint16_t i = 0; i < objCount; i++) {
         getSer = tSock->GetDWord(offset + (i * 4));
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }
@@ -4054,7 +4054,7 @@ void CPIToolTipRequest::Receive() { getSer = tSock->GetDWord(5); }
 bool CPIToolTipRequest::Handle() {
     if (getSer != INVALIDSERIAL) {
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }
@@ -4820,7 +4820,7 @@ bool CPIKrriosClientSpecial::Handle() {
     case 0x01: // guild track info
     {
         // If ini-setting for worldmap packets is enabled
-        if (cwmWorldState->ServerData()->GetClassicUOMapTracker()) {
+        if (cwmWorldState->ServerData()->getClassicUOMapTracker()) {
             CChar *mChar = tSock->CurrcharObj();
 
             if (type == 0x00) {
@@ -4949,7 +4949,7 @@ void CPISpellbookSelect::log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with requests for various AoS features
 // o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0xD7 (Generic AOS Commands)
+//|	Notes		-	Packet: 0xD7 (Generic AOS serverCommands)
 //|					Size: Variable
 //|
 //|					Packet Build

@@ -78,6 +78,6 @@ public:
     void setCommandStatus(const std::string &cmdName, bool isEnabled);
 };
 
-extern CCommands Commands;
+extern CCommands serverCommands;
 
 #endif

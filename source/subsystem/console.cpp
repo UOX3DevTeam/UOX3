@@ -1059,7 +1059,7 @@ auto Console::process(std::int32_t c) -> void {
                     messageLoop << MSG_PRINTDONE;
                     // Reload the server command list
                     messageLoop << "     Loading commands... ";
-                    Commands.load();
+                    serverCommands.load();
                     messageLoop << MSG_PRINTDONE;
                     // Reload DFN's
                     messageLoop << "     Loading Server DFN... ";
@@ -1218,16 +1218,16 @@ auto Console::process(std::int32_t c) -> void {
                 messageLoop << "Console commands:";
                 messageLoop << MSG_SECTIONBEGIN;
                 messageLoop << " ShardOP:";
-                messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
+                messageLoop << "    * - Lock/Unlock Console ? - serverCommands list(this)";
                 messageLoop << "    C - Configuration       H - Unused";
                 messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
-                messageLoop << " Load Commands:";
+                messageLoop << " Load serverCommands:";
                 messageLoop << "    1 - Ini                 2 - Accounts";
                 messageLoop << "    3 - Regions             4 - Spawn Regions";
-                messageLoop << "    5 - Spells              6 - Commands";
+                messageLoop << "    5 - Spells              6 - serverCommands";
                 messageLoop << "    7 - Dfn's               8 - JavaScript";
                 messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
-                messageLoop << " Save Commands:";
+                messageLoop << " Save serverCommands:";
                 messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
                 messageLoop << "    # - Unused              $ - Unused";
                 messageLoop << "    % - Unused              ^ - Unused";

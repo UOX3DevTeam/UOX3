@@ -43,6 +43,7 @@ enum clientfeatures_t {
     CF_BIT_COUNT
 };
 
+//======================================================================================================
 enum serverfeatures_t {
     SF_BIT_UNKNOWN1 = 0, // 0x01
     SF_BIT_IGR,          // 0x02
@@ -64,6 +65,7 @@ enum serverfeatures_t {
     SF_BIT_COUNT
 };
 
+//======================================================================================================
 enum assistantfeatures_t : std::uint64_t {
     AF_NONE = 0,
     
@@ -105,6 +107,7 @@ enum assistantfeatures_t : std::uint64_t {
     AF_ALL = 0xFFFFFFFFFFFFFFFF        // Every feature possible
 };
 
+//======================================================================================================
 enum csd_tid_t {
     tSERVER_ERROR = -1,
     tSERVER_CORPSEDECAY = 0, // Amount of time for a corpse to decay.
@@ -152,6 +155,7 @@ enum csd_tid_t {
     tSERVER_COUNT
 };
 
+//======================================================================================================
 enum csddirectorypaths_t {
     CSDDP_ROOT = 0,
     CSDDP_DATA,
@@ -169,8 +173,11 @@ enum csddirectorypaths_t {
     CSDDP_SCRIPTDATA,
     CSDDP_COUNT
 };
-struct __STARTLOCATIONDATA__ {
-    __STARTLOCATIONDATA__() {
+//======================================================================================================
+// CServerData
+//======================================================================================================
+struct StartLocationData {
+    StartLocationData() {
         x = 0;
         y = 0;
         z = 0;
@@ -210,7 +217,9 @@ private:
     std::string ip;
     std::uint16_t port;
 };
-
+//======================================================================================================
+// CServerData
+//======================================================================================================
 class CServerData {
 private:
     std::bitset<CF_BIT_COUNT> clientFeatures;
@@ -261,8 +270,6 @@ private:
     bool uogEnabled;             // 04/03/2004 - Added to support the UOG Info Request Service
     bool randomStartingLocation; // Enable or disable randomizing starting location for new players
     // based on starting location entries
-    bool useUnicodeMessages; // Enable or disable sending messages originating on server in Unicode
-    // format
     
     // Client Support
     bool isClients4000Enabled;  // Allow client connections from 4.0.0 to 4.0.11f
@@ -389,12 +396,12 @@ private:
     std::uint8_t msgRemovalLevel; //	If not 0, then players can remove posts
     
     // WorldLight
-    lightlevel_t dungeonLightLevel; //	Default light level for a dungeon, if not subject to a
+    lightlevel_t worldDungeonLightLevel; //	Default light level for a dungeon, if not subject to a
     // weather system
-    lightlevel_t currentLightLevel; //	Default current light level if not subject to a weather system
-    lightlevel_t brightnessLightLevel; //	Default brightest light level if not subject to a weather
+    lightlevel_t woldCurrentLightLevel; //	Default current light level if not subject to a weather system
+    lightlevel_t worldBrightnessLightLevel; //	Default brightest light level if not subject to a weather
     // system
-    lightlevel_t darknessLightLevel; //	Default darkest light level if not subject to a weather system
+    lightlevel_t worldDarknessLightLevel; //	Default darkest light level if not subject to a weather system
     
     // WorldTimer								//	days/hours/minutes/seconds to it's
     // own file?
@@ -465,8 +472,8 @@ private:
     std::int16_t combatAttackStamina;     //	Amount of stamina lost when hitting an opponent
     
     // Start & Location Settings
-    std::vector<__STARTLOCATIONDATA__> startlocations;
-    std::vector<__STARTLOCATIONDATA__> youngStartlocations;
+    std::vector<StartLocationData> startlocations;
+    std::vector<StartLocationData> youngStartlocations;
     std::uint16_t startPrivs; //	Starting privileges of characters
     std::int16_t startGold;  //	Amount of gold created when a PC is made
     
@@ -494,57 +501,57 @@ private:
     std::uint32_t taxPeriod;       //	Time (in seconds) between periods of taxes for PCs
     std::uint32_t guardPayment;    //	Time (in seconds) between payments for guards
     
-    void PostLoadDefaults();
     static const std::map<std::string, std::int32_t> uox3IniCaseValue;
-    
+    void postLoadDefaults();
+
 public:
-    std::uint64_t DisabledAssistantFeatures;
+    std::uint64_t disabledAssistantFeatures;
     
-    auto LookupINIValue(const std::string &tag) -> std::int32_t;
+    auto lookupINIValue(const std::string &tag) -> std::int32_t;
     
-    auto SetServerFeature(serverfeatures_t, bool) -> void;
-    auto SetServerFeatures(size_t) -> void;
-    auto GetServerFeature(serverfeatures_t) const -> bool;
-    auto GetServerFeatures() const -> size_t;
+    auto setServerFeature(serverfeatures_t, bool) -> void;
+    auto setServerFeatures(size_t) -> void;
+    auto getServerFeature(serverfeatures_t) const -> bool;
+    auto getServerFeatures() const -> size_t;
     
-    auto SetClientFeature(clientfeatures_t, bool) -> void;
-    auto SetClientFeatures(std::uint32_t) -> void;
-    auto GetClientFeature(clientfeatures_t) const -> bool;
-    std::uint32_t GetClientFeatures() const;
+    auto setClientFeature(clientfeatures_t, bool) -> void;
+    auto setClientFeatures(std::uint32_t) -> void;
+    auto getClientFeature(clientfeatures_t) const -> bool;
+    auto getClientFeatures() const -> std::uint32_t ;
     
-    auto SetDisabledAssistantFeature(assistantfeatures_t, bool) -> void;
-    auto SetDisabledAssistantFeatures(std::uint64_t) -> void;
-    auto GetDisabledAssistantFeature(assistantfeatures_t) const -> bool;
-    std::uint64_t GetDisabledAssistantFeatures() const;
+    auto setDisabledAssistantFeature(assistantfeatures_t, bool) -> void;
+    auto setDisabledAssistantFeatures(std::uint64_t) -> void;
+    auto getDisabledAssistantFeature(assistantfeatures_t) const -> bool;
+    auto getDisabledAssistantFeatures() const ->std::uint64_t ;
     
-    auto SetAssistantNegotiation(bool value) -> void;
-    auto GetAssistantNegotiation() const -> bool;
+    auto setAssistantNegotiation(bool value) -> void;
+    auto getAssistantNegotiation() const -> bool;
     
-    auto GetSpawnRegionsFacetStatus(std::uint32_t value) const -> bool;
-    auto SetSpawnRegionsFacetStatus(std::uint32_t value, bool status) -> void;
-    std::uint32_t GetSpawnRegionsFacetStatus() const;
-    auto SetSpawnRegionsFacetStatus(std::uint32_t value) -> void;
+    auto getSpawnRegionsFacetStatus(std::uint32_t value) const -> bool;
+    auto setSpawnRegionsFacetStatus(std::uint32_t value, bool status) -> void;
+    auto getSpawnRegionsFacetStatus() const ->std::uint32_t ;
+    auto setSpawnRegionsFacetStatus(std::uint32_t value) -> void;
     
-    auto SetClassicUOMapTracker(bool value) -> void;
-    auto GetClassicUOMapTracker() const -> bool;
+    auto setClassicUOMapTracker(bool value) -> void;
+    auto getClassicUOMapTracker() const -> bool;
     
-    auto UseUnicodeMessages(bool value) -> void;
-    auto UseUnicodeMessages() const -> bool;
+    auto useUnicodeMessages(bool value) -> void;
+    auto useUnicodeMessages() const -> bool;
     
-    std::int16_t ServerMoon(std::int16_t slot) const;
-    lightlevel_t WorldLightDarkLevel() const;
-    lightlevel_t WorldLightBrightLevel() const;
-    lightlevel_t WorldLightCurrentLevel() const;
-    lightlevel_t DungeonLightLevel() const;
-    auto ServerStartPrivs() const -> std::uint16_t;
+    std::int16_t serverMoon(std::int16_t slot) const;
+    lightlevel_t worldLightDarkLevel() const;
+    lightlevel_t worldLightBrightLevel() const;
+    lightlevel_t worldLightCurrentLevel() const;
+    lightlevel_t dungeonLightLevel() const;
+    auto serverStartPrivs() const -> std::uint16_t;
     std::int16_t ServerStartGold() const;
     
-    auto ServerMoon(std::int16_t slot, std::int16_t value) -> void;
-    auto WorldLightDarkLevel(lightlevel_t value) -> void;
-    auto WorldLightBrightLevel(lightlevel_t value) -> void;
-    auto WorldLightCurrentLevel(lightlevel_t value) -> void;
-    auto DungeonLightLevel(lightlevel_t value) -> void;
-    auto ServerStartPrivs(std::uint16_t value) -> void;
+    auto serverMoon(std::int16_t slot, std::int16_t value) -> void;
+    auto worldLightDarkLevel(lightlevel_t value) -> void;
+    auto worldLightBrightLevel(lightlevel_t value) -> void;
+    auto worldLightCurrentLevel(lightlevel_t value) -> void;
+    auto dungeonLightLevel(lightlevel_t value) -> void;
+    auto serverStartPrivs(std::uint16_t value) -> void;
     auto ServerStartGold(std::int16_t value) -> void;
     auto ParseIni(const std::string &filename) -> bool;
     auto HandleLine(const std::string &tag, const std::string &value) -> bool;
@@ -554,8 +561,7 @@ public:
     auto SaveIni(const std::string &filename) -> bool;
     
     auto EraEnumToString(expansionruleset_t eraNum, bool coreEnum = false) -> std::string;
-    auto EraStringToEnum(const std::string &eraString, bool useDefault = true,
-                         bool inheritCore = true) -> expansionruleset_t;
+    auto EraStringToEnum(const std::string &eraString, bool useDefault = true, bool inheritCore = true) -> expansionruleset_t;
     
     auto ResetDefaults() -> void;
     auto startup() -> void;
@@ -593,24 +599,24 @@ public:
     auto ServerContextMenus(bool setting) -> void;
     auto ServerContextMenus() const -> bool;
     auto ServerSavesTimer(std::uint32_t timer) -> void;
-    std::uint32_t ServerSavesTimerStatus() const;
+    auto ServerSavesTimerStatus() const ->std::uint32_t ;
     auto ServerMainThreadTimer(std::uint32_t threadtimer) -> void;
-    std::uint32_t ServerMainThreadTimerStatus() const;
+    auto ServerMainThreadTimerStatus() const ->std::uint32_t ;
     auto ServerSkillTotalCap(std::uint16_t cap) -> void;
     auto ServerSkillTotalCapStatus() const -> std::uint16_t;
     auto ServerSkillCap(std::uint16_t cap) -> void;
     auto ServerSkillCapStatus() const -> std::uint16_t;
     auto ServerSkillDelay(std::uint8_t skdelay) -> void;
-    std::uint8_t ServerSkillDelayStatus() const;
+    auto ServerSkillDelayStatus() const ->std::uint8_t ;
     auto ServerStatCap(std::uint16_t cap) -> void;
     auto ServerStatCapStatus() const -> std::uint16_t;
     auto MaxStealthMovement(std::int16_t value) -> void;
-    std::int16_t MaxStealthMovement() const;
+    auto MaxStealthMovement() const ->std::int16_t ;
     auto MaxStaminaMovement(std::int16_t value) -> void;
-    std::int16_t MaxStaminaMovement() const;
+    auto MaxStaminaMovement() const -> std::int16_t ;
     auto SystemTimer(csd_tid_t timerId, std::uint16_t value) -> void;
     auto SystemTimer(csd_tid_t timerId) const -> std::uint16_t;
-    timerval_t BuildSystemTimeValue(csd_tid_t timerId) const;
+    auto BuildSystemTimeValue(csd_tid_t timerId) const ->timerval_t ;
     auto SysMsgColour(std::uint16_t value) -> void;
     auto SysMsgColour() const -> std::uint16_t;
     
@@ -622,11 +628,11 @@ public:
     auto ServerRandomStartingLocation(bool rndStartLocValue) -> void {
         randomStartingLocation = rndStartLocValue;
     }
-    std::uint32_t ServerNetRetryCount() const { return netRetryCount; }
+    auto ServerNetRetryCount() const -> std::uint32_t { return netRetryCount; }
     auto ServerNetRetryCount(std::uint32_t retryValue) -> void { netRetryCount = retryValue; }
-    std::uint32_t ServerNetRcvTimeout() const { return netRcvTimeout; }
+    auto ServerNetRcvTimeout() const -> std::uint32_t { return netRcvTimeout; }
     auto ServerNetRcvTimeout(std::uint32_t timeoutValue) -> void { netRcvTimeout = timeoutValue; }
-    std::uint32_t ServerNetSndTimeout() const { return netSndTimeout; }
+    auto ServerNetSndTimeout() const -> std::uint32_t { return netSndTimeout; }
     auto ServerNetSndTimeout(std::uint32_t timeoutValue) -> void { netSndTimeout = timeoutValue; }
     
     // ClientSupport used to determine login-restrictions
@@ -667,7 +673,7 @@ public:
     
     // Define all Path Get/Set's here please
     auto Directory(csddirectorypaths_t dp, std::string value) -> void;
-    std::string Directory(csddirectorypaths_t dp);
+    auto Directory(csddirectorypaths_t dp)->std::string ;
     
     auto CorpseLootDecay(bool value) -> void;
     auto CorpseLootDecay() const -> bool;
@@ -679,7 +685,7 @@ public:
     auto DeathAnimationStatus() const -> bool;
     
     auto WorldAmbientSounds(std::int16_t value) -> void;
-    std::int16_t WorldAmbientSounds() const;
+    auto WorldAmbientSounds() const -> std::int16_t ;
     
     auto AmbientFootsteps(bool value) -> void;
     auto AmbientFootsteps() const -> bool;
@@ -706,13 +712,13 @@ public:
     auto PlayerPersecutionStatus() const -> bool;
     
     auto HtmlStatsStatus(std::int16_t value) -> void;
-    std::int16_t HtmlStatsStatus() const;
+    auto HtmlStatsStatus() const ->std::int16_t;
     
     auto SellByNameStatus(bool value) -> void;
     auto SellByNameStatus() const -> bool;
     
     auto SellMaxItemsStatus(std::int16_t value) -> void;
-    std::int16_t SellMaxItemsStatus() const;
+    auto SellMaxItemsStatus() const -> std::int16_t ;
     
     auto TradeSystemStatus(bool value) -> void;
     auto TradeSystemStatus() const -> bool;
@@ -733,7 +739,7 @@ public:
     auto NPCTrainingStatus() const -> bool;
     
     auto CheckItemsSpeed(R64 value) -> void;
-    R64 CheckItemsSpeed() const;
+    auto CheckItemsSpeed() const -> R64 ;
     
     auto CheckBoatSpeed(R64 value) -> void;
     R64 CheckBoatSpeed() const;
@@ -1129,10 +1135,10 @@ public:
     R32 NPCMountedWalkingSpeed() const;
     
     auto NPCMountedRunningSpeed(R32 value) -> void;
-    R32 NPCMountedRunningSpeed() const;
+    auto NPCMountedRunningSpeed() const ->R32 ;
     
     auto NPCMountedFleeingSpeed(R32 value) -> void;
-    R32 NPCMountedFleeingSpeed() const;
+    auto NPCMountedFleeingSpeed() const ->R32 ;
     
     auto TitleColour(std::uint16_t value) -> void;
     auto TitleColour() const -> std::uint16_t;
@@ -1156,28 +1162,28 @@ public:
     auto BackgroundPic() const -> std::uint16_t;
     
     auto TownNumSecsPollOpen(std::uint32_t value) -> void;
-    std::uint32_t TownNumSecsPollOpen() const;
+    auto TownNumSecsPollOpen() const ->std::uint32_t ;
     
     auto TownNumSecsAsMayor(std::uint32_t value) -> void;
-    std::uint32_t TownNumSecsAsMayor() const;
+    auto TownNumSecsAsMayor() const ->std::uint32_t ;
     
     auto TownTaxPeriod(std::uint32_t value) -> void;
-    std::uint32_t TownTaxPeriod() const;
+    auto TownTaxPeriod() const ->std::uint32_t ;
     
     auto TownGuardPayment(std::uint32_t value) -> void;
-    std::uint32_t TownGuardPayment() const;
+    auto TownGuardPayment() const ->std::uint32_t ;
     
     auto RepMaxKills(std::uint16_t value) -> void;
     auto RepMaxKills() const -> std::uint16_t;
     
     auto ResLogs(std::int16_t value) -> void;
-    std::int16_t ResLogs() const;
+    auto ResLogs() const -> std::int16_t ;
     
     auto ResLogTime(std::uint16_t value) -> void;
     auto ResLogTime() const -> std::uint16_t;
     
     auto ResOre(std::int16_t value) -> void;
-    std::int16_t ResOre() const;
+    auto ResOre() const ->std::int16_t ;
     
     auto ResOreTime(std::uint16_t value) -> void;
     auto ResOreTime() const -> std::uint16_t;
@@ -1186,19 +1192,19 @@ public:
     auto ResourceAreaSize() const -> std::uint16_t;
     
     auto ResFish(std::int16_t value) -> void;
-    std::int16_t ResFish() const;
+    auto ResFish() const ->std::int16_t ;
     
     auto ResFishTime(std::uint16_t value) -> void;
     auto ResFishTime() const -> std::uint16_t;
     
     auto AccountFlushTimer(R64 value) -> void;
-    R64 AccountFlushTimer() const;
+    auto AccountFlushTimer() const ->R64 ;
     
     auto TrackingBaseRange(std::uint16_t value) -> void;
     auto TrackingBaseRange() const -> std::uint16_t;
     
     auto TrackingMaxTargets(std::uint8_t value) -> void;
-    std::uint8_t TrackingMaxTargets() const;
+    auto TrackingMaxTargets() const ->std::uint8_t ;
     
     auto TrackingBaseTimer(std::uint16_t value) -> void;
     auto TrackingBaseTimer() const -> std::uint16_t;
@@ -1211,7 +1217,7 @@ public:
     auto CharHideWhileMounted() const -> bool;
     
     auto WeightPerStr(R32 newVal) -> void;
-    R32 WeightPerStr() const;
+    auto WeightPerStr() const ->R32 ;
     
     auto ServerOverloadPackets(bool newVal) -> void;
     auto ServerOverloadPackets() const -> bool;
@@ -1231,11 +1237,11 @@ public:
     auto DumpPaths() -> void;
     
     auto ServerLocation(std::string toSet) -> void;
-    auto ServerLocation(size_t locNum) -> __STARTLOCATIONDATA__ *;
+    auto ServerLocation(size_t locNum) -> StartLocationData *;
     auto NumServerLocations() const -> size_t;
     
     auto YoungServerLocation(std::string toSet) -> void;
-    auto YoungServerLocation(size_t locNum) -> __STARTLOCATIONDATA__ *;
+    auto YoungServerLocation(size_t locNum) -> StartLocationData *;
     auto NumYoungServerLocations() const -> size_t;
     
     auto ServerSecondsPerUOMinute() const -> std::uint16_t;
@@ -1244,13 +1250,13 @@ public:
     auto ServerLanguage() const -> std::uint16_t;
     auto ServerLanguage(std::uint16_t newVal) -> void;
     
-    std::uint32_t MaxClientBytesIn() const;
+    auto MaxClientBytesIn() const ->std::uint32_t ;
     auto MaxClientBytesIn(std::uint32_t newVal) -> void;
     
-    std::uint32_t MaxClientBytesOut() const;
+    auto MaxClientBytesOut() const ->std::uint32_t ;
     auto MaxClientBytesOut(std::uint32_t newVal) -> void;
     
-    std::uint32_t NetTrafficTimeban() const;
+    auto NetTrafficTimeban() const ->std::uint32_t ;
     auto NetTrafficTimeban(std::uint32_t newVal) -> void;
     
     auto GetJSEngineSize() const -> std::uint16_t;
@@ -1265,10 +1271,10 @@ public:
     auto APSDelayMaxCap() const -> std::uint16_t;
     auto APSDelayMaxCap(std::uint16_t newVal) -> void;
     
-    std::int16_t ServerTimeDay() const;
-    std::uint8_t ServerTimeHours() const;
-    std::uint8_t ServerTimeMinutes() const;
-    std::uint8_t ServerTimeSeconds() const;
+    auto ServerTimeDay() const -> std::int16_t ;
+    auto ServerTimeHours() const ->std::uint8_t ;
+    auto ServerTimeMinutes() const ->std::uint8_t ;
+    auto ServerTimeSeconds() const ->std::uint8_t ;
     auto ServerTimeAMPM() const -> bool;
     
     auto ServerTimeDay(std::int16_t nValue) -> void;
@@ -1291,7 +1297,7 @@ public:
     
     auto matchIP(const IP4Addr &ip) const -> IP4Addr;
     
-    PhysicalServer *ServerEntry(std::uint16_t entryNum);
+    auto ServerEntry(std::uint16_t entryNum) ->PhysicalServer *;
     auto ServerCount() const -> std::uint16_t;
     
 private:

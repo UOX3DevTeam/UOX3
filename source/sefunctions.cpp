@@ -498,7 +498,7 @@ JSBool SE_CommandLevelReq(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CommandLevelReq: Invalid command name");
         return JS_FALSE;
     }
-    CommandMapEntry *details = Commands.commandDetails(test);
+    CommandMapEntry *details = serverCommands.commandDetails(test);
     if (details == nullptr) {
         *rval = INT_TO_JSVAL(255);
     }
@@ -524,7 +524,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         ScriptError(cx, "CommandExists: Invalid command name");
         return JS_FALSE;
     }
-    *rval = BOOLEAN_TO_JSVAL(Commands.commandExists(test));
+    *rval = BOOLEAN_TO_JSVAL(serverCommands.commandExists(test));
     return JS_TRUE;
 }
 
@@ -536,7 +536,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                        [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands.firstCommand();
+    const std::string tVal = serverCommands.firstCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -557,7 +557,7 @@ JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_un
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                       [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands.nextCommand();
+    const std::string tVal = serverCommands.nextCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -578,7 +578,7 @@ JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unu
 JSBool SE_FinishedCommandList([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                               [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                               jsval *rval) {
-    *rval = BOOLEAN_TO_JSVAL(Commands.finishedCommandList());
+    *rval = BOOLEAN_TO_JSVAL(serverCommands.finishedCommandList());
     return JS_TRUE;
 }
 
@@ -610,7 +610,7 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         return JS_FALSE;
     }
 
-    Commands.registerCommand(toRegister, scriptId, execLevel, isEnabled);
+    serverCommands.registerCommand(toRegister, scriptId, execLevel, isEnabled);
     return JS_TRUE;
 }
 
@@ -794,7 +794,7 @@ JSBool SE_DisableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         return JS_FALSE;
     }
     std::string toDisable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands.setCommandStatus(toDisable, false);
+    serverCommands.setCommandStatus(toDisable, false);
     return JS_TRUE;
 }
 
@@ -858,7 +858,7 @@ JSBool SE_EnableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         return JS_FALSE;
     }
     std::string toEnable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands.setCommandStatus(toEnable, true);
+    serverCommands.setCommandStatus(toEnable, true);
     return JS_TRUE;
 }
 
@@ -2373,7 +2373,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
 
     std::string tmpString = GetNpcDictName(myChar, mySock, NRS_SPEECH) + yellTo + textToYell;
 
-    if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(tmpString);
         unicodeMessage.Font(static_cast<fonttype_t>(myChar->GetFontType()));
@@ -2445,8 +2445,8 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
     case 2: // Reload Spells
         Magic->LoadScript();
         break;
-    case 3: // Reload Commands
-        Commands.load();
+    case 3: // Reload serverCommands
+        serverCommands.load();
         break;
     case 4: // Reload DFNs
         FileLookup->Reload();
@@ -2470,7 +2470,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
         UnloadSpawnRegions();
         loadSpawnRegions();
         Magic->LoadScript();
-        Commands.load();
+        serverCommands.load();
         loadSkills();
         Skills->load();
         messageLoop << MSG_RELOADJS;
@@ -2644,9 +2644,9 @@ JSBool SE_WorldBrightLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     }
     else if (argc == 1) {
         auto brightLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->WorldLightBrightLevel(brightLevel);
+        cwmWorldState->ServerData()->worldLightBrightLevel(brightLevel);
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->WorldLightBrightLevel());
+    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->worldLightBrightLevel());
     return JS_TRUE;
 }
 
@@ -2666,9 +2666,9 @@ JSBool SE_WorldDarkLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
     }
     else if (argc == 1) {
         auto darkLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->WorldLightDarkLevel(darkLevel);
+        cwmWorldState->ServerData()->worldLightDarkLevel(darkLevel);
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->WorldLightDarkLevel());
+    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->worldLightDarkLevel());
     return JS_TRUE;
 }
 
@@ -2687,9 +2687,9 @@ JSBool SE_WorldDungeonLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
     }
     else if (argc == 1) {
         auto dungeonLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->DungeonLightLevel(dungeonLevel);
+        cwmWorldState->ServerData()->dungeonLightLevel(dungeonLevel);
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->DungeonLightLevel());
+    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->dungeonLightLevel());
     return JS_TRUE;
 }
 
@@ -2709,7 +2709,7 @@ JSBool SE_GetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
     else if (argc == 1) {
         std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         bool spawnRegionFacetStatus =
-            cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(spawnRegionFacet);
+            cwmWorldState->ServerData()->getSpawnRegionsFacetStatus(spawnRegionFacet);
         if (spawnRegionFacetStatus) {
             *rval = INT_TO_JSVAL(1);
         }
@@ -2735,12 +2735,12 @@ JSBool SE_SetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
     }
     else if (argc == 1) {
         std::uint32_t spawnRegionFacetVal = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus(spawnRegionFacetVal);
+        cwmWorldState->ServerData()->setSpawnRegionsFacetStatus(spawnRegionFacetVal);
     }
     else if (argc == 2) {
         std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         bool spawnRegionFacetStatus = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
-        cwmWorldState->ServerData()->SetSpawnRegionsFacetStatus(spawnRegionFacet,
+        cwmWorldState->ServerData()->setSpawnRegionsFacetStatus(spawnRegionFacet,
                                                                 spawnRegionFacetStatus);
     }
     return JS_TRUE;
@@ -3199,10 +3199,10 @@ JSBool SE_Moon([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, u
     std::int16_t slot = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     if (argc == 2) {
         std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
-        cwmWorldState->ServerData()->ServerMoon(slot, newVal);
+        cwmWorldState->ServerData()->serverMoon(slot, newVal);
     }
 
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ServerMoon(slot));
+    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->serverMoon(slot));
 
     return JS_TRUE;
 }
@@ -3674,7 +3674,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     JSString *tString;
     std::string settingName = util::upper(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     if (!settingName.empty()) {
-        auto settingId = cwmWorldState->ServerData()->LookupINIValue(settingName);
+        auto settingId = cwmWorldState->ServerData()->lookupINIValue(settingName);
         switch (settingId) {
         case 1: // SERVERNAME
         {
@@ -3939,22 +3939,22 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTACTIVE)));
             break;
         case 72: // MOON1
-            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerMoon(0)));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->serverMoon(0)));
             break;
         case 73: // MOON2
-            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerMoon(1)));
+            *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->serverMoon(1)));
             break;
         case 74: // DUNGEONLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<lightlevel_t>(cwmWorldState->ServerData()->DungeonLightLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->dungeonLightLevel()));
             break;
         case 75: // CURRENTLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightCurrentLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightCurrentLevel()));
             break;
         case 76: // BRIGHTLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightBrightLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightBrightLevel()));
             break;
         case 77: // BASERANGE
             *rval =
@@ -4055,7 +4055,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 105: // STARTPRIVS
             *rval =
-                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerStartPrivs()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->serverStartPrivs()));
             break;
         case 106: // ESCORTDONEEXPIRE
             *rval = INT_TO_JSVAL(
@@ -4063,7 +4063,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 107: // DARKLEVEL
             *rval = INT_TO_JSVAL(
-                static_cast<lightlevel_t>(cwmWorldState->ServerData()->WorldLightDarkLevel()));
+                static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightDarkLevel()));
             break;
         case 108: // TITLECOLOUR
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TitleColour()));
@@ -4194,7 +4194,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 145: // CLIENTFEATURES
             *rval =
-                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetClientFeatures()));
+                INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->getClientFeatures()));
             break;
         case 146: // PACKETOVERLOADS
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerOverloadPackets());
@@ -4218,7 +4218,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 153: // SERVERFEATURES
             *rval =
-                INT_TO_JSVAL(static_cast<size_t>(cwmWorldState->ServerData()->GetServerFeatures()));
+                INT_TO_JSVAL(static_cast<size_t>(cwmWorldState->ServerData()->getServerFeatures()));
             break;
         case 154: // LOOTINGISCRIME
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->LootingIsCrime());
@@ -4246,7 +4246,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 162: // SPAWNREGIONSFACETS
             *rval = INT_TO_JSVAL(
-                static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus()));
+                static_cast<std::uint32_t>(cwmWorldState->ServerData()->getSpawnRegionsFacetStatus()));
             break;
         case 163: // PAPERDOLLGUILDBUTTON
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PaperdollGuildButton());
@@ -4339,101 +4339,101 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerRandomStartingLocation());
             break;
         case 194: // ASSISTANTNEGOTIATION
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetAssistantNegotiation());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getAssistantNegotiation());
             break;
         case 195: // KICKONASSISTANTSILENCE
             *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KickOnAssistantSilence());
             break;
         case 196: // AF_FILTERWEATHER
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_FILTERWEATHER));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERWEATHER));
             break;
         case 197: // AF_FILTERLIGHT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_FILTERLIGHT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERLIGHT));
             break;
         case 198: // AF_SMARTTARGET
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_SMARTTARGET));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SMARTTARGET));
             break;
         case 199: // AF_RANGEDTARGET
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_RANGEDTARGET));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RANGEDTARGET));
             break;
         case 200: // AF_AUTOOPENDOORS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_AUTOOPENDOORS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOOPENDOORS));
             break;
         case 201: // AF_DEQUIPONCAST
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_DEQUIPONCAST));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_DEQUIPONCAST));
             break;
         case 202: // AF_AUTOPOTIONEQUIP
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOPOTIONEQUIP));
             break;
         case 203: // AF_POISONEDCHECKS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_POISONEDCHECKS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_POISONEDCHECKS));
             break;
         case 204: // AF_LOOPEDMACROS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_LOOPEDMACROS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_LOOPEDMACROS));
             break;
         case 205: // AF_USEONCEAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_USEONCEAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_USEONCEAGENT));
             break;
         case 206: // AF_RESTOCKAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_RESTOCKAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RESTOCKAGENT));
             break;
         case 207: // AF_SELLAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_SELLAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SELLAGENT));
             break;
         case 208: // AF_BUYAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_BUYAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_BUYAGENT));
             break;
         case 209: // AF_POTIONHOTKEYS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_POTIONHOTKEYS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_POTIONHOTKEYS));
             break;
         case 210: // AF_RANDOMTARGETS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_RANDOMTARGETS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RANDOMTARGETS));
             break;
         case 211: // AF_CLOSESTTARGETS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_CLOSESTTARGETS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_CLOSESTTARGETS));
             break;
         case 212: // AF_OVERHEADHEALTH
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_OVERHEADHEALTH));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_OVERHEADHEALTH));
             break;
         case 213: // AF_AUTOLOOTAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_AUTOLOOTAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOLOOTAGENT));
             break;
         case 214: // AF_BONECUTTERAGENT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_BONECUTTERAGENT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_BONECUTTERAGENT));
             break;
         case 215: // AF_JSCRIPTMACROS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_JSCRIPTMACROS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_JSCRIPTMACROS));
             break;
         case 216: // AF_AUTOREMOUNT
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_AUTOREMOUNT));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOREMOUNT));
             break;
         case 217: // AF_ALL
             *rval =
-                BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_ALL));
+                BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_ALL));
             break;
         case 218: // CLASSICUOMAPTRACKER
-            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetClassicUOMapTracker());
+            *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getClassicUOMapTracker());
             break;
         case 219: // DECAYTIMERINHOUSE
             *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(
@@ -4591,7 +4591,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 249: // USEUNICODEMESSAGES
             *rval =
-                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->UseUnicodeMessages()));
+                INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->useUnicodeMessages()));
             break;
         case 250: // SCRIPTDATADIRECTORY
         {
@@ -4710,27 +4710,27 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             break;
         case 284: // AF_AUTOBANDAGE
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_AUTOBANDAGE));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOBANDAGE));
             break;
         case 285: // AF_ENEMYTARGETSHARE
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_ENEMYTARGETSHARE));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_ENEMYTARGETSHARE));
             break;
         case 286: // AF_FILTERSEASON
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_FILTERSEASON));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERSEASON));
             break;
         case 287: // AF_SPELLTARGETSHARE
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_SPELLTARGETSHARE));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SPELLTARGETSHARE));
             break;
         case 288: // AF_HUMANOIDHEALTHCHECKS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS));
             break;
         case 289: // AF_SPEECHJOURNALCHECKS
             *rval = BOOLEAN_TO_JSVAL(
-                cwmWorldState->ServerData()->GetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS));
+                cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS));
             break;
         case 290: // ARCHERYSHOOTDELAY
             *rval = INT_TO_JSVAL(
@@ -4960,12 +4960,12 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 JSBool SE_GetClientFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                            uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
-        ScriptError(cx, "GetClientFeature: Invalid number of arguments (takes 1 - feature ID)");
+        ScriptError(cx, "getClientFeature: Invalid number of arguments (takes 1 - feature ID)");
         return JS_FALSE;
     }
 
     auto clientFeature = static_cast<clientfeatures_t>(JSVAL_TO_INT(argv[0]));
-    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetClientFeature(clientFeature));
+    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getClientFeature(clientFeature));
     return JS_TRUE;
 }
 
@@ -4977,12 +4977,12 @@ JSBool SE_GetClientFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 JSBool SE_GetServerFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                            uintN argc, jsval *argv, jsval *rval) {
     if (argc != 1) {
-        ScriptError(cx, "GetServerFeature: Invalid number of arguments (takes 1 - feature ID)");
+        ScriptError(cx, "getServerFeature: Invalid number of arguments (takes 1 - feature ID)");
         return JS_FALSE;
     }
 
     auto serverFeature = static_cast<serverfeatures_t>(JSVAL_TO_INT(argv[0]));
-    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GetServerFeature(serverFeature));
+    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getServerFeature(serverFeature));
     return JS_TRUE;
 }
 

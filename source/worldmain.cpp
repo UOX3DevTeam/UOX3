@@ -348,8 +348,8 @@ void CWorldMain::ClassesInitialized(bool newVal) { classesInitialized = newVal; 
 //|	Purpose		-	Set world light level based on time of day and script settings
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::DoWorldLight() {
-    std::uint8_t worlddarklevel = ServerData()->WorldLightDarkLevel();
-    std::uint8_t worldbrightlevel = ServerData()->WorldLightBrightLevel();
+    std::uint8_t worlddarklevel = ServerData()->worldLightDarkLevel();
+    std::uint8_t worldbrightlevel = ServerData()->worldLightBrightLevel();
     bool ampm = ServerData()->ServerTimeAMPM();
     std::uint8_t currentHour = ServerData()->ServerTimeHours();
     std::uint8_t currentMinute = ServerData()->ServerTimeMinutes();
@@ -360,11 +360,11 @@ void CWorldMain::DoWorldLight() {
                                           // morning / add to LightMin in evening
 
     if (ampm) {
-        ServerData()->WorldLightCurrentLevel(
+        ServerData()->worldLightCurrentLevel(
             static_cast<std::uint8_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
     }
     else {
-        ServerData()->WorldLightCurrentLevel(
+        ServerData()->worldLightCurrentLevel(
             static_cast<std::uint8_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
     }
 }

@@ -592,7 +592,7 @@ constexpr auto BIT_YOUNGPLAYERSYSTEM = std::uint32_t(103);
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 
 //+++++++++++++++++++++++++++++++++++++++++++++++
-auto CServerData::LookupINIValue(const std::string &tag) -> std::int32_t {
+auto CServerData::lookupINIValue(const std::string &tag) -> std::int32_t {
     auto iter = uox3IniCaseValue.find(tag);
     if (iter != uox3IniCaseValue.end()) {
         return iter->second;
@@ -622,16 +622,16 @@ auto CServerData::ResetDefaults() -> void {
     SetJSEngineSize(256);
     
     // Send server-originating messages in Unicode format, if possible
-    UseUnicodeMessages(true);
+    useUnicodeMessages(true);
     
     ServerLanguage(DL_DEFAULT);
     SystemTimer(tSERVER_POTION, 10);
-    ServerMoon(0, 0);
-    ServerMoon(1, 0);
-    DungeonLightLevel(15);
-    WorldLightCurrentLevel(0);
-    WorldLightBrightLevel(0);
-    WorldLightDarkLevel(12);
+    serverMoon(0, 0);
+    serverMoon(1, 0);
+    dungeonLightLevel(15);
+    worldLightCurrentLevel(0);
+    worldLightBrightLevel(0);
+    worldLightDarkLevel(12);
     
     ServerNetRcvTimeout(3);
     ServerNetSndTimeout(3);
@@ -959,34 +959,34 @@ auto CServerData::ResetDefaults() -> void {
     TownTaxPeriod(1800);       // taxed every 30 minutes
     TownGuardPayment(3600);    // guards paid every hour
     
-    SetClientFeature(CF_BIT_CHAT, true);
-    SetClientFeature(CF_BIT_UOR, true);
-    SetClientFeature(CF_BIT_TD, true);
-    SetClientFeature(CF_BIT_LBR, true);
-    SetClientFeature(CF_BIT_AOS, true);
-    SetClientFeature(CF_BIT_SIXCHARS, true);
-    SetClientFeature(CF_BIT_SE, true);
-    SetClientFeature(CF_BIT_ML, true);
-    SetClientFeature(CF_BIT_EXPANSION, true);
+    setClientFeature(CF_BIT_CHAT, true);
+    setClientFeature(CF_BIT_UOR, true);
+    setClientFeature(CF_BIT_TD, true);
+    setClientFeature(CF_BIT_LBR, true);
+    setClientFeature(CF_BIT_AOS, true);
+    setClientFeature(CF_BIT_SIXCHARS, true);
+    setClientFeature(CF_BIT_SE, true);
+    setClientFeature(CF_BIT_ML, true);
+    setClientFeature(CF_BIT_EXPANSION, true);
     
-    SetServerFeature(SF_BIT_CONTEXTMENUS, true);
-    SetServerFeature(SF_BIT_AOS, true);
-    SetServerFeature(SF_BIT_SIXCHARS, true);
-    SetServerFeature(SF_BIT_SE, true);
-    SetServerFeature(SF_BIT_ML, true);
+    setServerFeature(SF_BIT_CONTEXTMENUS, true);
+    setServerFeature(SF_BIT_AOS, true);
+    setServerFeature(SF_BIT_SIXCHARS, true);
+    setServerFeature(SF_BIT_SE, true);
+    setServerFeature(SF_BIT_ML, true);
     
     // Disable spawn regions for all facets by default
-    SetSpawnRegionsFacetStatus(0);
+    setSpawnRegionsFacetStatus(0);
     
     // Set no assistant features as disabled by default
-    SetDisabledAssistantFeature(AF_ALL, false);
+    setDisabledAssistantFeature(AF_ALL, false);
     
     ExtendedStartingStats(true);
     ExtendedStartingSkills(true);
     
     ServerRandomStartingLocation(false);
     ServerStartGold(1000);
-    ServerStartPrivs(0);
+    serverStartPrivs(0);
     SystemTimer(tSERVER_CORPSEDECAY, 420);
     SystemTimer(tSERVER_NPCCORPSEDECAY, 420);
     SystemTimer(tSERVER_BLOODDECAYCORPSE, 210); // Default to half the decay timer of a npc corpse
@@ -3692,146 +3692,146 @@ auto CServerData::AccountFlushTimer() const -> double { return flushTime; }
 auto CServerData::AccountFlushTimer(R64 value) -> void { flushTime = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetClientFeature()
-//|					CServerData::SetClientFeature()
+//|	Function	-	CServerData::getClientFeature()
+//|					CServerData::setClientFeature()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific client-side feature
 //|	Notes		-	See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClientFeature(clientfeatures_t bitNum) const -> bool {
+auto CServerData::getClientFeature(clientfeatures_t bitNum) const -> bool {
     return clientFeatures.test(bitNum);
 }
-auto CServerData::SetClientFeature(clientfeatures_t bitNum, bool nVal) -> void {
+auto CServerData::setClientFeature(clientfeatures_t bitNum, bool nVal) -> void {
     clientFeatures.set(bitNum, nVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetClientFeatures()
-//|					CServerData::SetClientFeatures()
+//|	Function	-	CServerData::getClientFeatures()
+//|					CServerData::setClientFeatures()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets which client side features to enable for connecting
 // clients |	Notes		-	See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClientFeatures() const -> std::uint32_t {
+auto CServerData::getClientFeatures() const -> std::uint32_t {
     return static_cast<std::uint32_t>(clientFeatures.to_ulong());
 }
-auto CServerData::SetClientFeatures(std::uint32_t nVal) -> void { clientFeatures = nVal; }
+auto CServerData::setClientFeatures(std::uint32_t nVal) -> void { clientFeatures = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetServerFeature()
-//|					CServerData::SetServerFeature()
+//|	Function	-	CServerData::getServerFeature()
+//|					CServerData::setServerFeature()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific server-side feature
 //|	Notes		-	See ServerFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetServerFeature(serverfeatures_t bitNum) const -> bool {
+auto CServerData::getServerFeature(serverfeatures_t bitNum) const -> bool {
     return serverFeatures.test(bitNum);
 }
-auto CServerData::SetServerFeature(serverfeatures_t bitNum, bool nVal) -> void {
+auto CServerData::setServerFeature(serverfeatures_t bitNum, bool nVal) -> void {
     serverFeatures.set(bitNum, nVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetServerFeatures()
-//|					CServerData::SetServerFeatures()
+//|	Function	-	CServerData::getServerFeatures()
+//|					CServerData::setServerFeatures()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets which server side features to enable
 //|	Notes		-	See ServerFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetServerFeatures() const -> size_t { return serverFeatures.to_ulong(); }
-auto CServerData::SetServerFeatures(size_t nVal) -> void { serverFeatures = nVal; }
+auto CServerData::getServerFeatures() const -> size_t { return serverFeatures.to_ulong(); }
+auto CServerData::setServerFeatures(size_t nVal) -> void { serverFeatures = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetSpawnRegionsFacetStatus()
-//|					CServerData::SetSpawnRegionsFacetStatus()
+//|	Function	-	CServerData::getSpawnRegionsFacetStatus()
+//|					CServerData::setSpawnRegionsFacetStatus()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets active status of spawn regions per facet
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetSpawnRegionsFacetStatus(std::uint32_t value) const -> bool {
+auto CServerData::getSpawnRegionsFacetStatus(std::uint32_t value) const -> bool {
     return spawnRegionsFacets.test(value);
 }
-auto CServerData::SetSpawnRegionsFacetStatus(std::uint32_t nVal, bool status) -> void {
+auto CServerData::setSpawnRegionsFacetStatus(std::uint32_t nVal, bool status) -> void {
     spawnRegionsFacets.set(nVal, status);
 }
-auto CServerData::GetSpawnRegionsFacetStatus() const -> std::uint32_t {
+auto CServerData::getSpawnRegionsFacetStatus() const -> std::uint32_t {
     return static_cast<std::uint32_t>(spawnRegionsFacets.to_ulong());
 }
-auto CServerData::SetSpawnRegionsFacetStatus(std::uint32_t nVal) -> void { spawnRegionsFacets = nVal; }
+auto CServerData::setSpawnRegionsFacetStatus(std::uint32_t nVal) -> void { spawnRegionsFacets = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetAssistantNegotiation()
-//|					CServerData::SetAssistantNegotiation()
+//|	Function	-	CServerData::getAssistantNegotiation()
+//|					CServerData::setAssistantNegotiation()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of feature negotiation with assist tools like Razor
 // and AssistUO
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetAssistantNegotiation() const -> bool {
+auto CServerData::getAssistantNegotiation() const -> bool {
     return boolVals.test(BIT_ASSISTANTNEGOTIATION);
 }
-auto CServerData::SetAssistantNegotiation(bool nVal) -> void {
+auto CServerData::setAssistantNegotiation(bool nVal) -> void {
     boolVals.set(BIT_ASSISTANTNEGOTIATION, nVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetClassicUOMapTracker()
-//|					CServerData::SetClassicUOMapTracker()
+//|	Function	-	CServerData::getClassicUOMapTracker()
+//|					CServerData::setClassicUOMapTracker()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap
 // Tracker packets
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClassicUOMapTracker() const -> bool {
+auto CServerData::getClassicUOMapTracker() const -> bool {
     return boolVals.test(BIT_CLASSICUOMAPTRACKER);
 }
-auto CServerData::SetClassicUOMapTracker(bool nVal) -> void {
+auto CServerData::setClassicUOMapTracker(bool nVal) -> void {
     boolVals.set(BIT_CLASSICUOMAPTRACKER, nVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::UseUnicodeMessages()
+//|	Function	-	CServerData::useUnicodeMessages()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should send messages originating on server
 // as unicode
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::UseUnicodeMessages() const -> bool {
+auto CServerData::useUnicodeMessages() const -> bool {
     return boolVals.test(BIT_USEUNICODEMESSAGES);
 }
-auto CServerData::UseUnicodeMessages(bool nVal) -> void {
+auto CServerData::useUnicodeMessages(bool nVal) -> void {
     boolVals.set(BIT_USEUNICODEMESSAGES, nVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetDisabledAssistantFeature()
-//|					CServerData::SetDisabledAssistantFeature()
+//|	Function	-	CServerData::getDisabledAssistantFeature()
+//|					CServerData::setDisabledAssistantFeature()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetDisabledAssistantFeature(assistantfeatures_t bitNum) const -> bool {
-    return 0 != (CServerData::DisabledAssistantFeatures & bitNum);
+auto CServerData::getDisabledAssistantFeature(assistantfeatures_t bitNum) const -> bool {
+    return 0 != (CServerData::disabledAssistantFeatures & bitNum);
 }
-auto CServerData::SetDisabledAssistantFeature(assistantfeatures_t bitNum, bool nVal) -> void {
+auto CServerData::setDisabledAssistantFeature(assistantfeatures_t bitNum, bool nVal) -> void {
     if (nVal) {
-        CServerData::DisabledAssistantFeatures |= bitNum;
+        CServerData::disabledAssistantFeatures |= bitNum;
     }
     else {
-        CServerData::DisabledAssistantFeatures &= ~bitNum;
+        CServerData::disabledAssistantFeatures &= ~bitNum;
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GetDisabledAssistantFeatures()
-//|					CServerData::SetDisabledAssistantFeatures()
+//|	Function	-	CServerData::getDisabledAssistantFeatures()
+//|					CServerData::setDisabledAssistantFeatures()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cserverdata.h for full list
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::GetDisabledAssistantFeatures() const -> std::uint64_t {
-    return CServerData::DisabledAssistantFeatures;
+auto CServerData::getDisabledAssistantFeatures() const -> std::uint64_t {
+    return CServerData::disabledAssistantFeatures;
 }
-auto CServerData::SetDisabledAssistantFeatures(std::uint64_t nVal) -> void {
-    CServerData::DisabledAssistantFeatures = nVal;
+auto CServerData::setDisabledAssistantFeatures(std::uint64_t nVal) -> void {
+    CServerData::disabledAssistantFeatures = nVal;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3997,11 +3997,11 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "UOGENABLED=" << (ServerUOGEnabled() ? 1 : 0) << '\n';
         ofsOutput << "FREESHARDSERVERPOLL=" << (FreeshardServerPoll() ? 1 : 0) << '\n';
         ofsOutput << "RANDOMSTARTINGLOCATION=" << (ServerRandomStartingLocation() ? 1 : 0) << '\n';
-        ofsOutput << "ASSISTANTNEGOTIATION=" << (GetAssistantNegotiation() ? 1 : 0) << '\n';
+        ofsOutput << "ASSISTANTNEGOTIATION=" << (getAssistantNegotiation() ? 1 : 0) << '\n';
         ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence() ? 1 : 0) << '\n';
-        ofsOutput << "CLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker() ? 1 : 0) << '\n';
+        ofsOutput << "CLASSICUOMAPTRACKER=" << (getClassicUOMapTracker() ? 1 : 0) << '\n';
         ofsOutput << "JSENGINESIZE=" << static_cast<std::uint16_t>(GetJSEngineSize()) << '\n';
-        ofsOutput << "USEUNICODEMESSAGES=" << (UseUnicodeMessages() ? 1 : 0) << '\n';
+        ofsOutput << "USEUNICODEMESSAGES=" << (useUnicodeMessages() ? 1 : 0) << '\n';
         ofsOutput << "CONTEXTMENUS=" << (ServerContextMenus() ? 1 : 0) << '\n';
         ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
         ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<std::uint32_t>(MaxClientBytesIn()) << '\n';
@@ -4152,9 +4152,9 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "HIDEWHILEMOUNTED=" << (CharHideWhileMounted() ? 1 : 0) << '\n';
         ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
         ofsOutput << "POLYDURATION=" << SystemTimer(tSERVER_POLYMORPH) << '\n';
-        ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
-        ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
-        ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
+        ofsOutput << "CLIENTFEATURES=" << getClientFeatures() << '\n';
+        ofsOutput << "SERVERFEATURES=" << getServerFeatures() << '\n';
+        ofsOutput << "SPAWNREGIONSFACETS=" << getSpawnRegionsFacetStatus() << '\n';
         ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets() ? 1 : 0) << '\n';
         ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding() ? 1 : 0) << '\n';
         ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime() ? 1 : 0) << '\n';
@@ -4234,9 +4234,9 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
-        ofsOutput << "DUNGEONLEVEL=" << static_cast<std::uint16_t>(DungeonLightLevel()) << '\n';
-        ofsOutput << "BRIGHTLEVEL=" << static_cast<std::uint16_t>(WorldLightBrightLevel()) << '\n';
-        ofsOutput << "DARKLEVEL=" << static_cast<std::uint16_t>(WorldLightDarkLevel()) << '\n';
+        ofsOutput << "DUNGEONLEVEL=" << static_cast<std::uint16_t>(dungeonLightLevel()) << '\n';
+        ofsOutput << "BRIGHTLEVEL=" << static_cast<std::uint16_t>(worldLightBrightLevel()) << '\n';
+        ofsOutput << "DARKLEVEL=" << static_cast<std::uint16_t>(worldLightDarkLevel()) << '\n';
         ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
         ofsOutput << "}" << '\n';
         
@@ -4358,7 +4358,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         
         ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
         ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
-        ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
+        ofsOutput << "STARTPRIVS=" << serverStartPrivs() << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
@@ -4404,58 +4404,58 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
-        ofsOutput << "AF_FILTERWEATHER=" << (GetDisabledAssistantFeature(AF_FILTERWEATHER) ? 1 : 0)
+        ofsOutput << "AF_FILTERWEATHER=" << (getDisabledAssistantFeature(AF_FILTERWEATHER) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_FILTERLIGHT=" << (GetDisabledAssistantFeature(AF_FILTERLIGHT) ? 1 : 0)
+        ofsOutput << "AF_FILTERLIGHT=" << (getDisabledAssistantFeature(AF_FILTERLIGHT) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_SMARTTARGET=" << (GetDisabledAssistantFeature(AF_SMARTTARGET) ? 1 : 0)
+        ofsOutput << "AF_SMARTTARGET=" << (getDisabledAssistantFeature(AF_SMARTTARGET) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_RANGEDTARGET=" << (GetDisabledAssistantFeature(AF_RANGEDTARGET) ? 1 : 0)
+        ofsOutput << "AF_RANGEDTARGET=" << (getDisabledAssistantFeature(AF_RANGEDTARGET) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_AUTOOPENDOORS=" << (GetDisabledAssistantFeature(AF_AUTOOPENDOORS) ? 1 : 0)
+        ofsOutput << "AF_AUTOOPENDOORS=" << (getDisabledAssistantFeature(AF_AUTOOPENDOORS) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_DEQUIPONCAST=" << (GetDisabledAssistantFeature(AF_DEQUIPONCAST) ? 1 : 0)
+        ofsOutput << "AF_DEQUIPONCAST=" << (getDisabledAssistantFeature(AF_DEQUIPONCAST) ? 1 : 0)
         << '\n';
         ofsOutput << "AF_AUTOPOTIONEQUIP="
-        << (GetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP) ? 1 : 0) << '\n';
+        << (getDisabledAssistantFeature(AF_AUTOPOTIONEQUIP) ? 1 : 0) << '\n';
         ofsOutput << "AF_POISONEDCHECKS="
-        << (GetDisabledAssistantFeature(AF_POISONEDCHECKS) ? 1 : 0) << '\n';
-        ofsOutput << "AF_LOOPEDMACROS=" << (GetDisabledAssistantFeature(AF_LOOPEDMACROS) ? 1 : 0)
+        << (getDisabledAssistantFeature(AF_POISONEDCHECKS) ? 1 : 0) << '\n';
+        ofsOutput << "AF_LOOPEDMACROS=" << (getDisabledAssistantFeature(AF_LOOPEDMACROS) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_USEONCEAGENT=" << (GetDisabledAssistantFeature(AF_USEONCEAGENT) ? 1 : 0)
+        ofsOutput << "AF_USEONCEAGENT=" << (getDisabledAssistantFeature(AF_USEONCEAGENT) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_RESTOCKAGENT=" << (GetDisabledAssistantFeature(AF_RESTOCKAGENT) ? 1 : 0)
+        ofsOutput << "AF_RESTOCKAGENT=" << (getDisabledAssistantFeature(AF_RESTOCKAGENT) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_SELLAGENT=" << (GetDisabledAssistantFeature(AF_SELLAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_BUYAGENT=" << (GetDisabledAssistantFeature(AF_BUYAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_POTIONHOTKEYS=" << (GetDisabledAssistantFeature(AF_POTIONHOTKEYS) ? 1 : 0)
+        ofsOutput << "AF_SELLAGENT=" << (getDisabledAssistantFeature(AF_SELLAGENT) ? 1 : 0) << '\n';
+        ofsOutput << "AF_BUYAGENT=" << (getDisabledAssistantFeature(AF_BUYAGENT) ? 1 : 0) << '\n';
+        ofsOutput << "AF_POTIONHOTKEYS=" << (getDisabledAssistantFeature(AF_POTIONHOTKEYS) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_RANDOMTARGETS=" << (GetDisabledAssistantFeature(AF_RANDOMTARGETS) ? 1 : 0)
+        ofsOutput << "AF_RANDOMTARGETS=" << (getDisabledAssistantFeature(AF_RANDOMTARGETS) ? 1 : 0)
         << '\n';
         ofsOutput << "AF_CLOSESTTARGETS="
-        << (GetDisabledAssistantFeature(AF_CLOSESTTARGETS) ? 1 : 0) << '\n';
+        << (getDisabledAssistantFeature(AF_CLOSESTTARGETS) ? 1 : 0) << '\n';
         ofsOutput << "AF_OVERHEADHEALTH="
-        << (GetDisabledAssistantFeature(AF_OVERHEADHEALTH) ? 1 : 0) << '\n';
-        ofsOutput << "AF_AUTOLOOTAGENT=" << (GetDisabledAssistantFeature(AF_AUTOLOOTAGENT) ? 1 : 0)
+        << (getDisabledAssistantFeature(AF_OVERHEADHEALTH) ? 1 : 0) << '\n';
+        ofsOutput << "AF_AUTOLOOTAGENT=" << (getDisabledAssistantFeature(AF_AUTOLOOTAGENT) ? 1 : 0)
         << '\n';
         ofsOutput << "AF_BONECUTTERAGENT="
-        << (GetDisabledAssistantFeature(AF_BONECUTTERAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_JSCRIPTMACROS=" << (GetDisabledAssistantFeature(AF_JSCRIPTMACROS) ? 1 : 0)
+        << (getDisabledAssistantFeature(AF_BONECUTTERAGENT) ? 1 : 0) << '\n';
+        ofsOutput << "AF_JSCRIPTMACROS=" << (getDisabledAssistantFeature(AF_JSCRIPTMACROS) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_AUTOREMOUNT=" << (GetDisabledAssistantFeature(AF_AUTOREMOUNT) ? 1 : 0)
+        ofsOutput << "AF_AUTOREMOUNT=" << (getDisabledAssistantFeature(AF_AUTOREMOUNT) ? 1 : 0)
         << '\n';
-        ofsOutput << "AF_AUTOBANDAGE=" << (GetDisabledAssistantFeature(AF_AUTOBANDAGE) ? 1 : 0)
+        ofsOutput << "AF_AUTOBANDAGE=" << (getDisabledAssistantFeature(AF_AUTOBANDAGE) ? 1 : 0)
         << '\n';
         ofsOutput << "AF_ENEMYTARGETSHARE="
-        << (GetDisabledAssistantFeature(AF_ENEMYTARGETSHARE) ? 1 : 0) << '\n';
-        ofsOutput << "AF_FILTERSEASON=" << (GetDisabledAssistantFeature(AF_FILTERSEASON) ? 1 : 0)
+        << (getDisabledAssistantFeature(AF_ENEMYTARGETSHARE) ? 1 : 0) << '\n';
+        ofsOutput << "AF_FILTERSEASON=" << (getDisabledAssistantFeature(AF_FILTERSEASON) ? 1 : 0)
         << '\n';
         ofsOutput << "AF_SPELLTARGETSHARE="
-        << (GetDisabledAssistantFeature(AF_SPELLTARGETSHARE) ? 1 : 0) << '\n';
+        << (getDisabledAssistantFeature(AF_SPELLTARGETSHARE) ? 1 : 0) << '\n';
         ofsOutput << "AF_HUMANOIDHEALTHCHECKS="
-        << (GetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS) ? 1 : 0) << '\n';
+        << (getDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS) ? 1 : 0) << '\n';
         ofsOutput << "AF_SPEECHJOURNALCHECKS="
-        << (GetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS) ? 1 : 0) << '\n';
+        << (getDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS) ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput.close();
@@ -4483,7 +4483,7 @@ auto CServerData::load(const std::string &filename) -> bool {
     }
     actualINI = iniFile;
     auto rValue = ParseIni(iniFile);
-    PostLoadDefaults();
+    postLoadDefaults();
     return rValue;
 }
 
@@ -4864,19 +4864,19 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             SystemTimer(tSERVER_ESCORTACTIVE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 72: // MOON1
-            ServerMoon(0, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            serverMoon(0, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
             break;
         case 73: // MOON2
-            ServerMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
+            serverMoon(1, static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
             break;
         case 74: // DUNGEONLEVEL
-            DungeonLightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            dungeonLightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
             break;
         case 75: // CURRENTLEVEL
-            WorldLightCurrentLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            worldLightCurrentLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
             break;
         case 76: // BRIGHTLEVEL
-            WorldLightBrightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            worldLightBrightLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
             break;
         case 77: // BASERANGE
             TrackingBaseRange(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4963,13 +4963,13 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             ServerStartGold(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
             break;
         case 105: // STARTPRIVS
-            ServerStartPrivs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
+            serverStartPrivs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 106: // ESCORTDONEEXPIRE
             SystemTimer(tSERVER_ESCORTDONE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 107: // DARKLEVEL
-            WorldLightDarkLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
+            worldLightDarkLevel(static_cast<lightlevel_t>(std::stoul(value, nullptr, 0)));
             break;
         case 108: // TITLECOLOUR
             TitleColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -5082,7 +5082,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             ServerNetRetryCount(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 145: // CLIENTFEATURES
-            SetClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            setClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 146: // PACKETOVERLOADS
             ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
@@ -5103,7 +5103,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 153: // SERVERFEATURES
-            SetServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            setServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 154: // LOOTINGISCRIME
             LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
@@ -5130,7 +5130,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             ItemDecayInHouses((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 162: // SPAWNREGIONSFACETS
-            SetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            setSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 163: // PAPERDOLLGUILDBUTTON
             PaperdollGuildButton(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
@@ -5214,97 +5214,97 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 194: // ASSISTANTNEGOTIATION
-            SetAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            setAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 195: // KICKONASSISTANTSILENCE
             KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 196: // AF_FILTERWEATHER
-            SetDisabledAssistantFeature(AF_FILTERWEATHER,
+            setDisabledAssistantFeature(AF_FILTERWEATHER,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 197: // AF_FILTERLIGHT
-            SetDisabledAssistantFeature(AF_FILTERLIGHT,
+            setDisabledAssistantFeature(AF_FILTERLIGHT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 198: // AF_SMARTTARGET
-            SetDisabledAssistantFeature(AF_SMARTTARGET,
+            setDisabledAssistantFeature(AF_SMARTTARGET,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 199: // AF_RANGEDTARGET
-            SetDisabledAssistantFeature(AF_RANGEDTARGET,
+            setDisabledAssistantFeature(AF_RANGEDTARGET,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 200: // AF_AUTOOPENDOORS
-            SetDisabledAssistantFeature(AF_AUTOOPENDOORS,
+            setDisabledAssistantFeature(AF_AUTOOPENDOORS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 201: // AF_DEQUIPONCAST
-            SetDisabledAssistantFeature(AF_DEQUIPONCAST,
+            setDisabledAssistantFeature(AF_DEQUIPONCAST,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 202: // AF_AUTOPOTIONEQUIP
-            SetDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
+            setDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 203: // AF_POISONEDCHECKS
-            SetDisabledAssistantFeature(AF_POISONEDCHECKS,
+            setDisabledAssistantFeature(AF_POISONEDCHECKS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 204: // AF_LOOPEDMACROS
-            SetDisabledAssistantFeature(AF_LOOPEDMACROS,
+            setDisabledAssistantFeature(AF_LOOPEDMACROS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 205: // AF_USEONCEAGENT
-            SetDisabledAssistantFeature(AF_USEONCEAGENT,
+            setDisabledAssistantFeature(AF_USEONCEAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 206: // AF_RESTOCKAGENT
-            SetDisabledAssistantFeature(AF_RESTOCKAGENT,
+            setDisabledAssistantFeature(AF_RESTOCKAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 207: // AF_SELLAGENT
-            SetDisabledAssistantFeature(AF_SELLAGENT,
+            setDisabledAssistantFeature(AF_SELLAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 208: // AF_BUYAGENT
-            SetDisabledAssistantFeature(AF_BUYAGENT,
+            setDisabledAssistantFeature(AF_BUYAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 209: // AF_POTIONHOTKEYS
-            SetDisabledAssistantFeature(AF_POTIONHOTKEYS,
+            setDisabledAssistantFeature(AF_POTIONHOTKEYS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 210: // AF_RANDOMTARGETS
-            SetDisabledAssistantFeature(AF_RANDOMTARGETS,
+            setDisabledAssistantFeature(AF_RANDOMTARGETS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 211: // AF_CLOSESTTARGETS
-            SetDisabledAssistantFeature(AF_CLOSESTTARGETS,
+            setDisabledAssistantFeature(AF_CLOSESTTARGETS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 212: // AF_OVERHEADHEALTH
-            SetDisabledAssistantFeature(AF_OVERHEADHEALTH,
+            setDisabledAssistantFeature(AF_OVERHEADHEALTH,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 213: // AF_AUTOLOOTAGENT
-            SetDisabledAssistantFeature(AF_AUTOLOOTAGENT,
+            setDisabledAssistantFeature(AF_AUTOLOOTAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 214: // AF_BONECUTTERAGENT
-            SetDisabledAssistantFeature(AF_BONECUTTERAGENT,
+            setDisabledAssistantFeature(AF_BONECUTTERAGENT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 215: // AF_JSCRIPTMACROS
-            SetDisabledAssistantFeature(AF_JSCRIPTMACROS,
+            setDisabledAssistantFeature(AF_JSCRIPTMACROS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 216: // AF_AUTOREMOUNT
-            SetDisabledAssistantFeature(AF_AUTOREMOUNT,
+            setDisabledAssistantFeature(AF_AUTOREMOUNT,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 218: // CLASSICUOMAPTRACKER
-            SetClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
+            setClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 219: // DECAYTIMERINHOUSE
             SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -5397,7 +5397,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             SetJSEngineSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 249: // USEUNICODEMESSAGES
-            UseUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
+            useUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 250: // SCRIPTDATADIRECTORY
         {
@@ -5506,27 +5506,27 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 284: // AF_AUTOBANDAGE
-            SetDisabledAssistantFeature(AF_AUTOBANDAGE,
+            setDisabledAssistantFeature(AF_AUTOBANDAGE,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 285: // AF_ENEMYTARGETSHARE
-            SetDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
+            setDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 286: // AF_FILTERSEASON
-            SetDisabledAssistantFeature(AF_FILTERSEASON,
+            setDisabledAssistantFeature(AF_FILTERSEASON,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 287: // AF_SPELLTARGETSHARE
-            SetDisabledAssistantFeature(AF_SPELLTARGETSHARE,
+            setDisabledAssistantFeature(AF_SPELLTARGETSHARE,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 288: // AF_HUMANOIDHEALTHCHECKS
-            SetDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
+            setDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 289: // AF_SPEECHJOURNALCHECKS
-            SetDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
+            setDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
                                         static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 290: // ARCHERYSHOOTDELAY
@@ -5733,73 +5733,73 @@ auto CServerData::ServerStartGold(std::int16_t value) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerStartPrivs()
+//|	Function	-	CServerData::serverStartPrivs()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default starting privs for new characters
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStartPrivs() const -> std::uint16_t { return startPrivs; }
-auto CServerData::ServerStartPrivs(std::uint16_t value) -> void { startPrivs = value; }
+auto CServerData::serverStartPrivs() const -> std::uint16_t { return startPrivs; }
+auto CServerData::serverStartPrivs(std::uint16_t value) -> void { startPrivs = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerMoon()
+//|	Function	-	CServerData::serverMoon()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the phase of one of the game's two moons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerMoon(std::int16_t slot) const -> std::int16_t {
+auto CServerData::serverMoon(std::int16_t slot) const -> std::int16_t {
     std::int16_t rValue = -1;
     if (slot >= 0 && slot <= 1) {
         rValue = moon[slot];
     }
     return rValue;
 }
-auto CServerData::ServerMoon(std::int16_t slot, std::int16_t value) -> void {
+auto CServerData::serverMoon(std::int16_t slot, std::int16_t value) -> void {
     if (slot >= 0 && slot <= 1 && value >= 0) {
         moon[slot] = value;
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::DungeonLightLevel()
+//|	Function	-	CServerData::dungeonLightLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for dungeons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::DungeonLightLevel() const -> lightlevel_t { return dungeonLightLevel; }
-auto CServerData::DungeonLightLevel(lightlevel_t value) -> void { dungeonLightLevel = value; }
+auto CServerData::dungeonLightLevel() const -> lightlevel_t { return worldDungeonLightLevel; }
+auto CServerData::dungeonLightLevel(lightlevel_t value) -> void { worldDungeonLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::WorldLightCurrentLevel()
+//|	Function	-	CServerData::worldLightCurrentLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global current light level outside of
 // dungeons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightCurrentLevel() const -> lightlevel_t { return currentLightLevel; }
-auto CServerData::WorldLightCurrentLevel(lightlevel_t value) -> void { currentLightLevel = value; }
+auto CServerData::worldLightCurrentLevel() const -> lightlevel_t { return woldCurrentLightLevel; }
+auto CServerData::worldLightCurrentLevel(lightlevel_t value) -> void { woldCurrentLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::WorldLightBrightLevel()
+//|	Function	-	CServerData::worldLightBrightLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for the brightest time of
 // day
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightBrightLevel() const -> lightlevel_t { return brightnessLightLevel; }
-auto CServerData::WorldLightBrightLevel(lightlevel_t value) -> void { brightnessLightLevel = value; }
+auto CServerData::worldLightBrightLevel() const -> lightlevel_t { return worldBrightnessLightLevel; }
+auto CServerData::worldLightBrightLevel(lightlevel_t value) -> void { worldBrightnessLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::WorldLightDarkLevel()
+//|	Function	-	CServerData::worldLightDarkLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for the darkest time of
 // day
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldLightDarkLevel() const -> lightlevel_t { return darknessLightLevel; }
-auto CServerData::WorldLightDarkLevel(lightlevel_t value) -> void { darknessLightLevel = value; }
+auto CServerData::worldLightDarkLevel() const -> lightlevel_t { return worldDarknessLightLevel; }
+auto CServerData::worldLightDarkLevel(lightlevel_t value) -> void { worldDarknessLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::PostLoadDefaults()
+//|	Function	-	CServerData::postLoadDefaults()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If no start locations have been provided in ini, use hardcoded
 // defaults
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::PostLoadDefaults() -> void {
+auto CServerData::postLoadDefaults() -> void {
     if (startlocations.empty()) {
         ServerLocation("Yew,Center,545,982,0,0,0,1075072");
         ServerLocation("Minoc,Tavern,2477,411,15,0,0,1075073");
@@ -5831,8 +5831,8 @@ auto CServerData::PostLoadDefaults() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server start locations
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerLocation(size_t locNum) -> __STARTLOCATIONDATA__ * {
-    __STARTLOCATIONDATA__ *rValue = nullptr;
+auto CServerData::ServerLocation(size_t locNum) -> StartLocationData * {
+    StartLocationData *rValue = nullptr;
     if (locNum < startlocations.size()) {
         rValue = &startlocations[locNum];
     }
@@ -5844,7 +5844,7 @@ auto CServerData::ServerLocation(std::string toSet) -> void {
     temp = util::trim(util::strip(temp, "//"));
     auto csecs = oldstrutil::sections(temp, ",");
     
-    __STARTLOCATIONDATA__ toAdd;
+    StartLocationData toAdd;
     if (csecs.size() >= 7) {
         toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
         toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
@@ -5880,8 +5880,8 @@ auto CServerData::NumServerLocations() const -> size_t { return startlocations.s
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server start location(s) for Young players
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::YoungServerLocation(size_t locNum) -> __STARTLOCATIONDATA__ * {
-    __STARTLOCATIONDATA__ *rValue = nullptr;
+auto CServerData::YoungServerLocation(size_t locNum) -> StartLocationData * {
+    StartLocationData *rValue = nullptr;
     if (locNum < youngStartlocations.size()) {
         rValue = &youngStartlocations[locNum];
     }
@@ -5893,7 +5893,7 @@ auto CServerData::YoungServerLocation(std::string toSet) -> void {
     temp = util::trim(util::strip(temp, "//"));
     auto csecs = oldstrutil::sections(temp, ",");
     
-    __STARTLOCATIONDATA__ toAdd;
+    StartLocationData toAdd;
     if (csecs.size() >= 7) {
         toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
         toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
@@ -6042,12 +6042,12 @@ auto CServerData::SaveTime() -> void {
     }
     
     timeDestination << "[TIME]" << '\n' << "{" << '\n';
-    timeDestination << "CURRENTLIGHT=" << static_cast<std::uint16_t>(WorldLightCurrentLevel()) << '\n';
+    timeDestination << "CURRENTLIGHT=" << static_cast<std::uint16_t>(worldLightCurrentLevel()) << '\n';
     timeDestination << "DAY=" << ServerTimeDay() << '\n';
     timeDestination << "HOUR=" << static_cast<std::uint16_t>(ServerTimeHours()) << '\n';
     timeDestination << "MINUTE=" << static_cast<std::uint16_t>(ServerTimeMinutes()) << '\n';
     timeDestination << "AMPM=" << (ServerTimeAMPM() ? 1 : 0) << '\n';
-    timeDestination << "MOON=" << ServerMoon(0) << "," << ServerMoon(1) << '\n';
+    timeDestination << "MOON=" << serverMoon(0) << "," << serverMoon(1) << '\n';
     timeDestination << "}" << '\n' << '\n';
     
     timeDestination.close();
@@ -6096,7 +6096,7 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
                 ServerTimeAMPM((std::stoi(data, nullptr, 0) == 1));
             }
             else if (UTag == "CURRENTLIGHT") {
-                WorldLightCurrentLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                worldLightCurrentLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
             }
             else if (UTag == "DAY") {
                 ServerTimeDay(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));
@@ -6110,9 +6110,9 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
             else if (UTag == "MOON") {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
-                    ServerMoon(0, static_cast<std::int16_t>(std::stoi(
+                    serverMoon(0, static_cast<std::int16_t>(std::stoi(
                                                                       util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    ServerMoon(1, static_cast<std::int16_t>(std::stoi(
+                    serverMoon(1, static_cast<std::int16_t>(std::stoi(
                                                                       util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
             }

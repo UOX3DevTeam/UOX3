@@ -1723,8 +1723,8 @@ void MakeStatusTarget(CSocket *sock) {
         return;
     }
     std::uint8_t origCommand = targetChar->GetCommandLevel();
-    CommandLevel *targLevel = Commands.getClearance(sock->XText());
-    CommandLevel *origLevel = Commands.getClearance(origCommand);
+    CommandLevel *targLevel = serverCommands.getClearance(sock->XText());
+    CommandLevel *origLevel = serverCommands.getClearance(origCommand);
     
     if (targLevel == nullptr) {
         sock->SysMessage(1112); // No such clearance level!

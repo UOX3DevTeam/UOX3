@@ -265,7 +265,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
             }
             toSendTo->SetDWord(7, targetChar->GetSerial());
             // Trigger scripted command
-            Commands.command(toSendTo, targetChar, "cstats", true);
+            serverCommands.command(toSendTo, targetChar, "cstats", true);
             break;
         case 207: // remote tweak
             if (targetChar->GetCommandLevel() > sourceChar->GetCommandLevel()) {
@@ -274,7 +274,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
             }
             toSendTo->SetDWord(7, targetChar->GetSerial());
             // Trigger scripted command
-            Commands.command(toSendTo, targetChar, "tweak", true);
+            serverCommands.command(toSendTo, targetChar, "tweak", true);
             break;
         default:
             Console::shared().error(

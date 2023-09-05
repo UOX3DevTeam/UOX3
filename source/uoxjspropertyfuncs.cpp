@@ -3224,7 +3224,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
             if (gPriv->GetSocket() != nullptr) {
                 if (static_cast<std::uint8_t>(encaps.toInt()) == 255) {
                     DoLight(gPriv->GetSocket(),
-                            cwmWorldState->ServerData()->WorldLightCurrentLevel());
+                            cwmWorldState->ServerData()->worldLightCurrentLevel());
                 }
                 else {
                     DoLight(gPriv->GetSocket(), static_cast<std::uint8_t>(encaps.toInt()));

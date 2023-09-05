@@ -725,7 +725,7 @@ bool CPICreateCharacter::Handle() {
 
             SetNewCharGenderAndRace(mChar);
 
-            mChar->SetPriv(cwmWorldState->ServerData()->ServerStartPrivs());
+            mChar->SetPriv(cwmWorldState->ServerData()->serverStartPrivs());
 
             AccountEntry &actbTemp2 = mChar->GetAccount();
             if (actbTemp2.accountNumber != AccountEntry::INVALID_ACCOUNT &&
@@ -740,7 +740,7 @@ bool CPICreateCharacter::Handle() {
 
             // Fetch player's chosen start location
             size_t serverCount = 0;
-            __STARTLOCATIONDATA__ *toGo = nullptr;
+            StartLocationData *toGo = nullptr;
             auto useYoungLocations = false;
             if (cwmWorldState->ServerData()->YoungPlayerSystem() &&
                 tSock->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -1093,10 +1093,10 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
     std::uint16_t pGenderId = 0x0190;
     bool gargCreation = false;
     bool elfCreation = false;
-    if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_SA)) {
+    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_SA)) {
         gargCreation = true;
     }
-    if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_ML)) {
+    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_ML)) {
         elfCreation = true;
     }
 
@@ -1375,7 +1375,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 
             // Negotiate features with assistant tools like Razor and AssistUO if
             // ASSISTANTNEGOTIATION is enabled in uox.ini
-            if (cwmWorldState->ServerData()->GetAssistantNegotiation()) {
+            if (cwmWorldState->ServerData()->getAssistantNegotiation()) {
                 CPNegotiateAssistantFeatures ii(mSock);
                 mSock->Send(&ii);
                 mSock->SysMessage(9012); // Attempting to negotiate features with assistant tool...

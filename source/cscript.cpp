@@ -176,8 +176,8 @@ static JSFunctionSpec my_functions[] = {
 
     {"CreateParty", SE_CreateParty, 1, 0, 0},
 
-    {"GetClientFeature", SE_GetClientFeature, 1, 0, 0},
-    {"GetServerFeature", SE_GetServerFeature, 1, 0, 0},
+    {"getClientFeature", SE_GetClientFeature, 1, 0, 0},
+    {"getServerFeature", SE_GetServerFeature, 1, 0, 0},
     {"GetServerSetting", SE_GetServerSetting, 1, 0, 0},
 
     {"DeleteFile", SE_DeleteFile, 2, 0, 0},

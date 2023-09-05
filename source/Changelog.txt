@@ -3160,8 +3160,8 @@
 	Added new JS function that allows deleting files from UOX3/shared/ folder or subfolders of shared folder. If no subFolderName is provided, looks for file directly in shared folder itself. Restrictions on file- and folder-names apply.
 		bool DeleteFile( fileName, subFolderName )
 	Added new JS functions for checking if a specific client or server feature is enabled. See documentation for full list of client/server features.
-		GetClientFeature( bitNum ) // Returns true if specified client feature is enabled on server
-		GetServerFeature( bitNum ) // Returns true if specified server feature is enabled on server
+		getClientFeature( bitNum ) // Returns true if specified client feature is enabled on server
+		getServerFeature( bitNum ) // Returns true if specified server feature is enabled on server
 	Added new JS function for returning the value of almost any server setting from UOX.INI
 		GetServerSetting( settingNameInDoubleQuotes )
 	Updated JS function DoesDynamicBlock() with two new parameters - checkOnlyMultis and checkOnlyNonMultis
@@ -6026,7 +6026,7 @@ Oct 12, 2008 - Maarc
 			2	Reload Regions
 			3	Reload Spawn Regions
 			4	Reload Spells
-			5	Reload Commands
+			5	Reload serverCommands
 			6	Reload Definition Files
 			7	Reload JS
 			8	Reload HTML
@@ -6474,8 +6474,8 @@ March 4 2005 - Maarc
 	Fixed an issue causing some newbie clothing to be destroyed in combat.
 	Fixed an issue on loading teleport.scp causing some locations to not function properly.
 	Added the ability to reload entire sections of the JS Scripts.
-	JS Commands will now properly reload when reloading the Commands.
-	JS Commands will now properly register when reloading the JS Scripts.
+	JS serverCommands will now properly reload when reloading the serverCommands.
+	JS serverCommands will now properly register when reloading the JS Scripts.
 
 2/27/2005 - giwo (0.98-2.8a)
 	Fixed an issue causing 'GO PLACE to reach an invalid location after about 140.
@@ -6600,7 +6600,7 @@ January 15 2005 - Maarc
 1/7/2005 - giwo
 	Made some adjustments to the Client update range.
 	Converted many functions to use references rather than pointers.
-	Fixed Mark, Recall, and Gate Spells and Commands to handle different worlds.
+	Fixed Mark, Recall, and Gate Spells and serverCommands to handle different worlds.
 	Added js/jse_typeassociations.scp
 	Added CEnvoke to handle all envoke functions.
 	Added CTriggerScripts to simplify script handling in CTrigger class.
@@ -6994,8 +6994,8 @@ July 28 2004 - Maarc
 		Yell( socket, toYell, commandLevel )
 		GetDictionaryEntry( entryNum, [language] )
 		RaceGate( socket, character, raceNum )
-		WorldDarkLevel() to set and return cSD:WorldLightDarkLevel().
-		WorldDungeonLevel() to set and return cSD:DungeonLightLevel()
+		WorldDarkLevel() to set and return cSD:worldLightDarkLevel().
+		WorldDungeonLevel() to set and return cSD:dungeonLightLevel()
 	Added the following character props & methods:
 		(bool) allmove
 		(bool) houseicons
@@ -7008,7 +7008,7 @@ July 28 2004 - Maarc
 		WhoList()
 	Modified:
 		Reload(), Now accepts case 9, reload accounts.
-		GetWorldBrightLevel() renamed to WorldBrightLevel(), now sets and returns cSD::WorldLightBrightLevel()
+		GetWorldBrightLevel() renamed to WorldBrightLevel(), now sets and returns cSD::worldLightBrightLevel()
 
 14 July 2004 - Maarc
 ------------
@@ -7419,7 +7419,7 @@ July 28 2004 - Maarc
 	Updated / fixed-up Spawnregions to improve functionality, speed, and all-around usability.
 	Fixed SetSpawn() when object is spawned by a spawnregion, was forcing the region num down to a UI08 (which we handle them as a UI16),
 		also this allows us to calculate our spawnregion (and thus not need to search through all of them in Cleanup()).
-	Commands:
+	serverCommands:
 		Removed many commands updating other commands to take their place.
 		Fixed command "regspawn" and gave it capability to pass "ALL" rather than region number to allow removal of "regspawnall"
 		Removed regspawnmax
@@ -8320,7 +8320,7 @@ Removed:
 		UseHairDye() and moved all contained code to its' one usage
 		enlist()
 		CChar: Murderer(), Skin2(), ID2(), xID(), xSkin() and many unused overloads
-	Commands:
+	serverCommands:
 		'USE' Because it has not had supporting code for it for quite some time
 		'CTRIG','ITRIG', and 'TTRIG' As they were remnants of the old trigger system
 		'SETHEXMOREXYZ' Because SetMOREXYZ will support both HEX and Decimal

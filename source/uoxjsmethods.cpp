@@ -1724,7 +1724,7 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         speechType = static_cast<speechtype_t>(JSVAL_TO_INT(argv[6]));
     }
 
-    bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+    bool useUnicode = cwmWorldState->ServerData()->useUnicodeMessages();
 
     // Keep track of original script that's executing
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
@@ -2230,7 +2230,7 @@ JSBool CChar_EmoteMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         speechTarget = SPTRG_INDIVIDUAL;
     }
 
-    bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+    bool useUnicode = cwmWorldState->ServerData()->useUnicodeMessages();
 
     MethodSpeech(*myChar, trgMessage, EMOTE, txtHue, static_cast<fonttype_t>(myChar->GetFontType()),
                  speechTarget, speechTargetSerial, useUnicode);
@@ -3663,7 +3663,7 @@ JSBool CChar_ExecuteCommand(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         ScriptError(cx, "ExecuteCommand: Invalid socket or speech (%s)", targMessage);
         return JS_FALSE;
     }
-    Commands.command(targSock, myChar, trgMessage);
+    serverCommands.command(targSock, myChar, trgMessage);
     return JS_TRUE;
 }
 
@@ -5711,7 +5711,7 @@ JSBool CChar_YellMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-    bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+    bool useUnicode = cwmWorldState->ServerData()->useUnicodeMessages();
 
     // Keep track of original script that's executing
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
@@ -5773,7 +5773,7 @@ JSBool CChar_WhisperMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         return JS_FALSE;
     }
 
-    bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
+    bool useUnicode = cwmWorldState->ServerData()->useUnicodeMessages();
 
     // Keep track of original script that's executing
     auto origScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
@@ -8123,7 +8123,7 @@ JSBool CConsole_BeginShutdown([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
 //|						2 Reload Regions
 //|						3 Reload Spawn Regions
 //|						4 Reload Spells
-//|						5 Reload Commands
+//|						5 Reload serverCommands
 //|						6 Reload Definition Files
 //|						7 Reload JS
 //|						8 Reload HTML

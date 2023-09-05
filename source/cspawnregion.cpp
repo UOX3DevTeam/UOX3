@@ -530,7 +530,7 @@ void CSpawnRegion::load(CScriptSection *toScan) {
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned) {
     // Only perform the region spawn if the spawn region in question is active
-    if (!cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
+    if (!cwmWorldState->ServerData()->getSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
         return;
     
     if (sNpcs.empty()) {

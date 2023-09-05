@@ -1606,7 +1606,7 @@ void CPOpenGump::Serial(serial_t toSet) { pStream.WriteLong(3, toSet); }
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to activate targeting cursor in client
 // o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0x6C (Targeting Cursor Commands)
+//|	Notes		-	Packet: 0x6C (Targeting Cursor serverCommands)
 //|					Size: 19 bytes
 //|
 //|					Packet Build
@@ -1768,7 +1768,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
         else {
             // We haven't received any client details yet.. let's use default server settings
 
-            /*if( cwmWorldState->ServerData()->GetClientFeature( CF_BIT_HS ))
+            /*if( cwmWorldState->ServerData()->getClientFeature( CF_BIT_HS ))
             {
                     // Extended stats not implemented yet
                     extended3 = true;
@@ -1779,7 +1779,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
                     pStream.WriteByte( 2, 121 );
                     Flag( 6 );
             }*/
-            if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_ML)) {
+            if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_ML)) {
                 extended3 = true;
                 extended4 = true;
                 extended5 = true;
@@ -1787,14 +1787,14 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
                 pStream.WriteByte(2, 91);
                 Flag(5);
             }
-            else if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_AOS)) {
+            else if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_AOS)) {
                 extended3 = true;
                 extended4 = true;
                 pStream.ReserveSize(88);
                 pStream.WriteByte(2, 88);
                 Flag(4);
             }
-            else if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_UOR)) {
+            else if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_UOR)) {
                 extended3 = true;
                 pStream.ReserveSize(70);
                 pStream.WriteByte(2, 70);
@@ -2514,13 +2514,13 @@ CPEnableClientFeatures::CPEnableClientFeatures(CSocket *mSock) {
         // Clients 6.0.14.1 and lower
         pStream.ReserveSize(3);
         pStream.WriteByte(0, 0xB9);
-        pStream.WriteShort(1, cwmWorldState->ServerData()->GetClientFeatures());
+        pStream.WriteShort(1, cwmWorldState->ServerData()->getClientFeatures());
     }
     if (mSock->ClientType() >= CV_SA2D) {
         // Clients 6.0.14.2 and higher
         pStream.ReserveSize(5);
         pStream.WriteByte(0, 0xB9);
-        pStream.WriteLong(1, cwmWorldState->ServerData()->GetClientFeatures());
+        pStream.WriteLong(1, cwmWorldState->ServerData()->getClientFeatures());
     }
 }
 
@@ -2637,8 +2637,8 @@ CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures([[maybe_unused]] CSoc
     pStream.WriteByte(0, 0xF0);
     pStream.WriteShort(1, 0x000C);
     pStream.WriteByte(3, 0xFE);
-    pStream.WriteLong(4, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() >> 32);
-    pStream.WriteLong(8, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() & 0xFFFFFFFF);
+    pStream.WriteLong(4, cwmWorldState->ServerData()->getDisabledAssistantFeatures() >> 32);
+    pStream.WriteLong(8, cwmWorldState->ServerData()->getDisabledAssistantFeatures() & 0xFFFFFFFF);
 }
 
 void CPNegotiateAssistantFeatures::log(std::ostream &outStream, bool fullHeader) {
@@ -3749,7 +3749,7 @@ void CPItemsInContainer::AddItem(CItem *toAdd, std::uint16_t itemNum, CSocket *m
     toAdd->SetDecayTime(0);
 
     // Only send tooltip if server feature for tooltips is enabled
-    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
         CPToolTip pSend(toAdd->GetSerial(), mSock, !isVendor, isPlayerVendor);
         mSock->Send(&pSend);
     }
@@ -4172,13 +4172,13 @@ CPCharAndStartLoc::CPCharAndStartLoc(AccountEntry &actbBlock, [[maybe_unused]] s
     }
 
     std::uint8_t charSlots = 5;
-    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_SIXCHARS) &&
-        cwmWorldState->ServerData()->GetClientFeature(CF_BIT_SIXCHARS) &&
+    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_SIXCHARS) &&
+        cwmWorldState->ServerData()->getClientFeature(CF_BIT_SIXCHARS) &&
         mSock->ClientVersionMajor() >= 4) {
         charSlots = 6;
     }
-    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_SEVENCHARS) &&
-        cwmWorldState->ServerData()->GetClientFeature(CF_BIT_SEVENCHARS) &&
+    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_SEVENCHARS) &&
+        cwmWorldState->ServerData()->getClientFeature(CF_BIT_SEVENCHARS) &&
         mSock->ClientVersionMajor() >= 7) {
         charSlots = 7;
     }
@@ -4188,14 +4188,14 @@ CPCharAndStartLoc::CPCharAndStartLoc(AccountEntry &actbBlock, [[maybe_unused]] s
         pStream.ReserveSize(packetSize);
         pStream.WriteShort(1, packetSize);
         pStream.WriteLong(packetSize - 4,
-                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetServerFeatures()));
+                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->getServerFeatures()));
     }
     else {
         packetSize = static_cast<std::uint16_t>(noLoopBytes + (charSlots * 60) + (numLocations * 63));
         pStream.ReserveSize(packetSize);
         pStream.WriteShort(1, packetSize);
         pStream.WriteLong(packetSize - 4,
-                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->GetServerFeatures()));
+                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->getServerFeatures()));
     }
 
     pStream.WriteByte(3, charSlots);
@@ -4238,7 +4238,7 @@ void CPCharAndStartLoc::NumberOfLocations(std::uint8_t numLocations, [[maybe_unu
     pStream.WriteByte(byteOffset, numLocations);
 }
 
-auto CPCharAndStartLoc::AddStartLocation(__STARTLOCATIONDATA__ *sLoc, std::uint8_t locOffset) -> void {
+auto CPCharAndStartLoc::AddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void {
     if (sLoc) {
         std::uint16_t baseOffset = 0;
         baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
@@ -4250,7 +4250,7 @@ auto CPCharAndStartLoc::AddStartLocation(__STARTLOCATIONDATA__ *sLoc, std::uint8
     }
 }
 
-auto CPCharAndStartLoc::NewAddStartLocation(__STARTLOCATIONDATA__ *sLoc, std::uint8_t locOffset) -> void {
+auto CPCharAndStartLoc::NewAddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void {
     if (sLoc) {
         std::uint16_t baseOffset = 0;
         baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
@@ -5709,7 +5709,7 @@ void CPSendGumpMenu::log(std::ostream &outStream, bool fullHeader) {
     outStream << "X                : " << std::hex << pStream.GetUShort(11) << std::endl;
     outStream << "Y                : " << std::hex << pStream.GetUShort(15) << std::endl;
     outStream << "Command Sec Len  : " << std::dec << pStream.GetUShort(19) << std::endl;
-    outStream << "Commands         : " << std::endl;
+    outStream << "serverCommands         : " << std::endl;
     for (size_t x = 0; x < commands.size(); ++x) {
         outStream << "     " << commands[x] << std::endl;
     }
@@ -8072,7 +8072,7 @@ void CPClilocMessage::ArgumentString(const std::string &arguments) {
 //someone to party
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x06 (Party Commands)
+//|					Subcommand: 0x06 (Party serverCommands)
 //|					Subsubcommand: 0x01 (Party Add Member)
 //|					Size: Variable
 //|
@@ -8130,7 +8130,7 @@ void CPPartyMemberList::log(std::ostream &outStream, bool fullHeader) {
 //| Purpose		-	Handles outgoing packet with invitation for player to join a party
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x06 (Party Commands)
+//|					Subcommand: 0x06 (Party serverCommands)
 //|					Subsubcommand: 0x07 (Party Invitation)
 //|					Size: Variable
 //|
@@ -8175,7 +8175,7 @@ void CPPartyInvitation::log(std::ostream &outStream, bool fullHeader) {
 //| Purpose		-	Handles outgoing packet to remove member from party
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x06 (Party Commands)
+//|					Subcommand: 0x06 (Party serverCommands)
 //|					Subsubcommand: 0x02 (Remove Party Member)
 //|					Size: Variable
 //|
@@ -8240,7 +8240,7 @@ void CPPartyMemberRemove::log(std::ostream &outStream, bool fullHeader) {
 //| Purpose		-	Handles outgoing packet to send a message to a specific party member
 // o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
-//|					Subcommand: 0x06 (Party Commands)
+//|					Subcommand: 0x06 (Party serverCommands)
 //|					Subsubcommand: 0x03 (Tell party member a message)
 //|					Size: Variable
 //|

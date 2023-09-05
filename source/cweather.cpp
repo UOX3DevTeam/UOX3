@@ -1606,20 +1606,20 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 currentLight = CurrentLight(weatherSys);
             }
             else {
-                currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-                lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
-                lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
+                currentLight = cwmWorldState->ServerData()->worldLightCurrentLevel();
+                lightMin = cwmWorldState->ServerData()->worldLightDarkLevel();
+                lightMax = cwmWorldState->ServerData()->worldLightBrightLevel();
             }
         }
         else {
-            currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-            lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
-            lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
+            currentLight = cwmWorldState->ServerData()->worldLightCurrentLevel();
+            lightMin = cwmWorldState->ServerData()->worldLightDarkLevel();
+            lightMax = cwmWorldState->ServerData()->worldLightBrightLevel();
         }
         
         if (mChar.InDungeon()) {
             R32 dungeonLight = 255;
-            dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
+            dungeonLight = cwmWorldState->ServerData()->dungeonLightLevel();
             
             if (lightLevel > dungeonLight) {
                 if (lightLevel > 0) {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
+		56CEBFE12AA79189008D3229 /* serverdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56CEBFDF2AA79189008D3229 /* serverdata.cpp */; };
 		56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */; };
 		56D6EEF82AA13174005355FA /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEF42AA13174005355FA /* account.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
@@ -128,6 +129,8 @@
 		56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
 		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
+		56CEBFDF2AA79189008D3229 /* serverdata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverdata.cpp; sourceTree = "<group>"; };
+		56CEBFE02AA79189008D3229 /* serverdata.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverdata.hpp; sourceTree = "<group>"; };
 		56D6EEC32A9F7707005355FA /* strutil.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strutil.hpp; sourceTree = "<group>"; };
 		56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uoxversion.cpp; sourceTree = "<group>"; };
 		56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxversion.hpp; sourceTree = "<group>"; };
@@ -389,6 +392,8 @@
 				56D6EEF72AA13174005355FA /* account.hpp */,
 				64A90081293E3DD4009B54DA /* console.cpp */,
 				64A90082293E3DD4009B54DA /* console.hpp */,
+				56CEBFDF2AA79189008D3229 /* serverdata.cpp */,
+				56CEBFE02AA79189008D3229 /* serverdata.hpp */,
 			);
 			path = subsystem;
 			sourceTree = "<group>";
@@ -775,6 +780,7 @@
 				64A90136293E3DD4009B54DA /* csocket.cpp in Sources */,
 				64A90126293E3DD4009B54DA /* chtmlsystem.cpp in Sources */,
 				64A90150293E3DD4009B54DA /* objectfactory.cpp in Sources */,
+				56CEBFE12AA79189008D3229 /* serverdata.cpp in Sources */,
 				64A90121293E3DD4009B54DA /* cchar.cpp in Sources */,
 				56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */,
 				64A90154293E3DD4009B54DA /* quantityfuncs.cpp in Sources */,

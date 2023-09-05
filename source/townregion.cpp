@@ -1664,7 +1664,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
             va_start(argptr, dictEntry);
             msg += oldstrutil::format(txt, argptr);
             
-            if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
                 CPUnicodeMessage unicodeMessage;
                 unicodeMessage.Message(msg);
                 unicodeMessage.Font(FNT_NORMAL);

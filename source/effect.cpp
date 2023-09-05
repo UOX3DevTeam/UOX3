@@ -648,7 +648,7 @@ auto cEffects::CheckTempeffects() -> void {
         case 2: // Nightsight Potion (JS) and Spell (code)
             if (validChar) {
                 s->SetFixedLight(255);
-                DoLight(tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel());
+                DoLight(tSock, cwmWorldState->ServerData()->worldLightCurrentLevel());
             }
             break;
         case 3: // Clumsy spell (JS)
@@ -1205,7 +1205,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
     case 2: // Nightsight Potion (JS) and Spell (code)
     {
         std::int16_t worldbrightlevel;
-        worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
+        worldbrightlevel = cwmWorldState->ServerData()->worldLightBrightLevel();
         dest->SetFixedLight(static_cast<std::uint8_t>(worldbrightlevel));
         DoLight(tSock, static_cast<std::int8_t>(worldbrightlevel));
 

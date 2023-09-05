@@ -1454,7 +1454,7 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             if (mSock != nullptr) {
                 // Refresh container tooltip
                 CPToolTip pSend(iCreated->GetContSerial(), mSock);

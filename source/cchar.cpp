@@ -2274,7 +2274,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip pSend(GetSerial(), s);
             s->Send(&pSend);
         }
@@ -4472,7 +4472,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 target = SPTRG_INDIVIDUAL;
             }
             
-            if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
                 // Doesn't enter the speech-queue, though!
                 bool sendAll = true;
                 if (target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER) {

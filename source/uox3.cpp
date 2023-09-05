@@ -147,7 +147,7 @@ auto aJailSys = CJailSystem();                        // no depend, no startup
 auto aSpeechSys = CSpeechQueue();        // has startup
 auto aJSEngine = CJSEngine();            // has startup
 auto aFileLookup = CServerDefinitions(); // has startup
-CCommands Commands ;            
+CCommands serverCommands ;            
 auto aMap = CMulHandler();               // replaced
 auto aNetwork = CNetworkStuff();         // Maybe dependent, has startup
 auto aMapRegion = CMapHandler();         // Dependent (Map->) , has startup
@@ -531,8 +531,8 @@ auto startInitialize(CServerData &serverdata) -> void {
     Weather->NewHour();
     Console::shared().printDone();
     
-    Console::shared() << "Loading Commands               " << myendl;
-    Commands.load();
+    Console::shared() << "Loading serverCommands               " << myendl;
+    serverCommands.load();
     Console::shared().printDone();
     
     // Rework that...
@@ -780,7 +780,7 @@ auto doMessageLoop() -> void {
                 JSEngine->Reload();
                 JSMapping->Reload();
                 Console::shared().printDone();
-                Commands.load();
+                serverCommands.load();
                 break;
             case MSG_CONSOLEBCAST:
                 sysBroadcast(tVal.data);
@@ -818,7 +818,7 @@ auto doMessageLoop() -> void {
                             break; // Reload spells
                         case '5':  // Reload commands
                             JSMapping->Reload(CJSMappingSection::SCPT_COMMAND);
-                            Commands.load();
+                            serverCommands.load();
                             break;
                         case '6': // Reload definition files
                             FileLookup->Reload();
@@ -832,7 +832,7 @@ auto doMessageLoop() -> void {
                             JSEngine->Reload();
                             JSMapping->Reload();
                             Console::shared().printDone();
-                            Commands.load();
+                            serverCommands.load();
                             Skills->load();
                             break;
                         case '8': // Reload HTML
@@ -1461,7 +1461,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
     
     if (!mChar.IsDead()) {
         if (doWeather) {
-            const std::uint8_t curLevel = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+            const std::uint8_t curLevel = cwmWorldState->ServerData()->worldLightCurrentLevel();
             lightlevel_t toShow;
             if (Races->VisLevel(mChar.GetRace()) > curLevel) {
                 toShow = 0;
@@ -1973,7 +1973,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
         
         // Do JS Weather for item
         if (doWeather) {
-            DoLight(itemCheck, cwmWorldState->ServerData()->WorldLightCurrentLevel());
+            DoLight(itemCheck, cwmWorldState->ServerData()->worldLightCurrentLevel());
         }
     }
 }
@@ -2515,7 +2515,7 @@ auto initClasses() -> void {
 
     aJSEngine.startup();
     aFileLookup.startup();
-    Commands.startup();
+    serverCommands.startup();
     aSpeechSys.startup();
     // Need to do map
     aNetwork.startup();
@@ -3064,9 +3064,9 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     
     auto curRegion = mChar->GetRegion();
     auto wSys = Weather->Weather(curRegion->GetWeather());
-    auto toShow = cwmWorldState->ServerData()->WorldLightCurrentLevel();
+    auto toShow = cwmWorldState->ServerData()->worldLightCurrentLevel();
     
-    auto dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+    auto dunLevel = cwmWorldState->ServerData()->dungeonLightLevel();
     // we have a valid weather system
     if (wSys) {
         const R32 lightMin = wSys->LightMin();
@@ -3136,7 +3136,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     auto wSys = Weather->Weather(curRegion->GetWeather());
     
     lightlevel_t toShow = level;
-    lightlevel_t dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+    lightlevel_t dunLevel = cwmWorldState->ServerData()->dungeonLightLevel();
     
     // we have a valid weather system
     if (wSys) {
@@ -3197,7 +3197,7 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     auto wSys = Weather->Weather(curRegion->GetWeather());
     
     lightlevel_t toShow = level;
-    lightlevel_t dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+    lightlevel_t dunLevel = cwmWorldState->ServerData()->dungeonLightLevel();
     
     // we have a valid weather system
     if (wSys) {
@@ -3540,7 +3540,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
         }
         if (mSock) {
             Effects->DoSocketMusic(mSock);
-            DoLight(mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel());
+            DoLight(mSock, cwmWorldState->ServerData()->worldLightCurrentLevel());
         }
     }
     else {
@@ -3551,7 +3551,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
         
         // Update lighting
         if (forceUpdateLight && mSock != nullptr) {
-            DoLight(mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel());
+            DoLight(mSock, cwmWorldState->ServerData()->worldLightCurrentLevel());
         }
     }
 }
