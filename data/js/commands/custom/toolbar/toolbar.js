@@ -47,56 +47,15 @@ function CommandInfo( pUser )
 
 function page0( pUser, uox3gump )
 {
-	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1 );
-	uox3gump.AddText( 190, 60, 0, "A" );
+	const buttonLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "R"];
+	const startY = 60;
 
-	uox3gump.AddPageButton( 160, 90, 2443, 2444, 2 );
-	uox3gump.AddText( 190, 90, 0, "B" );
-
-	uox3gump.AddPageButton( 160, 120, 2443, 2444, 3 );
-	uox3gump.AddText( 190, 120, 0, "C" );
-
-	uox3gump.AddPageButton( 160, 150, 2443, 2444, 4 );
-	uox3gump.AddText( 190, 150, 0, "D" );
-
-	uox3gump.AddPageButton( 160, 180, 2443, 2444, 5 );
-	uox3gump.AddText( 190, 180, 0, "E" );
-
-	uox3gump.AddPageButton( 160, 210, 2443, 2444, 6 );
-	uox3gump.AddText( 190, 210, 0, "F" );
-
-	uox3gump.AddPageButton( 160, 240, 2443, 2444, 7 );
-	uox3gump.AddText( 190, 240, 0, "G" );
-
-	uox3gump.AddPageButton( 160, 270, 2443, 2444, 8 );
-	uox3gump.AddText( 190, 270, 0, "H" );
-
-	uox3gump.AddPageButton( 160, 300, 2443, 2444, 9 );
-	uox3gump.AddText( 190, 300, 0, "I" );
-
-	uox3gump.AddPageButton( 160, 330, 2443, 2444, 10 );
-	uox3gump.AddText( 190, 330, 0, "J" );
-
-	uox3gump.AddPageButton( 160, 360, 2443, 2444, 11 );
-	uox3gump.AddText( 190, 360, 0, "K" );
-
-	uox3gump.AddPageButton( 160, 390, 2443, 2444, 11 );
-	uox3gump.AddText( 190, 390, 0, "L" );
-
-	uox3gump.AddPageButton( 160, 420, 2443, 2444, 12 );
-	uox3gump.AddText( 190, 420, 0, "M" );
-
-	uox3gump.AddPageButton( 160, 450, 2443, 2444, 13 );
-	uox3gump.AddText( 190, 450, 0, "N" );
-
-	uox3gump.AddPageButton( 160, 480, 2443, 2444, 14 );
-	uox3gump.AddText( 190, 480, 0, "O" );
-
-	uox3gump.AddPageButton( 160, 510, 2443, 2444, 15 );
-	uox3gump.AddText( 190, 510, 0, "P" );
-
-	uox3gump.AddPageButton( 160, 540, 2443, 2444, 16 );
-	uox3gump.AddText( 190, 540, 0, "R" );
+	for( let i = 1; i <= 16; i++ ) 
+	{
+		const yPos = startY + ( i - 1 ) * 30;
+		uox3gump.AddPageButton( 160, yPos, 2443, 2444, i );
+		uox3gump.AddText( 190, yPos, 0, buttonLabels[i - 1] );
+	}
 
 	uox3gump.AddButton( 210, 570, 1543, 1544, 1, 0, 20 );
 	uox3gump.AddText( 170, 570, 0, "Next" );
@@ -108,7 +67,7 @@ function page0( pUser, uox3gump )
 	TriggerEvent( 9001, "InfoB", uox3gump );
 
 	uox3gump.AddPage( 3 );
-	TriggerEvent( 9002, "InfoC", uox3gump );
+	TriggerEvent(9002, "InfoC", uox3gump);
 }
 
 function page20( pUser )
@@ -119,29 +78,17 @@ function page20( pUser )
 	uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
 	uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
 
-	uox3gump.AddPageButton( 160, 60, 2443, 2444, 1 );
-	uox3gump.AddText( 190, 60, 0, "S" );
+	const startChar = 'S';
+	const startY = 60;
 
-	uox3gump.AddPageButton( 160, 90, 2443, 2444, 2 );
-	uox3gump.AddText( 190, 90, 0, "T" );
+	for (let i = 0; i < 8; i++) 
+	{
+		const char = String.fromCharCode(startChar.charCodeAt(0) + i);
+		const yPos = startY + i * 30;
 
-	uox3gump.AddPageButton( 160, 120, 2443, 2444, 3 );
-	uox3gump.AddText( 190, 120, 0, "U" );
-
-	uox3gump.AddPageButton( 160, 150, 2443, 2444, 4 );
-	uox3gump.AddText( 190, 150, 0, "V" );
-
-	uox3gump.AddPageButton( 160, 180, 2443, 2444, 5 );
-	uox3gump.AddText( 190, 180, 0, "W" );
-
-	uox3gump.AddPageButton( 160, 210, 2443, 2444, 6 );
-	uox3gump.AddText( 190, 210, 0, "X" );
-
-	uox3gump.AddPageButton( 160, 240, 2443, 2444, 7 );
-	uox3gump.AddText( 190, 240, 0, "Y" );
-
-	uox3gump.AddPageButton( 160, 270, 2443, 2444, 8 );
-	uox3gump.AddText( 190, 270, 0, "Z" );
+		uox3gump.AddPageButton(160, yPos, 2443, 2444, i + 1);
+		uox3gump.AddText(190, yPos, 0, char);
+	}
 
 	uox3gump.AddButton( 210, 570, 1545, 1546, 1, 0, 1 );
 	uox3gump.AddText( 170, 570, 0, "Back" );
