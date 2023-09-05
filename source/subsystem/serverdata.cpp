@@ -195,7 +195,7 @@ StartLocation::StartLocation(const std::string &line):StartLocation(){
 std::map<std::string,std::variant<R32,R64,bool,std::string,std::uint8_t,std::int8_t,std::uint16_t,std::int16_t,std::uint32_t,std::int32_t,std::uint64_t,std::int64_t>> ServerData::dataValue ;
 
 const std::map<ServerData::timer_t,std::string> ServerData::TIMERNAMEMAP{
-    {ServerData::ERROR,"ERROR"s},{ServerData::CORPSEDECAY,"CORPSEDECAY"},{ServerData::WEATHER,"WEATHER"s},
+    {ServerData::TIMERERROR,"ERROR"s},{ServerData::CORPSEDECAY,"CORPSEDECAY"},{ServerData::WEATHER,"WEATHER"s},
     {ServerData::SHOPSPAWN,"SHOPSPAWN"s},{ServerData::DECAY,"DECAY"s},{ServerData::DECAYINHOUSE,"DECAYINHOUSE"s},
     {ServerData::INVISIBLITY,"INVISIBLITY"s},{ServerData::OBJECTUSAGE,"OBJECTUSAGE"s},{ServerData::GATE,"GATE"s},
     {ServerData::POISON,"POISON"s},{ServerData::LOGINTIMEOUT,"LOGINTIMEOUT"s},{ServerData::HITPOINTREGEN,"HITPOINTREGEN"s},
@@ -217,7 +217,7 @@ auto ServerData::timerForName(const std::string &name) const -> timer_t {
     if (iter != TIMERNAMEMAP.end()){
         return iter->first ;
     }
-    return timer_t::ERROR ;
+    return timer_t::TIMERERROR ;
 }
 //======================================================================
 auto ServerData::shared() ->ServerData&{
