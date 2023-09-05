@@ -498,7 +498,7 @@ JSBool SE_CommandLevelReq(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CommandLevelReq: Invalid command name");
         return JS_FALSE;
     }
-    CommandMapEntry *details = Commands->CommandDetails(test);
+    CommandMapEntry *details = Commands.CommandDetails(test);
     if (details == nullptr) {
         *rval = INT_TO_JSVAL(255);
     }
@@ -524,7 +524,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         ScriptError(cx, "CommandExists: Invalid command name");
         return JS_FALSE;
     }
-    *rval = BOOLEAN_TO_JSVAL(Commands->CommandExists(test));
+    *rval = BOOLEAN_TO_JSVAL(Commands.commandExists(test));
     return JS_TRUE;
 }
 
@@ -536,7 +536,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                        [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands->FirstCommand();
+    const std::string tVal = Commands.FirstCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -557,7 +557,7 @@ JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_un
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                       [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands->NextCommand();
+    const std::string tVal = Commands.NextCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -578,7 +578,7 @@ JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unu
 JSBool SE_FinishedCommandList([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                               [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                               jsval *rval) {
-    *rval = BOOLEAN_TO_JSVAL(Commands->FinishedCommandList());
+    *rval = BOOLEAN_TO_JSVAL(Commands.FinishedCommandList());
     return JS_TRUE;
 }
 
@@ -610,7 +610,7 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         return JS_FALSE;
     }
 
-    Commands->Register(toRegister, scriptId, execLevel, isEnabled);
+    Commands.Register(toRegister, scriptId, execLevel, isEnabled);
     return JS_TRUE;
 }
 
@@ -794,7 +794,7 @@ JSBool SE_DisableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         return JS_FALSE;
     }
     std::string toDisable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands->SetCommandStatus(toDisable, false);
+    Commands.SetCommandStatus(toDisable, false);
     return JS_TRUE;
 }
 
@@ -858,7 +858,7 @@ JSBool SE_EnableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         return JS_FALSE;
     }
     std::string toEnable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands->SetCommandStatus(toEnable, true);
+    Commands.SetCommandStatus(toEnable, true);
     return JS_TRUE;
 }
 
@@ -2446,7 +2446,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
         Magic->LoadScript();
         break;
     case 3: // Reload Commands
-        Commands->Load();
+        Commands.Load();
         break;
     case 4: // Reload DFNs
         FileLookup->Reload();
@@ -2470,7 +2470,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
         UnloadSpawnRegions();
         LoadSpawnRegions();
         Magic->LoadScript();
-        Commands->Load();
+        Commands.Load();
         LoadSkills();
         Skills->Load();
         messageLoop << MSG_RELOADJS;

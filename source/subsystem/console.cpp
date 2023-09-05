@@ -1066,7 +1066,7 @@ auto Console::Process(std::int32_t c) -> void {
                     messageLoop << MSG_PRINTDONE;
                     // Reload the server command list
                     messageLoop << "     Loading commands... ";
-                    Commands->Load();
+                    Commands.Load();
                     messageLoop << MSG_PRINTDONE;
                     // Reload DFN's
                     messageLoop << "     Loading Server DFN... ";

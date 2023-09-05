@@ -22,7 +22,7 @@ class CWhoList {
     void ResetUpdateFlag();
     void AddSerial(serial_t toAdd);
     void Delete();
-    void Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed);
+    void command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed);
 
   public:
     CWhoList(bool trulyOnline = true);

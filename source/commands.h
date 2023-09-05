@@ -44,26 +44,26 @@ private:
     std::vector<std::unique_ptr<CommandLevel>> clearance;
     std::map<std::string, CommandMapEntry>::iterator cmdPointer;
     std::map<std::string, TargetMapEntry>::iterator targPointer;
-    std::string commandString;
+    std::string cmdString;
     
-    void InitClearance();
-    void CommandReset();
+    void initClearance();
+    void resetCommand();
     
 public:
-    std::uint8_t NumArguments();
-    std::int32_t Argument(std::uint8_t argNum);
-    std::string CommandString(std::uint8_t section, std::uint8_t end = 0);
-    void CommandString(std::string newValue);
+    std::uint8_t numArguments();
+    std::int32_t argument(std::uint8_t argNum);
+    std::string commandString(std::uint8_t section, std::uint8_t end = 0);
+    void commandString(std::string newValue);
     
-    CommandLevel *GetClearance(std::string clearName); // return by command name
-    CommandLevel *GetClearance(std::uint8_t commandLevel);     // return by command level
-    std::uint16_t GetColourByLevel(std::uint8_t commandLevel);
-    void Command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
+    CommandLevel *getClearance(std::string clearName); // return by command name
+    CommandLevel *getClearance(std::uint8_t commandLevel);     // return by command level
+    std::uint16_t getColourByLevel(std::uint8_t commandLevel);
+    void command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
     void Load();
     void Log(const std::string &command, CChar *player1, CChar *player2,
              const std::string &extraInfo);
     
-    bool CommandExists(const std::string &cmdName);
+    bool commandExists(const std::string &cmdName);
     const std::string FirstCommand();
     const std::string NextCommand();
     bool FinishedCommandList();
@@ -79,6 +79,6 @@ public:
     void SetCommandStatus(const std::string &cmdName, bool isEnabled);
 };
 
-extern CCommands *Commands;
+extern CCommands Commands;
 
 #endif

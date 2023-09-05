@@ -16,7 +16,6 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
-CCommands *Commands = nullptr;
 
 //===================================================================================================
 // CCommands
@@ -28,7 +27,7 @@ auto CCommands::targetMap = std::map<std::string, TargetMapEntry>();
 auto CCommands::jscommandMap = std::map<std::string, JSCommandEntry>();
 
 //==================================================================================================
-auto CCommands::Startup() -> void { CommandReset(); }
+auto CCommands::Startup() -> void { resetCommand(); }
 
 //==================================================================================================
 CCommands::~CCommands() {
@@ -39,25 +38,25 @@ CCommands::~CCommands() {
  
 }
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::NumArguments()
+//|	Function	-	CCommands::numArguments()
 //|	Date		-	3/12/2003
 //|	Changes		-	4/2/2003 - Reduced to a std::uint8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Number of arguments in a command
 // o------------------------------------------------------------------------------------------------o
-std::uint8_t CCommands::NumArguments() {
-    auto secs = oldstrutil::sections(commandString, " ");
+std::uint8_t CCommands::numArguments() {
+    auto secs = oldstrutil::sections(cmdString, " ");
     return static_cast<std::uint8_t>(secs.size());
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::Argument()
+//|	Function	-	CCommands::argument()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs argument argNum and converts it to an integer
 // o------------------------------------------------------------------------------------------------o
-std::int32_t CCommands::Argument(std::uint8_t argNum) {
+std::int32_t CCommands::argument(std::uint8_t argNum) {
     std::int32_t retVal = 0;
-    std::string tempString = CommandString(argNum + 1, argNum + 1);
+    std::string tempString = commandString(argNum + 1, argNum + 1);
     if (!tempString.empty()) {
         try {
             retVal = std::stoi(tempString, nullptr, 0);
@@ -70,25 +69,25 @@ std::int32_t CCommands::Argument(std::uint8_t argNum) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::CommandString()
+//|	Function	-	CCommands::commandString()
 //|	Date		-	4/02/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
 // o------------------------------------------------------------------------------------------------o
-std::string CCommands::CommandString(std::uint8_t section, std::uint8_t end) {
+std::string CCommands::commandString(std::uint8_t section, std::uint8_t end) {
     std::string retString;
     if (end != 0) {
-        retString = oldstrutil::extractSection(commandString, " ", section - 1, end - 1);
+        retString = oldstrutil::extractSection(cmdString, " ", section - 1, end - 1);
     }
     else {
-        retString = oldstrutil::extractSection(commandString, " ", section - 1);
+        retString = oldstrutil::extractSection(cmdString, " ", section - 1);
     }
     return retString;
 }
-void CCommands::CommandString(std::string newValue) { commandString = newValue; }
+void CCommands::commandString(std::string newValue) { cmdString = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::Command()
+//|	Function	-	CCommands::command()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
 // o------------------------------------------------------------------------------------------------o
@@ -96,13 +95,13 @@ void CCommands::CommandString(std::string newValue) { commandString = newValue; 
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
 // o------------------------------------------------------------------------------------------------o
-void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess) {
-    CommandString(util::simplify(text));
-    if (NumArguments() < 1)
+void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess) {
+    commandString(util::simplify(text));
+    if (numArguments() < 1)
         return;
     
     // Discard the leading command prefix
-    std::string command = util::upper(CommandString(1, 1));
+    std::string command = util::upper(commandString(1, 1));
     
     auto toFind = jscommandMap.find(command);
     if (toFind != jscommandMap.end()) {
@@ -133,7 +132,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
 #if defined(UOX_DEBUG_MODE)
                 Console::shared().Print(util::format("Executing JS command %s\n", command.c_str()));
 #endif
-                toExecute->executeCommand(s, "command_" + command, CommandString(2));
+                toExecute->executeCommand(s, "command_" + command, commandString(2));
             }
             if (checkSocketAccess) {
                 Log(command, s->CurrcharObj(), nullptr, "Cleared");
@@ -177,10 +176,10 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
                 s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
                 break;
             case CMD_TARGETXYZ:
-                if (NumArguments() == 4) {
-                    s->ClickX(static_cast<std::int16_t>(Argument(1)));
-                    s->ClickY(static_cast<std::int16_t>(Argument(2)));
-                    s->ClickZ(static_cast<std::int8_t>(Argument(3)));
+                if (numArguments() == 4) {
+                    s->ClickX(static_cast<std::int16_t>(argument(1)));
+                    s->ClickY(static_cast<std::int16_t>(argument(2)));
+                    s->ClickZ(static_cast<std::int8_t>(argument(3)));
                     s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
                 }
                 else {
@@ -188,8 +187,8 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
                 }
                 break;
             case CMD_TARGETINT:
-                if (NumArguments() == 2) {
-                    s->TempInt(Argument(1));
+                if (numArguments() == 2) {
+                    s->TempInt(argument(1));
                     s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
                 }
                 else {
@@ -197,8 +196,8 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
                 }
                 break;
             case CMD_TARGETTXT:
-                if (NumArguments() > 1) {
-                    s->XText(CommandString(2));
+                if (numArguments() > 1) {
+                    s->XText(commandString(2));
                     s->SendTargetCursor(0, findTarg->second.targId, 0, findTarg->second.dictEntry);
                 }
                 else {
@@ -281,8 +280,8 @@ void CCommands::Load() {
     std::int16_t commandCount = 0;
     CScriptSection *commands = FileLookup->FindEntry("COMMAND_OVERRIDE", command_def);
     if (commands == nullptr) {
-        InitClearance();
-        return;
+        initClearance();
+        return ;
     }
     
     std::string tag;
@@ -321,7 +320,7 @@ void CCommands::Load() {
 #endif
     CScriptSection *cmdClearance = FileLookup->FindEntry("COMMANDLEVELS", command_def);
     if (cmdClearance == nullptr) {
-        InitClearance();
+        initClearance();
     }
     else {
         size_t currentWorking;
@@ -409,8 +408,8 @@ void CCommands::Log(const std::string &command, CChar *player1, CChar *player2,
     logDestination << "[" << dateTime << "] ";
     logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial()
     << ") ";
-    logDestination << "used command <" << command << (CommandString(2) != "" ? " " : "")
-    << CommandString(2) << "> ";
+    logDestination << "used command <" << command << (commandString(2) != "" ? " " : "")
+    << commandString(2) << "> ";
     if (ValidateObject(player2)) {
         logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial()
         << " )";
@@ -420,11 +419,11 @@ void CCommands::Log(const std::string &command, CChar *player1, CChar *player2,
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	*CCommands::GetClearance()
+//|	Function	-	*CCommands::getClearance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
 // o------------------------------------------------------------------------------------------------o
-CommandLevel *CCommands::GetClearance(std::string clearName) {
+CommandLevel *CCommands::getClearance(std::string clearName) {
     if (clearance.empty()) {
         return nullptr;
     }
@@ -440,11 +439,11 @@ CommandLevel *CCommands::GetClearance(std::string clearName) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::GetColourByLevel()
+//|	Function	-	CCommands::getColourByLevel()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a players nick color based on his command level
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
+std::uint16_t CCommands::getColourByLevel(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return 0x005A;
@@ -461,11 +460,11 @@ std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::InitClearance()
+//|	Function	-	CCommands::initClearance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize command levels
 // o------------------------------------------------------------------------------------------------o
-void CCommands::InitClearance() {
+void CCommands::initClearance() {
     clearance.push_back(std::make_unique<CommandLevel>()); // 0 -> 3
     clearance.push_back(std::make_unique<CommandLevel>());
     clearance.push_back(std::make_unique<CommandLevel>());
@@ -520,11 +519,11 @@ void CCommands::InitClearance() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::GetClearance()
+//|	Function	-	CCommands::getClearance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Geta characters command level
 // o------------------------------------------------------------------------------------------------o
-CommandLevel *CCommands::GetClearance(std::uint8_t commandLevel) {
+CommandLevel *CCommands::getClearance(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return nullptr;
@@ -541,11 +540,11 @@ CommandLevel *CCommands::GetClearance(std::uint8_t commandLevel) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::CommandExists()
+//|	Function	-	CCommands::commandExists()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a command is valid
 // o------------------------------------------------------------------------------------------------o
-bool CCommands::CommandExists(const std::string &cmdName) {
+bool CCommands::commandExists(const std::string &cmdName) {
     auto toFind = commandMap.find(cmdName);
     return (toFind != commandMap.end());
 }
@@ -592,7 +591,7 @@ bool CCommands::FinishedCommandList() { return (cmdPointer == commandMap.end());
 //|	Purpose		-	Get command info
 // o------------------------------------------------------------------------------------------------o
 CommandMapEntry *CCommands::CommandDetails(const std::string &cmdName) {
-    if (!CommandExists(cmdName))
+    if (!commandExists(cmdName))
         return nullptr;
     
     auto toFind = commandMap.find(cmdName);

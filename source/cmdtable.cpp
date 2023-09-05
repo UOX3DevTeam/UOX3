@@ -176,13 +176,13 @@ void command_fixspawn() {
 // o------------------------------------------------------------------------------------------------o
 void Command_AddAccount(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() > 1) {
-        std::string newUsername = Commands->CommandString(2, 2);
-        std::string newPassword = Commands->CommandString(3, 3);
+    if (Commands.numArguments() > 1) {
+        std::string newUsername = Commands.commandString(2, 2);
+        std::string newPassword = Commands.commandString(3, 3);
         std::uint16_t newFlags = 0x0000;
 
-        if (Commands->NumArguments() > 2) {
-            newFlags = util::ston<std::uint16_t>(Commands->CommandString(4, 4));
+        if (Commands.numArguments() > 2) {
+            newFlags = util::ston<std::uint16_t>(Commands.commandString(4, 4));
         }
 
         if (newUsername == "" || newPassword == "") {
@@ -266,7 +266,7 @@ void Command_SetPost(CSocket *s) {
         return;
 
     PostTypes type = PT_LOCAL;
-    std::string upperCommand = util::upper(Commands->CommandString(2, 2));
+    std::string upperCommand = util::upper(Commands.commandString(2, 2));
     if (upperCommand == "GLOBAL") // user's next post appears in ALL bulletin boards
     {
         type = PT_GLOBAL;
@@ -361,35 +361,35 @@ auto Command_ShowIds(CSocket *s) -> void {
 // o------------------------------------------------------------------------------------------------o
 void Command_Tile(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 0)
+    if (Commands.numArguments() == 0)
         return;
 
     std::uint16_t targId = 0;
-    if (util::upper(Commands->CommandString(2, 2)) == "STATIC") {
-        targId = static_cast<std::uint16_t>(Commands->Argument(2));
+    if (util::upper(Commands.commandString(2, 2)) == "STATIC") {
+        targId = static_cast<std::uint16_t>(Commands.argument(2));
     }
     else {
-        targId = static_cast<std::uint16_t>(Commands->Argument(1));
+        targId = static_cast<std::uint16_t>(Commands.argument(1));
     }
 
     // Reset tempint2 on socket
     s->TempInt2(0);
 
-    if (Commands->NumArguments() == 7 || Commands->NumArguments() == 8) {
+    if (Commands.numArguments() == 7 || Commands.numArguments() == 8) {
         // tile itemId x1 y1 x2 y2 z rndVal
         std::int32_t rndVal = 0;
         std::uint16_t rndId = 0;
 
-        if (Commands->NumArguments() == 8) {
-            rndVal = static_cast<std::int32_t>(Commands->Argument(7));
+        if (Commands.numArguments() == 8) {
+            rndVal = static_cast<std::int32_t>(Commands.argument(7));
         }
 
         // tile itemId x1 y1 x2 y2 z
-        std::int16_t x1 = static_cast<std::int16_t>(Commands->Argument(2));
-        std::int16_t x2 = static_cast<std::int16_t>(Commands->Argument(3));
-        std::int16_t y1 = static_cast<std::int16_t>(Commands->Argument(4));
-        std::int16_t y2 = static_cast<std::int16_t>(Commands->Argument(5));
-        std::int8_t z = static_cast<std::int8_t>(Commands->Argument(6));
+        std::int16_t x1 = static_cast<std::int16_t>(Commands.argument(2));
+        std::int16_t x2 = static_cast<std::int16_t>(Commands.argument(3));
+        std::int16_t y1 = static_cast<std::int16_t>(Commands.argument(4));
+        std::int16_t y2 = static_cast<std::int16_t>(Commands.argument(5));
+        std::int8_t z = static_cast<std::int8_t>(Commands.argument(6));
 
         for (std::int16_t x = x1; x <= x2; ++x) {
             for (std::int16_t y = y1; y <= y2; ++y) {
@@ -403,30 +403,30 @@ void Command_Tile(CSocket *s) {
             }
         }
     }
-    else if (Commands->NumArguments() == 4) {
+    else if (Commands.numArguments() == 4) {
         // tile static itemId rndVal
         s->ClickX(-1);
         s->ClickY(-1);
-        s->TempInt2(static_cast<std::int32_t>(Commands->Argument(3)));
+        s->TempInt2(static_cast<std::int32_t>(Commands.argument(3)));
 
         s->AddId1(static_cast<std::uint8_t>(targId >> 8));
         s->AddId2(static_cast<std::uint8_t>(targId % 256));
         s->SendTargetCursor(0, TARGET_TILING, 0, 24);
     }
-    else if (Commands->NumArguments() == 3) {
+    else if (Commands.numArguments() == 3) {
         // tile itemId rndVal
         // tile static itemId
         s->ClickX(-1);
         s->ClickY(-1);
-        if (util::upper(Commands->CommandString(2, 2)) != "STATIC") {
-            s->TempInt2(static_cast<std::int32_t>(Commands->Argument(2)));
+        if (util::upper(Commands.commandString(2, 2)) != "STATIC") {
+            s->TempInt2(static_cast<std::int32_t>(Commands.argument(2)));
         }
 
         s->AddId1(static_cast<std::uint8_t>(targId >> 8));
         s->AddId2(static_cast<std::uint8_t>(targId % 256));
         s->SendTargetCursor(0, TARGET_TILING, 0, 24);
     }
-    else if (Commands->NumArguments() == 2) {
+    else if (Commands.numArguments() == 2) {
         // tile itemId
         s->ClickX(-1);
         s->ClickY(-1);
@@ -457,14 +457,14 @@ void Command_Save() {
 void Command_Dye(CSocket *s) {
     VALIDATESOCKET(s);
     s->DyeAll(1);
-    if (Commands->NumArguments() == 2) {
-        std::uint16_t tNum = static_cast<std::int16_t>(Commands->Argument(1));
+    if (Commands.numArguments() == 2) {
+        std::uint16_t tNum = static_cast<std::int16_t>(Commands.argument(1));
         s->AddId1(static_cast<std::uint8_t>(tNum >> 8));
         s->AddId2(static_cast<std::uint8_t>(tNum % 256));
     }
-    else if (Commands->NumArguments() == 3) {
-        s->AddId1(static_cast<std::uint8_t>(Commands->Argument(1)));
-        s->AddId2(static_cast<std::uint8_t>(Commands->Argument(2)));
+    else if (Commands.numArguments() == 3) {
+        s->AddId1(static_cast<std::uint8_t>(Commands.argument(1)));
+        s->AddId2(static_cast<std::uint8_t>(Commands.argument(2)));
     }
     else {
         s->AddId1(0xFF);
@@ -479,9 +479,9 @@ void Command_Dye(CSocket *s) {
 //|	Purpose		-	(d d) Sets the current UO time in hours and minutes.
 // o------------------------------------------------------------------------------------------------o
 void Command_SetTime() {
-    if (Commands->NumArguments() == 3) {
-        std::uint8_t newhours = static_cast<std::uint8_t>(Commands->Argument(1));
-        std::uint8_t newminutes = static_cast<std::uint8_t>(Commands->Argument(2));
+    if (Commands.numArguments() == 3) {
+        std::uint8_t newhours = static_cast<std::uint8_t>(Commands.argument(1));
+        std::uint8_t newminutes = static_cast<std::uint8_t>(Commands.argument(2));
         if ((newhours < 25) && (newhours > 0) && (newminutes < 60)) {
             cwmWorldState->ServerData()->ServerTimeAMPM((newhours > 12));
             if (newhours > 12) {
@@ -502,9 +502,9 @@ void Command_SetTime() {
 //|					until shutdown.
 // o------------------------------------------------------------------------------------------------o
 void Command_Shutdown() {
-    if (Commands->NumArguments() == 2) {
-        cwmWorldState->SetEndTime(BuildTimeValue(static_cast<R32>(Commands->Argument(1))));
-        if (Commands->Argument(1) == 0) {
+    if (Commands.numArguments() == 2) {
+        cwmWorldState->SetEndTime(BuildTimeValue(static_cast<R32>(Commands.argument(1))));
+        if (Commands.argument(1) == 0) {
             cwmWorldState->SetEndTime(0);
             SysBroadcast(Dictionary->GetEntry(36));
         }
@@ -522,9 +522,9 @@ void Command_Shutdown() {
 // o------------------------------------------------------------------------------------------------o
 void Command_Tell(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() > 2) {
-        CSocket *i = Network->GetSockPtr(Commands->Argument(1));
-        std::string txt = Commands->CommandString(3);
+    if (Commands.numArguments() > 2) {
+        CSocket *i = Network->GetSockPtr(Commands.argument(1));
+        std::string txt = Commands.commandString(3);
         if (i == nullptr || txt.empty())
             return;
 
@@ -582,8 +582,8 @@ void Command_Tell(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_GmMenu(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 2) {
-        CPIHelpRequest toHandle(s, static_cast<std::uint16_t>(Commands->Argument(1)));
+    if (Commands.numArguments() == 2) {
+        CPIHelpRequest toHandle(s, static_cast<std::uint16_t>(Commands.argument(1)));
         toHandle.Handle();
     }
 }
@@ -595,9 +595,9 @@ void Command_GmMenu(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_Command(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() > 1) {
-        HandleGumpCommand(s, util::upper(Commands->CommandString(2, 2)),
-                          util::upper(Commands->CommandString(3)));
+    if (Commands.numArguments() > 1) {
+        HandleGumpCommand(s, util::upper(Commands.commandString(2, 2)),
+                          util::upper(Commands.commandString(3)));
     }
 }
 
@@ -645,7 +645,7 @@ void Command_MemStats(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_Restock(CSocket *s) {
     VALIDATESOCKET(s);
-    if (util::upper(Commands->CommandString(2, 2)) == "ALL") {
+    if (util::upper(Commands.commandString(2, 2)) == "ALL") {
         Restock(true);
         s->SysMessage(55); // Restocking all shops to their maximums
     }
@@ -662,9 +662,9 @@ void Command_Restock(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_SetShopRestockRate(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 2) {
+    if (Commands.numArguments() == 2) {
         cwmWorldState->ServerData()->SystemTimer(tSERVER_SHOPSPAWN,
-                                                 static_cast<std::uint16_t>(Commands->Argument(1)));
+                                                 static_cast<std::uint16_t>(Commands.argument(1)));
         s->SysMessage(56); // NPC shop restock rate changed.
     }
     else
@@ -722,11 +722,11 @@ void Command_Respawn() {
 void Command_RegSpawn(CSocket *s) {
     VALIDATESOCKET(s);
 
-    if (Commands->NumArguments() == 2) {
+    if (Commands.numArguments() == 2) {
         std::uint32_t itemsSpawned = 0;
         std::uint32_t npcsSpawned = 0;
 
-        if (util::upper(Commands->CommandString(2, 2)) == "ALL") {
+        if (util::upper(Commands.commandString(2, 2)) == "ALL") {
             std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
                           [&itemsSpawned, &npcsSpawned](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                               if (entry.second) {
@@ -745,7 +745,7 @@ void Command_RegSpawn(CSocket *s) {
             }
         }
         else {
-            std::uint16_t spawnRegNum = static_cast<std::uint16_t>(Commands->Argument(1));
+            std::uint16_t spawnRegNum = static_cast<std::uint16_t>(Commands.argument(1));
             if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
                 cwmWorldState->spawnRegions.end()) {
                 CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
@@ -784,8 +784,8 @@ void Command_LoadDefaults() { cwmWorldState->ServerData()->ResetDefaults(); }
 // o------------------------------------------------------------------------------------------------o
 void Command_CQ(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 2) {
-        std::string upperCommand = util::upper(Commands->CommandString(2, 2));
+    if (Commands.numArguments() == 2) {
+        std::string upperCommand = util::upper(Commands.commandString(2, 2));
         if (upperCommand == "NEXT") // Go to next call in Counselor queue
         {
             NextCall(s, false);
@@ -837,8 +837,8 @@ void Command_CQ(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_GQ(CSocket *s) {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 2) {
-        std::string upperCommand = util::upper(Commands->CommandString(2, 2));
+    if (Commands.numArguments() == 2) {
+        std::string upperCommand = util::upper(Commands.commandString(2, 2));
         if (upperCommand == "NEXT") // Go to next call in GM queue
         {
             NextCall(s, true);
@@ -866,8 +866,8 @@ void Command_GQ(CSocket *s) {
 // only
 // o------------------------------------------------------------------------------------------------o
 void Command_MineCheck() {
-    if (Commands->NumArguments() == 2) {
-        cwmWorldState->ServerData()->MineCheck(static_cast<std::uint8_t>(Commands->Argument(1)));
+    if (Commands.numArguments() == 2) {
+        cwmWorldState->ServerData()->MineCheck(static_cast<std::uint8_t>(Commands.argument(1)));
     }
 }
 
@@ -877,11 +877,11 @@ void Command_MineCheck() {
 //|	Purpose		-	Enables (ON) or disables (OFF) town guards globally
 // o------------------------------------------------------------------------------------------------o
 void Command_Guards() {
-    if (util::upper(Commands->CommandString(2, 2)) == "ON") {
+    if (util::upper(Commands.commandString(2, 2)) == "ON") {
         cwmWorldState->ServerData()->GuardStatus(true);
         SysBroadcast(Dictionary->GetEntry(61)); // Guards have been reactivated.
     }
-    else if (util::upper(Commands->CommandString(2, 2)) == "OFF") {
+    else if (util::upper(Commands.commandString(2, 2)) == "OFF") {
         cwmWorldState->ServerData()->GuardStatus(false);
         SysBroadcast(Dictionary->GetEntry(62)); // Warning: Guards have been deactivated globally.
     }
@@ -893,11 +893,11 @@ void Command_Guards() {
 //|	Purpose		-	Enables (ON) or disables (OFF) announcement of world saves
 // o------------------------------------------------------------------------------------------------o
 void Command_Announce() {
-    if (util::upper(Commands->CommandString(2, 2)) == "ON") {
+    if (util::upper(Commands.commandString(2, 2)) == "ON") {
         cwmWorldState->ServerData()->ServerAnnounceSaves(true);
         SysBroadcast(Dictionary->GetEntry(63)); // WorldStat Saves will be displayed.
     }
-    else if (util::upper(Commands->CommandString(2, 2)) == "OFF") {
+    else if (util::upper(Commands.commandString(2, 2)) == "OFF") {
         cwmWorldState->ServerData()->ServerAnnounceSaves(false);
         SysBroadcast(Dictionary->GetEntry(64)); // WorldStat Saves will not be displayed.
     }
@@ -945,8 +945,8 @@ void Command_PDump(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 auto Command_SpawnKill(CSocket *s) -> void {
     VALIDATESOCKET(s);
-    if (Commands->NumArguments() == 2) {
-        std::uint16_t regNum = static_cast<std::uint16_t>(Commands->Argument(1));
+    if (Commands.numArguments() == 2) {
+        std::uint16_t regNum = static_cast<std::uint16_t>(Commands.argument(1));
         if (cwmWorldState->spawnRegions.find(regNum) != cwmWorldState->spawnRegions.end()) {
             auto spawnReg = cwmWorldState->spawnRegions[regNum];
             if (spawnReg) {
@@ -1048,7 +1048,7 @@ void Command_ReportBug(CSocket *s) {
 
     logDestination << "[" << dateTime << "] ";
     logDestination << "<" << mChar->GetName() << "> ";
-    logDestination << "Reports: " << Commands->CommandString(2) << std::endl;
+    logDestination << "Reports: " << Commands.commandString(2) << std::endl;
     logDestination.close();
 
     s->SysMessage(87); // Thank you for your continuing support, your feedback is important to us
@@ -1061,7 +1061,7 @@ void Command_ReportBug(CSocket *s) {
                     x = true;
                     iSock->SysMessage(
                         277, mChar->GetName().c_str(),
-                        Commands->CommandString(2).c_str()); // User %s reported a bug (%s)
+                        Commands.commandString(2).c_str()); // User %s reported a bug (%s)
                 }
             }
         }
@@ -1127,7 +1127,7 @@ void Command_ValidCmd(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_HowTo(CSocket *s) {
     VALIDATESOCKET(s);
-    std::string commandStart = util::upper(Commands->CommandString(2));
+    std::string commandStart = util::upper(Commands.commandString(2));
     if (commandStart.empty()) {
         CChar *mChar = s->CurrcharObj();
         if (!ValidateObject(mChar))
@@ -1315,7 +1315,7 @@ void Command_Status(CSocket *s) {
 }
 
 
-void CCommands::CommandReset() {
+void CCommands::resetCommand() {
     targetMap.clear();
     // targetMap[Command Name] = TargetMapEntry(Required Command Level, Command Type, Target ID,
     // Dictionary Entry);

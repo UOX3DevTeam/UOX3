@@ -739,7 +739,7 @@ class CPMapRelated : public CPUOXBuffer {
     CPMapRelated();
     virtual void PlotState(std::uint8_t pState);
     virtual void Location(std::int16_t x, std::int16_t y);
-    virtual void Command(std::uint8_t cmd);
+    virtual void command(std::uint8_t cmd);
     virtual void ID(serial_t key);
 };
 

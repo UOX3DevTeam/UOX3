@@ -4524,7 +4524,7 @@ void CPMapRelated::Location(std::int16_t x, std::int16_t y) {
     pStream.WriteShort(7, x);
     pStream.WriteShort(9, y);
 }
-void CPMapRelated::Command(std::uint8_t cmd) { pStream.WriteByte(5, cmd); }
+void CPMapRelated::command(std::uint8_t cmd) { pStream.WriteByte(5, cmd); }
 void CPMapRelated::ID(serial_t key) { pStream.WriteLong(1, key); }
 
 // o------------------------------------------------------------------------------------------------o

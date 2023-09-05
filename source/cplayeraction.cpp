@@ -2570,7 +2570,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
         mSock->Send(&m1);
 
         m2.ID(iUsed->GetSerial());
-        m2.Command(5);
+        m2.command(5);
         m2.Location(0, 0);
         m2.PlotState(0);
         mSock->Send(&m2);

@@ -147,7 +147,7 @@ auto aJailSys = CJailSystem();                        // no depend, no startup
 auto aSpeechSys = CSpeechQueue();        // has startup
 auto aJSEngine = CJSEngine();            // has startup
 auto aFileLookup = CServerDefinitions(); // has startup
-auto aCommands = CCommands();            // Restart resets commands, maybe no dependency
+auto Commands = CCommands();            // Restart resets commands, maybe no dependency
 auto aMap = CMulHandler();               // replaced
 auto aNetwork = CNetworkStuff();         // Maybe dependent, has startup
 auto aMapRegion = CMapHandler();         // Dependent (Map->) , has startup
@@ -566,7 +566,7 @@ auto StartInitialize(CServerData &serverdata) -> void {
     Console::shared().PrintDone();
 
     Console::shared() << "Loading Commands               " << myendl;
-    Commands->Load();
+    Commands.Load();
     Console::shared().PrintDone();
 
     // Rework that...
@@ -834,7 +834,7 @@ auto DoMessageLoop() -> void {
                     JSEngine->Reload();
                     JSMapping->Reload();
                     Console::shared().PrintDone();
-                    Commands->Load();
+                    Commands.Load();
                     break;
                 case MSG_CONSOLEBCAST:
                     SysBroadcast(tVal.data);
@@ -872,7 +872,7 @@ auto DoMessageLoop() -> void {
                             break; // Reload spells
                         case '5':  // Reload commands
                             JSMapping->Reload(CJSMappingSection::SCPT_COMMAND);
-                            Commands->Load();
+                            Commands.Load();
                             break;
                         case '6': // Reload definition files
                             FileLookup->Reload();
@@ -886,7 +886,7 @@ auto DoMessageLoop() -> void {
                             JSEngine->Reload();
                             JSMapping->Reload();
                             Console::shared().PrintDone();
-                            Commands->Load();
+                            Commands.Load();
                             Skills->Load();
                             break;
                         case '8': // Reload HTML
@@ -2751,7 +2751,7 @@ auto InitClasses() -> void {
     JSEngine = &aJSEngine;
     JSMapping = &aJSMapping;
     Effects = &aEffects;
-    Commands = &aCommands;
+    
     Combat = &aCombat;
     Items = &aItems;
     Map = &aMap;
@@ -2778,7 +2778,7 @@ auto InitClasses() -> void {
 
     aJSEngine.Startup();
     aFileLookup.Startup();
-    aCommands.Startup();
+    Commands.Startup();
     aSpeechSys.Startup();
     // Need to do map
     aNetwork.Startup();

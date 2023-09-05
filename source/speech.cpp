@@ -292,7 +292,7 @@ bool CPITalkRequest::Handle() {
     
     if ((asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix()) ||
         ((asciiText[0] == '.') && (asciiText[1] != '.'))) {
-        Commands->Command(tSock, mChar, &asciiText[1]);
+        Commands.command(tSock, mChar, &asciiText[1]);
     }
     else {
         if (mChar->IsDead()) {

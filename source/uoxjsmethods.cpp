@@ -3663,7 +3663,7 @@ JSBool CChar_ExecuteCommand(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         ScriptError(cx, "ExecuteCommand: Invalid socket or speech (%s)", targMessage);
         return JS_FALSE;
     }
-    Commands->Command(targSock, myChar, trgMessage);
+    Commands.command(targSock, myChar, trgMessage);
     return JS_TRUE;
 }
 
