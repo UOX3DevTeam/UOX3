@@ -444,7 +444,7 @@ void WStatsTarget(CSocket *s) {
         return;
     
     CGumpDisplay wStat(s, 300, 300);
-    wStat.SetTitle("Walking Stats");
+    wStat.setTitle("Walking Stats");
     serial_t charSerial = i->GetSerial();
     std::uint16_t charId = i->GetId();
     wStat.AddData("Serial", charSerial, 3);
@@ -600,7 +600,7 @@ void InfoTarget(CSocket *s) {
         // manually calculating the ID's if it's a maptype
         auto map1 = Map->SeekMap(x, y, worldNumber);
         CGumpDisplay mapStat(s, 300, 300);
-        mapStat.SetTitle("Map Tile");
+        mapStat.setTitle("Map Tile");
         mapStat.AddData("Tilenum", map1.tileId, 5);
         mapStat.AddData("Flags", map1.terrainInfo->FlagsNum(), 1);
         mapStat.AddData("Name", map1.name());
@@ -611,7 +611,7 @@ void InfoTarget(CSocket *s) {
         CTile &tile = Map->SeekTile(tileId);
         
         CGumpDisplay statTile(s, 300, 300);
-        statTile.SetTitle("Map Tile");
+        statTile.setTitle("Map Tile");
         
         statTile.AddData("Tilenum", tileId, 5);
         statTile.AddData("Weight", tile.Weight(), 0);
@@ -1325,7 +1325,7 @@ void NpcResurrectTarget(CChar *i) {
         return;
     
     if (i->IsNpc()) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
         return;
     }
@@ -1407,7 +1407,7 @@ void NpcResurrectTarget(CChar *i) {
         }
     }
     else {
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()));
     }
 }
@@ -1429,7 +1429,7 @@ void ShowSkillTarget(CSocket *s) {
     std::uint16_t skillVal;
     
     CGumpDisplay showSkills(s, 300, 300);
-    showSkills.SetTitle("Skills Info");
+    showSkills.setTitle("Skills Info");
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
         if (dispType == 0 || dispType == 1) {
             skillVal = mChar->GetBaseSkill(i);
@@ -1738,7 +1738,7 @@ void MakeStatusTarget(CSocket *sock) {
     auto temp2 = util::format("%s has made %s a %s.\n", mChar->GetName().c_str(),
                               targetChar->GetName().c_str(), targLevel->name.c_str());
     
-    Console::shared().Log(temp2, temp);
+    Console::shared().log(temp2, temp);
     
     DismountCreature(targetChar);
     

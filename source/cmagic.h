@@ -58,7 +58,7 @@ public:
     
     std::vector<CSpellInfo> spells; // adding variable for spell system "cache"
     
-    void Register(cScript *toRegister, std::int32_t spellNumber, bool isEnabled);
+    void registerSpell(cScript *toRegister, std::int32_t spellNumber, bool isEnabled);
     void SetSpellStatus(std::int32_t spellNumber, bool isEnabled);
     
 private:

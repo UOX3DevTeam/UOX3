@@ -613,12 +613,12 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CheckAI()
+//|	Function	-	checkArtificialIntelligence()
 //|	Date		-	12/30/2003
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Switch to easily handle AI types
 // o------------------------------------------------------------------------------------------------o
-void CheckAI(CChar &mChar) {
+void checkArtificialIntelligence(CChar &mChar) {
     CChar *realChar = nullptr;
     switch (mChar.GetNpcAiType()) {
     case AI_NONE:         // No special AI, default NPC behavior
@@ -667,7 +667,7 @@ void CheckAI(CChar &mChar) {
         break;
     default: {
         std::string mCharName = GetNpcDictName(&mChar, nullptr, NRS_SYSTEM);
-        Console::shared().Error(util::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i",
+        Console::shared().error(util::format(" checkArtificialIntelligence() Error npc %s(0x%X) has invalid AI type %i",
                                              mCharName.c_str(), mChar.GetSerial(),
                                              mChar.GetNpcAiType())); // Morrolan
         return;

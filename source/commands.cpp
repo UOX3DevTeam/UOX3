@@ -4,6 +4,7 @@
 
 #include "cchar.h"
 #include "cjsmapping.h"
+#include "cmdtable.h"
 #include "cpacketsend.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
@@ -16,7 +17,13 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+using namespace std::string_literals;
 
+//==================================================================================================
+// Forward declare from something in uox3.cpp
+//
+auto CollectGarbage() ->void;
+//==================================================================================================
 //===================================================================================================
 // CCommands
 //==================================================================================================
@@ -27,16 +34,8 @@ auto CCommands::targetMap = std::map<std::string, TargetMapEntry>();
 auto CCommands::jscommandMap = std::map<std::string, JSCommandEntry>();
 
 //==================================================================================================
-auto CCommands::Startup() -> void { resetCommand(); }
+auto CCommands::startup() -> void { resetCommand(); }
 
-//==================================================================================================
-CCommands::~CCommands() {
-    targetMap.clear();
-    jscommandMap.clear();
-    clearance.clear();
-    commandMap.clear();
- 
-}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCommands::numArguments()
 //|	Date		-	3/12/2003
@@ -61,7 +60,7 @@ std::int32_t CCommands::argument(std::uint8_t argNum) {
         try {
             retVal = std::stoi(tempString, nullptr, 0);
         } catch (const std::invalid_argument &e) {
-            Console::shared().Error(util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str()));
+            Console::shared().error(util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str()));
         }
     }
     
@@ -118,10 +117,10 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             // from now on, account 0 ALWAYS has admin access, regardless of command level
             if (!plClearance) {
                 if (checkSocketAccess) {
-                    Log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
+                    log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
                 }
                 else {
-                    Log(command, mChar, nullptr, "Insufficient clearance");
+                    log(command, mChar, nullptr, "Insufficient clearance");
                 }
                 s->SysMessage(337); // Access denied.
                 return;
@@ -130,15 +129,15 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             if (toExecute != nullptr) { // All commands that execute are of the form:
                 // command_commandname (to avoid possible clashes)
 #if defined(UOX_DEBUG_MODE)
-                Console::shared().Print(util::format("Executing JS command %s\n", command.c_str()));
+                Console::shared().print(util::format("Executing JS command %s\n", command.c_str()));
 #endif
                 toExecute->executeCommand(s, "command_" + command, commandString(2));
             }
             if (checkSocketAccess) {
-                Log(command, s->CurrcharObj(), nullptr, "Cleared");
+                log(command, s->CurrcharObj(), nullptr, "Cleared");
             }
             else {
-                Log(command, mChar, nullptr, "Cleared");
+                log(command, mChar, nullptr, "Cleared");
             }
             return;
         }
@@ -157,19 +156,19 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         }
         if (!plClearance) {
             if (checkSocketAccess) {
-                Log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
+                log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
             }
             else {
-                Log(command, mChar, nullptr, "Insufficient clearance");
+                log(command, mChar, nullptr, "Insufficient clearance");
             }
             s->SysMessage(337); // Access denied.
             return;
         }
         if (checkSocketAccess) {
-            Log(command, s->CurrcharObj(), nullptr, "Cleared");
+            log(command, s->CurrcharObj(), nullptr, "Cleared");
         }
         else {
-            Log(command, mChar, nullptr, "Cleared");
+            log(command, mChar, nullptr, "Cleared");
         }
         switch (findTarg->second.cmdType) {
             case CMD_TARGET:
@@ -241,19 +240,19 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
             // from now on, account 0 ALWAYS has admin access, regardless of command level
             if (!plClearance) {
                 if (checkSocketAccess) {
-                    Log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
+                    log(command, s->CurrcharObj(), nullptr, "Insufficient clearance");
                 }
                 else {
-                    Log(command, mChar, nullptr, "Insufficient clearance");
+                    log(command, mChar, nullptr, "Insufficient clearance");
                 }
                 s->SysMessage(337); // Access denied.
                 return;
             }
             if (checkSocketAccess) {
-                Log(command, s->CurrcharObj(), nullptr, "Cleared");
+                log(command, s->CurrcharObj(), nullptr, "Cleared");
             }
             else {
-                Log(command, mChar, nullptr, "Cleared");
+                log(command, mChar, nullptr, "Cleared");
             }
             
             switch (toFind->second.cmdType) {
@@ -272,11 +271,11 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::Load()
+//|	Function	-	CCommands::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the command table
 // o------------------------------------------------------------------------------------------------o
-void CCommands::Load() {
+void CCommands::load() {
     std::int16_t commandCount = 0;
     CScriptSection *commands = FileLookup->FindEntry("COMMAND_OVERRIDE", command_def);
     if (commands == nullptr) {
@@ -388,17 +387,17 @@ void CCommands::Load() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::Log()
+//|	Function	-	CCommands::log()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
 // o------------------------------------------------------------------------------------------------o
-void CCommands::Log(const std::string &command, CChar *player1, CChar *player2,
+void CCommands::log(const std::string &command, CChar *player1, CChar *player2,
                     const std::string &extraInfo) {
     std::string logName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "command.log";
     std::ofstream logDestination;
     logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("Unable to open command log file %s!", logName.c_str()));
         return;
     }
@@ -550,47 +549,47 @@ bool CCommands::commandExists(const std::string &cmdName) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::FirstCommand()
+//|	Function	-	CCommands::firstCommand()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get first command in cmd_table
 // o------------------------------------------------------------------------------------------------o
-const std::string CCommands::FirstCommand() {
+const std::string CCommands::firstCommand() {
     cmdPointer = commandMap.begin();
-    if (FinishedCommandList())
+    if (finishedCommandList())
         return "";
     
     return cmdPointer->first;
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::NextCommand()
+//|	Function	-	CCommands::nextCommand()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get next command in cmd_table
 // o------------------------------------------------------------------------------------------------o
-const std::string CCommands::NextCommand() {
-    if (FinishedCommandList())
+const std::string CCommands::nextCommand() {
+    if (finishedCommandList())
         return "";
     
     ++cmdPointer;
-    if (FinishedCommandList())
+    if (finishedCommandList())
         return "";
     
     return cmdPointer->first;
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::FinishedCommandList()
+//|	Function	-	CCommands::finishedCommandList()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get end of cmd_table
 // o------------------------------------------------------------------------------------------------o
-bool CCommands::FinishedCommandList() { return (cmdPointer == commandMap.end()); }
+bool CCommands::finishedCommandList() { return (cmdPointer == commandMap.end()); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCommands::CommandDetails()
+//|	Function	-	CCommands::commandDetails()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
 // o------------------------------------------------------------------------------------------------o
-CommandMapEntry *CCommands::CommandDetails(const std::string &cmdName) {
+CommandMapEntry *CCommands::commandDetails(const std::string &cmdName) {
     if (!commandExists(cmdName))
         return nullptr;
     
@@ -599,4 +598,172 @@ CommandMapEntry *CCommands::CommandDetails(const std::string &cmdName) {
         return nullptr;
     
     return &(toFind->second);
+}
+
+
+
+//===================================================================================================
+void CCommands::resetCommand() {
+    targetMap.clear();
+    // targetMap[Command Name] = TargetMapEntry(Required Command Level, Command Type, Target ID,
+    // Dictionary Entry);
+    // A
+    // B
+    // C
+    // D
+    // E
+    // F
+    // G
+    // H
+    // I
+    
+    targetMap["INFO"s] = TargetMapEntry(CL_GM, CMD_TARGET, TARGET_INFO, 261);
+    // J
+    // K
+    // L
+    // M
+    targetMap["MAKE"s] = TargetMapEntry(CL_ADMIN, CMD_TARGETTXT, TARGET_MAKESTATUS, 279);
+    // N
+    // O
+    // P
+    // Q
+    // R
+    // S
+    targetMap["SHOWSKILLS"s] = TargetMapEntry(CL_GM, CMD_TARGETINT, TARGET_SHOWSKILLS, 260);
+    // T
+     targetMap["TWEAK"]            = TargetMapEntry( CL_GM,CMD_TARGET,TARGET_TWEAK, 229);
+    // U
+    // V
+    // W
+    targetMap["WSTATS"s] = TargetMapEntry(CL_CNS, CMD_TARGET, TARGET_WSTATS, 183);
+    // X
+    // Y
+    // Z
+    commandMap = std::map<std::string, CommandMapEntry>();
+    // commandMap[Command Name] = CommandMapEntry(Required Command Level, Command Type, Command
+    // Function);
+    // A
+    commandMap["ADDACCOUNT"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_AddAccount);
+    commandMap["ANNOUNCE"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Announce);
+    // B
+    // C
+    commandMap["CQ"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_CQ);
+    commandMap["COMMAND"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Command);
+    // D
+    commandMap["DYE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Dye);
+    // E
+    // F
+    commandMap["FORCEWHO"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ForceWho);
+    commandMap["FIXSPAWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&command_fixspawn);
+    // G,
+    commandMap["GETLIGHT"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetLight);
+    commandMap["GUARDS"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Guards);
+    commandMap["GMS"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GMs);
+    commandMap["GMMENU"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GmMenu);
+    commandMap["GCOLLECT"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&CollectGarbage);
+    commandMap["GQ"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GQ);
+    // H
+    commandMap["HOWTO"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_HowTo);
+    // I
+    // J
+    // K
+    // L
+    commandMap["LOADDEFAULTS"s] =  CommandMapEntry(CL_ADMIN, CMD_FUNC, (CMD_DEFINE)&Command_LoadDefaults);
+    // M
+    commandMap["MEMSTATS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_MemStats);
+    commandMap["MINECHECK"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_MineCheck);
+    // N
+    // O
+    // P
+    //commandMap["PDUMP"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_PDump);
+    //commandMap["POST"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetPost);
+    // Q
+    // R
+    commandMap["RESTOCK"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Restock);
+    commandMap["RESPAWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Respawn);
+    commandMap["REGSPAWN"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_RegSpawn);
+    commandMap["REPORTBUG"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ReportBug);
+    // S
+    commandMap["SETPOST"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetPost);
+    commandMap["SPAWNKILL"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SpawnKill);
+    commandMap["SETSHOPRESTOCKRATE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetShopRestockRate);
+    commandMap["SETTIME"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_SetTime);
+    commandMap["SHUTDOWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Shutdown);
+    commandMap["SAVE"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Save);
+    commandMap["STATUS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Status);
+    commandMap["SHOWIDS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ShowIds);
+    // T
+    commandMap["TEMP"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Temp);
+    commandMap["TELL"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tell);
+    commandMap["TILE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tile);
+    // U
+    // V
+    commandMap["VALIDCMD"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ValidCmd);
+    // W
+    //commandMap.insert_or_assign("WHO"s,CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Who));
+    commandMap["WHO"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Who);
+    // X
+    // Y
+    // Z
+}
+
+// o------------------------------------------------------------------------------------------------o
+//|    Function    -    CCommands::unRegisterCommand()
+// o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Unregisters a command from JS command table
+// o------------------------------------------------------------------------------------------------o
+void CCommands::unRegisterCommand(const std::string &cmdName, [[maybe_unused]] cScript *toRegister) {
+#if defined(UOX_DEBUG_MODE)
+    Console::shared().print(util::format("   UnRegistering command %s\n", cmdName.c_str()));
+#endif
+    std::string upper = cmdName;
+    upper = util::upper(upper);
+    auto p = CCommands::jscommandMap.find(upper);
+    if (p != CCommands::jscommandMap.end()) {
+        CCommands::jscommandMap.erase(p);
+    }
+#if defined(UOX_DEBUG_MODE)
+    else {
+        Console::shared().print(
+            util::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
+    }
+#endif
+}
+
+// o------------------------------------------------------------------------------------------------o
+//|    Function    -    CCommands::registerCommand()
+// o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Resgisters a new command in JS command table
+// o------------------------------------------------------------------------------------------------o
+void CCommands::registerCommand(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled) {
+#if defined(UOX_DEBUG_MODE)
+    Console::shared().print(" ");
+    Console::shared().moveTo(15);
+    Console::shared().print("Registering ");
+    Console::shared().turnYellow();
+    Console::shared().print(cmdName);
+    Console::shared().turnNormal();
+    Console::shared().moveTo(50);
+    Console::shared().print("@ command level ");
+    Console::shared().turnYellow();
+    Console::shared().print(util::format("%i\n", cmdLevel));
+    Console::shared().turnNormal();
+#endif
+    std::string upper = cmdName;
+    upper = util::upper(upper);
+    CCommands::jscommandMap[upper] = JSCommandEntry(cmdLevel, scriptId, isEnabled);
+}
+
+// o------------------------------------------------------------------------------------------------o
+//|    Function    -    CCommands::setCommandStatus()
+// o------------------------------------------------------------------------------------------------o
+//|    Purpose        -    Enables or disables a command in JS command table
+// o------------------------------------------------------------------------------------------------o
+void CCommands::setCommandStatus(const std::string &cmdName, bool isEnabled) {
+    std::string upper = cmdName;
+    upper = util::upper(upper);
+    auto toFind = CCommands::jscommandMap.find(upper);
+    if (toFind != CCommands::jscommandMap.end()) {
+        toFind->second.isEnabled = isEnabled;
+    }
 }

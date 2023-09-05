@@ -209,7 +209,7 @@ void OpenPlank(CItem *p) {
             p->SetId(0x8A, 2);
             break;
         default:
-            Console::shared().Warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]",
+            Console::shared().warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]",
                                                    p->GetSerial(), p->GetName().c_str(), p->GetId()));
             break;
     }
@@ -315,7 +315,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             y2 = cy + 8;
                             break; // Length of N/S ship as it moves N/S
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     " Fallout of North/South switch() statement in cBoats::BlockBoat()");
                             break;
                     }
@@ -340,13 +340,13 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             x2 = cx + 8;
                             break; // Length of E/W ship as it moves N/S
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     " Fallout of East/West switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
                 default:
-                    Console::shared().Error(
+                    Console::shared().error(
                                             " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
                     break;
             }
@@ -376,7 +376,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             x2 = cx + 8;
                             break; // Length of E/W ship as it moves E/W
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     " Fallout of East/West switch() statement in cBoats::BlockBoat()");
                             break;
                     }
@@ -401,13 +401,13 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             y2 = cy + 8;
                             break; // Length of N/S ship as it moves E/W
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     " Fallout of North/South switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
                 default:
-                    Console::shared().Error(
+                    Console::shared().error(
                                             " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
                     break;
             }
@@ -658,11 +658,11 @@ void CheckDirection(std::uint8_t dir, std::int16_t &tx, std::int16_t &ty) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	MoveBoat()
+//|	Function	-	moveBoat()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Move the boat and everything on it 1 tile in its current direction
 // o------------------------------------------------------------------------------------------------o
-void MoveBoat(std::uint8_t dir, CBoatObj *boat) {
+void moveBoat(std::uint8_t dir, CBoatObj *boat) {
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
     CItem *p1 = CalcItemObjFromSer(boat->GetPlank(0));
     CItem *p2 = CalcItemObjFromSer(boat->GetPlank(1));
@@ -926,7 +926,7 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
             hold->IncLocation(iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP]);
             break;
         default:
-            Console::shared().Error(util::format("TurnBoat() more1 error! more1 = %c not found!",
+            Console::shared().error(util::format("TurnBoat() more1 error! more1 = %c not found!",
                                                  b->GetTempVar(CITV_MOREZ, 1)));
     }
     
@@ -1147,7 +1147,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
             model->SetName(shipModelNameDict.replace(sPos, 2, i->GetName()));
             
             // Also store the original name in the item's title
-            model->SetTitle(i->GetName());
+            model->setTitle(i->GetName());
         }
         
         tiller->Delete();

@@ -110,14 +110,14 @@ auto CMulHandler::LoadMapsDFN(const std::string &uodir) -> std::map<int, MapDfnD
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMulHandler::Load()
+//|	Function	-	CMulHandler::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load UO data (tiledata, maps, statics, multis)
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::Load() -> void {
+auto CMulHandler::load() -> void {
     auto uodir = cwmWorldState->ServerData()->Directory(CSDDP_DATA);
     auto mapinfo = LoadMapsDFN(uodir);
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
     Console::shared() << "Loading UO Data..." << myendl
                       << "(If they fail to load, check your DATADIRECTORY path in uox.ini or "
                          "filenames in maps.dfn)"
@@ -126,13 +126,13 @@ auto CMulHandler::Load() -> void {
     LoadDFNOverrides();
     LoadMapAndStatics(mapinfo);
     if (uoWorlds.empty()) {
-        Console::shared().Error(" Fatal Error: No maps found");
-        Console::shared().Error(" Check the settings for DATADIRECTORY in uox.ini");
+        Console::shared().error(" Fatal Error: No maps found");
+        Console::shared().error(" Check the settings for DATADIRECTORY in uox.ini");
         Shutdown(FATAL_UOX3_MAP_NOT_FOUND);
     }
     LoadMultis(uodir);
     FileLookup->Dispose(maps_def);
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -145,10 +145,10 @@ auto CMulHandler::LoadTileData(const std::string &uodir) -> void {
     Console::shared() << "\t" << lName << "\t";
 
     if (!tileInfo.LoadTiles(lName)) {
-        Console::shared().PrintFailed();
+        Console::shared().printFailed();
         Shutdown(FATAL_UOX3_TILEDATA_NOT_FOUND);
     }
-    Console::shared().PrintDone();
+    Console::shared().printDone();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -341,10 +341,10 @@ auto CMulHandler::LoadMapAndStatics(const std::map<int, MapDfnData_st> &info) ->
         }
 
         if (!rValue) {
-            Console::shared().PrintFailed();
+            Console::shared().printFailed();
         }
         else {
-            Console::shared().PrintDone();
+            Console::shared().printDone();
         }
 
         // Load Art/Statics data
@@ -366,10 +366,10 @@ auto CMulHandler::LoadMapAndStatics(const std::map<int, MapDfnData_st> &info) ->
             }
 
             if (!rValue) {
-                Console::shared().PrintFailed();
+                Console::shared().printFailed();
             }
             else {
-                Console::shared().PrintDone();
+                Console::shared().printDone();
             }
         }
     }
@@ -384,10 +384,10 @@ auto CMulHandler::LoadMultis(const std::string &uodir) -> void {
     // now main memory multiItems
     // Odd we do no check?
     if (!multiData.LoadMultiCollection(std::filesystem::path(uodir), &tileInfo)) {
-        Console::shared().PrintFailed();
+        Console::shared().printFailed();
         Shutdown(FATAL_UOX3_MULTI_DATA_NOT_FOUND);
     }
-    Console::shared().PrintDone();
+    Console::shared().printDone();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1030,7 +1030,7 @@ auto CMulHandler::IsValidTile(std::uint16_t tileNum) const -> bool {
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::SeekTile(std::uint16_t tileNum) -> CTile & {
     if (!IsValidTile(tileNum)) {
-        Console::shared().Warning(
+        Console::shared().warning(
             util::format("Invalid tile access, the offending tile number is %u", tileNum));
         static CTile emptyTile;
         return emptyTile;
@@ -1042,7 +1042,7 @@ auto CMulHandler::SeekTile(std::uint16_t tileNum) -> CTile & {
 //=================================================================================================
 auto CMulHandler::SeekTile(std::uint16_t tileNum) const -> const CTile & {
     if (!IsValidTile(tileNum)) {
-        Console::shared().Warning(
+        Console::shared().warning(
             util::format("Invalid tile access, the offending tile number is %u", tileNum));
         static CTile emptyTile;
         return emptyTile;
@@ -1059,7 +1059,7 @@ auto CMulHandler::SeekTile(std::uint16_t tileNum) const -> const CTile & {
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::SeekLand(std::uint16_t landNum) -> CLand & {
     if (landNum == INVALIDID || landNum >= tileInfo.SizeTerrain()) {
-        Console::shared().Warning(
+        Console::shared().warning(
             util::format("Invalid land access, the offending land number is %u", landNum));
         static CLand emptyTile;
         return emptyTile;
@@ -1071,7 +1071,7 @@ auto CMulHandler::SeekLand(std::uint16_t landNum) -> CLand & {
 //=================================================================================================
 auto CMulHandler::SeekLand(std::uint16_t landNum) const -> const CLand & {
     if (landNum == INVALIDID || landNum >= tileInfo.SizeTerrain()) {
-        Console::shared().Warning(
+        Console::shared().warning(
             util::format("Invalid land access, the offending land number is %u", landNum));
         static CLand emptyTile;
         return emptyTile;

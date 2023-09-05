@@ -206,7 +206,7 @@ fd_set errsock;
 
 void KillTrades(CChar *i);
 void DoorMacro(CSocket *s);
-void SysBroadcast(const std::string &txt);
+void sysBroadcast(const std::string &txt);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CNetworkStuff::ClearBuffers()
@@ -419,9 +419,9 @@ void CNetworkStuff::sockInit() {
 
     a_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (a_socket < 0) {
-        Console::shared().Error(" Unable to create socket");
+        Console::shared().error(" Unable to create socket");
 #if defined(_WIN32)
-        Console::shared().Error(util::format(" Code %i", WSAGetLastError()));
+        Console::shared().error(util::format(" Code %i", WSAGetLastError()));
 #else
         Console::shared() << myendl;
 #endif
@@ -443,7 +443,7 @@ void CNetworkStuff::sockInit() {
     bcode = bind(a_socket, (struct sockaddr *)&connection, len_connection_addr);
 
     if (bcode < 0) {
-        Console::shared().Error(util::format(" Unable to bind socket 1 - Error code: %i", bcode));
+        Console::shared().error(util::format(" Unable to bind socket 1 - Error code: %i", bcode));
         cwmWorldState->SetKeepRun(false);
         cwmWorldState->SetError(true);
         Shutdown(FATAL_UOX3_ALLOC_NETWORK);
@@ -497,7 +497,7 @@ void CNetworkStuff::CheckConn() {
 #else
         newClient = accept(a_socket, (struct sockaddr *)&client_addr, (socklen_t *)&len);
         if (newClient >= FD_SETSIZE) {
-            Console::shared().Error("accept() returning unselectable fd!");
+            Console::shared().error("accept() returning unselectable fd!");
             closesocket(static_cast<uoxsocket_t>(newClient));
             return;
         }
@@ -518,7 +518,7 @@ void CNetworkStuff::CheckConn() {
                 delete toMake;
                 return;
             }
-            Console::shared().Error("Error at client connection!");
+            Console::shared().error("Error at client connection!");
             cwmWorldState->SetKeepRun(true);
             cwmWorldState->SetError(true);
             delete toMake;
@@ -555,7 +555,7 @@ void CNetworkStuff::CheckConn() {
         return;
     }
     if (s < 0) {
-        Console::shared().Error(" Select (Conn) failed!");
+        Console::shared().error(" Select (Conn) failed!");
         cwmWorldState->SetKeepRun(false);
         cwmWorldState->SetError(true);
         return;
@@ -658,7 +658,7 @@ void CNetworkStuff::CheckMessage() {
 CNetworkStuff::CNetworkStuff()
     : peakConnectionCount(0) // Initialize sockets
 {}
-auto CNetworkStuff::Startup() -> void {
+auto CNetworkStuff::startup() -> void {
     FD_ZERO(&conn);
     sockInit();
     LoadFirewallEntries();
@@ -740,7 +740,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                 return;
             }
 #if _DEBUG_PACKET
-            Console::shared().Print(util::format("Packet ID: 0x%x\n", packetId));
+            Console::shared().print(util::format("Packet ID: 0x%x\n", packetId));
 #endif
             if (packetId != 0x73 && packetId != 0xA4 && packetId != 0x80 && packetId != 0x91) {
                 if (!mSock->ForceOffline()) // Don't refresh idle-timer if character is being forced
@@ -1289,14 +1289,14 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                 try {
                     test = WhichLoginPacket(packetId, mSock);
                 } catch (socket_error &) {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                         util::format("Bad packet request thrown! [packet ID: 0x%x]", packetId));
                     mSock->FlushIncoming();
                     return;
                 }
                 if (test != nullptr) {
 #ifdef _DEBUG_PACKET
-                    Console::shared().Log(util::format("Logging packet ID: 0x%X", packetId),
+                    Console::shared().log(util::format("Logging packet ID: 0x%X", packetId),
                                           "loginthread.txt");
 #endif
                     mSock->ReceiveLogging(test);
@@ -1404,7 +1404,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void {
                                     slEntries.push_back(FirewallEntry_st(p[0], p[1], p[2], p[3]));
                                 }
                                 else if (data != "\n" && data != "\r") {
-                                    Console::shared().Error(util::format(
+                                    Console::shared().error(util::format(
                                         "Malformed IP address in banlist.ini (line: %s)",
                                         data.c_str()));
                                 }

@@ -27,11 +27,11 @@
 #endif
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadCustomTitle()
+//|	Function	-	loadCustomTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads players titles (Karma, Fame, Murder, ect)
 // o------------------------------------------------------------------------------------------------o
-void LoadCustomTitle() {
+void loadCustomTitle() {
     size_t titlecount = 0;
     std::string tag;
     std::string data;
@@ -83,11 +83,11 @@ void LoadCustomTitle() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadSkills()
+//|	Function	-	loadSkills()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load skills from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadSkills() {
+void loadSkills() {
     std::string skEntry;
     std::string tag, data, UTag;
     std::uint8_t i = 0;
@@ -152,7 +152,7 @@ void LoadSkills() {
                                 cwmWorldState->skill[i].name = data;
                             }
                             else {
-                                Console::shared().Warning(
+                                Console::shared().warning(
                                     util::format("Unknown tag in skills.dfn: %s", data.c_str()));
                             }
                         }
@@ -164,11 +164,11 @@ void LoadSkills() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadSpawnRegions()
+//|	Function	-	loadSpawnRegions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads spawning regions from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadSpawnRegions() {
+void loadSpawnRegions() {
     cwmWorldState->spawnRegions.clear();
     std::uint16_t i = 0;
     for (Script *spnScp = FileLookup->FirstScript(spawn_def);
@@ -189,10 +189,10 @@ void LoadSpawnRegions() {
                     std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 if (cwmWorldState->spawnRegions.find(i) == cwmWorldState->spawnRegions.end()) {
                     cwmWorldState->spawnRegions[i] = new CSpawnRegion(i);
-                    cwmWorldState->spawnRegions[i]->Load(toScan);
+                    cwmWorldState->spawnRegions[i]->load(toScan);
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                         "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i));
                 }
             }
@@ -201,11 +201,11 @@ void LoadSpawnRegions() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadRegions()
+//|	Function	-	loadRegions()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load regions from regions.dfn and townregions from regions.wsc
 // o------------------------------------------------------------------------------------------------o
-void LoadRegions() {
+void loadRegions() {
     cwmWorldState->townRegions.clear();
     std::string regionsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "regions.wsc";
     bool performLoad = false;
@@ -236,11 +236,11 @@ void LoadRegions() {
                     cwmWorldState->townRegions[i] = new CTownRegion(i);
                     cwmWorldState->townRegions[i]->InitFromScript(toScan);
                     if (performLoad) {
-                        cwmWorldState->townRegions[i]->Load(ourRegions);
+                        cwmWorldState->townRegions[i]->load(ourRegions);
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                         "regions.dfn has a duplicate REGION entry, Entry Number: %u", i));
                 }
             }
@@ -248,7 +248,7 @@ void LoadRegions() {
     }
     if (regEntry == "") {
         // No regions found? :O Shut down UOX3, or we'll run into trouble later.
-        Console::shared().PrintFailed();
+        Console::shared().printFailed();
         Shutdown(FATAL_UOX3_ALLOC_MAPREGIONS);
     }
 
@@ -324,19 +324,19 @@ void LoadRegions() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadTeleportLocations()
+//|	Function	-	loadTeleportLocations()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load teleport locations from definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadTeleportLocations() {
+void loadTeleportLocations() {
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS) + "teleport.scp";
     cwmWorldState->teleLocs.resize(0);
 
     if (!FileExists(filename)) {
         Console::shared() << myendl;
-        Console::shared().Error(
+        Console::shared().error(
             util::format(" Failed to open teleport data script %s", filename.c_str()));
-        Console::shared().Error(util::format(" Teleport Data not found"));
+        Console::shared().error(util::format(" Teleport Data not found"));
         cwmWorldState->SetKeepRun(false);
         cwmWorldState->SetError(true);
         return;
@@ -393,7 +393,7 @@ void LoadTeleportLocations() {
                             cwmWorldState->teleLocs.push_back(toAdd);
                         }
                         else {
-                            Console::shared().Error("Insufficient parameters for teleport entry");
+                            Console::shared().error("Insufficient parameters for teleport entry");
                         }
                     }
                 }
@@ -409,11 +409,11 @@ void LoadTeleportLocations() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadCreatures()
+//|	Function	-	loadCreatures()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads creatures from creature definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadCreatures() {
+void loadCreatures() {
     std::string cEntry;
     std::string tag, data, UTag;
     std::uint16_t i = 0;
@@ -618,11 +618,11 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	LoadPlaces()
+//|	Function	-	loadPlaces()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load locations from location definition files
 // o------------------------------------------------------------------------------------------------o
-void LoadPlaces() {
+void loadPlaces() {
     cwmWorldState->goPlaces.clear();
     std::string data, UTag, entryName;
     GoPlaces *toAdd = nullptr;
@@ -647,7 +647,7 @@ void LoadPlaces() {
             if ((util::upper(util::trim(util::strip(ssecs[0], "//"))) == "LOCATION") && entryNum) {
                 if (cwmWorldState->goPlaces.find(static_cast<std::uint16_t>(entryNum)) !=
                     cwmWorldState->goPlaces.end()) {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                         util::format("Doubled up entry in Location.dfn (%u)", entryNum));
                 }
                 toAdd = &cwmWorldState->goPlaces[static_cast<std::uint16_t>(entryNum)];

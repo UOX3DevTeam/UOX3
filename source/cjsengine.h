@@ -107,7 +107,7 @@ class CJSEngine {
     CJSEngine() = default;
     ~CJSEngine();
 
-    auto Startup() -> void;
+    auto startup() -> void;
 
     JSRuntime *GetRuntime(std::uint8_t runTime) const;
     JSContext *GetContext(std::uint8_t runTime) const;

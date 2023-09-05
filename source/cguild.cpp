@@ -545,11 +545,11 @@ void CGuild::Save(std::ostream &toSave, guildid_t gNum) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGuild::Load()
+//|	Function	-	CGuild::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load guilds from guilds worldfile
 // o------------------------------------------------------------------------------------------------o
-void CGuild::Load(CScriptSection *toRead) {
+void CGuild::load(CScriptSection *toRead) {
     std::string tag;
     std::string data;
     std::string UTag;
@@ -809,15 +809,15 @@ void CGuildCollection::Save() {
         (pMove->second)->Save(toSave, pMove->first);
         ++pMove;
     }
-    Console::shared().PrintDone();
+    Console::shared().printDone();
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGuildCollection::Load()
+//|	Function	-	CGuildCollection::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load guilds from worldfile
 // o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Load() {
+void CGuildCollection::load() {
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
     if (FileExists(filename)) {
         Script newScript(filename, NUM_DEFS, false);
@@ -832,7 +832,7 @@ void CGuildCollection::Load() {
                 delete gList[guildNum];
             }
             gList[guildNum] = new CGuild();
-            gList[guildNum]->Load(testSect);
+            gList[guildNum]->load(testSect);
         }
     }
 }
@@ -1725,7 +1725,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
-            Console::shared().Error(util::format("Critical error adding guildstone, memory "
+            Console::shared().error(util::format("Critical error adding guildstone, memory "
                                                  "allocation failed.  Attempted by player 0x%X",
                                                  mChar->GetSerial()));
             return;
@@ -1737,7 +1737,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         if (!ValidateObject(stone)) {
             s->ObjMessage(176,
                           deed); // Critical error, unable to spawn guildstone, please contact a GM!
-            Console::shared().Error(util::format(
+            Console::shared().error(util::format(
                                                  "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",
                                                  mChar->GetSerial()));
             return;
@@ -1774,7 +1774,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
-            Console::shared().Error(util::format("Critical error adding guildstone, memory "
+            Console::shared().error(util::format("Critical error adding guildstone, memory "
                                                  "allocation failed.  Attempted by player 0x%X",
                                                  mChar->GetSerial()));
             return;
@@ -1783,7 +1783,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         if (!ValidateObject(stone)) {
             s->ObjMessage(176,
                           deed); // Critical error, unable to spawn guildstone, please contact a GM!
-            Console::shared().Error(util::format(
+            Console::shared().error(util::format(
                                                  "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",
                                                  mChar->GetSerial()));
             return;

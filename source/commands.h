@@ -28,9 +28,8 @@ struct CommandLevel {
     std::uint16_t targBody;           // target body value
     std::uint16_t bodyColour;         // target body colour
     std::bitset<8> stripOff; // strips off hair, beard and clothes
-    CommandLevel()
-    : name(""), title(""), commandLevel(0), defaultPriv(0), nickColour(0), allSkillVals(0),
-    targBody(0), bodyColour(0) {
+    
+    CommandLevel() : name(""), title(""), commandLevel(0), defaultPriv(0), nickColour(0), allSkillVals(0), targBody(0), bodyColour(0) {
         stripOff.reset();
     }
 };
@@ -59,24 +58,24 @@ public:
     CommandLevel *getClearance(std::uint8_t commandLevel);     // return by command level
     std::uint16_t getColourByLevel(std::uint8_t commandLevel);
     void command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
-    void Load();
-    void Log(const std::string &command, CChar *player1, CChar *player2,
+    void load();
+    void log(const std::string &command, CChar *player1, CChar *player2,
              const std::string &extraInfo);
     
     bool commandExists(const std::string &cmdName);
-    const std::string FirstCommand();
-    const std::string NextCommand();
-    bool FinishedCommandList();
+    const std::string firstCommand();
+    const std::string nextCommand();
+    bool finishedCommandList();
     
-    CommandMapEntry *CommandDetails(const std::string &cmdName);
+    CommandMapEntry *commandDetails(const std::string &cmdName);
     
     CCommands() = default;
-    auto Startup() -> void;
-    ~CCommands();
+    auto startup() -> void;
+    ~CCommands() = default;
     
-    void Register(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled);
-    void UnRegister(const std::string &cmdName, cScript *toRegister);
-    void SetCommandStatus(const std::string &cmdName, bool isEnabled);
+    void registerCommand(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled);
+    void unRegisterCommand(const std::string &cmdName, cScript *toRegister);
+    void setCommandStatus(const std::string &cmdName, bool isEnabled);
 };
 
 extern CCommands Commands;

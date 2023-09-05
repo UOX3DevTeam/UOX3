@@ -73,7 +73,7 @@ public:
     CGumpDisplay(CSocket *target);
     CGumpDisplay(CSocket *target, std::uint16_t gumpWidth, std::uint16_t gumpHeight);
     ~CGumpDisplay();
-    void SetTitle(const std::string &newTitle);
+    void setTitle(const std::string &newTitle);
     void Send(std::uint32_t gumpNum, bool isMenu, serial_t serial);
     void Delete();
 };

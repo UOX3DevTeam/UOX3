@@ -549,7 +549,7 @@ public:
     auto ParseIni(const std::string &filename) -> bool;
     auto HandleLine(const std::string &tag, const std::string &value) -> bool;
     
-    auto Load(const std::string &filename = "") -> bool;
+    auto load(const std::string &filename = "") -> bool;
     auto SaveIni() -> bool;
     auto SaveIni(const std::string &filename) -> bool;
     
@@ -558,7 +558,7 @@ public:
                          bool inheritCore = true) -> expansionruleset_t;
     
     auto ResetDefaults() -> void;
-    auto Startup() -> void;
+    auto startup() -> void;
     // void		RefreshIPs( void );
     
     CServerData();

@@ -72,7 +72,7 @@ public:
     
     CServerDefinitions();
     ~CServerDefinitions();
-    auto Startup() -> void;
+    auto startup() -> void;
     auto Reload() -> bool;
     auto Dispose(definitioncategories_t toDispose) -> bool;
     

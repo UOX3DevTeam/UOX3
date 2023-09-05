@@ -229,7 +229,7 @@ class CWorldMain {
     void CheckTimers();
     void DoWorldLight();
     void SaveNewWorld(bool x);
-    auto Startup() -> void;
+    auto startup() -> void;
     CWorldMain();
     auto ServerData() -> CServerData *;
     auto SetServerData(CServerData &server_data) -> void;

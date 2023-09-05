@@ -49,7 +49,7 @@ void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t ind
     
     std::string txt = Dictionary->GetEntry(dictEntry, s->Language());
     if (txt.empty()) {
-        Console::shared().Error("Invalid text in TextEntryGump()");
+        Console::shared().error("Invalid text in TextEntryGump()");
         return;
     }
     
@@ -352,7 +352,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
                 emailAddy = packet->GetTextString(i);
                 break;
             default:
-                Console::shared().Warning(util::format("Unknown textId %i with string %s", textId,
+                Console::shared().warning(util::format("Unknown textId %i with string %s", textId,
                                                        packet->GetTextString(i).c_str()));
         }
     }
@@ -362,7 +362,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
         s->SysMessage(555); // An account by that name already exists!
         return;
     }
-    Console::shared().Print(
+    Console::shared().print(
                             util::format("Attempting to add username %s with password %s at emailaddy %s",
                                          username.c_str(), password.c_str(), emailAddy.c_str()));
 }
@@ -1326,7 +1326,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             }
             else if (cmd == "GUIINFORMATION") {
                 CGumpDisplay guiInfo(s, 400, 300);
-                guiInfo.SetTitle(UOXVersion::productName + " Status"s);
+                guiInfo.setTitle(UOXVersion::productName + " Status"s);
                 builtString = GetUptime();
                 guiInfo.AddData("Version",
                                 UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s);
@@ -1658,7 +1658,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
     size_t entryNum = ((static_cast<size_t>(button) - 6) * 2);
     autoAddMenuItemCount += static_cast<std::uint32_t>(ItemMenu->NumEntries());
     if (autoAddMenuItemCount >= entryNum) {
-        std::string tag = ItemMenu->MoveTo(entryNum);
+        std::string tag = ItemMenu->moveTo(entryNum);
         std::string data = ItemMenu->GrabData();
         HandleGumpCommand(s, tag, data);
     }
@@ -1716,7 +1716,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
         // Build gump structure here, with basic information like Command Level, Name, Command Type,
         // and parameters (if any, from table)
         CGumpDisplay CommandInfo(sock, 480, 320);
-        CommandInfo.SetTitle(cmdName);
+        CommandInfo.setTitle(cmdName);
         
         CommandInfo.AddData("Minimum Command Level", cmdLevelReq);
         switch (cmdType) {
@@ -1991,7 +1991,7 @@ std::string GrabMenuData(std::string sect, size_t entryNum, std::string &tag) {
     CScriptSection *sectionData = FileLookup->FindEntry(sect, menus_def);
     if (sectionData != nullptr) {
         if (sectionData->NumEntries() >= entryNum) {
-            tag = sectionData->MoveTo(entryNum);
+            tag = sectionData->moveTo(entryNum);
             data = sectionData->GrabData();
         }
     }
@@ -2184,11 +2184,11 @@ void CGumpDisplay::Delete() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGumpDisplay::SetTitle()
+//|	Function	-	CGumpDisplay::setTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set a gumps title
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::SetTitle(const std::string &newTitle) { title = newTitle; }
+void CGumpDisplay::setTitle(const std::string &newTitle) { title = newTitle; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SendVecsAsGump()

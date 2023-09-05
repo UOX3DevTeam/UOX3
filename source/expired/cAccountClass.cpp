@@ -466,7 +466,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
         else if (l.substr(0, 10) == "CHARACTER-") {
             std::int32_t charNum = std::stoi(l.substr(10), nullptr, 0);
             if (charNum < 1 || charNum > CHARACTERCOUNT) {
-                Console::shared().Error("Invalid character found in accounts");
+                Console::shared().error("Invalid character found in accounts");
             }
             else {
                 r = util::trim(r);
@@ -521,7 +521,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 auto create_status =
                     std::filesystem::create_directory(std::filesystem::path(sNewPath));
                 if (!create_status) {
-                    Console::shared().Error(util::format(
+                    Console::shared().error(util::format(
                         "CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()));
                     m_mapUsernameIdMap.clear();
                     m_mapUsernameMap.clear();
@@ -693,7 +693,7 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
     // First were going to make sure that the needed fields are sent in with at least data
     if (sUsername.length() < 4 || sPassword.length() < 5) {
         // Username and password must be 4 and 5 characters or more in length, respectively
-        Console::shared().Log(util::format("ERROR: Unable to create account for username '%s' with "
+        Console::shared().log(util::format("ERROR: Unable to create account for username '%s' with "
                                            "password of '%s'. Username/Password to short",
                                            sUsername.c_str(), sPassword.c_str()),
                               "accounts.log");
@@ -748,7 +748,7 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
         auto create_status =
             std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
         if (!create_status) {
-            Console::shared().Error(
+            Console::shared().error(
                 util::format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
             return 0x0000;
         }
@@ -866,7 +866,7 @@ bool cAccountClass::IsUser(std::string sUsername) {
 std::uint32_t cAccountClass::size() { return static_cast<std::int32_t>(m_mapUsernameMap.size()); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cAccountClass::Load()
+//|	Function	-	cAccountClass::load()
 //|	Date		-	12/17/2002 4:00:47 PM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the internal accounts structure from the accounts.adm
@@ -890,7 +890,7 @@ std::uint32_t cAccountClass::size() { return static_cast<std::int32_t>(m_mapUser
 //|							general SQL query for MSAccess, MSSQL, and
 // mySQL
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t cAccountClass::Load() {
+std::uint16_t cAccountClass::load() {
     // Now we can load the accounts file in and re fill the map.
     std::string sAccountsADM(m_sAccountsDirectory);
     sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
@@ -913,7 +913,7 @@ std::uint16_t cAccountClass::Load() {
         fsAccountsADMTest.close();
         Console::shared() << myendl << "  o Processing legacy UOX3 accounts.adm file";
         std::uint16_t wResponse = CreateAccountSystem();
-        Console::shared().PrintDone();
+        Console::shared().printDone();
         Console::shared() << "    - Processed " << wResponse << " account blocks." << myendl;
         // Nope, not a v3 file.. so we should attempt a convert
         return wResponse;
@@ -1180,7 +1180,7 @@ std::uint16_t cAccountClass::Load() {
         {
             auto charNum = static_cast<std::uint8_t>(std::stoul(l.substr(10), nullptr, 0));
             if (charNum < 1 || charNum > CHARACTERCOUNT) {
-                Console::shared().Error("Invalid character found in accounts");
+                Console::shared().error("Invalid character found in accounts");
             }
             else {
                 if (!r.empty() && r.length() != 0) {
@@ -1741,7 +1741,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         // Check to make sure at least that the username and passwords match
         if (actbId.sUsername != actbName.sUsername || actbId.sPassword != actbName.sPassword) {
             // there was an error between blocks
-            Console::shared().Error(
+            Console::shared().error(
                 util::format("Save(): Mismatch %s - %s (Duplicate username in accounts file?)",
                              actbId.sUsername.c_str(), actbName.sUsername.c_str()));
             fsAccountsAdm.close();
@@ -1779,7 +1779,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
             auto create_status =
                 std::filesystem::create_directory(std::filesystem::path(actbId.sPath));
             if (!create_status) {
-                Console::shared().Error(
+                Console::shared().error(
                     util::format("Save(): Couldn't create directory %s", actbId.sPath.c_str()));
                 fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
                 continue;
@@ -1805,7 +1805,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         std::fstream fsAccountsUad(sUsernameUadPath.c_str(), std::ios::out | std::ios::trunc);
         if (!fsAccountsUad.is_open()) {
             // Ok we were unable to open the file so this user will not be added.
-            Console::shared().Error(
+            Console::shared().error(
                 util::format("Save(): Couldn't open file %s", sUsernameUadPath.c_str()));
             fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
             continue;

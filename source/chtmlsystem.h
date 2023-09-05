@@ -39,11 +39,11 @@ private:
 public:
     cHTMLTemplate();
     ~cHTMLTemplate();
-    void Process();
-    void Poll();
+    void process();
+    void poll();
     void LoadTemplate();
     void UnloadTemplate();
-    void Load(CScriptSection *found);
+    void load(CScriptSection *found);
     
     // Some Getters
     std::string GetName() const;
@@ -62,9 +62,9 @@ public:
     cHTMLTemplates() = default;
     ~cHTMLTemplates();
     
-    void Load();
+    void load();
     void Unload();
-    void Poll(ETemplateType nTemplateId = ETT_ALLTEMPLATES);
+    void poll(ETemplateType nTemplateId = ETT_ALLTEMPLATES);
     void TemplateInfoGump(CSocket *mySocket);
 };
 

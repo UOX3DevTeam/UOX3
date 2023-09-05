@@ -3623,7 +3623,7 @@
 	Resolved an issue with uninitialized struct members
 	Removed some redundant conditional checks
 	Made the boolean part of JS function RegisterSkill( <skillnum>, <bool> ) actually work; can now be used to disable/enable JS-implemented skills
-	Fixed a bug with cHTMLTemplate::Process() where the same expression was used for both branches of a ternary operator
+	Fixed a bug with cHTMLTemplate::process() where the same expression was used for both branches of a ternary operator
 	Various minor cleanups; removed some unused variables, addressed some potential portability issues
 
 18/09/2018 - Xuri
@@ -4764,9 +4764,9 @@ Oct 12, 2008 - Maarc
 	of AOS and SE weapons so that they are in the same area as the other weapons.
 
 4/04/2006 - giwo (0.98-3.6)
-	Removed unused level value passed with Console.Warning() and Console.Error().
+	Removed unused level value passed with Console.warning() and Console.error().
 	Removed JS Console prop .level
-	Modified JS Console Methods Warning() and Error() to remove the unused level value.
+	Modified JS Console Methods warning() and error() to remove the unused level value.
 	Fixed several issues with mapdiff and staticdiff handling.
 	Fixed a bug causing a crash when calling JS Event onGumpInput.
 	Merged CMultiObject vectors ownerList and banList into a single map housePrivList, to allow multiple owner/banned levels
@@ -5156,7 +5156,7 @@ Oct 12, 2008 - Maarc
 	Fixed a bug where items without a layer didn't add to the chars weight.
 	Fixed a bug in CWeight::calcCharWeight() that added the weight of the backpack
 	twice.
-	Changed CMapHandler::Load() so that PostLoadProcessing of chars is done after
+	Changed CMapHandler::load() so that PostLoadProcessing of chars is done after
 	PostLoadProcessing of items, or else the forced recalculation of the chars
 	weight doesn't work.
 
@@ -5588,8 +5588,8 @@ Oct 12, 2008 - Maarc
 	Added a check to ensure a character cannot open a container unless he is in the same house it is.
 	Removed JS Function RaceGate() as CChar property .race does the same thing.
 	Removed JS Function SubStringSearch() as .match() does the same thing.
-	Removed JS Function ConsoleMessage() as Console.Print() does the same thing.
-	Removed JS Function ScriptPrintNumber() as Console.Print( number.toString() ) does the same thing.
+	Removed JS Function ConsoleMessage() as Console.print() does the same thing.
+	Removed JS Function ScriptPrintNumber() as Console.print( number.toString() ) does the same thing.
 	Removed JS Functions GetCommand() and GetCommandSize() as they were superfluous.
 	Removed JS Functions CreateBuffer() DestroyBuffer() and SendBuffer() as the new Packet class handles that.
 	Removed JS Item & Character property .raceID as .race does the same thing.
@@ -5896,7 +5896,7 @@ Oct 12, 2008 - Maarc
 		Changed the behavior of character props .id and .skin not to set their org* equivalents automatically.
 
 6th February, 2006 - Maarc
-	Moved maps_def Disposal to the end of CMapStuff::Load()
+	Moved maps_def Disposal to the end of CMapStuff::load()
 	Added the ability to override tiledata info for real tiles (not land)
 	Bit of const correctness (CTile.Name( const char *newVal ))
 
@@ -6017,7 +6017,7 @@ Oct 12, 2008 - Maarc
 	Moved checkkey(), processkey() and cl_getch() from uox3.cpp into CConsole methods
 	Added a key/command handler console exposure to the JS environment (involves a secondary runtime because of threading!)
 	Note: Creating/editing world objects through this environment is not thread safe, and may cause errors
-	Modified Console.PrintDone() and Console.PrintFailed() to take an optional boolean parameter as to whether it is printed instantly, or queued up
+	Modified Console.printDone() and Console.printFailed() to take an optional boolean parameter as to whether it is printed instantly, or queued up
 	Added functions Console.BeginShutdown() and Console.Reload( intVal )
 		BeginShutdown() takes no parameters
 		Reload() takes a single parameter, with the values of
@@ -6185,7 +6185,7 @@ Oct 12, 2008 - Maarc
 11/1/2005 - giwo (0.98-3.1a [3.2 BETA])
 	Updated some areas of the code to conform to const correctness.
 	Fixed an issue causing vendor "Buy" windows to display improperly.
-	Added some more error-checking to the ClearTrades() function.
+	Added some more error-checking to the clearTrades() function.
 	Removed JS CChar_Freeze() and CChar_Unfreeze() as the .frozen property does the same thing.
 	Removed JS CItem_SetPoison() as the .poison property does the same thing.
 
@@ -7406,8 +7406,8 @@ July 28 2004 - Maarc
 	Moved checkauto() to CWorldMain class and renamed it CheckAutoTimers().
 	Fixed Polymorph spell and tracking skill, unifying the code a bit for easier maintenance.
 	Moved Polymorph Duration out of polymorph.dfn and into uox.ini to remove needless re-loading.
-	Broke CheckAI() out into several smaller functions simplifying things a bit.
-	Tweaked checkItem() cleaning up RespawnItem() and DecayItem() and optimizing things a bit.
+	Broke checkArtificialIntelligence() out into several smaller functions simplifying things a bit.
+	Tweaked checkItem() cleaning up RespawnItem() and decayItem() and optimizing things a bit.
 	Fixed display of clothing on corpses.
 	Made more use of RefreshQueue, now is used for updateStats, Thus SetStrength/SetHP and other Stat-modifying mutators use Dirty().
 	Updated Dirty() to allow passing of a var (matched to an enum) that is then used to determine the type of refresh.
@@ -7452,7 +7452,7 @@ July 28 2004 - Maarc
 	Rewrote JailSystem::WriteData() to make use of an ofstream, and moved out the code specific to
 		a Jail Cell into its own WriteData() function.
 	Changed insta-log code so only house owners are logged out in their house, saving us some time searching for a matching house key.
-	Removed Network::kr and faul as they performed the same function as cWmWorldState::KeepRun() and Error().
+	Removed Network::kr and faul as they performed the same function as cWmWorldState::KeepRun() and error().
 	Fixed an issue in loading mapregions where Items and Characters would not be properly deleted if they failed to load.
 	Took our main classes out of global scope, now only files that include their headers will have access to them.
 	Added CServerProfile class to remove our profiling variables from global scope.
@@ -7516,7 +7516,7 @@ Oct 31 2003 - giwo
 	Added scriptability (itemtypes.dfn in /items/ dir) for automatically associating an items ID to an item type.
 	Added cSocket::TempObj() in place of addmitem and overuse of AddID.
 	Changed cSocket AddX() and AddY() to SI16, made more use of TempInt().
-	LoadSkills() now sets a skills madeword to "made" by default.
+	loadSkills() now sets a skills madeword to "made" by default.
 	Updated several areas where we loaded in scripts to make use of UString.
 	UOX now reads in a skills madeword from skills.dfn rather than setting them manually in ResetVars().
 	Converted skill[].madeword into a string.
@@ -8029,7 +8029,7 @@ Oct 04 2003 - giwo
 	Added a packet specific log routine to CPOpenBuyWindow
 	Updated cSocket and other routines to allow for packet specific logging on receive
 	Sideeffect of that is that non-packet classes save data already logged for variable length packet
-	Implemented Log() routine for CPIFirstLogin, CPISecondLogin, CPIServerSelect, CPIClientVersion and CPIUpdateRangeChange
+	Implemented log() routine for CPIFirstLogin, CPISecondLogin, CPIServerSelect, CPIClientVersion and CPIUpdateRangeChange
 	Whitespace updates
 	setid now has character body restrictions, and is the same as 'poly, which has been upgraded to 0->0x7CF
 	Removed JS functions due to equivs
@@ -8518,7 +8518,7 @@ Changed:
 		-Attack flagging issues addressed/worked on
 		-Combat bug causing you swing but never hit when diagonal from enemy fixed
 		-Decay timer reset upon dropping an item on the ground
-		-Cleanup of cItem::DecayItem()
+		-Cleanup of cItem::decayItem()
 		-Fixed an issue causing creatures to get stuck turning around when nearly dead
 		-Fixed up amount functions to allow for UI32, should allow statwindow to properly display up to 4billion+ gold on a character, as well as allow high-cost item buy/sells
 		-Changed CChar tailitem, GetTailItem() and SetTailItem() to an object pointer
@@ -8752,7 +8752,7 @@ Changed:
 	Added 'reloaddefs which allows runtime reloading of all definitions
 	(can be time consuming)
 	Fixed a bug with newbie items with text named items
-	Called SpeechSys->Poll() just before a world save, so that the
+	Called SpeechSys->poll() just before a world save, so that the
 	broadcast message telling about the save can be sent
 	Warning cleanups
 
@@ -10690,7 +10690,7 @@ Changed:
 	instead of CHARACTER
 	DirectDamage was removed
 	CheckParry for CHARACTER was removed
-	Log() for magic was updated to use CChar * instead of CHARACTER
+	log() for magic was updated to use CChar * instead of CHARACTER
 	Other minor code clean up / tidy ups
 
 2001-08-07 21:42  darkangelab
@@ -11171,7 +11171,7 @@ Changed:
 	Converted boats.cpp functions to object-based.
 	Moved findMulti, inMulti, and sendInRange() to uox3.cpp.
 	Documented all functions in boats.cpp.
-	Changed cBoats:: Turn, Move, and Build to TurnBoat, MoveBoat, and
+	Changed cBoats:: Turn, Move, and Build to TurnBoat, moveBoat, and
 	CreateBoat respectively.
 	Minor code cleanups.
 

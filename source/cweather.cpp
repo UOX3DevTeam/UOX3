@@ -616,11 +616,11 @@ cWeatherAb::~cWeatherAb() { weather.clear(); }
 size_t cWeatherAb::Count() const { return weather.size(); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CWeatherAb::Load()
+//|	Function	-	CWeatherAb::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the weather system loaded okay
 // o------------------------------------------------------------------------------------------------o
-auto cWeatherAb::Load() -> bool {
+auto cWeatherAb::load() -> bool {
     weather.resize(FileLookup->CountOfEntries(weathab_def));
     std::string tag, data, UTag;
     size_t i = 0;

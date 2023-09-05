@@ -151,7 +151,7 @@ class CMulHandler {
 
   public:
     CMulHandler() = default;
-    auto Load() -> void;
+    auto load() -> void;
     auto ArtAt(std::int16_t x, std::int16_t y, std::uint8_t world) -> std::vector<Tile_st> &;
     auto ArtAt(std::int16_t x, std::int16_t y, std::uint8_t world) const
         -> const std::vector<Tile_st> &;

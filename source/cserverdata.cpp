@@ -997,11 +997,11 @@ auto CServerData::ResetDefaults() -> void {
 }
 //==================================================================================================
 CServerData::CServerData() {
-    Startup();
+    startup();
     availableIPs = ip4list_t::available();
 }
 //==================================================================================================
-auto CServerData::Startup() -> void { ResetDefaults(); }
+auto CServerData::startup() -> void { ResetDefaults(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerName()
@@ -1376,7 +1376,7 @@ auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
         auto sText = util::trim(value);
         
         if (sText.empty()) {
-            Console::shared().Error(
+            Console::shared().error(
                                     util::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str()));
             Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
         }
@@ -1405,7 +1405,7 @@ auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
             }
             
             if (error) {
-                Console::shared().Error(
+                Console::shared().error(
                                         util::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()));
                 Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
             }
@@ -1815,7 +1815,7 @@ auto CServerData::NPCTrainingStatus(bool newVal) -> void { boolVals.set(BIT_NPCT
 //here to please |					 so it can be looked up if needed.
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::DumpPaths() -> void {
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
     Console::shared() << "PathDump: \n";
     Console::shared() << "    Root        : " << Directory(CSDDP_ROOT) << "\n";
     Console::shared() << "    Accounts    : " << Directory(CSDDP_ACCOUNTS) << "\n";
@@ -1830,7 +1830,7 @@ auto CServerData::DumpPaths() -> void {
     Console::shared() << "    Shared      : " << Directory(CSDDP_SHARED) << "\n";
     Console::shared() << "    Backups     : " << Directory(CSDDP_BACKUP) << "\n";
     Console::shared() << "    Logs        : " << Directory(CSDDP_LOGS) << "\n";
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2411,7 +2411,7 @@ auto CServerData::ForceNewAnimationPacket() const -> bool {
 auto CServerData::ForceNewAnimationPacket(bool newVal) -> void {
     if (ClientSupport4000() || ClientSupport5000() || ClientSupport6000() || ClientSupport6050()) {
         boolVals.set(BIT_FORCENEWANIMATIONPACKET, false);
-        Console::shared().Warning("FORCENEWANIMATIONPACKET setting not compatible with support for "
+        Console::shared().warning("FORCENEWANIMATIONPACKET setting not compatible with support for "
                                   "client versions below 7.0.0.0. Setting disabled!");
     }
     else {
@@ -3886,7 +3886,7 @@ auto CServerData::EraEnumToString(expansionruleset_t eraEnum, bool coreEnum) -> 
         try {
             eraName = eraNames.at(eraEnum);
         } catch (const std::out_of_range &e) {
-            Console::shared().Error(
+            Console::shared().error(
                                     util::format("Unknown era enum detected, exception thrown: %s", e.what()));
         }
     }
@@ -4462,21 +4462,21 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         rValue = true;
     }
     else {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("Unable to open file %s for writing", filename.c_str()));
     }
     return rValue;
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::Load()
+//|	Function	-	CServerData::load()
 //|	Date		-	January 13, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load up the uox.ini file and parse it into the internals
 //|	Returns		-	pointer to the valid inmemory serverdata storage(this)
 //|						nullptr is there is an error, or invalid file type
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::Load(const std::string &filename) -> bool {
+auto CServerData::load(const std::string &filename) -> bool {
     auto iniFile = filename;
     if (iniFile.empty()) {
         iniFile = Directory(CSDDP_ROOT) + "uox.ini"s;
@@ -4591,10 +4591,10 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
                                         rValue = true;
                                     }
                                 } catch (const std::exception &e) {
-                                    Console::shared().Error("Error parsing ini file");
-                                    Console::shared().Error(
+                                    Console::shared().error("Error parsing ini file");
+                                    Console::shared().error(
                                                             util::format("Entry was: %s = %s", key.c_str(), value.c_str()));
-                                    Console::shared().Error(
+                                    Console::shared().error(
                                                             util::format("Exception was: %s", e.what()));
                                     exit(1);
                                 }
@@ -4626,17 +4626,17 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
      auto tag = sec->tag;
      auto data = util::simplify( sec->data );
      if( !HandleLine( tag, data )) {
-     Console::shared().Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
+     Console::shared().warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
      }
      }
      }
      }
-     Console::shared().PrintDone();
+     Console::shared().printDone();
      rValue = true;
      }
      else
      {
-     Console::shared().Warning( util::format( "%s File not found, Using default settings.",
+     Console::shared().warning( util::format( "%s File not found, Using default settings.",
      filename.c_str() )); cwmWorldState->ServerData()->save();
      }
      }
@@ -5869,7 +5869,7 @@ auto CServerData::ServerLocation(std::string toSet) -> void {
         startlocations.push_back(toAdd);
     }
     else {
-        Console::shared().Error("Malformed location entry in ini file");
+        Console::shared().error("Malformed location entry in ini file");
     }
 }
 
@@ -5918,7 +5918,7 @@ auto CServerData::YoungServerLocation(std::string toSet) -> void {
         youngStartlocations.push_back(toAdd);
     }
     else {
-        Console::shared().Error("Malformed young start location entry in ini file");
+        Console::shared().error("Malformed young start location entry in ini file");
     }
 }
 
@@ -6037,7 +6037,7 @@ auto CServerData::SaveTime() -> void {
     std::string timeFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "time.wsc";
     std::ofstream timeDestination(timeFile.c_str());
     if (!timeDestination) {
-        Console::shared().Error(util::format("Failed to open %s for writing", timeFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", timeFile.c_str()));
         return;
     }
     

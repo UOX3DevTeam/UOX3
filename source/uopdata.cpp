@@ -180,7 +180,7 @@ UopFile::TableEntry_st::TableEntry_st() {
     compression = 0;
 }
 //===============================================================
-auto UopFile::TableEntry_st::Load(std::istream &input) -> UopFile::TableEntry_st & {
+auto UopFile::TableEntry_st::load(std::istream &input) -> UopFile::TableEntry_st & {
     input.read(reinterpret_cast<char *>(&offset), sizeof(offset));
     input.read(reinterpret_cast<char *>(&headerLength), sizeof(headerLength));
     input.read(reinterpret_cast<char *>(&compressedLength), sizeof(compressedLength));
@@ -301,7 +301,7 @@ auto UopFile::LoadUop(const std::string &filepath, std::size_t max_hashindex,
         input.read(reinterpret_cast<char *>(&table_offset), sizeof(table_offset));
         for (std::uint32_t i = 0; i < tablesize; i++) {
             TableEntry_st entry;
-            entry.Load(input);
+            entry.load(input);
             entries.push_back(entry);
         }
         if ((table_offset != 0) && (!input.eof()) && input.good()) {

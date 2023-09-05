@@ -83,7 +83,7 @@ using namespace std::string_literals;
 //|						Note: Only send once after login. It’s mandatory to send
 //it once.
 // o------------------------------------------------------------------------------------------------o
-void CPCharLocBody::Log(std::ostream &outStream, bool fullHeader) {
+void CPCharLocBody::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet     : CPCharLocBody 0x1B --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
@@ -103,7 +103,7 @@ void CPCharLocBody::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Flag Byte        : " << static_cast<std::uint16_t>(pStream.GetByte(31)) << std::endl;
     outStream << "Highlight Colour : " << static_cast<std::uint16_t>(pStream.GetByte(32)) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 void CPCharLocBody::InternalReset() {
@@ -1506,7 +1506,7 @@ void CPDrawContainer::Serial(serial_t toSet) { pStream.WriteLong(1, toSet); }
 // item |							BYTE response text length |
 //BYTE[response text length] response text
 // o------------------------------------------------------------------------------------------------o
-void CPOpenGump::Log(std::ostream &outStream, bool fullHeader) {
+void CPOpenGump::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet     : CPOpenGump 0x7C --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
@@ -1540,7 +1540,7 @@ void CPOpenGump::Log(std::ostream &outStream, bool fullHeader) {
             (5 + static_cast<size_t>(pStream.GetByte(static_cast<size_t>(offsetCount) + 4)));
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 void CPOpenGump::Question(std::string toAdd) {
     pStream.ReserveSize(
@@ -1549,7 +1549,7 @@ void CPOpenGump::Question(std::string toAdd) {
     pStream.WriteString(10, toAdd, toAdd.length());
 #if defined(UOX_DEBUG_MODE)
     if (toAdd.length() >= 255) {
-        Console::shared().Error(
+        Console::shared().error(
             util::format("CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length()));
     }
 #endif
@@ -1562,7 +1562,7 @@ void CPOpenGump::AddResponse(std::uint16_t modelNum, std::uint16_t colour, std::
                       pStream.GetByte(responseBaseOffset) + 1); // increment number of responses
 #if defined(UOX_DEBUG_MODE)
     if (responseText.length() >= 255) {
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
             "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length()));
     }
 #endif
@@ -2103,9 +2103,9 @@ void CPIdleWarning::InternalReset() {
 CPIdleWarning::CPIdleWarning() { InternalReset(); }
 CPIdleWarning::CPIdleWarning(std::uint8_t errorNum) {
     InternalReset();
-    Error(errorNum);
+    error(errorNum);
 }
-void CPIdleWarning::Error(std::uint8_t errorNum) { pStream.WriteByte(1, errorNum); }
+void CPIdleWarning::error(std::uint8_t errorNum) { pStream.WriteByte(1, errorNum); }
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	CPTime()
@@ -2524,7 +2524,7 @@ CPEnableClientFeatures::CPEnableClientFeatures(CSocket *mSock) {
     }
 }
 
-void CPEnableClientFeatures::Log(std::ostream &outStream, bool fullHeader) {
+void CPEnableClientFeatures::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet     : CPEnableClientFeatures 0xB9 --> Length: 3" << TimeStamp()
                   << std::endl;
@@ -2607,7 +2607,7 @@ void CPEnableClientFeatures::Log(std::ostream &outStream, bool fullHeader) {
     }
 
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2641,13 +2641,13 @@ CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures([[maybe_unused]] CSoc
     pStream.WriteLong(8, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() & 0xFFFFFFFF);
 }
 
-void CPNegotiateAssistantFeatures::Log(std::ostream &outStream, bool fullHeader) {
+void CPNegotiateAssistantFeatures::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPNegotiateAssistantFeatures 0xF0 --> Length: "
                   << pStream.GetSize() << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3523,13 +3523,13 @@ CPKrriosClientSpecial::CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, std::
     }
 }
 
-void CPKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
+void CPKrriosClientSpecial::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPKrriosClientSpecial 0xF0 --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3555,7 +3555,7 @@ void CPKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
 // 0x03 = Malas |								0x04 = Tokuno |
 // 0x05 = TerMur)
 // o------------------------------------------------------------------------------------------------o
-void CPMapChange::Log(std::ostream &outStream, bool fullHeader) {
+void CPMapChange::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPMapChange 0xBF Subcommand 8 --> Length: "
                   << pStream.GetSize() << TimeStamp() << std::endl;
@@ -3579,7 +3579,7 @@ void CPMapChange::Log(std::ostream &outStream, bool fullHeader) {
         break;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 void CPMapChange::InternalReset() {
     pStream.ReserveSize(6);
@@ -3639,7 +3639,7 @@ void CPCloseGump::InternalReset() {
     pStream.WriteLong(5, _gumpId);   // gumpId - which gump to destroy
     pStream.WriteLong(9, _buttonId); // buttonId - response buttonId for packet 0xB1
 }
-void CPCloseGump::Log(std::ostream &outStream, bool fullHeader) {
+void CPCloseGump::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPCloseGump 0xBF Subcommand 4 --> Length: "
                   << pStream.GetSize() << TimeStamp() << std::endl;
@@ -3647,7 +3647,7 @@ void CPCloseGump::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "gumpId            : " << static_cast<std::uint32_t>(pStream.GetLong(5)) << std::endl;
     outStream << "buttonId            : " << static_cast<std::uint32_t>(pStream.GetLong(9)) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3787,7 +3787,7 @@ void CPItemsInContainer::CopyData(CSocket *mSock, CItem &toCopy) {
     NumberOfItems(itemCount);
 }
 
-void CPItemsInContainer::Log(std::ostream &outStream, bool fullHeader) {
+void CPItemsInContainer::log(std::ostream &outStream, bool fullHeader) {
     size_t numItems = pStream.GetUShort(3);
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPItemsInContainer 0x3c --> Length: " << pStream.GetSize()
@@ -3813,7 +3813,7 @@ void CPItemsInContainer::Log(std::ostream &outStream, bool fullHeader) {
     }
     outStream << "  Raw dump      :" << std::endl;
 
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3945,7 +3945,7 @@ auto CPOpenBuyWindow::CopyData(CItem &toCopy, CChar *vendorId, CPItemsInContaine
     pStream.WriteShort(1, length);
 }
 
-void CPOpenBuyWindow::Log(std::ostream &outStream, bool fullHeader) {
+void CPOpenBuyWindow::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet   : CPOpenBuyWindow 0x74 --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
@@ -3970,7 +3970,7 @@ void CPOpenBuyWindow::Log(std::ostream &outStream, bool fullHeader) {
 
     outStream << "  Raw dump :" << std::endl;
 
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4025,7 +4025,7 @@ void CPOpenBuyWindow::Log(std::ostream &outStream, bool fullHeader) {
 //|							0x8000	= unlock new felucca areas (faction
 // areas)
 // o------------------------------------------------------------------------------------------------o
-void CPCharAndStartLoc::Log(std::ostream &outStream, bool fullHeader) {
+void CPCharAndStartLoc::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader)
         outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
@@ -4151,7 +4151,7 @@ void CPCharAndStartLoc::Log(std::ostream &outStream, bool fullHeader) {
         outStream << "               : Enable new Felucca faction areas" << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 void CPCharAndStartLoc::InternalReset() {
@@ -5620,7 +5620,7 @@ void CPSendGumpMenu::addCommand(const std::string &msg) {
 void CPSendGumpMenu::addText(const std::string &msg) {
     if (msg.empty() || msg.size() == 0) {
         
-        Console::shared().Error("Blank text field added!");
+        Console::shared().error("Blank text field added!");
         return;
     }
     auto temp = msg;
@@ -5645,7 +5645,7 @@ void CPSendGumpMenu::Finalize() {
             lineLen = static_cast<std::uint16_t>(entry.length());
             increment = static_cast<std::uint16_t>(lineLen + 4);
             if ((length + increment) >= 0xFFFF) {
-                Console::shared().Warning(
+                Console::shared().warning(
                     "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!");
                 break;
             }
@@ -5675,7 +5675,7 @@ void CPSendGumpMenu::Finalize() {
             // so we can't use PackString
             increment = lineLen * 2 + 2;
             if ((length + increment) >= 0xFFFF) {
-                Console::shared().Warning(
+                Console::shared().warning(
                     "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!");
                 break;
             }
@@ -5699,7 +5699,7 @@ void CPSendGumpMenu::Finalize() {
     pStream.WriteShort(tlOff, static_cast<std::uint16_t>(tlines));
 }
 
-void CPSendGumpMenu::Log(std::ostream &outStream, bool fullHeader) {
+void CPSendGumpMenu::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet     : CPSendGumpMenu 0xB0 --> Length: " << pStream.GetSize()
                   << TimeStamp() << std::endl;
@@ -5719,7 +5719,7 @@ void CPSendGumpMenu::Log(std::ostream &outStream, bool fullHeader) {
     }
 
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o-----------------------------------------------------------------------------------------------o
@@ -8105,7 +8105,7 @@ void CPPartyMemberList::AddMember(CChar *member) {
     pStream.WriteShort(1, static_cast<std::int32_t>(curPos) + 4);
 }
 
-void CPPartyMemberList::Log(std::ostream &outStream, bool fullHeader) {
+void CPPartyMemberList::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream
             << "[SEND]Packet     : CPPartyMemberList 0xBF Subcommand Party Command --> Length: "
@@ -8121,7 +8121,7 @@ void CPPartyMemberList::Log(std::ostream &outStream, bool fullHeader) {
                   << pStream.GetLong(7 + 4 * static_cast<size_t>(i)) << std::dec << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -8154,7 +8154,7 @@ void CPPartyInvitation::InternalReset() {
 
 void CPPartyInvitation::Leader(CChar *leader) { pStream.WriteLong(6, leader->GetSerial()); }
 
-void CPPartyInvitation::Log(std::ostream &outStream, bool fullHeader) {
+void CPPartyInvitation::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream
             << "[SEND]Packet     : CPPartyInvitation 0xBF Subcommand Party Command --> Length: "
@@ -8166,7 +8166,7 @@ void CPPartyInvitation::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Party Sub        : " << static_cast<std::uint16_t>(pStream.GetByte(5)) << std::endl;
     outStream << "Leader Serial    : 0x" << std::hex << pStream.GetLong(6) << std::dec << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -8212,7 +8212,7 @@ void CPPartyMemberRemove::AddMember(CChar *member) {
     pStream.WriteShort(1, static_cast<std::int32_t>(curPos) + 4);
 }
 
-void CPPartyMemberRemove::Log(std::ostream &outStream, bool fullHeader) {
+void CPPartyMemberRemove::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream
             << "[SEND]Packet     : CPPartyMemberRemove 0xBF Subcommand Party Command --> Length: "
@@ -8231,7 +8231,7 @@ void CPPartyMemberRemove::Log(std::ostream &outStream, bool fullHeader) {
                   << pStream.GetLong(11 + 4 * static_cast<size_t>(i)) << std::dec << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -8285,7 +8285,7 @@ void CPPartyTell::InternalReset() {
     pStream.WriteByte(5, 3);    // subcommand
 }
 
-void CPPartyTell::Log(std::ostream &outStream, bool fullHeader) {
+void CPPartyTell::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet     : CPPartyTell 0xBF Subcommand Party Command --> Length: "
                   << pStream.GetSize() << TimeStamp() << std::endl;
@@ -8301,7 +8301,7 @@ void CPPartyTell::Log(std::ostream &outStream, bool fullHeader) {
     }
     outStream << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPUOXBuffer::Log(outStream, false);
+    CPUOXBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o

@@ -152,7 +152,7 @@ private:
 public:
     cWeatherAb();
     ~cWeatherAb();
-    bool Load();
+    bool load();
     bool NewDay();
     bool NewHour();
     size_t Count() const;

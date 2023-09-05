@@ -60,7 +60,7 @@ public:
     CSpawnRegion(std::uint16_t spawnregion);
     ~CSpawnRegion();
     
-    void Load(CScriptSection *toScan);
+    void load(CScriptSection *toScan);
     void DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned);
     
     const std::string GetName() const;

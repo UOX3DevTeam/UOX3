@@ -46,12 +46,12 @@
 #include "uoxjspropertyspecs.h"
 #include "utility/strutil.hpp"
 
-void LoadTeleportLocations();
-void LoadSpawnRegions();
-void LoadRegions();
+void loadTeleportLocations();
+void loadSpawnRegions();
+void loadRegions();
 void UnloadRegions();
 void UnloadSpawnRegions();
-void LoadSkills();
+void loadSkills();
 void ScriptError(JSContext *cx, const char *txt, ...);
 
 #define __EXTREMELY_VERBOSE__
@@ -159,7 +159,7 @@ JSBool SE_DoTempEffect(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 }
 
 // Speech related functions
-void SysBroadcast(const std::string &txt);
+void sysBroadcast(const std::string &txt);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_BroadcastMessage()
 // o------------------------------------------------------------------------------------------------o
@@ -177,7 +177,7 @@ JSBool SE_BroadcastMessage(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             cx, util::format("BroadcastMessage: Invalid string (%s)", trgMessage.c_str()).c_str());
         return JS_FALSE;
     }
-    SysBroadcast(trgMessage);
+    sysBroadcast(trgMessage);
     return JS_TRUE;
 }
 
@@ -498,7 +498,7 @@ JSBool SE_CommandLevelReq(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CommandLevelReq: Invalid command name");
         return JS_FALSE;
     }
-    CommandMapEntry *details = Commands.CommandDetails(test);
+    CommandMapEntry *details = Commands.commandDetails(test);
     if (details == nullptr) {
         *rval = INT_TO_JSVAL(255);
     }
@@ -536,7 +536,7 @@ JSBool SE_CommandExists(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                        [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands.FirstCommand();
+    const std::string tVal = Commands.firstCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -557,7 +557,7 @@ JSBool SE_FirstCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_un
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc,
                       [[maybe_unused]] jsval *argv, jsval *rval) {
-    const std::string tVal = Commands.NextCommand();
+    const std::string tVal = Commands.nextCommand();
     JSString *strSpeech = nullptr;
     if (tVal.empty()) {
         strSpeech = JS_NewStringCopyZ(cx, "");
@@ -578,7 +578,7 @@ JSBool SE_NextCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unu
 JSBool SE_FinishedCommandList([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
                               [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
                               jsval *rval) {
-    *rval = BOOLEAN_TO_JSVAL(Commands.FinishedCommandList());
+    *rval = BOOLEAN_TO_JSVAL(Commands.finishedCommandList());
     return JS_TRUE;
 }
 
@@ -610,7 +610,7 @@ JSBool SE_RegisterCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         return JS_FALSE;
     }
 
-    Commands.Register(toRegister, scriptId, execLevel, isEnabled);
+    Commands.registerCommand(toRegister, scriptId, execLevel, isEnabled);
     return JS_TRUE;
 }
 
@@ -633,7 +633,7 @@ JSBool SE_RegisterSpell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     std::int32_t spellNumber = JSVAL_TO_INT(argv[0]);
     bool isEnabled = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
-    Magic->Register(myScript, spellNumber, isEnabled);
+    Magic->registerSpell(myScript, spellNumber, isEnabled);
     return JS_TRUE;
 }
 
@@ -658,17 +658,17 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
-        Console::shared().Print(" ");
-        Console::shared().MoveTo(15);
-        Console::shared().Print("Registering skill number ");
-        Console::shared().TurnYellow();
-        Console::shared().Print(util::format("%i", skillNumber));
+        Console::shared().print(" ");
+        Console::shared().moveTo(15);
+        Console::shared().print("Registering skill number ");
+        Console::shared().turnYellow();
+        Console::shared().print(util::format("%i", skillNumber));
         if (!isEnabled) {
-            Console::shared().TurnRed();
-            Console::shared().Print(" [DISABLED]");
+            Console::shared().turnRed();
+            Console::shared().print(" [DISABLED]");
         }
-        Console::shared().Print("\n");
-        Console::shared().TurnNormal();
+        Console::shared().print("\n");
+        Console::shared().turnNormal();
 #endif
         // If skill is not enabled, unset scriptId from skill data
         if (!isEnabled) {
@@ -708,7 +708,7 @@ JSBool SE_RegisterPacket(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     std::uint16_t scriptId = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     if (scriptId != 0xFFFF) {
 #if defined(UOX_DEBUG_MODE)
-        Console::shared().Print(
+        Console::shared().print(
             util::format("Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd));
 #endif
         Network->RegisterPacket(packet, subCmd, scriptId);
@@ -754,7 +754,7 @@ JSBool SE_RegisterKey(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
     else {
         toPass = encaps.toInt();
     }
-    Console::shared().RegisterKey(toPass, toRegister, scriptId);
+    Console::shared().registerKey(toPass, toRegister, scriptId);
     return JS_TRUE;
 }
 
@@ -778,7 +778,7 @@ JSBool SE_RegisterConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uin
         return JS_FALSE;
     }
 
-    Console::shared().RegisterFunc(funcToRegister, toRegister, scriptId);
+    Console::shared().registerFunc(funcToRegister, toRegister, scriptId);
     return JS_TRUE;
 }
 
@@ -794,7 +794,7 @@ JSBool SE_DisableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         return JS_FALSE;
     }
     std::string toDisable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands.SetCommandStatus(toDisable, false);
+    Commands.setCommandStatus(toDisable, false);
     return JS_TRUE;
 }
 
@@ -810,7 +810,7 @@ JSBool SE_DisableKey([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *
         return JS_FALSE;
     }
     std::int32_t toDisable = JSVAL_TO_INT(argv[0]);
-    Console::shared().SetKeyStatus(toDisable, false);
+    Console::shared().setKeyStatus(toDisable, false);
     return JS_TRUE;
 }
 
@@ -826,7 +826,7 @@ JSBool SE_DisableConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         return JS_FALSE;
     }
     std::string toDisable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Console::shared().SetFuncStatus(toDisable, false);
+    Console::shared().setFuncStatus(toDisable, false);
     return JS_TRUE;
 }
 
@@ -858,7 +858,7 @@ JSBool SE_EnableCommand(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
         return JS_FALSE;
     }
     std::string toEnable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Commands.SetCommandStatus(toEnable, true);
+    Commands.setCommandStatus(toEnable, true);
     return JS_TRUE;
 }
 
@@ -890,7 +890,7 @@ JSBool SE_EnableKey([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
         return JS_FALSE;
     }
     std::int32_t toEnable = JSVAL_TO_INT(argv[0]);
-    Console::shared().SetKeyStatus(toEnable, true);
+    Console::shared().setKeyStatus(toEnable, true);
     return JS_TRUE;
 }
 
@@ -906,7 +906,7 @@ JSBool SE_EnableConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
         return JS_FALSE;
     }
     std::string toEnable = JS_GetStringBytes(JS_ValueToString(cx, argv[0]));
-    Console::shared().SetFuncStatus(toEnable, false);
+    Console::shared().setFuncStatus(toEnable, false);
     return JS_TRUE;
 }
 
@@ -2435,48 +2435,48 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
     switch (toLoad) {
     case 0: // Reload regions
         UnloadRegions();
-        LoadRegions();
-        LoadTeleportLocations();
+        loadRegions();
+        loadTeleportLocations();
         break;
     case 1: // Reload spawn regions
         UnloadSpawnRegions();
-        LoadSpawnRegions();
+        loadSpawnRegions();
         break;
     case 2: // Reload Spells
         Magic->LoadScript();
         break;
     case 3: // Reload Commands
-        Commands.Load();
+        Commands.load();
         break;
     case 4: // Reload DFNs
         FileLookup->Reload();
-        LoadSkills();
-        Skills->Load();
+        loadSkills();
+        Skills->load();
         break;
     case 5: // Reload JScripts
         messageLoop << MSG_RELOADJS;
         break;
     case 6: // Reload HTMLTemplates
         HTMLTemplates->Unload();
-        HTMLTemplates->Load();
+        HTMLTemplates->load();
         break;
     case 7: // Reload INI
-        cwmWorldState->ServerData()->Load();
+        cwmWorldState->ServerData()->load();
         break;
     case 8: // Reload Everything
         FileLookup->Reload();
         UnloadRegions();
-        LoadRegions();
+        loadRegions();
         UnloadSpawnRegions();
-        LoadSpawnRegions();
+        loadSpawnRegions();
         Magic->LoadScript();
-        Commands.Load();
-        LoadSkills();
-        Skills->Load();
+        Commands.load();
+        loadSkills();
+        Skills->load();
         messageLoop << MSG_RELOADJS;
         HTMLTemplates->Unload();
-        HTMLTemplates->Load();
-        cwmWorldState->ServerData()->Load();
+        HTMLTemplates->load();
+        cwmWorldState->ServerData()->load();
         break;
     case 9: // Reload Accounts
         Account::shared().load();
@@ -2525,7 +2525,7 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
             for (auto &tile : artwork) {
                 if (targetZ == tile.altitude) {
                     CGumpDisplay staticStat(mySock, 300, 300);
-                    staticStat.SetTitle("Item [Static]");
+                    staticStat.setTitle("Item [Static]");
                     staticStat.AddData("ID", targetId, 5);
                     staticStat.AddData("Height", tile.height());
                     staticStat.AddData("Name", tile.artInfo->Name());
@@ -2538,7 +2538,7 @@ JSBool SE_SendStaticStats(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
             // manually calculating the ID's if a maptype
             auto map1 = Map->SeekMap(targetX, targetY, worldNumber);
             CGumpDisplay mapStat(mySock, 300, 300);
-            mapStat.SetTitle("Item [Map]");
+            mapStat.setTitle("Item [Map]");
             mapStat.AddData("ID", targetId, 5);
             mapStat.AddData("Name", map1.name());
             mapStat.Send(4, false, INVALIDSERIAL);

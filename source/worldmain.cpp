@@ -92,7 +92,7 @@ CWorldMain::CWorldMain()
     uoxTimeout.tv_usec = 0;
 }
 //==================================================================================================
-auto CWorldMain::Startup() -> void {}
+auto CWorldMain::startup() -> void {}
 
 //==================================================================================================
 auto CWorldMain::SetServerData(CServerData &server_data) -> void { sData = &server_data; }
@@ -371,7 +371,7 @@ void CWorldMain::DoWorldLight() {
 
 void FileArchive();
 void CollectGarbage();
-void SysBroadcast(const std::string &txt);
+void sysBroadcast(const std::string &txt);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::SaveNewWorld()
 //|	Date		-	1997
@@ -393,11 +393,11 @@ void CWorldMain::SaveNewWorld(bool x) {
 
     if (GetWorldSaveProgress() != SS_SAVING) {
         SetWorldSaveProgress(SS_SAVING);
-        Console::shared().PrintSectionBegin();
+        Console::shared().printSectionBegin();
         if (ServerData()->ServerAnnounceSavesStatus()) {
-            SysBroadcast(Dictionary->GetEntry(1615)); // World data saving, you may experience some
+            sysBroadcast(Dictionary->GetEntry(1615)); // World data saving, you may experience some
                                                       // lag for the next several minutes.
-            SpeechSys->Poll();
+            SpeechSys->poll();
         }
         Network->ClearBuffers();
 
@@ -418,9 +418,9 @@ void CWorldMain::SaveNewWorld(bool x) {
         }
         Console::shared() << "Saving Misc. data... ";
         ServerData()->SaveIni();
-        Console::shared().Log("Server data save", "server.log");
+        Console::shared().log("Server data save", "server.log");
         RegionSave();
-        Console::shared().PrintDone();
+        Console::shared().printDone();
         MapRegion->Save();
         GuildSys->Save();
         JailSys->WriteData();
@@ -429,7 +429,7 @@ void CWorldMain::SaveNewWorld(bool x) {
         SaveStatistics();
 
         if (ServerData()->ServerAnnounceSavesStatus()) {
-            SysBroadcast("World Save Complete.");
+            sysBroadcast("World Save Complete.");
         }
 
         //	If accounts are to be loaded then they should be loaded
@@ -448,7 +448,7 @@ void CWorldMain::SaveNewWorld(bool x) {
         strftime(saveTimestamp, 50, "%F at %T", &curtime);
 
         Console::shared() << "World save complete on " << saveTimestamp << myendl;
-        Console::shared().PrintSectionBegin();
+        Console::shared().printSectionBegin();
     }
     CollectGarbage();
     uiCurrentTime = GetClock();
@@ -463,7 +463,7 @@ void CWorldMain::RegionSave() {
     std::string regionsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "regions.wsc";
     std::ofstream regionsDestination(regionsFile.c_str());
     if (!regionsDestination) {
-        Console::shared().Error(util::format("Failed to open %s for writing", regionsFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", regionsFile.c_str()));
         return;
     }
     std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
@@ -493,7 +493,7 @@ void CWorldMain::SaveStatistics() {
     std::string statsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "statistics.wsc";
     std::ofstream statsDestination(statsFile.c_str());
     if (!statsDestination) {
-        Console::shared().Error(util::format("Failed to open %s for writing", statsFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", statsFile.c_str()));
         return;
     }
     statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';

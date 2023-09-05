@@ -602,7 +602,7 @@ bool CSocket::FlushBuffer(bool doLog) {
                 logDestination.close();
             }
             else {
-                Console::shared().Error(
+                Console::shared().error(
                                         util::format("Failed to open socket log %s", logFile.c_str()));
             }
             bytesSent += outlength;
@@ -665,7 +665,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
                 logDestination.close();
             }
             else {
-                Console::shared().Error(
+                Console::shared().error(
                                         util::format("Failed to open socket log %s", logFile.c_str()));
             }
             bytesSent += outlength;
@@ -790,12 +790,12 @@ void CSocket::Send(const void *point, std::int32_t length) {
         FlushBuffer();
     }
     if (outlength > 0) {
-        Console::shared().Print(util::format("Fragmented packet! [packet: %i]\n", outbuffer[0]));
+        Console::shared().print(util::format("Fragmented packet! [packet: %i]\n", outbuffer[0]));
     }
     // sometimes we send enormous packets... oh what fun
     if (length > MAXBUFFER) {
 #if defined(UOX_DEBUG_MODE)
-        Console::shared().Print(util::format("Large packet found [%i]\n", outbuffer[0]));
+        Console::shared().print(util::format("Large packet found [%i]\n", outbuffer[0]));
 #endif
         largeBuffer.resize(length);
         memcpy(&largeBuffer[0], point, length);
@@ -843,11 +843,11 @@ void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
         std::ofstream logDestination;
         logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
-            Console::shared().Error(util::format("Failed to open socket log %s", logFile.c_str()));
+            Console::shared().error(util::format("Failed to open socket log %s", logFile.c_str()));
             return;
         }
         if (toLog != nullptr) {
-            toLog->Log(logDestination);
+            toLog->log(logDestination);
         }
         else {
             logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10 ? "0" : "")
@@ -1020,7 +1020,7 @@ void CSocket::NewClient(bool newValue) { newClient = newValue; }
 std::uint32_t CSocket::GetDWord(size_t offset) {
     std::uint32_t retVal = 0;
     if (offset + 3 >= MAXBUFFER) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("GetDWord was passed an invalid offset value 0x%X", offset));
     }
     else {
@@ -1038,7 +1038,7 @@ std::uint32_t CSocket::GetDWord(size_t offset) {
 std::uint16_t CSocket::GetWord(size_t offset) {
     std::uint16_t retVal = 0;
     if (offset + 1 >= MAXBUFFER) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("GetWord was passed an invalid offset value 0x%X", offset));
     }
     else {
@@ -1055,7 +1055,7 @@ std::uint16_t CSocket::GetWord(size_t offset) {
 std::uint8_t CSocket::GetByte(size_t offset) {
     std::uint8_t retVal = 0;
     if (offset >= MAXBUFFER) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("GetByte was passed an invalid offset value 0x%X", offset));
     }
     else {
@@ -1270,10 +1270,10 @@ void CSocket::Send(CPUOXBuffer *toSend) {
         std::ofstream logDestination;
         logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
-            Console::shared().Error(util::format("Failed to open socket log %s", logFile.c_str()));
+            Console::shared().error(util::format("Failed to open socket log %s", logFile.c_str()));
             return;
         }
-        toSend->Log(logDestination);
+        toSend->log(logDestination);
         logDestination.close();
     }
 }
@@ -2169,7 +2169,7 @@ void CSocket::UpdateSkill(std::uint8_t skillnum) {
 // o------------------------------------------------------------------------------------------------o
 void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
     if (!ValidateObject(i)) {
-        Console::shared().Warning("OpenPack() was passed an invalid item");
+        Console::shared().warning("OpenPack() was passed an invalid item");
         return;
     }
     CPDrawContainer contSend = (*i);
@@ -2319,7 +2319,7 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
                 contSend.Model(0x11A); // Square gray mailbox
                 break;
             case PT_UNKNOWN:
-                Console::shared().Warning(
+                Console::shared().warning(
                                           util::format("OpenPack() passed an invalid container type: 0x%X", i->GetSerial()));
                 return;
         }
@@ -2483,11 +2483,11 @@ ByteBuffer &CPUOXBuffer::GetPacketStream() { return pStream; }
 std::uint32_t CPUOXBuffer::PackedLength() const { return packedLength; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CPUOXBuffer::Log()
+//|	Function	-	CPUOXBuffer::log()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log sent packets to log file
 // o------------------------------------------------------------------------------------------------o
-void CPUOXBuffer::Log(std::ostream &outStream, bool fullHeader) {
+void CPUOXBuffer::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[SEND]Packet: 0x" << (pStream.GetByte(0) < 16 ? "0" : "") << std::hex
         << static_cast<std::uint16_t>(pStream.GetByte(0)) << "--> Length:" << std::dec
@@ -2500,11 +2500,11 @@ CPInputBuffer::CPInputBuffer() : tSock(nullptr) {}
 CPInputBuffer::CPInputBuffer(CSocket *input) { SetSocket(input); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CPInputBuffer::Log()
+//|	Function	-	CPInputBuffer::log()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Log received packets to log file
 // o------------------------------------------------------------------------------------------------o
-void CPInputBuffer::Log(std::ostream &outStream, bool fullHeader) {
+void CPInputBuffer::log(std::ostream &outStream, bool fullHeader) {
     std::uint8_t *buffer = tSock->Buffer();
     const std::uint32_t len = tSock->InLength();
     if (fullHeader) {

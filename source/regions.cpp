@@ -50,7 +50,7 @@ void LoadChar(std::istream &readDestination) {
     if (x == nullptr)
         return;
     
-    if (!x->Load(readDestination)) {
+    if (!x->load(readDestination)) {
         x->Cleanup();
         ObjectFactory::shared().DestroyObject(x);
     }
@@ -66,7 +66,7 @@ void LoadItem(std::istream &readDestination) {
     if (x == nullptr)
         return;
     
-    if (!x->Load(readDestination)) {
+    if (!x->load(readDestination)) {
         x->Cleanup();
         ObjectFactory::shared().DestroyObject(x);
     }
@@ -81,7 +81,7 @@ void LoadItem(std::istream &readDestination) {
 void LoadMulti(std::istream &readDestination) {
     CMultiObj *ourHouse =
     static_cast<CMultiObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_MULTI));
-    if (!ourHouse->Load(readDestination)) // if no load, DELETE
+    if (!ourHouse->load(readDestination)) // if no load, DELETE
     {
         ourHouse->Cleanup();
         ObjectFactory::shared().DestroyObject(ourHouse);
@@ -96,7 +96,7 @@ void LoadMulti(std::istream &readDestination) {
 void LoadBoat(std::istream &readDestination) {
     CBoatObj *ourBoat =
     static_cast<CBoatObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_BOAT));
-    if (!ourBoat->Load(readDestination)) // if no load, DELETE
+    if (!ourBoat->load(readDestination)) // if no load, DELETE
     {
         ourBoat->Cleanup();
         ObjectFactory::shared().DestroyObject(ourBoat);
@@ -111,7 +111,7 @@ void LoadBoat(std::istream &readDestination) {
 void LoadSpawnItem(std::istream &readDestination) {
     CSpawnItem *ourSpawner =
     static_cast<CSpawnItem *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_SPAWNER));
-    if (!ourSpawner->Load(readDestination)) // if no load, DELETE
+    if (!ourSpawner->load(readDestination)) // if no load, DELETE
     {
         ourSpawner->Cleanup();
         ObjectFactory::shared().DestroyObject(ourSpawner);
@@ -315,7 +315,7 @@ void CMapWorld::SaveResources(std::uint8_t worldNum) {
     }
     else {
         // Can't save resources
-        Console::shared().Error("Failed to open resource.bin for writing");
+        Console::shared().error("Failed to open resource.bin for writing");
     }
 }
 
@@ -367,12 +367,12 @@ void CMapWorld::LoadResources(std::uint8_t worldNum) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMapHandler::Startup()
+//|	Function	-	CMapHandler::startup()
 //|	Date		-	23 July, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 // o------------------------------------------------------------------------------------------------o
-auto CMapHandler::Startup() -> void {
+auto CMapHandler::startup() -> void {
     std::uint8_t numWorlds = Map->MapCount();
     
     mapWorlds.reserve(numWorlds);
@@ -407,7 +407,7 @@ bool CMapHandler::ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std
         if (!curCell->GetRegionSerialList()->Remove(nItem->GetSerial()) ||
             !curCell->GetItemList()->Remove(nItem)) {
 #if DEBUG_REGIONS
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
 #endif
         }
@@ -426,7 +426,7 @@ bool CMapHandler::ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std
         }
         else {
 #if DEBUG_REGIONS
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
 #endif
         }
@@ -451,7 +451,7 @@ bool CMapHandler::ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std
         if (!curCell->GetRegionSerialList()->Remove(nChar->GetSerial()) ||
             !curCell->GetCharList()->Remove(nChar)) {
 #if DEBUG_REGIONS
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial()));
 #endif
         }
@@ -470,7 +470,7 @@ bool CMapHandler::ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std
         }
         else {
 #if DEBUG_REGIONS
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial()));
 #endif
         }
@@ -498,7 +498,7 @@ bool CMapHandler::AddItem(CItem *nItem) {
     }
     else {
 #if DEBUG_REGIONS
-        CConsole::shared() onsole.Warning(
+        CConsole::shared() onsole.warning(
                                           util::format("Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
 #endif
     }
@@ -525,7 +525,7 @@ bool CMapHandler::RemoveItem(CItem *nItem) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
 #endif
         return false;
@@ -553,7 +553,7 @@ bool CMapHandler::AddChar(CChar *toAdd) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial()));
 #endif
     }
@@ -580,7 +580,7 @@ bool CMapHandler::RemoveChar(CChar *toRemove) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial()));
 #endif
         return false;
@@ -713,7 +713,7 @@ void CMapHandler::Save() {
     const std::uint32_t s_t = GetClock();
     
     Console::shared() << "Saving Character and Item Map Region data...   ";
-    Console::shared().TurnYellow();
+    Console::shared().turnYellow();
     Console::shared() << "0%";
     
     std::string basePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
@@ -761,7 +761,7 @@ void CMapHandler::Save() {
             writeDestination.open(filename.c_str(), std::ios::binary);
             
             if (!writeDestination) {
-                Console::shared().Error(
+                Console::shared().error(
                                         util::format("Failed to open %s for writing", filename.c_str()));
                 continue;
             }
@@ -814,15 +814,15 @@ void CMapHandler::Save() {
         writeDestination.close();
     }
     else {
-        Console::shared().Error(util::format("Failed to open %s for writing", filename.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", filename.c_str()));
         return;
     }
     
     Console::shared() << "\b\b\b\b";
-    Console::shared().PrintDone();
+    Console::shared().printDone();
     
     const std::uint32_t e_t = GetClock();
-    Console::shared().Print(
+    Console::shared().print(
                             util::format("World saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
     
     i = 0;
@@ -842,17 +842,17 @@ bool PostLoadFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMapHandler::Load()
+//|	Function	-	CMapHandler::load()
 //|	Date		-	23 July, 2000
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads in worldfile data to MapRegions
 // o------------------------------------------------------------------------------------------------o
-void CMapHandler::Load() {
+void CMapHandler::load() {
     const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
     const std::int16_t AreaY = UpperY / 8;
     std::uint32_t count = 0;
     std::ifstream readDestination;
-    Console::shared().TurnYellow();
+    Console::shared().turnYellow();
     Console::shared() << "0%";
     std::uint32_t s_t = GetClock();
     std::string basePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
@@ -911,9 +911,9 @@ void CMapHandler::Load() {
         Console::shared() << "\b\b" << static_cast<std::uint32_t>(100) << "%";
     }
     
-    Console::shared().TurnNormal();
+    Console::shared().turnNormal();
     Console::shared() << "\b\b\b";
-    Console::shared().PrintDone();
+    Console::shared().printDone();
     
     filename = basePath + "overflow.wsc";
     std::ifstream flowDestination(filename.c_str());
@@ -931,7 +931,7 @@ void CMapHandler::Load() {
     houseDestination.close();
     
     std::uint32_t e_t = GetClock();
-    Console::shared().Print(
+    Console::shared().print(
                             util::format("ASCII world loaded in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
     
     std::uint8_t i = 0;

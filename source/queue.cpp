@@ -141,7 +141,7 @@ void PageVector::KillQueue() {
 // o------------------------------------------------------------------------------------------------o
 void PageVector::SendAsGump(CSocket *toSendTo) {
     CGumpDisplay GQueue(toSendTo, 320, 340);
-    GQueue.SetTitle(title);
+    GQueue.setTitle(title);
     
     std::vector<CHelpRequest *>::iterator qIter;
     for (qIter = requestQueue.begin(); qIter != requestQueue.end(); ++qIter) {
@@ -159,11 +159,11 @@ void PageVector::SendAsGump(CSocket *toSendTo) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	PageVector::SetTitle()
+//|	Function	-	PageVector::setTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets title displayed for help request queue in client
 // o------------------------------------------------------------------------------------------------o
-void PageVector::SetTitle(const std::string &newTitle) { title = newTitle; }
+void PageVector::setTitle(const std::string &newTitle) { title = newTitle; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	PageVector::PageVector()
@@ -171,7 +171,7 @@ void PageVector::SetTitle(const std::string &newTitle) { title = newTitle; }
 //|	Purpose		-	Initializer for PageVector class
 // o------------------------------------------------------------------------------------------------o
 PageVector::PageVector(const std::string &newTitle) {
-    SetTitle(newTitle);
+    setTitle(newTitle);
     requestQueue.resize(0);
     currentPos = requestQueue.end();
 }

@@ -277,7 +277,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
             Commands.command(toSendTo, targetChar, "tweak", true);
             break;
         default:
-            Console::shared().Error(
+            Console::shared().error(
                                     " Fallout of switch statement without default. wholist.cpp, ButtonSelect()");
             break;
     }

@@ -249,7 +249,7 @@ inline bool ValidateObject(const CBaseObject *toValidate) {
         }
     } catch (...) {
         rValue = false;
-        Console::shared().Error(util::format("Invalid Object found: 0x%X", (std::uint64_t)toValidate));
+        Console::shared().error(util::format("Invalid Object found: 0x%X", (std::uint64_t)toValidate));
     }
     return rValue;
 }

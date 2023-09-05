@@ -1918,7 +1918,7 @@ void CChar::CopyData(CChar *target) {
     target->SetSpawn(GetSpawn());
     target->SetPriv(GetPriv());
     target->SetName(name);
-    target->SetTitle(title);
+    target->setTitle(title);
     target->SetLocation(this);
     target->SetDir(dir);
     target->SetId(id);
@@ -2437,7 +2437,7 @@ bool CChar::WearItem(CItem *toWear) {
         if (ValidateObject(GetItemAtLayer(tLayer))) {
 #if defined(UOX_DEBUG_MODE)
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section "
                                                    "[%s]) - another item (%s) is already equipped in that layer!",
                                                    toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial,
@@ -4299,7 +4299,7 @@ bool CChar::LoadRemnants() {
     if (GetId() > 0x999) {
         if (acct == AccountEntry::INVALID_ACCOUNT) {
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-            Console::shared().Warning(
+            Console::shared().warning(
                                       util::format("NPC: %s with serial 0x%X with bugged body found, deleting",
                                                    charName.c_str(), GetSerial()));
             rValue = false;
@@ -4322,7 +4322,7 @@ bool CChar::LoadRemnants() {
             ((overRight && mx < 7000) || (overBottom && my < 7000) || mx < 0 || my < 0)) {
             if (IsNpc()) {
                 std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-                Console::shared().Warning(util::format(
+                Console::shared().warning(util::format(
                                                        "NPC: %s with serial 0x%X found outside valid world locations, deleting",
                                                        charName.c_str(), GetSerial()));
                 rValue = false;
@@ -7668,7 +7668,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
             Fame(attacker, GetFame());
         }
         if ((!attacker->IsNpc()) && (!IsNpc())) {
-            Console::shared().Log(util::format(Dictionary->GetEntry(1617), GetName().c_str(),
+            Console::shared().log(util::format(Dictionary->GetEntry(1617), GetName().c_str(),
                                                attacker->GetName().c_str()),
                                   "PvP.log");
         }

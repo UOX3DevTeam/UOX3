@@ -41,11 +41,11 @@ std::string timeNow() {
 Interval_st::Interval_st() { startTime = std::chrono::steady_clock::now(); }
 
 // o-----------------------------------------------------------------------------------------------o
-//|	Function	-	Interval_st::Start()
+//|	Function	-	Interval_st::start()
 // o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set a start time point representing current time
 // o-----------------------------------------------------------------------------------------------o
-void Interval_st::Start() { startTime = std::chrono::steady_clock::now(); }
+void Interval_st::start() { startTime = std::chrono::steady_clock::now(); }
 
 // o-----------------------------------------------------------------------------------------------o
 //|	Function	-	Interval_st::Elapsed()

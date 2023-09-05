@@ -95,7 +95,7 @@ void Script::Reload(bool disp) {
         }
     }
     if (disp) {
-        Console::shared().Print(util::format("Reloading %-15s: ", filename.c_str()));
+        Console::shared().print(util::format("Reloading %-15s: ", filename.c_str()));
     }
     
     fflush(stdout);

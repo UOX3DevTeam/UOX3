@@ -379,8 +379,8 @@ private:
 public:
     CSpeechQueue();
     ~CSpeechQueue();
-    auto Startup() -> void;
-    bool Poll();         // Send out any pending speech, returning true if entries were sent
+    auto startup() -> void;
+    bool poll();         // Send out any pending speech, returning true if entries were sent
     CSpeechEntry &Add(); // Make space in queue, and return pointer to new entry
     std::int32_t PollTime() const;
     void PollTime(std::int32_t value);

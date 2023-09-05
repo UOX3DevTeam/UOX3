@@ -16,7 +16,7 @@ struct Interval_st {
 
   public:
     Interval_st();
-    void Start();
+    void start();
     long long Elapsed();
     long long Stop();
 };

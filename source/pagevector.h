@@ -77,7 +77,7 @@ public:
     PageVector(const std::string &newTitle);
     ~PageVector();
     void SendAsGump(CSocket *toSendTo);
-    void SetTitle(const std::string &newTitle);
+    void setTitle(const std::string &newTitle);
     bool GotoPos(std::int32_t pos);
     std::int32_t CurrentPos() const;
     serial_t GetCallNum() const;

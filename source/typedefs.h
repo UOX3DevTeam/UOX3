@@ -24,12 +24,12 @@ class CSocket;
 #if defined(_DEBUG)
 #define VALIDATESOCKET(s)                                                                          \
     if (s == nullptr) {                                                                            \
-        Console::shared().Print(util::format("Socket failure at %s", __FILE__LINE__));             \
+        Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
         return;                                                                                    \
     }
 #define VALIDATESOCKET_WITH_RETURN(s)                                                              \
     if (s == nullptr) {                                                                            \
-        Console::shared().Print(util::format("Socket failure at %s", __FILE__LINE__));             \
+        Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
         return false;                                                                              \
     }
 #else

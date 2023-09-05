@@ -41,15 +41,15 @@ std::multimap<std::uint32_t, AddMenuItem> g_mmapAddMenuMap;
 //==================================================================================================
 CServerDefinitions::CServerDefinitions() : defaultPriority(0) {}
 //==================================================================================================
-auto CServerDefinitions::Startup() -> void {
-    Console::shared().PrintSectionBegin();
+auto CServerDefinitions::startup() -> void {
+    Console::shared().printSectionBegin();
     Console::shared() << "Loading server scripts..." << myendl;
     Console::shared() << "   o Clearing AddMenuMap entries("
     << static_cast<std::uint64_t>(g_mmapAddMenuMap.size()) << ")" << myendl;
     g_mmapAddMenuMap.clear();
     ScriptListings.resize(NUM_DEFS);
     ReloadScriptObjects();
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -204,31 +204,31 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
     }
     if (!mSort.empty()) {
         std::sort(mSort.begin(), mSort.end());
-        Console::shared().Print(util::format("Section %20s : %6i", dirNames[toLoad].c_str(), 0));
+        Console::shared().print(util::format("Section %20s : %6i", dirNames[toLoad].c_str(), 0));
         size_t iTotal = 0;
-        Console::shared().TurnYellow();
+        Console::shared().turnYellow();
         
         
         for (auto mIter = mSort.begin(); mIter != mSort.end(); ++mIter) {
-            Console::shared().Print("\b\b\b\b\b\b");
+            Console::shared().print("\b\b\b\b\b\b");
             ScriptListings[toLoad].push_back(std::make_unique< Script>((*mIter).filename, toLoad, false));
             iTotal += ScriptListings[toLoad].back()->NumEntries();
-            Console::shared().Print(util::format("%6i", iTotal));
+            Console::shared().print(util::format("%6i", iTotal));
         }
         
-        Console::shared().Print(util::format("\b\b\b\b\b\b%6i", CountOfEntries(toLoad)));
-        Console::shared().TurnNormal();
-        Console::shared().Print(" entries");
+        Console::shared().print(util::format("\b\b\b\b\b\b%6i", CountOfEntries(toLoad)));
+        Console::shared().turnNormal();
+        Console::shared().print(" entries");
         switch (wasPriod) {
             case 0:
-                Console::shared().PrintSpecial(CGREEN, "prioritized");
+                Console::shared().printSpecial(CGREEN, "prioritized");
                 break; // prioritized
             case 1:
-                Console::shared().PrintSpecial(CGREEN, "done");
+                Console::shared().printSpecial(CGREEN, "done");
                 break; // file exist, no section
             default:
             case 2:
-                Console::shared().PrintSpecial(CBLUE, "done");
+                Console::shared().printSpecial(CBLUE, "done");
                 break; // no file
         };
     }
@@ -338,7 +338,7 @@ auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::
         }
     }
 #if defined(UOX_DEBUG_MODE)
-    //	Console::shared().Warning( util::format( "Failed to open priority.nfo for reading in %s
+    //	Console::shared().warning( util::format( "Failed to open priority.nfo for reading in %s
     // DFN", dirNames[category].c_str() ));
 #endif
     wasPrioritized = 2;
@@ -381,7 +381,7 @@ auto CDirectoryListing::PushDir(std::string toMove) -> bool {
     auto path = std::filesystem::path(toMove);
     auto rValue = true;
     if (!std::filesystem::exists(path)) {
-        Console::shared().Error(util::format("DFN directory %s does not exist", toMove.c_str()));
+        Console::shared().error(util::format("DFN directory %s does not exist", toMove.c_str()));
         Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
     }
     std::filesystem::current_path(path);
@@ -393,7 +393,7 @@ auto CDirectoryListing::PushDir(std::string toMove) -> bool {
 //==================================================================================================
 auto CDirectoryListing::PopDir() -> void {
     if (dirs.empty()) {
-        Console::shared().Error("cServerDefinition::PopDir called, but dirs is empty");
+        Console::shared().error("cServerDefinition::PopDir called, but dirs is empty");
         Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
     }
     else {
