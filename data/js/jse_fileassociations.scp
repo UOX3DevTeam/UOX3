@@ -296,6 +296,7 @@
 //-------------------------------------------
 9000=commands/custom/CommandInfo/InfoA.js
 9001=commands/custom/CommandInfo/InfoB.js
+9002=commands/custom/CommandInfo/InfoC.js
 }
 
 //-------------------------------------------

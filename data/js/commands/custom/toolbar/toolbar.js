@@ -106,6 +106,9 @@ function page0( pUser, uox3gump )
 
 	uox3gump.AddPage( 2 );
 	TriggerEvent( 9001, "InfoB", uox3gump );
+
+	uox3gump.AddPage( 3 );
+	TriggerEvent( 9002, "InfoC", uox3gump );
 }
 
 function page20( pUser )
