@@ -336,7 +336,7 @@ public:
     auto GrabData(std::int32_t &ndata, std::int32_t &odata) -> std::string;
     auto FlushData() -> bool;
     auto NumEntries() const -> size_t;
-    auto MoveTo(size_t position) -> std::string;
+    auto moveTo(size_t position) -> std::string;
     auto CloseFile() -> bool;
     auto Remove(size_t position) -> void;
     auto Append(std::string tag, std::string data) -> void;

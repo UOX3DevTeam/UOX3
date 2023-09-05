@@ -516,7 +516,7 @@ class CPUOXBuffer {
     std::uint32_t PackedLength() const;
     const std::uint8_t *PackedPointer() const;
 
-    virtual void Log(std::ostream &outStream, bool fullHeader = true);
+    virtual void log(std::ostream &outStream, bool fullHeader = true);
 };
 
 class CPInputBuffer {
@@ -529,7 +529,7 @@ class CPInputBuffer {
     virtual ~CPInputBuffer() {}
 
     virtual void Receive() = 0;
-    virtual void Log(std::ostream &outStream, bool fullHeader = true);
+    virtual void log(std::ostream &outStream, bool fullHeader = true);
     virtual bool Handle();
     void SetSocket(CSocket *toSet);
     CSocket *GetSocket() const;
@@ -540,7 +540,7 @@ class CNetworkStuff {
   public:
     CNetworkStuff();
     ~CNetworkStuff();
-    auto Startup() -> void;
+    auto startup() -> void;
     void Disconnect(uoxsocket_t s);
     void Disconnect(CSocket *s);
     void ClearBuffers();

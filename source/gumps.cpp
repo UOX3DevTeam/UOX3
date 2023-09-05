@@ -49,7 +49,7 @@ void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t ind
     
     std::string txt = Dictionary->GetEntry(dictEntry, s->Language());
     if (txt.empty()) {
-        Console::shared().Error("Invalid text in TextEntryGump()");
+        Console::shared().error("Invalid text in TextEntryGump()");
         return;
     }
     
@@ -352,7 +352,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
                 emailAddy = packet->GetTextString(i);
                 break;
             default:
-                Console::shared().Warning(util::format("Unknown textId %i with string %s", textId,
+                Console::shared().warning(util::format("Unknown textId %i with string %s", textId,
                                                        packet->GetTextString(i).c_str()));
         }
     }
@@ -362,7 +362,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
         s->SysMessage(555); // An account by that name already exists!
         return;
     }
-    Console::shared().Print(
+    Console::shared().print(
                             util::format("Attempting to add username %s with password %s at emailaddy %s",
                                          username.c_str(), password.c_str(), emailAddy.c_str()));
 }
@@ -1175,7 +1175,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                                     addCmd = util::format("add item %s", tmp.c_str());
                                 }
                             }
-                            Commands->Command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else if (repeatAdd.m_IntValue == 1) {
                             std::string addCmd = "";
@@ -1185,7 +1185,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             else {
                                 addCmd = util::format("radditem %s", tmp.c_str());
                             }
-                            Commands->Command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else {
                             CItem *newItem =
@@ -1229,7 +1229,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                                     addCmd = util::format("add item %s", data.c_str());
                                 }
                             }
-                            Commands->Command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else if (repeatAdd.m_IntValue == 1) {
                             std::string addCmd = "";
@@ -1239,7 +1239,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                             else {
                                 addCmd = util::format("radditem %s", data.c_str());
                             }
-                            Commands->Command(s, mChar, addCmd);
+                            serverCommands.command(s, mChar, addCmd);
                         }
                         else {
                             CItem *newItem = Items->CreateScriptItem(s, mChar, data, 0, itemType, true);
@@ -1266,7 +1266,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 }
                 if (reopenMenu.m_IntValue == 1) {
                     std::string menuString = util::format("itemmenu %d", s->TempInt());
-                    Commands->Command(s, mChar, menuString);
+                    serverCommands.command(s, mChar, menuString);
                 }
             }
             break;
@@ -1326,7 +1326,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             }
             else if (cmd == "GUIINFORMATION") {
                 CGumpDisplay guiInfo(s, 400, 300);
-                guiInfo.SetTitle(UOXVersion::productName + " Status"s);
+                guiInfo.setTitle(UOXVersion::productName + " Status"s);
                 builtString = GetUptime();
                 guiInfo.AddData("Version",
                                 UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s);
@@ -1371,12 +1371,12 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     return;
                 
                 std::string menuString = util::format("itemmenu %d", s->TempInt());
-                Commands->Command(s, mChar, menuString);
+                serverCommands.command(s, mChar, menuString);
                 
                 auto repeatAdd = mChar->GetTag("repeatAdd");
                 if (repeatAdd.m_IntValue == 1) {
                     std::string addCmd = util::format("raddnpc %s", data.c_str());
-                    Commands->Command(s, mChar, addCmd);
+                    serverCommands.command(s, mChar, addCmd);
                 }
                 else {
                     s->XText(data);
@@ -1492,7 +1492,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         else if (button == 50002) {
             // Return to home page of menu
-            Commands->Command(s, mChar, "add");
+            serverCommands.command(s, mChar, "add");
             return;
         }
         else if (button == 50003) // Automatically reopen menu after adding objects
@@ -1592,36 +1592,36 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         else if (button == 50008) {
             // Show command list
-            Commands->Command(s, mChar, "howto");
+            serverCommands.command(s, mChar, "howto");
             return;
         }
         else if (button == 50009) {
             // Show wholist online
-            Commands->Command(s, mChar, "wholist on");
+            serverCommands.command(s, mChar, "wholist on");
             return;
         }
         else if (button == 50010) {
             // Show wholist offline
-            Commands->Command(s, mChar, "wholist off");
+            serverCommands.command(s, mChar, "wholist off");
             return;
         }
         else if (button == 50011) {
             // Reload DFNs
-            Commands->Command(s, mChar, "reloaddefs");
+            serverCommands.command(s, mChar, "reloaddefs");
             return;
         }
         else if (button == 50012) {
             // Shutdown Server
             if (mChar->GetCommandLevel() >= CL_ADMIN)
-                Commands->Command(s, mChar, "shutdown 1");
+                serverCommands.command(s, mChar, "shutdown 1");
             return;
         }
         else if (button == 50020) {
             // Browse UOX3 Docs online
-            Commands->Command(s, mChar, "browse https://www.uox3.org/docs");
+            serverCommands.command(s, mChar, "browse https://www.uox3.org/docs");
             
             // Reopen menu
-            Commands->Command(s, mChar, sect);
+            serverCommands.command(s, mChar, sect);
             return;
         }
         customTag.m_Destroy = false;
@@ -1636,7 +1636,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         }
         
         // Reopen menu
-        Commands->Command(s, mChar, sect);
+        serverCommands.command(s, mChar, sect);
         return;
     }
     
@@ -1658,7 +1658,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
     size_t entryNum = ((static_cast<size_t>(button) - 6) * 2);
     autoAddMenuItemCount += static_cast<std::uint32_t>(ItemMenu->NumEntries());
     if (autoAddMenuItemCount >= entryNum) {
-        std::string tag = ItemMenu->MoveTo(entryNum);
+        std::string tag = ItemMenu->moveTo(entryNum);
         std::string data = ItemMenu->GrabData();
         HandleGumpCommand(s, tag, data);
     }
@@ -1678,7 +1678,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     std::uint8_t cmdType = 0xFF;
     std::string cmdName = "";
     bool found = false;
-    for (auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr) {
+    for (auto itr = CCommands::commandMap.begin(); itr != CCommands::commandMap.end(); ++itr) {
         if (iCounter == cmdNumber) {
             cmdName = itr->first;
             cmdLevelReq = itr->second.cmdLevelReq;
@@ -1690,7 +1690,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = TargetMap.begin(); itr != TargetMap.end(); ++itr) {
+        for (auto itr = CCommands::targetMap.begin(); itr != CCommands::targetMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
@@ -1702,7 +1702,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = JSCommandMap.begin(); itr != JSCommandMap.end(); ++itr) {
+        for (auto itr = CCommands::jscommandMap.begin(); itr != CCommands::jscommandMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
@@ -1716,7 +1716,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
         // Build gump structure here, with basic information like Command Level, Name, Command Type,
         // and parameters (if any, from table)
         CGumpDisplay CommandInfo(sock, 480, 320);
-        CommandInfo.SetTitle(cmdName);
+        CommandInfo.setTitle(cmdName);
         
         CommandInfo.AddData("Minimum Command Level", cmdLevelReq);
         switch (cmdType) {
@@ -1744,7 +1744,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
         
         auto filename = util::format("help/commands/%s.txt", cmdName.c_str());
         
-        std::ifstream toOpen(filename);
+        auto toOpen = std::ifstream(filename);
         if (!toOpen.is_open()) {
             CommandInfo.AddData("", "No extra information is available about this command", 7);
         }
@@ -1991,7 +1991,7 @@ std::string GrabMenuData(std::string sect, size_t entryNum, std::string &tag) {
     CScriptSection *sectionData = FileLookup->FindEntry(sect, menus_def);
     if (sectionData != nullptr) {
         if (sectionData->NumEntries() >= entryNum) {
-            tag = sectionData->MoveTo(entryNum);
+            tag = sectionData->moveTo(entryNum);
             data = sectionData->GrabData();
         }
     }
@@ -2184,11 +2184,11 @@ void CGumpDisplay::Delete() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CGumpDisplay::SetTitle()
+//|	Function	-	CGumpDisplay::setTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set a gumps title
 // o------------------------------------------------------------------------------------------------o
-void CGumpDisplay::SetTitle(const std::string &newTitle) { title = newTitle; }
+void CGumpDisplay::setTitle(const std::string &newTitle) { title = newTitle; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SendVecsAsGump()

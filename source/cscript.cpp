@@ -176,8 +176,8 @@ static JSFunctionSpec my_functions[] = {
 
     {"CreateParty", SE_CreateParty, 1, 0, 0},
 
-    {"GetClientFeature", SE_GetClientFeature, 1, 0, 0},
-    {"GetServerFeature", SE_GetServerFeature, 1, 0, 0},
+    {"getClientFeature", SE_GetClientFeature, 1, 0, 0},
+    {"getServerFeature", SE_GetServerFeature, 1, 0, 0},
     {"GetServerSetting", SE_GetServerSetting, 1, 0, 0},
 
     {"DeleteFile", SE_DeleteFile, 2, 0, 0},
@@ -201,16 +201,16 @@ static JSFunctionSpec my_functions[] = {
 void UOX3ErrorReporter(JSContext *cx, const char *message, JSErrorReport *report) {
     std::uint16_t scriptNum = JSMapping->GetScriptId(JS_GetGlobalObject(cx));
     // If we're loading the world then do NOT print out anything!
-    Console::shared().Error(
+    Console::shared().error(
         util::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message));
     if (report == nullptr || report->filename == nullptr) {
-        Console::shared().Error("No detailed data");
+        Console::shared().error("No detailed data");
         return;
     }
-    Console::shared().Error(
+    Console::shared().error(
         util::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno));
     if (report->linebuf != nullptr || report->tokenptr != nullptr) {
-        Console::shared().Error(
+        Console::shared().error(
             util::format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr));
     }
 }
@@ -818,7 +818,7 @@ std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
     // If rval is negative, it's possible some other function/method called from within Ontooltip()
     // encountered an error. Abort attempt to turn it into a string - it might crash the server!
     if (rval < 0) {
-        Console::shared().Error("Handled exception in cscript.cpp OnTooltip() - invalid return "
+        Console::shared().error("Handled exception in cscript.cpp OnTooltip() - invalid return "
                                 "value/error encountered!");
         return "";
     }
@@ -829,7 +829,7 @@ std::string cScript::OnTooltip(CBaseObject *myObj, CSocket *pSocket) {
 
         return returnString;
     } catch (...) {
-        Console::shared().Error("Handled exception in cscript.cpp OnTooltip()");
+        Console::shared().error("Handled exception in cscript.cpp OnTooltip()");
         return "";
     }
 }
@@ -884,7 +884,7 @@ std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std
         // onNameRequest() encountered an error. Abort attempt to turn it into a string - it might
         // crash the server!
         if (rval < 0) {
-            Console::shared().Error("Handled exception in cscript.cpp OnNameRequest() - invalid "
+            Console::shared().error("Handled exception in cscript.cpp OnNameRequest() - invalid "
                                     "return value/error encountered!");
             return "";
         }
@@ -903,7 +903,7 @@ std::string cScript::OnNameRequest(CBaseObject *myObj, CChar *nameRequester, std
 
         return returnString;
     } catch (...) {
-        Console::shared().Error("Handled exception in cscript.cpp OnNameRequest()");
+        Console::shared().error("Handled exception in cscript.cpp OnNameRequest()");
 
         // Clear flag that marks object as having an active name lookup via onNameRequest
         myObj->NameRequestActive(false);
@@ -2292,7 +2292,7 @@ bool cScript::DoCallback(CSocket *tSock, serial_t targeted, std::uint8_t callNum
                                 util::format("onCallback%i", callNum).c_str(), 2, params, &rval);
         return (retVal == JS_TRUE);
     } catch (...) {
-        Console::shared().Error("Handled exception in cscript.cpp DoCallback()");
+        Console::shared().error("Handled exception in cscript.cpp DoCallback()");
     }
     return false;
 }
@@ -3132,7 +3132,7 @@ bool cScript::AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *t
         [[maybe_unused]] JSBool retVal =
             JS_CallFunctionName(targContext, targObject, funcName, 3, params, &rval);
     } catch (...) {
-        Console::shared().Error("Some error!");
+        Console::shared().error("Some error!");
     }
 
     return (JSVAL_TO_BOOLEAN(rval) == JS_TRUE);
@@ -3194,7 +3194,7 @@ bool cScript::ExistAndVerify(cScript::event_t eventNum, std::string functionName
 //|	Date		-	20th December, 2001
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a script with the JS engine
-//|	Notes		-	Also requires a <scriptType>Registration() event with a
+//|	Notes		-	Also requires a <scriptType>registration() event with a
 // Register<scriptType>()
 //|					function, and an onSkill() event, both in the same script
 // o------------------------------------------------------------------------------------------------o
@@ -3207,7 +3207,7 @@ bool cScript::ScriptRegistration(std::string scriptType) {
     jsval Func = JSVAL_NULL;
     JS_GetProperty(targContext, targObject, scriptType.c_str(), &Func);
     if (Func == JSVAL_VOID) {
-        Console::shared().Warning(util::format("Script Number (%u) does not have a %s function",
+        Console::shared().warning(util::format("Script Number (%u) does not have a %s function",
                                                JSMapping->GetScriptId(targObject),
                                                scriptType.c_str()));
         return false;

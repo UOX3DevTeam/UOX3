@@ -474,7 +474,7 @@ bool splMagicLock(CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] 
                 target->SetType(IT_LOCKEDSPAWNCONT);
                 break;
             default:
-                Console::shared().Error(
+                Console::shared().error(
                                         "Fallout of switch statement without default. magic.cpp, magiclocktarget()");
                 break;
         }
@@ -3719,7 +3719,7 @@ void CMagic::SpellFail(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     if (num < 1) {
-        Console::shared().Error(
+        Console::shared().error(
                                 "Invalid spell ID passed to CMagic::SelectSpell() - aborting spellcast attempt!");
         return false;
     }
@@ -4000,13 +4000,13 @@ std::uint8_t CMagic::GetFieldDir(CChar *s, std::int16_t x, std::int16_t y) {
                     fieldDir = 1;
                     break;
                 default:
-                    Console::shared().Error(
+                    Console::shared().error(
                                             " Fallout of switch statement without default. uox3.cpp, GetFieldDir()");
                     break;
             }
             break;
         default:
-            Console::shared().Error(
+            Console::shared().error(
                                     " Fallout of switch statement without default. uox3.cpp, GetFieldDir()");
             break;
     }
@@ -4246,7 +4246,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                                 break;
                             }
                             default:
-                                Console::shared().Error(
+                                Console::shared().error(
                                                         util::format(" Unknown Travel spell %i, magic.cpp", curSpell));
                                 break;
                         }
@@ -4448,7 +4448,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                             break;
                         }
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     util::format(" Unknown CharacterTarget spell %i, magic.cpp", curSpell));
                             break;
                     }
@@ -4569,7 +4569,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                                                                                     curSpell);
                             break;
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     util::format(" Unknown LocationTarget spell %i", curSpell));
                             break;
                     }
@@ -4612,7 +4612,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                                                                                  curSpell);
                         break;
                     default:
-                        Console::shared().Error(
+                        Console::shared().error(
                                                 util::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell));
                         break;
                 }
@@ -4648,7 +4648,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
                 (*((MAGIC_NOFUNC)magic_table[curSpell - 1].mag_extra))(s, caster, curSpell);
                 break;
             default:
-                Console::shared().Error(
+                Console::shared().error(
                                         util::format(" Unknown NonTarget spell %i, magic.cpp", curSpell));
                 break;
         }
@@ -4691,14 +4691,14 @@ void CMagic::LoadScript() {
                     spells[i].Enabled(false);
                     Reag_st *mRegs = spells[i].ReagantsPtr();
                     
-                    // Console::shared().Log( "Spell number: %i", "spell.log", i ); // Disabled for
+                    // Console::shared().log( "Spell number: %i", "spell.log", i ); // Disabled for
                     // performance reasons
                     for (const auto &sec : SpellLoad->collection()) {
                         tag = sec->tag;
                         data = sec->data;
                         UTag = util::upper(tag);
                         data = util::trim(util::strip(data, "//"));
-                        // Console::shared().Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(),
+                        // Console::shared().log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(),
                         // data.c_str() ); // Disabled for performance reasons
                         switch ((UTag.data()[0])) {
                             case 'A':
@@ -4880,7 +4880,7 @@ void CMagic::LoadScript() {
     }
     
 #if defined(UOX_DEBUG_MODE)
-    Console::shared().Print("Registering spells\n");
+    Console::shared().print("Registering spells\n");
 #endif
     
     CJSMappingSection *spellSection = JSMapping->GetSection(CJSMappingSection::SCPT_MAGIC);
@@ -4997,7 +4997,7 @@ void CMagic::LogSpell(std::string spell, CChar *player1, CChar *player2,
     std::ofstream logDestination;
     logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
-        Console::shared().Error(util::format("Unable to open spell log file %s!", logName.c_str()));
+        Console::shared().error(util::format("Unable to open spell log file %s!", logName.c_str()));
         return;
     }
     char dateTime[1024];
@@ -5018,13 +5018,13 @@ void CMagic::LogSpell(std::string spell, CChar *player1, CChar *player2,
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CMagic::Register()
+//|	Function	-	CMagic::registerSpell()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a spell in the JS Engine
 // o------------------------------------------------------------------------------------------------o
-void CMagic::Register(cScript *toRegister, std::int32_t spellNumber, bool isEnabled) {
+void CMagic::registerSpell(cScript *toRegister, std::int32_t spellNumber, bool isEnabled) {
 #if defined(UOX_DEBUG_MODE)
-    Console::shared().Print(util::format("Registering spell number %i\n", spellNumber));
+    Console::shared().print(util::format("Registering spell number %i\n", spellNumber));
 #endif
     if (spellNumber < 0 || static_cast<size_t>(spellNumber) >= spells.size())
         return;

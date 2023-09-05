@@ -1918,7 +1918,7 @@ void CChar::CopyData(CChar *target) {
     target->SetSpawn(GetSpawn());
     target->SetPriv(GetPriv());
     target->SetName(name);
-    target->SetTitle(title);
+    target->setTitle(title);
     target->SetLocation(this);
     target->SetDir(dir);
     target->SetId(id);
@@ -2225,9 +2225,9 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
                 alwaysSendItemHue = true;
             }
         }
-        else if (cwmWorldState->ServerData()->ClientSupport70331() ||
-                 cwmWorldState->ServerData()->ClientSupport704565() ||
-                 cwmWorldState->ServerData()->ClientSupport70610()) {
+        else if (cwmWorldState->ServerData()->clientSupport70331() ||
+                 cwmWorldState->ServerData()->clientSupport704565() ||
+                 cwmWorldState->ServerData()->clientSupport70610()) {
             // No client version received yet. Rely on highest client support enabled in UOX.INI
             alwaysSendItemHue = true;
         }
@@ -2274,7 +2274,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip pSend(GetSerial(), s);
             s->Send(&pSend);
         }
@@ -2437,7 +2437,7 @@ bool CChar::WearItem(CItem *toWear) {
         if (ValidateObject(GetItemAtLayer(tLayer))) {
 #if defined(UOX_DEBUG_MODE)
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section "
                                                    "[%s]) - another item (%s) is already equipped in that layer!",
                                                    toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial,
@@ -4299,7 +4299,7 @@ bool CChar::LoadRemnants() {
     if (GetId() > 0x999) {
         if (acct == AccountEntry::INVALID_ACCOUNT) {
             std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-            Console::shared().Warning(
+            Console::shared().warning(
                                       util::format("NPC: %s with serial 0x%X with bugged body found, deleting",
                                                    charName.c_str(), GetSerial()));
             rValue = false;
@@ -4322,7 +4322,7 @@ bool CChar::LoadRemnants() {
             ((overRight && mx < 7000) || (overBottom && my < 7000) || mx < 0 || my < 0)) {
             if (IsNpc()) {
                 std::string charName = GetNpcDictName(this, nullptr, NRS_SYSTEM);
-                Console::shared().Warning(util::format(
+                Console::shared().warning(util::format(
                                                        "NPC: %s with serial 0x%X found outside valid world locations, deleting",
                                                        charName.c_str(), GetSerial()));
                 rValue = false;
@@ -4472,7 +4472,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 target = SPTRG_INDIVIDUAL;
             }
             
-            if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
                 // Doesn't enter the speech-queue, though!
                 bool sendAll = true;
                 if (target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER) {
@@ -7668,7 +7668,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
             Fame(attacker, GetFame());
         }
         if ((!attacker->IsNpc()) && (!IsNpc())) {
-            Console::shared().Log(util::format(Dictionary->GetEntry(1617), GetName().c_str(),
+            Console::shared().log(util::format(Dictionary->GetEntry(1617), GetName().c_str(),
                                                attacker->GetName().c_str()),
                                   "PvP.log");
         }

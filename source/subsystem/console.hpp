@@ -68,55 +68,54 @@ public:
     
     auto operator<<(CEndL &myObj) -> Console &;
     
-    auto Print(const std::string &toPrint) -> void;
-    auto Log(const std::string &msg, const std::string &filename) -> void;
-    auto Log(const std::string &msg) -> void;
-    auto Error(const std::string &msg) -> void;
-    auto Warning(const std::string &msg) -> void;
+    auto print(const std::string &toPrint) -> void;
+    auto log(const std::string &msg, const std::string &filename) -> void;
+    auto log(const std::string &msg) -> void;
+    auto error(const std::string &msg) -> void;
+    auto warning(const std::string &msg) -> void;
     
-    auto CurrentMode() const -> std::uint8_t;
-    auto CurrentMode(std::uint8_t value) -> void;
+    auto currentMode() const -> std::uint8_t;
+    auto currentMode(std::uint8_t value) -> void;
     
-    auto PrintSectionBegin() -> void;
+    auto printSectionBegin() -> void;
     
-    auto TurnYellow() -> void;
-    auto TurnRed() -> void;
-    auto TurnGreen() -> void;
-    auto TurnBlue() -> void;
-    auto TurnNormal() -> void;
-    auto TurnBrightWhite() -> void;
-    auto PrintDone() -> void;
-    auto PrintFailed() -> void;
-    auto PrintPassed() -> void;
+    auto turnYellow() -> void;
+    auto turnRed() -> void;
+    auto turnGreen() -> void;
+    auto turnBlue() -> void;
+    auto turnNormal() -> void;
+    auto turnBrightWhite() -> void;
+    auto printDone() -> void;
+    auto printFailed() -> void;
+    auto printPassed() -> void;
     
-    auto ClearScreen() -> void;
-    auto Start(const std::string &temp) -> void;
-    auto PrintBasedOnVal(bool value) -> void;
-    auto MoveTo(std::int32_t x, std::int32_t y = -1) -> void; // y=-1 will move on the current line
+    auto clearScreen() -> void;
+    auto start(const std::string &temp) -> void;
+    auto printBasedOnVal(bool value) -> void;
+    auto moveTo(std::int32_t x, std::int32_t y = -1) -> void; // y=-1 will move on the current line
     
-    auto LogEcho() const -> bool;
-    auto LogEcho(bool value) -> void;
-    auto PrintSpecial(std::uint8_t color, const std::string &msg) -> void;
-    auto Poll() -> void;
+    auto logEcho() const -> bool;
+    auto logEcho(bool value) -> void;
+    auto printSpecial(std::uint8_t color, const std::string &msg) -> void;
+    auto poll() -> void;
     
-    auto RegisterKey(std::int32_t key, std::string cmdName, std::uint16_t scriptId) -> void;
-    auto RegisterFunc(const std::string &key, const std::string &cmdName, std::uint16_t scriptId) -> void;
-    auto SetKeyStatus(std::int32_t key, bool isEnabled) -> void;
-    auto SetFuncStatus(const std::string &key, bool isEnabled) -> void;
-    auto Registration() -> void;
+    auto registerKey(std::int32_t key, std::string cmdName, std::uint16_t scriptId) -> void;
+    auto registerFunc(const std::string &key, const std::string &cmdName, std::uint16_t scriptId) -> void;
+    auto setKeyStatus(std::int32_t key, bool isEnabled) -> void;
+    auto setFuncStatus(const std::string &key, bool isEnabled) -> void;
+    auto registration() -> void;
     
 private:
-    auto Reset() -> void;
-    auto WindowSize() -> std::pair<int, int>;
-    auto DoClearScreen() -> void;
-    auto SetTitle(const std::string &title) -> void;
-    auto SendCMD(const std::string &cmd) -> Console &;
+    auto reset() -> void;
+    auto windowSize() -> std::pair<int, int>;
+    auto setTitle(const std::string &title) -> void;
+    auto sendCMD(const std::string &cmd) -> Console &;
     
-    auto PrintStartOfLine() -> void;
-    auto StartOfLineCheck() -> void;
+    auto printStartOfLine() -> void;
+    auto startOfLineCheck() -> void;
     auto cl_getch() -> std::int32_t;
-    auto Process(std::int32_t c) -> void;
-    auto DisplaySettings() -> void;
+    auto process(std::int32_t c) -> void;
+    auto displaySettings() -> void;
     
     struct JSConsoleEntry {
         std::uint16_t scriptId;
@@ -128,14 +127,14 @@ private:
     };
     
     
-    std::map<std::int32_t, JSConsoleEntry> JSKeyHandler;
-    std::map<std::string, JSConsoleEntry> JSConsoleFunctions;
+    std::map<std::int32_t, JSConsoleEntry> jskeyHandler;
+    std::map<std::string, JSConsoleEntry> jsconsoleFunctions;
     std::uint16_t width, height; // for differing windows
     std::uint16_t curLeft, curTop;
     std::bitset<16> filterSettings;
-    std::uint8_t currentMode;
+    std::uint8_t curMode;
     std::uint8_t previousColour;
-    bool logEcho;
+    bool enableLogEcho;
     bool is_initialized;
     
     static const std::string ESC;

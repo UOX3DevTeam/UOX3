@@ -540,7 +540,7 @@ void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
         src->SkillUsed(false, toMake->skillReqs[skCounter].skillNumber);
     }
     if (targItem == nullptr) {
-        Console::shared().Error(
+        Console::shared().error(
             util::format("CSkills::MakeItem() bad script item # %s, made by player 0x%X",
                          addItem.c_str(), src->GetSerial()));
         return;
@@ -648,7 +648,7 @@ auto cEffects::CheckTempeffects() -> void {
         case 2: // Nightsight Potion (JS) and Spell (code)
             if (validChar) {
                 s->SetFixedLight(255);
-                DoLight(tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel());
+                DoLight(tSock, cwmWorldState->ServerData()->worldLightCurrentLevel());
             }
             break;
         case 3: // Clumsy spell (JS)
@@ -1024,7 +1024,7 @@ auto cEffects::CheckTempeffects() -> void {
             break;
         }
         default:
-            Console::shared().Error(util::format(
+            Console::shared().error(util::format(
                 " Fallout of switch statement without default (%i). checktempeffects()",
                 Effect->Number()));
             break;
@@ -1121,7 +1121,7 @@ void ReverseEffect(CTEffect *Effect) {
             s->SetUsingPotion(false);
             break;
         default:
-            Console::shared().Error(
+            Console::shared().error(
                 " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
             break;
         }
@@ -1205,7 +1205,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
     case 2: // Nightsight Potion (JS) and Spell (code)
     {
         std::int16_t worldbrightlevel;
-        worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
+        worldbrightlevel = cwmWorldState->ServerData()->worldLightBrightLevel();
         dest->SetFixedLight(static_cast<std::uint8_t>(worldbrightlevel));
         DoLight(tSock, static_cast<std::int8_t>(worldbrightlevel));
 
@@ -1580,7 +1580,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
         toAdd->ExpireTime(BuildTimeValue(static_cast<R32>(more1)));
         break;
     default:
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
             " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num));
         delete toAdd;
         return;
@@ -1645,7 +1645,7 @@ void cEffects::TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uin
         toAdd->Dispellable(false);
         break;
     default:
-        Console::shared().Error(
+        Console::shared().error(
             " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
         delete toAdd;
         return;
@@ -1665,12 +1665,12 @@ void cEffects::SaveEffects() {
     std::int32_t s_t = GetClock();
 
     Console::shared() << "Saving Effects...   ";
-    Console::shared().TurnYellow();
+    Console::shared().turnYellow();
 
     std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "effects.wsc";
     effectDestination.open(filename.c_str());
     if (!effectDestination) {
-        Console::shared().Error(util::format("Failed to open %s for writing", filename.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", filename.c_str()));
         return;
     }
 
@@ -1683,10 +1683,10 @@ void cEffects::SaveEffects() {
     effectDestination.close();
 
     Console::shared() << "\b\b\b\b";
-    Console::shared().PrintDone();
+    Console::shared().printDone();
 
     std::int32_t e_t = GetClock();
-    Console::shared().Print(
+    Console::shared().print(
         util::format("Effects saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
 }
 
@@ -1815,7 +1815,7 @@ void cEffects::LoadEffects() {
                                 }
                                 break;
                             default:
-                                Console::shared().Error(
+                                Console::shared().error(
                                     util::format("Unknown effects tag %s with contents of %s",
                                                  tag.c_str(), data.c_str()));
                                 break;

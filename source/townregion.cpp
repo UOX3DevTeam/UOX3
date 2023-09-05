@@ -103,12 +103,12 @@ CTownRegion::~CTownRegion() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CTownRegion::Load()
+//|	Function	-	CTownRegion::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads town regions from region world files
 //|	Notes		-	ss is a script section containing all the data!
 // o------------------------------------------------------------------------------------------------o
-bool CTownRegion::Load(Script *ss) {
+bool CTownRegion::load(Script *ss) {
     size_t location = 0xFFFFFFFF;
     std::string tag;
     std::string data;
@@ -478,7 +478,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         goodList[actgood].buyVal = static_cast<std::int32_t>(duint);
                     }
                     else {
-                        Console::shared().Error(
+                        Console::shared().error(
                                                 "regions dfn -> You must write BUYABLE after GOOD <num>!");
                     }
                 }
@@ -576,7 +576,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         orePrefLoaded = true;
                     }
                     else {
-                        Console::shared().Error(util::format(
+                        Console::shared().error(util::format(
                                                              "Invalid ore preference in region %i as %s", regionNum, oreName.c_str()));
                     }
                 }
@@ -608,7 +608,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                             goodList[actgood].rand2 = goodList[actgood].rand1;
                         }
                         if (goodList[actgood].rand2 < goodList[actgood].rand1) {
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     util::format(" regions dfn -> You must write RANDOMVALUE NUM2[%i] "
                                                                  "greater than NUM1[%i].",
                                                                  goodList[actgood].rand2, goodList[actgood].rand1));
@@ -616,7 +616,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         }
                     }
                     else {
-                        Console::shared().Error(
+                        Console::shared().error(
                                                 " regions dfn -> You must write RANDOMVALUE after GOOD <num>!");
                     }
                 }
@@ -633,7 +633,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         goodList[actgood].sellVal = static_cast<std::int32_t>(duint);
                     }
                     else {
-                        Console::shared().Error(
+                        Console::shared().error(
                                                 " regions dfn -> You must write SELLABLE after GOOD <num>!");
                     }
                 }
@@ -641,7 +641,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     std::string sect = "PREDEFINED_SPAWN " + data;
                     CScriptSection *predefSpawn = FileLookup->FindEntry(sect, spawn_def);
                     if (predefSpawn == nullptr) {
-                        Console::shared().Warning(util::format(
+                        Console::shared().warning(util::format(
                                                                "Undefined region spawn %s, check your regions.dfn and spawn.dfn files",
                                                                data.c_str()));
                     }
@@ -656,7 +656,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                                     spawnReg->SetY1(locations[locations.size() - 1].y1);
                                     spawnReg->SetX2(locations[locations.size() - 1].x2);
                                     spawnReg->SetY2(locations[locations.size() - 1].y2);
-                                    spawnReg->Load(predefSpawn);
+                                    spawnReg->load(predefSpawn);
                                 }
                                 break;
                             }
@@ -668,7 +668,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     if (scriptId != 0) {
                         cScript *toExecute = JSMapping->GetScript(scriptId);
                         if (toExecute == nullptr) {
-                            Console::shared().Warning(
+                            Console::shared().warning(
                                                       util::format("SCRIPT tag found with invalid script ID (%s) when "
                                                                    "loading region data!",
                                                                    util::ntos(scriptId).c_str()));
@@ -1015,7 +1015,7 @@ void CTownRegion::SendEnemyGump(CSocket *sock) {
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::SendBasicInfo(CSocket *sock) {
     CGumpDisplay BasicGump(sock);
-    BasicGump.SetTitle("Basic Townstone gump");
+    BasicGump.setTitle("Basic Townstone gump");
     BasicGump.Send(4, false, INVALIDSERIAL);
 }
 
@@ -1273,7 +1273,7 @@ size_t CTownRegion::GetPopulation() const { return townMember.size(); }
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::DisplayTownMembers(CSocket *sock) {
     CGumpDisplay townListing(sock, 300, 300);
-    townListing.SetTitle(Dictionary->GetEntry(1149, sock->Language()));
+    townListing.setTitle(Dictionary->GetEntry(1149, sock->Language()));
     CChar *sChar = sock->CurrcharObj();
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         CChar *townChar = CalcCharObjFromSer(townMember[counter].townMember);
@@ -1434,7 +1434,7 @@ bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
 bool CTownRegion::ViewBudget(CSocket *sock) {
     unicodetypes_t sLang = sock->Language();
     CGumpDisplay Budget(sock, 300, 300);
-    Budget.SetTitle(Dictionary->GetEntry(1161, sLang));                 // Budget
+    Budget.setTitle(Dictionary->GetEntry(1161, sLang));                 // Budget
     Budget.AddData(Dictionary->GetEntry(1162, sLang), guardsPurchased); // Guards Bought
     Budget.AddData(Dictionary->GetEntry(1163, sLang), numGuards);       // Guards Total
     Budget.AddData(Dictionary->GetEntry(1164, sLang), numGuards * 20);  // Guard Upkeep
@@ -1664,7 +1664,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
             va_start(argptr, dictEntry);
             msg += oldstrutil::format(txt, argptr);
             
-            if (cwmWorldState->ServerData()->UseUnicodeMessages()) {
+            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
                 CPUnicodeMessage unicodeMessage;
                 unicodeMessage.Message(msg);
                 unicodeMessage.Font(FNT_NORMAL);
@@ -1711,7 +1711,7 @@ void CTownRegion::SendAlliedTowns(CSocket *sock) {
     
     auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(),
                              alliedTowns.size()); // Allied Towns (%i)
-    Ally.SetTitle(temp);
+    Ally.setTitle(temp);
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
         Ally.AddData(cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " ");
     }
@@ -1757,7 +1757,7 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
         }
     });
     
-    Enemy.SetTitle(util::format("Enemy Towns (%u)", enemyCount));
+    Enemy.setTitle(util::format("Enemy Towns (%u)", enemyCount));
     Enemy.Send(4, false, INVALIDSERIAL);
 }
 

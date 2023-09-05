@@ -69,7 +69,7 @@ bool CountNPCFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ex
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Process()
+//|	Function	-	cHTMLTemplate::process()
 //|	Date		-	1/18/2003 4:43:17 AM
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-
@@ -79,7 +79,7 @@ bool CountNPCFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ex
 //SEEN!! Written to truely
 //|									handle multiple Templates.
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::Process() {
+void cHTMLTemplate::process() {
     // Need to check to see if the server is actually running, of so we do not want to process the
     // offline template.
     if (cwmWorldState->GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE)
@@ -592,19 +592,19 @@ void cHTMLTemplate::Process() {
         Output.close();
     }
     else {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format(" Couldn't open the template file %s for writing", outputFile.c_str()));
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Poll()
+//|	Function	-	cHTMLTemplate::poll()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the page if needed
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::Poll() {
+void cHTMLTemplate::poll() {
     if (scheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun()) {
-        Process();
+        process();
         scheduledUpdate = BuildTimeValue(static_cast<R32>(updateTimer));
     }
 }
@@ -624,7 +624,7 @@ void cHTMLTemplate::LoadTemplate() {
     std::ifstream InputFile1(inputFile.c_str());
     
     if (!InputFile1.is_open()) {
-        Console::shared().Error(
+        Console::shared().error(
                                 util::format("Couldn't open HTML Template File %s", inputFile.c_str()));
         return;
     }
@@ -655,11 +655,11 @@ void cHTMLTemplate::UnloadTemplate() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplate::Load( CScriptSection *found )
+//|	Function	-	cHTMLTemplate::load( CScriptSection *found )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Template from a CScriptSection
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplate::Load(CScriptSection *found) {
+void cHTMLTemplate::load(CScriptSection *found) {
     for (const auto &sec : found->collection()) {
         auto tag = sec->tag;
         auto data = sec->data;
@@ -708,18 +708,18 @@ void cHTMLTemplate::Load(CScriptSection *found) {
 cHTMLTemplates::~cHTMLTemplates() { Unload(); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Load()
+//|	Function	-	cHTMLTemplates::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Templates from the scripts
 // o------------------------------------------------------------------------------------------------o
-auto cHTMLTemplates::Load() -> void {
+auto cHTMLTemplates::load() -> void {
     for (auto &toCheck : FileLookup->ScriptListings[html_def]) {
         if (toCheck) {
             size_t NumEntries = toCheck->NumEntries();
             if (NumEntries != 0) {
                 for (const auto &[entryName, found] : toCheck->collection()) {
                     cHTMLTemplate *Template = new cHTMLTemplate();
-                    Template->Load(found);
+                    Template->load(found.get());
                     Templates.push_back(Template);
                 }
             }
@@ -744,17 +744,17 @@ void cHTMLTemplates::Unload() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cHTMLTemplates::Poll()
+//|	Function	-	cHTMLTemplates::poll()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Polls the templates for updates
 // o------------------------------------------------------------------------------------------------o
-void cHTMLTemplates::Poll(ETemplateType nTemplateId) {
+void cHTMLTemplates::poll(ETemplateType nTemplateId) {
     std::vector<cHTMLTemplate *>::const_iterator tIter;
     for (tIter = Templates.begin(); tIter != Templates.end(); ++tIter) {
         cHTMLTemplate *toPoll = (*tIter);
         if (toPoll != nullptr) {
             if (nTemplateId == -1 || toPoll->GetTemplateType() == nTemplateId) {
-                toPoll->Poll();
+                toPoll->poll();
             }
         }
     }

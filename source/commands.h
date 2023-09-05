@@ -3,6 +3,8 @@
 
 #include <bitset>
 #include <cstdint>
+#include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,10 +14,11 @@
 class CChar;
 class cScript;
 
-const std::uint32_t BIT_STRIPHAIR = 1;
-const std::uint32_t BIT_STRIPITEMS = 2;
 
-struct CommandLevel_st {
+struct CommandLevel {
+    static constexpr auto BIT_STRIPHAIR = std::uint32_t(1);
+    static constexpr auto BIT_STRIPITEMS = std::uint32_t(2);
+
     std::string name;        // name of level
     std::string title;       // Title of level, displayed in front of name
     std::uint8_t commandLevel;       // upper limit of level
@@ -25,53 +28,56 @@ struct CommandLevel_st {
     std::uint16_t targBody;           // target body value
     std::uint16_t bodyColour;         // target body colour
     std::bitset<8> stripOff; // strips off hair, beard and clothes
-    CommandLevel_st()
-    : name(""), title(""), commandLevel(0), defaultPriv(0), nickColour(0), allSkillVals(0),
-    targBody(0), bodyColour(0) {
+    
+    CommandLevel() : name(""), title(""), commandLevel(0), defaultPriv(0), nickColour(0), allSkillVals(0), targBody(0), bodyColour(0) {
         stripOff.reset();
     }
 };
 
 class CCommands {
+public:
+    static std::map<std::string, CommandMapEntry> commandMap ;
+    static std::map<std::string, TargetMapEntry> targetMap;
+    static std::map<std::string, JSCommandEntry> jscommandMap ;
 private:
-    std::vector<CommandLevel_st *> clearance;
-    COMMANDMAP_ITERATOR cmdPointer;
-    TARGETMAP_ITERATOR targPointer;
-    std::string commandString;
+    std::vector<std::unique_ptr<CommandLevel>> clearance;
+    std::map<std::string, CommandMapEntry>::iterator cmdPointer;
+    std::map<std::string, TargetMapEntry>::iterator targPointer;
+    std::string cmdString;
     
-    void InitClearance();
-    void CommandReset();
+    void initClearance();
+    void resetCommand();
     
 public:
-    std::uint8_t NumArguments();
-    std::int32_t Argument(std::uint8_t argNum);
-    std::string CommandString(std::uint8_t section, std::uint8_t end = 0);
-    void CommandString(std::string newValue);
+    std::uint8_t numArguments();
+    std::int32_t argument(std::uint8_t argNum);
+    std::string commandString(std::uint8_t section, std::uint8_t end = 0);
+    void commandString(std::string newValue);
     
-    CommandLevel_st *GetClearance(std::string clearName); // return by command name
-    CommandLevel_st *GetClearance(std::uint8_t commandLevel);     // return by command level
-    std::uint16_t GetColourByLevel(std::uint8_t commandLevel);
-    void Command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
-    void Load();
-    void Log(const std::string &command, CChar *player1, CChar *player2,
+    CommandLevel *getClearance(std::string clearName); // return by command name
+    CommandLevel *getClearance(std::uint8_t commandLevel);     // return by command level
+    std::uint16_t getColourByLevel(std::uint8_t commandLevel);
+    void command(CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false);
+    void load();
+    void log(const std::string &command, CChar *player1, CChar *player2,
              const std::string &extraInfo);
     
-    bool CommandExists(const std::string &cmdName);
-    const std::string FirstCommand();
-    const std::string NextCommand();
-    bool FinishedCommandList();
+    bool commandExists(const std::string &cmdName);
+    const std::string firstCommand();
+    const std::string nextCommand();
+    bool finishedCommandList();
     
-    CommandMapEntry_st *CommandDetails(const std::string &cmdName);
+    CommandMapEntry *commandDetails(const std::string &cmdName);
     
     CCommands() = default;
-    auto Startup() -> void;
-    ~CCommands();
+    auto startup() -> void;
+    ~CCommands() = default;
     
-    void Register(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled);
-    void UnRegister(const std::string &cmdName, cScript *toRegister);
-    void SetCommandStatus(const std::string &cmdName, bool isEnabled);
+    void registerCommand(const std::string &cmdName, std::uint16_t scriptId, std::uint8_t cmdLevel, bool isEnabled);
+    void unRegisterCommand(const std::string &cmdName, cScript *toRegister);
+    void setCommandStatus(const std::string &cmdName, bool isEnabled);
 };
 
-extern CCommands *Commands;
+extern CCommands serverCommands;
 
 #endif

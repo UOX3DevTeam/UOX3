@@ -402,11 +402,11 @@ void CSpawnRegion::LoadItemList(const std::string &itemList) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSpawnRegion::Load()
+//|	Function	-	CSpawnRegion::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the spawnregion from spawn.dfn script entry
 // o------------------------------------------------------------------------------------------------o
-void CSpawnRegion::Load(CScriptSection *toScan) {
+void CSpawnRegion::load(CScriptSection *toScan) {
     std::string sect;
     std::string data;
     std::string UTag;
@@ -530,7 +530,7 @@ void CSpawnRegion::Load(CScriptSection *toScan) {
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned) {
     // Only perform the region spawn if the spawn region in question is active
-    if (!cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
+    if (!cwmWorldState->ServerData()->getSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
         return;
     
     if (sNpcs.empty()) {
@@ -657,7 +657,7 @@ foundNpcId:
         }
     }
     else {
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum()));
     }
     return nullptr;
@@ -969,7 +969,7 @@ void CSpawnRegion::CheckSpawned() {
             }
         }
         else {
-            Console::shared().Warning(
+            Console::shared().warning(
                                       "Invalid Object found in CSpawnRegion character list, AutoCorrecting.");
             spawnedChars.Remove(cCheck);
         }
@@ -984,7 +984,7 @@ void CSpawnRegion::CheckSpawned() {
             }
         }
         else {
-            Console::shared().Warning(
+            Console::shared().warning(
                                       "Invalid Object found in CSpawnRegion item list, AutoCorrecting.");
             spawnedItems.Remove(iCheck);
         }

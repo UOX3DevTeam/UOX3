@@ -351,12 +351,12 @@ bool CPIPlayCharacter::Handle() {
                     if (kChar->IsGM()) {
                         CPKAccept AckGM(0x02);
                         tSock->Send(&AckGM);
-                        Console::shared().Print("Accepted a Krrios client with GM Privs\n");
+                        Console::shared().print("Accepted a Krrios client with GM Privs\n");
                     }
                     else {
                         CPKAccept AckNoGM(0x01);
                         tSock->Send(&AckNoGM);
-                        Console::shared().Print("Accepted a Krrios client without GM Privs\n");
+                        Console::shared().print("Accepted a Krrios client without GM Privs\n");
                     }
                 }
                 if (!disconnect) {
@@ -725,7 +725,7 @@ bool CPICreateCharacter::Handle() {
 
             SetNewCharGenderAndRace(mChar);
 
-            mChar->SetPriv(cwmWorldState->ServerData()->ServerStartPrivs());
+            mChar->SetPriv(cwmWorldState->ServerData()->serverStartPrivs());
 
             AccountEntry &actbTemp2 = mChar->GetAccount();
             if (actbTemp2.accountNumber != AccountEntry::INVALID_ACCOUNT &&
@@ -740,7 +740,7 @@ bool CPICreateCharacter::Handle() {
 
             // Fetch player's chosen start location
             size_t serverCount = 0;
-            __STARTLOCATIONDATA__ *toGo = nullptr;
+            StartLocationData *toGo = nullptr;
             auto useYoungLocations = false;
             if (cwmWorldState->ServerData()->YoungPlayerSystem() &&
                 tSock->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -775,12 +775,12 @@ bool CPICreateCharacter::Handle() {
                 if (serverCount == 0) {
                     // No start locations found, use a default hardcoded one
                     if (useYoungLocations) {
-                        Console::shared().Error(
+                        Console::shared().error(
                             "No young starting locations found in ini file; sending new character "
                             "to Sweet Dreams Inn (1495, 1629, 10).");
                     }
                     else {
-                        Console::shared().Error(
+                        Console::shared().error(
                             "No starting locations found in ini file; sending new character to "
                             "Sweet Dreams Inn (1495, 1629, 10).");
                     }
@@ -826,12 +826,12 @@ bool CPICreateCharacter::Handle() {
                 if (mChar->IsGM()) {
                     CPKAccept AckGM(0x02);
                     tSock->Send(&AckGM);
-                    Console::shared().Print("Accepted a Krrios client with GM Privs\n");
+                    Console::shared().print("Accepted a Krrios client with GM Privs\n");
                 }
                 else {
                     CPKAccept AckNoGM(0x01);
                     tSock->Send(&AckNoGM);
-                    Console::shared().Print("Accepted a Krrios client without GM Privs\n");
+                    Console::shared().print("Accepted a Krrios client without GM Privs\n");
                 }
             }
 
@@ -956,7 +956,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
             mChar->SetIntelligence(extStats ? 20 : 10);
             break;
         default:
-            Console::shared().Error(util::format("Character created with invalid profession - no "
+            Console::shared().error(util::format("Character created with invalid profession - no "
                                                  "skills or stats assigned! (0x%X, %s)",
                                                  mChar->GetSerial(), mChar->GetName().c_str()));
             break;
@@ -975,7 +975,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
         if (totalstats != 80 && !cwmWorldState->ServerData()->ExtendedStartingStats()) {
             if (totalstats > 80) {
                 // If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
-                Console::shared().Error(
+                Console::shared().error(
                     util::format("Character created with invalid stats (over 80 total): 0x%X, (%s)",
                                  mChar->GetSerial(), mChar->GetName().c_str()));
                 percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
@@ -986,7 +986,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
                 mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
             }
             else {
-                Console::shared().Error(util::format(
+                Console::shared().error(util::format(
                     "Character created with invalid stats (under 80 total): 0x%X, (%s)",
                     mChar->GetSerial(), mChar->GetName().c_str()));
             }
@@ -994,7 +994,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
         else if (totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats()) {
             if (totalstats > 90) {
                 // If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
-                Console::shared().Error(
+                Console::shared().error(
                     util::format("Character created with invalid stats (over 90 total): 0x%X, (%s)",
                                  mChar->GetSerial(), mChar->GetName().c_str()));
                 percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
@@ -1005,7 +1005,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
                 mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
             }
             else {
-                Console::shared().Error(util::format(
+                Console::shared().error(util::format(
                     "Character created with invalid stats (under 90 total): 0x%X, (%s)",
                     mChar->GetSerial(), mChar->GetName().c_str()));
             }
@@ -1028,7 +1028,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
             }
             totalskills += skillValue[2];
             if (totalskills < 100) {
-                Console::shared().Error(util::format(
+                Console::shared().error(util::format(
                     "Character created with invalid skills (under 100 total): 0x%X, (%s)",
                     mChar->GetSerial(), mChar->GetName().c_str()));
             }
@@ -1047,7 +1047,7 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
             }
             totalskills += skillValue[3];
             if (totalskills < 120) {
-                Console::shared().Error(util::format(
+                Console::shared().error(util::format(
                     "Character created with invalid skills (under 120 total): 0x%X, (%s)",
                     mChar->GetSerial(), mChar->GetName().c_str()));
             }
@@ -1093,10 +1093,10 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
     std::uint16_t pGenderId = 0x0190;
     bool gargCreation = false;
     bool elfCreation = false;
-    if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_SA)) {
+    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_SA)) {
         gargCreation = true;
     }
-    if (cwmWorldState->ServerData()->GetClientFeature(CF_BIT_ML)) {
+    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_ML)) {
         elfCreation = true;
     }
 
@@ -1224,7 +1224,7 @@ auto ShowMessageOfTheDay(CSocket *s) -> void {
     }
 }
 
-void SysBroadcast(const std::string &txt);
+void sysBroadcast(const std::string &txt);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	StartChar()
 // o------------------------------------------------------------------------------------------------o
@@ -1320,7 +1320,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 
             if (cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus()) {
                 // message upon entering a server
-                SysBroadcast(
+                sysBroadcast(
                     oldstrutil::format(1024, Dictionary->GetEntry(1208),
                                        mChar->GetName().c_str())); // message upon entering a server
             }
@@ -1375,7 +1375,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
 
             // Negotiate features with assistant tools like Razor and AssistUO if
             // ASSISTANTNEGOTIATION is enabled in uox.ini
-            if (cwmWorldState->ServerData()->GetAssistantNegotiation()) {
+            if (cwmWorldState->ServerData()->getAssistantNegotiation()) {
                 CPNegotiateAssistantFeatures ii(mSock);
                 mSock->Send(&ii);
                 mSock->SysMessage(9012); // Attempting to negotiate features with assistant tool...

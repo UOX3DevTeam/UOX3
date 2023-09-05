@@ -164,12 +164,12 @@ bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void 
     return retVal;
 }
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	ClearTrades()
+//|	Function	-	clearTrades()
 //|	Date		-	February 2, 2006
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all items to clear any active trades
 // o------------------------------------------------------------------------------------------------o
-void ClearTrades() {
+void clearTrades() {
     std::uint32_t b = 0;
     ObjectFactory::shared().IterateOver(CBaseObject::OT_ITEM, b, nullptr, &ClearTradesFunctor);
 }
@@ -327,7 +327,7 @@ bool CPITradeMessage::Handle() {
                 CancelTrade(tradeWindowOne);
                 break;
             default:
-                Console::shared().Error(
+                Console::shared().error(
                                         " Fallout of switch statement without default. trade.cpp, trademsg()");
                 break;
         }

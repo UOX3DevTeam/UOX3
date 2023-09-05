@@ -1351,11 +1351,11 @@ bool CSkills::LoadMiningData() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSkills::Load()
+//|	Function	-	CSkills::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load mining stuff from scripts
 // o------------------------------------------------------------------------------------------------o
-void CSkills::Load() {
+void CSkills::load() {
     Console::shared() << "Loading custom ore data        ";
     
     if (!LoadMiningData()) {
@@ -1363,11 +1363,11 @@ void CSkills::Load() {
         return;
     }
     
-    Console::shared().PrintDone();
+    Console::shared().printDone();
     
     Console::shared() << "Loading creation menus         ";
     LoadCreateMenus();
-    Console::shared().PrintDone();
+    Console::shared().printDone();
     
     CJSMappingSection *skillSection = JSMapping->GetSection(CJSMappingSection::SCPT_SKILLUSE);
     for (cScript *ourScript = skillSection->First(); !skillSection->Finished();
@@ -1377,7 +1377,7 @@ void CSkills::Load() {
         }
     }
     
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
 }
 
 // o------------------------------------------------------------------------------------------------o

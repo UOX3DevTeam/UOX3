@@ -74,7 +74,7 @@ auto CDictionary::GetEntry(int message_number) const -> const std::string & {
     try {
         return msgdata.at(message_number);
     } catch (...) {
-        Console::shared().Warning("Dictionary reference "s + std::to_string(message_number) +
+        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) +
                                   " not found in "s + pathToDictionary);
         return invalid_dictionary_string;
     }
@@ -84,7 +84,7 @@ auto CDictionary::GetEntry(int message_number) -> std::string & {
     try {
         return msgdata.at(message_number);
     } catch (...) {
-        Console::shared().Warning("Dictionary reference "s + std::to_string(message_number) +
+        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) +
                                   " not found in "s + pathToDictionary);
         return invalid_dictionary_string;
     }
@@ -118,14 +118,14 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
     msgdata.clear();
     
     auto status = ParseFile(pathToDictionary);
-    Console::shared().Print(" ");
-    Console::shared().MoveTo(15);
+    Console::shared().print(" ");
+    Console::shared().moveTo(15);
     Console::shared() << "Dictionary." << dictLanguage;
     if (status) {
-        Console::shared().PrintSpecial(CGREEN, "done");
+        Console::shared().printSpecial(CGREEN, "done");
     }
     else {
-        Console::shared().PrintSpecial(CRED, "failed");
+        Console::shared().printSpecial(CRED, "failed");
     }
     
     return static_cast<std::int32_t>(msgdata.size());
@@ -232,7 +232,7 @@ auto CDictionaryContainer::LoadDictionaries(const std::string &filepath) -> std:
         dictList[i].LoadDictionary(buildName, DistinctLanguageNames[i]);
     }
     if (!dictList[LanguageCodesLang[ZERO]].GetValid()) {
-        Console::shared().Error("Dictionary.ZRO is bad or nonexistant");
+        Console::shared().error("Dictionary.ZRO is bad or nonexistant");
         Shutdown(FATAL_UOX3_BAD_DEF_DICT);
         rValue = -1;
     }

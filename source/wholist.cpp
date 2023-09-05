@@ -130,7 +130,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
         
         buttonPressed -= 7;
         toSendTo->AddId(buttonPressed);
-        Command(toSendTo, type, buttonPressed);
+        command(toSendTo, type, buttonPressed);
         return;
     }
     
@@ -265,7 +265,7 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
             }
             toSendTo->SetDWord(7, targetChar->GetSerial());
             // Trigger scripted command
-            Commands->Command(toSendTo, targetChar, "cstats", true);
+            serverCommands.command(toSendTo, targetChar, "cstats", true);
             break;
         case 207: // remote tweak
             if (targetChar->GetCommandLevel() > sourceChar->GetCommandLevel()) {
@@ -274,21 +274,21 @@ void CWhoList::ButtonSelect(CSocket *toSendTo, std::uint16_t buttonPressed, std:
             }
             toSendTo->SetDWord(7, targetChar->GetSerial());
             // Trigger scripted command
-            Commands->Command(toSendTo, targetChar, "tweak", true);
+            serverCommands.command(toSendTo, targetChar, "tweak", true);
             break;
         default:
-            Console::shared().Error(
+            Console::shared().error(
                                     " Fallout of switch statement without default. wholist.cpp, ButtonSelect()");
             break;
     }
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CWhoList::Command()
+//|	Function	-	CWhoList::command()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Builds the WhoList gump and sends it to the player
 // o------------------------------------------------------------------------------------------------o
-void CWhoList::Command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed) {
+void CWhoList::command(CSocket *toSendTo, std::uint8_t type, std::uint16_t buttonPressed) {
     serial_t serial = whoMenuData[buttonPressed];
     CChar *targetChar = CalcCharObjFromSer(serial); // find selected char ...
     

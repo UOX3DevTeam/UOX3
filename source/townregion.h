@@ -108,7 +108,7 @@ public:
     bool PurchaseGuard(CSocket *sock, std::uint8_t number);
     bool ViewBudget(CSocket *sock);
     bool PeriodicCheck();
-    bool Load(Script *ss);              // entry is the region #, fp is the file to load from
+    bool load(Script *ss);              // entry is the region #, fp is the file to load from
     bool Save(std::ostream &outStream); // entry is the region #, fp is the file to save in
     bool InitFromScript(CScriptSection *toScan);
     bool AddAsTownMember(CChar &toAdd);  // toAdd is the character to add

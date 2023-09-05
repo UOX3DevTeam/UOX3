@@ -267,7 +267,7 @@ void CheckBanTimer(AccountEntry &actbTemp) {
 //|						BYTE[30] password
 //|						BYTE unknown1 (not usually 0x00 - so not nullptr)
 // o------------------------------------------------------------------------------------------------o
-void CPIFirstLogin::Log(std::ostream &outStream, bool fullHeader) {
+void CPIFirstLogin::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << TimeStamp()
                   << std::endl;
@@ -276,7 +276,7 @@ void CPIFirstLogin::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Password       : " << Pass() << std::endl;
     outStream << "Unknown        : " << static_cast<std::int16_t>(Unknown()) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 bool CPIFirstLogin::Handle() {
@@ -320,9 +320,9 @@ bool CPIFirstLogin::Handle() {
             // Client-versions below 6.0.5.0 can only be verified after they're ingame, so can only
             // be blocked in FirstLogin if _all_ client versions below 6.0.5.0 are blocked
             if (tSock->ClientType() == CV_T2A) {
-                if (!cwmWorldState->ServerData()->ClientSupport4000() &&
-                    !cwmWorldState->ServerData()->ClientSupport5000() &&
-                    !cwmWorldState->ServerData()->ClientSupport6000()) {
+                if (!cwmWorldState->ServerData()->clientSupport4000() &&
+                    !cwmWorldState->ServerData()->clientSupport5000() &&
+                    !cwmWorldState->ServerData()->clientSupport6000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..."
@@ -330,7 +330,7 @@ bool CPIFirstLogin::Handle() {
                 }
             }
             else if (tSock->ClientType() <= CV_KR3D && tSock->ClientType() != CV_DEFAULT) {
-                if (!cwmWorldState->ServerData()->ClientSupport6050()) {
+                if (!cwmWorldState->ServerData()->clientSupport6050()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..."
@@ -338,7 +338,7 @@ bool CPIFirstLogin::Handle() {
                 }
             }
             else if (tSock->ClientType() <= CV_SA3D && tSock->ClientType() != CV_DEFAULT) {
-                if (!cwmWorldState->ServerData()->ClientSupport7000()) {
+                if (!cwmWorldState->ServerData()->clientSupport7000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared()
                         << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..."
@@ -347,7 +347,7 @@ bool CPIFirstLogin::Handle() {
             }
             else if (tSock->ClientType() <= CV_HS3D && tSock->ClientType() != CV_DEFAULT) {
                 if (tSock->ClientVerShort() < CVS_70160) {
-                    if (!cwmWorldState->ServerData()->ClientSupport7090()) {
+                    if (!cwmWorldState->ServerData()->clientSupport7090()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.9.0 - "
                                              "7.0.15.1). See UOX.INI..."
@@ -355,7 +355,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70240) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70160()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70160()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.16.0 - "
                                              "7.0.23.1). See UOX.INI..."
@@ -363,7 +363,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70300) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70240()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70240()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..."
@@ -371,7 +371,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70331) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70300()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70300()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..."
@@ -379,7 +379,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_704565) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70331()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70331()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..."
@@ -387,7 +387,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70610) {
-                    if (!cwmWorldState->ServerData()->ClientSupport704565()) {
+                    if (!cwmWorldState->ServerData()->clientSupport704565()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..."
@@ -395,7 +395,7 @@ bool CPIFirstLogin::Handle() {
                     }
                 }
                 else if (tSock->ClientVerShort() >= CVS_70610) {
-                    if (!cwmWorldState->ServerData()->ClientSupport70610()) {
+                    if (!cwmWorldState->ServerData()->clientSupport70610()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared()
                             << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..."
@@ -425,7 +425,7 @@ bool CPIFirstLogin::Handle() {
         auto temp = util::format("Client [%i.%i.%i.%i] connected using Account '%s'.",
                                  tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(),
                                  tSock->ClientIP1(), username.c_str());
-        Console::shared().Log(temp, "server.log");
+        Console::shared().log(temp, "server.log");
         messageLoop << temp;
 
         actbTemp->flag.set(AccountEntry::attributeflag_t::ONLINE, true);
@@ -499,14 +499,14 @@ std::uint8_t CPIFirstLogin::Unknown() { return unknown; }
 //|						BYTE[2] server # chosen
 //|						0x80 Packet
 // o------------------------------------------------------------------------------------------------o
-void CPIServerSelect::Log(std::ostream &outStream, bool fullHeader) {
+void CPIServerSelect::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIServerSelect 0xA0 --> Length: 3" << TimeStamp()
                   << std::endl;
     }
     outStream << "Server         : " << ServerNum() << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 void CPIServerSelect::InternalReset() {}
@@ -554,7 +554,7 @@ bool CPIServerSelect::Handle() {
 //|						BYTE[30] sid
 //|						BYTE[30] password
 // o------------------------------------------------------------------------------------------------o
-void CPISecondLogin::Log(std::ostream &outStream, bool fullHeader) {
+void CPISecondLogin::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISecondLogin 0x91 --> Length: 65" << TimeStamp()
                   << std::endl;
@@ -564,7 +564,7 @@ void CPISecondLogin::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "SID            : " << Name() << std::endl;
     outStream << "Password       : " << Pass() << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPISecondLogin::InternalReset() {
     sid.reserve(30);
@@ -692,14 +692,14 @@ bool CPISecondLogin::Handle() {
 //|						Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are
 //sending this packet.
 // o------------------------------------------------------------------------------------------------o
-void CPINewClientVersion::Log(std::ostream &outStream, bool fullHeader) {
+void CPINewClientVersion::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPINewClientVersion 0xEF --> Length: " << std::dec
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "Version        : " << tSock->ClientVersion() << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPINewClientVersion::InternalReset() {
     //	len = 0;
@@ -836,14 +836,14 @@ bool CPINewClientVersion::Handle() { return true; }
 //|						Clients sends a client version of this packet ONCE at
 //login (without server request.)
 // o------------------------------------------------------------------------------------------------o
-void CPIClientVersion::Log(std::ostream &outStream, bool fullHeader) {
+void CPIClientVersion::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIClientVersion 0xBD --> Length: " << std::dec
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "Version        : " << Offset() << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPIClientVersion::InternalReset() { len = 0; }
 CPIClientVersion::CPIClientVersion() { InternalReset(); }
@@ -971,7 +971,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             {
                 tSock->ClientVerShort(CVS_4011c);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport4000()) {
+            if (!cwmWorldState->ServerData()->clientSupport4000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,
@@ -993,7 +993,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             else if (CliVerSub > 8 || (CliVerSub == 8 && CliVerLetter >= 2)) {
                 tSock->ClientVerShort(CVS_5082);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport5000()) {
+            if (!cwmWorldState->ServerData()->clientSupport5000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,
@@ -1017,7 +1017,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             else if (CliVerSub < 5) {
                 tSock->ClientVerShort(CVS_6017);
             }
-            if (!cwmWorldState->ServerData()->ClientSupport6000()) {
+            if (!cwmWorldState->ServerData()->clientSupport6000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,
@@ -1122,13 +1122,13 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
 //|						"Greying" has no packet, purely client internal.
 //|						Minimal value:5, maximal: 18
 // o------------------------------------------------------------------------------------------------o
-void CPIUpdateRangeChange::Log(std::ostream &outStream, bool fullHeader) {
+void CPIUpdateRangeChange::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: 2 " << std::endl;
     }
     outStream << "Range			 : " << static_cast<std::int32_t>(tSock->GetByte(1)) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPIUpdateRangeChange::InternalReset() {}
 CPIUpdateRangeChange::CPIUpdateRangeChange() { InternalReset(); }
@@ -1182,12 +1182,12 @@ bool CPIUpdateRangeChange::Handle() {
 //the server sends FLAG & 0x02 in the 0xA9 Packet during logon. |
 //Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 // o------------------------------------------------------------------------------------------------o
-void CPILogoutStatus::Log(std::ostream &outStream, bool fullHeader) {
+void CPILogoutStatus::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPILogoutStatus 0xD1 --> Length: 2 " << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPILogoutStatus::InternalReset() {}
 CPILogoutStatus::CPILogoutStatus() { InternalReset(); }
@@ -1350,7 +1350,7 @@ void CPIStatusRequest::Receive() {
     playerId = tSock->GetDWord(6);
 }
 
-void CPIStatusRequest::Log(std::ostream &outStream, bool fullHeader) {
+void CPIStatusRequest::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << TimeStamp()
                   << std::endl;
@@ -1359,7 +1359,7 @@ void CPIStatusRequest::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Request Type   : " << static_cast<std::int32_t>(getType) << std::endl;
     outStream << "PlayerID       : " << std::hex << "0x" << playerId << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 bool CPIStatusRequest::Handle() {
@@ -1511,13 +1511,13 @@ void CPIDblClick::Receive() {
     objectId = tSock->GetDWord(1);
 }
 
-void CPIDblClick::Log(std::ostream &outStream, bool fullHeader) {
+void CPIDblClick::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << TimeStamp() << std::endl;
     }
     outStream << "ClickedID      : " << std::hex << "0x" << objectId << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1544,14 +1544,14 @@ void CPISingleClick::Receive() {
     objectId = tSock->GetDWord(1);
 }
 
-void CPISingleClick::Log(std::ostream &outStream, bool fullHeader) {
+void CPISingleClick::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << TimeStamp()
                   << std::endl;
     }
     outStream << "ClickedID      : " << std::hex << "0x" << objectId << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1591,7 +1591,7 @@ bool CPIMoveRequest::Handle() {
     return true;
 }
 
-void CPIMoveRequest::Log(std::ostream &outStream, bool fullHeader) {
+void CPIMoveRequest::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIMoveRequest 0x02 --> Length: 7" << TimeStamp()
                   << std::endl;
@@ -1600,7 +1600,7 @@ void CPIMoveRequest::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Sequence Number: " << tSock->GetByte(2) << std::endl;
     outStream << "FW Prevent Key : " << tSock->GetDWord(3) << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1710,7 +1710,7 @@ bool CPIAttack::Handle() {
 CPITargetCursor::CPITargetCursor() {}
 CPITargetCursor::CPITargetCursor(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPITargetCursor::Receive() { tSock->Receive(19, false); }
-void CPITargetCursor::Log(std::ostream &outStream, bool fullHeader) {
+void CPITargetCursor::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPITargetCursor 0x6C --> Length: 19" << TimeStamp()
                   << std::endl;
@@ -1727,7 +1727,7 @@ void CPITargetCursor::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Model #      : "
               << "0x" << std::hex << tSock->GetWord(17) << std::endl;
     outStream << "  Raw dump     :" << std::dec << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1944,7 +1944,7 @@ void CPIGumpMenuSelect::BuildTextLocations() {
 //|						0x0D - Guild Chat
 //|						0x0E - Alliance Chat
 //|						0x0F - Command Prompts
-//|						0xC0 - Encoded Commands
+//|						0xC0 - Encoded serverCommands
 //|
 //|					NOTE: bool CPITalkRequest::Handle() is located in speech.cpp
 // o------------------------------------------------------------------------------------------------o
@@ -2656,7 +2656,7 @@ void CPICreateCharacter::Receive() {
 // o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create3DCharacter() {
     if (ValidateObject(tSock->CurrcharObj())) {
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
             "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) "
             "attached. Disconnecting socket as safeguard against corruption!",
             tSock->CurrcharObj()->GetSerial()));
@@ -2757,7 +2757,7 @@ void CPICreateCharacter::Create3DCharacter() {
 // o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create2DCharacter() {
     if (ValidateObject(tSock->CurrcharObj())) {
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
             "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character "
             "(%i) attached. Disconnecting socket as safeguard against corruption!",
             tSock->CurrcharObj()->GetSerial()));
@@ -2817,7 +2817,7 @@ void CPICreateCharacter::Create2DCharacter() {
            30); // Does this really have anything to do with passwords?
 }
 
-void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
+void CPICreateCharacter::log(std::ostream &outStream, bool fullHeader) {
     if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
         if (fullHeader) {
             outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp()
@@ -2864,7 +2864,7 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
         outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec
                   << std::endl;
         outStream << "  Raw dump     :" << std::endl;
-        CPInputBuffer::Log(outStream, false);
+        CPInputBuffer::log(outStream, false);
     }
     else {
         if (fullHeader) {
@@ -2904,7 +2904,7 @@ void CPICreateCharacter::Log(std::ostream &outStream, bool fullHeader) {
         outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
         outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
         outStream << "  Raw dump     :" << std::endl;
-        CPInputBuffer::Log(outStream, false);
+        CPInputBuffer::log(outStream, false);
     }
 }
 
@@ -2955,7 +2955,7 @@ void CPIPlayCharacter::Receive() {
     memcpy(unknown, &tSock->Buffer()[35], 33);
 }
 
-void CPIPlayCharacter::Log(std::ostream &outStream, bool fullHeader) {
+void CPIPlayCharacter::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp()
                   << std::endl;
@@ -2965,7 +2965,7 @@ void CPIPlayCharacter::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Slot chosen    : " << static_cast<std::int32_t>(slotChosen) << std::endl;
     outStream << "Client IP      : " << ipAddress << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3017,7 +3017,7 @@ std::uint8_t CPIGumpInput::Unk(std::int32_t offset) const {
 }
 const std::string CPIGumpInput::Reply() const { return reply; }
 
-void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
+void CPIGumpInput::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord(1)
                   << TimeStamp() << std::endl;
@@ -3029,7 +3029,7 @@ void CPIGumpInput::Log(std::ostream &outStream, bool fullHeader) {
               << static_cast<std::int32_t>(unk[1]) << " " << static_cast<std::int32_t>(unk[2]) << std::endl;
     outStream << "Reply          : " << reply << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3106,7 +3106,7 @@ void CPIDyeWindow::Receive() {
     newValue = tSock->GetWord(7);
 }
 
-void CPIDyeWindow::Log(std::ostream &outStream, bool fullHeader) {
+void CPIDyeWindow::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIDyeWindow 0x95 --> Length: 9" << TimeStamp() << std::endl;
     }
@@ -3114,7 +3114,7 @@ void CPIDyeWindow::Log(std::ostream &outStream, bool fullHeader) {
     outStream << "Model          : " << modelId << std::endl;
     outStream << "Colour         : " << newValue << std::endl;
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 bool CPIDyeWindow::Handle() {
@@ -3267,20 +3267,20 @@ void CPIToolTipRequestAoS::Receive() {
     for (std::uint16_t i = 0; i < objCount; i++) {
         getSer = tSock->GetDWord(offset + (i * 4));
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }
     }
 }
 bool CPIToolTipRequestAoS::Handle() { return true; }
-void CPIToolTipRequestAoS::Log(std::ostream &outStream, bool fullHeader) {
+void CPIToolTipRequestAoS::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : 0xD6 Tooltip Request --> Length: " << tSock->GetWord(1)
                   << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, true);
+    CPInputBuffer::log(outStream, true);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3370,12 +3370,12 @@ bool CPIMetrics::Handle() {
     return true;
 }
 
-void CPIMetrics::Log(std::ostream &outStream, bool fullHeader) {
+void CPIMetrics::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIMetrics 0xD9 --> Length: 268" << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 //	std::uint16_t			subCmd;
@@ -3535,7 +3535,7 @@ void CPISubcommands::Receive() {
         skipOver = true;
         break;
     default:
-        Console::shared().Print(util::format("Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd));
+        Console::shared().print(util::format("Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd));
         skipOver = true;
         break;
     case 0x06: {
@@ -3581,9 +3581,9 @@ bool CPISubcommands::Handle() {
     }
     return retVal;
 }
-void CPISubcommands::Log(std::ostream &outStream, bool fullHeader) {
+void CPISubcommands::log(std::ostream &outStream, bool fullHeader) {
     if (subPacket != nullptr) {
-        subPacket->Log(outStream, fullHeader);
+        subPacket->log(outStream, fullHeader);
     }
     else {
         if (fullHeader) {
@@ -3591,7 +3591,7 @@ void CPISubcommands::Log(std::ostream &outStream, bool fullHeader) {
                       << TimeStamp() << std::endl;
         }
         outStream << "  Raw dump     :" << std::endl;
-        CPInputBuffer::Log(outStream, false);
+        CPInputBuffer::log(outStream, false);
     }
 }
 
@@ -3770,7 +3770,7 @@ bool CPIPartyCommand::Handle() {
     }
     return true;
 }
-void CPIPartyCommand::Log(std::ostream &outStream, bool fullHeader) {
+void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
     std::uint8_t partyCmd = tSock->GetByte(5);
 
     const std::int32_t PARTY_ADD = 1;
@@ -3872,7 +3872,7 @@ void CPIPartyCommand::Log(std::ostream &outStream, bool fullHeader) {
     }
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3920,13 +3920,13 @@ bool CPITrackingArrow::Handle() {
     }
     return true;
 }
-void CPITrackingArrow::Log(std::ostream &outStream, bool fullHeader) {
+void CPITrackingArrow::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tracking Arrow --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3957,13 +3957,13 @@ bool CPIClientLanguage::Handle() {
     tSock->Language(newLang);
     return true;
 }
-void CPIClientLanguage::Log(std::ostream &outStream, bool fullHeader) {
+void CPIClientLanguage::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Client Language --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4019,13 +4019,13 @@ bool CPIUOTDActions::Handle() {
     Effects->PlayCharacterAnimation(ourChar, action, 1);
     return true;
 }
-void CPIUOTDActions::Log(std::ostream &outStream, bool fullHeader) {
+void CPIUOTDActions::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket UOTD Actions --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4054,20 +4054,20 @@ void CPIToolTipRequest::Receive() { getSer = tSock->GetDWord(5); }
 bool CPIToolTipRequest::Handle() {
     if (getSer != INVALIDSERIAL) {
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }
     }
     return true;
 }
-void CPIToolTipRequest::Log(std::ostream &outStream, bool fullHeader) {
+void CPIToolTipRequest::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tooltip Request --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4112,14 +4112,14 @@ bool CPIPopupMenuRequest::Handle() {
     }
     return true;
 }
-void CPIPopupMenuRequest::Log(std::ostream &outStream, bool fullHeader) {
+void CPIPopupMenuRequest::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream
             << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Request --> Length: "
             << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4203,7 +4203,7 @@ bool CPIPopupMenuSelect::Handle() {
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                         util::format("Character 0x%X has no backpack!", targChar->GetSerial()));
                 }
             }
@@ -4543,7 +4543,7 @@ bool CPIPopupMenuSelect::Handle() {
         }
         break;
     default:
-        Console::shared().Print(
+        Console::shared().print(
             util::format("Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n",
                          tSock->GetDWord(5), tSock->GetWord(9)));
         break;
@@ -4561,13 +4561,13 @@ bool CPIPopupMenuSelect::Handle() {
 
     return true;
 }
-void CPIPopupMenuSelect::Log(std::ostream &outStream, bool fullHeader) {
+void CPIPopupMenuSelect::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Select --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4599,13 +4599,13 @@ bool CPIExtendedStats::Handle() {
     ourChar->SetSkillLock(static_cast<skilllock_t>(value), statToSet);
     return true;
 }
-void CPIExtendedStats::Log(std::ostream &outStream, bool fullHeader) {
+void CPIExtendedStats::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Extended Stats --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4667,13 +4667,13 @@ bool CPIBandageMacro::Handle() {
     return false;
 }
 
-void CPIBandageMacro::Log(std::ostream &outStream, bool fullHeader) {
+void CPIBandageMacro::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4710,13 +4710,13 @@ bool CPIClosedStatusGump::Handle() {
     return false;
 }
 
-void CPIClosedStatusGump::Log(std::ostream &outStream, bool fullHeader) {
+void CPIClosedStatusGump::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4748,14 +4748,14 @@ bool CPIToggleFlying::Handle() {
     return true;
 }
 
-void CPIToggleFlying::Log(std::ostream &outStream, bool fullHeader) {
+void CPIToggleFlying::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream
             << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Toggle Gargoyle Flying --> Length: "
             << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4785,13 +4785,13 @@ void CPIToggleFlying::Log(std::ostream &outStream, bool fullHeader) {
 // settings are enabled, player will get kicked within 30 seconds |
 // if this packet is not received by the server.
 // o------------------------------------------------------------------------------------------------o
-void CPIKrriosClientSpecial::Log(std::ostream &outStream, bool fullHeader) {
+void CPIKrriosClientSpecial::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPKrriosClientSpecial 0xF0 --> Length: " << tSock->GetWord(1)
                   << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 void CPIKrriosClientSpecial::InternalReset() {}
 CPIKrriosClientSpecial::CPIKrriosClientSpecial() { InternalReset(); }
@@ -4820,7 +4820,7 @@ bool CPIKrriosClientSpecial::Handle() {
     case 0x01: // guild track info
     {
         // If ini-setting for worldmap packets is enabled
-        if (cwmWorldState->ServerData()->GetClassicUOMapTracker()) {
+        if (cwmWorldState->ServerData()->getClassicUOMapTracker()) {
             CChar *mChar = tSock->CurrcharObj();
 
             if (type == 0x00) {
@@ -4935,13 +4935,13 @@ bool CPISpellbookSelect::Handle() {
     }
     return true;
 }
-void CPISpellbookSelect::Log(std::ostream &outStream, bool fullHeader) {
+void CPISpellbookSelect::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Spellbook Select --> Length: "
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "  Raw dump     :" << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4949,7 +4949,7 @@ void CPISpellbookSelect::Log(std::ostream &outStream, bool fullHeader) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with requests for various AoS features
 // o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Packet: 0xD7 (Generic AOS Commands)
+//|	Notes		-	Packet: 0xD7 (Generic AOS serverCommands)
 //|					Size: Variable
 //|
 //|					Packet Build
@@ -5131,7 +5131,7 @@ bool CPIAOSCommand::Handle() {
 
     return false;
 }
-void CPIAOSCommand::Log(std::ostream &outStream, bool fullHeader) {
+void CPIAOSCommand::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
         outStream << "[RECV]Packet   : CPIAOSCommand 0xD7 --> Length: " << tSock->GetWord(1)
                   << TimeStamp() << std::endl;
@@ -5187,5 +5187,5 @@ void CPIAOSCommand::Log(std::ostream &outStream, bool fullHeader) {
     }
     outStream << std::endl;
     outStream << "  Raw dump     : " << std::endl;
-    CPInputBuffer::Log(outStream, false);
+    CPInputBuffer::log(outStream, false);
 }

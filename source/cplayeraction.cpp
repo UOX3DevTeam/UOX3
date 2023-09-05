@@ -1682,7 +1682,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         iDropped.SetGridLocation(gridLoc);
 
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             // Refresh target container tooltip
             CPToolTip pSend(droppedOn.GetSerial(), &mSock);
             mSock.Send(&pSend);
@@ -1693,7 +1693,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         [[maybe_unused]] std::uint16_t amountLeft = HandleAutoStack(&iDropped, &droppedOn, &mSock, &mChar);
 
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             // Refresh target container tooltip
             CPToolTip pSend(droppedOn.GetSerial(), &mSock);
             mSock.Send(&pSend);
@@ -1881,7 +1881,7 @@ bool CPIDropItem::Handle() {
     }
 
     // Only send tooltip if server feature for tooltips is enabled
-    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
         // Refresh source container tooltip
         CPToolTip pSend(tSock->PickupSerial(), tSock);
         tSock->Send(&pSend);
@@ -2320,7 +2320,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     s->Send(&pd);
 
     // Only send tooltip if server feature for tooltips is enabled
-    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
         for (CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems();
              wearItem = pdoll->NextItem()) {
             if (ValidateObject(wearItem)) {
@@ -2570,7 +2570,7 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
         mSock->Send(&m1);
 
         m2.ID(iUsed->GetSerial());
-        m2.Command(5);
+        m2.command(5);
         m2.Location(0, 0);
         m2.PlotState(0);
         mSock->Send(&m2);

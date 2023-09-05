@@ -597,11 +597,11 @@ auto CScriptSection::Next() -> std::string {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CScriptSection::MoveTo()
+//|	Function	-	CScriptSection::moveTo()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to position in the section and returns the tag there
 // o------------------------------------------------------------------------------------------------o
-auto CScriptSection::MoveTo(size_t position) -> std::string {
+auto CScriptSection::moveTo(size_t position) -> std::string {
     std::string rValue;
     std::vector<SectData *>::iterator curPos = currentPos;
     currentPos = (data.begin() + position);
@@ -635,7 +635,7 @@ auto CScriptSection::GrabData() -> std::string {
 // o------------------------------------------------------------------------------------------------o
 CScriptSection::~CScriptSection() {
     if (!FlushData()) {
-        Console::shared().Error("Section unable to flush data!");
+        Console::shared().error("Section unable to flush data!");
     }
 }
 
@@ -901,7 +901,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                         toAdd2->ndata = std::stoi(value, nullptr, 0);
                                     } catch (...) {
                                         toAdd2->ndata = 0;
-                                        Console::shared().Warning(
+                                        Console::shared().warning(
                                                                   util::format("Invalid data (%s) found for %s tag in "
                                                                                "advance/harditems/item or character DFNs",
                                                                                value.c_str(), utag.c_str()));

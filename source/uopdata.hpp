@@ -192,7 +192,7 @@ class UopFile {
         std::uint32_t dataBlockHash;
         std::int16_t compression;
         TableEntry_st();
-        auto Load(std::istream &input) -> TableEntry_st &;
+        auto load(std::istream &input) -> TableEntry_st &;
         auto Save(std::ostream &output) -> TableEntry_st &;
         // 34 bytes for a table entry
         /*********************** Constants used ******************/

@@ -141,7 +141,7 @@ public:
     TargetFunc Smith;
     TargetFunc StealingTarget;
     
-    void Load();
+    void load();
     
     void NewMakeMenu(CSocket *s, std::int32_t menu, std::uint8_t skill);
     CreateEntry_st *FindItem(std::uint16_t itemNum);

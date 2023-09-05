@@ -993,7 +993,7 @@ void CBaseObject::RemoveFromMulti(bool fireTrigger) {
             }
         }
         else {
-            Console::shared().Error(
+            Console::shared().error(
                                     util::format("Object of type %i with serial 0x%X has a bad multi setting of %i",
                                                  GetObjType(), serial, multis->GetSerial()));
         }
@@ -1045,7 +1045,7 @@ void CBaseObject::AddToMulti(bool fireTrigger) {
             }
         }
         else {
-            Console::shared().Error(
+            Console::shared().error(
                                     util::format("Object of type %i with serial 0x%X has a bad multi setting of %X",
                                                  GetObjType(), serial, multis->GetSerial()));
         }
@@ -1210,12 +1210,12 @@ void CBaseObject::SetMana(std::int16_t mn) { mana = mn; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetTitle()
-//|					CBaseObject::SetTitle()
+//|					CBaseObject::setTitle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's title
 // o------------------------------------------------------------------------------------------------o
 std::string CBaseObject::GetTitle() const { return title; }
-void CBaseObject::SetTitle(std::string newtitle) { title = newtitle.substr(0, MAX_TITLE - 1); }
+void CBaseObject::setTitle(std::string newtitle) { title = newtitle.substr(0, MAX_TITLE - 1); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetOrigin()
@@ -1411,21 +1411,21 @@ bool CBaseObject::DumpFooter(std::ostream &outStream) const {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::Load()
+//|	Function	-	CBaseObject::load()
 //|	Date		-	28 July, 2000
 //|	Changes		-	(1/9/02) no longer needs mode
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads object from disk based on mode
 // o------------------------------------------------------------------------------------------------o
 void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &data);
-bool CBaseObject::Load(std::istream &inStream) {
+bool CBaseObject::load(std::istream &inStream) {
     std::string tag = "", data = "", UTag = "";
     while (tag != "o---o") {
         ReadWorldTagData(inStream, tag, data);
         if (tag != "o---o") {
             UTag = util::upper(tag);
             if (!HandleLine(UTag, data)) {
-                Console::shared().Warning(util::format(
+                Console::shared().warning(util::format(
                                                        "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()));
             }
         }
@@ -1713,7 +1713,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 if (scriptId != 0 && scriptId != 65535) {
                     cScript *toExecute = JSMapping->GetScript(scriptId);
                     if (toExecute == nullptr) {
-                        Console::shared().Warning(util::format(
+                        Console::shared().warning(util::format(
                                                                "SCPTRIG tag found with invalid script ID (%s) while loading world data!",
                                                                data.c_str()));
                     }
@@ -2072,7 +2072,7 @@ void CBaseObject::Cleanup() {
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::Dirty([[maybe_unused]] updatetypes_t updateType) {
     if (IsDeleted()) {
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
                                              "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!",
                                              GetName().c_str(), GetId(), GetSerial()));
     }
@@ -2095,7 +2095,7 @@ void CBaseObject::RemoveFromRefreshQueue() {
 
 void CBaseObject::CopyData(CBaseObject *target) {
     target->SetSectionId(GetSectionId());
-    target->SetTitle(GetTitle());
+    target->setTitle(GetTitle());
     target->SetOrigin(GetOrigin());
     target->SetRace(GetRace());
     target->SetName(GetName());

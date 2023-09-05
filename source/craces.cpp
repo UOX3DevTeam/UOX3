@@ -76,11 +76,11 @@ void cRaces::DefaultInitCombat() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cRaces::Load()
+//|	Function	-	cRaces::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load race details from races.dfn
 // o------------------------------------------------------------------------------------------------o
-void cRaces::Load() {
+void cRaces::load() {
     initialized = true;
     std::uint32_t i = 0;
     std::uint32_t raceCount = 0;
@@ -114,14 +114,14 @@ void cRaces::Load() {
         }
         else {
             if (util::upper(tag) != "MODCOUNT") {
-                Console::shared().Error("MODCOUNT must come before any entries!");
+                Console::shared().error("MODCOUNT must come before any entries!");
                 DefaultInitCombat();
             }
             else {
                 std::uint32_t modifierCount =
                 static_cast<std::uint32_t>(std::stoul(CombatMods->GrabData(), nullptr, 0));
                 if (modifierCount < 4) {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               "MODCOUNT must be more >= 4, or it uses the defaults!");
                     DefaultInitCombat();
                 }
@@ -145,7 +145,7 @@ void cRaces::Load() {
         DefaultInitCombat();
     }
     for (size_t er = 0; er < raceCount; ++er) {
-        races[er]->Load(er, static_cast<std::int32_t>(combat.size()));
+        races[er]->load(er, static_cast<std::int32_t>(combat.size()));
     }
 }
 
@@ -1382,11 +1382,11 @@ void CRace::StamModifier(std::int16_t value) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CRace::Load()
+//|	Function	-	CRace::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load details of race from races.dfn
 // o------------------------------------------------------------------------------------------------o
-void CRace::Load(size_t sectNum, std::int32_t modCount) {
+void CRace::load(size_t sectNum, std::int32_t modCount) {
     std::string tag;
     std::string data;
     std::string UTag;

@@ -1416,7 +1416,7 @@ auto CItem::CopyData(CItem *target) -> void {
     target->SetStamina(GetStamina());
     target->SetStrength(GetStrength());
     target->SetStrength2(GetStrength2());
-    target->SetTitle(GetTitle());
+    target->setTitle(GetTitle());
     target->SetType(GetType());
     target->SetBuyValue(GetBuyValue());
     target->SetSellValue(GetSellValue());
@@ -2086,7 +2086,7 @@ void CItem::PostLoadProcessing() {
 void CItem::CheckItemIntegrity() {
     auto getSerial = GetSerial();
     if (getSerial == INVALIDSERIAL) {
-        Console::shared().Warning(
+        Console::shared().warning(
                                   util::format("Item (%s, from DFN section [%s]) has an invalid serial number, Deleting",
                                                GetName().c_str(), GetSectionId().c_str()));
         Delete();
@@ -2094,19 +2094,19 @@ void CItem::CheckItemIntegrity() {
     }
     
     if (getSerial == GetContSerial()) {
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting",
                                                getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetCont(nullptr);
     }
     if (getSerial == GetOwner()) {
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting",
                                                getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetOwner(nullptr);
     }
     if (getSerial == GetSpawn()) {
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting",
                                                getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetSpawn(INVALIDSERIAL);
@@ -2116,7 +2116,7 @@ void CItem::CheckItemIntegrity() {
         (contObj != nullptr && contObj->CanBeObjType(OT_CHAR))) {
         if (GetMaxItems() == 0) {
             SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Container (%s, from DFN section [%s]) with maxItems set to 0 detected on "
                                                    "character (%s). Resetting maxItems for container to default value.",
                                                    std::to_string(GetSerial()).c_str(), GetSectionId().c_str(),
@@ -2124,7 +2124,7 @@ void CItem::CheckItemIntegrity() {
         }
         if (GetWeightMax() == 0) {
             SetWeightMax(cwmWorldState->ServerData()->MaxPlayerPackWeight());
-            Console::shared().Warning(util::format(
+            Console::shared().warning(util::format(
                                                    "Container (%s, from DFN section [%s]) with weightMax set to 0 detected on "
                                                    "character (%s). Resetting weightMax for container to default value.",
                                                    std::to_string(GetSerial()).c_str(), GetSectionId().c_str(),
@@ -2314,7 +2314,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std
     if (txt.empty())
         return;
     
-    if (s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages()) {
+    if (s != nullptr && cwmWorldState->ServerData()->useUnicodeMessages()) {
         [[maybe_unused]] bool sendAll = true;
         if (target == SPTRG_INDIVIDUAL) {
             sendAll = false;
@@ -2369,7 +2369,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
     //  lot of flickering issues with animated items, boats, etc.
     
     if (GetCont() == this) {
-        Console::shared().Warning(
+        Console::shared().warning(
                                   util::format("Item %s(0x%X) has a dangerous container value, auto-correcting",
                                                GetName().c_str(), GetSerial()));
         SetCont(nullptr);
@@ -2398,7 +2398,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
                     tSock->Send(&toWear);
                     
                     // Only send tooltip if server feature for tooltips is enabled
-                    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                         CPToolTip pSend(GetSerial(), tSock);
                         tSock->Send(&pSend);
                     }
@@ -2419,7 +2419,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
             return;
         }
     }
-    Console::shared().Error(
+    Console::shared().error(
                             util::format(" CItem::Update(0x%X): cannot determine container type!", GetSerial()));
 }
 
@@ -2462,7 +2462,7 @@ void CItem::SendToSocket(CSocket *mSock, [[maybe_unused]] bool drawGamePlayer) {
         }
         if (!CanBeObjType(OT_MULTI)) {
             // Only send tooltip if server feature for tooltips is enabled
-            if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+            if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                 CPToolTip pSend(GetSerial(), mSock);
                 mSock->Send(&pSend);
             }
@@ -2496,7 +2496,7 @@ auto CItem::SendPackItemToSocket(CSocket *mSock) -> void {
         }
         mSock->Send(&itemSend);
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             CPToolTip pSend(GetSerial(), mSock);
             mSock->Send(&pSend);
         }
@@ -2828,7 +2828,7 @@ void CItem::Cleanup() {
                 CSocket *ownerSocket = rootOwner->GetSocket();
                 if (ownerSocket != nullptr) {
                     // Only send tooltip if server feature for tooltips is enabled
-                    if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                         // Refresh container tooltip
                         CPToolTip pSend(iCont->GetSerial(), ownerSocket);
                         ownerSocket->Send(&pSend);
@@ -2839,7 +2839,7 @@ void CItem::Cleanup() {
                 for (auto &tSock : FindNearbyPlayers(iCont, DIST_NEARBY)) {
                     if (tSock->LoginComplete()) {
                         // Only send tooltip if server feature for tooltips is enabled
-                        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+                        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
                             // Refresh container tooltip
                             CPToolTip pSend(iCont->GetSerial(), tSock);
                             tSock->Send(&pSend);
@@ -3083,7 +3083,7 @@ auto CSpawnItem::HandleItemSpawner() -> bool {
             Items->AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), false, 1);
         }
         else {
-            Console::shared().Warning("Bad Item Spawner Found, Deleting");
+            Console::shared().warning("Bad Item Spawner Found, Deleting");
             Delete();
             return true;
         }
@@ -3101,7 +3101,7 @@ auto CSpawnItem::HandleNPCSpawner() -> bool {
             Npcs->CreateNPC(this, util::ntos(GetTempVar(CITV_MOREX)));
         }
         else {
-            Console::shared().Warning("Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values "
+            Console::shared().warning("Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values "
                                       "missing! Deleting Spawner.");
             Delete();
             return true;
@@ -3137,7 +3137,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                         // listObj will either contain an itemID and amount, or an itemlist/lootlist
                         // tag
                         auto listObj = oldstrutil::sections(
-                                                            util::trim(util::strip(itemList->MoveTo(i), "//")), ",");
+                                                            util::trim(util::strip(itemList->moveTo(i), "//")), ",");
                         if (!listObj.empty()) {
                             std::uint16_t amountToSpawn = 1;
                             std::vector<std::string> itemListData;
@@ -3248,7 +3248,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
             Items->AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), true, 1);
         }
         else {
-            Console::shared().Warning(
+            Console::shared().warning(
                                       "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner.");
             Delete();
             return true;

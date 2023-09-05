@@ -167,7 +167,7 @@ public:
     Party *Get(CChar *member);
     void CreateInvite(CSocket *inviter);
     void Kick(CSocket *inviter);
-    bool Load();
+    bool load();
     bool Save();
     
     static PartyFactory &shared();

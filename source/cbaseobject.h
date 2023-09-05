@@ -137,7 +137,7 @@ public:
     void SetResist(std::uint16_t newValue, weathertype_t damage);
     std::uint16_t GetResist(weathertype_t damage) const;
     
-    void SetTitle(std::string newtitle);
+    void setTitle(std::string newtitle);
     std::string GetTitle() const;
     
     // void					SetOrigin( std::string newOrigin );
@@ -207,7 +207,7 @@ public:
     virtual bool DumpHeader(std::ostream &outStream) const = 0;
     virtual bool DumpBody(std::ostream &outStream) const;
     bool DumpFooter(std::ostream &outStream) const;
-    bool Load(std::istream &inStream);
+    bool load(std::istream &inStream);
     
     virtual bool HandleLine(std::string &UTag, std::string &data);
     

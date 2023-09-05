@@ -468,7 +468,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
                 break;
             }
 #if defined(UOX_DEBUG_MODE)
-            Console::shared().Print(util::format("Unhandled trigger [%s] sent by the client 0x%X\n",
+            Console::shared().print(util::format("Unhandled trigger [%s] sent by the client 0x%X\n",
                                                  text.c_str(), trigWord));
 #endif
             break;

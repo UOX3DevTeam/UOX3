@@ -616,11 +616,11 @@ cWeatherAb::~cWeatherAb() { weather.clear(); }
 size_t cWeatherAb::Count() const { return weather.size(); }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CWeatherAb::Load()
+//|	Function	-	CWeatherAb::load()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the weather system loaded okay
 // o------------------------------------------------------------------------------------------------o
-auto cWeatherAb::Load() -> bool {
+auto cWeatherAb::load() -> bool {
     weather.resize(FileLookup->CountOfEntries(weathab_def));
     std::string tag, data, UTag;
     size_t i = 0;
@@ -1606,20 +1606,20 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 currentLight = CurrentLight(weatherSys);
             }
             else {
-                currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-                lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
-                lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
+                currentLight = cwmWorldState->ServerData()->worldLightCurrentLevel();
+                lightMin = cwmWorldState->ServerData()->worldLightDarkLevel();
+                lightMax = cwmWorldState->ServerData()->worldLightBrightLevel();
             }
         }
         else {
-            currentLight = cwmWorldState->ServerData()->WorldLightCurrentLevel();
-            lightMin = cwmWorldState->ServerData()->WorldLightDarkLevel();
-            lightMax = cwmWorldState->ServerData()->WorldLightBrightLevel();
+            currentLight = cwmWorldState->ServerData()->worldLightCurrentLevel();
+            lightMin = cwmWorldState->ServerData()->worldLightDarkLevel();
+            lightMax = cwmWorldState->ServerData()->worldLightBrightLevel();
         }
         
         if (mChar.InDungeon()) {
             R32 dungeonLight = 255;
-            dungeonLight = cwmWorldState->ServerData()->DungeonLightLevel();
+            dungeonLight = cwmWorldState->ServerData()->dungeonLightLevel();
             
             if (lightLevel > dungeonLight) {
                 if (lightLevel > 0) {

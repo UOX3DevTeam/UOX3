@@ -143,7 +143,7 @@ class cAccountClass {
     bool SetPath(const std::string &sPath);
     std::string GetPath();
     std::uint16_t Save(bool bForceLoad = false);
-    std::uint16_t Load();
+    std::uint16_t load();
     std::uint32_t size();
     bool clear();
     bool IsUser(std::string sUsername);

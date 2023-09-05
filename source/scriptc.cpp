@@ -80,7 +80,7 @@ void Script::Reload(bool disp) {
                         // We are finally in the actual section!
                         // We waited until now to create it, incase a total invalid file
                         lastModTime = 0;
-                        defEntries[sectionname] = new CScriptSection(input, dfnCat);
+                        defEntries[sectionname] = std::make_unique< CScriptSection>(input, dfnCat);
                         ++count;
                     }
                 }
@@ -95,7 +95,7 @@ void Script::Reload(bool disp) {
         }
     }
     if (disp) {
-        Console::shared().Print(util::format("Reloading %-15s: ", filename.c_str()));
+        Console::shared().print(util::format("Reloading %-15s: ", filename.c_str()));
     }
     
     fflush(stdout);
@@ -119,9 +119,9 @@ Script::Script(const std::string &_filename, definitioncategories_t d, bool disp
     Reload(disp);
 }
 //===============================================================================================
-auto Script::collection() const -> const std::unordered_map<std::string, CScriptSection *> & { return defEntries; }
+auto Script::collection() const -> const std::unordered_map<std::string, std::unique_ptr<CScriptSection>> & { return defEntries; }
 //===============================================================================================
-auto Script::collection() -> std::unordered_map<std::string, CScriptSection *> & { return defEntries; }
+auto Script::collection() -> std::unordered_map<std::string, std::unique_ptr<CScriptSection>> & { return defEntries; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function		-	~Script()
@@ -154,7 +154,7 @@ CScriptSection *Script::FindEntry(const std::string &section) {
     CScriptSection *rValue = nullptr;
     auto iSearch = defEntries.find(section);
     if (iSearch != defEntries.end()) {
-        rValue = iSearch->second;
+        rValue = iSearch->second.get();
     }
     return rValue;
 }
@@ -173,7 +173,7 @@ CScriptSection *Script::FindEntrySubStr(const std::string &section) {
          ++iSearch) {
         if (iSearch->first.find(usection) != std::string::npos) // FOUND IT!
         {
-            rValue = iSearch->second;
+            rValue = iSearch->second.get();
             break;
         }
     }
@@ -189,7 +189,7 @@ CScriptSection *Script::FirstEntry() {
     CScriptSection *rValue = nullptr;
     iSearch = defEntries.begin();
     if (iSearch != defEntries.end()) {
-        rValue = iSearch->second;
+        rValue = iSearch->second.get();
     }
     return rValue;
 }
@@ -204,7 +204,7 @@ CScriptSection *Script::NextEntry() {
     if (iSearch != defEntries.end()) {
         ++iSearch;
         if (iSearch != defEntries.end()) {
-            rValue = iSearch->second;
+            rValue = iSearch->second.get();
         }
     }
     return rValue;
@@ -216,9 +216,6 @@ CScriptSection *Script::NextEntry() {
 //|	Purpose			-	Destroys any memory that has been allocated
 // o------------------------------------------------------------------------------------------------o
 void Script::DeleteMap() {
-    for (auto iTest = defEntries.begin(); iTest != defEntries.end(); ++iTest) {
-        delete iTest->second;
-    }
     defEntries.clear();
 }
 

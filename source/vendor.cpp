@@ -324,7 +324,7 @@ bool CPIBuyItem::Handle() {
                             }
                             break;
                         default:
-                            Console::shared().Error(
+                            Console::shared().error(
                                                     " Fallout of switch statement without default. vendor.cpp, buyItem()");
                             break;
                     }
@@ -559,11 +559,11 @@ bool CPISellItem::Handle() {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	RestockNPC()
+//|	Function	-	restockNPC()
 /// o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Restock NPC Vendors
 // o------------------------------------------------------------------------------------------------o
-void RestockNPC(CChar &i, bool stockAll) {
+void restockNPC(CChar &i, bool stockAll) {
     if (!i.IsShop())
         return; // if we aren't a shopkeeper, why bother?
     
@@ -596,7 +596,7 @@ bool RestockFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ext
     bool retVal = true;
     CChar *c = static_cast<CChar *>(a);
     if (ValidateObject(c)) {
-        RestockNPC((*c), (b == 1));
+        restockNPC((*c), (b == 1));
     }
     
     return retVal;

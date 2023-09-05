@@ -18,7 +18,7 @@ class CMultiObj;
 class CTownRegion;
 
 // Forward declare
-struct __STARTLOCATIONDATA__;
+struct StartLocationData;
 
 class CPCharLocBody : public CPUOXBuffer {
   protected:
@@ -32,7 +32,7 @@ class CPCharLocBody : public CPUOXBuffer {
     virtual void Flag(std::uint8_t toPut);
     virtual void HighlightColour(std::uint8_t color);
     CPCharLocBody &operator=(CChar &toCopy);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPacketSpeech : public CPUOXBuffer {
@@ -419,7 +419,7 @@ class CPOpenGump : public CPUOXBuffer {
     virtual void AddResponse(std::uint16_t modelNum, std::uint16_t colour, std::string responseText);
     virtual void Finalize();
     CPOpenGump &operator=(CChar &toCopy);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPTargetCursor : public CPUOXBuffer {
@@ -497,7 +497,7 @@ class CPIdleWarning : public CPUOXBuffer {
     CPIdleWarning();
     virtual ~CPIdleWarning() {}
     CPIdleWarning(std::uint8_t errorNum);
-    virtual void Error(std::uint8_t errorNum);
+    virtual void error(std::uint8_t errorNum);
 };
 
 class CPTime : public CPUOXBuffer {
@@ -621,19 +621,19 @@ class CPMultiPlacementView : public CPUOXBuffer {
 class CPEnableClientFeatures : public CPUOXBuffer {
   public:
     CPEnableClientFeatures(CSocket *mSock);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPNegotiateAssistantFeatures : public CPUOXBuffer {
   public:
     CPNegotiateAssistantFeatures(CSocket *mSock);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPKrriosClientSpecial : public CPUOXBuffer {
   public:
     CPKrriosClientSpecial(CSocket *mSock, CChar *mChar, std::uint8_t type, bool locations);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPLogoutResponse : public CPUOXBuffer {
@@ -739,7 +739,7 @@ class CPMapRelated : public CPUOXBuffer {
     CPMapRelated();
     virtual void PlotState(std::uint8_t pState);
     virtual void Location(std::int16_t x, std::int16_t y);
-    virtual void Command(std::uint8_t cmd);
+    virtual void command(std::uint8_t cmd);
     virtual void ID(serial_t key);
 };
 
@@ -799,7 +799,7 @@ class CPMapChange : public CPUOXBuffer {
     virtual ~CPMapChange() {}
     virtual void SetMap(std::uint8_t newMap);
     CPMapChange &operator=(CBaseObject &moving);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPCloseGump : public CPUOXBuffer {
@@ -811,7 +811,7 @@ class CPCloseGump : public CPUOXBuffer {
   public:
     CPCloseGump(std::uint32_t dialogId, std::uint32_t buttonId);
     virtual ~CPCloseGump() {}
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPItemsInContainer : public CPUOXBuffer {
@@ -837,7 +837,7 @@ class CPItemsInContainer : public CPUOXBuffer {
     void VendorSerial(serial_t toSet);
     virtual void AddItem(CItem *toAdd, std::uint16_t itemNum, CSocket *mSock);
     void Add(std::uint16_t itemNum, serial_t toAdd, serial_t cont, std::uint8_t amount);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPCorpseClothing : public CPUOXBuffer {
@@ -866,7 +866,7 @@ class CPOpenBuyWindow : public CPUOXBuffer {
     virtual void NumberOfItems(std::uint8_t numItems);
     virtual std::uint8_t NumberOfItems() const;
     virtual void AddItem(CItem *toAdd, CTownRegion *tReg, std::uint16_t &baseOffset);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPCharAndStartLoc : public CPUOXBuffer {
@@ -882,10 +882,10 @@ class CPCharAndStartLoc : public CPUOXBuffer {
     CPCharAndStartLoc(AccountEntry &account, std::uint8_t numCharacters, std::uint8_t numLocations, CSocket *mSock);
     virtual void NumberOfLocations(std::uint8_t numLocations, CSocket *mSock);
     virtual void AddCharacter(CChar *toAdd, std::uint8_t charOffset);
-    virtual auto AddStartLocation(__STARTLOCATIONDATA__ *sLoc, std::uint8_t locOffset) -> void;
-    virtual auto NewAddStartLocation(__STARTLOCATIONDATA__ *sLoc, std::uint8_t locOffset) -> void;
+    virtual auto AddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void;
+    virtual auto NewAddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void;
     CPCharAndStartLoc &operator=(AccountEntry &actbBlock);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPUpdScroll : public CPUOXBuffer {
@@ -1188,7 +1188,7 @@ class CPSendGumpMenu : public CPUOXBuffer {
     void addText(const std::string &msg);
 
     void Finalize();
-    virtual void Log(std::ostream &outStream, bool fullHeader) override;
+    virtual void log(std::ostream &outStream, bool fullHeader) override;
 };
 
 class CPNewSpellBook : public CPUOXBuffer {
@@ -1402,7 +1402,7 @@ class CPPartyMemberList : public CPUOXBuffer {
     CPPartyMemberList();
     virtual ~CPPartyMemberList() {}
     void AddMember(CChar *member);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPPartyInvitation : public CPUOXBuffer {
@@ -1412,7 +1412,7 @@ class CPPartyInvitation : public CPUOXBuffer {
   public:
     CPPartyInvitation();
     virtual ~CPPartyInvitation() {}
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
     void Leader(CChar *leader);
 };
 
@@ -1424,7 +1424,7 @@ class CPPartyMemberRemove : public CPUOXBuffer {
     CPPartyMemberRemove(CChar *removed);
     virtual ~CPPartyMemberRemove() {}
     void AddMember(CChar *member);
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPPartyTell : public CPUOXBuffer {
@@ -1434,7 +1434,7 @@ class CPPartyTell : public CPUOXBuffer {
   public:
     CPPartyTell(CPIPartyCommand *told, CSocket *talker);
     virtual ~CPPartyTell() {}
-    virtual void Log(std::ostream &outStream, bool fullHeader = true) override;
+    virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPDropItemApproved : public CPUOXBuffer {

@@ -171,7 +171,7 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
             return p->second;
         }
         else {
-            Console::shared().Error(
+            Console::shared().error(
                                     util::format("Unknown language type \"%s\". PLEASE report this in the Bugs section "
                                                  "of the forums at https://www.uox3.org!",
                                                  ulangCode.c_str()));
@@ -181,7 +181,7 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	SysBroadcast()
+//|	Function	-	sysBroadcast()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function was adapted to be used with the new code
 //|						in the console thread that allows text to be entered
@@ -190,9 +190,9 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
 //|
 //|	Changes		-	  (February 27, 2000)
 // o------------------------------------------------------------------------------------------------o
-void SysBroadcast(const std::string &txt) {
+void sysBroadcast(const std::string &txt) {
     if (!txt.empty()) {
-        /*if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+        /*if( cwmWorldState->ServerData()->useUnicodeMessages() )
          {
          Network->pushConn();
          for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock =
@@ -292,7 +292,7 @@ bool CPITalkRequest::Handle() {
     
     if ((asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix()) ||
         ((asciiText[0] == '.') && (asciiText[1] != '.'))) {
-        Commands->Command(tSock, mChar, &asciiText[1]);
+        serverCommands.command(tSock, mChar, &asciiText[1]);
     }
     else {
         if (mChar->IsDead()) {
@@ -347,7 +347,7 @@ bool CPITalkRequest::Handle() {
                 util::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(),
                              mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3),
                              mChar->GetSerial(4), mChar->GetAccount().accountNumber, asciiText);
-                Console::shared().Log(temp, temp2);
+                Console::shared().log(temp, temp2);
             }
             
             std::string upperText = util::upper(text);
@@ -487,7 +487,7 @@ CSpeechQueue::CSpeechQueue() : pollTime(100), runAsThread(false) {
     speechList.resize(0);
     // InitializeLookup();
 }
-auto CSpeechQueue::Startup() -> void { InitializeLookup(); }
+auto CSpeechQueue::startup() -> void { InitializeLookup(); }
 CSpeechQueue::~CSpeechQueue() {
     for (auto slIter = speechList.begin(); slIter != speechList.end(); ++slIter) {
         delete (*slIter);
@@ -611,7 +611,7 @@ bool CSpeechQueue::InternalPoll() {
     return retVal;
 }
 
-bool CSpeechQueue::Poll() {
+bool CSpeechQueue::poll() {
     if (RunAsThread()) {
         while (RunAsThread()) {
             InternalPoll();
@@ -644,7 +644,7 @@ void CSpeechQueue::DumpInFile() {
     std::string speechFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "speechdump.txt";
     std::ofstream speechDestination(speechFile.c_str());
     if (!speechDestination) {
-        Console::shared().Error(util::format("Failed to open %s for writing", speechFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", speechFile.c_str()));
         return;
     }
     

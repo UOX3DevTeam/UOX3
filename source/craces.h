@@ -160,7 +160,7 @@ public:
     bool IsValidHair(colour_t val) const;
     bool IsValidBeard(colour_t val) const;
     
-    void Load(size_t sectNum, std::int32_t modCount);
+    void load(size_t sectNum, std::int32_t modCount);
     CRace &operator=(CRace &trgRace);
 };
 
@@ -189,7 +189,7 @@ public:
     // Functions
     ~cRaces();
     cRaces();
-    void Load(); // loads races
+    void load(); // loads races
     RaceRelate Compare(CChar *player1, CChar *player2) const;
     RaceRelate CompareByRace(raceid_t race1, raceid_t race2) const; // compares chars
     void ApplyRace(CChar *s, raceid_t x, bool always = false);    // Race Gate

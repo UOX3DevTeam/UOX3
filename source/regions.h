@@ -100,10 +100,10 @@ private:
 public:
     CMapHandler() = default;
     ~CMapHandler();
-    auto Startup() -> void;
+    auto startup() -> void;
     
     void Save();
-    void Load();
+    void load();
     
     bool AddItem(CItem *nItem);
     bool RemoveItem(CItem *nItem);

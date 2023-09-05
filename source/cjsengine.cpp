@@ -33,7 +33,7 @@
 CJSEngine *JSEngine = nullptr;
 
 //==================================================================================================
-auto CJSEngine::Startup() -> void {
+auto CJSEngine::startup() -> void {
     runtimeList.resize(0);
     const std::uint32_t maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
@@ -46,14 +46,14 @@ auto CJSEngine::Startup() -> void {
     std::uint32_t engineMaxBytes =
         std::min(static_cast<std::uint32_t>(static_cast<std::uint32_t>(maxBytesSize) * 1024 * 1024), maxEngineSize);
 
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
     Console::shared() << "Starting JavaScript Engine...." << myendl;
 
     runtimeList.push_back(new CJSRuntime(engineMaxBytes)); // Default Runtime
     runtimeList.push_back(new CJSRuntime(engineMaxBytes)); // Console Runtime
 
     Console::shared() << "JavaScript engine startup complete." << myendl;
-    Console::shared().PrintSectionBegin();
+    Console::shared().printSectionBegin();
 }
 //===================================================================
 CJSEngine::~CJSEngine() {

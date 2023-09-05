@@ -101,7 +101,7 @@ public:
     void SetGuildFaction(GuildType newFaction);
     void SetGuildRelation(guildid_t otherGuild, GuildRelation toSet);
     void Save(std::ostream &toSave, guildid_t gNum);
-    void Load(CScriptSection *toRead);
+    void load(CScriptSection *toRead);
     
     std::map<guildid_t, GuildRelation>* GuildRelationList(); // NOTE: This is aimed ONLY at menu stuff
     
@@ -134,7 +134,7 @@ public:
     CGuild *Guild(guildid_t num) const;
     CGuild *operator[](guildid_t num);
     void Save();
-    void Load();
+    void load();
     GuildRelation Compare(guildid_t srcGuild, guildid_t trgGuild) const;
     GuildRelation Compare(CChar *src, CChar *trg) const;
     void Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild = -1, serial_t plID = INVALIDSERIAL);

@@ -116,7 +116,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str()));
                 }
                 break;
@@ -133,7 +133,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in ATT/DAMAGE tag inside item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -211,7 +211,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in DEF tag inside item script [%s]", sectionId.c_str()));
                 break;
             case DFNTAG_DEFBONUS:
@@ -227,7 +227,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in DEFBONUS tag inside item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -242,7 +242,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in DEX tag inside item script [%s]", sectionId.c_str()));
                 }
                 break;
@@ -296,12 +296,12 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 
                 auto toFind = FileLookup->FindEntry(scriptEntry, items_def);
                 if (toFind == nullptr) {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid script entry (%s) called with GET tag, item serial 0x%X",
                                                            scriptEntry.c_str(), applyTo->GetSerial()));
                 }
                 else if (toFind == toApply) {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Infinite loop avoided with GET tag inside item script [%s]",
                                                            scriptEntry.c_str()));
                 }
@@ -400,12 +400,12 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     
                     CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, items_def);
                     if (toFind == NULL) {
-                        Console::shared().Warning(util::format(
+                        Console::shared().warning(util::format(
                                                                "Invalid script entry (%s) called with %s tag, item serial 0x%X",
                                                                scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial()));
                     }
                     else if (toFind == toApply) {
-                        Console::shared().Warning(
+                        Console::shared().warning(
                                                   util::format("Infinite loop avoided with %s tag inside item script [%s]",
                                                                tagName.c_str(), scriptEntry.c_str()));
                     }
@@ -425,7 +425,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in HP tag inside item script [%s]", sectionId.c_str()));
                 }
                 break;
@@ -673,7 +673,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in RESISTFIRE tag inside Item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -688,7 +688,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in RESISTCOLD tag inside Item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -703,7 +703,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in RESISTLIGHTNING tag inside Item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -718,7 +718,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in RESISTPOISON tag inside Item script [%s]",
                                                            sectionId.c_str()));
                 }
@@ -767,7 +767,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                                                                                util::trim(util::strip(ssecs[2], "//")), nullptr, 0)));
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str()));
                 }
                 break;
@@ -800,7 +800,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Invalid data found in VALUE tag inside item script [%s]", sectionId.c_str()));
                 }
                 break;
@@ -816,7 +816,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetWipeable(ndata != 0);
                 break;
             case DFNTAG_ADDMENUITEM:
-                Console::shared().Print(cdata);
+                Console::shared().print(cdata);
                 break;
             case DFNTAG_CUSTOMSTRINGTAG: {
                 auto count = 0;
@@ -843,7 +843,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     applyTo->SetTag(customTagName, customTag);
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in CUSTOMSTRINGTAG tag inside Item script "
                                                            "[%s] - Supported data format: <tagName> <text>",
                                                            sectionId.c_str()));
@@ -871,14 +871,14 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     customTag.m_StringValue = "";
                     applyTo->SetTag(customTagName, customTag);
                     if (count > 2) {
-                        Console::shared().Warning(util::format(
+                        Console::shared().warning(util::format(
                                                                "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only "
                                                                "first value will be used! Supported data format: <tagName> <value>",
                                                                sectionId.c_str()));
                     }
                 }
                 else {
-                    Console::shared().Warning(
+                    Console::shared().warning(
                                               util::format("Invalid data found in CUSTOMINTTAG tag in Item script [%s] - "
                                                            "Supported data format: <tagName> <value>",
                                                            sectionId.c_str()));
@@ -932,7 +932,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 break;
             }
             default: {
-                Console::shared().Warning(util::format("Unknown items dfn tag %i %s %i %i ", tag,
+                Console::shared().warning(util::format("Unknown items dfn tag %i %s %i %i ", tag,
                                                        cdata.c_str(), ndata, odata));
                 break;
             }
@@ -959,7 +959,7 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemI
         instanceId = mChar->GetInstanceId();
         if (inPack && !ValidateObject(mChar->GetPackItem())) {
             std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
-            Console::shared().Warning(
+            Console::shared().warning(
                                       util::format("CreateItem(): Character %s(0x%X) has no pack, item creation aborted.",
                                                    charName.c_str(), mChar->GetSerial()));
             return nullptr;
@@ -1027,7 +1027,7 @@ CItem *cItem::CreateScriptItem(CSocket *mSock, CChar *mChar, const std::string &
                                const std::uint16_t iColor, bool shouldSave) {
     if (inPack && !ValidateObject(mChar->GetPackItem())) {
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.",
                                                charName.c_str(), mChar->GetSerial()));
         return nullptr;
@@ -1153,7 +1153,7 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
             for (size_t j = 0; j < itemListSize; j++) {
                 // Split string for entry into a stringlist, based on | as a separator
                 auto csecs =
-                oldstrutil::sections(util::trim(util::strip(ItemList->MoveTo(j), "//")), "|");
+                oldstrutil::sections(util::trim(util::strip(ItemList->moveTo(j), "//")), "|");
                 if (csecs.size() == 2) {
                     // The entry has a weight assigned to it - let's add the weight to the total
                     sum_of_weight += static_cast<int>(
@@ -1177,7 +1177,7 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
             int weightOfChosenItem = 0;
             for (auto j = 0; j < static_cast<int>(itemListSize); j++) {
                 auto csecs =
-                oldstrutil::sections(util::trim(util::strip(ItemList->MoveTo(j), "//")), "|");
+                oldstrutil::sections(util::trim(util::strip(ItemList->moveTo(j), "//")), "|");
                 if (csecs.size() == 2) {
                     // Ok, item entry has a weight, let's compare that weight to our chosen random
                     // number
@@ -1213,13 +1213,13 @@ auto cItem::CreateRandomItem(CItem *mCont, const std::string &sItemList, const s
             if (itemEntryToSpawn != -1) {
                 // If an entry has been selected based on weights, use that
                 csecs = oldstrutil::sections(
-                                             util::trim(util::strip(ItemList->MoveTo(itemEntryToSpawn), "//")), ",");
+                                             util::trim(util::strip(ItemList->moveTo(itemEntryToSpawn), "//")), ",");
             }
             else {
                 // Otherwise choose a random entry
                 csecs = oldstrutil::sections(
                                              util::trim(util::strip(
-                                                                    ItemList->MoveTo(RandomNum(static_cast<size_t>(0), itemListSize - 1)),
+                                                                    ItemList->moveTo(RandomNum(static_cast<size_t>(0), itemListSize - 1)),
                                                                     "//")),
                                              ",");
             }
@@ -1346,7 +1346,7 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std:
     
     CScriptSection *itemCreate = FileLookup->FindEntry(ourItem, items_def);
     if (itemCreate == nullptr) {
-        Console::shared().Error(util::format(
+        Console::shared().error(util::format(
                                              "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str()));
         return nullptr;
     }
@@ -1367,7 +1367,7 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std:
         }
         
         if (!ApplyItemSection(iCreated, itemCreate, ourItem)) {
-            Console::shared().Error("Trying to apply an item section failed");
+            Console::shared().error("Trying to apply an item section failed");
         }
         
         // If maxHP has not been defined for a new item, set it to the same value as HP
@@ -1454,7 +1454,7 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->GetServerFeature(SF_BIT_AOS)) {
+        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
             if (mSock != nullptr) {
                 // Refresh container tooltip
                 CPToolTip pSend(iCreated->GetContSerial(), mSock);
@@ -1472,11 +1472,11 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	DecayItem()
+//|	Function	-	decayItem()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 // o------------------------------------------------------------------------------------------------o
-auto DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t nextDecayItemsInHouses) -> bool {
+auto decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t nextDecayItemsInHouses) -> bool {
     if (toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay()) {
         if (toDecay.GetMulti() == INVALIDSERIAL) {
             toDecay.SetDecayTime(nextDecayItems);
@@ -1525,7 +1525,7 @@ auto DecayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t
     
     if (toDecay.CanBeObjType(CBaseObject::OT_MULTI)) {
         toDecay.SetDecayTime(nextDecayItems);
-        Console::shared().Warning(util::format(
+        Console::shared().warning(util::format(
                                                "Warning: Prevented multi (serial: 0x%X) from decaying!", toDecay.GetSerial()));
     }
     toDecay.Delete(); // This is a problem, if done in a ierator loop

@@ -48,7 +48,7 @@ auto DoHouseTarget(CSocket *mSock, std::uint16_t houseEntry) -> void {
             }
         }
         if (!houseId) {
-            Console::shared().Error(util::format("Bad house script: #%u\n", houseEntry));
+            Console::shared().error(util::format("Bad house script: #%u\n", houseEntry));
         }
         else {
             mSock->AddId(houseEntry);
@@ -663,7 +663,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
                 customTagMap.insert(std::pair<std::string, TagMap>(customTagName, customTag));
             }
             else {
-                Console::shared().Warning(
+                Console::shared().warning(
                                           util::format("Invalid data found in CUSTOMSTRINGTAG tag inside House script "
                                                        "[%s] - Supported data format: <tagName> <text>",
                                                        sect.c_str()));
@@ -692,14 +692,14 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
                 customTag.m_StringValue = "";
                 customTagMap.insert(std::pair<std::string, TagMap>(customTagName, customTag));
                 if (count > 1) {
-                    Console::shared().Warning(util::format(
+                    Console::shared().warning(util::format(
                                                            "Multiple values detected for CUSTOMINTTAG in House script [%s] - only "
                                                            "first value will be used! Supported data format: <tagName> <value>",
                                                            sect.c_str()));
                 }
             }
             else {
-                Console::shared().Warning(
+                Console::shared().warning(
                                           util::format("Invalid data found in CUSTOMINTTAG tag in House script [%s] - "
                                                        "Supported data format: <tagName> <value>",
                                                        sect.c_str()));
@@ -708,7 +708,7 @@ CMultiObj *BuildHouse(CSocket *mSock, std::uint16_t houseEntry, bool checkLocati
     }
     
     if (!houseId) {
-        Console::shared().Error(util::format("Bad house script # %u!", houseEntry));
+        Console::shared().error(util::format("Bad house script # %u!", houseEntry));
         return nullptr;
     }
     
