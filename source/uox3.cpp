@@ -147,7 +147,7 @@ auto aJailSys = CJailSystem();                        // no depend, no startup
 auto aSpeechSys = CSpeechQueue();        // has startup
 auto aJSEngine = CJSEngine();            // has startup
 auto aFileLookup = CServerDefinitions(); // has startup
-auto Commands = CCommands();            // Restart resets commands, maybe no dependency
+CCommands Commands ;            
 auto aMap = CMulHandler();               // replaced
 auto aNetwork = CNetworkStuff();         // Maybe dependent, has startup
 auto aMapRegion = CMapHandler();         // Dependent (Map->) , has startup

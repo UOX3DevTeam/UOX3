@@ -29,9 +29,9 @@ auto CollectGarbage() ->void;
 //==================================================================================================
 //==================================================================================================
 // Define our static maps
-auto CCommands::commandMap = std::map<std::string, CommandMapEntry>();
-auto CCommands::targetMap = std::map<std::string, TargetMapEntry>();
-auto CCommands::jscommandMap = std::map<std::string, JSCommandEntry>();
+std::map<std::string, CommandMapEntry> CCommands::commandMap = std::map<std::string, CommandMapEntry>();
+std::map<std::string, TargetMapEntry> CCommands::targetMap = std::map<std::string, TargetMapEntry>();
+std::map<std::string, JSCommandEntry> CCommands::jscommandMap = std::map<std::string, JSCommandEntry>();
 
 //==================================================================================================
 auto CCommands::startup() -> void { resetCommand(); }
