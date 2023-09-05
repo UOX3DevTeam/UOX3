@@ -57,8 +57,8 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/chtmlsystem.cpp
    ${PROJECT_SOURCE_DIR}/../../source/chtmlsystem.h  
    ${PROJECT_SOURCE_DIR}/../../source/cmagic.h
-	${PROJECT_SOURCE_DIR}/../../source/subsystem/console.cpp
-	${PROJECT_SOURCE_DIR}/../../source/subsystem/console.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/subsystem/console.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/subsystem/console.hpp
    ${PROJECT_SOURCE_DIR}/../../source/combat.cpp
    ${PROJECT_SOURCE_DIR}/../../source/combat.h
    ${PROJECT_SOURCE_DIR}/../../source/commands.cpp
@@ -85,6 +85,8 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/queue.cpp
    ${PROJECT_SOURCE_DIR}/../../source/regions.cpp
    ${PROJECT_SOURCE_DIR}/../../source/regions.h
+   ${PROJECT_SOURCE_DIR}/../../source/subsystem/serverdata.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/subsystem/serverdata.hpp
    ${PROJECT_SOURCE_DIR}/../../source/skills.cpp
    ${PROJECT_SOURCE_DIR}/../../source/skills.h
    ${PROJECT_SOURCE_DIR}/../../source/sound.cpp

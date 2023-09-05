@@ -75,6 +75,7 @@
 #include "eventtimer.hpp"
 #include "funcdecl.h"
 #include "jail.h"
+#include "serverdata.hpp"
 #include "subsystem/account.hpp"
 #include "subsystem/console.hpp"
 

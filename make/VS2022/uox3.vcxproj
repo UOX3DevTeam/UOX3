@@ -132,6 +132,7 @@
     <ClCompile Include="..\..\source\quantityfuncs.cpp" />
     <ClCompile Include="..\..\source\queue.cpp" />
     <ClCompile Include="..\..\source\regions.cpp" />
+    <ClCompile Include="..\..\source\subsystem\serverdata.cpp" />
     <ClCompile Include="..\..\source\skills.cpp" />
     <ClCompile Include="..\..\source\sound.cpp" />
     <ClCompile Include="..\..\source\speech.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="..\..\source\msgboard.h" />
     <ClInclude Include="..\..\source\partysystem.h" />
     <ClInclude Include="..\..\source\regions.h" />
+    <ClInclude Include="..\..\source\subsystem\serverdata.hpp" />
     <ClInclude Include="..\..\source\skills.h" />
     <ClInclude Include="..\..\source\speech.h" />
     <ClInclude Include="..\..\source\teffect.h" />
