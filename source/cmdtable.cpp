@@ -40,6 +40,9 @@
 #include "utility/strutil.hpp"
 #include "wholist.h"
 #include "worldmain.h"
+
+using namespace std::string_literals ;
+
 void CollectGarbage();
 void EndMessage(std::int32_t x);
 void HandleGumpCommand(CSocket *s, std::string cmd, std::string data);
@@ -1094,19 +1097,19 @@ void Command_ValidCmd(CSocket *s) {
     CGumpDisplay targetCmds(s, 300, 300);
     targetCmds.SetTitle("Valid Commands");
 
-    for (COMMANDMAP_ITERATOR myCounter = CommandMap.begin(); myCounter != CommandMap.end();
+    for (auto myCounter = CCommands::CommandMap.begin(); myCounter != CCommands::CommandMap.end();
          ++myCounter) {
         if (myCounter->second.cmdLevelReq <= targetCommand) {
             targetCmds.AddData(myCounter->first, myCounter->second.cmdLevelReq);
         }
     }
-    for (TARGETMAP_ITERATOR targCounter = TargetMap.begin(); targCounter != TargetMap.end();
+    for (auto targCounter = CCommands::TargetMap.begin(); targCounter != CCommands::TargetMap.end();
          ++targCounter) {
         if (targCounter->second.cmdLevelReq <= targetCommand) {
             targetCmds.AddData(targCounter->first, targCounter->second.cmdLevelReq);
         }
     }
-    for (JSCOMMANDMAP_ITERATOR jsCounter = JSCommandMap.begin(); jsCounter != JSCommandMap.end();
+    for (auto jsCounter = CCommands::JSCommandMap.begin(); jsCounter != CCommands::JSCommandMap.end();
          ++jsCounter) {
         if (jsCounter->second.cmdLevelReq <= targetCommand) {
             targetCmds.AddData(jsCounter->first, jsCounter->second.cmdLevelReq);
@@ -1150,14 +1153,14 @@ void Command_HowTo(CSocket *s) {
                                        cwmWorldState->ServerData()->ButtonCancel() + 1));
 
         std::uint8_t currentLevel = mChar->GetCommandLevel();
-        COMMANDMAP_ITERATOR gAdd = CommandMap.begin();
-        TARGETMAP_ITERATOR tAdd = TargetMap.begin();
-        JSCOMMANDMAP_ITERATOR jAdd = JSCommandMap.begin();
+        auto gAdd = CCommands::CommandMap.begin();
+        auto tAdd =  CCommands::TargetMap.begin();
+        auto jAdd = CCommands::JSCommandMap.begin();
 
         toSend.addCommand("page 1");
 
         bool justDonePageAdd = false;
-        while (gAdd != CommandMap.end()) {
+        while (gAdd !=CCommands::CommandMap.end()) {
             if (numAdded > 0 && !(numAdded % 10) && !justDonePageAdd) {
                 position = 40;
                 ++pagenum;
@@ -1181,7 +1184,7 @@ void Command_HowTo(CSocket *s) {
             ++iCmd;
             ++gAdd;
         }
-        while (tAdd != TargetMap.end()) {
+        while (tAdd != CCommands::TargetMap.end()) {
             if (numAdded > 0 && !(numAdded % 10) && !justDonePageAdd) {
                 position = 40;
                 ++pagenum;
@@ -1205,7 +1208,7 @@ void Command_HowTo(CSocket *s) {
             ++iCmd;
             ++tAdd;
         }
-        while (jAdd != JSCommandMap.end()) {
+        while (jAdd != CCommands::JSCommandMap.end()) {
             if (numAdded > 0 && !(numAdded % 10) && !justDonePageAdd) {
                 position = 40;
                 ++pagenum;
@@ -1249,30 +1252,30 @@ void Command_HowTo(CSocket *s) {
     }
     else {
         std::int32_t i = 0;
-        COMMANDMAP_ITERATOR toFind;
-        for (toFind = CommandMap.begin(); toFind != CommandMap.end(); ++toFind) {
+        auto toFind = CCommands::CommandMap.begin();
+        for (toFind = CCommands::CommandMap.begin(); toFind != CCommands::CommandMap.end(); ++toFind) {
             if (commandStart == toFind->first) {
                 break;
             }
             ++i;
         }
-        if (toFind == CommandMap.end()) {
-            TARGETMAP_ITERATOR findTarg;
-            for (findTarg = TargetMap.begin(); findTarg != TargetMap.end(); ++findTarg) {
+        if (toFind == CCommands::CommandMap.end()) {
+            auto findTarg = CCommands::TargetMap.begin();
+            for (findTarg = CCommands::TargetMap.begin(); findTarg != CCommands::TargetMap.end(); ++findTarg) {
                 if (commandStart == findTarg->first) {
                     break;
                 }
                 ++i;
             }
-            if (findTarg == TargetMap.end()) {
-                JSCOMMANDMAP_ITERATOR findJS = JSCommandMap.begin();
-                for (findJS = JSCommandMap.begin(); findJS != JSCommandMap.end(); ++findJS) {
+            if (findTarg == CCommands::TargetMap.end()) {
+                auto findJS = CCommands::JSCommandMap.begin();
+                for (findJS = CCommands::JSCommandMap.begin(); findJS != CCommands::JSCommandMap.end(); ++findJS) {
                     if (commandStart == findJS->first) {
                         break;
                     }
                     ++i;
                 }
-                if (findJS == JSCommandMap.end()) {
+                if (findJS == CCommands::JSCommandMap.end()) {
                     s->SysMessage(280); // Error finding command
                     return;
                 }
@@ -1311,12 +1314,10 @@ void Command_Status(CSocket *s) {
     HTMLTemplates->TemplateInfoGump(s);
 }
 
-COMMANDMAP CommandMap;
-TARGETMAP TargetMap;
-JSCOMMANDMAP JSCommandMap;
 
 void CCommands::CommandReset() {
-    // TargetMap[Command Name] = TargetMapEntry_st(Required Command Level, Command Type, Target ID,
+    TargetMap.clear();
+    // TargetMap[Command Name] = TargetMapEntry(Required Command Level, Command Type, Target ID,
     // Dictionary Entry);
     // A
     // B
@@ -1327,97 +1328,91 @@ void CCommands::CommandReset() {
     // G
     // H
     // I
-    TargetMap["INFO"] = TargetMapEntry_st(CL_GM, CMD_TARGET, TARGET_INFO, 261);
+    TargetMap["INFO"s] = TargetMapEntry(CL_GM, CMD_TARGET, TARGET_INFO, 261);
     // J
     // K
     // L
     // M
-    TargetMap["MAKE"] = TargetMapEntry_st(CL_ADMIN, CMD_TARGETTXT, TARGET_MAKESTATUS, 279);
+    TargetMap["MAKE"s] = TargetMapEntry(CL_ADMIN, CMD_TARGETTXT, TARGET_MAKESTATUS, 279);
     // N
     // O
     // P
     // Q
     // R
     // S
-    TargetMap["SHOWSKILLS"] = TargetMapEntry_st(CL_GM, CMD_TARGETINT, TARGET_SHOWSKILLS, 260);
+    TargetMap["SHOWSKILLS"s] = TargetMapEntry(CL_GM, CMD_TARGETINT, TARGET_SHOWSKILLS, 260);
     // T
-    // TargetMap["TWEAK"]			= TargetMapEntry_st( CL_GM,			CMD_TARGET,
+    // TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,
     // TARGET_TWEAK, 229);
     // U
     // V
     // W
-    TargetMap["WSTATS"] = TargetMapEntry_st(CL_CNS, CMD_TARGET, TARGET_WSTATS, 183);
+    TargetMap["WSTATS"s] = TargetMapEntry(CL_CNS, CMD_TARGET, TARGET_WSTATS, 183);
     // X
     // Y
     // Z
-
-    // CommandMap[Command Name] = CommandMapEntry_st(Required Command Level, Command Type, Command
+    CommandMap.clear();
+    // CommandMap[Command Name] = CommandMapEntry(Required Command Level, Command Type, Command
     // Function);
     // A
-    CommandMap["ADDACCOUNT"] =
-        CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_AddAccount);
-    CommandMap["ANNOUNCE"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Announce);
+    CommandMap["ADDACCOUNT"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_AddAccount);
+    CommandMap["ANNOUNCE"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Announce);
     // B
     // C
-    CommandMap["CQ"] = CommandMapEntry_st(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_CQ);
-    CommandMap["COMMAND"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Command);
+    CommandMap["CQ"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_CQ);
+    CommandMap["COMMAND"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Command);
     // D
-    CommandMap["DYE"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Dye);
+    CommandMap["DYE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Dye);
     // E
     // F
-    CommandMap["FORCEWHO"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ForceWho);
-    CommandMap["FIXSPAWN"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&command_fixspawn);
+    CommandMap["FORCEWHO"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ForceWho);
+    CommandMap["FIXSPAWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&command_fixspawn);
     // G,
-    CommandMap["GETLIGHT"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetLight);
-    CommandMap["GUARDS"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Guards);
-    CommandMap["GMS"] = CommandMapEntry_st(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GMs);
-    CommandMap["GMMENU"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GmMenu);
-    CommandMap["GCOLLECT"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&CollectGarbage);
-    CommandMap["GQ"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GQ);
+    CommandMap["GETLIGHT"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetLight);
+    CommandMap["GUARDS"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Guards);
+    CommandMap["GMS"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GMs);
+    CommandMap["GMMENU"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GmMenu);
+    CommandMap["GCOLLECT"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&CollectGarbage);
+    CommandMap["GQ"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GQ);
     // H
-    CommandMap["HOWTO"] = CommandMapEntry_st(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_HowTo);
+    CommandMap["HOWTO"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_HowTo);
     // I
     // J
     // K
     // L
-    CommandMap["LOADDEFAULTS"] =
-        CommandMapEntry_st(CL_ADMIN, CMD_FUNC, (CMD_DEFINE)&Command_LoadDefaults);
+    CommandMap["LOADDEFAULTS"s] =  CommandMapEntry(CL_ADMIN, CMD_FUNC, (CMD_DEFINE)&Command_LoadDefaults);
     // M
-    CommandMap["MEMSTATS"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_MemStats);
-    CommandMap["MINECHECK"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_MineCheck);
+    CommandMap["MEMSTATS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_MemStats);
+    CommandMap["MINECHECK"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_MineCheck);
     // N
     // O
     // P
-    CommandMap["PDUMP"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_PDump);
-    CommandMap["POST"] = CommandMapEntry_st(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetPost);
+    CommandMap["PDUMP"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_PDump);
+    CommandMap["POST"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_GetPost);
     // Q
     // R
-    CommandMap["RESTOCK"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Restock);
-    CommandMap["RESPAWN"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Respawn);
-    CommandMap["REGSPAWN"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_RegSpawn);
-    CommandMap["REPORTBUG"] =
-        CommandMapEntry_st(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ReportBug);
+    CommandMap["RESTOCK"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Restock);
+    CommandMap["RESPAWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Respawn);
+    CommandMap["REGSPAWN"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_RegSpawn);
+    CommandMap["REPORTBUG"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ReportBug);
     // S
-    CommandMap["SETPOST"] = CommandMapEntry_st(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetPost);
-    CommandMap["SPAWNKILL"] =
-        CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SpawnKill);
-    CommandMap["SETSHOPRESTOCKRATE"] =
-        CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetShopRestockRate);
-    CommandMap["SETTIME"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_SetTime);
-    CommandMap["SHUTDOWN"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Shutdown);
-    CommandMap["SAVE"] = CommandMapEntry_st(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Save);
-    CommandMap["STATUS"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Status);
-    CommandMap["SHOWIDS"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ShowIds);
+    CommandMap["SETPOST"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetPost);
+    CommandMap["SPAWNKILL"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SpawnKill);
+    CommandMap["SETSHOPRESTOCKRATE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_SetShopRestockRate);
+    CommandMap["SETTIME"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_SetTime);
+    CommandMap["SHUTDOWN"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Shutdown);
+    CommandMap["SAVE"s] = CommandMapEntry(CL_GM, CMD_FUNC, (CMD_DEFINE)&Command_Save);
+    CommandMap["STATUS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Status);
+    CommandMap["SHOWIDS"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ShowIds);
     // T
-    CommandMap["TEMP"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Temp);
-    CommandMap["TELL"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tell);
-    CommandMap["TILE"] = CommandMapEntry_st(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tile);
+    CommandMap["TEMP"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Temp);
+    CommandMap["TELL"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tell);
+    CommandMap["TILE"s] = CommandMapEntry(CL_GM, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Tile);
     // U
     // V
-    CommandMap["VALIDCMD"] =
-        CommandMapEntry_st(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ValidCmd);
+    CommandMap["VALIDCMD"s] = CommandMapEntry(CL_PLAYER, CMD_SOCKFUNC, (CMD_DEFINE)&Command_ValidCmd);
     // W
-    CommandMap["WHO"] = CommandMapEntry_st(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Who);
+    CommandMap["WHO"s] = CommandMapEntry(CL_CNS, CMD_SOCKFUNC, (CMD_DEFINE)&Command_Who);
     // X
     // Y
     // Z
@@ -1434,9 +1429,9 @@ void CCommands::UnRegister(const std::string &cmdName, [[maybe_unused]] cScript 
 #endif
     std::string upper = cmdName;
     upper = util::upper(upper);
-    JSCOMMANDMAP_ITERATOR p = JSCommandMap.find(upper);
-    if (p != JSCommandMap.end()) {
-        JSCommandMap.erase(p);
+    auto p = CCommands::JSCommandMap.find(upper);
+    if (p != CCommands::JSCommandMap.end()) {
+        CCommands::JSCommandMap.erase(p);
     }
 #if defined(UOX_DEBUG_MODE)
     else {
@@ -1467,7 +1462,7 @@ void CCommands::Register(const std::string &cmdName, std::uint16_t scriptId, std
 #endif
     std::string upper = cmdName;
     upper = util::upper(upper);
-    JSCommandMap[upper] = JSCommandEntry_st(cmdLevel, scriptId, isEnabled);
+    CCommands::JSCommandMap[upper] = JSCommandEntry(cmdLevel, scriptId, isEnabled);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1478,8 +1473,8 @@ void CCommands::Register(const std::string &cmdName, std::uint16_t scriptId, std
 void CCommands::SetCommandStatus(const std::string &cmdName, bool isEnabled) {
     std::string upper = cmdName;
     upper = util::upper(upper);
-    JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find(upper);
-    if (toFind != JSCommandMap.end()) {
+    auto toFind = CCommands::JSCommandMap.find(upper);
+    if (toFind != CCommands::JSCommandMap.end()) {
         toFind->second.isEnabled = isEnabled;
     }
 }

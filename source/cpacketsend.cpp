@@ -5619,7 +5619,7 @@ void CPSendGumpMenu::addCommand(const std::string &msg) {
 
 void CPSendGumpMenu::addText(const std::string &msg) {
     if (msg.empty() || msg.size() == 0) {
-        // throw new std::runtime_error( "Blank text field added!" );
+        
         Console::shared().Error("Blank text field added!");
         return;
     }

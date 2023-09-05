@@ -18,16 +18,23 @@
 
 CCommands *Commands = nullptr;
 
+//===================================================================================================
+// CCommands
+//==================================================================================================
+//==================================================================================================
+// Define our static maps
+auto CCommands::CommandMap = std::map<std::string, CommandMapEntry>();
+auto CCommands::TargetMap = std::map<std::string, TargetMapEntry>();
+auto CCommands::JSCommandMap = std::map<std::string, JSCommandEntry>();
+
+//==================================================================================================
 auto CCommands::Startup() -> void { CommandReset(); }
 
+//==================================================================================================
 CCommands::~CCommands() {
     CommandMap.clear();
-    TargetMap.clear();
-    JSCommandMap.clear();
-    for (size_t clearIter = 0; clearIter < clearance.size(); ++clearIter) {
-        delete clearance[clearIter];
-        clearance[clearIter] = nullptr;
-    }
+    //TargetMap.clear();
+    //JSCommandMap.clear();
     clearance.clear();
 }
 // o------------------------------------------------------------------------------------------------o
@@ -54,9 +61,7 @@ std::int32_t CCommands::Argument(std::uint8_t argNum) {
         try {
             retVal = std::stoi(tempString, nullptr, 0);
         } catch (const std::invalid_argument &e) {
-            Console::shared().Error(
-                                    util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(),
-                                                 tempString.c_str()));
+            Console::shared().Error(util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str()));
         }
     }
     
@@ -98,7 +103,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
     // Discard the leading command prefix
     std::string command = util::upper(CommandString(1, 1));
     
-    JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find(command);
+    auto toFind = JSCommandMap.find(command);
     if (toFind != JSCommandMap.end()) {
         if (toFind->second.isEnabled) {
             bool plClearance = false;
@@ -139,7 +144,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         }
     }
     
-    TARGETMAP_ITERATOR findTarg = TargetMap.find(command);
+    auto findTarg = TargetMap.find(command);
     if (findTarg != TargetMap.end()) {
         bool plClearance = false;
         if (checkSocketAccess) {
@@ -202,7 +207,7 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         }
     }
     else {
-        COMMANDMAP_ITERATOR toFind = CommandMap.find(command);
+        auto toFind = CommandMap.find(command);
         if (toFind == CommandMap.end()) {
             bool cmdHandled = false;
             std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
@@ -286,8 +291,8 @@ void CCommands::Load() {
     std::vector<std::string> badCommands;
     for (tag = commands->First(); !commands->AtEnd(); tag = commands->Next()) {
         data = commands->GrabData();
-        COMMANDMAP_ITERATOR toFind = CommandMap.find(tag);
-        TARGETMAP_ITERATOR findTarg = TargetMap.find(tag);
+        auto toFind = CommandMap.find(tag);
+        auto findTarg = TargetMap.find(tag);
         if (toFind == CommandMap.end() && findTarg == TargetMap.end()) {
             badCommands.push_back(tag); // make sure we don't index into array at -1
         }
@@ -305,8 +310,7 @@ void CCommands::Load() {
     if (!badCommands.empty()) {
         Console::shared() << myendl;
         std::for_each(badCommands.begin(), badCommands.end(), [](const std::string &entry) {
-            Console::shared() << "Invalid command '" << entry.c_str() << "' found in commands.dfn!"
-            << myendl;
+            Console::shared() << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
         });
     }
     
@@ -324,14 +328,13 @@ void CCommands::Load() {
             tag = sec->tag;
             data = sec->data;
             currentWorking = clearance.size();
-            clearance.push_back(new CommandLevel_st);
+            clearance.push_back(std::make_unique<CommandLevel>());
             clearance[currentWorking]->name = tag;
-            clearance[currentWorking]->commandLevel =
-            static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
+            clearance[currentWorking]->commandLevel = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
         }
-        std::vector<CommandLevel_st *>::const_iterator cIter;
-        for (cIter = clearance.begin(); cIter != clearance.end(); ++cIter) {
-            CommandLevel_st *ourClear = (*cIter);
+        
+        for (auto cIter = clearance.begin(); cIter != clearance.end(); ++cIter) {
+            CommandLevel *ourClear = (*cIter).get();
             if (ourClear) {
                 cmdClearance = FileLookup->FindEntry(ourClear->name, command_def);
                 if (cmdClearance) {
@@ -359,10 +362,10 @@ void CCommands::Load() {
                             ourClear->bodyColour = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                         }
                         else if (UTag == "STRIPHAIR") {
-                            ourClear->stripOff.set(BIT_STRIPHAIR, true);
+                            ourClear->stripOff.set(CommandLevel::BIT_STRIPHAIR, true);
                         }
                         else if (UTag == "STRIPITEMS") {
-                            ourClear->stripOff.set(BIT_STRIPITEMS, true);
+                            ourClear->stripOff.set(CommandLevel::BIT_STRIPITEMS, true);
                         }
                         else {
                             Console::shared() << myendl << "Unknown tag in " << ourClear->name
@@ -420,14 +423,14 @@ void CCommands::Log(const std::string &command, CChar *player1, CChar *player2,
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
 // o------------------------------------------------------------------------------------------------o
-CommandLevel_st *CCommands::GetClearance(std::string clearName) {
+CommandLevel *CCommands::GetClearance(std::string clearName) {
     if (clearance.empty()) {
         return nullptr;
     }
-    CommandLevel_st *clearPointer;
-    std::vector<CommandLevel_st *>::const_iterator clearIter;
-    for (clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter) {
-        clearPointer = (*clearIter);
+    CommandLevel *clearPointer;
+    
+    for (auto clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter) {
+        clearPointer = (*clearIter).get();
         if (util::upper(clearName) == clearPointer->name) {
             return clearPointer;
         }
@@ -462,10 +465,10 @@ std::uint16_t CCommands::GetColourByLevel(std::uint8_t commandLevel) {
 //|	Purpose		-	Initialize command levels
 // o------------------------------------------------------------------------------------------------o
 void CCommands::InitClearance() {
-    clearance.push_back(new CommandLevel_st); // 0 -> 3
-    clearance.push_back(new CommandLevel_st);
-    clearance.push_back(new CommandLevel_st);
-    clearance.push_back(new CommandLevel_st);
+    clearance.push_back(std::make_unique<CommandLevel>()); // 0 -> 3
+    clearance.push_back(std::make_unique<CommandLevel>());
+    clearance.push_back(std::make_unique<CommandLevel>());
+    clearance.push_back(std::make_unique<CommandLevel>());
     
     clearance[0]->name = "ADMIN";
     clearance[1]->name = "GM";
@@ -507,12 +510,12 @@ void CCommands::InitClearance() {
     clearance[3]->allSkillVals = 0;
     
     // Strip Everything for Admins, GMs and Counselors
-    clearance[0]->stripOff.set(BIT_STRIPHAIR, true);
-    clearance[0]->stripOff.set(BIT_STRIPITEMS, true);
-    clearance[1]->stripOff.set(BIT_STRIPHAIR, true);
-    clearance[1]->stripOff.set(BIT_STRIPITEMS, true);
-    clearance[2]->stripOff.set(BIT_STRIPHAIR, true);
-    clearance[2]->stripOff.set(BIT_STRIPITEMS, true);
+    clearance[0]->stripOff.set(CommandLevel::BIT_STRIPHAIR, true);
+    clearance[0]->stripOff.set(CommandLevel::BIT_STRIPITEMS, true);
+    clearance[1]->stripOff.set(CommandLevel::BIT_STRIPHAIR, true);
+    clearance[1]->stripOff.set(CommandLevel::BIT_STRIPITEMS, true);
+    clearance[2]->stripOff.set(CommandLevel::BIT_STRIPHAIR, true);
+    clearance[2]->stripOff.set(CommandLevel::BIT_STRIPITEMS, true);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -520,20 +523,20 @@ void CCommands::InitClearance() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Geta characters command level
 // o------------------------------------------------------------------------------------------------o
-CommandLevel_st *CCommands::GetClearance(std::uint8_t commandLevel) {
+CommandLevel *CCommands::GetClearance(std::uint8_t commandLevel) {
     size_t clearanceSize = clearance.size();
     if (clearanceSize == 0)
         return nullptr;
     
     if (commandLevel > clearance[0]->commandLevel)
-        return clearance[0];
+        return clearance[0].get();
     
     for (size_t counter = 0; counter < (clearanceSize - 1); ++counter) {
         if (commandLevel <= clearance[counter]->commandLevel &&
             commandLevel > clearance[counter + 1]->commandLevel)
-            return clearance[counter];
+            return clearance[counter].get();
     }
-    return clearance[clearanceSize - 1];
+    return clearance[clearanceSize - 1].get();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -542,7 +545,7 @@ CommandLevel_st *CCommands::GetClearance(std::uint8_t commandLevel) {
 //|	Purpose		-	Check if a command is valid
 // o------------------------------------------------------------------------------------------------o
 bool CCommands::CommandExists(const std::string &cmdName) {
-    COMMANDMAP_ITERATOR toFind = CommandMap.find(cmdName);
+    auto toFind = CommandMap.find(cmdName);
     return (toFind != CommandMap.end());
 }
 
@@ -587,11 +590,11 @@ bool CCommands::FinishedCommandList() { return (cmdPointer == CommandMap.end());
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
 // o------------------------------------------------------------------------------------------------o
-CommandMapEntry_st *CCommands::CommandDetails(const std::string &cmdName) {
+CommandMapEntry *CCommands::CommandDetails(const std::string &cmdName) {
     if (!CommandExists(cmdName))
         return nullptr;
     
-    COMMANDMAP_ITERATOR toFind = CommandMap.find(cmdName);
+    auto toFind = CommandMap.find(cmdName);
     if (toFind == CommandMap.end())
         return nullptr;
     

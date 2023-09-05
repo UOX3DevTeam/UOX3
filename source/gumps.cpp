@@ -1678,7 +1678,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     std::uint8_t cmdType = 0xFF;
     std::string cmdName = "";
     bool found = false;
-    for (auto itr = CommandMap.begin(); itr != CommandMap.end(); ++itr) {
+    for (auto itr = CCommands::CommandMap.begin(); itr != CCommands::CommandMap.end(); ++itr) {
         if (iCounter == cmdNumber) {
             cmdName = itr->first;
             cmdLevelReq = itr->second.cmdLevelReq;
@@ -1690,7 +1690,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = TargetMap.begin(); itr != TargetMap.end(); ++itr) {
+        for (auto itr = CCommands::TargetMap.begin(); itr != CCommands::TargetMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
@@ -1702,7 +1702,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = JSCommandMap.begin(); itr != JSCommandMap.end(); ++itr) {
+        for (auto itr = CCommands::JSCommandMap.begin(); itr != CCommands::JSCommandMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
@@ -1744,7 +1744,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
         
         auto filename = util::format("help/commands/%s.txt", cmdName.c_str());
         
-        std::ifstream toOpen(filename);
+        auto toOpen = std::ifstream(filename);
         if (!toOpen.is_open()) {
             CommandInfo.AddData("", "No extra information is available about this command", 7);
         }

@@ -719,7 +719,7 @@ auto cHTMLTemplates::Load() -> void {
             if (NumEntries != 0) {
                 for (const auto &[entryName, found] : toCheck->collection()) {
                     cHTMLTemplate *Template = new cHTMLTemplate();
-                    Template->Load(found);
+                    Template->Load(found.get());
                     Templates.push_back(Template);
                 }
             }

@@ -1723,8 +1723,8 @@ void MakeStatusTarget(CSocket *sock) {
         return;
     }
     std::uint8_t origCommand = targetChar->GetCommandLevel();
-    CommandLevel_st *targLevel = Commands->GetClearance(sock->XText());
-    CommandLevel_st *origLevel = Commands->GetClearance(origCommand);
+    CommandLevel *targLevel = Commands->GetClearance(sock->XText());
+    CommandLevel *origLevel = Commands->GetClearance(origCommand);
     
     if (targLevel == nullptr) {
         sock->SysMessage(1112); // No such clearance level!
@@ -1791,7 +1791,7 @@ void MakeStatusTarget(CSocket *sock) {
                 switch (z->GetLayer()) {
                     case IL_HAIR:
                     case IL_FACIALHAIR:
-                        if (targLevel->stripOff.test(BIT_STRIPHAIR)) {
+                        if (targLevel->stripOff.test(CommandLevel::BIT_STRIPHAIR)) {
                             z->Delete();
                         }
                         break;
@@ -1801,7 +1801,7 @@ void MakeStatusTarget(CSocket *sock) {
                     case IL_BANKBOX:
                         break;
                     default:
-                        if (targLevel->stripOff.test(BIT_STRIPITEMS)) {
+                        if (targLevel->stripOff.test(CommandLevel::BIT_STRIPITEMS)) {
                             if (!ValidateObject(mypack)) {
                                 mypack = targetChar->GetPackItem();
                             }

@@ -4,6 +4,7 @@
 #include <cstdint>
 
 #include <fstream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -21,8 +22,8 @@ public:
     CScriptSection *FindEntrySubStr(const std::string &section);
     CScriptSection *FirstEntry();
     CScriptSection *NextEntry();
-    auto collection() const -> const std::unordered_map<std::string, CScriptSection *> &;
-    auto collection() -> std::unordered_map<std::string, CScriptSection *> &;
+    auto collection() const -> const std::unordered_map<std::string, std::unique_ptr<CScriptSection>> &;
+    auto collection() -> std::unordered_map<std::string, std::unique_ptr<CScriptSection>> &;
     
     bool IsInSection(const std::string &section);
     std::string EntryName();
@@ -34,8 +35,8 @@ private:
     void Reload(bool disp = true);
     bool CreateSection(std::string &name);
     
-    std::unordered_map<std::string, CScriptSection *> defEntries; // string is the name of section
-    std::unordered_map<std::string, CScriptSection *>::iterator iSearch;
+    std::unordered_map<std::string, std::unique_ptr<CScriptSection> > defEntries; // string is the name of section
+    std::unordered_map<std::string, std::unique_ptr<CScriptSection>>::iterator iSearch;
     time_t last_modification;
     std::string filename;
     bool errorState;

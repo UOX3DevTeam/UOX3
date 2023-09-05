@@ -498,7 +498,7 @@ JSBool SE_CommandLevelReq(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
         ScriptError(cx, "CommandLevelReq: Invalid command name");
         return JS_FALSE;
     }
-    CommandMapEntry_st *details = Commands->CommandDetails(test);
+    CommandMapEntry *details = Commands->CommandDetails(test);
     if (details == nullptr) {
         *rval = INT_TO_JSVAL(255);
     }

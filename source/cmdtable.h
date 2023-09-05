@@ -28,48 +28,39 @@ enum commandTypes {
     CMD_TARGETTXT,  // target with XText
 };
 
-struct CommandMapEntry_st {
+struct CommandMapEntry {
     std::uint8_t cmdLevelReq;
     std::uint8_t cmdType;
     void (*cmd_extra)(); // executable function
-    CommandMapEntry_st() : cmdLevelReq(0), cmdType(CMD_SOCKFUNC), cmd_extra(nullptr) {}
-    CommandMapEntry_st(std::uint8_t cLR, std::uint8_t cT, void (*ce)())
+    CommandMapEntry() : cmdLevelReq(0), cmdType(CMD_SOCKFUNC), cmd_extra(nullptr) {}
+    CommandMapEntry(std::uint8_t cLR, std::uint8_t cT, void (*ce)())
         : cmdLevelReq(cLR), cmdType(cT), cmd_extra(ce) {}
 };
 
-struct TargetMapEntry_st {
+struct TargetMapEntry {
     std::uint8_t cmdLevelReq;
     std::uint8_t cmdType;
     targetids_t targId;
     std::int32_t dictEntry;
-    TargetMapEntry_st()
+    TargetMapEntry()
         : cmdLevelReq(0), cmdType(CMD_TARGET), targId(TARGET_NOFUNC), dictEntry(0) {}
-    TargetMapEntry_st(std::uint8_t cLR, std::uint8_t cT, targetids_t tID, std::int32_t dE)
+    TargetMapEntry(std::uint8_t cLR, std::uint8_t cT, targetids_t tID, std::int32_t dE)
         : cmdLevelReq(cLR), cmdType(cT), targId(tID), dictEntry(dE) {}
 };
 
-struct JSCommandEntry_st {
+struct JSCommandEntry {
     std::uint8_t cmdLevelReq;
     std::uint16_t scriptId;
     bool isEnabled;
-    JSCommandEntry_st() : cmdLevelReq(0), scriptId(0), isEnabled(true) {}
-    JSCommandEntry_st(std::uint8_t cLR, std::uint16_t id, bool iE) : cmdLevelReq(cLR), scriptId(id), isEnabled(iE) {}
+    JSCommandEntry() : cmdLevelReq(0), scriptId(0), isEnabled(true) {}
+    JSCommandEntry(std::uint8_t cLR, std::uint16_t id, bool iE) : cmdLevelReq(cLR), scriptId(id), isEnabled(iE) {}
 };
 
-typedef std::map<std::string, CommandMapEntry_st> COMMANDMAP;
-typedef std::map<std::string, CommandMapEntry_st>::iterator COMMANDMAP_ITERATOR;
-extern COMMANDMAP CommandMap;
 
 #define CMD_EXEC void (*)()
 #define CMD_SOCKEXEC void (*)(CSocket *)
 #define CMD_DEFINE void (*)()
 
-typedef std::map<std::string, TargetMapEntry_st> TARGETMAP;
-typedef std::map<std::string, TargetMapEntry_st>::iterator TARGETMAP_ITERATOR;
-extern TARGETMAP TargetMap;
 
-typedef std::map<std::string, JSCommandEntry_st> JSCOMMANDMAP;
-typedef std::map<std::string, JSCommandEntry_st>::iterator JSCOMMANDMAP_ITERATOR;
-extern JSCOMMANDMAP JSCommandMap;
 
 #endif // __CMDTABLE_H
