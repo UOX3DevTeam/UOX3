@@ -81,13 +81,13 @@ function page20( pUser )
 	const startChar = 'S';
 	const startY = 60;
 
-	for (let i = 0; i < 8; i++) 
+	for( let i = 0; i < 8; i++ ) 
 	{
-		const char = String.fromCharCode(startChar.charCodeAt(0) + i);
+		const char = String.fromCharCode(startChar.charCodeAt(0) + i );
 		const yPos = startY + i * 30;
 
-		uox3gump.AddPageButton(160, yPos, 2443, 2444, i + 1);
-		uox3gump.AddText(190, yPos, 0, char);
+		uox3gump.AddPageButton( 160, yPos, 2443, 2444, i + 1 );
+		uox3gump.AddText( 190, yPos, 0, char );
 	}
 
 	uox3gump.AddButton( 210, 570, 1545, 1546, 1, 0, 1 );
