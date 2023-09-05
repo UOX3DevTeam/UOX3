@@ -14,8 +14,8 @@ function toolbar( pUser )
 	var socket = pUser.socket;
 	var uox3gump = new Gump;
 	uox3gump.NoClose();
-	uox3gump.AddPage( 0 );
 
+	uox3gump.AddPage( 0 );
 	uox3gump.AddBackground( 180, 260, 524, 32, 9200 );
 	uox3gump.AddButton( 190, 265, 2445, 2443, 1, 0, 1 );
 	uox3gump.AddButton( 300, 265, 2445, 2443, 1, 0, 2 );
@@ -35,12 +35,19 @@ function toolbar( pUser )
 function CommandInfo( pUser ) 
 {
 	var socket = pUser.socket;
-	var uox3gump = new Gump;
+	var uox3gump = new Gump();
 
-	uox3gump.AddPage( 0 );
-	uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
-	uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
-	page0( pUser, uox3gump );
+	// Create Page 0
+	function createPage0()
+	{
+		uox3gump.AddPage( 0 );
+		uox3gump.AddBackground( 140, 40, 100, 568, 9270 );
+		uox3gump.AddBackground( 240, 40, 644, 568, 9270 );
+		page0(pUser, uox3gump);
+	}
+
+	createPage0();
+
 	uox3gump.Send( pUser );
 	uox3gump.Free();
 }
