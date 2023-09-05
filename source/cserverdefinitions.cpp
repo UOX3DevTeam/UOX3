@@ -74,16 +74,18 @@ auto CServerDefinitions::Reload() -> bool {
 
 //==================================================================================================
 auto CServerDefinitions::Cleanup() -> void {
-    
+    // We could just do a clear here, unless we are trying to keep the size?
+    /*
     for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
         auto &toDel = (*slIter);
         for (size_t j = 0; j < toDel.size(); ++j) {
             if (toDel[j]) {
-                delete toDel[j];
                 toDel[j] = nullptr;
             }
         }
     }
+     */
+    ScriptListings.clear();
 }
 
 //==================================================================================================
@@ -93,6 +95,8 @@ CServerDefinitions::~CServerDefinitions() { Cleanup(); }
 auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
     bool retVal = false;
     if (toDispose != NUM_DEFS) {
+        ScriptListings[toDispose].clear() ;
+        /*
         auto &toDel = ScriptListings[toDispose];
         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
             Script *toDelete = (*dIter);
@@ -102,6 +106,7 @@ auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
             }
         }
         toDel.clear();
+         */
     }
     return retVal;
 }
@@ -120,7 +125,7 @@ auto CServerDefinitions::FindEntry(const std::string &toFind, definitioncategori
         
         auto &toDel = ScriptListings[typeToFind];
         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
-            Script *toCheck = (*dIter);
+            Script *toCheck = (*dIter).get();
             if (toCheck) {
                 rValue = toCheck->FindEntry(tUFind);
                 if (rValue) {
@@ -139,7 +144,7 @@ auto CServerDefinitions::FindEntrySubStr(const std::string &toFind, definitionca
     if (!toFind.empty() && typeToFind != NUM_DEFS) {
         auto &toDel = ScriptListings[typeToFind];
         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
-            Script *toCheck = (*dIter);
+            Script *toCheck = (*dIter).get();
             if (toCheck) {
                 rValue = toCheck->FindEntrySubStr(toFind);
                 if (rValue) {
@@ -203,10 +208,10 @@ auto CServerDefinitions::LoadDFNCategory(definitioncategories_t toLoad) -> void 
         size_t iTotal = 0;
         Console::shared().TurnYellow();
         
-        std::vector<PrioScan>::const_iterator mIter;
-        for (mIter = mSort.begin(); mIter != mSort.end(); ++mIter) {
+        
+        for (auto mIter = mSort.begin(); mIter != mSort.end(); ++mIter) {
             Console::shared().Print("\b\b\b\b\b\b");
-            ScriptListings[toLoad].push_back(new Script((*mIter).filename, toLoad, false));
+            ScriptListings[toLoad].push_back(std::make_unique< Script>((*mIter).filename, toLoad, false));
             iTotal += ScriptListings[toLoad].back()->NumEntries();
             Console::shared().Print(util::format("%6i", iTotal));
         }
@@ -265,7 +270,7 @@ auto CServerDefinitions::FirstScript(definitioncategories_t typeToFind) -> Scrip
     Script *retScript = nullptr;
     slIter = ScriptListings[typeToFind].begin();
     if (!FinishedScripts(typeToFind)) {
-        retScript = (*slIter);
+        retScript = (*slIter).get();
     }
     return retScript;
 }
@@ -275,7 +280,7 @@ auto CServerDefinitions::NextScript(definitioncategories_t typeToFind) -> Script
     if (!FinishedScripts(typeToFind)) {
         ++slIter;
         if (!FinishedScripts(typeToFind)) {
-            retScript = (*slIter);
+            retScript = (*slIter).get();
         }
     }
     return retScript;

@@ -37,9 +37,9 @@ struct CommandLevel {
 
 class CCommands {
 public:
-    static std::map<std::string, CommandMapEntry> CommandMap ;
-    static std::map<std::string, TargetMapEntry> TargetMap;
-    static std::map<std::string, JSCommandEntry> JSCommandMap ;
+    static std::map<std::string, CommandMapEntry> commandMap ;
+    static std::map<std::string, TargetMapEntry> targetMap;
+    static std::map<std::string, JSCommandEntry> jscommandMap ;
 private:
     std::vector<std::unique_ptr<CommandLevel>> clearance;
     std::map<std::string, CommandMapEntry>::iterator cmdPointer;

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <stack>
 #include <string>
 #include <vector>
@@ -52,7 +53,7 @@ public:
 
 class CServerDefinitions {
 private:
-    std::vector<Script *>::iterator slIter;
+    std::vector<std::unique_ptr<Script>>::iterator slIter;
     
     std::map<std::string, std::int16_t> priorityMap;
     std::int16_t defaultPriority;
@@ -67,7 +68,7 @@ private:
     auto Cleanup() -> void;
     
 public:
-    std::vector<std::vector<Script *>> ScriptListings;
+    std::vector<std::vector<std::unique_ptr<Script>>> ScriptListings;
     
     CServerDefinitions();
     ~CServerDefinitions();
@@ -76,8 +77,7 @@ public:
     auto Dispose(definitioncategories_t toDispose) -> bool;
     
     auto FindEntry(const std::string &toFind, definitioncategories_t typeToFind) -> CScriptSection *;
-    auto FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind)
-    -> CScriptSection *;
+    auto FindEntrySubStr(const std::string &toFind, definitioncategories_t typeToFind) -> CScriptSection *;
     auto CountOfEntries(definitioncategories_t typeToFind) -> size_t;
     auto CountOfFiles(definitioncategories_t typeToFind) -> size_t;
     auto DisplayPriorityMap() -> void;

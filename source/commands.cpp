@@ -23,19 +23,20 @@ CCommands *Commands = nullptr;
 //==================================================================================================
 //==================================================================================================
 // Define our static maps
-auto CCommands::CommandMap = std::map<std::string, CommandMapEntry>();
-auto CCommands::TargetMap = std::map<std::string, TargetMapEntry>();
-auto CCommands::JSCommandMap = std::map<std::string, JSCommandEntry>();
+auto CCommands::commandMap = std::map<std::string, CommandMapEntry>();
+auto CCommands::targetMap = std::map<std::string, TargetMapEntry>();
+auto CCommands::jscommandMap = std::map<std::string, JSCommandEntry>();
 
 //==================================================================================================
 auto CCommands::Startup() -> void { CommandReset(); }
 
 //==================================================================================================
 CCommands::~CCommands() {
-    CommandMap.clear();
-    //TargetMap.clear();
-    //JSCommandMap.clear();
+    targetMap.clear();
+    jscommandMap.clear();
     clearance.clear();
+    commandMap.clear();
+ 
 }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCommands::NumArguments()
@@ -103,8 +104,8 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
     // Discard the leading command prefix
     std::string command = util::upper(CommandString(1, 1));
     
-    auto toFind = JSCommandMap.find(command);
-    if (toFind != JSCommandMap.end()) {
+    auto toFind = jscommandMap.find(command);
+    if (toFind != jscommandMap.end()) {
         if (toFind->second.isEnabled) {
             bool plClearance = false;
             if (checkSocketAccess) {
@@ -144,8 +145,8 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         }
     }
     
-    auto findTarg = TargetMap.find(command);
-    if (findTarg != TargetMap.end()) {
+    auto findTarg = targetMap.find(command);
+    if (findTarg != targetMap.end()) {
         bool plClearance = false;
         if (checkSocketAccess) {
             plClearance = (s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq ||
@@ -207,8 +208,8 @@ void CCommands::Command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         }
     }
     else {
-        auto toFind = CommandMap.find(command);
-        if (toFind == CommandMap.end()) {
+        auto toFind = commandMap.find(command);
+        if (toFind == commandMap.end()) {
             bool cmdHandled = false;
             std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
             for (auto scriptTrig : scriptTriggers) {
@@ -291,17 +292,17 @@ void CCommands::Load() {
     std::vector<std::string> badCommands;
     for (tag = commands->First(); !commands->AtEnd(); tag = commands->Next()) {
         data = commands->GrabData();
-        auto toFind = CommandMap.find(tag);
-        auto findTarg = TargetMap.find(tag);
-        if (toFind == CommandMap.end() && findTarg == TargetMap.end()) {
+        auto toFind = commandMap.find(tag);
+        auto findTarg = targetMap.find(tag);
+        if (toFind == commandMap.end() && findTarg == targetMap.end()) {
             badCommands.push_back(tag); // make sure we don't index into array at -1
         }
         else {
             ++commandCount;
-            if (toFind != CommandMap.end()) {
+            if (toFind != commandMap.end()) {
                 toFind->second.cmdLevelReq = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
-            else if (findTarg != TargetMap.end()) {
+            else if (findTarg != targetMap.end()) {
                 findTarg->second.cmdLevelReq = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
             }
         }
@@ -545,8 +546,8 @@ CommandLevel *CCommands::GetClearance(std::uint8_t commandLevel) {
 //|	Purpose		-	Check if a command is valid
 // o------------------------------------------------------------------------------------------------o
 bool CCommands::CommandExists(const std::string &cmdName) {
-    auto toFind = CommandMap.find(cmdName);
-    return (toFind != CommandMap.end());
+    auto toFind = commandMap.find(cmdName);
+    return (toFind != commandMap.end());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -555,7 +556,7 @@ bool CCommands::CommandExists(const std::string &cmdName) {
 //|	Purpose		-	Get first command in cmd_table
 // o------------------------------------------------------------------------------------------------o
 const std::string CCommands::FirstCommand() {
-    cmdPointer = CommandMap.begin();
+    cmdPointer = commandMap.begin();
     if (FinishedCommandList())
         return "";
     
@@ -583,7 +584,7 @@ const std::string CCommands::NextCommand() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get end of cmd_table
 // o------------------------------------------------------------------------------------------------o
-bool CCommands::FinishedCommandList() { return (cmdPointer == CommandMap.end()); }
+bool CCommands::FinishedCommandList() { return (cmdPointer == commandMap.end()); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCommands::CommandDetails()
@@ -594,8 +595,8 @@ CommandMapEntry *CCommands::CommandDetails(const std::string &cmdName) {
     if (!CommandExists(cmdName))
         return nullptr;
     
-    auto toFind = CommandMap.find(cmdName);
-    if (toFind == CommandMap.end())
+    auto toFind = commandMap.find(cmdName);
+    if (toFind == commandMap.end())
         return nullptr;
     
     return &(toFind->second);

@@ -1678,7 +1678,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     std::uint8_t cmdType = 0xFF;
     std::string cmdName = "";
     bool found = false;
-    for (auto itr = CCommands::CommandMap.begin(); itr != CCommands::CommandMap.end(); ++itr) {
+    for (auto itr = CCommands::commandMap.begin(); itr != CCommands::commandMap.end(); ++itr) {
         if (iCounter == cmdNumber) {
             cmdName = itr->first;
             cmdLevelReq = itr->second.cmdLevelReq;
@@ -1690,7 +1690,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = CCommands::TargetMap.begin(); itr != CCommands::TargetMap.end(); ++itr) {
+        for (auto itr = CCommands::targetMap.begin(); itr != CCommands::targetMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
@@ -1702,7 +1702,7 @@ void HandleHowTo(CSocket *sock, std::int32_t cmdNumber) {
     }
     
     if (!found) {
-        for (auto itr = CCommands::JSCommandMap.begin(); itr != CCommands::JSCommandMap.end(); ++itr) {
+        for (auto itr = CCommands::jscommandMap.begin(); itr != CCommands::jscommandMap.end(); ++itr) {
             if (iCounter == cmdNumber) {
                 cmdName = itr->first;
                 cmdLevelReq = itr->second.cmdLevelReq;
