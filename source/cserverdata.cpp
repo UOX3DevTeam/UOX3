@@ -1390,8 +1390,6 @@ auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
             bool error = false;
             if (!resettingDefaults) {
                 error = true;
-                // auto curWorkingDir = fixDirectory( std::filesystem::current_path().string() );
-                
                 auto npath = std::filesystem::path(sText);
                 
                 if (std::filesystem::exists(npath)) {
