@@ -280,9 +280,6 @@
     <ClCompile Include="..\..\source\subsystem\account.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\subsystem\serverdata.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -453,9 +450,6 @@
       <Filter>Source Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\subsystem\console.hpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\subsystem\serverdata.hpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\craces.h">

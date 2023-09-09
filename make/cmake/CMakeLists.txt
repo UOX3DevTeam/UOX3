@@ -12,6 +12,13 @@ add_executable(uox3
 	${PROJECT_SOURCE_DIR}/../../source/uox3.cpp
 	
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
+
+# configuration
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.hpp
+
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.h
@@ -85,8 +92,6 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/queue.cpp
    ${PROJECT_SOURCE_DIR}/../../source/regions.cpp
    ${PROJECT_SOURCE_DIR}/../../source/regions.h
-   ${PROJECT_SOURCE_DIR}/../../source/subsystem/serverdata.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/subsystem/serverdata.hpp
    ${PROJECT_SOURCE_DIR}/../../source/skills.cpp
    ${PROJECT_SOURCE_DIR}/../../source/skills.h
    ${PROJECT_SOURCE_DIR}/../../source/sound.cpp

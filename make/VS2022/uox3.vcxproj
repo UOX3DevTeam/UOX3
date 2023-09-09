@@ -93,6 +93,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp" />
+    <!-- configuration group -->
+    <ClCompile Include="..\..\source\configuration\serverconfig.cpp" />
+    <ClCompile Include="..\..\source\configuration\directorylocation.cpp" />
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdata.cpp" />
     <ClCompile Include="..\..\source\cserverdefinitions.cpp" />
@@ -132,7 +135,6 @@
     <ClCompile Include="..\..\source\quantityfuncs.cpp" />
     <ClCompile Include="..\..\source\queue.cpp" />
     <ClCompile Include="..\..\source\regions.cpp" />
-    <ClCompile Include="..\..\source\subsystem\serverdata.cpp" />
     <ClCompile Include="..\..\source\skills.cpp" />
     <ClCompile Include="..\..\source\sound.cpp" />
     <ClCompile Include="..\..\source\speech.cpp" />
@@ -184,6 +186,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
+    <!-- configuration group -->
+    <ClInclude Include="..\..\source\configuration\serverconfig.hpp" />
+    <ClInclude Include="..\..\source\configuration\directorylocation.hpp" />
     <!-- Script group -->
     <ClInclude Include="..\..\source\cserverdata.h" />
     <ClInclude Include="..\..\source\cserverdefinitions.h" />
@@ -221,7 +226,6 @@
     <ClInclude Include="..\..\source\msgboard.h" />
     <ClInclude Include="..\..\source\partysystem.h" />
     <ClInclude Include="..\..\source\regions.h" />
-    <ClInclude Include="..\..\source\subsystem\serverdata.hpp" />
     <ClInclude Include="..\..\source\skills.h" />
     <ClInclude Include="..\..\source\speech.h" />
     <ClInclude Include="..\..\source\teffect.h" />

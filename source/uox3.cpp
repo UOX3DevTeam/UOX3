@@ -40,6 +40,7 @@
 #include <random>
 #include <set>
 #include <stdexcept>
+#include <string>
 #include <thread>
 #if defined(_WIN32)
 #include <process.h>
@@ -75,7 +76,7 @@
 #include "eventtimer.hpp"
 #include "funcdecl.h"
 #include "jail.h"
-#include "subsystem/serverdata.hpp"
+#include "configuration/serverconfig.hpp"
 #include "subsystem/account.hpp"
 #include "subsystem/console.hpp"
 
@@ -100,6 +101,7 @@
 #include "weight.h"
 #include "wholist.h"
 
+using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //  Global variables
 // o------------------------------------------------------------------------------------------------o
@@ -109,13 +111,12 @@ std::chrono::time_point<std::chrono::system_clock> current;
 std::mt19937 generator;
 std::random_device rd; // Will be used to obtain a seed for the random number engine
 
-using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //  These should be atomic, for another day
 // o------------------------------------------------------------------------------------------------o
-bool isWorldSaving = false;
-bool conThreadCloseOk = false;
-bool netpollthreadclose = false;
+auto isWorldSaving = false;
+auto conThreadCloseOk = false;
+auto netpollthreadclose = false;
 auto saveOnShutdown = false;
 
 // o------------------------------------------------------------------------------------------------o
@@ -167,19 +168,19 @@ void loadPlaces();
 // o------------------------------------------------------------------------------------------------o
 //  Misc Pre-Declarations
 // o------------------------------------------------------------------------------------------------o
-void restockNPC(CChar &i, bool stockAll);
-void clearTrades();
-void sysBroadcast(const std::string &txt);
-void moveBoat(std::uint8_t dir, CBoatObj *boat);
-bool decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, const std::uint32_t nextDecayItemsInHouses);
-void checkArtificialIntelligence(CChar &mChar);
+auto restockNPC(CChar &i, bool stockAll)->void;
+auto clearTrades()->void;
+auto sysBroadcast(const std::string &txt)->void;
+auto moveBoat(std::uint8_t dir, CBoatObj *boat)->void;
+auto decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, const std::uint32_t nextDecayItemsInHouses) ->bool;
+auto checkArtificialIntelligence(CChar &mChar)->void;
 // o------------------------------------------------------------------------------------------------o
 //  Internal Pre-Declares
 // o------------------------------------------------------------------------------------------------o
 #if defined(_WIN32)
 BOOL WINAPI exit_handler(DWORD dwCtrlType);
 #else
-void app_stopped(int sig);
+auto app_stopped(int sig) ->void;
 #endif
 auto endMessage(std::int32_t x) -> void;
 auto initClasses() -> void;
@@ -203,9 +204,18 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     
     // We are going to do some fundmental checks, that if fail, we will bail out before
     // setting up
-    auto configFile = std::string("uox.ini");
+    auto configFile = std::filesystem::path("uox.ini");
     if (argc > 1) {
-        configFile = argv[1];
+        configFile = std::filesystem::path(argv[1]);
+    }
+    try{
+        // If we cant read the config file, should we even do anything else ?
+        ServerConfig::shared().loadConfig(configFile);
+        
+    }
+    catch( const std::exception &e){
+        std::cerr <<e.what() << std::endl;
+        return EXIT_FAILURE ;
     }
     
     auto status = initOperatingSystem();
@@ -475,14 +485,14 @@ auto startInitialize(CServerData &serverdata) -> void {
     saveOnShutdown = false;
     // Let's measure startup time
     auto startupStartTime = std::chrono::high_resolution_clock::now();
-
+    
     cwmWorldState = &aWorld;
     cwmWorldState->SetServerData(serverdata);
-
+    
     Console::shared() << "Initializing and creating class pointers... " << myendl;
     initClasses();
     cwmWorldState->SetUICurrentTime(GetClock());
-
+    
     Console::shared().printSectionBegin();
     
     cwmWorldState->ServerData()->LoadTime();
@@ -490,7 +500,7 @@ auto startInitialize(CServerData &serverdata) -> void {
     Console::shared() << "Loading skill advancement      ";
     loadSkills();
     Console::shared().printDone();
-     // Moved BulkStartup here, dunno why that function was there...
+    // Moved BulkStartup here, dunno why that function was there...
     Console::shared() << "Loading dictionaries...        " << myendl;
     Console::shared().printBasedOnVal( Dictionary->LoadDictionaries(cwmWorldState->ServerData()->Directory(CSDDP_DICTIONARIES)) >= 0);
     
@@ -2513,7 +2523,7 @@ auto initClasses() -> void {
     CounselorQueue = &aCounselorQueue;
     HTMLTemplates = &aHTMLTemplates;
     FileLookup = &aFileLookup;
-
+    
     aJSEngine.startup();
     aFileLookup.startup();
     serverCommands.startup();
