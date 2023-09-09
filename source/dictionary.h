@@ -6,6 +6,7 @@
 #define __DICTIONARY_H__
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <string>
 
@@ -27,13 +28,13 @@ public:
     auto GetEntry(int message_number) -> std::string &;
     
     auto ShowList() -> void;
-    auto LoadDictionary(const std::string filepath = "", const std::string &language = "") -> std::int32_t;
+    auto LoadDictionary(const std::filesystem::path &filepath = std::filesystem::path(), const std::string &language = "") -> std::int32_t;
     auto NumberOfEntries() const -> size_t;
     auto GetValid() const -> bool;
     
 private:
-    auto ParseFile(const std::string &dictionaryfile) -> bool;
-    std::string pathToDictionary;
+    auto ParseFile(const std::filesystem::path &dictionaryfile) -> bool;
+    std::filesystem::path pathToDictionary;
     std::string dictLanguage;
     std::map<int, std::string>
     msgdata; // The key here really needs to match the index in operator[]
@@ -50,7 +51,7 @@ private:
 public:
     CDictionaryContainer();
     ~CDictionaryContainer() = default;
-    auto LoadDictionaries(const std::string &filepath = "") -> int;
+    auto LoadDictionaries(const std::filesystem::path &filepath = std::filesystem::path()) -> int;
     auto SetDefaultLang(unicodetypes_t newType) -> void;
     
     auto operator[](int message_number) const -> const std::string &; // only default lang

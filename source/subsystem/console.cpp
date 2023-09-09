@@ -18,6 +18,16 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#if !defined(_WIN32)
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <unistd.h>
+struct termios initial_terminal_state;
+#else
+#include <windows.h>
+#include <conio.h>
+DWORD initial_terminal_state;
+#endif
 
 #include "cchar.h"
 #include "cguild.h"
@@ -36,21 +46,13 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
-
-#include "teffect.h"
 #include "utility/strutil.hpp"
 
-#if !defined(_WIN32)
-#include <sys/ioctl.h>
-#include <termios.h>
-#include <unistd.h>
-struct termios initial_terminal_state;
-#else
-#include <conio.h>
-DWORD initial_terminal_state;
-#endif
+#include "teffect.h"
+
 using namespace std::string_literals;
 CEndL myendl;
 
@@ -403,20 +405,13 @@ auto Console::log(const std::string &msg, const std::string &filename) -> void {
     if (cwmWorldState) {
         if (cwmWorldState->ServerData()->ServerConsoleLog()) {
             std::ofstream toWrite;
-            std::string
-            realFileName; // 022602: in windows a path can be max 512 chars, this at 128 coud
-            // potentially cause crashes if the path is longer than 128 chars
-            if (cwmWorldState != nullptr) {
-                realFileName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + filename;
-            }
-            else {
-                realFileName = filename;
-            }
+            auto realFileName = std::filesystem::path() ;
+            realFileName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(filename);
             
             char timeStr[256];
             RealTime(timeStr);
             
-            toWrite.open(realFileName.c_str(), std::ios::out | std::ios::app);
+            toWrite.open(realFileName.string(), std::ios::out | std::ios::app);
             if (toWrite.is_open()) {
                 toWrite << "[" << timeStr << "] " << msg << std::endl;
             }
@@ -1302,8 +1297,7 @@ auto Console::displaySettings() -> void {
     
     (*this) << "   -Archiving[";
     if (cwmWorldState->ServerData()->ServerBackupStatus())
-        (*this) << "Enabled]. (" << cwmWorldState->ServerData()->Directory(CSDDP_BACKUP) << ")"
-        << myendl;
+        (*this) << "Enabled]. (" << ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).string() << ")" << myendl;
     else
         (*this) << "Disabled]" << myendl;
     
@@ -1318,31 +1312,19 @@ auto Console::displaySettings() -> void {
     
     (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
     (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;
-    (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR)
-    << myendl;
-    (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM)
-    << myendl;
-    (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size())
-    << myendl;
+    (*this) << "   -Char count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR) << myendl;
+    (*this) << "   -Item count: " << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM) << myendl;
+    (*this) << "   -Num Accounts: " << static_cast<std::uint32_t>(Account::shared().size()) << myendl;
     (*this) << "   Directories: " << myendl;
-    (*this) << "   -Shared:          " << cwmWorldState->ServerData()->Directory(CSDDP_SHARED)
-    << myendl;
-    (*this) << "   -Archive:         " << cwmWorldState->ServerData()->Directory(CSDDP_BACKUP)
-    << myendl;
-    (*this) << "   -Data:            " << cwmWorldState->ServerData()->Directory(CSDDP_DATA)
-    << myendl;
-    (*this) << "   -Defs:            " << cwmWorldState->ServerData()->Directory(CSDDP_DEFS)
-    << myendl;
-    (*this) << "   -Scripts:         " << cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS)
-    << myendl;
-    (*this) << "   -ScriptData:      " << cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTDATA)
-    << myendl;
-    (*this) << "   -HTML:            " << cwmWorldState->ServerData()->Directory(CSDDP_HTML)
-    << myendl;
-    (*this) << "   -Books:           " << cwmWorldState->ServerData()->Directory(CSDDP_BOOKS)
-    << myendl;
-    (*this) << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD)
-    << myendl;
+    (*this) << "   -Shared:          " << ServerConfig::shared().directoryFor(dirlocation_t::SAVE).string() << myendl;
+    (*this) << "   -Archive:         " << ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).string() << myendl;
+    (*this) << "   -Data:            " << ServerConfig::shared().directoryFor(dirlocation_t::UODIR).string() << myendl;
+    (*this) << "   -Defs:            " << ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION).string() << myendl;
+    (*this) << "   -Scripts:         " << ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT).string() << myendl;
+    (*this) << "   -ScriptData:      " << ServerConfig::shared().directoryFor(dirlocation_t::SCRIPTDATA).string() << myendl;
+    (*this) << "   -HTML:            " << ServerConfig::shared().directoryFor(dirlocation_t::HTML).string() << myendl;
+    (*this) << "   -Books:           " << ServerConfig::shared().directoryFor(dirlocation_t::BOOK).string() << myendl;
+    (*this) << "   -MessageBoards:   " << ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).string() << myendl;
 }
 
 // o------------------------------------------------------------------------------------------------o

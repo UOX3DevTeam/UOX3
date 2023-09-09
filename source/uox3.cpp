@@ -211,7 +211,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     try{
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
-        
+        return 0 ;
     }
     catch( const std::exception &e){
         std::cerr <<e.what() << std::endl;
@@ -502,7 +502,7 @@ auto startInitialize(CServerData &serverdata) -> void {
     Console::shared().printDone();
     // Moved BulkStartup here, dunno why that function was there...
     Console::shared() << "Loading dictionaries...        " << myendl;
-    Console::shared().printBasedOnVal( Dictionary->LoadDictionaries(cwmWorldState->ServerData()->Directory(CSDDP_DICTIONARIES)) >= 0);
+    Console::shared().printBasedOnVal( Dictionary->LoadDictionaries(ServerConfig::shared().directoryFor(dirlocation_t::LANGUAGE)) >= 0);
     
     Console::shared() << "Loading teleport               ";
     loadTeleportLocations();
@@ -2535,7 +2535,7 @@ auto initClasses() -> void {
     JSMapping->GetEnvokeById()->Parse();
     JSMapping->GetEnvokeByType()->Parse();
     aMapRegion.startup();
-    Account::accountDirectory = std::filesystem::path(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
+    Account::accountDirectory = ServerConfig::shared().directoryFor(dirlocation_t::ACCOUNT);
 }
 
 auto FindNearbyObjects(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)-> std::vector<CBaseObject *>;

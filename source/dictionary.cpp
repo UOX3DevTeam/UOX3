@@ -50,7 +50,7 @@ auto CDictionary::SetLocationLanguage(const std::string &filepath, const std::st
     }
     auto path = std::filesystem::path(filepath);
     if (filepath.empty() || !std::filesystem::exists(path)) {
-        pathToDictionary = "./dictionary/dictionary.ZRO";
+        pathToDictionary = std::filesystem::path("./dictionary/dictionary.ZRO").make_preferred();
     }
     else {
         pathToDictionary = filepath;
@@ -74,8 +74,7 @@ auto CDictionary::GetEntry(int message_number) const -> const std::string & {
     try {
         return msgdata.at(message_number);
     } catch (...) {
-        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) +
-                                  " not found in "s + pathToDictionary);
+        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) + " not found in "s + pathToDictionary.string());
         return invalid_dictionary_string;
     }
 }
@@ -84,8 +83,7 @@ auto CDictionary::GetEntry(int message_number) -> std::string & {
     try {
         return msgdata.at(message_number);
     } catch (...) {
-        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) +
-                                  " not found in "s + pathToDictionary);
+        Console::shared().warning("Dictionary reference "s + std::to_string(message_number) + " not found in "s + pathToDictionary.string());
         return invalid_dictionary_string;
     }
 }
@@ -96,8 +94,7 @@ auto CDictionary::GetEntry(int message_number) -> std::string & {
 //|	Purpose		-	Dump entire dictionary for selected language to console
 // o------------------------------------------------------------------------------------------------o
 auto CDictionary::ShowList() -> void {
-    Console::shared() << "Dictionary Entries for language: " << dictLanguage
-    << " file: " << pathToDictionary << myendl;
+    Console::shared() << "Dictionary Entries for language: " << dictLanguage << " file: " << pathToDictionary.string() << myendl;
     for (auto &[entrynum, text] : msgdata) {
         Console::shared() << entrynum << " : "s << text << myendl;
     }
@@ -108,7 +105,7 @@ auto CDictionary::ShowList() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load dictionary file for selected language
 // o------------------------------------------------------------------------------------------------o
-auto CDictionary::LoadDictionary(const std::string filepath, const std::string &language) -> std::int32_t {
+auto CDictionary::LoadDictionary(const std::filesystem::path &filepath, const std::string &language) -> std::int32_t {
     if (!filepath.empty()) {
         pathToDictionary = filepath;
     }
@@ -137,9 +134,9 @@ auto CDictionary::LoadDictionary(const std::string filepath, const std::string &
 //|	Purpose		-	Parse dictionary file for selected language, and load entries into
 // memory
 // o------------------------------------------------------------------------------------------------o
-auto CDictionary::ParseFile(const std::string &dictionaryfile) -> bool {
+auto CDictionary::ParseFile(const std::filesystem::path &dictionaryfile) -> bool {
     auto rValue = false;
-    auto input = std::ifstream(dictionaryfile);
+    auto input = std::ifstream(dictionaryfile.string());
     enum search_t { header, startsection, endsection };
     auto state = search_t::header;
     if (input.is_open()) {
@@ -221,13 +218,13 @@ CDictionaryContainer::CDictionaryContainer() { defaultLang = ZERO; }
 //|	Purpose		-	Loop through all supported dictionary languages and load each
 // dictionary
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::LoadDictionaries(const std::string &filepath) -> std::int32_t {
+auto CDictionaryContainer::LoadDictionaries(const std::filesystem::path &filepath) -> std::int32_t {
     std::int32_t rValue = 0;
     for (auto i = static_cast<int>(DL_DEFAULT); i < static_cast<int>(DL_COUNT); i++) {
         auto basepath = filepath;
         auto buildName = std::string();
         if (!filepath.empty()) {
-            buildName = basepath + "dictionary."s + DistinctLanguageNames[i];
+            buildName = basepath / std::filesystem::path( "dictionary."s + DistinctLanguageNames[i]);
         }
         dictList[i].LoadDictionary(buildName, DistinctLanguageNames[i]);
     }

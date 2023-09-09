@@ -48,6 +48,7 @@
 #include "osunique.hpp"
 #include "partysystem.h"
 #include "sefunctions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "speech.h"
 #include "teffect.h"
@@ -6411,7 +6412,7 @@ JSBool CFile_Open(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         return JS_FALSE;
     }
 
-    std::string filePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
+    auto filePath = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) ;
 
     // if folderName argument was supplied, use it, and create the appropriate folder under the
     // /shared/ folder
@@ -6424,24 +6425,25 @@ JSBool CFile_Open(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
         // If script wants to look in script-data folder instead of shared folder, let it
         if (useScriptDataDir) {
-            filePath = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTDATA);
+            filePath = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPTDATA);
         }
 
         // Append the provided folder name
-        filePath.append(folderName);
+        filePath /= std::filesystem::path(folderName);
+        
 
         if (!std::filesystem::exists(filePath)) {
             // Create missing directory
             std::filesystem::create_directory(filePath);
         }
 
-        filePath += std::filesystem::path::preferred_separator;
+        
     }
 
-    filePath.append(fileName);
+    filePath /= std::filesystem::path(fileName);
     FILE *stream;
 
-    mFile->mWrap = mfopen(&stream, filePath.c_str(), util::lower(mode).substr(0, 1).c_str());
+    mFile->mWrap = mfopen(&stream, filePath.string().c_str(), util::lower(mode).substr(0, 1).c_str());
     return JS_TRUE;
 }
 

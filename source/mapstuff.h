@@ -4,6 +4,7 @@
 #include <array>
 #include <climits>
 #include <cstdint>
+#include <filesystem>
 #include <istream>
 #include <string>
 #include <vector>
@@ -143,7 +144,7 @@ class CMulHandler {
     MultiCollection multiData;
     std::unordered_map<int, UltimaMap> uoWorlds;
 
-    auto LoadMapsDFN(const std::string &uoDir) -> std::map<int, MapDfnData_st>;
+    auto LoadMapsDFN(const std::filesystem::path &uoDir) -> std::map<int, MapDfnData_st>;
     auto LoadDFNOverrides() -> void;
     auto LoadTileData(const std::string &uoDir) -> void;
     auto LoadMultis(const std::string &uoDir) -> void;

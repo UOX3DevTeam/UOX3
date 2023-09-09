@@ -9,14 +9,15 @@
 #include "cchar.h"
 #include "citem.h"
 #include "cmultiobj.h"
+#include "subsystem/console.hpp"
 #include "cserverdefinitions.h"
 #include "funcdecl.h"
 #include "regions.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
-#include "subsystem/console.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 using namespace std::string_literals;
 
@@ -43,10 +44,10 @@ CMulHandler *Map = nullptr;
 //|	Purpose		-	Loads maps.dfn to see which map files to actually load into memory
 // later
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::LoadMapsDFN(const std::string &uodir) -> std::map<int, MapDfnData_st> {
+auto CMulHandler::LoadMapsDFN(const std::filesystem::path &uopath) -> std::map<int, MapDfnData_st> {
     auto entrycount = FileLookup->CountOfEntries(maps_def);
     std::map<int, MapDfnData_st> results;
-    auto uopath = std::filesystem::path(uodir);
+    
     for (auto i = 0; i < static_cast<int>(entrycount); i++) {
         auto toFind = FileLookup->FindEntry("MAP "s + std::to_string(i), maps_def);
         if (toFind == nullptr)
@@ -115,7 +116,7 @@ auto CMulHandler::LoadMapsDFN(const std::string &uodir) -> std::map<int, MapDfnD
 //|	Purpose		-	Load UO data (tiledata, maps, statics, multis)
 // o------------------------------------------------------------------------------------------------o
 auto CMulHandler::load() -> void {
-    auto uodir = cwmWorldState->ServerData()->Directory(CSDDP_DATA);
+    auto uodir = ServerConfig::shared().directoryFor(dirlocation_t::UODIR) ;
     auto mapinfo = LoadMapsDFN(uodir);
     Console::shared().printSectionBegin();
     Console::shared() << "Loading UO Data..." << myendl
