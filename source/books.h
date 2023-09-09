@@ -6,6 +6,7 @@
 #define __books_h
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 
 #include "typedefs.h"
@@ -16,13 +17,11 @@ class CSocket;
 
 class CBooks {
 public:
-    void CreateBook(const std::string &fileName, CChar *mChar,
-                    CItem *mBook); // "formats and creates a new bok file"
+    void CreateBook(const std::filesystem::path &fileName, CChar *mChar, CItem *mBook); // "formats and creates a new bok file"
     
     void OpenPreDefBook(CSocket *s, CItem *i); // opens old-readonly books, takes data from misc.dfn
     void OpenBook(CSocket *s, CItem *i, bool isWriteable); // opens new books
-    void ReadPreDefBook(CSocket *mSock, CItem *mBook,
-                        std::uint16_t pageNum); // reads books from misc.dfn, readonly = old books
+    void ReadPreDefBook(CSocket *mSock, CItem *mBook, std::uint16_t pageNum); // reads books from misc.dfn, readonly = old books
     void DeleteBook(CItem *id);        // deletes bok-file.
 };
 

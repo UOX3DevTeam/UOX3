@@ -802,8 +802,8 @@ CGuild *CGuildCollection::operator[](guildid_t num) { return Guild(num); }
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::Save() {
     Console::shared() << "Saving guild data.... ";
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
-    std::ofstream toSave(filename.c_str());
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("guilds.wsc");
+    std::ofstream toSave(filename.string());
     auto pMove = gList.begin();
     while (pMove != gList.end()) {
         (pMove->second)->Save(toSave, pMove->first);

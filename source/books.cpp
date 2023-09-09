@@ -39,6 +39,7 @@
 #include "cpacketsend.h"
 #include "cserverdefinitions.h"
 #include "funcdecl.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
@@ -62,17 +63,16 @@ bool CPINewBookHeader::Handle() {
         if (!ValidateObject(mBook))
             return true;
         
-        const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-        util::ntos(bookSer, 16) + std::string(".bok");
+        auto fileName = ServerConfig::shared().directoryFor(dirlocation_t::BOOK) / std::filesystem::path(util::ntos(bookSer, 16) + ".bok"s);
         
-        if (!FileExists(fileName)) {
+        if (!std::filesystem::exists(fileName)) {
             Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
         
-        std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
+        std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
         
-        if (file.is_open()) // If it isn't open now, our create and open failed
-        {
+        if (file.is_open()) { // If it isn't open now, our create and open failed
+        
             const size_t titleLen = tSock->GetWord(11);
             const size_t authorLen = tSock->GetWord(13 + titleLen);
             
@@ -93,19 +93,16 @@ bool CPINewBookHeader::Handle() {
                 file.write(authBuff, 32);
                 
                 if (file.fail()) {
-                    Console::shared().error(
-                                            util::format("Couldn't write to book file %s", fileName.c_str()));
+                    Console::shared().error(util::format("Couldn't write to book file %s", fileName.string().c_str()));
                 }
             }
             else {
-                Console::shared().error(
-                                        util::format("Failed to seek to book file %s", fileName.c_str()));
+                Console::shared().error(util::format("Failed to seek to book file %s", fileName.string().c_str()));
             }
             file.close();
         }
         else {
-            Console::shared().error(util::format("Couldn't write to book file %s for book 0x%X",
-                                                 fileName.c_str(), bookSer));
+            Console::shared().error(util::format("Couldn't write to book file %s for book 0x%X",fileName.string().c_str(), bookSer));
         }
     }
     return true;
@@ -171,10 +168,9 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         std::uint16_t numPages = 0;
         
         std::string bookTitle, bookAuthor;
-        const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-        util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
+        auto fileName = ServerConfig::shared().directoryFor(dirlocation_t::BOOK) / std::filesystem::path(util::ntos(mBook->GetSerial(), 16) + ".bok"s);
         
-        std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+        std::ifstream file(fileName.string(), std::ios::in | std::ios::binary);
         
         bool bookExists = (file.is_open());
         if (bookExists) {
@@ -213,15 +209,13 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
                 cpbpToSend.Finalize();
             }
             else {
-                Console::shared().error(
-                                        util::format("Failed to seek to book file %s", fileName.c_str()));
+                Console::shared().error(util::format("Failed to seek to book file %s", fileName.string().c_str()));
             }
             
             file.close();
         }
         else {
-            numPages = static_cast<std::uint16_t>(
-                                                  mBook->GetTempVar(CITV_MOREY)); // if new book get number of maxpages ...
+            numPages = static_cast<std::uint16_t>(mBook->GetTempVar(CITV_MOREY)); // if new book get number of maxpages ...
             if (numPages < 1 || numPages > 255) {
                 numPages = 16;
             }
@@ -254,8 +248,8 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         bInfo.Finalize();
         mSock->Send(&bInfo);
         
-        if (bookExists) // dont send book contents if the file doesnt exist (yet)!
-        {
+        if (bookExists) { // dont send book contents if the file doesnt exist (yet)!
+        
             mSock->Send(&cpbpToSend);
         }
     }
@@ -321,8 +315,7 @@ bool CPIBookPage::Handle() {
             return true;
         }
         
-        const std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-        util::ntos(mBook->GetSerial(), 16) + std::string(".bok");
+        auto fileName = ServerConfig::shared().directoryFor(dirlocation_t::BOOK) / std::filesystem::path(util::ntos(mBook->GetSerial(), 16) + ".bok"s);
         std::uint16_t totalLines = tSock->GetWord(11);
         
         // Cap amount of lines sent in one go at 8 per page
@@ -349,11 +342,11 @@ bool CPIBookPage::Handle() {
             }
         }
         
-        if (!FileExists(fileName)) {
+        if (!std::filesystem::exists(fileName)) {
             Books->CreateBook(fileName, tSock->CurrcharObj(), mBook);
         }
         
-        std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
+        std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
         if (file.is_open()) {
             file.seekp((((static_cast<size_t>(pageNum) - 1) * 272) + 32 + 62 + 2), std::ios::beg);
             if (!file.fail()) {
@@ -362,14 +355,12 @@ bool CPIBookPage::Handle() {
                 }
             }
             else {
-                Console::shared().error(
-                                        util::format("Failed to seek to book file %s", fileName.c_str()));
+                Console::shared().error(util::format("Failed to seek to book file %s", fileName.string().c_str()));
             }
             file.close();
         }
         else {
-            Console::shared().error(
-                                    util::format("Couldn't write to book file %s", fileName.c_str()));
+            Console::shared().error(util::format("Couldn't write to book file %s", fileName.string().c_str()));
         }
     }
     return true;
@@ -382,9 +373,10 @@ bool CPIBookPage::Handle() {
 //|	Purpose		-	Deletes the .bok file associated with the book item
 // o------------------------------------------------------------------------------------------------o
 void CBooks::DeleteBook(CItem *id) {
-    std::string fileName = cwmWorldState->ServerData()->Directory(CSDDP_BOOKS) +
-    util::ntos(id->GetSerial(), 16) + std::string(".bok");
-    [[maybe_unused]] int removeResult = remove(fileName.c_str());
+    auto fileName = ServerConfig::shared().directoryFor(dirlocation_t::BOOK) / std::filesystem::path(util::ntos(id->GetSerial(), 16) + ".bok"s);
+    if (std::filesystem::exists(fileName)){
+        std::filesystem::remove(fileName);
+    }
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -394,7 +386,7 @@ void CBooks::DeleteBook(CItem *id) {
 //|	Purpose		-	Formats a newly created .bok file, this must be done with any new
 // book file
 // o------------------------------------------------------------------------------------------------o
-void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook) {
+void CBooks::CreateBook(const std::filesystem::path &fileName, CChar *mChar, CItem *mBook) {
     char wBuffer[2];
     char line[34];
     char titleBuff[62];
@@ -415,7 +407,7 @@ void CBooks::CreateBook(const std::string &fileName, CChar *mChar, CItem *mBook)
     strncopy(titleBuff, 62, title.c_str(), 61);
     strncopy(authBuff, 32, author.c_str(), 31);
     
-    std::ofstream file(fileName.c_str(), std::ios::out | std::ios::binary | std::ios::trunc);
+    std::ofstream file(fileName.string(), std::ios::out | std::ios::binary | std::ios::trunc);
     
     file.seekp(0, std::ios::beg);
     

@@ -7,6 +7,7 @@
 #include "cscript.h"
 #include "funcdecl.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "subsystem/console.hpp"
@@ -370,8 +371,11 @@ auto CServerDefinitions::GetPriority(const char *file) -> std::int16_t {
 
 //==================================================================================================
 auto CDirectoryListing::PushDir(definitioncategories_t toMove) -> bool {
-    auto filePath = cwmWorldState->ServerData()->Directory(CSDDP_DEFS);
+    auto filePath = ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION).string();
+    //auto filePath = cwmWorldState->ServerData()->Directory(CSDDP_DEFS);
+//    std::cout <<"Filepath is : " << filePath << " and will append: " << dirNames[toMove] << std::endl;
     filePath += dirNames[toMove];
+//    std::cout <<"The new file path is: " << filePath << std::endl;
     return PushDir(filePath);
 }
 //==================================================================================================
@@ -379,6 +383,7 @@ auto CDirectoryListing::PushDir(std::string toMove) -> bool {
     std::string cwd = CurrentWorkingDir();
     dirs.push(cwd);
     auto path = std::filesystem::path(toMove);
+    std::cout <<"the path is now: " << path.string() << std::endl;
     auto rValue = true;
     if (!std::filesystem::exists(path)) {
         Console::shared().error(util::format("DFN directory %s does not exist", toMove.c_str()));
@@ -415,9 +420,7 @@ CDirectoryListing::CDirectoryListing(const std::string &dir, const std::string &
     Retrieve(dir);
 }
 //==================================================================================================
-CDirectoryListing::CDirectoryListing(definitioncategories_t dir, const std::string &extent,
-                                     bool recurse)
-: doRecursion(recurse) {
+CDirectoryListing::CDirectoryListing(definitioncategories_t dir, const std::string &extent,bool recurse): doRecursion(recurse) {
     Extension(extent);
     Retrieve(dir);
 }

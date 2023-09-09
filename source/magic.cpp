@@ -27,12 +27,15 @@
 #include "power.h"
 #include "regions.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
 #include "weight.h"
+
+using namespace std::string_literals;
 
 CMagic *Magic = nullptr;
 
@@ -4993,11 +4996,11 @@ void CMagic::LogSpell(std::string spell, CChar *player1, CChar *player2,
     if (spell.empty() || !ValidateObject(player1))
         return;
     
-    std::string logName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "spell.log";
+    auto logName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path("spell.log");
     std::ofstream logDestination;
-    logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
+    logDestination.open(logName.string(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
-        Console::shared().error(util::format("Unable to open spell log file %s!", logName.c_str()));
+        Console::shared().error(util::format("Unable to open spell log file %s!", logName.string().c_str()));
         return;
     }
     char dateTime[1024];
@@ -5010,8 +5013,7 @@ void CMagic::LogSpell(std::string spell, CChar *player1, CChar *player2,
     logDestination << "cast spell <" << spell << "> ";
     if (ValidateObject(player2)) {
         std::string targetName = GetNpcDictName(player2, nullptr, NRS_SYSTEM);
-        logDestination << "on player " << targetName << " (serial: " << player2->GetSerial()
-        << " ) ";
+        logDestination << "on player " << targetName << " (serial: " << player2->GetSerial() << " ) ";
     }
     logDestination << "Extra Info: " << extraInfo << std::endl;
     logDestination.close();

@@ -4,6 +4,7 @@
 #include <array>
 #include <bitset>
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <string>
 #include <vector>

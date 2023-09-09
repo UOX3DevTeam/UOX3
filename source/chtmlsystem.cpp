@@ -14,6 +14,7 @@
 #include "ostype.h"
 #include "osunique.hpp"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "subsystem/console.hpp"
 #include "townregion.h"
@@ -21,14 +22,14 @@
 
 #include "other/uoxversion.hpp"
 
+using namespace std::string_literals;
+
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate()
 : updateTimer(60), loaded(false), type(ETT_INVALIDTEMPLATE), scheduledUpdate(0) {
     name = "";
     content = "";
-    outputFile.reserve(MAX_PATH);
-    inputFile.reserve(MAX_PATH);
 }
 
 cHTMLTemplate::~cHTMLTemplate() {}
@@ -586,14 +587,13 @@ void cHTMLTemplate::process() {
     
     // Print the Content out to the new file...
     std::ofstream Output;
-    Output.open(outputFile.c_str(), std::ios::out);
+    Output.open(outputFile.string(), std::ios::out);
     if (Output.is_open()) {
         Output << ParsedContent;
         Output.close();
     }
     else {
-        Console::shared().error(
-                                util::format(" Couldn't open the template file %s for writing", outputFile.c_str()));
+        Console::shared().error(util::format(" Couldn't open the template file %s for writing", outputFile.string().c_str()));
     }
 }
 
@@ -621,11 +621,10 @@ void cHTMLTemplate::poll() {
 void cHTMLTemplate::LoadTemplate() {
     content = "";
     
-    std::ifstream InputFile1(inputFile.c_str());
+    std::ifstream InputFile1(inputFile.string());
     
     if (!InputFile1.is_open()) {
-        Console::shared().error(
-                                util::format("Couldn't open HTML Template File %s", inputFile.c_str()));
+        Console::shared().error(util::format("Couldn't open HTML Template File %s", inputFile.string().c_str()));
         return;
     }
     
@@ -687,14 +686,10 @@ void cHTMLTemplate::load(CScriptSection *found) {
             }
         }
         else if (UTag == "INPUT") {
-            auto fullPath = cwmWorldState->ServerData()->Directory(CSDDP_DEFS) + "html/" + data;
-            // LOOKATME
-            inputFile = util::trim(fullPath).substr(0, MAX_PATH - 1);
+            inputFile = ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION) / std::filesystem::path("html") / std::filesystem::path(data);
         }
         else if (UTag == "OUTPUT") {
-            auto fullPath = cwmWorldState->ServerData()->Directory(CSDDP_HTML) + data;
-            // LOOKATME
-            outputFile = util::trim(fullPath).substr(0, MAX_PATH - 1);
+            outputFile = ServerConfig::shared().directoryFor(dirlocation_t::HTML) / std::filesystem::path(data);
         }
         else if (UTag == "NAME") {
             name = data;
@@ -829,14 +824,14 @@ std::string cHTMLTemplate::GetName() const { return name; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Output Filename
 // o------------------------------------------------------------------------------------------------o
-std::string cHTMLTemplate::GetOutput() const { return outputFile; }
+auto cHTMLTemplate::GetOutput() const -> std::filesystem::path { return outputFile; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetInput()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the Input Filename
 // o------------------------------------------------------------------------------------------------o
-std::string cHTMLTemplate::GetInput() const { return inputFile; }
+auto cHTMLTemplate::GetInput() const ->std::filesystem::path { return inputFile; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cHTMLTemplate::GetScheduledUpdate()

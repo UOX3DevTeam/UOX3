@@ -8,6 +8,7 @@
 #define __CHTMLSYSTEM_H__
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -28,11 +29,11 @@ enum ETemplateType {
 class cHTMLTemplate {
 private:
     std::uint32_t updateTimer;
-    std::string inputFile;
+    std::filesystem::path inputFile;
     bool loaded;
     ETemplateType type;
     std::string content;
-    std::string outputFile;
+    std::filesystem::path outputFile;
     std::string name;
     std::uint32_t scheduledUpdate;
     
@@ -47,8 +48,8 @@ public:
     
     // Some Getters
     std::string GetName() const;
-    std::string GetOutput() const;
-    std::string GetInput() const;
+    auto GetOutput() const -> std::filesystem::path ;
+    auto GetInput() const -> std::filesystem::path ;
     ETemplateType GetTemplateType() const;
     std::uint32_t GetScheduledUpdate() const;
     std::uint32_t GetUpdateTimer() const;

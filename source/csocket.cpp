@@ -24,10 +24,12 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "partysystem.h"
-
+#include "configuration/serverconfig.hpp"
 #include "speech.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+
+using namespace std::string_literals;
 
 //	1.0		29th November, 2000
 //			Initial implementation
@@ -590,20 +592,16 @@ bool CSocket::FlushBuffer(bool doLog) {
             else {
                 toPrint = currCharObj->GetSerial();
             }
-            std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-            util::ntos(toPrint) + std::string(".snd");
+            auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(util::ntos(toPrint) + ".snd"s);
             std::ofstream logDestination;
-            logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
+            logDestination.open(logFile.string(), std::ios::out | std::ios::app);
             if (logDestination.is_open()) {
-                logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex
-                << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
-                << outlength << TimeStamp() << std::endl;
+                logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
                 DoPacketLogging(logDestination, outlength, outbuffer);
                 logDestination.close();
             }
             else {
-                Console::shared().error(
-                                        util::format("Failed to open socket log %s", logFile.c_str()));
+                Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
             }
             bytesSent += outlength;
         }
@@ -653,20 +651,16 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             else {
                 toPrint = currCharObj->GetSerial();
             }
-            std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-            util::ntos(toPrint) + std::string(".snd");
+            auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path( util::ntos(toPrint) +".snd"s);
             std::ofstream logDestination;
-            logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
+            logDestination.open(logFile.string(), std::ios::out | std::ios::app);
             if (logDestination.is_open()) {
-                logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex
-                << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec
-                << outlength << TimeStamp() << std::endl;
+                logDestination << "[SEND]Packet: 0x" << (outbuffer[0] < 16 ? "0" : "") << std::hex << static_cast<std::uint16_t>(outbuffer[0]) << "--> Length: " << std::dec << outlength << TimeStamp() << std::endl;
                 DoPacketLogging(logDestination, outlength, largeBuffer);
                 logDestination.close();
             }
             else {
-                Console::shared().error(
-                                        util::format("Failed to open socket log %s", logFile.c_str()));
+                Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
             }
             bytesSent += outlength;
         }
@@ -838,21 +832,18 @@ void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
         else {
             toPrint = currCharObj->GetSerial();
         }
-        std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-        util::ntos(toPrint) + std::string(".rcv");
+        auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(util::ntos(toPrint) + ".rcv"s);
         std::ofstream logDestination;
-        logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
+        logDestination.open(logFile.string(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
-            Console::shared().error(util::format("Failed to open socket log %s", logFile.c_str()));
+            Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
             return;
         }
         if (toLog != nullptr) {
             toLog->log(logDestination);
         }
         else {
-            logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10 ? "0" : "")
-            << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec
-            << inlength << TimeStamp() << std::endl;
+            logDestination << "[RECV]Packet: 0x" << std::hex << (buffer[0] < 10 ? "0" : "") << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec << inlength << TimeStamp() << std::endl;
             DoPacketLogging(logDestination, inlength, buffer);
         }
         logDestination.close();
@@ -1265,12 +1256,11 @@ void CSocket::Send(CPUOXBuffer *toSend) {
         else {
             toPrint = currCharObj->GetSerial();
         }
-        std::string logFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) +
-        util::ntos(toPrint) + std::string(".snd");
+        auto logFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(util::ntos(toPrint) + ".snd"s);
         std::ofstream logDestination;
-        logDestination.open(logFile.c_str(), std::ios::out | std::ios::app);
+        logDestination.open(logFile.string(), std::ios::out | std::ios::app);
         if (!logDestination.is_open()) {
-            Console::shared().error(util::format("Failed to open socket log %s", logFile.c_str()));
+            Console::shared().error(util::format("Failed to open socket log %s", logFile.string().c_str()));
             return;
         }
         toSend->log(logDestination);

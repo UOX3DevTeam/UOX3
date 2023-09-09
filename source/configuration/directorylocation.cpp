@@ -20,7 +20,8 @@ const std::map<std::string, dirlocation_t> DirectoryLocation::LOCATIONNAMEMAP{
 };
 //======================================================================
 auto DirectoryLocation::makePath(const std::filesystem::path &path) const -> std::filesystem::path{
-    if (!path.is_absolute()){
+    auto path_to_check = std::filesystem::path("./").make_preferred() ;
+    if (!path.is_absolute() && locations.at(static_cast<int>(dirlocation_t::BASE)) != path_to_check){
         return locations.at(static_cast<int>(dirlocation_t::BASE)) / path ;
     }
     return path ;
@@ -44,6 +45,7 @@ auto DirectoryLocation::checkCreatePath(const std::filesystem::path &path, const
 //======================================================================
 auto DirectoryLocation::normalizePaths() ->void {
     // Normalize all the directories
+    
     locations.at(static_cast<int>(dirlocation_t::DEFINITION)) = makePath(locations.at(static_cast<int>(dirlocation_t::DEFINITION)) );
     locations.at(static_cast<int>(dirlocation_t::BOOK)) = makePath(locations.at(static_cast<int>(dirlocation_t::BOOK)))  ;
     locations.at(static_cast<int>(dirlocation_t::ACCOUNT)) = makePath(locations.at(static_cast<int>(dirlocation_t::ACCOUNT)))  ;
