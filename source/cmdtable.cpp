@@ -32,6 +32,7 @@
 #include "objectfactory.h"
 #include "pagevector.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "speech.h"
 #include "stringutility.hpp"
 #include "teffect.h"
@@ -1035,11 +1036,11 @@ void Command_ReportBug(CSocket *s) {
     if (!ValidateObject(mChar))
         return;
 
-    std::string logName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "bugs.log";
+    auto logName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path("bugs.log");
     std::ofstream logDestination;
-    logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
+    logDestination.open(logName.string(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
-        Console::shared().error(util::format("Unable to open bugs log file %s!", logName.c_str()));
+        Console::shared().error(util::format("Unable to open bugs log file %s!", logName.string().c_str()));
         return;
     }
     char dateTime[1024];
@@ -1058,9 +1059,7 @@ void Command_ReportBug(CSocket *s) {
             if (ValidateObject(iChar)) {
                 if (iChar->IsGMPageable()) {
                     x = true;
-                    iSock->SysMessage(
-                        277, mChar->GetName().c_str(),
-                        serverCommands.commandString(2).c_str()); // User %s reported a bug (%s)
+                    iSock->SysMessage(277, mChar->GetName().c_str(),serverCommands.commandString(2).c_str()); // User %s reported a bug (%s)
                 }
             }
         }

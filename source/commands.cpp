@@ -5,14 +5,13 @@
 #include "cchar.h"
 #include "cjsmapping.h"
 #include "cmdtable.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
-
-#include "subsystem/console.hpp"
-
 #include "funcdecl.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
@@ -393,25 +392,22 @@ void CCommands::load() {
 // o------------------------------------------------------------------------------------------------o
 void CCommands::log(const std::string &command, CChar *player1, CChar *player2,
                     const std::string &extraInfo) {
-    std::string logName = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "command.log";
+    auto logName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path("command.log");
     std::ofstream logDestination;
-    logDestination.open(logName.c_str(), std::ios::out | std::ios::app);
+    logDestination.open(logName.string(), std::ios::out | std::ios::app);
     if (!logDestination.is_open()) {
-        Console::shared().error(
-                                util::format("Unable to open command log file %s!", logName.c_str()));
+        Console::shared().error(util::format("Unable to open command log file %s!", logName.string().c_str()));
         return;
     }
     char dateTime[1024];
     RealTime(dateTime);
     
     logDestination << "[" << dateTime << "] ";
-    logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial()
-    << ") ";
+    logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << ") ";
     logDestination << "used command <" << command << (commandString(2) != "" ? " " : "")
     << commandString(2) << "> ";
     if (ValidateObject(player2)) {
-        logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial()
-        << " )";
+        logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " )";
     }
     logDestination << "Extra Info: " << extraInfo << std::endl;
     logDestination.close();

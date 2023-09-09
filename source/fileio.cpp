@@ -16,6 +16,7 @@
 #include "subsystem/console.hpp"
 
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "townregion.h"
@@ -207,10 +208,10 @@ void loadSpawnRegions() {
 // o------------------------------------------------------------------------------------------------o
 void loadRegions() {
     cwmWorldState->townRegions.clear();
-    std::string regionsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "regions.wsc";
+    auto regionsFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("regions.wsc");
     bool performLoad = false;
     Script *ourRegions = nullptr;
-    if (FileExists(regionsFile)) {
+    if (std::filesystem::exists(regionsFile)) {
         performLoad = true;
         ourRegions = new Script(regionsFile, NUM_DEFS, false);
     }
@@ -329,13 +330,12 @@ void loadRegions() {
 //|	Purpose		-	Load teleport locations from definition files
 // o------------------------------------------------------------------------------------------------o
 void loadTeleportLocations() {
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS) + "teleport.scp";
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT) / std::filesystem::path("teleport.scp");
     cwmWorldState->teleLocs.resize(0);
 
-    if (!FileExists(filename)) {
+    if (!std::filesystem::exists(filename)) {
         Console::shared() << myendl;
-        Console::shared().error(
-            util::format(" Failed to open teleport data script %s", filename.c_str()));
+        Console::shared().error( util::format(" Failed to open teleport data script %s", filename.string().c_str()));
         Console::shared().error(util::format(" Teleport Data not found"));
         cwmWorldState->SetKeepRun(false);
         cwmWorldState->SetError(true);

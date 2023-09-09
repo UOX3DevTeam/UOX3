@@ -150,10 +150,9 @@ void CJSMapping::Reload(CJSMappingSection::type_t sectionId) {
 void CJSMapping::Parse(CJSMappingSection::type_t toParse) {
     Console::shared().print("Loading JS Scripts\n");
 
-    std::string scpFileName =
-        cwmWorldState->ServerData()->Directory(CSDDP_SCRIPTS) + "jse_fileassociations.scp";
-    if (!FileExists(scpFileName)) {
-        Console::shared().error(util::format("Failed to open %s", scpFileName.c_str()));
+    auto scpFileName = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT) / std::filesystem::path("jse_fileassociations.scp");
+    if (!std::filesystem::exists(scpFileName)) {
+        Console::shared().error(util::format("Failed to open %s", scpFileName.string().c_str()));
         return;
     }
 
@@ -370,7 +369,7 @@ auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
         return;
     }
 
-    auto fileAssocData = std::make_unique<Script>(scpFileName.string(), NUM_DEFS, false);
+    auto fileAssocData = std::make_unique<Script>(scpFileName, NUM_DEFS, false);
     if (fileAssocData) {
         auto mSection = fileAssocData->FindEntry(ScriptNames[scriptType]);
         if (mSection) {
@@ -580,7 +579,7 @@ auto CEnvoke::Parse() -> void {
         return;
     }
 
-    auto fileAssocData = new Script(filename.string(), NUM_DEFS, false);
+    auto fileAssocData = new Script(filename, NUM_DEFS, false);
     if (fileAssocData) {
         auto mSection = fileAssocData->FindEntry("ENVOKE");
         if (mSection) {

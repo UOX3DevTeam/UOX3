@@ -23,8 +23,10 @@
 
 #include <fstream>
 
+#include "subsystem/account.hpp"
 #include "ceffects.h"
 #include "cguild.h"
+#include "subsystem/console.hpp"
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
@@ -33,12 +35,10 @@
 #include "objectfactory.h"
 #include "osunique.hpp"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "speech.h"
-#include "subsystem/account.hpp"
-#include "subsystem/console.hpp"
 #include "townregion.h"
-
 CWorldMain *cwmWorldState = nullptr;
 
 // o------------------------------------------------------------------------------------------------o
@@ -408,8 +408,7 @@ void CWorldMain::SaveNewWorld(bool x) {
             Console::shared() << "Starting automatic world data save...." << myendl;
         }
 
-        if (ServerData()->ServerBackupStatus() &&
-            ServerData()->Directory(CSDDP_BACKUP).length() > 1) {
+        if (ServerData()->ServerBackupStatus() && !ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).empty()) {
             ++save_counter;
             if ((save_counter % ServerData()->BackupRatio()) == 0) {
                 Console::shared() << "Archiving world files." << myendl;
@@ -460,18 +459,17 @@ void CWorldMain::SaveNewWorld(bool x) {
 //|	Purpose		-	Loops through all town regions and saves them to disk
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::RegionSave() {
-    std::string regionsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "regions.wsc";
-    std::ofstream regionsDestination(regionsFile.c_str());
+    auto regionsFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("regions.wsc");
+    std::ofstream regionsDestination(regionsFile.string());
     if (!regionsDestination) {
-        Console::shared().error(util::format("Failed to open %s for writing", regionsFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", regionsFile.string().c_str()));
         return;
     }
-    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                  [&regionsDestination](const std::pair<std::uint16_t, CTownRegion *> &town) {
-                      if (town.second) {
-                          town.second->Save(regionsDestination);
-                      }
-                  });
+    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[&regionsDestination](const std::pair<std::uint16_t, CTownRegion *> &town) {
+        if (town.second) {
+            town.second->Save(regionsDestination);
+        }
+    });
     regionsDestination.close();
 }
 
@@ -490,10 +488,10 @@ auto CWorldMain::ServerProfile() -> CServerProfile * { return &sProfile; }
 // shortcuts
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveStatistics() {
-    std::string statsFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "statistics.wsc";
-    std::ofstream statsDestination(statsFile.c_str());
+    auto statsFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("statistics.wsc");
+    std::ofstream statsDestination(statsFile.string());
     if (!statsDestination) {
-        Console::shared().error(util::format("Failed to open %s for writing", statsFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", statsFile.string().c_str()));
         return;
     }
     statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';

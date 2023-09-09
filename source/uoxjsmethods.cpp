@@ -1792,10 +1792,7 @@ JSBool CBase_TextMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -2033,10 +2030,7 @@ JSBool CBase_Delete(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Item JS Method .Delete(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -2357,10 +2351,7 @@ JSBool CSocket_Disconnect(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Socket JS Method .Disconnect(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
     return JS_TRUE;
@@ -2552,9 +2543,7 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
             Console::shared().warning(util::format(
-                "Script context lost after using Char/Item JS Method .Teleport(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+                "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -2738,10 +2727,7 @@ JSBool CMisc_SellTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -2813,10 +2799,7 @@ JSBool CMisc_BuyFrom(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID));
         }
     }
 
@@ -2928,10 +2911,7 @@ JSBool CMisc_RemoveSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -3407,10 +3387,7 @@ JSBool CChar_OpenBank(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char JS Method .OpenBank(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -3450,10 +3427,7 @@ JSBool CSocket_OpenContainer(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
             JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
             if (retVal == JS_FALSE) {
                 // Dummy function not found, let shard admin know!
-                Console::shared().warning(util::format(
-                    "Script context lost after using Socket JS Method .OpenContainer(). Add "
-                    "'function _restorecontext_() {}' to original script (%u) as safeguard!",
-                    origScriptID));
+                Console::shared().warning(util::format("Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
             }
         }
     }
@@ -3496,10 +3470,7 @@ JSBool CChar_OpenLayer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                     origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
                 if (retVal == JS_FALSE) {
                     // Dummy function not found, let shard admin know!
-                    Console::shared().warning(util::format(
-                        "Script context lost after using Char JS Method .OpenLayer(). Add "
-                        "'function _restorecontext_() {}' to original script (%u) as safeguard!",
-                        origScriptID));
+                    Console::shared().warning(util::format("Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
                 }
             }
         }
@@ -3583,10 +3554,7 @@ JSBool CChar_TurnToward(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .TurnToward(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -4615,10 +4583,7 @@ JSBool CItem_SetCont(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Item JS Method .SetCont(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -5274,10 +5239,7 @@ JSBool CItem_PlaceInPack(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Item JS Method .PlaceInPack(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -5735,10 +5697,7 @@ JSBool CChar_YellMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char JS Method .YellMessage(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -5797,10 +5756,7 @@ JSBool CChar_WhisperMessage(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char JS Method .WhisperMessage(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -6049,10 +6005,7 @@ JSBool CChar_AddSpell(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
             if (retVal == JS_FALSE) {
                 // Dummy function not found, let shard admin know!
-                Console::shared().warning(util::format(
-                    "Script context lost after using Char JS Method .AddSpell(). Add 'function "
-                    "_restorecontext_() {}' to original script (%u) as safeguard!",
-                    origScriptID));
+                Console::shared().warning(util::format("Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
             }
         }
     }
@@ -6135,10 +6088,7 @@ JSBool CBase_Refresh(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char/Item JS Method .Refresh(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID));
         }
     }
 
@@ -6884,10 +6834,7 @@ JSBool CChar_WalkTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char JS Method .WalkTo(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
     return JS_TRUE;
@@ -6992,10 +6939,7 @@ JSBool CChar_RunTo(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Char JS Method .RunTo(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID));
         }
     }
 
@@ -7167,10 +7111,7 @@ JSBool CItem_Glow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsv
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Item JS Method .Glow(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -7229,10 +7170,7 @@ JSBool CItem_UnGlow(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, j
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Item JS Method .UnGlow(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -7366,10 +7304,7 @@ JSBool CChar_Recall(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .Recall(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -7526,10 +7461,7 @@ JSBool CChar_Kill(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .Kill(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -7566,10 +7498,7 @@ JSBool CChar_Resurrect(JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .Resurrect(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID));
         }
     }
 
@@ -8360,10 +8289,7 @@ JSBool CItem_Carve(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Item JS Method .Carve(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -9206,10 +9132,7 @@ JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .Damage(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -9253,10 +9176,7 @@ JSBool CChar_InitiateCombat(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .InitiateCombat(). Add "
-                "'function _restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -9294,10 +9214,7 @@ JSBool CChar_InvalidateAttacker(JSContext *cx, JSObject *obj, uintN argc,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .InvalidateAttacker(). Add "
-                "'function _restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 
@@ -9705,10 +9622,7 @@ JSBool CChar_Heal(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         JSBool retVal = origScript->CallParticularEvent("_restorecontext_", &argv[0], 0, rval);
         if (retVal == JS_FALSE) {
             // Dummy function not found, let shard admin know!
-            Console::shared().warning(util::format(
-                "Script context lost after using Character JS Method .Heal(). Add 'function "
-                "_restorecontext_() {}' to original script (%u) as safeguard!",
-                origScriptID));
+            Console::shared().warning(util::format("Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!",origScriptID));
         }
     }
 

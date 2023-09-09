@@ -40,10 +40,11 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "osunique.hpp"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -53,23 +54,21 @@ using namespace std::string_literals;
 //|	Purpose		-	Creates the proper MessageBoard filename based on the messageType
 // and board Serial
 // o------------------------------------------------------------------------------------------------o
-std::string GetMsgBoardFile(const serial_t msgBoardSer, const std::uint8_t msgType) {
-    std::string fileName;
+auto GetMsgBoardFile(const serial_t msgBoardSer, const std::uint8_t msgType) -> std::filesystem::path  {
+    auto fileName = std::filesystem::path();
     switch (msgType) {
         case PT_GLOBAL:
-            fileName = "global.bbf";
+            fileName = std::filesystem::path("global.bbf");
             break;
         case PT_REGIONAL:
             CItem *msgBoard;
             CTownRegion *mbRegion;
             msgBoard = CalcItemObjFromSer(msgBoardSer);
-            mbRegion = CalcRegionFromXY(msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(),
-                                        msgBoard->GetInstanceId());
-            fileName =
-            std::string("region") + util::ntos(mbRegion->GetRegionNum()) + std::string(".bbf");
+            mbRegion = CalcRegionFromXY(msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(),msgBoard->GetInstanceId());
+            fileName = std::filesystem::path("region"s+ util::ntos(mbRegion->GetRegionNum()) + ".bbf"s);
             break;
         case PT_LOCAL:
-            fileName = util::ntos(msgBoardSer, 16) + std::string(".bbf");
+            fileName = std::filesystem::path(util::ntos(msgBoardSer, 16) + ".bbf"s);
             break;
         default:
             Console::shared().error("GetMsgBoardFile() Invalid post type, aborting");
@@ -93,7 +92,7 @@ void MsgBoardOpen(CSocket *mSock) {
     }
     
     char buffer[4];
-    std::string fileName, dirPath;
+    std::filesystem::path fileName, dirPath;
     
     mSock->PostClear();
     
@@ -102,14 +101,14 @@ void MsgBoardOpen(CSocket *mSock) {
     
     CPSendMsgBoardPosts mbSend;
     
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        dirPath = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        dirPath = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD);
     }
     
     for (std::uint8_t currentFile = 1; currentFile < 4 && mSock->PostCount() < MAXPOSTS; ++currentFile) {
-        fileName = dirPath + GetMsgBoardFile(boardSer, currentFile);
+        fileName = dirPath / GetMsgBoardFile(boardSer, currentFile);
         
-        std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+        std::ifstream file(fileName.string(), std::ios::in | std::ios::binary);
         if (file.is_open()) {
             MsgBoardPost_st msgBoardPost;
             
@@ -135,8 +134,7 @@ void MsgBoardOpen(CSocket *mSock) {
                 tmpSerial = CalcSerial(buffer[0], buffer[1], buffer[2], buffer[3]);
                 
                 if (!file.fail()) {
-                    if (tmpToggle) // If it's 0, flagged for deletion
-                    {
+                    if (tmpToggle) { // If it's 0, flagged for deletion
                         mbSend.CopyData(mSock, tmpSerial, tmpToggle, boardSer);
                         mSock->PostAcked(tmpSerial);
                     }
@@ -160,21 +158,21 @@ void MsgBoardOpen(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardList(CSocket *mSock) {
     char buffer[4];
-    std::string fileName, dirPath;
+    std::filesystem::path fileName, dirPath;
     
     CItem *msgBoard = CalcItemObjFromSer(mSock->GetDWord(4));
     if (!ValidateObject(msgBoard)) {
         return;
     }
     
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        dirPath = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        dirPath = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD);
     }
     
     for (std::uint8_t currentFile = 1; currentFile < 4 && mSock->PostCount() > 0; ++currentFile) {
-        fileName = dirPath + GetMsgBoardFile(msgBoard->GetSerial(), currentFile);
+        fileName = dirPath / GetMsgBoardFile(msgBoard->GetSerial(), currentFile);
         
-        std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+        std::ifstream file(fileName.string(), std::ios::in | std::ios::binary);
         if (file.is_open()) {
             size_t totalSize = 0;
             MsgBoardPost_st msgBoardPost;
@@ -217,9 +215,7 @@ void MsgBoardList(CSocket *mSock) {
                         msgBoardPost.dateLen = buffer[0];
                         
                         if (file.fail()) {
-                            Console::shared().warning(
-                                                      util::format("Malformed MessageBoard post, MessageID: 0x%X",
-                                                                   msgBoardPost.serial));
+                            Console::shared().warning(util::format("Malformed MessageBoard post, MessageID: 0x%X",msgBoardPost.serial));
                             file.close();
                         }
                         else {
@@ -247,8 +243,7 @@ void MsgBoardList(CSocket *mSock) {
     
     if (!mSock->FinishedPostAck()) {
         mSock->PostClear();
-        Console::shared().error(
-                                util::format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord(4)));
+        Console::shared().error(util::format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord(4)));
     }
 }
 
@@ -357,16 +352,15 @@ void MsgBoardWritePost(std::ostream &mFile, const MsgBoardPost_st &msgBoardPost)
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file, returning the messages SERIAL
 // o------------------------------------------------------------------------------------------------o
-serial_t MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fileName,
-                           const PostTypes msgType) {
+serial_t MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::filesystem::path &fileName,const PostTypes msgType) {
     serial_t msgId = INVALIDSERIAL;
     
-    std::string fullFile;
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        fullFile = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD) + fileName;
+    std::filesystem::path fullFile;
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        fullFile = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD) / fileName;
     }
     
-    std::ifstream file(fullFile.c_str(), std::ios::in | std::ios::ate | std::ios::binary);
+    std::ifstream file(fullFile.string(), std::ios::in | std::ios::ate | std::ios::binary);
     
     std::uint8_t nextMsgId[4];
     memset(nextMsgId, 0xFF, 4);
@@ -388,15 +382,13 @@ serial_t MsgBoardWritePost(MsgBoardPost_st &msgBoardPost, const std::string &fil
     lcltime(timet, timeOfPost);
     
     lcltime(timet, timeOfPost);
-    auto time = util::format("Day %i @ %i:%02i\0", (timeOfPost.tm_yday + 1), timeOfPost.tm_hour,
-                             timeOfPost.tm_min);
+    auto time = util::format("Day %i @ %i:%02i\0", (timeOfPost.tm_yday + 1), timeOfPost.tm_hour,timeOfPost.tm_min);
     time.resize(time.size() + 1);
     const std::uint8_t timeSize = static_cast<std::uint8_t>(time.size());
     const std::uint8_t posterSize = static_cast<std::uint8_t>(msgBoardPost.posterLen);
     const std::uint8_t subjSize = static_cast<std::uint8_t>(msgBoardPost.subjectLen);
     auto totalSize = static_cast<std::uint16_t>(15 + posterSize + subjSize + timeSize);
-    std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(),
-                  [&totalSize](const std::string &entry) {
+    std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(),[&totalSize](const std::string &entry) {
         totalSize += 1 + static_cast<std::uint16_t>(entry.size());
     });
     
@@ -440,7 +432,7 @@ void MsgBoardPost(CSocket *tSock) {
         return;
     }
     
-    std::string fileName = GetMsgBoardFile(tSock->GetDWord(4), msgType);
+    auto fileName = GetMsgBoardFile(tSock->GetDWord(4), msgType);
     if (fileName.empty()) {
         tSock->SysMessage(725); // Invalid post type.
         return;
@@ -590,21 +582,21 @@ bool MsgBoardReadPost(std::istream &file, MsgBoardPost_st &msgBoardPost,
 //|	Purpose		-	Opens a post on a message board when double clicked.
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardOpenPost(CSocket *mSock) {
-    std::string fileName = GetMsgBoardFile(mSock->GetDWord(4), (mSock->GetByte(8) - 0x40));
+    auto fileName = GetMsgBoardFile(mSock->GetDWord(4), (mSock->GetByte(8) - 0x40));
     if (fileName.empty()) {
         mSock->SysMessage(732); // Post not valid, please notify GM!
         return;
     }
     
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        fileName = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD) + fileName;
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        fileName = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD) / fileName;
     }
     
     MsgBoardPost_st msgBoardPost;
     bool foundEntry = false;
     
     const serial_t msgSerial = (mSock->GetDWord(8) - BASEITEMSERIAL);
-    std::ifstream file(fileName.c_str(), std::ios::in | std::ios::binary);
+    std::ifstream file(fileName.string(), std::ios::in | std::ios::binary);
     if (file.is_open()) {
         file.seekg(0, std::ios::beg);
         while (file && !foundEntry) {
@@ -615,8 +607,7 @@ void MsgBoardOpenPost(CSocket *mSock) {
         file.close();
     }
     else {
-        Console::shared().error(util::format(
-                                             "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial));
+        Console::shared().error(util::format("Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial));
     }
     
     if (foundEntry) {
@@ -624,8 +615,7 @@ void MsgBoardOpenPost(CSocket *mSock) {
         mSock->Send(&mbPost);
     }
     else {
-        Console::shared().warning(
-                                  util::format("Failed to find MessageBoard file for MessageID: 0x%X", msgSerial));
+        Console::shared().warning(util::format("Failed to find MessageBoard file for MessageID: 0x%X", msgSerial));
     }
 }
 
@@ -654,14 +644,14 @@ void MsgBoardRemovePost(CSocket *mSock) {
     }
     
     // If the messageboard filename is not returned properly, do nothing
-    std::string fileName = GetMsgBoardFile(msgBoard->GetSerial(), (mSock->GetByte(8) - 0x40));
+    auto fileName = GetMsgBoardFile(msgBoard->GetSerial(), (mSock->GetByte(8) - 0x40));
     if (fileName.empty()) {
         return;
     }
     
     // If the folder storing messageboard files exists, construct a path for the filename
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        fileName = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD) + fileName;
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        fileName = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD) / fileName;
     }
     
     bool foundPost = false;
@@ -673,7 +663,8 @@ void MsgBoardRemovePost(CSocket *mSock) {
     std::size_t fileSize = 0;
     try {
         fileSize = std::filesystem::file_size(fileName);
-    } catch (...) {
+    }
+    catch (...) {
         fileSize = 0;
     }
     
@@ -683,13 +674,12 @@ void MsgBoardRemovePost(CSocket *mSock) {
             mSock->SysMessage(9038); // Failed to remove post; file size not found! Check server log
             // for more details.
         }
-        Console::shared().error(
-                                util::format("Could not fetch file size for file %s", fileName.c_str()));
+        Console::shared().error(util::format("Could not fetch file size for file %s", fileName.string().c_str()));
         return;
     }
     
     // Open a filestream in binary mode to read in data from the messageboard file
-    std::fstream file(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
+    std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
     if (file.is_open()) {
         serial_t tmpSerial = 0;
         size_t totalSize = 0;
@@ -775,8 +765,7 @@ void MsgBoardRemovePost(CSocket *mSock) {
         file.close();
     }
     else {
-        Console::shared().error(
-                                util::format("Could not open file %s for reading", fileName.c_str()));
+        Console::shared().error(util::format("Could not open file %s for reading", fileName.c_str()));
     }
     
     // If we found the post to remove previously, remove it at this point, since all potential
@@ -1054,13 +1043,12 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
 //|	Purpose		-	Removes an escort quest post on regional messageboards
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
-    std::string fileName;
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        fileName = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
+    auto fileName = std::filesystem::path();
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        fileName = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD);
     }
     
-    fileName +=
-    std::string("region") + util::ntos(mNPC->GetQuestOrigRegion()) + std::string(".bbf");
+    fileName /= std::filesystem::path("region"s + util::ntos(mNPC->GetQuestOrigRegion()) + ".bbf"s);
     std::size_t fileSize = 0;
     try {
         fileSize = std::filesystem::file_size(fileName);
@@ -1073,7 +1061,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
     }
     
     std::fstream file;
-    file.open(fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary);
+    file.open(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
     if (file.is_open()) {
         serial_t tmpSerial = 0;
         size_t totalSize = 0;
@@ -1100,8 +1088,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
                     file.seekg(totalSize, std::ios::beg);
                 }
                 else {
-                    Console::shared().error(util::format(
-                                                         "Attempting to seek past end of file in %s", fileName.c_str()));
+                    Console::shared().error(util::format("Attempting to seek past end of file in %s", fileName.string().c_str()));
                     break;
                 }
             }
@@ -1109,8 +1096,7 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
         file.close();
     }
     else {
-        Console::shared().error(
-                                util::format("Could not open file %s for reading", fileName.c_str()));
+        Console::shared().error(util::format("Could not open file %s for reading", fileName.string().c_str()));
     }
 }
 
@@ -1121,18 +1107,17 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
 //|	Purpose		-	Removes the MessageBoard .bbf file attached to the specified serial
 // o------------------------------------------------------------------------------------------------o
 void MsgBoardRemoveFile(const serial_t msgBoardSer) {
-    std::string fileName;
+    auto fileName = std::filesystem::path();
     
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        fileName = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        fileName = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD);
     }
     
-    fileName += util::ntos(msgBoardSer, 16) + std::string(".bbf");
+    fileName /= std::filesystem::path(util::ntos(msgBoardSer, 16) + ".bbf"s);
     
-    [[maybe_unused]] int removeResult = remove(fileName.c_str());
+    [[maybe_unused]] int removeResult = std::filesystem::remove(fileName);
     
-    Console::shared().print(
-                            util::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer));
+    Console::shared().print(util::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1147,9 +1132,9 @@ void MsgBoardMaintenance() {
     std::vector<MsgBoardPost_st> mbMessages;
     std::vector<MsgBoardPost_st>::const_iterator mbIter;
     
-    std::string dirName = "./msgboards/";
-    if (!cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD).empty()) {
-        dirName = cwmWorldState->ServerData()->Directory(CSDDP_MSGBOARD);
+    auto dirName = std::filesystem::path("msgboards");
+    if (!ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD).empty()) {
+        dirName = ServerConfig::shared().directoryFor(dirlocation_t::MSGBOARD);
     }
     
     // Fetch file listing from msgboards directory
@@ -1196,9 +1181,7 @@ void MsgBoardMaintenance() {
                     mbMessages.clear();
                 }
                 else {
-                    Console::shared().error(
-                                            util::format("Failed to open MessageBoard file for reading: %s",
-                                                         entry.path().string().c_str()));
+                    Console::shared().error(util::format("Failed to open MessageBoard file for reading: %s",entry.path().string().c_str()));
                 }
             }
         }

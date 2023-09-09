@@ -9,6 +9,8 @@
 
 #include "ssection.h"
 
+#include <chrono>
+#include <filesystem>
 #include <iostream>
 #if !defined(_WIN32)
 #include <sys/stat.h>
@@ -23,21 +25,6 @@
 #include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	GetModificationDate()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns true if the file's stats can be found (testing its
-// existence)
-// o------------------------------------------------------------------------------------------------o
-bool GetModificationDate(const std::string &filename, time_t *mod_time) {
-    struct stat stat_buf;
-    
-    if (stat(filename.c_str(), &stat_buf))
-        return false;
-    
-    *mod_time = stat_buf.st_mtime;
-    return true;
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function		-	Script::Reload()
@@ -52,7 +39,7 @@ void Script::Reload(bool disp) {
         // Clear the map, we are starting from scratch;
         DeleteMap();
         char line[2048];
-        input.open(filename.c_str(), std::ios_base::in);
+        input.open(filename.string(), std::ios_base::in);
         if (input.is_open()) {
             std::string sLine;
             std::int32_t count = 0;
@@ -89,13 +76,13 @@ void Script::Reload(bool disp) {
         }
         else {
             char buffer[200];
-            std::cerr << "Cannot open " << filename << ": "
+            std::cerr << "Cannot open " << filename.string() << ": "
             << std::string(mstrerror(buffer, 200, errno)) << std::endl;
             errorState = true;
         }
     }
     if (disp) {
-        Console::shared().print(util::format("Reloading %-15s: ", filename.c_str()));
+        Console::shared().print(util::format("Reloading %-15s: ", filename.string().c_str()));
     }
     
     fflush(stdout);
@@ -107,15 +94,13 @@ void Script::Reload(bool disp) {
 //|	Purpose			-	Builds the script, reading in the information from the
 // script file.
 // o------------------------------------------------------------------------------------------------o
-Script::Script(const std::string &_filename, definitioncategories_t d, bool disp)
-: errorState(false), dfnCat(d) {
-    filename = _filename;
-    if (!GetModificationDate(filename, &last_modification)) {
-        char buffer[200];
-        std::cerr << "Cannot open " << filename << ": "
-        << std::string(mstrerror(buffer, 200, errno)) << std::endl;
+Script::Script(const std::filesystem::path &filename, definitioncategories_t d, bool disp) : errorState(false), dfnCat(d) {
+    this->filename = filename;
+    if (!std::filesystem::exists(filename)){
+        std::cerr << "Cannot open " << filename.string()  << std::endl;
         errorState = true;
     }
+    last_modification = std::filesystem::last_write_time(this->filename);
     Reload(disp);
 }
 //===============================================================================================

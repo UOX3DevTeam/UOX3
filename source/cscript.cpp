@@ -3207,9 +3207,7 @@ bool cScript::ScriptRegistration(std::string scriptType) {
     jsval Func = JSVAL_NULL;
     JS_GetProperty(targContext, targObject, scriptType.c_str(), &Func);
     if (Func == JSVAL_VOID) {
-        Console::shared().warning(util::format("Script Number (%u) does not have a %s function",
-                                               JSMapping->GetScriptId(targObject),
-                                               scriptType.c_str()));
+        Console::shared().warning(util::format("Script Number (%u) does not have a %s function",JSMapping->GetScriptId(targObject),scriptType.c_str()));
         return false;
     }
 

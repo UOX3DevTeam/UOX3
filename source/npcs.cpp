@@ -1097,9 +1097,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                                                       shouldSave);
                 if (retitem != nullptr) {
                     if (retitem->GetLayer() == IL_NONE) {
-                        Console::shared()
-                            << "Warning: Bad NPC Script ([" << sectionId.c_str()
-                            << "]) with problem item " << cdata << " executed!" << myendl;
+                        Console::shared()<< "Warning: Bad NPC Script ([" << sectionId.c_str()<< "]) with problem item " << cdata << " executed!" << myendl;
                     }
                     else if (!retitem->SetCont(applyTo)) {
                         if (!retitem->SetCont(applyTo->GetPackItem())) {
@@ -1352,9 +1350,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     }
                 }
                 else {
-                    Console::shared().warning(
-                        util::format("Bad NPC Script ([%s]) with problem no backpack for gold",
-                                     sectionId.c_str()));
+                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for gold",sectionId.c_str()));
                 }
             }
             break;
@@ -1509,9 +1505,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     }
                 }
                 else {
-                    Console::shared().warning(
-                        util::format("Bad NPC Script ([%s]) with problem no backpack for loot",
-                                     sectionId.c_str()));
+                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for loot",sectionId.c_str()));
                 }
             }
             break;
@@ -1720,9 +1714,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     }
                 }
                 else {
-                    Console::shared().warning(
-                        util::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item",
-                                     sectionId.c_str()));
+                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item",sectionId.c_str()));
                 }
             }
             break;
@@ -1783,9 +1775,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     }
                 }
                 else {
-                    Console::shared().warning(
-                        util::format("Bad NPC Script ([%s]) with no Vendor SellPack for item",
-                                     sectionId.c_str()));
+                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor SellPack for item",sectionId.c_str()));
                 }
             }
             break;
@@ -1808,9 +1798,7 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     }
                 }
                 else {
-                    Console::shared().warning(
-                        util::format("Bad NPC Script ([%s]) with no Vendor Bought Pack for item",
-                                     sectionId.c_str()));
+                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Bought Pack for item",sectionId.c_str()));
                 }
             }
             break;

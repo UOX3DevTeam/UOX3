@@ -1,5 +1,9 @@
 #include "cguild.h"
 
+#ifndef va_start
+#include <cstdarg>
+#endif
+
 #include "cbaseobject.h"
 #include "cchar.h"
 #include "citem.h"
@@ -13,16 +17,12 @@
 
 #include "cjsengine.h"
 #include "dictionary.h"
+#include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
-
+#include "townregion.h"
 #include "osunique.hpp"
 #include "useful.h"
-#ifndef va_start
-#include <cstdarg>
-#endif
-
 using namespace std::string_literals;
 
 CGuildCollection *GuildSys;
@@ -818,7 +818,7 @@ void CGuildCollection::Save() {
 //|	Purpose		-	Load guilds from worldfile
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::load() {
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "guilds.wsc";
+    std::string filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("guilds.wsc");
     if (FileExists(filename)) {
         Script newScript(filename, NUM_DEFS, false);
         CScriptSection *testSect = nullptr;

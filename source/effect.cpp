@@ -16,6 +16,7 @@
 #include "magic.h"
 #include "mapstuff.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "stringutility.hpp"
 #include "teffect.h"
@@ -1667,10 +1668,10 @@ void cEffects::SaveEffects() {
     Console::shared() << "Saving Effects...   ";
     Console::shared().turnYellow();
 
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "effects.wsc";
-    effectDestination.open(filename.c_str());
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("effects.wsc");
+    effectDestination.open(filename.string());
     if (!effectDestination) {
-        Console::shared().error(util::format("Failed to open %s for writing", filename.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", filename.string().c_str()));
         return;
     }
 
@@ -1699,9 +1700,9 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 // o------------------------------------------------------------------------------------------------o
 void cEffects::LoadEffects() {
     std::ifstream input;
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "effects.wsc";
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("effects.wsc");
 
-    input.open(filename.c_str(), std::ios_base::in);
+    input.open(filename.string(), std::ios_base::in);
     input.seekg(0, std::ios::beg);
 
     std::string tag;

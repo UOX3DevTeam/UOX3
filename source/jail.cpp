@@ -7,6 +7,7 @@
 #include "cserverdefinitions.h"
 #include "funcdecl.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "subsystem/console.hpp"
@@ -244,8 +245,8 @@ auto CJailSystem::ReadSetup() -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CJailSystem::ReadData() -> void {
     if (!jails.empty()) {
-        auto temp = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "jails.wsc";
-        if (!FileExists(temp))
+        auto temp = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("jails.wsc");
+        if (!std::filesystem::exists(temp))
             return;
         
         auto jailData = std::make_unique<Script>(temp, NUM_DEFS, false);

@@ -1368,14 +1368,12 @@ uoxsocket_t CNetworkStuff::FindNetworkPtr(CSocket *toFind) {
 // o------------------------------------------------------------------------------------------------o
 auto CNetworkStuff::LoadFirewallEntries() -> void {
     std::string token;
-    std::string fileToUse;
-    if (!FileExists("banlist.ini")) {
-        if (FileExists("firewall.ini")) {
-            fileToUse = "firewall.ini";
+    auto fileToUse = std::filesystem::path("banlist.ini");
+    if (!std::filesystem::exists(fileToUse)) {
+        fileToUse = std::filesystem::path("firewall.ini");
+        if (!std::filesystem::exists(fileToUse)) {
+            fileToUse =  std::filesystem::path();
         }
-    }
-    else {
-        fileToUse = "banlist.ini";
     }
     if (!fileToUse.empty()) {
         auto firewallData = std::make_unique<Script>(fileToUse, NUM_DEFS, false);
@@ -1404,9 +1402,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void {
                                     slEntries.push_back(FirewallEntry_st(p[0], p[1], p[2], p[3]));
                                 }
                                 else if (data != "\n" && data != "\r") {
-                                    Console::shared().error(util::format(
-                                        "Malformed IP address in banlist.ini (line: %s)",
-                                        data.c_str()));
+                                    Console::shared().error(util::format( "Malformed IP address in banlist.ini (line: %s)", data.c_str()));
                                 }
                             }
                         }

@@ -9,11 +9,11 @@
 #include "citem.h"
 #include "classes.h"
 #include "cmultiobj.h"
+#include "subsystem/console.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
-#include "subsystem/console.hpp"
-
 #include "objectfactory.h"
+#include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
@@ -293,8 +293,7 @@ MapResource_st &CMapWorld::GetResource(std::int16_t x, std::int16_t y) {
 //|	Purpose		-	Saves the Resource data to disk
 // o------------------------------------------------------------------------------------------------o
 void CMapWorld::SaveResources(std::uint8_t worldNum) {
-    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory(CSDDP_SHARED) +
-                                              "resource["s + std::to_string(worldNum) + "].bin"s);
+    auto resourceFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("resource["s + std::to_string(worldNum) + "].bin"s);
     auto output = std::ofstream(resourceFile.string(), std::ios::binary);
     auto buffer = std::vector<std::int16_t>(3, 0);
     
@@ -326,17 +325,10 @@ void CMapWorld::SaveResources(std::uint8_t worldNum) {
 //|	Purpose		-	Loads the Resource data from the disk
 // o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources(std::uint8_t worldNum) {
-    mapResources = std::vector<MapResource_st>(
-                                               mapResources.size(),
-                                               MapResource_st(
-                                                              cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(),
-                                                              cwmWorldState->ServerData()->ResFish(),
-                                                              BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResOreTime())),
-                                                              BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResLogTime())),
-                                                              BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResFishTime()))));
+    mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(),cwmWorldState->ServerData()->ResFish(),BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResOreTime())),
+                                                                                  BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResLogTime())),BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResFishTime()))));
     
-    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory(CSDDP_SHARED) +
-                                              "resource["s + util::ntos(worldNum) + "].bin"s);
+    auto resourceFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/std::filesystem::path("resource["s + util::ntos(worldNum) + "].bin"s);
     
     // The data is grouped as three shorts (for each resource), so we read in that format
     auto buffer = std::vector<std::int16_t>(3, 0);
@@ -716,33 +708,29 @@ void CMapHandler::Save() {
     Console::shared().turnYellow();
     Console::shared() << "0%";
     
-    std::string basePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
+    auto basePath = ServerConfig::shared().directoryFor(dirlocation_t::SAVE);
     
     // Legacy - deletes house.wsc on next world save, since house data is now saved in the regional
     // wsc files along with other objects, so we don't want this file loaded again on next startup
-    std::filesystem::path houseFilePath = basePath + "house.wsc";
+    auto houseFilePath = basePath / std::filesystem::path("house.wsc");
     std::filesystem::remove(houseFilePath);
     
-    std::string filename = "";
-    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
-    {
+    auto filename = std::filesystem::path();
+    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) {// move left->right
+        
         const std::int32_t baseX = counter1 * 8;
-        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
-        {
+        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) {// move up->down
+            
             const std::int32_t baseY = counter2 * 8; // calculate x grid offset
-            filename = basePath + util::ntos(counter1) + std::string(".") + util::ntos(counter2) +
-            std::string(".wsc"); // let's name our file
+            filename = basePath / std::filesystem::path(util::ntos(counter1) + "."s + util::ntos(counter2) + ".wsc"s); // let's name our file
             
             bool changesDetected = false;
-            for (std::uint8_t xCnt = 0; !changesDetected && xCnt < 8;
-                 ++xCnt) // walk through each part of the 8x8 grid, left->right
-            {
-                for (std::uint8_t yCnt = 0; !changesDetected && yCnt < 8; ++yCnt) // walk the row
-                {
-                    for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end();
-                         ++mIter) {
-                        CMapRegion *mRegion =
-                        (*mIter)->GetMapRegion((baseX + xCnt), (baseY + yCnt));
+            for (std::uint8_t xCnt = 0; !changesDetected && xCnt < 8; ++xCnt) {// walk through each part of the 8x8 grid, left->right
+                
+                for (std::uint8_t yCnt = 0; !changesDetected && yCnt < 8; ++yCnt){ // walk the row
+                    
+                    for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter) {
+                        CMapRegion *mRegion = (*mIter)->GetMapRegion((baseX + xCnt), (baseY + yCnt));
                         if (mRegion != nullptr) {
                             // Only save objects mapRegions marked as "changed" by objects updated
                             // in said regions
@@ -758,37 +746,31 @@ void CMapHandler::Save() {
             if (!changesDetected)
                 continue;
             
-            writeDestination.open(filename.c_str(), std::ios::binary);
+            writeDestination.open(filename.string());
             
             if (!writeDestination) {
-                Console::shared().error(
-                                        util::format("Failed to open %s for writing", filename.c_str()));
+                Console::shared().error(util::format("Failed to open %s for writing", filename.c_str()));
                 continue;
             }
             
             writeDestination.rdbuf()->pubsetbuf(streamBuffer.data(), BUFFERSIZE);
             
-            for (std::uint8_t xCnt = 0; xCnt < 8;
-                 ++xCnt) // walk through each part of the 8x8 grid, left->right
-            {
-                for (std::uint8_t yCnt = 0; yCnt < 8; ++yCnt) // walk the row
-                {
-                    for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end();
-                         ++mIter) {
+            for (std::uint8_t xCnt = 0; xCnt < 8; ++xCnt) {// walk through each part of the 8x8 grid, left->right
+                
+                for (std::uint8_t yCnt = 0; yCnt < 8; ++yCnt) {// walk the row
+                    
+                    for (WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter) {
                         ++count;
                         if (count % onePercent == 0) {
                             if (count / onePercent <= 10) {
-                                Console::shared()
-                                << "\b\b" << std::to_string(count / onePercent) << "%";
+                                Console::shared()<< "\b\b" << std::to_string(count / onePercent) << "%";
                             }
                             else if (count / onePercent <= 100) {
-                                Console::shared()
-                                << "\b\b\b" << std::to_string(count / onePercent) << "%";
+                                Console::shared()<< "\b\b\b" << std::to_string(count / onePercent) << "%";
                             }
                         }
                         
-                        CMapRegion *mRegion =
-                        (*mIter)->GetMapRegion((baseX + xCnt), (baseY + yCnt));
+                        CMapRegion *mRegion = (*mIter)->GetMapRegion((baseX + xCnt), (baseY + yCnt));
                         if (mRegion != nullptr) {
                             mRegion->SaveToDisk(writeDestination);
                             
@@ -806,15 +788,15 @@ void CMapHandler::Save() {
     }
     Console::shared() << "\b\b\b\b" << static_cast<std::uint32_t>(100) << "%";
     
-    filename = basePath + "overflow.wsc";
-    writeDestination.open(filename.c_str());
+    filename = basePath / std::filesystem::path("overflow.wsc");
+    writeDestination.open(filename.string());
     
     if (writeDestination.is_open()) {
         overFlow.SaveToDisk(writeDestination);
         writeDestination.close();
     }
     else {
-        Console::shared().error(util::format("Failed to open %s for writing", filename.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", filename.string().c_str()));
         return;
     }
     
@@ -822,8 +804,7 @@ void CMapHandler::Save() {
     Console::shared().printDone();
     
     const std::uint32_t e_t = GetClock();
-    Console::shared().print(
-                            util::format("World saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
+    Console::shared().print(util::format("World saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
     
     i = 0;
     for (WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter) {
@@ -855,16 +836,15 @@ void CMapHandler::load() {
     Console::shared().turnYellow();
     Console::shared() << "0%";
     std::uint32_t s_t = GetClock();
-    std::string basePath = cwmWorldState->ServerData()->Directory(CSDDP_SHARED);
-    std::string filename;
+    auto basePath = ServerConfig::shared().directoryFor(dirlocation_t::SAVE);
+    std::filesystem::path filename;
     
     std::uint32_t runningCount = 0;
     std::int32_t fileSizes[AreaX][AreaY];
     for (std::int16_t cx = 0; cx < AreaX; ++cx) {
         for (std::int16_t cy = 0; cy < AreaY; ++cy) {
-            filename = basePath + util::ntos(cx) + std::string(".") + util::ntos(cy) +
-            std::string(".wsc"); // let's name our file
-            fileSizes[cx][cy] = FileSize(filename);
+            filename = basePath / std::filesystem::path(util::ntos(cx) + "."s + util::ntos(cy) + ".wsc"s); // let's name our file
+            fileSizes[cx][cy] = std::filesystem::file_size(filename);
             runningCount += fileSizes[cx][cy];
         }
     }
@@ -878,9 +858,8 @@ void CMapHandler::load() {
     {
         for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
         {
-            filename = basePath + util::ntos(counter1) + std::string(".") + util::ntos(counter2) +
-            std::string(".wsc");         // let's name our file
-            readDestination.open(filename.c_str()); // let's open it
+            filename = basePath / std::filesystem::path(util::ntos(counter1) + "."s + util::ntos(counter2) + ".wsc"s);         // let's name our file
+            readDestination.open(filename.string()); // let's open it
             readDestination.seekg(0, std::ios::beg);
             
             if (readDestination.eof() || readDestination.fail()) {
@@ -915,13 +894,13 @@ void CMapHandler::load() {
     Console::shared() << "\b\b\b";
     Console::shared().printDone();
     
-    filename = basePath + "overflow.wsc";
-    std::ifstream flowDestination(filename.c_str());
+    filename = basePath / std::filesystem::path("overflow.wsc");
+    std::ifstream flowDestination(filename.string());
     LoadFromDisk(flowDestination, -1, -1, -1);
     flowDestination.close();
     
-    filename = basePath + "house.wsc";
-    std::ifstream houseDestination(filename.c_str());
+    filename = basePath / std::filesystem::path("house.wsc");
+    std::ifstream houseDestination(filename.string());
     LoadFromDisk(houseDestination, -1, -1, -1);
     
     std::uint32_t b = 0;
@@ -931,8 +910,7 @@ void CMapHandler::load() {
     houseDestination.close();
     
     std::uint32_t e_t = GetClock();
-    Console::shared().print(
-                            util::format("ASCII world loaded in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
+    Console::shared().print(util::format("ASCII world loaded in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
     
     std::uint8_t i = 0;
     for (WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter) {
@@ -961,8 +939,8 @@ void CMapHandler::LoadFromDisk(std::istream &readDestination, std::int32_t baseV
         std::string sLine(line);
         sLine = util::trim(sLine);
         
-        if (sLine.substr(0, 1) == "[") // in a section
-        {
+        if (sLine.substr(0, 1) == "["){ // in a section
+         
             sLine = sLine.substr(1, sLine.size() - 2);
             sLine = util::upper(util::trim(sLine));
             if (sLine == "CHARACTER") {

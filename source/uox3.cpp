@@ -2722,8 +2722,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
         sect = util::trim(util::strip(sect, "//"));
         auto Advancement = FileLookup->FindEntry(sect, advance_def);
         if (Advancement == nullptr) {
-            Console::shared()
-            << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
+            Console::shared() << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
             applyTo->SetAdvObj(0);
             return;
         }
@@ -2936,9 +2935,7 @@ auto AdvanceObj(CChar *applyTo, std::uint16_t advObj, bool multiUse) -> void {
                         }
                     }
                     else {
-                        Console::shared()
-                        << "Warning: Bad NPC Script with problem no backpack for packitem"
-                        << myendl;
+                        Console::shared() << "Warning: Bad NPC Script with problem no backpack for packitem"  << myendl;
                     }
                     break;
                 case DFNTAG_REMOVETRAP:

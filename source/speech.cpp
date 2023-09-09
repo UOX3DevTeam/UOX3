@@ -15,11 +15,13 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "movement.h"
-
-#include "other/uoxversion.hpp"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
+
+
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	ClilocMessage()
@@ -641,10 +643,10 @@ bool CSpeechQueue::RunAsThread() const { return runAsThread; }
 void CSpeechQueue::RunAsThread(bool value) { runAsThread = value; }
 
 void CSpeechQueue::DumpInFile() {
-    std::string speechFile = cwmWorldState->ServerData()->Directory(CSDDP_LOGS) + "speechdump.txt";
-    std::ofstream speechDestination(speechFile.c_str());
+    auto speechFile = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path("speechdump.txt");
+    std::ofstream speechDestination(speechFile.string());
     if (!speechDestination) {
-        Console::shared().error(util::format("Failed to open %s for writing", speechFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", speechFile.string().c_str()));
         return;
     }
     

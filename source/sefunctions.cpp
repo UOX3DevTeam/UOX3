@@ -2793,12 +2793,7 @@ JSBool SE_ReloadJSFile(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     }
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     if (scriptId == JSMapping->GetScriptId(JS_GetGlobalObject(cx))) {
-        ScriptError(
-                    cx,
-                    util::format(
-                                 "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)",
-                                 scriptId)
-                    .c_str());
+        ScriptError(cx, util::format("ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)",scriptId).c_str());
         return JS_FALSE;
     }
     
