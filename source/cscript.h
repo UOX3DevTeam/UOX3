@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <cstdint>
+#include <filesystem>
 #include <map>
 #include <string>
 #include <vector>
@@ -184,7 +185,7 @@ public:
     void HandleGumpPress(CPIGumpMenuSelect *packet);
     void HandleGumpInput(CPIGumpInput *pressing);
 
-    cScript(std::string targFile, std::uint8_t runTime);
+    cScript(const std::filesystem::path &targFile, std::uint8_t runTime);
     ~cScript();
 
     JSObject *Object() const; // returns object pointer

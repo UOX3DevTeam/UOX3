@@ -119,10 +119,7 @@ auto CMulHandler::load() -> void {
     auto uodir = ServerConfig::shared().directoryFor(dirlocation_t::UODIR) ;
     auto mapinfo = LoadMapsDFN(uodir);
     Console::shared().printSectionBegin();
-    Console::shared() << "Loading UO Data..." << myendl
-                      << "(If they fail to load, check your DATADIRECTORY path in uox.ini or "
-                         "filenames in maps.dfn)"
-                      << myendl;
+    Console::shared() << "Loading UO Data..." << myendl<< "(If they fail to load, check your DATADIRECTORY path in uox.ini or filenames in maps.dfn)"<< myendl;
     LoadTileData(uodir);
     LoadDFNOverrides();
     LoadMapAndStatics(mapinfo);
@@ -141,9 +138,9 @@ auto CMulHandler::load() -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads tiledata file into memory
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::LoadTileData(const std::string &uodir) -> void {
-    std::string lName = uodir + "tiledata.mul"s;
-    Console::shared() << "\t" << lName << "\t";
+auto CMulHandler::LoadTileData(const std::filesystem::path &uodir) -> void {
+    auto lName = uodir / std::filesystem::path("tiledata.mul"s);
+    Console::shared() << "\t" << lName.string() << "\t";
 
     if (!tileInfo.LoadTiles(lName)) {
         Console::shared().printFailed();
@@ -381,10 +378,10 @@ auto CMulHandler::LoadMapAndStatics(const std::map<int, MapDfnData_st> &info) ->
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads multi files into memory
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::LoadMultis(const std::string &uodir) -> void {
+auto CMulHandler::LoadMultis(const std::filesystem::path &uodir) -> void {
     // now main memory multiItems
     // Odd we do no check?
-    if (!multiData.LoadMultiCollection(std::filesystem::path(uodir), &tileInfo)) {
+    if (!multiData.LoadMultiCollection(uodir, &tileInfo)) {
         Console::shared().printFailed();
         Shutdown(FATAL_UOX3_MULTI_DATA_NOT_FOUND);
     }
@@ -1148,10 +1145,7 @@ auto CMulHandler::ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether given location is valid for house/boat placement
 // o------------------------------------------------------------------------------------------------o
-auto CMulHandler::ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t z,
-                                     std::uint8_t worldNumber, std::uint16_t instanceId,
-                                     bool checkWater, bool checkOnlyOtherMultis,
-                                     bool checkOnlyNonMultis, bool checkForRoads) -> std::uint8_t {
+auto CMulHandler::ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t z,std::uint8_t worldNumber, std::uint16_t instanceId,bool checkWater, bool checkOnlyOtherMultis,bool checkOnlyNonMultis, bool checkForRoads) -> std::uint8_t {
     if (!InsideValidWorld(x, y, worldNumber))
         return 0;
 
@@ -1171,8 +1165,7 @@ auto CMulHandler::ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t
     }
 
     // get the tile id of any dynamic tiles at this spot
-    if (!checkOnlyNonMultis && DoesDynamicBlock(x, y, elev, worldNumber, instanceId, checkWater,
-                                                false, checkOnlyOtherMultis, checkOnlyNonMultis)) {
+    if (!checkOnlyNonMultis && DoesDynamicBlock(x, y, elev, worldNumber, instanceId, checkWater,false, checkOnlyOtherMultis, checkOnlyNonMultis)) {
         return 2;
     }
 
@@ -1250,17 +1243,17 @@ TileInfo::TileInfo(const std::string &filename) : isHsFormat(false) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads tiles from tiledata file into memory
 // o------------------------------------------------------------------------------------------------o
-auto TileInfo::LoadTiles(const std::string &filename) -> bool {
+auto TileInfo::LoadTiles(const std::filesystem::path &filename) -> bool {
     auto rValue = false;
     artData.clear();
     terrainData.clear();
     isHsFormat = false;
-    auto path = std::filesystem::path(filename);
+    auto path = filename;
     if (std::filesystem::exists(path)) {
         if (std::filesystem::file_size(path) >= hsSize) {
             isHsFormat = true;
         }
-        auto input = std::ifstream(filename, std::ios::binary);
+        auto input = std::ifstream(filename.string(), std::ios::binary);
         if (input.is_open()) {
             rValue = true;
             ProcessTerrain(input);

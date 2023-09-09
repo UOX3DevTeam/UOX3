@@ -292,14 +292,13 @@ std::int32_t TryParseJSVal(jsval toParse) {
     }
 }
 
-cScript::cScript(std::string targFile, std::uint8_t rT) : isFiring(false), runTime(rT) {
+cScript::cScript(const std::filesystem::path &targFile, std::uint8_t rT) : isFiring(false), runTime(rT) {
     for (std::int32_t i = 0; i < 3; ++i) {
         eventPresence[i].set();
         needsChecking[i].set();
     }
 
-    targContext =
-        JSEngine->GetContext(runTime); // JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
+    targContext = JSEngine->GetContext(runTime); // JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
     if (targContext == nullptr)
         return;
 
@@ -317,7 +316,7 @@ cScript::cScript(std::string targFile, std::uint8_t rT) : isFiring(false), runTi
 
     JS_InitStandardClasses(targContext, targObject);
     JS_DefineFunctions(targContext, targObject, my_functions);
-    targScript = JS_CompileFile(targContext, targObject, targFile.c_str());
+    targScript = JS_CompileFile(targContext, targObject, targFile.string().c_str());
     if (targScript == nullptr) {
         throw std::runtime_error("Compilation failed");
     }

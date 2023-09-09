@@ -222,7 +222,7 @@ auto CDictionaryContainer::LoadDictionaries(const std::filesystem::path &filepat
     std::int32_t rValue = 0;
     for (auto i = static_cast<int>(DL_DEFAULT); i < static_cast<int>(DL_COUNT); i++) {
         auto basepath = filepath;
-        auto buildName = std::string();
+        auto buildName = std::filesystem::path();
         if (!filepath.empty()) {
             buildName = basepath / std::filesystem::path( "dictionary."s + DistinctLanguageNames[i]);
         }

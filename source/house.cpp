@@ -408,9 +408,7 @@ auto CheckForValidHouseLocation(CSocket *mSock, CChar *mChar, std::int16_t x, st
                     checkForRoads = true;
                 }
                 
-                std::uint8_t retVal1 =
-                Map->ValidMultiLocation(curX, curY, z, worldNum, instanceId, !isBoat,
-                                        checkOnlyMultis, checkOnlyNonMultis, checkForRoads);
+                std::uint8_t retVal1 = Map->ValidMultiLocation(curX, curY, z, worldNum, instanceId, !isBoat,checkOnlyMultis, checkOnlyNonMultis, checkForRoads);
                 auto retVal2 = FindMulti(curX, curY, z, worldNum, instanceId);
                 
                 if (retVal1 != 1 || retVal2 != nullptr) {

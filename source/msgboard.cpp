@@ -253,7 +253,7 @@ void MsgBoardList(CSocket *mSock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates nextMsgId with the next available message serial.
 // o------------------------------------------------------------------------------------------------o
-bool GetMaxSerial(const std::string &fileName, std::uint8_t *nextMsgId, const PostTypes msgType) {
+bool GetMaxSerial(const std::filesystem::path &fileName, std::uint8_t *nextMsgId, const PostTypes msgType) {
     serial_t msgIdSer = (CalcSerial(nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3]));
     if (msgIdSer == INVALIDSERIAL) {
         switch (msgType) {
@@ -278,9 +278,7 @@ bool GetMaxSerial(const std::string &fileName, std::uint8_t *nextMsgId, const Po
     nextMsgId[3] = static_cast<std::uint8_t>(msgIdSer % 256);
     
     if (nextMsgId[1] == 0xFF && nextMsgId[2] == 0xFF && nextMsgId[3] == 0xFF) {
-        Console::shared().warning(
-                                  util::format("Maximum Posts reached for board %s, no further posts can be created",
-                                               fileName.c_str()));
+        Console::shared().warning(util::format("Maximum Posts reached for board %s, no further posts can be created",fileName.string().c_str()));
         return false;
     }
     

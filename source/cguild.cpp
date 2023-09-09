@@ -818,8 +818,8 @@ void CGuildCollection::Save() {
 //|	Purpose		-	Load guilds from worldfile
 // o------------------------------------------------------------------------------------------------o
 void CGuildCollection::load() {
-    std::string filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("guilds.wsc");
-    if (FileExists(filename)) {
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/ std::filesystem::path("guilds.wsc");
+    if (std::filesystem::exists(filename)) {
         Script newScript(filename, NUM_DEFS, false);
         CScriptSection *testSect = nullptr;
         guildid_t guildNum = 0;

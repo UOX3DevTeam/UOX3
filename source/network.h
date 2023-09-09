@@ -354,12 +354,9 @@ class ByteBuffer {
                 for (auto i = 0; i < amount; ++i) {
                     auto input = value[i];
                     if (reverse && (entry_size > 1)) {
-                        std::reverse(reinterpret_cast<std::uint8_t *>(&input),
-                                     reinterpret_cast<std::uint8_t *>(&input) + entry_size);
+                        std::reverse(reinterpret_cast<std::uint8_t *>(&input),reinterpret_cast<std::uint8_t *>(&input) + entry_size);
                     }
-                    std::copy(reinterpret_cast<std::uint8_t *>(&input),
-                              reinterpret_cast<std::uint8_t *>(&input) + entry_size,
-                              _bytedata.begin() + offset + (i * entry_size));
+                    std::copy(reinterpret_cast<std::uint8_t *>(&input),reinterpret_cast<std::uint8_t *>(&input) + entry_size,_bytedata.begin() + offset + (i * entry_size));
                 }
                 _index = offset + (entry_size * amount);
             }
