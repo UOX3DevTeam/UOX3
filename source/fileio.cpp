@@ -40,8 +40,7 @@ void loadCustomTitle() {
     if (CustomTitle == nullptr) {
         return;
     }
-    for (tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS;
-         tag = CustomTitle->Next()) {
+    for (tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS; tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
         cwmWorldState->title[titlecount].skill = data;
         ++titlecount;
@@ -52,23 +51,22 @@ void loadCustomTitle() {
     }
     for (tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
-        cwmWorldState->prowessTitles.push_back(
-            TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
+        cwmWorldState->prowessTitles.push_back(TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
-
+    
     CustomTitle = FileLookup->FindEntry("FAME", titles_def);
     if (CustomTitle == nullptr) {
         return;
     }
     titlecount = 0;
-
+    
     for (tag = CustomTitle->First(); !CustomTitle->AtEnd() && titlecount < ALLSKILLS;
          tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
         cwmWorldState->title[titlecount].fame = data;
         ++titlecount;
     }
-
+    
     // Murder tags now scriptable in SECTION MURDER - Titles.dfn
     CustomTitle = FileLookup->FindEntry("MURDERER", titles_def);
     if (CustomTitle == nullptr) {
@@ -76,10 +74,9 @@ void loadCustomTitle() {
     }
     for (tag = CustomTitle->First(); !CustomTitle->AtEnd(); tag = CustomTitle->Next()) {
         data = CustomTitle->GrabData();
-        cwmWorldState->murdererTags.push_back(
-            TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
+        cwmWorldState->murdererTags.push_back(TitlePair(static_cast<std::int16_t>(std::stoi(tag, nullptr, 0)), data));
     }
-
+    
     FileLookup->Dispose(titles_def);
 }
 
@@ -92,16 +89,14 @@ void loadSkills() {
     std::string skEntry;
     std::string tag, data, UTag;
     std::uint8_t i = 0;
-    for (Script *creatScp = FileLookup->FirstScript(skills_def);
-         !FileLookup->FinishedScripts(skills_def); creatScp = FileLookup->NextScript(skills_def)) {
+    for (Script *creatScp = FileLookup->FirstScript(skills_def); !FileLookup->FinishedScripts(skills_def); creatScp = FileLookup->NextScript(skills_def)) {
         if (creatScp == nullptr)
             continue;
-
-        for (CScriptSection *SkillList = creatScp->FirstEntry(); SkillList != nullptr;
-             SkillList = creatScp->NextEntry()) {
+        
+        for (CScriptSection *SkillList = creatScp->FirstEntry(); SkillList != nullptr; SkillList = creatScp->NextEntry()) {
             if (SkillList == nullptr)
                 continue;
-
+            
             skEntry = creatScp->EntryName();
             auto ssecs = oldstrutil::sections(skEntry, " ");
             if (util::trim(util::strip(ssecs[0], "// ")) == "SKILL") {
@@ -109,42 +104,33 @@ void loadSkills() {
                     i = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(ssecs[1], "//"))));
                     if (i <= INTELLECT) {
                         cwmWorldState->skill[i].ResetDefaults();
-                        for (tag = SkillList->First(); !SkillList->AtEnd();
-                             tag = SkillList->Next()) {
+                        for (tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next()) {
                             UTag = util::upper(tag);
                             data = SkillList->GrabData();
                             data = util::trim(util::strip(data, "//"));
                             if (UTag == "STR") {
-                                cwmWorldState->skill[i].strength =
-                                    static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
+                                cwmWorldState->skill[i].strength = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "DEX") {
-                                cwmWorldState->skill[i].dexterity =
-                                    static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
+                                cwmWorldState->skill[i].dexterity = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "INT") {
-                                cwmWorldState->skill[i].intelligence =
-                                    static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
+                                cwmWorldState->skill[i].intelligence = static_cast<std::uint16_t>(std::stoul(data, nullptr, 0));
                             }
                             else if (UTag == "SKILLPOINT") {
                                 Advance tempAdvance;
                                 data = util::simplify(data);
                                 auto csecs = oldstrutil::sections(data, ",");
-                                tempAdvance.base = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                                tempAdvance.success = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                                tempAdvance.failure = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                                tempAdvance.base = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                tempAdvance.success = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                tempAdvance.failure = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                                 if (csecs.size() == 4) {
-                                    tempAdvance.amtToGain = static_cast<std::uint16_t>(std::stoul(
-                                        util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                                    tempAdvance.amtToGain = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
                                 }
                                 cwmWorldState->skill[i].advancement.push_back(tempAdvance);
                             }
                             else if (UTag == "SKILLDELAY") {
-                                cwmWorldState->skill[i].skillDelay =
-                                    static_cast<std::int32_t>(std::stoi(data, nullptr, 0));
+                                cwmWorldState->skill[i].skillDelay = static_cast<std::int32_t>(std::stoi(data, nullptr, 0));
                             }
                             else if (UTag == "MADEWORD") {
                                 cwmWorldState->skill[i].madeWord = data;
@@ -153,8 +139,7 @@ void loadSkills() {
                                 cwmWorldState->skill[i].name = data;
                             }
                             else {
-                                Console::shared().warning(
-                                    util::format("Unknown tag in skills.dfn: %s", data.c_str()));
+                                Console::shared().warning(util::format("Unknown tag in skills.dfn: %s", data.c_str()));
                             }
                         }
                     }
@@ -172,29 +157,25 @@ void loadSkills() {
 void loadSpawnRegions() {
     cwmWorldState->spawnRegions.clear();
     std::uint16_t i = 0;
-    for (Script *spnScp = FileLookup->FirstScript(spawn_def);
-         !FileLookup->FinishedScripts(spawn_def); spnScp = FileLookup->NextScript(spawn_def)) {
+    for (Script *spnScp = FileLookup->FirstScript(spawn_def);!FileLookup->FinishedScripts(spawn_def); spnScp = FileLookup->NextScript(spawn_def)) {
         if (spnScp == nullptr)
             continue;
-
-        for (CScriptSection *toScan = spnScp->FirstEntry(); toScan != nullptr;
-             toScan = spnScp->NextEntry()) {
+        
+        for (CScriptSection *toScan = spnScp->FirstEntry(); toScan != nullptr;toScan = spnScp->NextEntry()) {
             if (toScan == nullptr)
                 continue;
-
+            
             std::string sectionName = spnScp->EntryName();
             auto ssecs = oldstrutil::sections(sectionName, " ");
             if ("REGIONSPAWN" == ssecs[0]) // Is it a region spawn entry?
             {
-                i = static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                i = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 if (cwmWorldState->spawnRegions.find(i) == cwmWorldState->spawnRegions.end()) {
                     cwmWorldState->spawnRegions[i] = new CSpawnRegion(i);
                     cwmWorldState->spawnRegions[i]->load(toScan);
                 }
                 else {
-                    Console::shared().warning(util::format(
-                        "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i));
+                    Console::shared().warning(util::format("spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i));
                 }
             }
         }
@@ -215,24 +196,21 @@ void loadRegions() {
         performLoad = true;
         ourRegions = new Script(regionsFile, NUM_DEFS, false);
     }
-
+    
     std::uint16_t i = 0;
     std::string regEntry;
-    for (Script *regScp = FileLookup->FirstScript(regions_def);
-         !FileLookup->FinishedScripts(regions_def); regScp = FileLookup->NextScript(regions_def)) {
+    for (Script *regScp = FileLookup->FirstScript(regions_def);!FileLookup->FinishedScripts(regions_def); regScp = FileLookup->NextScript(regions_def)) {
         if (regScp == nullptr)
             continue;
-
-        for (CScriptSection *toScan = regScp->FirstEntry(); toScan != nullptr;
-             toScan = regScp->NextEntry()) {
+        
+        for (CScriptSection *toScan = regScp->FirstEntry(); toScan != nullptr; toScan = regScp->NextEntry()) {
             if (toScan == nullptr)
                 continue;
-
+            
             regEntry = regScp->EntryName();
             auto ssecs = oldstrutil::sections(regEntry, " ");
             if (util::trim(util::strip(ssecs[0], "//")) == "REGION") {
-                i = static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                i = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 if (cwmWorldState->townRegions.find(i) == cwmWorldState->townRegions.end()) {
                     cwmWorldState->townRegions[i] = new CTownRegion(i);
                     cwmWorldState->townRegions[i]->InitFromScript(toScan);
@@ -241,8 +219,7 @@ void loadRegions() {
                     }
                 }
                 else {
-                    Console::shared().warning(util::format(
-                        "regions.dfn has a duplicate REGION entry, Entry Number: %u", i));
+                    Console::shared().warning(util::format("regions.dfn has a duplicate REGION entry, Entry Number: %u", i));
                 }
             }
         }
@@ -252,18 +229,18 @@ void loadRegions() {
         Console::shared().printFailed();
         Shutdown(FATAL_UOX3_ALLOC_MAPREGIONS);
     }
-
+    
     if (performLoad) {
         delete ourRegions;
         ourRegions = nullptr;
     }
-
+    
     // Load Instant Logout regions from [INSTALOG] section of regions.dfn
     // Note that all the tags below are required to setup valid locations
     CScriptSection *InstaLog = FileLookup->FindEntry("INSTALOG", regions_def);
     if (InstaLog == nullptr)
         return;
-
+    
     LogoutLocationEntry_st toAdd;
     std::string data, UTag;
     for (std::string tag = InstaLog->First(); !InstaLog->AtEnd(); tag = InstaLog->Next()) {
@@ -290,13 +267,13 @@ void loadRegions() {
             cwmWorldState->logoutLocs.push_back(toAdd);
         }
     }
-
+    
     // Load areas valid for SOS coordinates from [SOSAREAS] section of regions.dfn
     // Note that all the tags below are required to setup valid locations
     CScriptSection *sosAreas = FileLookup->FindEntry("SOSAREAS", regions_def);
     if (sosAreas == nullptr)
         return;
-
+    
     SOSLocationEntry toAddSOS;
     for (std::string tag = sosAreas->First(); !sosAreas->AtEnd(); tag = sosAreas->Next()) {
         UTag = util::upper(tag);
@@ -332,7 +309,7 @@ void loadRegions() {
 void loadTeleportLocations() {
     auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT) / std::filesystem::path("teleport.scp");
     cwmWorldState->teleLocs.resize(0);
-
+    
     if (!std::filesystem::exists(filename)) {
         Console::shared() << myendl;
         Console::shared().error( util::format(" Failed to open teleport data script %s", filename.string().c_str()));
@@ -341,20 +318,18 @@ void loadTeleportLocations() {
         cwmWorldState->SetError(true);
         return;
     }
-
+    
     Script *teleportData = new Script(filename, NUM_DEFS, false);
     if (teleportData != nullptr) {
         cwmWorldState->teleLocs.reserve(teleportData->NumEntries());
-
+        
         std::uint16_t tempX, tempY;
         std::int8_t tempZ;
         CScriptSection *teleportSect = nullptr;
         std::string tag, data, temp;
-        for (teleportSect = teleportData->FirstEntry(); teleportSect != nullptr;
-             teleportSect = teleportData->NextEntry()) {
+        for (teleportSect = teleportData->FirstEntry(); teleportSect != nullptr;teleportSect = teleportData->NextEntry()) {
             if (teleportSect != nullptr) {
-                for (tag = teleportSect->First(); !teleportSect->AtEnd();
-                     tag = teleportSect->Next()) {
+                for (tag = teleportSect->First(); !teleportSect->AtEnd();tag = teleportSect->Next()) {
                     CTeleLocationEntry toAdd;
                     if (util::upper(tag) == "ENTRY") {
                         tempX = 0;
@@ -364,30 +339,23 @@ void loadTeleportLocations() {
                         auto csecs = oldstrutil::sections(data, ",");
                         std::int32_t sectCount = static_cast<std::int32_t>(csecs.size());
                         if (sectCount >= 6) {
-                            tempX = static_cast<std::uint16_t>(
-                                std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                            tempY = static_cast<std::uint16_t>(
-                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                            tempX = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                            tempY = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                             temp = util::upper(util::trim(util::strip(csecs[2], "//")));
                             if (temp != "ALL" && temp != "A") {
                                 tempZ = static_cast<std::uint16_t>(std::stoul(temp, nullptr, 0));
                             }
                             toAdd.SourceLocation(tempX, tempY, tempZ);
-
-                            tempX = static_cast<std::uint16_t>(
-                                std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-                            tempY = static_cast<std::uint16_t>(
-                                std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
-                            tempZ = static_cast<std::int8_t>(
-                                std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
+                            
+                            tempX = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                            tempY = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+                            tempZ = static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
                             toAdd.TargetLocation(tempX, tempY, tempZ);
-
+                            
                             if (sectCount >= 7) {
-                                toAdd.SourceWorld(static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[6], "//")), nullptr, 0)));
+                                toAdd.SourceWorld(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0)));
                                 if (sectCount >= 8) {
-                                    toAdd.TargetWorld(static_cast<std::uint16_t>(std::stoul(
-                                        util::trim(util::strip(csecs[7], "//")), nullptr, 0)));
+                                    toAdd.TargetWorld(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0)));
                                 }
                             }
                             cwmWorldState->teleLocs.push_back(toAdd);
@@ -399,11 +367,9 @@ void loadTeleportLocations() {
                 }
             }
         }
-        std::sort(cwmWorldState->teleLocs.begin(), cwmWorldState->teleLocs.end(),
-                  [](CTeleLocationEntry &one, CTeleLocationEntry &two) {
-                      return static_cast<std::uint32_t>(one.SourceLocation().x) <
-                             static_cast<std::uint32_t>(two.SourceLocation().x);
-                  });
+        std::sort(cwmWorldState->teleLocs.begin(), cwmWorldState->teleLocs.end(),[](CTeleLocationEntry &one, CTeleLocationEntry &two) {
+            return static_cast<std::uint32_t>(one.SourceLocation().x) < static_cast<std::uint32_t>(two.SourceLocation().x);
+        });
         delete teleportData;
     }
 }
@@ -417,24 +383,20 @@ void loadCreatures() {
     std::string cEntry;
     std::string tag, data, UTag;
     std::uint16_t i = 0;
-    for (Script *creatScp = FileLookup->FirstScript(creatures_def);
-         !FileLookup->FinishedScripts(creatures_def);
-         creatScp = FileLookup->NextScript(creatures_def)) {
+    for (Script *creatScp = FileLookup->FirstScript(creatures_def);!FileLookup->FinishedScripts(creatures_def);creatScp = FileLookup->NextScript(creatures_def)) {
         if (creatScp == nullptr)
             continue;
-
-        for (CScriptSection *creatureData = creatScp->FirstEntry(); creatureData != nullptr;
-             creatureData = creatScp->NextEntry()) {
+        
+        for (CScriptSection *creatureData = creatScp->FirstEntry(); creatureData != nullptr;creatureData = creatScp->NextEntry()) {
             if (creatureData == nullptr)
                 continue;
-
+            
             cEntry = creatScp->EntryName();
             auto ssecs = oldstrutil::sections(cEntry, " ");
             if (ssecs[0] == "CREATURE") {
-                i = static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                i = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 cwmWorldState->creatures[i].CreatureId(i);
-
+                
                 for (tag = creatureData->First(); !creatureData->AtEnd();
                      tag = creatureData->Next()) {
                     if (tag.empty()) {
@@ -444,124 +406,114 @@ void loadCreatures() {
                     data = util::trim(util::strip(data, "//"));
                     UTag = util::upper(tag);
                     switch ((UTag.data()[0])) {
-                    case 'A':
-                        if (UTag == "ANTIBLINK") {
-                            cwmWorldState->creatures[i].AntiBlink(true);
-                        }
-                        else if (UTag == "ANIMAL") {
-                            cwmWorldState->creatures[i].IsAnimal(true);
-                        }
-                        else if (UTag.rfind("ANIM_", 0) == 0) // Check if UTag starts with "ANIM_"
-                        {
-                            // The following bit is shared between all the "ANIM_" tags
-                            std::uint8_t animId = 0;
-                            std::uint8_t animLength = 0;
-                            auto csecs = oldstrutil::sections(data, ",");
-                            if (csecs.size() > 1) {
-                                animId = static_cast<std::uint8_t>(std::stoul(
-                                    util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                                animLength = static_cast<std::uint8_t>(std::stoul(
-                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                        case 'A':
+                            if (UTag == "ANTIBLINK") {
+                                cwmWorldState->creatures[i].AntiBlink(true);
                             }
-                            else {
-                                animId = static_cast<std::uint8_t>(std::stoul(
-                                    util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                                animLength = 7; // default to 7 frames if nothing is specified
+                            else if (UTag == "ANIMAL") {
+                                cwmWorldState->creatures[i].IsAnimal(true);
                             }
-
-                            // Now apply the anim-data to the creature
-                            if (UTag == "ANIM_ATTACK1") {
-                                cwmWorldState->creatures[i].AttackAnim1(animId, animLength);
+                            else if (UTag.rfind("ANIM_", 0) == 0) // Check if UTag starts with "ANIM_"
+                            {
+                                // The following bit is shared between all the "ANIM_" tags
+                                std::uint8_t animId = 0;
+                                std::uint8_t animLength = 0;
+                                auto csecs = oldstrutil::sections(data, ",");
+                                if (csecs.size() > 1) {
+                                    animId = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                    animLength = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                }
+                                else {
+                                    animId = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                    animLength = 7; // default to 7 frames if nothing is specified
+                                }
+                                
+                                // Now apply the anim-data to the creature
+                                if (UTag == "ANIM_ATTACK1") {
+                                    cwmWorldState->creatures[i].AttackAnim1(animId, animLength);
+                                }
+                                else if (UTag == "ANIM_ATTACK2") {
+                                    cwmWorldState->creatures[i].AttackAnim2(animId, animLength);
+                                }
+                                else if (UTag == "ANIM_ATTACK3") {
+                                    cwmWorldState->creatures[i].AttackAnim3(animId, animLength);
+                                }
+                                else if (UTag == "ANIM_CASTAREA") {
+                                    cwmWorldState->creatures[i].CastAnimArea(animId, animLength);
+                                }
+                                else if (UTag == "ANIM_CASTTARGET") {
+                                    cwmWorldState->creatures[i].CastAnimTarget(animId, animLength);
+                                }
+                                else if (UTag == "ANIM_CAST3") {
+                                    cwmWorldState->creatures[i].CastAnim3(animId, animLength);
+                                }
                             }
-                            else if (UTag == "ANIM_ATTACK2") {
-                                cwmWorldState->creatures[i].AttackAnim2(animId, animLength);
-                            }
-                            else if (UTag == "ANIM_ATTACK3") {
-                                cwmWorldState->creatures[i].AttackAnim3(animId, animLength);
-                            }
-                            else if (UTag == "ANIM_CASTAREA") {
-                                cwmWorldState->creatures[i].CastAnimArea(animId, animLength);
-                            }
-                            else if (UTag == "ANIM_CASTTARGET") {
-                                cwmWorldState->creatures[i].CastAnimTarget(animId, animLength);
-                            }
-                            else if (UTag == "ANIM_CAST3") {
-                                cwmWorldState->creatures[i].CastAnim3(animId, animLength);
-                            }
-                        }
-                        break;
-                    case 'B':
-                        if (UTag == "BASESOUND") {
                             break;
-                        }
-                        break;
-                    case 'F':
-                        if (UTag == "FLIES") {
-                            cwmWorldState->creatures[i].CanFly(true);
-                        }
-                        break;
-                    case 'H':
-                        if (UTag == "HUMAN") {
-                            cwmWorldState->creatures[i].IsHuman(true);
-                        }
-                        break;
-                    case 'I':
-                        if (UTag == "ICON") {
-                            cwmWorldState->creatures[i].Icon(
-                                static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        break;
-                    case 'M':
-                        if (UTag == "MOVEMENT") {
-                            if (util::upper(data) == "WATER") {
-                                cwmWorldState->creatures[i].IsWater(true);
+                        case 'B':
+                            if (UTag == "BASESOUND") {
+                                break;
                             }
-                            else if (util::upper(data) == "BOTH") {
-                                cwmWorldState->creatures[i].IsAmphibian(true);
-                            }
-                            else {
-                                cwmWorldState->creatures[i].IsWater(false);
-                                cwmWorldState->creatures[i].IsAmphibian(false);
-                            }
-                        }
-                        else if (UTag == "MOUNTID") {
-                            cwmWorldState->creatures[i].MountId(
-                                static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        break;
-                    case 'S':
-                        if (UTag == "SOUNDFLAG") {
                             break;
-                        }
-                        else if (UTag == "SOUND_IDLE") {
-                            cwmWorldState->creatures[i].SetSound(
-                                SND_IDLE, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        else if (UTag == "SOUND_STARTATTACK") {
-                            cwmWorldState->creatures[i].SetSound(
-                                SND_STARTATTACK, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        else if (UTag == "SOUND_ATTACK") {
-                            cwmWorldState->creatures[i].SetSound(
-                                SND_ATTACK, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        else if (UTag == "SOUND_DEFEND") {
-                            cwmWorldState->creatures[i].SetSound(
-                                SND_DEFEND, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        else if (UTag == "SOUND_DIE") {
-                            cwmWorldState->creatures[i].SetSound(
-                                SND_DIE, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
-                        }
-                        break;
-                    default:
-                        break;
+                        case 'F':
+                            if (UTag == "FLIES") {
+                                cwmWorldState->creatures[i].CanFly(true);
+                            }
+                            break;
+                        case 'H':
+                            if (UTag == "HUMAN") {
+                                cwmWorldState->creatures[i].IsHuman(true);
+                            }
+                            break;
+                        case 'I':
+                            if (UTag == "ICON") {
+                                cwmWorldState->creatures[i].Icon(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            break;
+                        case 'M':
+                            if (UTag == "MOVEMENT") {
+                                if (util::upper(data) == "WATER") {
+                                    cwmWorldState->creatures[i].IsWater(true);
+                                }
+                                else if (util::upper(data) == "BOTH") {
+                                    cwmWorldState->creatures[i].IsAmphibian(true);
+                                }
+                                else {
+                                    cwmWorldState->creatures[i].IsWater(false);
+                                    cwmWorldState->creatures[i].IsAmphibian(false);
+                                }
+                            }
+                            else if (UTag == "MOUNTID") {
+                                cwmWorldState->creatures[i].MountId(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            break;
+                        case 'S':
+                            if (UTag == "SOUNDFLAG") {
+                                break;
+                            }
+                            else if (UTag == "SOUND_IDLE") {
+                                cwmWorldState->creatures[i].SetSound(SND_IDLE, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            else if (UTag == "SOUND_STARTATTACK") {
+                                cwmWorldState->creatures[i].SetSound(SND_STARTATTACK, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            else if (UTag == "SOUND_ATTACK") {
+                                cwmWorldState->creatures[i].SetSound(SND_ATTACK, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            else if (UTag == "SOUND_DEFEND") {
+                                cwmWorldState->creatures[i].SetSound(SND_DEFEND, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            else if (UTag == "SOUND_DIE") {
+                                cwmWorldState->creatures[i].SetSound(SND_DIE, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
         }
     }
-
+    
     FileLookup->Dispose(creatures_def);
 }
 
@@ -574,7 +526,7 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
         temp[inStream.gcount()] = 0;
         auto sLine = std::string(temp);
         auto cloc = sLine.find("//");
-
+        
         if (cloc != std::string::npos) {
             sLine = sLine.substr(0, cloc);
         }
@@ -585,7 +537,7 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
                 sLine = sLine.substr(cloc, (temp2 - cloc) + 1);
             }
         }
-
+        
         if (!sLine.empty()) {
             if (sLine != "o---o") {
                 auto loc = sLine.find("=");
@@ -596,7 +548,7 @@ void ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
                         auto temp2 = tag.find_last_not_of(" \t\v\f\0");
                         tag = tag.substr(temp, (temp2 - temp) + 1);
                     }
-
+                    
                     if ((loc + 1) < sLine.size()) {
                         data = sLine.substr(loc + 1);
                         auto temp = data.find_first_not_of(" \t\v\f\0");
@@ -626,29 +578,23 @@ void loadPlaces() {
     cwmWorldState->goPlaces.clear();
     std::string data, UTag, entryName;
     GoPlaces *toAdd = nullptr;
-
-    for (Script *locScp = FileLookup->FirstScript(location_def);
-         !FileLookup->FinishedScripts(location_def);
-         locScp = FileLookup->NextScript(location_def)) {
+    
+    for (Script *locScp = FileLookup->FirstScript(location_def); !FileLookup->FinishedScripts(location_def); locScp = FileLookup->NextScript(location_def)) {
         if (locScp == nullptr) {
             continue;
         }
-        for (CScriptSection *toScan = locScp->FirstEntry(); toScan != nullptr;
-             toScan = locScp->NextEntry()) {
+        for (CScriptSection *toScan = locScp->FirstEntry(); toScan != nullptr; toScan = locScp->NextEntry()) {
             if (toScan == nullptr) {
                 continue;
             }
             entryName = locScp->EntryName();
             auto ssecs = oldstrutil::sections(entryName, " ");
-
-            size_t entryNum =
-                static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
-
+            
+            size_t entryNum = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+            
             if ((util::upper(util::trim(util::strip(ssecs[0], "//"))) == "LOCATION") && entryNum) {
-                if (cwmWorldState->goPlaces.find(static_cast<std::uint16_t>(entryNum)) !=
-                    cwmWorldState->goPlaces.end()) {
-                    Console::shared().warning(
-                        util::format("Doubled up entry in Location.dfn (%u)", entryNum));
+                if (cwmWorldState->goPlaces.find(static_cast<std::uint16_t>(entryNum)) != cwmWorldState->goPlaces.end()) {
+                    Console::shared().warning(util::format("Doubled up entry in Location.dfn (%u)", entryNum));
                 }
                 toAdd = &cwmWorldState->goPlaces[static_cast<std::uint16_t>(entryNum)];
                 if (toAdd != nullptr) {
@@ -676,19 +622,15 @@ void loadPlaces() {
                             auto csecs = oldstrutil::sections(data, ",");
                             size_t sectionCount = csecs.size() + 1;
                             if (sectionCount >= 3) {
-                                toAdd->x = static_cast<std::int16_t>(
-                                    std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                toAdd->x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
                                 toAdd->y = static_cast<std::int16_t>(
-                                    std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                                toAdd->z = static_cast<std::int8_t>(
-                                    std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-                                toAdd->worldNum = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                                                                     std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                toAdd->z = static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                                toAdd->worldNum = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
                             }
-
+                            
                             if (sectionCount == 4) {
-                                toAdd->instanceId = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+                                toAdd->instanceId = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
                             }
                         }
                     }
@@ -696,16 +638,7 @@ void loadPlaces() {
             }
         }
     }
-
+    
     FileLookup->Dispose(location_def);
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	FileExists()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Check if specified file/filepath exists
-// o------------------------------------------------------------------------------------------------o
-bool FileExists(const std::string &filepath) {
-    auto temp = std::filesystem::path(filepath);
-    return std::filesystem::exists(temp);
-}

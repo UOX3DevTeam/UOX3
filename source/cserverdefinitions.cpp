@@ -77,14 +77,14 @@ auto CServerDefinitions::Reload() -> bool {
 auto CServerDefinitions::Cleanup() -> void {
     // We could just do a clear here, unless we are trying to keep the size?
     /*
-    for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
-        auto &toDel = (*slIter);
-        for (size_t j = 0; j < toDel.size(); ++j) {
-            if (toDel[j]) {
-                toDel[j] = nullptr;
-            }
-        }
-    }
+     for (auto slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter) {
+     auto &toDel = (*slIter);
+     for (size_t j = 0; j < toDel.size(); ++j) {
+     if (toDel[j]) {
+     toDel[j] = nullptr;
+     }
+     }
+     }
      */
     ScriptListings.clear();
 }
@@ -98,15 +98,15 @@ auto CServerDefinitions::Dispose(definitioncategories_t toDispose) -> bool {
     if (toDispose != NUM_DEFS) {
         ScriptListings[toDispose].clear() ;
         /*
-        auto &toDel = ScriptListings[toDispose];
-        for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
-            Script *toDelete = (*dIter);
-            if (toDelete) {
-                retVal = true;
-                delete toDelete;
-            }
-        }
-        toDel.clear();
+         auto &toDel = ScriptListings[toDispose];
+         for (auto dIter = toDel.begin(); dIter != toDel.end(); ++dIter) {
+         Script *toDelete = (*dIter);
+         if (toDelete) {
+         retVal = true;
+         delete toDelete;
+         }
+         }
+         toDel.clear();
          */
     }
     return retVal;
@@ -305,12 +305,10 @@ auto CServerDefinitions::BuildPriorityMap(definitioncategories_t category, std::
     if (!longList->empty()) {
         std::string filename = (*longList)[0];
         //	Do we have any priority informat?
-        if (FileExists(filename)) // the file exists, so perhaps we do
-        {
+        if (std::filesystem::exists(std::filesystem::path(filename))) { // the file exists, so perhaps we do
             auto prio =
             std::make_unique<Script>(filename, category, false); // generate a script for it
-            if (prio)                                                // successfully made a script
-            {
+            if (prio) {                                               // successfully made a script
                 auto prioInfo = prio->FindEntry("PRIORITY"); // find the priority entry
                 if (prioInfo) {
                     for (const auto &sec : prioInfo->collection()) {
@@ -373,9 +371,9 @@ auto CServerDefinitions::GetPriority(const char *file) -> std::int16_t {
 auto CDirectoryListing::PushDir(definitioncategories_t toMove) -> bool {
     auto filePath = ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION).string();
     //auto filePath = cwmWorldState->ServerData()->Directory(CSDDP_DEFS);
-//    std::cout <<"Filepath is : " << filePath << " and will append: " << dirNames[toMove] << std::endl;
+    //    std::cout <<"Filepath is : " << filePath << " and will append: " << dirNames[toMove] << std::endl;
     filePath += dirNames[toMove];
-//    std::cout <<"The new file path is: " << filePath << std::endl;
+    //    std::cout <<"The new file path is: " << filePath << std::endl;
     return PushDir(filePath);
 }
 //==================================================================================================

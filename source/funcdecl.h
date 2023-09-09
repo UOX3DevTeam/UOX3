@@ -77,8 +77,7 @@ inline std::uint32_t CalcSerial(std::uint8_t a1, std::uint8_t a2, std::uint8_t a
 // o------------------------------------------------------------------------------------------------o
 //  Socket stuff
 // o------------------------------------------------------------------------------------------------o
-auto SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    std::uint32_t type, serial_t serial) -> void;
+auto SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two, std::uint32_t type, serial_t serial) -> void;
 void SendMapChange(std::uint8_t worldNumber, CSocket *sock, bool initialLogin = false);
 bool IsOnline(CChar &mChar);
 
@@ -98,24 +97,17 @@ timerval_t GetPoisonTickTime(std::uint8_t poisonStrength);
 // o------------------------------------------------------------------------------------------------o
 //  Amount related
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0,
-                            bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
+std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
 std::uint32_t GetTotalItemCount(CItem *objCont);
-std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
-                               std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
-                               std::string sectionId = "");
-std::uint32_t DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,
-                                  std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false,
-                                  std::string sectionId = "");
+std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000,  std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
+std::uint32_t DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "");
 std::uint32_t GetBankCount(CChar *p, std::uint16_t itemId, std::uint16_t realColour = 0x0000, std::uint32_t realMoreVal = 0x0);
-std::uint32_t DeleteBankItem(CChar *p, std::uint32_t amt, std::uint16_t itemId, std::uint16_t realColour = 0x0000,
-                             std::uint32_t realMoreVal = 0x0);
+std::uint32_t DeleteBankItem(CChar *p, std::uint32_t amt, std::uint16_t itemId, std::uint16_t realColour = 0x0000,  std::uint32_t realMoreVal = 0x0);
 
 // o------------------------------------------------------------------------------------------------o
 //  Region related
 // o------------------------------------------------------------------------------------------------o
-CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,
-                              CBaseObject *mObj = nullptr);
+CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, CBaseObject *mObj = nullptr);
 void CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff);
 
 // o------------------------------------------------------------------------------------------------o
@@ -148,8 +140,7 @@ void CallGuards(CChar *mChar);
 //  Time Functions
 // o------------------------------------------------------------------------------------------------o
 inline timerval_t BuildTimeValue(R32 timeFromNow) {
-    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() +
-                                   (static_cast<R32>(1000) * timeFromNow));
+    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() + (static_cast<R32>(1000) * timeFromNow));
 }
 
 std::uint32_t GetClock();
@@ -178,9 +169,7 @@ inline char *RealTimeDate(char *time_str) {
 #if P_TIMESTAMP
 inline std::string TimeStamp() {
     auto stamp = []() {
-        auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                                                           std::chrono::system_clock::now().time_since_epoch())
-        .count();
+        auto milli = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         auto hours = (((milli / 1000) / 60) / 60);
         milli = milli - (hours * 60 * 60 * 1000);
         auto minutes = ((milli / 1000) / 60);
@@ -216,9 +205,7 @@ inline std::uint32_t CheckMilliTimer(std::uint32_t &Seconds, std::uint32_t &Mill
 }
 
 inline std::uint32_t GetMinutesSinceEpoch() {
-    return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(
-                                                                                       std::chrono::system_clock::now().time_since_epoch())
-                                      .count());
+    return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now().time_since_epoch()).count());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -226,13 +213,11 @@ inline std::uint32_t GetMinutesSinceEpoch() {
 // o------------------------------------------------------------------------------------------------o
 R32 RoundNumber(R32 toRound);
 bool IsNumber(const std::string &str);
-bool FileExists(const std::string &filepath);
 void DismountCreature(CChar *s);
 size_t GetTileName(CItem &mItem, std::string &itemname);
 std::string GetNpcDictName(CChar *mChar, CSocket *tSock = nullptr, std::uint8_t requestSource = 0);
 std::string GetNpcDictTitle(CChar *mChar, CSocket *tSock = nullptr);
-bool LineOfSight(CSocket *s, CChar *mChar, std::int16_t x2, std::int16_t y2, std::int8_t z2, std::uint8_t checkfor,
-                 bool useSurfaceZ, std::int8_t z2Top = 0, bool checkDistance = true);
+bool LineOfSight(CSocket *s, CChar *mChar, std::int16_t x2, std::int16_t y2, std::int8_t z2, std::uint8_t checkfor, bool useSurfaceZ, std::int8_t z2Top = 0, bool checkDistance = true);
 bool CheckItemLineOfSight(CChar *mChar, CItem *i);
 void Shutdown(std::int32_t retCode);
 void HandleDeath(CChar *mChar, CChar *attacker);
