@@ -211,7 +211,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     try{
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
-        return 0 ;
+        //return 0 ;
     }
     catch( const std::exception &e){
         std::cerr <<e.what() << std::endl;

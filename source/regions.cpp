@@ -844,7 +844,12 @@ void CMapHandler::load() {
     for (std::int16_t cx = 0; cx < AreaX; ++cx) {
         for (std::int16_t cy = 0; cy < AreaY; ++cy) {
             filename = basePath / std::filesystem::path(util::ntos(cx) + "."s + util::ntos(cy) + ".wsc"s); // let's name our file
-            fileSizes[cx][cy] = std::filesystem::file_size(filename);
+            if (std::filesystem::exists(filename)) {
+                fileSizes[cx][cy] = std::filesystem::file_size(filename);
+            }
+            else {
+                fileSizes[cx][cy] = 0;
+            }
             runningCount += fileSizes[cx][cy];
         }
     }
