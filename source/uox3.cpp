@@ -235,13 +235,13 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     // We are going to load some of our basic data, if that goes ok, we then initialize classes,
     // data, network and the classes
     Console::shared() << "Processing INI Settings  ";
-    if (!std::filesystem::exists(std::filesystem::path(configFile))) {
-        Console::shared().error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format("Cannot find UOX3 ini file: %s", configFile.c_str()));
+    if (!std::filesystem::exists(configFile)) {
+        Console::shared().error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format("Cannot find UOX3 ini file: %s", configFile.string().c_str()));
         return EXIT_FAILURE;
     }
     auto serverdata = CServerData();
-    if (!serverdata.load(configFile)) {
-        Console::shared().error(configFile.empty() ? "Error loading UOX3 ini file." : util::format("Error loading UOX3 ini file: %s", configFile.c_str()));
+    if (!serverdata.load(configFile.string())) {
+        Console::shared().error(configFile.empty() ? "Error loading UOX3 ini file." : util::format("Error loading UOX3 ini file: %s", configFile.string().c_str()));
         return EXIT_FAILURE;
     }
     Console::shared().printDone();

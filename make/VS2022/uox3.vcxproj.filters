@@ -33,6 +33,9 @@
     <Filter Include="Source Files\Script">
       <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\configuration">
+      <UniqueIdentifier>{31f27eb9-4e9c-4f76-8fa2-0dac25da970f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp">
@@ -280,6 +283,12 @@
     <ClCompile Include="..\..\source\subsystem\account.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\configuration\directorylocation.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\serverconfig.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -520,6 +529,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjspropertyspecs.h">
       <Filter>Source Files\JS Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\directorylocation.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\serverconfig.hpp">
+      <Filter>Source Files\configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

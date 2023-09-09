@@ -85,7 +85,7 @@ auto DirectoryLocation::reset() ->void {
     locations = std::vector<std::filesystem::path>(LOCATIONNAMEMAP.size());
     locations.at(static_cast<int>(dirlocation_t::BASE)) = std::filesystem::current_path() ;
 #if defined(_WIN32)
-    locations.at(dirlocation_t::UODIR)=std::filesystem::path("C:\\Program Files (x86)\\Electronic Arts\\Ultima Online Classic");
+    locations.at(static_cast<int>(dirlocation_t::UODIR))=std::filesystem::path("C:\\Program Files (x86)\\Electronic Arts\\Ultima Online Classic");
     auto potential = std::getenv("UODATA") ;
     if (potential != nullptr){
         locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path(potential) ;
