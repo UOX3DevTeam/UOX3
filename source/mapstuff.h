@@ -200,7 +200,7 @@ class CMulHandler {
 
     // misc functions
     auto ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater = true) -> bool;
-    auto ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater,bool checkOnlyNonMultis, bool checkForRoads) -> std::uint8_t;
+    auto ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater, bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads) -> std::uint8_t;
     auto MapExists(std::uint8_t worldNumber) const -> bool;
     auto InsideValidWorld(std::int16_t x, std::int16_t y, std::uint8_t worldNumber = 0xFF) const-> bool;
     auto MapCount() const -> std::uint8_t;
