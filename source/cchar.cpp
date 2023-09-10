@@ -2263,7 +2263,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
         toSend.Finalize();
         s->Send(&toSend);
         
-        if (s->ClientType() >= CV_SA2D) {
+        if (s->clientType() >= ClientType::SA2D) {
             // Send poison state of healthbar
             CPHealthBarStatus hpBarStatus1((*this), (*s), 1);
             s->Send(&hpBarStatus1);

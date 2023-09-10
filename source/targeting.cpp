@@ -1297,7 +1297,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     CPDrawContainer toSend;
     toSend.Model(0x0030);
     toSend.Serial(c->GetSerial());
-    if (s->ClientType() >= CV_HS2D && s->ClientVerShort() >= CVS_7090) {
+    if (s->clientType() >= ClientType::HS2D && s->ClientVerShort() >= CVS_7090) {
         toSend.ContType(0x00);
     }
     

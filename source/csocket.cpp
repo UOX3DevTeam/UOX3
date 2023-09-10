@@ -1960,7 +1960,7 @@ void CSocket::mtarget(std::uint16_t itemId, std::int32_t dictEntry) {
     toSend.MultiModel(itemId);
     toSend.RequestType(1);
     
-    if (ClientVersion() >= CV_HS2D && ClientVerShort() >= CVS_7090) {
+    if (clientType() >= ClientType::HS2D && ClientVerShort() >= CVS_7090) {
         toSend.SetHue(0);
     }
     
@@ -2038,7 +2038,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
         if (!CharInRange(mChar, targChar))
             return;
         
-        if (ClientType() >= CV_SA2D) {
+        if (clientType() >= ClientType::SA2D) {
             // Send poison state of healthbar
             CPHealthBarStatus hpBarStatus1((*targChar), ((*this)), 1);
             Send(&hpBarStatus1);
@@ -2309,7 +2309,7 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
                 return;
         }
     }
-    if (ClientType() >= CV_HS2D && ClientVerShort() >= CVS_7090) {
+    if (clientType() >= ClientType::HS2D && ClientVerShort() >= CVS_7090) {
         contSend.ContType(0x7D);
     }
     

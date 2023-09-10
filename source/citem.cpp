@@ -2446,7 +2446,7 @@ void CItem::SendToSocket(CSocket *mSock, [[maybe_unused]] bool drawGamePlayer) {
                 return;
             }
         }
-        if (mSock->ClientType() >= CV_SA2D) {
+        if (mSock->clientType() >= ClientType::SA2D) {
             CPNewObjectInfo toSend((*this), (*mChar));
             mSock->Send(&toSend);
         }

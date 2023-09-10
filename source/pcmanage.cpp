@@ -734,7 +734,7 @@ bool CPICreateCharacter::Handle() {
                 mChar->SetCommandLevel(CL_GM);
             }
 
-            if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
+            if (tSock->clientType() == ClientType::SA3D || tSock->clientType() == ClientType::HS3D) {
                 locationNumber = clientFlags;
             }
 
@@ -1100,7 +1100,7 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
         elfCreation = true;
     }
 
-    if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
+    if (tSock->clientType() == ClientType::SA3D || tSock->clientType() == ClientType::HS3D) {
         switch (sex) {
         case 0:
             switch (race) {
@@ -1136,7 +1136,7 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
         // races.dfn 0 = human, 1 = elf, 2 = gargoyle
         mChar->SetRace(race);
     }
-    else if (tSock->ClientType() >= CV_SA2D) {
+    else if (tSock->clientType() >= ClientType::SA2D) {
         switch (sex) {
         case 0:
             // human male

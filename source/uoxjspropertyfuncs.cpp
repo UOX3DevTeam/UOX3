@@ -4391,7 +4391,7 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->ClientVersionLetter(static_cast<std::uint8_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTTYPE:
-            gPriv->ClientType(static_cast<ClientTypes>(encaps.toInt()));
+            gPriv->setClientType(static_cast<ClientType::type_t>(encaps.toInt()));
             break;
         default:
             break;
@@ -4571,7 +4571,7 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             *vp = INT_TO_JSVAL(gPriv->ClientVersionLetter());
             break;
         case CSOCKP_CLIENTTYPE:
-            *vp = INT_TO_JSVAL(gPriv->ClientType());
+            *vp = INT_TO_JSVAL(gPriv->clientType().type);
             break;
         case CSOCKP_TARGET: {
             serial_t mySerial = gPriv->GetDWord(7);

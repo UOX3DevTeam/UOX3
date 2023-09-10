@@ -2705,7 +2705,7 @@ void CMagic::SpellBook(CSocket *mSock) {
     }
     CPDrawContainer sbStart((*spellBook));
     sbStart.Model(0xFFFF);
-    if (mSock->ClientType() >= CV_HS2D && mSock->ClientVerShort() >= CVS_7090) {
+    if (mSock->clientType() >= ClientType::HS2D && mSock->ClientVerShort() >= CVS_7090) {
         sbStart.ContType(0x7D);
     }
     mSock->Send(&sbStart);

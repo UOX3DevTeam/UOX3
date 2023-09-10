@@ -1071,7 +1071,7 @@ void CSkills::Track(CChar *i) {
         s->SetTimer(tPC_TRACKING, 0);
         CPTrackingArrow tSend;
         tSend.Active(0);
-        if (s->ClientVersion() >= CV_HS2D) {
+        if (s->clientType() >= ClientType::HS2D) {
             tSend.AddSerial(i->GetTrackingTargetSerial());
         }
         s->Send(&tSend);
@@ -1079,7 +1079,7 @@ void CSkills::Track(CChar *i) {
     }
     CPTrackingArrow tSend = (*trackTarg);
     tSend.Active(1);
-    if (s->ClientType() >= CV_HS2D) {
+    if (s->clientType() >= ClientType::HS2D) {
         tSend.AddSerial(i->GetTrackingTarget()->GetSerial());
     }
     s->Send(&tSend);
