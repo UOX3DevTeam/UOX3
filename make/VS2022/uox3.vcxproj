@@ -93,6 +93,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp" />
+    <!-- type group -->
+    <ClCompile Include="..\..\source\type\clientversion.cpp" />
     <!-- configuration group -->
     <ClCompile Include="..\..\source\configuration\serverconfig.cpp" />
     <ClCompile Include="..\..\source\configuration\directorylocation.cpp" />
@@ -186,6 +188,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
+    <!-- type group -->
+    <ClInclude Include="..\..\source\type\clientversion.hpp" />
     <!-- configuration group -->
     <ClInclude Include="..\..\source\configuration\serverconfig.hpp" />
     <ClInclude Include="..\..\source\configuration\directorylocation.hpp" />

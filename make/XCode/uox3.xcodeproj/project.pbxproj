@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2452AABB95300D624FC /* directorylocation.cpp */; };
 		56AAE24A2AABB95300D624FC /* serverconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2462AABB95300D624FC /* serverconfig.cpp */; };
+		56AAE25E2AADF26B00D624FC /* clientcfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE25C2AADF26B00D624FC /* clientcfg.cpp */; };
+		56AAE2642AADF3A800D624FC /* clientversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2622AADF3A800D624FC /* clientversion.cpp */; };
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
 		56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */; };
 		56D6EEF82AA13174005355FA /* account.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEF42AA13174005355FA /* account.cpp */; };
@@ -991,6 +993,10 @@
 		56AAE2462AABB95300D624FC /* serverconfig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serverconfig.cpp; sourceTree = "<group>"; };
 		56AAE2472AABB95300D624FC /* directorylocation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = directorylocation.hpp; sourceTree = "<group>"; };
 		56AAE2482AABB95300D624FC /* serverconfig.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = serverconfig.hpp; sourceTree = "<group>"; };
+		56AAE25C2AADF26B00D624FC /* clientcfg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clientcfg.cpp; sourceTree = "<group>"; };
+		56AAE25D2AADF26B00D624FC /* clientcfg.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clientcfg.hpp; sourceTree = "<group>"; };
+		56AAE2622AADF3A800D624FC /* clientversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clientversion.cpp; sourceTree = "<group>"; };
+		56AAE2632AADF3A800D624FC /* clientversion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clientversion.hpp; sourceTree = "<group>"; };
 		56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
 		56C9E3D52A9C8FF0004D9F38 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CMakeLists.txt; path = ../cmake/CMakeLists.txt; sourceTree = "<group>"; };
 		56C9E3D82A9C9022004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2022/uox3.sln; sourceTree = "<group>"; };
@@ -1186,6 +1192,8 @@
 				56AAE2472AABB95300D624FC /* directorylocation.hpp */,
 				56AAE2462AABB95300D624FC /* serverconfig.cpp */,
 				56AAE2482AABB95300D624FC /* serverconfig.hpp */,
+				56AAE25C2AADF26B00D624FC /* clientcfg.cpp */,
+				56AAE25D2AADF26B00D624FC /* clientcfg.hpp */,
 			);
 			path = configuration;
 			sourceTree = "<group>";
@@ -2927,6 +2935,15 @@
 			path = carve;
 			sourceTree = "<group>";
 		};
+		56AAE2612AADF38900D624FC /* type */ = {
+			isa = PBXGroup;
+			children = (
+				56AAE2622AADF3A800D624FC /* clientversion.cpp */,
+				56AAE2632AADF3A800D624FC /* clientversion.hpp */,
+			);
+			path = type;
+			sourceTree = "<group>";
+		};
 		56BA2FB62A95BDF70064EB36 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3020,6 +3037,7 @@
 		64A90074293E3DD4009B54DA /* source */ = {
 			isa = PBXGroup;
 			children = (
+				56AAE2612AADF38900D624FC /* type */,
 				56AADE742AABB8F400D624FC /* configuration */,
 				56D6EEE62AA0B861005355FA /* subsystem */,
 				56D6EEE12AA0AC66005355FA /* expired */,
@@ -3341,6 +3359,7 @@
 				64A90122293E3DD4009B54DA /* console.cpp in Sources */,
 				64A90152293E3DD4009B54DA /* partysystem.cpp in Sources */,
 				64A90163293E3DD4009B54DA /* uox3.cpp in Sources */,
+				56AAE25E2AADF26B00D624FC /* clientcfg.cpp in Sources */,
 				64A90125293E3DD4009B54DA /* cgump.cpp in Sources */,
 				64A9014C293E3DD4009B54DA /* msgboard.cpp in Sources */,
 				64A9015F293E3DD4009B54DA /* timeutility.cpp in Sources */,
@@ -3386,6 +3405,7 @@
 				64A90121293E3DD4009B54DA /* cchar.cpp in Sources */,
 				56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */,
 				64A90154293E3DD4009B54DA /* quantityfuncs.cpp in Sources */,
+				56AAE2642AADF3A800D624FC /* clientversion.cpp in Sources */,
 				64A90165293E3DD4009B54DA /* uoxjspropertyfuncs.cpp in Sources */,
 				64A9012C293E3DD4009B54DA /* combat.cpp in Sources */,
 				64A90153293E3DD4009B54DA /* pcmanage.cpp in Sources */,

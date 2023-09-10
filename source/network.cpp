@@ -11,6 +11,7 @@
 #include "cchar.h"
 #include "ceffects.h"
 #include "cjsmapping.h"
+#include "type/clientversion.hpp"
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "cpacketsend.h"
@@ -830,7 +831,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                             if (ourChar->GetBodyType() == BT_GARGOYLE ||
                                 (cwmWorldState->ServerData()->ForceNewAnimationPacket() &&
                                  (ourChar->GetSocket() == nullptr ||
-                                  ourChar->GetSocket()->ClientType() >= CV_SA2D))) {
+                                  ourChar->GetSocket()->clientType() >= ClientType::SA2D))) {
                                 // If gargoyle, human or elf, and new animation packet is enabled
                                 Effects->PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE,
                                                                    S_ACT_EMOTE_BOW);
@@ -852,7 +853,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                             if (ourChar->GetBodyType() == BT_GARGOYLE ||
                                 (cwmWorldState->ServerData()->ForceNewAnimationPacket() &&
                                  (ourChar->GetSocket() == nullptr ||
-                                  ourChar->GetSocket()->ClientType() >= CV_SA2D))) {
+                                  ourChar->GetSocket()->clientType() >= ClientType::SA2D))) {
                                 // If gargoyle, human or elf, and new animation packet is enabled
                                 Effects->PlayNewCharacterAnimation(ourChar, N_ACT_EMOTE,
                                                                    S_ACT_EMOTE_SALUTE);

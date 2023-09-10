@@ -455,7 +455,6 @@ const std::int16_t DEFSOCK_PX = 0;
 const std::int16_t DEFSOCK_PY = 0;
 const std::int8_t DEFSOCK_PZ = 0;
 const unicodetypes_t DEFSOCK_LANG = UT_ENU;
-const ClientTypes DEFSOCK_CLITYPE = CV_DEFAULT;
 const ClientVersions DEFSOCK_CLIVERSHORT = CVS_DEFAULT;
 const std::uint32_t DEFSOCK_CLIENTVERSION = CalcSerial(4, 0, 0, 0);
 const std::uint32_t DEFSOCK_BYTESSENT = 0;
@@ -477,7 +476,7 @@ outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGIN
 range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum),
 walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT),
 pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG),
-cliType(DEFSOCK_CLITYPE), cliVerShort(DEFSOCK_CLIVERSHORT),
+ cliVerShort(DEFSOCK_CLIVERSHORT),
 clientVersion(DEFSOCK_CLIENTVERSION), bytesReceived(DEFSOCK_BYTESRECEIVED),
 bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr),
 tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL),
@@ -1011,8 +1010,7 @@ void CSocket::NewClient(bool newValue) { newClient = newValue; }
 std::uint32_t CSocket::GetDWord(size_t offset) {
     std::uint32_t retVal = 0;
     if (offset + 3 >= MAXBUFFER) {
-        Console::shared().error(
-                                util::format("GetDWord was passed an invalid offset value 0x%X", offset));
+        Console::shared().error(util::format("GetDWord was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal =
@@ -1372,8 +1370,8 @@ void CSocket::ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets client type associated with socket
 // o------------------------------------------------------------------------------------------------o
-ClientTypes CSocket::ClientType() const { return cliType; }
-void CSocket::ClientType(ClientTypes newVer) { cliType = newVer; }
+auto CSocket::clientType() const -> const ClientType& { return cliType;}
+auto CSocket::setClientType(ClientType::type_t type) ->void { cliType.type = type ;}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::ClientVerShort()
@@ -1431,13 +1429,10 @@ void CSocket::ClientVersionLetter(std::uint8_t value) {
 std::uint8_t CSocket::Range() const { return range; }
 void CSocket::Range(std::uint8_t value) {
     if (ClientVerShort() < CVS_705527) {
-        range = std::min(
-                         value, static_cast<std::uint8_t>(18)); // 18 is max range for 2D clients prior to 7.0.55.27
+        range = std::min(value, static_cast<std::uint8_t>(18)); // 18 is max range for 2D clients prior to 7.0.55.27
     }
     else {
-        range = std::min(
-                         value,
-                         static_cast<std::uint8_t>(24)); // 24 is max range for 2D clients after that, or enhanced client
+        range = std::min(value,static_cast<std::uint8_t>(24)); // 24 is max range for 2D clients after that, or enhanced client
     }
 }
 

@@ -14,6 +14,7 @@
 #include <ostream>
 #include <string>
 
+#include "type/clientversion.hpp"
 class CChar;
 namespace account {
 using serial_t = std::uint32_t;
@@ -32,8 +33,7 @@ struct AccountCharacter {
     account::serial_t serialNumber;
     std::string name;
     CChar *pointer;
-    AccountCharacter(account::serial_t serialNumber = INVALID_SERIAL,
-                     const std::string &name = "UNKNOWN");
+    AccountCharacter(account::serial_t serialNumber = INVALID_SERIAL, const std::string &name = "UNKNOWN");
     AccountCharacter(const std::string &line);
     auto describe() const -> std::string;
     auto realName() -> std::string;
@@ -55,22 +55,10 @@ struct AccountEntry {
     static constexpr auto INVALID_ACCOUNT = std::numeric_limits<account::acctnum_t>::max();
 
     enum attributeflag_t {
-        BANNED = 0,
-        SUSPENDED,
-        PUBLIC,
-        ONLINE,
-        CHARACTER1,
-        CHARACTER2,
-        CHARACTER3,
-        CHARACTER4,
-        CHARACTER5,
-        CHARACTER6,
-        CHARACTER7,
-        YOUNG,
-        UNUSED,
-        SEER,
-        COUNSELOR,
-        GM,
+        BANNED = 0, SUSPENDED, PUBLIC, ONLINE,
+        CHARACTER1, CHARACTER2, CHARACTER3, CHARACTER4,
+        CHARACTER5, CHARACTER6, CHARACTER7, YOUNG,
+        UNUSED, SEER, COUNSELOR, GM,
         COUNT
     };
     std::string username;
@@ -90,7 +78,7 @@ struct AccountEntry {
     std::uint32_t lastIP;
 
     std::uint32_t lastClientVersion;
-    std::uint32_t lastClientType;
+    ClientType lastClientType;
     std::uint8_t lastClientVersionShort;
 
     std::array<AccountCharacter, CHARACTERCOUNT> character;

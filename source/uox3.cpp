@@ -1611,7 +1611,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
             if (ValidateObject(mChar.GetTrackingTarget())) {
                 CPTrackingArrow tSend = (*mChar.GetTrackingTarget());
                 tSend.Active(0);
-                if (mSock->ClientType() >= CV_HS2D) {
+                if (mSock->clientType() >= ClientType::HS2D) {
                     tSend.AddSerial(mChar.GetTrackingTarget()->GetSerial());
                 }
                 mSock->Send(&tSend);
@@ -3811,19 +3811,13 @@ auto SocketMapChange(CSocket *sock, CChar *charMoving, CItem *gate) -> void {
         }
     }
     
-    switch (sock->ClientType()) {
-        case CV_UO3D:
-        case CV_KRRIOS:
-            toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),
-                                static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)),
-                                static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
-                                tInstanceId);
+    switch (sock->clientType().type) {
+        case ClientType::UO3D:
+        case ClientType::KRRIOS:
+            toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)), static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum, tInstanceId);
             break;
         default:
-            toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)),
-                                static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)),
-                                static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum,
-                                tInstanceId);
+            toMove->SetLocation(static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREX)), static_cast<std::int16_t>(gate->GetTempVar(CITV_MOREY)), static_cast<std::int8_t>(gate->GetTempVar(CITV_MOREZ)), tWorldNum, tInstanceId);
             break;
     }
     SendMapChange(tWorldNum, sock);

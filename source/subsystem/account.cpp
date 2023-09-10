@@ -152,15 +152,12 @@ AccountEntry::AccountEntry() {
     lastIP = 0;
     
     lastClientVersion = 0;
-    lastClientType = 0;
     lastClientVersionShort = 0;
     
     std::fill(character.begin(), character.end(), AccountCharacter());
 }
 //======================================================================
-AccountEntry::AccountEntry(const std::string &username, const std::string &password,
-                           account::attribute_t attribute, const std::string &contact)
-: AccountEntry() {
+AccountEntry::AccountEntry(const std::string &username, const std::string &password, account::attribute_t attribute, const std::string &contact) : AccountEntry() {
     this->username = util::lower(username);
     this->password = password;
     flag = std::bitset<attributeflag_t::COUNT>(attribute);

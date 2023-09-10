@@ -9,6 +9,7 @@
 #include "cguild.h"
 #include "citem.h"
 #include "cjsmapping.h"
+#include "type/clientversion.hpp"
 #include "cmagic.h"
 #include "combat.h"
 #include "cpacketsend.h"
@@ -319,87 +320,67 @@ bool CPIFirstLogin::Handle() {
             // Handle client-restrictions, disconnect if client-version isn't supported
             // Client-versions below 6.0.5.0 can only be verified after they're ingame, so can only
             // be blocked in FirstLogin if _all_ client versions below 6.0.5.0 are blocked
-            if (tSock->ClientType() == CV_T2A) {
+            if (tSock->clientType() == ClientType::T2A) {
                 if (!cwmWorldState->ServerData()->clientSupport4000() &&
                     !cwmWorldState->ServerData()->clientSupport5000() &&
                     !cwmWorldState->ServerData()->clientSupport6000()) {
                     t = LDR_COMMSFAILURE;
-                    Console::shared()
-                        << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..."
-                        << myendl;
+                    Console::shared() << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
                 }
             }
-            else if (tSock->ClientType() <= CV_KR3D && tSock->ClientType() != CV_DEFAULT) {
+            else if (tSock->clientType() <= ClientType::KR3D && tSock->clientType() != ClientType::DEFAULT) {
                 if (!cwmWorldState->ServerData()->clientSupport6050()) {
                     t = LDR_COMMSFAILURE;
-                    Console::shared()
-                        << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..."
-                        << myendl;
+                    Console::shared() << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
                 }
             }
-            else if (tSock->ClientType() <= CV_SA3D && tSock->ClientType() != CV_DEFAULT) {
+            else if (tSock->clientType() <= ClientType::SA3D && tSock->clientType() != ClientType::DEFAULT) {
                 if (!cwmWorldState->ServerData()->clientSupport7000()) {
                     t = LDR_COMMSFAILURE;
-                    Console::shared()
-                        << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..."
-                        << myendl;
+                    Console::shared() << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
                 }
             }
-            else if (tSock->ClientType() <= CV_HS3D && tSock->ClientType() != CV_DEFAULT) {
+            else if (tSock->clientType() <= ClientType::HS3D && tSock->clientType() != ClientType::DEFAULT) {
                 if (tSock->ClientVerShort() < CVS_70160) {
                     if (!cwmWorldState->ServerData()->clientSupport7090()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared() << "Login denied - unsupported client (7.0.9.0 - "
-                                             "7.0.15.1). See UOX.INI..."
-                                          << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.9.0 - 7.0.15.1). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70240) {
                     if (!cwmWorldState->ServerData()->clientSupport70160()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared() << "Login denied - unsupported client (7.0.16.0 - "
-                                             "7.0.23.1). See UOX.INI..."
-                                          << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70300) {
                     if (!cwmWorldState->ServerData()->clientSupport70240()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared()
-                            << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..."
-                            << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70331) {
                     if (!cwmWorldState->ServerData()->clientSupport70300()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared()
-                            << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..."
-                            << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_704565) {
                     if (!cwmWorldState->ServerData()->clientSupport70331()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared()
-                            << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..."
-                            << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() < CVS_70610) {
                     if (!cwmWorldState->ServerData()->clientSupport704565()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared()
-                            << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..."
-                            << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..." << myendl;
                     }
                 }
                 else if (tSock->ClientVerShort() >= CVS_70610) {
                     if (!cwmWorldState->ServerData()->clientSupport70610()) {
                         t = LDR_COMMSFAILURE;
-                        Console::shared()
-                            << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..."
-                            << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..." << myendl;
                     }
                 }
             }
@@ -431,9 +412,9 @@ bool CPIFirstLogin::Handle() {
         actbTemp->flag.set(AccountEntry::attributeflag_t::ONLINE, true);
 
         // Add temp-clientversion info to account here, to be used for second login
-        if (actbTemp->lastClientVersion == 0 || tSock->ClientType() != CV_DEFAULT) {
+        if (actbTemp->lastClientVersion == 0 || tSock->clientType() != ClientType::DEFAULT) {
             actbTemp->lastClientVersion = tSock->ClientVersion();
-            actbTemp->lastClientType = tSock->ClientType();
+            actbTemp->lastClientType = tSock->clientType();
             actbTemp->lastClientVersionShort = tSock->ClientVerShort();
         }
 
@@ -446,8 +427,8 @@ bool CPIFirstLogin::Handle() {
     }
     // If socket's ClientType is still CV_DEFAULT, it's an old client,
     // since there was no packet before 0x80 where ClientType changed
-    if (tSock->ClientType() == CV_DEFAULT) {
-        tSock->ClientType(CV_T2A);
+    if (tSock->clientType() == ClientType::DEFAULT) {
+        tSock->setClientType(ClientType::T2A);
     }
     // CPEnableClientFeatures ii;
     // tSock->Send( &ii );
@@ -609,7 +590,7 @@ bool CPISecondLogin::Handle() {
 
     // Add socket version info from first login, stored in account, to new socket!
     tSock->ClientVersion(actbTemp.lastClientVersion);
-    tSock->ClientType(static_cast<ClientTypes>(actbTemp.lastClientType));
+    tSock->setClientType(actbTemp.lastClientType.type);
     tSock->ClientVerShort(static_cast<ClientVersions>(actbTemp.lastClientVersionShort));
 
     std::string pass0, pass1, pass2;
@@ -658,7 +639,7 @@ bool CPISecondLogin::Handle() {
         size_t serverCount = sd->NumServerLocations();
         CPCharAndStartLoc toSend(actbTemp, charCount, static_cast<std::uint8_t>(serverCount), tSock);
         for (size_t j = 0; j < serverCount; ++j) {
-            if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13) {
+            if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 13) {
                 toSend.NewAddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
             }
             else {
@@ -717,7 +698,7 @@ CPINewClientVersion::CPINewClientVersion(CSocket *s) : CPInputBuffer(s) {
 }
 void CPINewClientVersion::Receive() {
     if (tSock->GetByte(0) == 0xC0) {
-        tSock->ClientType(CV_T2A);
+        tSock->setClientType(ClientType::T2A);
     }
     else if (tSock->GetByte(0) == 0xEF) {
         tSock->Receive(21, false);
@@ -740,20 +721,20 @@ void CPINewClientVersion::Receive() {
         if (tSock->ClientVersion() <= 100666881) // If under or equal to 6.0.14.1, which in reality
                                                  // means between 6.0.5.0 and 6.0.14.1
         {
-            tSock->ClientType(CV_KR2D);
+            tSock->setClientType(ClientType::KR2D);
         }
         else if (tSock->ClientVersion() >= 10066881) {
             if (tSock->ClientVersion() >= 1000000000) // 1124079360 is 4.0.23.1?
             {
                 if (tSock->ClientVersion() == 1110912768) {
                     // Kingdom Reborn 3D client, build 2.53.0.2
-                    tSock->ClientType(CV_KR3D);
+                    tSock->setClientType(ClientType::KR3D);
                     tSock->ClientVerShort(CVS_25302);
                 }
                 else {
                     // UO Enhanced client 4.0.23.1 and above
                     // should use same version numbering scheme as classic client internally
-                    tSock->ClientType(CV_HS3D);
+                    tSock->setClientType(ClientType::HS3D);
                     if (clientRevision <= 15) {
                         tSock->ClientVerShort(CVS_70151);
                     }
@@ -765,16 +746,14 @@ void CPINewClientVersion::Receive() {
                     }
                 }
             }
-            else if (tSock->ClientVersion() ==
-                     100666882) // 6.0.14.2, but technically first SA2D client
-            {
-                tSock->ClientType(CV_SA2D);
+            else if (tSock->ClientVersion() == 100666882) {// 6.0.14.2, but technically first SA2D client
+                tSock->setClientType(ClientType::SA2D);
             }
             else if (tSock->ClientVersion() <= 117442562 && clientRevision < 9) {
-                tSock->ClientType(CV_SA2D);
+                tSock->setClientType(ClientType::SA2D);
             }
             else if (tSock->ClientVersion() >= 117440814 && clientRevision >= 9) {
-                tSock->ClientType(CV_HS2D);
+                tSock->setClientType(ClientType::HS2D);
                 // Set temporary client-versions to be used by client-support option during login
                 if (clientRevision <= 15) {
                     tSock->ClientVerShort(CVS_70151);
@@ -795,7 +774,7 @@ void CPINewClientVersion::Receive() {
                     tSock->ClientVerShort(CVS_704565);
                 }
                 else if (clientRevision < 61) {
-                    tSock->ClientType(CV_TOL2D);
+                    tSock->setClientType(ClientType::TOL2D);
                     tSock->ClientVerShort(CVS_705527);
                 }
                 else {
@@ -885,7 +864,7 @@ bool CPIClientVersion::Handle() {
 
     // Only need this bit for clients prior to 6.0.5.0 (6.0.0.0 to 6.0.4.x are classified as CV_T2A
     // up until this point) Version already received in packet 0xEF for 6.0.5.0+
-    if (tSock->ClientType() < CV_KR2D) {
+    if (tSock->clientType() < ClientType::KR2D) {
         std::uint8_t major, minor, sub, letter;
         std::string s(verString);
         std::string us = std::string(s);
@@ -938,10 +917,10 @@ bool CPIClientVersion::Handle() {
     }
 
     if (strstr(verString, "Dawn")) {
-        tSock->ClientType(CV_UO3D);
+        tSock->setClientType(ClientType::UO3D);
     }
     else if (strstr(verString, "Krrios")) {
-        tSock->ClientType(CV_KRRIOS);
+        tSock->setClientType(ClientType::KRRIOS);
     }
     else {
         SetClientVersionShortAndType(tSock, verString);
@@ -959,31 +938,26 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
 
     if (CliVer < 100663559) {
         if (CliVerMajor == 4) {
-            tSock->ClientType(CV_T2A);
+            tSock->setClientType(ClientType::T2A);
             if (tSock->ClientVersionSub() < 7) {
                 tSock->ClientVerShort(CVS_400);
             }
             else if (CliVerSub < 11 || (CliVerSub == 11 && CliVerLetter < 2)) {
                 tSock->ClientVerShort(CVS_407a);
             }
-            else if (CliVerSub == 11 &&
-                     CliVerLetter >= 2) // 4.0.11f really belongs in the CV_ML type though...
-            {
+            else if (CliVerSub == 11 && CliVerLetter >= 2){ // 4.0.11f really belongs in the CV_ML type though...
                 tSock->ClientVerShort(CVS_4011c);
             }
             if (!cwmWorldState->ServerData()->clientSupport4000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
-                tSock->SysMessage(1796,
-                                  verString); // Your current client-version (%s) is not supported
+                tSock->SysMessage(1796, verString); // Your current client-version (%s) is not supported
                                               // by this shard. You will be disconnected.
-                Console::shared()
-                    << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..."
-                    << myendl;
+                Console::shared() << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
             }
         }
         else if (CliVerMajor == 5) {
-            tSock->ClientType(CV_ML);
+            tSock->setClientType(ClientType::ML);
             if (tSock->ClientVersionSub() < 2) {
                 tSock->ClientVerShort(CVS_500a);
             }
@@ -1006,7 +980,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
         }
     }
     else if (CliVer >= 100663559 && CliVer <= 100666881) {
-        tSock->ClientType(CV_KR2D);
+        tSock->setClientType(ClientType::KR2D);
         if (CliVerSub >= 5 && CliVerSub <= 14) {
             tSock->ClientVerShort(CVS_6050);
         }
@@ -1030,8 +1004,8 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
         }
     }
     else if (CliVer > 100666881) {
-        if (CliVer <= 117442562 && tSock->ClientType() == CV_SA2D) {
-            tSock->ClientType(CV_SA2D);
+        if (CliVer <= 117442562 && tSock->clientType() == ClientType::SA2D) {
+            tSock->setClientType(ClientType::SA2D);
             if (CliVerMajor == 6 && CliVerSub == 14 && CliVerLetter >= 2) {
                 tSock->ClientVerShort(CVS_60142);
             }
@@ -1039,8 +1013,8 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
                 tSock->ClientVerShort(CVS_7000);
             }
         }
-        else if (CliVer >= 117440814 && tSock->ClientType() == CV_HS2D) {
-            tSock->ClientType(CV_HS2D);
+        else if (CliVer >= 117440814 && tSock->clientType() == ClientType::HS2D) {
+            tSock->setClientType(ClientType::HS2D);
             if (CliVerSub < 13) {
                 tSock->ClientVerShort(CVS_7090);
             }
@@ -1066,18 +1040,18 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
                 tSock->ClientVerShort(CVS_704565);
             }
             else if (CliVerSub < 61) {
-                tSock->ClientType(CV_TOL2D);
+                tSock->setClientType(ClientType::TOL2D);
                 tSock->ClientVerShort(CVS_704565);
             }
             else {
                 tSock->ClientVerShort(CVS_70610);
             }
         }
-        else if (CliVer >= 1000000000 && tSock->ClientType() == CV_HS3D) // 1124079360 is 4.0.23.1?
+        else if (CliVer >= 1000000000 && tSock->clientType() == ClientType::HS3D) // 1124079360 is 4.0.23.1?
         {
             // UO Enhanced client 4.0.23.1 and above
             // should use same version numbering scheme as classic client internally
-            tSock->ClientType(CV_HS3D);
+            tSock->setClientType(ClientType::HS3D);
             if (CliVerSub < 13) {
                 tSock->ClientVerShort(CVS_7090);
             }
@@ -1141,17 +1115,17 @@ bool CPIUpdateRangeChange::Handle() {
     // Byte 0 == 0xC8
     // Byte 1 == 0x0F (by default)  This is the distance, we believe
 
-    switch (tSock->ClientType()) {
-    case CV_DEFAULT:
-    case CV_T2A:
-    case CV_UO3D:
-    case CV_ML:
-    case CV_KR2D:
-    case CV_KR3D:
-    case CV_SA2D:
-    case CV_SA3D:
-    case CV_HS2D:
-    case CV_HS3D:
+    switch (tSock->clientType().type) {
+        case ClientType::DEFAULT:
+        case ClientType::T2A:
+        case ClientType::UO3D:
+        case ClientType::ML:
+        case ClientType::KR2D:
+        case ClientType::KR3D:
+        case ClientType::SA2D:
+        case ClientType::SA3D:
+        case ClientType::HS2D:
+        case ClientType::HS3D:
         tSock->Range(tSock->GetByte(1));
         break;
     default:
@@ -2592,7 +2566,7 @@ void CPIDeleteCharacter::Receive() { tSock->Receive(0x27, false); }
 CPICreateCharacter::CPICreateCharacter() {}
 CPICreateCharacter::CPICreateCharacter(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPICreateCharacter::Receive() {
-    if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
+    if (tSock->clientType() == ClientType::SA3D || tSock->clientType() == ClientType::HS3D) {
         Create3DCharacter();
     }
     else {
@@ -2687,7 +2661,7 @@ void CPICreateCharacter::Create3DCharacter() {
     skill[2] = tSock->GetByte(92);      // Byte[1]
     skillValue[2] = tSock->GetByte(93); // Byte[1]
     std::uint8_t byteNum = 94;
-    if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
         skill[3] = tSock->GetByte(94);      // Byte[1]
         skillValue[3] = tSock->GetByte(95); // Byte[1]
         byteNum = 96;
@@ -2765,7 +2739,7 @@ void CPICreateCharacter::Create2DCharacter() {
         return;
     }
 
-    if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
         tSock->Receive(106, true);
     }
     else {
@@ -2794,7 +2768,7 @@ void CPICreateCharacter::Create2DCharacter() {
     skill[2] = tSock->GetByte(78);
     skillValue[2] = tSock->GetByte(79);
     std::uint8_t byteNum = 80;
-    if (tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
         skill[3] = tSock->GetByte(80);
         skillValue[3] = tSock->GetByte(81);
         byteNum = 82;
@@ -2818,10 +2792,9 @@ void CPICreateCharacter::Create2DCharacter() {
 }
 
 void CPICreateCharacter::log(std::ostream &outStream, bool fullHeader) {
-    if (tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D) {
+    if (tSock->clientType() == ClientType::SA3D || tSock->clientType() == ClientType::HS3D) {
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp()
-                      << std::endl;
+            outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp() << std::endl;
         }
         outStream << "Pattern1       : " << pattern1 << std::endl;
         outStream << "Slot           : " << static_cast<std::int32_t>(slot) << std::endl;
@@ -2837,16 +2810,11 @@ void CPICreateCharacter::log(std::ostream &outStream, bool fullHeader) {
         outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
         outStream << "Unknown1       : " << static_cast<std::int32_t>(unknown1) << std::endl;
         outStream << "Unknown2       : " << static_cast<std::int32_t>(unknown2) << std::endl;
-        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " "
-                  << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << " "
-                  << static_cast<std::int32_t>(skill[3]) << std::endl;
-        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " "
-                  << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2])
-                  << " " << static_cast<std::int32_t>(skillValue[3]) << std::endl;
+        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " " << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << " " << static_cast<std::int32_t>(skill[3]) << std::endl;
+        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " " << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2]) << " " << static_cast<std::int32_t>(skillValue[3]) << std::endl;
         std::int32_t temp1;
         for (temp1 = 0; temp1 < 25; temp1++) {
-            outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex
-                      << static_cast<std::uint32_t>(unknown3[temp1]) << std::endl;
+            outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << static_cast<std::uint32_t>(unknown3[temp1]) << std::endl;
         }
         outStream << "Unknown4       : " << static_cast<std::int32_t>(unknown4) << std::endl;
         outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
@@ -2861,20 +2829,17 @@ void CPICreateCharacter::log(std::ostream &outStream, bool fullHeader) {
         outStream << "Face ID		 : " << std::hex << faceId << std::dec << std::endl;
         outStream << "Unknown9       : " << static_cast<std::int32_t>(unknown9) << std::endl;
         outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
-        outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec
-                  << std::endl;
+        outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
         outStream << "  Raw dump     :" << std::endl;
         CPInputBuffer::log(outStream, false);
     }
     else {
         if (fullHeader) {
             if (tSock->GetByte(0) == 0xF8) {
-                outStream << "[RECV]Packet   : CPICreateCharacter 0xF8 --> Length: 106"
-                          << TimeStamp() << std::endl;
+                outStream << "[RECV]Packet   : CPICreateCharacter 0xF8 --> Length: 106" << TimeStamp() << std::endl;
             }
             else {
-                outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104"
-                          << TimeStamp() << std::endl;
+                outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << TimeStamp() << std::endl;
             }
         }
         outStream << "Pattern1       : " << pattern1 << std::endl;
@@ -2886,17 +2851,13 @@ void CPICreateCharacter::log(std::ostream &outStream, bool fullHeader) {
         outStream << "Strength       : " << static_cast<std::int32_t>(str) << std::endl;
         outStream << "Dexterity      : " << static_cast<std::int32_t>(dex) << std::endl;
         outStream << "Intelligence   : " << static_cast<std::int32_t>(intel) << std::endl;
-        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " "
-                  << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << std::endl;
-        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " "
-                  << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2])
-                  << std::endl;
+        outStream << "Skills         : " << static_cast<std::int32_t>(skill[0]) << " " << static_cast<std::int32_t>(skill[1]) << " " << static_cast<std::int32_t>(skill[2]) << std::endl;
+        outStream << "Skills Values  : " << static_cast<std::int32_t>(skillValue[0]) << " " << static_cast<std::int32_t>(skillValue[1]) << " " << static_cast<std::int32_t>(skillValue[2]) << std::endl;
         outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
         outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
         outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
         outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
-        outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec
-                  << std::endl;
+        outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
         outStream << "Location Number: " << locationNumber << std::endl;
         outStream << "Unknown        : " << unknown << std::endl;
         outStream << "Slot           : " << static_cast<std::int32_t>(slot) << std::endl;
@@ -2948,7 +2909,7 @@ void CPIPlayCharacter::Receive() {
     // lost! 	tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
     AccountEntry &actbTemp = tSock->GetAccount();
     actbTemp.lastClientVersion = 0;
-    actbTemp.lastClientType = 0;
+    actbTemp.lastClientType = ClientType::DEFAULT;
     actbTemp.lastClientVersionShort = 0;
 
     memcpy(charName, &tSock->Buffer()[5], 30);
@@ -2957,8 +2918,7 @@ void CPIPlayCharacter::Receive() {
 
 void CPIPlayCharacter::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
-        outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp()
-                  << std::endl;
+        outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
     }
     outStream << "Pattern1       : " << pattern << std::endl;
     outStream << "Char name      : " << charName << std::endl;
@@ -3019,14 +2979,12 @@ const std::string CPIGumpInput::Reply() const { return reply; }
 
 void CPIGumpInput::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
-        outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord(1)
-                  << TimeStamp() << std::endl;
+        outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
     outStream << "ID             : " << id << std::endl;
     outStream << "Type           : " << static_cast<std::int32_t>(type) << std::endl;
     outStream << "Index          : " << static_cast<std::int32_t>(index) << std::endl;
-    outStream << "Unknown        : " << static_cast<std::int32_t>(unk[0]) << " "
-              << static_cast<std::int32_t>(unk[1]) << " " << static_cast<std::int32_t>(unk[2]) << std::endl;
+    outStream << "Unknown        : " << static_cast<std::int32_t>(unk[0]) << " " << static_cast<std::int32_t>(unk[1]) << " " << static_cast<std::int32_t>(unk[2]) << std::endl;
     outStream << "Reply          : " << reply << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::log(outStream, false);
@@ -3140,8 +3098,7 @@ bool CPIDyeWindow::Handle() {
             std::int32_t b = newValue & 0x4000;
 
             if (((newValue >> 8) < 0x80) &&
-                ((body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ||
-                 (body >= 0x00B7 && body <= 0x00BA) || (body == 0x02EE || body == 0x02EF))) {
+                ((body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) || (body >= 0x00B7 && body <= 0x00BA) || (body == 0x02EE || body == 0x02EF))) {
                 newValue += 0x8000;
             }
             if (b == 16384 && (body >= 0x0190 && body <= 0x03e1)) {
@@ -3691,9 +3648,7 @@ bool CPIPartyCommand::Handle() {
                 else { // Crap crap crap, what do we do here?
                     tSock->SendTargetCursor(
                         0, TARGET_PARTYREMOVE,
-                        Dictionary->GetEntry(
-                            9004,
-                            tSock->Language())); // Select the character to remove from the party
+                        Dictionary->GetEntry(9004,tSock->Language())); // Select the character to remove from the party
                 }
             }
             else {
@@ -3788,12 +3743,9 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE[4]	id		(if 0, a targeting cursor appears)
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_ADD --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ADD --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
-        outStream << "To add         : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec
-                  << std::endl;
+        outStream << "To add         : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec << std::endl;
         break;
     }
     case PARTY_REMOVE: {
@@ -3801,12 +3753,9 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE[4] id		(if 0, a targeting cursor appears)
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_REMOVE --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_REMOVE --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
-        outStream << "To remove      : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec
-                  << std::endl;
+        outStream << "To remove      : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec << std::endl;
         break;
     }
     case PARTY_TELLINDIV: {
@@ -3814,9 +3763,7 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		BYTE[4]		id
         //		BYTE[n][2]	Null terminated Unicode message
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_TELLINDIV --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLINDIV --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
         break;
     }
@@ -3825,9 +3772,7 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE[n][2]	Null terminated unicode message
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_TELLALL --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLALL --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
         break;
     }
@@ -3836,12 +3781,9 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE	canLoot	( 0 == no, 1 == yes )
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_LOOT --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_LOOT --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
-        outStream << "Can loot       : " << ((tSock->GetByte(BASE_OFFSET) == 1) ? "yes" : "no")
-                  << std::endl;
+        outStream << "Can loot       : " << ((tSock->GetByte(BASE_OFFSET) == 1) ? "yes" : "no") << std::endl;
         break;
     }
     case PARTY_ACCEPT: {
@@ -3849,12 +3791,9 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE[4]	leaderID
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_ACCEPT --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ACCEPT --> Length: "  << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
-        outStream << "Leader         : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec
-                  << std::endl;
+        outStream << "Leader         : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec << std::endl;
         break;
     }
     case PARTY_DECLINE: {
@@ -3862,12 +3801,9 @@ void CPIPartyCommand::log(std::ostream &outStream, bool fullHeader) {
         //		Client
         //			BYTE[4] leaderID
         if (fullHeader) {
-            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand "
-                         "PARTY_DECLINE --> Length: "
-                      << tSock->GetWord(1) << TimeStamp() << std::endl;
+            outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_DECLINE --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
         }
-        outStream << "Character      : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec
-                  << std::endl;
+        outStream << "Character      : 0x" << std::hex << tSock->GetDWord(BASE_OFFSET) << std::dec << std::endl;
         break;
     }
     }

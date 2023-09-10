@@ -13,6 +13,10 @@ add_executable(uox3
 	
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
 
+# type
+    ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.hpp
+
 # configuration
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
