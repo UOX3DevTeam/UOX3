@@ -36,6 +36,9 @@
     <Filter Include="Source Files\configuration">
       <UniqueIdentifier>{31f27eb9-4e9c-4f76-8fa2-0dac25da970f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\type">
+      <UniqueIdentifier>{2c486189-a83f-452c-99c9-2ca988ecf300}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp">
@@ -295,11 +298,20 @@
     <ClCompile Include="..\..\source\configuration\clientfeature.cpp">
       <Filter>Source Files\configuration</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\type\clientversion.cpp">
-      <Filter>Source Files\configuration</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\configuration\serverfeature.cpp">
       <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\assistantfeature.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\startlocconfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\type\startlocation.cpp">
+      <Filter>Source Files\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\type\clientversion.cpp">
+      <Filter>Source Files\type</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -554,11 +566,16 @@
     <ClInclude Include="..\..\source\configuration\clientfeature.hpp">
       <Filter>Source Files\configuration</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\type\clientversion.hpp">
-      <Filter>Source Files\configuration</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverfeature.hpp">
       <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
+    <ClInclude Include="..\..\source\configuration\startlocconfig.hpp" />
+    <ClInclude Include="..\..\source\type\startlocation.hpp">
+      <Filter>Source Files\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\type\clientversion.hpp">
+      <Filter>Source Files\type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

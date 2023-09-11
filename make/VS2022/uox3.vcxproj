@@ -92,7 +92,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\configuration\serverfeature.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
@@ -193,7 +192,6 @@
     <ClCompile Include="..\..\source\uopdata.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\configuration\serverfeature.hpp" />
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <!-- type group -->
