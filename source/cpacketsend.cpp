@@ -2614,8 +2614,8 @@ CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures([[maybe_unused]] CSoc
     pStream.WriteByte(0, 0xF0);
     pStream.WriteShort(1, 0x000C);
     pStream.WriteByte(3, 0xFE);
-    pStream.WriteLong(4, cwmWorldState->ServerData()->getDisabledAssistantFeatures() >> 32);
-    pStream.WriteLong(8, cwmWorldState->ServerData()->getDisabledAssistantFeatures() & 0xFFFFFFFF);
+    pStream.WriteLong(4, ServerConfig::shared().assistantFeature.value >> 32);
+    pStream.WriteLong(8, ServerConfig::shared().assistantFeature.value  & 0xFFFFFFFF);
 }
 
 void CPNegotiateAssistantFeatures::log(std::ostream &outStream, bool fullHeader) {

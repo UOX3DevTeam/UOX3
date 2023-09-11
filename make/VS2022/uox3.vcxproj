@@ -101,6 +101,7 @@
     <ClCompile Include="..\..\source\configuration\directorylocation.cpp" />
     <ClCompile Include="..\..\source\configuration\clientenable.cpp" />
     <ClCompile Include="..\..\source\configuration\clientfeature.cpp" />
+    <ClCompile Include="..\..\source\configuration\assistantfeature.cpp" />
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdata.cpp" />
     <ClCompile Include="..\..\source\cserverdefinitions.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="..\..\source\configuration\directorylocation.hpp" />
     <ClInclude Include="..\..\source\configuration\clientenable.hpp" />
     <ClInclude Include="..\..\source\configuration\clientfeature.hpp" />
+    <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
     <!-- Script group -->
     <ClInclude Include="..\..\source\cserverdata.h" />
     <ClInclude Include="..\..\source\cserverdefinitions.h" />

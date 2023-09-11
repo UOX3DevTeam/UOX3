@@ -4260,70 +4260,70 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KickOnAssistantSilence());
                 break;
             case 196: // AF_FILTERWEATHER
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERWEATHER));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::FILTERWEATHER) );
                 break;
             case 197: // AF_FILTERLIGHT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERLIGHT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::FILTERLIGHT));
                 break;
             case 198: // AF_SMARTTARGET
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SMARTTARGET));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::SMARTTARGET));
                 break;
             case 199: // AF_RANGEDTARGET
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RANGEDTARGET));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::RANGEDTARGET));
                 break;
             case 200: // AF_AUTOOPENDOORS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOOPENDOORS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::AUTOOPENDOORS));
                 break;
             case 201: // AF_DEQUIPONCAST
-                *rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_DEQUIPONCAST));
+                *rval = BOOLEAN_TO_JSVAL( ServerConfig::shared().assistantFeature.test(AssistantFeature::DEQUIPONCAST));
                 break;
             case 202: // AF_AUTOPOTIONEQUIP
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOPOTIONEQUIP));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::AUTOPOTIONEQUIP));
                 break;
             case 203: // AF_POISONEDCHECKS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_POISONEDCHECKS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::POISONEDCHECKS));
                 break;
             case 204: // AF_LOOPEDMACROS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_LOOPEDMACROS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::LOOPEDMACROS));
                 break;
             case 205: // AF_USEONCEAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_USEONCEAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::USEONCEAGENT));
                 break;
             case 206: // AF_RESTOCKAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RESTOCKAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::RESTOCKAGENT));
                 break;
             case 207: // AF_SELLAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SELLAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::SELLAGENT));
                 break;
             case 208: // AF_BUYAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_BUYAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::BUYAGENT));
                 break;
             case 209: // AF_POTIONHOTKEYS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_POTIONHOTKEYS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::POTIONHOTKEYS));
                 break;
             case 210: // AF_RANDOMTARGETS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_RANDOMTARGETS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::RANDOMTARGETS));
                 break;
             case 211: // AF_CLOSESTTARGETS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_CLOSESTTARGETS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::CLOSESTTARGETS));
                 break;
             case 212: // AF_OVERHEADHEALTH
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_OVERHEADHEALTH));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::OVERHEADHEALTH));
                 break;
             case 213: // AF_AUTOLOOTAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOLOOTAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::AUTOLOOTAGENT));
                 break;
             case 214: // AF_BONECUTTERAGENT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_BONECUTTERAGENT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::BONECUTTERAGENT));
                 break;
             case 215: // AF_JSCRIPTMACROS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_JSCRIPTMACROS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::JSCRIPTMACROS));
                 break;
             case 216: // AF_AUTOREMOUNT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOREMOUNT));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::AUTOREMOUNT));
                 break;
             case 217: // AF_ALL
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_ALL));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::ALL));
                 break;
             case 218: // CLASSICUOMAPTRACKER
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getClassicUOMapTracker());
@@ -4563,22 +4563,22 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SysMsgColour()));
                 break;
             case 284: // AF_AUTOBANDAGE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_AUTOBANDAGE));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::AUTOBANDAGE));
                 break;
             case 285: // AF_ENEMYTARGETSHARE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_ENEMYTARGETSHARE));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::ENEMYTARGETSHARE));
                 break;
             case 286: // AF_FILTERSEASON
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_FILTERSEASON));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::FILTERSEASON));
                 break;
             case 287: // AF_SPELLTARGETSHARE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SPELLTARGETSHARE));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::SPELLTARGETSHARE));
                 break;
             case 288: // AF_HUMANOIDHEALTHCHECKS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::HUMANOIDHEALTHCHECKS));
                 break;
             case 289: // AF_SPEECHJOURNALCHECKS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::SPEECHJOURNALCHECKS));
                 break;
             case 290: // ARCHERYSHOOTDELAY
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->CombatArcheryShootDelay()));

@@ -21,8 +21,12 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
     if (!directoryLocation.setLocation(key, value)){
         if (!enableClients.setKeyValue(key,value)){
             if (!clientFeature.setKeyValue(key,value)){
-                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                rvalue = false ;
+                if (!serverFeature.setKeyValue(key,value)){
+                    if (!assistantFeature.setKeyValue(key,value)){
+                        std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                        rvalue = false ;
+                    }
+                }
             }
         }
     }

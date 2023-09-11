@@ -12,6 +12,7 @@
 #include "clientenable.hpp"
 #include "clientfeature.hpp"
 #include "serverfeature.hpp"
+#include "assistantfeature.hpp"
 //======================================================================
 class ServerConfig {
    
@@ -40,6 +41,7 @@ public:
     ClientEnable enableClients ;
     ClientFeature clientFeature ;
     ServerFeature serverFeature ;
+    AssistantFeature assistantFeature ;
     auto reset() ->void ;
     
 };

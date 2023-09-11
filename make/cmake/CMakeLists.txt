@@ -28,6 +28,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.hpp
 
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  

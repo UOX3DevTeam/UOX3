@@ -196,27 +196,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"RANDOMSTARTINGLOCATION"s, 193},
     {"ASSISTANTNEGOTIATION"s, 194},
     {"KICKONASSISTANTSILENCE"s, 195},
-    {"AF_FILTERWEATHER"s, 196},
-    {"AF_FILTERLIGHT"s, 197},
-    {"AF_SMARTTARGET"s, 198},
-    {"AF_RANGEDTARGET"s, 199},
-    {"AF_AUTOOPENDOORS"s, 200},
-    {"AF_DEQUIPONCAST"s, 201},
-    {"AF_AUTOPOTIONEQUIP"s, 202},
-    {"AF_POISONEDCHECKS"s, 203},
-    {"AF_LOOPEDMACROS"s, 204},
-    {"AF_USEONCEAGENT"s, 205},
-    {"AF_RESTOCKAGENT"s, 206},
-    {"AF_SELLAGENT"s, 207},
-    {"AF_BUYAGENT"s, 208},
-    {"AF_POTIONHOTKEYS"s, 209},
-    {"AF_RANDOMTARGETS"s, 210},
-    {"AF_CLOSESTTARGETS"s, 211},
-    {"AF_OVERHEADHEALTH"s, 212},
-    {"AF_AUTOLOOTAGENT"s, 213},
-    {"AF_BONECUTTERAGENT"s, 214},
-    {"AF_JSCRIPTMACROS"s, 215},
-    {"AF_AUTOREMOUNT"s, 216},
     // 217 free
     {"CLASSICUOMAPTRACKER"s, 218},
     {"DECAYTIMERINHOUSE"s, 219},
@@ -283,12 +262,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"ARCHERYHITBONUS"s, 281},
     {"ITEMSINTERRUPTCASTING"s, 282},
     {"SYSMESSAGECOLOUR"s, 283},
-    {"AF_AUTOBANDAGE"s, 284},
-    {"AF_ENEMYTARGETSHARE"s, 285},
-    {"AF_FILTERSEASON"s, 286},
-    {"AF_SPELLTARGETSHARE"s, 287},
-    {"AF_HUMANOIDHEALTHCHECKS"s, 288},
-    {"AF_SPEECHJOURNALCHECKS"s, 289},
     {"ARCHERYSHOOTDELAY"s, 290},
     {"MAXCLIENTBYTESIN"s, 291},
     {"MAXCLIENTBYTESOUT"s, 292},
@@ -925,8 +898,6 @@ auto CServerData::ResetDefaults() -> void {
     // Disable spawn regions for all facets by default
     setSpawnRegionsFacetStatus(0);
     
-    // Set no assistant features as disabled by default
-    setDisabledAssistantFeature(AF_ALL, false);
     
     ExtendedStartingStats(true);
     ExtendedStartingSkills(true);
@@ -3571,41 +3542,6 @@ auto CServerData::useUnicodeMessages(bool nVal) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getDisabledAssistantFeature()
-//|					CServerData::setDisabledAssistantFeature()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
-//|	Notes		-	Example of assistant: Razor, AssistUO
-//|					See ClientFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getDisabledAssistantFeature(assistantfeatures_t bitNum) const -> bool {
-    return 0 != (CServerData::disabledAssistantFeatures & bitNum);
-}
-auto CServerData::setDisabledAssistantFeature(assistantfeatures_t bitNum, bool nVal) -> void {
-    if (nVal) {
-        CServerData::disabledAssistantFeatures |= bitNum;
-    }
-    else {
-        CServerData::disabledAssistantFeatures &= ~bitNum;
-    }
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getDisabledAssistantFeatures()
-//|					CServerData::setDisabledAssistantFeatures()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which assistant features to enable for connecting clients
-//|	Notes		-	Example of assistant: Razor, AssistUO
-//|					See ClientFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getDisabledAssistantFeatures() const -> std::uint64_t {
-    return CServerData::disabledAssistantFeatures;
-}
-auto CServerData::setDisabledAssistantFeatures(std::uint64_t nVal) -> void {
-    CServerData::disabledAssistantFeatures = nVal;
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::KickOnAssistantSilence()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether player is kicked if there's no response from
@@ -4180,66 +4116,14 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
-        ofsOutput << "AF_FILTERWEATHER=" << (getDisabledAssistantFeature(AF_FILTERWEATHER) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_FILTERLIGHT=" << (getDisabledAssistantFeature(AF_FILTERLIGHT) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_SMARTTARGET=" << (getDisabledAssistantFeature(AF_SMARTTARGET) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_RANGEDTARGET=" << (getDisabledAssistantFeature(AF_RANGEDTARGET) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_AUTOOPENDOORS=" << (getDisabledAssistantFeature(AF_AUTOOPENDOORS) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_DEQUIPONCAST=" << (getDisabledAssistantFeature(AF_DEQUIPONCAST) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_AUTOPOTIONEQUIP="
-        << (getDisabledAssistantFeature(AF_AUTOPOTIONEQUIP) ? 1 : 0) << '\n';
-        ofsOutput << "AF_POISONEDCHECKS="
-        << (getDisabledAssistantFeature(AF_POISONEDCHECKS) ? 1 : 0) << '\n';
-        ofsOutput << "AF_LOOPEDMACROS=" << (getDisabledAssistantFeature(AF_LOOPEDMACROS) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_USEONCEAGENT=" << (getDisabledAssistantFeature(AF_USEONCEAGENT) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_RESTOCKAGENT=" << (getDisabledAssistantFeature(AF_RESTOCKAGENT) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_SELLAGENT=" << (getDisabledAssistantFeature(AF_SELLAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_BUYAGENT=" << (getDisabledAssistantFeature(AF_BUYAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_POTIONHOTKEYS=" << (getDisabledAssistantFeature(AF_POTIONHOTKEYS) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_RANDOMTARGETS=" << (getDisabledAssistantFeature(AF_RANDOMTARGETS) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_CLOSESTTARGETS="
-        << (getDisabledAssistantFeature(AF_CLOSESTTARGETS) ? 1 : 0) << '\n';
-        ofsOutput << "AF_OVERHEADHEALTH="
-        << (getDisabledAssistantFeature(AF_OVERHEADHEALTH) ? 1 : 0) << '\n';
-        ofsOutput << "AF_AUTOLOOTAGENT=" << (getDisabledAssistantFeature(AF_AUTOLOOTAGENT) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_BONECUTTERAGENT="
-        << (getDisabledAssistantFeature(AF_BONECUTTERAGENT) ? 1 : 0) << '\n';
-        ofsOutput << "AF_JSCRIPTMACROS=" << (getDisabledAssistantFeature(AF_JSCRIPTMACROS) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_AUTOREMOUNT=" << (getDisabledAssistantFeature(AF_AUTOREMOUNT) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_AUTOBANDAGE=" << (getDisabledAssistantFeature(AF_AUTOBANDAGE) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_ENEMYTARGETSHARE="
-        << (getDisabledAssistantFeature(AF_ENEMYTARGETSHARE) ? 1 : 0) << '\n';
-        ofsOutput << "AF_FILTERSEASON=" << (getDisabledAssistantFeature(AF_FILTERSEASON) ? 1 : 0)
-        << '\n';
-        ofsOutput << "AF_SPELLTARGETSHARE="
-        << (getDisabledAssistantFeature(AF_SPELLTARGETSHARE) ? 1 : 0) << '\n';
-        ofsOutput << "AF_HUMANOIDHEALTHCHECKS="
-        << (getDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS) ? 1 : 0) << '\n';
-        ofsOutput << "AF_SPEECHJOURNALCHECKS="
-        << (getDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS) ? 1 : 0) << '\n';
+        ofsOutput << ServerConfig::shared().assistantFeature.describe() ;
         ofsOutput << "}" << '\n';
         
         ofsOutput.close();
         rValue = true;
     }
     else {
-        Console::shared().error(
-                                util::format("Unable to open file %s for writing", filename.c_str()));
+        Console::shared().error(util::format("Unable to open file %s for writing", filename.c_str()));
     }
     return rValue;
 }
@@ -4903,90 +4787,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 195: // KICKONASSISTANTSILENCE
             KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
-        case 196: // AF_FILTERWEATHER
-            setDisabledAssistantFeature(AF_FILTERWEATHER,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 197: // AF_FILTERLIGHT
-            setDisabledAssistantFeature(AF_FILTERLIGHT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 198: // AF_SMARTTARGET
-            setDisabledAssistantFeature(AF_SMARTTARGET,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 199: // AF_RANGEDTARGET
-            setDisabledAssistantFeature(AF_RANGEDTARGET,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 200: // AF_AUTOOPENDOORS
-            setDisabledAssistantFeature(AF_AUTOOPENDOORS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 201: // AF_DEQUIPONCAST
-            setDisabledAssistantFeature(AF_DEQUIPONCAST,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 202: // AF_AUTOPOTIONEQUIP
-            setDisabledAssistantFeature(AF_AUTOPOTIONEQUIP,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 203: // AF_POISONEDCHECKS
-            setDisabledAssistantFeature(AF_POISONEDCHECKS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 204: // AF_LOOPEDMACROS
-            setDisabledAssistantFeature(AF_LOOPEDMACROS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 205: // AF_USEONCEAGENT
-            setDisabledAssistantFeature(AF_USEONCEAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 206: // AF_RESTOCKAGENT
-            setDisabledAssistantFeature(AF_RESTOCKAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 207: // AF_SELLAGENT
-            setDisabledAssistantFeature(AF_SELLAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 208: // AF_BUYAGENT
-            setDisabledAssistantFeature(AF_BUYAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 209: // AF_POTIONHOTKEYS
-            setDisabledAssistantFeature(AF_POTIONHOTKEYS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 210: // AF_RANDOMTARGETS
-            setDisabledAssistantFeature(AF_RANDOMTARGETS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 211: // AF_CLOSESTTARGETS
-            setDisabledAssistantFeature(AF_CLOSESTTARGETS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 212: // AF_OVERHEADHEALTH
-            setDisabledAssistantFeature(AF_OVERHEADHEALTH,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 213: // AF_AUTOLOOTAGENT
-            setDisabledAssistantFeature(AF_AUTOLOOTAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 214: // AF_BONECUTTERAGENT
-            setDisabledAssistantFeature(AF_BONECUTTERAGENT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 215: // AF_JSCRIPTMACROS
-            setDisabledAssistantFeature(AF_JSCRIPTMACROS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 216: // AF_AUTOREMOUNT
-            setDisabledAssistantFeature(AF_AUTOREMOUNT,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
         case 218: // CLASSICUOMAPTRACKER
             setClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
@@ -5184,31 +4984,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 283: // SYSMESSAGECOLOUR
             SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 284: // AF_AUTOBANDAGE
-            setDisabledAssistantFeature(AF_AUTOBANDAGE,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 285: // AF_ENEMYTARGETSHARE
-            setDisabledAssistantFeature(AF_ENEMYTARGETSHARE,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 286: // AF_FILTERSEASON
-            setDisabledAssistantFeature(AF_FILTERSEASON,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 287: // AF_SPELLTARGETSHARE
-            setDisabledAssistantFeature(AF_SPELLTARGETSHARE,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 288: // AF_HUMANOIDHEALTHCHECKS
-            setDisabledAssistantFeature(AF_HUMANOIDHEALTHCHECKS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 289: // AF_SPEECHJOURNALCHECKS
-            setDisabledAssistantFeature(AF_SPEECHJOURNALCHECKS,
-                                        static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 290: // ARCHERYSHOOTDELAY
+       case 290: // ARCHERYSHOOTDELAY
             CombatArcheryShootDelay(std::stof(value));
             break;
         case 291: // MAXCLIENTBYTESIN
