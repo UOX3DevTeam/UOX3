@@ -2705,7 +2705,7 @@ void CMagic::SpellBook(CSocket *mSock) {
     }
     CPDrawContainer sbStart((*spellBook));
     sbStart.Model(0xFFFF);
-    if (mSock->clientType() >= ClientType::HS2D && mSock->ClientVerShort() >= CVS_7090) {
+    if (mSock->clientType() >= ClientType::HS2D && mSock->clientVersion >= ClientVersion::V7090) {
         sbStart.ContType(0x7D);
     }
     mSock->Send(&sbStart);
@@ -2750,7 +2750,7 @@ void CMagic::SpellBook(CSocket *mSock) {
         }
         if (scount > 0) {
             CPItemsInContainer mItems;
-            if (mSock->ClientVerShort() >= CVS_6017) {
+            if (mSock->clientVersion >= ClientVersion::V6017) {
                 mItems.UOKRFlag(true);
             }
             mItems.NumberOfItems(scount);

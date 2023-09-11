@@ -15,12 +15,12 @@
 #include "objectfactory.h"
 #include "regions.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "subsystem/console.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
-
+#include "townregion.h"
 using namespace std::string_literals;
 
 cItem *Items = nullptr;
@@ -1454,7 +1454,7 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
+        if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             if (mSock != nullptr) {
                 // Refresh container tooltip
                 CPToolTip pSend(iCreated->GetContSerial(), mSock);

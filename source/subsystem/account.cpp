@@ -150,10 +150,7 @@ AccountEntry::AccountEntry() {
     totalPlayingTime = 0;
     inGame = std::numeric_limits<std::uint32_t>::max();
     lastIP = 0;
-    
-    lastClientVersion = 0;
-    lastClientVersionShort = 0;
-    
+
     std::fill(character.begin(), character.end(), AccountCharacter());
 }
 //======================================================================

@@ -4,8 +4,9 @@
 
 #include <fstream>
 #include <stdexcept>
-#include "utility/strutil.hpp"
 #include <vector>
+
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals ;
 
@@ -14,11 +15,16 @@ ServerConfig::ServerConfig(){
     
 }
 //======================================================================
-auto ServerConfig::loadKeyValue(const std::string &key, const std::string &value)->bool {
+auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &value)->bool {
+    auto key = util::upper(lkey) ;
     auto rvalue = true ;
     if (!directoryLocation.setLocation(key, value)){
-        std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-        rvalue = false ;
+        if (!enableClients.setKeyValue(key,value)){
+            if (!clientFeature.setKeyValue(key,value)){
+                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                rvalue = false ;
+            }
+        }
     }
     return rvalue ;
 }
@@ -33,6 +39,9 @@ auto ServerConfig::reloadKeyValue(const std::string &key, const std::string &val
 auto ServerConfig::shared() ->ServerConfig&{
     static ServerConfig instance ;
     return instance ;
+}
+//======================================================================
+auto ServerConfig::reset() -> void {
 }
 //======================================================================
 auto ServerConfig::loadConfig(const std::filesystem::path &config) ->void {
@@ -86,4 +95,8 @@ auto ServerConfig::reloadConfig() ->void{
 //======================================================================
 auto ServerConfig::directoryFor(dirlocation_t location) const -> const std::filesystem::path &{
     return directoryLocation[location] ;
+}
+//======================================================================
+auto ServerConfig::dumpPaths() const ->void {
+    directoryLocation.dumpPaths();
 }

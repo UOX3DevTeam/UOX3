@@ -1279,7 +1279,7 @@ bool BuyShop(CSocket *s, CChar *c) {
         return false;
     
     CPItemsInContainer iic;
-    if (s->ClientVerShort() >= CVS_6017) {
+    if (s->clientVersion >= ClientVersion::V6017) {
         iic.UOKRFlag(true);
     }
     iic.Type(0x02);
@@ -1287,7 +1287,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     CPOpenBuyWindow obw(sellPack, c, iic, s);
     
     CPItemsInContainer iic2;
-    if (s->ClientVerShort() >= CVS_6017) {
+    if (s->clientVersion >= ClientVersion::V6017) {
         iic2.UOKRFlag(true);
     }
     iic2.Type(0x02);
@@ -1297,7 +1297,7 @@ bool BuyShop(CSocket *s, CChar *c) {
     CPDrawContainer toSend;
     toSend.Model(0x0030);
     toSend.Serial(c->GetSerial());
-    if (s->clientType() >= ClientType::HS2D && s->ClientVerShort() >= CVS_7090) {
+    if (s->clientType() >= ClientType::HS2D && s->clientVersion >= ClientVersion::V7090) {
         toSend.ContType(0x00);
     }
     

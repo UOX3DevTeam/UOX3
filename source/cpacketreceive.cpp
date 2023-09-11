@@ -28,6 +28,7 @@
 #include "movement.h"
 #include "pagevector.h"
 #include "partysystem.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
@@ -300,8 +301,7 @@ bool CPIFirstLogin::Handle() {
         if (cwmWorldState->ServerData()->InternalAccountStatus()) {
             Account::shared().createAccount(username, pass1);
             actbTemp = &Account::shared()[username];
-            if (actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT) // grab our account number
-            {
+            if (actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT){ // grab our account number
                 tSock->SetAccount((*actbTemp));
             }
         }
@@ -321,64 +321,64 @@ bool CPIFirstLogin::Handle() {
             // Client-versions below 6.0.5.0 can only be verified after they're ingame, so can only
             // be blocked in FirstLogin if _all_ client versions below 6.0.5.0 are blocked
             if (tSock->clientType() == ClientType::T2A) {
-                if (!cwmWorldState->ServerData()->clientSupport4000() &&
-                    !cwmWorldState->ServerData()->clientSupport5000() &&
-                    !cwmWorldState->ServerData()->clientSupport6000()) {
+                if (!ServerConfig::shared().enableClients.enableClient4000() &&
+                    !ServerConfig::shared().enableClients.enableClient5000() &&
+                    !ServerConfig::shared().enableClients.enableClient6000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared() << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
                 }
             }
             else if (tSock->clientType() <= ClientType::KR3D && tSock->clientType() != ClientType::DEFAULT) {
-                if (!cwmWorldState->ServerData()->clientSupport6050()) {
+                if (!ServerConfig::shared().enableClients.enableClient6050()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared() << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
                 }
             }
             else if (tSock->clientType() <= ClientType::SA3D && tSock->clientType() != ClientType::DEFAULT) {
-                if (!cwmWorldState->ServerData()->clientSupport7000()) {
+                if (!ServerConfig::shared().enableClients.enableClient7000()) {
                     t = LDR_COMMSFAILURE;
                     Console::shared() << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
                 }
             }
             else if (tSock->clientType() <= ClientType::HS3D && tSock->clientType() != ClientType::DEFAULT) {
-                if (tSock->ClientVerShort() < CVS_70160) {
-                    if (!cwmWorldState->ServerData()->clientSupport7090()) {
+                if (tSock->clientVersion < ClientVersion::V70160) {
+                    if (!ServerConfig::shared().enableClients.enableClient7090()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.9.0 - 7.0.15.1). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() < CVS_70240) {
-                    if (!cwmWorldState->ServerData()->clientSupport70160()) {
+                else if (tSock->clientVersion < ClientVersion::V70240) {
+                    if (!ServerConfig::shared().enableClients.enableClient70160()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() < CVS_70300) {
-                    if (!cwmWorldState->ServerData()->clientSupport70240()) {
+                else if (tSock->clientVersion < ClientVersion::V70300) {
+                    if (!ServerConfig::shared().enableClients.enableClient70240()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() < CVS_70331) {
-                    if (!cwmWorldState->ServerData()->clientSupport70300()) {
+                else if (tSock->clientVersion < ClientVersion::V70331) {
+                    if (!ServerConfig::shared().enableClients.enableClient70300()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() < CVS_704565) {
-                    if (!cwmWorldState->ServerData()->clientSupport70331()) {
+                else if (tSock->clientVersion < ClientVersion::V704565) {
+                    if (!ServerConfig::shared().enableClients.enableClient70331()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() < CVS_70610) {
-                    if (!cwmWorldState->ServerData()->clientSupport704565()) {
+                else if (tSock->clientVersion < ClientVersion::V70610) {
+                    if (!ServerConfig::shared().enableClients.enableClient704565()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..." << myendl;
                     }
                 }
-                else if (tSock->ClientVerShort() >= CVS_70610) {
-                    if (!cwmWorldState->ServerData()->clientSupport70610()) {
+                else if (tSock->clientVersion >= ClientVersion::V70610) {
+                    if (!ServerConfig::shared().enableClients.enableClient70610()) {
                         t = LDR_COMMSFAILURE;
                         Console::shared() << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..." << myendl;
                     }
@@ -401,21 +401,17 @@ bool CPIFirstLogin::Handle() {
         return true;
     }
     if (tSock->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
-        actbTemp->lastIP = CalcSerial(tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(),
-                                      tSock->ClientIP1());
-        auto temp = util::format("Client [%i.%i.%i.%i] connected using Account '%s'.",
-                                 tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(),
-                                 tSock->ClientIP1(), username.c_str());
+        actbTemp->lastIP = CalcSerial(tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1());
+        auto temp = util::format("Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(),tSock->ClientIP1(), username.c_str());
         Console::shared().log(temp, "server.log");
         messageLoop << temp;
 
         actbTemp->flag.set(AccountEntry::attributeflag_t::ONLINE, true);
 
         // Add temp-clientversion info to account here, to be used for second login
-        if (actbTemp->lastClientVersion == 0 || tSock->clientType() != ClientType::DEFAULT) {
-            actbTemp->lastClientVersion = tSock->ClientVersion();
+        if (actbTemp->lastClientVersion.version() == 0 || tSock->clientType() != ClientType::DEFAULT) {
+            actbTemp->lastClientVersion = tSock->clientVersion;
             actbTemp->lastClientType = tSock->clientType();
-            actbTemp->lastClientVersionShort = tSock->ClientVerShort();
         }
 
         // change for IP4Address
@@ -589,9 +585,8 @@ bool CPISecondLogin::Handle() {
     }
 
     // Add socket version info from first login, stored in account, to new socket!
-    tSock->ClientVersion(actbTemp.lastClientVersion);
+    tSock->clientVersion = actbTemp.lastClientVersion;
     tSock->setClientType(actbTemp.lastClientType.type);
-    tSock->ClientVerShort(static_cast<ClientVersions>(actbTemp.lastClientVersionShort));
 
     std::string pass0, pass1, pass2;
     pass0 = Pass();
@@ -639,7 +634,7 @@ bool CPISecondLogin::Handle() {
         size_t serverCount = sd->NumServerLocations();
         CPCharAndStartLoc toSend(actbTemp, charCount, static_cast<std::uint8_t>(serverCount), tSock);
         for (size_t j = 0; j < serverCount; ++j) {
-            if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 13) {
+            if (tSock->clientType() >= ClientType::HS2D && tSock->clientVersion.sub >= 13) {
                 toSend.NewAddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
             }
             else {
@@ -678,7 +673,7 @@ void CPINewClientVersion::log(std::ostream &outStream, bool fullHeader) {
         outStream << "[RECV]Packet   : CPINewClientVersion 0xEF --> Length: " << std::dec
                   << tSock->GetWord(1) << TimeStamp() << std::endl;
     }
-    outStream << "Version        : " << tSock->ClientVersion() << std::endl;
+    outStream << "Version        : " << tSock->clientVersion.describe() << std::endl;
     outStream << "  Raw dump     :" << std::endl;
     CPInputBuffer::log(outStream, false);
 }
@@ -707,78 +702,74 @@ void CPINewClientVersion::Receive() {
         minorVersion = tSock->GetDWord(9);
         clientRevision = tSock->GetDWord(13);
         clientPrototype = tSock->GetDWord(17);
-        tSock->ClientVersion(majorVersion, minorVersion, clientRevision, clientPrototype);
+        tSock->clientVersion = ClientVersion(majorVersion, minorVersion, clientRevision, clientPrototype);
 
-        std::string verString = util::ntos(majorVersion) + std::string(".") +
-                                util::ntos(minorVersion) + std::string(". ") +
-                                util::ntos(clientRevision) + std::string(".") +
-                                util::ntos(clientPrototype);
+        std::string verString = util::ntos(majorVersion) + std::string(".") + util::ntos(minorVersion) + std::string(". ") + util::ntos(clientRevision) + std::string(".") + util::ntos(clientPrototype);
         Console::shared() << verString << myendl;
 
         // Set client-version based on information received so far. We need this to be able to send
         // the correct info during login Needs to be refined in second client-version pass
         // (CPIClientVersion)
-        if (tSock->ClientVersion() <= 100666881) // If under or equal to 6.0.14.1, which in reality
+        if (tSock->clientVersion.version() <= 100666881) // If under or equal to 6.0.14.1, which in reality
                                                  // means between 6.0.5.0 and 6.0.14.1
         {
             tSock->setClientType(ClientType::KR2D);
         }
-        else if (tSock->ClientVersion() >= 10066881) {
-            if (tSock->ClientVersion() >= 1000000000) // 1124079360 is 4.0.23.1?
-            {
-                if (tSock->ClientVersion() == 1110912768) {
+        else if (tSock->clientVersion.version() >= 10066881) {
+            if (tSock->clientVersion.version() >= 1000000000) { // 1124079360 is 4.0.23.1?
+                if (tSock->clientVersion.version() == 1110912768) {
                     // Kingdom Reborn 3D client, build 2.53.0.2
                     tSock->setClientType(ClientType::KR3D);
-                    tSock->ClientVerShort(CVS_25302);
+                    tSock->clientVersion.shortVersion = ClientVersion::V25302;
                 }
                 else {
                     // UO Enhanced client 4.0.23.1 and above
                     // should use same version numbering scheme as classic client internally
                     tSock->setClientType(ClientType::HS3D);
                     if (clientRevision <= 15) {
-                        tSock->ClientVerShort(CVS_70151);
+                        tSock->clientVersion.shortVersion = ClientVersion::V70151;
                     }
                     else if (clientRevision < 24) {
-                        tSock->ClientVerShort(CVS_70160);
+                        tSock->clientVersion.shortVersion = ClientVersion::V70160;
                     }
                     else {
-                        tSock->ClientVerShort(CVS_70240);
+                        tSock->clientVersion.shortVersion = ClientVersion::V70240;
                     }
                 }
             }
-            else if (tSock->ClientVersion() == 100666882) {// 6.0.14.2, but technically first SA2D client
+            else if (tSock->clientVersion.version() == 100666882) {// 6.0.14.2, but technically first SA2D client
                 tSock->setClientType(ClientType::SA2D);
             }
-            else if (tSock->ClientVersion() <= 117442562 && clientRevision < 9) {
+            else if (tSock->clientVersion.version() <= 117442562 && clientRevision < 9) {
                 tSock->setClientType(ClientType::SA2D);
             }
-            else if (tSock->ClientVersion() >= 117440814 && clientRevision >= 9) {
+            else if (tSock->clientVersion.version() >= 117440814 && clientRevision >= 9) {
                 tSock->setClientType(ClientType::HS2D);
                 // Set temporary client-versions to be used by client-support option during login
                 if (clientRevision <= 15) {
-                    tSock->ClientVerShort(CVS_70151);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70151;
                 }
                 else if (clientRevision < 24) {
-                    tSock->ClientVerShort(CVS_70160);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70160;
                 }
                 else if (clientRevision < 30) {
-                    tSock->ClientVerShort(CVS_70240);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70240;
                 }
                 else if (clientRevision < 33) {
-                    tSock->ClientVerShort(CVS_70300);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70300;
                 }
                 else if (clientRevision < 45) {
-                    tSock->ClientVerShort(CVS_70331);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70331;
                 }
                 else if (clientRevision < 46) {
-                    tSock->ClientVerShort(CVS_704565);
+                    tSock->clientVersion.shortVersion = ClientVersion::V704565;
                 }
                 else if (clientRevision < 61) {
                     tSock->setClientType(ClientType::TOL2D);
-                    tSock->ClientVerShort(CVS_705527);
+                    tSock->clientVersion.shortVersion = ClientVersion::V705527;
                 }
                 else {
-                    tSock->ClientVerShort(CVS_70610);
+                    tSock->clientVersion.shortVersion = ClientVersion::V70610;
                 }
             }
             // ??? - 7.0.61.0 - Endless Journey
@@ -912,7 +903,7 @@ bool CPIClientVersion::Handle() {
             letter = ShiftValue(letter, 'A', 'Z', false);
         }
 
-        tSock->ClientVersion(major, minor, sub, letter);
+        tSock->clientVersion = ClientVersion(major, minor, sub, letter);
         Console::shared() << verString << myendl;
     }
 
@@ -930,25 +921,25 @@ bool CPIClientVersion::Handle() {
 }
 
 void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verString) {
-    std::uint8_t CliVerMajor = tSock->ClientVersionMajor();
+    std::uint8_t CliVerMajor = tSock->clientVersion.major;
     // std::uint8_t CliVerMinor = tSock->ClientVersionMinor(); //uncomment if needed
-    std::uint8_t CliVerSub = tSock->ClientVersionSub();
-    std::uint8_t CliVerLetter = tSock->ClientVersionLetter();
-    std::uint32_t CliVer = tSock->ClientVersion();
+    std::uint8_t CliVerSub = tSock->clientVersion.sub;
+    std::uint8_t CliVerLetter = tSock->clientVersion.letter;
+    std::uint32_t CliVer = tSock->clientVersion.version();
 
     if (CliVer < 100663559) {
         if (CliVerMajor == 4) {
             tSock->setClientType(ClientType::T2A);
-            if (tSock->ClientVersionSub() < 7) {
-                tSock->ClientVerShort(CVS_400);
+            if (tSock->clientVersion.sub < 7) {
+                tSock->clientVersion.shortVersion = ClientVersion::V400;
             }
             else if (CliVerSub < 11 || (CliVerSub == 11 && CliVerLetter < 2)) {
-                tSock->ClientVerShort(CVS_407a);
+                tSock->clientVersion.shortVersion = ClientVersion::V407A;
             }
             else if (CliVerSub == 11 && CliVerLetter >= 2){ // 4.0.11f really belongs in the CV_ML type though...
-                tSock->ClientVerShort(CVS_4011c);
+                tSock->clientVersion.shortVersion = ClientVersion::V4011C;
             }
-            if (!cwmWorldState->ServerData()->clientSupport4000()) {
+            if (!ServerConfig::shared().enableClients.enableClient4000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
                 tSock->SysMessage(1796, verString); // Your current client-version (%s) is not supported
@@ -958,48 +949,42 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
         }
         else if (CliVerMajor == 5) {
             tSock->setClientType(ClientType::ML);
-            if (tSock->ClientVersionSub() < 2) {
-                tSock->ClientVerShort(CVS_500a);
+            if (tSock->clientVersion.sub < 2) {
+                tSock->clientVersion.shortVersion = ClientVersion::V500A;
             }
             else if (CliVerSub < 8 || (CliVerSub == 8 && CliVerLetter < 2)) {
-                tSock->ClientVerShort(CVS_502a);
+                tSock->clientVersion.shortVersion = ClientVersion::V502A;
             }
             else if (CliVerSub > 8 || (CliVerSub == 8 && CliVerLetter >= 2)) {
-                tSock->ClientVerShort(CVS_5082);
+                tSock->clientVersion.shortVersion = ClientVersion::V5082;
             }
-            if (!cwmWorldState->ServerData()->clientSupport5000()) {
+            if (!ServerConfig::shared().enableClients.enableClient6050()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
-                tSock->SysMessage(1796,
-                                  verString); // Your current client-version (%s) is not supported
+                tSock->SysMessage(1796,verString); // Your current client-version (%s) is not supported
                                               // by this shard. You will be disconnected.
-                Console::shared()
-                    << "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..."
-                    << myendl;
+                Console::shared()<< "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..."<< myendl;
             }
         }
     }
     else if (CliVer >= 100663559 && CliVer <= 100666881) {
         tSock->setClientType(ClientType::KR2D);
         if (CliVerSub >= 5 && CliVerSub <= 14) {
-            tSock->ClientVerShort(CVS_6050);
+            tSock->clientVersion.shortVersion = ClientVersion::V6050;
         }
         else {
             if (CliVerSub < 1 || (CliVerSub == 1 && CliVerLetter < 7)) {
-                tSock->ClientVerShort(CVS_6000);
+                tSock->clientVersion.shortVersion = ClientVersion::V6000;
             }
             else if (CliVerSub < 5) {
-                tSock->ClientVerShort(CVS_6017);
+                tSock->clientVersion.shortVersion = ClientVersion::V6017;
             }
-            if (!cwmWorldState->ServerData()->clientSupport6000()) {
+            if (!ServerConfig::shared().enableClients.enableClient6000()) {
                 tSock->ForceOffline(true);
                 tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
-                tSock->SysMessage(1796,
-                                  verString); // Your current client-version (%s) is not supported
+                tSock->SysMessage(1796, verString); // Your current client-version (%s) is not supported
                                               // by this shard. You will be disconnected.
-                Console::shared()
-                    << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..."
-                    << myendl;
+                Console::shared() << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
             }
         }
     }
@@ -1007,44 +992,44 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
         if (CliVer <= 117442562 && tSock->clientType() == ClientType::SA2D) {
             tSock->setClientType(ClientType::SA2D);
             if (CliVerMajor == 6 && CliVerSub == 14 && CliVerLetter >= 2) {
-                tSock->ClientVerShort(CVS_60142);
+                tSock->clientVersion.shortVersion = ClientVersion::V60142;
             }
             else if (CliVerMajor == 7 && CliVerSub < 9) {
-                tSock->ClientVerShort(CVS_7000);
+                tSock->clientVersion.shortVersion = ClientVersion::V7000;
             }
         }
         else if (CliVer >= 117440814 && tSock->clientType() == ClientType::HS2D) {
             tSock->setClientType(ClientType::HS2D);
             if (CliVerSub < 13) {
-                tSock->ClientVerShort(CVS_7090);
+                tSock->clientVersion.shortVersion = ClientVersion::V7090;
             }
             else if (CliVerSub < 14) {
-                tSock->ClientVerShort(CVS_70130);
+                tSock->clientVersion.shortVersion = ClientVersion::V70130;
             }
             else if (CliVerSub < 16) {
-                tSock->ClientVerShort(CVS_70151);
+                tSock->clientVersion.shortVersion = ClientVersion::V70151;
             }
             else if (CliVerSub < 24) {
-                tSock->ClientVerShort(CVS_70160);
+                tSock->clientVersion.shortVersion = ClientVersion::V70160;
             }
             else if (CliVerSub < 30) {
-                tSock->ClientVerShort(CVS_70240);
+                tSock->clientVersion.shortVersion = ClientVersion::V70240;
             }
             else if (CliVerSub < 33) {
-                tSock->ClientVerShort(CVS_70300);
+                tSock->clientVersion.shortVersion = ClientVersion::V70300;
             }
             else if (CliVerSub < 45) {
-                tSock->ClientVerShort(CVS_70331);
+                tSock->clientVersion.shortVersion = ClientVersion::V70331;
             }
             else if (CliVerSub < 46) {
-                tSock->ClientVerShort(CVS_704565);
+                tSock->clientVersion.shortVersion = ClientVersion::V704565;
             }
             else if (CliVerSub < 61) {
                 tSock->setClientType(ClientType::TOL2D);
-                tSock->ClientVerShort(CVS_704565);
+                tSock->clientVersion.shortVersion = ClientVersion::V704565;
             }
             else {
-                tSock->ClientVerShort(CVS_70610);
+                tSock->clientVersion.shortVersion = ClientVersion::V70610;
             }
         }
         else if (CliVer >= 1000000000 && tSock->clientType() == ClientType::HS3D) // 1124079360 is 4.0.23.1?
@@ -1053,19 +1038,19 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             // should use same version numbering scheme as classic client internally
             tSock->setClientType(ClientType::HS3D);
             if (CliVerSub < 13) {
-                tSock->ClientVerShort(CVS_7090);
+                tSock->clientVersion.shortVersion = ClientVersion::V7090;
             }
             else if (CliVerSub <= 15 && CliVerLetter == 0) {
-                tSock->ClientVerShort(CVS_70130);
+                tSock->clientVersion.shortVersion = ClientVersion::V70130;
             }
             else if (CliVerSub == 15 && CliVerLetter == 1) {
-                tSock->ClientVerShort(CVS_70151);
+                tSock->clientVersion.shortVersion = ClientVersion::V70151;
             }
             else if (CliVerSub >= 16 && CliVerSub < 24) {
-                tSock->ClientVerShort(CVS_70160);
+                tSock->clientVersion.shortVersion = ClientVersion::V70160;
             }
             else if (CliVerSub >= 24) {
-                tSock->ClientVerShort(CVS_70240);
+                tSock->clientVersion.shortVersion = ClientVersion::V70240;
             }
         }
     }
@@ -1781,7 +1766,7 @@ CPIDropItem::CPIDropItem() {}
 CPIDropItem::CPIDropItem(CSocket *s) : CPInputBuffer(s) { Receive(); }
 void CPIDropItem::Receive() {
     uokrFlag = false;
-    if (tSock->ClientVerShort() >= CVS_6017) {
+    if (tSock->clientVersion >= ClientVersion::V6017) {
         uokrFlag = true;
     }
 
@@ -2661,7 +2646,7 @@ void CPICreateCharacter::Create3DCharacter() {
     skill[2] = tSock->GetByte(92);      // Byte[1]
     skillValue[2] = tSock->GetByte(93); // Byte[1]
     std::uint8_t byteNum = 94;
-    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->clientVersion.sub >= 16) {
         skill[3] = tSock->GetByte(94);      // Byte[1]
         skillValue[3] = tSock->GetByte(95); // Byte[1]
         byteNum = 96;
@@ -2739,7 +2724,7 @@ void CPICreateCharacter::Create2DCharacter() {
         return;
     }
 
-    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->clientVersion.sub >= 16) {
         tSock->Receive(106, true);
     }
     else {
@@ -2768,7 +2753,7 @@ void CPICreateCharacter::Create2DCharacter() {
     skill[2] = tSock->GetByte(78);
     skillValue[2] = tSock->GetByte(79);
     std::uint8_t byteNum = 80;
-    if (tSock->clientType() >= ClientType::HS2D && tSock->ClientVersionSub() >= 16) {
+    if (tSock->clientType() >= ClientType::HS2D && tSock->clientVersion.sub >= 16) {
         skill[3] = tSock->GetByte(80);
         skillValue[3] = tSock->GetByte(81);
         byteNum = 82;
@@ -2908,9 +2893,8 @@ void CPIPlayCharacter::Receive() {
     // goes back to server-selection instead - in which case the socket's clientversion info is
     // lost! 	tSock->AcctNo( AccountEntry::INVALID_ACCOUNT );
     AccountEntry &actbTemp = tSock->GetAccount();
-    actbTemp.lastClientVersion = 0;
+    actbTemp.lastClientVersion = ClientVersion() ;
     actbTemp.lastClientType = ClientType::DEFAULT;
-    actbTemp.lastClientVersionShort = 0;
 
     memcpy(charName, &tSock->Buffer()[5], 30);
     memcpy(unknown, &tSock->Buffer()[35], 33);
@@ -3224,7 +3208,7 @@ void CPIToolTipRequestAoS::Receive() {
     for (std::uint16_t i = 0; i < objCount; i++) {
         getSer = tSock->GetDWord(offset + (i * 4));
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
+        if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }
@@ -3990,7 +3974,7 @@ void CPIToolTipRequest::Receive() { getSer = tSock->GetDWord(5); }
 bool CPIToolTipRequest::Handle() {
     if (getSer != INVALIDSERIAL) {
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
+        if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             CPToolTip tSend(getSer, tSock);
             tSock->Send(&tSend);
         }

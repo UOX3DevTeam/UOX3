@@ -18,39 +18,6 @@ class CBaseObject;
 struct AccountEntry;
 
 
-// Only client-versions with major packet changes included. Clients between two versions "belong" to
-// the nearest previous version
-enum ClientVersions {
-    CVS_DEFAULT = 0,
-    CVS_400,
-    CVS_407a,
-    CVS_4011c,
-    CVS_500a, // map0.mul size increased from 6144x4096 to 7168x4096
-    CVS_502a,
-    CVS_5082,
-    CVS_6000,  // Felucca/Trammel no longer both use map0.mul, Trammel gets its own: map1.mul
-    CVS_6017,  // Packet updates to support container-grid in KR client, support implemented so it
-    // (in theory) will have no effect on lower versions
-    CVS_6050,  // 21 extra bytes of data added prior to initial 0x80 packet, in the form of a new
-    // clientversion packet: 0xEF
-    CVS_25302, // UOKR3D 2.53.0.2
-    CVS_60142,
-    CVS_7000, // animation packet 0xE2 replaces 0x6E, packet 0xF3 is sent instead of 0x1A (object
-    // information packet)
-    CVS_7090,
-    CVS_70130, // Packet 0xA9 updated with extra information and longer City/Building names
-    CVS_70151,
-    CVS_70160, // Packet 0xF8 (New Character Creation) replaces 0x00 (Character Creation)
-    CVS_70240, // Map#.mul files are now wrapped in .uop headers. This means incompability with
-    // tools, and updated emulators needed to read map correctly.
-    CVS_70300,
-    CVS_70331,
-    CVS_704565,
-    CVS_705527, // Max update range increase from 18 to 24
-    CVS_70610,
-    CVS_COUNT
-};
-
 enum cS_TID {
     // PC Timers
     tPC_SKILLDELAY = 0,
@@ -120,9 +87,6 @@ private:
     
     unicodetypes_t lang;
     ClientType cliType;
-    ClientVersions cliVerShort;
-    std::uint32_t clientVersion;
-    
     std::uint32_t bytesReceived;
     std::uint32_t bytesSent;
     bool receivedVersion;
@@ -162,22 +126,7 @@ public:
     CSocket(size_t sockNum);
     ~CSocket();
     
-    std::uint32_t ClientVersion() const;
-    void ClientVersion(std::uint32_t newVer);
-    void ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t sub, std::uint8_t letter);
-    
-    void ClientVersionMajor(std::uint8_t value);
-    void ClientVersionMinor(std::uint8_t value);
-    void ClientVersionSub(std::uint8_t value);
-    void ClientVersionLetter(std::uint8_t value);
-    
-    std::uint8_t ClientVersionMajor() const;
-    std::uint8_t ClientVersionMinor() const;
-    std::uint8_t ClientVersionSub() const;
-    std::uint8_t ClientVersionLetter() const;
-    
-    ClientVersions ClientVerShort() const;
-    void ClientVerShort(ClientVersions newVer);
+    ClientVersion clientVersion ;
     
     auto clientType() const -> const ClientType&;
     auto setClientType(ClientType::type_t type) ->void;

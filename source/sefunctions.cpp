@@ -4122,7 +4122,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRetryCount()));
                 break;
             case 145: // CLIENTFEATURES
-                *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->getClientFeatures()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(ServerConfig::shared().clientFeature.value()));
                 break;
             case 146: // PACKETOVERLOADS
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerOverloadPackets());
@@ -4143,7 +4143,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AdvancedPathfinding());
                 break;
             case 153: // SERVERFEATURES
-                *rval = INT_TO_JSVAL(static_cast<size_t>(cwmWorldState->ServerData()->getServerFeatures()));
+                *rval = INT_TO_JSVAL(static_cast<size_t>(ServerConfig::shared().serverFeature.value()));
                 break;
             case 154: // LOOTINGISCRIME
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->LootingIsCrime());
@@ -4182,40 +4182,40 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatDisplayDamageNumbers());
                 break;
             case 170: // CLIENTSUPPORT4000
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport4000());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient4000());
                 break;
             case 171: // CLIENTSUPPORT5000
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport5000());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient5000());
                 break;
             case 172: // CLIENTSUPPORT6000
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport6000());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient6000());
                 break;
             case 173: // CLIENTSUPPORT6050
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport6050());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient6050());
                 break;
             case 174: // CLIENTSUPPORT7000
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport7000());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient7000());
                 break;
             case 175: // CLIENTSUPPORT7090
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport7090());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient7090());
                 break;
             case 176: // CLIENTSUPPORT70160
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70160());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70160());
                 break;
             case 177: // CLIENTSUPPORT70240
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70240());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70240());
                 break;
             case 178: // CLIENTSUPPORT70300
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70300());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70300());
                 break;
             case 179: // CLIENTSUPPORT70331
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70331());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70331());
                 break;
             case 180: // CLIENTSUPPORT704565
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport704565());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient704565());
                 break;
             case 181: // CLIENTSUPPORT70610
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->clientSupport70610());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70610());
                 break;
             case 182: // EXTENDEDSTARTINGSTATS
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ExtendedStartingStats());
@@ -4788,8 +4788,8 @@ JSBool SE_GetClientFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         ScriptError(cx, "getClientFeature: Invalid number of arguments (takes 1 - feature ID)");
         return JS_FALSE;
     }
-    auto clientFeature = static_cast<clientfeatures_t>(JSVAL_TO_INT(argv[0]));
-    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getClientFeature(clientFeature));
+    auto clientFeature = static_cast<ClientFeature::feature_t>(JSVAL_TO_INT(argv[0]));
+    *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().clientFeature.test(clientFeature));
     return JS_TRUE;
 }
 
@@ -4803,8 +4803,8 @@ JSBool SE_GetServerFeature([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
         ScriptError(cx, "getServerFeature: Invalid number of arguments (takes 1 - feature ID)");
         return JS_FALSE;
     }
-    auto serverFeature = static_cast<serverfeatures_t>(JSVAL_TO_INT(argv[0]));
-    *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getServerFeature(serverFeature));
+    auto serverFeature = static_cast<ServerFeature::feature_t>(JSVAL_TO_INT(argv[0]));
+    *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().serverFeature.test(serverFeature));
     return JS_TRUE;
 }
 

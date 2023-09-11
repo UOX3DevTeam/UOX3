@@ -76,10 +76,9 @@ struct AccountEntry {
     std::uint32_t totalPlayingTime;
     std::uint32_t inGame;
     std::uint32_t lastIP;
-
-    std::uint32_t lastClientVersion;
+    
+    ClientVersion lastClientVersion ;
     ClientType lastClientType;
-    std::uint8_t lastClientVersionShort;
 
     std::array<AccountCharacter, CHARACTERCOUNT> character;
 

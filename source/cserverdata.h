@@ -12,59 +12,9 @@
 #include "typedefs.h"
 
 #include "ip4address.hpp"
+#include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
-// o------------------------------------------------------------------------------------------------o
-enum clientfeatures_t {
-    CF_BIT_CHAT = 0, // 0x01
-    CF_BIT_UOR,      // 0x02
-    CF_BIT_TD,       // 0x04
-    CF_BIT_LBR,      // 0x08 - Enables LBR features: mp3s instead of midi, show new LBR monsters
-    CF_BIT_AOS, // 0x10 - Enable AoS monsters/map, AoS skills, Necro/Pala/Fight book stuff - works
-    // for 4.0+
-    CF_BIT_SIXCHARS,   // 0x20 - Enable sixth character slot
-    CF_BIT_SE,         // 0x40
-    CF_BIT_ML,         // 0x80 - Elven race, new spells, skills + housing tiles
-    CF_BIT_EIGHTAGE,   // 0x100 - Splash screen for 8th age
-    CF_BIT_NINTHAGE,   // 0x200 - Splash screen for 9th age
-    CF_BIT_TENTHAGE,   // 0x400 - Splash screen for 10th age - crystal/shadow house tiles
-    CF_BIT_UNKNOWN1,   // 0x800 - Increased housing/bank storage (6.0.3.0 or earlier)
-    CF_BIT_SEVENCHARS, // 0x1000 - Enable seventh character slot
-    // CF_BIT_KRFACES,		// 0x2000 - KR release (6.0.0.0)
-    // CF_BIT_TRIAL,			// 0x4000 - Trial account
-    CF_BIT_EXPANSION = 15, // 0x8000 - Live account
-    CF_BIT_SA, // 0x10000 - Enable SA features: gargoyle race, spells, skills, housing tiles -
-    // clients 6.0.14.2+
-    CF_BIT_HS, // 0x20000 - Enable HS features: boats, new movementtype? ++
-    CF_BIT_GOTHHOUSE,    // 0x40000
-    CF_BIT_RUSTHOUSE,    // 0x80000
-    CF_BIT_JUNGLEHOUSE,  // 0x100000 - Enable Jungle housing tiles
-    CF_BIT_SHADOWHOUSE,  // 0x200000 - Enable Shadowguard housing tiles
-    CF_BIT_TOLHOUSE,     // 0x400000 - Enable Time of Legends features
-    CF_BIT_ENDLESSHOUSE, // 0x800000 - Enable Endless Journey account
-    CF_BIT_COUNT
-};
 
-//======================================================================================================
-enum serverfeatures_t {
-    SF_BIT_UNKNOWN1 = 0, // 0x01
-    SF_BIT_IGR,          // 0x02
-    SF_BIT_ONECHAR,      // 0x04 - One char only, Siege-server style
-    SF_BIT_CONTEXTMENUS, // 0x08
-    SF_BIT_LIMITCHAR,    // 0x10 - Limit amount of chars, combine with OneChar
-    SF_BIT_AOS,          // 0x20 - Enable Tooltips, fight system book - but not
-    // monsters/map/skills/necro/pala classes
-    SF_BIT_SIXCHARS,     // 0x40 - Use 6 character slots instead of 5 (4.0.3a)
-    SF_BIT_SE,           // 0x80 - Samurai and Ninja classes, bushido, ninjitsu (4.0.5a)
-    SF_BIT_ML,           // 0x100 - Elven race, spellweaving (4.0.11d)
-    SF_BIT_UNKNOWN2,     // 0x200 - added with UO:KR launch (6.0.0.0)
-    SF_BIT_SEND3DTYPE,   // 0x400 - Send UO3D client type? KR and SA clients will send 0xE1)
-    SF_BIT_UNKNOWN4,     // 0x800 - added sometime between UO:KR and UO:SA
-    SF_BIT_SEVENCHARS,   // 0x1000 - Use 7 character slots instead of 5?6?, only 2D client?
-    SF_BIT_UNKNOWN5, // 0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)
-    SF_BIT_NEWMOVE,  // 0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))
-    SF_BIT_FACTIONAREAS = 15, // 0x8000 - Unlock new Felucca faction-areas (map0x.mul?)
-    SF_BIT_COUNT
-};
 
 //======================================================================================================
 enum assistantfeatures_t : std::uint64_t {
@@ -157,24 +107,6 @@ enum csd_tid_t {
 };
 
 //======================================================================================================
-enum csddirectorypaths_t {
-    CSDDP_ROOT = 0,
-    CSDDP_DATA,
-    CSDDP_DEFS,
-    CSDDP_ACCESS,
-    CSDDP_ACCOUNTS,
-    CSDDP_SCRIPTS,
-    CSDDP_BACKUP,
-    CSDDP_MSGBOARD,
-    CSDDP_SHARED,
-    CSDDP_HTML,
-    CSDDP_LOGS,
-    CSDDP_DICTIONARIES,
-    CSDDP_BOOKS,
-    CSDDP_SCRIPTDATA,
-    CSDDP_COUNT
-};
-//======================================================================================================
 // CServerData
 //======================================================================================================
 struct StartLocationData {
@@ -223,8 +155,6 @@ private:
 //======================================================================================================
 class CServerData {
 private:
-    std::bitset<CF_BIT_COUNT> clientFeatures;
-    std::bitset<SF_BIT_COUNT> serverFeatures;
     
     // Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++
     // specificaiton, to minimize wasted space for bools These should be updated
@@ -271,7 +201,7 @@ private:
     bool uogEnabled;             // 04/03/2004 - Added to support the UOG Info Request Service
     bool randomStartingLocation; // Enable or disable randomizing starting location for new players
     // based on starting location entries
-    
+    /*
     // Client Support
     bool isClients4000Enabled;  // Allow client connections from 4.0.0 to 4.0.11f
     bool isClients5000Enabled;  // Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
@@ -285,7 +215,7 @@ private:
     bool isClients70331Enabled; // Allow client connections from 7.0.33.1+
     bool isClients704565Enabled; // Allow client connections from 7.0.45.65+ (Time of Legends)
     bool isClients70610Enabled;  // Allow client connections from 7.0.61.0+ (Endless Journey)
-    
+    */
     // facet block
     bool useFacetSaves;
     std::vector<std::string> facetNameList;
@@ -304,7 +234,7 @@ private:
     std::uint16_t serverTimers[tSERVER_COUNT];
     // Directories
     // array
-    std::string serverDirectories[CSDDP_COUNT];
+    //std::string serverDirectories[CSDDP_COUNT];
     
     std::string actualINI; // 	The actual uox.ini file loaded, used for saveing
     
@@ -510,15 +440,7 @@ public:
     
     auto lookupINIValue(const std::string &tag) -> std::int32_t;
     
-    auto setServerFeature(serverfeatures_t, bool) -> void;
-    auto setServerFeatures(size_t) -> void;
-    auto getServerFeature(serverfeatures_t) const -> bool;
-    auto getServerFeatures() const -> size_t;
     
-    auto setClientFeature(clientfeatures_t, bool) -> void;
-    auto setClientFeatures(std::uint32_t) -> void;
-    auto getClientFeature(clientfeatures_t) const -> bool;
-    auto getClientFeatures() const -> std::uint32_t ;
     
     auto setDisabledAssistantFeature(assistantfeatures_t, bool) -> void;
     auto setDisabledAssistantFeatures(std::uint64_t) -> void;
@@ -636,32 +558,7 @@ public:
     auto ServerNetSndTimeout() const -> std::uint32_t { return netSndTimeout; }
     auto ServerNetSndTimeout(std::uint32_t timeoutValue) -> void { netSndTimeout = timeoutValue; }
     
-    // ClientSupport used to determine login-restrictions
-    auto clientSupport4000() const -> bool { return isClients4000Enabled; }
-    auto clientSupport4000(bool cliSuppValue) -> void { isClients4000Enabled = cliSuppValue; }
-    auto clientSupport5000() const -> bool { return isClients5000Enabled; }
-    auto clientSupport5000(bool cliSuppValue) -> void { isClients5000Enabled = cliSuppValue; }
-    auto clientSupport6000() const -> bool { return isClients6000Enabled; }
-    auto clientSupport6000(bool cliSuppValue) -> void { isClients6000Enabled = cliSuppValue; }
-    auto clientSupport6050() const -> bool { return isClients6050Enabled; }
-    auto clientSupport6050(bool cliSuppValue) -> void { isClients6050Enabled = cliSuppValue; }
-    auto clientSupport7000() const -> bool { return isClients7000Enabled; }
-    auto clientSupport7000(bool cliSuppValue) -> void { isClients7000Enabled = cliSuppValue; }
-    auto clientSupport7090() const -> bool { return isClients7090Enabled; }
-    auto clientSupport7090(bool cliSuppValue) -> void { isClients7090Enabled = cliSuppValue; }
-    auto clientSupport70160() const -> bool { return isClients70160Enabled; }
-    auto clientSupport70160(bool cliSuppValue) -> void { isClients70160Enabled = cliSuppValue; }
-    auto clientSupport70240() const -> bool { return isClients70240Enabled; }
-    auto clientSupport70240(bool cliSuppValue) -> void { isClients70240Enabled = cliSuppValue; }
-    auto clientSupport70300() const -> bool { return isClients70300Enabled; }
-    auto clientSupport70300(bool cliSuppValue) -> void { isClients70300Enabled = cliSuppValue; }
-    auto clientSupport70331() const -> bool { return isClients70331Enabled; }
-    auto clientSupport70331(bool cliSuppValue) -> void { isClients70331Enabled = cliSuppValue; }
-    auto clientSupport704565() const -> bool { return isClients704565Enabled; }
-    auto clientSupport704565(bool cliSuppValue) -> void { isClients704565Enabled = cliSuppValue; }
-    auto clientSupport70610() const -> bool { return isClients70610Enabled; }
-    auto clientSupport70610(bool cliSuppValue) -> void { isClients70610Enabled = cliSuppValue; }
-    
+   
     auto StatsAffectSkillChecks(bool setting) -> void;
     auto StatsAffectSkillChecks() const -> bool;
     
@@ -672,9 +569,6 @@ public:
     auto ExtendedStartingSkills(bool setting) -> void;
     auto ExtendedStartingSkills() const -> bool;
     
-    // Define all Path Get/Set's here please
-    auto Directory(csddirectorypaths_t dp, std::string value) -> void;
-    auto Directory(csddirectorypaths_t dp)->std::string ;
     
     auto CorpseLootDecay(bool value) -> void;
     auto CorpseLootDecay() const -> bool;

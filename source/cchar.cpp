@@ -50,6 +50,7 @@
 
 #include <algorithm>
 
+#include "subsystem/account.hpp"
 #include "ceffects.h"
 #include "cguild.h"
 #include "cjsengine.h"
@@ -70,13 +71,13 @@
 #include "objectfactory.h"
 #include "power.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "speech.h"
 #include "stringutility.hpp"
-#include "subsystem/account.hpp"
+#include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
-#include "utility/strutil.hpp"
 #include "weight.h"
 
 #define DEBUGMOVEMULTIPLIER 1.75
@@ -2221,32 +2222,26 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
         bool alwaysSendItemHue = false;
         
         if (s->ReceivedVersion()) {
-            if (s->ClientVerShort() >= CVS_70331) {
+            if (s->clientVersion >= ClientVersion::V70331) {
                 alwaysSendItemHue = true;
             }
         }
-        else if (cwmWorldState->ServerData()->clientSupport70331() ||
-                 cwmWorldState->ServerData()->clientSupport704565() ||
-                 cwmWorldState->ServerData()->clientSupport70610()) {
+        else if (ServerConfig::shared().enableClients.enableClient70331() || ServerConfig::shared().enableClients.enableClient704565()|| ServerConfig::shared().enableClients.enableClient70610()) {
             // No client version received yet. Rely on highest client support enabled in UOX.INI
             alwaysSendItemHue = true;
         }
         
-        if (mCharObj == this && drawGamePlayer &&
-            (mCharObj->GetVisible() == 0 || mCharObj->IsDead())) {
+        if (mCharObj == this && drawGamePlayer && (mCharObj->GetVisible() == 0 || mCharObj->IsDead())) {
             // Only send this when updating after a teleport/world change
             CPDrawGamePlayer gpToSend((*this));
             s->Send(&gpToSend);
             
             SendWornItems(s);
         }
-        else if (GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() &&
-                 GetCommandLevel() >= mCharObj->GetCommandLevel()) {
+        else if (GetVisible() == VT_GHOSTHIDDEN && !mCharObj->IsDead() && GetCommandLevel() >= mCharObj->GetCommandLevel()) {
             return;
         }
-        else if (mCharObj != this && GetCommandLevel() >= mCharObj->GetCommandLevel() &&
-                 ((GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN) ||
-                  (!IsNpc() && !IsOnline((*this))))) {
+        else if (mCharObj != this && GetCommandLevel() >= mCharObj->GetCommandLevel() && ((GetVisible() != VT_VISIBLE && GetVisible() != VT_GHOSTHIDDEN) || (!IsNpc() && !IsOnline((*this))))) {
             return;
         }
         
@@ -2274,7 +2269,7 @@ void CChar::SendToSocket(CSocket *s, bool drawGamePlayer) {
         }
         
         // Only send tooltip if server feature for tooltips is enabled
-        if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
+        if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             CPToolTip pSend(GetSerial(), s);
             s->Send(&pSend);
         }

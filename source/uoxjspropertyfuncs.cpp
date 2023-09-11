@@ -4379,16 +4379,16 @@ JSBool CSocketProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             gPriv->Language(static_cast<unicodetypes_t>(encaps.toInt()));
             break;
         case CSOCKP_CLIENTMAJORVER:
-            gPriv->ClientVersionMajor(static_cast<std::uint8_t>(encaps.toInt()));
+            gPriv->clientVersion.major= static_cast<std::uint8_t>(encaps.toInt());
             break;
         case CSOCKP_CLIENTMINORVER:
-            gPriv->ClientVersionMinor(static_cast<std::uint8_t>(encaps.toInt()));
+            gPriv->clientVersion.minor = static_cast<std::uint8_t>(encaps.toInt());
             break;
         case CSOCKP_CLIENTSUBVER:
-            gPriv->ClientVersionSub(static_cast<std::uint8_t>(encaps.toInt()));
+            gPriv->clientVersion.sub = static_cast<std::uint8_t>(encaps.toInt());
             break;
         case CSOCKP_CLIENTLETTERVER:
-            gPriv->ClientVersionLetter(static_cast<std::uint8_t>(encaps.toInt()));
+            gPriv->clientVersion.letter = static_cast<std::uint8_t>(encaps.toInt());
             break;
         case CSOCKP_CLIENTTYPE:
             gPriv->setClientType(static_cast<ClientType::type_t>(encaps.toInt()));
@@ -4559,16 +4559,16 @@ JSBool CSocketProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *v
             *vp = INT_TO_JSVAL(gPriv->Language());
             break;
         case CSOCKP_CLIENTMAJORVER:
-            *vp = INT_TO_JSVAL(gPriv->ClientVersionMajor());
+            *vp = INT_TO_JSVAL(gPriv->clientVersion.major);
             break;
         case CSOCKP_CLIENTMINORVER:
-            *vp = INT_TO_JSVAL(gPriv->ClientVersionMinor());
+            *vp = INT_TO_JSVAL(gPriv->clientVersion.minor);
             break;
         case CSOCKP_CLIENTSUBVER:
-            *vp = INT_TO_JSVAL(gPriv->ClientVersionSub());
+            *vp = INT_TO_JSVAL(gPriv->clientVersion.sub);
             break;
         case CSOCKP_CLIENTLETTERVER:
-            *vp = INT_TO_JSVAL(gPriv->ClientVersionLetter());
+            *vp = INT_TO_JSVAL(gPriv->clientVersion.letter);
             break;
         case CSOCKP_CLIENTTYPE:
             *vp = INT_TO_JSVAL(gPriv->clientType().type);

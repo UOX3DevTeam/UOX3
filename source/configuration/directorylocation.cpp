@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals ;
@@ -154,4 +155,22 @@ auto DirectoryLocation::operator[](dirlocation_t location) -> std::filesystem::p
         throw std::out_of_range("Request for directory index: "s+std::to_string(static_cast<int>(location))+ " error: "s + e.what());
     }
 }
-
+//======================================================================
+auto DirectoryLocation::dumpPaths() const ->void {
+    Console::shared().printSectionBegin();
+    Console::shared() << "PathDump: \n";
+    Console::shared() << "    Root        : " << locations.at(static_cast<int>(dirlocation_t::BASE)).string() << "\n";
+    Console::shared() << "    Accounts    : " << locations.at(static_cast<int>(dirlocation_t::ACCOUNT)).string() << "\n";
+    Console::shared() << "    Access      : " << locations.at(static_cast<int>(dirlocation_t::ACCESS)).string() << "\n";
+    Console::shared() << "    Mul(Data)   : " << locations.at(static_cast<int>(dirlocation_t::UODIR)).string() << "\n";
+    Console::shared() << "    DFN(Defs)   : " << locations.at(static_cast<int>(dirlocation_t::DEFINITION)).string() << "\n";
+    Console::shared() << "    JScript     : " << locations.at(static_cast<int>(dirlocation_t::SCRIPT)).string() << "\n";
+    Console::shared() << "    JScriptData : " << locations.at(static_cast<int>(dirlocation_t::SCRIPTDATA)).string() << "\n";
+    Console::shared() << "    HTML        : " << locations.at(static_cast<int>(dirlocation_t::HTML)).string() << "\n";
+    Console::shared() << "    MSGBoards   : " << locations.at(static_cast<int>(dirlocation_t::MSGBOARD)).string() << "\n";
+    Console::shared() << "    Books       : " << locations.at(static_cast<int>(dirlocation_t::BOOK)).string() << "\n";
+    Console::shared() << "    Shared      : " << locations.at(static_cast<int>(dirlocation_t::SAVE)).string() << "\n";
+    Console::shared() << "    Backups     : " << locations.at(static_cast<int>(dirlocation_t::BACKUP)).string() << "\n";
+    Console::shared() << "    Logs        : " << locations.at(static_cast<int>(dirlocation_t::LOG)).string() << "\n";
+    Console::shared().printSectionBegin();
+}

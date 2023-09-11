@@ -9,6 +9,9 @@
 #include <string>
 
 #include "directorylocation.hpp"
+#include "clientenable.hpp"
+#include "clientfeature.hpp"
+#include "serverfeature.hpp"
 //======================================================================
 class ServerConfig {
    
@@ -33,6 +36,11 @@ public:
     auto reloadConfig() ->void;
     
     auto directoryFor(dirlocation_t location) const -> const std::filesystem::path &;
+    auto dumpPaths() const ->void ;
+    ClientEnable enableClients ;
+    ClientFeature clientFeature ;
+    ServerFeature serverFeature ;
+    auto reset() ->void ;
     
 };
 

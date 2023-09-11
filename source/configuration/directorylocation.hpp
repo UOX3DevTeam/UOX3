@@ -33,6 +33,7 @@ public:
     auto postLoad() ->void ;
     auto operator[](dirlocation_t location) const -> const std::filesystem::path& ;
     auto operator[](dirlocation_t location) -> std::filesystem::path& ;
+    auto dumpPaths() const ->void ;
 };
 
 #endif /* directorylocation_hpp */

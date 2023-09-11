@@ -22,6 +22,10 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/clientenable.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/clientenable.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.hpp
 
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  

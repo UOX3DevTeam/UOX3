@@ -381,7 +381,6 @@ auto CDirectoryListing::PushDir(std::string toMove) -> bool {
     std::string cwd = CurrentWorkingDir();
     dirs.push(cwd);
     auto path = std::filesystem::path(toMove);
-    std::cout <<"the path is now: " << path.string() << std::endl;
     auto rValue = true;
     if (!std::filesystem::exists(path)) {
         Console::shared().error(util::format("DFN directory %s does not exist", toMove.c_str()));

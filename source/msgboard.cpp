@@ -483,7 +483,7 @@ void MsgBoardPost(CSocket *tSock) {
     const serial_t msgId = MsgBoardWritePost(msgBoardPost, fileName, msgType);
     if (msgId != INVALIDSERIAL) {
         CPAddItemToCont toAdd;
-        if (tSock->ClientVerShort() >= CVS_6017) {
+        if (tSock->clientVersion >= ClientVersion::V6017) {
             toAdd.UOKRFlag(true);
         }
         toAdd.Serial((msgId | BASEITEMSERIAL));

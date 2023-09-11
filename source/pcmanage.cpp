@@ -10,6 +10,7 @@
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
+#include "configuration/serverconfig.hpp"
 #include "cserverdata.h"
 #include "cserverdefinitions.h"
 #include "cskillclass.h"
@@ -23,8 +24,8 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "subsystem/account.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 #include "other/uoxversion.hpp"
 #include "wholist.h"
@@ -1093,10 +1094,10 @@ void CPICreateCharacter::SetNewCharGenderAndRace(CChar *mChar) {
     std::uint16_t pGenderId = 0x0190;
     bool gargCreation = false;
     bool elfCreation = false;
-    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_SA)) {
+    if (ServerConfig::shared().clientFeature.test(ClientFeature::SA)) {
         gargCreation = true;
     }
-    if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_ML)) {
+    if (ServerConfig::shared().clientFeature.test(ClientFeature::ML)) {
         elfCreation = true;
     }
 

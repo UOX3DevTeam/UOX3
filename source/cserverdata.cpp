@@ -61,7 +61,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"HITPOINTREGENTIMER"s, 22},
     {"STAMINAREGENTIMER"s, 23},
     {"BASEFISHINGTIMER"s, 24},
-    {"SCRIPTSDIRECTORY"s, 25},
     {"JOINPARTMSGS"s, 26},
     {"MAXPETOWNERS"s, 34},
     {"MAXFOLLOWERS"s, 35},
@@ -69,13 +68,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"MANAREGENTIMER"s, 37},
     {"RANDOMFISHINGTIMER"s, 38},
     {"SPIRITSPEAKTIMER"s, 39},
-    {"DIRECTORY"s, 40},
-    {"DATADIRECTORY"s, 41},
-    {"DEFSDIRECTORY"s, 42},
-    {"ACTSDIRECTORY"s, 43},
-    {"BACKUPDIRECTORY"s, 44},
-    {"MSGBOARDDIRECTORY"s, 45},
-    {"SHAREDDIRECTORY"s, 46},
     {"LOOTDECAYSWITHCORPSE"s, 47},
     {"GUARDSACTIVE"s, 49},
     {"DEATHANIMATION"s, 27},
@@ -155,16 +147,11 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"AMPM"s, 123},
     {"SKILLLEVEL"s, 124},
     {"SNOOPISCRIME"s, 125},
-    {"BOOKSDIRECTORY"s, 126},
     //{"SERVERLIST"s, 127},
     {"PORT"s, 128},
-    {"ACCESSDIRECTORY"s, 129},
-    {"LOGSDIRECTORY"s, 130},
     {"ACCOUNTISOLATION"s, 131},
-    {"HTMLDIRECTORY"s, 132},
     {"SHOOTONANIMALBACK"s, 133},
     {"NPCTRAININGENABLED"s, 134},
-    {"DICTIONARYDIRECTORY"s, 135},
     {"BACKUPSAVERATIO"s, 136},
     {"HIDEWHILEMOUNTED"s, 137},
     {"SECONDSPERUOMINUTE"s, 138},
@@ -195,18 +182,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"PAPERDOLLGUILDBUTTON"s, 163},
     {"ATTACKSPEEDFROMSTAMINA"s, 164},
     {"DISPLAYDAMAGENUMBERS"s, 169},
-    {"CLIENTSUPPORT4000"s, 170},
-    {"CLIENTSUPPORT5000"s, 171},
-    {"CLIENTSUPPORT6000"s, 172},
-    {"CLIENTSUPPORT6050"s, 173},
-    {"CLIENTSUPPORT7000"s, 174},
-    {"CLIENTSUPPORT7090"s, 175},
-    {"CLIENTSUPPORT70160"s, 176},
-    {"CLIENTSUPPORT70240"s, 177},
-    {"CLIENTSUPPORT70300"s, 178},
-    {"CLIENTSUPPORT70331"s, 179},
-    {"CLIENTSUPPORT704565"s, 180},
-    {"CLIENTSUPPORT70610"s, 181},
     {"EXTENDEDSTARTINGSTATS"s, 182},
     {"EXTENDEDSTARTINGSKILLS"s, 183},
     {"WEAPONDAMAGECHANCE"s, 184},
@@ -275,7 +250,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"NPCFLAGUPDATETIMER"s, 247},
     {"JSENGINESIZE"s, 248},
     {"USEUNICODEMESSAGES"s, 249},
-    {"SCRIPTDATADIRECTORY"s, 250},
     {"THIRSTRATE"s, 251},
     {"THIRSTDRAINVAL"s, 252},
     {"PETTHIRSTOFFLINE"s, 253},
@@ -672,19 +646,6 @@ auto CServerData::ResetDefaults() -> void {
     CorpseLootDecay(true);
     ServerSavesTimer(600);
     
-    // Enable login-support only for latest available client by default
-    clientSupport4000(false);
-    clientSupport5000(false);
-    clientSupport6000(false);
-    clientSupport6050(false);
-    clientSupport7000(false);
-    clientSupport7090(false);
-    clientSupport70160(false);
-    clientSupport70240(false);
-    clientSupport70300(false);
-    clientSupport70331(false);
-    clientSupport704565(false);
-    clientSupport70610(true);
     
     SystemTimer(tSERVER_INVISIBILITY, 60);
     SystemTimer(tSERVER_HUNGERRATE, 6000);
@@ -763,7 +724,7 @@ auto CServerData::ResetDefaults() -> void {
     SetPetLoyaltyLossOnFailure(3);
     SystemTimer(tSERVER_LOYALTYRATE, 900);
     ItemsInterruptCasting(true);
-    
+    /*
     auto curWorkingDir = std::filesystem::current_path().string();
     
     auto wDir = oldstrutil::fixDirectory(curWorkingDir);
@@ -794,7 +755,7 @@ auto CServerData::ResetDefaults() -> void {
     Directory(CSDDP_DICTIONARIES, tDir);
     tDir = wDir + std::string("logs/");
     Directory(CSDDP_LOGS, tDir);
-    
+    */
     // Expansion settings
     ExpansionCoreShardEra(ER_LBR); // Default to LBR expansion
     ExpansionArmorCalculation(ER_CORE);
@@ -959,21 +920,7 @@ auto CServerData::ResetDefaults() -> void {
     TownTaxPeriod(1800);       // taxed every 30 minutes
     TownGuardPayment(3600);    // guards paid every hour
     
-    setClientFeature(CF_BIT_CHAT, true);
-    setClientFeature(CF_BIT_UOR, true);
-    setClientFeature(CF_BIT_TD, true);
-    setClientFeature(CF_BIT_LBR, true);
-    setClientFeature(CF_BIT_AOS, true);
-    setClientFeature(CF_BIT_SIXCHARS, true);
-    setClientFeature(CF_BIT_SE, true);
-    setClientFeature(CF_BIT_ML, true);
-    setClientFeature(CF_BIT_EXPANSION, true);
     
-    setServerFeature(SF_BIT_CONTEXTMENUS, true);
-    setServerFeature(SF_BIT_AOS, true);
-    setServerFeature(SF_BIT_SIXCHARS, true);
-    setServerFeature(SF_BIT_SE, true);
-    setServerFeature(SF_BIT_ML, true);
     
     // Disable spawn regions for all facets by default
     setSpawnRegionsFacetStatus(0);
@@ -1304,117 +1251,6 @@ auto CServerData::SystemTimer(csd_tid_t timerid, std::uint16_t value) -> void {
     serverTimers[timerid] = value;
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	Directory()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets directory paths
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::Directory(csddirectorypaths_t dp) -> std::string {
-    std::string rValue;
-    if (dp != CSDDP_COUNT) {
-        rValue = serverDirectories[dp];
-    }
-    return rValue;
-}
-auto CServerData::Directory(csddirectorypaths_t dp, std::string value) -> void {
-    bool create_dir = false;
-    
-    if (dp != CSDDP_COUNT) {
-        std::string verboseDirectory;
-        switch (dp) {
-            case CSDDP_ROOT:
-                verboseDirectory = "Root directory";
-                break;
-            case CSDDP_DATA:
-                verboseDirectory = "Data directory";
-                break;
-            case CSDDP_DEFS:
-                verboseDirectory = "DFNs directory";
-                break;
-            case CSDDP_ACCESS:
-                verboseDirectory = "Access directory";
-                break;
-            case CSDDP_ACCOUNTS:
-                verboseDirectory = "Accounts directory";
-                break;
-            case CSDDP_SCRIPTS:
-                verboseDirectory = "Scripts directory";
-                break;
-            case CSDDP_SCRIPTDATA:
-                verboseDirectory = "ScriptData directory";
-                create_dir = true;
-                break;
-            case CSDDP_BACKUP:
-                verboseDirectory = "Backup directory";
-                break;
-            case CSDDP_MSGBOARD:
-                verboseDirectory = "Messageboard directory";
-                break;
-            case CSDDP_SHARED:
-                verboseDirectory = "Shared directory";
-                create_dir = true;
-                break;
-            case CSDDP_HTML:
-                verboseDirectory = "HTML directory";
-                break;
-            case CSDDP_LOGS:
-                verboseDirectory = "Logs directory";
-                break;
-            case CSDDP_DICTIONARIES:
-                verboseDirectory = "Dictionary directory";
-                break;
-            case CSDDP_BOOKS:
-                verboseDirectory = "Books directory";
-                break;
-            case CSDDP_COUNT:
-            default:
-                verboseDirectory = "Unknown directory";
-                break;
-        };
-        // First, let's normalize the path name and fix common errors
-        // remove all trailing and leading spaces...
-        auto sText = util::trim(value);
-        
-        if (sText.empty()) {
-            Console::shared().error(
-                                    util::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str()));
-            Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
-        }
-        else {
-            // Make sure we're terminated with a directory separator
-            // Just incase it's not set in the .ini
-            // and convert the windows backward slashes to forward slashes
-            
-            sText = oldstrutil::fixDirectory(sText);
-            
-            bool error = false;
-            if (!resettingDefaults) {
-                error = true;
-                auto npath = std::filesystem::path(sText);
-                
-                if (std::filesystem::exists(npath)) {
-                    error = false;
-                }
-                else if (create_dir) {
-                    // Create missing directory
-                    std::filesystem::create_directory(npath);
-                    error = false;
-                }
-            }
-            
-            if (error) {
-                Console::shared().error(
-                                        util::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()));
-                Shutdown(FATAL_UOX3_DIR_NOT_FOUND);
-            }
-            else {
-                // There was a check to see if text was empty, to set to "./".  However, if text was
-                // blank, we bailed out in the beginning of the routine
-                serverDirectories[dp] = sText;
-            }
-        }
-    }
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ExpansionCoreShardEra()
@@ -1813,22 +1649,7 @@ auto CServerData::NPCTrainingStatus(bool newVal) -> void { boolVals.set(BIT_NPCT
 //here to please |					 so it can be looked up if needed.
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::DumpPaths() -> void {
-    Console::shared().printSectionBegin();
-    Console::shared() << "PathDump: \n";
-    Console::shared() << "    Root        : " << Directory(CSDDP_ROOT) << "\n";
-    Console::shared() << "    Accounts    : " << Directory(CSDDP_ACCOUNTS) << "\n";
-    Console::shared() << "    Access      : " << Directory(CSDDP_ACCESS) << "\n";
-    Console::shared() << "    Mul(Data)   : " << Directory(CSDDP_DATA) << "\n";
-    Console::shared() << "    DFN(Defs)   : " << Directory(CSDDP_DEFS) << "\n";
-    Console::shared() << "    JScript     : " << Directory(CSDDP_SCRIPTS) << "\n";
-    Console::shared() << "    JScriptData : " << Directory(CSDDP_SCRIPTDATA) << "\n";
-    Console::shared() << "    HTML        : " << Directory(CSDDP_HTML) << "\n";
-    Console::shared() << "    MSGBoards   : " << Directory(CSDDP_MSGBOARD) << "\n";
-    Console::shared() << "    Books       : " << Directory(CSDDP_BOOKS) << "\n";
-    Console::shared() << "    Shared      : " << Directory(CSDDP_SHARED) << "\n";
-    Console::shared() << "    Backups     : " << Directory(CSDDP_BACKUP) << "\n";
-    Console::shared() << "    Logs        : " << Directory(CSDDP_LOGS) << "\n";
-    Console::shared().printSectionBegin();
+    ServerConfig::shared().dumpPaths();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2407,10 +2228,9 @@ auto CServerData::ForceNewAnimationPacket() const -> bool {
     return boolVals.test(BIT_FORCENEWANIMATIONPACKET);
 }
 auto CServerData::ForceNewAnimationPacket(bool newVal) -> void {
-    if (clientSupport4000() || clientSupport5000() || clientSupport6000() || clientSupport6050()) {
+    if (ServerConfig::shared().enableClients.enableClient4000() || ServerConfig::shared().enableClients.enableClient5000() || ServerConfig::shared().enableClients.enableClient6000() || ServerConfig::shared().enableClients.enableClient6050()) {
         boolVals.set(BIT_FORCENEWANIMATIONPACKET, false);
-        Console::shared().warning("FORCENEWANIMATIONPACKET setting not compatible with support for "
-                                  "client versions below 7.0.0.0. Setting disabled!");
+        Console::shared().warning("FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!");
     }
     else {
         boolVals.set(BIT_FORCENEWANIMATIONPACKET, newVal);
@@ -3689,55 +3509,8 @@ auto CServerData::ResFishTime(std::uint16_t value) -> void { fishRespawnTimer = 
 auto CServerData::AccountFlushTimer() const -> double { return flushTime; }
 auto CServerData::AccountFlushTimer(R64 value) -> void { flushTime = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getClientFeature()
-//|					CServerData::setClientFeature()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets a specific client-side feature
-//|	Notes		-	See ClientFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getClientFeature(clientfeatures_t bitNum) const -> bool {
-    return clientFeatures.test(bitNum);
-}
-auto CServerData::setClientFeature(clientfeatures_t bitNum, bool nVal) -> void {
-    clientFeatures.set(bitNum, nVal);
-}
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getClientFeatures()
-//|					CServerData::setClientFeatures()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which client side features to enable for connecting
-// clients |	Notes		-	See ClientFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getClientFeatures() const -> std::uint32_t {
-    return static_cast<std::uint32_t>(clientFeatures.to_ulong());
-}
-auto CServerData::setClientFeatures(std::uint32_t nVal) -> void { clientFeatures = nVal; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getServerFeature()
-//|					CServerData::setServerFeature()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets a specific server-side feature
-//|	Notes		-	See ServerFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getServerFeature(serverfeatures_t bitNum) const -> bool {
-    return serverFeatures.test(bitNum);
-}
-auto CServerData::setServerFeature(serverfeatures_t bitNum, bool nVal) -> void {
-    serverFeatures.set(bitNum, nVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getServerFeatures()
-//|					CServerData::setServerFeatures()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets which server side features to enable
-//|	Notes		-	See ServerFeatures enum in cserverdata.h for full list
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getServerFeatures() const -> size_t { return serverFeatures.to_ulong(); }
-auto CServerData::setServerFeatures(size_t nVal) -> void { serverFeatures = nVal; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::getSpawnRegionsFacetStatus()
@@ -3855,12 +3628,15 @@ auto CServerData::KickOnAssistantSilence(bool nVal) -> void {
 //|	Returns		- [true] If successfull
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::SaveIni() -> bool {
+    /*
     auto s = actualINI;
     if (s.empty()) {
         s = Directory(CSDDP_ROOT);
         s += "uox.ini"s;
     }
     return SaveIni(s);
+     */
+    return true ;
 }
 
 // Map of era enums to era strings, used for conversion between the two types
@@ -4010,7 +3786,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "APSDELAYSTEP=" << static_cast<std::uint16_t>(APSDelayStep()) << '\n';
         ofsOutput << "APSDELAYMAXCAP=" << static_cast<std::uint16_t>(APSDelayMaxCap()) << '\n';
         ofsOutput << "}" << '\n' << '\n';
-        
+        /*
         ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
         ofsOutput << "CLIENTSUPPORT4000=" << (clientSupport4000() ? 1 : 0) << '\n';
         ofsOutput << "CLIENTSUPPORT5000=" << (clientSupport5000() ? 1 : 0) << '\n';
@@ -4025,7 +3801,8 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "CLIENTSUPPORT704565=" << (clientSupport704565() ? 1 : 0) << '\n';
         ofsOutput << "CLIENTSUPPORT70610=" << (clientSupport70610() ? 1 : 0) << '\n';
         ofsOutput << "}" << '\n';
-        
+         */
+        /*
         ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
         ofsOutput << "DIRECTORY=" << Directory(CSDDP_ROOT) << '\n';
         ofsOutput << "DATADIRECTORY=" << Directory(CSDDP_DATA) << '\n';
@@ -4042,6 +3819,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "LOGSDIRECTORY=" << Directory(CSDDP_LOGS) << '\n';
         ofsOutput << "DICTIONARYDIRECTORY=" << Directory(CSDDP_DICTIONARIES) << '\n';
         ofsOutput << "}" << '\n';
+         */
         
         ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
         ofsOutput << "SKILLLEVEL=" << static_cast<std::uint16_t>(SkillLevel()) << '\n';
@@ -4150,8 +3928,8 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "HIDEWHILEMOUNTED=" << (CharHideWhileMounted() ? 1 : 0) << '\n';
         ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
         ofsOutput << "POLYDURATION=" << SystemTimer(tSERVER_POLYMORPH) << '\n';
-        ofsOutput << "CLIENTFEATURES=" << getClientFeatures() << '\n';
-        ofsOutput << "SERVERFEATURES=" << getServerFeatures() << '\n';
+        ofsOutput << "CLIENTFEATURES=" << ServerConfig::shared().clientFeature.value() << '\n';
+        ofsOutput << "SERVERFEATURES=" << ServerConfig::shared().serverFeature.value()  << '\n';
         ofsOutput << "SPAWNREGIONSFACETS=" << getSpawnRegionsFacetStatus() << '\n';
         ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets() ? 1 : 0) << '\n';
         ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding() ? 1 : 0) << '\n';
@@ -4475,14 +4253,16 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
 //|						nullptr is there is an error, or invalid file type
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::load(const std::string &filename) -> bool {
+    /*
     auto iniFile = filename;
     if (iniFile.empty()) {
         iniFile = Directory(CSDDP_ROOT) + "uox.ini"s;
     }
     actualINI = iniFile;
     auto rValue = ParseIni(iniFile);
+     */
     postLoadDefaults();
-    return rValue;
+    return true;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -4746,46 +4526,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 39: // SPIRITSPEAKTIMER
             SystemTimer(tSERVER_SPIRITSPEAK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 40: // DIRECTORY
-        {
-            Directory(CSDDP_ROOT, value);
-            break;
-        }
-        case 41: // DATADIRECTORY
-        {
-            Directory(CSDDP_DATA, value);
-            break;
-        }
-        case 42: // DEFSDIRECTORY
-        {
-            Directory(CSDDP_DEFS, value);
-            break;
-        }
-        case 43: // ACTSDIRECTORY
-        {
-            Directory(CSDDP_ACCOUNTS, value);
-            break;
-        }
-        case 25: // SCRIPTSDIRECTORY
-        {
-            Directory(CSDDP_SCRIPTS, value);
-            break;
-        }
-        case 44: // BACKUPDIRECTORY
-        {
-            Directory(CSDDP_BACKUP, value);
-            break;
-        }
-        case 45: // MSGBOARDDIRECTORY
-        {
-            Directory(CSDDP_MSGBOARD, value);
-            break;
-        }
-        case 46: // SHAREDDIRECTORY
-        {
-            Directory(CSDDP_SHARED, value);
-            break;
-        }
         case 47: // LOOTDECAYSWITHCORPSE
             CorpseLootDecay(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
@@ -5023,33 +4763,18 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 125: // SNOOPISCRIME
             SnoopIsCrime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
-        case 126: // BOOKSDIRECTORY
-            Directory(CSDDP_BOOKS, value);
-            break;
         case 127: // SERVERLIST
             break;
         case 128: // PORT
             ServerPort(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 129: // ACCESSDIRECTORY
-            Directory(CSDDP_ACCESS, value);
-            break;
-        case 130: // LOGSDIRECTORY
-            Directory(CSDDP_LOGS, value);
-            break;
         case 131: // ACCOUNTISOLATION
-            break;
-        case 132: // HTMLDIRECTORY
-            Directory(CSDDP_HTML, value);
             break;
         case 133: // SHOOTONANIMALBACK
             ShootOnAnimalBack(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 134: // NPCTRAININGENABLED
             NPCTrainingStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 135: // DICTIONARYDIRECTORY
-            Directory(CSDDP_DICTIONARIES, value);
             break;
         case 136: // BACKUPSAVERATIO
             BackupRatio(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
@@ -5080,7 +4805,7 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             ServerNetRetryCount(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 145: // CLIENTFEATURES
-            setClientFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
+            ServerConfig::shared().clientFeature = static_cast<std::uint32_t>(std::stoul(value, nullptr, 0));
             break;
         case 146: // PACKETOVERLOADS
             ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
@@ -5099,9 +4824,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 152: // ADVANCEDPATHFINDING
             AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 153: // SERVERFEATURES
-            setServerFeatures(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
         case 154: // LOOTINGISCRIME
             LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
@@ -5138,42 +4860,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 169: // DISPLAYDAMAGENUMBERS
             CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 170: // CLIENTSUPPORT4000
-            clientSupport4000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 171: // CLIENTSUPPORT5000
-            clientSupport5000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 172: // CLIENTSUPPORT6000
-            clientSupport6000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 173: // CLIENTSUPPORT6050
-            clientSupport6050(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 174: // CLIENTSUPPORT7000
-            clientSupport7000(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 175: // CLIENTSUPPORT7090
-            clientSupport7090(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 176: // CLIENTSUPPORT70160
-            clientSupport70160(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 177: // CLIENTSUPPORT70240
-            clientSupport70240(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 178: // CLIENTSUPPORT70300
-            clientSupport70300(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 179: // CLIENTSUPPORT70331
-            clientSupport70331(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 180: // CLIENTSUPPORT704565
-            clientSupport704565(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 181: // CLIENTSUPPORT70610
-            clientSupport70610(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 182: // EXTENDEDSTARTINGSTATS
             ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
@@ -5397,11 +5083,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 249: // USEUNICODEMESSAGES
             useUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
-        case 250: // SCRIPTDATADIRECTORY
-        {
-            Directory(CSDDP_SCRIPTDATA, value);
-            break;
-        }
         case 251: // THIRSTRATE
             SystemTimer(tSERVER_THIRSTRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -6032,10 +5713,10 @@ auto CServerData::APSDelayMaxCap(std::uint16_t newVal) -> void { apsDelayMaxCap 
 // directory
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::SaveTime() -> void {
-    std::string timeFile = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "time.wsc";
-    std::ofstream timeDestination(timeFile.c_str());
+    auto timeFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("time.wsc");
+    std::ofstream timeDestination(timeFile.string());
     if (!timeDestination) {
-        Console::shared().error(util::format("Failed to open %s for writing", timeFile.c_str()));
+        Console::shared().error(util::format("Failed to open %s for writing", timeFile.string().c_str()));
         return;
     }
     
@@ -6060,9 +5741,9 @@ auto ReadWorldTagData(std::istream &inStream, std::string &tag, std::string &dat
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::LoadTime() -> void {
     std::ifstream input;
-    std::string filename = cwmWorldState->ServerData()->Directory(CSDDP_SHARED) + "time.wsc";
+    auto filename = ServerConfig::shared().directoryFor(dirlocation_t::SAVE) / std::filesystem::path("time.wsc");
     
-    input.open(filename.c_str(), std::ios_base::in);
+    input.open(filename.string(), std::ios_base::in);
     input.seekg(0, std::ios::beg);
     
     if (input.is_open()) {

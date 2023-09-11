@@ -33,9 +33,10 @@
 
 #include "partysystem.h"
 #include "power.h"
+#include "configuration/serverconfig.hpp"
 #include "speech.h"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 using namespace std::string_literals;
 // Unknown bytes
@@ -392,14 +393,7 @@ void CPExtMove::FlagColour(std::uint8_t newValue) { pStream.WriteByte(16, newVal
 void CPExtMove::SetFlags(CChar &toCopy) {
     std::bitset<8> flag(0);
     
-    if (cwmWorldState->ServerData()->clientSupport7000() ||
-        cwmWorldState->ServerData()->clientSupport7090() ||
-        cwmWorldState->ServerData()->clientSupport70160() ||
-        cwmWorldState->ServerData()->clientSupport70240() ||
-        cwmWorldState->ServerData()->clientSupport70300() ||
-        cwmWorldState->ServerData()->clientSupport70331() ||
-        cwmWorldState->ServerData()->clientSupport704565() ||
-        cwmWorldState->ServerData()->clientSupport70610()) {
+    if (ServerConfig::shared().enableClients.enableClient7000() ||  ServerConfig::shared().enableClients.enableClient7090() || ServerConfig::shared().enableClients.enableClient70160() || ServerConfig::shared().enableClients.enableClient70240() || ServerConfig::shared().enableClients.enableClient70300() || ServerConfig::shared().enableClients.enableClient70331() || ServerConfig::shared().enableClients.enableClient704565() || ServerConfig::shared().enableClients.enableClient70610() ) {
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, female flag
@@ -959,14 +953,7 @@ void CPDrawGamePlayer::CopyData(CChar &toCopy) {
     
     std::bitset<8> flag(0);
     
-    if (cwmWorldState->ServerData()->clientSupport7000() ||
-        cwmWorldState->ServerData()->clientSupport7090() ||
-        cwmWorldState->ServerData()->clientSupport70160() ||
-        cwmWorldState->ServerData()->clientSupport70240() ||
-        cwmWorldState->ServerData()->clientSupport70300() ||
-        cwmWorldState->ServerData()->clientSupport70331() ||
-        cwmWorldState->ServerData()->clientSupport704565() ||
-        cwmWorldState->ServerData()->clientSupport70610()) {
+    if (ServerConfig::shared().enableClients.enableClient7000() ||  ServerConfig::shared().enableClients.enableClient7090() || ServerConfig::shared().enableClients.enableClient70160() || ServerConfig::shared().enableClients.enableClient70240() || ServerConfig::shared().enableClients.enableClient70300() || ServerConfig::shared().enableClients.enableClient70331() || ServerConfig::shared().enableClients.enableClient704565() || ServerConfig::shared().enableClients.enableClient70610() ) {
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, should be female flag
@@ -1733,18 +1720,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
     CChar *mChar = target.CurrcharObj();
     if (toCopy.GetSerial() == mChar->GetSerial()) {
         if (target.ReceivedVersion()) {
-            /*if( target.ClientVersionMajor() >= 6 )
-             {
-             // Extended stats not implemented yet
-             extended3 = true;
-             extended4 = true;
-             extended5 = true;
-             extended6 = true;
-             pStream.ReserveSize( 121 );
-             pStream.WriteByte( 2, 121 );
-             Flag( 6 );
-             }*/
-            if (target.ClientVersionMajor() >= 5) {
+            if (target.clientVersion.major >= 5) {
                 extended3 = true;
                 extended4 = true;
                 extended5 = true;
@@ -1752,14 +1728,14 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
                 pStream.WriteByte(2, 91);
                 Flag(5);
             }
-            else if (target.ClientVersionMajor() >= 4) {
+            else if (target.clientVersion.major >= 4) {
                 extended3 = true;
                 extended4 = true;
                 pStream.ReserveSize(88);
                 pStream.WriteByte(2, 88);
                 Flag(4);
             }
-            else if (target.ClientVersionMajor() >= 3) {
+            else if (target.clientVersion.major >= 3) {
                 extended3 = true;
                 pStream.ReserveSize(70);
                 pStream.WriteByte(2, 70);
@@ -1780,7 +1756,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
              pStream.WriteByte( 2, 121 );
              Flag( 6 );
              }*/
-            if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_ML)) {
+            if (ServerConfig::shared().clientFeature.test(ClientFeature::ML)) {
                 extended3 = true;
                 extended4 = true;
                 extended5 = true;
@@ -1788,14 +1764,14 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
                 pStream.WriteByte(2, 91);
                 Flag(5);
             }
-            else if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_AOS)) {
+            else if (ServerConfig::shared().clientFeature.test(ClientFeature::AOS)) {
                 extended3 = true;
                 extended4 = true;
                 pStream.ReserveSize(88);
                 pStream.WriteByte(2, 88);
                 Flag(4);
             }
-            else if (cwmWorldState->ServerData()->getClientFeature(CF_BIT_UOR)) {
+            else if (ServerConfig::shared().clientFeature.test(ClientFeature::UOR)) {
                 extended3 = true;
                 pStream.ReserveSize(70);
                 pStream.WriteByte(2, 70);
@@ -2253,7 +2229,7 @@ bool CPPauseResume::ClientCanReceive(CSocket *mSock) {
         case ClientType::SA3D:
         case ClientType::HS2D:
         case ClientType::HS3D:
-            if (mSock->ClientVersionMajor() >= 4) {
+            if (mSock->clientVersion.major >= 4) {
                 return false;
             }
             break;
@@ -2515,13 +2491,13 @@ CPEnableClientFeatures::CPEnableClientFeatures(CSocket *mSock) {
         // Clients 6.0.14.1 and lower
         pStream.ReserveSize(3);
         pStream.WriteByte(0, 0xB9);
-        pStream.WriteShort(1, cwmWorldState->ServerData()->getClientFeatures());
+        pStream.WriteShort(1, ServerConfig::shared().clientFeature.value());
     }
     if (mSock->clientType() >= ClientType::SA2D) {
         // Clients 6.0.14.2 and higher
         pStream.ReserveSize(5);
         pStream.WriteByte(0, 0xB9);
-        pStream.WriteLong(1, cwmWorldState->ServerData()->getClientFeatures());
+        pStream.WriteLong(1, ServerConfig::shared().clientFeature.value());
     }
 }
 
@@ -3688,7 +3664,7 @@ CPItemsInContainer::CPItemsInContainer(CSocket *mSock, CItem *container, std::ui
                                        bool isPVendor) {
     if (ValidateObject(container)) {
         InternalReset();
-        if (mSock->ClientVerShort() >= CVS_6017) {
+        if (mSock->clientVersion >= ClientVersion::V6017) {
             UOKRFlag(true);
         }
         Type(contType);
@@ -3750,7 +3726,7 @@ void CPItemsInContainer::AddItem(CItem *toAdd, std::uint16_t itemNum, CSocket *m
     toAdd->SetDecayTime(0);
     
     // Only send tooltip if server feature for tooltips is enabled
-    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_AOS)) {
+    if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
         CPToolTip pSend(toAdd->GetSerial(), mSock, !isVendor, isPlayerVendor);
         mSock->Send(&pSend);
     }
@@ -4173,30 +4149,24 @@ CPCharAndStartLoc::CPCharAndStartLoc(AccountEntry &actbBlock, [[maybe_unused]] s
     }
     
     std::uint8_t charSlots = 5;
-    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_SIXCHARS) &&
-        cwmWorldState->ServerData()->getClientFeature(CF_BIT_SIXCHARS) &&
-        mSock->ClientVersionMajor() >= 4) {
+    if (ServerConfig::shared().serverFeature.test(ServerFeature::SIXCHARS) && ServerConfig::shared().clientFeature.test(ClientFeature::SIXCHARS) && mSock->clientVersion.major >= 4) {
         charSlots = 6;
     }
-    if (cwmWorldState->ServerData()->getServerFeature(SF_BIT_SEVENCHARS) &&
-        cwmWorldState->ServerData()->getClientFeature(CF_BIT_SEVENCHARS) &&
-        mSock->ClientVersionMajor() >= 7) {
+    if (ServerConfig::shared().serverFeature.test(ServerFeature::SEVENCHARS) && ServerConfig::shared().clientFeature.test(ClientFeature::SEVENCHARS) && mSock->clientVersion.major >= 7) {
         charSlots = 7;
     }
     
-    if (mSock->clientType() >= ClientType::HS2D && mSock->ClientVersionSub() >= 13) {
+    if (mSock->clientType() >= ClientType::HS2D && mSock->clientVersion.sub >= 13) {
         packetSize = static_cast<std::uint16_t>(noLoopBytes + (charSlots * 60) + (numLocations * 89));
         pStream.ReserveSize(packetSize);
         pStream.WriteShort(1, packetSize);
-        pStream.WriteLong(packetSize - 4,
-                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->getServerFeatures()));
+        pStream.WriteLong(packetSize - 4, static_cast<std::uint32_t>(ServerConfig::shared().serverFeature.value()));
     }
     else {
         packetSize = static_cast<std::uint16_t>(noLoopBytes + (charSlots * 60) + (numLocations * 63));
         pStream.ReserveSize(packetSize);
         pStream.WriteShort(1, packetSize);
-        pStream.WriteLong(packetSize - 4,
-                          static_cast<std::uint32_t>(cwmWorldState->ServerData()->getServerFeatures()));
+        pStream.WriteLong(packetSize - 4, static_cast<std::uint32_t>(ServerConfig::shared().serverFeature.value()));
     }
     
     pStream.WriteByte(3, charSlots);
@@ -4650,15 +4620,8 @@ void CPDrawObject::CopyData(CChar &mChar) {
     //	7	0x80 - Hidden
     
     std::bitset<8> flag(0);
-    
-    if (cwmWorldState->ServerData()->clientSupport7000() ||
-        cwmWorldState->ServerData()->clientSupport7090() ||
-        cwmWorldState->ServerData()->clientSupport70160() ||
-        cwmWorldState->ServerData()->clientSupport70240() ||
-        cwmWorldState->ServerData()->clientSupport70300() ||
-        cwmWorldState->ServerData()->clientSupport70331() ||
-        cwmWorldState->ServerData()->clientSupport704565() ||
-        cwmWorldState->ServerData()->clientSupport70610()) {
+    if (ServerConfig::shared().enableClients.enableClient7000() ||  ServerConfig::shared().enableClients.enableClient7090() || ServerConfig::shared().enableClients.enableClient70160() || ServerConfig::shared().enableClients.enableClient70240() || ServerConfig::shared().enableClients.enableClient70300() || ServerConfig::shared().enableClients.enableClient70331() || ServerConfig::shared().enableClients.enableClient704565() || ServerConfig::shared().enableClients.enableClient70610() ) {
+
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, female
@@ -5787,7 +5750,7 @@ bool CPNewSpellBook::ClientCanReceive(CSocket *mSock) {
         case ClientType::DEFAULT:
         case ClientType::T2A:
         case ClientType::UO3D:
-            if (mSock->ClientVersionMajor() < 4) {
+            if (mSock->clientVersion.major < 4) {
                 return false;
             }
             break;
@@ -5844,7 +5807,7 @@ bool CPDisplayDamage::ClientCanReceive(CSocket *mSock) {
         case ClientType::DEFAULT:
         case ClientType::T2A:
         case ClientType::UO3D:
-            if (mSock->ClientVersionMajor() < 4) {
+            if (mSock->clientVersion.major < 4) {
                 return false;
             }
             break;
@@ -5908,7 +5871,7 @@ bool CPQueryToolTip::ClientCanReceive(CSocket *mSock) {
         case ClientType::DEFAULT:
         case ClientType::T2A:
         case ClientType::UO3D:
-            if (mSock->ClientVersionMajor() < 4) {
+            if (mSock->clientVersion.major < 4) {
                 return false;
             }
             break;
@@ -6964,7 +6927,7 @@ void CPSendMsgBoardPosts::InternalReset() {
 void CPSendMsgBoardPosts::CopyData(CSocket *mSock, serial_t mSerial, [[maybe_unused]] std::uint8_t pToggle,
                                    serial_t oSerial) {
     size_t byteOffset = pStream.GetSize();
-    if (mSock->ClientVerShort() >= CVS_6017) {
+    if (mSock->clientVersion >= ClientVersion::V6017) {
         pStream.ReserveSize(byteOffset + 20);
     }
     else {
@@ -6977,7 +6940,7 @@ void CPSendMsgBoardPosts::CopyData(CSocket *mSock, serial_t mSerial, [[maybe_unu
     pStream.WriteShort(byteOffset + 7, 0x0001); // item amount
     pStream.WriteShort(byteOffset + 9, 0x00);   // xLoc
     pStream.WriteShort(byteOffset + 11, 0x00);  // yLoc
-    if (mSock->ClientVerShort() >= CVS_6017) {
+    if (mSock->clientVersion >= ClientVersion::V6017) {
         pStream.WriteByte(byteOffset + 13, 0);       // grid location
         pStream.WriteLong(byteOffset + 14, oSerial); // container serial
         pStream.WriteShort(byteOffset + 18, 0x00);   // item color

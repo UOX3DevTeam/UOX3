@@ -455,7 +455,6 @@ const std::int16_t DEFSOCK_PX = 0;
 const std::int16_t DEFSOCK_PY = 0;
 const std::int8_t DEFSOCK_PZ = 0;
 const unicodetypes_t DEFSOCK_LANG = UT_ENU;
-const ClientVersions DEFSOCK_CLIVERSHORT = CVS_DEFAULT;
 const std::uint32_t DEFSOCK_CLIENTVERSION = CalcSerial(4, 0, 0, 0);
 const std::uint32_t DEFSOCK_BYTESSENT = 0;
 const std::uint32_t DEFSOCK_BYTESSENTWARNINGCOUNT = 0;
@@ -475,9 +474,7 @@ clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPEL
 outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING),
 range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum),
 walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT),
-pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG),
- cliVerShort(DEFSOCK_CLIVERSHORT),
-clientVersion(DEFSOCK_CLIENTVERSION), bytesReceived(DEFSOCK_BYTESRECEIVED),
+pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG), bytesReceived(DEFSOCK_BYTESRECEIVED),
 bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr),
 tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL),
 newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET),
@@ -1348,24 +1345,6 @@ unicodetypes_t CSocket::Language() const { return lang; }
 void CSocket::Language(unicodetypes_t newVal) { lang = newVal; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersion()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets a calculated serial of player's client version
-// o------------------------------------------------------------------------------------------------o
-std::uint32_t CSocket::ClientVersion() const { return clientVersion; }
-void CSocket::ClientVersion(std::uint32_t newVer) { clientVersion = newVer; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersion()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Calculates serial based on major, minor, sub and letter client
-// version parts
-// o------------------------------------------------------------------------------------------------o
-void CSocket::ClientVersion(std::uint8_t major, std::uint8_t minor, std::uint8_t sub, std::uint8_t letter) {
-    ClientVersion(CalcSerial(major, minor, sub, letter));
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::ClientType()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets client type associated with socket
@@ -1374,61 +1353,13 @@ auto CSocket::clientType() const -> const ClientType& { return cliType;}
 auto CSocket::setClientType(ClientType::type_t type) ->void { cliType.type = type ;}
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVerShort()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the short version of client version associated with socket
-// o------------------------------------------------------------------------------------------------o
-ClientVersions CSocket::ClientVerShort() const { return cliVerShort; }
-void CSocket::ClientVerShort(ClientVersions newVer) { cliVerShort = newVer; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersionMajor()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets major part of client version associated with socket
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientVersionMajor() const { return static_cast<std::uint8_t>(clientVersion >> 24); }
-void CSocket::ClientVersionMajor(std::uint8_t value) {
-    ClientVersion(value, ClientVersionMinor(), ClientVersionSub(), ClientVersionLetter());
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersionMinor()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets minor part of client version associated with socket
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientVersionMinor() const { return static_cast<std::uint8_t>(clientVersion >> 16); }
-void CSocket::ClientVersionMinor(std::uint8_t value) {
-    ClientVersion(ClientVersionMajor(), value, ClientVersionSub(), ClientVersionLetter());
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersionSub()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets sub part of client version associated with socket
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientVersionSub() const { return static_cast<std::uint8_t>(clientVersion >> 8); }
-void CSocket::ClientVersionSub(std::uint8_t value) {
-    ClientVersion(ClientVersionMajor(), ClientVersionMinor(), value, ClientVersionLetter());
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CSocket::ClientVersionLetter()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets letter part of client version associated with socket
-// o------------------------------------------------------------------------------------------------o
-std::uint8_t CSocket::ClientVersionLetter() const { return static_cast<std::uint8_t>(clientVersion % 256); }
-void CSocket::ClientVersionLetter(std::uint8_t value) {
-    ClientVersion(ClientVersionMajor(), ClientVersionMinor(), ClientVersionSub(), value);
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::Range()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the range for which the client receives updates on objects
 // o------------------------------------------------------------------------------------------------o
 std::uint8_t CSocket::Range() const { return range; }
 void CSocket::Range(std::uint8_t value) {
-    if (ClientVerShort() < CVS_705527) {
+    if (clientVersion < ClientVersion::V705527) {
         range = std::min(value, static_cast<std::uint8_t>(18)); // 18 is max range for 2D clients prior to 7.0.55.27
     }
     else {
@@ -1960,7 +1891,7 @@ void CSocket::mtarget(std::uint16_t itemId, std::int32_t dictEntry) {
     toSend.MultiModel(itemId);
     toSend.RequestType(1);
     
-    if (clientType() >= ClientType::HS2D && ClientVerShort() >= CVS_7090) {
+    if (clientType() >= ClientType::HS2D && clientVersion >= ClientVersion::V7090) {
         toSend.SetHue(0);
     }
     
@@ -2304,12 +2235,11 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
                 contSend.Model(0x11A); // Square gray mailbox
                 break;
             case PT_UNKNOWN:
-                Console::shared().warning(
-                                          util::format("OpenPack() passed an invalid container type: 0x%X", i->GetSerial()));
+                Console::shared().warning(util::format("OpenPack() passed an invalid container type: 0x%X", i->GetSerial()));
                 return;
         }
     }
-    if (clientType() >= ClientType::HS2D && ClientVerShort() >= CVS_7090) {
+    if (clientType() >= ClientType::HS2D && clientVersion >= ClientVersion::V7090) {
         contSend.ContType(0x7D);
     }
     
