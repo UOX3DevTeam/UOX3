@@ -298,6 +298,9 @@
     <ClCompile Include="..\..\source\type\clientversion.cpp">
       <Filter>Source Files\configuration</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\configuration\serverfeature.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -552,6 +555,9 @@
       <Filter>Source Files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\clientversion.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\serverfeature.hpp">
       <Filter>Source Files\configuration</Filter>
     </ClInclude>
   </ItemGroup>
