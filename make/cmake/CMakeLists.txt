@@ -16,20 +16,24 @@ add_executable(uox3
 # type
     ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.cpp
     ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.hpp
 
 # configuration
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientenable.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientenable.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
 
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  

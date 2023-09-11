@@ -13,6 +13,7 @@
 #include "clientfeature.hpp"
 #include "serverfeature.hpp"
 #include "assistantfeature.hpp"
+#include "startlocconfig.hpp"
 //======================================================================
 class ServerConfig {
    
@@ -35,14 +36,17 @@ public:
     
     auto loadConfig(const std::filesystem::path &config) ->void ;
     auto reloadConfig() ->void;
-    
+    auto reset() ->void ;
+
     auto directoryFor(dirlocation_t location) const -> const std::filesystem::path &;
     auto dumpPaths() const ->void ;
+    
     ClientEnable enableClients ;
     ClientFeature clientFeature ;
     ServerFeature serverFeature ;
     AssistantFeature assistantFeature ;
-    auto reset() ->void ;
+    StartLocConfig startLocation;
+    StartLocConfig youngLocation;
     
 };
 

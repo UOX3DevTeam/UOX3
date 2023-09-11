@@ -4208,34 +4208,30 @@ void CPCharAndStartLoc::NumberOfLocations(std::uint8_t numLocations, [[maybe_unu
     pStream.WriteByte(byteOffset, numLocations);
 }
 
-auto CPCharAndStartLoc::AddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void {
-    if (sLoc) {
+auto CPCharAndStartLoc::AddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void {
         std::uint16_t baseOffset = 0;
         baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
         baseOffset += (locOffset * 63);
         
         pStream.WriteByte(baseOffset, locOffset); // StartLocation #
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc->oldTown, 31);
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc->oldDescription, 31);
-    }
+        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 31);
+        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 31);
 }
 
-auto CPCharAndStartLoc::NewAddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void {
-    if (sLoc) {
+auto CPCharAndStartLoc::NewAddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void {
         std::uint16_t baseOffset = 0;
         baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
         baseOffset += (locOffset * 89);
         
         pStream.WriteByte(baseOffset, locOffset); // StartLocation #
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc->newTown, 32);
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc->newDescription, 32);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 65, sLoc->x);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 69, sLoc->y);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 73, sLoc->z);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 77, sLoc->worldNum);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 81, sLoc->clilocDesc);
+        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 32);
+        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 32);
+        pStream.WriteLong(static_cast<size_t>(baseOffset) + 65, sLoc.xloc);
+        pStream.WriteLong(static_cast<size_t>(baseOffset) + 69, sLoc.yloc);
+        pStream.WriteLong(static_cast<size_t>(baseOffset) + 73, sLoc.zloc);
+        pStream.WriteLong(static_cast<size_t>(baseOffset) + 77, sLoc.worldNumber);
+        pStream.WriteLong(static_cast<size_t>(baseOffset) + 81, sLoc.clilocID);
         pStream.WriteLong(static_cast<size_t>(baseOffset) + 85, 0x00);
-    }
 }
 
 CPCharAndStartLoc &CPCharAndStartLoc::operator=(AccountEntry &actbBlock) {

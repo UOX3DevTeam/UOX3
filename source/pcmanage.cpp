@@ -741,19 +741,18 @@ bool CPICreateCharacter::Handle() {
 
             // Fetch player's chosen start location
             size_t serverCount = 0;
-            StartLocationData *toGo = nullptr;
+            auto toGo = StartLocation() ;
             auto useYoungLocations = false;
-            if (cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                tSock->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+            if (cwmWorldState->ServerData()->YoungPlayerSystem() && tSock->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 // Young player! Let's use young player start locations
-                toGo = cwmWorldState->ServerData()->YoungServerLocation(locationNumber);
-                serverCount = cwmWorldState->ServerData()->NumYoungServerLocations();
+                toGo = ServerConfig::shared().youngLocation[locationNumber];
+                serverCount = ServerConfig::shared().youngLocation.size();
                 useYoungLocations = true;
             }
             else {
                 // Use normal player start locations
-                toGo = cwmWorldState->ServerData()->ServerLocation(locationNumber);
-                serverCount = cwmWorldState->ServerData()->NumServerLocations();
+                toGo = ServerConfig::shared().startLocation[locationNumber];
+                serverCount = ServerConfig::shared().startLocation.size();
             }
 
             // Use random start location if enabled in uox.ini
@@ -762,28 +761,23 @@ bool CPICreateCharacter::Handle() {
                     size_t rndStartingLocation = RandomNum(static_cast<size_t>(0), serverCount - 1);
 
                     if (useYoungLocations) {
-                        toGo =
-                            cwmWorldState->ServerData()->YoungServerLocation(rndStartingLocation);
+                        toGo = ServerConfig::shared().youngLocation[rndStartingLocation];
                     }
                     else {
-                        toGo = cwmWorldState->ServerData()->ServerLocation(rndStartingLocation);
+                        toGo = ServerConfig::shared().startLocation[rndStartingLocation];
                     }
                 }
             }
 
-            if (toGo == nullptr) {
+            if (toGo.town.empty()) {
                 // Invalid locationNumber; check if there are ANY start locations loaded
                 if (serverCount == 0) {
                     // No start locations found, use a default hardcoded one
                     if (useYoungLocations) {
-                        Console::shared().error(
-                            "No young starting locations found in ini file; sending new character "
-                            "to Sweet Dreams Inn (1495, 1629, 10).");
+                        Console::shared().error( "No young starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10).");
                     }
                     else {
-                        Console::shared().error(
-                            "No starting locations found in ini file; sending new character to "
-                            "Sweet Dreams Inn (1495, 1629, 10).");
+                        Console::shared().error( "No starting locations found in ini file; sending new character to  Sweet Dreams Inn (1495, 1629, 10).");
                     }
                     std::int16_t startX;
                     std::int16_t startY;
@@ -800,20 +794,17 @@ bool CPICreateCharacter::Handle() {
                 else {
                     // Use first start location, which we know exists
                     if (useYoungLocations) {
-                        toGo = cwmWorldState->ServerData()->YoungServerLocation(0);
+                        
+                        toGo = ServerConfig::shared().youngLocation[0];
                     }
                     else {
-                        toGo = cwmWorldState->ServerData()->ServerLocation(0);
+                        toGo = ServerConfig::shared().startLocation[0];
                     }
-                    mChar->SetLocation(toGo->x, toGo->y, static_cast<std::int8_t>(toGo->z),
-                                       static_cast<std::uint8_t>(toGo->worldNum),
-                                       static_cast<std::uint16_t>(toGo->instanceId));
+                    mChar->SetLocation(toGo.xloc, toGo.yloc, static_cast<std::int8_t>(toGo.zloc), static_cast<std::uint8_t>(toGo.worldNumber),  static_cast<std::uint16_t>(toGo.instanceID));
                 }
             }
             else {
-                mChar->SetLocation(toGo->x, toGo->y, static_cast<std::int8_t>(toGo->z),
-                                   static_cast<std::uint8_t>(toGo->worldNum),
-                                   static_cast<std::uint16_t>(toGo->instanceId));
+                mChar->SetLocation(toGo.xloc, toGo.yloc, static_cast<std::int8_t>(toGo.zloc), static_cast<std::uint8_t>(toGo.worldNumber), static_cast<std::uint16_t>(toGo.instanceID));
             }
             mChar->SetDir(SOUTH);
 

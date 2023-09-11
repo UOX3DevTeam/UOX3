@@ -630,15 +630,14 @@ bool CPISecondLogin::Handle() {
                 ++charCount;
             }
         }
-        CServerData *sd = cwmWorldState->ServerData();
-        size_t serverCount = sd->NumServerLocations();
+        auto serverCount =ServerConfig::shared().startLocation.size();
         CPCharAndStartLoc toSend(actbTemp, charCount, static_cast<std::uint8_t>(serverCount), tSock);
         for (size_t j = 0; j < serverCount; ++j) {
             if (tSock->clientType() >= ClientType::HS2D && tSock->clientVersion.sub >= 13) {
-                toSend.NewAddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
+                toSend.NewAddStartLocation(ServerConfig::shared().startLocation[j], static_cast<std::uint8_t>(j));
             }
             else {
-                toSend.AddStartLocation(sd->ServerLocation(j), static_cast<std::uint8_t>(j));
+                toSend.AddStartLocation(ServerConfig::shared().startLocation[j], static_cast<std::uint8_t>(j));
             }
         }
         tSock->Send(&toSend);

@@ -124,8 +124,7 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"NPCBASEFLEEAT"s, 100},
     {"NPCBASEREATTACKAT"s, 101},
     {"ATTACKSTAMINA"s, 102},
-    {"LOCATION"s, 103},
-    {"STARTGOLD"s, 104},
+     {"STARTGOLD"s, 104},
     {"STARTPRIVS"s, 105},
     {"ESCORTDONEEXPIRE"s, 106},
     {"DARKLEVEL"s, 107},
@@ -317,7 +316,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"APSDELAYSTEP"s, 342},
     {"APSDELAYMAXCAP"s, 343},
     {"YOUNGPLAYERSYSTEM"s, 344},
-    {"YOUNGLOCATION"s, 345},
     {"SECRETSHARDKEY"s, 346}
     
 };
@@ -909,8 +907,6 @@ auto CServerData::ResetDefaults() -> void {
     SystemTimer(tSERVER_NPCCORPSEDECAY, 420);
     SystemTimer(tSERVER_BLOODDECAYCORPSE, 210); // Default to half the decay timer of a npc corpse
     SystemTimer(tSERVER_BLOODDECAY, 3);         // Keep it short and sweet
-    startlocations.clear();
-    youngStartlocations.clear();
     resettingDefaults = false;
 }
 //==================================================================================================
@@ -4048,24 +4044,12 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
-        for (size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr) {
-            ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << ","
-            << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << ","
-            << startlocations[lCtr].y << "," << startlocations[lCtr].z << ","
-            << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceId
-            << "," << startlocations[lCtr].clilocDesc << '\n';
-        }
+        ofsOutput<< ServerConfig::shared().startLocation.describe();
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[young start locations]" << '\n' << "{" << '\n';
-        for (size_t lCtr = 0; lCtr < youngStartlocations.size(); ++lCtr) {
-            ofsOutput << "YOUNGLOCATION=" << youngStartlocations[lCtr].newTown << ","
-            << youngStartlocations[lCtr].newDescription << ","
-            << youngStartlocations[lCtr].x << "," << youngStartlocations[lCtr].y << ","
-            << youngStartlocations[lCtr].z << "," << youngStartlocations[lCtr].worldNum
-            << "," << youngStartlocations[lCtr].instanceId << ","
-            << youngStartlocations[lCtr].clilocDesc << '\n';
-        }
+        ofsOutput<< ServerConfig::shared().youngLocation.describe();
+
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
@@ -4220,8 +4204,6 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
     };
     auto state = search_t(header);
     if (input.is_open()) {
-        startlocations.clear();
-        youngStartlocations.clear();
         char input_buffer[4096];
         while (input.good() && !input.eof()) {
             input.getline(input_buffer, 4095);
@@ -4254,10 +4236,8 @@ auto CServerData::ParseIni(const std::string &filename) -> bool {
                                     }
                                 } catch (const std::exception &e) {
                                     Console::shared().error("Error parsing ini file");
-                                    Console::shared().error(
-                                                            util::format("Entry was: %s = %s", key.c_str(), value.c_str()));
-                                    Console::shared().error(
-                                                            util::format("Exception was: %s", e.what()));
+                                    Console::shared().error(util::format("Entry was: %s = %s", key.c_str(), value.c_str()));
+                                    Console::shared().error(util::format("Exception was: %s", e.what()));
                                     exit(1);
                                 }
                             }
@@ -4577,9 +4557,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 102: // ATTACKSTAMINA
             CombatAttackStamina(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 103: // LOCATION
-            ServerLocation(value);
             break;
         case 104: // STARTGOLD
             ServerStartGold(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
@@ -5162,9 +5139,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 344: // YOUNGPLAYERSYSTEM
             YoungPlayerSystem(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
-        case 345: // YOUNGLOCATION
-            YoungServerLocation(value);
-            break;
         case 346: // SECRETSHARDKEY
             SecretShardKey(value);
             break;
@@ -5255,6 +5229,7 @@ auto CServerData::worldLightDarkLevel(lightlevel_t value) -> void { worldDarknes
 // defaults
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::postLoadDefaults() -> void {
+    /*
     if (startlocations.empty()) {
         ServerLocation("Yew,Center,545,982,0,0,0,1075072");
         ServerLocation("Minoc,Tavern,2477,411,15,0,0,1075073");
@@ -5279,105 +5254,9 @@ auto CServerData::postLoadDefaults() -> void {
         YoungServerLocation("Skara Brae,Docks,639,2236,0,0,0,1075079");
         YoungServerLocation("Vesper,Ironwood Inn,2771,977,0,0,0,1075080");
     }
+     */
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerLocation()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets server start locations
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerLocation(size_t locNum) -> StartLocationData * {
-    StartLocationData *rValue = nullptr;
-    if (locNum < startlocations.size()) {
-        rValue = &startlocations[locNum];
-    }
-    return rValue;
-}
-
-auto CServerData::ServerLocation(std::string toSet) -> void {
-    auto temp = toSet;
-    temp = util::trim(util::strip(temp, "//"));
-    auto csecs = oldstrutil::sections(temp, ",");
-    
-    StartLocationData toAdd;
-    if (csecs.size() >= 7) {
-        toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
-        toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
-        toAdd.newTown = toAdd.oldTown;
-        toAdd.newDescription = toAdd.oldDescription;
-        
-        toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-        toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-        toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
-        toAdd.worldNum =
-        static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
-        if (csecs.size() == 7) {
-            toAdd.clilocDesc =
-            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
-        }
-        else {
-            toAdd.instanceId =
-            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
-            toAdd.clilocDesc =
-            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
-        }
-        startlocations.push_back(toAdd);
-    }
-    else {
-        Console::shared().error("Malformed location entry in ini file");
-    }
-}
-
-auto CServerData::NumServerLocations() const -> size_t { return startlocations.size(); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::YoungServerLocation()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets server start location(s) for Young players
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::YoungServerLocation(size_t locNum) -> StartLocationData * {
-    StartLocationData *rValue = nullptr;
-    if (locNum < youngStartlocations.size()) {
-        rValue = &youngStartlocations[locNum];
-    }
-    return rValue;
-}
-
-auto CServerData::YoungServerLocation(std::string toSet) -> void {
-    auto temp = toSet;
-    temp = util::trim(util::strip(temp, "//"));
-    auto csecs = oldstrutil::sections(temp, ",");
-    
-    StartLocationData toAdd;
-    if (csecs.size() >= 7) {
-        toAdd.oldTown = util::trim(util::strip(csecs[0], "//"));
-        toAdd.oldDescription = util::trim(util::strip(csecs[1], "//"));
-        toAdd.newTown = toAdd.oldTown;
-        toAdd.newDescription = toAdd.oldDescription;
-        
-        toAdd.x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-        toAdd.y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-        toAdd.z = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
-        toAdd.worldNum =
-        static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[5], "//")), nullptr, 0));
-        if (csecs.size() == 7) {
-            toAdd.clilocDesc =
-            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
-        }
-        else {
-            toAdd.instanceId =
-            static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[6], "//")), nullptr, 0));
-            toAdd.clilocDesc =
-            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[7], "//")), nullptr, 0));
-        }
-        youngStartlocations.push_back(toAdd);
-    }
-    else {
-        Console::shared().error("Malformed young start location entry in ini file");
-    }
-}
-
-auto CServerData::NumYoungServerLocations() const -> size_t { return youngStartlocations.size(); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerSecondsPerUOMinute()

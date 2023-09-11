@@ -12,7 +12,9 @@ using namespace std::string_literals ;
 
 //======================================================================
 ServerConfig::ServerConfig(){
-    
+    startLocation = StartLocConfig("LOCATION");
+    youngLocation = StartLocConfig("YOUNGLOCATION");
+
 }
 //======================================================================
 auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &value)->bool {
@@ -23,8 +25,12 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
             if (!clientFeature.setKeyValue(key,value)){
                 if (!serverFeature.setKeyValue(key,value)){
                     if (!assistantFeature.setKeyValue(key,value)){
-                        std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                        rvalue = false ;
+                        if (!startLocation.setKeyValue(key,value)){
+                            if (!youngLocation.setKeyValue(key,value)){
+                                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                                rvalue = false ;
+                            }
+                        }
                     }
                 }
             }

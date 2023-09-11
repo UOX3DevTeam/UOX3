@@ -18,7 +18,7 @@ class CMultiObj;
 class CTownRegion;
 
 // Forward declare
-struct StartLocationData;
+struct StartLocation;
 
 class CPCharLocBody : public CPUOXBuffer {
   protected:
@@ -882,8 +882,8 @@ class CPCharAndStartLoc : public CPUOXBuffer {
     CPCharAndStartLoc(AccountEntry &account, std::uint8_t numCharacters, std::uint8_t numLocations, CSocket *mSock);
     virtual void NumberOfLocations(std::uint8_t numLocations, CSocket *mSock);
     virtual void AddCharacter(CChar *toAdd, std::uint8_t charOffset);
-    virtual auto AddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void;
-    virtual auto NewAddStartLocation(StartLocationData *sLoc, std::uint8_t locOffset) -> void;
+    virtual auto AddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void;
+    virtual auto NewAddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void;
     CPCharAndStartLoc &operator=(AccountEntry &actbBlock);
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };

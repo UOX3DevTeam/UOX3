@@ -64,7 +64,7 @@ enum csd_tid_t {
     tSERVER_LOYALTYRATE,        // Amount of time between each time loyalty decreases for a pet
     tSERVER_COUNT
 };
-
+/*
 //======================================================================================================
 // CServerData
 //======================================================================================================
@@ -88,6 +88,7 @@ struct StartLocationData {
     std::uint16_t instanceId;
     std::uint32_t clilocDesc;
 };
+ */
 // o------------------------------------------------------------------------------------------------o
 //  PhysicalServer
 // o------------------------------------------------------------------------------------------------o
@@ -362,8 +363,6 @@ private:
     std::int16_t combatAttackStamina;     //	Amount of stamina lost when hitting an opponent
     
     // Start & Location Settings
-    std::vector<StartLocationData> startlocations;
-    std::vector<StartLocationData> youngStartlocations;
     std::uint16_t startPrivs; //	Starting privileges of characters
     std::int16_t startGold;  //	Amount of gold created when a PC is made
     
@@ -1085,14 +1084,6 @@ public:
     auto KickOnAssistantSilence() const -> bool;
     
     auto DumpPaths() -> void;
-    
-    auto ServerLocation(std::string toSet) -> void;
-    auto ServerLocation(size_t locNum) -> StartLocationData *;
-    auto NumServerLocations() const -> size_t;
-    
-    auto YoungServerLocation(std::string toSet) -> void;
-    auto YoungServerLocation(size_t locNum) -> StartLocationData *;
-    auto NumYoungServerLocations() const -> size_t;
     
     auto ServerSecondsPerUOMinute() const -> std::uint16_t;
     auto ServerSecondsPerUOMinute(std::uint16_t newVal) -> void;
