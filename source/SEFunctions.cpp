@@ -1914,24 +1914,18 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if (className == "UOXChar")
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ))
 		{
-			mChar = static_cast<CChar *>( myClass.toObject() );
-			if( !ValidateObject( mChar ))
-			{
-				mChar = nullptr;
-			}
+			mChar = nullptr;
 		}
 	}
 	else if( className == "UOXSocket" )
 	{
-		if( myClass.isType( JSOT_OBJECT ))
+		mySocket = static_cast<CSocket *>( myClass.toObject() );
+		if( mySocket != nullptr )
 		{
-			mySocket = static_cast<CSocket *>( myClass.toObject() );
-			if( mySocket != nullptr )
-			{
-				mChar = mySocket->CurrcharObj();
-			}
+			mChar = mySocket->CurrcharObj();
 		}
 	}
 
@@ -1981,27 +1975,19 @@ bool SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI16 scriptNumberToFire = static_cast<UI16>( args.get( 0 ).toInt32());
-	char *eventToFire		= convertToString( cx, args.get( 1 ).toString() );
+	auto eventToFire		= convertToString( cx, args.get( 1 ).toString() );
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToFire );
 
-	if( toExecute == nullptr || eventToFire == nullptr )
+	if( toExecute == nullptr || eventToFire.empty() )
 		return false;
 
 	auto origContext = cx;
 	auto origObject = obj;
 
-	JSBool retVal = toExecute->CallParticularEvent( eventToFire, &argv[2], argc - 2, rval );
+	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval );
 
-	if( retVal )
-	{
-		JS_SetGlobalObject( origContext, origObject );
-		return true;
-	}
-	else
-	{
-		JS_SetGlobalObject( origContext, origObject );
-		return false;
-	}
+	JS_SetGlobalObject( origContext, origObject );
+  return( retVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2021,13 +2007,13 @@ bool SE_DoesEventExist( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	args.rval().setInt32( 1 );
 	UI16 scriptNumberToCheck = static_cast<UI16>( args.get( 0 ).toInt32());
-	char *eventToCheck		= convertToString( cx, args.get( 1 ).toString() );
+	auto eventToCheck		= convertToString( cx, args.get( 1 ).toString() );
 	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
 
-	if( toExecute == nullptr || eventToCheck == nullptr )
+	if( toExecute == nullptr || eventToCheck.empty() )
 		return false;
 
-	bool retVal = toExecute->DoesEventExist( eventToCheck );
+	bool retVal = toExecute->DoesEventExist( eventToCheck.c_str() );
 	if( !retVal )
 	{
 		args.rval().setInt32( 0 );
@@ -2204,7 +2190,7 @@ bool SE_GetTileIdAtMapCoord( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI16 yLoc		= static_cast<UI16>( args.get( 1 ).toInt32());
 	UI08 wrldNumber	= static_cast<UI08>( args.get( 2 ).toInt32());
 	auto mMap		= Map->SeekMap( xLoc, yLoc, wrldNumber );
-	*rval			= INT_TO_JSVAL( mMap.tileId );
+	args.rval().setInt32( mMap.tileId );
 	return true;
 }
 
@@ -2394,8 +2380,8 @@ bool SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= convertToString( cx, args.get( 0 ).toString() );
-	if( trgFunc == nullptr )
+	auto trgFunc			= convertToString( cx, args.get( 0 ).toString() );
+	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaCharacterFunction: Argument 0 not a valid string" );
 		return false;
@@ -2410,7 +2396,7 @@ bool SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	R32 distance = static_cast<R32>( args.get( 2 ).toInt32());
-	if( argc == 4 && argv[3] != JSVAL_NULL )
+	if( argc == 4 && !args.get( 3 ).isNull() )
 	{
 		srcSocketObj = args.get( 3 ).toObjectOrNull();
 		srcSocket = JS::GetMaybePtrFromReservedSlot<CSocket>( srcSocketObj, 0 );
@@ -2443,7 +2429,7 @@ bool SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		std::for_each( charsFound.begin(), charsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CChar *tempChar )
 		{
-			if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ))
+			if( myScript->AreaObjFunc( trgFunc.c_str(), srcObject, tempChar, srcSocket ))
 			{
 				++retCounter;
 			}
@@ -2477,8 +2463,8 @@ bool SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *srcSocketObj	= nullptr;
 	CSocket *srcSocket		= nullptr;
-	char *trgFunc			= convertToString( cx, args.get( 0 ).toString() );
-	if( trgFunc == nullptr )
+	auto trgFunc			= convertToString( cx, args.get( 0 ).toString() );
+	if( trgFunc.empty() )
 	{
 		ScriptError( cx, "AreaItemFunction: Argument 0 not a valid string" );
 		return false;
@@ -2493,7 +2479,7 @@ bool SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	R32 distance = static_cast<R32>( args.get( 2 ).toInt32());
-	if( argc == 4 && argv[3] != JSVAL_NULL )
+	if( argc == 4 && !args.get( 3 ).isNull() )
 	{
 		srcSocketObj = args.get( 3 ).toObjectOrNull();
 		if( srcSocketObj != nullptr )
@@ -2527,7 +2513,7 @@ bool SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 	// Now iterate over all the characters that we found previously, and run the area function for each
 	std::for_each( itemsFound.begin(), itemsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CItem *tempItem )
 	{
-		if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ))
+		if( myScript->AreaObjFunc( trgFunc.c_str(), srcObject, tempItem, srcSocket ))
 		{
 			++retCounter;
 		}
@@ -2811,7 +2797,6 @@ bool SE_GetTileHeight( JSContext* cx, unsigned argc, JS::Value* vp )
 
 bool SE_IterateFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
-  auto args		= JS::CallArgsFromVp(argc, vp);
 	cScript *myScript = static_cast<cScript *>( extraData );
 	return myScript->OnIterate( a, b );
 }
@@ -2848,7 +2833,6 @@ bool SE_IterateOver( JSContext* cx, unsigned argc, JS::Value* vp )
 
 bool SE_IterateSpawnRegionsFunctor( CSpawnRegion *a, UI32 &b, void *extraData )
 {
-  auto args		= JS::CallArgsFromVp(argc, vp);
 	cScript *myScript = static_cast<cScript *>( extraData );
 	return myScript->OnIterateSpawnRegions( a, b );
 }

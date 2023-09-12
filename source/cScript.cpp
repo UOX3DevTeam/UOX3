@@ -407,7 +407,7 @@ bool cScript::OnStop( void )
 //|	Purpose		-	Allows scripters to check if a particular JS event (or function) exists in a
 //|					script before attempting to call it via TriggerEvent
 //o------------------------------------------------------------------------------------------------o
-bool cScript::DoesEventExist( char *eventToFind )
+bool cScript::DoesEventExist( const char *eventToFind )
 {
 	JS::Value Func;
   Func.setNull();
@@ -3272,7 +3272,7 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 //|	Purpose		-	Calls the function represented in funcName for the script
 //|				-	passing in two character parameters
 //o------------------------------------------------------------------------------------------------o
-bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
+bool cScript::AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
 {
 	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == nullptr )
 		return false;

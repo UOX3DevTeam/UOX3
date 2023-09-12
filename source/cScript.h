@@ -180,7 +180,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
-	bool		DoesEventExist( char *eventToFind );
+	bool		DoesEventExist( const char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -263,7 +263,7 @@ public:
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityId );
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
-	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
+	bool		AreaObjFunc( const char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
