@@ -993,7 +993,7 @@ CItem *cItem::CreateItem(CSocket *mSock, CChar *mChar, const std::uint16_t itemI
     }
     
     // Only set item to decayable by default if ini setting is enabled
-    if (cwmWorldState->ServerData()->BaseItemsDecayable()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::BASEITEMSDECAYABLE)) {
         iCreated->SetDecayable(true);
     }
     
@@ -1362,7 +1362,7 @@ CItem *cItem::CreateBaseScriptItem(CItem *mCont, std::string ourItem, const std:
             return nullptr;
         
         // Only set item to decayable by default if ini setting is enabled
-        if (cwmWorldState->ServerData()->ScriptItemsDecayable()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::SCRIPTITEMSDECAYABLE)) {
             iCreated->SetDecayable(true);
         }
         
@@ -1477,7 +1477,7 @@ CItem *cItem::PlaceItem(CSocket *mSock, CChar *mChar, CItem *iCreated, const boo
 //|	Purpose		-	Cause items to decay when left on the ground
 // o------------------------------------------------------------------------------------------------o
 auto decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t nextDecayItemsInHouses) -> bool {
-    if (toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay()) {
+    if (toDecay.GetDecayTime() == 0 || !ServerConfig::shared().enabled(ServerSwitch::ITEMDECAY)) {
         if (toDecay.GetMulti() == INVALIDSERIAL) {
             toDecay.SetDecayTime(nextDecayItems);
         }
@@ -1491,17 +1491,14 @@ auto decayItem(CItem &toDecay, const std::uint32_t nextDecayItems, std::uint32_t
     // Multis
     if (!toDecay.IsFieldSpell() && !isCorpse) // Gives fieldspells a chance to decay in multis
     {
-        if (toDecay.IsLockedDown() || toDecay.IsDoorOpen() ||
-            (ValidateObject(toDecay.GetMultiObj()) &&
-             (toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses()))) {
+        if (toDecay.IsLockedDown() || toDecay.IsDoorOpen() || (ValidateObject(toDecay.GetMultiObj()) && (toDecay.GetMovable() >= 2 || !ServerConfig::shared().enabled(ServerSwitch::INHOUSEDECAY)))) {
             toDecay.SetDecayTime(nextDecayItemsInHouses);
             return false;
         }
     }
     
     if (toDecay.IsContType()) {
-        if (!isCorpse || ValidateObject(toDecay.GetOwnerObj()) ||
-            !cwmWorldState->ServerData()->CorpseLootDecay()) {
+        if (!isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !ServerConfig::shared().enabled(ServerSwitch::CORPSELOOTDECAY)) {
             std::vector<CItem *> corpseItems;
             auto iCont = toDecay.GetContainsList();
             for (const auto &io : iCont->collection()) {

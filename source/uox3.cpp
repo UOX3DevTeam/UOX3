@@ -1001,7 +1001,7 @@ auto MountCreature(CSocket *sockPtr, CChar *s, CChar *x) -> void {
         return;
     
     if (x->GetOwnerObj() == s || Npcs->CheckPetFriend(s, x) || s->IsGM()) {
-        if (!cwmWorldState->ServerData()->CharHideWhileMounted()) {
+        if (!ServerConfig::shared().enabled(ServerSwitch::HIDEWHILEMOUNTED)) {
             s->ExposeToView();
         }
         
@@ -1107,8 +1107,7 @@ auto endMessage([[maybe_unused]] std::int32_t x) -> void {
 //|					murderers
 // o------------------------------------------------------------------------------------------------o
 auto CallGuards(CChar *mChar) -> void {
-    if (ValidateObject(mChar) && mChar->GetRegion()->IsGuarded() &&
-        cwmWorldState->ServerData()->GuardsStatus()) {
+    if (ValidateObject(mChar) && mChar->GetRegion()->IsGuarded() && ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE)) {
         auto attacker = mChar->GetAttacker();
         if (ValidateObject(attacker)) {
             if (!attacker->IsDead() && (attacker->IsCriminal() || attacker->IsMurderer())) {
@@ -1160,7 +1159,7 @@ auto CallGuards(CChar *mChar) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CallGuards(CChar *mChar, CChar *targChar) -> void {
     if (ValidateObject(mChar) && ValidateObject(targChar)) {
-        if (mChar->GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus()) {
+        if (mChar->GetRegion()->IsGuarded() && ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE)) {
             if (!targChar->IsDead() && (targChar->IsCriminal() || targChar->IsMurderer())) {
                 // Can only be called on criminals for the first 10 seconds of receiving the
                 // criminal flag
@@ -1201,7 +1200,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         
         if (mChar.GetRegen(0) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
             if (mChar.GetHP() < maxHP) {
-                if (!cwmWorldState->ServerData()->HungerSystemEnabled() || (mChar.GetHunger() > 0) || (!Races->DoesHunger(mChar.GetRace()) && ((cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE) == 0) || mChar.IsNpc()))) {
+                if (!ServerConfig::shared().enabled(ServerSwitch::HUNGER) || (mChar.GetHunger() > 0) || (!Races->DoesHunger(mChar.GetRace()) && ((cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE) == 0) || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxHP; ++c) {
                         if (mChar.GetHP() <= maxHP && (mChar.GetRegen(0) + (c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN) * 1000)) <= cwmWorldState->GetUICurrentTime()) {
                             if (mChar.GetSkill(HEALING) < 500) {
@@ -1232,7 +1231,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 // Continue with stamina regen if  character is not yet fully parched, or if
                 // character is parched but has less than 25% stamina, or if char belongs to
                 // race that does not thirst
-                if (!cwmWorldState->ServerData()->ThirstSystemEnabled() || (mChar.GetThirst() > 0) || ((mChar.GetThirst() == 0) && (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) || (!Races->DoesThirst(mChar.GetRace()) && (cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE) == 0 || mChar.IsNpc()))) {
+                if (!ServerConfig::shared().enabled(ServerSwitch::THIRST)|| (mChar.GetThirst() > 0) || ((mChar.GetThirst() == 0) && (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) || (!Races->DoesThirst(mChar.GetRace()) && (cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE) == 0 || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxStam; ++c) {
                         if ((mChar.GetRegen(1) + (c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN) * 1000)) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam) {
                             mChar.IncStamina(1);
@@ -1272,7 +1271,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             }
             const R32 MeditationBonus = (.00075f * mChar.GetSkill(MEDITATION)); // Bonus for Meditation
             std::int32_t NextManaRegen = static_cast<std::int32_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN) * (1 - MeditationBonus) * 1000);
-            if (cwmWorldState->ServerData()->ArmorAffectManaRegen()){ // If armor effects mana regeneration...
+            if (ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA)){ // If armor effects mana regeneration...
                 R32 ArmorPenalty = Combat->CalcDef((&mChar), 0, false); // Penalty taken due to high def
                 if (ArmorPenalty > 100){// For def higher then 100, penalty is the same...just in case
                     ArmorPenalty = 100;
@@ -2059,7 +2058,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 tSock->WasIdleWarned(true);
             }
             
-            if (serverData->KickOnAssistantSilence()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::KICKONASSISTANTSILENCE)) {
                 if (!tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<std::uint32_t>(tSock->NegotiateTimeout()) <= GetUICurrentTime()) {
                     const CChar *tChar = tSock->CurrcharObj();
                     if (!ValidateObject(tChar)) {
@@ -2139,7 +2138,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                     wsSocket->WasIdleWarned(
                                             true); // don't give them the message if they only have 60s
                 }
-                if (cwmWorldState->ServerData()->KickOnAssistantSilence()) {
+                if (ServerConfig::shared().enabled(ServerSwitch::KICKONASSISTANTSILENCE)) {
                     if (!wsSocket->NegotiatedWithAssistant() &&
                         static_cast<std::uint32_t>(wsSocket->NegotiateTimeout()) <
                         GetUICurrentTime()) {
@@ -2365,7 +2364,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
         doRestock = true;
     }
     
-    bool allowAwakeNPCs = cwmWorldState->ServerData()->AllowAwakeNPCs();
+    bool allowAwakeNPCs = ServerConfig::shared().enabled(ServerSwitch::AWAKENPC);
     for (auto &toCheck : regionList) {
         auto regChars = toCheck->GetCharList();
         auto collection = regChars->collection();
@@ -2404,7 +2403,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                             charCheck->Teleport();
                             
                             // Announce that player has logged out (if enabled)
-                            if (cwmWorldState->ServerData() ->ServerJoinPartAnnouncementsStatus()) {
+                            if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART)) {
                                 sysBroadcast(oldstrutil::format(1024, Dictionary->GetEntry(752),charCheck->GetName().c_str())); // %s has left the realm.
                             }
                         }
@@ -3695,11 +3694,8 @@ auto UpdateFlag(CChar *mChar) -> void {
         else {
             if (mChar->IsNpc()) {
                 auto doSwitch = true;
-                if (cwmWorldState->creatures[mChar->GetId()].IsAnimal() &&
-                    (mChar->GetNpcAiType() != AI_EVIL &&
-                     mChar->GetNpcAiType() != AI_EVIL_CASTER)) {
-                    if (cwmWorldState->ServerData()->CombatAnimalsGuarded() &&
-                        mChar->GetRegion()->IsGuarded()) {
+                if (cwmWorldState->creatures[mChar->GetId()].IsAnimal() && (mChar->GetNpcAiType() != AI_EVIL && mChar->GetNpcAiType() != AI_EVIL_CASTER)) {
+                    if (ServerConfig::shared().enabled(ServerSwitch::ANIMALSGUARDED) && mChar->GetRegion()->IsGuarded()) {
                         mChar->SetFlagBlue();
                         doSwitch = false;
                     }

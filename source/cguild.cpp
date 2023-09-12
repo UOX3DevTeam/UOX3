@@ -691,7 +691,7 @@ void CGuild::TellMembers(std::int32_t dictEntry, ...) {
             va_list argptr;
             va_start(argptr, dictEntry);
             
-            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
                 std::string tempStr = oldstrutil::format(512, txt, argptr);
                 
                 CPUnicodeMessage unicodeMessage;

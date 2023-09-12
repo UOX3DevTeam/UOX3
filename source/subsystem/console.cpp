@@ -403,7 +403,7 @@ auto Console::print(const std::string &msg) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto Console::log(const std::string &msg, const std::string &filename) -> void {
     if (cwmWorldState) {
-        if (cwmWorldState->ServerData()->ServerConsoleLog()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) {
             std::ofstream toWrite;
             auto realFileName = std::filesystem::path() ;
             realFileName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path(filename);
@@ -429,7 +429,7 @@ auto Console::log(const std::string &msg, const std::string &filename) -> void {
 //| Purpose		-	Log to the console.log file
 // o------------------------------------------------------------------------------------------------o
 auto Console::log(const std::string &msg) -> void {
-    if (cwmWorldState->ServerData()->ServerConsoleLog()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) {
         log(msg, "console.log");
     }
 }
@@ -1296,19 +1296,19 @@ auto Console::displaySettings() -> void {
     (*this) << "Server Settings:" << myendl;
     
     (*this) << "   -Archiving[";
-    if (cwmWorldState->ServerData()->ServerBackupStatus())
+    if (ServerConfig::shared().enabled(ServerSwitch::BACKUP))
         (*this) << "Enabled]. (" << ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).string() << ")" << myendl;
     else
         (*this) << "Disabled]" << myendl;
     
     (*this) << "   -Weapons & Armour Rank System: ";
-    (*this) << activeMap[cwmWorldState->ServerData()->RankSystemStatus()] << myendl;
+    (*this) << activeMap[ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM)] << myendl;
     
     (*this) << "   -Vendors buy by item name: ";
-    (*this) << activeMap[cwmWorldState->ServerData()->SellByNameStatus()] << myendl;
+    (*this) << activeMap[ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME)] << myendl;
     
     (*this) << "   -Adv. Trade System: ";
-    (*this) << activeMap[cwmWorldState->ServerData()->TradeSystemStatus()] << myendl;
+    (*this) << activeMap[ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)] << myendl;
     
     (*this) << "   -Races: " << static_cast<std::uint32_t>(Races->Count()) << myendl;
     (*this) << "   -Guilds: " << static_cast<std::uint32_t>(GuildSys->NumGuilds()) << myendl;

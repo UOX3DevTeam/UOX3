@@ -39,7 +39,7 @@ std::uint32_t CalcValue(CItem *i, std::uint32_t value) {
         value = (value * mod) / 10;
     }
     
-    if (i->GetRank() > 0 && i->GetRank() < 10 && cwmWorldState->ServerData()->RankSystemStatus()) {
+    if (i->GetRank() > 0 && i->GetRank() < 10 && ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM)) {
         value = static_cast<std::uint32_t>(i->GetRank() * value) / 10;
     }
     if (value < 1) {
@@ -49,7 +49,7 @@ std::uint32_t CalcValue(CItem *i, std::uint32_t value) {
     if (!i->GetRndValueRate()) {
         i->SetRndValueRate(0);
     }
-    if (i->GetRndValueRate() != 0 && cwmWorldState->ServerData()->TradeSystemStatus()) {
+    if (i->GetRndValueRate() != 0 && ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
         value += static_cast<std::uint32_t>(value * i->GetRndValueRate()) / 1000;
     }
     if (value < 1) {
@@ -582,7 +582,7 @@ void restockNPC(CChar &i, bool stockAll) {
                     c->IncAmount(stockAmt);
                     c->SetRestock(c->GetRestock() - stockAmt);
                 }
-                if (cwmWorldState->ServerData()->TradeSystemStatus()) {
+                if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
                     CTownRegion *tReg =
                     CalcRegionFromXY(i.GetX(), i.GetY(), i.WorldNumber(), i.GetInstanceId());
                     Items->StoreItemRandomValue(c, tReg);

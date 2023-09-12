@@ -62,42 +62,31 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
                 return false;
             }
         }
-
+        
         // Targets on character's combat ignore list are not valid
         if (mChar.CheckCombatIgnore(cTarget->GetSerial())) {
             return false;
         }
-
+        
         // Invulnerable, dead, hidden or evading targets are not valid
         if (cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE ||
             cTarget->IsEvading()) {
             return false;
         }
-
+        
         if (ObjInRange(&mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange())) {
-            if (LineOfSight(nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(),
-                            (cTarget->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING,
-                            false)) {
+            if (LineOfSight(nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), (cTarget->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 // Young players are not valid targets for NPCs outside of dungeons
-                if (cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() &&
-                    !cTarget->IsNpc() && IsOnline((*cTarget)) &&
-                    cTarget->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
-                    !cTarget->GetRegion()->IsDungeon()) {
-                    if (cTarget->GetSocket() && (cTarget->GetTimer(tCHAR_YOUNGMESSAGE) <=
-                                                     cwmWorldState->GetUICurrentTime() ||
-                                                 cwmWorldState->GetOverflow())) {
-                        cTarget->SetTimer(
-                            tCHAR_YOUNGMESSAGE,
-                            BuildTimeValue(static_cast<R32>(
-                                120))); // Only send them the warning message once couple of minutes
-                        cTarget->GetSocket()->SysMessage(
-                            18734); // A monster looks at you menacingly but does not attack.  You
-                                    // would be under attack now if not for your status as a new
-                                    // citizen of Britannia.
+                if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline((*cTarget)) && cTarget->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !cTarget->GetRegion()->IsDungeon()) {
+                    if (cTarget->GetSocket() && (cTarget->GetTimer(tCHAR_YOUNGMESSAGE) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+                        cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue(static_cast<R32>(120))); // Only send them the warning message once couple of minutes
+                        cTarget->GetSocket()->SysMessage(18734); // A monster looks at you menacingly but does not attack.  You
+                        // would be under attack now if not for your status as a new
+                        // citizen of Britannia.
                     }
                     return false;
                 }
-
+                
                 if (IsOnline((*cTarget)) || cTarget->IsNpc()) {
                     return true;
                 }
@@ -116,10 +105,10 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
 bool CheckForValidOwner(CChar &mChar, CChar *cTarget) {
     if (ValidateObject(mChar.GetOwnerObj()) && mChar.GetOwnerObj() == cTarget)
         return true;
-
+    
     if (ValidateObject(cTarget->GetOwnerObj()) && cTarget->GetOwnerObj() == &mChar)
         return true;
-
+    
     return false;
 }
 
@@ -132,11 +121,11 @@ bool CheckForValidOwner(CChar &mChar, CChar *cTarget) {
 void HandleGuardAI(CChar &mChar) {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
         for (const auto &tempChar : regChars->collection()) {
             if (IsValidAttackTarget(mChar, tempChar)) {
@@ -159,14 +148,14 @@ void HandleGuardAI(CChar &mChar) {
 void HandleFighterAI(CChar &mChar) {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
         // Chance to reverse list of chars
         if (RandomNum(0, 1)) {
@@ -234,44 +223,40 @@ void HandleHealerAI(CChar &mChar) {
                 }
                 else if (realChar->IsCriminal()) {
                     mChar.TextMessage(
-                        nullptr, 770, TALK,
-                        true); // I will nay give life to thee for thou art a criminal!
+                                      nullptr, 770, TALK,
+                                      true); // I will nay give life to thee for thou art a criminal!
                 }
                 else if (realChar->IsInnocent()) {
-                    if (mChar.GetBodyType() == BT_GARGOYLE ||
-                        cwmWorldState->ServerData()->ForceNewAnimationPacket()) {
+                    if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
                         Effects->PlayNewCharacterAnimation(
-                            &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                                                           &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
                         std::uint16_t castAnim = static_cast<std::uint16_t>(
-                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
+                                                                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
                         std::uint8_t castAnimLength =
-                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
-
+                        cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+                        
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
                         Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04),
                                                         0,
                                                         (castAnimLength != 0 ? castAnimLength : 4));
                     }
-
+                    
                     NpcResurrectTarget(realChar);
                     Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
                     mChar.TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false);
                 }
             }
         }
-        else if (realChar->GetHP() < realChar->GetMaxHP() &&
-                 cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                 realChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+        else if (realChar->GetHP() < realChar->GetMaxHP() && ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) &&  realChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             // Heal young players every X minutes
-            if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= cwmWorldState->GetUICurrentTime() ||
-                cwmWorldState->GetOverflow()) {
+            if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
                 mChar.RemoveFromCombatIgnore(realChar->GetSerial());
                 realChar->SetTimer(tCHAR_YOUNGHEAL,
                                    BuildTimeValue(static_cast<R32>(
-                                       300))); // Only heal young player max once every 5 minutes
+                                                                   300))); // Only heal young player max once every 5 minutes
                 mChar.TextMessage(nullptr, 18731, TALK,
                                   false); // You look like you need some healing my child.
                 Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
@@ -281,10 +266,10 @@ void HandleHealerAI(CChar &mChar) {
                 // Ignore players on the healer's "combat" ignore list
                 if (mChar.CheckCombatIgnore(realChar->GetSerial()))
                     continue;
-
+                
                 mChar.AddToCombatIgnore(realChar->GetSerial(),
                                         false); // Use combat ignore to ignore the injured player
-                                                // for a short while to avoid spamming message
+                // for a short while to avoid spamming message
                 mChar.TextMessage(nullptr, 18732, TALK,
                                   false); // I can do no more for you at this time.
             }
@@ -302,38 +287,29 @@ void HandleEvilHealerAI(CChar &mChar) {
     for (auto &mSock : FindNearbyPlayers(&mChar, DIST_NEARBY)) {
         CChar *realChar = mSock->CurrcharObj();
         CMultiObj *multiObj = realChar->GetMultiObj();
-        if (realChar->IsDead() &&
-            (!ValidateObject(multiObj) || multiObj->GetOwner() == realChar->GetSerial())) {
-            if (LineOfSight(mSock, realChar, mChar.GetX(), mChar.GetY(), (mChar.GetZ() + 15),
-                            WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
+        if (realChar->IsDead() && (!ValidateObject(multiObj) || multiObj->GetOwner() == realChar->GetSerial())) {
+            if (LineOfSight(mSock, realChar, mChar.GetX(), mChar.GetY(), (mChar.GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 if (realChar->IsMurderer()) {
-                    if (mChar.GetBodyType() == BT_GARGOYLE ||
-                        cwmWorldState->ServerData()->ForceNewAnimationPacket()) {
-                        Effects->PlayNewCharacterAnimation(
-                            &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                    if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
+                        Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        std::uint16_t castAnim = static_cast<std::uint16_t>(
-                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        std::uint8_t castAnimLength =
-                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
-
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
+                        std::uint8_t castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+                        
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
-                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04),
-                                                        0,
-                                                        (castAnimLength != 0 ? castAnimLength : 4));
+                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                     }
-
+                    
                     NpcResurrectTarget(realChar);
                     Effects->PlayStaticAnimation(realChar, 0x3709, 0x09, 0x19); // Flamestrike
-                                                                                // effect
+                    // effect
                     mChar.TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false);
                 }
                 else {
                     mChar.TextMessage(
-                        nullptr, 329, TALK,
-                        true); // I despise all things good. I shall not give thee another chance!
+                                      nullptr, 329, TALK, true); // I despise all things good. I shall not give thee another chance!
                 }
             }
         }
@@ -349,16 +325,16 @@ void HandleEvilHealerAI(CChar &mChar) {
 auto HandleEvilAI(CChar &mChar) -> void {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
-
+        
         // Chance to reverse list of chars
         if (RandomNum(0, 1)) {
             regChars->Reverse();
@@ -372,7 +348,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                     auto toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
-
+                    
                     std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
@@ -386,13 +362,13 @@ auto HandleEvilAI(CChar &mChar) -> void {
                         }
                     }
                 }
-
+                
                 if (invalidTarget)
                     continue;
-
+                
                 if (tempChar->GetNpcAiType() != AI_HEALER_G) {
                     if (cwmWorldState->creatures[tempChar->GetId()].IsAnimal()) {
-                        if (!cwmWorldState->ServerData()->CombatMonstersVsAnimals()) {
+                        if (!ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS)) {
                             continue;
                         }
                         else if (cwmWorldState->ServerData()->CombatAnimalsAttackChance() <
@@ -410,7 +386,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                                    tempChar->GetNpcAiType() == AI_EVIL_CASTER) &&
                                   raceComp > RACE_ENEMY)) {
                                 if (RandomNum(1, 100) < 85) { // 85% chance to attack current
-                                                              // target, 15% chance to pick another
+                                    // target, 15% chance to pick another
                                     Combat->AttackTarget(&mChar, tempChar);
                                     return;
                                 }
@@ -432,16 +408,16 @@ auto HandleEvilAI(CChar &mChar) -> void {
 auto HandleChaoticAI(CChar &mChar) -> void {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
-
+        
         // Chance to reverse list of chars
         if (RandomNum(0, 1)) {
             regChars->Reverse();
@@ -455,7 +431,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
-
+                    
                     std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
@@ -491,18 +467,18 @@ auto HandleChaoticAI(CChar &mChar) -> void {
 auto HandleAnimalAI(CChar &mChar) -> void {
     if (mChar.IsAtWar() && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     const std::int8_t hunger = mChar.GetHunger();
     if (hunger > 3)
         return;
-
+    
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
         for (const auto &tempChar : regChars->collection()) {
             if (IsValidAttackTarget(mChar, tempChar)) {
@@ -513,7 +489,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
-
+                    
                     std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
@@ -529,7 +505,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                 }
                 if (invalidTarget)
                     continue;
-
+                
                 auto raceComp = Races->Compare(tempChar, &mChar);
                 if (raceComp <= RACE_ENEMY ||
                     (cwmWorldState->creatures[tempChar->GetId()].IsAnimal() &&
@@ -556,14 +532,14 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
     // Do nothing if NPC is already running scared and has a valid target
     if (mChar.GetNpcWander() == WT_SCARED && ValidateObject(mChar.GetTarg()))
         return;
-
+    
     // Fetch scriptTriggers attached to mChar
     std::vector<std::uint16_t> scriptTriggers = mChar.GetScriptTriggers();
-
+    
     for (auto &MapArea : MapRegion->PopulateList(&mChar)) {
         if (MapArea == nullptr)
             continue;
-
+        
         auto regChars = MapArea->GetCharList();
         for (const auto &tempChar : regChars->collection()) {
             if (IsValidAttackTarget(mChar, tempChar)) {
@@ -574,7 +550,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                     cScript *toExecute = JSMapping->GetScript(scriptTrig);
                     if (toExecute == nullptr)
                         continue;
-
+                    
                     std::int8_t retVal = toExecute->OnAICombatTarget(&mChar, tempChar);
                     if (retVal != -1) {
                         if (retVal == 0) {
@@ -595,7 +571,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                 }
                 if (invalidTarget)
                     continue;
-
+                
                 if (!tempChar->IsNpc() || (ValidateObject(tempChar->GetOwnerObj()) &&
                                            !tempChar->GetOwnerObj()->IsNpc())) {
                     if (ObjInRange(&mChar, tempChar, DIST_INRANGE)) {
@@ -621,56 +597,54 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
 void checkArtificialIntelligence(CChar &mChar) {
     CChar *realChar = nullptr;
     switch (mChar.GetNpcAiType()) {
-    case AI_NONE:         // No special AI, default NPC behavior
-    case AI_DUMMY:        // Passive AI - doesn't attack nor fight back
-    case AI_BANKER:       // Banker
-    case AI_STABLEMASTER: // Stablemaster
-    case AI_PLAYERVENDOR: // Player Vendors.
-        break;            // No AI for these special NPC's.
-    case AI_HEALER_G:
-        HandleHealerAI(mChar);
-        break; // Good Healers
-    case AI_EVIL_CASTER:
-        [[fallthrough]]; // Evil Caster NPCs, use same AI as AI_EVIL
-    case AI_EVIL:
-        HandleEvilAI(mChar);
-        break; // Evil NPC's
-    case AI_GUARD:
-        HandleGuardAI(mChar);
-        break; // Guard
-    case AI_CASTER:
-        [[fallthrough]]; // Caster - same as AI_FIGHTER, but keep their distance
-    case AI_FIGHTER:
-        HandleFighterAI(mChar);
-        break; // Fighter - same as guard, without teleporting & yelling "HALT!"
-    case AI_ANIMAL:
-        HandleAnimalAI(mChar);
-        break; // Hungry animals
-    case AI_ANIMAL_SCARED:
-        HandleAnimalScaredAI(mChar);
-        break; // Scared animals, try to stay away from humans
-    case AI_CHAOTIC:
-        HandleChaoticAI(mChar);
-        break; // Energy Vortex / Blade Spirit
-    case AI_HEALER_E:
-        HandleEvilHealerAI(mChar);
-        break;         // Evil Healers
-    case AI_PET_GUARD: // Pet Guarding AI
-        realChar = mChar.GetOwnerObj();
-        if (!ValidateObject(realChar)) {
-            mChar.SetNPCAiType(AI_NONE);
+        case AI_NONE:         // No special AI, default NPC behavior
+        case AI_DUMMY:        // Passive AI - doesn't attack nor fight back
+        case AI_BANKER:       // Banker
+        case AI_STABLEMASTER: // Stablemaster
+        case AI_PLAYERVENDOR: // Player Vendors.
+            break;            // No AI for these special NPC's.
+        case AI_HEALER_G:
+            HandleHealerAI(mChar);
+            break; // Good Healers
+        case AI_EVIL_CASTER:
+            [[fallthrough]]; // Evil Caster NPCs, use same AI as AI_EVIL
+        case AI_EVIL:
+            HandleEvilAI(mChar);
+            break; // Evil NPC's
+        case AI_GUARD:
+            HandleGuardAI(mChar);
+            break; // Guard
+        case AI_CASTER:
+            [[fallthrough]]; // Caster - same as AI_FIGHTER, but keep their distance
+        case AI_FIGHTER:
+            HandleFighterAI(mChar);
+            break; // Fighter - same as guard, without teleporting & yelling "HALT!"
+        case AI_ANIMAL:
+            HandleAnimalAI(mChar);
+            break; // Hungry animals
+        case AI_ANIMAL_SCARED:
+            HandleAnimalScaredAI(mChar);
+            break; // Scared animals, try to stay away from humans
+        case AI_CHAOTIC:
+            HandleChaoticAI(mChar);
+            break; // Energy Vortex / Blade Spirit
+        case AI_HEALER_E:
+            HandleEvilHealerAI(mChar);
+            break;         // Evil Healers
+        case AI_PET_GUARD: // Pet Guarding AI
+            realChar = mChar.GetOwnerObj();
+            if (!ValidateObject(realChar)) {
+                mChar.SetNPCAiType(AI_NONE);
+                return;
+            }
+            if (ValidateObject(realChar->GetTarg())) {
+                Combat->AttackTarget(&mChar, realChar->GetTarg());
+            }
+            break;
+        default: {
+            std::string mCharName = GetNpcDictName(&mChar, nullptr, NRS_SYSTEM);
+            Console::shared().error(util::format(" checkArtificialIntelligence() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNpcAiType())); // Morrolan
             return;
         }
-        if (ValidateObject(realChar->GetTarg())) {
-            Combat->AttackTarget(&mChar, realChar->GetTarg());
-        }
-        break;
-    default: {
-        std::string mCharName = GetNpcDictName(&mChar, nullptr, NRS_SYSTEM);
-        Console::shared().error(util::format(" checkArtificialIntelligence() Error npc %s(0x%X) has invalid AI type %i",
-                                             mCharName.c_str(), mChar.GetSerial(),
-                                             mChar.GetNpcAiType())); // Morrolan
-        return;
-    }
     }
 }

@@ -51,34 +51,34 @@ void ModelBoat(CSocket *s, CBoatObj *i);
 void Bounce(CSocket *bouncer, CItem *bouncing, std::uint8_t mode = 5) {
     if (bouncer == nullptr || !ValidateObject(bouncing))
         return;
-
+    
     CPBounce bounce(mode);
     pickuplocations_t from = bouncer->PickupSpot();
     auto spot = bouncer->PickupSerial();
     switch (from) {
-    default:
-    case PL_NOWHERE:
-        break;
-    case PL_GROUND: {
-        std::int16_t x = bouncer->PickupX();
-        std::int16_t y = bouncer->PickupY();
-        std::int8_t z = bouncer->PickupZ();
-        bouncing->SetLocation(x, y, z);
-
-        // If item bounces out of range, bounce it to character's feet instead
-        if (!ObjInRange(bouncer, bouncing, DIST_INRANGE)) {
-            x = bouncer->CurrcharObj()->GetX();
-            y = bouncer->CurrcharObj()->GetY();
-            z = bouncer->CurrcharObj()->GetZ();
+        default:
+        case PL_NOWHERE:
+            break;
+        case PL_GROUND: {
+            std::int16_t x = bouncer->PickupX();
+            std::int16_t y = bouncer->PickupY();
+            std::int8_t z = bouncer->PickupZ();
             bouncing->SetLocation(x, y, z);
+            
+            // If item bounces out of range, bounce it to character's feet instead
+            if (!ObjInRange(bouncer, bouncing, DIST_INRANGE)) {
+                x = bouncer->CurrcharObj()->GetX();
+                y = bouncer->CurrcharObj()->GetY();
+                z = bouncer->CurrcharObj()->GetZ();
+                bouncing->SetLocation(x, y, z);
+            }
+            break;
         }
-        break;
-    }
-    case PL_OWNPACK:
-    case PL_OTHERPACK:
-    case PL_PAPERDOLL:
-        bouncing->SetContSerial(spot);
-        break;
+        case PL_OWNPACK:
+        case PL_OTHERPACK:
+        case PL_PAPERDOLL:
+            bouncing->SetContSerial(spot);
+            break;
     }
     bouncing->SetHeldOnCursor(false);
     bouncing->Dirty(UT_UPDATE);
@@ -96,7 +96,7 @@ void Bounce(CSocket *bouncer, CItem *bouncing, std::uint8_t mode = 5) {
 void PickupBounce(CSocket *bouncer, std::uint8_t mode = 0) {
     if (bouncer == nullptr)
         return;
-
+    
     CPBounce bounce(mode);
     bouncer->Send(&bounce);
     bouncer->PickupSpot(PL_NOWHERE);
@@ -150,7 +150,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
     }
     if (!ValidateObject(iToStack) || !ValidateObject(iPack))
         return nullptr;
-
+    
     iToStack->SetCont(iPack);
     if (iToStack->IsPileable()) {
         if (mSock != nullptr &&
@@ -166,7 +166,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
         const std::uint32_t itMoreZ = iToStack->GetTempVar(CITV_MOREZ);
         const std::uint32_t itBuyValue = iToStack->GetBuyValue();
         const std::uint32_t itSellValue = iToStack->GetSellValue();
-
+        
         auto ipCont = iPack->GetContainsList();
         for (const auto &stack : ipCont->collection()) {
             if (ValidateObject(stack)) {
@@ -180,7 +180,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
                     // Autostack
                     if (DoStacking(mSock, mChar, iToStack, stack) ==
                         stack) // compare to stack, if DoStacking returned the stack, then the raw
-                               // object was deleted
+                        // object was deleted
                     {
                         return stack; // return the stack
                     }
@@ -200,7 +200,7 @@ auto AutoStack(CSocket *mSock, CItem *iToStack, CItem *iPack) -> CItem * {
 }
 
 auto FindNearbyChars(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId, std::uint16_t distance)
-    -> std::vector<CChar *>;
+-> std::vector<CChar *>;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CPIGetItem::Handle()
 // o------------------------------------------------------------------------------------------------o
@@ -211,13 +211,12 @@ bool CPIGetItem::Handle() {
     serial_t serial = tSock->GetDWord(1);
     if (serial == INVALIDSERIAL)
         return true;
-
+    
     // Break their meditation/concentration
     ourChar->BreakConcentration(tSock);
-
+    
     // In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
-    if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) &&
-        cwmWorldState->ServerData()->ItemsInterruptCasting()) {
+    if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) && ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING)) {
         tSock->SendTargetCursor(0, 0x00000000, Dictionary->GetEntry(2862, tSock->Language()),
                                 3); // Your hands must be free to cast spells or meditate.
         ourChar->StopSpell();
@@ -225,13 +224,13 @@ bool CPIGetItem::Handle() {
             ourChar->SetFrozen(false);
         }
     }
-
+    
     CItem *i = CalcItemObjFromSer(serial);
     if (!ValidateObject(i))
         return true;
-
+    
     CPBounce bounce(0);
-
+    
     auto oType = CBaseObject::OT_CBO;
     CBaseObject *iOwner = nullptr;
     CItem *x = i;
@@ -273,7 +272,7 @@ bool CPIGetItem::Handle() {
                 }
                 else {
                     tSock->SysMessage(
-                        9065); // That item does not belong to you. You'll have to steal it.
+                                      9065); // That item does not belong to you. You'll have to steal it.
                 }
                 Bounce(tSock, i);
                 return true;
@@ -316,14 +315,14 @@ bool CPIGetItem::Handle() {
             if (!ObjInRange(ourChar, x, DIST_NEARBY)) {
                 Bounce(tSock, i);
                 tSock->SysMessage(393); // That is too far away.
-
+                
                 // Resend items in container after bounce, or the bounced item will vanish from
                 // player's screen
                 CPItemsInContainer itemsIn(tSock, static_cast<CItem *>(iCont), 0x01);
                 tSock->Send(&itemsIn);
                 return true;
             }
-
+            
             if (x->IsCorpse()) {
                 CChar *corpseTargChar = x->GetOwnerObj();
                 if (ValidateObject(corpseTargChar)) {
@@ -353,13 +352,13 @@ bool CPIGetItem::Handle() {
             return true;
         }
     }
-
+    
     if (i->IsCorpse() || !CheckItemRange(ourChar, x)) {
         tSock->SysMessage(9064); // You cannot pick that up.
         Bounce(tSock, i);
         return true;
     }
-
+    
     if (x->GetMultiObj() != nullptr) {
         if ((tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) &&
             (x->GetMultiObj() != ourChar->GetMultiObj() || x->IsLockedDown())) {
@@ -369,7 +368,7 @@ bool CPIGetItem::Handle() {
         }
         i->SetMulti(INVALIDSERIAL);
     }
-
+    
     if (i->IsDecayable()) {
         i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
     }
@@ -387,10 +386,10 @@ bool CPIGetItem::Handle() {
                     if (ValidateObject(nearbyCharOwner)) {
                         // Turn the player who picked up the guarded item criminal
                         MakeCriminal(ourChar);
-
+                        
                         // Have pet/follower attack the player who picked up the item
                         Combat->PetGuardAttack(ourChar, nearbyCharOwner, i, nearbyChar);
-
+                        
                         // Stop guarding item, it is now in someone else's possession
                         nearbyChar->SetGuarding(nullptr);
                         i->SetGuarded(false);
@@ -399,7 +398,7 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-
+    
     CTile &tile = Map->SeekTile(i->GetId());
     if (!ourChar->AllMove() && (i->GetMovable() == 2 || i->IsLockedDown() ||
                                 (tile.Weight() == 255 && i->GetMovable() != 1))) {
@@ -407,24 +406,24 @@ bool CPIGetItem::Handle() {
             tSock->SysMessage(9064); // You cannot pick that up.
             if (ourChar->GetCommandLevel() >= 2) {
                 tSock->SysMessage(9099); // Tip: Try 'ALLMOVE ON command or modify item's movable
-                                         // property with 'TWEAK command!
+                // property with 'TWEAK command!
             }
             Bounce(tSock, i);
             return true;
         }
         else {
             tSock->SysMessage(9098); // Item immovable to normal players, but can be dragged out of
-                                     // backpack by GM characters.
+            // backpack by GM characters.
         }
     }
-
+    
     // Trigger pickup event for item being picked up
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
-
+            
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
             // 1 == script returned true or 1
@@ -434,7 +433,7 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-
+    
     // Trigger pickup event for character picking up item
     scriptTriggers.clear();
     scriptTriggers = ourChar->GetScriptTriggers();
@@ -442,7 +441,7 @@ bool CPIGetItem::Handle() {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
-
+            
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
             // 1 == script returned true or 1
@@ -452,7 +451,7 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-
+    
     // Trigger pickup event for potential container item is being picked up from
     if (ValidateObject(iCont) && iCont != nullptr) {
         // Trigger pickup event for character picking up item
@@ -462,7 +461,7 @@ bool CPIGetItem::Handle() {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
             if (toExecute != nullptr) {
                 std::int8_t retStatus = toExecute->OnPickup(i, ourChar, iCont);
-
+                
                 // -1 == script doesn't exist, or returned -1
                 // 0 == script returned false, 0, or nothing - don't execute hard code
                 // 1 == script returned true or 1
@@ -473,13 +472,13 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-
+    
     if (i->GetAmount() > 1 && i->GetObjType() != CBaseObject::OT_SPAWNER) {
         std::uint16_t amount = tSock->GetWord(5);
         if (amount > i->GetAmount()) {
             amount = i->GetAmount();
         }
-
+        
         if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
             if (!Weight->CheckCharWeight(nullptr, ourChar, i, amount)) {
                 tSock->SysMessage(1743); // That person can not possibly hold more weight
@@ -487,13 +486,13 @@ bool CPIGetItem::Handle() {
                 return true;
             }
         }
-
+        
         if (amount < i->GetAmount()) {
             CItem *c = i->Dupe();
             if (c != nullptr) {
                 c->IncAmount(-amount);
                 c->SetCont(i->GetCont());
-
+                
                 c->SetLocation(c->GetX(), c->GetY(), c->GetZ(), 0, c->WorldNumber(),
                                c->GetInstanceId());
             }
@@ -506,7 +505,7 @@ bool CPIGetItem::Handle() {
         }
     }
     Effects->PlaySound(tSock, 0x0057, true);
-
+    
     if (i->IsCorpse()) {
         // Store temp tag on corpse with serial of player who looted the corpse last
         TagMap tagObject;
@@ -516,26 +515,26 @@ bool CPIGetItem::Handle() {
         tagObject.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
         i->SetTempTag("lootedBy", tagObject);
     }
-
+    
     if (iCont == nullptr) {
         // Remove item from mapregion it was in before being picked up
         MapRegion->RemoveItem(i);
-
+        
         // Add item to mapregion of character who picked up item instead
         MapRegion->AddItem(i);
     }
     i->RemoveFromSight();
-
+    
     tSock->SetCursorItem(i);
     i->SetHeldOnCursor(true);
-
+    
     // Update region of item to match that of the character holding it
     i->SetRegion(ourChar->GetRegionNum());
-
+    
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
         Weight->AddItemWeight(ourChar, i);
     }
-
+    
     if (iCont != nullptr) {
         if (ValidateObject(iCont) && iCont->CanBeObjType(CBaseObject::OT_ITEM)) {
             std::vector<std::uint16_t> contScriptTriggers = iCont->GetScriptTriggers();
@@ -548,7 +547,7 @@ bool CPIGetItem::Handle() {
             }
         }
     }
-
+    
     return true;
 }
 
@@ -563,13 +562,13 @@ bool CPIEquipItem::Handle() {
     serial_t iserial = tSock->GetDWord(1);
     if (cserial == INVALIDSERIAL || iserial == INVALIDSERIAL)
         return true;
-
+    
     ourChar->BreakConcentration(tSock);
     CItem *i = CalcItemObjFromSer(iserial);
     CChar *k = CalcCharObjFromSer(cserial);
     if (!ValidateObject(i))
         return true;
-
+    
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_PAPERDOLL) {
         CBaseObject::type_t pOType;
         CBaseObject *pOwner = FindItemOwner(i, pOType);
@@ -598,13 +597,13 @@ bool CPIEquipItem::Handle() {
             return true;
         }
     }
-
+    
     if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
         Weight->SubtractItemWeight(
-            ourChar, i); // SetCont() adds the weight for us (But we also had to add the weight in
-                         // grabItem() since it sets cont as INVALIDSERIAL
+                                   ourChar, i); // SetCont() adds the weight for us (But we also had to add the weight in
+        // grabItem() since it sets cont as INVALIDSERIAL
     }
-
+    
     if (!ourChar->IsGM() &&
         k != ourChar) // players cant equip items on other players or npc`s paperdolls.  // GM PRIVS
     {
@@ -612,7 +611,7 @@ bool CPIEquipItem::Handle() {
         tSock->SysMessage(1186); // You can't put items on other players!
         return true;
     }
-
+    
     if (ourChar->IsDead()) {
         Bounce(tSock, i);
         tSock->SysMessage(1185); // You can't do much in your current state.
@@ -620,7 +619,7 @@ bool CPIEquipItem::Handle() {
     }
     if (!ValidateObject(k))
         return true;
-
+    
     auto raceId = k->GetRace();
     CRace *race = Races->Race(raceId);
     if (!race->CanEquipItem(i->GetId())) {
@@ -628,10 +627,10 @@ bool CPIEquipItem::Handle() {
         Bounce(tSock, i);
         return true;
     }
-
+    
     armorclass_t ac1 = Races->ArmorRestrict(raceId);
     armorclass_t ac2 = i->GetArmourClass();
-
+    
     if (ac1 != 0 &&
         ((ac1 & ac2) == 0)) // bit comparison, if they have ANYTHING in common, they can wear it
     {
@@ -643,8 +642,8 @@ bool CPIEquipItem::Handle() {
         bool canWear = false;
         if (i->GetStrength() > k->GetStrength()) {
             tSock->SysMessage(
-                1188); // You are not strong enough to use that. (NOTE: Should these messages use
-                       // color 0x096a to stand out and replicate hard coded client message?)
+                              1188); // You are not strong enough to use that. (NOTE: Should these messages use
+            // color 0x096a to stand out and replicate hard coded client message?)
         }
         else if (i->GetDexterity() > k->GetDexterity()) {
             tSock->SysMessage(1189); // You are not agile enough to use that.
@@ -657,7 +656,7 @@ bool CPIEquipItem::Handle() {
         }
         if (!canWear) {
             Bounce(tSock, i);
-
+            
             if (tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND) {
                 Effects->ItemSound(tSock, i, true);
             }
@@ -667,7 +666,7 @@ bool CPIEquipItem::Handle() {
             return true;
         }
     }
-
+    
     CTile &tile = Map->SeekTile(i->GetId());
     if (!ourChar->AllMove() &&
         (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != ourChar) ||
@@ -676,11 +675,11 @@ bool CPIEquipItem::Handle() {
         Bounce(tSock, i);
         return true;
     }
-
+    
     if (i->GetLayer() == IL_NONE) {
         i->SetLayer(static_cast<itemlayers_t>(tSock->GetByte(5)));
     }
-
+    
     // 1/13/2003 - Fix for equipping an item to more than one hand, or multiple equipping.
     if (i->GetCont() != k) {
         bool conflictItem = true;
@@ -692,7 +691,7 @@ bool CPIEquipItem::Handle() {
             else if (i->GetLayer() == IL_LEFTHAND) {
                 j = k->GetItemAtLayer(IL_RIGHTHAND);
             }
-
+            
             // GetDir-check is to allow for torches and lanterns,
             // which use left-hand layer but are not 2-handers or shields
             if (ValidateObject(j) && !i->IsShieldType() && i->GetDir() == 0) {
@@ -710,23 +709,22 @@ bool CPIEquipItem::Handle() {
             return true;
         }
     }
-
+    
     if (!Weight->CheckCharWeight(ourChar, k, i)) {
         tSock->SysMessage(1743); // That person can not possibly hold more weight
         Bounce(tSock, i);
         return true;
     }
-
+    
     i->SetCont(k);
     i->SetHeldOnCursor(false);
-
+    
     // Reset PickupSpot after dropping the item
     tSock->PickupSpot(PL_NOWHERE);
     tSock->SetCursorItem(nullptr);
-
+    
     // In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
-    if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) &&
-        cwmWorldState->ServerData()->ItemsInterruptCasting()) {
+    if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) && ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING)) {
         tSock->SendTargetCursor(0, 0x00000000, Dictionary->GetEntry(2862, tSock->Language()),
                                 3); // Your hands must be free to cast spells or meditate.
         ourChar->StopSpell();
@@ -734,10 +732,10 @@ bool CPIEquipItem::Handle() {
             ourChar->SetFrozen(false);
         }
     }
-
+    
     CPDropItemApproved lc;
     tSock->Send(&lc);
-
+    
     auto weaponType = Combat->GetCombatSkill(i);
     if (weaponType == SWORDSMANSHIP || weaponType == MACEFIGHTING || weaponType == FENCING) {
         Effects->PlaySound(tSock, 0x0056, false); // Play unsheath sound if
@@ -800,7 +798,7 @@ bool DropOnPC(CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 auto IsOnFoodList(const std::string &sFoodList, const std::uint16_t sItemId) -> bool {
     auto doesEat = false;
-
+    
     const std::string sect = "FOODLIST "s + sFoodList;
     auto FoodList = FileLookup->FindEntry(sect, items_def);
     if (FoodList) {
@@ -814,7 +812,7 @@ auto IsOnFoodList(const std::string &sFoodList, const std::uint16_t sItemId) -> 
                     doesEat = true;
                 }
             }
-
+            
             if (doesEat) // We found a valid food, let's stop looking
                 break;
         }
@@ -832,35 +830,35 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     const bool isGM = (mChar->GetCommandLevel() >= CL_CNS);
     bool stackDeleted = false;
     bool executeNpc = true;
-
+    
     std::int8_t rVal = 0;
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             rVal =
-                toExecute->OnDropItemOnNpc(mChar, targNPC, i); // returns 1 if we should bounce it
+            toExecute->OnDropItemOnNpc(mChar, targNPC, i); // returns 1 if we should bounce it
             switch (rVal) {
-            case -1: // no such event
-            default:
-                executeNpc = true;
-                break;
-            case 0: // bounce, no code, error message handled in script
-                if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(mChar, i);
-                }
-                Bounce(mSock, i);
-                return false; // stack not deleted, as we're bouncing
-            case 1:           // don't bounce, use code
-                executeNpc = false;
-                break;
-            case 2: // don't bounce, don't use code
-                executeNpc = true;
-                break;
+                case -1: // no such event
+                default:
+                    executeNpc = true;
+                    break;
+                case 0: // bounce, no code, error message handled in script
+                    if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
+                        Weight->SubtractItemWeight(mChar, i);
+                    }
+                    Bounce(mSock, i);
+                    return false; // stack not deleted, as we're bouncing
+                case 1:           // don't bounce, use code
+                    executeNpc = false;
+                    break;
+                case 2: // don't bounce, don't use code
+                    executeNpc = true;
+                    break;
             }
         }
     }
-
+    
     if (executeNpc) {
         std::vector<std::uint16_t> targScriptTriggers = targNPC->GetScriptTriggers();
         for (auto scriptTrig : targScriptTriggers) {
@@ -869,25 +867,25 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                 rVal = toExecute->OnDropItemOnNpc(mChar, targNPC,
                                                   i); // returns 1 if we should bounce it
                 switch (rVal) {
-                case -1: // no such event
-                case 1:  // we don't want to bounce, use code
-                default:
-                    break;
-                case 0: // we want to bounce and return. Handle error message in script
+                    case -1: // no such event
+                    case 1:  // we don't want to bounce, use code
+                    default:
+                        break;
+                    case 0: // we want to bounce and return. Handle error message in script
                         // If we want to bounce, then it's safe to assume the item still exists!
-                    if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                        Weight->SubtractItemWeight(mChar, i);
-                    }
-                    Bounce(mSock, i);
-                    return false; // bouncing, so item exists
-                case 2:           // we don't want to bounce, don't use code
-                    return true; // don't let the code assume the item exists, so we never reference
-                                 // it
+                        if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
+                            Weight->SubtractItemWeight(mChar, i);
+                        }
+                        Bounce(mSock, i);
+                        return false; // bouncing, so item exists
+                    case 2:           // we don't want to bounce, don't use code
+                        return true; // don't let the code assume the item exists, so we never reference
+                        // it
                 }
             }
         }
     }
-
+    
     if (targNPC->IsTamed() && (isGM || targNPC->GetOwnerObj() == mChar ||
                                Npcs->CheckPetFriend(mChar, targNPC))) // do food stuff
     {
@@ -897,7 +895,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                 if (cwmWorldState->creatures[targNPC->GetId()].IsAnimal()) {
                     Effects->PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
                 }
-
+                
                 // Restore loyalty upon feeding pet
                 if (targNPC->GetLoyalty() < targNPC->GetMaxLoyalty()) {
                     if (cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS) {
@@ -912,26 +910,26 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                     }
                     mSock->SysMessage(2416); // Your pet looks happier.
                 }
-
+                
                 std::uint8_t poisonStrength = i->GetPoisoned();
                 if (poisonStrength && targNPC->GetPoisoned() < poisonStrength) {
                     Effects->PlaySound(mSock, 0x0246, true); // poison sound - SpaceDog
-
+                    
                     // Apply poison on target
                     targNPC->SetPoisoned(poisonStrength);
-
+                    
                     // Set time until next time poison "ticks"
                     targNPC->SetTimer(tCHAR_POISONTIME, BuildTimeValue(static_cast<R32>(
-                                                            GetPoisonTickTime(poisonStrength))));
-
+                                                                                        GetPoisonTickTime(poisonStrength))));
+                    
                     // Set time until poison wears off completely
                     targNPC->SetTimer(
-                        tCHAR_POISONWEAROFF,
-                        targNPC->GetTimer(tCHAR_POISONTIME) +
-                            (1000 *
-                             GetPoisonDuration(
-                                 poisonStrength))); // wear off starts after poison takes effect
-
+                                      tCHAR_POISONWEAROFF,
+                                      targNPC->GetTimer(tCHAR_POISONTIME) +
+                                      (1000 *
+                                       GetPoisonDuration(
+                                                         poisonStrength))); // wear off starts after poison takes effect
+                    
                     // Cut loyalty in half if pet was fed poisoned food
                     if (targNPC->GetLoyalty() > 0) {
                         targNPC->SetLoyalty(std::clamp(static_cast<std::uint16_t>(targNPC->GetLoyalty() / 2),
@@ -939,7 +937,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                                                        static_cast<std::uint16_t>(100)));
                     }
                 }
-
+                
                 // Remove a food item
                 bool iDeleted = i->IncAmount(-1);
                 targNPC->SetHunger(static_cast<std::int8_t>(targNPC->GetHunger() + 1));
@@ -966,15 +964,15 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             else {
                 dropResult = 1;
                 targNPC->TextMessage(
-                    mSock, 1197, TALK,
-                    false); // Thank thee kindly, but I have done nothing to warrant a gift.
+                                     mSock, 1197, TALK,
+                                     false); // Thank thee kindly, but I have done nothing to warrant a gift.
             }
         }
         else if (i->GetId() == 0x0EED) // They gave the NPC gold
         {
             targNPC->TextMessage(mSock, 1198, TALK,
                                  false); // I thank thee for thy payment. That should give thee a
-                                         // good start on thy way. Farewell!
+            // good start on thy way. Farewell!
             std::uint8_t trainedIn = targNPC->GetTrainingPlayerIn();
             std::uint16_t oldskill = mChar->GetBaseSkill(trainedIn);
             mChar->SetBaseSkill(static_cast<std::uint16_t>(mChar->GetBaseSkill(trainedIn) + i->GetAmount()),
@@ -982,7 +980,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             if (mChar->GetBaseSkill(trainedIn) > 250) {
                 mChar->SetBaseSkill(250, trainedIn);
             }
-
+            
             Skills->UpdateSkillLevel(mChar, trainedIn);
             mSock->UpdateSkill(trainedIn);
             std::uint16_t getAmount = i->GetAmount();
@@ -999,7 +997,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
                 i->Delete();
                 stackDeleted = true;
             }
-
+            
             mSock->TempObj(nullptr);
             targNPC->SetTrainingPlayerIn(0xFF);
             Effects->GoldSound(mSock, getAmount, false);
@@ -1014,25 +1012,25 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
     else {
         dropResult = (isGM ? 2 : 1);
     }
-
+    
     switch (dropResult) {
-    default:
-    case 0: // Do nothing;
-        break;
-    case 1: // Bounce
-        if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-            Weight->SubtractItemWeight(mChar, i);
-        }
-
-        Bounce(mSock, i);
-        break;
-    case 2: // Stack
-        CItem *pack;
-        pack = targNPC->GetPackItem();
-        if (ValidateObject(pack)) {
-            stackDeleted = (AutoStack(mSock, i, pack) != i);
-        }
-        break;
+        default:
+        case 0: // Do nothing;
+            break;
+        case 1: // Bounce
+            if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
+                Weight->SubtractItemWeight(mChar, i);
+            }
+            
+            Bounce(mSock, i);
+            break;
+        case 2: // Stack
+            CItem *pack;
+            pack = targNPC->GetPackItem();
+            if (ValidateObject(pack)) {
+                stackDeleted = (AutoStack(mSock, i, pack) != i);
+            }
+            break;
     }
     return stackDeleted;
 }
@@ -1046,15 +1044,15 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
     CChar *mChar = mSock->CurrcharObj();
     if (!ValidateObject(mChar))
         return false;
-
+    
     CItem *packItem = targChar->GetPackItem();
     if (ValidateObject(packItem)) {
         // Can character's backpack hold any more items?
         if (mSock->PickupSpot() != PL_OWNPACK &&
             (GetTotalItemCount(packItem) >= packItem->GetMaxItems() ||
              GetTotalItemCount(packItem) +
-                     std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(i)) >
-                 packItem->GetMaxItems())) {
+             std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(i)) >
+             packItem->GetMaxItems())) {
             mSock->SysMessage(1818); // The container is already at capacity.
             if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
                 Weight->SubtractItemWeight(mChar, i);
@@ -1062,7 +1060,7 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
             Bounce(mSock, i);
             return false;
         }
-
+        
         // Can character's backpack hold any more weight?
         if (!Weight->CheckCharWeight(mChar, targChar, i)) {
             mSock->SysMessage(1743); // That person can not possibly hold more weight
@@ -1072,12 +1070,12 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
             Bounce(mSock, i);
             return false;
         }
-
+        
         if (!targChar->IsNpc()) {
             // Drop on player character
             return DropOnPC(mSock, mChar, targChar, i);
         }
-
+        
         // Drop on NPC
         return DropOnNPC(mSock, mChar, targChar, i);
     }
@@ -1092,19 +1090,19 @@ bool DropOnChar(CSocket *mSock, CChar *targChar, CItem *i) {
 // o------------------------------------------------------------------------------------------------o
 bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, std::uint16_t y, std::int8_t z) {
     bool dropLocationBlocked = false;
-
+    
     // Don't allow dropping item at a location far below or far above character
     if (z < nChar->GetZ() - 7 ||
         z > nChar->GetZ() +
-                16) // 7 to allow to stand on bottom of stairs and drop items on floor/ground below
+        16) // 7 to allow to stand on bottom of stairs and drop items on floor/ground below
     {
         dropLocationBlocked = true;
     }
-
+    
     if (!dropLocationBlocked) {
         // Check for a valid surface to drop item on first - then check for blocking tiles after
         // If done the other way, the valid surface will override the blocking tiles!
-
+        
         // First, check for a static surface to drop item on
         std::uint16_t foundTileId1 = 0;
         std::uint16_t foundTileId2 = 0;
@@ -1115,10 +1113,10 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
                 // No static OR dynamic surface was found to place item? Check if map itself blocks
                 // the placement
                 dropLocationBlocked =
-                    Map->DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
+                Map->DoesMapBlock(x, y, z, nChar->WorldNumber(), true, false, false, false);
             }
         }
-
+        
         if (!dropLocationBlocked) {
             // Some kind of valid surface was found. But is it blocked by...
             if (Map->CheckStaticFlag(x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2,
@@ -1140,13 +1138,13 @@ bool CheckForValidDropLocation(CSocket *mSock, CChar *nChar, std::uint16_t x, st
             }
         }
     }
-
+    
     // Let's check line of sight as well, for good measure
     if (!nChar->IsGM() && !dropLocationBlocked &&
         !LineOfSight(mSock, nChar, x, y, z, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, true)) {
         dropLocationBlocked = true;
     }
-
+    
     return !dropLocationBlocked;
 }
 
@@ -1159,38 +1157,38 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
     CChar *nChar = mSock->CurrcharObj();
     CItem *i = CalcItemObjFromSer(item);
     bool stackDeleted = false;
-
+    
     if (!ValidateObject(i)) {
         nChar->Teleport();
         return;
     }
-
+    
     // Bounce if no valid pickupspot exists
     if (mSock->PickupSpot() == PL_NOWHERE) {
         mSock->SysMessage(9067); // Unable to drop item... where was it picked up from?
         Bounce(mSock, i);
         return;
     }
-
+    
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t rVal = toExecute->OnDrop(i, nChar); // returns 1 if we should bounce it
             switch (rVal) {
-            case 1:  // don't bounce, use code
-            case -1: // no such event
-            default:
-                break;
-            case 0: // bounce, no code, handle error message in client
-                Bounce(mSock, i);
-                return; // stack not deleted, as we're bouncing
-            case 2:     // don't bounce, don't use code
-                return;
+                case 1:  // don't bounce, use code
+                case -1: // no such event
+                default:
+                    break;
+                case 0: // bounce, no code, handle error message in client
+                    Bounce(mSock, i);
+                    return; // stack not deleted, as we're bouncing
+                case 2:     // don't bounce, don't use code
+                    return;
             }
         }
     }
-
+    
     CTile &tile = Map->SeekTile(i->GetId());
     if (!nChar->AllMove() &&
         (i->GetMovable() == 2 || (i->IsLockedDown() && i->GetOwnerObj() != nChar) ||
@@ -1204,7 +1202,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             return;
         }
     }
-
+    
     if (mSock->GetByte(5) != 0xFF) // Dropped in a specific location or on an item
     {
         // Let's check for a valid drop location for the item, and bounce it if none was found
@@ -1216,7 +1214,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             mSock->SysMessage(683); // There seems to be something in the way
             return;
         }
-
+        
         // New location either is not blocking, or has a surface we can put the item on, so let's
         // find the exact Z of where to put it
         auto newZ = Map->StaticTop(x, y, z, nChar->WorldNumber(), 14 - (z - nChar->GetZ()));
@@ -1231,10 +1229,10 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         }
         else {
             auto dynZ =
-                Map->DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
+            Map->DynamicElevation(x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14);
             newZ = ((dynZ >= z && dynZ <= z + 14) ? dynZ : newZ);
         }
-
+        
         auto iMulti = FindMulti(x, y, newZ, nChar->WorldNumber(), nChar->GetInstanceId());
         if (ValidateObject(iMulti)) {
             // Check if new Z plus height of dropped item will make it exceed 20 Z limit per floor
@@ -1244,7 +1242,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
                 if (nChar->GetCommandLevel() >= 2 || nChar->IsGM()) {
                     // GM override
                     mSock->SysMessage(91); // Item placement rule overruled by GM privileges - Z too
-                                           // high for normal players!
+                    // high for normal players!
                 }
                 else {
                     if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
@@ -1261,7 +1259,7 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             if (nChar->GetCommandLevel() >= 2 || nChar->IsGM()) {
                 // GM override
                 mSock->SysMessage(91); // Item placement rule overruled by GM privileges - Z too
-                                       // high for normal players!
+                // high for normal players!
             }
             else {
                 if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
@@ -1272,10 +1270,10 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
                 return;
             }
         }
-
+        
         i->SetCont(nullptr);
         i->SetLocation(x, y, newZ, gridLoc, nChar->WorldNumber(), nChar->GetInstanceId());
-
+        
         // If item was picked up from a container and dropped on ground, update old location to
         // match new!
         if (mSock->PickupSpot() != PL_GROUND) {
@@ -1298,18 +1296,18 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             return;
         }
     }
-
+    
     if (!stackDeleted) {
         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
             Weight->SubtractItemWeight(nChar, i);
         }
-
+        
         if (nChar->GetMultiObj() != nullptr) {
             CMultiObj *multi = FindMulti(i);
             if (ValidateObject(multi)) {
                 if (i->IsDecayable()) {
                     i->SetDecayTime(
-                        cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+                                    cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
                 }
                 i->SetMulti(multi);
             }
@@ -1320,15 +1318,15 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
         else if (i->IsDecayable()) {
             i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
         }
-
+        
         i->SetHeldOnCursor(false);
-
+        
         Effects->ItemSound(
-            mSock, i, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
+                           mSock, i, (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
     }
     // IF client-version is above 6.0.1.7, send approval packet for dropping item. If not, don't.
     CPDropItemApproved lc;
-
+    
     mSock->Send(&lc);
 }
 
@@ -1359,8 +1357,8 @@ void DropOnTradeWindow(CSocket &mSock, CChar &mChar, CItem &tradeWindowOne, CIte
             CSocket *tw2Sock = tw2Owner->GetSocket();
             if (tw2Sock != nullptr) {
                 Effects->ItemSound(
-                    tw2Sock, &tradeWindowOne,
-                    (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
+                                   tw2Sock, &tradeWindowOne,
+                                   (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND));
             }
         }
     }
@@ -1410,7 +1408,7 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
     else {
         name = iDropped.GetName();
     }
-
+    
     if (spellBook.GetTempVar(CITV_MORE, 1) ==
         1) // using more1 to "lock" a spellbook for RP purposes
     {
@@ -1418,7 +1416,7 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
         Bounce(&mSock, &iDropped);
         return;
     }
-
+    
     if (name == Dictionary->GetEntry(1605)) // All-Spell Scroll
     {
         if (spellBook.GetSpell(0) == INVALIDSERIAL && spellBook.GetSpell(1) == INVALIDSERIAL &&
@@ -1443,7 +1441,7 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
         else if (scrollId >= 0x1F34 && scrollId < 0x1F6D) {
             targSpellNum = (scrollId - 0x1F2D);
         }
-
+        
         if (Magic->HasSpell(&spellBook, targSpellNum)) {
             mSock.SysMessage(1206); // You already have that spell.
             Bounce(&mSock, &iDropped);
@@ -1479,7 +1477,7 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
         Bounce(&mSock, &iDropped);
         return false;
     }
-
+    
     bool canHold = true;
     if (droppedOn.GetCont() != nullptr) {
         if (droppedOn.GetContSerial() >= BASEITEMSERIAL) {
@@ -1512,7 +1510,7 @@ bool DropOnStack(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDropped
     {
         Bounce(&mSock, &iDropped);
     }
-
+    
     return true;
 }
 
@@ -1533,7 +1531,7 @@ std::uint16_t HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar 
             return mItem->GetAmount();
         }
     }
-
+    
     // Attempt to autostack item in container
     bool stackDeleted = (AutoStack(mSock, mItem, mCont) != mItem);
     if (!stackDeleted) {
@@ -1541,10 +1539,10 @@ std::uint16_t HandleAutoStack(CItem *mItem, CItem *mCont, CSocket *mSock, CChar 
             (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND)) {
             Weight->SubtractItemWeight(mChar, mItem);
         }
-
+        
         return mItem->GetAmount();
     }
-
+    
     return 0;
 }
 
@@ -1564,7 +1562,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
                     CItem *recurseItem = static_cast<CItem *>(recurseCont);
                     if (recurseItem->GetType() == IT_TRADEWINDOW) {
                         CItem *tradeWindowTwo =
-                            CalcItemObjFromSer(recurseItem->GetTempVar(CITV_MOREX));
+                        CalcItemObjFromSer(recurseItem->GetTempVar(CITV_MOREX));
                         if (ValidateObject(tradeWindowTwo)) {
                             if (tradeWindowTwo->GetTempVar(CITV_MOREZ) ||
                                 recurseItem->GetTempVar(CITV_MOREZ)) {
@@ -1598,7 +1596,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
                 // Clear old values, if item have 'em
                 iDropped.SetDesc("");
                 iDropped.SetVendorPrice(0);
-
+                
                 // Ask player to enter price for item, or 0 to mark it as 'Not for Sale'
                 mChar.SetSpeechMode(3);
                 mChar.SetSpeechItem(&iDropped);
@@ -1610,7 +1608,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
                 }
                 contOwner->TextMessage(&mSock, 9176, TALK,
                                        false); // I can only accept items from the shop owner.
-
+                
                 Bounce(&mSock, &iDropped);
                 return false;
             }
@@ -1629,7 +1627,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
             return false;
         }
     }
-
+    
     // Check if player is allowed to drop item on container
     if (droppedOn.IsLockedDown()) {
         auto iMultiObj = droppedOn.GetMultiObj();
@@ -1644,14 +1642,14 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
             }
         }
     }
-
+    
     // Check if container can hold more items
     if (iDropped.GetContSerial() != droppedOn.GetSerial() &&
         (mSock.PickupSpot() != PL_OWNPACK &&
          (GetTotalItemCount(&droppedOn) >= droppedOn.GetMaxItems() ||
           GetTotalItemCount(&droppedOn) +
-                  std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(&iDropped)) >
-              droppedOn.GetMaxItems()))) {
+          std::max(static_cast<std::uint32_t>(1), 1 + GetTotalItemCount(&iDropped)) >
+          droppedOn.GetMaxItems()))) {
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
             Weight->SubtractItemWeight(&mChar, &iDropped);
         }
@@ -1659,13 +1657,13 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         Bounce(&mSock, &iDropped);
         return false;
     }
-
+    
     if (mSock.GetByte(5) != 0xFF) // In a specific spot in a container
     {
         if (mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND) {
             Weight->SubtractItemWeight(&mChar, &iDropped);
         }
-
+        
         if (&droppedOn != iDropped.GetCont() &&
             !Weight->CheckPackWeight(&mChar, &droppedOn, &iDropped)) {
             mSock.SysMessage(1385); // That pack cannot hold any more weight
@@ -1677,7 +1675,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
         iDropped.SetY(y);
         iDropped.SetZ(9);
         iDropped.SetGridLocation(gridLoc);
-
+        
         // Only send tooltip if server feature for tooltips is enabled
         if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             // Refresh target container tooltip
@@ -1688,7 +1686,7 @@ bool DropOnContainer(CSocket &mSock, CChar &mChar, CItem &droppedOn, CItem &iDro
     else // Drop directly on a container, placing it randomly inside
     {
         [[maybe_unused]] std::uint16_t amountLeft = HandleAutoStack(&iDropped, &droppedOn, &mSock, &mChar);
-
+        
         // Only send tooltip if server feature for tooltips is enabled
         if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
             // Refresh target container tooltip
@@ -1709,52 +1707,24 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     CItem *nCont = CalcItemObjFromSer(dest);
     if (!ValidateObject(nCont) || !ValidateObject(mChar))
         return;
-
+    
     CItem *nItem = CalcItemObjFromSer(item);
     if (!ValidateObject(nItem))
         return;
-
+    
     nItem->SetHeldOnCursor(false);
-
+    
     bool executeCont = true;
     std::vector<std::uint16_t> scriptTriggers = nItem->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
             std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,
-                                                    nCont); // returns 1 if we should bounce it
+                                                           nCont); // returns 1 if we should bounce it
             switch (rVal) {
-            case -1: // no such event
-            default:
-                executeCont = true;
-                break;
-            case 0: // bounce, no code, handle player feedback in script
-                if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
-                    Weight->SubtractItemWeight(mChar, nItem);
-                }
-                Bounce(mSock, nItem);
-                return; // stack not deleted, as we're bouncing
-            case 1:     // don't bounce, use code
-                executeCont = false;
-                break;
-            case 2: // don't bounce, don't use code
-                executeCont = true;
-                break;
-            }
-        }
-    }
-
-    if (executeCont) {
-        std::vector<std::uint16_t> contScriptTriggers = nCont->GetScriptTriggers();
-        for (auto scriptTrig : contScriptTriggers) {
-            cScript *toExecute = JSMapping->GetScript(scriptTrig);
-            if (toExecute != nullptr) {
-                std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,
-                                                        nCont); // returns 1 if we should bounce it
-                switch (rVal) {
-                case 1:  // don't bounce, use code
                 case -1: // no such event
                 default:
+                    executeCont = true;
                     break;
                 case 0: // bounce, no code, handle player feedback in script
                     if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
@@ -1762,15 +1732,43 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
                     }
                     Bounce(mSock, nItem);
                     return; // stack not deleted, as we're bouncing
-                case 2:     // don't bounce, don't use code
-                    return;
+                case 1:     // don't bounce, use code
+                    executeCont = false;
+                    break;
+                case 2: // don't bounce, don't use code
+                    executeCont = true;
+                    break;
+            }
+        }
+    }
+    
+    if (executeCont) {
+        std::vector<std::uint16_t> contScriptTriggers = nCont->GetScriptTriggers();
+        for (auto scriptTrig : contScriptTriggers) {
+            cScript *toExecute = JSMapping->GetScript(scriptTrig);
+            if (toExecute != nullptr) {
+                std::int8_t rVal = toExecute->OnDropItemOnItem(nItem, mChar,
+                                                               nCont); // returns 1 if we should bounce it
+                switch (rVal) {
+                    case 1:  // don't bounce, use code
+                    case -1: // no such event
+                    default:
+                        break;
+                    case 0: // bounce, no code, handle player feedback in script
+                        if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
+                            Weight->SubtractItemWeight(mChar, nItem);
+                        }
+                        Bounce(mSock, nItem);
+                        return; // stack not deleted, as we're bouncing
+                    case 2:     // don't bounce, don't use code
+                        return;
                 }
             }
         }
     }
-
+    
     bool stackDeleted = false;
-
+    
     CTile &tile = Map->SeekTile(nItem->GetId());
     if (!mChar->AllMove() &&
         (nItem->GetMovable() == 2 || (nItem->IsLockedDown() && nItem->GetOwnerObj() != mChar) ||
@@ -1784,7 +1782,7 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
             return;
         }
     }
-
+    
     if (nCont->GetType() == IT_TRADEWINDOW && FindItemOwner(nCont) == mChar) // Trade window
     {
         DropOnTradeWindow((*mSock), (*mChar), (*nCont), (*nItem), x, y, gridLoc);
@@ -1824,29 +1822,29 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
     else {
         if (nCont->GetType() == IT_SPAWNCONT ||
             nCont->GetType() ==
-                IT_UNLOCKABLESPAWNCONT) // - Unlocked item spawner or unlockable item spawner
+            IT_UNLOCKABLESPAWNCONT) // - Unlocked item spawner or unlockable item spawner
         {
             nItem->SetCont(nCont);
         }
         else {
             nItem->SetCont(nCont->GetCont());
         }
-
+        
         nItem->SetX(x);
         nItem->SetY(y);
         nItem->SetZ(z);
         nItem->SetGridLocation(gridLoc);
-
+        
         if (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND) {
             Weight->SubtractItemWeight(mChar, nItem);
         }
     }
     if (!stackDeleted) {
         Effects->ItemSound(
-            mSock, nItem,
-            (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
+                           mSock, nItem,
+                           (mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND));
     }
-
+    
     // Would be nice to do this to instantly update the stats & weight on the container the item is
     // dropped on
     //  but unfortunately it seems like updating the container will also force-close it :/
@@ -1861,14 +1859,14 @@ void DropOnItem(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, st
 bool CPIDropItem::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
-
+    
     if (dest >= BASEITEMSERIAL && dest != INVALIDSERIAL) {
         DropOnItem(tSock, item, dest, x, y, z, gridLoc);
     }
     else {
         Drop(tSock, item, dest, x, y, z, gridLoc);
     }
-
+    
     // Display overloaded message if character is overloaded as a result of the above
     if (Weight->IsOverloaded(ourChar)) {
         std::int32_t maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
@@ -1876,14 +1874,14 @@ bool CPIDropItem::Handle() {
         tSock->SysMessage(1784, currentWeight,
                           maxWeight); // You are overloaded. Current / Max: %i / %i
     }
-
+    
     // Only send tooltip if server feature for tooltips is enabled
     if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
         // Refresh source container tooltip
         CPToolTip pSend(tSock->PickupSerial(), tSock);
         tSock->Send(&pSend);
     }
-
+    
     // Reset PickupSpot after dropping the item
     tSock->PickupSpot(PL_NOWHERE);
     tSock->SetCursorItem(nullptr);
@@ -1901,7 +1899,7 @@ std::uint8_t BestSkill(CChar *mChar, skillval_t &skillLevel) {
     for (std::uint8_t sCtr = 0; sCtr < ALLSKILLS; ++sCtr) {
         vecSkills.push_back(cSkillClass(sCtr, mChar->GetBaseSkill(sCtr)));
     }
-
+    
     std::sort(vecSkills.rbegin(), vecSkills.rend());
     if (vecSkills[0].value > 0) {
         retSkill = vecSkills[0].skill;
@@ -1919,7 +1917,7 @@ std::uint8_t BestSkill(CChar *mChar, skillval_t &skillLevel) {
 void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
     if (cwmWorldState->prowessTitles.empty())
         return;
-
+    
     skillval_t skillLevel = 0;
     std::uint8_t bestSkill = BestSkill(mChar, skillLevel);
     if (skillLevel <= cwmWorldState->prowessTitles[0].lowBound) {
@@ -1946,10 +1944,10 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
     if (ValidateObject(p)) {
         std::string theTitle;
         std::uint8_t titleNum = 0xFF;
-
+        
         std::int16_t k = p->GetKarma();
         std::int16_t f = p->GetFame();
-
+        
         if (k >= 10000) {
             if (f >= 5000) {
                 titleNum = 0;
@@ -2113,34 +2111,29 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
         if (!cwmWorldState->title[titleNum].fame.empty()) {
             theTitle = cwmWorldState->title[titleNum].fame + " ";
         }
-
-        /*if( cwmWorldState->ServerData()->ShowRaceWithName() && p->GetRace() != 0 && p->GetRace()
-        != 65535 )
-        {
-                theTitle = theTitle + Races->Name( p->GetRace() ) + " ";
-        }*/
-
+        
+        
         if (f >= 10000) // bugfix for repsys
         {
             if (p->GetKills() > cwmWorldState->ServerData()->RepMaxKills()) {
                 if (p->GetId(2) == 0x91) {
                     fameTitle = util::format(Dictionary->GetEntry(1177),
                                              Races->Name(p->GetRace()).c_str()) +
-                                std::string(" ");
+                    std::string(" ");
                 }
                 else {
                     fameTitle = util::format(Dictionary->GetEntry(1178),
                                              Races->Name(p->GetRace()).c_str()) +
-                                std::string(" ");
+                    std::string(" ");
                 }
             }
             else if (p->GetId(2) == 0x91) {
                 fameTitle =
-                    util::format(Dictionary->GetEntry(1179), theTitle.c_str()) + std::string(" ");
+                util::format(Dictionary->GetEntry(1179), theTitle.c_str()) + std::string(" ");
             }
             else {
                 fameTitle =
-                    util::format(Dictionary->GetEntry(1180), theTitle.c_str()) + std::string(" ");
+                util::format(Dictionary->GetEntry(1180), theTitle.c_str()) + std::string(" ");
             }
         }
         else {
@@ -2165,7 +2158,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     std::string tempstr;
     CPPaperdoll pd = (*pdoll);
     unicodetypes_t sLang = s->Language();
-
+    
     cScript *toExecute;
     std::vector<std::uint16_t> scriptTriggers = pdoll->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
@@ -2180,7 +2173,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
             }
         }
     }
-
+    
     // Also check global script!
     toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
     if (toExecute != nullptr) {
@@ -2189,12 +2182,12 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
             return;
         }
     }
-
+    
     std::string skillProwessTitle;
     std::string fameTitle;
     GetSkillProwessTitle(pdoll, skillProwessTitle);
     GetFameTitle(pdoll, fameTitle);
-
+    
     bool bContinue = false;
     if (pdoll->IsGM()) {
         tempstr = pdoll->GetName() + " " + pdoll->GetTitle();
@@ -2204,16 +2197,15 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         if (fameTitle != "") {
             tempstr = fameTitle;
         }
-
+        
         // Then add actual name
         tempstr += pdoll->GetNameRequest(myChar, NRS_PAPERDOLL);
-
+        
         // Append race, if enabled
-        if (cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 &&
-            pdoll->GetRace() != 65535) {
+        if ( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535) {
             tempstr += " ("s + Races->Name(pdoll->GetRace()) + ")";
         }
-
+        
         // Append title, if one exists
         if (pdoll->GetTitle() != "") {
             std::string tempTitle = GetNpcDictTitle(pdoll, s);
@@ -2247,8 +2239,8 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
             }
             else {
                 tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " +
-                          pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + ", " + pdoll->GetTitle() +
-                          skillProwessTitle;
+                pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + ", " + pdoll->GetTitle() +
+                skillProwessTitle;
             }
         }
     }
@@ -2262,32 +2254,29 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     }
     if (bContinue) {
         tempstr = fameTitle + pdoll->GetNameRequest(myChar, NRS_PAPERDOLL); // Repuation + Name
-
+        
         // Append race, if enabled
-        if (cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 &&
-            pdoll->GetRace() != 65535) {
+        if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535) {
             tempstr += " ("s + Races->Name(pdoll->GetRace()) + ")";
         }
-
-        if (pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2) // TownTitle
-        {
+        
+        if (pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2) {// TownTitle
             if (pdoll->GetTownPriv() == 2) // is Mayor
             {
                 tempstr =
-                    util::format(Dictionary->GetEntry(379, sLang),
-                                 pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),
-                                 cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(),
-                                 skillProwessTitle.c_str());
+                util::format(Dictionary->GetEntry(379, sLang),
+                             pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),
+                             cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(),
+                             skillProwessTitle.c_str());
             }
             else // is Resident
             {
                 tempstr = pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + " of " +
-                          cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " +
-                          skillProwessTitle;
+                cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " +
+                skillProwessTitle;
             }
         }
-        else // No Town Title
-        {
+        else {// No Town Title
             if (!pdoll->IsIncognito() && !pdoll->IsDisguised() && !(pdoll->GetTitle().empty())) {
                 if (cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A) {
                     // Title & Skill
@@ -2305,7 +2294,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         }
     }
     pd.Text(tempstr);
-
+    
     CChar *mChar = s->CurrcharObj();
     if (ValidateObject(mChar) && (mChar == pdoll)) {
         pd.FlagByte(0x02 | (mChar->IsAtWar() ? 0x01 : 0x00));
@@ -2313,9 +2302,9 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     else if (ValidateObject(mChar) && mChar->IsGM()) {
         pd.FlagByte(0x02);
     }
-
+    
     s->Send(&pd);
-
+    
     // Only send tooltip if server feature for tooltips is enabled
     if (ServerConfig::shared().serverFeature.test(ServerFeature::AOS)) {
         for (CItem *wearItem = pdoll->FirstItem(); !pdoll->FinishedItems();
@@ -2339,7 +2328,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
     CChar *c = CalcCharObjFromSer(serial);
     if (!ValidateObject(c))
         return;
-
+    
     std::vector<std::uint16_t> scriptTriggers = c->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
@@ -2352,7 +2341,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
                 return;
         }
     }
-
+    
     if (c->IsNpc()) {
         CItem *pack = nullptr;
         if (cwmWorldState->creatures[c->GetId()].MountId() != 0) // Is a mount
@@ -2398,7 +2387,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
                         }
                         else {
                             Console::shared() << "Pack animal " << c->GetSerial()
-                                              << " has no backpack!" << myendl;
+                            << " has no backpack!" << myendl;
                         }
                     }
                     else {
@@ -2442,584 +2431,584 @@ bool HandleDoubleClickTypes(CSocket *mSock, CChar *mChar, CItem *iUsed, itemtype
     CItem *i = nullptr;
     std::uint16_t itemId = iUsed->GetId();
     bool canTrap = false;
-
+    
     // Begin Check items by type
     switch (iType) {
-    case IT_NOTYPE:
-    case IT_COUNT:
-    case IT_HOUSEADDON:
-        return false;
-    case IT_CONTAINER: // Container, Backpack
-    case IT_SPAWNCONT: // Item spawn container
-        canTrap = true;
-        [[fallthrough]]; // Indicate to compiler that fallthrough is valid to suppress warning
-    case IT_UNLOCKABLESPAWNCONT: // Unlockable item spawn container
-    case IT_TRASHCONT:           // Trash container
-        bool packOpened;
-        packOpened = false;
-        CBaseObject *baseCont;
-        CBaseObject::type_t objType;
-        baseCont = FindItemOwner(iUsed, objType);
-        if (!ValidateObject(baseCont)) {
-            baseCont = iUsed;
-        }
-        if (ValidateObject(baseCont)) {
-            if (baseCont->CanBeObjType(CBaseObject::OT_ITEM)) {
-                CMultiObj *baseContMultiObj = baseCont->GetMultiObj();
-
-                if (baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj) {
-                    if (baseContMultiObj &&
-                        baseContMultiObj->IsSecureContainer(static_cast<CItem *>(baseCont)) &&
-                        !mChar->GetMultiObj()->IsOnOwnerList(mChar)) {
-                        mSock->SysMessage(9011); // That container is secure. You cannot use this
-                                                 // unless you are the owner.
-                        return true;
-                    }
-                    else {
-                        mSock->OpenPack(iUsed);
-                        packOpened = true;
+        case IT_NOTYPE:
+        case IT_COUNT:
+        case IT_HOUSEADDON:
+            return false;
+        case IT_CONTAINER: // Container, Backpack
+        case IT_SPAWNCONT: // Item spawn container
+            canTrap = true;
+            [[fallthrough]]; // Indicate to compiler that fallthrough is valid to suppress warning
+        case IT_UNLOCKABLESPAWNCONT: // Unlockable item spawn container
+        case IT_TRASHCONT:           // Trash container
+            bool packOpened;
+            packOpened = false;
+            CBaseObject *baseCont;
+            CBaseObject::type_t objType;
+            baseCont = FindItemOwner(iUsed, objType);
+            if (!ValidateObject(baseCont)) {
+                baseCont = iUsed;
+            }
+            if (ValidateObject(baseCont)) {
+                if (baseCont->CanBeObjType(CBaseObject::OT_ITEM)) {
+                    CMultiObj *baseContMultiObj = baseCont->GetMultiObj();
+                    
+                    if (baseContMultiObj == nullptr || mChar->GetMultiObj() == baseContMultiObj) {
+                        if (baseContMultiObj &&
+                            baseContMultiObj->IsSecureContainer(static_cast<CItem *>(baseCont)) &&
+                            !mChar->GetMultiObj()->IsOnOwnerList(mChar)) {
+                            mSock->SysMessage(9011); // That container is secure. You cannot use this
+                            // unless you are the owner.
+                            return true;
+                        }
+                        else {
+                            mSock->OpenPack(iUsed);
+                            packOpened = true;
+                        }
                     }
                 }
-            }
-            else {
-                iChar = static_cast<CChar *>(baseCont);
-                if (ValidateObject(iChar)) {
-                    if (mChar == iChar || mChar == iChar->GetOwnerObj()) {
-                        if (iChar->GetNpcAiType() == AI_PLAYERVENDOR) // PlayerVendors
+                else {
+                    iChar = static_cast<CChar *>(baseCont);
+                    if (ValidateObject(iChar)) {
+                        if (mChar == iChar || mChar == iChar->GetOwnerObj()) {
+                            if (iChar->GetNpcAiType() == AI_PLAYERVENDOR) // PlayerVendors
+                            {
+                                mSock->OpenPack(iUsed, true);
+                            }
+                            else {
+                                if (mChar->GetPackItem() == iUsed) {
+                                    mChar->SetWeight(Weight->CalcCharWeight(mChar));
+                                }
+                                mSock->OpenPack(iUsed);
+                            }
+                        }
+                        else if (iChar->GetNpcAiType() == AI_PLAYERVENDOR) // PlayerVendors
                         {
                             mSock->OpenPack(iUsed, true);
                         }
                         else {
-                            if (mChar->GetPackItem() == iUsed) {
-                                mChar->SetWeight(Weight->CalcCharWeight(mChar));
+                            CItem *rootItem = FindRootContainer(iUsed);
+                            if (ValidateObject(rootItem) && rootItem->GetType() == IT_TRADEWINDOW) {
+                                mSock->OpenPack(iUsed, true);
                             }
-                            mSock->OpenPack(iUsed);
+                            else {
+                                Skills->Snooping(mSock, iChar, iUsed);
+                            }
                         }
+                        packOpened = true;
                     }
-                    else if (iChar->GetNpcAiType() == AI_PLAYERVENDOR) // PlayerVendors
+                }
+            }
+            if (packOpened) {
+                if (canTrap && iUsed->GetTempVar(CITV_MOREZ, 1)) // Is trapped
+                {
+                    Magic->MagicTrap(mChar, iUsed);
+                }
+            }
+            else {
+                mSock->SysMessage(400); // You are too far away!
+            }
+            return true;
+        case IT_CASTLEGATEOPENER: // Order gate opener
+            i = CalcItemObjFromSer(iUsed->GetTempVar(CITV_MORE));
+            if (ValidateObject(i)) {
+                if (i->GetType() == IT_CASTLEGATE) {
+                    if (i->GetTempVar(CITV_MOREZ) == 1) {
+                        i->SetTempVar(CITV_MOREZ, 2);
+                        i->SetZ(i->GetZ() + 17);
+                    }
+                    else if (i->GetTempVar(CITV_MOREZ) == 2) {
+                        i->SetTempVar(CITV_MOREZ, 1);
+                        i->SetZ(i->GetZ() - 17);
+                    }
+                }
+            }
+            return true;
+        case IT_LOCKEDCONTAINER:     // Locked container
+        case IT_LOCKEDSPAWNCONT:     // locked spawn container
+            mSock->SysMessage(1428); // This item is locked.
+            return true;
+        case IT_SPELLBOOK: // Spellbook
+            i = mChar->GetPackItem();
+            if (ValidateObject(i)) {
+                if ((iUsed->GetCont() == i || iUsed->GetCont() == mChar) ||
+                    iUsed->GetLayer() == IL_RIGHTHAND) {
+                    Magic->SpellBook(mSock);
+                }
+                else {
+                    mSock->SysMessage(403); // If you wish to open a spellbook, it must be equipped or
+                    // in your main backpack.
+                }
+            }
+            return true;
+        case IT_MAP: // Map
+        {
+            CPMapMessage m1;
+            CPMapRelated m2;
+            m1.KeyUsed(iUsed->GetSerial());
+            m1.GumpArt(0x139D);
+            m1.UpperLeft(0, 0);
+            m1.LowerRight(0x13FF, 0x0FA0);
+            m1.Dimensions(0x0190, 0x0190);
+            mSock->Send(&m1);
+            
+            m2.ID(iUsed->GetSerial());
+            m2.command(5);
+            m2.Location(0, 0);
+            m2.PlotState(0);
+            mSock->Send(&m2);
+            return true;
+        }
+        case IT_BOOK: // Readable book
+            if (iUsed->GetTempVar(CITV_MOREX) != 666 && iUsed->GetTempVar(CITV_MOREX) != 999) {
+                Books->OpenPreDefBook(mSock, iUsed);
+            }
+            else {
+                Books->OpenBook(mSock, iUsed, (iUsed->GetTempVar(CITV_MOREX) == 666));
+            }
+            return true;
+        case IT_MAGICWAND: // Magic Wands
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            if (iUsed->GetTempVar(CITV_MOREZ) != 0) {
+                mSock->CurrentSpellType(2);
+                if (Magic->SelectSpell(mSock, iUsed->GetTempVar(CITV_MOREY))) {
+                    iUsed->SetTempVar(CITV_MOREZ, iUsed->GetTempVar(CITV_MOREZ) - 1);
+                    if (iUsed->GetTempVar(CITV_MOREZ) == 0) // Number of charges have dropped to zero
                     {
-                        mSock->OpenPack(iUsed, true);
+                        iUsed->SetType(IT_NOTYPE);
+                        iUsed->SetTempVar(CITV_MOREX, 0);
+                        iUsed->SetTempVar(CITV_MOREY, 0);
+                        iUsed->SetOffSpell(0);
+                    }
+                    // Update item so player will see how many charges remain (if any)
+                    iUsed->Dirty(UT_UPDATE);
+                }
+            }
+            return true;
+        case IT_TOWNSTONE:        // Townstone and Townstone Deed
+            if (itemId == 0x14F0) // Check for Deed
+            {
+                // If item is locked down, check if player has access to use it
+                if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                    return true;
+                
+                Items->CreateScriptItem(nullptr, mChar, "townstone", 1, CBaseObject::OT_ITEM);
+                iUsed->Delete();
+            }
+            else // Display Townstone gump
+            {
+                CTownRegion *useRegion = iUsed->GetRegion();
+                if (useRegion != nullptr) {
+                    useRegion->DisplayTownMenu(iUsed, mSock);
+                }
+            }
+            return true;
+        case IT_RECALLRUNE: // Recall Rune
+            if (iUsed->GetTempVar(CITV_MOREX) == 0 && iUsed->GetTempVar(CITV_MOREY) == 0 &&
+                iUsed->GetTempVar(CITV_MOREZ) == 0) // changed, to fix, Lord Vader
+            {
+                mSock->SysMessage(431); // That rune is not yet marked!
+            }
+            else {
+                // If item is locked down, check if player has access to use it
+                if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                    return true;
+                
+                mSock->SysMessage(432); // Enter new rune name.
+                mChar->SetSpeechItem(iUsed);
+                mChar->SetSpeechMode(7);
+            }
+            return true;
+        case IT_OBJTELEPORTER: // Object Teleporter
+            if (ObjInRange(mChar, iUsed, DIST_NEARBY)) {
+                mChar->SetLocation(static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREX)),
+                                   static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREY)),
+                                   static_cast<std::int8_t>(iUsed->GetTempVar(CITV_MOREZ)));
+            }
+            return true;
+        case IT_MAPCHANGEOBJECT:
+            SocketMapChange(mSock, mChar, iUsed);
+            return true;
+        case IT_MORPHOBJECT: // Morph Object
+            mChar->SetId(static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
+            iUsed->SetType(IT_UNMORPHOBJECT);
+            return true;
+        case IT_UNMORPHOBJECT: // Unmorph Object
+            mChar->SetId(mChar->GetOrgId());
+            iUsed->SetType(IT_MORPHOBJECT);
+            return true;
+        case IT_PLANK: // Planks
+            if (ObjInRange(mChar, iUsed, DIST_INRANGE)) {
+                auto plankStatus = iUsed->GetTag("plankLocked");
+                if (plankStatus.m_IntValue == 1) // Is plank locked?
+                {
+                    auto iMulti = iUsed->GetMultiObj();
+                    auto mMulti = mChar->GetMultiObj();
+                    if (ValidateObject(iMulti) && ValidateObject(mMulti) && iMulti == mMulti) {
+                        // Allow opening plank for disembarking purposes if player is onboard boat
+                        switch (iUsed->GetId()) {
+                                // Open the plank visually
+                            case 0x3EE9:
+                                iUsed->SetId(0x3E84);
+                                break;
+                            case 0x3EB1:
+                                iUsed->SetId(0x3ED5);
+                                break;
+                            case 0x3EB2:
+                                iUsed->SetId(0x3ED4);
+                                break;
+                            case 0x3E8A:
+                                iUsed->SetId(0x3E89);
+                                break;
+                            case 0x3E85:
+                                iUsed->SetId(0x3E84);
+                                break;
+                                // Exit from the open (but locked) plank
+                            case 0x3E84:
+                                [[fallthrough]];
+                            case 0x3ED5:
+                                [[fallthrough]];
+                            case 0x3ED4:
+                                [[fallthrough]];
+                            case 0x3E89:
+                                PlankStuff(mSock, iUsed);
+                                break;
+                            default:
+                                return true;
+                        }
+                        
+                        // Start a timer to auto-close the plank
+                        mSock->SysMessage(9144); // You open the plank, though it's still locked.
+                        iUsed->SetTempTimer(BuildTimeValue(static_cast<R32>(5)));
                     }
                     else {
-                        CItem *rootItem = FindRootContainer(iUsed);
-                        if (ValidateObject(rootItem) && rootItem->GetType() == IT_TRADEWINDOW) {
-                            mSock->OpenPack(iUsed, true);
-                        }
-                        else {
-                            Skills->Snooping(mSock, iChar, iUsed);
-                        }
+                        // Plank is locked! Tough luck
+                        mSock->SysMessage(398); // Locked
                     }
-                    packOpened = true;
                 }
-            }
-        }
-        if (packOpened) {
-            if (canTrap && iUsed->GetTempVar(CITV_MOREZ, 1)) // Is trapped
-            {
-                Magic->MagicTrap(mChar, iUsed);
-            }
-        }
-        else {
-            mSock->SysMessage(400); // You are too far away!
-        }
-        return true;
-    case IT_CASTLEGATEOPENER: // Order gate opener
-        i = CalcItemObjFromSer(iUsed->GetTempVar(CITV_MORE));
-        if (ValidateObject(i)) {
-            if (i->GetType() == IT_CASTLEGATE) {
-                if (i->GetTempVar(CITV_MOREZ) == 1) {
-                    i->SetTempVar(CITV_MOREZ, 2);
-                    i->SetZ(i->GetZ() + 17);
-                }
-                else if (i->GetTempVar(CITV_MOREZ) == 2) {
-                    i->SetTempVar(CITV_MOREZ, 1);
-                    i->SetZ(i->GetZ() - 17);
-                }
-            }
-        }
-        return true;
-    case IT_LOCKEDCONTAINER:     // Locked container
-    case IT_LOCKEDSPAWNCONT:     // locked spawn container
-        mSock->SysMessage(1428); // This item is locked.
-        return true;
-    case IT_SPELLBOOK: // Spellbook
-        i = mChar->GetPackItem();
-        if (ValidateObject(i)) {
-            if ((iUsed->GetCont() == i || iUsed->GetCont() == mChar) ||
-                iUsed->GetLayer() == IL_RIGHTHAND) {
-                Magic->SpellBook(mSock);
-            }
-            else {
-                mSock->SysMessage(403); // If you wish to open a spellbook, it must be equipped or
-                                        // in your main backpack.
-            }
-        }
-        return true;
-    case IT_MAP: // Map
-    {
-        CPMapMessage m1;
-        CPMapRelated m2;
-        m1.KeyUsed(iUsed->GetSerial());
-        m1.GumpArt(0x139D);
-        m1.UpperLeft(0, 0);
-        m1.LowerRight(0x13FF, 0x0FA0);
-        m1.Dimensions(0x0190, 0x0190);
-        mSock->Send(&m1);
-
-        m2.ID(iUsed->GetSerial());
-        m2.command(5);
-        m2.Location(0, 0);
-        m2.PlotState(0);
-        mSock->Send(&m2);
-        return true;
-    }
-    case IT_BOOK: // Readable book
-        if (iUsed->GetTempVar(CITV_MOREX) != 666 && iUsed->GetTempVar(CITV_MOREX) != 999) {
-            Books->OpenPreDefBook(mSock, iUsed);
-        }
-        else {
-            Books->OpenBook(mSock, iUsed, (iUsed->GetTempVar(CITV_MOREX) == 666));
-        }
-        return true;
-    case IT_MAGICWAND: // Magic Wands
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
-            return true;
-
-        if (iUsed->GetTempVar(CITV_MOREZ) != 0) {
-            mSock->CurrentSpellType(2);
-            if (Magic->SelectSpell(mSock, iUsed->GetTempVar(CITV_MOREY))) {
-                iUsed->SetTempVar(CITV_MOREZ, iUsed->GetTempVar(CITV_MOREZ) - 1);
-                if (iUsed->GetTempVar(CITV_MOREZ) == 0) // Number of charges have dropped to zero
-                {
-                    iUsed->SetType(IT_NOTYPE);
-                    iUsed->SetTempVar(CITV_MOREX, 0);
-                    iUsed->SetTempVar(CITV_MOREY, 0);
-                    iUsed->SetOffSpell(0);
-                }
-                // Update item so player will see how many charges remain (if any)
-                iUsed->Dirty(UT_UPDATE);
-            }
-        }
-        return true;
-    case IT_TOWNSTONE:        // Townstone and Townstone Deed
-        if (itemId == 0x14F0) // Check for Deed
-        {
-            // If item is locked down, check if player has access to use it
-            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
-                return true;
-
-            Items->CreateScriptItem(nullptr, mChar, "townstone", 1, CBaseObject::OT_ITEM);
-            iUsed->Delete();
-        }
-        else // Display Townstone gump
-        {
-            CTownRegion *useRegion = iUsed->GetRegion();
-            if (useRegion != nullptr) {
-                useRegion->DisplayTownMenu(iUsed, mSock);
-            }
-        }
-        return true;
-    case IT_RECALLRUNE: // Recall Rune
-        if (iUsed->GetTempVar(CITV_MOREX) == 0 && iUsed->GetTempVar(CITV_MOREY) == 0 &&
-            iUsed->GetTempVar(CITV_MOREZ) == 0) // changed, to fix, Lord Vader
-        {
-            mSock->SysMessage(431); // That rune is not yet marked!
-        }
-        else {
-            // If item is locked down, check if player has access to use it
-            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
-                return true;
-
-            mSock->SysMessage(432); // Enter new rune name.
-            mChar->SetSpeechItem(iUsed);
-            mChar->SetSpeechMode(7);
-        }
-        return true;
-    case IT_OBJTELEPORTER: // Object Teleporter
-        if (ObjInRange(mChar, iUsed, DIST_NEARBY)) {
-            mChar->SetLocation(static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREX)),
-                               static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MOREY)),
-                               static_cast<std::int8_t>(iUsed->GetTempVar(CITV_MOREZ)));
-        }
-        return true;
-    case IT_MAPCHANGEOBJECT:
-        SocketMapChange(mSock, mChar, iUsed);
-        return true;
-    case IT_MORPHOBJECT: // Morph Object
-        mChar->SetId(static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
-        iUsed->SetType(IT_UNMORPHOBJECT);
-        return true;
-    case IT_UNMORPHOBJECT: // Unmorph Object
-        mChar->SetId(mChar->GetOrgId());
-        iUsed->SetType(IT_MORPHOBJECT);
-        return true;
-    case IT_PLANK: // Planks
-        if (ObjInRange(mChar, iUsed, DIST_INRANGE)) {
-            auto plankStatus = iUsed->GetTag("plankLocked");
-            if (plankStatus.m_IntValue == 1) // Is plank locked?
-            {
-                auto iMulti = iUsed->GetMultiObj();
-                auto mMulti = mChar->GetMultiObj();
-                if (ValidateObject(iMulti) && ValidateObject(mMulti) && iMulti == mMulti) {
-                    // Allow opening plank for disembarking purposes if player is onboard boat
+                else {
+                    // Plank is unlocked! Open the plank, or use it to disembark
                     switch (iUsed->GetId()) {
-                    // Open the plank visually
-                    case 0x3EE9:
-                        iUsed->SetId(0x3E84);
-                        break;
-                    case 0x3EB1:
-                        iUsed->SetId(0x3ED5);
-                        break;
-                    case 0x3EB2:
-                        iUsed->SetId(0x3ED4);
-                        break;
-                    case 0x3E8A:
-                        iUsed->SetId(0x3E89);
-                        break;
-                    case 0x3E85:
-                        iUsed->SetId(0x3E84);
-                        break;
-                    // Exit from the open (but locked) plank
-                    case 0x3E84:
-                        [[fallthrough]];
-                    case 0x3ED5:
-                        [[fallthrough]];
-                    case 0x3ED4:
-                        [[fallthrough]];
-                    case 0x3E89:
-                        PlankStuff(mSock, iUsed);
-                        break;
-                    default:
-                        return true;
+                        case 0x3EE9:
+                            iUsed->SetId(0x3E84);
+                            break;
+                        case 0x3EB1:
+                            iUsed->SetId(0x3ED5);
+                            break;
+                        case 0x3EB2:
+                            iUsed->SetId(0x3ED4);
+                            break;
+                        case 0x3E8A:
+                            iUsed->SetId(0x3E89);
+                            break;
+                        case 0x3E85:
+                            iUsed->SetId(0x3E84);
+                            break;
+                        default:
+                            PlankStuff(mSock, iUsed);
+                            return true;
+                            ;
                     }
-
-                    // Start a timer to auto-close the plank
-                    mSock->SysMessage(9144); // You open the plank, though it's still locked.
-                    iUsed->SetTempTimer(BuildTimeValue(static_cast<R32>(5)));
-                }
-                else {
-                    // Plank is locked! Tough luck
-                    mSock->SysMessage(398); // Locked
+                    mSock->SysMessage(2031); // You open the plank
                 }
             }
             else {
-                // Plank is unlocked! Open the plank, or use it to disembark
-                switch (iUsed->GetId()) {
-                case 0x3EE9:
-                    iUsed->SetId(0x3E84);
-                    break;
-                case 0x3EB1:
-                    iUsed->SetId(0x3ED5);
-                    break;
-                case 0x3EB2:
-                    iUsed->SetId(0x3ED4);
-                    break;
-                case 0x3E8A:
-                    iUsed->SetId(0x3E89);
-                    break;
-                case 0x3E85:
-                    iUsed->SetId(0x3E84);
-                    break;
-                default:
-                    PlankStuff(mSock, iUsed);
-                    return true;
-                    ;
+                mSock->SysMessage(399); // You can't reach that!
+            }
+            return true;
+        case IT_FIREWORKSWAND: // Fireworks wands
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            if (iUsed->GetTempVar(CITV_MOREX) == 0) {
+                mSock->SysMessage(396); // That is out of charges!
+                return true;
+            }
+            iUsed->SetTempVar(CITV_MOREX, iUsed->GetTempVar(CITV_MOREX) - 1);
+            mSock->SysMessage(397, iUsed->GetTempVar(CITV_MOREX));
+            std::uint8_t j;
+            for (j = 0; j < static_cast<std::uint8_t>(RandomNum(0, 3) + 2); ++j) {
+                std::int16_t wx = (mChar->GetX() + RandomNum(0, 5) - 5);
+                std::int16_t wy = (mChar->GetY() - RandomNum(0, 7));
+                Effects->PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0,
+                                             (RandomNum(0, 1) == 1));
+                std::uint16_t animId;
+                switch (RandomNum(0, 4)) {
+                    default:
+                    case 0:
+                        animId = 0x373A;
+                        break;
+                    case 1:
+                        animId = 0x374A;
+                        break;
+                    case 2:
+                        animId = 0x375A;
+                        break;
+                    case 3:
+                        animId = 0x376A;
+                        break;
+                    case 4:
+                        animId = 0x377A;
+                        break;
                 }
-                mSock->SysMessage(2031); // You open the plank
+                Effects->PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, RandomNum(0x04, 0x09),
+                                             30, 0);
             }
-        }
-        else {
-            mSock->SysMessage(399); // You can't reach that!
-        }
-        return true;
-    case IT_FIREWORKSWAND: // Fireworks wands
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
             return true;
-
-        if (iUsed->GetTempVar(CITV_MOREX) == 0) {
-            mSock->SysMessage(396); // That is out of charges!
-            return true;
-        }
-        iUsed->SetTempVar(CITV_MOREX, iUsed->GetTempVar(CITV_MOREX) - 1);
-        mSock->SysMessage(397, iUsed->GetTempVar(CITV_MOREX));
-        std::uint8_t j;
-        for (j = 0; j < static_cast<std::uint8_t>(RandomNum(0, 3) + 2); ++j) {
-            std::int16_t wx = (mChar->GetX() + RandomNum(0, 5) - 5);
-            std::int16_t wy = (mChar->GetY() - RandomNum(0, 7));
-            Effects->PlayMovingAnimation(mChar, wx, wy, mChar->GetZ() + 10, 0x36E4, 17, 0,
-                                         (RandomNum(0, 1) == 1));
-            std::uint16_t animId;
-            switch (RandomNum(0, 4)) {
-            default:
-            case 0:
-                animId = 0x373A;
-                break;
-            case 1:
-                animId = 0x374A;
-                break;
-            case 2:
-                animId = 0x375A;
-                break;
-            case 3:
-                animId = 0x376A;
-                break;
-            case 4:
-                animId = 0x377A;
-                break;
-            }
-            Effects->PlayStaticAnimation(wx, wy, mChar->GetZ() + 10, animId, RandomNum(0x04, 0x09),
-                                         30, 0);
-        }
-        return true;
-    case IT_RENAMEDEED: // Rename Deed
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
-            return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        mChar->SetSpeechItem(iUsed);
-        mChar->SetSpeechMode(6);
-        mSock->SysMessage(434); // Enter your new name.
-        return true;
-    case IT_TILLER: // Tillerman
-    {
-        CBoatObj *boat = static_cast<CBoatObj *>(iUsed->GetMultiObj());
-        if (ValidateObject(boat)) {
-            if (boat->GetMoveType() != BOAT_ANCHORED) {
-                mSock->SysMessage(2029); // You must lower the anchor to dock the boat.
-            }
-            else {
-                if (ObjInRange(mChar, boat, DIST_INRANGE)) {
-                    ModelBoat(mSock, boat);
-                }
-                else {
-                    mSock->SysMessage(461); // You are too far away.
-                }
-            }
-        }
-        return true;
-    }
-    case IT_GUILDSTONE:                           // Guildstone Deed
-        if (itemId == 0x14F0 || itemId == 0x1869) // Check for Deed/Teleporter + Guild Type
-        {
+        case IT_RENAMEDEED: // Rename Deed
             // If item is locked down, check if player has access to use it
             if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
                 return true;
-
-            mChar->SetSpeechItem(iUsed); // we're using this as a generic item
-            GuildSys->PlaceStone(mSock, iUsed);
-            return true;
-        }
-        else if (itemId == 0x0ED5) // Check for Guildstone + Guild Type
-        {
-            mSock->TempInt(iUsed->GetTempVar(CITV_MORE)); // track things properly
-            if (mChar->GetGuildNumber() == -1 ||
-                mChar->GetGuildNumber() != static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
-                mSock->SysMessage(1984); // You are not a member of this guild!
-            }
-            else if (mChar->GetGuildNumber() == static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
-                GuildSys->Menu(mSock, BasePage + 1,
-                               static_cast<guildid_t>(iUsed->GetTempVar(
-                                   CITV_MORE))); // more of the stone is the guild number
-            }
-            else {
-                mSock->SysMessage(438); // You already belong to a guild.
-            }
-            return true;
-        }
-        else {
-            Console::shared() << "Unhandled guild item type named: " << iUsed->GetName()
-                              << " with ID of: " << itemId << myendl;
-        }
-        return true;
-    case IT_METALREPAIRTOOL:
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
-            return true;
-
-        mSock->TempObj(iUsed);
-        mSock->SendTargetCursor(0, TARGET_REPAIRMETAL, 0, 485); // What do we wish to repair?
-        return true;
-    case IT_FORGE: // Forges
-        mSock->TempObj(iUsed);
-        mSock->SendTargetCursor(0, TARGET_SMELT, 0, 440);
-        return true;
-    case IT_DYE: // Dye
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
-            return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        mSock->TempObj(iUsed);
-        mSock->DyeAll(0);
-        mSock->SendTargetCursor(0, TARGET_DYEALL, 0, 441);
-        return true;
-    case IT_DYEVAT: // Dye vat
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
-            return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        mSock->TempObj(iUsed);
-        mSock->AddId1(iUsed->GetColour(1));
-        mSock->AddId2(iUsed->GetColour(2));
-        mSock->SendTargetCursor(0, TARGET_DVAT, 0, 442);
-        return true;
-    case IT_MODELMULTI: // Model boat/Houses
-        if (iType != IT_TOWNSTONE && iType != IT_GUILDSTONE) {
-            // If item is locked down, check if player has access to use it
-            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
                 return true;
-
-            if (iUsed->GetTempVar(CITV_MOREX) == 0)
-                break;
-
+            }
+            
             mChar->SetSpeechItem(iUsed);
-            DoHouseTarget(mSock, static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
-        }
-        return true;
-    case IT_SMITHYTOOL:
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+            mChar->SetSpeechMode(6);
+            mSock->SysMessage(434); // Enter your new name.
             return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        mSock->TempObj(iUsed);
-        mSock->SendTargetCursor(0, TARGET_SMITH, 0, 444);
-        return true;
-    case IT_MININGTOOL: // Mining
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
-            return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
+        case IT_TILLER: // Tillerman
+        {
+            CBoatObj *boat = static_cast<CBoatObj *>(iUsed->GetMultiObj());
+            if (ValidateObject(boat)) {
+                if (boat->GetMoveType() != BOAT_ANCHORED) {
+                    mSock->SysMessage(2029); // You must lower the anchor to dock the boat.
+                }
+                else {
+                    if (ObjInRange(mChar, boat, DIST_INRANGE)) {
+                        ModelBoat(mSock, boat);
+                    }
+                    else {
+                        mSock->SysMessage(461); // You are too far away.
+                    }
+                }
+            }
             return true;
         }
-
-        // Don't allow using tools with no usage left, if usage limits are enabled in ini
-        if (cwmWorldState->ServerData()->ToolUseLimit() && iUsed->GetUsesLeft() == 0) {
-            mSock->SysMessage(9262); // This has no more charges
-            return true;
-        }
-
-        mSock->TempObj(iUsed);
-        mSock->SendTargetCursor(0, TARGET_MINE, 0, 446);
-        return true;
-    case IT_EMPTYVIAL: // empty vial
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
-            return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        i = mChar->GetPackItem();
-        if (ValidateObject(i)) {
-            if (iUsed->GetCont() == i) {
-                mSock->TempObj(iUsed);
-                mSock->SendTargetCursor(0, TARGET_VIAL, 0, 447);
+        case IT_GUILDSTONE:                           // Guildstone Deed
+            if (itemId == 0x14F0 || itemId == 0x1869) // Check for Deed/Teleporter + Guild Type
+            {
+                // If item is locked down, check if player has access to use it
+                if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                    return true;
+                
+                mChar->SetSpeechItem(iUsed); // we're using this as a generic item
+                GuildSys->PlaceStone(mSock, iUsed);
+                return true;
+            }
+            else if (itemId == 0x0ED5) // Check for Guildstone + Guild Type
+            {
+                mSock->TempInt(iUsed->GetTempVar(CITV_MORE)); // track things properly
+                if (mChar->GetGuildNumber() == -1 ||
+                    mChar->GetGuildNumber() != static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
+                    mSock->SysMessage(1984); // You are not a member of this guild!
+                }
+                else if (mChar->GetGuildNumber() == static_cast<std::int16_t>(iUsed->GetTempVar(CITV_MORE))) {
+                    GuildSys->Menu(mSock, BasePage + 1,
+                                   static_cast<guildid_t>(iUsed->GetTempVar(
+                                                                            CITV_MORE))); // more of the stone is the guild number
+                }
+                else {
+                    mSock->SysMessage(438); // You already belong to a guild.
+                }
+                return true;
             }
             else {
-                mSock->SysMessage(448); // The vial is not in your pack!
+                Console::shared() << "Unhandled guild item type named: " << iUsed->GetName()
+                << " with ID of: " << itemId << myendl;
             }
-        }
-        return true;
-    case IT_ORE: // smelt ore
-        // If item is locked down, check if player has access to use it
-        if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
             return true;
-
-        // Don't allow using GM-locked down tools
-        if (iUsed->GetMovable() == 2) {
-            mSock->SysMessage(1032); // This is not yours!
-            return true;
-        }
-
-        if (iUsed->GetId() == 0x19B7 && iUsed->GetAmount() < 2) {
-            mSock->SysMessage(1814); // Too little ore to smelt!
-        }
-        else {
+        case IT_METALREPAIRTOOL:
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
             mSock->TempObj(iUsed);
-            if (iUsed->GetId() == 0x19B7) {
-                mSock->SendTargetCursor(0, TARGET_SMELTORE, 0,
-                                        460); // Select the forge on which to smelt the ore.
+            mSock->SendTargetCursor(0, TARGET_REPAIRMETAL, 0, 485); // What do we wish to repair?
+            return true;
+        case IT_FORGE: // Forges
+            mSock->TempObj(iUsed);
+            mSock->SendTargetCursor(0, TARGET_SMELT, 0, 440);
+            return true;
+        case IT_DYE: // Dye
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            mSock->TempObj(iUsed);
+            mSock->DyeAll(0);
+            mSock->SendTargetCursor(0, TARGET_DYEALL, 0, 441);
+            return true;
+        case IT_DYEVAT: // Dye vat
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            mSock->TempObj(iUsed);
+            mSock->AddId1(iUsed->GetColour(1));
+            mSock->AddId2(iUsed->GetColour(2));
+            mSock->SendTargetCursor(0, TARGET_DVAT, 0, 442);
+            return true;
+        case IT_MODELMULTI: // Model boat/Houses
+            if (iType != IT_TOWNSTONE && iType != IT_GUILDSTONE) {
+                // If item is locked down, check if player has access to use it
+                if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                    return true;
+                
+                if (iUsed->GetTempVar(CITV_MOREX) == 0)
+                    break;
+                
+                mChar->SetSpeechItem(iUsed);
+                DoHouseTarget(mSock, static_cast<std::uint16_t>(iUsed->GetTempVar(CITV_MOREX)));
+            }
+            return true;
+        case IT_SMITHYTOOL:
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            mSock->TempObj(iUsed);
+            mSock->SendTargetCursor(0, TARGET_SMITH, 0, 444);
+            return true;
+        case IT_MININGTOOL: // Mining
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            // Don't allow using tools with no usage left, if usage limits are enabled in ini
+            if (ServerConfig::shared().enabled(ServerSwitch::TOOLUSE) && iUsed->GetUsesLeft() == 0) {
+                mSock->SysMessage(9262); // This has no more charges
+                return true;
+            }
+            
+            mSock->TempObj(iUsed);
+            mSock->SendTargetCursor(0, TARGET_MINE, 0, 446);
+            return true;
+        case IT_EMPTYVIAL: // empty vial
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, true))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            i = mChar->GetPackItem();
+            if (ValidateObject(i)) {
+                if (iUsed->GetCont() == i) {
+                    mSock->TempObj(iUsed);
+                    mSock->SendTargetCursor(0, TARGET_VIAL, 0, 447);
+                }
+                else {
+                    mSock->SysMessage(448); // The vial is not in your pack!
+                }
+            }
+            return true;
+        case IT_ORE: // smelt ore
+            // If item is locked down, check if player has access to use it
+            if (iUsed->IsLockedDown() && !ValidateLockdownAccess(mChar, mSock, iUsed, false))
+                return true;
+            
+            // Don't allow using GM-locked down tools
+            if (iUsed->GetMovable() == 2) {
+                mSock->SysMessage(1032); // This is not yours!
+                return true;
+            }
+            
+            if (iUsed->GetId() == 0x19B7 && iUsed->GetAmount() < 2) {
+                mSock->SysMessage(1814); // Too little ore to smelt!
             }
             else {
-                mSock->SendTargetCursor(0, TARGET_SMELTORE, 0,
-                                        1815); // Select the forge on which to smelt the ore, or
-                                               // another pile of ore with which to combine it.
+                mSock->TempObj(iUsed);
+                if (iUsed->GetId() == 0x19B7) {
+                    mSock->SendTargetCursor(0, TARGET_SMELTORE, 0,
+                                            460); // Select the forge on which to smelt the ore.
+                }
+                else {
+                    mSock->SendTargetCursor(0, TARGET_SMELTORE, 0,
+                                            1815); // Select the forge on which to smelt the ore, or
+                    // another pile of ore with which to combine it.
+                }
             }
-        }
-        return true;
-    case IT_MESSAGEBOARD: // Message board opening
-        if (ObjInRange(mChar, iUsed, DIST_NEARBY)) {
-            CPIMsgBoardEvent *mbEvent = new CPIMsgBoardEvent(mSock, false);
-            mbEvent->Handle();
-        }
-        else {
-            mSock->SysMessage(461); // You are too far away.
-        }
-        return true;
-    case IT_MAGICSTATUE:
-        if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
-            if (itemId == 0x1508) {
-                iUsed->SetId(0x1509);
+            return true;
+        case IT_MESSAGEBOARD: // Message board opening
+            if (ObjInRange(mChar, iUsed, DIST_NEARBY)) {
+                CPIMsgBoardEvent *mbEvent = new CPIMsgBoardEvent(mSock, false);
+                mbEvent->Handle();
             }
             else {
-                iUsed->SetId(0x1508);
+                mSock->SysMessage(461); // You are too far away.
             }
-        }
-        else {
-            mSock->SysMessage(465); // You failed to use this statue.
-        }
-        return true;
-    case IT_GUILLOTINE:
-        if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
-            if (itemId == 0x1245) {
-                iUsed->SetId(0x1230);
+            return true;
+        case IT_MAGICSTATUE:
+            if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
+                if (itemId == 0x1508) {
+                    iUsed->SetId(0x1509);
+                }
+                else {
+                    iUsed->SetId(0x1508);
+                }
             }
             else {
-                iUsed->SetId(0x1245);
+                mSock->SysMessage(465); // You failed to use this statue.
             }
-        }
-        else {
-            mSock->SysMessage(466); // You failed to use this.
-        }
-        return true;
-    default:
-        if (iType) {
-            Console::shared() << "Unhandled item type for item: " << iUsed->GetName() << "["
-                              << iUsed->GetSerial() << "] of type: " << static_cast<std::uint16_t>(iType)
-                              << myendl;
-        }
-        break;
+            return true;
+        case IT_GUILLOTINE:
+            if (Skills->CheckSkill(mChar, ITEMID, 0, 10)) {
+                if (itemId == 0x1245) {
+                    iUsed->SetId(0x1230);
+                }
+                else {
+                    iUsed->SetId(0x1245);
+                }
+            }
+            else {
+                mSock->SysMessage(466); // You failed to use this.
+            }
+            return true;
+        default:
+            if (iType) {
+                Console::shared() << "Unhandled item type for item: " << iUsed->GetName() << "["
+                << iUsed->GetSerial() << "] of type: " << static_cast<std::uint16_t>(iType)
+                << myendl;
+            }
+            break;
     }
     return false;
 }
@@ -3098,10 +3087,10 @@ itemtypes_t FindItemTypeFromTag(const std::string &strToFind) {
         InitTagToItemType();
     }
     std::map<std::string, itemtypes_t>::const_iterator toFind =
-        tagToItemType.find(util::upper(strToFind));
+    tagToItemType.find(util::upper(strToFind));
     if (toFind != tagToItemType.end())
         return toFind->second;
-
+    
     return IT_COUNT;
 }
 
@@ -3127,7 +3116,7 @@ auto InitIdToItemType() -> void {
                 if (sectionCount != 0) {
                     for (std::int32_t i = 0; i <= sectionCount; i++) {
                         idToItemType[util::ston<std::uint16_t>(oldstrutil::extractSection(data, ",", i, i),
-                                                      16)] = iType;
+                                                               16)] = iType;
                     }
                 }
                 else {
@@ -3152,7 +3141,7 @@ itemtypes_t FindItemTypeFromId(std::uint16_t idToFind) {
     if (toFind != idToItemType.end()) {
         return toFind->second;
     }
-
+    
     return IT_COUNT;
 }
 
@@ -3165,14 +3154,14 @@ itemtypes_t FindItemTypeFromId(std::uint16_t idToFind) {
 itemtypes_t FindItemType(CItem *i) {
     itemtypes_t iType = i->GetType();
     switch (iType) {
-    case IT_NOTYPE:
-    case IT_COUNT:
-        iType = FindItemTypeFromId(i->GetId());
-        break;
-    default:
-        break;
+        case IT_NOTYPE:
+        case IT_COUNT:
+            iType = FindItemTypeFromId(i->GetId());
+            break;
+        default:
+            break;
     }
-
+    
     return iType;
 }
 
@@ -3218,28 +3207,26 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
         tSock->SetTimer(tPC_OBJDELAY,
                         cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_OBJECTUSAGE));
         tSock->ObjDelayMsgShown(false);
-
+        
         CChar *iChar = nullptr;
         if (iUsed->GetCont() != nullptr) {
             iChar = FindItemOwner(iUsed);
-            if (ValidateObject(iChar) && iChar != ourChar &&
-                !(iUsed->IsContType() && cwmWorldState->ServerData()->RogueStatus())) {
+            if (ValidateObject(iChar) && iChar != ourChar && !(iUsed->IsContType() && ServerConfig::shared().enabled(ServerSwitch::ROGUEENABLE))) {
                 tSock->SysMessage(387); // You cannot use items equipped by other players.
                 return false;
             }
         }
         // Check if item is in a house?
-        else if (iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK &&
-                 iType != IT_HOUSESIGN && iType != IT_TILLER) {
+        else if (iType != IT_DOOR && iType != IT_LOCKEDDOOR && iType != IT_PLANK && iType != IT_HOUSESIGN && iType != IT_TILLER) {
             if (iUsed->GetMultiObj() != nullptr && iUsed->GetMultiObj() != ourChar->GetMultiObj()) {
                 tSock->SysMessage(389); // That is too far away and you cannot reach it.
                 return false;
             }
         }
-
+        
         iChar = iUsed->GetOwnerObj();
         if (iUsed->IsCorpse()) {
-            if (cwmWorldState->ServerData()->LootingIsCrime()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::LOOTINGISCRIME)) {
                 bool willCrim = false;
                 if (ValidateObject(iChar)) {
                     // if the corpse is from an innocent player, and is not our own corpse
@@ -3255,7 +3242,7 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
                     MakeCriminal(ourChar);
                 }
             }
-
+            
             if (ValidateObject(iChar)) {
                 CTownRegion *itemTownRegion = iUsed->GetRegion();
                 if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
@@ -3303,22 +3290,22 @@ bool CPIDblClick::Handle() {
     CChar *ourChar = tSock->CurrcharObj();
     ourChar->BreakConcentration(tSock);
     std::uint8_t a1 = tSock->GetByte(1);
-
+    
     bool keyboard = ((a1 & 0x80) == 0x80);
     if (keyboard) {
         objectId -= 0x80000000;
     }
-
+    
     if (objectId < BASEITEMSERIAL) {
         handleCharDoubleClick(tSock, objectId, keyboard);
         return true;
     }
-
+    
     // Begin Items / Guildstones Section
     CItem *iUsed = CalcItemObjFromSer(objectId);
     if (!ValidateObject(iUsed))
         return true;
-
+    
     itemtypes_t iType = FindItemType(iUsed);
     bool scriptExecuted = false;
     std::vector<std::uint16_t> scriptTriggers = iUsed->GetScriptTriggers();
@@ -3343,7 +3330,7 @@ bool CPIDblClick::Handle() {
             }
         }
     }
-
+    
     bool itemUsageCheckComplete = false;
     // Then loop through all scripts again, checking for OnUseChecked event - but first run item
     // usage check once to make sure player can actually use item! If it hasn't been done at least
@@ -3352,17 +3339,17 @@ bool CPIDblClick::Handle() {
         if (!ItemIsUsable(tSock, ourChar, iUsed, iType)) {
             return true;
         }
-
+        
         // If item is disabled, don't continue
         if (iUsed->IsDisabled()) {
             tSock->SysMessage(394); // You cannot do that at the moment.
             return true;
         }
-
+        
         // Item-usage check completed!
         itemUsageCheckComplete = true;
     }
-
+    
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
@@ -3378,13 +3365,13 @@ bool CPIDblClick::Handle() {
             }
         }
     }
-
+    
     // If no scripts were found, or if no script contained onUse events, proceed with envoke stuff
     if (scriptTriggers.size() == 0 || !scriptExecuted) {
         std::uint16_t itemId = iUsed->GetId();
         cScript *toExecute = nullptr;
         std::uint16_t envTrig = 0;
-
+        
         if (JSMapping->GetEnvokeByType()->Check(static_cast<std::uint16_t>(iType))) {
             // Get script to run by item type
             envTrig = JSMapping->GetEnvokeByType()->GetScript(static_cast<std::uint16_t>(iType));
@@ -3395,20 +3382,20 @@ bool CPIDblClick::Handle() {
             envTrig = JSMapping->GetEnvokeById()->GetScript(itemId);
             toExecute = JSMapping->GetScript(envTrig);
         }
-
+        
         // Check for the onUse events in envoke scripts!
         if (toExecute != nullptr) {
             if (toExecute->OnUseUnChecked(ourChar, iUsed) == 0)
                 return true;
-
+            
             if (toExecute->OnUseChecked(ourChar, iUsed) == 0)
                 return true;
         }
     }
-
+    
     if (HandleDoubleClickTypes(tSock, ourChar, iUsed, iType))
         return true;
-
+    
     tSock->SysMessage(486); // You can't think of a way to use that item.
     return true;
 }
@@ -3424,37 +3411,37 @@ bool CPIDblClick::Handle() {
 const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     std::string dataToAdd;
     switch (i->GetType()) {
-    case IT_CONTAINER:
-    case IT_SPAWNCONT:
-    case IT_UNLOCKABLESPAWNCONT:
-        dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
-                    std::string(" items, ");
-        dataToAdd += util::ntos((i->GetWeight() / 100)) + std::string(" stones)");
-        break;
-    case IT_LOCKEDCONTAINER: // containers
-    case IT_LOCKEDSPAWNCONT: // spawn containers
-        dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
-                    std::string(" items, ");
-        dataToAdd +=
+        case IT_CONTAINER:
+        case IT_SPAWNCONT:
+        case IT_UNLOCKABLESPAWNCONT:
+            dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
+            std::string(" items, ");
+            dataToAdd += util::ntos((i->GetWeight() / 100)) + std::string(" stones)");
+            break;
+        case IT_LOCKEDCONTAINER: // containers
+        case IT_LOCKEDSPAWNCONT: // spawn containers
+            dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) +
+            std::string(" items, ");
+            dataToAdd +=
             util::ntos((i->GetWeight() / 100)) +
             std::string(" stones) " + Dictionary->GetEntry(9050, s->Language())); // [Locked]
-        break;
-    case IT_LOCKEDDOOR:
-        dataToAdd = " " + Dictionary->GetEntry(9050); // [Locked]
-        break;
-    case IT_RECALLRUNE:
-    case IT_GATE:
-    case IT_OBJTELEPORTER: {
-        CTownRegion *newRegion = CalcRegionFromXY(static_cast<std::int16_t>(i->GetTempVar(CITV_MOREX)),
-                                                  static_cast<std::int16_t>(i->GetTempVar(CITV_MOREY)),
-                                                  i->WorldNumber(), i->GetInstanceId());
-        dataToAdd = std::string(" (") + newRegion->GetName() + std::string(")");
-        break;
+            break;
+        case IT_LOCKEDDOOR:
+            dataToAdd = " " + Dictionary->GetEntry(9050); // [Locked]
+            break;
+        case IT_RECALLRUNE:
+        case IT_GATE:
+        case IT_OBJTELEPORTER: {
+            CTownRegion *newRegion = CalcRegionFromXY(static_cast<std::int16_t>(i->GetTempVar(CITV_MOREX)),
+                                                      static_cast<std::int16_t>(i->GetTempVar(CITV_MOREY)),
+                                                      i->WorldNumber(), i->GetInstanceId());
+            dataToAdd = std::string(" (") + newRegion->GetName() + std::string(")");
+            break;
+        }
+        default:
+            break;
     }
-    default:
-        break;
-    }
-
+    
     if (i->IsLockedDown()) {
         auto iMultiObj = i->GetMultiObj();
         if (ValidateObject(iMultiObj) && iMultiObj->IsSecureContainer(i)) {
@@ -3473,12 +3460,12 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     if (i->IsNewbie()) {
         dataToAdd += " " + Dictionary->GetEntry(9055, s->Language()); // [Blessed]
     }
-
+    
     // Is the item a magical item, and unidentified?
     if (!i->IsCorpse() && i->GetName2() != "#" && i->GetName2() != "") {
         s->ObjMessage(Dictionary->GetEntry(9402, s->Language()), i); // [Unidentified]
     }
-
+    
     currentName += dataToAdd;
     // Question: Do we put the creator thing here, saves some redundancy a bit later
     return currentName.c_str();
@@ -3493,7 +3480,7 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
 bool CPISingleClick::Handle() {
     if (objectId == INVALIDSERIAL) // invalid
         return true;
-
+    
     if (objectId < BASEITEMSERIAL) {
         // Begin chars/npcs section
         CChar *c = CalcCharObjFromSer(objectId);
@@ -3511,16 +3498,16 @@ bool CPISingleClick::Handle() {
             }
             tSock->ShowCharName(c, false);
         }
-
+        
         // End chars/npcs section
         return true;
     }
-
+    
     std::string temp2;
     std::string realname;
-
+    
     CChar *mChar = tSock->CurrcharObj();
-
+    
     // Begin items section
     std::uint8_t a1 = tSock->GetByte(1);
     std::uint8_t a2 = tSock->GetByte(2);
@@ -3529,7 +3516,7 @@ bool CPISingleClick::Handle() {
     CItem *i = CalcItemObjFromSer(objectId);
     if (!ValidateObject(i)) // invalid item
         return true;
-
+    
     // October 6, 2002 - Added support for the onClick event
     std::vector<std::uint16_t> scriptTriggers = i->GetScriptTriggers();
     for (auto scriptTrig : scriptTriggers) {
@@ -3542,11 +3529,11 @@ bool CPISingleClick::Handle() {
             }
         }
     }
-
+    
     if (mChar->GetSingClickSer()) {
         tSock->ObjMessage(1737, i, 0.0f, 0x03B2, a1, a2, a3, a4);
     }
-
+    
     std::uint16_t getAmount = i->GetAmount();
     if (i->GetCont() != nullptr && i->GetContSerial() >= BASEITEMSERIAL) {
         CChar *w = FindItemOwner(static_cast<CItem *>(i->GetCont()));
@@ -3554,25 +3541,25 @@ bool CPISingleClick::Handle() {
             if (w->GetNpcAiType() == AI_PLAYERVENDOR) {
                 std::string temp;
                 temp = "Desc: " + i->GetDesc() + std::string(" at ") +
-                       std::to_string(i->GetBuyValue()) + std::string("gp");
+                std::to_string(i->GetBuyValue()) + std::string("gp");
                 tSock->ObjMessage(temp, i);
             }
         }
     }
-
+    
     // todo( "We need to update this to use GetTileName almost exclusively, for plurality" );
     if (i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK)[0] != '#') {
         if (i->GetId() == 0x0ED5) // guildstone
         {
             realname =
-                util::format(Dictionary->GetEntry(101, tSock->Language()).c_str(),
-                             i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
+            util::format(Dictionary->GetEntry(101, tSock->Language()).c_str(),
+                         i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
         }
         if (!i->IsPileable() || getAmount == 1) {
             if (mChar->IsGM() && !i->IsCorpse() && getAmount > 1) {
                 realname = util::format(
-                    "%s (%u)", i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str(),
-                    getAmount);
+                                        "%s (%u)", i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str(),
+                                        getAmount);
             }
             else {
                 realname = i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK);
@@ -3580,8 +3567,8 @@ bool CPISingleClick::Handle() {
         }
         else {
             realname =
-                util::format("%u %ss", getAmount,
-                             i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
+            util::format("%u %ss", getAmount,
+                         i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
         }
     }
     else {
@@ -3589,7 +3576,7 @@ bool CPISingleClick::Handle() {
         if (i->GetAmount() > 1)
             realname = std::to_string(getAmount) + std::string(" ") + realname;
     }
-
+    
     if (i->GetType() == IT_MAGICWAND) {
         if (i->GetName2() == "#" || i->GetName2() == "") {
             realname += util::format(Dictionary->GetEntry(9404, tSock->Language()),
@@ -3609,31 +3596,28 @@ bool CPISingleClick::Handle() {
         }
         realname += util::format(", (%u items, %u stones)", iCount, (i->GetWeight() / 100));
     }
-
+    
     // Use item's real name as starting point for final string
     temp2 = realname;
-
+    
     if (i->GetCreator() != INVALIDSERIAL) {
         CChar *mCreator = CalcCharObjFromSer(i->GetCreator());
         if (ValidateObject(mCreator)) {
-            if (cwmWorldState->ServerData()->RankSystemStatus() && i->GetRank() == 10) {
+            if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && i->GetRank() == 10) {
                 std::string creatorName = GetNpcDictName(mCreator, tSock, NRS_SINGLECLICK);
-                temp2 += util::format(" %s", Dictionary->GetEntry(9140, tSock->Language())
-                                                 .c_str()); // of exceptional quality
-
-                if (cwmWorldState->ServerData()->DisplayMakersMark() && i->IsMarkedByMaker()) {
-                    temp2 += util::format(
-                        " %s by %s", cwmWorldState->skill[i->GetMadeWith() - 1].madeWord.c_str(),
-                        creatorName.c_str()); //  [crafted] by %s
+                temp2 += util::format(" %s", Dictionary->GetEntry(9140, tSock->Language()).c_str()); // of exceptional quality
+                
+                if (ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && i->IsMarkedByMaker()) {
+                    temp2 += util::format(" %s by %s", cwmWorldState->skill[i->GetMadeWith() - 1].madeWord.c_str(), creatorName.c_str()); //  [crafted] by %s
                 }
             }
         }
     }
-
+    
     tSock->ObjMessage(temp2, i);
-
+    
     std::string itemTags = "";
     tSock->ObjMessage(AppendData(tSock, i, itemTags), i);
-
+    
     return true;
 }

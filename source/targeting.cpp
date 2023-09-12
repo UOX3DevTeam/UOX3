@@ -900,7 +900,7 @@ void AttackTarget(CSocket *s) {
         return;
     
     // Don't allow fighting between Young/Non-Young players or their pets
-    if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER)) {
         auto targOwner = target->GetOwnerObj();
         if (!ValidateObject(targOwner)) {
             targOwner = target;
@@ -910,8 +910,7 @@ void AttackTarget(CSocket *s) {
             auto mPetOwner = mPet->GetOwnerObj();
             if (ValidateObject(mPetOwner) &&
                 mPetOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
-                s->SysMessage(
-                              18708); // As a Young player, you cannot harm other players, or their followers.
+                s->SysMessage(18708); // As a Young player, you cannot harm other players, or their followers.
                 return;
             }
             else if (targOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
@@ -1125,15 +1124,13 @@ void TransferTarget(CSocket *s) {
         return;
     }
     
-    if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER)) {
         if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
             !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18725); // As a young player, you may not transfer pets to older players.
             return;
         }
-        else if (!mChar->IsNpc() &&
-                 !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
-                 targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+        else if (!mChar->IsNpc() && !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18726); // As an older player, you may not transfer pets to young players.
             return;
         }
@@ -1141,23 +1138,17 @@ void TransferTarget(CSocket *s) {
     
     // Don't allow transfer of pet if either party is a criminal
     if (mChar->IsCriminal()) {
-        s->SysMessage(
-                      2379); // The pet refuses to be transferred because it will not obey you sufficiently.
+        s->SysMessage(2379); // The pet refuses to be transferred because it will not obey you sufficiently.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(2382,
-                                              mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                              .c_str()); // The pet will not accept you as a
+            targChar->GetSocket()->SysMessage(2382, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // The pet will not accept you as a
             // master because it does not trust %s.
         }
         return;
     }
     else if (targChar->IsCriminal()) {
-        s->SysMessage(
-                      2380, targChar->GetNameRequest(mChar, NRS_SPEECH)
-                      .c_str()); // The pet refuses to be transferred because it will not obey %s.
+        s->SysMessage(2380, targChar->GetNameRequest(mChar, NRS_SPEECH).c_str()); // The pet refuses to be transferred because it will not obey %s.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2381); // The pet will not accept you as a master because it does not trust you.
+            targChar->GetSocket()->SysMessage(2381); // The pet will not accept you as a master because it does not trust you.
         }
         return;
     }
@@ -1168,8 +1159,7 @@ void TransferTarget(CSocket *s) {
         if (targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots) {
             s->SysMessage(2391); // That would exceed the other player's maximum pet control slots.
             if (targChar->GetSocket() != nullptr) {
-                targChar->GetSocket()->SysMessage(
-                                                  2390); // That would exceed your maximum pet control slots.
+                targChar->GetSocket()->SysMessage(2390); // That would exceed your maximum pet control slots.
             }
             return;
         }
@@ -1178,8 +1168,7 @@ void TransferTarget(CSocket *s) {
              static_cast<std::uint8_t>(targChar->GetFollowerList()->Num()) >= maxFollowers) {
         s->SysMessage(2779); // That would exceed the other player's maximum follower count.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2780); // That would exceed your maximum follower count.
+            targChar->GetSocket()->SysMessage(2780); // That would exceed your maximum follower count.
         }
         return;
     }
@@ -1190,35 +1179,27 @@ void TransferTarget(CSocket *s) {
         s->SysMessage(2402); // The creature has had too many masters and is not willing to do the
         // bidding of another one!
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2402); // The creature has had too many masters and is not willing to do the bidding
+            targChar->GetSocket()->SysMessage(2402); // The creature has had too many masters and is not willing to do the bidding
             // of another one!
         }
         return;
     }
     
     // Check loyalty of pet to old master
-    if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
-        !Npcs->CanControlPet(mChar, petChar, true, false, false, true)) {
-        s->SysMessage(
-                      2379); // The pet refuses to be transferred because it will not obey you sufficiently.
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(mChar, petChar, true, false, false, true)) {
+        s->SysMessage(2379); // The pet refuses to be transferred because it will not obey you sufficiently.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(2382,
-                                              mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                              .c_str()); // The pet will not accept you as a
+            targChar->GetSocket()->SysMessage(2382, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // The pet will not accept you as a
             // master because it does not trust %s.
         }
         return;
     }
     
     // Check loyalty of pet to new master
-    if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
-        !Npcs->CanControlPet(targChar, petChar, true, true, true, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(targChar, petChar, true, true, true, true)) {
         s->SysMessage(2380); // The pet refuses to be transferred because it will not obey %s.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2381, mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                              .c_str()); // The pet will not accept you as a master because it does not
+            targChar->GetSocket()->SysMessage(2381, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // The pet will not accept you as a master because it does not
             // trust you.
         }
         return;
@@ -1229,10 +1210,7 @@ void TransferTarget(CSocket *s) {
         CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
-            petTransferDeed->SetName(util::format(
-                                                  "a transfer deed for %s (%s)", petName.c_str(),
-                                                  Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language())
-                                                  .c_str())); // cwmWorldState->creatures[petChar->GetId()].CreatureType().c_str()
+            petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // cwmWorldState->creatures[petChar->GetId()].CreatureType().c_str()
             // ));
             petTransferDeed->SetTempVar(CITV_MORE, petChar->GetSerial());
             petTransferDeed->SetMovable(2); // Disallow moving the deed out of the trade window
@@ -1325,8 +1303,7 @@ void NpcResurrectTarget(CChar *i) {
         return;
     
     if (i->IsNpc()) {
-        Console::shared().error(
-                                util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
+        Console::shared().error(util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
         return;
     }
     CSocket *mSock = i->GetSocket();
@@ -1337,8 +1314,7 @@ void NpcResurrectTarget(CChar *i) {
             for (auto scriptTrig : scriptTriggers) {
                 cScript *toExecute = JSMapping->GetScript(scriptTrig);
                 if (toExecute != nullptr) {
-                    if (toExecute->OnResurrect(i) ==
-                        1) // if it exists and we don't want hard code, return
+                    if (toExecute->OnResurrect(i) == 1) // if it exists and we don't want hard code, return
                         return;
                 }
             }
@@ -1407,8 +1383,7 @@ void NpcResurrectTarget(CChar *i) {
         }
     }
     else {
-        Console::shared().warning(util::format(
-                                               "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()));
+        Console::shared().warning(util::format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()));
     }
 }
 
@@ -1439,8 +1414,7 @@ void ShowSkillTarget(CSocket *s) {
         }
         
         if (skillVal > 0 || dispType % 2 == 0) {
-            showSkills.AddData(cwmWorldState->skill[i].name,
-                               std::to_string(static_cast<R32>(skillVal) / 10), 8);
+            showSkills.AddData(cwmWorldState->skill[i].name, std::to_string(static_cast<R32>(skillVal) / 10), 8);
         }
     }
     showSkills.Send(4, false, INVALIDSERIAL);
@@ -1490,15 +1464,12 @@ void FriendTarget(CSocket *s) {
         return;
     }
     
-    if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
-        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
-            !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER)) {
+        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18727); // As a young player, you may not friend pets to older players.
             return;
         }
-        else if (!mChar->IsNpc() &&
-                 !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
-                 targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+        else if (!mChar->IsNpc() && !mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18728); // As an older player, you may not friend pets to young players.
             return;
         }
@@ -1514,28 +1485,22 @@ void FriendTarget(CSocket *s) {
     }
     
     // Check loyalty of pet to master
-    if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
-        !Npcs->CanControlPet(mChar, pet, false, true, true)) {
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(mChar, pet, false, true, true)) {
         s->SysMessage(2417); // The pet refuses to accept a new friend because it will not obey you
         // sufficiently.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2418,
-                                              mChar->GetNameRequest(targChar, 0).c_str()); // The pet will not accept you as a
+            targChar->GetSocket()->SysMessage(2418,  mChar->GetNameRequest(targChar, 0).c_str()); // The pet will not accept you as a
             // friend because it does not trust %s.
         }
         return;
     }
     
     // Check loyalty of pet to new friend
-    if (cwmWorldState->ServerData()->CheckPetControlDifficulty() &&
-        !Npcs->CanControlPet(targChar, pet, false, true, true)) {
-        s->SysMessage(2419, targChar->GetNameRequest(mChar, NRS_SPEECH)
-                      .c_str()); // The pet refuses to accept %s as a friend because it
+    if (ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) && !Npcs->CanControlPet(targChar, pet, false, true, true)) {
+        s->SysMessage(2419, targChar->GetNameRequest(mChar, NRS_SPEECH).c_str()); // The pet refuses to accept %s as a friend because it
         // will not obey them.
         if (targChar->GetSocket() != nullptr) {
-            targChar->GetSocket()->SysMessage(
-                                              2420); // The pet will not accept you as a friend because it does not trust you.
+            targChar->GetSocket()->SysMessage(2420); // The pet will not accept you as a friend because it does not trust you.
         }
         return;
     }
@@ -1550,8 +1515,7 @@ void FriendTarget(CSocket *s) {
         if (targSock != nullptr) {
             // %s has befriended %s to you.
             petName = GetNpcDictName(pet, targSock, NRS_SPEECH);
-            targSock->SysMessage(1625, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str(),
-                                 petName.c_str());
+            targSock->SysMessage(1625, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str(), petName.c_str());
         }
     }
     else {
@@ -1652,8 +1616,7 @@ void GuardTarget(CSocket *s) {
             if (charToGuard->GetSocket() != nullptr) {
                 std::string petName =
                 GetNpcDictName(petGuarding, charToGuard->GetSocket(), NRS_SPEECH);
-                charToGuard->GetSocket()->SysMessage(
-                                                     2374, petName.c_str()); // ~1_PETNAME~ is now guarding you.
+                charToGuard->GetSocket()->SysMessage(2374, petName.c_str()); // ~1_PETNAME~ is now guarding you.
             }
         }
         
@@ -1670,8 +1633,7 @@ void GuardTarget(CSocket *s) {
             }
         }
         else {
-            s->SysMessage(
-                          1628); // Your pet may only guard you, his friends, and items in your house!
+            s->SysMessage(1628); // Your pet may only guard you, his friends, and items in your house!
         }
     }
 }
@@ -1735,8 +1697,7 @@ void MakeStatusTarget(CSocket *sock) {
     
     std::uint8_t targetCommand = targLevel->commandLevel;
     auto temp = util::format("account%i.log", mChar->GetAccount().accountNumber);
-    auto temp2 = util::format("%s has made %s a %s.\n", mChar->GetName().c_str(),
-                              targetChar->GetName().c_str(), targLevel->name.c_str());
+    auto temp2 = util::format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str());
     
     Console::shared().log(temp2, temp);
     
@@ -1775,8 +1736,7 @@ void MakeStatusTarget(CSocket *sock) {
         }
     }
     if (targetCommand != 0 && targetCommand != origCommand) {
-        targetChar->SetName(util::trim(
-                                       util::format("%s %s", targLevel->title.c_str(), util::trim(playerName).c_str())));
+        targetChar->SetName(util::trim(util::format("%s %s", targLevel->title.c_str(), util::trim(playerName).c_str())));
     }
     else if (origCommand != 0) {
         targetChar->SetName(util::trim(playerName));
@@ -1978,10 +1938,7 @@ void VialTarget(CSocket *mSock) {
                 }
                 else {
                     CSocket *nCharSocket = targChar->GetSocket();
-                    nCharSocket->SysMessage(
-                                            746,
-                                            mChar->GetNameRequest(targChar, NRS_SPEECH)
-                                            .c_str()); // %s has pricked you with a dagger and sampled your blood
+                    nCharSocket->SysMessage(746, mChar->GetNameRequest(targChar, NRS_SPEECH).c_str()); // %s has pricked you with a dagger and sampled your blood
                 }
                 if (WillResultInCriminal(mChar, targChar)) {
                     MakeCriminal(mChar);
@@ -2017,8 +1974,7 @@ bool CPITargetCursor::Handle() {
             return true; // do nothing if user cancels, avoids CRASH!
         }
         if (tSock->GetByte(1) == 1 && !tSock->GetDWord(7)) {
-            tSock->SetDWord(
-                            7, INVALIDSERIAL); // Client sends TargSer as 0 when we target an XY/Static, use
+            tSock->SetDWord(7, INVALIDSERIAL); // Client sends TargSer as 0 when we target an XY/Static, use
             // INVALIDSERIAL as 0 could be a valid Serial -
         }
         

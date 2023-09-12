@@ -103,6 +103,7 @@
     <ClCompile Include="..\..\source\configuration\directorylocation.cpp" />
     <ClCompile Include="..\..\source\configuration\serverconfig.cpp" />
     <ClCompile Include="..\..\source\configuration\serverfeature.cpp" />
+    <ClCompile Include="..\..\source\configuration\serverswitch.cpp" />
     <ClCompile Include="..\..\source\configuration\startlocconfig.cpp" />
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdata.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="..\..\source\configuration\directorylocation.hpp" />
     <ClInclude Include="..\..\source\configuration\serverconfig.hpp" />
     <ClInclude Include="..\..\source\configuration\serverfeature.hpp" />
+    <ClInclude Include="..\..\source\configuration\serverswitch.hpp" />
     <ClInclude Include="..\..\source\configuration\startlocconfig.hpp" />
     <!-- Script group -->
     <ClInclude Include="..\..\source\cserverdata.h" />

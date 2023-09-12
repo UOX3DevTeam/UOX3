@@ -64,15 +64,15 @@ const bool DEFWORLD_RELOADINGSCRIPTS = false;
 const bool DEFWORLD_CLASSESINITIALIZED = false;
 
 CWorldMain::CWorldMain()
-    : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), secure(DEFWORLD_SECURE),
-      hasLoaded(DEFWORLD_LOADED), uoTickCount(DEFWORLD_UOTICKCOUNT), startTime(DEFWORLD_STARTTIME),
-      endTime(DEFWORLD_ENDTIME), lClock(DEFWORLD_LCLOCK), overflow(DEFWORLD_OVERFLOW),
-      uiCurrentTime(DEFWORLD_UICURRENTTIME), oldTime(DEFWORLD_OLDTIME), newTime(DEFWORLD_NEWTIME),
-      autoSaved(DEFWORLD_AUTOSAVED), worldSaveProgress(DEFWORLD_SAVEPROGRESS),
-      playersOnline(DEFWORLD_PLAYERSONLINE), reloadingScripts(DEFWORLD_RELOADINGSCRIPTS),
-      classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
+: error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), secure(DEFWORLD_SECURE),
+hasLoaded(DEFWORLD_LOADED), uoTickCount(DEFWORLD_UOTICKCOUNT), startTime(DEFWORLD_STARTTIME),
+endTime(DEFWORLD_ENDTIME), lClock(DEFWORLD_LCLOCK), overflow(DEFWORLD_OVERFLOW),
+uiCurrentTime(DEFWORLD_UICURRENTTIME), oldTime(DEFWORLD_OLDTIME), newTime(DEFWORLD_NEWTIME),
+autoSaved(DEFWORLD_AUTOSAVED), worldSaveProgress(DEFWORLD_SAVEPROGRESS),
+playersOnline(DEFWORLD_PLAYERSONLINE), reloadingScripts(DEFWORLD_RELOADINGSCRIPTS),
+classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
     sData = nullptr;
-
+    
     for (std::int32_t mTID = static_cast<std::int32_t>(tWORLD_NEXTFIELDEFFECT);
          mTID < static_cast<std::int32_t>(tWORLD_COUNT); ++mTID) {
         worldTimers[mTID] = 0;
@@ -353,19 +353,19 @@ void CWorldMain::DoWorldLight() {
     bool ampm = ServerData()->ServerTimeAMPM();
     std::uint8_t currentHour = ServerData()->ServerTimeHours();
     std::uint8_t currentMinute = ServerData()->ServerTimeMinutes();
-
+    
     R32 currentTime = R32(currentHour + (currentMinute / 60.0f));
     R32 hourIncrement = R32(fabs((worlddarklevel - worldbrightlevel) /
                                  12.0f)); // we want the amount to subtract from LightMax in the
-                                          // morning / add to LightMin in evening
-
+    // morning / add to LightMin in evening
+    
     if (ampm) {
         ServerData()->worldLightCurrentLevel(
-            static_cast<std::uint8_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
+                                             static_cast<std::uint8_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
     }
     else {
         ServerData()->worldLightCurrentLevel(
-            static_cast<std::uint8_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
+                                             static_cast<std::uint8_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
     }
 }
 
@@ -383,32 +383,32 @@ void sysBroadcast(const std::string &txt);
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld(bool x) {
     static std::uint32_t save_counter = 0;
-
+    
     std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
                   [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
-                      if (entry.second) {
-                          entry.second->CheckSpawned();
-                      }
-                  });
-
+        if (entry.second) {
+            entry.second->CheckSpawned();
+        }
+    });
+    
     if (GetWorldSaveProgress() != SS_SAVING) {
         SetWorldSaveProgress(SS_SAVING);
         Console::shared().printSectionBegin();
-        if (ServerData()->ServerAnnounceSavesStatus()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE)) {
             sysBroadcast(Dictionary->GetEntry(1615)); // World data saving, you may experience some
-                                                      // lag for the next several minutes.
+            // lag for the next several minutes.
             SpeechSys->poll();
         }
         Network->ClearBuffers();
-
+        
         if (x) {
             Console::shared() << "Starting manual world data save...." << myendl;
         }
         else {
             Console::shared() << "Starting automatic world data save...." << myendl;
         }
-
-        if (ServerData()->ServerBackupStatus() && !ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).empty()) {
+        
+        if (ServerConfig::shared().enabled(ServerSwitch::BACKUP) && !ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).empty()) {
             ++save_counter;
             if ((save_counter % ServerData()->BackupRatio()) == 0) {
                 Console::shared() << "Archiving world files." << myendl;
@@ -426,26 +426,25 @@ void CWorldMain::SaveNewWorld(bool x) {
         Effects->SaveEffects();
         ServerData()->SaveTime();
         SaveStatistics();
-
-        if (ServerData()->ServerAnnounceSavesStatus()) {
+        
+        if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE)) {
             sysBroadcast("World Save Complete.");
         }
-
+        
         //	If accounts are to be loaded then they should be loaded
         //	all the time if using the web interface
         Account::shared().save();
         // Make sure to import the new accounts so they have access too.
-        Console::shared() << "New accounts processed: " << Account::shared().importAccounts()
-                          << myendl;
+        Console::shared() << "New accounts processed: " << Account::shared().importAccounts() << myendl;
         SetWorldSaveProgress(SS_JUSTSAVED);
-
+        
         char saveTimestamp[100];
         time_t tempTimestamp =
-            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         struct tm curtime;
         lcltime(tempTimestamp, curtime);
         strftime(saveTimestamp, 50, "%F at %T", &curtime);
-
+        
         Console::shared() << "World save complete on " << saveTimestamp << myendl;
         Console::shared().printSectionBegin();
     }
@@ -496,13 +495,13 @@ void CWorldMain::SaveStatistics() {
     }
     statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
     statsDestination << "PLAYERCOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR)
-                     << '\n';
+    << '\n';
     statsDestination << "ITEMCOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM)
-                     << '\n';
+    << '\n';
     statsDestination << "MULTICOUNT=" << ObjectFactory::shared().CountOfObjects(CBaseObject::OT_MULTI)
-                     << '\n';
+    << '\n';
     statsDestination << "}" << '\n' << '\n';
-
+    
     statsDestination.close();
 }
 
@@ -520,8 +519,8 @@ void CWorldMain::SaveStatistics() {
 // scope
 // o------------------------------------------------------------------------------------------------o
 CServerProfile::CServerProfile()
-    : networkTime(0), timerTime(0), autoTime(0), loopTime(0), networkTimeCount(1000),
-      timerTimeCount(1000), autoTimeCount(1000), loopTimeCount(1000), globalRecv(0), globalSent(0) {
+: networkTime(0), timerTime(0), autoTime(0), loopTime(0), networkTimeCount(1000),
+timerTimeCount(1000), autoTimeCount(1000), loopTimeCount(1000), globalRecv(0), globalSent(0) {
 }
 
 // o------------------------------------------------------------------------------------------------o

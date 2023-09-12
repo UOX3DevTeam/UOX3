@@ -401,20 +401,12 @@ public:
     
     
     
-    auto setAssistantNegotiation(bool value) -> void;
-    auto getAssistantNegotiation() const -> bool;
     
     auto getSpawnRegionsFacetStatus(std::uint32_t value) const -> bool;
     auto setSpawnRegionsFacetStatus(std::uint32_t value, bool status) -> void;
     auto getSpawnRegionsFacetStatus() const ->std::uint32_t ;
     auto setSpawnRegionsFacetStatus(std::uint32_t value) -> void;
-    
-    auto setClassicUOMapTracker(bool value) -> void;
-    auto getClassicUOMapTracker() const -> bool;
-    
-    auto useUnicodeMessages(bool value) -> void;
-    auto useUnicodeMessages() const -> bool;
-    
+        
     std::int16_t serverMoon(std::int16_t slot) const;
     lightlevel_t worldLightDarkLevel() const;
     lightlevel_t worldLightBrightLevel() const;
@@ -457,24 +449,11 @@ public:
     auto ExternalIP(const std::string &ip) -> void;
     auto ServerPort(std::uint16_t setport) -> void;
     auto ServerPort() const -> std::uint16_t;
-    auto ServerConsoleLog(bool setting) -> void;
-    auto ServerConsoleLog() const -> bool;
-    auto ServerNetworkLog(bool setting) -> void;
-    auto ServerNetworkLog() const -> bool;
-    auto ServerSpeechLog(bool setting) -> void;
-    auto ServerSpeechLog() const -> bool;
     auto ServerCommandPrefix(char cmdvalue) -> void;
     char ServerCommandPrefix() const;
-    auto ServerAnnounceSaves(bool setting) -> void;
-    auto ServerAnnounceSavesStatus() const -> bool;
-    auto ServerJoinPartAnnouncements(bool setting) -> void;
-    auto ServerJoinPartAnnouncementsStatus() const -> bool;
     auto ServerMulCaching(bool setting) -> void;
     auto ServerMulCachingStatus() const -> bool;
-    auto ServerBackups(bool setting) -> void;
-    auto ServerBackupStatus() const -> bool;
-    auto ServerContextMenus(bool setting) -> void;
-    auto ServerContextMenus() const -> bool;
+
     auto ServerSavesTimer(std::uint32_t timer) -> void;
     auto ServerSavesTimerStatus() const ->std::uint32_t ;
     auto ServerMainThreadTimer(std::uint32_t threadtimer) -> void;
@@ -497,10 +476,6 @@ public:
     auto SysMsgColour(std::uint16_t value) -> void;
     auto SysMsgColour() const -> std::uint16_t;
     
-    auto ServerUOGEnabled() const -> bool { return uogEnabled; }
-    auto ServerUOGEnabled(bool uogValue) -> void { uogEnabled = uogValue; }
-    auto FreeshardServerPoll(bool value) -> void;
-    auto FreeshardServerPoll() const -> bool;
     auto ServerRandomStartingLocation() const -> bool { return randomStartingLocation; }
     auto ServerRandomStartingLocation(bool rndStartLocValue) -> void {
         randomStartingLocation = rndStartLocValue;
@@ -512,80 +487,14 @@ public:
     auto ServerNetSndTimeout() const -> std::uint32_t { return netSndTimeout; }
     auto ServerNetSndTimeout(std::uint32_t timeoutValue) -> void { netSndTimeout = timeoutValue; }
     
-   
-    auto StatsAffectSkillChecks(bool setting) -> void;
-    auto StatsAffectSkillChecks() const -> bool;
-    
-    // Enable/disable higher total for starting stats, and/or fourth starting skill in
-    // clients 7.0.16+
-    auto ExtendedStartingStats(bool setting) -> void;
-    auto ExtendedStartingStats() const -> bool;
-    auto ExtendedStartingSkills(bool setting) -> void;
-    auto ExtendedStartingSkills() const -> bool;
-    
-    
-    auto CorpseLootDecay(bool value) -> void;
-    auto CorpseLootDecay() const -> bool;
-    
-    auto GuardStatus(bool value) -> void;
-    auto GuardsStatus() const -> bool;
-    
-    auto DeathAnimationStatus(bool value) -> void;
-    auto DeathAnimationStatus() const -> bool;
-    
     auto WorldAmbientSounds(std::int16_t value) -> void;
     auto WorldAmbientSounds() const -> std::int16_t ;
-    
-    auto AmbientFootsteps(bool value) -> void;
-    auto AmbientFootsteps() const -> bool;
-    
-    auto InternalAccountStatus(bool value) -> void;
-    auto InternalAccountStatus() const -> bool;
-    
-    auto YoungPlayerSystem(bool value) -> void;
-    auto YoungPlayerSystem() const -> bool;
-    
-    auto ShowOfflinePCs(bool value) -> void;
-    auto ShowOfflinePCs() const -> bool;
-    
-    auto RogueStatus(bool value) -> void;
-    auto RogueStatus() const -> bool;
-    
-    auto SnoopIsCrime(bool value) -> void;
-    auto SnoopIsCrime() const -> bool;
-    
-    auto SnoopAwareness(bool value) -> void;
-    auto SnoopAwareness() const -> bool;
-    
-    auto PlayerPersecutionStatus(bool value) -> void;
-    auto PlayerPersecutionStatus() const -> bool;
     
     auto HtmlStatsStatus(std::int16_t value) -> void;
     auto HtmlStatsStatus() const ->std::int16_t;
     
-    auto SellByNameStatus(bool value) -> void;
-    auto SellByNameStatus() const -> bool;
-    
     auto SellMaxItemsStatus(std::int16_t value) -> void;
     auto SellMaxItemsStatus() const -> std::int16_t ;
-    
-    auto TradeSystemStatus(bool value) -> void;
-    auto TradeSystemStatus() const -> bool;
-    
-    auto RankSystemStatus(bool value) -> void;
-    auto RankSystemStatus() const -> bool;
-    
-    void DisplayMakersMark(bool value);
-    bool DisplayMakersMark() const;
-    
-    auto CutScrollRequirementStatus(bool value) -> void;
-    auto CutScrollRequirementStatus() const -> bool;
-    
-    auto CheckPetControlDifficulty(bool value) -> void;
-    auto CheckPetControlDifficulty() const -> bool;
-    
-    auto NPCTrainingStatus(bool setting) -> void;
-    auto NPCTrainingStatus() const -> bool;
     
     auto CheckItemsSpeed(R64 value) -> void;
     auto CheckItemsSpeed() const -> R64 ;
@@ -623,29 +532,11 @@ public:
     auto MineCheck(std::uint8_t value) -> void;
     std::uint8_t MineCheck() const;
     
-    auto AlchemyDamageBonusEnabled(bool value) -> void;
-    auto AlchemyDamageBonusEnabled() const -> bool;
-    
     auto AlchemyDamageBonusModifier(std::uint8_t value) -> void;
     std::uint8_t AlchemyDamageBonusModifier() const;
     
     auto WeaponDamageBonusType(std::uint8_t value) -> void;
     std::uint8_t WeaponDamageBonusType() const;
-    
-    auto ItemsInterruptCasting(bool value) -> void;
-    auto ItemsInterruptCasting() const -> bool;
-    
-    auto CombatArmorClassDamageBonus(bool value) -> void;
-    auto CombatArmorClassDamageBonus() const -> bool;
-    
-    auto CombatDisplayHitMessage(bool value) -> void;
-    auto CombatDisplayHitMessage() const -> bool;
-    
-    auto CombatDisplayDamageNumbers(bool value) -> void;
-    auto CombatDisplayDamageNumbers() const -> bool;
-    
-    auto CombatAttackSpeedFromStamina(bool value) -> void;
-    auto CombatAttackSpeedFromStamina() const -> bool;
     
     auto FishingStaminaLoss(std::int16_t value) -> void;
     std::int16_t FishingStaminaLoss() const;
@@ -659,18 +550,6 @@ public:
     std::uint8_t SkillLevel() const;
     auto SkillLevel(std::uint8_t value) -> void;
     
-    auto EscortsEnabled(bool value) -> void;
-    auto EscortsEnabled() const -> bool;
-    
-    auto ItemsDetectSpeech(bool value) -> void;
-    auto ItemsDetectSpeech() const -> bool;
-    
-    auto ForceNewAnimationPacket(bool value) -> void;
-    auto ForceNewAnimationPacket() const -> bool;
-    
-    auto MapDiffsEnabled(bool value) -> void;
-    auto MapDiffsEnabled() const -> bool;
-    
     auto MaxPlayerPackItems(std::uint16_t value) -> void;
     auto MaxPlayerPackItems() const -> std::uint16_t;
     
@@ -682,111 +561,12 @@ public:
     
     auto MaxPlayerBankWeight(std::int32_t newVal) -> void;
     auto MaxPlayerBankWeight() const -> std::int32_t;
-    
-    auto BasicTooltipsOnly(bool value) -> void;
-    auto BasicTooltipsOnly() const -> bool;
-    
-    auto ShowNpcTitlesInTooltips(bool value) -> void;
-    auto ShowNpcTitlesInTooltips() const -> bool;
-    
-    auto ShowNpcTitlesOverhead(bool value) -> void;
-    auto ShowNpcTitlesOverhead() const -> bool;
-    
-    auto ShowInvulnerableTagOverhead(bool value) -> void;
-    auto ShowInvulnerableTagOverhead() const -> bool;
-    
-    auto ShowRaceWithName(bool value) -> void;
-    auto ShowRaceWithName() const -> bool;
-    
-    auto ShowRaceInPaperdoll(bool value) -> void;
-    auto ShowRaceInPaperdoll() const -> bool;
-    
-    auto ShowGuildInfoInTooltip(bool value) -> void;
-    auto ShowGuildInfoInTooltip() const -> bool;
-    
-    auto ShowReputationTitleInTooltip(bool value) -> void;
-    auto ShowReputationTitleInTooltip() const -> bool;
-    
-    auto EnableNPCGuildDiscounts(bool value) -> void;
-    auto EnableNPCGuildDiscounts() const -> bool;
-    
-    auto EnableNPCGuildPremiums(bool value) -> void;
-    auto EnableNPCGuildPremiums() const -> bool;
-    
-    auto CastSpellsWhileMoving(bool value) -> void;
-    auto CastSpellsWhileMoving() const -> bool;
-    
-    auto PetCombatTraining(bool value) -> void;
-    auto PetCombatTraining() const -> bool;
-    
-    auto HirelingCombatTraining(bool value) -> void;
-    auto HirelingCombatTraining() const -> bool;
-    
-    auto NpcCombatTraining(bool value) -> void;
-    auto NpcCombatTraining() const -> bool;
-    
-    auto ShowItemResistStats(bool value) -> void;
-    auto ShowItemResistStats() const -> bool;
-    
-    auto ShowWeaponDamageTypes(bool value) -> void;
-    auto ShowWeaponDamageTypes() const -> bool;
-    
-    auto GlobalItemDecay(bool value) -> void;
-    auto GlobalItemDecay() const -> bool;
-    
-    auto ScriptItemsDecayable(bool value) -> void;
-    auto ScriptItemsDecayable() const -> bool;
-    
-    auto BaseItemsDecayable(bool value) -> void;
-    auto BaseItemsDecayable() const -> bool;
-    
-    auto ItemDecayInHouses(bool value) -> void;
-    auto ItemDecayInHouses() const -> bool;
-    
-    auto ProtectPrivateHouses(bool value) -> void;
-    auto ProtectPrivateHouses() const -> bool;
-    
-    auto TrackHousesPerAccount(bool value) -> void;
-    auto TrackHousesPerAccount() const -> bool;
-    
-    auto CanOwnAndCoOwnHouses(bool value) -> void;
-    auto CanOwnAndCoOwnHouses() const -> bool;
-    
-    auto CoOwnHousesOnSameAccount(bool value) -> void;
-    auto CoOwnHousesOnSameAccount() const -> bool;
-    
-    auto SafeCoOwnerLogout(bool value) -> void;
-    auto SafeCoOwnerLogout() const -> bool;
-    
-    auto SafeFriendLogout(bool value) -> void;
-    auto SafeFriendLogout() const -> bool;
-    
-    auto SafeGuestLogout(bool value) -> void;
-    auto SafeGuestLogout() const -> bool;
-    
-    auto KeylessOwnerAccess(bool value) -> void;
-    auto KeylessOwnerAccess() const -> bool;
-    
-    auto KeylessCoOwnerAccess(bool value) -> void;
-    auto KeylessCoOwnerAccess() const -> bool;
-    
-    auto KeylessFriendAccess(bool value) -> void;
-    auto KeylessFriendAccess() const -> bool;
-    
-    auto KeylessGuestAccess(bool value) -> void;
-    auto KeylessGuestAccess() const -> bool;
-    
+        
     auto MaxHousesOwnable(std::uint16_t value) -> void;
     auto MaxHousesOwnable() const -> std::uint16_t;
     
     auto MaxHousesCoOwnable(std::uint16_t value) -> void;
     auto MaxHousesCoOwnable() const -> std::uint16_t;
-    
-    auto PaperdollGuildButton(bool value) -> void;
-    auto PaperdollGuildButton() const -> bool;
-    
-    auto CombatMonstersVsAnimals(bool value) -> void;
-    auto CombatMonstersVsAnimals() const -> bool;
     
     auto CombatAnimalsAttackChance(std::uint16_t value) -> void;
     auto CombatAnimalsAttackChance() const -> std::uint16_t;
@@ -827,45 +607,6 @@ public:
     auto CombatBloodEffectChance(std::uint8_t value) -> void;
     std::uint8_t CombatBloodEffectChance() const;
     
-    auto TravelSpellsFromBoatKeys(bool value) -> void;
-    auto TravelSpellsFromBoatKeys() const -> bool;
-    
-    auto TravelSpellsWhileOverweight(bool value) -> void;
-    auto TravelSpellsWhileOverweight() const -> bool;
-    
-    auto MarkRunesInMultis(bool value) -> void;
-    auto MarkRunesInMultis() const -> bool;
-    
-    auto TravelSpellsBetweenWorlds(bool value) -> void;
-    auto TravelSpellsBetweenWorlds() const -> bool;
-    
-    auto TravelSpellsWhileAggressor(bool value) -> void;
-    auto TravelSpellsWhileAggressor() const -> bool;
-    
-    auto ToolUseLimit(bool value) -> void;
-    auto ToolUseLimit() const -> bool;
-    
-    auto ToolUseBreak(bool value) -> void;
-    auto ToolUseBreak() const -> bool;
-    
-    auto ItemRepairDurabilityLoss(bool value) -> void;
-    auto ItemRepairDurabilityLoss() const -> bool;
-    
-    auto HideStatsForUnknownMagicItems(bool value) -> void;
-    auto HideStatsForUnknownMagicItems() const -> bool;
-    
-    auto CraftColouredWeapons(bool value) -> void;
-    auto CraftColouredWeapons() const -> bool;
-    
-    auto OfferBODsFromItemSales(bool value) -> void;
-    auto OfferBODsFromItemSales() const -> bool;
-    
-    auto OfferBODsFromContextMenu(bool value) -> void;
-    auto OfferBODsFromContextMenu() const -> bool;
-    
-    auto BODsFromCraftedItemsOnly(bool value) -> void;
-    auto BODsFromCraftedItemsOnly() const -> bool;
-    
     auto MaxControlSlots(std::uint8_t value) -> void;
     std::uint8_t MaxControlSlots() const;
     
@@ -884,29 +625,11 @@ public:
     auto MaxSafeTeleportsPerDay(std::uint8_t value) -> void;
     std::uint8_t MaxSafeTeleportsPerDay() const;
     
-    auto TeleportToNearestSafeLocation(bool value) -> void;
-    auto TeleportToNearestSafeLocation() const -> bool;
-    
-    auto AllowAwakeNPCs(bool value) -> void;
-    auto AllowAwakeNPCs() const -> bool;
-    
-    auto HungerSystemEnabled(bool value) -> void;
-    auto HungerSystemEnabled() const -> bool;
-    
-    auto ThirstSystemEnabled(bool value) -> void;
-    auto ThirstSystemEnabled() const -> bool;
-    
     auto HungerDamage(std::int16_t value) -> void;
     std::int16_t HungerDamage() const;
     
     auto ThirstDrain(std::int16_t value) -> void;
     std::int16_t ThirstDrain() const;
-    
-    auto PetHungerOffline(bool value) -> void;
-    auto PetHungerOffline() const -> bool;
-    
-    auto PetThirstOffline(bool value) -> void;
-    auto PetThirstOffline() const -> bool;
     
     auto PetOfflineTimeout(std::uint16_t value) -> void;
     auto PetOfflineTimeout() const -> std::uint16_t;
@@ -922,9 +645,6 @@ public:
     
     auto CombatMaxSpellRange(std::int16_t value) -> void;
     std::int16_t CombatMaxSpellRange() const;
-    
-    auto CombatAnimalsGuarded(bool value) -> void;
-    auto CombatAnimalsGuarded() const -> bool;
     
     auto CombatNPCBaseFleeAt(std::int16_t value) -> void;
     std::int16_t CombatNPCBaseFleeAt() const;
@@ -968,8 +688,6 @@ public:
     auto CombatNPCBaseReattackAt(std::int16_t value) -> void;
     std::int16_t CombatNPCBaseReattackAt() const;
     
-    auto ShootOnAnimalBack(bool setting) -> void;
-    auto ShootOnAnimalBack() const -> bool;
     
     auto NPCWalkingSpeed(R32 value) -> void;
     R32 NPCWalkingSpeed() const;
@@ -1061,27 +779,8 @@ public:
     auto TrackingRedisplayTime(std::uint16_t value) -> void;
     auto TrackingRedisplayTime() const -> std::uint16_t;
     
-    // Sept 22, 2002 - Support for HideWhileMounted fix.
-    auto CharHideWhileMounted(bool value) -> void;
-    auto CharHideWhileMounted() const -> bool;
-    
     auto WeightPerStr(R32 newVal) -> void;
     auto WeightPerStr() const ->R32 ;
-    
-    auto ServerOverloadPackets(bool newVal) -> void;
-    auto ServerOverloadPackets() const -> bool;
-    
-    auto ArmorAffectManaRegen(bool newVal) -> void;
-    auto ArmorAffectManaRegen() const -> bool;
-    
-    auto AdvancedPathfinding(bool value) -> void;
-    auto AdvancedPathfinding() const -> bool;
-    
-    auto LootingIsCrime(bool value) -> void;
-    auto LootingIsCrime() const -> bool;
-    
-    auto KickOnAssistantSilence(bool value) -> void;
-    auto KickOnAssistantSilence() const -> bool;
     
     auto DumpPaths() -> void;
     

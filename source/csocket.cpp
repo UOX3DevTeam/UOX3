@@ -580,7 +580,7 @@ bool CSocket::FlushBuffer(bool doLog) {
             }
 #endif
         }
-        if ((cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog) {
+        if ((ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) && doLog) {
             serial_t toPrint;
             if (!ValidateObject(currCharObj)) {
                 toPrint = INVALIDSERIAL;
@@ -639,7 +639,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             }
 #endif
         }
-        if ((cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog) {
+        if ((ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) && doLog) {
             serial_t toPrint;
             if (!ValidateObject(currCharObj)) {
                 toPrint = INVALIDSERIAL;
@@ -820,7 +820,7 @@ void CSocket::FlushIncoming() {
 //|	Purpose		-	Logs received network packets
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging(CPInputBuffer *toLog) {
-    if (cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) {
         serial_t toPrint;
         if (!ValidateObject(currCharObj)) {
             toPrint = INVALIDSERIAL;
@@ -1243,7 +1243,7 @@ void CSocket::Send(CPUOXBuffer *toSend) {
     
     bytesSent += len;
     
-    if (cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG) || Logging()) {
         serial_t toPrint;
         if (!ValidateObject(currCharObj)) {
             toPrint = INVALIDSERIAL;
@@ -1388,7 +1388,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         msg = msg.substr(0, 512);
     }
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1434,7 +1434,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
         txtColor = cwmWorldState->ServerData()->SysMsgColour();
     }
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1482,7 +1482,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         msg = msg.substr(0, 512);
     }
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
@@ -1550,7 +1550,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
     }
     CChar *mChar = CurrcharObj();
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(temp);
         unicodeMessage.Font(FNT_NORMAL);
@@ -1677,9 +1677,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
                 util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
             }
         }
-        if (cwmWorldState->ServerData()->ShowRaceWithName() && i->GetRace() != 0 &&
-            i->GetRace() != 65535) // need to check for placeholder race ( )
-        {
+        if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE) && i->GetRace() != 0 && i->GetRace() != 65535) {// need to check for placeholder race ( )
             charName += " (";
             charName += Races->Name(i->GetRace());
             charName += ")";
@@ -1693,20 +1691,19 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         }
     }
     else {
-        if (i->IsTamed() && ValidateObject(i->GetOwnerObj()) &&
-            !cwmWorldState->creatures[i->GetId()].IsHuman()) {
+        if (i->IsTamed() && ValidateObject(i->GetOwnerObj()) && !cwmWorldState->creatures[i->GetId()].IsHuman()) {
             charName += " (tame) ";
         }
         
         // Show NPC title over their head?
         auto npcTitle = GetNpcDictTitle(i, this);
-        if (cwmWorldState->ServerData()->ShowNpcTitlesOverhead() && npcTitle != "") {
+        if (ServerConfig::shared().enabled(ServerSwitch::OVERHEADTITLE) && npcTitle != "") {
             charName += " " + npcTitle;
         }
     }
     
     // Show (invulnerable) tags over the heads of invulnerable characters?
-    if (i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead()) {
+    if (i->IsInvulnerable() && ServerConfig::shared().enabled(ServerSwitch::DISPLAYINVUNERABLE)) {
         charName += " (invulnerable)";
     }
     if (i->IsFrozen()) {
@@ -1719,7 +1716,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         GuildSys->DisplayTitle(this, i);
     }
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(charName);
         unicodeMessage.Font(FNT_NORMAL);

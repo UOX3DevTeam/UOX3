@@ -38,17 +38,13 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     // bool CServerData::HandleLine( const std::string& tag, const std::string& value )
     // in cserverdata.cpp (this file).
     {"SERVERNAME"s, 1},
-    {"CONSOLELOG"s, 2},
     {"COMMANDPREFIX"s, 3},
-    {"ANNOUNCEWORLDSAVES"s, 4},
-    {"BACKUPSENABLED"s, 5},
     {"SAVESTIMER"s, 6},
     {"SKILLCAP"s, 7},
     {"SKILLDELAY"s, 8},
     {"STATCAP"s, 9},
     {"MAXSTEALTHMOVEMENTS"s, 10},
     {"MAXSTAMINAMOVEMENTS"s, 11},
-    {"ARMORAFFECTMANAREGEN"s, 12},
     {"CORPSEDECAYTIMER"s, 13},
     {"WEATHERTIMER"s, 14},
     {"SHOPSPAWNTIMER"s, 15},
@@ -61,29 +57,17 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"HITPOINTREGENTIMER"s, 22},
     {"STAMINAREGENTIMER"s, 23},
     {"BASEFISHINGTIMER"s, 24},
-    {"JOINPARTMSGS"s, 26},
     {"MAXPETOWNERS"s, 34},
     {"MAXFOLLOWERS"s, 35},
     {"MAXCONTROLSLOTS"s, 36},
     {"MANAREGENTIMER"s, 37},
     {"RANDOMFISHINGTIMER"s, 38},
     {"SPIRITSPEAKTIMER"s, 39},
-    {"LOOTDECAYSWITHCORPSE"s, 47},
-    {"GUARDSACTIVE"s, 49},
     {"DEATHANIMATION"s, 27},
     {"AMBIENTSOUNDS"s, 50},
-    {"AMBIENTFOOTSTEPS"s, 51},
-    {"INTERNALACCOUNTCREATION"s, 52},
-    {"SHOWOFFLINEPCS"s, 53},
-    {"ROGUESENABLED"s, 54},
-    {"PLAYERPERSECUTION"s, 55},
     {"ACCOUNTFLUSH"s, 56},
     {"HTMLSTATUSENABLED"s, 57},
-    {"SELLBYNAME"s, 58},
     {"SELLMAXITEMS"s, 59},
-    {"TRADESYSTEM"s, 60},
-    {"RANKSYSTEM"s, 61},
-    {"CUTSCROLLREQUIREMENTS"s, 62},
     {"CHECKITEMS"s, 63},
     {"CHECKBOATS"s, 64},
     {"CHECKNPCAI"s, 65},
@@ -111,15 +95,11 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"RESOURCEAREASIZE"s, 87},
     {"LOGSPERAREA"s, 88},
     {"LOGSRESPAWNTIMER"s, 89},
-    {"STATSAFFECTSKILLCHECKS"s, 90},
     {"HUNGERRATE"s, 91},
     {"HUNGERDMGVAL"s, 92},
     {"MAXRANGE"s, 93},
     {"SPELLMAXRANGE"s, 94},
-    {"DISPLAYHITMSG"s, 95},
-    {"MONSTERSVSANIMALS"s, 96},
     {"ANIMALATTACKCHANCE"s, 97},
-    {"ANIMALSGUARDED"s, 98},
     {"NPCDAMAGERATE"s, 99},
     {"NPCBASEFLEEAT"s, 100},
     {"NPCBASEREATTACKAT"s, 101},
@@ -145,44 +125,26 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"SECONDS"s, 122},
     {"AMPM"s, 123},
     {"SKILLLEVEL"s, 124},
-    {"SNOOPISCRIME"s, 125},
     //{"SERVERLIST"s, 127},
     {"PORT"s, 128},
     {"ACCOUNTISOLATION"s, 131},
     {"SHOOTONANIMALBACK"s, 133},
-    {"NPCTRAININGENABLED"s, 134},
     {"BACKUPSAVERATIO"s, 136},
-    {"HIDEWHILEMOUNTED"s, 137},
     {"SECONDSPERUOMINUTE"s, 138},
     {"WEIGHTPERSTR"s, 139},
     {"POLYDURATION"s, 140},
-    {"UOGENABLED"s, 141},
     {"NETRCVTIMEOUT"s, 142},
     {"NETSNDTIMEOUT"s, 143},
     {"NETRETRYCOUNT"s, 144},
     {"CLIENTFEATURES"s, 145},
-    {"OVERLOADPACKETS"s, 146},
     {"NPCMOVEMENTSPEED"s, 147},
-    {"PETHUNGEROFFLINE"s, 148},
     {"PETOFFLINETIMEOUT"s, 149},
     {"PETOFFLINECHECKTIMER"s, 150},
     {"ARCHERRANGE"s, 151},
-    {"ADVANCEDPATHFINDING"s, 152},
     {"SERVERFEATURES"s, 153},
-    {"LOOTINGISCRIME"s, 154},
     {"NPCRUNNINGSPEED"s, 155},
     {"NPCFLEEINGSPEED"s, 156},
-    {"BASICTOOLTIPSONLY"s, 157},
-    {"GLOBALITEMDECAY"s, 158},
-    {"SCRIPTITEMSDECAYABLE"s, 159},
-    {"BASEITEMSDECAYABLE"s, 160},
-    {"ITEMDECAYINHOUSES"s, 161},
     {"SPAWNREGIONSFACETS"s, 162},
-    {"PAPERDOLLGUILDBUTTON"s, 163},
-    {"ATTACKSPEEDFROMSTAMINA"s, 164},
-    {"DISPLAYDAMAGENUMBERS"s, 169},
-    {"EXTENDEDSTARTINGSTATS"s, 182},
-    {"EXTENDEDSTARTINGSKILLS"s, 183},
     {"WEAPONDAMAGECHANCE"s, 184},
     {"ARMORDAMAGECHANCE"s, 185},
     {"WEAPONDAMAGEMIN"s, 186},
@@ -193,22 +155,13 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"NPCSPELLCASTSPEED"s, 191},
     {"FISHINGSTAMINALOSS"s, 192},
     {"RANDOMSTARTINGLOCATION"s, 193},
-    {"ASSISTANTNEGOTIATION"s, 194},
-    {"KICKONASSISTANTSILENCE"s, 195},
     // 217 free
-    {"CLASSICUOMAPTRACKER"s, 218},
     {"DECAYTIMERINHOUSE"s, 219},
-    {"PROTECTPRIVATEHOUSES"s, 220},
-    {"TRACKHOUSESPERACCOUNT"s, 221},
     {"MAXHOUSESOWNABLE"s, 222},
     {"MAXHOUSESCOOWNABLE"s, 223},
-    {"CANOWNANDCOOWNHOUSES"s, 224},
     {"COOWNHOUSESONSAMEACCOUNT"s, 225},
-    {"ITEMSDETECTSPEECH"s, 226},
     {"MAXPLAYERPACKITEMS"s, 227},
     {"MAXPLAYERBANKITEMS"s, 228},
-    {"FORCENEWANIMATIONPACKET"s, 229},
-    {"MAPDIFFSENABLED"s, 230},
     {"CORESHARDERA"s, 231},
     {"ARMORCALCULATION"s, 232},
     {"STRENGTHDAMAGEBONUS"s, 233},
@@ -221,86 +174,43 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"PARRYDAMAGECHANCE"s, 240},
     {"PARRYDAMAGEMIN"s, 241},
     {"PARRYDAMAGEMAX"s, 242},
-    {"ARMORCLASSDAMAGEBONUS"s, 243},
-    {"FREESHARDSERVERPOLL"s, 244},
     {"ALCHEMYBONUSENABLED"s, 245},
     {"ALCHEMYBONUSMODIFIER"s, 246},
     {"NPCFLAGUPDATETIMER"s, 247},
     {"JSENGINESIZE"s, 248},
-    {"USEUNICODEMESSAGES"s, 249},
     {"THIRSTRATE"s, 251},
     {"THIRSTDRAINVAL"s, 252},
-    {"PETTHIRSTOFFLINE"s, 253},
     {"EXTERNALIP"s, 254},
     {"BLOODDECAYTIMER"s, 255},
     {"BLOODDECAYCORPSETIMER"s, 256},
     {"BLOODEFFECTCHANCE"s, 257},
     {"NPCCORPSEDECAYTIMER"s, 258},
-    {"HUNGERENABLED"s, 259},
-    {"THIRSTENABLED"s, 260},
-    {"TRAVELSPELLSFROMBOATKEYS"s, 261},
-    {"TRAVELSPELLSWHILEOVERWEIGHT"s, 262},
-    {"MARKRUNESINMULTIS"s, 263},
-    {"TRAVELSPELLSBETWEENWORLDS"s, 264},
-    {"TRAVELSPELLSWHILEAGGRESSOR"s, 265},
     {"BANKBUYTHRESHOLD"s, 266},
-    {"NETWORKLOG"s, 267},
-    {"SPEECHLOG"s, 268},
     {"NPCMOUNTEDWALKINGSPEED"s, 269},
     {"NPCMOUNTEDRUNNINGSPEED"s, 270},
     {"NPCMOUNTEDFLEEINGSPEED"s, 271},
-    {"CONTEXTMENUS"s, 272},
     {"SERVERLANGUAGE"s, 273},
-    {"CHECKPETCONTROLDIFFICULTY"s, 274},
     {"PETLOYALTYGAINONSUCCESS"s, 275},
     {"PETLOYALTYLOSSONFAILURE"s, 276},
     {"PETLOYALTYRATE"s, 277},
-    {"SHOWNPCTITLESINTOOLTIPS"s, 278},
     {"FISHPERAREA"s, 279},
     {"FISHRESPAWNTIMER"s, 280},
     {"ARCHERYHITBONUS"s, 281},
-    {"ITEMSINTERRUPTCASTING"s, 282},
     {"SYSMESSAGECOLOUR"s, 283},
     {"ARCHERYSHOOTDELAY"s, 290},
     {"MAXCLIENTBYTESIN"s, 291},
     {"MAXCLIENTBYTESOUT"s, 292},
     {"NETTRAFFICTIMEBAN"s, 293},
-    {"TOOLUSELIMIT"s, 294},
-    {"TOOLUSEBREAK"s, 295},
-    {"ITEMREPAIRDURABILITYLOSS"s, 296},
     {"HIDESTATSFORUNKNOWNMAGICITEMS"s, 297},
-    {"CRAFTCOLOUREDWEAPONS"s, 298},
     {"MAXSAFETELEPORTSPERDAY"s, 299},
-    {"TELEPORTTONEARESTSAFELOCATION"s, 300},
-    {"ALLOWAWAKENPCS"s, 301},
-    {"DISPLAYMAKERSMARK"s, 302},
-    {"SHOWNPCTITLESOVERHEAD"s, 303},
-    {"SHOWINVULNERABLETAGOVERHEAD"s, 304},
-    {"PETCOMBATTRAINING"s, 305},
-    {"HIRELINGCOMBATTRAINING"s, 306},
-    {"NPCCOMBATTRAINING"s, 307},
     {"GLOBALRESTOCKMULTIPLIER"s, 308},
-    {"SHOWITEMRESISTSTATS"s, 309},
-    {"SHOWWEAPONDAMAGETYPES"s, 310},
-    {"SHOWRACEWITHNAME"s, 311},
-    {"SHOWRACEINPAPERDOLL"s, 312},
     {"WEAPONPARRY"s, 313},
     {"WRESTLINGPARRY"s, 314},
     {"COMBATHITCHANCE"s, 315},
     {"CASTSPELLSWHILEMOVING"s, 316},
-    {"SHOWREPUTATIONTITLEINTOOLTIP"s, 317},
-    {"SHOWGUILDINFOINTOOLTIP"s, 318},
     {"MAXPLAYERPACKWEIGHT"s, 319},
     {"MAXPLAYERBANKWEIGHT"s, 320},
-    {"SAFECOOWNERLOGOUT"s, 321},
-    {"SAFEFRIENDLOGOUT"s, 322},
-    {"SAFEGUESTLOGOUT"s, 323},
-    {"KEYLESSOWNERACCESS"s, 324},
-    {"KEYLESSCOOWNERACCESS"s, 325},
-    {"KEYLESSFRIENDACCESS"s, 326},
-    {"KEYLESSGUESTACCESS"s, 327},
     {"WEAPONDAMAGEBONUSTYPE"s, 328},
-    {"OFFERBODSFROMITEMSALES"s, 329},
     {"OFFERBODSFROMCONTEXTMENU"s, 330},
     {"BODSFROMCRAFTEDITEMSONLY"s, 331},
     {"BODGOLDREWARDMULTIPLIER"s, 332},
@@ -324,109 +234,6 @@ constexpr auto SKILLTOTALCAP = 7000;
 constexpr auto SKILLCAP = 1000;
 constexpr auto STATCAP = 225;
 
-constexpr auto BIT_ANNOUNCESAVES = std::uint32_t(0);
-constexpr auto BIT_ANNOUNCEJOINPART = std::uint32_t(1);
-constexpr auto BIT_SERVERBACKUP = std::uint32_t(2);
-constexpr auto BIT_SHOOTONANIMALBACK = std::uint32_t(3);
-constexpr auto BIT_NPCTRAINING = std::uint32_t(4);
-constexpr auto BIT_LOOTDECAYSONCORPSE = std::uint32_t(5);
-constexpr auto BIT_GUARDSENABLED = std::uint32_t(6);
-constexpr auto BIT_PLAYDEATHANIMATION = std::uint32_t(7);
-constexpr auto BIT_AMBIENTFOOTSTEPS = std::uint32_t(8);
-constexpr auto BIT_INTERNALACCOUNTS = std::uint32_t(9);
-constexpr auto BIT_SHOWOFFLINEPCS = std::uint32_t(10);
-constexpr auto BIT_ROGUESTATUS = std::uint32_t(11);
-constexpr auto BIT_SNOOPISCRIME = std::uint32_t(12);
-constexpr auto BIT_PERSECUTIONSTATUS = std::uint32_t(13);
-constexpr auto BIT_SELLBYNAME = std::uint32_t(14);
-constexpr auto BIT_TRADESYSSTATUS = std::uint32_t(15);
-constexpr auto BIT_RANKSYSSTATUS = std::uint32_t(16);
-constexpr auto BIT_CUTSCROLLREQ = std::uint32_t(17);
-constexpr auto BIT_SHOWHITMESSAGE = std::uint32_t(18);
-constexpr auto BIT_ESCORTSTATUS = std::uint32_t(19);
-constexpr auto BIT_MONSTERSVSANIMALS = std::uint32_t(20);
-constexpr auto BIT_PETHUNGEROFFLINE = std::uint32_t(21);
-constexpr auto BIT_HIDEWHILEMOUNTED = std::uint32_t(22);
-constexpr auto BIT_OVERLOADPACKETS = std::uint32_t(23);
-constexpr auto BIT_ARMORAFFECTMANAREGEN = std::uint32_t(24);
-constexpr auto BIT_ANIMALSGUARDED = std::uint32_t(25);
-constexpr auto BIT_ADVANCEDPATHFIND = std::uint32_t(26);
-constexpr auto BIT_LOOTINGISCRIME = std::uint32_t(27);
-constexpr auto BIT_BASICTOOLTIPSONLY = std::uint32_t(28);
-constexpr auto BIT_GLOBALITEMDECAY = std::uint32_t(29);
-constexpr auto BIT_SCRIPTITEMSDECAYABLE = std::uint32_t(30);
-constexpr auto BIT_BASEITEMSDECAYABLE = std::uint32_t(31);
-constexpr auto BIT_ITEMDECAYINHOUSES = std::uint32_t(32);
-constexpr auto BIT_PAPERDOLLGUILDBUTTON = std::uint32_t(33);
-constexpr auto BIT_ATTSPEEDFROMSTAMINA = std::uint32_t(34);
-constexpr auto BIT_SHOWDAMAGENUMBERS = std::uint32_t(35);
-// 37 free!
-constexpr auto BIT_EXTENDEDSTARTINGSTATS = std::uint32_t(38);
-constexpr auto BIT_EXTENDEDSTARTINGSKILLS = std::uint32_t(39);
-constexpr auto BIT_ASSISTANTNEGOTIATION = std::uint32_t(40);
-constexpr auto BIT_KICKONASSISTANTSILENCE = std::uint32_t(41);
-constexpr auto BIT_CLASSICUOMAPTRACKER = std::uint32_t(42);
-constexpr auto BIT_PROTECTPRIVATEHOUSES = std::uint32_t(43);
-constexpr auto BIT_TRACKHOUSESPERACCOUNT = std::uint32_t(44);
-constexpr auto BIT_CANOWNANDCOOWNHOUSES = std::uint32_t(45);
-constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT = std::uint32_t(46);
-constexpr auto BIT_ITEMSDETECTSPEECH = std::uint32_t(47);
-constexpr auto BIT_FORCENEWANIMATIONPACKET = std::uint32_t(48);
-constexpr auto BIT_MAPDIFFSENABLED = std::uint32_t(49);
-constexpr auto BIT_ARMORCLASSDAMAGEBONUS = std::uint32_t(50);
-constexpr auto BIT_FREESHARDSERVERPOLL = std::uint32_t(51);
-constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED = std::uint32_t(52);
-constexpr auto BIT_PETTHIRSTOFFLINE = std::uint32_t(53);
-constexpr auto BIT_USEUNICODEMESSAGES = std::uint32_t(54);
-constexpr auto BIT_HUNGERSYSTEMENABLED = std::uint32_t(55);
-constexpr auto BIT_THIRSTSYSTEMENABLED = std::uint32_t(56);
-constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS = std::uint32_t(57);
-constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT = std::uint32_t(58);
-constexpr auto BIT_MARKRUNESINMULTIS = std::uint32_t(59);
-constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS = std::uint32_t(60);
-constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR = std::uint32_t(61);
-[[maybe_unused]] constexpr auto BIT_CONSOLELOG = std::uint32_t(62);
-constexpr auto BIT_NETWORKLOG = std::uint32_t(63);
-constexpr auto BIT_SPEECHLOG = std::uint32_t(64);
-constexpr auto BIT_CONTEXTMENUS = std::uint32_t(65);
-constexpr auto BIT_CHECKPETCONTROLDIFFICULTY = std::uint32_t(66);
-constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS = std::uint32_t(67);
-constexpr auto BIT_ITEMSINTERRUPTCASTING = std::uint32_t(68);
-constexpr auto BIT_STATSAFFECTSKILLCHECKS = std::uint32_t(69);
-constexpr auto BIT_TOOLUSELIMIT = std::uint32_t(70);
-constexpr auto BIT_TOOLUSEBREAK = std::uint32_t(71);
-constexpr auto BIT_ITEMREPAIRDURABILITYLOSS = std::uint32_t(72);
-constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS = std::uint32_t(73);
-constexpr auto BIT_CRAFTCOLOUREDWEAPONS = std::uint32_t(74);
-constexpr auto BIT_TELEPORTTONEARESTSAFELOC = std::uint32_t(75);
-constexpr auto BIT_ALLOWAWAKENPCS = std::uint32_t(76);
-constexpr auto BIT_DISPLAYMAKERSMARK = std::uint32_t(77);
-constexpr auto BIT_SHOWNPCTITLESOVERHEAD = std::uint32_t(78);
-constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD = std::uint32_t(79);
-constexpr auto BIT_PETCOMBATTRAINING = std::uint32_t(80);
-constexpr auto BIT_HIRELINGCOMBATTRAINING = std::uint32_t(81);
-constexpr auto BIT_NPCCOMBATTRAINING = std::uint32_t(82);
-constexpr auto BIT_SHOWITEMRESISTSTATS = std::uint32_t(83);
-constexpr auto BIT_SHOWWEAPONDAMAGETYPES = std::uint32_t(84);
-constexpr auto BIT_SHOWRACEWITHNAME = std::uint32_t(85);
-constexpr auto BIT_SHOWRACEINPAPERDOLL = std::uint32_t(86);
-constexpr auto BIT_CASTSPELLSWHILEMOVING = std::uint32_t(87);
-constexpr auto BIT_SHOWREPTITLEINTOOLTIP = std::uint32_t(88);
-constexpr auto BIT_SHOWGUILDINFOINTOOLTIP = std::uint32_t(89);
-constexpr auto BIT_SAFECOOWNERLOGOUT = std::uint32_t(90);
-constexpr auto BIT_SAFEFRIENDLOGOUT = std::uint32_t(91);
-constexpr auto BIT_SAFEGUESTLOGOUT = std::uint32_t(92);
-constexpr auto BIT_KEYLESSOWNERACCESS = std::uint32_t(93);
-constexpr auto BIT_KEYLESSCOOWNERACCESS = std::uint32_t(94);
-constexpr auto BIT_KEYLESSFRIENDACCESS = std::uint32_t(95);
-constexpr auto BIT_KEYLESSGUESTACCESS = std::uint32_t(96);
-constexpr auto BIT_OFFERBODSFROMITEMSALES = std::uint32_t(97);
-constexpr auto BIT_OFFERBODSFROMCONTEXTMENU = std::uint32_t(98);
-constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY = std::uint32_t(99);
-constexpr auto BIT_ENABLENPCGUILDDISCOUNTS = std::uint32_t(100);
-constexpr auto BIT_ENABLENPCGUILDPREMIUMS = std::uint32_t(101);
-constexpr auto BIT_SNOOPAWARENESS = std::uint32_t(102);
-constexpr auto BIT_YOUNGPLAYERSYSTEM = std::uint32_t(103);
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -567,7 +374,7 @@ auto CServerData::ResetDefaults() -> void {
     SetJSEngineSize(256);
     
     // Send server-originating messages in Unicode format, if possible
-    useUnicodeMessages(true);
+//    useUnicodeMessages(true);
     
     ServerLanguage(DL_DEFAULT);
     SystemTimer(tSERVER_POTION, 10);
@@ -600,8 +407,8 @@ auto CServerData::ResetDefaults() -> void {
     ServerTimeSeconds(0);
     ServerTimeAMPM(0);
     
-    InternalAccountStatus(true);
-    YoungPlayerSystem(true);
+    //InternalAccountStatus(true);
+//    YoungPlayerSystem(true);
     CombatMaxRange(10);
     CombatMaxSpellRange(10);
     
@@ -613,60 +420,60 @@ auto CServerData::ResetDefaults() -> void {
     ServerSkillTotalCap(7000);
     ServerSkillCap(1000);
     ServerStatCap(225);
-    StatsAffectSkillChecks(false);
-    CorpseLootDecay(true);
+//    StatsAffectSkillChecks(false);
+//    CorpseLootDecay(true);
     ServerSavesTimer(600);
     
     
     SystemTimer(tSERVER_INVISIBILITY, 60);
     SystemTimer(tSERVER_HUNGERRATE, 6000);
     HungerDamage(2);
-    HungerSystemEnabled(true);
+//    HungerSystemEnabled(true);
     
     SystemTimer(tSERVER_THIRSTRATE, 6000);
     ThirstDrain(2);
-    ThirstSystemEnabled(false);
+//    ThirstSystemEnabled(false);
     
     ServerSkillDelay(5);
     SystemTimer(tSERVER_OBJECTUSAGE, 1);
     SystemTimer(tSERVER_HITPOINTREGEN, 8);
     SystemTimer(tSERVER_STAMINAREGEN, 3);
     SystemTimer(tSERVER_MANAREGEN, 5);
-    ArmorAffectManaRegen(true);
-    SnoopIsCrime(false);
-    SnoopAwareness(false);
+ //   ArmorAffectManaRegen(true);
+//    SnoopIsCrime(false);
+//    SnoopAwareness(false);
     SystemTimer(tSERVER_GATE, 30);
     MineCheck(1);
-    DeathAnimationStatus(true);
-    ShowOfflinePCs(true);
-    CombatDisplayHitMessage(true);
-    CombatDisplayDamageNumbers(true);
-    CombatAttackSpeedFromStamina(true);
+//    DeathAnimationStatus(true);
+//    ShowOfflinePCs(true);
+//    CombatDisplayHitMessage(true);
+//    CombatDisplayDamageNumbers(true);
+//    CombatAttackSpeedFromStamina(true);
     CombatAttackStamina(-2);
-    NPCTrainingStatus(true);
-    CharHideWhileMounted(true);
+//    NPCTrainingStatus(true);
+//    CharHideWhileMounted(true);
     WeightPerStr(3.5);
     SystemTimer(tSERVER_POLYMORPH, 90);
-    ServerOverloadPackets(true);
-    AdvancedPathfinding(true);
-    LootingIsCrime(true);
-    ServerUOGEnabled(true);
-    FreeshardServerPoll(true);
-    ServerContextMenus(true);
+//    ServerOverloadPackets(true);
+//    AdvancedPathfinding(true);
+//    LootingIsCrime(true);
+//    ServerUOGEnabled(true);
+//    FreeshardServerPoll(true);
+ //   ServerContextMenus(true);
     SysMsgColour(0x0048);
     
-    CombatMonstersVsAnimals(true);
+    //CombatMonstersVsAnimals(true);
     CombatAnimalsAttackChance(2);
-    CombatAnimalsGuarded(false);
+//    CombatAnimalsGuarded(false);
     CombatNPCBaseFleeAt(20);
     CombatNPCBaseReattackAt(40);
-    ShootOnAnimalBack(false);
-    SellByNameStatus(false);
+//    ShootOnAnimalBack(false);
+//    SellByNameStatus(false);
     SkillLevel(5);
     SellMaxItemsStatus(250);
     CombatNpcDamageRate(1);
-    RankSystemStatus(true);
-    DisplayMakersMark(true);
+ //   RankSystemStatus(true);
+//    DisplayMakersMark(true);
     CombatArcheryHitBonus(10);
     CombatArcheryShootDelay(1.0);
     CombatWeaponDamageChance(17);
@@ -682,19 +489,19 @@ auto CServerData::ResetDefaults() -> void {
     GlobalAttackSpeed(1.0);
     NPCSpellCastSpeed(1.0);
     FishingStaminaLoss(static_cast<std::uint16_t>(2.0));
-    CombatArmorClassDamageBonus(false);
-    AlchemyDamageBonusEnabled(false);
+//    CombatArmorClassDamageBonus(false);
+//    AlchemyDamageBonusEnabled(false);
     AlchemyDamageBonusModifier(5);
-    PetCombatTraining(true);
-    HirelingCombatTraining(true);
-    NpcCombatTraining(false);
+//    PetCombatTraining(true);
+//    HirelingCombatTraining(true);
+ //   NpcCombatTraining(false);
     WeaponDamageBonusType(2);
     
-    CheckPetControlDifficulty(true);
+//    CheckPetControlDifficulty(true);
     SetPetLoyaltyGainOnSuccess(1);
     SetPetLoyaltyLossOnFailure(3);
     SystemTimer(tSERVER_LOYALTYRATE, 900);
-    ItemsInterruptCasting(true);
+//    ItemsInterruptCasting(true);
     /*
     auto curWorkingDir = std::filesystem::current_path().string();
     
@@ -742,14 +549,14 @@ auto CServerData::ResetDefaults() -> void {
     ExpansionCombatHitChance(ER_CORE);
     
     BuyThreshold(2000);
-    GuardStatus(true);
-    ServerAnnounceSaves(true);
+ //   GuardStatus(true);
+//    ServerAnnounceSaves(true);
     WorldAmbientSounds(5);
-    ServerJoinPartAnnouncements(true);
-    ServerConsoleLog(true);
-    ServerNetworkLog(false);
-    ServerSpeechLog(false);
-    RogueStatus(true);
+//    ServerJoinPartAnnouncements(true);
+//    ServerConsoleLog(true);
+//    ServerNetworkLog(false);
+//    ServerSpeechLog(false);
+//    RogueStatus(true);
     SystemTimer(tSERVER_WEATHER, 60);
     SystemTimer(tSERVER_LOGINTIMEOUT, 300);
     BackupRatio(5);
@@ -757,63 +564,63 @@ auto CServerData::ResetDefaults() -> void {
     MaxStaminaMovement(15);
     SystemTimer(tSERVER_NPCFLAGUPDATETIMER, 10);
     PetOfflineTimeout(5);
-    PetHungerOffline(true);
+//    PetHungerOffline(true);
     SystemTimer(tSERVER_PETOFFLINECHECK, 600);
-    ItemsDetectSpeech(false);
+//    ItemsDetectSpeech(false);
     MaxPlayerPackItems(125);
     MaxPlayerBankItems(125);
     MaxPlayerPackWeight(40000);  // 400.00 stones
     MaxPlayerBankWeight(160000); // 1600.00 stones
-    ForceNewAnimationPacket(true);
-    MapDiffsEnabled(false);
-    TravelSpellsFromBoatKeys(true);
-    TravelSpellsWhileOverweight(false);
-    MarkRunesInMultis(true);
-    TravelSpellsBetweenWorlds(false);
-    TravelSpellsWhileAggressor(false);
-    CastSpellsWhileMoving(false);
+//    ForceNewAnimationPacket(true);
+//    MapDiffsEnabled(false);
+//    TravelSpellsFromBoatKeys(true);
+//    TravelSpellsWhileOverweight(false);
+//    MarkRunesInMultis(true);
+//    TravelSpellsBetweenWorlds(false);
+ //   TravelSpellsWhileAggressor(false);
+ //   CastSpellsWhileMoving(false);
     MaxControlSlots(0); // Default to 0, which is equal to off
     MaxFollowers(5);
     MaxPetOwners(10);
-    ToolUseLimit(true);
-    ToolUseBreak(true);
-    ItemRepairDurabilityLoss(true);
-    HideStatsForUnknownMagicItems(true);
-    CraftColouredWeapons(false);
+//    ToolUseLimit(true);
+//    ToolUseBreak(true);
+//    ItemRepairDurabilityLoss(true);
+//    HideStatsForUnknownMagicItems(true);
+//    CraftColouredWeapons(false);
     MaxSafeTeleportsPerDay(1);
-    TeleportToNearestSafeLocation(false);
-    AllowAwakeNPCs(true);
+//    TeleportToNearestSafeLocation(false);
+//    AllowAwakeNPCs(true);
     GlobalRestockMultiplier(1.0);
-    ShowItemResistStats(false);
-    ShowWeaponDamageTypes(true);
-    ShowReputationTitleInTooltip(true);
-    ShowGuildInfoInTooltip(true);
-    EnableNPCGuildDiscounts(true);
-    EnableNPCGuildPremiums(true);
+//    ShowItemResistStats(false);
+//    ShowWeaponDamageTypes(true);
+//    ShowReputationTitleInTooltip(true);
+//    ShowGuildInfoInTooltip(true);
+//    EnableNPCGuildDiscounts(true);
+ //   EnableNPCGuildPremiums(true);
     
     CheckBoatSpeed(0.65);
     CheckNpcAISpeed(1);
-    CutScrollRequirementStatus(true);
-    PlayerPersecutionStatus(false);
+//    CutScrollRequirementStatus(true);
+    //PlayerPersecutionStatus(false);
     HtmlStatsStatus(-1);
     
     MsgBoardPostingLevel(0);
     MsgBoardPostRemovalLevel(0);
     // No replacement I can see
-    EscortsEnabled(true);
-    BasicTooltipsOnly(false);
-    ShowNpcTitlesInTooltips(true);
-    ShowNpcTitlesOverhead(true);
-    ShowInvulnerableTagOverhead(false);
-    ShowRaceWithName(true);
-    ShowRaceInPaperdoll(true);
-    GlobalItemDecay(true);
-    ScriptItemsDecayable(true);
-    BaseItemsDecayable(false);
+//    EscortsEnabled(true);
+//    BasicTooltipsOnly(false);
+//    ShowNpcTitlesInTooltips(true);
+//    ShowNpcTitlesOverhead(true);
+//    ShowInvulnerableTagOverhead(false);
+//    ShowRaceWithName(true);
+//    ShowRaceInPaperdoll(true);
+//    GlobalItemDecay(true);
+//    ScriptItemsDecayable(true);
+//    BaseItemsDecayable(false);
     SystemTimer(tSERVER_ESCORTWAIT, 900);
     SystemTimer(tSERVER_ESCORTACTIVE, 600);
     SystemTimer(tSERVER_ESCORTDONE, 600);
-    AmbientFootsteps(false);
+//    AmbientFootsteps(false);
     ServerCommandPrefix('\'');
     
     CheckSpawnRegionSpeed(30);
@@ -863,25 +670,25 @@ auto CServerData::ResetDefaults() -> void {
     BackgroundPic(5054);
     
     // Houses
-    ItemDecayInHouses(true);
-    ProtectPrivateHouses(true);
-    TrackHousesPerAccount(true);
-    CanOwnAndCoOwnHouses(true);
-    CoOwnHousesOnSameAccount(true);
+//    ItemDecayInHouses(true);
+//    ProtectPrivateHouses(true);
+//    TrackHousesPerAccount(true);
+//    CanOwnAndCoOwnHouses(true);
+//    CoOwnHousesOnSameAccount(true);
     MaxHousesOwnable(1);
     MaxHousesCoOwnable(10);
-    SafeCoOwnerLogout(true);
-    SafeFriendLogout(true);
-    SafeGuestLogout(true);
-    KeylessOwnerAccess(true);
-    KeylessCoOwnerAccess(true);
-    KeylessFriendAccess(true);
-    KeylessGuestAccess(false);
+//    SafeCoOwnerLogout(true);
+//    SafeFriendLogout(true);
+//    SafeGuestLogout(true);
+//    KeylessOwnerAccess(true);
+//    KeylessCoOwnerAccess(true);
+ //   KeylessFriendAccess(true);
+ //   KeylessGuestAccess(false);
     
     // Bulk Order Deeds
-    OfferBODsFromItemSales(true);
-    OfferBODsFromContextMenu(false);
-    BODsFromCraftedItemsOnly(false);
+//    OfferBODsFromItemSales(true);
+//    OfferBODsFromContextMenu(false);
+//    BODsFromCraftedItemsOnly(false);
     BODGoldRewardMultiplier(1.0);
     BODFameRewardMultiplier(1.0);
     
@@ -897,8 +704,8 @@ auto CServerData::ResetDefaults() -> void {
     setSpawnRegionsFacetStatus(0);
     
     
-    ExtendedStartingStats(true);
-    ExtendedStartingSkills(true);
+//    ExtendedStartingStats(true);
+//    ExtendedStartingSkills(true);
     
     ServerRandomStartingLocation(false);
     ServerStartGold(1000);
@@ -1030,29 +837,7 @@ auto CServerData::ServerPort(std::uint16_t setport) -> void {
     }
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerConsoleLog()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set logging of console messages, warnings and errors
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerConsoleLog() const -> bool { return consoleLogEnabled; }
-auto CServerData::ServerConsoleLog(bool setting) -> void { consoleLogEnabled = setting; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerNetworkLog()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets logging of network traffic to logs folder
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerNetworkLog() const -> bool { return boolVals.test(BIT_NETWORKLOG); }
-auto CServerData::ServerNetworkLog(bool newVal) -> void { boolVals.set(BIT_NETWORKLOG, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerSpeechLog()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets logging of player/staff speech to logs folder
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSpeechLog() const -> bool { return boolVals.test(BIT_SPEECHLOG); }
-auto CServerData::ServerSpeechLog(bool newVal) -> void { boolVals.set(BIT_SPEECHLOG, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerCommandPrefix()
@@ -1064,49 +849,6 @@ auto CServerData::ServerCommandPrefix() const -> char {
 }
 auto CServerData::ServerCommandPrefix(char cmdvalue) -> void {
     commandprefix = std::string(1, cmdvalue);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerAnnounceSavesStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set status of server accouncements for worldsaves
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerAnnounceSavesStatus() const -> bool {
-    return boolVals.test(BIT_ANNOUNCESAVES);
-}
-auto CServerData::ServerAnnounceSaves(bool newVal) -> void {
-    boolVals.set(BIT_ANNOUNCESAVES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerJoinPartAnnouncementsStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets status of server accouncements for players
-// connecting/disconnecting
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerJoinPartAnnouncementsStatus() const -> bool {
-    return boolVals.test(BIT_ANNOUNCEJOINPART);
-}
-auto CServerData::ServerJoinPartAnnouncements(bool newVal) -> void {
-    boolVals.set(BIT_ANNOUNCEJOINPART, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerBackupStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets enabled status of server worldsave backups
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerBackupStatus() const -> bool { return boolVals.test(BIT_SERVERBACKUP); }
-auto CServerData::ServerBackups(bool newVal) -> void { boolVals.set(BIT_SERVERBACKUP, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerContextMenus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets enabled status of context menus
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerContextMenus() const -> bool { return boolVals.test(BIT_CONTEXTMENUS); }
-auto CServerData::ServerContextMenus(bool newVal) -> void {
-    boolVals.set(BIT_CONTEXTMENUS, newVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1589,24 +1331,6 @@ auto CServerData::ExpansionCombatHitChance(std::uint8_t setting) -> void {
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShootOnAnimalBack()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players can shoot arrows while riding mounts
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShootOnAnimalBack() const -> bool { return boolVals.test(BIT_SHOOTONANIMALBACK); }
-auto CServerData::ShootOnAnimalBack(bool newVal) -> void {
-    boolVals.set(BIT_SHOOTONANIMALBACK, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::NPCTrainingStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether NPCs can train players in skills
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::NPCTrainingStatus() const -> bool { return boolVals.test(BIT_NPCTRAINING); }
-auto CServerData::NPCTrainingStatus(bool newVal) -> void { boolVals.set(BIT_NPCTRAINING, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DumpPaths()
 //|	Date		-	02/26/2002
 // o------------------------------------------------------------------------------------------------o
@@ -1619,36 +1343,8 @@ auto CServerData::DumpPaths() -> void {
     ServerConfig::shared().dumpPaths();
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CorpseLootDecay()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether loot decays along with corpses or is left on
-// ground
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CorpseLootDecay() const -> bool { return boolVals.test(BIT_LOOTDECAYSONCORPSE); }
-auto CServerData::CorpseLootDecay(bool newVal) -> void {
-    boolVals.set(BIT_LOOTDECAYSONCORPSE, newVal);
-}
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GuardsStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether guards are enabled globally or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::GuardsStatus() const -> bool { return boolVals.test(BIT_GUARDSENABLED); }
-auto CServerData::GuardStatus(bool newVal) -> void { boolVals.set(BIT_GUARDSENABLED, newVal); }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::DeathAnimationStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether death animation plays when a player dies
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::DeathAnimationStatus() const -> bool {
-    return boolVals.test(BIT_PLAYDEATHANIMATION);
-}
-auto CServerData::DeathAnimationStatus(bool newVal) -> void {
-    boolVals.set(BIT_PLAYDEATHANIMATION, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::WorldAmbientSounds()
@@ -1664,126 +1360,6 @@ auto CServerData::WorldAmbientSounds(std::int16_t value) -> void {
     else {
         ambientSounds = value;
     }
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::AmbientFootsteps()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether context-specific footstep sounds are enabled or
-// not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::AmbientFootsteps() const -> bool { return boolVals.test(BIT_AMBIENTFOOTSTEPS); }
-auto CServerData::AmbientFootsteps(bool newVal) -> void {
-    boolVals.set(BIT_AMBIENTFOOTSTEPS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::InternalAccountStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether automatic account creation is enabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::InternalAccountStatus() const -> bool {
-    return boolVals.test(BIT_INTERNALACCOUNTS);
-}
-auto CServerData::InternalAccountStatus(bool newVal) -> void {
-    boolVals.set(BIT_INTERNALACCOUNTS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::YoungPlayerSystem()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether the Young Player system is enabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::YoungPlayerSystem() const -> bool { return boolVals.test(BIT_YOUNGPLAYERSYSTEM); }
-auto CServerData::YoungPlayerSystem(bool newVal) -> void {
-    boolVals.set(BIT_YOUNGPLAYERSYSTEM, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowOfflinePCs()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether GMs can see offline players
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowOfflinePCs() const -> bool { return boolVals.test(BIT_SHOWOFFLINEPCS); }
-auto CServerData::ShowOfflinePCs(bool newVal) -> void { boolVals.set(BIT_SHOWOFFLINEPCS, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::RogueStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether stealing skill is enabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::RogueStatus() const -> bool { return boolVals.test(BIT_ROGUESTATUS); }
-auto CServerData::RogueStatus(bool newVal) -> void { boolVals.set(BIT_ROGUESTATUS, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SnoopIsCrime()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether snooping is considered a crime
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SnoopIsCrime() const -> bool { return boolVals.test(BIT_SNOOPISCRIME); }
-auto CServerData::SnoopIsCrime(bool newVal) -> void { boolVals.set(BIT_SNOOPISCRIME, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SnoopAwareness()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether targets of snooping become more aware of it over
-// time
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SnoopAwareness() const -> bool { return boolVals.test(BIT_SNOOPAWARENESS); }
-auto CServerData::SnoopAwareness(bool newVal) -> void { boolVals.set(BIT_SNOOPAWARENESS, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::StatsAffectSkillChecks()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether stats like strength, dexterity and intelligence
-// provide |					bonuses to skillchecks
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::StatsAffectSkillChecks() const -> bool {
-    return boolVals.test(BIT_STATSAFFECTSKILLCHECKS);
-}
-auto CServerData::StatsAffectSkillChecks(bool newVal) -> void {
-    boolVals.set(BIT_STATSAFFECTSKILLCHECKS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExtendedStartingStats()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether extended starting stats are enabled
-//|					If enabled players start with 90 total statpoints instead of
-// 80
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExtendedStartingStats() const -> bool {
-    return boolVals.test(BIT_EXTENDEDSTARTINGSTATS);
-}
-auto CServerData::ExtendedStartingStats(bool newVal) -> void {
-    boolVals.set(BIT_EXTENDEDSTARTINGSTATS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExtendedStartingSkills()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether extended starting skills are enabled
-//|					If enabled, players start with 4 skills instead of 3, and have
-//a total of |					120 skillpoints at the start instead of 100
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExtendedStartingSkills() const -> bool {
-    return boolVals.test(BIT_EXTENDEDSTARTINGSKILLS);
-}
-auto CServerData::ExtendedStartingSkills(bool newVal) -> void {
-    boolVals.set(BIT_EXTENDEDSTARTINGSKILLS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::PlayerPersecutionStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether player ghosts can drain mana from other players by
-// attacking them
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::PlayerPersecutionStatus() const -> bool {
-    return boolVals.test(BIT_PERSECUTIONSTATUS);
-}
-auto CServerData::PlayerPersecutionStatus(bool newVal) -> void {
-    boolVals.set(BIT_PERSECUTIONSTATUS, newVal);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1821,13 +1397,6 @@ auto CServerData::BODGoldRewardMultiplier(R32 value) -> void { bodGoldRewardMult
 auto CServerData::BODFameRewardMultiplier() const -> float { return bodFameRewardMultiplier; }
 auto CServerData::BODFameRewardMultiplier(R32 value) -> void { bodFameRewardMultiplier = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SellByNameStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether items are sold by their name, not just ID/Colour
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SellByNameStatus() const -> bool { return boolVals.test(BIT_SELLBYNAME); }
-auto CServerData::SellByNameStatus(bool newVal) -> void { boolVals.set(BIT_SELLBYNAME, newVal); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SellMaxItemsStatus()
@@ -1838,65 +1407,6 @@ auto CServerData::SellByNameStatus(bool newVal) -> void { boolVals.set(BIT_SELLB
 auto CServerData::SellMaxItemsStatus() const -> std::int16_t { return sellMaxItems; }
 auto CServerData::SellMaxItemsStatus(std::int16_t value) -> void { sellMaxItems = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::TradeSystemStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether the advanced trade system is enabled or not.
-//|					If enabled, prices of goods with NPC vendors will fluctuate
-//with demand
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TradeSystemStatus() const -> bool { return boolVals.test(BIT_TRADESYSSTATUS); }
-auto CServerData::TradeSystemStatus(bool newVal) -> void {
-    boolVals.set(BIT_TRADESYSSTATUS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::RankSystemStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether rank system is enabled or not. If enabled, it
-// allows for |					variable quality of crafted items
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::RankSystemStatus() const -> bool { return boolVals.test(BIT_RANKSYSSTATUS); }
-auto CServerData::RankSystemStatus(bool newVal) -> void { boolVals.set(BIT_RANKSYSSTATUS, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::DisplayMakersMark()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether maker's mark is displayed for crafted items that
-// have this
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::DisplayMakersMark() const -> bool {
-    return boolVals.test(BIT_DISPLAYMAKERSMARK);
-}
-auto CServerData::DisplayMakersMark(bool newVal) -> void {
-    boolVals.set(BIT_DISPLAYMAKERSMARK, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CutScrollRequirementStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether skill requirements are cut when casting spells
-// from scrolls
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CutScrollRequirementStatus() const -> bool {
-    return boolVals.test(BIT_CUTSCROLLREQ);
-}
-auto CServerData::CutScrollRequirementStatus(bool newVal) -> void {
-    boolVals.set(BIT_CUTSCROLLREQ, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CheckPetControlDifficulty()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether pet control difficulty is enabled or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CheckPetControlDifficulty() const -> bool {
-    
-    return boolVals.test(BIT_CHECKPETCONTROLDIFFICULTY);
-}
-auto CServerData::CheckPetControlDifficulty(bool newVal) -> void {
-    boolVals.set(BIT_CHECKPETCONTROLDIFFICULTY, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CheckItemsSpeed()
@@ -1991,69 +1501,6 @@ auto CServerData::MineCheck() const -> std::uint8_t { return mineCheck; }
 auto CServerData::MineCheck(std::uint8_t value) -> void { mineCheck = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::FreeshardServerPoll()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether UOX3 will respond to freeshard server poll
-// requests
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::FreeshardServerPoll() const -> bool {
-    return boolVals.test(BIT_FREESHARDSERVERPOLL);
-}
-auto CServerData::FreeshardServerPoll(bool newVal) -> void {
-    boolVals.set(BIT_FREESHARDSERVERPOLL, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatArmorClassDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of
-// matching AC
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorClassDamageBonus() const -> bool {
-    return boolVals.test(BIT_ARMORCLASSDAMAGEBONUS);
-}
-auto CServerData::CombatArmorClassDamageBonus(bool newVal) -> void {
-    boolVals.set(BIT_ARMORCLASSDAMAGEBONUS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatDisplayHitMessage()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether combat hit messages are displayed in combat
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatDisplayHitMessage() const -> bool {
-    return boolVals.test(BIT_SHOWHITMESSAGE);
-}
-auto CServerData::CombatDisplayHitMessage(bool newVal) -> void {
-    boolVals.set(BIT_SHOWHITMESSAGE, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatDisplayDamageNumbers()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether combat damage numbers are displayed in combat
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatDisplayDamageNumbers() const -> bool {
-    return boolVals.test(BIT_SHOWDAMAGENUMBERS);
-}
-auto CServerData::CombatDisplayDamageNumbers(bool newVal) -> void {
-    boolVals.set(BIT_SHOWDAMAGENUMBERS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatAttackSpeedFromStamina()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether combat attack speed is derived from stamina
-// instead of dexterity
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAttackSpeedFromStamina() const -> bool {
-    return boolVals.test(BIT_ATTSPEEDFROMSTAMINA);
-}
-auto CServerData::CombatAttackSpeedFromStamina(bool newVal) -> void {
-    boolVals.set(BIT_ATTSPEEDFROMSTAMINA, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GlobalAttackSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global attack speed in combat
@@ -2101,18 +1548,6 @@ auto CServerData::CombatNpcDamageRate() const -> std::int16_t { return combatNpc
 auto CServerData::CombatNpcDamageRate(std::int16_t value) -> void { combatNpcDamageRate = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::AlchemyDamageBonusEnabled()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether Alchemy Damage Bonus Modifier is enabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::AlchemyDamageBonusEnabled() const -> bool {
-    return boolVals.test(BIT_ALCHEMYDAMAGEBONUSENABLED);
-}
-auto CServerData::AlchemyDamageBonusEnabled(bool newVal) -> void {
-    boolVals.set(BIT_ALCHEMYDAMAGEBONUSENABLED, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::AlchemyDamageBonusModifier()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Alchemy Damage Bonus Modifier, which gives bonus
@@ -2139,18 +1574,6 @@ auto CServerData::WeaponDamageBonusType() const -> std::uint8_t { return combatW
 auto CServerData::WeaponDamageBonusType(std::uint8_t value) -> void { combatWeaponDamageBonusType = value; }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ItemsInterruptCasting()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether manipulation of items interrupts casting
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ItemsInterruptCasting() const -> bool {
-    return boolVals.test(BIT_ITEMSINTERRUPTCASTING);
-}
-auto CServerData::ItemsInterruptCasting(bool newVal) -> void {
-    boolVals.set(BIT_ITEMSINTERRUPTCASTING, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatAttackStamina()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount of stamina lost by swinging weapon in combat
@@ -2167,53 +1590,7 @@ auto CServerData::CombatAttackStamina(std::int16_t value) -> void { combatAttack
 auto CServerData::SkillLevel() const -> std::uint8_t { return skillLevel; }
 auto CServerData::SkillLevel(std::uint8_t value) -> void { skillLevel = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::EscortsEnabled()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether escorts are enabled or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::EscortsEnabled() const -> bool { return boolVals.test(BIT_ESCORTSTATUS); }
-auto CServerData::EscortsEnabled(bool newVal) -> void { boolVals.set(BIT_ESCORTSTATUS, newVal); }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ItemsDetectSpeech()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether items can trigger onSpeech JS event
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ItemsDetectSpeech() const -> bool { return boolVals.test(BIT_ITEMSDETECTSPEECH); }
-auto CServerData::ItemsDetectSpeech(bool newVal) -> void {
-    boolVals.set(BIT_ITEMSDETECTSPEECH, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ForceNewAnimationPacket()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server should force the use of new animation
-// packet for NPCs
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ForceNewAnimationPacket() const -> bool {
-    return boolVals.test(BIT_FORCENEWANIMATIONPACKET);
-}
-auto CServerData::ForceNewAnimationPacket(bool newVal) -> void {
-    if (ServerConfig::shared().enableClients.enableClient4000() || ServerConfig::shared().enableClients.enableClient5000() || ServerConfig::shared().enableClients.enableClient6000() || ServerConfig::shared().enableClients.enableClient6050()) {
-        boolVals.set(BIT_FORCENEWANIMATIONPACKET, false);
-        Console::shared().warning("FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!");
-    }
-    else {
-        boolVals.set(BIT_FORCENEWANIMATIONPACKET, newVal);
-    }
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::MapDiffsEnabled()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server should load diff files for maps and statics
-//|	Notes		-	Diff files are not used by client versions newer than 7.0.8.2
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::MapDiffsEnabled() const -> bool { return boolVals.test(BIT_MAPDIFFSENABLED); }
-auto CServerData::MapDiffsEnabled(bool newVal) -> void {
-    boolVals.set(BIT_MAPDIFFSENABLED, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxPlayerPackItems()
@@ -2246,453 +1623,6 @@ auto CServerData::MaxPlayerBankItems(std::uint16_t newVal) -> void { maxPlayerBa
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::MaxPlayerBankWeight() const -> std::int32_t { return maxPlayerBankWeight; }
 auto CServerData::MaxPlayerBankWeight(std::int32_t newVal) -> void { maxPlayerBankWeight = newVal; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::BasicTooltipsOnly()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether basic tooltips are enabled or not (instead of
-// advanced tooltips)
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::BasicTooltipsOnly() const -> bool { return boolVals.test(BIT_BASICTOOLTIPSONLY); }
-auto CServerData::BasicTooltipsOnly(bool newVal) -> void {
-    boolVals.set(BIT_BASICTOOLTIPSONLY, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowNpcTitlesInTooltips()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether NPC titles show up in tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowNpcTitlesInTooltips() const -> bool {
-    return boolVals.test(BIT_SHOWNPCTITLESINTOOLTIPS);
-}
-auto CServerData::ShowNpcTitlesInTooltips(bool newVal) -> void {
-    boolVals.set(BIT_SHOWNPCTITLESINTOOLTIPS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowNpcTitlesOverhead()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether NPC titles show up along with name over their
-// heads
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowNpcTitlesOverhead() const -> bool {
-    return boolVals.test(BIT_SHOWNPCTITLESOVERHEAD);
-}
-auto CServerData::ShowNpcTitlesOverhead(bool newVal) -> void {
-    boolVals.set(BIT_SHOWNPCTITLESOVERHEAD, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowInvulnerableTagOverhead()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether (invulnerable) tags show over character heads when
-// invulnerable
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowInvulnerableTagOverhead() const -> bool {
-    return boolVals.test(BIT_SHOWINVULNERABLETAGOVERHEAD);
-}
-auto CServerData::ShowInvulnerableTagOverhead(bool newVal) -> void {
-    boolVals.set(BIT_SHOWINVULNERABLETAGOVERHEAD, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowRaceWithName()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether character races show up in tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowRaceWithName() const -> bool { return boolVals.test(BIT_SHOWRACEWITHNAME); }
-auto CServerData::ShowRaceWithName(bool newVal) -> void {
-    boolVals.set(BIT_SHOWRACEWITHNAME, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowRaceInPaperdoll()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether character races show up in tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowRaceInPaperdoll() const -> bool {
-    return boolVals.test(BIT_SHOWRACEINPAPERDOLL);
-}
-auto CServerData::ShowRaceInPaperdoll(bool newVal) -> void {
-    boolVals.set(BIT_SHOWRACEINPAPERDOLL, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowGuildInfoInTooltip()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether guild info shows in character tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowGuildInfoInTooltip() const -> bool {
-    return boolVals.test(BIT_SHOWGUILDINFOINTOOLTIP);
-}
-auto CServerData::ShowGuildInfoInTooltip(bool newVal) -> void {
-    boolVals.set(BIT_SHOWGUILDINFOINTOOLTIP, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowReputationTitleInTooltip()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether reputation title (fame/karma) shows up in
-// character tooltip
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowReputationTitleInTooltip() const -> bool {
-    return boolVals.test(BIT_SHOWREPTITLEINTOOLTIP);
-}
-auto CServerData::ShowReputationTitleInTooltip(bool newVal) -> void {
-    boolVals.set(BIT_SHOWREPTITLEINTOOLTIP, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::EnableNPCGuildDiscounts()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether a discounted price is given when buying items from
-// shopkeepers |					that belong to the same NPC Guild as the
-// player
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::EnableNPCGuildDiscounts() const -> bool {
-    return boolVals.test(BIT_ENABLENPCGUILDDISCOUNTS);
-}
-auto CServerData::EnableNPCGuildDiscounts(bool newVal) -> void {
-    boolVals.set(BIT_ENABLENPCGUILDDISCOUNTS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::EnableNPCGuildPremiums()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether a premium price is offered when selling items to
-// shopkeepers |					that belong to the same NPC Guild as the
-// player
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::EnableNPCGuildPremiums() const -> bool {
-    return boolVals.test(BIT_ENABLENPCGUILDPREMIUMS);
-}
-auto CServerData::EnableNPCGuildPremiums(bool newVal) -> void {
-    boolVals.set(BIT_ENABLENPCGUILDPREMIUMS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CastSpellsWhileMoving()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether character races show up in tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CastSpellsWhileMoving() const -> bool {
-    return boolVals.test(BIT_CASTSPELLSWHILEMOVING);
-}
-auto CServerData::CastSpellsWhileMoving(bool newVal) -> void {
-    boolVals.set(BIT_CASTSPELLSWHILEMOVING, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::PetCombatTraining()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether pets can gain skills/stats from fighting
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::PetCombatTraining() const -> bool { return boolVals.test(BIT_PETCOMBATTRAINING); }
-auto CServerData::PetCombatTraining(bool newVal) -> void {
-    boolVals.set(BIT_PETCOMBATTRAINING, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::NpcCombatTraining()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether (non-tamed, non-hireling) NPCs can gain
-// skills/stats from fighting
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::NpcCombatTraining() const -> bool { return boolVals.test(BIT_NPCCOMBATTRAINING); }
-auto CServerData::NpcCombatTraining(bool newVal) -> void {
-    boolVals.set(BIT_NPCCOMBATTRAINING, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::HirelingCombatTraining()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether hireling NPCs can gain skills/stats from fighting
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::HirelingCombatTraining() const -> bool {
-    return boolVals.test(BIT_HIRELINGCOMBATTRAINING);
-}
-auto CServerData::HirelingCombatTraining(bool newVal) -> void {
-    boolVals.set(BIT_HIRELINGCOMBATTRAINING, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowItemResistStats()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether elemental resist shows up in item tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowItemResistStats() const -> bool {
-    return boolVals.test(BIT_SHOWITEMRESISTSTATS);
-}
-auto CServerData::ShowItemResistStats(bool newVal) -> void {
-    boolVals.set(BIT_SHOWITEMRESISTSTATS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ShowWeaponDamageTypes()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether damage types show up in weapon tooltips
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ShowWeaponDamageTypes() const -> bool {
-    return boolVals.test(BIT_SHOWWEAPONDAMAGETYPES);
-}
-auto CServerData::ShowWeaponDamageTypes(bool newVal) -> void {
-    boolVals.set(BIT_SHOWWEAPONDAMAGETYPES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::GlobalItemDecay()
-//|	Date		-	2/07/2010
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether decay is enabled or disabled, on a global scale
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::GlobalItemDecay() const -> bool { return boolVals.test(BIT_GLOBALITEMDECAY); }
-auto CServerData::GlobalItemDecay(bool newVal) -> void {
-    boolVals.set(BIT_GLOBALITEMDECAY, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ScriptItemsDecayable()
-//|	Date		-	2/07/2010
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether items added through scripts decay or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ScriptItemsDecayable() const -> bool {
-    return boolVals.test(BIT_SCRIPTITEMSDECAYABLE);
-}
-auto CServerData::ScriptItemsDecayable(bool newVal) -> void {
-    boolVals.set(BIT_SCRIPTITEMSDECAYABLE, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::BaseItemsDecayable()
-//|	Date		-	2/07/2010
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether base items added will decay or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::BaseItemsDecayable() const -> bool {
-    return boolVals.test(BIT_BASEITEMSDECAYABLE);
-}
-auto CServerData::BaseItemsDecayable(bool newVal) -> void {
-    boolVals.set(BIT_BASEITEMSDECAYABLE, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ItemDecayInHouses()
-//|	Date		-	2/07/2010
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether items inside houses will decay or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ItemDecayInHouses() const -> bool { return boolVals.test(BIT_ITEMDECAYINHOUSES); }
-auto CServerData::ItemDecayInHouses(bool newVal) -> void {
-    boolVals.set(BIT_ITEMDECAYINHOUSES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ProtectPrivateHouses()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players without explicit access are prevented from
-// entering private houses
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ProtectPrivateHouses() const -> bool {
-    return boolVals.test(BIT_PROTECTPRIVATEHOUSES);
-}
-auto CServerData::ProtectPrivateHouses(bool newVal) -> void {
-    boolVals.set(BIT_PROTECTPRIVATEHOUSES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::TrackHousesPerAccount()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether house ownership is tracked per account (true) or
-// character (false )
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackHousesPerAccount() const -> bool {
-    return boolVals.test(BIT_TRACKHOUSESPERACCOUNT);
-}
-auto CServerData::TrackHousesPerAccount(bool newVal) -> void {
-    boolVals.set(BIT_TRACKHOUSESPERACCOUNT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CanOwnAndCoOwnHouses()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players can both own and co-own houses at the same
-// time
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CanOwnAndCoOwnHouses() const -> bool {
-    return boolVals.test(BIT_CANOWNANDCOOWNHOUSES);
-}
-auto CServerData::CanOwnAndCoOwnHouses(bool newVal) -> void {
-    boolVals.set(BIT_CANOWNANDCOOWNHOUSES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CoOwnHousesOnSameAccount()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether characters on same account as house owner will be
-// treated as |					if they are co-owners of the house
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CoOwnHousesOnSameAccount() const -> bool {
-    return boolVals.test(BIT_COOWNHOUSESONSAMEACCOUNT);
-}
-auto CServerData::CoOwnHousesOnSameAccount(bool newVal) -> void {
-    boolVals.set(BIT_COOWNHOUSESONSAMEACCOUNT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData:SafeCoOwnerLogout()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether co-owners of a house can safely log out in the
-// house without |					being booted out of the house
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SafeCoOwnerLogout() const -> bool { return boolVals.test(BIT_SAFECOOWNERLOGOUT); }
-auto CServerData::SafeCoOwnerLogout(bool newVal) -> void {
-    boolVals.set(BIT_SAFECOOWNERLOGOUT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SafeFriendLogout()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether friends of a house can safely log out in the house
-// without |					being booted out of the house
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SafeFriendLogout() const -> bool { return boolVals.test(BIT_SAFEFRIENDLOGOUT); }
-auto CServerData::SafeFriendLogout(bool newVal) -> void {
-    boolVals.set(BIT_SAFEFRIENDLOGOUT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SafeGuestLogout()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether guests of a house can safely log out in the house
-// without |					being booted out of the house
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SafeGuestLogout() const -> bool { return boolVals.test(BIT_SAFEGUESTLOGOUT); }
-auto CServerData::SafeGuestLogout(bool newVal) -> void {
-    boolVals.set(BIT_SAFEGUESTLOGOUT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::KeylessOwnerAccess()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether owner of a house can access locked doors without a
-// key
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::KeylessOwnerAccess() const -> bool {
-    return boolVals.test(BIT_KEYLESSOWNERACCESS);
-}
-auto CServerData::KeylessOwnerAccess(bool newVal) -> void {
-    boolVals.set(BIT_KEYLESSOWNERACCESS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::KeylessCoOwnerAccess()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether co-owners of a house can access locked doors
-// without a key
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::KeylessCoOwnerAccess() const -> bool {
-    return boolVals.test(BIT_KEYLESSCOOWNERACCESS);
-}
-auto CServerData::KeylessCoOwnerAccess(bool newVal) -> void {
-    boolVals.set(BIT_KEYLESSCOOWNERACCESS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::KeylessFriendAccess()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether friends of a house can access locked doors without
-// a key
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::KeylessFriendAccess() const -> bool {
-    return boolVals.test(BIT_KEYLESSFRIENDACCESS);
-}
-auto CServerData::KeylessFriendAccess(bool newVal) -> void {
-    boolVals.set(BIT_KEYLESSFRIENDACCESS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::KeylessGuestAccess()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether guests of a house can access locked doors without
-// a key
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::KeylessGuestAccess() const -> bool {
-    return boolVals.test(BIT_KEYLESSGUESTACCESS);
-}
-auto CServerData::KeylessGuestAccess(bool newVal) -> void {
-    boolVals.set(BIT_KEYLESSGUESTACCESS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::PaperdollGuildButton()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether guild menu can be accessed from paperdoll button
-// or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::PaperdollGuildButton() const -> bool {
-    return boolVals.test(BIT_PAPERDOLLGUILDBUTTON);
-}
-auto CServerData::PaperdollGuildButton(bool newVal) -> void {
-    boolVals.set(BIT_PAPERDOLLGUILDBUTTON, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatMonstersVsAnimals()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether monsters will attack animals or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatMonstersVsAnimals() const -> bool {
-    return boolVals.test(BIT_MONSTERSVSANIMALS);
-}
-auto CServerData::CombatMonstersVsAnimals(bool newVal) -> void {
-    boolVals.set(BIT_MONSTERSVSANIMALS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::OfferBODsFromItemSales()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players upon
-// selling |					items to a vendor that supports that feature (like a
-// blacksmith)
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::OfferBODsFromItemSales() const -> bool {
-    return boolVals.test(BIT_OFFERBODSFROMITEMSALES);
-}
-auto CServerData::OfferBODsFromItemSales(bool newVal) -> void {
-    boolVals.set(BIT_OFFERBODSFROMITEMSALES, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::OfferBODsFromContextMenu()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players via
-//|					context menu option on vendors that supports that feature (like
-//a blacksmith)
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::OfferBODsFromContextMenu() const -> bool {
-    return boolVals.test(BIT_OFFERBODSFROMCONTEXTMENU);
-}
-auto CServerData::OfferBODsFromContextMenu(bool newVal) -> void {
-    boolVals.set(BIT_OFFERBODSFROMCONTEXTMENU, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::BODsFromCraftedItemsOnly()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether Bulk Order Deed offers will be triggered by
-// selling any
-//|					items to a vendor that supports the feature, or just from
-//selling crafted items. |					Depends on OFFERBODSFROMITEMSALES
-//feature being enabled.
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::BODsFromCraftedItemsOnly() const -> bool {
-    return boolVals.test(BIT_BODSFROMCRAFTEDITEMSONLY);
-}
-auto CServerData::BODsFromCraftedItemsOnly(bool newVal) -> void {
-    boolVals.set(BIT_BODSFROMCRAFTEDITEMSONLY, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::MaxHousesOwnable()
@@ -2857,29 +1787,7 @@ auto CServerData::CombatBloodEffectChance(std::uint8_t value) -> void {
     combatBloodEffectChance = value;
 }
 
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::HungerSystemEnabled()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::HungerSystemEnabled() const -> bool {
-    return boolVals.test(BIT_HUNGERSYSTEMENABLED);
-}
-auto CServerData::HungerSystemEnabled(bool newVal) -> void {
-    boolVals.set(BIT_HUNGERSYSTEMENABLED, newVal);
-}
 
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::ThirstSystemEnabled()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ThirstSystemEnabled() const -> bool {
-    return boolVals.test(BIT_THIRSTSYSTEMENABLED);
-}
-auto CServerData::ThirstSystemEnabled(bool newVal) -> void {
-    boolVals.set(BIT_THIRSTSYSTEMENABLED, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::HungerDamage()
@@ -2906,26 +1814,6 @@ auto CServerData::ThirstDrain(std::int16_t value) -> void { thirstDrain = value;
 auto CServerData::PetOfflineTimeout() const -> std::uint16_t { return petOfflineTimeout; }
 auto CServerData::PetOfflineTimeout(std::uint16_t value) -> void { petOfflineTimeout = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::PetHungerOffline()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether pets should hunger while the player (owner) is
-// offline or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::PetHungerOffline() const -> bool { return boolVals.test(BIT_PETHUNGEROFFLINE); }
-auto CServerData::PetHungerOffline(bool newVal) -> void {
-    boolVals.set(BIT_PETHUNGEROFFLINE, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::PetThirstOffline()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether pets should thirst while the player (owner) is offline or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::PetThirstOffline() const -> bool { return boolVals.test(BIT_PETTHIRSTOFFLINE); }
-auto CServerData::PetThirstOffline(bool newVal) -> void {
-    boolVals.set(BIT_PETTHIRSTOFFLINE, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::BuyThreshold()
@@ -2937,20 +1825,6 @@ auto CServerData::PetThirstOffline(bool newVal) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::BuyThreshold() const -> std::int16_t { return buyThreshold; }
 auto CServerData::BuyThreshold(std::int16_t value) -> void { buyThreshold = value; }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CharHideWhileMounted()
-//|	Date		-	09/22/2002
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players can hide while mounted or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CharHideWhileMounted() const -> bool {
-    return boolVals.test(BIT_HIDEWHILEMOUNTED);
-}
-auto CServerData::CharHideWhileMounted(bool newVal) -> void {
-    boolVals.set(BIT_HIDEWHILEMOUNTED, newVal);
-}
-
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::WeightPerStr()
 //|	Date		-	3/12/2003
@@ -2960,113 +1834,7 @@ auto CServerData::CharHideWhileMounted(bool newVal) -> void {
 auto CServerData::WeightPerStr() const -> float { return weightPerSTR; }
 auto CServerData::WeightPerStr(R32 newVal) -> void { weightPerSTR = newVal; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerOverloadPackets()
-//|	Date		-	11/20/2005
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether packet handling in JS is enabled or disabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerOverloadPackets() const -> bool {
-    return boolVals.test(BIT_OVERLOADPACKETS);
-}
-auto CServerData::ServerOverloadPackets(bool newVal) -> void {
-    boolVals.set(BIT_OVERLOADPACKETS, newVal);
-}
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ArmorAffectManaRegen()
-//|	Date		-	3/20/2005
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether armor affects mana regeneration or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ArmorAffectManaRegen() const -> bool {
-    return boolVals.test(BIT_ARMORAFFECTMANAREGEN);
-}
-auto CServerData::ArmorAffectManaRegen(bool newVal) -> void {
-    boolVals.set(BIT_ARMORAFFECTMANAREGEN, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::AdvancedPathfinding()
-//|	Date		-	7/16/2005
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether NPCs use the A* Pathfinding routine or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::AdvancedPathfinding() const -> bool {
-    return boolVals.test(BIT_ADVANCEDPATHFIND);
-}
-auto CServerData::AdvancedPathfinding(bool newVal) -> void {
-    boolVals.set(BIT_ADVANCEDPATHFIND, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::LootingIsCrime()
-//|	Date		-	4/09/2007
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether looting of corpses can be a crime or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::LootingIsCrime() const -> bool { return boolVals.test(BIT_LOOTINGISCRIME); }
-auto CServerData::LootingIsCrime(bool newVal) -> void { boolVals.set(BIT_LOOTINGISCRIME, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::TravelSpellsFromBoatKeys()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are usable with boat keys to
-// teleport |					directly to boat's location
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TravelSpellsFromBoatKeys() const -> bool {
-    return boolVals.test(BIT_TRAVELSPELLSFROMBOATKEYS);
-}
-auto CServerData::TravelSpellsFromBoatKeys(bool newVal) -> void {
-    boolVals.set(BIT_TRAVELSPELLSFROMBOATKEYS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::TravelSpellsWhileOverweight()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while overweight
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TravelSpellsWhileOverweight() const -> bool {
-    return boolVals.test(BIT_TRAVELSPELLSWHILEOVERWEIGHT);
-}
-auto CServerData::TravelSpellsWhileOverweight(bool newVal) -> void {
-    boolVals.set(BIT_TRAVELSPELLSWHILEOVERWEIGHT, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::MarkRunesInMultis()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether server allows marking recall runes in multis (houses, boats)
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::MarkRunesInMultis() const -> bool { return boolVals.test(BIT_MARKRUNESINMULTIS); }
-auto CServerData::MarkRunesInMultis(bool newVal) -> void {
-    boolVals.set(BIT_MARKRUNESINMULTIS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::TravelSpellsBetweenWorlds()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed between worlds
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TravelSpellsBetweenWorlds() const -> bool {
-    return boolVals.test(BIT_TRAVELSPELLSBETWEENWORLDS);
-}
-auto CServerData::TravelSpellsBetweenWorlds(bool newVal) -> void {
-    boolVals.set(BIT_TRAVELSPELLSBETWEENWORLDS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//| Function    -   CServerData::TravelSpellsWhileAggressor()
-// o------------------------------------------------------------------------------------------------o
-//| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while marked as an
-// aggressor
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TravelSpellsWhileAggressor() const -> bool {
-    return boolVals.test(BIT_TRAVELSPELLSWHILEAGGRESSOR);
-}
-auto CServerData::TravelSpellsWhileAggressor(bool newVal) -> void {
-    boolVals.set(BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //| Function    -   CServerData::MaxControlSlots()
@@ -3122,82 +1890,6 @@ auto CServerData::SetPetLoyaltyLossOnFailure(std::uint16_t newVal) -> void {
 auto CServerData::MaxSafeTeleportsPerDay() const -> std::uint8_t { return maxSafeTeleports; }
 auto CServerData::MaxSafeTeleportsPerDay(std::uint8_t newVal) -> void { maxSafeTeleports = newVal; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::TeleportToNearestSafeLocation()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players who use the safe teleport via help menu
-// will teleport |					to the nearest safe location, or to a random
-// safe location anywhere on the map
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::TeleportToNearestSafeLocation() const -> bool {
-    return boolVals.test(BIT_TELEPORTTONEARESTSAFELOC);
-}
-auto CServerData::TeleportToNearestSafeLocation(bool newVal) -> void {
-    boolVals.set(BIT_TELEPORTTONEARESTSAFELOC, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::AllowAwakeNPCs()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether the feature that allows permanently awake NPCs
-//(ones marked |					as such) is enabled or not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::AllowAwakeNPCs() const -> bool { return boolVals.test(BIT_ALLOWAWAKENPCS); }
-auto CServerData::AllowAwakeNPCs(bool newVal) -> void { boolVals.set(BIT_ALLOWAWAKENPCS, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ToolUseLimit()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether tools have usage limits (based on item health)
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ToolUseLimit() const -> bool { return boolVals.test(BIT_TOOLUSELIMIT); }
-auto CServerData::ToolUseLimit(bool newVal) -> void { boolVals.set(BIT_TOOLUSELIMIT, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ToolUseBreak()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether tools will break if they reach 0 health
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ToolUseBreak() const -> bool { return boolVals.test(BIT_TOOLUSEBREAK); }
-auto CServerData::ToolUseBreak(bool newVal) -> void { boolVals.set(BIT_TOOLUSEBREAK, newVal); }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ItemRepairDurabilityLoss()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether items will have their durability reduced when
-// repaired
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ItemRepairDurabilityLoss() const -> bool {
-    return boolVals.test(BIT_ITEMREPAIRDURABILITYLOSS);
-}
-auto CServerData::ItemRepairDurabilityLoss(bool newVal) -> void {
-    boolVals.set(BIT_ITEMREPAIRDURABILITYLOSS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::HideStatsForUnknownMagicItems()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether stats are displayed for unknown/unidentified magic
-// items
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::HideStatsForUnknownMagicItems() const -> bool {
-    return boolVals.test(BIT_HIDESTATSFORUNKNOWNMAGICITEMS);
-}
-auto CServerData::HideStatsForUnknownMagicItems(bool newVal) -> void {
-    boolVals.set(BIT_HIDESTATSFORUNKNOWNMAGICITEMS, newVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CraftColouredWeapons()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether players can craft weapons from coloured ore
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CraftColouredWeapons() const -> bool {
-    return boolVals.test(BIT_CRAFTCOLOUREDWEAPONS);
-}
-auto CServerData::CraftColouredWeapons(bool newVal) -> void {
-    boolVals.set(BIT_CRAFTCOLOUREDWEAPONS, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::BackupRatio()
@@ -3223,16 +1915,6 @@ auto CServerData::CombatMaxRange(std::int16_t value) -> void { combatMaxRange = 
 auto CServerData::CombatMaxSpellRange() const -> std::int16_t { return combatMaxSpellRange; }
 auto CServerData::CombatMaxSpellRange(std::int16_t value) -> void { combatMaxSpellRange = value; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::CombatAnimalsGuarded()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or
-// not
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAnimalsGuarded() const -> bool { return boolVals.test(BIT_ANIMALSGUARDED); }
-auto CServerData::CombatAnimalsGuarded(bool newVal) -> void {
-    boolVals.set(BIT_ANIMALSGUARDED, newVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::CombatNPCBaseFleeAt()
@@ -3496,60 +2178,7 @@ auto CServerData::getSpawnRegionsFacetStatus() const -> std::uint32_t {
 }
 auto CServerData::setSpawnRegionsFacetStatus(std::uint32_t nVal) -> void { spawnRegionsFacets = nVal; }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getAssistantNegotiation()
-//|					CServerData::setAssistantNegotiation()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets status of feature negotiation with assist tools like Razor
-// and AssistUO
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getAssistantNegotiation() const -> bool {
-    return boolVals.test(BIT_ASSISTANTNEGOTIATION);
-}
-auto CServerData::setAssistantNegotiation(bool nVal) -> void {
-    boolVals.set(BIT_ASSISTANTNEGOTIATION, nVal);
-}
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::getClassicUOMapTracker()
-//|					CServerData::setClassicUOMapTracker()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap
-// Tracker packets
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::getClassicUOMapTracker() const -> bool {
-    return boolVals.test(BIT_CLASSICUOMAPTRACKER);
-}
-auto CServerData::setClassicUOMapTracker(bool nVal) -> void {
-    boolVals.set(BIT_CLASSICUOMAPTRACKER, nVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::useUnicodeMessages()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether server should send messages originating on server
-// as unicode
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::useUnicodeMessages() const -> bool {
-    return boolVals.test(BIT_USEUNICODEMESSAGES);
-}
-auto CServerData::useUnicodeMessages(bool nVal) -> void {
-    boolVals.set(BIT_USEUNICODEMESSAGES, nVal);
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::KickOnAssistantSilence()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether player is kicked if there's no response from
-// assistant tool |					to verify it complies with the allowed
-// assistant features
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::KickOnAssistantSilence() const -> bool {
-    return boolVals.test(BIT_KICKONASSISTANTSILENCE);
-}
-auto CServerData::KickOnAssistantSilence(bool nVal) -> void {
-    boolVals.set(BIT_KICKONASSISTANTSILENCE, nVal);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveIni()
@@ -3689,26 +2318,25 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
         ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
         ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
-        ofsOutput << "CONSOLELOG=" << (ServerConsoleLog() ? 1 : 0) << '\n';
-        ofsOutput << "NETWORKLOG=" << (ServerNetworkLog() ? 1 : 0) << '\n';
-        ofsOutput << "SPEECHLOG=" << (ServerSpeechLog() ? 1 : 0) << '\n';
+        ofsOutput << "CONSOLELOG=" << (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) << '\n';
+        ofsOutput << "NETWORKLOG=" << (ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG)) << '\n';
+        ofsOutput << "SPEECHLOG=" << ServerConfig::shared().enabled(ServerSwitch::SPEECHLOG) << '\n';
         ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
-        ofsOutput << "ANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus() ? 1 : 0) << '\n';
-        ofsOutput << "JOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus() ? 1 : 0) << '\n';
-        ofsOutput << "BACKUPSENABLED=" << (ServerBackupStatus() ? 1 : 0) << '\n';
+        ofsOutput << "ANNOUNCEWORLDSAVES=" << ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE) << '\n';
+        ofsOutput << "JOINPARTMSGS=" << ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART) << '\n';
+        ofsOutput << "BACKUPSENABLED=" << ServerConfig::shared().enabled(ServerSwitch::BACKUP) << '\n';
         ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
         ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-        ofsOutput << "ACCOUNTISOLATION="
-        << "1" << '\n';
-        ofsOutput << "UOGENABLED=" << (ServerUOGEnabled() ? 1 : 0) << '\n';
-        ofsOutput << "FREESHARDSERVERPOLL=" << (FreeshardServerPoll() ? 1 : 0) << '\n';
+        ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
+        ofsOutput << "UOGENABLED=" << static_cast<int>(ServerConfig::shared().enabled(ServerSwitch::UOG)) << '\n';
+        ofsOutput << "FREESHARDSERVERPOLL=" << static_cast<int>(ServerConfig::shared().enabled(ServerSwitch::FREESHARD)) << '\n';
         ofsOutput << "RANDOMSTARTINGLOCATION=" << (ServerRandomStartingLocation() ? 1 : 0) << '\n';
-        ofsOutput << "ASSISTANTNEGOTIATION=" << (getAssistantNegotiation() ? 1 : 0) << '\n';
-        ofsOutput << "KICKONASSISTANTSILENCE=" << (KickOnAssistantSilence() ? 1 : 0) << '\n';
-        ofsOutput << "CLASSICUOMAPTRACKER=" << (getClassicUOMapTracker() ? 1 : 0) << '\n';
+        ofsOutput << "ASSISTANTNEGOTIATION=" << ServerConfig::shared().enabled(ServerSwitch::ASSISTANTNEGOTIATION) << '\n';
+        ofsOutput << "KICKONASSISTANTSILENCE=" << ServerConfig::shared().enabled(ServerSwitch::KICKONASSISTANTSILENCE) << '\n';
+        ofsOutput << "CLASSICUOMAPTRACKER=" << ServerConfig::shared().enabled(ServerSwitch::CUOMAPTRACKER) << '\n';
         ofsOutput << "JSENGINESIZE=" << static_cast<std::uint16_t>(GetJSEngineSize()) << '\n';
-        ofsOutput << "USEUNICODEMESSAGES=" << (useUnicodeMessages() ? 1 : 0) << '\n';
-        ofsOutput << "CONTEXTMENUS=" << (ServerContextMenus() ? 1 : 0) << '\n';
+        ofsOutput << "USEUNICODEMESSAGES=" << ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE) << '\n';
+        ofsOutput << "CONTEXTMENUS=" << ServerConfig::shared().enabled(ServerSwitch::CONTEXTMENU) << '\n';
         ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
         ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<std::uint32_t>(MaxClientBytesIn()) << '\n';
         ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<std::uint32_t>(MaxClientBytesOut()) << '\n';
@@ -3758,14 +2386,14 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
         ofsOutput << "SKILLDELAY=" << static_cast<std::uint16_t>(ServerSkillDelayStatus()) << '\n';
         ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
-        ofsOutput << "STATSAFFECTSKILLCHECKS=" << (StatsAffectSkillChecks() ? 1 : 0) << '\n';
-        ofsOutput << "EXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats() ? 1 : 0) << '\n';
-        ofsOutput << "EXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills() ? 1 : 0) << '\n';
+        ofsOutput << "STATSAFFECTSKILLCHECKS=" << ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL) << '\n';
+        ofsOutput << "EXTENDEDSTARTINGSTATS=" << ServerConfig::shared().enabled(ServerSwitch::EXTENDEDSTATS) << '\n';
+        ofsOutput << "EXTENDEDSTARTINGSKILLS=" << ServerConfig::shared().enabled(ServerSwitch::EXTENDEDSKILLS) << '\n';
         ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
         ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
-        ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime() ? 1 : 0) << '\n';
-        ofsOutput << "SNOOPAWARENESS=" << (SnoopAwareness() ? 1 : 0) << '\n';
-        ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
+        ofsOutput << "SNOOPISCRIME=" << ServerConfig::shared().enabled(ServerSwitch::SNOOPISCRIME) << '\n';
+        ofsOutput << "SNOOPAWARENESS=" << ServerConfig::shared().enabled(ServerSwitch::SNOOPAWARE) << '\n';
+        ofsOutput << "ARMORAFFECTMANAREGEN=" << ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
@@ -3837,76 +2465,74 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
-        ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay() ? 1 : 0) << '\n';
-        ofsOutput << "GUARDSACTIVE=" << (GuardsStatus() ? 1 : 0) << '\n';
-        ofsOutput << "DEATHANIMATION=" << (DeathAnimationStatus() ? 1 : 0) << '\n';
+        ofsOutput << "LOOTDECAYSWITHCORPSE=" << ServerConfig::shared().enabled(ServerSwitch::CORPSELOOTDECAY) << '\n';
+        ofsOutput << "GUARDSACTIVE=" << ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) << '\n';
+        ofsOutput << "DEATHANIMATION=" << ServerConfig::shared().enabled(ServerSwitch::DEATHANIMATION) << '\n';
         ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
-        ofsOutput << "AMBIENTFOOTSTEPS=" << (AmbientFootsteps() ? 1 : 0) << '\n';
-        ofsOutput << "INTERNALACCOUNTCREATION=" << (InternalAccountStatus() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWOFFLINEPCS=" << (ShowOfflinePCs() ? 1 : 0) << '\n';
-        ofsOutput << "ROGUESENABLED=" << (RogueStatus() ? 1 : 0) << '\n';
-        ofsOutput << "PLAYERPERSECUTION=" << (PlayerPersecutionStatus() ? 1 : 0) << '\n';
+        ofsOutput << "AMBIENTFOOTSTEPS=" << ServerConfig::shared().enabled(ServerSwitch::AMBIENTFOOTSTEPS) << '\n';
+        ofsOutput << "INTERNALACCOUNTCREATION=" << ServerConfig::shared().enabled(ServerSwitch::AUTOACCOUNT) << '\n';
+        ofsOutput << "SHOWOFFLINEPCS=" << ServerConfig::shared().enabled(ServerSwitch::SHOWOFFLINEPCS) << '\n';
+        ofsOutput << "ROGUESENABLED=" << ServerConfig::shared().enabled(ServerSwitch::ROGUEENABLE) << '\n';
+        ofsOutput << "PLAYERPERSECUTION=" << ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION) << '\n';
         ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
         ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
-        ofsOutput << "SELLBYNAME=" << (SellByNameStatus() ? 1 : 0) << '\n';
+        ofsOutput << "SELLBYNAME=" << ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME) << '\n';
         ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
         ofsOutput << "GLOBALRESTOCKMULTIPLIER=" << GlobalRestockMultiplier() << '\n';
         ofsOutput << "BANKBUYTHRESHOLD=" << BuyThreshold() << '\n';
-        ofsOutput << "TRADESYSTEM=" << (TradeSystemStatus() ? 1 : 0) << '\n';
-        ofsOutput << "RANKSYSTEM=" << (RankSystemStatus() ? 1 : 0) << '\n';
-        ofsOutput << "DISPLAYMAKERSMARK=" << (DisplayMakersMark() ? 1 : 0) << '\n';
-        ofsOutput << "CUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus() ? 1 : 0) << '\n';
-        ofsOutput << "NPCTRAININGENABLED=" << (NPCTrainingStatus() ? 1 : 0) << '\n';
-        ofsOutput << "HIDEWHILEMOUNTED=" << (CharHideWhileMounted() ? 1 : 0) << '\n';
+        ofsOutput << "TRADESYSTEM=" << ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM) << '\n';
+        ofsOutput << "RANKSYSTEM=" << ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) << '\n';
+        ofsOutput << "DISPLAYMAKERSMARK=" << ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) << '\n';
+        ofsOutput << "CUTSCROLLREQUIREMENTS=" << ServerConfig::shared().enabled(ServerSwitch::CUTSCROLLREQ) << '\n';
+        ofsOutput << "NPCTRAININGENABLED=" << ServerConfig::shared().enabled(ServerSwitch::NPCTRAINING) << '\n';
+        ofsOutput << "HIDEWHILEMOUNTED=" << ServerConfig::shared().enabled(ServerSwitch::HIDEWHILEMOUNTED) << '\n';
         ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
         ofsOutput << "POLYDURATION=" << SystemTimer(tSERVER_POLYMORPH) << '\n';
         ofsOutput << "CLIENTFEATURES=" << ServerConfig::shared().clientFeature.value() << '\n';
         ofsOutput << "SERVERFEATURES=" << ServerConfig::shared().serverFeature.value()  << '\n';
         ofsOutput << "SPAWNREGIONSFACETS=" << getSpawnRegionsFacetStatus() << '\n';
-        ofsOutput << "OVERLOADPACKETS=" << (ServerOverloadPackets() ? 1 : 0) << '\n';
-        ofsOutput << "ADVANCEDPATHFINDING=" << (AdvancedPathfinding() ? 1 : 0) << '\n';
-        ofsOutput << "LOOTINGISCRIME=" << (LootingIsCrime() ? 1 : 0) << '\n';
-        ofsOutput << "BASICTOOLTIPSONLY=" << (BasicTooltipsOnly() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWREPUTATIONTITLEINTOOLTIP=" << (ShowReputationTitleInTooltip() ? 1 : 0)
-        << '\n';
-        ofsOutput << "SHOWGUILDINFOINTOOLTIP=" << (ShowGuildInfoInTooltip() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << (ShowNpcTitlesInTooltips() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWNPCTITLESOVERHEAD=" << (ShowNpcTitlesOverhead() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWINVULNERABLETAGOVERHEAD=" << (ShowInvulnerableTagOverhead() ? 1 : 0)
-        << '\n';
-        ofsOutput << "SHOWRACEWITHNAME=" << (ShowRaceWithName() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWRACEINPAPERDOLL=" << (ShowRaceInPaperdoll() ? 1 : 0) << '\n';
-        ofsOutput << "GLOBALITEMDECAY=" << (GlobalItemDecay() ? 1 : 0) << '\n';
-        ofsOutput << "SCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable() ? 1 : 0) << '\n';
-        ofsOutput << "BASEITEMSDECAYABLE=" << (BaseItemsDecayable() ? 1 : 0) << '\n';
-        ofsOutput << "PAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton() ? 1 : 0) << '\n';
+        ofsOutput << "OVERLOADPACKETS=" << ServerConfig::shared().enabled(ServerSwitch::OVERLOADPACKETS) << '\n';
+        ofsOutput << "ADVANCEDPATHFINDING=" << ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING) << '\n';
+        ofsOutput << "LOOTINGISCRIME=" << ServerConfig::shared().enabled(ServerSwitch::LOOTINGISCRIME) << '\n';
+        ofsOutput << "BASICTOOLTIPSONLY=" << ServerConfig::shared().enabled(ServerSwitch::BASICTOOLTIPSONLY) << '\n';
+        ofsOutput << "SHOWREPUTATIONTITLEINTOOLTIP=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP) << '\n';
+        ofsOutput << "SHOWGUILDINFOINTOOLTIP=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDTOOLTIP) << '\n';
+        ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << ServerConfig::shared().enabled(ServerSwitch::NPCTOOLTIPS) << '\n';
+        ofsOutput << "SHOWNPCTITLESOVERHEAD=" << ServerConfig::shared().enabled(ServerSwitch::OVERHEADTITLE) << '\n';
+        ofsOutput << "SHOWINVULNERABLETAGOVERHEAD=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYINVUNERABLE) << '\n';
+        ofsOutput << "SHOWRACEWITHNAME=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE) << '\n';
+        ofsOutput << "SHOWRACEINPAPERDOLL=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) << '\n';
+        ofsOutput << "GLOBALITEMDECAY=" << ServerConfig::shared().enabled(ServerSwitch::ITEMDECAY) << '\n';
+        ofsOutput << "SCRIPTITEMSDECAYABLE=" << ServerConfig::shared().enabled(ServerSwitch::SCRIPTITEMSDECAYABLE) << '\n';
+        ofsOutput << "BASEITEMSDECAYABLE=" << ServerConfig::shared().enabled(ServerSwitch::BASEITEMSDECAYABLE) << '\n';
+        ofsOutput << "PAPERDOLLGUILDBUTTON=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDBUTTON) << '\n';
         ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
-        ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
+        ofsOutput << "ITEMSDETECTSPEECH=" << ServerConfig::shared().enabled(ServerSwitch::ITEMDETECTSPEECH) << '\n';
         ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
         ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
         ofsOutput << "MAXPLAYERPACKWEIGHT=" << MaxPlayerPackWeight() << '\n';
         ofsOutput << "MAXPLAYERBANKWEIGHT=" << MaxPlayerBankWeight() << '\n';
-        ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
-        ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
-        ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
-        ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
-        ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
-        ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
+        ofsOutput << "FORCENEWANIMATIONPACKET=" << ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET) << '\n';
+        ofsOutput << "MAPDIFFSENABLED=" << ServerConfig::shared().enabled(ServerSwitch::MAPDIFF) << '\n';
+        ofsOutput << "TOOLUSELIMIT=" << ServerConfig::shared().enabled(ServerSwitch::TOOLUSE) << '\n';
+        ofsOutput << "TOOLUSEBREAK=" << ServerConfig::shared().enabled(ServerSwitch::TOOLBREAK) << '\n';
+        ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ServerConfig::shared().enabled(ServerSwitch::REPAIRLOSS) << '\n';
+        ofsOutput << "CRAFTCOLOUREDWEAPONS=" << ServerConfig::shared().enabled(ServerSwitch::COLORWEAPON) << '\n';
         ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<std::uint16_t>(MaxSafeTeleportsPerDay())
         << '\n';
-        ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation() ? 1 : 0)
+        ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << ServerConfig::shared().enabled(ServerSwitch::SAFETELEPORT)
         << '\n';
-        ofsOutput << "ALLOWAWAKENPCS=" << (AllowAwakeNPCs() ? 1 : 0) << '\n';
-        ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << (EnableNPCGuildDiscounts() ? 1 : 0) << '\n';
-        ofsOutput << "ENABLENPCGUILDPREMIUMS=" << (EnableNPCGuildPremiums() ? 1 : 0) << '\n';
-        ofsOutput << "YOUNGPLAYERSYSTEM=" << (YoungPlayerSystem() ? 1 : 0) << '\n';
+        ofsOutput << "ALLOWAWAKENPCS=" << ServerConfig::shared().enabled(ServerSwitch::AWAKENPC) << '\n';
+        ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ServerConfig::shared().enabled(ServerSwitch::GUILDDISCOUNT) << '\n';
+        ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ServerConfig::shared().enabled(ServerSwitch::GUILDPREMIUM) << '\n';
+        ofsOutput << "YOUNGPLAYERSYSTEM=" << ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
         ofsOutput << "MAXCONTROLSLOTS=" << static_cast<std::uint16_t>(MaxControlSlots()) << '\n';
         ofsOutput << "MAXFOLLOWERS=" << static_cast<std::uint16_t>(MaxFollowers()) << '\n';
         ofsOutput << "MAXPETOWNERS=" << static_cast<std::uint16_t>(MaxPetOwners()) << '\n';
-        ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << (CheckPetControlDifficulty() ? 1 : 0) << '\n';
+        ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY) << '\n';
         ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<std::uint16_t>(GetPetLoyaltyGainOnSuccess())
         << '\n';
         ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<std::uint16_t>(GetPetLoyaltyLossOnFailure())
@@ -3935,7 +2561,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
-        ofsOutput << "ESCORTENABLED=" << (EscortsEnabled() ? 1 : 0) << '\n';
+        ofsOutput << "ESCORTENABLED=" << ServerConfig::shared().enabled(ServerSwitch::ESCORTS) << '\n';
         ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer(tSERVER_ESCORTWAIT) << '\n';
         ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer(tSERVER_ESCORTACTIVE) << '\n';
         ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer(tSERVER_ESCORTDONE) << '\n';
@@ -3976,37 +2602,37 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
-        ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled() ? 1 : 0) << '\n';
+        ofsOutput << "HUNGERENABLED=" << ServerConfig::shared().enabled(ServerSwitch::HUNGER) << '\n';
         ofsOutput << "HUNGERRATE=" << SystemTimer(tSERVER_HUNGERRATE) << '\n';
         ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
-        ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline() ? 1 : 0) << '\n';
+        ofsOutput << "PETHUNGEROFFLINE=" << ServerConfig::shared().enabled(ServerSwitch::PETHUNGEROFFLINE) << '\n';
         ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
-        ofsOutput << "THIRSTENABLED=" << (ThirstSystemEnabled() ? 1 : 0) << '\n';
+        ofsOutput << "THIRSTENABLED=" << ServerConfig::shared().enabled(ServerSwitch::THIRST) << '\n';
         ofsOutput << "THIRSTRATE=" << SystemTimer(tSERVER_THIRSTRATE) << '\n';
         ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
-        ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline() ? 1 : 0) << '\n';
+        ofsOutput << "PETTHIRSTOFFLINE=" << ServerConfig::shared().enabled(ServerSwitch::PETTHIRSTOFFLINE) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
         ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
         ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
-        ofsOutput << "DISPLAYHITMSG=" << (CombatDisplayHitMessage() ? 1 : 0) << '\n';
-        ofsOutput << "DISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers() ? 1 : 0) << '\n';
-        ofsOutput << "MONSTERSVSANIMALS=" << (CombatMonstersVsAnimals() ? 1 : 0) << '\n';
+        ofsOutput << "DISPLAYHITMSG=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG) << '\n';
+        ofsOutput << "DISPLAYDAMAGENUMBERS=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGENUMBERS) << '\n';
+        ofsOutput << "MONSTERSVSANIMALS=" << ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS) << '\n';
         ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<std::uint16_t>(CombatAnimalsAttackChance())
         << '\n';
-        ofsOutput << "ANIMALSGUARDED=" << (CombatAnimalsGuarded() ? 1 : 0) << '\n';
+        ofsOutput << "ANIMALSGUARDED=" << ServerConfig::shared().enabled(ServerSwitch::ANIMALSGUARDED) << '\n';
         ofsOutput << "NPCDAMAGERATE=" << CombatNpcDamageRate() << '\n';
         ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
         ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
         ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
-        ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina() ? 1 : 0) << '\n';
+        ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << ServerConfig::shared().enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA) << '\n';
         ofsOutput << "ARCHERYHITBONUS=" << static_cast<std::int16_t>(CombatArcheryHitBonus()) << '\n';
         ofsOutput << "ARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
-        ofsOutput << "SHOOTONANIMALBACK=" << (ShootOnAnimalBack() ? 1 : 0) << '\n';
+        ofsOutput << "SHOOTONANIMALBACK=" << ServerConfig::shared().enabled(ServerSwitch::SHOOTONANIMALBACK) << '\n';
         ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<std::uint16_t>(CombatWeaponDamageChance()) << '\n';
         ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<std::uint16_t>(CombatWeaponDamageMin()) << '\n';
         ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<std::uint16_t>(CombatWeaponDamageMax()) << '\n';
@@ -4016,31 +2642,31 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<std::uint16_t>(CombatParryDamageChance()) << '\n';
         ofsOutput << "PARRYDAMAGEMIN=" << static_cast<std::uint16_t>(CombatParryDamageMin()) << '\n';
         ofsOutput << "PARRYDAMAGEMAX=" << static_cast<std::uint16_t>(CombatParryDamageMax()) << '\n';
-        ofsOutput << "ARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus() ? 1 : 0) << '\n';
-        ofsOutput << "ALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled() ? 1 : 0) << '\n';
+        ofsOutput << "ARMORCLASSDAMAGEBONUS=" << ServerConfig::shared().enabled(ServerSwitch::ARMORCLASSBONUS) << '\n';
+        ofsOutput << "ALCHEMYBONUSENABLED=" << ServerConfig::shared().enabled(ServerSwitch::ALCHEMYBONUS) << '\n';
         ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<std::uint16_t>(AlchemyDamageBonusModifier())
         << '\n';
         ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<std::uint16_t>(CombatBloodEffectChance()) << '\n';
-        ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting() ? 1 : 0) << '\n';
-        ofsOutput << "PETCOMBATTRAINING=" << (PetCombatTraining() ? 1 : 0) << '\n';
-        ofsOutput << "HIRELINGCOMBATTRAINING=" << (HirelingCombatTraining() ? 1 : 0) << '\n';
-        ofsOutput << "NPCCOMBATTRAINING=" << (NpcCombatTraining() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWITEMRESISTSTATS=" << (ShowItemResistStats() ? 1 : 0) << '\n';
-        ofsOutput << "SHOWWEAPONDAMAGETYPES=" << (ShowWeaponDamageTypes() ? 1 : 0) << '\n';
+        ofsOutput << "ITEMSINTERRUPTCASTING=" << ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING) << '\n';
+        ofsOutput << "PETCOMBATTRAINING=" << ServerConfig::shared().enabled(ServerSwitch::PETCOMBATTRAINING) << '\n';
+        ofsOutput << "HIRELINGCOMBATTRAINING=" << ServerConfig::shared().enabled(ServerSwitch::HIRELINGTRAINING) << '\n';
+        ofsOutput << "NPCCOMBATTRAINING=" << ServerConfig::shared().enabled(ServerSwitch::NPCCOMBAT) << '\n';
+        ofsOutput << "SHOWITEMRESISTSTATS=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYRESISTSTATS) << '\n';
+        ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGETYPE) << '\n';
         ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<std::uint16_t>(WeaponDamageBonusType()) << '\n';
         
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
-        ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << (TravelSpellsFromBoatKeys() ? 1 : 0) << '\n';
-        ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << (TravelSpellsWhileOverweight() ? 1 : 0)
+        ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << ServerConfig::shared().enabled(ServerSwitch::TRAVELBOATKEY) << '\n';
+        ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << ServerConfig::shared().enabled(ServerSwitch::TRAVELBURDEN)
         << '\n';
-        ofsOutput << "MARKRUNESINMULTIS=" << (MarkRunesInMultis() ? 1 : 0) << '\n';
-        ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << (TravelSpellsBetweenWorlds() ? 1 : 0) << '\n';
-        ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << (TravelSpellsWhileAggressor() ? 1 : 0)
+        ofsOutput << "MARKRUNESINMULTIS=" << ServerConfig::shared().enabled(ServerSwitch::RUNEMULTI) << '\n';
+        ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << ServerConfig::shared().enabled(ServerSwitch::SPELLWORLDTRAVEL) << '\n';
+        ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ServerConfig::shared().enabled(ServerSwitch::TRAVELAGRESSOR)
         << '\n';
-        ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
-        ofsOutput << "CASTSPELLSWHILEMOVING=" << (CastSpellsWhileMoving() ? 1 : 0) << '\n';
+        ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << ServerConfig::shared().enabled(ServerSwitch::MAGICSTATS) << '\n';
+        ofsOutput << "CASTSPELLSWHILEMOVING=" << ServerConfig::shared().enabled(ServerSwitch::SPELLMOVING) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
@@ -4068,26 +2694,26 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[houses]" << '\n' << "{" << '\n';
-        ofsOutput << "TRACKHOUSESPERACCOUNT=" << (TrackHousesPerAccount() ? 1 : 0) << '\n';
-        ofsOutput << "CANOWNANDCOOWNHOUSES=" << (CanOwnAndCoOwnHouses() ? 1 : 0) << '\n';
-        ofsOutput << "COOWNHOUSESONSAMEACCOUNT=" << (CoOwnHousesOnSameAccount() ? 1 : 0) << '\n';
-        ofsOutput << "ITEMDECAYINHOUSES=" << (ItemDecayInHouses() ? 1 : 0) << '\n';
-        ofsOutput << "PROTECTPRIVATEHOUSES=" << (ProtectPrivateHouses() ? 1 : 0) << '\n';
+        ofsOutput << "TRACKHOUSESPERACCOUNT=" << ServerConfig::shared().enabled(ServerSwitch::TRACKHOUSESPERACCOUNT) << '\n';
+        ofsOutput << "CANOWNANDCOOWNHOUSES=" << ServerConfig::shared().enabled(ServerSwitch::OWNCOOWNHOUSE)<< '\n';
+        ofsOutput << "COOWNHOUSESONSAMEACCOUNT=" << ServerConfig::shared().enabled(ServerSwitch::COWNHOUSEACCOUNT) << '\n';
+        ofsOutput << "ITEMDECAYINHOUSES=" << ServerConfig::shared().enabled(ServerSwitch::INHOUSEDECAY) << '\n';
+        ofsOutput << "PROTECTPRIVATEHOUSES=" << ServerConfig::shared().enabled(ServerSwitch::PROTECTPRIVATEHOUSES) << '\n';
         ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
         ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
-        ofsOutput << "SAFECOOWNERLOGOUT=" << (SafeCoOwnerLogout() ? 1 : 0) << '\n';
-        ofsOutput << "SAFEFRIENDLOGOUT=" << (SafeFriendLogout() ? 1 : 0) << '\n';
-        ofsOutput << "SAFEGUESTLOGOUT=" << (SafeGuestLogout() ? 1 : 0) << '\n';
-        ofsOutput << "KEYLESSOWNERACCESS=" << (KeylessOwnerAccess() ? 1 : 0) << '\n';
-        ofsOutput << "KEYLESSCOOWNERACCESS=" << (KeylessCoOwnerAccess() ? 1 : 0) << '\n';
-        ofsOutput << "KEYLESSFRIENDACCESS=" << (KeylessFriendAccess() ? 1 : 0) << '\n';
-        ofsOutput << "KEYLESSGUESTACCESS=" << (KeylessGuestAccess() ? 1 : 0) << '\n';
+        ofsOutput << "SAFECOOWNERLOGOUT=" << ServerConfig::shared().enabled(ServerSwitch::COOWNERLOGOUT) << '\n';
+        ofsOutput << "SAFEFRIENDLOGOUT=" << ServerConfig::shared().enabled(ServerSwitch::FRIENDLOGOUT) << '\n';
+        ofsOutput << "SAFEGUESTLOGOUT=" << ServerConfig::shared().enabled(ServerSwitch::GUESTLOGOUT) << '\n';
+        ofsOutput << "KEYLESSOWNERACCESS=" << ServerConfig::shared().enabled(ServerSwitch::KEYLESSOWNER) << '\n';
+        ofsOutput << "KEYLESSCOOWNERACCESS=" << ServerConfig::shared().enabled(ServerSwitch::KEYLESSCOOWNER) << '\n';
+        ofsOutput << "KEYLESSFRIENDACCESS=" << ServerConfig::shared().enabled(ServerSwitch::KEYLESSFRIEND) << '\n';
+        ofsOutput << "KEYLESSGUESTACCESS=" << ServerConfig::shared().enabled(ServerSwitch::KEYLESSGUEST) << '\n';
         ofsOutput << "}" << '\n';
         
         ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
-        ofsOutput << "OFFERBODSFROMITEMSALES=" << (OfferBODsFromItemSales() ? 1 : 0) << '\n';
-        ofsOutput << "OFFERBODSFROMCONTEXTMENU=" << (OfferBODsFromContextMenu() ? 1 : 0) << '\n';
-        ofsOutput << "BODSFROMCRAFTEDITEMSONLY=" << (BODsFromCraftedItemsOnly() ? 1 : 0) << '\n';
+        ofsOutput << "OFFERBODSFROMITEMSALES=" << ServerConfig::shared().enabled(ServerSwitch::OFFERBODSFROMITEMSALES) << '\n';
+        ofsOutput << "OFFERBODSFROMCONTEXTMENU=" << ServerConfig::shared().enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << '\n';
+        ofsOutput << "BODSFROMCRAFTEDITEMSONLY=" << ServerConfig::shared().enabled(ServerSwitch::BODSFROMCRAFTEDITEMSONLY) << '\n';
         ofsOutput << "BODGOLDREWARDMULTIPLIER=" << BODGoldRewardMultiplier() << '\n';
         ofsOutput << "BODFAMEREWARDMULTIPLIER=" << BODFameRewardMultiplier() << '\n';
         ofsOutput << "}" << '\n';
@@ -4298,22 +2924,9 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 1: // SERVERNAME
             ServerName(value);
             break;
-        case 2: // CONSOLELOG
-            ServerConsoleLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 3: // COMMANDPREFIX
             ServerCommandPrefix(
                                 (value.data()[0])); // return the first character of the return string only
-            break;
-        case 4: // ANNOUNCEWORLDSAVES
-            ServerAnnounceSaves((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
-            break;
-        case 26: // JOINPARTMSGS
-            ServerJoinPartAnnouncements(
-                                        (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1 ? true : false));
-            break;
-        case 5: // BACKUPSENABLED
-            ServerBackups((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
             break;
         case 6: // SAVESTIMER
             ServerSavesTimer(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
@@ -4332,9 +2945,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 11: // MAXSTAMINAMOVEMENTS
             MaxStaminaMovement(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 12: // ARMORAFFECTMANAREGEN
-            ArmorAffectManaRegen((static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)) > 0 ? true : false));
             break;
         case 13: // CORPSEDECAYTIMER
             SystemTimer(tSERVER_CORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4389,33 +2999,9 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 39: // SPIRITSPEAKTIMER
             SystemTimer(tSERVER_SPIRITSPEAK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 47: // LOOTDECAYSWITHCORPSE
-            CorpseLootDecay(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 49: // GUARDSACTIVE
-            GuardStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 27: // DEATHANIMATION
-            DeathAnimationStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
+            break;            break;
         case 50: // AMBIENTSOUNDS
             WorldAmbientSounds(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 51: // AMBIENTFOOTSTEPS
-            AmbientFootsteps(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 52: // INTERNALACCOUNTCREATION
-            InternalAccountStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 53: // SHOWOFFLINEPCS
-            ShowOfflinePCs(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 54: // ROGUESENABLED
-            RogueStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 55: // PLAYERPERSECUTION
-            PlayerPersecutionStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
         case 56: // ACCOUNTFLUSH
             AccountFlushTimer(std::stod(value));
@@ -4423,20 +3009,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 57: // HTMLSTATUSENABLED
             HtmlStatsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 58: // SELLBYNAME
-            SellByNameStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 59: // SELLMAXITEMS
             SellMaxItemsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 60: // TRADESYSTEM
-            TradeSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 61: // RANKSYSTEM
-            RankSystemStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 62: // CUTSCROLLREQUIREMENTS
-            CutScrollRequirementStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
         case 63: // CHECKITEMS
             CheckItemsSpeed(std::stod(value));
@@ -4455,9 +3029,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 68: // REMOVALLEVEL
             MsgBoardPostRemovalLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 69: // ESCORTENABLED
-            EscortsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 70: // ESCORTINITEXPIRE
             SystemTimer(tSERVER_ESCORTWAIT, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4519,9 +3090,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 89: // LOGSRESPAWNTIMER
             ResLogTime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 90: // STATSAFFECTSKILLCHECKS
-            StatsAffectSkillChecks(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 91: // HUNGERRATE
             SystemTimer(tSERVER_HUNGERRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -4534,17 +3102,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 94: // SPELLMAXRANGE
             CombatMaxSpellRange(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
             break;
-        case 95: // DISPLAYHITMSG
-            CombatDisplayHitMessage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 96: // MONSTERSVSANIMALS
-            CombatMonstersVsAnimals(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 97: // ANIMALATTACKCHANCE
             CombatAnimalsAttackChance(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 98: // ANIMALSGUARDED
-            CombatAnimalsGuarded(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 99: // NPCDAMAGERATE
             CombatNpcDamageRate(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
@@ -4621,9 +3180,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 124: // SKILLLEVEL
             SkillLevel(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 125: // SNOOPISCRIME
-            SnoopIsCrime(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
         case 127: // SERVERLIST
             break;
         case 128: // PORT
@@ -4631,17 +3187,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 131: // ACCOUNTISOLATION
             break;
-        case 133: // SHOOTONANIMALBACK
-            ShootOnAnimalBack(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 134: // NPCTRAININGENABLED
-            NPCTrainingStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 136: // BACKUPSAVERATIO
             BackupRatio(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 137: // HIDEWHILEMOUNTED
-            CharHideWhileMounted(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
             break;
         case 138: // SECONDSPERUOMINUTE
             ServerSecondsPerUOMinute(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4652,9 +3199,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 140: // POLYDURATION
             SystemTimer(tSERVER_POLYMORPH, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 141: // UOGENABLED
-            ServerUOGEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 142: // NETRCVTIMEOUT
             ServerNetRcvTimeout(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
@@ -4668,14 +3212,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 145: // CLIENTFEATURES
             ServerConfig::shared().clientFeature = static_cast<std::uint32_t>(std::stoul(value, nullptr, 0));
             break;
-        case 146: // PACKETOVERLOADS
-            ServerOverloadPackets((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 147: // NPCMOVEMENTSPEED
             NPCWalkingSpeed(std::stof(value));
-            break;
-        case 148: // PETHUNGEROFFLINE
-            PetHungerOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 149: // PETOFFLINETIMEOUT
             PetOfflineTimeout(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4683,50 +3221,14 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 150: // PETOFFLINECHECKTIMER
             SystemTimer(tSERVER_PETOFFLINECHECK, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 152: // ADVANCEDPATHFINDING
-            AdvancedPathfinding((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 154: // LOOTINGISCRIME
-            LootingIsCrime((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 155: // NPCRUNNINGSPEED
             NPCRunningSpeed(std::stof(value));
             break;
         case 156: // NPCFLEEINGSPEED
             NPCFleeingSpeed(std::stof(value));
             break;
-        case 157: // BASICTOOLTIPSONLY
-            BasicTooltipsOnly((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 158: // GLOBALITEMDECAY
-            GlobalItemDecay((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 159: // SCRIPTITEMSDECAYABLE
-            ScriptItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 160: // BASEITEMSDECAYABLE
-            BaseItemsDecayable((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 161: // ITEMDECAYINHOUSES
-            ItemDecayInHouses((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 162: // SPAWNREGIONSFACETS
             setSpawnRegionsFacetStatus(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 163: // PAPERDOLLGUILDBUTTON
-            PaperdollGuildButton(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 164: // ATTACKSPEEDFROMSTAMINA
-            CombatAttackSpeedFromStamina(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 169: // DISPLAYDAMAGENUMBERS
-            CombatDisplayDamageNumbers(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 182: // EXTENDEDSTARTINGSTATS
-            ExtendedStartingStats(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 183: // EXTENDEDSTARTINGSKILLS
-            ExtendedStartingSkills(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 184: // WEAPONDAMAGECHANCE
             CombatWeaponDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
@@ -4758,23 +3260,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 193: // RANDOMSTARTINGLOCATION
             ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
-        case 194: // ASSISTANTNEGOTIATION
-            setAssistantNegotiation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 195: // KICKONASSISTANTSILENCE
-            KickOnAssistantSilence((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 218: // CLASSICUOMAPTRACKER
-            setClassicUOMapTracker((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 219: // DECAYTIMERINHOUSE
             SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 220: // PROTECTPRIVATEHOUSES
-            ProtectPrivateHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 221: // TRACKHOUSESPERACCOUNT
-            TrackHousesPerAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 222: // MAXHOUSESOWNABLE
             MaxHousesOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4782,26 +3269,11 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 223: // MAXHOUSESCOOWNABLE
             MaxHousesCoOwnable(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 224: // CANOWNANDCOOWNHOUSES
-            CanOwnAndCoOwnHouses(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 225: // COOWNHOUSESONSAMEACCOUNT
-            CoOwnHousesOnSameAccount(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 226: // ITEMSDETECTSPEECH
-            ItemsDetectSpeech(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 227: // MAXPLAYERPACKITEMS
             MaxPlayerPackItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 228: // MAXPLAYERBANKITEMS
             MaxPlayerBankItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 229: // FORCENEWANIMATIONPACKET
-            ForceNewAnimationPacket(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
-        case 230: // MAPDIFFSENABLED
-            MapDiffsEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
             break;
         case 231: // CORESHARDERA
             ExpansionCoreShardEra(EraStringToEnum(util::trim(value)));
@@ -4839,15 +3311,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 242: // PARRYDAMAGEMAX
             CombatParryDamageMax(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 243: // ARMORCLASSDAMAGEBONUS
-            CombatArmorClassDamageBonus(static_cast<std::int8_t>(std::stoi(value, nullptr, 0)) == 1);
-            break;
-        case 244: // FREESHARDSERVERPOLL
-            FreeshardServerPoll((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 245: // ALCHEMYBONUSENABLED
-            AlchemyDamageBonusEnabled(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 246: // ALCHEMYBONUSMODIFIER
             AlchemyDamageBonusModifier(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -4857,17 +3320,11 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 248: // JSENGINESIZE
             SetJSEngineSize(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 249: // USEUNICODEMESSAGES
-            useUnicodeMessages(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 251: // THIRSTRATE
             SystemTimer(tSERVER_THIRSTRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 252: // THIRSTDRAINVAL
             ThirstDrain(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 253: // PETTHIRSTOFFLINE
-            PetThirstOffline((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 254: // ExternalIP
             ExternalIP(value);
@@ -4884,35 +3341,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 258: // NPCCORPSEDECAYTIMER
             SystemTimer(tSERVER_NPCCORPSEDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 259: // HUNGERENABLED
-            HungerSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 260: // THIRSTENABLED
-            ThirstSystemEnabled((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 261: // TRAVELSPELLSFROMBOATKEYS
-            TravelSpellsFromBoatKeys((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 262: // TRAVELSPELLSWHILEOVERWEIGHT
-            TravelSpellsWhileOverweight((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 263: // MARKRUNESINMULTIS
-            MarkRunesInMultis((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 264: // TRAVELSPELLSBETWEENWORLD
-            TravelSpellsBetweenWorlds((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 265: // TRAVELSPELLSWHILEAGGRESSOR
-            TravelSpellsWhileAggressor((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 266: // BUYBANKTHRESHOLD
             BuyThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 267: // NETWORKLOG
-            ServerNetworkLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 268: // SPEECHLOG
-            ServerSpeechLog((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
             break;
         case 269: // NPCMOUNTEDWALKINGSPEED
             NPCMountedWalkingSpeed(std::stof(value));
@@ -4923,15 +3353,8 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 271: // NPCMOUNTEDFLEEINGSPEED
             NPCMountedFleeingSpeed(std::stof(value));
             break;
-        case 272: // CONTEXTMENUS
-            ServerContextMenus((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 273: // SERVERLANGUAGE
             ServerLanguage(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 274: // CHECKPETCONTROLDIFFICULTY
-            CheckPetControlDifficulty(
-                                      (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
             break;
         case 275: // PETLOYALTYGAINONSUCCESS
             SetPetLoyaltyGainOnSuccess(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4942,10 +3365,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 277: // LOYALTYRATE
             SystemTimer(tSERVER_LOYALTYRATE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 278: // SHOWNPCTITLESINTOOLTIPS
-            ShowNpcTitlesInTooltips(
-                                    (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 279: // FISHPERAREA
             ResFish(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
             break;
@@ -4954,9 +3373,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 281: // ARCHERYHITBONUS
             CombatArcheryHitBonus(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 282: // ITEMSINTERRUPTCASTING
-            ItemsInterruptCasting((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
             break;
         case 283: // SYSMESSAGECOLOUR
             SysMsgColour(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -4973,66 +3389,11 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 293: // NETTRAFFICTIMEBAN
             NetTrafficTimeban(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 294: // TOOLUSELIMIT
-            ToolUseLimit((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 295: // TOOLUSEBREAK
-            ToolUseBreak((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 296: // ITEMREPAIRDURABILITYLOSS
-            ItemRepairDurabilityLoss((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 297: // HIDESTATSFORUNKNOWNMAGICITEMS
-            HideStatsForUnknownMagicItems((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 298: // CRAFTCOLOUREDWEAPONS
-            CraftColouredWeapons((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
         case 299: // MAXSAFETELEPORTSPERDAY
             MaxSafeTeleportsPerDay(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 300: // TELEPORTONEARESTSAFELOCATION
-            TeleportToNearestSafeLocation((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 301: // ALLOWAWAKENPCS
-            AllowAwakeNPCs((static_cast<std::int16_t>(std::stoi(value, nullptr, 0)) == 1));
-            break;
-        case 302: // DISPLAYMAKERSMARK
-            DisplayMakersMark(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
-            break;
-        case 303: // SHOWNPCTITLESOVERHEAD
-            ShowNpcTitlesOverhead(
-                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 304: // SHOWINVULNERABLETAGOVERHEAD
-            ShowInvulnerableTagOverhead(
-                                        (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 305: // PETCOMBATTRAINING
-            PetCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 306: // HIRELINGCOMBATTRAINING
-            HirelingCombatTraining(
-                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 307: // NPCCOMBATTRAINING
-            NpcCombatTraining((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 308: // GLOBALRESTOCKMULTIPLIER
             GlobalRestockMultiplier(std::stof(value));
-            break;
-        case 309: // SHOWITEMRESISTSTATS
-            ShowItemResistStats((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 310: // SHOWWEAPONDAMAGETYPES
-            ShowWeaponDamageTypes(
-                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 311: // SHOWRACEWITHNAME
-            ShowRaceWithName((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 312: // SHOWRACEINPAPERDOLL
-            ShowRaceInPaperdoll((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
             break;
         case 313: // WEAPONPARRY
             ExpansionWeaponParry(EraStringToEnum(util::trim(value)));
@@ -5043,74 +3404,20 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 315: // COMBATHITCHANCE
             ExpansionCombatHitChance(EraStringToEnum(util::trim(value)));
             break;
-        case 316: // CASTSPELLSWHILEMOVING
-            CastSpellsWhileMoving(
-                                  (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 317: // SHOWREPUTATIONTITLEINTOOLTIP
-            ShowReputationTitleInTooltip(
-                                         (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 318: // SHOWGUILDINFOINTOOLTIP
-            ShowGuildInfoInTooltip(
-                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 319: // MAXPLAYERPACKWEIGHT
             MaxPlayerPackWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
             break;
         case 320: // MAXPLAYERBANKWEIGHT
             MaxPlayerBankWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));
             break;
-        case 321: // SAFECOOWNERLOGOUT
-            SafeCoOwnerLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 322: // SAFEFRIENDLOGOUT
-            SafeFriendLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 323: // SAFEGUESTLOGOUT
-            SafeGuestLogout((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 324: // KEYLESSOWNERACCESS
-            KeylessOwnerAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 325: // KEYLESSCOOWNERACCESS
-            KeylessCoOwnerAccess(
-                                 (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 326: // KEYLESSFRIENDACCESS
-            KeylessFriendAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 327: // KEYLESSGUESTACCESS
-            KeylessGuestAccess((static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
         case 328: // WEAPONDAMAGEBONUSTYPE
             WeaponDamageBonusType(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 329: // OFFERBODSFROMITEMSALES
-            OfferBODsFromItemSales(
-                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 330: // OFFERBODSFROMCONTEXTMENU
-            OfferBODsFromContextMenu(
-                                     (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 331: // BODSFROMCRAFTEDITEMSONLY
-            BODsFromCraftedItemsOnly(
-                                     (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
             break;
         case 332: // BODGOLDREWARDMULTIPLIER
             BODGoldRewardMultiplier(std::stof(value));
             break;
         case 333: // BODFAMEREWARDMULTIPLIER
             BODFameRewardMultiplier(std::stof(value));
-            break;
-        case 334: // ENABLENPCGUILDDISCOUNTS
-            EnableNPCGuildDiscounts(
-                                    (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
-            break;
-        case 335: // ENABLENPCGUILDPREMIUMS
-            EnableNPCGuildPremiums(
-                                   (static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) >= 1 ? true : false));
             break;
         case 336: // AGGRESSORFLAGTIMER
             SystemTimer(tSERVER_AGGRESSORFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -5120,9 +3427,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 338: // STEALINGFLAGTIMER
             SystemTimer(tSERVER_STEALINGFLAG, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 339: // SNOOPAWARENESS
-            SnoopAwareness(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
         case 340: // APSPERFTHRESHOLD
             APSPerfThreshold(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -5135,9 +3439,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 343: // APSDELAYMAXCAP
             APSDelayMaxCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 344: // YOUNGPLAYERSYSTEM
-            YoungPlayerSystem(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) != 0);
             break;
         case 346: // SECRETSHARDKEY
             SecretShardKey(value);

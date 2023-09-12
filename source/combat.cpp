@@ -170,9 +170,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
     {
         MakeCriminal(cAttack);
         bool regionGuarded = (cTarget->GetRegion()->IsGuarded());
-        if (cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() &&
-            cTarget->GetNpcAiType() != AI_GUARD &&
-            cwmWorldState->creatures[cTarget->GetId()].IsHuman()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetId()].IsHuman()) {
             cTarget->TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
             CallGuards(cTarget, cAttack);
         }
@@ -263,62 +261,47 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         return;
     }
     if (ourChar->IsDead()) {
-        if (i->IsNpc()) // if target is an NPC
-        {
+        if (i->IsNpc()) { // if target is an NPC
             switch (i->GetNpcAiType()) {
                 case AI_HEALER_G: // Good Healer
                     if (ourChar->IsCriminal() || ourChar->IsMurderer()) {
-                        i->TextMessage(nullptr, 322, TALK,
-                                       true); // I will not give life to a scoundrel like thee!
+                        i->TextMessage(nullptr, 322, TALK, true); // I will not give life to a scoundrel like thee!
                     }
                     else if (!ObjInRange(i, ourChar, DIST_NEARBY)) {
-                        i->TextMessage(nullptr, 321, TALK,
-                                       true); // Come nearer, ghost, and I'll give you life!
+                        i->TextMessage(nullptr, 321, TALK, true); // Come nearer, ghost, and I'll give you life!
                     }
                     else {
                         // Proceed with resurrection
                         CMultiObj *multiObj = ourChar->GetMultiObj();
                         if (!ValidateObject(multiObj) || multiObj->GetOwner() == ourChar->GetSerial()) {
-                            if (LineOfSight(s, ourChar, i->GetX(), i->GetY(), (i->GetZ() + 15),
-                                            WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
+                            if (LineOfSight(s, ourChar, i->GetX(), i->GetY(), (i->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                                 // Play Resurrect casting animation
-                                if (i->GetBodyType() == BT_GARGOYLE ||
-                                    cwmWorldState->ServerData()->ForceNewAnimationPacket()) {
-                                    Effects->PlayNewCharacterAnimation(
-                                                                       i, N_ACT_SPELL,
-                                                                       S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                                if (i->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
+                                    Effects->PlayNewCharacterAnimation(i, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
-                                    std::uint16_t castAnim = static_cast<std::uint16_t>(
-                                                                                        cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                    std::uint8_t castAnimLength =
-                                    cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+                                    std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
+                                    std::uint8_t castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
                                     
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
                                     // creatures.dfn
-                                    Effects->PlayCharacterAnimation(
-                                                                    i, (castAnim != 0 ? castAnim : 0x04), 0,
-                                                                    (castAnimLength != 0 ? castAnimLength : 4));
+                                    Effects->PlayCharacterAnimation(i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                                 }
                                 
                                 NpcResurrectTarget(ourChar);
                                 Effects->PlayStaticAnimation(ourChar, 0x376A, 0x09, 0x06);
-                                i->TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK,
-                                               false); // Random resurrection speak from NPC healer
+                                i->TextMessage(nullptr, (316 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from NPC healer
                             }
                         }
                     }
                     break;
                 case AI_HEALER_E: // Evil Healer
                     if (!ourChar->IsMurderer()) {
-                        i->TextMessage(
-                                       nullptr, 329, TALK,
-                                       true); // I despise all things good. I shall not give thee another chance!
+                        i->TextMessage(nullptr, 329, TALK, true); // I despise all things good. I shall not give thee another chance!
                     }
                     else if (!ObjInRange(i, ourChar, DIST_NEARBY)) {
-                        i->TextMessage(nullptr, 328, TALK,
-                                       true); // Come nearer, evil soul, and I'll give you life!
+                        i->TextMessage(nullptr, 328, TALK, true); // Come nearer, evil soul, and I'll give you life!
                     }
                     else {
                         // Proceed with resurrection
@@ -327,31 +310,22 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                             if (LineOfSight(s, ourChar, i->GetX(), i->GetY(), (i->GetZ() + 15),
                                             WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                                 // Play Resurrect casting animation
-                                if (i->GetBodyType() == BT_GARGOYLE ||
-                                    cwmWorldState->ServerData()->ForceNewAnimationPacket()) {
-                                    Effects->PlayNewCharacterAnimation(
-                                                                       i, N_ACT_SPELL,
-                                                                       S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                                if (i->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
+                                    Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL,  S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
-                                    std::uint16_t castAnim = static_cast<std::uint16_t>(
-                                                                                        cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                    std::uint8_t castAnimLength =
-                                    cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+                                    std::uint16_t castAnim = static_cast<std::uint16_t>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
+                                    std::uint8_t castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
                                     
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
                                     // creatures.dfn
-                                    Effects->PlayCharacterAnimation(
-                                                                    i, (castAnim != 0 ? castAnim : 0x04), 0,
-                                                                    (castAnimLength != 0 ? castAnimLength : 4));
+                                    Effects->PlayCharacterAnimation( i, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                                 }
                                 
                                 NpcResurrectTarget(ourChar);
-                                Effects->PlayStaticAnimation(ourChar, 0x3709, 0x09,
-                                                             0x19); // Flamestrike effect
-                                i->TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK,
-                                               false); // Random resurrection speak from evil NPC healer
+                                Effects->PlayStaticAnimation(ourChar, 0x3709, 0x09, 0x19); // Flamestrike effect
+                                i->TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false); // Random resurrection speak from evil NPC healer
                             }
                         }
                     }
@@ -362,9 +336,8 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
             }
             return;
         }
-        else // if target is a player
-        {
-            if (cwmWorldState->ServerData()->PlayerPersecutionStatus()) {
+        else { // if target is a player
+            if (ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION)) {
                 ourChar->SetTarg(i);
                 Skills->Persecute(s);
                 return;
@@ -464,8 +437,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         {
             MakeCriminal(ourChar);
             bool regionGuarded = (i->GetRegion()->IsGuarded());
-            if (cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() &&
-                i->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[i->GetId()].IsHuman()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && i->IsNpc() && i->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[i->GetId()].IsHuman()) {
                 i->TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
                 CallGuards(i, ourChar);
             }
@@ -1678,8 +1650,7 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
             }
         }
     }
-    else if (mChar->GetBodyType() == BT_GARGOYLE ||
-             cwmWorldState->ServerData()->ForceNewAnimationPacket()) {
+    else if (mChar->GetBodyType() == BT_GARGOYLE ||  ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
         CombatAnimsNew(mChar);
     }
     else if (mChar->IsOnHorse()) {
@@ -1874,7 +1845,7 @@ void CHandleCombat::DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLo
     
     CSocket *targSock = ourTarg->GetSocket();
     
-    if (cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr) {
+    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG) && targSock != nullptr) {
         std::string attackerName = GetNpcDictName(mChar, targSock, NRS_SPEECH);
         
         // Don't show hit messages for very low amounts of damage
@@ -2045,7 +2016,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(weathertype_t damageType, CChar *
             baseDamage = AdjustRaceDamage(mChar, ourTarg, mWeapon, baseDamage, hitLoc, getFightSkill);
             
             // Adjust for armour class weakness
-            if (serverData->CombatArmorClassDamageBonus()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::ARMORCLASSBONUS)) {
                 baseDamage = AdjustArmorClassDamage(mChar, ourTarg, mWeapon, baseDamage, hitLoc);
             }
             
@@ -2354,7 +2325,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                     std::int16_t shieldDamage = -(RandomNum(static_cast<std::int16_t>(loShieldDamage),
                                                             static_cast<std::int16_t>(hiShieldDamage)));
                     
-                    if (cwmWorldState->ServerData()->CombatDisplayHitMessage()) {
+                    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG)) {
                         if (targSock != nullptr) {
                             targSock->SysMessage(1805); // You block the attack!
                         }
@@ -2499,8 +2470,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                         // Play parrying FX
                         Effects->PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
                         
-                        if (cwmWorldState->ServerData()->CombatDisplayHitMessage() &&
-                            targSock != NULL) {
+                        if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG) && targSock != NULL) {
                             targSock->SysMessage(1982); // You parry the attack!
                         }
                         
@@ -2868,9 +2838,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                      !RandomNum(0, 2)) ||
                     mChar.IsNpc()) {
                     auto doPoison = true;
-                    if (!mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                        !ourTarg->IsNpc() &&
-                        ourTarg->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+                    if (!mChar.IsNpc() && ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && !ourTarg->IsNpc() && ourTarg->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         doPoison = false;
                         if (targSock != nullptr) {
                             targSock->SysMessage(
@@ -2878,13 +2846,10 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                             // land of Britannia. Be careful in the future.
                         }
                     }
-                    else if (!mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() &&
-                             !mChar.IsNpc() &&
-                             mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+                    else if (!mChar.IsNpc() && ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && !mChar.IsNpc() &&  mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                         doPoison = false;
                         if (mSock != nullptr) {
-                            ourTarg->TextMessage(mSock, 18738, TALK,
-                                                 false); // * The poison seems to have no effect. *
+                            ourTarg->TextMessage(mSock, 18738, TALK, false); // * The poison seems to have no effect. *
                         }
                     }
                     
@@ -3343,7 +3308,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
 // o------------------------------------------------------------------------------------------------o
 R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
     std::int16_t statOffset = 0;
-    if (cwmWorldState->ServerData()->CombatAttackSpeedFromStamina()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA)) {
         statOffset = mChar->GetStamina();
     }
     else {
@@ -3591,9 +3556,7 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
                         StartAttack(ourTarg, &mChar);
                     }
                 }
-                else if (mChar.IsNpc() && mChar.GetNpcAiType() == AI_GUARD &&
-                         mChar.GetRegion()->IsGuarded() &&
-                         cwmWorldState->ServerData()->GuardsStatus()) {
+                else if (mChar.IsNpc() && mChar.GetNpcAiType() == AI_GUARD && mChar.GetRegion()->IsGuarded() && ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE)) {
                     validTarg = true;
                     mChar.SetLocation(ourTarg);
                     Effects->PlaySound(&mChar, 0x01FE);
@@ -3638,7 +3601,7 @@ auto CHandleCombat::SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, st
     
     auto targRegion = mChar->GetRegion();
     
-    if (!targRegion->IsGuarded() || !cwmWorldState->ServerData()->GuardsStatus())
+    if (!targRegion->IsGuarded() || !ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE))
         return;
     
     auto reUseGuard = false;

@@ -3849,10 +3849,10 @@ std::uint32_t CalcGoodValue(CTownRegion *tReg, CItem *i, std::uint32_t value, bo
 std::uint32_t CalcValue(CItem *i, std::uint32_t value);
 void CPOpenBuyWindow::AddItem(CItem *toAdd, CTownRegion *tReg, std::uint16_t &baseOffset) {
     std::uint32_t value = toAdd->GetBuyValue();
-    if (cwmWorldState->ServerData()->RankSystemStatus()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM)) {
         value = CalcValue(toAdd, value);
     }
-    if (cwmWorldState->ServerData()->TradeSystemStatus()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
         value = CalcGoodValue(tReg, toAdd, value, false);
     }
     
@@ -3883,9 +3883,8 @@ auto CPOpenBuyWindow::CopyData(CItem &toCopy, CChar *vendorId, CPItemsInContaine
     std::uint8_t itemCount = 0;
     std::uint16_t length = 8;
     CTownRegion *tReg = nullptr;
-    if (cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject(vendorId)) {
-        tReg = CalcRegionFromXY(vendorId->GetX(), vendorId->GetY(), vendorId->WorldNumber(),
-                                vendorId->GetInstanceId());
+    if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM) && ValidateObject(vendorId)) {
+        tReg = CalcRegionFromXY(vendorId->GetX(), vendorId->GetY(), vendorId->WorldNumber(), vendorId->GetInstanceId());
     }
     
     std::int16_t baseY = 0, baseX = 0;
@@ -5940,10 +5939,8 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             tempEntry.ourText = util::format(" \t%s : %i\t ", cItemName.c_str(), cItem.GetAmount());
         }
         else {
-            if (cwmWorldState->ServerData()->RankSystemStatus() && cItem.GetRank() == 10) {
-                tempEntry.ourText = util::format(" \t%s %s\t ", cItemName.c_str(),
-                                                 Dictionary->GetEntry(9140, tSock->Language())
-                                                 .c_str()); // %s of exceptional quality
+            if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && cItem.GetRank() == 10) {
+                tempEntry.ourText = util::format(" \t%s %s\t ", cItemName.c_str(),Dictionary->GetEntry(9140, tSock->Language()).c_str()); // %s of exceptional quality
             }
             else {
                 if (cItem.IsCorpse()) {
@@ -5988,16 +5985,11 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     FinalizeData(tempEntry, totalStringLen);
     
     // Maker's mark
-    if (cwmWorldState->ServerData()->RankSystemStatus() &&
-        cwmWorldState->ServerData()->DisplayMakersMark() && cItem.GetRank() == 10 &&
-        cItem.GetCreator() != INVALIDSERIAL && cItem.IsMarkedByMaker()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && cItem.GetRank() == 10 && cItem.GetCreator() != INVALIDSERIAL && cItem.IsMarkedByMaker()) {
         CChar *cItemCreator = CalcCharObjFromSer(cItem.GetCreator());
         if (ValidateObject(cItemCreator)) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format(
-                                             "%s by %s", cwmWorldState->skill[cItem.GetMadeWith() - 1].madeWord.c_str(),
-                                             cItemCreator->GetName()
-                                             .c_str()); // tailored/tinkered/forged by %s
+            tempEntry.ourText = util::format("%s by %s", cwmWorldState->skill[cItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
             // tempEntry.ourText = util::format( "%s %s", Dictionary->GetEntry(
             // 9141, tSock->Language() ).c_str(), cItemCreator->GetName().c_str()
             // ); // Crafted by %s
@@ -6197,13 +6189,11 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         FinalizeData(tempEntry, totalStringLen);
     }
     
-    bool hideMagicItemStats = cwmWorldState->ServerData()->HideStatsForUnknownMagicItems();
-    if (!cwmWorldState->ServerData()->BasicTooltipsOnly() &&
-        (!hideMagicItemStats ||
-         (hideMagicItemStats && (!cItem.GetName2().empty() && cItem.GetName2() == "#")))) {
+    bool hideMagicItemStats = ServerConfig::shared().enabled(ServerSwitch::MAGICSTATS);
+    if (!ServerConfig::shared().enabled(ServerSwitch::BASICTOOLTIPSONLY) && (!hideMagicItemStats || (hideMagicItemStats && (!cItem.GetName2().empty() && cItem.GetName2() == "#")))) {
         if (cItem.GetLayer() != IL_NONE) {
             if (cItem.GetHiDamage() > 0) {
-                if (cwmWorldState->ServerData()->ShowWeaponDamageTypes()) {
+                if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGETYPE)) {
                     if (cItem.GetWeatherDamage(PHYSICAL)) {
                         tempEntry.stringNum = 1060403; // physical damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
@@ -6294,7 +6284,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
                 FinalizeData(tempEntry, totalStringLen);
             }
             
-            if (cwmWorldState->ServerData()->ShowItemResistStats()) {
+            if ( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRESISTSTATS)) {
                 if (cItem.GetResist(PHYSICAL) > 0) {
                     tempEntry.stringNum = 1060448; // physical resist ~1_val~%
                     tempEntry.ourText = util::ntos(cItem.GetResist(PHYSICAL));
@@ -6408,9 +6398,8 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     
     // Fame prefix
     std::string fameTitle = "";
-    if (cwmWorldState->ServerData()->ShowReputationTitleInTooltip()) {
-        if (cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() &&
-            !mChar.IsDisguised()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP)) {
+        if (cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised()) {
             GetFameTitle(&mChar, fameTitle);
             fameTitle = util::trim(fameTitle);
         }
@@ -6425,7 +6414,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     FinalizeData(tempEntry, totalStringLen);
     
     // Show guild title in character tooltip?
-    if (cwmWorldState->ServerData()->ShowGuildInfoInTooltip()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDTOOLTIP)) {
         if (!mChar.IsIncognito() && !mChar.IsDisguised()) {
             CGuild *myGuild = GuildSys->Guild(mChar.GetGuildNumber());
             if (myGuild != nullptr) {
@@ -6444,10 +6433,8 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     }
     
     // Show Race in character tooltip?
-    if (cwmWorldState->ServerData()->ShowRaceWithName()) {
-        if (mChar.GetRace() != 0 && mChar.GetRace() != 65535 &&
-            cwmWorldState->creatures[mChar.GetId()].IsHuman()) // need to check for placeholder race
-        {
+    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE)) {
+        if (mChar.GetRace() != 0 && mChar.GetRace() != 65535 && cwmWorldState->creatures[mChar.GetId()].IsHuman()) { // need to check for placeholder race
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             auto raceName = Races->Name(mChar.GetRace());
             tempEntry.ourText = util::format("%s", ("("s + raceName + ")"s).c_str());
@@ -6457,19 +6444,16 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     
     // Is character Guarded?
     if (mChar.IsGuarded()) {
-        CTownRegion *charTownRegion = CalcRegionFromXY(mChar.GetX(), mChar.GetY(),
-                                                       mChar.WorldNumber(), mChar.GetInstanceId());
+        CTownRegion *charTownRegion = CalcRegionFromXY(mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceId());
         if (!charTownRegion->IsGuarded() && !charTownRegion->IsSafeZone()) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format(
-                                             "%s", Dictionary->GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
+            tempEntry.ourText = util::format("%s", Dictionary->GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
             FinalizeData(tempEntry, totalStringLen);
         }
     }
     
     // Does NPC have a title, and should we show it?
-    if (cwmWorldState->ServerData()->ShowNpcTitlesInTooltips() && mChar.IsNpc() &&
-        mChar.GetTitle() != "") {
+    if (ServerConfig::shared().enabled(ServerSwitch::NPCTOOLTIPS) && mChar.IsNpc() && mChar.GetTitle() != "") {
         tempEntry.stringNum = 1042971; // ~1_NOTHING~
         
         std::string mCharTitle = GetNpcDictTitle(&mChar, tSock);
@@ -6590,9 +6574,8 @@ auto CPSellList::CopyData(CChar &mChar, CChar &vendorId) -> void {
     
     if (ValidateObject(buyPack) && ValidateObject(ourPack)) {
         CTownRegion *tReg = nullptr;
-        if (cwmWorldState->ServerData()->TradeSystemStatus()) {
-            tReg = CalcRegionFromXY(vendorId.GetX(), vendorId.GetY(), vendorId.WorldNumber(),
-                                    vendorId.GetInstanceId());
+        if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
+            tReg = CalcRegionFromXY(vendorId.GetX(), vendorId.GetY(), vendorId.WorldNumber(), vendorId.GetInstanceId());
         }
         
         auto spCont = buyPack->GetContainsList();
@@ -6616,22 +6599,15 @@ auto CPSellList::AddContainer(CTownRegion *tReg, CItem *spItem, CItem *ourPack, 
             if (opItem->GetType() == IT_CONTAINER) {
                 AddContainer(tReg, spItem, opItem, packetLen);
             }
-            else if ((opItem->GetSectionId() == spItem->GetSectionId() &&
-                      opItem->GetSectionId() != "UNKNOWN") &&
-                     (spItem->GetName() == opItem->GetName() ||
-                      !cwmWorldState->ServerData()->SellByNameStatus())) {
+            else if ((opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetSectionId() != "UNKNOWN") && (spItem->GetName() == opItem->GetName() || !ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME))) {
                 // Basing it on GetSectionId() should replace all the other checks below...
                 AddItem(tReg, spItem, opItem, packetLen);
                 ++numItems;
             }
-            else if (opItem->GetSectionId() == "UNKNOWN" && opItem->GetId() == spItem->GetId() &&
-                     opItem->GetType() == spItem->GetType() &&
-                     (spItem->GetName() == opItem->GetName() ||
-                      !cwmWorldState->ServerData()->SellByNameStatus())) {
+            else if (opItem->GetSectionId() == "UNKNOWN" && opItem->GetId() == spItem->GetId() &&  opItem->GetType() == spItem->GetType() && (spItem->GetName() == opItem->GetName() || !ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME))) {
                 // If sectionID of an item is Unknown, it's a legacy item. Handle it the legacy way.
                 // Also includes special case for deeds and dyes, which all use same ID
-                if ((opItem->GetId() != 0x14f0 && opItem->GetId() != 0x0eff) ||
-                    (opItem->GetTempVar(CITV_MOREX) == spItem->GetTempVar(CITV_MOREX))) {
+                if ((opItem->GetId() != 0x14f0 && opItem->GetId() != 0x0eff) || (opItem->GetTempVar(CITV_MOREX) == spItem->GetTempVar(CITV_MOREX))) {
                     AddItem(tReg, spItem, opItem, packetLen);
                     ++numItems;
                 }
@@ -6654,7 +6630,7 @@ void CPSellList::AddItem(CTownRegion *tReg, CItem *spItem, CItem *opItem, size_t
     pStream.WriteShort(packetLen + 6, opItem->GetColour());
     pStream.WriteShort(packetLen + 8, opItem->GetAmount());
     std::uint32_t value = CalcValue(opItem, spItem->GetSellValue());
-    if (cwmWorldState->ServerData()->TradeSystemStatus()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM)) {
         value = CalcGoodValue(tReg, spItem, value, true);
     }
     pStream.WriteShort(packetLen + 10, value);
@@ -7358,7 +7334,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
      }*/
     
     // Bulk Order Info - if enabled in ini
-    if (cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopy.IsShop()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU) && toCopy.IsShop()) {
         auto isBodVendor = toCopy.GetTag("bodType");
         if (isBodVendor.m_IntValue > 0) {
             if (numEntries > 0) {

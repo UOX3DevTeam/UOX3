@@ -194,31 +194,6 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
 // o------------------------------------------------------------------------------------------------o
 void sysBroadcast(const std::string &txt) {
     if (!txt.empty()) {
-        /*if( cwmWorldState->ServerData()->useUnicodeMessages() )
-         {
-         Network->pushConn();
-         for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock =
-         Network->NextSocket() )
-         {
-         CChar *mChar = mSock->CurrcharObj();
-         if( ValidateObject( mChar ))
-         {
-         CPUnicodeMessage unicodeMessage;
-         unicodeMessage.Message( txt );
-         unicodeMessage.Font( 0xFFFF );
-         unicodeMessage.Colour( 0xFFFF );
-         unicodeMessage.Type( 1 );
-         unicodeMessage.Language( "ENG" );
-         unicodeMessage.Name( "System" );
-         unicodeMessage.ID( 0 );
-         unicodeMessage.Serial( 0 );
-         mSock->Send( &unicodeMessage );
-         }
-         }
-         Network->popConn();
-         }
-         else
-         {*/
         CSpeechEntry &toAdd = SpeechSys->Add();
         toAdd.Speech(txt);
         toAdd.Font(FNT_NORMAL);
@@ -230,7 +205,6 @@ void sysBroadcast(const std::string &txt) {
         toAdd.Colour(0x084D);
         toAdd.Font(FNT_BOLD);
         toAdd.SpeakerName("System: ");
-        //}
     }
 }
 
@@ -342,13 +316,10 @@ bool CPITalkRequest::Handle() {
             if (Type() == 2) {
                 mChar->SetEmoteColour(TextColour());
             }
-            if (cwmWorldState->ServerData()->ServerSpeechLog() && !mChar->IsNpc()) // Logging
-            {
+            if (ServerConfig::shared().enabled(ServerSwitch::SPEECHLOG) && !mChar->IsNpc()) {// Logging
                 auto temp = util::format("%s.log", mChar->GetName().c_str());
                 auto temp2 =
-                util::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(),
-                             mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3),
-                             mChar->GetSerial(4), mChar->GetAccount().accountNumber, asciiText);
+                util::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3), mChar->GetSerial(4), mChar->GetAccount().accountNumber, asciiText);
                 Console::shared().log(temp, temp2);
             }
             

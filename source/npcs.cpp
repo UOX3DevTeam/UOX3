@@ -329,7 +329,7 @@ auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
 CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
     const itemtypes_t iType = iSpawner->GetType();
     // If the spawner type is 125 and escort quests are not active then abort
-    if (iType == IT_ESCORTNPCSPAWNER && !cwmWorldState->ServerData()->EscortsEnabled())
+    if (iType == IT_ESCORTNPCSPAWNER && !ServerConfig::shared().enabled(ServerSwitch::ESCORTS))
         return nullptr;
 
     CChar *cCreated = nullptr;
@@ -2066,8 +2066,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
             (isRestricted || !Npcs->CheckPetFriend(mChar, Npc)))
             return false;
 
-        if (checkDifficulty && Npc->IsTamed() &&
-            cwmWorldState->ServerData()->CheckPetControlDifficulty()) {
+        if (checkDifficulty && Npc->IsTamed() && ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY)) {
             // Let's base this on how difficult it is to control the pet, as well
             std::uint16_t chanceToControl = Skills->CalculatePetControlChance(mChar, Npc);
             std::uint16_t loyaltyGainOnSuccess = cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess();

@@ -46,7 +46,7 @@ const std::uint16_t CREATE_MENU_OFFSET = 5000; // This is how we differentiate a
 // o------------------------------------------------------------------------------------------------o
 std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
     // If rank system is not enabled, assume perfectly crafted item each time
-    if (!cwmWorldState->ServerData()->RankSystemStatus())
+    if (!ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM))
         return 10;
     
     R32 rankSum = 0;
@@ -121,7 +121,7 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
     *tmpmsg = '\0';
     
     // Only apply rank system if enabled in ini, and only for non-pileable items!
-    if (cwmWorldState->ServerData()->RankSystemStatus() && !c->IsPileable()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && !c->IsPileable()) {
         c->SetRank(rank);
         
         if (c->GetLoDamage() > 0) {
@@ -582,7 +582,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         // Cap chance of success at 1000 (100.0%)
         chanceSkillSuccess = std::min(static_cast<R32>(1000), chanceSkillSuccess);
         
-        if (cwmWorldState->ServerData()->StatsAffectSkillChecks()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL)) {
             // Modify base chance of success with bonuses from stats, if this feature is enabled in
             // ini
             chanceSkillSuccess +=
@@ -627,11 +627,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
                 }
             }
         }
-        else if ((s->IsTamed() && cwmWorldState->ServerData()->PetCombatTraining()) ||
-                 (!s->IsTamed() && s->CanBeHired() &&
-                  cwmWorldState->ServerData()->HirelingCombatTraining()) ||
-                 (!s->IsTamed() && !s->CanBeHired() && s->IsNpc() &&
-                  cwmWorldState->ServerData()->NpcCombatTraining())) {
+        else if ((s->IsTamed() && ServerConfig::shared().enabled(ServerSwitch::PETCOMBATTRAINING)) || (!s->IsTamed() && s->CanBeHired() && ServerConfig::shared().enabled(ServerSwitch::HIRELINGTRAINING)) || (!s->IsTamed() && !s->CanBeHired() && s->IsNpc() && ServerConfig::shared().enabled(ServerSwitch::NPCCOMBAT))) {
             if (s->GetBaseSkill(sk) < highSkill) {
                 // Advance pet/NPC's skill based on result of skillCheck
                 if (AdvanceSkill(s, sk, skillCheck)) {

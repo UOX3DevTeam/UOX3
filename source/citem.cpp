@@ -2314,7 +2314,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std
     if (txt.empty())
         return;
     
-    if (s != nullptr && cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (s != nullptr && ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         [[maybe_unused]] bool sendAll = true;
         if (target == SPTRG_INDIVIDUAL) {
             sendAll = false;

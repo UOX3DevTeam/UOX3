@@ -251,10 +251,8 @@ void cEffects::PlayNewCharacterAnimation(CChar *mChar, std::uint16_t actionId, s
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 // o------------------------------------------------------------------------------------------------o
-void cEffects::PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast,
-                                         bool monsterAreaCastAnim) {
-    if (!monsterCast && (mChar->GetBodyType() == BT_GARGOYLE ||
-                         cwmWorldState->ServerData()->ForceNewAnimationPacket())) {
+void cEffects::PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast, bool monsterAreaCastAnim) {
+    if (!monsterCast && (mChar->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET))) {
         if (mChar->GetBodyType() == BT_GARGOYLE) {
             if (actionId == 0x10) {
                 PlayNewCharacterAnimation(

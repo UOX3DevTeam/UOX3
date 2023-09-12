@@ -84,13 +84,13 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
     // Build the full path and filename string here for access.adm
     std::string sAccessAdm = sActPath;
     sAccessAdm +=
-        (sActPath[sActPath.length() - 1] == '\\' || sActPath[sActPath.length() - 1] == '/')
-            ? "access.adm"
-            : "/access.adm";
+    (sActPath[sActPath.length() - 1] == '\\' || sActPath[sActPath.length() - 1] == '/')
+    ? "access.adm"
+    : "/access.adm";
     // Create stream and open the Access.adm file if it exists.
     // bool bIsNew = true;
     std::fstream fs1(sAccessAdm.c_str(), std::ios::in);
-
+    
     // Following is commented out, as it only serves to set bIsNew=false at the moment, which is not
     // used anywhere
     // if( !fs1.is_open() )
@@ -98,13 +98,13 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
     // Ok there was no access.adm this implies that this is a pre v0.97.00 release
     //	bIsNew=false;
     //}
-
+    
     // Build the full path and filename string here for accounts.adm
     std::string sAccountsAdm = sActPath;
     sAccountsAdm +=
-        (sActPath[sActPath.length() - 1] == '\\' || sActPath[sActPath.length() - 1] == '/')
-            ? "accounts.adm"
-            : "/accounts.adm";
+    (sActPath[sActPath.length() - 1] == '\\' || sActPath[sActPath.length() - 1] == '/')
+    ? "accounts.adm"
+    : "/accounts.adm";
     // Create stream and open the Accounts.Adm file for processing
     std::fstream fs2(sAccountsAdm.c_str(), std::ios::in);
     if (!fs2.is_open()) {
@@ -155,10 +155,10 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 actb.wAccountIndex = accountIdFromFile;
                 wAccountId = accountIdFromFile;
             }
-
+            
             // Increment the account acount
             ++wAccountCount;
-
+            
             // Ok, we have parsed out the account ID, Set bBraces[2] to true to allow block reading
             bBraces[0] = false;
             bBraces[1] = false;
@@ -215,7 +215,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 if (ssecs.size() > 2) {
                     actb.sUsername += ssecs[2]; // util::lower( ssecs[2] );
                 }
-
+                
                 // Next thing were going to do is make sure there isn't a duplicate username.
                 while (IsUser(actb.sUsername)) {
                     // This username is already on the list, keep adding a random value to the end
@@ -253,7 +253,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                             // Ok the section block was found, Tokenize the string to get the
                             // account #
                             wAccessId =
-                                util::ston<std::int32_t>(oldstrutil::extractSection(sLine2, " ", 2));
+                            util::ston<std::int32_t>(oldstrutil::extractSection(sLine2, " ", 2));
                             // Ok, we have parsed out the account ID, Set bBraces[2] to true to
                             // allow block reading
                             bBraces2[0] = false;
@@ -299,7 +299,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                             if ("PATH" == l2) {
                                 if (!r2.empty() &&
                                     r2.length() != 0) // Ok strip the name and store it. We need to
-                                                      // make it all the same case for comparisons
+                                    // make it all the same case for comparisons
                                 {
                                     actb.sPath = r2 + actb.sUsername + ".uad";
                                 }
@@ -313,7 +313,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                                     // Ok strip the flags and store it. We need to make it all the
                                     // same case for comparisons
                                     actb.wFlags = static_cast<std::uint16_t>(std::stoul(
-                                        r2, nullptr, 0)); //  -- Uses internal conversion code
+                                                                                        r2, nullptr, 0)); //  -- Uses internal conversion code
                                     if (actb.wAccountIndex == 0) {
                                         actb.wFlags.set(AB_FLAGS_GM, true);
                                     }
@@ -339,7 +339,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                     actb.sPath = sTemp;
                     // Need to create the directory for this entry as an access.adm isn't available
                     std::filesystem::create_directory(std::filesystem::path(actb.sPath));
-
+                    
                     // Now build the uad filename, and path,
                     sTemp += actb.sUsername;
                     sTemp += ".uad";
@@ -353,7 +353,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                     // Need to write out the charcters
                     for (std::uint8_t ii = 1; ii < CHARACTERCOUNT + 1; ++ii) {
                         fsUADFile << "CHARACTER-" << std::dec << static_cast<std::int32_t>(ii)
-                                  << " 0xffffffff [UNKNOWN]" << std::endl;
+                        << " 0xffffffff [UNKNOWN]" << std::endl;
                     }
                     fsUADFile.close();
                     // Flood fill the actb class for accounts
@@ -368,7 +368,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                     if (wAccountId == 0) {
                         actb.wFlags.set(AB_FLAGS_GM, true);
                     }
-
+                    
                     bSkipUAD = true;
                 }
             }
@@ -391,7 +391,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             else {
                 actb.dwLastIP = 0x00000000;
             }
-
+            
             std::getline(fs2, sLine);
             continue;
         }
@@ -403,7 +403,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             else {
                 actb.sContact = "UNKNOWN";
             }
-
+            
             std::getline(fs2, sLine);
             continue;
         }
@@ -414,7 +414,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             else {
                 actb.wTimeBan = 0;
             }
-
+            
             std::getline(fs2, sLine);
             continue;
         }
@@ -425,7 +425,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             else {
                 actb.wFirstLogin = 0;
             }
-
+            
             std::getline(fs2, sLine);
             continue;
         }
@@ -436,7 +436,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             else {
                 actb.wTotalPlayTime = 0;
             }
-
+            
             std::getline(fs2, sLine);
             continue;
         }
@@ -455,7 +455,7 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 // Ok strip the name and store it. We need to make it all the same case for
                 // comparisons
                 if (r == "ON") // Set the Public Flag on. Public implies that a users conatact
-                               // information can be published on the web.
+                    // information can be published on the web.
                 {
                     actb.wFlags.set(AB_FLAGS_PUBLIC, true);
                 }
@@ -472,12 +472,12 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 r = util::trim(r);
                 if (!r.empty()) {
                     auto temp =
-                        util::ston<std::int64_t>(r); // int64_t used for promotion from 32-bit int
+                    util::ston<std::int64_t>(r); // int64_t used for promotion from 32-bit int
                     if ((temp > 0) && (temp < static_cast<std::int64_t>(INVALIDSERIAL))) {
                         actb.dwCharacters[charNum - 1] =
-                            static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
+                        static_cast<std::uint32_t>(std::stoul(r, nullptr, 0));
                         actb.lpCharacters[charNum - 1] =
-                            CalcCharObjFromSer(actb.dwCharacters[charNum - 1]);
+                        CalcCharObjFromSer(actb.dwCharacters[charNum - 1]);
                     }
                     else {
                         actb.dwCharacters[charNum - 1] = INVALIDSERIAL;
@@ -519,16 +519,16 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
             // doesn't matter.
             if (!std::filesystem::exists(std::filesystem::path(sNewPath))) {
                 auto create_status =
-                    std::filesystem::create_directory(std::filesystem::path(sNewPath));
+                std::filesystem::create_directory(std::filesystem::path(sNewPath));
                 if (!create_status) {
                     Console::shared().error(util::format(
-                        "CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()));
+                                                         "CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str()));
                     m_mapUsernameIdMap.clear();
                     m_mapUsernameMap.clear();
                     return 0L;
                 }
             }
-
+            
             // Now open and copy the files. to their new location.
             if (!actbTemp.sPath.length()) {
                 // the file/path was not found so we should make an entry
@@ -548,14 +548,14 @@ std::uint16_t cAccountClass::CreateAccountSystem() {
                 // Ok write out the characters and the charcter names if we know them
                 for (std::int32_t i = 0; i < CHARACTERCOUNT; ++i) {
                     fsOut << "CHARACTER-" << (i + 1) << " 0x" << std::hex
-                          << (actbTemp.dwCharacters[i] != INVALIDSERIAL
-                                  ? actbTemp.lpCharacters[i]->GetSerial()
-                                  : INVALIDSERIAL)
-                          << " ["
-                          << (char *)(actbTemp.lpCharacters[i] != nullptr
-                                          ? actbTemp.lpCharacters[i]->GetName().c_str()
-                                          : "UNKNOWN")
-                          << "]\n";
+                    << (actbTemp.dwCharacters[i] != INVALIDSERIAL
+                        ? actbTemp.lpCharacters[i]->GetSerial()
+                        : INVALIDSERIAL)
+                    << " ["
+                    << (char *)(actbTemp.lpCharacters[i] != nullptr
+                                ? actbTemp.lpCharacters[i]->GetName().c_str()
+                                : "UNKNOWN")
+                    << "]\n";
                 }
                 // Close the files since we dont need them anymore
                 fsOut.close();
@@ -641,9 +641,9 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
     fsOut << "FIRSTLOGIN 0x" << std::hex << actbTemp.wFirstLogin << std::dec << std::endl;
     fsOut << "TOTALPLAYTIME 0x" << std::hex << actbTemp.wTotalPlayTime << std::dec << std::endl;
     fsOut << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
     fsOut << "CONTACT " << (actbTemp.sContact.length() ? actbTemp.sContact : "NA") << std::endl;
     for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
         auto charSer = INVALIDSERIAL;
@@ -689,7 +689,7 @@ void cAccountClass::WriteAccountSection(CAccountBlock_st &actbTemp, std::fstream
 // map structure, |					accounts must be reloaded!
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPassword,
-                               const std::string &sContact, std::uint16_t wAttributes) {
+                                        const std::string &sContact, std::uint16_t wAttributes) {
     // First were going to make sure that the needed fields are sent in with at least data
     if (sUsername.length() < 4 || sPassword.length() < 5) {
         // Username and password must be 4 and 5 characters or more in length, respectively
@@ -708,7 +708,7 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
     // directories and files.
     CAccountBlock_st actbTemp;
     actbTemp.reset();
-
+    
     // Build as much of the account block that we can right now.
     actbTemp.sUsername = sUsername;
     actbTemp.sPassword = sPassword;
@@ -722,8 +722,8 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
         actbTemp.lpCharacters[ii] = nullptr;
         actbTemp.dwCharacters[ii] = INVALIDSERIAL;
     }
-
-    if (cwmWorldState->ServerData()->YoungPlayerSystem()) {
+    
+    if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER)) {
         actbTemp.wFlags.set(AB_FLAGS_YOUNG, 1);
     }
     // Ok we have everything except the path to the account dir, so make that now
@@ -746,14 +746,14 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
     // Ok now that we got here we need to make the directory, and create the username.uad file
     if (!std::filesystem::exists(std::filesystem::path(actbTemp.sPath))) {
         auto create_status =
-            std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
+        std::filesystem::create_directory(std::filesystem::path(actbTemp.sPath));
         if (!create_status) {
             Console::shared().error(
-                util::format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
+                                    util::format("AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str()));
             return 0x0000;
         }
     }
-
+    
     // Ok now thats finished. We need to do one last thing. Create the username.uad file in the
     // account directory
     std::string sUsernameUADPath(actbTemp.sPath);
@@ -780,42 +780,42 @@ std::uint16_t cAccountClass::AddAccount(std::string sUsername, std::string sPass
     actbTemp.wAccountIndex = m_wHighestAccount + 1;
     // Ok we have to write the new username.uad file in the directory
     fsAccountsUAD << "//AI3.0"
-                  << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS"
-                  << time(nullptr) << "-ED" << UOXVersion::realBuild << "\n";
+    << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS"
+    << time(nullptr) << "-ED" << UOXVersion::realBuild << "\n";
     fsAccountsUAD
-        << "//------------------------------------------------------------------------------"
-        << std::endl;
+    << "//------------------------------------------------------------------------------"
+    << std::endl;
     fsAccountsUAD << "// UAD Path: " << actbTemp.sPath << std::endl; //"\n";
     fsAccountsUAD
-        << "//------------------------------------------------------------------------------"
-        << std::endl;
+    << "//------------------------------------------------------------------------------"
+    << std::endl;
     fsAccountsUAD << "// UOX3 uses this file to store any extra administration info\n";
     fsAccountsUAD
-        << "//------------------------------------------------------------------------------\n";
+    << "//------------------------------------------------------------------------------\n";
     fsAccountsUAD << "ID " << actbTemp.wAccountIndex << "\n";
     fsAccountsUAD << "NAME " << actbTemp.sUsername << "\n";
     fsAccountsUAD << "PASS " << actbTemp.sPassword << "\n";
     fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
     fsAccountsUAD << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << "\n";
     fsAccountsUAD << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec
-                  << "\n";
+    << "\n";
     fsAccountsUAD << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-                  << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << "\n";
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << "\n";
     fsAccountsUAD << "CONTACT " << actbTemp.sContact << "\n";
     fsAccountsUAD
-        << "//------------------------------------------------------------------------------\n";
+    << "//------------------------------------------------------------------------------\n";
     // Ok write out the characters and the charcter names if we know them
     for (std::uint8_t i = 0; i < CHARACTERCOUNT; ++i) {
         fsAccountsUAD << "CHARACTER-" << (i + 1) << " 0x" << std::hex
-                      << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]
-                                                                    : INVALIDSERIAL)
-                      << " ["
-                      << (char *)(actbTemp.lpCharacters[i] != nullptr
-                                      ? actbTemp.lpCharacters[i]->GetName().c_str()
-                                      : "INVALID")
-                      << "]\n";
+        << (actbTemp.dwCharacters[i] != INVALIDSERIAL ? actbTemp.dwCharacters[i]
+            : INVALIDSERIAL)
+        << " ["
+        << (char *)(actbTemp.lpCharacters[i] != nullptr
+                    ? actbTemp.lpCharacters[i]->GetName().c_str()
+                    : "INVALID")
+        << "]\n";
     }
     // Close the files since we dont need them anymore
     fsAccountsUAD.close();
@@ -895,8 +895,8 @@ std::uint16_t cAccountClass::load() {
     std::string sAccountsADM(m_sAccountsDirectory);
     sAccountsADM += (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
                      m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '/')
-                        ? "accounts.adm"
-                        : "/accounts.adm";
+    ? "accounts.adm"
+    : "/accounts.adm";
     sAccountsADM = oldstrutil::replaceSlash(sAccountsADM);
     // Check to see what version the current accounts.adm file is.
     std::string sLine;
@@ -921,7 +921,7 @@ std::uint16_t cAccountClass::load() {
     else {
         Console::shared() << myendl << " o Processing accounts file";
     }
-
+    
     if (fsAccountsADMTest.is_open()) {
         fsAccountsADMTest.close();
     }
@@ -929,7 +929,7 @@ std::uint16_t cAccountClass::load() {
     std::fstream fsAccountsADM(sAccountsADM.c_str(), std::ios::in);
     if (!fsAccountsADM.is_open()) // we were unable to load any accounts
         return 0x0000;
-
+    
     // We need to read from the stream once before entering the loop
     std::getline(fsAccountsADM, sLine);
     sLine = util::trim(util::strip(sLine, "//"));
@@ -940,10 +940,10 @@ std::uint16_t cAccountClass::load() {
     std::uint16_t wAccountId = 0x0000;
     std::uint16_t wAccountCount = 0x0000;
     std::uint32_t dwChars[CHARACTERCOUNT] = {INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL,
-                                    INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL};
+        INVALIDSERIAL, INVALIDSERIAL, INVALIDSERIAL};
     actb.reset();
     m_wHighestAccount = 0x0000;
-
+    
     while (!fsAccountsADM.eof() && !fsAccountsADM.fail()) {
         // Process each Line read in from the accounts.adm file. Handle Comments first
         if (sLine[0] == '\\' || sLine[0] == ';' || sLine[0] == '/' || sLine[0] == '\'' ||
@@ -958,8 +958,8 @@ std::uint16_t cAccountClass::load() {
             // Increment the account acount
             ++wAccountCount;
             actb.wAccountIndex = wAccountId =
-                util::ston<std::int32_t>(oldstrutil::extractSection(sLine, " ", 2));
-
+            util::ston<std::int32_t>(oldstrutil::extractSection(sLine, " ", 2));
+            
             // Scan for hiegest account. Needed for additional accounts.
             if (actb.wAccountIndex > m_wHighestAccount) {
                 m_wHighestAccount = actb.wAccountIndex;
@@ -1008,7 +1008,7 @@ std::uint16_t cAccountClass::load() {
                     if (actbTemp.dwCharacters[ii] != INVALIDSERIAL) {
                         actbTemp.dwCharacters[ii] = actbTempName.dwCharacters[ii] = dwChars[ii];
                         actbTempName.lpCharacters[ii] = actbTemp.lpCharacters[ii] =
-                            CalcCharObjFromSer(dwChars[ii]);
+                        CalcCharObjFromSer(dwChars[ii]);
                         if (actbTemp.lpCharacters[ii] != nullptr &&
                             actbTempName.lpCharacters[ii] != nullptr) {
                             actbTemp.lpCharacters[ii]->SetAccount(actbTemp);
@@ -1024,7 +1024,7 @@ std::uint16_t cAccountClass::load() {
                 for (std::uint8_t jj = 0; jj < CHARACTERCOUNT; ++jj) {
                     actbTemp.dwCharacters[jj] = actbTempName.dwCharacters[jj] = dwChars[jj];
                     actbTemp.lpCharacters[jj] = actbTempName.lpCharacters[jj] =
-                        CalcCharObjFromSer(dwChars[jj]);
+                    CalcCharObjFromSer(dwChars[jj]);
                     if (actbTemp.lpCharacters[jj] != nullptr &&
                         actbTempName.lpCharacters[jj] != nullptr) {
                         actbTemp.lpCharacters[jj]->SetAccount(actbTemp);
@@ -1038,7 +1038,7 @@ std::uint16_t cAccountClass::load() {
             m_mapUsernameIdMap[wAccountId] = actbTemp;
             m_mapUsernameMap[actb.sUsername] = &m_mapUsernameIdMap[wAccountId];
             actb.reset();
-
+            
             // Ok we have finished with this access block clean up and continue processing
             bBraces[0] = false;
             bBraces[1] = false;
@@ -1062,7 +1062,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.sUsername = "ERROR";
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1095,7 +1095,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.wFlags.set(AB_FLAGS_PUBLIC, true);
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1108,7 +1108,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.sPath = "ERROR";
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1120,7 +1120,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.wTimeBan = 0;
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1132,7 +1132,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.wFirstLogin = 0;
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1144,7 +1144,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.wTotalPlayTime = 0;
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1157,7 +1157,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.sContact = "UNKNOWN";
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1171,7 +1171,7 @@ std::uint16_t cAccountClass::load() {
             else {
                 actb.dwLastIP = 0x00000000;
             }
-
+            
             std::getline(fsAccountsADM, sLine);
             sLine = util::trim(util::strip(sLine, "//"));
             continue;
@@ -1234,7 +1234,7 @@ bool cAccountClass::TransCharacter(std::uint16_t wSAccountId, std::uint16_t wSSl
         return false;
     }
     // Get the account block for this username.
-
+    
     // ok we will check to see if there is a valid char in source slot, if not we will return
     if (actbId.dwCharacters[wSSlot] == INVALIDSERIAL)
         return false;
@@ -1253,7 +1253,7 @@ bool cAccountClass::TransCharacter(std::uint16_t wSAccountId, std::uint16_t wSSl
         return false;
     }
     // Get the account block for this username.
-
+    
     // ok at this point I/II = SourceID, and DestID and J/JJ SourceName/DestName
     if (AddCharacter(wDAccountId, actbId.dwCharacters[wSSlot], actbId.lpCharacters[wSSlot])) {
         // OK the character was added, need to remove it from the source.
@@ -1274,7 +1274,7 @@ bool cAccountClass::AddCharacter(std::uint16_t wAccountId, CChar *lpObject) {
     // Make sure that the lpObject pointer is valid
     if (lpObject == nullptr)
         return false;
-
+    
     // Ok we need to do is get see if this account id exists
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wAccountId);
     if (I == m_mapUsernameIdMap.end()) {
@@ -1321,7 +1321,7 @@ bool cAccountClass::AddCharacter(std::uint16_t wAccountId, std::uint32_t dwChara
     // Make sure that the lpObject pointer is valid
     if (lpObject == nullptr)
         return false;
-
+    
     // Ok we need to do is get see if this account id exists
     MAPUSERNAMEID_ITERATOR I;
     I = m_mapUsernameIdMap.find(wAccountId);
@@ -1406,7 +1406,7 @@ bool cAccountClass::DelAccount(std::string sUsername) {
     MAPUSERNAME_ITERATOR I = m_mapUsernameMap.find(sUsername);
     if (I == m_mapUsernameMap.end())
         return false;
-
+    
     CAccountBlock_st &actbTemp = (*I->second);
     // Ok lets do the work now
     return DelAccount(actbTemp.wAccountIndex);
@@ -1417,13 +1417,13 @@ bool cAccountClass::DelAccount(std::uint16_t wAccountId) {
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wAccountId);
     if (I == m_mapUsernameIdMap.end())
         return false;
-
+    
     CAccountBlock_st &actbId = I->second;
     // Now we need to get the matching username map entry
     MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbId.sUsername);
     if (J == m_mapUsernameMap.end())
         return false;
-
+    
     // Before we delete this account we need to spin the characters, and list them in the orphan.adm
     // file
     std::string sTempPath(m_sAccountsDirectory);
@@ -1444,7 +1444,7 @@ bool cAccountClass::DelAccount(std::uint16_t wAccountId) {
     std::fstream fsOrphansADM(sTempPath.c_str(), std::ios::out | std::ios::app);
     if (!fsOrphansADM.is_open())
         return false;
-
+    
     // If this is a new file then we need to write the header first
     if (bOrphanHeader) {
         WriteOrphanHeader(fsOrphansADM);
@@ -1456,9 +1456,9 @@ bool cAccountClass::DelAccount(std::uint16_t wAccountId) {
             INVALIDSERIAL) // Ok build then write what we need to the file
         {
             fsOrphansADM << "," << actbId.lpCharacters[jj]->GetName() << ","
-                         << actbId.lpCharacters[jj]->GetX() << ","
-                         << actbId.lpCharacters[jj]->GetY() << ","
-                         << static_cast<std::int32_t>(actbId.lpCharacters[jj]->GetZ()) << std::endl;
+            << actbId.lpCharacters[jj]->GetX() << ","
+            << actbId.lpCharacters[jj]->GetY() << ","
+            << static_cast<std::int32_t>(actbId.lpCharacters[jj]->GetZ()) << std::endl;
         }
     }
     fsOrphansADM.close();
@@ -1535,35 +1535,35 @@ std::int8_t cAccountClass::DelCharacter(std::uint16_t wAccountId, std::uint8_t n
     if (nSlot >= CHARACTERCOUNT) {
         return CDR_BADREQUEST;
     }
-
+    
     // ok were going to need to get the respective blocked from the maps
     MAPUSERNAMEID_ITERATOR I = m_mapUsernameIdMap.find(wAccountId);
     if (I == m_mapUsernameIdMap.end())
         return CDR_CHARNOTFOUND;
-
+    
     CAccountBlock_st &actbId = I->second;
-
+    
     // Ok now that we have the ID Map block we can get the Username Block
     MAPUSERNAME_ITERATOR J = m_mapUsernameMap.find(actbId.sUsername);
     if (J == m_mapUsernameMap.end())
         return CDR_BADPASSWORD;
-
+    
     CAccountBlock_st &actbName = (*J->second);
-
+    
     // Check to see if this record has been flagged changed
     // Edit: What's this supposed to do? All it does is prevent players from deleting their
     // character on the first try... then it succeedes on the second try
     /*if( actbId.bChanged )
-    {
-            I->second.bChanged = false;
-            return CDR_CHARISQUEUED;
-    }*/
-
+     {
+     I->second.bChanged = false;
+     return CDR_CHARISQUEUED;
+     }*/
+    
     // We have both blocks now. We should validate the slot, and make the changes
     if (actbId.dwCharacters[nSlot] == INVALIDSERIAL ||
         actbName.dwCharacters[nSlot] == INVALIDSERIAL)
         return CDR_CHARNOTFOUND;
-
+    
     // We need to make a entry in the orphan.adm file for this block before we change it
     std::string sTempPath(m_sAccountsDirectory);
     if (sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/') {
@@ -1572,7 +1572,7 @@ std::int8_t cAccountClass::DelCharacter(std::uint16_t wAccountId, std::uint8_t n
     else {
         sTempPath += "/orphans.adm";
     }
-
+    
     // First lets see if the file exists.
     bool bOrphanHeader = false;
     std::fstream fsOrphansADMTest(sTempPath.c_str(), std::ios::in);
@@ -1580,43 +1580,43 @@ std::int8_t cAccountClass::DelCharacter(std::uint16_t wAccountId, std::uint8_t n
         bOrphanHeader = true;
     }
     fsOrphansADMTest.close();
-
+    
     // ok open the stream for append and add this record to the end of the file
     std::fstream fsOrphansADM(sTempPath.c_str(), std::ios::out | std::ios::app);
     if (!fsOrphansADM.is_open())
         return CDR_BADREQUEST;
-
+    
     // If this is a new file then we need to write the header first
     if (bOrphanHeader) {
         WriteOrphanHeader(fsOrphansADM);
     }
-
+    
     // Ok build then write what we need to the file
     fsOrphansADM << actbId.sUsername << "=0x" << std::hex << actbId.dwCharacters[nSlot] << ","
-                 << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetName()
-                                                           : "UNKNOWN")
-                 << ",0x"
-                 << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetX() : 0)
-                 << ",0x"
-                 << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetY() : 0)
-                 << "," << std::dec
-                 << (actbId.lpCharacters[nSlot] != nullptr
-                         ? static_cast<std::int32_t>(actbId.lpCharacters[nSlot]->GetZ())
-                         : static_cast<std::int32_t>(0))
-                 << std::endl;
+    << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetName()
+        : "UNKNOWN")
+    << ",0x"
+    << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetX() : 0)
+    << ",0x"
+    << (actbId.lpCharacters[nSlot] != nullptr ? actbId.lpCharacters[nSlot]->GetY() : 0)
+    << "," << std::dec
+    << (actbId.lpCharacters[nSlot] != nullptr
+        ? static_cast<std::int32_t>(actbId.lpCharacters[nSlot]->GetZ())
+        : static_cast<std::int32_t>(0))
+    << std::endl;
     fsOrphansADM.close();
-
+    
     // Ok there is something in this slot so we should remove it.
     actbId.dwCharacters[nSlot] = actbName.dwCharacters[nSlot] = INVALIDSERIAL;
     actbId.lpCharacters[nSlot] = actbName.lpCharacters[nSlot] = nullptr;
-
+    
     // need to reorder the accounts or have to change the addchar code to ignore invalid
     // serials(earier here)
     CAccountBlock_st actbScratch;
     actbScratch.reset();
     actbScratch = actbId;
     std::int32_t kk = 0;
-
+    
     // Dont mind this loop, becuase we needed a copy of the data too we need to invalidate
     // actbScracthes pointers, and indexs
     for (std::uint8_t ll = 0; ll < CHARACTERCOUNT; ++ll) {
@@ -1627,21 +1627,21 @@ std::int8_t cAccountClass::DelCharacter(std::uint16_t wAccountId, std::uint8_t n
             kk += 1;
         }
     }
-
+    
     // Fill the rest with standard empty values.
     std::uint8_t jj = 0;
     for (jj = kk; jj < CHARACTERCOUNT; ++jj) {
         actbScratch.dwCharacters[jj] = INVALIDSERIAL;
         actbScratch.lpCharacters[jj] = nullptr;
     }
-
+    
     // Now copy back out the info to the structures
     for (jj = 0; jj < CHARACTERCOUNT; ++jj) {
         actbId.dwCharacters[jj] = actbName.dwCharacters[jj] = actbScratch.dwCharacters[jj];
         actbId.lpCharacters[jj] = actbName.lpCharacters[jj] = actbScratch.lpCharacters[jj];
     }
     actbId.bChanged = actbName.bChanged = true;
-
+    
     // Now we have to put the values back into the maps
     try {
         I->second = actbId;
@@ -1727,7 +1727,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
     std::fstream fsAccountsAdm(sTemp.c_str(), std::ios::out | std::ios::trunc);
     if (!fsAccountsAdm.is_open())
         return 0x0000;
-
+    
     // OK first we need to write the header.
     WriteAccountsHeader(fsAccountsAdm);
     // Now we need to iterate through each account block in the map, and save
@@ -1742,8 +1742,8 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         if (actbId.sUsername != actbName.sUsername || actbId.sPassword != actbName.sPassword) {
             // there was an error between blocks
             Console::shared().error(
-                util::format("Save(): Mismatch %s - %s (Duplicate username in accounts file?)",
-                             actbId.sUsername.c_str(), actbName.sUsername.c_str()));
+                                    util::format("Save(): Mismatch %s - %s (Duplicate username in accounts file?)",
+                                                 actbId.sUsername.c_str(), actbName.sUsername.c_str()));
             fsAccountsAdm.close();
             return 0xFFFF;
         }
@@ -1777,15 +1777,15 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         // Ok now that we got here we need to make the directory, and create the username.uad file
         if (!std::filesystem::exists(std::filesystem::path(actbId.sPath))) {
             auto create_status =
-                std::filesystem::create_directory(std::filesystem::path(actbId.sPath));
+            std::filesystem::create_directory(std::filesystem::path(actbId.sPath));
             if (!create_status) {
                 Console::shared().error(
-                    util::format("Save(): Couldn't create directory %s", actbId.sPath.c_str()));
+                                        util::format("Save(): Couldn't create directory %s", actbId.sPath.c_str()));
                 fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
                 continue;
             }
         }
-
+        
         // Ok now thats finished. We need to do one last thing. Create the username.uad file in the
         // account directory
         std::string sUsernameUadPath(actbId.sPath);
@@ -1806,7 +1806,7 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         if (!fsAccountsUad.is_open()) {
             // Ok we were unable to open the file so this user will not be added.
             Console::shared().error(
-                util::format("Save(): Couldn't open file %s", sUsernameUadPath.c_str()));
+                                    util::format("Save(): Couldn't open file %s", sUsernameUadPath.c_str()));
             fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
             continue;
         }
@@ -1815,13 +1815,13 @@ std::uint16_t cAccountClass::Save([[maybe_unused]] bool bForceLoad) {
         // Ok write out the characters and the charcter names if we know them
         for (std::uint8_t ii = 0; ii < CHARACTERCOUNT; ++ii) {
             fsAccountsUad << "CHARACTER-" << (ii + 1) << " 0x" << std::hex
-                          << (actbId.dwCharacters[ii] != INVALIDSERIAL ? actbId.dwCharacters[ii]
-                                                                       : INVALIDSERIAL)
-                          << " ["
-                          << (char *)(actbId.lpCharacters[ii] != nullptr
-                                          ? actbId.lpCharacters[ii]->GetName().c_str()
-                                          : "INVALID")
-                          << "]\n";
+            << (actbId.dwCharacters[ii] != INVALIDSERIAL ? actbId.dwCharacters[ii]
+                : INVALIDSERIAL)
+            << " ["
+            << (char *)(actbId.lpCharacters[ii] != nullptr
+                        ? actbId.lpCharacters[ii]->GetName().c_str()
+                        : "INVALID")
+            << "]\n";
         }
         // Close the files since we dont need them anymore
         fsAccountsUad.close();
@@ -1858,8 +1858,8 @@ std::uint16_t cAccountClass::ImportAccounts() {
     std::string sImportAccounts(m_sAccountsDirectory);
     sImportAccounts += (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
                         m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '/')
-                           ? "newaccounts.adm"
-                           : "/newaccounts.adm";
+    ? "newaccounts.adm"
+    : "/newaccounts.adm";
     sImportAccounts = oldstrutil::replaceSlash(sImportAccounts);
     // Check to see what version the current accounts.adm file is.
     std::string sLine;
@@ -1887,12 +1887,12 @@ std::uint16_t cAccountClass::ImportAccounts() {
             // OK we have an account to import, start parsing it.
             std::string user, pass;
             auto csecs = oldstrutil::sections(r, ",");
-
+            
             user = util::trim(util::strip(csecs[0], "//"));
             if (csecs.size() > 1) {
                 pass = util::trim(util::strip(csecs[1], "//"));
             }
-
+            
             if (user.empty() || user.length() == 0 || pass.empty() || pass.length() == 0) {
                 // error there are no NULLS allowed for usernames, passwords. So we move to the
                 // next. NOTE! This record will be dropped onces parsing is completed as file is
@@ -1901,12 +1901,12 @@ std::uint16_t cAccountClass::ImportAccounts() {
                 sLine = util::trim(util::strip(sLine, "//"));
                 continue;
             }
-
+            
             std::string flags;
             if (csecs.size() > 2) {
                 flags = util::trim(util::strip(csecs[2], "//"));
             }
-
+            
             // Set flags to a default value. and in this case I believe that its 0x00000004
             if (flags.empty() || flags.length() == 0) {
                 wCurrentFlags = 0x0000;
@@ -1914,12 +1914,12 @@ std::uint16_t cAccountClass::ImportAccounts() {
             else {
                 wCurrentFlags = static_cast<std::uint16_t>(std::stoul(flags, nullptr, 0));
             }
-
+            
             std::string email;
             if (csecs.size() > 3) {
                 email = util::trim(util::strip(csecs[3], "//"));
             }
-
+            
             if (email.empty() || email.length() == 0) {
                 email = "N/A";
             }
@@ -1927,10 +1927,10 @@ std::uint16_t cAccountClass::ImportAccounts() {
                 // As requested we are going to stuff back accounts into their own file
                 std::string sOutputBadAccounts(m_sAccountsDirectory);
                 sOutputBadAccounts +=
-                    (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
-                     m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '/')
-                        ? "failed_accounts.log"
-                        : "/failed_accounts.log";
+                (m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '\\' ||
+                 m_sAccountsDirectory[m_sAccountsDirectory.length() - 1] == '/')
+                ? "failed_accounts.log"
+                : "/failed_accounts.log";
                 sOutputBadAccounts = oldstrutil::replaceSlash(sOutputBadAccounts);
                 // Open the file and append this to the end
                 std::fstream fsOutputBadAccounts(sOutputBadAccounts.c_str(), std::ios::app);
@@ -1946,8 +1946,8 @@ std::uint16_t cAccountClass::ImportAccounts() {
                 // OK there was a problem entering this accounts into the system. Possibly a
                 // duplicate? or Other issues
                 Console::shared() << "NOTICE: New account was not processed. Please see "
-                                     "failed_accounts.log for details."
-                                  << myendl;
+                "failed_accounts.log for details."
+                << myendl;
                 std::getline(fsInputAccountsTest, sLine);
                 sLine = util::trim(util::strip(sLine, "//"));
                 continue;
@@ -2051,12 +2051,12 @@ cAccountClass &cAccountClass::operator--(std::int32_t) {
 // o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteAccountsHeader(std::fstream &fsOut) {
     fsOut << "//AV3.0"
-          << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
-          << "-ED" << UOXVersion::realBuild << std::endl;
+    << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
+    << "-ED" << UOXVersion::realBuild << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "//accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers"
-          << std::endl;
+    << std::endl;
     fsOut << "//" << std::endl;
     fsOut << "//   Format: " << std::endl;
     fsOut << "//      SECTION ACCOUNT 0" << std::endl;
@@ -2081,17 +2081,17 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut) {
     fsOut << "//" << std::endl;
     fsOut << "//   FLAGS: " << std::endl;
     fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public       "
-             "    0x0008) Currently Logged In"
-          << std::endl;
+    "    0x0008) Currently Logged In"
+    << std::endl;
     fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 "
-             "Blocked   0x0080) Char-4 Blocked"
-          << std::endl;
+    "Blocked   0x0080) Char-4 Blocked"
+    << std::endl;
     fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 "
-             "Blocked   0x0800) Young"
-          << std::endl;
+    "Blocked   0x0800) Young"
+    << std::endl;
     fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor    "
-             "    0x8000) GM Account"
-          << std::endl;
+    "    0x8000) GM Account"
+    << std::endl;
     fsOut << "//" << std::endl;
     fsOut << "//   TIMEBAN: " << std::endl;
     fsOut << "//      This would be the end date of a timed ban." << std::endl;
@@ -2101,17 +2101,17 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut) {
     fsOut << "//" << std::endl;
     fsOut << "//   TOTALPLAYTIME: " << std::endl;
     fsOut << "//      This would be total playtime on account in minutes across all characters, "
-             "since first login."
-          << std::endl;
+    "since first login."
+    << std::endl;
     fsOut << "//" << std::endl;
     fsOut << "//   CONTACT: " << std::endl;
     fsOut << "//      Usually this is the email address, but can be used as a comment or ICQ"
-          << std::endl;
+    << std::endl;
     fsOut << "//" << std::endl;
     fsOut << "//   LASTIP: " << std::endl;
     fsOut << "//      The last IP this account was used from." << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2121,12 +2121,12 @@ void cAccountClass::WriteAccountsHeader(std::fstream &fsOut) {
 // o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteAccessHeader(std::fstream &fsOut) {
     fsOut << "//SA3.0"
-          << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
-          << "-ED" << UOXVersion::realBuild << std::endl;
+    << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
+    << "-ED" << UOXVersion::realBuild << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "//access.adm[TEXT] : UOX3 uses this file for shared accounts access between servers"
-          << std::endl;
+    << std::endl;
     fsOut << "// " << std::endl;
     fsOut << "//   Format: " << std::endl;
     fsOut << "//      SECTION ACCESS 0" << std::endl;
@@ -2140,19 +2140,19 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut) {
     fsOut << "//" << std::endl;
     fsOut << "//   FLAGS: " << std::endl;
     fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public       "
-             "    0x0008) Currently Logged In"
-          << std::endl;
+    "    0x0008) Currently Logged In"
+    << std::endl;
     fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 "
-             "Blocked   0x0080) Char-4 Blocked"
-          << std::endl;
+    "Blocked   0x0080) Char-4 Blocked"
+    << std::endl;
     fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 "
-             "Blocked   0x0800) Young"
-          << std::endl;
+    "Blocked   0x0800) Young"
+    << std::endl;
     fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor    "
-             "    0x8000) GM Account"
-          << std::endl;
+    "    0x8000) GM Account"
+    << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2162,20 +2162,20 @@ void cAccountClass::WriteAccessHeader(std::fstream &fsOut) {
 // o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteOrphanHeader(std::fstream &fsOut) {
     fsOut << "//OI3.0"
-          << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
-          << "-ED" << UOXVersion::realBuild << "\n";
+    << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
+    << "-ED" << UOXVersion::realBuild << "\n";
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "// Orphans.Adm " << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "// UOX3 uses this file to store any characters that have been removed from"
-          << std::endl;
+    << std::endl;
     fsOut << "// an account. They are stored here so there is some history of user deltions"
-          << std::endl;
+    << std::endl;
     fsOut << "// of their characters. At best the co-ordinate may be available." << std::endl;
     fsOut << "// Name, X/Y/Z values if available will be displayed to ease locating trouble"
-          << std::endl;
+    << std::endl;
     fsOut << "// users, and where they deleted their characters last." << std::endl;
     fsOut << "// " << std::endl;
     fsOut << "// The format is as follows:" << std::endl;
@@ -2193,30 +2193,30 @@ void cAccountClass::WriteOrphanHeader(std::fstream &fsOut) {
 // o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteUADHeader(std::fstream &fsOut, CAccountBlock_st &actbTemp) {
     fsOut << "//AI3.0"
-          << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
-          << "-ED" << UOXVersion::realBuild << std::endl;
+    << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
+    << "-ED" << UOXVersion::realBuild << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "// UAD Path: " << actbTemp.sPath << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "// UOX3 uses this file to store any extra administration info\n";
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
     fsOut << "ID " << actbTemp.wAccountIndex << std::endl;
     fsOut << "NAME " << actbTemp.sUsername << std::endl;
     fsOut << "PASS " << actbTemp.sPassword << std::endl;
     fsOut << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << std::endl;
     fsOut << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << std::endl;
     fsOut << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec
-          << std::endl;
+    << std::endl;
     fsOut << "LASTIP " << static_cast<std::int32_t>((actbTemp.dwLastIP & 0xFF000000) >> 24) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
-          << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x00FF0000) >> 16) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x0000FF00) >> 8) << "."
+    << static_cast<std::int32_t>((actbTemp.dwLastIP & 0x000000FF) % 256) << std::endl;
     fsOut << "CONTACT " << actbTemp.sContact << std::endl;
     fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    << std::endl;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2225,16 +2225,11 @@ void cAccountClass::WriteUADHeader(std::fstream &fsOut, CAccountBlock_st &actbTe
 //|	Purpose		-	Writes the Username.uad header to the specified output stream.
 // o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteImportHeader(std::fstream &fsOut) {
-    fsOut << "//AIMP3.0"
-          << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr)
-          << "-ED" << UOXVersion::realBuild << std::endl;
-    fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
-    fsOut << "// UOX3 uses this file to store new accounts that are to be imported on the next"
-          << std::endl;
+    fsOut << "//AIMP3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time(nullptr) << "-ED" << UOXVersion::realBuild << std::endl;
+    fsOut << "//------------------------------------------------------------------------------" << std::endl;
+    fsOut << "// UOX3 uses this file to store new accounts that are to be imported on the next" << std::endl;
     fsOut << "// time the server does a world save, or world load." << std::endl;
-    fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    fsOut << "//------------------------------------------------------------------------------" << std::endl;
     fsOut << "// FORMAT: " << std::endl;
     fsOut << "//" << std::endl;
     fsOut << "//    USER=username,password,flags,contact" << std::endl;
@@ -2242,14 +2237,9 @@ void cAccountClass::WriteImportHeader(std::fstream &fsOut) {
     fsOut << "// WHERE: username   - Username of the accounts to create." << std::endl;
     fsOut << "//        password   - Password of the account to create." << std::endl;
     fsOut << "//        flags      - See accounts.adm for correct flag values." << std::endl;
-    fsOut << "//        contact    - Usually this is the email address, but can be used as a "
-             "comment or ICQ"
-          << std::endl;
+    fsOut << "//        contact    - Usually this is the email address, but can be used as a comment or ICQ" << std::endl;
     fsOut << "//" << std::endl;
-    fsOut << "// NOTE: Flags, and contact values are not required, defaults will be used."
-          << std::endl;
-    fsOut << "// NOTE: Please ensure you press ENTER after your last line for proper loading."
-          << std::endl;
-    fsOut << "//------------------------------------------------------------------------------"
-          << std::endl;
+    fsOut << "// NOTE: Flags, and contact values are not required, defaults will be used." << std::endl;
+    fsOut << "// NOTE: Please ensure you press ENTER after your last line for proper loading." << std::endl;
+    fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }

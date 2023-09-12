@@ -65,7 +65,7 @@ auto CMulHandler::LoadMapsDFN(const std::filesystem::path &uopath) -> std::map<i
                 else if (uTag == "MAPUOPWRAP") {
                     entry.mapUop = (uopath / std::filesystem::path(data));
                 }
-                else if (cwmWorldState->ServerData()->MapDiffsEnabled()) {
+                else if (ServerConfig::shared().enabled(ServerSwitch::MAPDIFF)) {
                     if (uTag == "MAPDIFF") {
                         entry.mapDiff = (uopath / std::filesystem::path(data));
                     }
@@ -81,7 +81,7 @@ auto CMulHandler::LoadMapsDFN(const std::filesystem::path &uopath) -> std::map<i
                 else if (uTag == "STAIDX") {
                     entry.staIdx = (uopath / std::filesystem::path(data));
                 }
-                else if (cwmWorldState->ServerData()->MapDiffsEnabled()) {
+                else if (ServerConfig::shared().enabled(ServerSwitch::MAPDIFF)) {
                     if (uTag == "STATICSDIFF") {
                         entry.staDiff = (uopath / std::filesystem::path(data));
                     }

@@ -506,7 +506,7 @@ bool CChar::SetHunger(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CChar::DoHunger(CSocket *mSock) {
     // Don't continue if hunger system is disabled
-    if (!cwmWorldState->ServerData()->HungerSystemEnabled())
+    if (!ServerConfig::shared().enabled(ServerSwitch::HUNGER))
         return;
     
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
@@ -594,7 +594,7 @@ void CChar::DoHunger(CSocket *mSock) {
                 return;
             
             // Pets don't hunger if owner is offline
-            if (cwmWorldState->ServerData()->PetHungerOffline() == false) {
+            if (!ServerConfig::shared().enabled(ServerSwitch::PETHUNGEROFFLINE) ) {
                 CChar *owner = GetOwnerObj();
                 if (!ValidateObject(owner))
                     return;
@@ -673,7 +673,7 @@ bool CChar::SetThirst(std::int8_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CChar::DoThirst(CSocket *mSock) {
     // Don't continue if thirst system is disabled
-    if (!cwmWorldState->ServerData()->ThirstSystemEnabled())
+    if (!ServerConfig::shared().enabled(ServerSwitch::THIRST))
         return;
     
     if (!IsInvulnerable()) // No need to do anything for invulnerable chars
@@ -757,7 +757,7 @@ void CChar::DoThirst(CSocket *mSock) {
         }
         else if (IsTamed() && GetTamedThirstRate() > 0) {
             if (WillThirst() && !GetMounted() && !GetStabled()) {
-                if (cwmWorldState->ServerData()->PetHungerOffline() == false) {
+                if (!ServerConfig::shared().enabled(ServerSwitch::PETHUNGEROFFLINE) ) {
                     CChar *owner = GetOwnerObj();
                     if (!ValidateObject(owner))
                         return;
@@ -2169,10 +2169,8 @@ auto CChar::RemoveAllObjectsFromSight(CSocket *mSock) -> void {
                 auto tempX = tempChar->GetX();
                 auto tempY = tempChar->GetY();
                 
-                if (this != tempChar &&
-                    (tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY) &&
-                    (IsOnline((*tempChar)) || tempChar->IsNpc() ||
-                     (IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs()))) {
+                if (this != tempChar && (tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY) && (IsOnline((*tempChar)) || tempChar->IsNpc() || (IsGM() && ServerConfig::shared().enabled(ServerSwitch::SHOWOFFLINEPCS)))) {
+                    
                     mSock->Send(&charToSend);
                 }
             }
@@ -2310,10 +2308,7 @@ auto CChar::Teleport() -> void {
                 
                 auto tempX = tempChar->GetX();
                 auto tempY = tempChar->GetY();
-                if (this != tempChar &&
-                    (tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY) &&
-                    (IsOnline((*tempChar)) || tempChar->IsNpc() ||
-                     (IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs()))) {
+                if (this != tempChar && (tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY) && (IsOnline((*tempChar)) || tempChar->IsNpc() || (IsGM() && ServerConfig::shared().enabled(ServerSwitch::SHOWOFFLINEPCS)))) {
                     tempChar->SendToSocket(mSock);
                 }
             }
@@ -4467,7 +4462,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 target = SPTRG_INDIVIDUAL;
             }
             
-            if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
                 // Doesn't enter the speech-queue, though!
                 bool sendAll = true;
                 if (target == SPTRG_INDIVIDUAL || target == SPTRG_ONLYRECEIVER) {
@@ -5948,7 +5943,7 @@ void CChar::SetLoyalty(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CChar::DoLoyaltyUpdate() {
     // Don't continue if pet control difficulty system is disabled
-    if (!cwmWorldState->ServerData()->CheckPetControlDifficulty())
+    if (!ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY))
         return;
     
     // No need to do anything for dead or non-tame NPCs, or player vendors
@@ -7389,7 +7384,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
         }
         if (!persFound) {
             damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, NONE,
-                                                     cwmWorldState->GetUICurrentTime()));
+                                                  cwmWorldState->GetUICurrentTime()));
         }
         damageHealed.Sort(DTEgreater);
     }
@@ -7487,7 +7482,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
     }
     
     // Display damage numbers
-    if (cwmWorldState->ServerData()->CombatDisplayDamageNumbers()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGENUMBERS)) {
         CPDisplayDamage toDisplay((*this), static_cast<std::uint16_t>(damageValue));
         if (mSock != nullptr) {
             mSock->Send(&toDisplay);
@@ -7562,9 +7557,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
                 // Flag attacker as criminal
                 MakeCriminal(attacker);
                 bool regionGuarded = (GetRegion()->IsGuarded());
-                if (cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && IsNpc() &&
-                    GetNpcAiType() != AI_GUARD &&
-                    cwmWorldState->creatures[this->GetId()].IsHuman()) {
+                if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && IsNpc() &&  GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[this->GetId()].IsHuman()) {
                     TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
                     CallGuards(this, attacker);
                 }
@@ -7589,7 +7582,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
         }
         if (!persFound) {
             damageDealt.Add(new DamageTrackEntry(attackerSerial, damageValue, damageType,
-                                                    cwmWorldState->GetUICurrentTime()));
+                                                 cwmWorldState->GetUICurrentTime()));
         }
         damageDealt.Sort(DTEgreater);
     }
@@ -7854,12 +7847,12 @@ bool CountHousesOwnedFunctor(CBaseObject *a, std::uint32_t &b, void *extraData) 
 }
 auto CChar::CountHousesOwned(bool countCoOwnedHouses) -> std::uint32_t {
     auto b = std::uint32_t(0);
-    if (cwmWorldState->ServerData()->TrackHousesPerAccount() || countCoOwnedHouses) {
+    if (ServerConfig::shared().enabled(ServerSwitch::TRACKHOUSESPERACCOUNT) || countCoOwnedHouses) {
         // Count all houses owned by characters on player's account by iterating over all multis on
         // the server(!)
         std::uint32_t toPass[3];
         toPass[0] = GetSerial();
-        toPass[1] = cwmWorldState->ServerData()->TrackHousesPerAccount();
+        toPass[1] = ServerConfig::shared().enabled(ServerSwitch::TRACKHOUSESPERACCOUNT);
         toPass[2] = countCoOwnedHouses;
         ObjectFactory::shared().IterateOver(OT_MULTI, b, toPass, &CountHousesOwnedFunctor);
     }

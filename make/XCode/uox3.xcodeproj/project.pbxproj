@@ -10,6 +10,7 @@
 		5611F3282AAF6997009438EA /* assistantfeature.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3262AAF6997009438EA /* assistantfeature.cpp */; };
 		5611F3312AAF807D009438EA /* startlocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F32F2AAF807D009438EA /* startlocation.cpp */; };
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
+		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2452AABB95300D624FC /* directorylocation.cpp */; };
 		56AAE24A2AABB95300D624FC /* serverconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2462AABB95300D624FC /* serverconfig.cpp */; };
 		56AAE25E2AADF26B00D624FC /* clientenable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE25C2AADF26B00D624FC /* clientenable.cpp */; };
@@ -135,6 +136,8 @@
 		5611F3302AAF807D009438EA /* startlocation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = startlocation.hpp; sourceTree = "<group>"; };
 		5611F3342AAF837A009438EA /* startlocconfig.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = startlocconfig.cpp; sourceTree = "<group>"; };
 		5611F3352AAF837A009438EA /* startlocconfig.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = startlocconfig.hpp; sourceTree = "<group>"; };
+		5611F3392AAF9FFA009438EA /* serverswitch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverswitch.cpp; sourceTree = "<group>"; };
+		5611F33A2AAF9FFA009438EA /* serverswitch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverswitch.hpp; sourceTree = "<group>"; };
 		56AADE792AABB91800D624FC /* jse_fileassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_fileassociations.scp; sourceTree = "<group>"; };
 		56AADE7A2AABB91800D624FC /* jse_typeassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_typeassociations.scp; sourceTree = "<group>"; };
 		56AADE7C2AABB91800D624FC /* anatomy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = anatomy.js; sourceTree = "<group>"; };
@@ -1217,6 +1220,8 @@
 				5611F3272AAF6997009438EA /* assistantfeature.hpp */,
 				5611F3342AAF837A009438EA /* startlocconfig.cpp */,
 				5611F3352AAF837A009438EA /* startlocconfig.hpp */,
+				5611F3392AAF9FFA009438EA /* serverswitch.cpp */,
+				5611F33A2AAF9FFA009438EA /* serverswitch.hpp */,
 			);
 			path = configuration;
 			sourceTree = "<group>";
@@ -3433,6 +3438,7 @@
 				64A90121293E3DD4009B54DA /* cchar.cpp in Sources */,
 				56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */,
 				64A90154293E3DD4009B54DA /* quantityfuncs.cpp in Sources */,
+				5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */,
 				56AAE2642AADF3A800D624FC /* clientversion.cpp in Sources */,
 				64A90165293E3DD4009B54DA /* uoxjspropertyfuncs.cpp in Sources */,
 				64A9012C293E3DD4009B54DA /* combat.cpp in Sources */,

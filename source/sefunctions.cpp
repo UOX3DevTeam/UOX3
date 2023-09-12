@@ -2374,7 +2374,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
     
     std::string tmpString = GetNpcDictName(myChar, mySock, NRS_SPEECH) + yellTo + textToYell;
     
-    if (cwmWorldState->ServerData()->useUnicodeMessages()) {
+    if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(tmpString);
         unicodeMessage.Font(static_cast<fonttype_t>(myChar->GetFontType()));
@@ -3605,7 +3605,7 @@ JSBool SE_DeleteFile(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
             return JS_TRUE;
         }
         
-     }
+    }
     
     pathString /= std::filesystem::path(fileName);
     *rval = std::filesystem::remove(pathString);
@@ -3675,7 +3675,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 2: // CONSOLELOG
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerConsoleLog());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG));
                 break;
             case 3: {// COMMANDPREFIX
                 
@@ -3685,13 +3685,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 4: // ANNOUNCEWORLDSAVES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerAnnounceSavesStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE));
                 break;
             case 26: // JOINPARTMSGS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART));
                 break;
             case 5: // BACKUPSENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerBackupStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::BACKUP));
                 break;
             case 6: // SAVESTIMER
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerSavesTimerStatus()));
@@ -3712,7 +3712,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->MaxStaminaMovement()));
                 break;
             case 12: // ARMORAFFECTMANAREGEN
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ArmorAffectManaRegen());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA));
                 break;
             case 13: // CORPSEDECAYTIMER
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CORPSEDECAY)));
@@ -3817,31 +3817,31 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 47: // LOOTDECAYSWITHCORPSE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CorpseLootDecay());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CORPSELOOTDECAY));
                 break;
             case 49: // GUARDSACTIVE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GuardsStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE));
                 break;
             case 27: // DEATHANIMATION
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->DeathAnimationStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DEATHANIMATION));
                 break;
             case 50: // AMBIENTSOUNDS
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->WorldAmbientSounds()));
                 break;
             case 51: // AMBIENTFOOTSTEPS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AmbientFootsteps());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::AMBIENTFOOTSTEPS));
                 break;
             case 52: // INTERNALACCOUNTCREATION
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->InternalAccountStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::AUTOACCOUNT));
                 break;
             case 53: // SHOWOFFLINEPCS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowOfflinePCs());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SHOWOFFLINEPCS));
                 break;
             case 54: // ROGUESENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->RogueStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ROGUEENABLE));
                 break;
             case 55: // PLAYERPERSECUTION
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PlayerPersecutionStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION));
                 break;
             case 56: // ACCOUNTFLUSH
                 *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->AccountFlushTimer()));
@@ -3850,19 +3850,19 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->HtmlStatsStatus()));
                 break;
             case 58: // SELLBYNAME
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SellByNameStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME));
                 break;
             case 59: // SELLMAXITEMS
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->SellMaxItemsStatus()));
                 break;
             case 60: // TRADESYSTEM
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TradeSystemStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM));
                 break;
             case 61: // RANKSYSTEM
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->RankSystemStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM));
                 break;
             case 62: // CUTSCROLLREQUIREMENTS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CutScrollRequirementStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CUTSCROLLREQ));
                 break;
             case 63: // CHECKITEMS
                 *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->CheckItemsSpeed()));
@@ -3883,7 +3883,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MsgBoardPostRemovalLevel()));
                 break;
             case 69: // ESCORTENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->EscortsEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ESCORTS));
                 break;
             case 70: // ESCORTINITEXPIRE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTWAIT)));
@@ -3946,7 +3946,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ResLogTime()));
                 break;
             case 90: // STATSAFFECTSKILLCHECKS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->StatsAffectSkillChecks());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL));
                 break;
             case 91: // HUNGERRATE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE)));
@@ -3961,16 +3961,16 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatMaxSpellRange()));
                 break;
             case 95: // DISPLAYHITMSG
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatDisplayHitMessage());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG));
                 break;
             case 96: // MONSTERSVSANIMALS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatMonstersVsAnimals());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS));
                 break;
             case 97: // ANIMALATTACKCHANCE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatAnimalsAttackChance()));
                 break;
             case 98: // ANIMALSGUARDED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatAnimalsGuarded());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ANIMALSGUARDED));
                 break;
             case 99: // NPCDAMAGERATE
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatNpcDamageRate()));
@@ -4050,7 +4050,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->SkillLevel()));
                 break;
             case 125: // SNOOPISCRIME
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SnoopIsCrime());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SNOOPISCRIME));
                 break;
             case 126: {// BOOKSDIRECTORY
                 auto dir = ServerConfig::shared().directoryFor(dirlocation_t::BOOK).string()+std::string(std::filesystem::path::preferred_separator,1) ;
@@ -4082,14 +4082,14 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 133: // SHOOTONANIMALBACK
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShootOnAnimalBack());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SHOOTONANIMALBACK));
                 break;
             case 134: // NPCTRAININGENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->NPCTrainingStatus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::NPCTRAINING));
                 break;
             case 135: {// DICTIONARYDIRECTORY
                 auto dir = ServerConfig::shared().directoryFor(dirlocation_t::LANGUAGE).string()+std::string(std::filesystem::path::preferred_separator,1) ;
-
+                
                 tString = JS_NewStringCopyZ(cx, dir.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
@@ -4098,7 +4098,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->BackupRatio()));
                 break;
             case 137: // HIDEWHILEMOUNTED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CharHideWhileMounted());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HIDEWHILEMOUNTED));
                 break;
             case 138: // SECONDSPERUOMINUTE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSecondsPerUOMinute()));
@@ -4110,7 +4110,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POLYMORPH)));
                 break;
             case 141: // UOGENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerUOGEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::UOG));
                 break;
             case 142: // NETRCVTIMEOUT
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout()));
@@ -4125,13 +4125,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(ServerConfig::shared().clientFeature.value()));
                 break;
             case 146: // PACKETOVERLOADS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerOverloadPackets());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::OVERLOADPACKETS));
                 break;
             case 147: // NPCMOVEMENTSPEED
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->NPCWalkingSpeed()));
                 break;
             case 148: // PETHUNGEROFFLINE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PetHungerOffline());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PETHUNGEROFFLINE));
                 break;
             case 149: // PETOFFLINETIMEOUT
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->PetOfflineTimeout()));
@@ -4140,13 +4140,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_PETOFFLINECHECK))));
                 break;
             case 152: // ADVANCEDPATHFINDING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AdvancedPathfinding());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING));
                 break;
             case 153: // SERVERFEATURES
                 *rval = INT_TO_JSVAL(static_cast<size_t>(ServerConfig::shared().serverFeature.value()));
                 break;
             case 154: // LOOTINGISCRIME
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->LootingIsCrime());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::LOOTINGISCRIME));
                 break;
             case 155: // NPCRUNNINGSPEED
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->NPCRunningSpeed()));
@@ -4155,31 +4155,31 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->NPCFleeingSpeed()));
                 break;
             case 157: // BASICTOOLTIPSONLY
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->BasicTooltipsOnly());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::BASICTOOLTIPSONLY));
                 break;
             case 158: // GLOBALITEMDECAY
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->GlobalItemDecay());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ITEMDECAY));
                 break;
             case 159: // SCRIPTITEMSDECAYABLE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ScriptItemsDecayable());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SCRIPTITEMSDECAYABLE));
                 break;
             case 160: // BASEITEMSDECAYABLE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->BaseItemsDecayable());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::BASEITEMSDECAYABLE));
                 break;
             case 161: // ITEMDECAYINHOUSES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ItemDecayInHouses());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::INHOUSEDECAY));
                 break;
             case 162: // SPAWNREGIONSFACETS
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->getSpawnRegionsFacetStatus()));
                 break;
             case 163: // PAPERDOLLGUILDBUTTON
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PaperdollGuildButton());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDBUTTON));
                 break;
             case 164: // ATTACKSPEEDFROMSTAMINA
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatAttackSpeedFromStamina());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA));
                 break;
             case 169: // DISPLAYDAMAGENUMBERS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatDisplayDamageNumbers());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGENUMBERS));
                 break;
             case 170: // CLIENTSUPPORT4000
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient4000());
@@ -4218,10 +4218,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enableClients.enableClient70610());
                 break;
             case 182: // EXTENDEDSTARTINGSTATS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ExtendedStartingStats());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::EXTENDEDSTATS));
                 break;
             case 183: // EXTENDEDSTARTINGSKILLS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ExtendedStartingSkills());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::EXTENDEDSKILLS));
                 break;
             case 184: // WEAPONDAMAGECHANCE
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatWeaponDamageChance()));
@@ -4254,10 +4254,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerRandomStartingLocation());
                 break;
             case 194: // ASSISTANTNEGOTIATION
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getAssistantNegotiation());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ASSISTANTNEGOTIATION));
                 break;
             case 195: // KICKONASSISTANTSILENCE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KickOnAssistantSilence());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::KICKONASSISTANTSILENCE));
                 break;
             case 196: // AF_FILTERWEATHER
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::FILTERWEATHER) );
@@ -4326,16 +4326,16 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().assistantFeature.test(AssistantFeature::ALL));
                 break;
             case 218: // CLASSICUOMAPTRACKER
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->getClassicUOMapTracker());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CUOMAPTRACKER));
                 break;
             case 219: // DECAYTIMERINHOUSE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_DECAYINHOUSE))));
                 break;
             case 220: // PROTECTPRIVATEHOUSES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ProtectPrivateHouses());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PROTECTPRIVATEHOUSES));
                 break;
             case 221: // TRACKHOUSESPERACCOUNT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TrackHousesPerAccount());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRACKHOUSESPERACCOUNT));
                 break;
             case 222: // MAXHOUSESOWNABLE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxHousesOwnable()));
@@ -4344,13 +4344,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxHousesCoOwnable()));
                 break;
             case 224: // CANOWNANDCOOWNHOUSES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CanOwnAndCoOwnHouses());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::OWNCOOWNHOUSE));
                 break;
             case 225: // COOWNHOUSESONSAMEACCOUNT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CoOwnHousesOnSameAccount());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::COWNHOUSEACCOUNT));
                 break;
             case 226: // ITEMSDETECTSPEECH
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ItemsDetectSpeech());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ITEMDETECTSPEECH));
                 break;
             case 227: // MAXPLAYERPACKITEMS
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxPlayerPackItems()));
@@ -4359,10 +4359,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->MaxPlayerBankItems()));
                 break;
             case 229: // FORCENEWANIMATIONPACKET
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ForceNewAnimationPacket());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET));
                 break;
             case 230: // MAPDIFFSENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->MapDiffsEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::MAPDIFF));
                 break;
             case 231: {// CORESHARDERA
                 
@@ -4440,13 +4440,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                                      static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMax()));
                 break;
             case 243: // ARMORCLASSDAMAGEBONUS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CombatArmorClassDamageBonus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ARMORCLASSBONUS));
                 break;
             case 244: // FREESHARDSERVERPOLL
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->FreeshardServerPoll());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::FREESHARD));
                 break;
             case 245: // ALCHEMYBONUSENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AlchemyDamageBonusEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ALCHEMYBONUS));
                 break;
             case 246: // ALCHEMYBONUSMODIFIER
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
@@ -4458,7 +4458,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetJSEngineSize()));
                 break;
             case 249: // USEUNICODEMESSAGES
-                *rval =INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->useUnicodeMessages()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)));
                 break;
             case 250:{ // SCRIPTDATADIRECTORY
                 auto dir = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPTDATA).string()+std::string(std::filesystem::path::preferred_separator,1) ;
@@ -4473,7 +4473,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ThirstDrain()));
                 break;
             case 253: // PETTHIRSTOFFLINE
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PetThirstOffline());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PETTHIRSTOFFLINE));
                 break;
             case 255: // BLOODDECAYTIMER
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY)));
@@ -4488,34 +4488,34 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_NPCCORPSEDECAY)));
                 break;
             case 259: // HUNGERENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->HungerSystemEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HUNGER));
                 break;
             case 260: // THIRSTENABLED
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ThirstSystemEnabled());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::THIRST));
                 break;
             case 261: // TRAVELSPELLSFROMBOATKEYS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TravelSpellsFromBoatKeys());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRAVELBOATKEY));
                 break;
             case 262: // TRAVELSPELLSWHILEOVERWEIGHT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TravelSpellsWhileOverweight());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRAVELBURDEN));
                 break;
             case 263: // MARKRUNESINMULTIS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->MarkRunesInMultis());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::RUNEMULTI));
                 break;
             case 264: // TRAVELSPELLSBETWEENWORLDS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TravelSpellsBetweenWorlds());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SPELLWORLDTRAVEL));
                 break;
             case 265: // TRAVELSPELLSWHILEAGGRESSOR
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TravelSpellsWhileAggressor());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRAVELAGRESSOR));
                 break;
             case 266: // BANKBUYTHRESHOLD
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->BuyThreshold()));
                 break;
             case 267: // NETWORKLOG
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerNetworkLog());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG));
                 break;
             case 268: // SPEECHLOG
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerSpeechLog());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SPEECHLOG));
                 break;
             case 269: // NPCMOUNTEDWALKINGSPEED
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->NPCMountedWalkingSpeed()));
@@ -4527,13 +4527,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->NPCMountedFleeingSpeed()));
                 break;
             case 272: // CONTEXTMENUS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerContextMenus());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CONTEXTMENU) );
                 break;
             case 273: // SERVERLANGUAGE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerLanguage()));
                 break;
             case 274: // CHECKPETCONTROLDIFFICULTY
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CheckPetControlDifficulty());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY));
                 break;
             case 275: // PETLOYALTYGAINONSUCCESS
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess()));
@@ -4545,7 +4545,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE)));
                 break;
             case 278: // SHOWNPCTITLESINTOOLTIPS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowNpcTitlesInTooltips());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::NPCTOOLTIPS));
                 break;
             case 279: // FISHPERAREA
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ResFish()));
@@ -4557,7 +4557,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatArcheryHitBonus()));
                 break;
             case 282: // ITEMSINTERRUPTCASTING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ItemsInterruptCasting());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING));
                 break;
             case 283: // SYSMESSAGECOLOUR
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SysMsgColour()));
@@ -4593,61 +4593,61 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->NetTrafficTimeban()));
                 break;
             case 294: // TOOLUSELIMIT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ToolUseLimit());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TOOLUSE));
                 break;
             case 295: // TOOLUSEBREAK
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ToolUseBreak());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TOOLBREAK));
                 break;
             case 296: // ITEMREPAIRDURABILITYLOSS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ItemRepairDurabilityLoss());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::REPAIRLOSS));
                 break;
             case 297: // HIDESTATSFORUNKNOWNMAGICITEMS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->HideStatsForUnknownMagicItems());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::MAGICSTATS));
                 break;
             case 298: // CRAFTCOLOUREDWEAPONS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CraftColouredWeapons());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::COLORWEAPON));
                 break;
             case 299: // MAXSAFETELEPORTSPERDAY
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxSafeTeleportsPerDay()));
                 break;
             case 300: // TELEPORTONEARESTSAFELOCATION
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->TeleportToNearestSafeLocation());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SAFETELEPORT));
                 break;
             case 301: // ALLOWAWAKENPCS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->AllowAwakeNPCs());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::AWAKENPC));
                 break;
             case 302: // DISPLAYMAKERSMARK
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->DisplayMakersMark());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::MAKERMARK));
                 break;
             case 303: // SHOWNPCTITLESOVERHEAD
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowNpcTitlesOverhead());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::OVERHEADTITLE));
                 break;
             case 304: // SHOWINVULNERABLETAGOVERHEAD
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowInvulnerableTagOverhead());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYINVUNERABLE));
                 break;
             case 305: // PETCOMBATTRAINING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->PetCombatTraining());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PETCOMBATTRAINING));
                 break;
             case 306: // HIRELINGCOMBATTRAINING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->HirelingCombatTraining());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HIRELINGTRAINING));
                 break;
             case 307: // NPCCOMBATTRAINING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->NpcCombatTraining());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::NPCCOMBAT));
                 break;
             case 308: // GLOBALRESTOCKMULTIPLIER
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->GlobalRestockMultiplier()));
                 break;
             case 309: // SHOWITEMRESISTSTATS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowItemResistStats());
+                *rval = BOOLEAN_TO_JSVAL( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRESISTSTATS));
                 break;
             case 310: // SHOWWEAPONDAMAGETYPES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowWeaponDamageTypes());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGETYPE));
                 break;
             case 311: // SHOWRACEWITHNAME
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowRaceWithName());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE));
                 break;
             case 312: // SHOWRACEINPAPERDOLL
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowRaceInPaperdoll());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACEPAPERDOLL));
                 break;
             case 313: {// WEAPONPARRY
                 
@@ -4671,13 +4671,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 316: // CASTSPELLSWHILEMOVING
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->CastSpellsWhileMoving());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SPELLMOVING));
                 break;
             case 317: // SHOWREPUTATIONTITLEINTOOLTIP
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowReputationTitleInTooltip());
-                break;
-            case 318: // SHOWGUILDINFOINTOOLTIP
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ShowGuildInfoInTooltip());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP));
                 break;
             case 319: // MAXPLAYERPACKWEIGHT
                 *rval =INT_TO_JSVAL(static_cast<std::int32_t>(cwmWorldState->ServerData()->MaxPlayerPackWeight()));
@@ -4686,37 +4683,34 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval =INT_TO_JSVAL(static_cast<std::int32_t>(cwmWorldState->ServerData()->MaxPlayerBankWeight()));
                 break;
             case 321: // SAFECOOWNERLOGOUT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SafeCoOwnerLogout());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::COOWNERLOGOUT));
                 break;
             case 322: // SAFEFRIENDLOGOUT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SafeFriendLogout());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::FRIENDLOGOUT));
                 break;
             case 323: // SAFEGUESTLOGOUT
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SafeGuestLogout());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::GUESTLOGOUT));
                 break;
             case 324: // KEYLESSOWNERACCESS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KeylessOwnerAccess());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::KEYLESSOWNER));
                 break;
             case 325: // KEYLESSCOOWNERACCESS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KeylessCoOwnerAccess());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::KEYLESSCOOWNER));
                 break;
             case 326: // KEYLESSFRIENDACCESS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KeylessFriendAccess());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::KEYLESSFRIEND));
                 break;
             case 327: // KEYLESSGUESTACCESS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->KeylessGuestAccess());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::KEYLESSGUEST));
                 break;
             case 328: // WEAPONDAMAGEBONUSTYPE
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->WeaponDamageBonusType()));
                 break;
-            case 329: // OFFERBODSFROMITEMSALES
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->OfferBODsFromItemSales());
-                break;
             case 330: // OFFERBODSFROMCONTEXTMENU
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->OfferBODsFromContextMenu());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU));
                 break;
             case 331: // BODSFROMCRAFTEDITEMSONLY
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->BODsFromCraftedItemsOnly());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::BODSFROMCRAFTEDITEMSONLY));
                 break;
             case 332: // BODGOLDREWARDMULTIPLIER
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->BODGoldRewardMultiplier()));
@@ -4725,10 +4719,10 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->BODFameRewardMultiplier()));
                 break;
             case 334: // ENABLENPCGUILDDISCOUNTS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->EnableNPCGuildDiscounts());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::GUILDDISCOUNT));
                 break;
             case 335: // ENABLENPCGUILDPREMIUMS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->EnableNPCGuildPremiums());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::GUILDPREMIUM));
                 break;
             case 336: // AGGRESSORFLAGTIMER
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_AGGRESSORFLAG)));
@@ -4740,7 +4734,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STEALINGFLAG)));
                 break;
             case 339: // SNOOPAWARENESS
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->SnoopAwareness());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SNOOPAWARE));
                 break;
             case 340: // APSPERFTHRESHOLD
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSPerfThreshold()));
@@ -4755,7 +4749,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->APSDelayMaxCap()));
                 break;
             case 344: // YOUNGPLAYERSYSTEM
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->YoungPlayerSystem());
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER));
                 break;
                 // case 345:	 // YOUNGLOCATION
                 // break;

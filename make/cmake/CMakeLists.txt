@@ -32,6 +32,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
 

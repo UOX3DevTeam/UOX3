@@ -14,7 +14,7 @@ using namespace std::string_literals ;
 ServerConfig::ServerConfig(){
     startLocation = StartLocConfig("LOCATION");
     youngLocation = StartLocConfig("YOUNGLOCATION");
-
+    
 }
 //======================================================================
 auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &value)->bool {
@@ -27,8 +27,10 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
                     if (!assistantFeature.setKeyValue(key,value)){
                         if (!startLocation.setKeyValue(key,value)){
                             if (!youngLocation.setKeyValue(key,value)){
-                                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                                rvalue = false ;
+                                if (!serverSwitch.setKeyValue(key,value)){
+                                    std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                                    rvalue = false ;
+                                }
                             }
                         }
                     }
@@ -100,7 +102,7 @@ auto ServerConfig::reloadConfig() ->void{
             }
         }
     }
-
+    
 }
 //======================================================================
 auto ServerConfig::directoryFor(dirlocation_t location) const -> const std::filesystem::path &{
@@ -109,4 +111,12 @@ auto ServerConfig::directoryFor(dirlocation_t location) const -> const std::file
 //======================================================================
 auto ServerConfig::dumpPaths() const ->void {
     directoryLocation.dumpPaths();
+}
+//======================================================================
+auto ServerConfig::enabled(ServerSwitch::switch_t setting) const ->bool {
+    return serverSwitch[setting];
+}
+//======================================================================
+auto ServerConfig::setEnabled(ServerSwitch::switch_t setting, bool state) ->void {
+    serverSwitch.setSetting(setting,state) ;
 }

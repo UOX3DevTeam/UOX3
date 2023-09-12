@@ -298,7 +298,7 @@ bool CPIFirstLogin::Handle() {
 
     // Need auto account creation code here
     if (tSock->AcctNo() == AccountEntry::INVALID_ACCOUNT) {
-        if (cwmWorldState->ServerData()->InternalAccountStatus()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::AUTOACCOUNT)) {
             Account::shared().createAccount(username, pass1);
             actbTemp = &Account::shared()[username];
             if (actbTemp->accountNumber != AccountEntry::INVALID_ACCOUNT){ // grab our account number
@@ -4013,7 +4013,7 @@ CPIPopupMenuRequest::CPIPopupMenuRequest(CSocket *s) : CPInputBuffer(s), mSer(IN
 void CPIPopupMenuRequest::Receive() { mSer = tSock->GetDWord(5); }
 bool CPIPopupMenuRequest::Handle() {
     // Only show context menus if enabled in ini
-    if (!cwmWorldState->ServerData()->ServerContextMenus())
+    if (!ServerConfig::shared().enabled(ServerSwitch::CONTEXTMENU) )
         return true;
 
     if (mSer < BASEITEMSERIAL) {
@@ -4074,7 +4074,7 @@ void CPIPopupMenuSelect::Receive() {
 bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr);
 bool CPIPopupMenuSelect::Handle() {
     // Only show context menus if enabled in ini
-    if (!cwmWorldState->ServerData()->ServerContextMenus())
+    if (!ServerConfig::shared().enabled(ServerSwitch::CONTEXTMENU) )
         return true;
 
     CChar *mChar = tSock->CurrcharObj();
@@ -4739,7 +4739,7 @@ bool CPIKrriosClientSpecial::Handle() {
     case 0x01: // guild track info
     {
         // If ini-setting for worldmap packets is enabled
-        if (cwmWorldState->ServerData()->getClassicUOMapTracker()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::CUOMAPTRACKER)) {
             CChar *mChar = tSock->CurrcharObj();
 
             if (type == 0x00) {
@@ -5013,7 +5013,7 @@ bool CPIAOSCommand::Handle() {
     }
     /*case 0x001A:	break;	//House Customisation :: Revert*/
     case 0x0028: // Guild :: Paperdoll button
-        if (cwmWorldState->ServerData()->PaperdollGuildButton()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYGUILDBUTTON)) {
             if (tSock->CurrcharObj()->GetGuildNumber() != -1) {
                 GuildSys->Menu(tSock, BasePage + 1,
                                static_cast<guildid_t>(tSock->CurrcharObj()->GetGuildNumber()));
