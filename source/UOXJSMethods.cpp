@@ -55,12 +55,6 @@ bool BuyShop( CSocket *s, CChar *c );
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
-std::string convertToString(JSContext *cx, JSString *string)
-{
-  auto chars = JS_EncodeStringToLatin1(cx, string);
-  return chars.get();
-}
-
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MethodSpeech()
 //o------------------------------------------------------------------------------------------------o
@@ -1901,7 +1895,7 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
 	}
@@ -2676,7 +2670,7 @@ static bool CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	UI16 msgColor = 0;
 	UI08 argCounter = 0;
-	if( argc > 1 && JSVAL_IS_INT( argv[0] ))
+	if( argc > 1 && args.get( 0 ).isInt32())
 	{
 		msgColor = static_cast<UI16>( JSVAL_TO_INT( argv[argCounter++] ));
 	}
@@ -2793,7 +2787,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 
 			// Parameters as a string
 		case 1:
-			if( JSVAL_IS_OBJECT( argv[0] ))
+			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
 				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -2827,7 +2821,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 					break;
 				}
 			}
-			else if( JSVAL_IS_INT( argv[0] ))
+			else if( args.get( 0 ).isInt32())
 			{
 				UI16 placeNum = args.get( 0 ).toInt32();
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
@@ -2847,7 +2841,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 
 			// 2 Parameters, x + y
 		case 2:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
+			if( args.get( 0 ).isInt32() && args.get( 1 ).isInt32())
 			{
 				x = static_cast<SI16>( args.get( 0 ).toInt32());
 				y = static_cast<SI16>( args.get( 1 ).toInt32());
@@ -2856,7 +2850,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z
 		case 3:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ))
+			if( args.get( 0 ).isInt32() && args.get( 1 ).isInt32() && args.get( 2 ).isInt32())
 			{
 				x = static_cast<SI16>( args.get( 0 ).toInt32());
 				y = static_cast<SI16>( args.get( 1 ).toInt32());
@@ -2866,7 +2860,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world
 		case 4:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ))
+			if( args.get( 0 ).isInt32() && args.get( 1 ).isInt32() && args.get( 2 ).isInt32() && args.get( 3 ).isInt32())
 			{
 				x		= static_cast<SI16>( args.get( 0 ).toInt32());
 				y		= static_cast<SI16>( args.get( 1 ).toInt32());
@@ -2877,7 +2871,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 
 			// x,y,z,world,instanceId
 		case 5:
-			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ) && JSVAL_IS_INT( argv[4] ))
+			if( args.get( 0 ).isInt32() && args.get( 1 ).isInt32() && args.get( 2 ).isInt32() && args.get( 3 ).isInt32() && args.get( 4 ).isInt32())
 			{
 				x = static_cast<SI16>( args.get( 0 ).toInt32());
 				y = static_cast<SI16>( args.get( 1 ).toInt32());
@@ -4111,7 +4105,7 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !args.get( 0 ).isObject())
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
 			return false;
@@ -4205,7 +4199,7 @@ static bool CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( !JSVAL_IS_OBJECT( argv[0] ))
+		if( !args.get( 0 ).isObject())
 		{
 			ScriptError( cx, "(DirectionTo) Invalid Object passed" );
 			return false;
@@ -6811,7 +6805,7 @@ static bool CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
   JS::RootedObject obj(cx);
   if (!args.computeThis(cx, &obj))
       return false;
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "You have to pass a valid menu number" );
 	}
@@ -7289,7 +7283,7 @@ static bool CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
   if (!args.computeThis(cx, &obj))
       return false;
 	// Ok get our object from the global context
-	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( JSVAL_IS_INT( argv[3] ) || JSVAL_IS_STRING( argv[3] )))
+	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( args.get( 3 ).isInt32() || JSVAL_IS_STRING( argv[3] )))
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
 		return false;
@@ -7299,7 +7293,7 @@ static bool CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 	std::string lpszComment		= convertToString( cx, args.get( 2 ).toString() );
 	UI16 u16Flags		= 0;
 
-	if( JSVAL_IS_INT( argv[3] ))
+	if( args.get( 3 ).isInt32())
 	{
 		u16Flags = static_cast<UI16>( args.get( 3 ).toInt32());
 	}
@@ -7928,7 +7922,7 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	switch( argc )
 	{
 		case 2:
-			if( JSVAL_IS_OBJECT( argv[0] ))
+			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
 				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -8044,7 +8038,7 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	switch( argc )
 	{
 		case 2:
-			if( JSVAL_IS_OBJECT( argv[0] ))
+			if( args.get( 0 ).isObject())
 			{	// we can work with this, it should be either a character or item, hopefully
 				JSEncapsulate jsToGoTo( cx, &( argv[0] ));
 				if( jsToGoTo.ClassName() == "UOXItem" || jsToGoTo.ClassName() == "UOXChar" )
@@ -8438,7 +8432,7 @@ static bool CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 1 )
 	{
-		if( JSVAL_IS_OBJECT( argv[0] ))
+		if( args.get( 0 ).isObject())
 		{
 			JSObject *jsObj		= args.get( 0 ).toObjectOrNull();
 			CItem *mItem		= JS::GetMaybePtrFromReservedSlot<CItem >(jsObj , 0);
@@ -9841,7 +9835,7 @@ static bool CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
 		return false;
@@ -9886,7 +9880,7 @@ static bool CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
 		return false;
@@ -9931,7 +9925,7 @@ static bool CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
 		return false;
@@ -9976,7 +9970,7 @@ static bool CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
 		return false;
@@ -10021,7 +10015,7 @@ static bool CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
 		return false;
@@ -10066,7 +10060,7 @@ static bool CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
 		return false;
@@ -10111,7 +10105,7 @@ static bool CMulti_RemoveTrashCont( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	if( !JSVAL_IS_OBJECT( argv[0] ))
+	if( !args.get( 0 ).isObject())
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
 		return false;
@@ -11633,7 +11627,7 @@ static bool CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
@@ -11681,7 +11675,7 @@ static bool CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* 
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
@@ -11724,7 +11718,7 @@ static bool CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
@@ -11763,7 +11757,7 @@ static bool CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 		return false;
@@ -11812,7 +11806,7 @@ static bool CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
 	}
@@ -11855,7 +11849,7 @@ static bool CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	if( !JSVAL_IS_INT( argv[0] ))
+	if( !args.get( 0 ).isInt32())
 	{
 		ScriptError( cx, "That is not a valid ore ID! Only integers between 0-65535 are accepted." );
 	}

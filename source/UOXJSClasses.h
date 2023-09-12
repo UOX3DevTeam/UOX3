@@ -265,4 +265,9 @@ inline JSClass UOXParty_class =
 //		CPartyProps_setProperty,
 //	CParty_equality,
 
+inline std::string convertToString(JSContext *cx, JSString *string) {
+    auto chars = JS_EncodeStringToLatin1(cx, string);
+    return chars.get();
+}
+
 #endif
