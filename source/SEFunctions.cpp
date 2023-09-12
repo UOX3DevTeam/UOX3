@@ -35,6 +35,7 @@
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
 #include <js/Object.h>
+#include <js/Array.h>
 
 
 
@@ -1131,13 +1132,13 @@ bool SE_GetRandomSOSArea( JSContext* cx, unsigned argc, JS::Value* vp )
 	JS::RootedValue jsInstanceId( cx, rndSosLoc.instanceId );
 
 	// Construct a JS Object with the properties of the chosen SOS area
-	JSObject *rndSosLocObj = JS_NewArrayObject( cx, 0, nullptr );
-	JS_SetElement( cx, rndSosLocObj, 0, &jsX1 );
-	JS_SetElement( cx, rndSosLocObj, 1, &jsY1 );
-	JS_SetElement( cx, rndSosLocObj, 2, &jsX2 );
-	JS_SetElement( cx, rndSosLocObj, 3, &jsY2 );
-	JS_SetElement( cx, rndSosLocObj, 4, &jsWorldNum );
-	JS_SetElement( cx, rndSosLocObj, 5, &jsInstanceId );
+	JS::RootedObject rndSosLocObj( cx, JS::NewArrayObject( cx, 6 ) );
+	JS_SetElement( cx, rndSosLocObj, 0, jsX1 );
+	JS_SetElement( cx, rndSosLocObj, 1, jsY1 );
+	JS_SetElement( cx, rndSosLocObj, 2, jsX2 );
+	JS_SetElement( cx, rndSosLocObj, 3, jsY2 );
+	JS_SetElement( cx, rndSosLocObj, 4, jsWorldNum );
+	JS_SetElement( cx, rndSosLocObj, 5, jsInstanceId );
 
 	// Pass the JS object to script
 	args.rval().setObjectOrNull( rndSosLocObj );
@@ -1296,14 +1297,14 @@ bool SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	CItem *newItem			= nullptr;
 	CSocket *mySock			= nullptr;
-	if( argv[0] != JSVAL_NULL )
+	if( !args.get( 0 ).isNull() )
 	{
 		JSObject *mSock		= args.get( 0 ).toObjectOrNull();
 		mySock				= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JSVAL_NULL )
+	if( !args.get( 1 ).isNull() )
 	{
 		JSObject *mChar			= args.get( 1 ).toObjectOrNull();
 		myChar					= JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
@@ -1908,8 +1909,10 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 	CChar *mChar = nullptr;
 	CSocket *mySocket = nullptr;
 
-	JSEncapsulate myClass( cx, &( argv[0] ));
-	if( myClass.ClassName() == "UOXChar" )
+	auto myClass = args.get( 0 );
+  std::string className = JS::GetClass( myClass.toObjectOrNull() )->name;
+
+	if (className == "UOXChar")
 	{
 		if( myClass.isType( JSOT_OBJECT ))
 		{
@@ -1920,7 +1923,7 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 			}
 		}
 	}
-	else if( myClass.ClassName() == "UOXSocket" )
+	else if( className == "UOXSocket" )
 	{
 		if( myClass.isType( JSOT_OBJECT ))
 		{
