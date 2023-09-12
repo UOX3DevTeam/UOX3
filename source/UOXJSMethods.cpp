@@ -418,6 +418,10 @@ bool CSocket_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  // Get the 'this' object from the call stack.
+  JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx, &args.thisv().toObject());
+
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
 	toAdd->one = new std::vector<std::string>();
@@ -491,7 +495,8 @@ static bool CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 
 static bool CGumpData_GetEdit(JSContext* cx, unsigned argc, JS::Value* vp) {
-    JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+
+	JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
 
     if (args.length() == 0) {
         ScriptError(cx, "(GumpData_getEdit) Invalid number of arguments");
@@ -502,20 +507,20 @@ static bool CGumpData_GetEdit(JSContext* cx, unsigned argc, JS::Value* vp) {
 	SEGumpData_st *myItem = JS::GetMaybePtrFromReservedSlot<SEGumpData_st >(obj , 0);
 
     if (myItem == nullptr)
- {
+		{
         ScriptError(cx, "(DataGump-getEdit) Invalid object assigned");
         args.rval().setString(JS_NewStringCopyN(cx, "", 0));
         return true;
     }
 
     if (args[0].isInt32())
- {
+		{
         int32_t index = args[0].toInt32();
         if (index >= 0 && static_cast<size_t>(index) < myItem->sEdits.size())
- {
+		{
             args.rval().setString(JS_NewStringCopyZ(cx, myItem->sEdits[index].c_str()));
         } else 
-{
+				{
             args.rval().setString(JS_NewStringCopyN(cx, "", 0));
         }
     } else 
@@ -535,10 +540,14 @@ static bool CGumpData_GetEdit(JSContext* cx, unsigned argc, JS::Value* vp) {
 //o------------------------------------------------------------------------------------------------o
 static bool CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 		return true;
 	}
 
@@ -547,18 +556,18 @@ static bool CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump_getID) Invalid object assigned" );
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 		return true;
 	}
 	size_t index = args.get( 0 ).toInt32();
 
 	if( index < myItem->nIDs.size() )
 	{
-		*rval = INT_TO_JSVAL( myItem->nIDs[index] );
+		args.rval().setInt32( myItem->nIDs[index] );
 	}
 	else
 	{
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 	}
 
 	return true;
@@ -572,10 +581,14 @@ static bool CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getbutton) Invalid Number of Arguments %d, needs: 1 ", argc );
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 		return true;
 	}
 
@@ -584,17 +597,17 @@ static bool CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( myItem == nullptr  )
 	{
 		ScriptError( cx, "(DataGump-getID) Invalid object assigned" );
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 		return true;
 	}
 	size_t index = args.get( 0 ).toInt32();
 	if( index < myItem->nButtons.size() )
 	{
-		*rval = INT_TO_JSVAL( myItem->nButtons[index] );
+		args.rval().setInt32( myItem->nButtons[index] );
 	}
 	else
 	{
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 	}
 
 	return true;
@@ -614,6 +627,10 @@ static bool CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = 0;
 	SI16 tR = 0;
 	UI16 gImage = 0;
@@ -668,6 +685,10 @@ static bool CGump_NoClose( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( gList == nullptr )
@@ -696,6 +717,10 @@ static bool CGump_NoMove( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( gList == nullptr )
@@ -728,6 +753,10 @@ static bool CGump_NoDispose( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( gList == nullptr )
@@ -756,6 +785,10 @@ static bool CGump_NoResize( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
 	if( gList == nullptr )
@@ -783,6 +816,10 @@ static bool CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI32 masterGumpId = static_cast<SI32>( args.get( 0 ).toInt32());
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 
@@ -812,6 +849,10 @@ static bool CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
 	SI16 bL = static_cast<SI16>( args.get( 2 ).toInt32());
@@ -843,6 +884,10 @@ static bool CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddButton: Invalid number of arguments (takes 6 or 7)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -877,6 +922,10 @@ static bool CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp 
 		ScriptError( cx, "AddButtonTileArt: Invalid number of arguments (takes 11)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 tileIdNorm = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -887,7 +936,7 @@ static bool CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp 
 	SI16 tileId = static_cast<SI16>( args.get( 7 ).toInt32());
 	SI16 hue = static_cast<SI16>( args.get( 8 ).toInt32());
 	SI16 tileX = static_cast<SI16>( args.get( 9 ).toInt32());
-	SI16 tileY = static_cast<SI16>( JSVAL_TO_INT( argv[10] ));
+	SI16 tileY = static_cast<SI16>( args.get( 10 ).toInt32());
 	//SI32 cliloc = 0;
 
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
@@ -915,6 +964,10 @@ static bool CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "AddPageButton: Invalid number of arguments (takes 4 or 5)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -948,6 +1001,10 @@ static bool CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width	= static_cast<SI16>( args.get( 2 ).toInt32()); // width
@@ -980,6 +1037,10 @@ static bool CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 TextX		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 TextY		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 TextHue	= static_cast<SI16>( args.get( 2 ).toInt32()); // Hue
@@ -1025,6 +1086,10 @@ static bool CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 	if( gList == nullptr )
 	{
@@ -1051,6 +1116,10 @@ static bool CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 	if( gList == nullptr )
 	{
@@ -1077,6 +1146,10 @@ static bool CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR = static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -1119,6 +1192,10 @@ static bool CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL			= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR			= static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
@@ -1158,6 +1235,10 @@ static bool CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 	if( gList == nullptr )
 	{
@@ -1206,12 +1287,16 @@ static bool CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
 	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool hasBorder		= ( args.get( 4 ).toBoolean() );
+	bool hasScrollbar	= ( args.get( 5 ).toBoolean() );
 
 	char *TextString = JS_GetStringBytes( JS_ValueToString( cx, argv[6] ));
 
@@ -1254,6 +1339,10 @@ static bool CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 	if( gList == nullptr )
 	{
@@ -1280,6 +1369,10 @@ static bool CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL		= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR		= static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -1310,6 +1403,10 @@ static bool CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL			= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR			= static_cast<SI16>( args.get( 1 ).toInt32());
 	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32());
@@ -1342,6 +1439,10 @@ static bool CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x			= static_cast<SI16>( args.get( 0 ).toInt32()); // starting x
 	SI16 y			= static_cast<SI16>( args.get( 1 ).toInt32()); // starting y
 	UI16 gImage		= static_cast<UI16>( args.get( 2 ).toInt32()); // GumpId
@@ -1380,6 +1481,10 @@ static bool CGump_AddItemProperty( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSObject *tObj = args.get( 0 ).toObjectOrNull();
 	CBaseObject *trgObj = JS::GetMaybePtrFromReservedSlot<CBaseObject >(tObj , 0);
 
@@ -1417,6 +1522,10 @@ static bool CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL = 0;
 	SI16 tR = 0;
 	UI16 gImage = 0;
@@ -1470,6 +1579,10 @@ static bool CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UI32 textId;
 
 	SI16 TextX		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
@@ -1514,6 +1627,10 @@ static bool CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL					= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR					= static_cast<SI16>( args.get( 1 ).toInt32());
 	SI16 width				= static_cast<SI16>( args.get( 2 ).toInt32());
@@ -1556,6 +1673,10 @@ static bool CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 tL					= static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 tR					= static_cast<SI16>( args.get( 1 ).toInt32());
 	SI16 width				= static_cast<SI16>( args.get( 2 ).toInt32());
@@ -1600,6 +1721,10 @@ static bool CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x		= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y		= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width	= static_cast<SI16>( args.get( 2 ).toInt32()); // width
@@ -1633,13 +1758,17 @@ static bool CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
 	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
 	SI32 number			= static_cast<SI32>( args.get( 4 ).toInt32()); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	bool hasBorder		= ( args.get( 5 ).toBoolean() );
+	bool hasScrollbar	= ( args.get( 6 ).toBoolean() );
 
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
 	if( gList == nullptr )
@@ -1671,13 +1800,17 @@ static bool CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
 	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
 	SI32 number			= static_cast<SI32>( args.get( 4 ).toInt32()); // number
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[6] ) == JS_TRUE );
+	bool hasBorder		= ( args.get( 5 ).toBoolean() );
+	bool hasScrollbar	= ( args.get( 6 ).toBoolean() );
 	SI32 rgbColour		= static_cast<SI32>( args.get( 7 ).toInt32());	// colour
 
 	SEGump_st *gList = JS::GetMaybePtrFromReservedSlot<SEGump_st>(obj, 0);
@@ -1709,12 +1842,16 @@ static bool CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x				= static_cast<SI16>( args.get( 0 ).toInt32()); // x
 	SI16 y				= static_cast<SI16>( args.get( 1 ).toInt32()); // y
 	SI16 width			= static_cast<SI16>( args.get( 2 ).toInt32()); // width
 	SI16 height			= static_cast<SI16>( args.get( 3 ).toInt32()); // height
-	bool hasBorder		= ( JSVAL_TO_BOOLEAN( argv[4] ) == JS_TRUE );
-	bool hasScrollbar	= ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
+	bool hasBorder		= ( args.get( 4 ).toBoolean() );
+	bool hasScrollbar	= ( args.get( 5 ).toBoolean() );
 	SI32 rgbColour		= static_cast<SI32>( args.get( 6 ).toInt32());	// colour
 	SI32 number			= static_cast<SI32>( args.get( 7 ).toInt32()); // number
 
@@ -1751,6 +1888,10 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "You have to pass a valid Socket or Character" );
@@ -1811,6 +1952,10 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
 
@@ -1952,13 +2097,17 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill all related timers that have been associated with an item or character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+bool CBase_KillTimers( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -2001,7 +2150,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get JS timer with specific timerId association with an item or character, and return time left
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+bool CBase_GetJSTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
@@ -2009,6 +2158,10 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -2016,7 +2169,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	args.rval().setInt32( 0 ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
 	UI16 scriptId = static_cast<UI16>( args.get( 1 ).toInt32());
 
@@ -2038,7 +2191,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			if( tScript != nullptr && ( scriptId == Effect->AssocScript() || scriptId == Effect->More2() ))
 			{
 				// Return the timestamp for when the Effect timer expires
-				//*rval = INT_TO_JSVAL( Effect->ExpireTime() );
+				//args.rval().setInt32( Effect->ExpireTime() );
 				JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
 			}
 		}
@@ -2053,7 +2206,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set expiration time for JS timer with specific timerId association with an item or character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+bool CBase_SetJSTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
@@ -2061,6 +2214,10 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -2068,7 +2225,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
+	args.rval().setInt32( 0 ); // Return value is 0 by default, indicating no timer was found or updated
 	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
 	UI32 expireTime = BuildTimeValue( args.get( 1 ).toInt32() / 1000.0f );
 	UI16 scriptId = static_cast<UI16>( args.get( 2 ).toInt32());
@@ -2092,7 +2249,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			{
 				// Set the timestamp for when the Effect timer expires to that specified in parameters
 				Effect->ExpireTime( expireTime );
-				*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and updated
+				args.rval().setInt32( 1 ); // Return 1 indicating timer was found and updated
 			}
 		}
 	}
@@ -2106,13 +2263,17 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill JS timer on item or character based on specified scriptId and timerId
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+bool CBase_KillJSTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "KillJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	auto myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -2120,7 +2281,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	args.rval().setInt32( 0 ); // Return value 0 by default, to indicate no valid timer found
 	UI16 timerId = static_cast<UI16>( args.get( 0 ).toInt32());
 	UI16 scriptId = static_cast<UI16>( args.get( 1 ).toInt32());
 
@@ -2152,7 +2313,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( removeEffect != nullptr )
 	{
 		cwmWorldState->tempEffects.Remove( removeEffect, true );
-		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and removed
+		args.rval().setInt32( 1 ); // Return 1 indicating timer was found and removed
 	}
 
 	return true;
@@ -2166,6 +2327,10 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -2210,6 +2375,10 @@ static bool CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI16 x1 = static_cast<SI16>( args.get( 0 ).toInt32());
 	SI16 y1 = static_cast<SI16>( args.get( 1 ).toInt32());
 	SI16 x2 = static_cast<SI16>( args.get( 2 ).toInt32());
@@ -2257,6 +2426,10 @@ static bool CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
@@ -2302,6 +2475,10 @@ static bool CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UI16 targAction = static_cast<UI16>( args.get( 0 ).toInt32());
 	SI16 targSubAction = -1;
 	UI16 frameCount = 7;
@@ -2364,6 +2541,10 @@ static bool CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	JSString *targMessage = JS_ValueToString( cx, argv[0] );
 	char *trgMessage = JS_GetStringBytes( targMessage );
@@ -2425,6 +2606,10 @@ static bool CChar_Dismount( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -2457,6 +2642,10 @@ static bool CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = nullptr;
 	JSEncapsulate myClass( cx, obj );
 
@@ -2523,6 +2712,10 @@ static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *targSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( targSock == nullptr )
@@ -2564,6 +2757,10 @@ static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 
 	CBaseObject *myObj	= static_cast<CBaseObject*>( myClass.toObject() );
@@ -2771,6 +2968,10 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UI16 effectId		= static_cast<UI16>( args.get( 0 ).toInt32());
 	UI08 speed			= static_cast<UI08>( args.get( 1 ).toInt32());
 	UI08 loop			= static_cast<UI08>( args.get( 2 ).toInt32());
@@ -2786,7 +2987,7 @@ static bool CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
-		bool explode = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+		bool explode = ( args.get( 3 ).toBoolean() );
 		Effects->PlayStaticAnimation( myObj, effectId, speed, loop, explode );
 	}
 	else
@@ -2811,6 +3012,10 @@ static bool CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock		= nullptr;
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXChar" )
@@ -2848,6 +3053,10 @@ static bool CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 
 	UI16 soundId = static_cast<UI16>( args.get( 0 ).toInt32());
@@ -2856,7 +3065,7 @@ static bool CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		tmpMonsterSound = static_cast<UI08>( args.get( 1 ).toInt32());
 	}
-	bool allHear = ( JSVAL_TO_BOOLEAN( argv[1] ) == JS_TRUE );
+	bool allHear = ( args.get( 1 ).toBoolean() );
 
 	if( myClass.ClassName() == "UOXChar" || myClass.ClassName() == "UOXItem" )
 	{
@@ -2900,6 +3109,10 @@ static bool CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	if( argc != 1 )
 	{
@@ -2987,6 +3200,10 @@ static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *myNPC = JS::GetMaybePtrFromReservedSlot<CChar>(args.get( 0 ).toObjectOrNull(), 0);
 	if( !ValidateObject( myNPC ))
@@ -3071,6 +3288,10 @@ static bool CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get( 0 ).toInt32());
 
@@ -3136,6 +3357,10 @@ static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	UI08 spellId = static_cast<UI08>( args.get( 0 ).toInt32());
 
@@ -3199,6 +3424,10 @@ static bool CBase_GetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTag: Invalid Count of Parameters: %d, need: 1", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3240,6 +3469,10 @@ static bool CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTag: Invalid Count of Parameters: %d, need: 2", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3340,6 +3573,10 @@ static bool CBase_GetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTempTag: Invalid Count of Parameters: %d, need: 1", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3382,6 +3619,10 @@ static bool CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTempTag: Invalid Count of Parameters: %d, need: 2", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3482,6 +3723,10 @@ static bool CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3490,7 +3735,7 @@ static bool CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetNumTags() );
+	args.rval().setInt32( myObj->GetNumTags() );
 	return true;
 }
 
@@ -3507,6 +3752,10 @@ static bool CBase_GetTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3589,6 +3838,10 @@ static bool CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Invalid Count of Parameters: %d, need: 0", argc );
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -3666,6 +3919,10 @@ static bool CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -3725,6 +3982,10 @@ static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -3771,6 +4032,10 @@ static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -3821,6 +4086,10 @@ static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -3911,6 +4180,10 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -3950,7 +4223,7 @@ static bool CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	UI08 NewDir = Movement->Direction( myChar, x, y );
 
-	*rval = INT_TO_JSVAL( NewDir );
+	args.rval().setInt32( NewDir );
 
 	return true;
 }
@@ -3969,6 +4242,10 @@ static bool CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
 	CChar *myChar			= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	char *trgMessage		= JS_GetStringBytes( targMessage );
@@ -3991,6 +4268,10 @@ static bool CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CGuild_AcceptRecruit( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>(obj, 0);
 
 	if( myGuild == nullptr )
@@ -4035,6 +4316,10 @@ static bool CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CGuild *myGuild = JS::GetMaybePtrFromReservedSlot<CGuild>(obj, 0);
 	if( myGuild == nullptr )
 	{
@@ -4057,6 +4342,10 @@ static bool CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -4092,7 +4381,7 @@ static bool CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool colorCheck = ( itemColour != -1 ? true : false );
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
+	args.rval().setInt32( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
 	return true;
 }
 
@@ -4108,6 +4397,10 @@ static bool CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
 
@@ -4158,7 +4451,7 @@ static bool CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 		CItem *myItem	= static_cast<CItem *>( myObj );
 		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
-	*rval = INT_TO_JSVAL( retVal );
+	args.rval().setInt32( retVal );
 	return true;
 }
 
@@ -4170,6 +4463,10 @@ static bool CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( ValidateObject( myChar ))
 	{
@@ -4197,6 +4494,10 @@ static bool CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 
 	if(( argc > 3 ) || ( argc < 1 ))
@@ -4281,6 +4582,10 @@ static bool CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	// Either useable with sockets OR characters
 	JSEncapsulate myClass( cx, obj );
 	CSocket *mySock = nullptr;
@@ -4338,6 +4643,10 @@ static bool CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UI16 distance = static_cast<UI16>( args.get( 1 ).toInt32());
 
 	CBaseObject *me = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
@@ -4383,6 +4692,10 @@ static bool CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -4407,7 +4720,7 @@ static bool CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		if( JSVAL_IS_BOOLEAN( argv[2] ))	// Is it a boolean?  If so, might be calling back into here
 		{
-			if( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE )
+			if( args.get( 2 ).toBoolean() )
 			{
 				Effect->AssocScript( JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
 			}
@@ -4455,6 +4768,10 @@ static bool CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -4483,6 +4800,10 @@ static bool CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem = nullptr;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
@@ -4529,6 +4850,10 @@ static bool CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -4566,6 +4891,10 @@ static bool CChar_FindItemSection( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -4604,6 +4933,10 @@ static bool CItem_OpenPlank( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 
 	if( !ValidateObject( myItem ))
@@ -4629,6 +4962,10 @@ static bool CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI08 speechId		= 0;
 	CItem *speechItem	= nullptr;
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc == 1 ) // Just the ID has been passed
 	{
 		speechId = static_cast<UI08>( args.get( 0 ).toInt32());
@@ -4687,6 +5024,10 @@ static bool CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ))
@@ -4729,6 +5070,10 @@ static bool CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI08 spellId = static_cast<SI08>( args.get( 0 ).toInt32());
 
 	CChar *myObj = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
@@ -4758,11 +5103,11 @@ static bool CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		*rval = INT_TO_JSVAL( 0 );
+		args.rval().setInt32( 0 );
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
+	args.rval().setInt32( myObj->GetSerial( part ));
 
 	return true;
 }
@@ -4775,17 +5120,21 @@ static bool CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	UI08 part = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	if( !ValidateObject( myObj ) || ( part == 0 ) || ( part > 4 ))
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
-		*rval = INT_TO_JSVAL( 0 );
+		args.rval().setInt32( 0 );
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
+	args.rval().setInt32( myObj->GetSerial( part ));
 
 	return true;
 }
@@ -4798,7 +5147,7 @@ void UpdateStats( CBaseObject *mObj, UI08 x );
 //|	Purpose		-	Sends update to client with specified stat (health, mana or stamina) for object
 //| Notes		-	Can be used with any character, as well as with items/multis with damageable flag enabled
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+bool CBase_UpdateStats( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -4806,6 +5155,10 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	UI08 statType = static_cast<UI08>( args.get( 0 ).toInt32());
 
@@ -4864,6 +5217,10 @@ static bool CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	if( !ValidateObject( myChar ) || myChar->GetObjType() != OT_CHAR )
@@ -4908,6 +5265,10 @@ static bool CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	JSObject *tObj = args.get( 0 ).toObjectOrNull();
 	CBaseObject *trgObj = JS::GetMaybePtrFromReservedSlot<CBaseObject >(tObj , 0);
@@ -4920,7 +5281,7 @@ static bool CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	UI32 damage = static_cast<UI32>( args.get( 1 ).toInt32());
 	UI08 damageType = static_cast<UI08>( args.get( 2 ).toInt32());
-	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+	bool explodeNearby = ( args.get( 3 ).toBoolean() );
 
 	ExplodeItem( myChar->GetSocket(), static_cast<CItem *>( trgObj ), damage, damageType, explodeNearby );
 	return true;
@@ -4941,6 +5302,10 @@ static bool CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	UI08 newVal = static_cast<UI08>( args.get( 0 ).toInt32());
 
@@ -4961,6 +5326,10 @@ static bool CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	JSObject *tObj = args.get( 0 ).toObjectOrNull();
 	CBaseObject *trgObj = JS::GetMaybePtrFromReservedSlot<CBaseObject >(tObj , 0);
@@ -5001,6 +5370,10 @@ static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsMulti) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5029,6 +5402,10 @@ static bool CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsBoat) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5057,6 +5434,10 @@ static bool CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsInMulti) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5092,6 +5473,10 @@ static bool CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5127,6 +5512,10 @@ static bool CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5162,6 +5551,10 @@ static bool CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5197,6 +5590,10 @@ static bool CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -5232,6 +5629,10 @@ static bool CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
@@ -5273,6 +5674,10 @@ static bool CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CMultiObj *myItem = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
@@ -5300,6 +5705,10 @@ static bool CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5336,6 +5745,10 @@ static bool CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5372,6 +5785,10 @@ static bool CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5408,6 +5825,10 @@ static bool CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5444,6 +5865,10 @@ static bool CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* v
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5480,6 +5905,10 @@ static bool CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5516,6 +5945,10 @@ static bool CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value*
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
@@ -5552,6 +5985,10 @@ static bool CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value*
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5581,6 +6018,10 @@ static bool CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5610,6 +6051,10 @@ static bool CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp 
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5639,6 +6084,10 @@ static bool CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CMulti_ClearOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
@@ -5676,6 +6125,10 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_ITEM ))
 	{
@@ -5687,7 +6140,7 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	auto autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+	auto autoStack = ( args.get( 0 ).toBoolean() );
 	if( autoStack && ValidateObject( myItem->GetCont() ))
 	{
 		// Attempt to stack the item with existing items. If item has any left-over amount after, it
@@ -5695,7 +6148,7 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 		CItem *myCont = static_cast<CItem *>( myItem->GetCont() );
 		if( ValidateObject( myCont ))
 		{
-			*rval = INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr ));
+			args.rval().setInt32( HandleAutoStack( myItem, myCont, nullptr, nullptr ));
 		}
 	}
 
@@ -5733,6 +6186,10 @@ static bool CSocket_OpenURL( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "OpenURL: Invalid Number of Arguments %d, needs: 1" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5758,6 +6215,10 @@ static bool CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5766,7 +6227,7 @@ static bool CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset	= args.get( 0 ).toInt32();
-	*rval		= INT_TO_JSVAL( mySock->GetByte( offset ));
+	args.rval().setInt32( mySock->GetByte( offset ));
 	return true;
 }
 
@@ -5783,6 +6244,10 @@ static bool CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5791,7 +6256,7 @@ static bool CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset	= args.get( 0 ).toInt32();
-	*rval		= INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset )));
+	args.rval().setInt32( static_cast<SI08>( mySock->GetByte( offset )));
 	return true;
 }
 
@@ -5808,6 +6273,10 @@ static bool CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5816,7 +6285,7 @@ static bool CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = args.get( 0 ).toInt32();
-	*rval = INT_TO_JSVAL( mySock->GetWord( offset ));
+	args.rval().setInt32( mySock->GetWord( offset ));
 	return true;
 }
 
@@ -5833,6 +6302,10 @@ static bool CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5841,7 +6314,7 @@ static bool CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = args.get( 0 ).toInt32();
-	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )));
+	args.rval().setInt32( static_cast<SI16>(mySock->GetWord( offset )));
 	return true;
 }
 
@@ -5883,6 +6356,10 @@ static bool CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -5891,7 +6368,7 @@ static bool CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 offset = args.get( 0 ).toInt32();
-	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )));
+	args.rval().setInt32( static_cast<SI32>(mySock->GetDWord( offset )));
 	return true;
 }
 
@@ -5910,6 +6387,10 @@ static bool CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -5956,6 +6437,10 @@ static bool CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetByte: Invalid number of arguments (takes 3)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -5983,6 +6468,10 @@ static bool CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -6011,6 +6500,10 @@ static bool CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -6046,6 +6539,10 @@ static bool CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	SI32 offset = args.get( 0 ).toInt32();
 	char *trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	if( trgMessage == nullptr )
@@ -6094,6 +6591,10 @@ static bool CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
 	{
@@ -6104,7 +6605,7 @@ static bool CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool sendOnList = true;
 	if( argc == 1 )
 	{
-		sendOnList = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+		sendOnList = ( args.get( 0 ).toBoolean() );
 	}
 
 	if( sendOnList )
@@ -6134,6 +6635,10 @@ static bool CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UI16 music = static_cast<UI16>( args.get( 0 ).toInt32());
 
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
@@ -6161,6 +6666,10 @@ static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
@@ -6223,6 +6732,10 @@ static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	JSString *targMessage = JS_ValueToString( cx, argv[0] );
@@ -6285,6 +6798,10 @@ static bool CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	if( !JSVAL_IS_INT( argv[0] ))
 	{
 		ScriptError( cx, "You have to pass a valid menu number" );
@@ -6318,6 +6835,10 @@ static bool CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 
 	if( mySock == nullptr )
@@ -6351,6 +6872,10 @@ static bool CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>(obj, 0);
 	if( myRace == nullptr )
 	{
@@ -6385,6 +6910,10 @@ static bool CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>(obj, 0);
 	if( myRace == nullptr )
 	{
@@ -6411,6 +6940,10 @@ static bool CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>(obj, 0);
 	if( myRace == nullptr )
 	{
@@ -6437,6 +6970,10 @@ static bool CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CRace *myRace = JS::GetMaybePtrFromReservedSlot<CRace>(obj, 0);
 	if( myRace == nullptr )
 	{
@@ -6466,6 +7003,10 @@ static bool CBase_ApplySection( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj		= static_cast<CBaseObject*>( myClass.toObject() );
 	std::string trgSection	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -6518,6 +7059,10 @@ static bool CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar	= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	UI08 spellNum	= static_cast<UI08>( args.get( 0 ).toInt32());
 	CItem *sBook	= FindItemOfType( myChar, IT_SPELLBOOK );
@@ -6559,6 +7104,10 @@ static bool CChar_SpellFail( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 
 	Effects->PlayStaticAnimation( myChar, 0x3735, 0, 30 );
@@ -6589,6 +7138,10 @@ static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 
 	if( !ValidateObject( myObj ))
@@ -6655,6 +7208,10 @@ static bool CItem_ApplyRank( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ApplyRank: Invalid number of arguments (takes 2)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem	= JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	SI32 rank		= args.get( 0 ).toInt32();
 	SI32 maxrank	= args.get( 1 ).toInt32();
@@ -6678,6 +7235,10 @@ static bool CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 
 	if( !ValidateObject( myItem ))
@@ -6698,26 +7259,6 @@ static bool CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CAccount_GetAccount()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	NOT IMPLEMENTED
-//o------------------------------------------------------------------------------------------------o
-static bool CAccount_GetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
-{
-	return false;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CAccount_SetAccount()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	NOT IMPLEMENTED
-//o------------------------------------------------------------------------------------------------o
-static bool CAccount_SetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
-{
-	return false;
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CAccount_AddAccount()
 //|	Prototype	-	void AddAccount( username, password, email, flags )
 //|	Date		-	8/15/2003 10:43:18 PM
@@ -6734,6 +7275,10 @@ static bool CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid number of arguments (takes 4)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	// Ok get our object from the global context
 	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( JSVAL_IS_INT( argv[3] ) || JSVAL_IS_STRING( argv[3] )))
 	{
@@ -6785,6 +7330,10 @@ static bool CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Account.DelAccount([username/id]): Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	// Ok get out object from the global context
 	if( JSVAL_IS_STRING( argv[0] ))
 	{
@@ -6811,26 +7360,6 @@ static bool CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	return true;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CAccount_ModAccount()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	NOT IMPLEMENTED
-//o------------------------------------------------------------------------------------------------o
-static bool CAccount_ModAccount( JSContext* cx, unsigned argc, JS::Value* vp )
-{
-	return false;
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CAccount_SaveAccounts()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	NOT IMPLEMENTED
-//o------------------------------------------------------------------------------------------------o
-static bool CAccount_SaveAccounts( JSContext* cx, unsigned argc, JS::Value* vp )
-{
-	return false;
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
@@ -6861,9 +7390,12 @@ static bool CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Free: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 	delete mFile;
-	//JS_UnlockGCThing( cx, obj );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
@@ -6882,6 +7414,10 @@ static bool CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Open: Invalid number of arguments (takes 2 to 4 - filename, file mode and - optionally - folderName and useScriptDataDir bool)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	char *fileName = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -6894,7 +7430,7 @@ static bool CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool useScriptDataDir = false;
 	if( argc >= 4 )
 	{
-		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+		useScriptDataDir = ( args.get( 3 ).toBoolean() );
 	}
 
 	if( oldstrutil::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
@@ -6959,6 +7495,10 @@ static bool CFile_Close( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Open: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	fclose( mFile->mWrap );
@@ -6979,6 +7519,10 @@ static bool CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Read: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
@@ -7017,6 +7561,10 @@ static bool CFile_ReadUntil( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "ReadUntil: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
@@ -7066,11 +7614,15 @@ static bool CFile_Write( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Write: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
-		ScriptError( cx, "Write: Error writing to file, file was not opened sucessfully!" );
+		ScriptError( cx, "Write: Error writing to file, file was not opened successfully!" );
 		return false;
 	}
 	else if( ftell( mFile->mWrap ) > ( 10 * 1024 * 1024 ))
@@ -7102,6 +7654,10 @@ static bool CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "EOF: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap )
@@ -7126,17 +7682,21 @@ static bool CFile_Length( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Length: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap )
 	{
-		*rval = INT_TO_JSVAL( -1 );
+		args.rval().setInt32( -1 );
 		return true;
 	}
 
 	long fpos = ftell( mFile->mWrap );
 	fseek( mFile->mWrap, 0, SEEK_END );
-	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
+	args.rval().setInt32( ftell( mFile->mWrap ));
 
 	if( fpos > -1 )
 	{
@@ -7160,6 +7720,10 @@ static bool CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Pos: Invalid number of arguments (takes 0 or 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	UOXFileWrapper_st *mFile = JS::GetMaybePtrFromReservedSlot<UOXFileWrapper_st>(obj, 0);
 
 	if( !mFile || !mFile->mWrap )
@@ -7170,7 +7734,7 @@ static bool CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 		int newFPos = fseek( mFile->mWrap, args.get( 0 ).toInt32(), SEEK_SET );
 	}
 
-	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
+	args.rval().setInt32( ftell( mFile->mWrap ));
 
 	return true;
 }
@@ -7189,6 +7753,10 @@ static bool CBase_FirstItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "FirstItem: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -7240,6 +7808,10 @@ static bool CBase_NextItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "NextItem: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -7291,6 +7863,10 @@ static bool CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -7328,6 +7904,10 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 or 3)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *cMove = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( cMove ))
 	{
@@ -7440,6 +8020,10 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 or 3)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *cMove = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( cMove ))
 	{
@@ -7552,6 +8136,10 @@ static bool CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXChar" )
@@ -7593,6 +8181,10 @@ static bool CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate encaps2( cx, &( argv[1] ));
 	JSEncapsulate myClass( cx, obj );
@@ -7642,6 +8234,10 @@ static bool CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSObject *jsObj		= args.get( 0 ).toObjectOrNull();
 	CBaseObject *myObj	= JS::GetMaybePtrFromReservedSlot<CBaseObject >(jsObj , 0);
 
@@ -7653,7 +8249,7 @@ static bool CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( GetDist( thisObj, myObj ));
+	args.rval().setInt32( GetDist( thisObj, myObj ));
 	return true;
 }
 
@@ -7665,6 +8261,10 @@ static bool CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSObject *mSock	= args.get( 0 ).toObjectOrNull();
 	CSocket *mySock	= JS::GetMaybePtrFromReservedSlot<CSocket >(mSock , 0);
 
@@ -7736,6 +8336,10 @@ static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSObject *mSock	= args.get( 0 ).toObjectOrNull();
 	CSocket *mySock	= JS::GetMaybePtrFromReservedSlot<CSocket >(mSock , 0);
 
@@ -7808,6 +8412,10 @@ static bool CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -7887,6 +8495,10 @@ static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -7955,6 +8567,10 @@ static bool CChar_Mark( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -8004,6 +8620,10 @@ static bool CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar			= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	std::string namelist	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
@@ -8033,6 +8653,10 @@ static bool CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar			= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	std::string skillName	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	UI16 value				= args.get( 1 ).toInt32();
@@ -8073,6 +8697,10 @@ static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Kill: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -8130,6 +8758,10 @@ static bool CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Resurrect: Invalid number of arguments (takes 0)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -8172,6 +8804,10 @@ static bool CItem_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *mItem	= JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	JSObject *jsObj	= args.get( 0 ).toObjectOrNull();
 
@@ -8222,6 +8858,10 @@ static bool CChar_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	// Original character object
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
@@ -8261,6 +8901,10 @@ static bool CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -8292,6 +8936,10 @@ static bool CChar_Release( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *myChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( myChar ))
 	{
@@ -8319,6 +8967,10 @@ static bool CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
 	{
@@ -8367,6 +9019,10 @@ static bool CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Print: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.Print( arg0.toString() );
 	return true;
@@ -8386,6 +9042,10 @@ static bool CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Log: Invalid number of arguments (takes 1 or 2)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1;
 	if( argc == 1 )
@@ -8431,6 +9091,10 @@ static bool CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Warning: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.Warning( arg0.toString() );
 	return true;
@@ -8569,6 +9233,10 @@ static bool CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PrintDone: Invalid number of arguments (takes 0 or 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	bool normalDone = true;
 	if( argc != 0 )
 	{
@@ -8600,6 +9268,10 @@ static bool CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PrintFailed: Invalid number of arguments (takes 0 or 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	bool normalFailed = true;
 	if( argc != 0 )
 	{
@@ -8664,6 +9336,10 @@ static bool CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* v
 		ScriptError( cx, "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.PrintBasedOnVal( arg0.toBool() );
 	return true;
@@ -8683,6 +9359,10 @@ static bool CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "MoveTo: Invalid number of arguments (takes 2)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
 	Console.MoveTo( arg0.toInt(), arg1.toInt() );
@@ -8710,6 +9390,10 @@ static bool CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "PrintSpecial: Invalid number of arguments (takes 2)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
@@ -8755,6 +9439,10 @@ static bool CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "Reload: Invalid number of arguments (takes 1)" );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	SI32 mArg = arg0.toInt();
 	if( mArg < 0 || mArg > 8 )
@@ -8781,6 +9469,10 @@ static bool CChar_SpellMoveEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSpellInfo *mySpell = JS::GetMaybePtrFromReservedSlot<CSpellInfo >(args.get( 1 ).toObjectOrNull(), 0);
 	if( mySpell == nullptr )
 	{
@@ -8820,6 +9512,10 @@ static bool CChar_SpellStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *source = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( source ))
 	{
@@ -8859,6 +9555,10 @@ static bool CChar_BreakConcentration( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -8896,6 +9596,10 @@ static bool CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mSock == nullptr )
 	{
@@ -8924,6 +9628,10 @@ static bool CItem_LockDown( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	if( mItem == nullptr )
 	{
@@ -8969,6 +9677,10 @@ static bool CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *toCarve = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	if( !ValidateObject( toCarve ))
 	{
@@ -9017,6 +9729,10 @@ static bool CItem_GetTileName( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CItem *mItem = JS::GetMaybePtrFromReservedSlot<CItem>(obj, 0);
 	if( !ValidateObject( mItem ))
 	{
@@ -9047,6 +9763,10 @@ static bool CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
@@ -9100,6 +9820,10 @@ static bool CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9141,6 +9865,10 @@ static bool CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9182,6 +9910,10 @@ static bool CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9223,6 +9955,10 @@ static bool CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9264,6 +10000,10 @@ static bool CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9305,6 +10045,10 @@ static bool CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9346,6 +10090,10 @@ static bool CMulti_RemoveTrashCont( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9388,6 +10136,10 @@ static bool CMulti_KillKeys( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	*rval = JSVAL_FALSE;
 	CMultiObj *multiObject = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 
@@ -9431,6 +10183,10 @@ static bool CMulti_FirstChar( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -9500,6 +10256,10 @@ static bool CMulti_NextChar( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -9569,6 +10329,10 @@ static bool CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
 		ScriptError( cx, "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CMultiObj *myObj = JS::GetMaybePtrFromReservedSlot<CMultiObj>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -9631,6 +10395,10 @@ static bool CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CSocket *mSock		= nullptr;
 	CChar *mChar		= nullptr;
@@ -9767,6 +10535,10 @@ static bool CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mSock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	JSEncapsulate myClass( cx, &( argv[0] ));
 
@@ -9806,6 +10578,10 @@ static bool CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *attacker	= nullptr;
 	CChar *mChar	= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
@@ -9860,6 +10636,10 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *attacker	= nullptr;
 	CChar *mChar	= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
@@ -9901,7 +10681,7 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool doRepsys = false;
 	if( argc >= 4 )
 	{
-		doRepsys = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+		doRepsys = ( args.get( 3 ).toBoolean() );
 	}
 
 	// Keep track of original script that's executing
@@ -9939,6 +10719,10 @@ static bool CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -9988,6 +10772,10 @@ static bool CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* v
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10030,6 +10818,10 @@ static bool CChar_AddAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10062,6 +10854,10 @@ static bool CChar_RemoveAggressorFlag( JSContext* cx, unsigned argc, JS::Value* 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10094,6 +10890,10 @@ static bool CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* v
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10126,6 +10926,10 @@ static bool CChar_UpdateAggressorFlagTimestamp( JSContext* cx, unsigned argc, JS
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10158,6 +10962,10 @@ static bool CChar_ClearAggressorFlags( JSContext* cx, unsigned argc, JS::Value* 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10191,7 +10999,11 @@ static bool CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
+	bool checkForPlayerOnly	= ( args.get( 0 ).toBoolean() );
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly ));
 	return true;
@@ -10211,6 +11023,10 @@ static bool CChar_AddPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10243,6 +11059,10 @@ static bool CChar_RemovePermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10275,6 +11095,10 @@ static bool CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* v
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10307,6 +11131,10 @@ static bool CChar_UpdatePermaGreyFlagTimestamp( JSContext* cx, unsigned argc, JS
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10339,6 +11167,10 @@ static bool CChar_ClearPermaGreyFlags( JSContext* cx, unsigned argc, JS::Value* 
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10365,6 +11197,10 @@ static bool CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *mChar = JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
 	{
@@ -10372,7 +11208,7 @@ static bool CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+	bool checkForPlayerOnly	= ( args.get( 0 ).toBoolean() );
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly ));
 	return true;
@@ -10393,6 +11229,10 @@ static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CChar *healer	= nullptr;
 	CChar *mChar	= JS::GetMaybePtrFromReservedSlot<CChar>(obj, 0);
 	if( !ValidateObject( mChar ))
@@ -10471,6 +11311,10 @@ static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar		= nullptr;
 	CItem *mItem		= nullptr;
@@ -10502,11 +11346,11 @@ static bool CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 	{
 		if( ValidateObject( mChar ))
 		{
-			*rval = INT_TO_JSVAL( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() )));
+			args.rval().setInt32( mChar->GetResist( static_cast<WeatherType>( resistType.toInt() )));
 		}
 		else if( ValidateObject( mItem ))
 		{
-			*rval = INT_TO_JSVAL( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() )));
+			args.rval().setInt32( mItem->GetResist( static_cast<WeatherType>( resistType.toInt() )));
 		}
 		else
 		{
@@ -10557,6 +11401,10 @@ static bool CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -10580,7 +11428,7 @@ static bool CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 	JSEncapsulate resistType( cx, &( argv[1] ));
 	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
 
-	*rval = INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() )));
+	args.rval().setInt32( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() )));
 	return true;
 }
 
@@ -10601,6 +11449,10 @@ static bool CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CItem *mItem = nullptr;
 
@@ -10659,7 +11511,7 @@ static bool CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
-	*rval = INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart ));
+	args.rval().setInt32( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart ));
 	return true;
 }
 
@@ -10681,6 +11533,10 @@ static bool CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CItem *mItem = nullptr;
 
@@ -10758,6 +11614,10 @@ static bool CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -10802,6 +11662,10 @@ static bool CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -10841,6 +11705,10 @@ static bool CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp 
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CBaseObject *myObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>(obj, 0);
 	if( !ValidateObject( myObj ))
 	{
@@ -10876,6 +11744,10 @@ static bool CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -10921,6 +11793,10 @@ static bool CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -10960,6 +11836,10 @@ static bool CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -11046,6 +11926,10 @@ static bool CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CTownRegion *myObj = JS::GetMaybePtrFromReservedSlot<CTownRegion>(obj, 0);
 	if( myObj == nullptr )
 	{
@@ -11053,7 +11937,7 @@ static bool CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
-	*rval = INT_TO_JSVAL( myObj->GetOreChance() );
+	args.rval().setInt32( myObj->GetOreChance() );
 	return true;
 }
 
@@ -11071,6 +11955,10 @@ static bool CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11115,6 +12003,10 @@ static bool CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11159,6 +12051,10 @@ static bool CChar_GetFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11219,6 +12115,10 @@ static bool CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11259,6 +12159,10 @@ static bool CChar_GetPetList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11325,6 +12229,10 @@ static bool CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11372,6 +12280,10 @@ static bool CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Valu
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11401,7 +12313,7 @@ static bool CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Valu
 
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
-	*rval = INT_TO_JSVAL( petControlChance );
+	args.rval().setInt32( petControlChance );
 	return true;
 }
 
@@ -11419,6 +12331,10 @@ static bool CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11463,6 +12379,10 @@ static bool CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11507,6 +12427,10 @@ static bool CChar_GetFollowerList( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	CChar *mChar = nullptr;
 
@@ -11574,6 +12498,10 @@ static bool CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXParty" )
 	{
@@ -11611,6 +12539,10 @@ static bool CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 
 	// let's setup our default return value here
@@ -11702,6 +12634,10 @@ static bool CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXParty" )
 	{
@@ -11750,6 +12686,10 @@ static bool CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* v
 		ScriptError( cx, "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
 	{
@@ -11757,7 +12697,7 @@ static bool CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* v
 		return false;
 	}
 	UI16 trigWord = mySock->FirstTrigWord();
-	*rval = INT_TO_JSVAL( trigWord );
+	args.rval().setInt32( trigWord );
 	return true;
 }
 
@@ -11775,6 +12715,10 @@ static bool CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp
 		ScriptError( cx, "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
 	{
@@ -11782,7 +12726,7 @@ static bool CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp
 		return false;
 	}
 	UI16 trigWord = mySock->NextTrigWord();
-	*rval = INT_TO_JSVAL( trigWord );
+	args.rval().setInt32( trigWord );
 	return true;
 }
 
@@ -11800,6 +12744,10 @@ static bool CSocket_FinishedTriggerWords( JSContext* cx, unsigned argc, JS::Valu
 		ScriptError( cx, "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );
 		return false;
 	}
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject obj(cx);
+  if (!args.computeThis(cx, &obj))
+      return false;
 	CSocket *mySock = JS::GetMaybePtrFromReservedSlot<CSocket>(obj, 0);
 	if( mySock == nullptr )
 	{
