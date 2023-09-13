@@ -1912,7 +1912,7 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 			ScriptError( cx, "Send: Passed an invalid Socket" );
 			return false;
 		}
-		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )));
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -1925,7 +1925,7 @@ static bool CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 		}
 
 		CSocket *mySock = myChar->GetSocket();
-		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )));
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
 	}
 	else
@@ -2007,8 +2007,8 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
@@ -2078,7 +2078,7 @@ static bool CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -2343,13 +2343,13 @@ static bool CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	myObj->Delete();
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -2728,14 +2728,14 @@ static bool CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	Network->Disconnect( targSock );
 	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() ); // yes we should do that...
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -2887,8 +2887,8 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myClass.ClassName() == "UOXItem" )
 	{
@@ -2949,7 +2949,7 @@ static bool CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -3132,8 +3132,8 @@ static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	CPSellList toSend;
 	if( myClass.ClassName() == "UOXSocket" )
@@ -3175,7 +3175,7 @@ static bool CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -3216,8 +3216,8 @@ static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myClass.ClassName() == "UOXSocket" )
 	{
@@ -3263,7 +3263,7 @@ static bool CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -3368,8 +3368,8 @@ static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI08 spellId = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
@@ -3400,7 +3400,7 @@ static bool CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -3934,8 +3934,8 @@ static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	CSocket *mySock = nullptr;
 	// Open the bank of myChar to myChar
@@ -3963,7 +3963,7 @@ static bool CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -4006,13 +4006,13 @@ static bool CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( contToOpen ))
 	{
 		// Keep track of original script that's executing
-		auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-		auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+		auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+		auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 		mSock->OpenPack( contToOpen, false );
 
 		// Active script-context might have been lost, so restore it...
-		if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
 			JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -4058,13 +4058,13 @@ static bool CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 		if( ValidateObject( iLayer ))
 		{
 			// Keep track of original script that's executing
-			auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-			auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+			auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+			auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 			mySock->OpenPack( iLayer );
 
 			// Active script-context might have been lost, so restore it...
-			if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+			if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 			{
 				// ... by calling a dummy function in original script!
 				JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -4134,8 +4134,8 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	// Just don't do anything if NewDir eq OldDir
 	UI08 newDir = Movement->Direction( myChar, x, y );
@@ -4160,7 +4160,7 @@ static bool CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -4537,8 +4537,8 @@ static bool CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 	
-	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	//mySock->TempInt( static_cast<SI64>( JSMapping->GetScript( JS_GetGlobalObject( cx ))));
+	mySock->scriptForCallBack = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	//mySock->TempInt( static_cast<SI64>( JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ))));
 	UI08 tNum = static_cast<UI08>( args.get( 0 ).toInt32());
 
 	constexpr auto maxsize = 512; // Could become long (make sure it's nullptr )
@@ -4725,7 +4725,7 @@ static bool CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 		{
 			if( args.get( 2 ).toBoolean() )
 			{
-				Effect->AssocScript( JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
+				Effect->AssocScript( JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )));
 			}
 			else
 			{
@@ -5008,7 +5008,7 @@ static bool CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	myChar->SetSpeechId( speechId );
-	myChar->SetSpeechCallback( JSMapping->GetScript( JS_GetGlobalObject( cx )));
+	myChar->SetSpeechCallback( JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )));
 
 	return true;
 }
@@ -5344,14 +5344,14 @@ static bool CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	// return true if the change was successful, false otherwise
 	*rval = BOOLEAN_TO_JSVAL( myItem->SetCont( trgObj ));
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -6140,8 +6140,8 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	auto autoStack = ( args.get( 0 ).toBoolean() );
 	if( autoStack && ValidateObject( myItem->GetCont() ))
@@ -6162,7 +6162,7 @@ static bool CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -6693,8 +6693,8 @@ static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER )
 	{
@@ -6706,7 +6706,7 @@ static bool CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -6759,8 +6759,8 @@ static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER  )
 	{
@@ -6772,7 +6772,7 @@ static bool CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -7072,13 +7072,13 @@ static bool CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( ValidateObject( sBook ))
 	{
 		// Keep track of original script that's executing
-		auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-		auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+		auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+		auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 		Magic->AddSpell( sBook, spellNum );
 
 		// Active script-context might have been lost, so restore it...
-		if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+		if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 		{
 			// ... by calling a dummy function in original script!
 			JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -7154,8 +7154,8 @@ static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( myObj->CanBeObjType( OT_CHAR ))
 	{
@@ -7180,7 +7180,7 @@ static bool CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -7970,8 +7970,8 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
@@ -7993,7 +7993,7 @@ static bool CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8087,8 +8087,8 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
@@ -8111,7 +8111,7 @@ static bool CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8295,8 +8295,8 @@ static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	mItem->SetGlowColour( mItem->GetColour() );
 
@@ -8316,7 +8316,7 @@ static bool CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 	mySock->SysMessage( 1098 ); // Item is now glowing.
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8372,8 +8372,8 @@ static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	mItem->SetColour( mItem->GetGlowColour() );
 
@@ -8384,7 +8384,7 @@ static bool CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 	mySock->SysMessage( 1102 ); // Item is no longer glowing.
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8527,8 +8527,8 @@ static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( mChar->WorldNumber() != destWorld && mChar->GetSocket() != nullptr )
 	{
@@ -8541,7 +8541,7 @@ static bool CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8711,8 +8711,8 @@ static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto i : scriptTriggers )
@@ -8733,7 +8733,7 @@ static bool CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 	HandleDeath( mChar, nullptr );
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -8772,13 +8772,13 @@ static bool CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	NpcResurrectTarget( mChar );
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -9698,13 +9698,13 @@ static bool CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	*rval = BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve ));
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -10687,13 +10687,13 @@ static bool CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	bool retVal = mChar->Damage( damage.toInt(), element, attacker, doRepsys );
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -10740,13 +10740,13 @@ static bool CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	*rval = BOOLEAN_TO_JSVAL( Combat->StartAttack( mChar, ourTarget ));
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -10786,13 +10786,13 @@ static bool CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* v
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	Combat->InvalidateAttacker( mChar );
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );
@@ -11269,13 +11269,13 @@ static bool CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	mChar->Heal( static_cast<SI16>( Heal.toInt() ), healer );
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &argv[0], 0, rval );

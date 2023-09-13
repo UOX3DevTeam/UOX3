@@ -644,7 +644,7 @@ bool SE_RegisterCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 	std::string toRegister	= convertToString( cx, args.get( 0 ).toString() );
 	UI08 execLevel			= static_cast<UI08>( args.get( 1 ).toInt32());
 	bool isEnabled			= ( args.get( 2 ).toBoolean() );
-	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId			= JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( scriptId == 0xFFFF )
 	{
@@ -674,7 +674,7 @@ bool SE_RegisterSpell( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	SI32 spellNumber	= args.get( 0 ).toInt32();
 	bool isEnabled		= ( args.get( 1 ).toBoolean() );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript	= JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	Magic->Register( myScript, spellNumber, isEnabled );
 	return true;
 }
@@ -697,7 +697,7 @@ bool SE_RegisterSkill( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	SI32 skillNumber	= args.get( 0 ).toInt32();
 	bool isEnabled		= ( args.get( 1 ).toBoolean() );
-	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId		= JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -749,7 +749,7 @@ bool SE_RegisterPacket( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI08 packet			= static_cast<UI08>( args.get( 0 ).toInt32());
 	UI08 subCmd			= static_cast<UI08>( args.get( 1 ).toInt32());
-	UI16 scriptId		= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId		= JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
@@ -776,9 +776,9 @@ bool SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
-	JSEncapsulate encaps( cx, &( argv[0] ));
+  auto encaps = args.get( 0 );
 	std::string toRegister	= convertToString( cx, args.get( 1 ).toString() );
-	UI16 scriptId			= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId			= JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( scriptId == 0xFFFF )
 	{
@@ -786,9 +786,9 @@ bool SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 	}
 	SI32 toPass = 0;
-	if( encaps.isType( JSOT_STRING ))
+	if( encaps.isString() )
 	{
-		std::string enStr = encaps.toString();
+		std::string enStr = convertToString( cx, encaps.toString() );
 		if( enStr.length() != 0 )
 		{
 			toPass  = enStr[0];
@@ -801,7 +801,7 @@ bool SE_RegisterKey( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		toPass = encaps.toInt();
+		toPass = encaps.toInt32();
 	}
 	Console.RegisterKey( toPass, toRegister, scriptId );
 	return true;
@@ -822,7 +822,7 @@ bool SE_RegisterConsoleFunc( JSContext* cx, unsigned argc, JS::Value* vp )
   auto args		= JS::CallArgsFromVp(argc, vp);
 	std::string funcToRegister	= convertToString( cx, args.get( 0 ).toString() );
 	std::string toRegister		= convertToString( cx, args.get( 1 ).toString() );
-	UI16 scriptId				= JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	UI16 scriptId				= JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( scriptId == 0xFFFF )
 	{
@@ -1055,7 +1055,7 @@ bool SE_SecondsPerUOMinute( JSContext* cx, unsigned argc, JS::Value* vp )
 bool SE_GetCurrentClock( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
+	args.rval().setInt32( cwmWorldState->GetUICurrentTime() );
 
 	return true;
 }
@@ -1068,7 +1068,7 @@ bool SE_GetCurrentClock( JSContext* cx, unsigned argc, JS::Value* vp )
 bool SE_GetStartTime( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
-	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
+	args.rval().setInt32( cwmWorldState->GetStartTime() );
 
 	return true;
 }
@@ -1170,8 +1170,8 @@ bool SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool useNpcList = ( argc == 7 ? ( args.get( 6 ).toBoolean() ) : false );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	////auto origContext = cx;
+	////auto origObject = obj;
 
 	cMade = Npcs->CreateNPCxyz( nnpcNum, x, y, z, world, instanceId, useNpcList );
 	if( cMade != nullptr )
@@ -1185,7 +1185,7 @@ bool SE_SpawnNPC( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 
 	return true;
 }
@@ -1205,14 +1205,14 @@ bool SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	CSocket *mySock = nullptr;
-	if( argv[0] != JSVAL_NULL )
+  if( !args.get( 0 ).isNull() )
 	{
 		JSObject *mSock			= args.get( 0 ).toObjectOrNull();
 		mySock					= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	}
 
 	CChar *myChar = nullptr;
-	if( argv[1] != JSVAL_NULL )
+	if( !args.get( 1 ).isNull() )
 	{
 		JSObject *mChar			= args.get( 1 ).toObjectOrNull();
 		myChar					= JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
@@ -1253,8 +1253,8 @@ bool SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	////auto origContext = cx;
+	////auto origObject = obj;
 
 	CItem *newItem = nullptr;
 	if( myChar != nullptr )
@@ -1277,7 +1277,7 @@ bool SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 	return true;
 }
 
@@ -1319,8 +1319,8 @@ bool SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	bool inPack				= ( args.get( 7 ).toBoolean() );
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	newItem = Items->CreateItem( mySock, myChar, itemId, amount, colour, itemType, inPack );
 	if( newItem != nullptr )
@@ -1338,7 +1338,7 @@ bool SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 
 	return true;
 }
@@ -1385,8 +1385,8 @@ bool SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	CMultiObj *newMulti = BuildHouse( nullptr, houseId, checkLocation, xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( newMulti != nullptr )
@@ -1406,7 +1406,7 @@ bool SE_CreateHouse( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 	return true;
 }
 
@@ -1453,8 +1453,8 @@ bool SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	CMultiObj *newMulti = BuildBaseMulti( multiId, xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( newMulti != nullptr )
@@ -1474,7 +1474,7 @@ bool SE_CreateBaseMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 	return true;
 }
 
@@ -1818,8 +1818,8 @@ bool SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	bool scriptExecuted = false;
 	std::vector<UI16> scriptTriggers = myItem->GetScriptTriggers();
@@ -1887,7 +1887,7 @@ bool SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 
 	return true;
 }
@@ -1945,8 +1945,8 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Store original script context and object, in case NPC spawned has some event that triggers on spawn and grabs context
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	if( myItem->GetTempVar( CITV_MOREZ, 1 ) == 1 && myItem->GetTempVar( CITV_MOREZ, 2 ) > 0 ) // Is trapped and set to deal more than 0 damage
 	{
@@ -1954,7 +1954,7 @@ bool SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	// Restore original script context and object
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
 
 	return true;
 }
@@ -1981,12 +1981,12 @@ bool SE_TriggerEvent( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( toExecute == nullptr || eventToFire.empty() )
 		return false;
 
-	auto origContext = cx;
-	auto origObject = obj;
+	//auto origContext = cx;
+	//auto origObject = obj;
 
 	bool retVal = toExecute->CallParticularEvent( eventToFire.c_str(), &argv[2], argc - 2, rval );
 
-	JS_SetGlobalObject( origContext, origObject );
+	//JS_SetGlobalObject( origContext, origObject );
   return( retVal );
 }
 
@@ -2404,7 +2404,7 @@ bool SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	std::vector<CChar *> charsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2490,7 +2490,7 @@ bool SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	std::vector<CItem *> itemsFound;
 	UI16 retCounter	= 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
 	{
 		if( MapArea )
@@ -2819,7 +2819,7 @@ bool SE_IterateOver( JSContext* cx, unsigned argc, JS::Value* vp )
 	UI32 b				= 0;
 	std::string objType = convertToString( cx, args.get( 0 ).toString() );
 	ObjectType toCheck	= FindObjTypeFromString( objType );
-	cScript *myScript	= JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript	= JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 	if( myScript != nullptr )
 	{
 		ObjectFactory::GetSingleton().IterateOver( toCheck, b, myScript, &SE_IterateFunctor );
@@ -2847,7 +2847,7 @@ bool SE_IterateOverSpawnRegions( JSContext* cx, unsigned argc, JS::Value* vp )
 {
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI32 b = 0;
-	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	cScript *myScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
 
 	if( myScript != nullptr )
 	{
@@ -3040,7 +3040,7 @@ bool SE_ReloadJSFile( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
 	UI16 scriptId = static_cast<UI16>( args.get( 0 ).toInt32());
-	if( scriptId == JSMapping->GetScriptId( JS_GetGlobalObject( cx )))
+	if( scriptId == JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )))
 	{
 		ScriptError( cx, oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ).c_str() );
 		return false;
