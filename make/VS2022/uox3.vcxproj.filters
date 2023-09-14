@@ -319,6 +319,12 @@
     <ClCompile Include="..\..\source\configuration\serverstring.cpp">
       <Filter>Source Files\configuration</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\configuration\expansion.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\type\era.cpp">
+      <Filter>Source Files\type</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -592,6 +598,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverstring.hpp">
       <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\expansion.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\type\era.hpp">
+      <Filter>Source Files\type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -92,12 +92,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\configuration\expansion.cpp" />
     <ClCompile Include="..\..\source\configuration\serverstring.cpp" />
+    <ClCompile Include="..\..\source\type\era.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
     <ClCompile Include="..\..\source\type\startlocation.cpp" />
-    <ClCompile Include="..\..\source\type\eraexpansion.cpp" />
     <!-- configuration group -->
     <ClCompile Include="..\..\source\configuration\assistantfeature.cpp" />
     <ClCompile Include="..\..\source\configuration\clientenable.cpp" />
@@ -195,13 +196,14 @@
     <ClCompile Include="..\..\source\uopdata.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\configuration\expansion.hpp" />
     <ClInclude Include="..\..\source\configuration\serverstring.hpp" />
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <!-- type group -->
     <ClInclude Include="..\..\source\type\clientversion.hpp" />
+    <ClInclude Include="..\..\source\type\era.hpp" />
     <ClInclude Include="..\..\source\type\startlocation.hpp" />
-    <ClInclude Include="..\..\source\type\eraexpansion.hpp" />
     <!-- configuration group -->
     <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
     <ClInclude Include="..\..\source\configuration\clientenable.hpp" />

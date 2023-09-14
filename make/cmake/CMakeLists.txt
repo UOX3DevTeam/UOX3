@@ -18,8 +18,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.hpp
     ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.cpp
     ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/type/eraexpansion.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/type/eraexpansion.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/era.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/era.hpp
 
 # configuration
     ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
@@ -40,6 +40,9 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.hpp
+
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.h
