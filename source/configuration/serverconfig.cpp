@@ -56,8 +56,10 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
                             if (!youngLocation.setKeyValue(key,value)){
                                 if (!serverSwitch.setKeyValue(key,value)){
                                     if (!serverString.setKeyValue(key,value)){
-                                        std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                                        rvalue = false ;
+                                        if (!ruleSets.setKeyValue(key,value)){
+                                            std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                                            rvalue = false ;
+                                        }
                                     }
                                 }
                             }
@@ -372,19 +374,19 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA\n";
     output << "//========================================================================\n" ;
     output << "[expansion settings]\n{\n" ;
-    
-//    output << "\tCORESHARDERA = " << EraEnumToString(static_cast<expansionruleset_t>(ExpansionCoreShardEra()), true) << "\n" ;
-//    output << "\tARMORCALCULATION = " << EraEnumToString(static_cast<expansionruleset_t>(expansionArmorCalculation)) << "\n" ;
-//    output << "\tSTRENGTHDAMAGEBONUS = " << EraEnumToString(static_cast<expansionruleset_t>(expansionStrengthDamageBonus)) << "\n" ;
-//    output << "\tTACTICSDAMAGEBONUS = " << EraEnumToString(static_cast<expansionruleset_t>(expansionTacticsDamageBonus)) << "\n" ;
-//    output << "\tANATOMYDAMAGEBONUS = "  << EraEnumToString(static_cast<expansionruleset_t>(expansionAnatomyDamageBonus)) << "\n" ;
-//    output << "\tLUMBERJACKDAMAGEBONUS = " << EraEnumToString(static_cast<expansionruleset_t>(expansionLumberjackDamageBonus))  << "\n" ;
-//    output << "\tRACIALDAMAGEBONUS = " << EraEnumToString(static_cast<expansionruleset_t>(expansionRacialDamageBonus)) <<< "\n" ;
-//    output << "\tDAMAGEBONUSCAP = " << EraEnumToString(static_cast<expansionruleset_t>(expansionDamageBonusCap)) << "\n" ;
-//    output << "\tSHIELDPARRY = " << EraEnumToString(static_cast<expansionruleset_t>(expansionShieldParry)) << "\n" ;
-//    output << "\tWEAPONPARRY ="  << EraEnumToString(static_cast<expansionruleset_t>(expansionWeaponParry)) << "\n" ;
-//    output << "\tWRESTLINGPARRY = " << EraEnumToString(static_cast<expansionruleset_t>(expansionWrestlingParry)) << "\n" ;
-//    output << "\tCOMBATHITCHANCE = " << EraEnumToString(static_cast<expansionruleset_t>(expansionCombatHitChance)) << "\n" ;
+    // Becaause we care about the order"
+    output << "\tCORESHARDERA = " << ruleSets[Expansion::SHARD].describe() << "\n" ;
+    output << "\tARMORCALCULATION = " << ruleSets[Expansion::ARMOR].describe() << "\n" ;
+    output << "\tSTRENGTHDAMAGEBONUS = " << ruleSets[Expansion::STRENGTH].describe() << "\n" ;
+    output << "\tTACTICSDAMAGEBONUS = " <<ruleSets[Expansion::TATIC].describe() << "\n" ;
+    output << "\tANATOMYDAMAGEBONUS = "  << ruleSets[Expansion::DAMAGE].describe() << "\n" ;
+    output << "\tLUMBERJACKDAMAGEBONUS = " << ruleSets[Expansion::LUMBERJACK].describe() << "\n" ;
+    output << "\tRACIALDAMAGEBONUS = " << ruleSets[Expansion::RACIAL].describe() << "\n" ;
+    output << "\tDAMAGEBONUSCAP = " << ruleSets[Expansion::DAMAGE].describe() << "\n" ;
+    output << "\tSHIELDPARRY = " << ruleSets[Expansion::SHIELD].describe() << "\n" ;
+    output << "\tWEAPONPARRY ="  << ruleSets[Expansion::WEAPON].describe() << "\n" ;
+    output << "\tWRESTLINGPARRY = " << ruleSets[Expansion::WRESTLING].describe() << "\n" ;
+    output << "\tCOMBATHITCHANCE = " << ruleSets[Expansion::COMBAT].describe() << "\n" ;
     
     output << "}\n\n" ;
 

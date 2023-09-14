@@ -160,15 +160,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"COOWNHOUSESONSAMEACCOUNT"s, 225},
     {"MAXPLAYERPACKITEMS"s, 227},
     {"MAXPLAYERBANKITEMS"s, 228},
-    {"CORESHARDERA"s, 231},
-    {"ARMORCALCULATION"s, 232},
-    {"STRENGTHDAMAGEBONUS"s, 233},
-    {"TACTICSDAMAGEBONUS"s, 234},
-    {"ANATOMYDAMAGEBONUS"s, 235},
-    {"LUMBERJACKDAMAGEBONUS"s, 236},
-    {"RACIALDAMAGEBONUS"s, 237},
-    {"DAMAGEBONUSCAP"s, 238},
-    {"SHIELDPARRY"s, 239},
     {"PARRYDAMAGECHANCE"s, 240},
     {"PARRYDAMAGEMIN"s, 241},
     {"PARRYDAMAGEMAX"s, 242},
@@ -201,9 +192,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"HIDESTATSFORUNKNOWNMAGICITEMS"s, 297},
     {"MAXSAFETELEPORTSPERDAY"s, 299},
     {"GLOBALRESTOCKMULTIPLIER"s, 308},
-    {"WEAPONPARRY"s, 313},
-    {"WRESTLINGPARRY"s, 314},
-    {"COMBATHITCHANCE"s, 315},
     {"CASTSPELLSWHILEMOVING"s, 316},
     {"MAXPLAYERPACKWEIGHT"s, 319},
     {"MAXPLAYERBANKWEIGHT"s, 320},
@@ -529,6 +517,7 @@ auto CServerData::ResetDefaults() -> void {
     Directory(CSDDP_LOGS, tDir);
     */
     // Expansion settings
+    /*
     ExpansionCoreShardEra(ER_LBR); // Default to LBR expansion
     ExpansionArmorCalculation(ER_CORE);
     ExpansionStrengthDamageBonus(ER_CORE);
@@ -541,7 +530,7 @@ auto CServerData::ResetDefaults() -> void {
     ExpansionWeaponParry(ER_CORE);
     ExpansionWrestlingParry(ER_CORE);
     ExpansionCombatHitChance(ER_CORE);
-    
+    */
     BuyThreshold(2000);
  //   GuardStatus(true);
 //    ServerAnnounceSaves(true);
@@ -887,375 +876,6 @@ auto CServerData::SystemTimer(csd_tid_t timerid, std::uint16_t value) -> void {
     serverTimers[timerid] = value;
 }
 
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionCoreShardEra()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set core era ruleset for shard
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCoreShardEra() const -> std::uint8_t { return coreShardEra; }
-auto CServerData::ExpansionCoreShardEra(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    coreShardEra = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionArmorCalculation()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for armor/defense calculation
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionArmorCalculation() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionArmorCalculation) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionArmorCalculation;
-}
-auto CServerData::ExpansionArmorCalculation(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    else if (static_cast<expansionruleset_t>(setting) == ER_CORE) {
-        setting = ExpansionCoreShardEra();
-    }
-    expansionArmorCalculation = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionStrengthDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for strength damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionStrengthDamageBonus() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionStrengthDamageBonus) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionStrengthDamageBonus;
-}
-auto CServerData::ExpansionStrengthDamageBonus(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionStrengthDamageBonus = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionTacticsDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for tactics damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionTacticsDamageBonus() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionTacticsDamageBonus) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionTacticsDamageBonus;
-}
-auto CServerData::ExpansionTacticsDamageBonus(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionTacticsDamageBonus = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionAnatomyDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for anatomy damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionAnatomyDamageBonus() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionAnatomyDamageBonus) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionAnatomyDamageBonus;
-}
-auto CServerData::ExpansionAnatomyDamageBonus(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionAnatomyDamageBonus = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionLumberjackDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for lumberjack damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionLumberjackDamageBonus() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionLumberjackDamageBonus) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionLumberjackDamageBonus;
-}
-auto CServerData::ExpansionLumberjackDamageBonus(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionLumberjackDamageBonus = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionRacialDamageBonus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for racial damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionRacialDamageBonus() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionRacialDamageBonus) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionRacialDamageBonus;
-}
-auto CServerData::ExpansionRacialDamageBonus(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionRacialDamageBonus = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionDamageBonusCap()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for cap applied to damage bonus
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionDamageBonusCap() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionDamageBonusCap) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionDamageBonusCap;
-}
-auto CServerData::ExpansionDamageBonusCap(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionDamageBonusCap = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionShieldParry()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for shield parry
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionShieldParry() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionShieldParry) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionShieldParry;
-}
-auto CServerData::ExpansionShieldParry(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionShieldParry = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionWeaponParry()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for weapon parry
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWeaponParry() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionWeaponParry) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionWeaponParry;
-}
-auto CServerData::ExpansionWeaponParry(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionWeaponParry = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionWrestlingParry()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for wrestling parry
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWrestlingParry() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionWrestlingParry) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionWrestlingParry;
-}
-auto CServerData::ExpansionWrestlingParry(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionWrestlingParry = setting;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExpansionCombatHitChance()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set era ruleset for combat hit chance calculations
-//|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = UO - Original UO release
-//|						2 = T2A - The Second Age
-//|						3 = UOR - Rennaissance
-//|						4 = TD - Third Dawn
-//|						5 = LBR - Lord Blackthorn's Revenge
-//|						6 = AoS - Age of Shadows
-//|						7 = SE - Samurai Empire
-//|						8 = ML - Mondain's Legacy
-//|						9 = SA - Stygian Abyss
-//|						10 = HS - High Seas
-//|						11 = ToL - Time of Legends
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCombatHitChance() const -> std::uint8_t {
-    if (static_cast<expansionruleset_t>(expansionCombatHitChance) == ER_CORE) {
-        // Inherit CoreShardEra setting
-        return ExpansionCoreShardEra();
-    }
-    return expansionCombatHitChance;
-}
-auto CServerData::ExpansionCombatHitChance(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
-    expansionCombatHitChance = setting;
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::DumpPaths()
@@ -2140,66 +1760,6 @@ auto CServerData::SaveIni() -> bool {
     return true ;
 }
 
-// Map of era enums to era strings, used for conversion between the two types
-static const std::unordered_map<expansionruleset_t, std::string> eraNames{
-    {ER_UO, "uo"s},   {ER_T2A, "t2a"s}, {ER_UOR, "uor"s}, {ER_TD, "td"s},
-    {ER_LBR, "lbr"s}, {ER_AOS, "aos"s}, {ER_SE, "se"s},   {ER_ML, "ml"s},
-    {ER_SA, "sa"s},   {ER_HS, "hs"s},   {ER_TOL, "tol"s}};
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::EraEnumToString()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Pass an era enum in, get an era string back
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::EraEnumToString(expansionruleset_t eraEnum, bool coreEnum) -> std::string {
-    std::string eraName = "lbr"; // default
-    if (!coreEnum && eraEnum == static_cast<expansionruleset_t>(ExpansionCoreShardEra())) {
-        // Enum matches the core shard era setting; return it as "core"
-        eraName = "core";
-    }
-    else {
-        try {
-            eraName = eraNames.at(eraEnum);
-        } catch (const std::out_of_range &e) {
-            Console::shared().error(
-                                    util::format("Unknown era enum detected, exception thrown: %s", e.what()));
-        }
-    }
-    
-    return eraName;
-}
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::EraStringToEnum()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Pass an era string in, get an era enum back
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::EraStringToEnum(const std::string &eraString, bool useDefault, bool inheritCore)
--> expansionruleset_t {
-    auto rValue = ER_CORE;
-    if (useDefault) {
-        rValue = ER_LBR; // Default era if specified era is not found
-    }
-    
-    auto searchEra = util::lower(eraString);
-    if (inheritCore && searchEra == "core") {
-        // Inherit setting from CORESHARDERA setting
-        return static_cast<expansionruleset_t>(ExpansionCoreShardEra());
-    }
-    
-    // Look for string with era name in eras map
-    auto iter = std::find_if(eraNames.begin(), eraNames.end(),
-                             [&searchEra](const std::pair<expansionruleset_t, std::string> &value) {
-        return searchEra == std::get<1>(value);
-    });
-    
-    if (iter != eraNames.end()) {
-        rValue = iter->first;
-    }
-    
-    return rValue;
-}
-
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SaveIni()
 // o------------------------------------------------------------------------------------------------o
@@ -2360,50 +1920,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer(tSERVER_BLOODDECAYCORPSE) << '\n';
         ofsOutput << "}" << '\n';
         
-        ofsOutput
-        << '\n'
-        << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol"
-        << '\n';
-        ofsOutput << '\n'
-        << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
-        ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
-        ofsOutput << "CORESHARDERA="
-        << EraEnumToString(static_cast<expansionruleset_t>(ExpansionCoreShardEra()), true)
-        << '\n';
-        ofsOutput << "ARMORCALCULATION="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionArmorCalculation))
-        << '\n';
-        ofsOutput << "STRENGTHDAMAGEBONUS="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionStrengthDamageBonus))
-        << '\n';
-        ofsOutput << "TACTICSDAMAGEBONUS="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionTacticsDamageBonus))
-        << '\n';
-        ofsOutput << "ANATOMYDAMAGEBONUS="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionAnatomyDamageBonus))
-        << '\n';
-        ofsOutput << "LUMBERJACKDAMAGEBONUS="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionLumberjackDamageBonus))
-        << '\n';
-        ofsOutput << "RACIALDAMAGEBONUS="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionRacialDamageBonus))
-        << '\n';
-        ofsOutput << "DAMAGEBONUSCAP="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionDamageBonusCap))
-        << '\n';
-        ofsOutput << "SHIELDPARRY="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionShieldParry)) << '\n';
-        ofsOutput << "WEAPONPARRY="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionWeaponParry)) << '\n';
-        ofsOutput << "WRESTLINGPARRY="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionWrestlingParry))
-        << '\n';
-        ofsOutput << "COMBATHITCHANCE="
-        << EraEnumToString(static_cast<expansionruleset_t>(expansionCombatHitChance))
-        << '\n';
-        
-        ofsOutput << "}" << '\n';
-        
+         
         ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
         ofsOutput << "LOOTDECAYSWITHCORPSE=" << ServerConfig::shared().enabled(ServerSwitch::CORPSELOOTDECAY) << '\n';
         ofsOutput << "GUARDSACTIVE=" << ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) << '\n';
@@ -3205,33 +2722,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 228: // MAXPLAYERBANKITEMS
             MaxPlayerBankItems(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
-        case 231: // CORESHARDERA
-            ExpansionCoreShardEra(EraStringToEnum(util::trim(value)));
-            break;
-        case 232: // ARMORCALCULATION
-            ExpansionArmorCalculation(EraStringToEnum(util::trim(value)));
-            break;
-        case 233: // STRENGTHDAMAGEBONUS
-            ExpansionStrengthDamageBonus(EraStringToEnum(util::trim(value)));
-            break;
-        case 234: // TACTICSDAMAGEBONUS
-            ExpansionTacticsDamageBonus(EraStringToEnum(util::trim(value)));
-            break;
-        case 235: // ANATOMYDAMAGEBONUS
-            ExpansionAnatomyDamageBonus(EraStringToEnum(util::trim(value)));
-            break;
-        case 236: // LUMBERJACKDAMAGEBONUS
-            ExpansionLumberjackDamageBonus(EraStringToEnum(util::trim(value)));
-            break;
-        case 237: // RACIALDAMAGEBONUS
-            ExpansionRacialDamageBonus(EraStringToEnum(util::trim(value)));
-            break;
-        case 238: // DAMAGEBONUSCAP
-            ExpansionDamageBonusCap(EraStringToEnum(util::trim(value)));
-            break;
-        case 239: // SHIELDPARRY
-            ExpansionShieldParry(EraStringToEnum(util::trim(value)));
-            break;
         case 240: // PARRYDAMAGECHANCE
             CombatParryDamageChance(static_cast<std::uint8_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -3321,15 +2811,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 308: // GLOBALRESTOCKMULTIPLIER
             GlobalRestockMultiplier(std::stof(value));
-            break;
-        case 313: // WEAPONPARRY
-            ExpansionWeaponParry(EraStringToEnum(util::trim(value)));
-            break;
-        case 314: // WRESTLINGPARRY
-            ExpansionWrestlingParry(EraStringToEnum(util::trim(value)));
-            break;
-        case 315: // COMBATHITCHANCE
-            ExpansionCombatHitChance(EraStringToEnum(util::trim(value)));
             break;
         case 319: // MAXPLAYERPACKWEIGHT
             MaxPlayerPackWeight(static_cast<std::int32_t>(std::stoi(value, nullptr, 0)));

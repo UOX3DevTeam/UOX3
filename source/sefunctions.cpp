@@ -29,6 +29,7 @@
 #include "cthreadqueue.h"
 #include "cweather.hpp"
 #include "dictionary.h"
+#include "type/era.hpp"
 #include "funcdecl.h"
 #include "jsencapsulate.h"
 #include "magic.h"
@@ -3444,13 +3445,12 @@ JSBool SE_EraStringToNum(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     
     std::string eraString = util::upper(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     if (!eraString.empty()) {
-        std::uint8_t eraNum = static_cast<std::uint8_t>(cwmWorldState->ServerData()->EraStringToEnum(eraString, false, false));
-        if (eraNum != 0) {
-            *rval = INT_TO_JSVAL(eraNum);
+        auto era = ServerConfig::shared().ruleSets.normalizedEraString(eraString,false,false);
+        if (era.value != Era::CORE){
+            *rval = INT_TO_JSVAL(static_cast<int>(era.value));
         }
         else {
-            ScriptError(cx, "EraStringToNum: Provided argument not valid era string (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs or tol)");
-            return JS_FALSE;
+            ScriptError( cx, "EraStringToNum: Provided argument not valid era string (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs or tol)" );
         }
     }
     else {
@@ -4607,66 +4607,64 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::MAPDIFF));
                 break;
             case 231: {// CORESHARDERA
-                
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionCoreShardEra()),true);
+               
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::SHARD].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 232:{ // ARMORCALCULATION
                 
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionArmorCalculation()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::ARMOR].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 233: {// STRENGTHDAMAGEBONUS
                 
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionStrengthDamageBonus()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::STRENGTH].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 234:{ // TACTICSDAMAGEBONUS
                 
-                auto tempString =cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionTacticsDamageBonus()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::TATIC].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 235:{ // ANATOMYDAMAGEBONUS
                 
-                std::string tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionAnatomyDamageBonus()));
+                std::string tempString = ServerConfig::shared().ruleSets[Expansion::ANATOMY].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 236:{ // LUMBERJACKDAMAGEBONUS
                 
-                std::string tempString =cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionLumberjackDamageBonus()));
+                std::string tempString = ServerConfig::shared().ruleSets[Expansion::LUMBERJACK].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 237:{ // RACIALDAMAGEBONUS
                 
-                std::string tempString =
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionRacialDamageBonus()));
+                std::string tempString = ServerConfig::shared().ruleSets[Expansion::RACIAL].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 238: {// DAMAGEBONUSCAP
                 
-                auto tempString =
-                cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionDamageBonusCap()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::DAMAGE].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 239: {// SHIELDPARRY
                 
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionShieldParry()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::SHIELD].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
@@ -4898,21 +4896,21 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             case 313: {// WEAPONPARRY
                 
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionWeaponParry()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::WEAPON].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 314:{ // WRESTLINGPARRY
                 
-                auto tempString = cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionWrestlingParry()));
+                auto tempString = ServerConfig::shared().ruleSets[Expansion::WRESTLING].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;
             }
             case 315: {// COMBATHITCHANCE
                 
-                std::string tempString =cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(cwmWorldState->ServerData()->ExpansionCombatHitChance()));
+                std::string tempString = ServerConfig::shared().ruleSets[Expansion::COMBAT].describe();
                 tString = JS_NewStringCopyZ(cx, tempString.c_str());
                 *rval = STRING_TO_JSVAL(tString);
                 break;

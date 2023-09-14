@@ -13,6 +13,7 @@
 
 #include "classes.h"
 #include "dictionary.h"
+#include "type/era.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "movement.h"
@@ -55,19 +56,19 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
             std::string tagData = lootList->GrabData();
             auto csecs = oldstrutil::sections(util::trim(util::strip(tagData, "//")), ",");
             auto tcsecs = oldstrutil::sections(util::trim(util::strip(tag, "//")), ",");
-
+            
             if (!tag.empty()) {
                 std::uint16_t iAmount = 0;
-
+                
                 if (util::upper(tag) == "LOOTLIST") {
                     if (csecs.size() > 1) // Amount specified behind lootlist entry?
                     {
                         iAmount = static_cast<std::uint16_t>(
-                            std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                                             std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                         [[maybe_unused]] CItem *retItemNested = nullptr;
                         for (std::uint16_t iCount = 0; iCount < iAmount; ++iCount) {
                             retItemNested = AddRandomLoot(
-                                s, util::trim(util::strip(csecs[0], "//")), shouldSave);
+                                                          s, util::trim(util::strip(csecs[0], "//")), shouldSave);
                         }
                     }
                     else {
@@ -78,10 +79,10 @@ auto CCharStuff::AddRandomLoot(CItem *s, const std::string &lootlist, bool shoul
                     if (tcsecs.size() > 1) // Amount specified behind lootlist entry?
                     {
                         iAmount = static_cast<std::uint16_t>(
-                            std::stoul(util::trim(util::strip(tcsecs[1], "//")), nullptr, 0));
+                                                             std::stoul(util::trim(util::strip(tcsecs[1], "//")), nullptr, 0));
                         retItem = Items->CreateBaseScriptItem(
-                            s, util::trim(util::strip(tcsecs[0], "//")), s->WorldNumber(), iAmount,
-                            s->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
+                                                              s, util::trim(util::strip(tcsecs[0], "//")), s->WorldNumber(), iAmount,
+                                                              s->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
                         if (retItem) {
                             retItem->SetCont(s);
                             retItem->PlaceInPack();
@@ -114,10 +115,10 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
     CScriptSection *npcCreate = FileLookup->FindEntry(ourNPC, npc_def);
     if (npcCreate == nullptr) {
         Console::shared().error(
-            util::format("CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()));
+                                util::format("CreateBaseNPC(): Bad script npc %s (NPC Not Found).", ourNPC.c_str()));
         return nullptr;
     }
-
+    
     CChar *cCreated = nullptr;
     if (npcCreate->NpcListExist()) {
         cCreated = CreateRandomNPC(npcCreate->NpcListData());
@@ -126,11 +127,11 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         cCreated = static_cast<CChar *>(ObjectFactory::shared().CreateObject(CBaseObject::OT_CHAR));
         if (cCreated == nullptr)
             return nullptr;
-
+        
         if (!shouldSave) {
             cCreated->ShouldSave(false);
         }
-
+        
         cCreated->SetSectionId(ourNPC);
         cCreated->SetSkillTitles(true);
         cCreated->SetNpc(true);
@@ -138,11 +139,11 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         cCreated->SetHiDamage(1);
         cCreated->SetResist(1, PHYSICAL);
         cCreated->SetSpawn(INVALIDSERIAL);
-
+        
         if (!ApplyNpcSection(cCreated, npcCreate, ourNPC)) {
             Console::shared().error("Trying to apply an npc section failed");
         }
-
+        
         std::vector<std::uint16_t> scriptTriggers = cCreated->GetScriptTriggers();
         for (auto scriptTrig : scriptTriggers) {
             cScript *toExecute = JSMapping->GetScript(scriptTrig);
@@ -161,35 +162,35 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
 //(section and weight)
 // o------------------------------------------------------------------------------------------------o
 auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std::uint16_t>> npcListVector)
-    -> std::string {
+-> std::string {
     auto npcListSize = npcListVector.size();
     if (npcListSize <= 0)
         return "";
-
+    
     int sum_of_weight = 0;
     for (const auto &it : npcListVector) {
         // const std::string& sectionName = it.first;
         const std::uint16_t &sectionWeight = it.second;
         sum_of_weight += sectionWeight;
     }
-
+    
     int rndChoice = RandomNum(0, sum_of_weight - 1);
     [[maybe_unused]] int npcWeight = 0;
-
+    
     std::vector<int> matchingEntries;
-
+    
     int weightOfChosenNpc = 0;
     for (size_t i = 0; i < npcListVector.size(); ++i) {
         // const std::string &sectionName = npcList[i].first;
         const std::uint16_t &sectionWeight = npcListVector[i].second;
-
+        
         // Ok, section has a weight, let's compare that weight to our chosen random number
         if (rndChoice < sectionWeight) {
             // If we find another entry with same weight as the first one found, or if none have
             // been found yet, add to list
             if (weightOfChosenNpc == 0 || weightOfChosenNpc == sectionWeight) {
                 weightOfChosenNpc = sectionWeight;
-
+                
                 // Add the entry index to a temporary vector of all entries with shared weight, the
                 // continue looking for more!
                 matchingEntries.push_back(static_cast<int>(i));
@@ -198,14 +199,14 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
         }
         rndChoice -= sectionWeight;
     }
-
+    
     // Did we find one or more entry that matched our random weight criteria?
     int npcEntryToSpawn = (matchingEntries.size() > 0
-                               ? matchingEntries[static_cast<int>(
-                                     RandomNum(static_cast<size_t>(0), matchingEntries.size() - 1))]
-                               : -1);
+                           ? matchingEntries[static_cast<int>(
+                                                              RandomNum(static_cast<size_t>(0), matchingEntries.size() - 1))]
+                           : -1);
     matchingEntries.clear();
-
+    
     std::string chosenNpcSection = "";
     if (npcEntryToSpawn != -1) {
         // If entry was selected based on weights, use that
@@ -215,7 +216,7 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
         // else, use a random entry from the list
         chosenNpcSection = npcListVector[RandomNum(static_cast<size_t>(0), npcListSize - 1)].first;
     }
-
+    
     return chosenNpcSection;
 }
 
@@ -230,41 +231,41 @@ auto CCharStuff::ChooseNpcToCreate(const std::vector<std::pair<std::string, std:
 auto CCharStuff::NpcListLookup(const std::string &npclist) -> std::string {
     auto sect = "NPCLIST "s + npclist;
     sect = util::trim(util::strip(sect, "//"));
-
+    
     auto npcList = FileLookup->FindEntry(sect, npc_def);
     if (!npcList)
         return "";
-
+    
     auto npcListSize = npcList->NumEntries();
     if (npcListSize <= 0)
         return "";
-
+    
     // Stuff each entry from the npcList into a vector
     std::vector<std::pair<std::string, std::uint16_t>> npcListVector;
     for (size_t i = 0; i < npcListSize; i++) {
         // Split string for entry into a stringlist based on | as separator
         auto csecs = oldstrutil::sections(util::trim(util::strip(npcList->moveTo(i), "//")), "|");
-
+        
         std::uint16_t sectionWeight = 1;
         if (csecs.size() > 1) {
             sectionWeight =
-                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+            static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
         }
-
+        
         auto npcSection = (csecs.size() > 1 ? csecs[1] : csecs[0]);
         npcListVector.emplace_back(npcSection, sectionWeight);
     }
-
+    
     auto chosenNpcSection = ChooseNpcToCreate(npcListVector);
     if (chosenNpcSection.empty())
         return "";
-
+    
     auto csecs = oldstrutil::sections(util::trim(util::strip(chosenNpcSection, "//")), "=");
     if (util::upper(csecs[0]) == "NPCLIST") {
         // Chosen entry contained another NPCLIST! Let's dive back into it...
         chosenNpcSection = NpcListLookup(chosenNpcSection);
     }
-
+    
     return chosenNpcSection;
 }
 
@@ -277,35 +278,35 @@ auto CCharStuff::NpcListLookup(const std::string &npclist) -> std::string {
 auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
     auto sect = "NPCLIST "s + npclist;
     sect = util::trim(util::strip(sect, "//"));
-
+    
     auto npcList = FileLookup->FindEntry(sect, npc_def);
     if (!npcList)
         return nullptr;
-
+    
     auto npcListSize = npcList->NumEntries();
     if (npcListSize <= 0)
         return nullptr;
-
+    
     // Stuff each entry from the npcList into a vector
     std::vector<std::pair<std::string, std::uint16_t>> npcListVector;
     for (size_t i = 0; i < npcListSize; i++) {
         // Split string for entry into a stringlist based on | as separator
         auto csecs = oldstrutil::sections(util::trim(util::strip(npcList->moveTo(i), "//")), "|");
-
+        
         std::uint16_t sectionWeight = 1;
         if (csecs.size() > 1) {
             sectionWeight =
-                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+            static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
         }
-
+        
         auto npcSection = (csecs.size() > 1 ? csecs[1] : csecs[0]);
         npcListVector.emplace_back(npcSection, sectionWeight);
     }
-
+    
     auto chosenNpcSection = ChooseNpcToCreate(npcListVector);
     if (chosenNpcSection.empty())
         return nullptr;
-
+    
     CChar *cCreated = nullptr;
     auto csecs = oldstrutil::sections(util::trim(util::strip(chosenNpcSection, "//")), "=");
     if (util::upper(csecs[0]) == "NPCLIST") {
@@ -316,7 +317,7 @@ auto CCharStuff::CreateRandomNPC(const std::string &npclist) -> CChar * {
         // Finally, an actual NPC entry. Spawn it!
         cCreated = CreateBaseNPC(chosenNpcSection);
     }
-
+    
     return cCreated;
 }
 
@@ -331,7 +332,7 @@ CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
     // If the spawner type is 125 and escort quests are not active then abort
     if (iType == IT_ESCORTNPCSPAWNER && !ServerConfig::shared().enabled(ServerSwitch::ESCORTS))
         return nullptr;
-
+    
     CChar *cCreated = nullptr;
     if (iSpawner->IsSectionAList()) {
         cCreated = CreateRandomNPC(npc);
@@ -341,7 +342,7 @@ CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
     }
     if (cCreated == nullptr)
         return nullptr;
-
+    
     cCreated->SetSpawn(iSpawner->GetSerial());
     std::int16_t awayX = 0, awayY = 0;
     if ((iType == IT_AREASPAWNER || iType == IT_ESCORTNPCSPAWNER) &&
@@ -349,17 +350,17 @@ CChar *CCharStuff::CreateNPC(CSpawnItem *iSpawner, const std::string &npc) {
         awayX = iSpawner->GetTempVar(CITV_MORE, 3);
         awayY = iSpawner->GetTempVar(CITV_MORE, 4);
     }
-
+    
     FindSpotForNPC(cCreated, iSpawner->GetX(), iSpawner->GetY(), awayX, awayY, iSpawner->GetZ(),
                    iSpawner->WorldNumber(), iSpawner->GetInstanceId());
     PostSpawnUpdate(cCreated);
-
+    
     if (iType == IT_ESCORTNPCSPAWNER) {
         MsgBoardQuestEscortCreate(cCreated);
     }
-
+    
     cCreated->SetWipeable(true);
-
+    
     return cCreated;
 }
 
@@ -380,7 +381,7 @@ CChar *CCharStuff::CreateNPCxyz(const std::string &npc, std::int16_t x, std::int
     }
     if (cCreated == nullptr)
         return nullptr;
-
+    
     cCreated->SetLocation(x, y, z, worldNumber, instanceId);
     // Update "old location" for new NPCs straight away
     cCreated->SetOldLocation(x, y, z);
@@ -396,18 +397,18 @@ CChar *CCharStuff::CreateNPCxyz(const std::string &npc, std::int16_t x, std::int
 // o------------------------------------------------------------------------------------------------o
 void CCharStuff::PostSpawnUpdate(CChar *cCreated) {
     CTownRegion *tReg =
-        CalcRegionFromXY(cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber(),
-                         cCreated->GetInstanceId(), cCreated);
+    CalcRegionFromXY(cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber(),
+                     cCreated->GetInstanceId(), cCreated);
     cCreated->SetRegion(tReg->GetRegionNum());
-
+    
     for (std::uint8_t z = 0; z < ALLSKILLS; ++z) {
         Skills->UpdateSkillLevel(cCreated, z);
     }
-
+    
     // Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
     auto hungerRate = Races->GetHungerRate(cCreated->GetRace());
     cCreated->SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
-
+    
     UpdateFlag(cCreated);
     cCreated->Update();
 }
@@ -544,15 +545,15 @@ void InitializeWanderArea(CChar *c, std::int16_t xAway, std::int16_t yAway) {
 void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, const std::int16_t originY,
                                 const std::int16_t xAway, const std::int16_t yAway, const std::int8_t z,
                                 const std::uint8_t worldNumber, const std::uint16_t instanceId) {
-
+    
 #ifdef DEBUG_SPAWN
     Console::shared().print(util::format("Going to spawn at (%d,%d) within %d by %d\n", originX,
                                          originY, xAway, yAway));
 #endif
-
+    
     if (!ValidateObject(cCreated))
         return;
-
+    
     std::int32_t k = xAway * yAway / 2;
     std::int16_t xos = 0, yos = 0;
     std::int8_t targZ = 0;
@@ -560,24 +561,24 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
     if (k > 50) {
         k = 50;
     }
-
+    
     while (!foundSpot) {
         targZ = z;
         if (--k < 0) // this CAN be a bit laggy. adjust as nessicary
         {
             if (xAway > 0 && yAway > 0) {
                 Console::shared() << "Problem area spawner found, NPC placed at default location"
-                                  << myendl;
+                << myendl;
             }
             xos = originX;
             yos = originY;
             foundSpot = true;
             break;
         }
-
+        
         xos = originX + RandomNum(static_cast<std::int16_t>(-xAway), xAway);
         yos = originY + RandomNum(static_cast<std::int16_t>(-yAway), yAway);
-
+        
         if (xos >= 1 && yos >= 1) {
             targZ = Map->Height(xos, yos, z, worldNumber, instanceId);
             if (!cwmWorldState->creatures[cCreated->GetId()].IsWater()) {
@@ -586,11 +587,11 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
             else if (cwmWorldState->creatures[cCreated->GetId()].IsWater() ||
                      (!foundSpot && cwmWorldState->creatures[cCreated->GetId()].IsAmphibian())) {
                 foundSpot =
-                    Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
+                Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
             }
         }
     }
-
+    
     cCreated->SetLocation(xos, yos, targZ, worldNumber, instanceId);
     InitializeWanderArea(cCreated, xAway, yAway);
 }
@@ -603,15 +604,15 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
 auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
     auto buyLayer = c->GetItemAtLayer(IL_BUYCONTAINER); // Contains items the NPC is willing to buy
     auto boughtLayer =
-        c->GetItemAtLayer(IL_BOUGHTCONTAINER); // Contains items the NPC has already bought
+    c->GetItemAtLayer(IL_BOUGHTCONTAINER); // Contains items the NPC has already bought
     auto sellLayer = c->GetItemAtLayer(IL_SELLCONTAINER); // Contains items the NPC will sell
-
+    
     auto sect = "SHOPLIST "s + list;
     sect = util::trim(util::strip(sect, "//"));
     auto ShoppingList = FileLookup->FindEntry(sect, items_def);
     if (ShoppingList == nullptr)
         return;
-
+    
     bool shouldSave = c->ShouldSave();
     std::string cdata;
     std::int32_t ndata = -1;
@@ -623,86 +624,86 @@ auto CCharStuff::LoadShopList(const std::string &list, CChar *c) -> void {
         ndata = sec->ndata;
         odata = sec->odata;
         switch (tag) {
-        case DFNTAG_RSHOPITEM:
-            if (ValidateObject(buyLayer)) {
-                retItem =
+            case DFNTAG_RSHOPITEM:
+                if (ValidateObject(buyLayer)) {
+                    retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
                                                 c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
-                if (retItem) {
-                    retItem->SetCont(buyLayer);
-                    retItem->PlaceInPack();
-                    if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
-                        retItem->SetName(retItem->GetName2()); // Item identified!
+                    if (retItem) {
+                        retItem->SetCont(buyLayer);
+                        retItem->PlaceInPack();
+                        if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
+                            retItem->SetName(retItem->GetName2()); // Item identified!
+                        }
                     }
                 }
-            }
-            else {
-                Console::shared() << "Warning: Bad Shopping List " << list
-                                  << " with no Vendor Buy Pack for NPC " << c
-                                  << " (serial: " << c->GetSerial() << myendl;
-            }
-            break;
-        case DFNTAG_SELLITEM:
-            if (ValidateObject(sellLayer)) {
-                retItem =
+                else {
+                    Console::shared() << "Warning: Bad Shopping List " << list
+                    << " with no Vendor Buy Pack for NPC " << c
+                    << " (serial: " << c->GetSerial() << myendl;
+                }
+                break;
+            case DFNTAG_SELLITEM:
+                if (ValidateObject(sellLayer)) {
+                    retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
                                                 c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
-                if (retItem) {
-                    retItem->SetCont(sellLayer);
-                    // retitem->SetSellValue( retitem->GetBuyValue() / 2 );
-                    retItem->PlaceInPack();
-                    if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
-                        retItem->SetName(retItem->GetName2());
+                    if (retItem) {
+                        retItem->SetCont(sellLayer);
+                        // retitem->SetSellValue( retitem->GetBuyValue() / 2 );
+                        retItem->PlaceInPack();
+                        if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
+                            retItem->SetName(retItem->GetName2());
+                        }
+                        
+                        // Let's start out with the shops fully restocked after spawning
+                        retItem->IncAmount(retItem->GetRestock());
+                        retItem->SetRestock(0);
                     }
-
-                    // Let's start out with the shops fully restocked after spawning
-                    retItem->IncAmount(retItem->GetRestock());
-                    retItem->SetRestock(0);
                 }
-            }
-            else {
-                Console::shared() << "Warning: Bad Shopping List " << list
-                                  << " with no Vendor Sell Pack for NPC " << c
-                                  << " (serial: " << c->GetSerial() << myendl;
-            }
-            break;
-        case DFNTAG_SHOPITEM:
-            if (ValidateObject(boughtLayer)) {
-                retItem =
+                else {
+                    Console::shared() << "Warning: Bad Shopping List " << list
+                    << " with no Vendor Sell Pack for NPC " << c
+                    << " (serial: " << c->GetSerial() << myendl;
+                }
+                break;
+            case DFNTAG_SHOPITEM:
+                if (ValidateObject(boughtLayer)) {
+                    retItem =
                     Items->CreateBaseScriptItem(nullptr, cdata, c->WorldNumber(), 1,
                                                 c->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF, shouldSave);
+                    if (retItem) {
+                        retItem->SetCont(boughtLayer);
+                        retItem->PlaceInPack();
+                        if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
+                            retItem->SetName(retItem->GetName2());
+                        }
+                    }
+                }
+                else {
+                    Console::shared() << "Warning: Bad Shopping List " << list
+                    << " with no Vendor Bought Pack for NPC " << c
+                    << " (serial: " << c->GetSerial() << myendl;
+                }
+                break;
+            case DFNTAG_VALUE:
                 if (retItem) {
-                    retItem->SetCont(boughtLayer);
-                    retItem->PlaceInPack();
-                    if (!retItem->GetName2().empty() && (retItem->GetName2() != "#")) {
-                        retItem->SetName(retItem->GetName2());
+                    if (!cdata.empty()) {
+                        auto ssecs = oldstrutil::sections(cdata, " ");
+                        if (ssecs.size() > 1) {
+                            retItem->SetBuyValue(static_cast<std::uint32_t>(
+                                                                            std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
+                            retItem->SetSellValue(static_cast<std::uint32_t>(
+                                                                             std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
+                            break;
+                        }
                     }
+                    retItem->SetBuyValue(ndata);
+                    retItem->SetSellValue((ndata / 2));
                 }
-            }
-            else {
-                Console::shared() << "Warning: Bad Shopping List " << list
-                                  << " with no Vendor Bought Pack for NPC " << c
-                                  << " (serial: " << c->GetSerial() << myendl;
-            }
-            break;
-        case DFNTAG_VALUE:
-            if (retItem) {
-                if (!cdata.empty()) {
-                    auto ssecs = oldstrutil::sections(cdata, " ");
-                    if (ssecs.size() > 1) {
-                        retItem->SetBuyValue(static_cast<std::uint32_t>(
-                            std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
-                        retItem->SetSellValue(static_cast<std::uint32_t>(
-                            std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)));
-                        break;
-                    }
-                }
-                retItem->SetBuyValue(ndata);
-                retItem->SetSellValue((ndata / 2));
-            }
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
         }
     }
 }
@@ -717,7 +718,7 @@ void SetRandomName(CChar *s, const std::string &namelist) {
     std::string sect = std::string("RANDOMNAME ") + namelist;
     sect = util::trim(util::strip(sect, "//"));
     std::string tempName;
-
+    
     CScriptSection *RandomName = FileLookup->FindEntry(sect, npc_def);
     if (RandomName == nullptr) {
         tempName = std::string("Error Namelist ") + namelist + std::string(" Not Found");
@@ -762,7 +763,7 @@ std::uint16_t AddRandomColor(const std::string &colorlist) {
 void MakeShop(CChar *c) {
     if (!ValidateObject(c))
         return;
-
+    
     c->SetShop(true);
     CItem *tPack = nullptr;
     for (std::uint8_t i = IL_SELLCONTAINER; i <= IL_BUYCONTAINER; ++i) {
@@ -795,15 +796,15 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                                  bool isGate) -> bool {
     if (NpcCreation == nullptr || !ValidateObject(applyTo))
         return false;
-
+    
     std::uint16_t haircolor = INVALIDCOLOUR;
     CItem *buyPack = nullptr, *boughtPack = nullptr, *sellPack = nullptr;
     CItem *retitem = nullptr, *mypack = nullptr;
-
+    
     std::string cdata;
     std::int32_t ndata = -1, odata = -1;
     std::uint8_t skillToSet = 0xFF;
-
+    
     TagMap customTag;
     std::string customTagName;
     std::string customTagStringValue;
@@ -816,487 +817,376 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
         auto ssects = oldstrutil::sections(cdata, " ");
         auto csects = oldstrutil::sections(cdata, ",");
         switch (tag) {
-        case DFNTAG_ALCHEMY:
-            skillToSet = ALCHEMY;
-            break;
-        case DFNTAG_ANATOMY:
-            skillToSet = ANATOMY;
-            break;
-        case DFNTAG_ANIMALLORE:
-            skillToSet = ANIMALLORE;
-            break;
-        case DFNTAG_ARMSLORE:
-            skillToSet = ARMSLORE;
-            break;
-        case DFNTAG_ARCHERY:
-            skillToSet = ARCHERY;
-            break;
-        case DFNTAG_DAMAGE:
-        case DFNTAG_ATT:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
-                    applyTo->SetHiDamage(static_cast<std::int16_t>(odata));
+            case DFNTAG_ALCHEMY:
+                skillToSet = ALCHEMY;
+                break;
+            case DFNTAG_ANATOMY:
+                skillToSet = ANATOMY;
+                break;
+            case DFNTAG_ANIMALLORE:
+                skillToSet = ANIMALLORE;
+                break;
+            case DFNTAG_ARMSLORE:
+                skillToSet = ARMSLORE;
+                break;
+            case DFNTAG_ARCHERY:
+                skillToSet = ARCHERY;
+                break;
+            case DFNTAG_DAMAGE:
+            case DFNTAG_ATT:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                        applyTo->SetHiDamage(static_cast<std::int16_t>(odata));
+                    }
+                    else {
+                        applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                        applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
+                    }
                 }
                 else {
-                    applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
-                    applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
+                    Console::shared().warning(
+                                              util::format("Invalid data found in ATT/DAMAGE tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
                 }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in ATT/DAMAGE tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_AWAKE:
-            if (!isGate) {
-                applyTo->SetAwake(ndata != 0);
-            }
-            break;
-        case DFNTAG_BACKPACK:
-            if (!isGate) {
-                if (mypack == nullptr) {
-                    mypack = applyTo->GetPackItem();
+                break;
+            case DFNTAG_AWAKE:
+                if (!isGate) {
+                    applyTo->SetAwake(ndata != 0);
                 }
-                if (mypack == nullptr) {
-                    bool shouldSave = applyTo->ShouldSave();
-                    mypack = Items->CreateItem(nullptr, applyTo, 0x0E75, 1, 0, CBaseObject::OT_ITEM, false,
-                                               shouldSave);
-                    if (ValidateObject(mypack)) {
-                        mypack->SetDecayable(false);
-                        applyTo->SetPackItem(mypack);
-                        mypack->SetName("Backpack");
-                        mypack->SetLayer(IL_PACKITEM);
-                        if (!mypack->SetCont(applyTo)) {
-                            mypack = nullptr;
-                        }
-                        else {
-                            mypack->SetX(0);
-                            mypack->SetY(0);
-                            mypack->SetZ(0);
-                            mypack->SetType(IT_CONTAINER);
-                            mypack->SetDye(true);
-                            mypack->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
-                            mypack->SetWeightMax(
-                                cwmWorldState->ServerData()->MaxPlayerPackWeight());
+                break;
+            case DFNTAG_BACKPACK:
+                if (!isGate) {
+                    if (mypack == nullptr) {
+                        mypack = applyTo->GetPackItem();
+                    }
+                    if (mypack == nullptr) {
+                        bool shouldSave = applyTo->ShouldSave();
+                        mypack = Items->CreateItem(nullptr, applyTo, 0x0E75, 1, 0, CBaseObject::OT_ITEM, false,
+                                                   shouldSave);
+                        if (ValidateObject(mypack)) {
+                            mypack->SetDecayable(false);
+                            applyTo->SetPackItem(mypack);
+                            mypack->SetName("Backpack");
+                            mypack->SetLayer(IL_PACKITEM);
+                            if (!mypack->SetCont(applyTo)) {
+                                mypack = nullptr;
+                            }
+                            else {
+                                mypack->SetX(0);
+                                mypack->SetY(0);
+                                mypack->SetZ(0);
+                                mypack->SetType(IT_CONTAINER);
+                                mypack->SetDye(true);
+                                mypack->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
+                                mypack->SetWeightMax(
+                                                     cwmWorldState->ServerData()->MaxPlayerPackWeight());
+                            }
                         }
                     }
                 }
-            }
-            break;
-        case DFNTAG_BEGGING:
-            skillToSet = BEGGING;
-            break;
-        case DFNTAG_BLACKSMITHING:
-            skillToSet = BLACKSMITHING;
-            break;
-        case DFNTAG_BOWCRAFT:
-            skillToSet = BOWCRAFT;
-            break;
-        case DFNTAG_BUSHIDO:
-            skillToSet = BUSHIDO;
-            break;
-        case DFNTAG_CAMPING:
-            skillToSet = CAMPING;
-            break;
-        case DFNTAG_CARPENTRY:
-            skillToSet = CARPENTRY;
-            break;
-        case DFNTAG_CARTOGRAPHY:
-            skillToSet = CARTOGRAPHY;
-            break;
-        case DFNTAG_CARVE:
-            if (!isGate) {
-                applyTo->SetCarve(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_CHIVALRY:
-            skillToSet = CHIVALRY;
-            break;
-        case DFNTAG_COOKING:
-            skillToSet = COOKING;
-            break;
-        case DFNTAG_COLOUR:
-            if (retitem != nullptr) {
-                retitem->SetColour(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_COLOURLIST:
-            if (retitem != nullptr) {
-                retitem->SetColour(AddRandomColor(cdata));
-            }
-            break;
-        case DFNTAG_COLOURMATCHHAIR:
-            if (retitem != nullptr) {
-                retitem->SetColour(static_cast<std::uint16_t>(haircolor));
-            }
-            break;
-        case DFNTAG_CONTROLSLOTS:
-            if (!isGate) {
-                applyTo->SetControlSlots(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_DEX:
-            if (ndata > 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                break;
+            case DFNTAG_BEGGING:
+                skillToSet = BEGGING;
+                break;
+            case DFNTAG_BLACKSMITHING:
+                skillToSet = BLACKSMITHING;
+                break;
+            case DFNTAG_BOWCRAFT:
+                skillToSet = BOWCRAFT;
+                break;
+            case DFNTAG_BUSHIDO:
+                skillToSet = BUSHIDO;
+                break;
+            case DFNTAG_CAMPING:
+                skillToSet = CAMPING;
+                break;
+            case DFNTAG_CARPENTRY:
+                skillToSet = CARPENTRY;
+                break;
+            case DFNTAG_CARTOGRAPHY:
+                skillToSet = CARTOGRAPHY;
+                break;
+            case DFNTAG_CARVE:
+                if (!isGate) {
+                    applyTo->SetCarve(static_cast<std::int16_t>(ndata));
                 }
-                else {
-                    applyTo->SetDexterity(ndata);
-                }
-                applyTo->SetStamina(applyTo->GetMaxStam());
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in DEX tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_DETECTINGHIDDEN:
-            skillToSet = DETECTINGHIDDEN;
-            break;
-        case DFNTAG_DEF:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
-                }
-                else {
-                    applyTo->SetResist(static_cast<std::uint16_t>(ndata), PHYSICAL);
-                }
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in DEF tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_DEFBONUS:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) +
-                                           static_cast<std::uint16_t>(RandomNum(ndata, odata)),
-                                       PHYSICAL);
-                }
-                else {
-                    applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata),
-                                       PHYSICAL);
-                }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in DEFBONUS tag inside item script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_DIR:
-            if (!isGate) {
-                std::string cupper = util::upper(cdata);
-                if (cupper == "NE") {
-                    applyTo->SetDir(NORTHEAST);
-                }
-                else if (cupper == "E") {
-                    applyTo->SetDir(EAST);
-                }
-                else if (cupper == "SE") {
-                    applyTo->SetDir(SOUTHEAST);
-                }
-                else if (cupper == "S") {
-                    applyTo->SetDir(SOUTH);
-                }
-                else if (cupper == "SW") {
-                    applyTo->SetDir(SOUTHWEST);
-                }
-                else if (cupper == "W") {
-                    applyTo->SetDir(WEST);
-                }
-                else if (cupper == "NW") {
-                    applyTo->SetDir(NORTHWEST);
-                }
-                else if (cupper == "N") {
-                    applyTo->SetDir(NORTH);
-                }
-                else if (cupper == "RND") {
-                    std::uint8_t rndDir = RandomNum(0, 7);
-                    switch (rndDir) {
-                    case 0:
-                        applyTo->SetDir(NORTHEAST);
-                        break;
-                    case 1:
-                        applyTo->SetDir(EAST);
-                        break;
-                    case 2:
-                        applyTo->SetDir(SOUTHEAST);
-                        break;
-                    case 3:
-                        applyTo->SetDir(SOUTH);
-                        break;
-                    case 4:
-                        applyTo->SetDir(SOUTHWEST);
-                        break;
-                    case 5:
-                        applyTo->SetDir(WEST);
-                        break;
-                    case 6:
-                        applyTo->SetDir(NORTHWEST);
-                        break;
-                    case 7:
-                        applyTo->SetDir(NORTH);
-                        break;
-                    }
-                }
-            }
-            break;
-        case DFNTAG_ELEMENTRESIST:
-            if (ssects.size() >= 4) {
-                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
-                                       util::trim(util::strip(ssects[0], "//")), nullptr, 0))),
-                                   HEAT);
-                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
-                                       util::trim(util::strip(ssects[1], "//")), nullptr, 0))),
-                                   COLD);
-                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
-                                       util::trim(util::strip(ssects[2], "//")), nullptr, 0))),
-                                   LIGHTNING);
-                applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
-                                       util::trim(util::strip(ssects[3], "//")), nullptr, 0))),
-                                   POISON);
-            }
-            break;
-        case DFNTAG_ERBONUS:
-            if (ssects.size() >= 4) {
-                applyTo->SetResist(applyTo->GetResist(HEAT) +
-                                       static_cast<std::uint16_t>(std::stoul(
-                                           util::trim(util::strip(ssects[0], "//")), nullptr, 0)),
-                                   HEAT);
-                applyTo->SetResist(applyTo->GetResist(COLD) +
-                                       static_cast<std::uint16_t>(std::stoul(
-                                           util::trim(util::strip(ssects[1], "//")), nullptr, 0)),
-                                   COLD);
-                applyTo->SetResist(applyTo->GetResist(LIGHTNING) +
-                                       static_cast<std::uint16_t>(std::stoul(
-                                           util::trim(util::strip(ssects[2], "//")), nullptr, 0)),
-                                   LIGHTNING);
-                applyTo->SetResist(applyTo->GetResist(POISON) +
-                                       static_cast<std::uint16_t>(std::stoul(
-                                           util::trim(util::strip(ssects[3], "//")), nullptr, 0)),
-                                   POISON);
-            }
-            break;
-        case DFNTAG_EMOTECOLOUR:
-            if (!isGate) {
-                applyTo->SetEmoteColour(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_ENTICEMENT:
-            skillToSet = ENTICEMENT;
-            break;
-        case DFNTAG_EQUIPITEM:
-            if (!isGate) {
-                bool shouldSave = applyTo->ShouldSave();
-                retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                      applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
-                                                      shouldSave);
+                break;
+            case DFNTAG_CHIVALRY:
+                skillToSet = CHIVALRY;
+                break;
+            case DFNTAG_COOKING:
+                skillToSet = COOKING;
+                break;
+            case DFNTAG_COLOUR:
                 if (retitem != nullptr) {
-                    if (retitem->GetLayer() == IL_NONE) {
-                        Console::shared()<< "Warning: Bad NPC Script ([" << sectionId.c_str()<< "]) with problem item " << cdata << " executed!" << myendl;
+                    retitem->SetColour(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_COLOURLIST:
+                if (retitem != nullptr) {
+                    retitem->SetColour(AddRandomColor(cdata));
+                }
+                break;
+            case DFNTAG_COLOURMATCHHAIR:
+                if (retitem != nullptr) {
+                    retitem->SetColour(static_cast<std::uint16_t>(haircolor));
+                }
+                break;
+            case DFNTAG_CONTROLSLOTS:
+                if (!isGate) {
+                    applyTo->SetControlSlots(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_DEX:
+                if (ndata > 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetDexterity(static_cast<std::int16_t>(RandomNum(ndata, odata)));
                     }
-                    else if (!retitem->SetCont(applyTo)) {
-                        if (!retitem->SetCont(applyTo->GetPackItem())) {
-                            retitem = nullptr;
+                    else {
+                        applyTo->SetDexterity(ndata);
+                    }
+                    applyTo->SetStamina(applyTo->GetMaxStam());
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in DEX tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_DETECTINGHIDDEN:
+                skillToSet = DETECTINGHIDDEN;
+                break;
+            case DFNTAG_DEF:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
+                    }
+                    else {
+                        applyTo->SetResist(static_cast<std::uint16_t>(ndata), PHYSICAL);
+                    }
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in DEF tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_DEFBONUS:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) +
+                                           static_cast<std::uint16_t>(RandomNum(ndata, odata)),
+                                           PHYSICAL);
+                    }
+                    else {
+                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata),
+                                           PHYSICAL);
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in DEFBONUS tag inside item script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_DIR:
+                if (!isGate) {
+                    std::string cupper = util::upper(cdata);
+                    if (cupper == "NE") {
+                        applyTo->SetDir(NORTHEAST);
+                    }
+                    else if (cupper == "E") {
+                        applyTo->SetDir(EAST);
+                    }
+                    else if (cupper == "SE") {
+                        applyTo->SetDir(SOUTHEAST);
+                    }
+                    else if (cupper == "S") {
+                        applyTo->SetDir(SOUTH);
+                    }
+                    else if (cupper == "SW") {
+                        applyTo->SetDir(SOUTHWEST);
+                    }
+                    else if (cupper == "W") {
+                        applyTo->SetDir(WEST);
+                    }
+                    else if (cupper == "NW") {
+                        applyTo->SetDir(NORTHWEST);
+                    }
+                    else if (cupper == "N") {
+                        applyTo->SetDir(NORTH);
+                    }
+                    else if (cupper == "RND") {
+                        std::uint8_t rndDir = RandomNum(0, 7);
+                        switch (rndDir) {
+                            case 0:
+                                applyTo->SetDir(NORTHEAST);
+                                break;
+                            case 1:
+                                applyTo->SetDir(EAST);
+                                break;
+                            case 2:
+                                applyTo->SetDir(SOUTHEAST);
+                                break;
+                            case 3:
+                                applyTo->SetDir(SOUTH);
+                                break;
+                            case 4:
+                                applyTo->SetDir(SOUTHWEST);
+                                break;
+                            case 5:
+                                applyTo->SetDir(WEST);
+                                break;
+                            case 6:
+                                applyTo->SetDir(NORTHWEST);
+                                break;
+                            case 7:
+                                applyTo->SetDir(NORTH);
+                                break;
                         }
                     }
-
-                    if (retitem->GetLayer() == 25) {
-                        // Item equipped on mount layer. Set NPC as mounted!
-                        applyTo->SetMounted(true);
+                }
+                break;
+            case DFNTAG_ELEMENTRESIST:
+                if (ssects.size() >= 4) {
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
+                                                                              util::trim(util::strip(ssects[0], "//")), nullptr, 0))),
+                                       HEAT);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
+                                                                              util::trim(util::strip(ssects[1], "//")), nullptr, 0))),
+                                       COLD);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
+                                                                              util::trim(util::strip(ssects[2], "//")), nullptr, 0))),
+                                       LIGHTNING);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul(
+                                                                              util::trim(util::strip(ssects[3], "//")), nullptr, 0))),
+                                       POISON);
+                }
+                break;
+            case DFNTAG_ERBONUS:
+                if (ssects.size() >= 4) {
+                    applyTo->SetResist(applyTo->GetResist(HEAT) +
+                                       static_cast<std::uint16_t>(std::stoul(
+                                                                             util::trim(util::strip(ssects[0], "//")), nullptr, 0)),
+                                       HEAT);
+                    applyTo->SetResist(applyTo->GetResist(COLD) +
+                                       static_cast<std::uint16_t>(std::stoul(
+                                                                             util::trim(util::strip(ssects[1], "//")), nullptr, 0)),
+                                       COLD);
+                    applyTo->SetResist(applyTo->GetResist(LIGHTNING) +
+                                       static_cast<std::uint16_t>(std::stoul(
+                                                                             util::trim(util::strip(ssects[2], "//")), nullptr, 0)),
+                                       LIGHTNING);
+                    applyTo->SetResist(applyTo->GetResist(POISON) +
+                                       static_cast<std::uint16_t>(std::stoul(
+                                                                             util::trim(util::strip(ssects[3], "//")), nullptr, 0)),
+                                       POISON);
+                }
+                break;
+            case DFNTAG_EMOTECOLOUR:
+                if (!isGate) {
+                    applyTo->SetEmoteColour(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_ENTICEMENT:
+                skillToSet = ENTICEMENT;
+                break;
+            case DFNTAG_EQUIPITEM:
+                if (!isGate) {
+                    bool shouldSave = applyTo->ShouldSave();
+                    retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
+                                                          applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
+                                                          shouldSave);
+                    if (retitem != nullptr) {
+                        if (retitem->GetLayer() == IL_NONE) {
+                            Console::shared()<< "Warning: Bad NPC Script ([" << sectionId.c_str()<< "]) with problem item " << cdata << " executed!" << myendl;
+                        }
+                        else if (!retitem->SetCont(applyTo)) {
+                            if (!retitem->SetCont(applyTo->GetPackItem())) {
+                                retitem = nullptr;
+                            }
+                        }
+                        
+                        if (retitem->GetLayer() == 25) {
+                            // Item equipped on mount layer. Set NPC as mounted!
+                            applyTo->SetMounted(true);
+                        }
                     }
                 }
-            }
-            break;
-        case DFNTAG_EVALUATINGINTEL:
-            skillToSet = EVALUATINGINTEL;
-            break;
-        case DFNTAG_FAME:
-            applyTo->SetFame(static_cast<std::int16_t>(ndata));
-            break;
-        case DFNTAG_FENCING:
-            skillToSet = FENCING;
-            break;
-        case DFNTAG_FISHING:
-            skillToSet = FISHING;
-            break;
-        case DFNTAG_FLEEAT:
-            if (!isGate) {
-                applyTo->SetFleeAt(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_FLEEINGSPEED:
-            applyTo->SetFleeingSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_FLEEINGSPEEDMOUNTED:
-            applyTo->SetMountedFleeingSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_FLAG:
-            if (!isGate) {
-                if (!cdata.empty()) {
-                    std::string upperData = util::upper(cdata);
-                    if (upperData == "NEUTRAL") {
-                        applyTo->SetNPCFlag(fNPC_NEUTRAL);
+                break;
+            case DFNTAG_EVALUATINGINTEL:
+                skillToSet = EVALUATINGINTEL;
+                break;
+            case DFNTAG_FAME:
+                applyTo->SetFame(static_cast<std::int16_t>(ndata));
+                break;
+            case DFNTAG_FENCING:
+                skillToSet = FENCING;
+                break;
+            case DFNTAG_FISHING:
+                skillToSet = FISHING;
+                break;
+            case DFNTAG_FLEEAT:
+                if (!isGate) {
+                    applyTo->SetFleeAt(static_cast<std::int16_t>(ndata));
+                }
+                break;
+            case DFNTAG_FLEEINGSPEED:
+                applyTo->SetFleeingSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_FLEEINGSPEEDMOUNTED:
+                applyTo->SetMountedFleeingSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_FLAG:
+                if (!isGate) {
+                    if (!cdata.empty()) {
+                        std::string upperData = util::upper(cdata);
+                        if (upperData == "NEUTRAL") {
+                            applyTo->SetNPCFlag(fNPC_NEUTRAL);
+                        }
+                        else if (upperData == "INNOCENT") {
+                            applyTo->SetNPCFlag(fNPC_INNOCENT);
+                        }
+                        else if (upperData == "EVIL") {
+                            applyTo->SetNPCFlag(fNPC_EVIL);
+                        }
                     }
-                    else if (upperData == "INNOCENT") {
-                        applyTo->SetNPCFlag(fNPC_INNOCENT);
-                    }
-                    else if (upperData == "EVIL") {
-                        applyTo->SetNPCFlag(fNPC_EVIL);
-                    }
-                }
-            }
-            break;
-        case DFNTAG_FORENSICS:
-            skillToSet = FORENSICS;
-            break;
-        case DFNTAG_FOCUS:
-            skillToSet = FOCUS;
-            break;
-        case DFNTAG_FX1:
-            if (!isGate) {
-                applyTo->SetFx(static_cast<std::int16_t>(ndata), 0);
-            }
-            break;
-        case DFNTAG_FX2:
-            if (!isGate) {
-                applyTo->SetFx(static_cast<std::int16_t>(ndata), 1);
-            }
-            break;
-        case DFNTAG_FY1:
-            if (!isGate) {
-                applyTo->SetFy(static_cast<std::int16_t>(ndata), 0);
-            }
-            break;
-        case DFNTAG_FY2:
-            if (!isGate) {
-                applyTo->SetFy(static_cast<std::int16_t>(ndata), 1);
-            }
-            break;
-        case DFNTAG_FZ1:
-            if (!isGate) {
-                applyTo->SetFz(static_cast<std::int8_t>(ndata));
-            }
-            break;
-        case DFNTAG_FOOD:
-            applyTo->SetFood(cdata);
-            break;
-        case DFNTAG_GET: {
-            std::string scriptEntry = "";
-            if (ssects.size() == 1) {
-                scriptEntry = cdata;
-            }
-            else {
-                std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
-                scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
-            }
-
-            CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, npc_def);
-            if (toFind == nullptr) {
-                Console::shared().warning(
-                    util::format("Invalid script entry ([%s]) called with GET tag, NPC serial 0x%X",
-                                 scriptEntry.c_str(), applyTo->GetSerial()));
-            }
-            else if (toFind == NpcCreation) {
-                Console::shared().warning(
-                    util::format("Infinite loop avoided with GET tag inside NPC script [%s]",
-                                 scriptEntry.c_str()));
-            }
-            else {
-                ApplyNpcSection(applyTo, toFind, scriptEntry, isGate);
-            }
-            break;
-        }
-        case DFNTAG_GETUO:
-        case DFNTAG_GETT2A:
-        case DFNTAG_GETUOR:
-        case DFNTAG_GETTD:
-        case DFNTAG_GETLBR:
-        case DFNTAG_GETAOS:
-        case DFNTAG_GETSE:
-        case DFNTAG_GETML:
-        case DFNTAG_GETSA:
-        case DFNTAG_GETHS:
-        case DFNTAG_GETTOL: {
-            // Inherit stats for object based on active ruleset
-            bool getParent = false;
-            std::string tagName = "";
-            switch (cwmWorldState->ServerData()->ExpansionCoreShardEra()) {
-            case ER_UO:
-                if (tag == DFNTAG_GETUO) {
-                    getParent = true;
-                    tagName = "GETUO";
                 }
                 break;
-            case ER_T2A:
-                if (tag == DFNTAG_GETT2A) {
-                    getParent = true;
-                    tagName = "GETT2A";
+            case DFNTAG_FORENSICS:
+                skillToSet = FORENSICS;
+                break;
+            case DFNTAG_FOCUS:
+                skillToSet = FOCUS;
+                break;
+            case DFNTAG_FX1:
+                if (!isGate) {
+                    applyTo->SetFx(static_cast<std::int16_t>(ndata), 0);
                 }
                 break;
-            case ER_UOR:
-                if (tag == DFNTAG_GETUOR) {
-                    getParent = true;
-                    tagName = "GETUOR";
+            case DFNTAG_FX2:
+                if (!isGate) {
+                    applyTo->SetFx(static_cast<std::int16_t>(ndata), 1);
                 }
                 break;
-            case ER_TD:
-                if (tag == DFNTAG_GETTD) {
-                    getParent = true;
-                    tagName = "GETTD";
+            case DFNTAG_FY1:
+                if (!isGate) {
+                    applyTo->SetFy(static_cast<std::int16_t>(ndata), 0);
                 }
                 break;
-            case ER_LBR:
-                if (tag == DFNTAG_GETLBR) {
-                    getParent = true;
-                    tagName = "GETLBR";
+            case DFNTAG_FY2:
+                if (!isGate) {
+                    applyTo->SetFy(static_cast<std::int16_t>(ndata), 1);
                 }
                 break;
-            case ER_AOS:
-                if (tag == DFNTAG_GETAOS) {
-                    getParent = true;
-                    tagName = "GETAOS";
+            case DFNTAG_FZ1:
+                if (!isGate) {
+                    applyTo->SetFz(static_cast<std::int8_t>(ndata));
                 }
                 break;
-            case ER_SE:
-                if (tag == DFNTAG_GETSE) {
-                    getParent = true;
-                    tagName = "GETSE";
-                }
+            case DFNTAG_FOOD:
+                applyTo->SetFood(cdata);
                 break;
-            case ER_ML:
-                if (tag == DFNTAG_GETML) {
-                    getParent = true;
-                    tagName = "GETML";
-                }
-                break;
-            case ER_SA:
-                if (tag == DFNTAG_GETSA) {
-                    getParent = true;
-                    tagName = "GETSA";
-                }
-                break;
-            case ER_HS:
-                if (tag == DFNTAG_GETHS) {
-                    getParent = true;
-                    tagName = "GETHS";
-                }
-                break;
-            case ER_TOL:
-                if (tag == DFNTAG_GETTOL) {
-                    getParent = true;
-                    tagName = "GETTOL";
-                }
-                break;
-            default:
-                break;
-            }
-
-            if (getParent) {
+            case DFNTAG_GET: {
                 std::string scriptEntry = "";
                 if (ssects.size() == 1) {
                     scriptEntry = cdata;
@@ -1305,750 +1195,860 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                     std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
                     scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
                 }
-
+                
                 CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, npc_def);
-                if (toFind == NULL) {
-                    Console::shared().warning(util::format(
-                        "Invalid script entry ([%s]) called with %s tag, NPC serial 0x%X",
-                        scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial()));
+                if (toFind == nullptr) {
+                    Console::shared().warning(
+                                              util::format("Invalid script entry ([%s]) called with GET tag, NPC serial 0x%X",
+                                                           scriptEntry.c_str(), applyTo->GetSerial()));
                 }
                 else if (toFind == NpcCreation) {
                     Console::shared().warning(
-                        util::format("Infinite loop avoided with %s tag inside NPC script [%s]",
-                                     tagName.c_str(), scriptEntry.c_str()));
+                                              util::format("Infinite loop avoided with GET tag inside NPC script [%s]",
+                                                           scriptEntry.c_str()));
                 }
                 else {
                     ApplyNpcSection(applyTo, toFind, scriptEntry, isGate);
                 }
                 break;
             }
-            break;
-        }
-        case DFNTAG_GOLD:
-            if (!isGate) {
-                if (!ValidateObject(mypack)) {
-                    mypack = applyTo->GetPackItem();
+            case DFNTAG_GETUO:
+            case DFNTAG_GETT2A:
+            case DFNTAG_GETUOR:
+            case DFNTAG_GETTD:
+            case DFNTAG_GETLBR:
+            case DFNTAG_GETAOS:
+            case DFNTAG_GETSE:
+            case DFNTAG_GETML:
+            case DFNTAG_GETSA:
+            case DFNTAG_GETHS:
+            case DFNTAG_GETTOL: {
+                // Inherit stats for object based on active ruleset
+                bool getParent = false;
+                std::string tagName = "";
+                switch (ServerConfig::shared().ruleSets[Expansion::SHARD].value) {
+                    case Era::UO:
+                        if (tag == DFNTAG_GETUO) {
+                            getParent = true;
+                            tagName = "GETUO";
+                        }
+                        break;
+                    case Era::T2A:
+                        if (tag == DFNTAG_GETT2A) {
+                            getParent = true;
+                            tagName = "GETT2A";
+                        }
+                        break;
+                    case Era::UOR:
+                        if (tag == DFNTAG_GETUOR) {
+                            getParent = true;
+                            tagName = "GETUOR";
+                        }
+                        break;
+                    case Era::TD:
+                        if (tag == DFNTAG_GETTD) {
+                            getParent = true;
+                            tagName = "GETTD";
+                        }
+                        break;
+                    case Era::LBR:
+                        if (tag == DFNTAG_GETLBR) {
+                            getParent = true;
+                            tagName = "GETLBR";
+                        }
+                        break;
+                    case Era::AOS:
+                        if (tag == DFNTAG_GETAOS) {
+                            getParent = true;
+                            tagName = "GETAOS";
+                        }
+                        break;
+                    case Era::SE:
+                        if (tag == DFNTAG_GETSE) {
+                            getParent = true;
+                            tagName = "GETSE";
+                        }
+                        break;
+                    case Era::ML:
+                        if (tag == DFNTAG_GETML) {
+                            getParent = true;
+                            tagName = "GETML";
+                        }
+                        break;
+                    case Era::SA:
+                        if (tag == DFNTAG_GETSA) {
+                            getParent = true;
+                            tagName = "GETSA";
+                        }
+                        break;
+                    case Era::HS:
+                        if (tag == DFNTAG_GETHS) {
+                            getParent = true;
+                            tagName = "GETHS";
+                        }
+                        break;
+                    case Era::TOL:
+                        if (tag == DFNTAG_GETTOL) {
+                            getParent = true;
+                            tagName = "GETTOL";
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                if (ValidateObject(mypack)) {
-                    if (ndata >= 0) {
-                        bool shouldSave = applyTo->ShouldSave();
-                        if (odata && odata > ndata) {
-                            retitem =
+                
+                if (getParent) {
+                    std::string scriptEntry = "";
+                    if (ssects.size() == 1) {
+                        scriptEntry = cdata;
+                    }
+                    else {
+                        std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                        scriptEntry = util::trim(util::strip(ssects[rndEntry], "//"));
+                    }
+                    
+                    CScriptSection *toFind = FileLookup->FindEntry(scriptEntry, npc_def);
+                    if (toFind == NULL) {
+                        Console::shared().warning(util::format(
+                                                               "Invalid script entry ([%s]) called with %s tag, NPC serial 0x%X",
+                                                               scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial()));
+                    }
+                    else if (toFind == NpcCreation) {
+                        Console::shared().warning(
+                                                  util::format("Infinite loop avoided with %s tag inside NPC script [%s]",
+                                                               tagName.c_str(), scriptEntry.c_str()));
+                    }
+                    else {
+                        ApplyNpcSection(applyTo, toFind, scriptEntry, isGate);
+                    }
+                    break;
+                }
+                break;
+            }
+            case DFNTAG_GOLD:
+                if (!isGate) {
+                    if (!ValidateObject(mypack)) {
+                        mypack = applyTo->GetPackItem();
+                    }
+                    if (ValidateObject(mypack)) {
+                        if (ndata >= 0) {
+                            bool shouldSave = applyTo->ShouldSave();
+                            if (odata && odata > ndata) {
+                                retitem =
                                 Items->CreateScriptItem(nullptr, applyTo, "0x0EED",
                                                         static_cast<std::uint16_t>(RandomNum(ndata, odata)),
                                                         CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
-                        }
-                        else {
-                            retitem = Items->CreateScriptItem(nullptr, applyTo, "0x0EED", ndata,
-                                                              CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
-                        }
-                    }
-                    else {
-                        Console::shared().warning(
-                            util::format("Invalid data found in GOLD tag inside NPC script [%s]",
-                                         sectionId.c_str()));
-                    }
-                }
-                else {
-                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for gold",sectionId.c_str()));
-                }
-            }
-            break;
-        case DFNTAG_HAIRCOLOUR:
-            haircolor = AddRandomColor(cdata);
-            if (retitem != nullptr) {
-                retitem->SetColour(haircolor);
-            }
-            break;
-        case DFNTAG_HEALING:
-            skillToSet = HEALING;
-            break;
-        case DFNTAG_HERDING:
-            skillToSet = HERDING;
-            break;
-        case DFNTAG_HIDING:
-            skillToSet = HIDING;
-            break;
-        case DFNTAG_HIDAMAGE:
-            applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
-            break;
-        case DFNTAG_HIRELING:
-            if (!isGate) {
-                applyTo->SetCanHire(true);
-            }
-            break;
-        case DFNTAG_HP:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetHP(ndata);
-                }
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in HP tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_HPMAX:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetFixedMaxHP(ndata);
-                }
-
-                // Update current HP
-                applyTo->SetHP(applyTo->GetMaxHP());
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in HPMAX tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_ID:
-            /*applyTo->SetId( static_cast<std::uint16_t>( ndata ));
-            applyTo->SetOrgId( static_cast<std::uint16_t>( ndata ));
-            break;*/
-
-            if (ssects.size() == 1) {
-                applyTo->SetId(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
-                applyTo->SetOrgId(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
-            }
-            else {
-                std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
-                applyTo->SetId(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
-                applyTo->SetOrgId(static_cast<std::uint16_t>(
-                    std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
-            }
-            break;
-        case DFNTAG_IMBUING:
-            skillToSet = IMBUING;
-            break;
-        case DFNTAG_INSCRIPTION:
-            skillToSet = INSCRIPTION;
-            break;
-        case DFNTAG_INTELLIGENCE:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetIntelligence(ndata);
-                }
-                applyTo->SetMana(applyTo->GetMaxMana());
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in INTELLIGENCE tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_ITEMID:
-            skillToSet = ITEMID;
-            break;
-        case DFNTAG_KARMA:
-            applyTo->SetKarma(static_cast<std::int16_t>(ndata));
-            break;
-        case DFNTAG_PACKITEM:
-            [[fallthrough]];
-        case DFNTAG_LOOT:
-            if (!isGate) {
-                if (!ValidateObject(mypack)) {
-                    mypack = applyTo->GetPackItem();
-                }
-                if (ValidateObject(mypack)) {
-                    if (!cdata.empty()) {
-                        auto csecs =
-                            oldstrutil::sections(util::trim(util::strip(cdata, "//")), ",");
-                        if (csecs.size() > 1) {
-                            std::uint16_t iAmount = 0;
-                            std::string amountData = util::trim(util::strip(csecs[1], "//"));
-                            auto tsects = oldstrutil::sections(amountData, " ");
-                            if (tsects.size() > 1) // check if the second part of the tag-data
-                                                   // contains two sections separated by a space
-                            {
-                                auto first = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                auto second = static_cast<std::uint16_t>(std::stoul(
-                                    util::trim(util::strip(tsects[1], "//")), nullptr, 0));
-
-                                // Tag contained a minimum and maximum value for amount! Let's
-                                // randomize!
-                                iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
                             }
                             else {
-                                iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
-                            }
-                            auto tdata = util::trim(util::strip(csecs[0], "//"));
-
-                            if (tag == DFNTAG_LOOT) {
-                                Items->AddRespawnItem(mypack, tdata, true, true, iAmount, true);
-                            }
-                            else {
-                                Items->AddRespawnItem(mypack, tdata, true, false, iAmount, false);
+                                retitem = Items->CreateScriptItem(nullptr, applyTo, "0x0EED", ndata,
+                                                                  CBaseObject::OT_ITEM, true, 0xFFFF, shouldSave);
                             }
                         }
                         else {
-                            if (tag == DFNTAG_LOOT) {
-                                Items->AddRespawnItem(mypack, cdata, true, true, 1, true);
-                            }
-                            else {
-                                Items->AddRespawnItem(mypack, cdata, true, false, 1, false);
-                            }
+                            Console::shared().warning(
+                                                      util::format("Invalid data found in GOLD tag inside NPC script [%s]",
+                                                                   sectionId.c_str()));
                         }
-                    }
-                }
-                else {
-                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for loot",sectionId.c_str()));
-                }
-            }
-            break;
-        case DFNTAG_LOCKPICKING:
-            skillToSet = LOCKPICKING;
-            break;
-        case DFNTAG_LODAMAGE:
-            applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
-            break;
-        case DFNTAG_LUMBERJACKING:
-            skillToSet = LUMBERJACKING;
-            break;
-        case DFNTAG_LOYALTY:
-            applyTo->SetLoyalty(static_cast<std::uint16_t>(ndata));
-            break;
-        case DFNTAG_MACEFIGHTING:
-            skillToSet = MACEFIGHTING;
-            break;
-        case DFNTAG_MAGERY:
-            skillToSet = MAGERY;
-            break;
-        case DFNTAG_MAGICRESISTANCE:
-            skillToSet = MAGICRESISTANCE;
-            break;
-        case DFNTAG_MANA:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetMana(ndata);
-                }
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in MANA tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_MANAMAX:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetFixedMaxMana(ndata);
-                }
-
-                // Update current Mana
-                applyTo->SetMana(applyTo->GetMaxMana());
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in MANAMAX tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_MAXLOYALTY:
-            applyTo->SetMaxLoyalty(static_cast<std::uint16_t>(ndata));
-            break;
-        case DFNTAG_MEDITATION:
-            skillToSet = MEDITATION;
-            break;
-        case DFNTAG_MINING:
-            skillToSet = MINING;
-            break;
-        case DFNTAG_MUSICIANSHIP:
-            skillToSet = MUSICIANSHIP;
-            break;
-        case DFNTAG_MYSTICISM:
-            skillToSet = MYSTICISM;
-            break;
-        case DFNTAG_NAME:
-            applyTo->SetName(cdata);
-            break;
-        case DFNTAG_NAMELIST:
-            SetRandomName(applyTo, cdata);
-            break;
-        case DFNTAG_NECROMANCY:
-            skillToSet = NECROMANCY;
-            break;
-        case DFNTAG_NINJITSU:
-            skillToSet = NINJITSU;
-            break;
-        case DFNTAG_NPCWANDER:
-            if (!isGate) {
-                applyTo->SetNpcWander(static_cast<std::int8_t>(ndata));
-            }
-            break;
-        case DFNTAG_NPCAI:
-            if (!isGate) {
-                applyTo->SetNPCAiType(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_NPCGUILD:
-            if (!isGate) {
-                applyTo->SetNPCGuild(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_NOHIRELING:
-            if (!isGate) {
-                applyTo->SetCanHire(false);
-            }
-            break;
-        case DFNTAG_NOTRAIN:
-            if (!isGate) {
-                applyTo->SetCanTrain(false);
-            }
-            break;
-        case DFNTAG_ORIGIN:
-            applyTo->SetOrigin(
-                static_cast<expansionruleset_t>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
-            break;
-        case DFNTAG_POISONSTRENGTH:
-            applyTo->SetPoisonStrength(static_cast<std::uint8_t>(ndata));
-            break;
-        case DFNTAG_PRIV:
-            if (!isGate) {
-                applyTo->SetPriv(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_PARRYING:
-            skillToSet = PARRYING;
-            break;
-        case DFNTAG_PEACEMAKING:
-            skillToSet = PEACEMAKING;
-            break;
-        case DFNTAG_PROVOCATION:
-            skillToSet = PROVOCATION;
-            break;
-        case DFNTAG_POISONING:
-            skillToSet = POISONING;
-            break;
-        case DFNTAG_RESISTFIRE:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
-                }
-                else {
-                    applyTo->SetResist(ndata, HEAT);
-                }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in RESISTFIRE tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_RESISTCOLD:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
-                }
-                else {
-                    applyTo->SetResist(ndata, COLD);
-                }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in RESISTCOLD tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_RESISTLIGHTNING:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
-                }
-                else {
-                    applyTo->SetResist(ndata, LIGHTNING);
-                }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in RESISTLIGHTNING tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_RESISTPOISON:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
-                }
-                else {
-                    applyTo->SetResist(ndata, POISON);
-                }
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in RESISTPOISON tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_RSHOPITEM:
-            if (!isGate) {
-                if (!ValidateObject(buyPack)) {
-                    buyPack = applyTo->GetItemAtLayer(IL_BUYCONTAINER);
-                }
-                if (ValidateObject(buyPack)) {
-                    retitem =
-                        Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1);
-                    if (retitem) {
-                        retitem->SetCont(buyPack);
-                        retitem->PlaceInPack();
-                        if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
-                            retitem->SetName(retitem->GetName2()); // Item identified!
-                        }
-                    }
-                }
-                else {
-                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item",sectionId.c_str()));
-                }
-            }
-            break;
-        case DFNTAG_REATTACKAT:
-            if (!isGate) {
-                applyTo->SetReattackAt(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_REMOVETRAP:
-            skillToSet = REMOVETRAP;
-            break;
-        case DFNTAG_RACE:
-            applyTo->SetRace(static_cast<std::uint16_t>(ndata));
-            break;
-        case DFNTAG_RUNS:
-            if (!isGate) {
-                applyTo->SetRun(true);
-            }
-            break;
-        case DFNTAG_RUNNINGSPEED:
-            applyTo->SetRunningSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_RUNNINGSPEEDMOUNTED:
-            applyTo->SetMountedRunningSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_SECTIONID:
-            applyTo->SetSectionId(cdata);
-            break;
-        case DFNTAG_SKIN:
-            applyTo->SetSkin(static_cast<std::uint16_t>(ndata));
-            break;
-        case DFNTAG_SHOPKEEPER:
-            if (!isGate) {
-                MakeShop(applyTo);
-            }
-            break;
-        case DFNTAG_SHOPLIST:
-            if (!isGate) {
-                LoadShopList(cdata, applyTo);
-            }
-            break;
-        case DFNTAG_SELLITEM:
-            if (!isGate) {
-                if (!ValidateObject(sellPack)) {
-                    sellPack = applyTo->GetItemAtLayer(IL_SELLCONTAINER);
-                }
-                if (ValidateObject(sellPack)) {
-                    bool shouldSave = applyTo->ShouldSave();
-                    retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                          applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
-                                                          shouldSave);
-                    if (retitem != nullptr) {
-                        retitem->SetCont(sellPack);
-                        retitem->PlaceInPack();
-                        if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
-                            retitem->SetName(retitem->GetName2());
-                        }
-                    }
-                }
-                else {
-                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor SellPack for item",sectionId.c_str()));
-                }
-            }
-            break;
-        case DFNTAG_SHOPITEM:
-            if (!isGate) {
-                if (!ValidateObject(boughtPack)) {
-                    boughtPack = applyTo->GetItemAtLayer(IL_BOUGHTCONTAINER);
-                }
-                if (ValidateObject(boughtPack)) {
-                    bool shouldSave = applyTo->ShouldSave();
-                    retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
-                                                          applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
-                                                          shouldSave);
-                    if (retitem != nullptr) {
-                        retitem->SetCont(boughtPack);
-                        retitem->PlaceInPack();
-                        if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
-                            retitem->SetName(retitem->GetName2());
-                        }
-                    }
-                }
-                else {
-                    Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Bought Pack for item",sectionId.c_str()));
-                }
-            }
-            break;
-        case DFNTAG_SAYCOLOUR:
-            if (!isGate) {
-                applyTo->SetSayColour(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_SPATTACK:
-            if (!isGate) {
-                applyTo->SetSpAttack(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_SPADELAY:
-            if (!isGate) {
-                applyTo->SetSpDelay(static_cast<std::int8_t>(ndata));
-            }
-            break;
-        case DFNTAG_SPELLWEAVING:
-            skillToSet = SPELLWEAVING;
-            break;
-        case DFNTAG_SPLIT:
-            if (!isGate) {
-                applyTo->SetSplit(static_cast<std::uint8_t>(ndata));
-            }
-            break;
-        case DFNTAG_SPLITCHANCE:
-            if (!isGate) {
-                applyTo->SetSplitChance(static_cast<std::uint8_t>(ndata));
-            }
-            break;
-        case DFNTAG_SNOOPING:
-            skillToSet = SNOOPING;
-            break;
-        case DFNTAG_SPIRITSPEAK:
-            skillToSet = SPIRITSPEAK;
-            break;
-        case DFNTAG_STEALING:
-            skillToSet = STEALING;
-            break;
-        case DFNTAG_STRENGTH:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetStrength(ndata);
-                }
-                applyTo->SetHP(applyTo->GetMaxHP());
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in STRENGTH tag inside NPC script [%s]",
-                                 sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_SWORDSMANSHIP:
-            skillToSet = SWORDSMANSHIP;
-            break;
-        case DFNTAG_STAMINA:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetStamina(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetStamina(ndata);
-                }
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in STAMINA tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_STAMINAMAX:
-            if (ndata >= 0) {
-                if (odata && odata > ndata) {
-                    applyTo->SetFixedMaxStam(static_cast<std::int16_t>(RandomNum(ndata, odata)));
-                }
-                else {
-                    applyTo->SetFixedMaxStam(ndata);
-                }
-
-                // Update current Stamina
-                applyTo->SetStamina(applyTo->GetMaxStam());
-            }
-            else {
-                Console::shared().warning(util::format(
-                    "Invalid data found in STAMINA tag inside NPC script [%s]", sectionId.c_str()));
-            }
-            break;
-        case DFNTAG_STEALTH:
-            skillToSet = STEALTH;
-            break;
-        case DFNTAG_SKINLIST:
-            applyTo->SetSkin(AddRandomColor(cdata));
-            break;
-        case DFNTAG_SKILL:
-            applyTo->SetBaseSkill(static_cast<std::uint16_t>(odata), static_cast<std::uint8_t>(ndata));
-            break;
-        case DFNTAG_SCRIPT:
-            if (!isGate) {
-                applyTo->AddScriptTrigger(static_cast<std::uint16_t>(ndata));
-            }
-            break;
-        case DFNTAG_THROWING:
-            skillToSet = THROWING;
-            break;
-        case DFNTAG_TITLE:
-            applyTo->setTitle(cdata);
-            break;
-        case DFNTAG_TOTAME:
-            if (!isGate) {
-                applyTo->SetTaming(static_cast<std::int16_t>(ndata));
-                applyTo->SetOrneriness(static_cast<std::uint16_t>(
-                    ndata)); // Set default difficulty to control equal to skill required to tame
-            }
-            break;
-        case DFNTAG_TOPROV:
-            if (!isGate) {
-                applyTo->SetProvoing(static_cast<std::int16_t>(ndata));
-            }
-            break;
-        case DFNTAG_TOPEACE:
-            if (!isGate) {
-                applyTo->SetPeaceing(static_cast<std::int16_t>(ndata));
-            }
-            applyTo->SetBrkPeaceChanceGain(static_cast<std::int16_t>(odata));
-            break;
-        case DFNTAG_TAMEDHUNGER:
-            if (!isGate) {
-                applyTo->SetTamedHungerRate(static_cast<std::uint16_t>(ndata));
-                applyTo->SetTamedHungerWildChance(static_cast<std::uint8_t>(odata));
-            }
-            break;
-        case DFNTAG_TAMEDTHIRST:
-            if (!isGate) {
-                applyTo->SetTamedThirstRate(static_cast<std::uint16_t>(ndata));
-                applyTo->SetTamedThirstWildChance(static_cast<std::uint8_t>(odata));
-            }
-            break;
-        case DFNTAG_WILLHUNGER:
-            if (!isGate) {
-                if (ndata > 0) {
-                    applyTo->SetHungerStatus(true);
-                }
-                else {
-                    applyTo->SetHungerStatus(false);
-                }
-            }
-            break;
-        case DFNTAG_WALKINGSPEED:
-            applyTo->SetWalkingSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_WALKINGSPEEDMOUNTED:
-            applyTo->SetMountedWalkingSpeed(std::stof(cdata));
-            break;
-        case DFNTAG_TACTICS:
-            skillToSet = TACTICS;
-            break;
-        case DFNTAG_TAILORING:
-            skillToSet = TAILORING;
-            break;
-        case DFNTAG_TAMING:
-            skillToSet = TAMING;
-            break;
-        case DFNTAG_TASTEID:
-            skillToSet = TASTEID;
-            break;
-        case DFNTAG_TINKERING:
-            skillToSet = TINKERING;
-            break;
-        case DFNTAG_TRACKING:
-            skillToSet = TRACKING;
-            break;
-        case DFNTAG_VETERINARY:
-            skillToSet = VETERINARY;
-            break;
-        case DFNTAG_WRESTLING:
-            skillToSet = WRESTLING;
-            break;
-        case DFNTAG_CUSTOMSTRINGTAG: {
-            auto count = 0;
-            std::string result;
-            for (auto &sec : ssects) {
-                if (count > 0) {
-                    if (count == 1) {
-                        result = util::trim(util::strip(sec, "//"));
                     }
                     else {
-                        result = result + " " + util::trim(util::strip(sec, "//"));
+                        Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for gold",sectionId.c_str()));
                     }
                 }
-                count++;
-            }
-            customTagName = util::trim(util::strip(ssects[0], "//"));
-            customTagStringValue = result;
-
-            if (!customTagName.empty() && !customTagStringValue.empty()) {
-                customTag.m_Destroy = false;
-                customTag.m_StringValue = customTagStringValue;
-                customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
-                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
-                applyTo->SetTag(customTagName, customTag);
-            }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in CUSTOMSTRINGTAG tag inside NPC script [%s] "
-                                 "- Supported data format: <tagName> <text>",
-                                 sectionId.c_str()));
-            }
-            break;
-        }
-        case DFNTAG_CUSTOMINTTAG: {
-            auto count = 0;
-            std::string result;
-            for (auto &sec : ssects) {
-                if (count > 0) {
-                    if (count == 1) {
-                        result = util::trim(util::strip(sec, "//"));
+                break;
+            case DFNTAG_HAIRCOLOUR:
+                haircolor = AddRandomColor(cdata);
+                if (retitem != nullptr) {
+                    retitem->SetColour(haircolor);
+                }
+                break;
+            case DFNTAG_HEALING:
+                skillToSet = HEALING;
+                break;
+            case DFNTAG_HERDING:
+                skillToSet = HERDING;
+                break;
+            case DFNTAG_HIDING:
+                skillToSet = HIDING;
+                break;
+            case DFNTAG_HIDAMAGE:
+                applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
+                break;
+            case DFNTAG_HIRELING:
+                if (!isGate) {
+                    applyTo->SetCanHire(true);
+                }
+                break;
+            case DFNTAG_HP:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetHP(ndata);
                     }
                 }
-                count++;
-            }
-            customTagName = util::trim(util::strip(ssects[0], "//"));
-            customTagStringValue = result;
-            if (!customTagName.empty() && !customTagStringValue.empty()) {
-                customTag.m_Destroy = false;
-                customTag.m_IntValue = std::stoi(customTagStringValue);
-                customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
-                customTag.m_StringValue = "";
-                applyTo->SetTag(customTagName, customTag);
-                if (count > 2) {
+                else {
                     Console::shared().warning(util::format(
-                        "Multiple values detected for CUSTOMINTTAG in NPC script [%s] - only first "
-                        "value will be used! Supported data format: <tagName> <value>",
-                        sectionId.c_str()));
+                                                           "Invalid data found in HP tag inside NPC script [%s]", sectionId.c_str()));
                 }
+                break;
+            case DFNTAG_HPMAX:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetFixedMaxHP(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetFixedMaxHP(ndata);
+                    }
+                    
+                    // Update current HP
+                    applyTo->SetHP(applyTo->GetMaxHP());
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in HPMAX tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_ID:
+                /*applyTo->SetId( static_cast<std::uint16_t>( ndata ));
+                 applyTo->SetOrgId( static_cast<std::uint16_t>( ndata ));
+                 break;*/
+                
+                if (ssects.size() == 1) {
+                    applyTo->SetId(static_cast<std::uint16_t>(
+                                                              std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
+                    applyTo->SetOrgId(static_cast<std::uint16_t>(
+                                                                 std::stoul(util::trim(util::strip(ssects[0], "//")), nullptr, 0)));
+                }
+                else {
+                    std::int32_t rndEntry = RandomNum(0, static_cast<std::int32_t>(ssects.size() - 1));
+                    applyTo->SetId(static_cast<std::uint16_t>(
+                                                              std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
+                    applyTo->SetOrgId(static_cast<std::uint16_t>(
+                                                                 std::stoul(util::trim(util::strip(ssects[rndEntry], "//")), nullptr, 0)));
+                }
+                break;
+            case DFNTAG_IMBUING:
+                skillToSet = IMBUING;
+                break;
+            case DFNTAG_INSCRIPTION:
+                skillToSet = INSCRIPTION;
+                break;
+            case DFNTAG_INTELLIGENCE:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetIntelligence(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetIntelligence(ndata);
+                    }
+                    applyTo->SetMana(applyTo->GetMaxMana());
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in INTELLIGENCE tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_ITEMID:
+                skillToSet = ITEMID;
+                break;
+            case DFNTAG_KARMA:
+                applyTo->SetKarma(static_cast<std::int16_t>(ndata));
+                break;
+            case DFNTAG_PACKITEM:
+                [[fallthrough]];
+            case DFNTAG_LOOT:
+                if (!isGate) {
+                    if (!ValidateObject(mypack)) {
+                        mypack = applyTo->GetPackItem();
+                    }
+                    if (ValidateObject(mypack)) {
+                        if (!cdata.empty()) {
+                            auto csecs =
+                            oldstrutil::sections(util::trim(util::strip(cdata, "//")), ",");
+                            if (csecs.size() > 1) {
+                                std::uint16_t iAmount = 0;
+                                std::string amountData = util::trim(util::strip(csecs[1], "//"));
+                                auto tsects = oldstrutil::sections(amountData, " ");
+                                if (tsects.size() > 1) // check if the second part of the tag-data
+                                    // contains two sections separated by a space
+                                {
+                                    auto first = static_cast<std::uint16_t>(std::stoul(
+                                                                                       util::trim(util::strip(tsects[0], "//")), nullptr, 0));
+                                    auto second = static_cast<std::uint16_t>(std::stoul(
+                                                                                        util::trim(util::strip(tsects[1], "//")), nullptr, 0));
+                                    
+                                    // Tag contained a minimum and maximum value for amount! Let's
+                                    // randomize!
+                                    iAmount = static_cast<std::uint16_t>(RandomNum(first, second));
+                                }
+                                else {
+                                    iAmount = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
+                                }
+                                auto tdata = util::trim(util::strip(csecs[0], "//"));
+                                
+                                if (tag == DFNTAG_LOOT) {
+                                    Items->AddRespawnItem(mypack, tdata, true, true, iAmount, true);
+                                }
+                                else {
+                                    Items->AddRespawnItem(mypack, tdata, true, false, iAmount, false);
+                                }
+                            }
+                            else {
+                                if (tag == DFNTAG_LOOT) {
+                                    Items->AddRespawnItem(mypack, cdata, true, true, 1, true);
+                                }
+                                else {
+                                    Items->AddRespawnItem(mypack, cdata, true, false, 1, false);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        Console::shared().warning(util::format("Bad NPC Script ([%s]) with problem no backpack for loot",sectionId.c_str()));
+                    }
+                }
+                break;
+            case DFNTAG_LOCKPICKING:
+                skillToSet = LOCKPICKING;
+                break;
+            case DFNTAG_LODAMAGE:
+                applyTo->SetLoDamage(static_cast<std::int16_t>(ndata));
+                break;
+            case DFNTAG_LUMBERJACKING:
+                skillToSet = LUMBERJACKING;
+                break;
+            case DFNTAG_LOYALTY:
+                applyTo->SetLoyalty(static_cast<std::uint16_t>(ndata));
+                break;
+            case DFNTAG_MACEFIGHTING:
+                skillToSet = MACEFIGHTING;
+                break;
+            case DFNTAG_MAGERY:
+                skillToSet = MAGERY;
+                break;
+            case DFNTAG_MAGICRESISTANCE:
+                skillToSet = MAGICRESISTANCE;
+                break;
+            case DFNTAG_MANA:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetMana(ndata);
+                    }
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in MANA tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_MANAMAX:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetFixedMaxMana(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetFixedMaxMana(ndata);
+                    }
+                    
+                    // Update current Mana
+                    applyTo->SetMana(applyTo->GetMaxMana());
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in MANAMAX tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_MAXLOYALTY:
+                applyTo->SetMaxLoyalty(static_cast<std::uint16_t>(ndata));
+                break;
+            case DFNTAG_MEDITATION:
+                skillToSet = MEDITATION;
+                break;
+            case DFNTAG_MINING:
+                skillToSet = MINING;
+                break;
+            case DFNTAG_MUSICIANSHIP:
+                skillToSet = MUSICIANSHIP;
+                break;
+            case DFNTAG_MYSTICISM:
+                skillToSet = MYSTICISM;
+                break;
+            case DFNTAG_NAME:
+                applyTo->SetName(cdata);
+                break;
+            case DFNTAG_NAMELIST:
+                SetRandomName(applyTo, cdata);
+                break;
+            case DFNTAG_NECROMANCY:
+                skillToSet = NECROMANCY;
+                break;
+            case DFNTAG_NINJITSU:
+                skillToSet = NINJITSU;
+                break;
+            case DFNTAG_NPCWANDER:
+                if (!isGate) {
+                    applyTo->SetNpcWander(static_cast<std::int8_t>(ndata));
+                }
+                break;
+            case DFNTAG_NPCAI:
+                if (!isGate) {
+                    applyTo->SetNPCAiType(static_cast<std::int16_t>(ndata));
+                }
+                break;
+            case DFNTAG_NPCGUILD:
+                if (!isGate) {
+                    applyTo->SetNPCGuild(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_NOHIRELING:
+                if (!isGate) {
+                    applyTo->SetCanHire(false);
+                }
+                break;
+            case DFNTAG_NOTRAIN:
+                if (!isGate) {
+                    applyTo->SetCanTrain(false);
+                }
+                break;
+            case DFNTAG_ORIGIN:
+                applyTo->SetOrigin(ServerConfig::shared().ruleSets.normalizedEraString(util::lower(cdata)));
+                break;
+            case DFNTAG_POISONSTRENGTH:
+                applyTo->SetPoisonStrength(static_cast<std::uint8_t>(ndata));
+                break;
+            case DFNTAG_PRIV:
+                if (!isGate) {
+                    applyTo->SetPriv(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_PARRYING:
+                skillToSet = PARRYING;
+                break;
+            case DFNTAG_PEACEMAKING:
+                skillToSet = PEACEMAKING;
+                break;
+            case DFNTAG_PROVOCATION:
+                skillToSet = PROVOCATION;
+                break;
+            case DFNTAG_POISONING:
+                skillToSet = POISONING;
+                break;
+            case DFNTAG_RESISTFIRE:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
+                    }
+                    else {
+                        applyTo->SetResist(ndata, HEAT);
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in RESISTFIRE tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_RESISTCOLD:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
+                    }
+                    else {
+                        applyTo->SetResist(ndata, COLD);
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in RESISTCOLD tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_RESISTLIGHTNING:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
+                    }
+                    else {
+                        applyTo->SetResist(ndata, LIGHTNING);
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in RESISTLIGHTNING tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_RESISTPOISON:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
+                    }
+                    else {
+                        applyTo->SetResist(ndata, POISON);
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in RESISTPOISON tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_RSHOPITEM:
+                if (!isGate) {
+                    if (!ValidateObject(buyPack)) {
+                        buyPack = applyTo->GetItemAtLayer(IL_BUYCONTAINER);
+                    }
+                    if (ValidateObject(buyPack)) {
+                        retitem =
+                        Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1);
+                        if (retitem) {
+                            retitem->SetCont(buyPack);
+                            retitem->PlaceInPack();
+                            if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
+                                retitem->SetName(retitem->GetName2()); // Item identified!
+                            }
+                        }
+                    }
+                    else {
+                        Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item",sectionId.c_str()));
+                    }
+                }
+                break;
+            case DFNTAG_REATTACKAT:
+                if (!isGate) {
+                    applyTo->SetReattackAt(static_cast<std::int16_t>(ndata));
+                }
+                break;
+            case DFNTAG_REMOVETRAP:
+                skillToSet = REMOVETRAP;
+                break;
+            case DFNTAG_RACE:
+                applyTo->SetRace(static_cast<std::uint16_t>(ndata));
+                break;
+            case DFNTAG_RUNS:
+                if (!isGate) {
+                    applyTo->SetRun(true);
+                }
+                break;
+            case DFNTAG_RUNNINGSPEED:
+                applyTo->SetRunningSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_RUNNINGSPEEDMOUNTED:
+                applyTo->SetMountedRunningSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_SECTIONID:
+                applyTo->SetSectionId(cdata);
+                break;
+            case DFNTAG_SKIN:
+                applyTo->SetSkin(static_cast<std::uint16_t>(ndata));
+                break;
+            case DFNTAG_SHOPKEEPER:
+                if (!isGate) {
+                    MakeShop(applyTo);
+                }
+                break;
+            case DFNTAG_SHOPLIST:
+                if (!isGate) {
+                    LoadShopList(cdata, applyTo);
+                }
+                break;
+            case DFNTAG_SELLITEM:
+                if (!isGate) {
+                    if (!ValidateObject(sellPack)) {
+                        sellPack = applyTo->GetItemAtLayer(IL_SELLCONTAINER);
+                    }
+                    if (ValidateObject(sellPack)) {
+                        bool shouldSave = applyTo->ShouldSave();
+                        retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
+                                                              applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
+                                                              shouldSave);
+                        if (retitem != nullptr) {
+                            retitem->SetCont(sellPack);
+                            retitem->PlaceInPack();
+                            if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
+                                retitem->SetName(retitem->GetName2());
+                            }
+                        }
+                    }
+                    else {
+                        Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor SellPack for item",sectionId.c_str()));
+                    }
+                }
+                break;
+            case DFNTAG_SHOPITEM:
+                if (!isGate) {
+                    if (!ValidateObject(boughtPack)) {
+                        boughtPack = applyTo->GetItemAtLayer(IL_BOUGHTCONTAINER);
+                    }
+                    if (ValidateObject(boughtPack)) {
+                        bool shouldSave = applyTo->ShouldSave();
+                        retitem = Items->CreateBaseScriptItem(nullptr, cdata, applyTo->WorldNumber(), 1,
+                                                              applyTo->GetInstanceId(), CBaseObject::OT_ITEM, 0xFFFF,
+                                                              shouldSave);
+                        if (retitem != nullptr) {
+                            retitem->SetCont(boughtPack);
+                            retitem->PlaceInPack();
+                            if (!retitem->GetName2().empty() && (retitem->GetName2() != "#")) {
+                                retitem->SetName(retitem->GetName2());
+                            }
+                        }
+                    }
+                    else {
+                        Console::shared().warning(util::format("Bad NPC Script ([%s]) with no Vendor Bought Pack for item",sectionId.c_str()));
+                    }
+                }
+                break;
+            case DFNTAG_SAYCOLOUR:
+                if (!isGate) {
+                    applyTo->SetSayColour(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_SPATTACK:
+                if (!isGate) {
+                    applyTo->SetSpAttack(static_cast<std::int16_t>(ndata));
+                }
+                break;
+            case DFNTAG_SPADELAY:
+                if (!isGate) {
+                    applyTo->SetSpDelay(static_cast<std::int8_t>(ndata));
+                }
+                break;
+            case DFNTAG_SPELLWEAVING:
+                skillToSet = SPELLWEAVING;
+                break;
+            case DFNTAG_SPLIT:
+                if (!isGate) {
+                    applyTo->SetSplit(static_cast<std::uint8_t>(ndata));
+                }
+                break;
+            case DFNTAG_SPLITCHANCE:
+                if (!isGate) {
+                    applyTo->SetSplitChance(static_cast<std::uint8_t>(ndata));
+                }
+                break;
+            case DFNTAG_SNOOPING:
+                skillToSet = SNOOPING;
+                break;
+            case DFNTAG_SPIRITSPEAK:
+                skillToSet = SPIRITSPEAK;
+                break;
+            case DFNTAG_STEALING:
+                skillToSet = STEALING;
+                break;
+            case DFNTAG_STRENGTH:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetStrength(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetStrength(ndata);
+                    }
+                    applyTo->SetHP(applyTo->GetMaxHP());
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in STRENGTH tag inside NPC script [%s]",
+                                                           sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_SWORDSMANSHIP:
+                skillToSet = SWORDSMANSHIP;
+                break;
+            case DFNTAG_STAMINA:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetStamina(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetStamina(ndata);
+                    }
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in STAMINA tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_STAMINAMAX:
+                if (ndata >= 0) {
+                    if (odata && odata > ndata) {
+                        applyTo->SetFixedMaxStam(static_cast<std::int16_t>(RandomNum(ndata, odata)));
+                    }
+                    else {
+                        applyTo->SetFixedMaxStam(ndata);
+                    }
+                    
+                    // Update current Stamina
+                    applyTo->SetStamina(applyTo->GetMaxStam());
+                }
+                else {
+                    Console::shared().warning(util::format(
+                                                           "Invalid data found in STAMINA tag inside NPC script [%s]", sectionId.c_str()));
+                }
+                break;
+            case DFNTAG_STEALTH:
+                skillToSet = STEALTH;
+                break;
+            case DFNTAG_SKINLIST:
+                applyTo->SetSkin(AddRandomColor(cdata));
+                break;
+            case DFNTAG_SKILL:
+                applyTo->SetBaseSkill(static_cast<std::uint16_t>(odata), static_cast<std::uint8_t>(ndata));
+                break;
+            case DFNTAG_SCRIPT:
+                if (!isGate) {
+                    applyTo->AddScriptTrigger(static_cast<std::uint16_t>(ndata));
+                }
+                break;
+            case DFNTAG_THROWING:
+                skillToSet = THROWING;
+                break;
+            case DFNTAG_TITLE:
+                applyTo->setTitle(cdata);
+                break;
+            case DFNTAG_TOTAME:
+                if (!isGate) {
+                    applyTo->SetTaming(static_cast<std::int16_t>(ndata));
+                    applyTo->SetOrneriness(static_cast<std::uint16_t>(
+                                                                      ndata)); // Set default difficulty to control equal to skill required to tame
+                }
+                break;
+            case DFNTAG_TOPROV:
+                if (!isGate) {
+                    applyTo->SetProvoing(static_cast<std::int16_t>(ndata));
+                }
+                break;
+            case DFNTAG_TOPEACE:
+                if (!isGate) {
+                    applyTo->SetPeaceing(static_cast<std::int16_t>(ndata));
+                }
+                applyTo->SetBrkPeaceChanceGain(static_cast<std::int16_t>(odata));
+                break;
+            case DFNTAG_TAMEDHUNGER:
+                if (!isGate) {
+                    applyTo->SetTamedHungerRate(static_cast<std::uint16_t>(ndata));
+                    applyTo->SetTamedHungerWildChance(static_cast<std::uint8_t>(odata));
+                }
+                break;
+            case DFNTAG_TAMEDTHIRST:
+                if (!isGate) {
+                    applyTo->SetTamedThirstRate(static_cast<std::uint16_t>(ndata));
+                    applyTo->SetTamedThirstWildChance(static_cast<std::uint8_t>(odata));
+                }
+                break;
+            case DFNTAG_WILLHUNGER:
+                if (!isGate) {
+                    if (ndata > 0) {
+                        applyTo->SetHungerStatus(true);
+                    }
+                    else {
+                        applyTo->SetHungerStatus(false);
+                    }
+                }
+                break;
+            case DFNTAG_WALKINGSPEED:
+                applyTo->SetWalkingSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_WALKINGSPEEDMOUNTED:
+                applyTo->SetMountedWalkingSpeed(std::stof(cdata));
+                break;
+            case DFNTAG_TACTICS:
+                skillToSet = TACTICS;
+                break;
+            case DFNTAG_TAILORING:
+                skillToSet = TAILORING;
+                break;
+            case DFNTAG_TAMING:
+                skillToSet = TAMING;
+                break;
+            case DFNTAG_TASTEID:
+                skillToSet = TASTEID;
+                break;
+            case DFNTAG_TINKERING:
+                skillToSet = TINKERING;
+                break;
+            case DFNTAG_TRACKING:
+                skillToSet = TRACKING;
+                break;
+            case DFNTAG_VETERINARY:
+                skillToSet = VETERINARY;
+                break;
+            case DFNTAG_WRESTLING:
+                skillToSet = WRESTLING;
+                break;
+            case DFNTAG_CUSTOMSTRINGTAG: {
+                auto count = 0;
+                std::string result;
+                for (auto &sec : ssects) {
+                    if (count > 0) {
+                        if (count == 1) {
+                            result = util::trim(util::strip(sec, "//"));
+                        }
+                        else {
+                            result = result + " " + util::trim(util::strip(sec, "//"));
+                        }
+                    }
+                    count++;
+                }
+                customTagName = util::trim(util::strip(ssects[0], "//"));
+                customTagStringValue = result;
+                
+                if (!customTagName.empty() && !customTagStringValue.empty()) {
+                    customTag.m_Destroy = false;
+                    customTag.m_StringValue = customTagStringValue;
+                    customTag.m_IntValue = static_cast<std::int32_t>(customTag.m_StringValue.size());
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_STRING;
+                    applyTo->SetTag(customTagName, customTag);
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in CUSTOMSTRINGTAG tag inside NPC script [%s] "
+                                                           "- Supported data format: <tagName> <text>",
+                                                           sectionId.c_str()));
+                }
+                break;
             }
-            else {
-                Console::shared().warning(
-                    util::format("Invalid data found in CUSTOMINTTAG tag in NPC script [%s] - "
-                                 "Supported data format: <tagName> <value>",
-                                 sectionId.c_str()));
+            case DFNTAG_CUSTOMINTTAG: {
+                auto count = 0;
+                std::string result;
+                for (auto &sec : ssects) {
+                    if (count > 0) {
+                        if (count == 1) {
+                            result = util::trim(util::strip(sec, "//"));
+                        }
+                    }
+                    count++;
+                }
+                customTagName = util::trim(util::strip(ssects[0], "//"));
+                customTagStringValue = result;
+                if (!customTagName.empty() && !customTagStringValue.empty()) {
+                    customTag.m_Destroy = false;
+                    customTag.m_IntValue = std::stoi(customTagStringValue);
+                    customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
+                    customTag.m_StringValue = "";
+                    applyTo->SetTag(customTagName, customTag);
+                    if (count > 2) {
+                        Console::shared().warning(util::format(
+                                                               "Multiple values detected for CUSTOMINTTAG in NPC script [%s] - only first "
+                                                               "value will be used! Supported data format: <tagName> <value>",
+                                                               sectionId.c_str()));
+                    }
+                }
+                else {
+                    Console::shared().warning(
+                                              util::format("Invalid data found in CUSTOMINTTAG tag in NPC script [%s] - "
+                                                           "Supported data format: <tagName> <value>",
+                                                           sectionId.c_str()));
+                }
+                break;
             }
-            break;
-        }
-        default:
-            Console::shared() << "Unknown tag in ApplyNpcSection(): " << static_cast<std::int32_t>(tag)
-                              << myendl;
-            break;
+            default:
+                Console::shared() << "Unknown tag in ApplyNpcSection(): " << static_cast<std::int32_t>(tag)
+                << myendl;
+                break;
         }
         if (skillToSet != 0xFF) {
             applyTo->SetBaseSkill(static_cast<std::uint16_t>(RandomNum(ndata, odata)), skillToSet);
@@ -2065,17 +2065,17 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
         if (!ignoreOwnerCheck && Npc->GetOwnerObj() != mChar &&
             (isRestricted || !Npcs->CheckPetFriend(mChar, Npc)))
             return false;
-
+        
         if (checkDifficulty && Npc->IsTamed() && ServerConfig::shared().enabled(ServerSwitch::PETDIFFICULTY)) {
             // Let's base this on how difficult it is to control the pet, as well
             std::uint16_t chanceToControl = Skills->CalculatePetControlChance(mChar, Npc);
             std::uint16_t loyaltyGainOnSuccess = cwmWorldState->ServerData()->GetPetLoyaltyGainOnSuccess();
             std::uint16_t loyaltyLossOnFailure = cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure();
-
+            
             // Easy to control pets/summoned creatures don't gain/lose loyalty from commands
             if (chanceToControl == 1000)
                 return true;
-
+            
             if (chanceToControl >= RandomNum(0, 1000)) {
                 // Succeeded in controlling pet
                 if (!ignoreLoyaltyChanges) {
@@ -2088,31 +2088,31 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
                 if (!ignoreLoyaltyChanges) {
                     Npc->SetLoyalty(std::max(0, Npc->GetLoyalty() - loyaltyLossOnFailure));
                     std::uint16_t soundToPlay =
-                        cwmWorldState->creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
+                    cwmWorldState->creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
                     Effects->PlaySound(Npc, soundToPlay);
-
+                    
                     if (Npc->GetLoyalty() == 0) {
                         // Reduce player's control slot usage by the amount of control slots taken
                         // up by the pet
                         mChar->SetControlSlotsUsed(
-                            std::max(0, mChar->GetControlSlotsUsed() - Npc->GetControlSlots()));
-
+                                                   std::max(0, mChar->GetControlSlotsUsed() - Npc->GetControlSlots()));
+                        
                         // Pet goes wild for lack of loyalty
                         Npcs->ReleasePet(Npc);
                         return false;
                     }
-
+                    
                     CSocket *mSock = mChar->GetSocket();
                     if (mSock != nullptr) {
                         std::string npcName = GetNpcDictName(Npc, mSock, NRS_SPEECH);
                         mSock->SysMessage(2412, npcName.c_str()); // %s disobeys your command
                     }
                 }
-
+                
                 return false;
             }
         }
-
+        
         // No difficulty checking needed, just allow it
         return true;
     }
@@ -2127,27 +2127,27 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
 void CCharStuff::FinalizeTransfer(CChar *petChar, CChar *srcChar, CChar *targChar) {
     // If the pet is guarding something, stop guarding that something
     Npcs->StopPetGuarding(petChar);
-
+    
     // Clear pet's existing friend-list
     petChar->ClearFriendList();
-
+    
     std::string petName = GetNpcDictName(petChar, nullptr, NRS_SPEECH);
     petChar->TextMessage(nullptr, 1074, TALK, 0, petName.c_str(),
                          targChar->GetName().c_str()); // * %s will now take %s as his master *
-
+    
     // Transfer ownership
     petChar->SetOwner(targChar);
-
+    
     // Make pet follow their new owner
     petChar->SetFTarg(static_cast<CChar *>(targChar));
     petChar->FlushPath();
     petChar->SetNpcWander(WT_FOLLOW);
-
+    
     // Update control slots used for both old and new owners
     srcChar->SetControlSlotsUsed(
-        std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots()));
+                                 std::max(0, srcChar->GetControlSlotsUsed() - petChar->GetControlSlots()));
     targChar->SetControlSlotsUsed(
-        std::clamp(targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255));
+                                  std::clamp(targChar->GetControlSlotsUsed() + petChar->GetControlSlots(), 0, 255));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2158,45 +2158,45 @@ void CCharStuff::FinalizeTransfer(CChar *petChar, CChar *srcChar, CChar *targCha
 void CCharStuff::ReleasePet(CChar *pet) {
     // Stop guarding
     Npcs->StopPetGuarding(pet);
-
+    
     // Stop following
     pet->SetFTarg(nullptr);
     pet->SetNpcWander(WT_FREE);
-
+    
     // Remove owner
     pet->SetOwner(nullptr);
-
+    
     std::string petName = GetNpcDictName(pet, nullptr, NRS_SPEECH);
     pet->TextMessage(
-        nullptr, 1325, TALK, 0,
-        petName.c_str()); // *%s appears to have decided that it is better off without a master *
-
+                     nullptr, 1325, TALK, 0,
+                     petName.c_str()); // *%s appears to have decided that it is better off without a master *
+    
     // If a summoned creature, unsummon it
     if (pet->GetTimer(tNPC_SUMMONTIME)) {
         Effects->PlaySound(pet, 0x01FE);
         pet->Delete();
     }
-
+    
     // Reset hunger
     pet->SetHunger(6);
-
+    
     // Increase pet orneriness, to make it more difficult to control for its next owner
     auto ownerCount = pet->GetOwnerCount();
     switch (ownerCount) {
-    case 1:
-        pet->SetOrneriness(pet->GetTaming() + 48);
-        break;
-    case 2:
-        pet->SetOrneriness(pet->GetTaming() + 192);
-        break;
-    case 3:
-        pet->SetOrneriness(pet->GetTaming() + 432);
-        break;
-    case 4:
-        pet->SetOrneriness(pet->GetTaming() + 768);
-        break;
-    default:
-        break;
+        case 1:
+            pet->SetOrneriness(pet->GetTaming() + 48);
+            break;
+        case 2:
+            pet->SetOrneriness(pet->GetTaming() + 192);
+            break;
+        case 3:
+            pet->SetOrneriness(pet->GetTaming() + 432);
+            break;
+        case 4:
+            pet->SetOrneriness(pet->GetTaming() + 768);
+            break;
+        default:
+            break;
     }
 }
 
@@ -2246,7 +2246,7 @@ void CCharStuff::StopPetGuarding(CChar *pet) {
     CBaseObject *petGuarding = pet->GetGuarding();
     if (!ValidateObject(petGuarding))
         return;
-
+    
     if (petGuarding->GetObjType() == CBaseObject::OT_ITEM) {
         CItem *itemGuard = static_cast<CItem *>(petGuarding);
         if (ValidateObject(itemGuard)) {
@@ -2271,21 +2271,21 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
     CItem *mypack = nullptr;
     if (s->IsNpc())
         return;
-
+    
     auto entry = scriptEntry;
     entry = util::trim(util::strip(entry, "//"));
     CScriptSection *Monster = FileLookup->FindEntry(entry, npc_def);
     if (Monster == nullptr)
         return;
-
+    
     s->setTitle("\0");
-
+    
     CItem *n;
     for (CItem *z = s->FirstItem(); !s->FinishedItems(); z = s->NextItem()) {
         if (ValidateObject(z)) {
             if (z->IsFree())
                 continue;
-
+            
             if (z->GetLayer() == IL_HAIR || z->GetLayer() == IL_FACIALHAIR) {
                 z->Delete();
             }
@@ -2297,7 +2297,7 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
                     n = Items->CreateItem(nullptr, s, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
                     if (!ValidateObject(n))
                         return;
-
+                    
                     s->SetPackItem(n);
                     n->SetDecayable(false);
                     n->SetLayer(IL_PACKITEM);
@@ -2312,7 +2312,7 @@ void MonsterGate(CChar *s, const std::string &scriptEntry) {
             }
         }
     }
-
+    
     Npcs->ApplyNpcSection(s, Monster, scriptEntry, true);
     // Now find real 'skill' based on 'baseskill' (stat modifiers)
     for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
@@ -2341,7 +2341,7 @@ void Karma(CChar *nCharId, CChar *nKilledId, const std::int16_t nKarma) {
         nCharId->SetKarma(-10000);
         nCurKarma = -10000;
     }
-
+    
     if (nCurKarma < nKarma && nKarma > 0) {
         nChange = ((nKarma - nCurKarma) / 75);
         nCharId->SetKarma(static_cast<std::int16_t>(nCurKarma + nChange));
@@ -2356,12 +2356,12 @@ void Karma(CChar *nCharId, CChar *nKilledId, const std::int16_t nKarma) {
     {
         return;
     }
-
+    
     CSocket *mSock = nCharId->GetSocket();
     if (nCharId->IsNpc() || mSock == nullptr) {
         return;
     }
-
+    
     if (nChange <= 25) {
         if (nEffect) {
             mSock->SysMessage(1367); // You have gained a little karma.
@@ -2419,16 +2419,16 @@ void Fame(CChar *nCharId, const std::int16_t nFame) {
     else {
         return; // current fame is greater than target fame, and we're not dead
     }
-
+    
     if (nChange == 0) {
         return;
     }
-
+    
     CSocket *mSock = nCharId->GetSocket();
     if (mSock == nullptr || nCharId->IsNpc()) {
         return;
     }
-
+    
     if (nChange <= 25) {
         if (nEffect) {
             mSock->SysMessage(1373); // You have gained a little fame.

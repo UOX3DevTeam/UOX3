@@ -104,7 +104,6 @@ constexpr auto MAX_NAME =
                        // - and are in some cases required (magic item names, for instance). Seems
                        // to still work for regular-length names if I increase it, but we might
                        // consider splitting this into character/item-specific somehow?
-constexpr auto MAX_ORIGIN = std::uint8_t(128); // To store expansion origin of item
 constexpr auto MAX_TITLE = std::uint8_t(60);
 constexpr auto MAX_STACK = std::uint16_t(0xFFFF);
 constexpr auto MAX_VISRANGE = std::uint8_t(18);

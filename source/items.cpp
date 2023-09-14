@@ -10,6 +10,7 @@
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "cspawnregion.h"
+#include "type/era.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "objectfactory.h"
@@ -323,62 +324,62 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 // Inherit stats for object based on active ruleset
                 bool getParent = false;
                 std::string tagName = "";
-                switch (cwmWorldState->ServerData()->ExpansionCoreShardEra()) {
-                    case ER_T2A:
+                switch (ServerConfig::shared().ruleSets[Expansion::SHARD].value) {
+                    case Era::T2A:
                         if (tag == DFNTAG_GETT2A) {
                             getParent = true;
                             tagName = "GETT2A";
                         }
                         break;
-                    case ER_UOR:
+                    case Era::UOR:
                         if (tag == DFNTAG_GETUOR) {
                             getParent = true;
                             tagName = "GETUOR";
                         }
                         break;
-                    case ER_TD:
+                    case Era::TD:
                         if (tag == DFNTAG_GETTD) {
                             getParent = true;
                             tagName = "GETTD";
                         }
                         break;
-                    case ER_LBR:
+                    case Era::LBR:
                         if (tag == DFNTAG_GETLBR) {
                             getParent = true;
                             tagName = "GETLBR";
                         }
                         break;
-                    case ER_AOS:
+                    case Era::AOS:
                         if (tag == DFNTAG_GETAOS) {
                             getParent = true;
                             tagName = "GETAOS";
                         }
                         break;
-                    case ER_SE:
+                    case Era::SE:
                         if (tag == DFNTAG_GETSE) {
                             getParent = true;
                             tagName = "GETSE";
                         }
                         break;
-                    case ER_ML:
+                    case Era::ML:
                         if (tag == DFNTAG_GETML) {
                             getParent = true;
                             tagName = "GETML";
                         }
                         break;
-                    case ER_SA:
+                    case Era::SA:
                         if (tag == DFNTAG_GETSA) {
                             getParent = true;
                             tagName = "GETSA";
                         }
                         break;
-                    case ER_HS:
+                    case Era::HS:
                         if (tag == DFNTAG_GETHS) {
                             getParent = true;
                             tagName = "GETHS";
                         }
                         break;
-                    case ER_TOL:
+                    case Era::TOL:
                         if (tag == DFNTAG_GETTOL) {
                             getParent = true;
                             tagName = "GETTOL";
@@ -639,8 +640,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetOffSpell(static_cast<std::int8_t>(ndata));
                 break;
             case DFNTAG_ORIGIN:
-                applyTo->SetOrigin(
-                                   static_cast<expansionruleset_t>(cwmWorldState->ServerData()->EraStringToEnum(cdata)));
+                applyTo->SetOrigin( ServerConfig::shared().ruleSets.normalizedEraString(util::lower(cdata)));
                 break;
             case DFNTAG_POISONDAMAGE:
                 applyTo->SetWeatherDamage(POISON, ndata != 0);
@@ -673,9 +673,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().warning(
-                                              util::format("Invalid data found in RESISTFIRE tag inside Item script [%s]",
-                                                           sectionId.c_str()));
+                    Console::shared().warning(util::format("Invalid data found in RESISTFIRE tag inside Item script [%s]", sectionId.c_str()));
                 }
                 break;
             case DFNTAG_RESISTCOLD:

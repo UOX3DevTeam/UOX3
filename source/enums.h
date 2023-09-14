@@ -703,21 +703,6 @@ enum RaceRelate { RACE_ENEMY = -1, RACE_NEUTRAL = 0, RACE_ALLY = 1 };
 
 enum BodyType { BT_HUMAN = 0, BT_ELF, BT_GARGOYLE, BT_OTHER, BT_COUNT };
 
-enum expansionruleset_t {
-    ER_CORE,
-    ER_UO,
-    ER_T2A,
-    ER_UOR,
-    ER_TD,
-    ER_LBR,
-    ER_AOS,
-    ER_SE,
-    ER_ML,
-    ER_SA,
-    ER_HS,
-    ER_TOL,
-    ER_COUNT
-};
 
 enum actions_t // Pre-v7.0.0.0
 {

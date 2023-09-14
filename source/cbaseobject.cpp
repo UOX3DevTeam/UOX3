@@ -102,7 +102,7 @@ const std::int16_t DEFBASE_FAME = 0;
 const std::int16_t DEFBASE_KILLS = 0;
 const std::uint16_t DEFBASE_RESIST = 0;
 const bool DEFBASE_NAMEREQUESTACTIVE = 0;
-const expansionruleset_t DEFBASE_ORIGIN = ER_UO;
+const auto DEFBASE_ORIGIN = Era(Era::UO);
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -129,7 +129,6 @@ nameRequestActive(DEFBASE_NAMEREQUESTACTIVE), origin(DEFBASE_ORIGIN) {
     tempContainerSerial = INVALIDSERIAL;
     name.reserve(MAX_NAME);
     title.reserve(MAX_TITLE);
-    // origin.reserve( MAX_ORIGIN );
     sectionId.reserve(MAX_NAME);
     if (cwmWorldState != nullptr && cwmWorldState->GetLoaded()) {
         SetPostLoaded(true);
@@ -659,9 +658,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     std::to_string(instanceId) + newLine;
     outStream << myLocation;
     outStream << "Title=" << title << newLine;
-    outStream << "Origin="
-    << cwmWorldState->ServerData()->EraEnumToString(static_cast<expansionruleset_t>(origin))
-    << newLine;
+    outStream << "Origin=" << ServerConfig::shared().ruleSets.normalizedEra(origin) << newLine;
     
     //=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next
     // serverstartup = increasing malis)
@@ -1223,19 +1220,8 @@ void CBaseObject::setTitle(std::string newtitle) { title = newtitle.substr(0, MA
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's origin
 // o------------------------------------------------------------------------------------------------o
-/*std::string CBaseObject::GetOrigin( void ) const
- {
- return origin;
- }
- void CBaseObject::SetOrigin( std::string newOrigin )
- {
- origin = newOrigin.substr( 0, MAX_ORIGIN );
- }*/
-auto CBaseObject::GetOrigin() const -> std::uint8_t { return origin; }
-auto CBaseObject::SetOrigin(std::uint8_t setting) -> void {
-    if (setting >= ER_COUNT) {
-        setting = ER_COUNT - 1;
-    }
+auto CBaseObject::GetOrigin() const -> const Era& { return origin; }
+auto CBaseObject::SetOrigin(const Era &setting) -> void {
     origin = setting;
 }
 
@@ -1484,10 +1470,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
         case 'D':
             if (UTag == "DAMAGE") {
                 if (csecs.size() >= 2) {
-                    loDamage = static_cast<std::int16_t>(
-                                                         std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                    hiDamage = static_cast<std::int16_t>(
-                                                         std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                    loDamage = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                    hiDamage = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
                     // If there's only one value, set both to the same
@@ -1505,10 +1489,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "DEXTERITY") {
                 if (csecs.size() >= 2) {
-                    dexterity = static_cast<std::int16_t>(
-                                                          std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                    dx2 = static_cast<std::int16_t>(
-                                                    std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                    dexterity = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                    dx2 = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
                     dexterity =
@@ -1571,10 +1553,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "INTELLIGENCE") {
                 if (data.find(",") != std::string::npos) {
-                    intelligence = static_cast<std::int16_t>(
-                                                             std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                    in2 = static_cast<std::int16_t>(
-                                                    std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                    intelligence = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                    in2 = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
                     intelligence = util::ston<std::int16_t>(data);
@@ -1608,8 +1588,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 
                 // Backwards compatibility with pre-instanceId worldfiles
                 if (csecs.size() >= 5) {
-                    instanceId = static_cast<std::int16_t>(
-                                                           std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+                    instanceId = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
                 }
                 else {
                     instanceId = 0;
@@ -1644,7 +1623,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             break;
         case 'O':
             if (UTag == "ORIGIN") {
-                origin = cwmWorldState->ServerData()->EraStringToEnum(data.substr(0, MAX_ORIGIN - 1));
+                origin = ServerConfig::shared().ruleSets.normalizedEraString(util::lower(data));
             }
             else if (UTag == "OWNERID") {
                 owner = util::ston<std::uint32_t>(data);
@@ -1667,12 +1646,9 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "REPUTATION") {
                 if (csecs.size() == 3) {
-                    SetFame(static_cast<std::int16_t>(
-                                                      std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetKarma(static_cast<std::int16_t>(
-                                                       std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetKills(static_cast<std::int16_t>(
-                                                       std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                    SetFame(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetKarma(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    SetKills(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                 }
             }
             else {
@@ -1695,10 +1671,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             else if (UTag == "STRENGTH") {
                 if (csecs.size() >= 2) {
-                    strength = static_cast<std::int16_t>(
-                                                         std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
-                    st2 = static_cast<std::int16_t>(
-                                                    std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                    strength = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                    st2 = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
                     strength = util::ston<std::int16_t>(data);
@@ -1713,9 +1687,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 if (scriptId != 0 && scriptId != 65535) {
                     cScript *toExecute = JSMapping->GetScript(scriptId);
                     if (toExecute == nullptr) {
-                        Console::shared().warning(util::format(
-                                                               "SCPTRIG tag found with invalid script ID (%s) while loading world data!",
-                                                               data.c_str()));
+                        Console::shared().warning(util::format("SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str()));
                     }
                     else {
                         this->AddScriptTrigger(util::ston<std::uint16_t>(data));
@@ -1779,22 +1751,19 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
         case 'X':
             if (UTag == "XYZ") {
                 if (csecs.size() >= 1) {
-                    x = static_cast<std::uint16_t>(
-                                                   std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                    x = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
                 }
                 else {
                     x = 0;
                 }
                 if (csecs.size() >= 2) {
-                    y = static_cast<std::uint16_t>(
-                                                   std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                    y = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 }
                 else {
                     y = 0;
                 }
                 if (csecs.size() >= 3) {
-                    z = static_cast<std::uint16_t>(
-                                                   std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                    z = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                 }
                 else {
                     z = 0;

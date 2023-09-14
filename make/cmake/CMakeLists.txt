@@ -18,6 +18,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/type/clientversion.hpp
     ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.cpp
     ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/eraexpansion.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/eraexpansion.hpp
 
 # configuration
     ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp

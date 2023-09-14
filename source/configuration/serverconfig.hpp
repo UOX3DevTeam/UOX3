@@ -19,6 +19,7 @@
 #include "startlocconfig.hpp"
 #include "serverswitch.hpp"
 #include "serverstring.hpp"
+#include "expansion.hpp"
 
 //======================================================================
 // AllDataType
@@ -83,6 +84,7 @@ public:
     StartLocConfig youngLocation;
     ServerSwitch serverSwitch;
     ServerString serverString;
+    Expansion ruleSets ;
     
 };
 

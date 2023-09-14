@@ -322,7 +322,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
     
     KillTrades(p);
     
-    if (p->GetCommandLevel() >= CL_CNS || p->GetAccount().accountNumber == 0 || (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && p->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR)) {
+    if (p->GetCommandLevel() >= CL_CNS || p->GetAccount().accountNumber == 0 || (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && p->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && ServerConfig::shared().ruleSets[Expansion::SHARD] >= Era(Era::UOR))) {
         valid = true;
     }
     else {

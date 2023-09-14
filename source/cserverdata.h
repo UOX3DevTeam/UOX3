@@ -355,8 +355,8 @@ public:
     auto SaveIni() -> bool;
     auto SaveIni(const std::string &filename) -> bool;
     
-    auto EraEnumToString(expansionruleset_t eraNum, bool coreEnum = false) -> std::string;
-    auto EraStringToEnum(const std::string &eraString, bool useDefault = true, bool inheritCore = true) -> expansionruleset_t;
+//    auto EraEnumToString(expansionruleset_t eraNum, bool coreEnum = false) -> std::string;
+//    auto EraStringToEnum(const std::string &eraString, bool useDefault = true, bool inheritCore = true) -> expansionruleset_t;
     
     auto ResetDefaults() -> void;
     auto startup() -> void;
@@ -560,42 +560,6 @@ public:
     
     auto CombatNPCBaseFleeAt(std::int16_t value) -> void;
     std::int16_t CombatNPCBaseFleeAt() const;
-    
-    void ExpansionCoreShardEra(std::uint8_t value);
-    std::uint8_t ExpansionCoreShardEra() const;
-    
-    void ExpansionArmorCalculation(std::uint8_t value);
-    std::uint8_t ExpansionArmorCalculation() const;
-    
-    void ExpansionStrengthDamageBonus(std::uint8_t value);
-    std::uint8_t ExpansionStrengthDamageBonus() const;
-    
-    void ExpansionTacticsDamageBonus(std::uint8_t value);
-    std::uint8_t ExpansionTacticsDamageBonus() const;
-    
-    void ExpansionAnatomyDamageBonus(std::uint8_t value);
-    std::uint8_t ExpansionAnatomyDamageBonus() const;
-    
-    void ExpansionLumberjackDamageBonus(std::uint8_t value);
-    std::uint8_t ExpansionLumberjackDamageBonus() const;
-    
-    void ExpansionRacialDamageBonus(std::uint8_t value);
-    std::uint8_t ExpansionRacialDamageBonus() const;
-    
-    void ExpansionDamageBonusCap(std::uint8_t value);
-    std::uint8_t ExpansionDamageBonusCap() const;
-    
-    void ExpansionShieldParry(std::uint8_t value);
-    std::uint8_t ExpansionShieldParry() const;
-    
-    void ExpansionWeaponParry(std::uint8_t value);
-    std::uint8_t ExpansionWeaponParry() const;
-    
-    void ExpansionWrestlingParry(std::uint8_t value);
-    std::uint8_t ExpansionWrestlingParry() const;
-    
-    void ExpansionCombatHitChance(std::uint8_t value);
-    std::uint8_t ExpansionCombatHitChance() const;
     
     auto CombatNPCBaseReattackAt(std::int16_t value) -> void;
     std::int16_t CombatNPCBaseReattackAt() const;

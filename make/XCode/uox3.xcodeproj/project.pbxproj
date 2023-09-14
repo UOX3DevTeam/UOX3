@@ -12,6 +12,8 @@
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
 		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		5611F3402AB1492D009438EA /* serverstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F33E2AB1492D009438EA /* serverstring.cpp */; };
+		56A6A4A92AB338AF008A5EB7 /* era.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4A72AB338AF008A5EB7 /* era.cpp */; };
+		56A6A4AE2AB34BBE008A5EB7 /* expansion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */; };
 		56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2452AABB95300D624FC /* directorylocation.cpp */; };
 		56AAE24A2AABB95300D624FC /* serverconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2462AABB95300D624FC /* serverconfig.cpp */; };
 		56AAE25E2AADF26B00D624FC /* clientenable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE25C2AADF26B00D624FC /* clientenable.cpp */; };
@@ -141,6 +143,10 @@
 		5611F33A2AAF9FFA009438EA /* serverswitch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverswitch.hpp; sourceTree = "<group>"; };
 		5611F33E2AB1492D009438EA /* serverstring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverstring.cpp; sourceTree = "<group>"; };
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
+		56A6A4A72AB338AF008A5EB7 /* era.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = era.cpp; sourceTree = "<group>"; };
+		56A6A4A82AB338AF008A5EB7 /* era.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = era.hpp; sourceTree = "<group>"; };
+		56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = expansion.cpp; sourceTree = "<group>"; };
+		56A6A4AD2AB34BBE008A5EB7 /* expansion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = expansion.hpp; sourceTree = "<group>"; };
 		56AADE792AABB91800D624FC /* jse_fileassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_fileassociations.scp; sourceTree = "<group>"; };
 		56AADE7A2AABB91800D624FC /* jse_typeassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_typeassociations.scp; sourceTree = "<group>"; };
 		56AADE7C2AABB91800D624FC /* anatomy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = anatomy.js; sourceTree = "<group>"; };
@@ -1209,6 +1215,8 @@
 		56AADE742AABB8F400D624FC /* configuration */ = {
 			isa = PBXGroup;
 			children = (
+				56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */,
+				56A6A4AD2AB34BBE008A5EB7 /* expansion.hpp */,
 				56AAE2452AABB95300D624FC /* directorylocation.cpp */,
 				56AAE2472AABB95300D624FC /* directorylocation.hpp */,
 				56AAE2462AABB95300D624FC /* serverconfig.cpp */,
@@ -2975,6 +2983,8 @@
 				56AAE2632AADF3A800D624FC /* clientversion.hpp */,
 				5611F32F2AAF807D009438EA /* startlocation.cpp */,
 				5611F3302AAF807D009438EA /* startlocation.hpp */,
+				56A6A4A72AB338AF008A5EB7 /* era.cpp */,
+				56A6A4A82AB338AF008A5EB7 /* era.hpp */,
 			);
 			path = type;
 			sourceTree = "<group>";
@@ -3390,8 +3400,10 @@
 				64A9014E293E3DD4009B54DA /* network.cpp in Sources */,
 				64A90168293E3DD4009B54DA /* wholist.cpp in Sources */,
 				64A90124293E3DD4009B54DA /* cguild.cpp in Sources */,
+				56A6A4AE2AB34BBE008A5EB7 /* expansion.cpp in Sources */,
 				64A90160293E3DD4009B54DA /* townregion.cpp in Sources */,
 				64A90122293E3DD4009B54DA /* console.cpp in Sources */,
+				56A6A4A92AB338AF008A5EB7 /* era.cpp in Sources */,
 				64A90152293E3DD4009B54DA /* partysystem.cpp in Sources */,
 				64A90163293E3DD4009B54DA /* uox3.cpp in Sources */,
 				56AAE25E2AADF26B00D624FC /* clientenable.cpp in Sources */,

@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+#include "type/era.hpp"
 #include "typedefs.h"
 #include "uoxstruct.h"
 class CMultiObj;
@@ -116,7 +117,7 @@ protected:
     
     bool nameRequestActive;
     // std::string	origin;	// Stores expansion item originates from
-    std::uint8_t origin; // Stores expansion item originates from
+    Era origin; // Stores expansion item originates from
     
     void CopyData(CBaseObject *target);
     
@@ -143,8 +144,8 @@ public:
     // void					SetOrigin( std::string newOrigin );
     // std::string				GetOrigin( void ) const;
     
-    void SetOrigin(std::uint8_t value);
-    std::uint8_t GetOrigin() const;
+    void SetOrigin(const Era &value);
+    auto GetOrigin() const ->const Era&;
     
     virtual void SetMana(std::int16_t mn);
     std::int16_t GetMana() const;
