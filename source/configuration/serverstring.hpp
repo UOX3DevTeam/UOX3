@@ -21,6 +21,7 @@ struct ServerString {
     auto operator[](item_t index) const -> const std::string & ;
     auto operator[](item_t index)  ->  std::string & ;
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
+    auto valueFor(const std::string &keyword) const ->std::optional<std::string> ;
 };
 
 #endif /* serverstring_hpp */

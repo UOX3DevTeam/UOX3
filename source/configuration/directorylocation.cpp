@@ -196,3 +196,17 @@ auto DirectoryLocation::unwindPath(dirlocation_t location) const -> std::filesys
     }
     return std::filesystem::path(path) ;
 }
+//======================================================================
+auto DirectoryLocation::valueFor(const std::string &keyword) const ->std::optional<std::string> {
+    auto iter = LOCATIONNAMEMAP.find(keyword);
+    if (iter != LOCATIONNAMEMAP.end()){
+        auto value =  unwindPath(iter->second).string() ;
+        if ( !value.empty()) {
+            if (value[value.size()-1] != '/' || value[value.size()-1] != '\\'){
+                value += "/" ;
+            }
+        }
+        return value ;
+    }
+    return {};
+}

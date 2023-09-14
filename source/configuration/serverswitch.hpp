@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <optional>
 #include <ostream>
 #include <vector>
 
@@ -50,6 +51,7 @@ struct ServerSwitch{
     auto setSetting(switch_t setting, bool state) ->void ;
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
     auto save(std::ostream &output) const ->void;
+    auto valueFor(const std::string &keyword) const ->std::optional<bool> ;
 };
 
 #endif /* serverswitch_hpp */

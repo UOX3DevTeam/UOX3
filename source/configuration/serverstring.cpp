@@ -37,3 +37,11 @@ auto ServerString::setKeyValue(const std::string &key, const std::string &value)
     }
     return rvalue;
 }
+//======================================================================
+auto ServerString::valueFor(const std::string &keyword) const ->std::optional<std::string> {
+    auto iter  = ITEMNAMEMAP.find(keyword) ;
+    if (iter != ITEMNAMEMAP.end()){
+        return item.at(iter->second);
+    }
+    return {} ;
+}

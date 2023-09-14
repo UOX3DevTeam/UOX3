@@ -4,8 +4,9 @@
 #define assistantfeature_hpp
 
 #include <cstdint>
-#include <map>
 #include <iostream>
+#include <map>
+#include <optional>
 #include <string>
 
 //======================================================================
@@ -61,6 +62,7 @@ struct AssistantFeature {
     auto test(feature_t feature) const ->bool ;
     auto setKeyValue(const std::string &key,const std::string &value) ->bool ;
     auto describe() const -> std::string ;
+    auto valueFor(const std::string &keyword) const ->std::optional<bool> ;
 };
 
 #endif /* assistantfeature_hpp */

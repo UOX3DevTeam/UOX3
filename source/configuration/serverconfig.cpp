@@ -685,3 +685,49 @@ auto ServerConfig::enabled(ServerSwitch::switch_t setting) const ->bool {
 auto ServerConfig::setEnabled(ServerSwitch::switch_t setting, bool state) ->void {
     serverSwitch.setSetting(setting,state) ;
 }
+//======================================================================
+auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional<AllDataType>{
+    auto ukey = util::upper(key) ;
+    auto data = AllDataType() ;
+    auto bvalue = serverSwitch.valueFor(ukey);
+    if (bvalue.has_value()){
+        data.type = AllDataType::T_BOOL ;
+        data.value = bvalue.value() ;
+        return data ;
+    }
+    bvalue = enableClients.valueFor(ukey);
+    if (bvalue.has_value()){
+        data.type = AllDataType::T_BOOL ;
+        data.value = bvalue.value() ;
+        return data ;
+    }
+    bvalue = assistantFeature.valueFor(ukey);
+    if (bvalue.has_value()){
+        data.type = AllDataType::T_BOOL ;
+        data.value = bvalue.value() ;
+        return data ;
+    }
+    auto svalue = serverString.valueFor(ukey) ;
+    if (svalue.has_value()){
+        data.type = AllDataType::T_STRING ;
+        data.value = svalue.value() ;
+        return data ;
+    }
+    svalue = directoryLocation.valueFor(ukey) ;
+    if (svalue.has_value()){
+        data.type = AllDataType::T_STRING ;
+        data.value = svalue.value() ;
+        return data ;
+    }
+    if (ukey == "SERVERFEATURES"){
+        data.type = AllDataType::T_UINT16;
+        data.value = static_cast<std::uint16_t>(serverFeature.value());
+        return data ;
+    }
+    if (ukey == "CLIENTFEATURES"){
+        data.type = AllDataType::T_UINT32;
+        data.value = static_cast<std::uint32_t>(clientFeature.value());
+        return data ;
+    }
+    return {};
+}

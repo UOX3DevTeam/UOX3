@@ -6,7 +6,9 @@
 #include <cstdint>
 #include <filesystem>
 #include <iostream>
+#include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "directorylocation.hpp"
@@ -17,6 +19,26 @@
 #include "startlocconfig.hpp"
 #include "serverswitch.hpp"
 #include "serverstring.hpp"
+
+//======================================================================
+// AllDataType
+//======================================================================
+using alldata_t = std::variant<std::string,bool,std::uint8_t,std::int8_t,std::uint64_t,std::int64_t,std::uint16_t,std::int16_t,std::uint32_t,std::int32_t,float,double> ;
+
+//======================================================================
+struct AllDataType {
+    enum datatype_t {
+        T_NONE,T_STRING, T_BOOL, T_UINT8, T_INT8, T_UINT64, T_INT64,
+        T_UINT16, T_INT16, T_UINT32, T_INT32, T_FLOAT, T_DOUBLE
+    };
+    datatype_t type ;
+    alldata_t value ;
+    AllDataType() { type = T_NONE ;}
+};
+
+//======================================================================
+// ServerConfig
+//======================================================================
 //======================================================================
 class ServerConfig {
     
@@ -50,6 +72,8 @@ public:
     auto unwindDirectoryFor(dirlocation_t location) const -> std::filesystem::path ;
     auto enabled(ServerSwitch::switch_t setting) const ->bool ;
     auto setEnabled(ServerSwitch::switch_t setting, bool state) ->void ;
+    
+    auto dataForKeyword(const std::string &key) const -> std::optional<AllDataType>;
     
     ClientEnable enableClients ;
     ClientFeature clientFeature ;

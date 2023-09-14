@@ -64,3 +64,11 @@ auto AssistantFeature::describe() const ->std::string {
     }
     return output.str();
 }
+//======================================================================
+auto AssistantFeature::valueFor(const std::string &keyword) const ->std::optional<bool> {
+    auto iter  = ININAMEFEATUREMAP.find(keyword) ;
+    if (iter != ININAMEFEATUREMAP.end()){
+        return static_cast<bool>(value & iter->second);
+    }
+    return {} ;
+}

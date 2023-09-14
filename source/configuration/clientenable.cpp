@@ -55,6 +55,16 @@ auto ClientEnable::setKeyValue(const std::string &key, const std::string &value)
     }
     return rvalue ;
 }
+
+//======================================================================
+auto ClientEnable::valueFor(const std::string &keyword) const ->std::optional<bool> {
+    auto iter  = NAMECLIENTMAP.find(keyword) ;
+    if (iter != NAMECLIENTMAP.end()){
+        return clients.at(iter->second);
+    }
+    return {} ;
+}
+
 //======================================================================
 auto ClientEnable::save(std::ostream &output) const ->void {
     for (const auto &[name,version]:NAMECLIENTMAP){

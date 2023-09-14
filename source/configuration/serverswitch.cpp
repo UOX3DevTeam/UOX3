@@ -98,3 +98,11 @@ auto ServerSwitch::save(std::ostream &output) const ->void{
         output <<"\t"<<name<<" = " << (enabledSwitch.at(value) == true ? 1:0)<<"\n";
     }
 }
+//======================================================================
+auto ServerSwitch::valueFor(const std::string &keyword) const ->std::optional<bool> {
+    auto iter  = NAMESWITCHMAP.find(keyword) ;
+    if (iter != NAMESWITCHMAP.end()){
+        return enabledSwitch.at(iter->second);
+    }
+    return {} ;
+}

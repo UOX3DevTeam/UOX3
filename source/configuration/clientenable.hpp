@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <iostream>
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,9 @@ struct ClientEnable {
     auto set(ClientVersion::version_t version, bool state) -> void ;
     auto test(ClientVersion::version_t version) const ->bool ;
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
+    auto valueFor(const std::string &keyword) const ->std::optional<bool> ;
+
+
  
     auto save(std::ostream &output) const ->void ;
     // Convience accessors
