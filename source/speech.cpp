@@ -266,8 +266,7 @@ bool CPITalkRequest::Handle() {
         }
     }
     
-    if ((asciiText[0] == cwmWorldState->ServerData()->ServerCommandPrefix()) ||
-        ((asciiText[0] == '.') && (asciiText[1] != '.'))) {
+    if ((asciiText[0] ==  ServerConfig::shared().serverString[ServerString::COMMANDPREFIX][0]) || ((asciiText[0] == '.') && (asciiText[1] != '.'))) {
         serverCommands.command(tSock, mChar, &asciiText[1]);
     }
     else {

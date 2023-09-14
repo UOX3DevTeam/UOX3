@@ -1328,9 +1328,9 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 CGumpDisplay guiInfo(s, 400, 300);
                 guiInfo.setTitle(UOXVersion::productName + " Status"s);
                 builtString = GetUptime();
-                guiInfo.AddData("Version",
-                                UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s);
-                guiInfo.AddData("Compiled By", UOXVersion::name);
+                guiInfo.AddData("Version",  UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s);
+//                guiInfo.AddData("Compiled By", UOXVersion::name);
+                guiInfo.AddData("Compiled By", "punt");
                 guiInfo.AddData("Uptime", builtString);
                 guiInfo.AddData("Accounts", static_cast<std::uint32_t>(Account::shared().size()));
                 guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
@@ -1413,9 +1413,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             break;
         case 'V':
             if (cmd == "VERSION") {
-                s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", UOXVersion::productName.c_str(),
-                              UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,
-                              UOXVersion::name.c_str());
+//                s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,  UOXVersion::name.c_str());
+                s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", "UOXVersion::productName.c_str()", UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,  "punt");
             }
             break;
         case 'W':

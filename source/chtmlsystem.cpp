@@ -224,7 +224,7 @@ void cHTMLTemplate::process() {
     }
     
     // Server Name
-    auto serverName = cwmWorldState->ServerData()->ServerName();
+    auto serverName = ServerConfig::shared().serverString[ServerString::SERVERNAME];
     Pos = ParsedContent.find("%servername");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, serverName)
@@ -233,7 +233,7 @@ void cHTMLTemplate::process() {
     }
     
     // External/WAN ServerIP
-    auto serverIP = cwmWorldState->ServerData()->ExternalIP();
+    auto serverIP = ServerConfig::shared().serverString[ServerString::PUBLICIP];
     Pos = ParsedContent.find("%serverip");
     while (Pos != std::string::npos) {
         (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 9, serverIP)

@@ -5319,6 +5319,7 @@ void CPGameServerList::NumberOfServers(std::uint16_t numItems) {
     pStream.WriteShort(1, static_cast<std::uint16_t>(tlen));
     pStream.WriteShort(4, numItems);
 }
+/*
 void CPGameServerList::AddServer(std::uint16_t servNum, PhysicalServer *data) {
     std::uint32_t baseOffset = 6 + servNum * 40;
     pStream.WriteShort(baseOffset, servNum + 1);
@@ -5331,6 +5332,7 @@ void CPGameServerList::AddServer(std::uint16_t servNum, PhysicalServer *data) {
     // std::uint32_t ip = inet_addr( data->GetIP().c_str() );
     pStream.WriteLong(static_cast<size_t>(baseOffset) + 36, ip);
 }
+ */
 void CPGameServerList::addEntry(const std::string &name, std::uint32_t addressBig) {
     pStream.WriteShort(1, 46);
     pStream.WriteShort(4, 1);

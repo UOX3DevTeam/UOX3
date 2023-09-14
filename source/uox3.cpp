@@ -211,6 +211,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     try{
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
+        //ServerConfig::shared().writeConfig(std::filesystem::path("test.cfg"));
         //return 0 ;
     }
     catch( const std::exception &e){
@@ -613,7 +614,7 @@ auto startInitialize(CServerData &serverdata) -> void {
     // Shows information about IPs and ports being listened on
     Console::shared().turnYellow();
     
-    auto externalIP = cwmWorldState->ServerData()->ExternalIP();
+    auto externalIP = ServerConfig::shared().serverString[ServerString::PUBLICIP];
     if (externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1") {
         Console::shared() << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
     }
@@ -2610,8 +2611,9 @@ auto displayBanner() -> void {
     Console::shared().turnYellow();
     Console::shared() << "Compiled by ";
     Console::shared().turnNormal();
-    Console::shared() << UOXVersion::name << myendl;
-    
+//    Console::shared() << UOXVersion::name << myendl;
+    Console::shared() << "punt" << myendl;
+
     Console::shared().turnYellow();
     Console::shared() << "Contact: ";
     Console::shared().turnNormal();

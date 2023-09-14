@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 using namespace std::string_literals ;
@@ -22,7 +21,7 @@ const std::map<std::string, dirlocation_t> DirectoryLocation::LOCATIONNAMEMAP{
 //======================================================================
 auto DirectoryLocation::makePath(const std::filesystem::path &path) const -> std::filesystem::path{
     auto path_to_check = std::filesystem::path("./").make_preferred() ;
-    if (!path.is_absolute() && locations.at(static_cast<int>(dirlocation_t::BASE)) != path_to_check){
+    if (!path.is_absolute() && locations.at(static_cast<int>(dirlocation_t::BASE)) != path_to_check && !locations.at(static_cast<int>(dirlocation_t::BASE)).empty()){
         return locations.at(static_cast<int>(dirlocation_t::BASE)) / path ;
     }
     return path ;
@@ -88,13 +87,13 @@ auto DirectoryLocation::reset() ->void {
     locations = std::vector<std::filesystem::path>(LOCATIONNAMEMAP.size());
     locations.at(static_cast<int>(dirlocation_t::BASE)) = std::filesystem::current_path() ;
 #if defined(_WIN32)
-    locations.at(static_cast<int>(dirlocation_t::UODIR))=std::filesystem::path("C:\\Program Files (x86)\\Electronic Arts\\Ultima Online Classic");
+    locations.at(static_cast<int>(dirlocation_t::UODIR))=std::filesystem::path("C:\\Program Files (x86)\\Electronic Arts\\Ultima Online Classic\\");
     auto potential = std::getenv("UODATA") ;
     if (potential != nullptr){
         locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path(potential) ;
     }
 #else
-    locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path("uodata");
+    locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path("uodata/");
     auto potential = std::getenv("UODATA") ;
     if (potential != nullptr){
         locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path(potential) ;
@@ -102,23 +101,23 @@ auto DirectoryLocation::reset() ->void {
     else {
         potential = std::getenv("HOME") ;
         if (potential != nullptr){
-            locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path(potential) / std::filesystem::path("uodata") ;
+            locations.at(static_cast<int>(dirlocation_t::UODIR)) = std::filesystem::path(potential) / std::filesystem::path("uodata/") ;
         }
         
     }
 #endif
-    locations.at(static_cast<int>(dirlocation_t::DEFINITION))=std::filesystem::path("dfndata") ;
-    locations.at(static_cast<int>(dirlocation_t::BOOK))=std::filesystem::path("books") ;
-    locations.at(static_cast<int>(dirlocation_t::ACCOUNT))=std::filesystem::path("accounts") ;
-    locations.at(static_cast<int>(dirlocation_t::SCRIPT))=std::filesystem::path("js") ;
-    locations.at(static_cast<int>(dirlocation_t::SCRIPTDATA))=locations.at(static_cast<int>(dirlocation_t::SCRIPT))/ std::filesystem::path("jsdata") ;
-    locations.at(static_cast<int>(dirlocation_t::BACKUP))=std::filesystem::path("archives") ;
-    locations.at(static_cast<int>(dirlocation_t::MSGBOARD))=std::filesystem::path("msgboards") ;
-    locations.at(static_cast<int>(dirlocation_t::SAVE))=std::filesystem::path("shared") ;
-    locations.at(static_cast<int>(dirlocation_t::ACCESS))=std::filesystem::path("accounts") ;
-    locations.at(static_cast<int>(dirlocation_t::HTML))=std::filesystem::path("html") ;
-    locations.at(static_cast<int>(dirlocation_t::LOG))=std::filesystem::path("logs") ;
-    locations.at(static_cast<int>(dirlocation_t::LANGUAGE))=std::filesystem::path("dictionaries") ;
+    locations.at(static_cast<int>(dirlocation_t::DEFINITION))=std::filesystem::path("dfndata/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::BOOK))=std::filesystem::path("books/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::ACCOUNT))=std::filesystem::path("accounts/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::SCRIPT))=std::filesystem::path("js/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::SCRIPTDATA))=locations.at(static_cast<int>(dirlocation_t::SCRIPT))/ std::filesystem::path("jsdata/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::BACKUP))=std::filesystem::path("archives/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::MSGBOARD))=std::filesystem::path("msgboards/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::SAVE))=std::filesystem::path("shared/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::ACCESS))=std::filesystem::path("accounts/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::HTML))=std::filesystem::path("html/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::LOG))=std::filesystem::path("logs/").make_preferred() ;
+    locations.at(static_cast<int>(dirlocation_t::LANGUAGE))=std::filesystem::path("dictionaries/").make_preferred() ;
 }
 //======================================================================
 auto DirectoryLocation::setLocation(const std::string &key, const std::string &value) ->bool {
@@ -156,21 +155,44 @@ auto DirectoryLocation::operator[](dirlocation_t location) -> std::filesystem::p
     }
 }
 //======================================================================
-auto DirectoryLocation::dumpPaths() const ->void {
-    Console::shared().printSectionBegin();
-    Console::shared() << "PathDump: \n";
-    Console::shared() << "    Root        : " << locations.at(static_cast<int>(dirlocation_t::BASE)).string() << "\n";
-    Console::shared() << "    Accounts    : " << locations.at(static_cast<int>(dirlocation_t::ACCOUNT)).string() << "\n";
-    Console::shared() << "    Access      : " << locations.at(static_cast<int>(dirlocation_t::ACCESS)).string() << "\n";
-    Console::shared() << "    Mul(Data)   : " << locations.at(static_cast<int>(dirlocation_t::UODIR)).string() << "\n";
-    Console::shared() << "    DFN(Defs)   : " << locations.at(static_cast<int>(dirlocation_t::DEFINITION)).string() << "\n";
-    Console::shared() << "    JScript     : " << locations.at(static_cast<int>(dirlocation_t::SCRIPT)).string() << "\n";
-    Console::shared() << "    JScriptData : " << locations.at(static_cast<int>(dirlocation_t::SCRIPTDATA)).string() << "\n";
-    Console::shared() << "    HTML        : " << locations.at(static_cast<int>(dirlocation_t::HTML)).string() << "\n";
-    Console::shared() << "    MSGBoards   : " << locations.at(static_cast<int>(dirlocation_t::MSGBOARD)).string() << "\n";
-    Console::shared() << "    Books       : " << locations.at(static_cast<int>(dirlocation_t::BOOK)).string() << "\n";
-    Console::shared() << "    Shared      : " << locations.at(static_cast<int>(dirlocation_t::SAVE)).string() << "\n";
-    Console::shared() << "    Backups     : " << locations.at(static_cast<int>(dirlocation_t::BACKUP)).string() << "\n";
-    Console::shared() << "    Logs        : " << locations.at(static_cast<int>(dirlocation_t::LOG)).string() << "\n";
-    Console::shared().printSectionBegin();
+auto DirectoryLocation::dumpPaths() const -> std::vector<std::pair<std::string,std::string>> {
+    // We are going to dump them in a special order, so not as simple as we wanted
+    auto rvalue = std::vector<std::pair<std::string,std::string>>();
+    auto specialFind = [this](dirlocation_t dir) -> std::pair<std::string,std::string>{
+        auto iter = std::find_if(DirectoryLocation::LOCATIONNAMEMAP.begin(), DirectoryLocation::LOCATIONNAMEMAP.end(), [dir](const std::pair<std::string,dirlocation_t> &entry){
+            return dir == entry.second ;
+        });
+        return std::make_pair(iter->first, this->unwindPath(dir));
+    };
+    rvalue.push_back(specialFind(dirlocation_t::BASE));
+    rvalue.push_back(specialFind(dirlocation_t::UODIR));
+    rvalue.push_back(specialFind(dirlocation_t::DEFINITION));
+    rvalue.push_back(specialFind(dirlocation_t::ACCOUNT));
+    rvalue.push_back(specialFind(dirlocation_t::SCRIPT));
+    rvalue.push_back(specialFind(dirlocation_t::SCRIPTDATA));
+    rvalue.push_back(specialFind(dirlocation_t::BACKUP));
+    rvalue.push_back(specialFind(dirlocation_t::MSGBOARD));
+    rvalue.push_back(specialFind(dirlocation_t::SAVE));
+    rvalue.push_back(specialFind(dirlocation_t::ACCESS));
+    rvalue.push_back(specialFind(dirlocation_t::HTML));
+    rvalue.push_back(specialFind(dirlocation_t::LOG));
+    rvalue.push_back(specialFind(dirlocation_t::LANGUAGE));
+    return rvalue ;
+}
+
+//======================================================================
+auto DirectoryLocation::unwindPath(dirlocation_t location) const -> std::filesystem::path {
+    if (location == dirlocation_t::BASE || location == dirlocation_t::UODIR){
+        return this->locations.at(static_cast<int>(location));
+    }
+    auto basepath = this->locations.at(static_cast<int>(dirlocation_t::BASE)).string() ;
+    auto path = this->locations.at(static_cast<int>(location)).string() ;
+    if (path.find(basepath) == 0){
+        path = path.substr(basepath.size()) ;
+        auto temp = std::filesystem::path(path).make_preferred() ;
+        if (temp.is_absolute()){
+            path = path.substr(1) ;
+        }
+    }
+    return std::filesystem::path(path) ;
 }

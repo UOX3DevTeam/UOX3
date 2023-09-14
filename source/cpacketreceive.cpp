@@ -418,7 +418,7 @@ bool CPIFirstLogin::Handle() {
         auto address = cwmWorldState->ServerData()->matchIP(tSock->ipaddress);
 
         CPGameServerList toSend(1);
-        toSend.addEntry(cwmWorldState->ServerData()->ServerName(), address.ipaddr(true));
+        toSend.addEntry(ServerConfig::shared().serverString[ServerString::SERVERNAME], address.ipaddr(true));
         tSock->Send(&toSend);
     }
     // If socket's ClientType is still CV_DEFAULT, it's an old client,
@@ -509,7 +509,7 @@ std::int16_t CPIServerSelect::ServerNum() {
 bool CPIServerSelect::Handle() {
     auto ip = cwmWorldState->ServerData()->matchIP(tSock->ipaddress);
 
-    auto name = cwmWorldState->ServerData()->ServerName();
+    auto name = ServerConfig::shared().serverString[ServerString::SERVERNAME];
     auto port = cwmWorldState->ServerData()->ServerPort();
     CPRelay toSend(ip.ipaddr(false), port);
     tSock->Send(&toSend);

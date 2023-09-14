@@ -45,3 +45,7 @@ auto StartLocConfig::operator[](size_t index)  ->  StartLocation& {
 auto StartLocConfig::size() const -> size_t {
     return startLocation.size();
 }
+//======================================================================
+auto StartLocConfig::empty() const ->bool {
+    return startLocation.empty() ;
+}

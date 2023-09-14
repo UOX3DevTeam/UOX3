@@ -37,8 +37,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     // in
     // bool CServerData::HandleLine( const std::string& tag, const std::string& value )
     // in cserverdata.cpp (this file).
-    {"SERVERNAME"s, 1},
-    {"COMMANDPREFIX"s, 3},
     {"SAVESTIMER"s, 6},
     {"SKILLCAP"s, 7},
     {"SKILLDELAY"s, 8},
@@ -180,7 +178,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"JSENGINESIZE"s, 248},
     {"THIRSTRATE"s, 251},
     {"THIRSTDRAINVAL"s, 252},
-    {"EXTERNALIP"s, 254},
     {"BLOODDECAYTIMER"s, 255},
     {"BLOODDECAYCORPSETIMER"s, 256},
     {"BLOODEFFECTCHANCE"s, 257},
@@ -220,13 +217,10 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"AGGRESSORFLAGTIMER"s, 336},
     {"PERMAGREYFLAGTIMER"s, 337},
     {"STEALINGFLAGTIMER"s, 338},
-    {"SNOOPAWARENESS"s, 339},
     {"APSPERFTHRESHOLD"s, 340},
     {"APSINTERVAL"s, 341},
     {"APSDELAYSTEP"s, 342},
     {"APSDELAYMAXCAP"s, 343},
-    {"YOUNGPLAYERSYSTEM"s, 344},
-    {"SECRETSHARDKEY"s, 346}
     
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -359,14 +353,14 @@ auto CServerData::lookupINIValue(const std::string &tag) -> std::int32_t {
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::ResetDefaults() -> void {
     resettingDefaults = true;
-    serverList.resize(1); // Set the initial count to hold one server.
+//    serverList.resize(1); // Set the initial count to hold one server.
     
-    ServerIP("127.0.0.1");
+//    ServerIP("127.0.0.1");
     ServerPort(2593);
-    ExternalIP("127.0.0.1");
-    serverList[0].SetPort(2593);
-    ServerName("My UOX3 Shard");
-    SecretShardKey("None");
+//    ExternalIP("127.0.0.1");
+//    serverList[0].SetPort(2593);
+//    ServerName("My UOX3 Shard");
+//    SecretShardKey("None");
     
     // Set default gcMaxBytes limit in MB per JS runtime
     // If set too low, UOX3 might crash when reloading (full) JS engine
@@ -621,7 +615,7 @@ auto CServerData::ResetDefaults() -> void {
     SystemTimer(tSERVER_ESCORTACTIVE, 600);
     SystemTimer(tSERVER_ESCORTDONE, 600);
 //    AmbientFootsteps(false);
-    ServerCommandPrefix('\'');
+//    ServerCommandPrefix('\'');
     
     CheckSpawnRegionSpeed(30);
     CheckItemsSpeed(1.5);
@@ -707,7 +701,7 @@ auto CServerData::ResetDefaults() -> void {
 //    ExtendedStartingStats(true);
 //    ExtendedStartingSkills(true);
     
-    ServerRandomStartingLocation(false);
+//    ServerRandomStartingLocation(false);
     ServerStartGold(1000);
     serverStartPrivs(0);
     SystemTimer(tSERVER_CORPSEDECAY, 420);
@@ -724,36 +718,8 @@ CServerData::CServerData() {
 //==================================================================================================
 auto CServerData::startup() -> void { ResetDefaults(); }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerName()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets server name. Sets to specified value, or to default name
-// if no value specified
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerName() const -> const std::string & { return serverList[0].GetName(); }
-auto CServerData::ServerName(const std::string &setname) -> void {
-    if (serverList.empty()) {
-        serverList.resize(1);
-    }
-    serverList[0].SetName(setname);
-    if (setname.empty()) {
-        serverList[0].SetName("My UOX3 Shard");
-    }
-}
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::SecretShardKey()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets secret shard key used to only allows connections from
-// specific |					custom clients that provide a matching secret key
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::SecretShardKey() const -> const std::string & { return secretShardKey; }
-auto CServerData::SecretShardKey(const std::string &newName) -> void {
-    if (!newName.empty()) {
-        secretShardKey = newName;
-    }
-}
-
+/*
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::ServerDomain()
 // o------------------------------------------------------------------------------------------------o
@@ -772,48 +738,20 @@ auto CServerData::ServerDomain(const std::string &setdomain) -> void {
         serverList[0].SetDomain(setdomain);
     }
 }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerIP()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets server IP. Sets to specified value, or to loopback IP if
-// no value specified
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerIP() const -> const std::string & { return serverList[0].GetIP(); }
-auto CServerData::ServerIP(const std::string &setip) -> void {
-    if (serverList.empty()) {
-        serverList.resize(1);
-    }
-    if (setip.empty()) {
-        serverList[0].SetIP("127.0.0.1");
-    }
-    else {
-        serverList[0].SetIP(setip);
-    }
-}
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ExternalIP()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets external (WAN) IP for server
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ExternalIP() const -> const std::string & { return externalIP; }
-auto CServerData::ExternalIP(const std::string &ip) -> void {
-    externalIP = ip;
-    // IP4Address::setExternal( externalIP );
-}
+*/
 auto CServerData::matchIP(const IP4Addr &ip) const -> IP4Addr {
     auto [candidate, match] = availableIPs.bestmatch(ip);
     if (match == 0) {
-        if (!externalIP.empty()) {
-            candidate = IP4Addr(externalIP);
+        if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
+            candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
         }
     }
     else {
         // We got some kind of match, see if on same network type?
         if (candidate.type() != ip.type()) {
             if (ip.type() == IP4Addr::ip4type_t::wan) {
-                if (!externalIP.empty()) {
-                    candidate = IP4Addr(externalIP);
+                if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
+                    candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
                 }
             }
         }
@@ -839,17 +777,6 @@ auto CServerData::ServerPort(std::uint16_t setport) -> void {
 
 
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::ServerCommandPrefix()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Set command prefix
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerCommandPrefix() const -> char {
-    return commandprefix.empty() ? 0 : commandprefix[0];
-}
-auto CServerData::ServerCommandPrefix(char cmdvalue) -> void {
-    commandprefix = std::string(1, cmdvalue);
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SysMsgColour()
@@ -1334,13 +1261,26 @@ auto CServerData::ExpansionCombatHitChance(std::uint8_t setting) -> void {
 //|	Function	-	CServerData::DumpPaths()
 //|	Date		-	02/26/2002
 // o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Needed a function that would dump out the paths. If you add any
-// paths to the
-//|					server please make sure that you place exports to the console
-//here to please |					 so it can be looked up if needed.
+//|	Purpose		-	Needed a function that would dump out the paths. If you add any paths to the
+//|					server please make sure that you place exports to the console here to please
+//|                 so it can be looked up if needed.
 // o------------------------------------------------------------------------------------------------o
 auto CServerData::DumpPaths() -> void {
-    ServerConfig::shared().dumpPaths();
+    Console::shared().printSectionBegin();
+    Console::shared() << "    Root        : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::BASE).string() << "\n";
+    Console::shared() << "    Accounts    : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::ACCOUNT).string() << "\n";
+    Console::shared() << "    Access      : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::ACCESS).string() << "\n";
+    Console::shared() << "    Mul(Data)   : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::UODIR).string() << "\n";
+    Console::shared() << "    DFN(Defs)   : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::DEFINITION).string() << "\n";
+    Console::shared() << "    JScript     : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::SCRIPT).string() << "\n";
+    Console::shared() << "    JScriptData : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::SCRIPTDATA).string() << "\n";
+    Console::shared() << "    HTML        : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::HTML).string() << "\n";
+    Console::shared() << "    MSGBoards   : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::MSGBOARD).string() << "\n";
+    Console::shared() << "    Books       : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::BOOK).string() << "\n";
+    Console::shared() << "    Shared      : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::SAVE).string() << "\n";
+    Console::shared() << "    Backups     : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::BACKUP).string() << "\n";
+    Console::shared() << "    Logs        : " << ServerConfig::shared().unwindDirectoryFor(dirlocation_t::LOG).string() << "\n";
+    Console::shared().printSectionBegin();
 }
 
 
@@ -2310,10 +2250,10 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         << "//================================" << '\n'
         << '\n';
         ofsOutput << "[system]" << '\n' << "{" << '\n';
-        ofsOutput << "SERVERNAME=" << ServerName() << '\n';
-        ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
+        ofsOutput << "SERVERNAME=" << ServerConfig::shared().serverString[ServerString::SERVERNAME] << '\n';
+        ofsOutput << "EXTERNALIP=" << ServerConfig::shared().serverString[ServerString::PUBLICIP]  << '\n';
         ofsOutput << "PORT=" << ServerPort() << '\n';
-        ofsOutput << "SECRETSHARDKEY=" << SecretShardKey() << '\n';
+        ofsOutput << "SECRETSHARDKEY=" << ServerConfig::shared().serverString[ServerString::SHARDKEY] << '\n';
         ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
         ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
         ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
@@ -2321,7 +2261,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "CONSOLELOG=" << (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) << '\n';
         ofsOutput << "NETWORKLOG=" << (ServerConfig::shared().enabled(ServerSwitch::NETWORKLOG)) << '\n';
         ofsOutput << "SPEECHLOG=" << ServerConfig::shared().enabled(ServerSwitch::SPEECHLOG) << '\n';
-        ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
+        ofsOutput << "COMMANDPREFIX=" << ServerConfig::shared().serverString[ServerString::COMMANDPREFIX] << '\n';
         ofsOutput << "ANNOUNCEWORLDSAVES=" << ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE) << '\n';
         ofsOutput << "JOINPARTMSGS=" << ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART) << '\n';
         ofsOutput << "BACKUPSENABLED=" << ServerConfig::shared().enabled(ServerSwitch::BACKUP) << '\n';
@@ -2330,7 +2270,7 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
         ofsOutput << "UOGENABLED=" << static_cast<int>(ServerConfig::shared().enabled(ServerSwitch::UOG)) << '\n';
         ofsOutput << "FREESHARDSERVERPOLL=" << static_cast<int>(ServerConfig::shared().enabled(ServerSwitch::FREESHARD)) << '\n';
-        ofsOutput << "RANDOMSTARTINGLOCATION=" << (ServerRandomStartingLocation() ? 1 : 0) << '\n';
+        ofsOutput << "RANDOMSTARTINGLOCATION=" << ServerConfig::shared().enabled(ServerSwitch::RANDOMSTART) << '\n';
         ofsOutput << "ASSISTANTNEGOTIATION=" << ServerConfig::shared().enabled(ServerSwitch::ASSISTANTNEGOTIATION) << '\n';
         ofsOutput << "KICKONASSISTANTSILENCE=" << ServerConfig::shared().enabled(ServerSwitch::KICKONASSISTANTSILENCE) << '\n';
         ofsOutput << "CLASSICUOMAPTRACKER=" << ServerConfig::shared().enabled(ServerSwitch::CUOMAPTRACKER) << '\n';
@@ -2921,13 +2861,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
     }
     
     switch (titer->second) {
-        case 1: // SERVERNAME
-            ServerName(value);
-            break;
-        case 3: // COMMANDPREFIX
-            ServerCommandPrefix(
-                                (value.data()[0])); // return the first character of the return string only
-            break;
         case 6: // SAVESTIMER
             ServerSavesTimer(static_cast<std::uint32_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -3257,9 +3190,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
         case 192: // FISHINGSTAMINALOSS
             FishingStaminaLoss(std::stof(value));
             break;
-        case 193: // RANDOMSTARTINGLOCATION
-            ServerRandomStartingLocation(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)) == 1);
-            break;
         case 219: // DECAYTIMERINHOUSE
             SystemTimer(tSERVER_DECAYINHOUSE, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
@@ -3325,9 +3255,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 252: // THIRSTDRAINVAL
             ThirstDrain(static_cast<std::int16_t>(std::stoi(value, nullptr, 0)));
-            break;
-        case 254: // ExternalIP
-            ExternalIP(value);
             break;
         case 255: // BLOODDECAYTIMER
             SystemTimer(tSERVER_BLOODDECAY, static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
@@ -3439,9 +3366,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 343: // APSDELAYMAXCAP
             APSDelayMaxCap(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
-            break;
-        case 346: // SECRETSHARDKEY
-            SecretShardKey(value);
             break;
         default:
             rValue = false;
@@ -3831,34 +3755,3 @@ auto CServerData::IncDay() -> bool {
     ++days;
     return true;
 }
-
-//==============================================================================================
-auto CServerData::ServerEntry(std::uint16_t entryNum) -> PhysicalServer * {
-    PhysicalServer *rValue = nullptr;
-    if (entryNum < serverList.size()) {
-        rValue = &serverList[entryNum];
-    }
-    return rValue;
-}
-//==============================================================================================
-auto CServerData::ServerCount() const -> std::uint16_t { return static_cast<std::uint16_t>(serverList.size()); }
-//==============================================================================================
-// PhysicalServer
-//==============================================================================================
-
-//==============================================================================================
-auto PhysicalServer::SetName(const std::string &newName) -> void { name = newName; }
-//==============================================================================================
-auto PhysicalServer::SetDomain(const std::string &newDomain) -> void { domain = newDomain; }
-//==============================================================================================
-auto PhysicalServer::SetIP(const std::string &newIP) -> void { ip = newIP; }
-//==============================================================================================
-auto PhysicalServer::SetPort(std::uint16_t newPort) -> void { port = newPort; }
-//==============================================================================================
-auto PhysicalServer::GetName() const -> const std::string & { return name; }
-//==============================================================================================
-auto PhysicalServer::GetDomain() const -> const std::string & { return domain; }
-//==============================================================================================
-auto PhysicalServer::GetIP() const -> const std::string & { return ip; }
-//==============================================================================================
-auto PhysicalServer::GetPort() const -> std::uint16_t { return port; }

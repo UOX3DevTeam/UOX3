@@ -988,7 +988,7 @@ class CPGameServerList : public CPUOXBuffer {
     CPGameServerList();
     CPGameServerList(std::uint16_t numServers);
     virtual void NumberOfServers(std::uint16_t numItems);
-    virtual void AddServer(std::uint16_t servNum, PhysicalServer *data);
+//    virtual void AddServer(std::uint16_t servNum, PhysicalServer *data);
     virtual void addEntry(const std::string &name, std::uint32_t addressBig);
 };
 

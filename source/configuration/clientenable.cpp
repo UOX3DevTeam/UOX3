@@ -55,6 +55,12 @@ auto ClientEnable::setKeyValue(const std::string &key, const std::string &value)
     }
     return rvalue ;
 }
+//======================================================================
+auto ClientEnable::save(std::ostream &output) const ->void {
+    for (const auto &[name,version]:NAMECLIENTMAP){
+        output <<"\t"<<name<<" = "<<clients.at(version)<<"\n";
+    }
+}
 
 //======================================================================
 auto ClientEnable::enableClient4000() const ->bool {

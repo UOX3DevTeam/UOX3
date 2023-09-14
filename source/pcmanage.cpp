@@ -756,7 +756,7 @@ bool CPICreateCharacter::Handle() {
             }
             
             // Use random start location if enabled in uox.ini
-            if (cwmWorldState->ServerData()->ServerRandomStartingLocation()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::RANDOMSTART)) {
                 if (serverCount > 0) {
                     size_t rndStartingLocation = RandomNum(static_cast<size_t>(0), serverCount - 1);
                     

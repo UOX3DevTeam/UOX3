@@ -20,6 +20,7 @@ struct StartLocConfig {
     auto operator[](size_t index) const -> const StartLocation&;
     auto operator[](size_t index)  ->  StartLocation&;
     auto size() const -> size_t ;
+    auto empty() const ->bool ;
 
 };
 

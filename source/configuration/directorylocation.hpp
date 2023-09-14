@@ -13,7 +13,7 @@
 //======================================================================
 // We make this outside the struct, as we are going to share, and hopefully makes more sense?
 enum class dirlocation_t {
-    BASE,UODIR,DEFINITION,BOOK,
+    BASE=0,UODIR,DEFINITION,BOOK,
     ACCOUNT,SCRIPT,SCRIPTDATA,BACKUP,
     MSGBOARD,SAVE,ACCESS,HTML,
     LOG,LANGUAGE
@@ -33,7 +33,9 @@ public:
     auto postLoad() ->void ;
     auto operator[](dirlocation_t location) const -> const std::filesystem::path& ;
     auto operator[](dirlocation_t location) -> std::filesystem::path& ;
-    auto dumpPaths() const ->void ;
+    auto dumpPaths() const -> std::vector<std::pair<std::string,std::string>> ;
+    //auto dumpPaths() const ->void ;
+    auto unwindPath(dirlocation_t location) const -> std::filesystem::path;
 };
 
 #endif /* directorylocation_hpp */

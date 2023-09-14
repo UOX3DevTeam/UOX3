@@ -19,6 +19,8 @@ struct ClientEnable {
     auto set(ClientVersion::version_t version, bool state) -> void ;
     auto test(ClientVersion::version_t version) const ->bool ;
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
+ 
+    auto save(std::ostream &output) const ->void ;
     // Convience accessors
     // ClientSupport used to determine login-restrictions
     auto enableClient4000() const ->bool ;
@@ -46,7 +48,6 @@ struct ClientEnable {
     auto enableClient70610() const ->bool ;
     auto setEnableClient70610(bool state) ->void ;
 
-    
-};
+ };
 
 #endif /* clientenable_hpp */

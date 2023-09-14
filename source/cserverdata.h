@@ -64,52 +64,7 @@ enum csd_tid_t {
     tSERVER_LOYALTYRATE,        // Amount of time between each time loyalty decreases for a pet
     tSERVER_COUNT
 };
-/*
-//======================================================================================================
-// CServerData
-//======================================================================================================
-struct StartLocationData {
-    StartLocationData() {
-        x = 0;
-        y = 0;
-        z = 0;
-        worldNum = 0;
-        instanceId = 0;
-        clilocDesc = 0;
-    }
-    std::string oldTown;
-    std::string oldDescription;
-    std::string newTown;
-    std::string newDescription;
-    std::int16_t x;
-    std::int16_t y;
-    std::int16_t z;
-    std::int16_t worldNum;
-    std::uint16_t instanceId;
-    std::uint32_t clilocDesc;
-};
- */
-// o------------------------------------------------------------------------------------------------o
-//  PhysicalServer
-// o------------------------------------------------------------------------------------------------o
-// o------------------------------------------------------------------------------------------------o
-class PhysicalServer {
-public:
-    auto SetName(const std::string &newName) -> void;
-    auto SetDomain(const std::string &newDomain) -> void;
-    auto SetIP(const std::string &newIP) -> void;
-    auto SetPort(std::uint16_t newPort) -> void;
-    auto GetName() const -> const std::string &;
-    auto GetDomain() const -> const std::string &;
-    auto GetIP() const -> const std::string &;
-    auto GetPort() const -> std::uint16_t;
-    
-private:
-    std::string name;
-    std::string domain;
-    std::string ip;
-    std::uint16_t port;
-};
+
 //======================================================================================================
 // CServerData
 //======================================================================================================
@@ -118,18 +73,13 @@ private:
     
     // Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++
     // specificaiton, to minimize wasted space for bools These should be updated
-    std::bitset<104> boolVals;          // Many values stored this way, rather than using bools.
     std::bitset<64> spawnRegionsFacets; // Used to determine which facets to enable spawn regions
     // for, set in UOX>INI
     
     // ServerSystems
-    std::string sServerName; // 04/03/2004 - Need a place to store the name of the server (Added to
-    // support the UOG Info Request)
-    std::string commandprefix; //	Character that acts as the command prefix
-    std::string externalIP;
     ip4list_t availableIPs;
     
-    std::vector<PhysicalServer> serverList; //	Series of server entries for shard list
+//    std::vector<PhysicalServer> serverList; //	Series of server entries for shard list
     std::uint8_t consoleLogEnabled; //	Various levels of legging 0 == none, 1 == normal, 2 == normal + all
     // speech
     std::uint16_t serverLanguage;    //	Default language used on server
@@ -156,26 +106,6 @@ private:
     std::uint32_t maxBytesOut; // Max bytes that can be sent to a client in a 10-second window before client
     // is warned/kicked for excessive data use
     std::uint32_t trafficTimeban; // Duration in minutes that player will be banned for if they exceed their
-    // network traffic budget
-    
-    bool uogEnabled;             // 04/03/2004 - Added to support the UOG Info Request Service
-    bool randomStartingLocation; // Enable or disable randomizing starting location for new players
-    // based on starting location entries
-    /*
-    // Client Support
-    bool isClients4000Enabled;  // Allow client connections from 4.0.0 to 4.0.11f
-    bool isClients5000Enabled;  // Allow client connections from 5.0.0.0 to 5.0.8.2 (Mondain's Legacy)
-    bool isClients6000Enabled;  // Allow client connections from 6.0.0.0 to 6.0.4.0
-    bool isClients6050Enabled;  // Allow client connections from 6.0.5.0 to 6.0.14.2
-    bool isClients7000Enabled;  // Allow client connections from 7.0.0.0 to 7.0.8.2
-    bool isClients7090Enabled;  // Allow client connections from 7.0.9.0 to 7.0.15.1 (High Seas)
-    bool isClients70160Enabled; // Allow client connections from 7.0.16.0 to 7.0.23.1
-    bool isClients70240Enabled; // Allow client connections from 7.0.24.0+
-    bool isClients70300Enabled; // Allow client connections from 7.0.30.0+
-    bool isClients70331Enabled; // Allow client connections from 7.0.33.1+
-    bool isClients704565Enabled; // Allow client connections from 7.0.45.65+ (Time of Legends)
-    bool isClients70610Enabled;  // Allow client connections from 7.0.61.0+ (Endless Journey)
-    */
     // facet block
     bool useFacetSaves;
     std::vector<std::string> facetNameList;
@@ -197,9 +127,6 @@ private:
     //std::string serverDirectories[CSDDP_COUNT];
     
     std::string actualINI; // 	The actual uox.ini file loaded, used for saveing
-    
-    std::string secretShardKey; // Secret shard key used to only allow connection from specific
-    // custom clients with matching key
     
     // Expansion
     // 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA,
@@ -248,7 +175,6 @@ private:
     std::int32_t maxPlayerBankWeight;     //	The max weight capacity of a player's bankbox (including
     // subcontainers)
     R32 weightPerSTR;             //	How much weight per point of STR a character can hold.
-    bool paperdollGuildButton;    //	Enable Guild-button on paperdoll to access guild-menus
     // without going through guildstone
     std::uint16_t petLoyaltyGainOnSuccess; //	The default amount of pet loyalty gained on successful use
     // of a pet command
@@ -437,20 +363,10 @@ public:
     // void		RefreshIPs( void );
     
     CServerData();
-    auto ServerName(const std::string &setname) -> void;
-    auto SecretShardKey(const std::string &newName) -> void;
     auto ServerDomain(const std::string &setdomain) -> void;
-    auto ServerIP(const std::string &setip) -> void;
-    auto ServerName() const -> const std::string &;
-    auto SecretShardKey() const -> const std::string &;
     auto ServerDomain() const -> const std::string &;
-    auto ServerIP() const -> const std::string &;
-    auto ExternalIP() const -> const std::string &;
-    auto ExternalIP(const std::string &ip) -> void;
     auto ServerPort(std::uint16_t setport) -> void;
     auto ServerPort() const -> std::uint16_t;
-    auto ServerCommandPrefix(char cmdvalue) -> void;
-    char ServerCommandPrefix() const;
     auto ServerMulCaching(bool setting) -> void;
     auto ServerMulCachingStatus() const -> bool;
 
@@ -476,10 +392,6 @@ public:
     auto SysMsgColour(std::uint16_t value) -> void;
     auto SysMsgColour() const -> std::uint16_t;
     
-    auto ServerRandomStartingLocation() const -> bool { return randomStartingLocation; }
-    auto ServerRandomStartingLocation(bool rndStartLocValue) -> void {
-        randomStartingLocation = rndStartLocValue;
-    }
     auto ServerNetRetryCount() const -> std::uint32_t { return netRetryCount; }
     auto ServerNetRetryCount(std::uint32_t retryValue) -> void { netRetryCount = retryValue; }
     auto ServerNetRcvTimeout() const -> std::uint32_t { return netRcvTimeout; }
@@ -837,8 +749,6 @@ public:
     
     auto matchIP(const IP4Addr &ip) const -> IP4Addr;
     
-    auto ServerEntry(std::uint16_t entryNum) ->PhysicalServer *;
-    auto ServerCount() const -> std::uint16_t;
     
 private:
     bool resettingDefaults;
