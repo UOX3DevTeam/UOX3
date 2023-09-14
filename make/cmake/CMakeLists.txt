@@ -36,7 +36,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
-
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.hpp
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.h
