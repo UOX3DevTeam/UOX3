@@ -162,7 +162,7 @@ auto DirectoryLocation::dumpPaths() const -> std::vector<std::pair<std::string,s
         auto iter = std::find_if(DirectoryLocation::LOCATIONNAMEMAP.begin(), DirectoryLocation::LOCATIONNAMEMAP.end(), [dir](const std::pair<std::string,dirlocation_t> &entry){
             return dir == entry.second ;
         });
-        return std::make_pair(iter->first, this->unwindPath(dir));
+        return std::make_pair(iter->first, this->unwindPath(dir).string());
     };
     rvalue.push_back(specialFind(dirlocation_t::BASE));
     rvalue.push_back(specialFind(dirlocation_t::UODIR));

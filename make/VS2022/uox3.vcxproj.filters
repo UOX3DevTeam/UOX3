@@ -301,17 +301,23 @@
     <ClCompile Include="..\..\source\configuration\serverfeature.cpp">
       <Filter>Source Files\configuration</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\configuration\assistantfeature.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\configuration\startlocconfig.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\type\startlocation.cpp">
       <Filter>Source Files\type</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\clientversion.cpp">
       <Filter>Source Files\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\assistantfeature.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\startlocconfig.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\serverswitch.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\serverstring.cpp">
+      <Filter>Source Files\configuration</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -569,13 +575,23 @@
     <ClInclude Include="..\..\source\configuration\serverfeature.hpp">
       <Filter>Source Files\configuration</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
-    <ClInclude Include="..\..\source\configuration\startlocconfig.hpp" />
     <ClInclude Include="..\..\source\type\startlocation.hpp">
       <Filter>Source Files\type</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\clientversion.hpp">
       <Filter>Source Files\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\assistantfeature.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\serverswitch.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\startlocconfig.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\serverstring.hpp">
+      <Filter>Source Files\configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
