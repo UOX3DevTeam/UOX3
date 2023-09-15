@@ -2177,8 +2177,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
     switch (damageType) {
         case NONE:
             break;     //	No Armor protection
-        case PHYSICAL: //	Physical damage
-        {
+        case PHYSICAL: { //	Physical damage
             // Check Shield Defense
             bool parrySuccess = false;
             if (ValidateObject(shield)) {

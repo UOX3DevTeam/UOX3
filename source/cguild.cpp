@@ -892,11 +892,8 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
     toSend.UserId(INVALIDSERIAL);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 560 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
+    toSend.addCommand(util::format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()));
+    toSend.addCommand(util::format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
     toSend.addCommand(util::format("text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour()));
     toSend.addCommand("page 1");
     
@@ -967,8 +964,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
             if (mChar->GetSerial() == gMaster || mChar->IsGM()) // Guildmaster Access?
             {
                 ++numButtons;
-                toSend.addText(
-                               util::format(Dictionary->GetEntry(113, sLang), gMstr->GetGuildTitle().c_str()));
+                toSend.addText(util::format(Dictionary->GetEntry(113, sLang), gMstr->GetGuildTitle().c_str()));
             }
             break;
         case BasePage + 2:
@@ -1000,15 +996,13 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
             numButtons = 3; // View charter
             toSend.addText(Dictionary->GetEntry(140, sLang));
             toSend.addText(gList[trgGuild]->Charter());
-            toSend.addText(
-                           util::format(Dictionary->GetEntry(142, sLang), gList[trgGuild]->Webpage().c_str()));
+            toSend.addText(util::format(Dictionary->GetEntry(142, sLang), gList[trgGuild]->Webpage().c_str()));
             toSend.addText(Dictionary->GetEntry(130, sLang));
             break;
         case BasePage + 6: // List of recruits
             toSend.addText(Dictionary->GetEntry(143, sLang));
             tCtr = 0;
-            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits();
-                 tChar = gList[trgGuild]->NextRecruit()) {
+            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
@@ -1018,8 +1012,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
         case BasePage + 7: // List of members
             toSend.addText(Dictionary->GetEntry(144, sLang));
             tCtr = 0;
-            for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember();
-                 tChar = gList[trgGuild]->NextMember()) {
+            for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
@@ -1029,8 +1022,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
         case BasePage + 8: // Member dismiss
             toSend.addText(Dictionary->GetEntry(145, sLang));
             tCtr = 0;
-            for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember();
-                 tChar = gList[trgGuild]->NextMember()) {
+            for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
@@ -1040,8 +1032,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
         case BasePage + 9: // Dismiss recruit
             toSend.addText(Dictionary->GetEntry(146, sLang));
             tCtr = 0;
-            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits();
-                 tChar = gList[trgGuild]->NextRecruit()) {
+            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
@@ -1051,8 +1042,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
         case BasePage + 10: // Accept recruit
             toSend.addText(Dictionary->GetEntry(147, sLang));
             tCtr = 0;
-            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits();
-                 tChar = gList[trgGuild]->NextRecruit()) {
+            for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
@@ -1180,24 +1170,16 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
     }
     
     for (std::uint16_t iCtr = 0; iCtr < numButtons; ++iCtr) {
-        toSend.addCommand(util::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr,
-                                       cwmWorldState->ServerData()->ButtonRight(),
-                                       cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2));
-        toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * iCtr,
-                                       cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1));
+        toSend.addCommand(util::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2));
+        toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1));
     }
     if (numText != 0) {
         for (std::uint16_t iCtr = 0; iCtr < numText; ++iCtr) {
             if (numColumns == 1) {
-                toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * (iCtr + numButtons),
-                                               cwmWorldState->ServerData()->LeftTextColour(),
-                                               iCtr + numButtons + 1));
+                toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * (iCtr + numButtons), cwmWorldState->ServerData()->LeftTextColour(),  iCtr + numButtons + 1));
             }
             else {
-                toSend.addCommand(util::format("text %i %i %i %i", 50 + (iCtr % numColumns) * 100,
-                                               30 + 20 * ((iCtr / 2) + numButtons),
-                                               cwmWorldState->ServerData()->LeftTextColour(),
-                                               iCtr + numButtons + 1));
+                toSend.addCommand(util::format("text %i %i %i %i", 50 + (iCtr % numColumns) * 100,  30 + 20 * ((iCtr / 2) + numButtons),  cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1));
             }
         }
     }
@@ -1240,8 +1222,7 @@ void CGuildCollection::GumpInput(CPIGumpInput *gi) {
                 gMember->SetGuildTitle(text);
                 auto gSock = gMember->GetSocket();
                 if (gSock != nullptr) {
-                    gSock->SysMessage(1686,
-                                      text.c_str()); // You have been granted a guild title of '%s'!
+                    gSock->SysMessage(1686, text.c_str()); // You have been granted a guild title of '%s'!
                 }
                 gMember->Dirty(UT_UPDATE);
             }
@@ -1267,12 +1248,10 @@ void CGuildCollection::ToggleAbbreviation(CSocket *s) {
     }
     else {
         mChar->SetGuildToggle(!mChar->GetGuildToggle());
-        if (mChar->GetGuildToggle()) // If set to On then
-        {
+        if (mChar->GetGuildToggle()) { // If set to On then
             s->SysMessage(154); // Tell player about the change
         }
-        else // Otherwise
-        {
+        else { // Otherwise
             s->SysMessage(155); // And tell him also
         }
         mChar->Dirty(UT_UPDATE);
@@ -1295,8 +1274,7 @@ void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
             gTransportStone->SetNewbie(true);
             gTransportStone->SetWeight(1, true);
             gTransportStone->SetType(IT_GUILDSTONE);
-            gTransportStone->SetName(
-                                     util::format(Dictionary->GetEntry(101), gList[guildId]->Name().c_str()));
+            gTransportStone->SetName(util::format(Dictionary->GetEntry(101), gList[guildId]->Name().c_str()));
             CItem *gStone = CalcItemObjFromSer(gList[guildId]->Stone());
             gStone->Delete();
             
@@ -1638,8 +1616,7 @@ void CGuildCollection::Resign(CSocket *s) {
         nGuild->CalcMaster();
         auto newGuildMaster = CalcCharObjFromSer(nGuild->Master());
         if (ValidateObject(newGuildMaster)) {
-            nGuild->TellMembers(1692, newGuildMaster->GetName().c_str(),
-                                nGuild->Name().c_str()); // %s is now the new Guild Master of %s!
+            nGuild->TellMembers(1692, newGuildMaster->GetName().c_str(), nGuild->Name().c_str()); // %s is now the new Guild Master of %s!
         }
     }
     
@@ -1725,9 +1702,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
-            Console::shared().error(util::format("Critical error adding guildstone, memory "
-                                                 "allocation failed.  Attempted by player 0x%X",
-                                                 mChar->GetSerial()));
+            Console::shared().error(util::format("Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial()));
             return;
         }
         mChar->SetGuildNumber(gNum);
@@ -1735,11 +1710,8 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
         nGuild->NewMember((*mChar));
         CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
-            s->ObjMessage(176,
-                          deed); // Critical error, unable to spawn guildstone, please contact a GM!
-            Console::shared().error(util::format(
-                                                 "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",
-                                                 mChar->GetSerial()));
+            s->ObjMessage(176,deed); // Critical error, unable to spawn guildstone, please contact a GM!
+            Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()));
             return;
         }
         stone->SetName(Dictionary->GetEntry(175)); // Guildstone for an unnamed guild
@@ -1764,28 +1736,21 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
     }
     else if (deed->GetId() == 0x1869) {
         // Transporter stone for guildstone
-        if (mChar->GetGuildNumber() == -1) // not in a guild
-        {
-            s->ObjMessage("You don't appear to be in a guild",
-                          deed); // You don't appear to be in a guild
+        if (mChar->GetGuildNumber() == -1) { // not in a guild
+            s->ObjMessage("You don't appear to be in a guild", deed); // You don't appear to be in a guild
             return;
         }
         guildid_t gNum = deed->GetTempVar(CITV_MORE);
         CGuild *nGuild = Guild(gNum);
         if (nGuild == nullptr) {
             s->ObjMessage(174, deed); // Critical error adding guildstone, please contact a GM!
-            Console::shared().error(util::format("Critical error adding guildstone, memory "
-                                                 "allocation failed.  Attempted by player 0x%X",
-                                                 mChar->GetSerial()));
+            Console::shared().error(util::format("Critical error adding guildstone, memory  allocation failed.  Attempted by player 0x%X", mChar->GetSerial()));
             return;
         }
         CItem *stone = Items->CreateItem(nullptr, mChar, 0x0ED5, 1, 0, CBaseObject::OT_ITEM);
         if (!ValidateObject(stone)) {
-            s->ObjMessage(176,
-                          deed); // Critical error, unable to spawn guildstone, please contact a GM!
-            Console::shared().error(util::format(
-                                                 "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",
-                                                 mChar->GetSerial()));
+            s->ObjMessage(176, deed); // Critical error, unable to spawn guildstone, please contact a GM!
+            Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",mChar->GetSerial()));
             return;
         }
         stone->SetName(util::format(Dictionary->GetEntry(101), nGuild->Name().c_str()));
@@ -1847,15 +1812,13 @@ void CGuildCollection::DisplayTitle(CSocket *s, CChar *src) const {
             return;
         
         auto abbreviation = std::string(mGuild->Abbreviation());
-        if (abbreviation.empty()) // 0 length string
-        {
+        if (abbreviation.empty()) { // 0 length string
             abbreviation = "none";
         }
         if (mGuild->Type() != GT_STANDARD) {
             auto guildtype = GTypeNames[mGuild->Type()];
             if (!src->GetGuildTitle().empty()) {
-                title = util::format("[%s, %s] [%s]", src->GetGuildTitle().c_str(),
-                                     abbreviation.c_str(), guildtype.c_str());
+                title = util::format("[%s, %s] [%s]", src->GetGuildTitle().c_str(),abbreviation.c_str(), guildtype.c_str());
             }
             else {
                 title = util::format("[%s] [%s]", abbreviation.c_str(), guildtype.c_str());
@@ -1863,8 +1826,7 @@ void CGuildCollection::DisplayTitle(CSocket *s, CChar *src) const {
         }
         else {
             if (!src->GetGuildTitle().empty()) {
-                title =
-                util::format("[%s, %s]", src->GetGuildTitle().c_str(), abbreviation.c_str());
+                title = util::format("[%s, %s]", src->GetGuildTitle().c_str(), abbreviation.c_str());
             }
             else {
                 title = util::format("[%s]", abbreviation.c_str());

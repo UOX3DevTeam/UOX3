@@ -40,8 +40,7 @@ CDictionary::CDictionary(const std::string &filepath, const std::string &languag
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set which language to use for dictionary
 // o------------------------------------------------------------------------------------------------o
-auto CDictionary::SetLocationLanguage(const std::string &filepath, const std::string &language)
--> void {
+auto CDictionary::SetLocationLanguage(const std::string &filepath, const std::string &language) -> void {
     if (language.empty()) {
         dictLanguage = "ZRO";
     }
@@ -250,11 +249,8 @@ auto CDictionaryContainer::operator[](int message_number) -> std::string & {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp)
--> std::string & {
-    if (cwmWorldState->ServerData()->ServerLanguage() !=
-        DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
-    {
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) -> std::string & {
+    if (cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
         // If a default server language has been specified in uox.ini, force the use of that
         // language
         if (dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid()) {
@@ -289,11 +285,8 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
     }
 }
 //==================================================================================================
-auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) const
--> const std::string & {
-    if (cwmWorldState->ServerData()->ServerLanguage() !=
-        DL_DEFAULT) // defaultServerLang != DL_DEFAULT )
-    {
+auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) const -> const std::string & {
+    if (cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
         // If a default server language has been specified in uox.ini, force the use of that
         // language
         if (dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid()) {
@@ -305,8 +298,7 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
     }
     
     auto typetouse = toDisp;
-    if ((static_cast<std::int32_t>(toDisp) < 0) ||
-        (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {
+    if ((static_cast<std::int32_t>(toDisp) < 0) || (static_cast<std::int32_t>(toDisp) >= unicodetypes_t::TOTAL_LANGUAGES)) {
         typetouse = ZERO;
     }
     try {

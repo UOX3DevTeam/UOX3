@@ -17,6 +17,10 @@ const std::map< std::string,Expansion::type_t> Expansion::NAMETYPEMAP{
 const Era Expansion::defaultEra = Era("lbr");
 //======================================================================
 Expansion::Expansion(){
+    reset();
+}
+//======================================================================
+auto Expansion::reset() ->void {
     values = std::vector<Era>(NAMETYPEMAP.size(),Era("core"));
     values.at(SHARD) = Era("lbr");
 }

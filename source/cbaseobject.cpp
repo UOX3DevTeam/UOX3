@@ -30,6 +30,7 @@
 #include "citem.h"
 #include "cjsmapping.h"
 #include "cmultiobj.h"
+#include "subsystem/console.hpp"
 #include "cscript.h"
 #include "csocket.h"
 #include "dictionary.h"
@@ -37,7 +38,6 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "power.h"
-#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 #include "weight.h"
 
@@ -110,19 +110,8 @@ const auto DEFBASE_ORIGIN = Era(Era::UO);
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
-CBaseObject::CBaseObject()
-: objType(DEFBASE_OBJTYPE), race(DEFBASE_RACE), x(DEFBASE_X), y(DEFBASE_Y), z(DEFBASE_Z),
-id(DEFBASE_ID), colour(DEFBASE_COLOUR), dir(DEFBASE_DIR), serial(DEFBASE_SERIAL),
-multis(DEFBASE_MULTIS), spawnSerial(DEFBASE_SPAWNSER), owner(DEFBASE_OWNER),
-worldNumber(DEFBASE_WORLD), instanceId(DEFBASE_INSTANCEID), strength(DEFBASE_STR),
-dexterity(DEFBASE_DEX), intelligence(DEFBASE_INT), hitpoints(DEFBASE_HP),
-visible(DEFBASE_VISIBLE), hiDamage(DEFBASE_HIDAMAGE), loDamage(DEFBASE_LODAMAGE),
-weight(DEFBASE_WEIGHT), mana(DEFBASE_MANA), stamina(DEFBASE_STAMINA),
-scriptTrig(DEFBASE_SCPTRIG), st2(DEFBASE_STR2), dx2(DEFBASE_DEX2), in2(DEFBASE_INT2),
-FilePosition(DEFBASE_FP), poisoned(DEFBASE_POISONED), carve(DEFBASE_CARVE), oldLocX(0),
-oldLocY(0), oldLocZ(0), oldTargLocX(0), oldTargLocY(0), fame(DEFBASE_FAME),
-karma(DEFBASE_KARMA), kills(DEFBASE_KILLS), subRegion(DEFBASE_SUBREGION),
-nameRequestActive(DEFBASE_NAMEREQUESTACTIVE), origin(DEFBASE_ORIGIN) {
+CBaseObject::CBaseObject() : objType(DEFBASE_OBJTYPE), race(DEFBASE_RACE), x(DEFBASE_X), y(DEFBASE_Y), z(DEFBASE_Z), id(DEFBASE_ID), colour(DEFBASE_COLOUR), dir(DEFBASE_DIR), serial(DEFBASE_SERIAL), multis(DEFBASE_MULTIS), spawnSerial(DEFBASE_SPAWNSER), owner(DEFBASE_OWNER), worldNumber(DEFBASE_WORLD), instanceId(DEFBASE_INSTANCEID), strength(DEFBASE_STR), dexterity(DEFBASE_DEX), intelligence(DEFBASE_INT), hitpoints(DEFBASE_HP), visible(DEFBASE_VISIBLE), hiDamage(DEFBASE_HIDAMAGE), loDamage(DEFBASE_LODAMAGE), weight(DEFBASE_WEIGHT), mana(DEFBASE_MANA), stamina(DEFBASE_STAMINA), scriptTrig(DEFBASE_SCPTRIG), st2(DEFBASE_STR2), dx2(DEFBASE_DEX2), in2(DEFBASE_INT2), FilePosition(DEFBASE_FP), poisoned(DEFBASE_POISONED), carve(DEFBASE_CARVE), oldLocX(0), oldLocY(0), oldLocZ(0), oldTargLocX(0), oldTargLocY(0), fame(DEFBASE_FAME), karma(DEFBASE_KARMA), kills(DEFBASE_KILLS), subRegion(DEFBASE_SUBREGION), nameRequestActive(DEFBASE_NAMEREQUESTACTIVE), origin(DEFBASE_ORIGIN) {
+    
     multis = nullptr;
     tempMulti = INVALIDSERIAL;
     objSettings.reset();
@@ -630,10 +619,10 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
         outStream << "MultiID=0x";
         try {
             outStream << multis->GetSerial() << newLine;
-        } catch (...) {
+        }
+        catch (...) {
             outStream << "FFFFFFFF" << newLine;
-            Console::shared() << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial
-            << "]) - 'MultiID' points to invalid memory." << myendl;
+            Console::shared() << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
         }
     }
     outStream << "SpawnerID=0x" << spawnSerial << newLine;
@@ -683,10 +672,8 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     outStream << "Weight=" + std::to_string(weight) + newLine;
     outStream << "Mana=" + std::to_string(mana) + newLine;
     outStream << "Stamina=" + std::to_string(stamina) + newLine;
-    outStream << "Dexterity=" + std::to_string(dexterity) + "," + std::to_string(temp_dx2) +
-    newLine;
-    outStream << "Intelligence=" + std::to_string(intelligence) + "," + std::to_string(temp_in2) +
-    newLine;
+    outStream << "Dexterity=" + std::to_string(dexterity) + "," + std::to_string(temp_dx2) + newLine;
+    outStream << "Intelligence=" + std::to_string(intelligence) + "," + std::to_string(temp_in2) + newLine;
     outStream << "Strength=" + std::to_string(strength) + "," + std::to_string(temp_st2) + newLine;
     outStream << "HitPoints=" + std::to_string(hitpoints) + newLine;
     outStream << "Race=" + std::to_string(race) + newLine;
@@ -711,8 +698,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     else {
         outStream << "ScpTrig=" + std::to_string(0) + newLine;
     }
-    outStream << "Reputation=" + std::to_string(GetFame()) + "," + std::to_string(GetKarma()) +
-    "," + std::to_string(GetKills()) + newLine;
+    outStream << "Reputation=" + std::to_string(GetFame()) + "," + std::to_string(GetKarma()) + "," + std::to_string(GetKills()) + newLine;
     
     // Spin the character tags to save make sure to dump them too
     
@@ -760,8 +746,7 @@ std::string CBaseObject::GetNameRequest(CChar *nameRequester, std::uint8_t reque
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            std::string textFromScript =
-            toExecute->OnNameRequest(this, nameRequester, requestSource);
+            std::string textFromScript = toExecute->OnNameRequest(this, nameRequester, requestSource);
             if (!textFromScript.empty()) {
                 // If a string was returned from the event, return that as the object's name
                 return textFromScript;
@@ -990,9 +975,7 @@ void CBaseObject::RemoveFromMulti(bool fireTrigger) {
             }
         }
         else {
-            Console::shared().error(
-                                    util::format("Object of type %i with serial 0x%X has a bad multi setting of %i",
-                                                 GetObjType(), serial, multis->GetSerial()));
+            Console::shared().error(util::format("Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial()));
         }
     }
 }
@@ -1042,9 +1025,7 @@ void CBaseObject::AddToMulti(bool fireTrigger) {
             }
         }
         else {
-            Console::shared().error(
-                                    util::format("Object of type %i with serial 0x%X has a bad multi setting of %X",
-                                                 GetObjType(), serial, multis->GetSerial()));
+            Console::shared().error(util::format("Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial()));
         }
     }
 }
@@ -1262,8 +1243,7 @@ void CBaseObject::AddScriptTrigger(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::RemoveScriptTrigger(std::uint16_t newValue) {
     // Remove all elements containing specified script trigger from vector
-    scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue),
-                         scriptTriggers.end());
+    scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue), scriptTriggers.end());
     
     if (CanBeObjType(OT_ITEM)) {
         (static_cast<CItem *>(this))->UpdateRegion();
@@ -1280,8 +1260,7 @@ void CBaseObject::RemoveScriptTrigger(std::uint16_t newValue) {
 // triggers
 // o------------------------------------------------------------------------------------------------o
 bool CBaseObject::HasScriptTrigger(std::uint16_t scriptTrigger) {
-    if (std::find(scriptTriggers.begin(), scriptTriggers.end(), scriptTrigger) !=
-        scriptTriggers.end()) {
+    if (std::find(scriptTriggers.begin(), scriptTriggers.end(), scriptTrigger) != scriptTriggers.end()) {
         // ScriptTrigger found!
         return true;
     }
@@ -1411,8 +1390,7 @@ bool CBaseObject::load(std::istream &inStream) {
         if (tag != "o---o") {
             UTag = util::upper(tag);
             if (!HandleLine(UTag, data)) {
-                Console::shared().warning(util::format(
-                                                       "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()));
+                Console::shared().warning(util::format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()));
             }
         }
     }
@@ -1436,10 +1414,8 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
         case 'A':
             if (UTag == "ATT") {
                 // For backwards compatibility with older UOX3 versions
-                loDamage =
-                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
-                hiDamage =
-                static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
+                loDamage = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
+                hiDamage = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
             }
             else {
                 rValue = false;
@@ -1475,8 +1451,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 }
                 else {
                     // If there's only one value, set both to the same
-                    loDamage =
-                    static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
+                    loDamage = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0));
                     hiDamage = loDamage;
                 }
             }
@@ -1516,9 +1491,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                     }
                 }
                 else {
-                    SetResist(
-                              static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)),
-                              PHYSICAL);
+                    SetResist(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)), PHYSICAL);
                 }
             }
             else if (UTag == "DISABLED") {
@@ -1583,8 +1556,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                 x = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
                 y = static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                 z = static_cast<std::int8_t>(std::stoi(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-                worldNumber =
-                static_cast<std::uint8_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                worldNumber = static_cast<std::uint8_t>(std::stoi(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
                 
                 // Backwards compatibility with pre-instanceId worldfiles
                 if (csecs.size() >= 5) {
@@ -1769,8 +1741,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                     z = 0;
                 }
             }
-            else if (UTag == "X") // For backwards compatibility with older UOX3 versions
-            {
+            else if (UTag == "X") { // For backwards compatibility with older UOX3 versions
                 x = util::ston<std::uint16_t>(data);
             }
             else {
@@ -1778,8 +1749,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             break;
         case 'Y':
-            if (UTag == "Y") // For backwards compatibility with older UOX3 versions
-            {
+            if (UTag == "Y"){ // For backwards compatibility with older UOX3 versions
                 y = util::ston<std::uint16_t>(data);
             }
             else {
@@ -1787,8 +1757,7 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
             }
             break;
         case 'Z':
-            if (UTag == "Z") // For backwards compatibility with older UOX3 versions
-            {
+            if (UTag == "Z") { // For backwards compatibility with older UOX3 versions
                 z = util::ston<std::uint16_t>(data);
             }
             else {
@@ -1828,8 +1797,7 @@ void CBaseObject::PostLoadProcessing() {
         spawnSerial = INVALIDSERIAL;
         SetSpawn(tmpSerial);
     }
-    if (owner != INVALIDSERIAL) // To repopulate the petlist of the owner
-    {
+    if (owner != INVALIDSERIAL) { // To repopulate the petlist of the owner
         tmpSerial = owner;
         owner = INVALIDSERIAL;
         SetOwner(CalcCharObjFromSer(tmpSerial));
@@ -2041,9 +2009,7 @@ void CBaseObject::Cleanup() {
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::Dirty([[maybe_unused]] updatetypes_t updateType) {
     if (IsDeleted()) {
-        Console::shared().error(util::format(
-                                             "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!",
-                                             GetName().c_str(), GetId(), GetSerial()));
+        Console::shared().error(util::format("Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial()));
     }
     else if (IsPostLoaded()) {
         ++(cwmWorldState->refreshQueue[this]);
@@ -2082,8 +2048,7 @@ void CBaseObject::CopyData(CBaseObject *target) {
     target->SetHiDamage(GetHiDamage());
     target->SetLoDamage(GetLoDamage());
     for (std::uint8_t resist = 0; resist < WEATHNUM; ++resist) {
-        target->SetResist(GetResist(static_cast<weathertype_t>(resist)),
-                          static_cast<weathertype_t>(resist));
+        target->SetResist(GetResist(static_cast<weathertype_t>(resist)),static_cast<weathertype_t>(resist));
     }
     target->SetStrength2(GetStrength2());
     target->SetDexterity2(GetDexterity2());

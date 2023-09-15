@@ -4064,7 +4064,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->AccountFlushTimer()));
                 break;
             case 57: // HTMLSTATUSENABLED
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->HtmlStatsStatus()));
+                *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HTMLSTAT));;
                 break;
             case 58: // SELLBYNAME
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME));
@@ -4075,7 +4075,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
             case 60: // TRADESYSTEM
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM));
                 break;
-            case 61: // RANKSYSTEM
+            case 61: // RANKSYSTEMCheckItemsSpeed
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM));
                 break;
             case 62: // CUTSCROLLREQUIREMENTS

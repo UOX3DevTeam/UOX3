@@ -18,6 +18,11 @@ ServerString::ServerString(){
 //======================================================================
 auto ServerString::reset() ->void {
     item = std::vector<std::string>(ITEMNAMEMAP.size(),std::string());
+    this->operator[](SERVERIP) = "127.0.0.1";
+    this->operator[](PUBLICIP) = "127.0.0.1";
+    this->operator[](SERVERNAME) = "My UOX3 Shard";
+    this->operator[](SHARDKEY) = "None";
+    this->operator[](COMMANDPREFIX) = "\\" ;
 }
 //======================================================================
 auto ServerString::operator[](item_t index) const -> const std::string & {

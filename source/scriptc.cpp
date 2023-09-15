@@ -12,11 +12,11 @@
 #include <chrono>
 #include <filesystem>
 #include <iostream>
+
 #if !defined(_WIN32)
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-
 #endif
 
 #include "osunique.hpp"

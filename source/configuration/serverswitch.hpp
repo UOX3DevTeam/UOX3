@@ -39,7 +39,8 @@ struct ServerSwitch{
         DISPLAYGUILDTOOLTIP,    COOWNERLOGOUT,              FRIENDLOGOUT,               GUESTLOGOUT,
         KEYLESSGUEST,           KEYLESSOWNER,               KEYLESSCOOWNER,             KEYLESSFRIEND,
         OFFERBODSFROMITEMSALES, OFFERBODSFROMCONTEXTMENU,   BODSFROMCRAFTEDITEMSONLY,   GUILDDISCOUNT,
-        GUILDPREMIUM,           SNOOPAWARE,                 YOUNGPLAYER,                RANDOMSTART
+        GUILDPREMIUM,           SNOOPAWARE,                 YOUNGPLAYER,                RANDOMSTART,
+        HTMLSTAT
     };
     static const std::map<std::string, switch_t> NAMESWITCHMAP ;
     std::vector<bool> enabledSwitch ;

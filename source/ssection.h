@@ -279,9 +279,7 @@ struct AddMenuItem {
     std::uint32_t weightPosition;
     std::uint32_t objectFlags;
     std::string objectId;
-    AddMenuItem()
-    : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0),
-    objectId("") {}
+    AddMenuItem() : itemIndex(0), itemName(""), groupId(0), tileId(0), weightPosition(0), objectFlags(0), objectId("") {}
 } ;
 
 extern std::multimap<std::uint32_t, AddMenuItem> g_mmapAddMenuMap;

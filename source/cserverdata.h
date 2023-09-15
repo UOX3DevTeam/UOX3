@@ -402,8 +402,6 @@ public:
     auto WorldAmbientSounds(std::int16_t value) -> void;
     auto WorldAmbientSounds() const -> std::int16_t ;
     
-    auto HtmlStatsStatus(std::int16_t value) -> void;
-    auto HtmlStatsStatus() const ->std::int16_t;
     
     auto SellMaxItemsStatus(std::int16_t value) -> void;
     auto SellMaxItemsStatus() const -> std::int16_t ;

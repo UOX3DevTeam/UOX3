@@ -535,8 +535,7 @@ auto FindDFNTagFromStr(const std::string &strToFind) -> dfntags_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 // o------------------------------------------------------------------------------------------------o
-CScriptSection::CScriptSection()
-: dfnCat(NUM_DEFS), npcList(false), itemList(false), npcListData(""), itemListData("") {
+CScriptSection::CScriptSection() : dfnCat(NUM_DEFS), npcList(false), itemList(false), npcListData(""), itemListData("") {
     data.resize(0);
     dataV2.resize(0);
     currentPos = data.end();
@@ -550,8 +549,7 @@ CScriptSection::CScriptSection()
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
 // o------------------------------------------------------------------------------------------------o
-CScriptSection::CScriptSection(std::istream &input, definitioncategories_t d)
-: dfnCat(d), npcList(false), itemList(false), npcListData(""), itemListData("") {
+CScriptSection::CScriptSection(std::istream &input, definitioncategories_t d) : dfnCat(d), npcList(false), itemList(false), npcListData(""), itemListData("") {
     data.resize(0);
     dataV2.resize(0);
     CreateSection(input);
@@ -840,12 +838,8 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                     case npc_def:
                     case items_def: {
                         mTag = FindDFNTagFromStr(tag);
-                        if (mTag != DFNTAG_COUNTOFTAGS && mTag != DFNTAG_ITEMLIST &&
-                            mTag != DFNTAG_NPCLIST) // we have a validly recognized tag
-                        {
-                            if (dfnDataTypes[mTag] != DFN_NODATA &&
-                                value.empty()) // it's a valid tag, needs data though!
-                            {
+                        if (mTag != DFNTAG_COUNTOFTAGS && mTag != DFNTAG_ITEMLIST && mTag != DFNTAG_NPCLIST)  {// we have a validly recognized tag
+                            if (dfnDataTypes[mTag] != DFN_NODATA && value.empty()) { // it's a valid tag, needs data though!
                                 break;
                             }
                             toAdd2 = new SectDataV2;
@@ -862,8 +856,7 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                         AddMenuItem amiLocalCopy = {};
                                         amiLocalCopy.itemName = std::string(localName);
                                         auto csecs = oldstrutil::sections(value, ",");
-                                        amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(
-                                                                                                     util::trim(util::strip(csecs[0], "//")), nullptr, 0));
+                                        amiLocalCopy.groupId = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0));
                                         if (amiLocalCopy.groupId != groupHolder) {
                                             groupHolder = amiLocalCopy.groupId;
                                             itemIndexHolder = 0;
@@ -872,20 +865,15 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                             itemIndexHolder += 1;
                                         }
                                         amiLocalCopy.itemIndex = itemIndexHolder;
-                                        amiLocalCopy.tileId = static_cast<std::uint16_t>(std::stoul(
-                                                                                                    util::trim(util::strip(csecs[1], "//")), nullptr, 0));
-                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
-                                                                                                            util::trim(util::strip(csecs[2], "//")), nullptr, 0));
-                                        amiLocalCopy.objectFlags = static_cast<std::uint32_t>(std::stoul(
-                                                                                                         util::trim(util::strip(csecs[3], "//")), nullptr, 0));
-                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(
-                                                                                                            util::trim(util::strip(csecs[4], "//")), nullptr, 0));
+                                        amiLocalCopy.tileId = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                                        amiLocalCopy.objectFlags = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0));
+                                        amiLocalCopy.weightPosition = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0));
                                         
                                         // if( amiLocalCopy.tileId == INVALIDSERIAL )
                                         // amiLocalCopy.tileId = amiLocalCopy.objectId;
                                         // Need to shove it into the multimap
-                                        g_mmapAddMenuMap.insert(
-                                                                std::make_pair(amiLocalCopy.groupId, amiLocalCopy));
+                                        g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupId, amiLocalCopy));
                                     }
                                     toAdd2->cdata = value;
                                     break;
@@ -899,12 +887,10 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                 case DFN_NUMERIC:
                                     try {
                                         toAdd2->ndata = std::stoi(value, nullptr, 0);
-                                    } catch (...) {
+                                    }
+                                    catch (...) {
                                         toAdd2->ndata = 0;
-                                        Console::shared().warning(
-                                                                  util::format("Invalid data (%s) found for %s tag in "
-                                                                               "advance/harditems/item or character DFNs",
-                                                                               value.c_str(), utag.c_str()));
+                                        Console::shared().warning(util::format("Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str()));
                                     }
                                     break;
                                 case DFN_DOUBLENUMERIC: {
@@ -926,7 +912,8 @@ auto CScriptSection::CreateSection(std::istream &input) -> void {
                                     else {
                                         try {
                                             toAdd2->ndata = std::stoi(value, nullptr, 0);
-                                        } catch (...) {
+                                        }
+                                        catch (...) {
                                             toAdd2->ndata = 0;
                                         }
                                         toAdd2->odata = toAdd2->ndata;

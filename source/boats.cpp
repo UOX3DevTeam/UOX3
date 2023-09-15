@@ -102,8 +102,7 @@ auto LeaveBoat(CSocket *s, CItem *p) -> bool {
     for (std::int16_t x = x2 - 3; x <= x2 + 4; ++x) {
         for (std::int16_t y = y2 - 3; y <= y2 + 4; ++y) {
             std::int8_t z = Map->Height(x, y, mChar->GetZ(), worldNumber, instanceId);
-            if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) &&
-                !FindMulti(x, y, z, worldNumber, instanceId)) {
+            if (Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, true) && !FindMulti(x, y, z, worldNumber, instanceId)) {
                 mChar->SetLocation(x, y, z, worldNumber, instanceId);
                 
                 // Freeze player temporarily after teleporting
@@ -143,8 +142,7 @@ void PlankStuff(CSocket *s, CItem *p) {
         mChar->SetLocation(p->GetX(), p->GetY(), p->GetZ() + 3);
         
         // Freeze player temporarily after teleporting
-        Effects->TempEffect(nullptr, mChar, 1, 1, 1,
-                            5); // 1 second, divided by 5 for 0.2s duration freeze
+        Effects->TempEffect(nullptr, mChar, 1, 1, 1, 5); // 1 second, divided by 5 for 0.2s duration freeze
         
         CMultiObj *boat2 = p->GetMultiObj();
         if (ValidateObject(boat2)) {
@@ -209,8 +207,7 @@ void OpenPlank(CItem *p) {
             p->SetId(0x8A, 2);
             break;
         default:
-            Console::shared().warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]",
-                                                   p->GetSerial(), p->GetName().c_str(), p->GetId()));
+            Console::shared().warning(util::format("Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetId()));
             break;
     }
 }
@@ -315,8 +312,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             y2 = cy + 8;
                             break; // Length of N/S ship as it moves N/S
                         default:
-                            Console::shared().error(
-                                                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
+                            Console::shared().error(" Fallout of North/South switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
@@ -340,14 +336,12 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             x2 = cx + 8;
                             break; // Length of E/W ship as it moves N/S
                         default:
-                            Console::shared().error(
-                                                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
+                            Console::shared().error(" Fallout of East/West switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
                 default:
-                    Console::shared().error(
-                                            " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
+                    Console::shared().error(" Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
                     break;
             }
             break;
@@ -376,8 +370,7 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             x2 = cx + 8;
                             break; // Length of E/W ship as it moves E/W
                         default:
-                            Console::shared().error(
-                                                    " Fallout of East/West switch() statement in cBoats::BlockBoat()");
+                            Console::shared().error(" Fallout of East/West switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
@@ -401,14 +394,12 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
                             y2 = cy + 8;
                             break; // Length of N/S ship as it moves E/W
                         default:
-                            Console::shared().error(
-                                                    " Fallout of North/South switch() statement in cBoats::BlockBoat()");
+                            Console::shared().error(" Fallout of North/South switch() statement in cBoats::BlockBoat()");
                             break;
                     }
                     break;
                 default:
-                    Console::shared().error(
-                                            " Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
+                    Console::shared().error(" Fallout of boatDir.switch() statement in cBoats::BlockBoat()");
                     break;
             }
             break;
@@ -440,11 +431,9 @@ bool BlockBoat(CBoatObj *b, std::int16_t xmove, std::int16_t ymove, std::uint8_t
             
             std::int8_t sz = Map->StaticTop(x, y, boatZ, worldNumber, MAX_Z_STEP);
             
-            if (sz == ILLEGAL_Z) // map tile
-            {
+            if (sz == ILLEGAL_Z) { // map tile
                 auto map = Map->SeekMap(x, y, worldNumber);
-                if (map.altitude >= cz && !map.CheckFlag(TF_WET) &&
-                    map.name() != "water") // only tiles on/above the water
+                if (map.altitude >= cz && !map.CheckFlag(TF_WET) && map.name() != "water") // only tiles on/above the water
                     return true;
             }
             else {
@@ -515,8 +504,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
         }
     }
     b->SetZ(z); // Z in water
-    b->SetTempVar(CITV_MOREZ, CalcSerial(id2, id2 + 3, b->GetTempVar(CITV_MOREZ, 3),
-                                         b->GetTempVar(CITV_MOREZ, 4)));
+    b->SetTempVar(CITV_MOREZ, CalcSerial(id2, id2 + 3, b->GetTempVar(CITV_MOREZ, 3), b->GetTempVar(CITV_MOREZ, 4)));
     b->SetMoveType(BOAT_ANCHORED);
     
     CChar *mChar = nullptr;
@@ -524,18 +512,13 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
         mChar = s->CurrcharObj();
     }
     
-    CItem *tiller = Items->CreateItem(nullptr, mChar, 0x3E4E, 1, 0, CBaseObject::OT_ITEM, false, true,
-                                      worldNumber, instanceId, x, y, z);
+    CItem *tiller = Items->CreateItem(nullptr, mChar, 0x3E4E, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber, instanceId, x, y, z);
     if (tiller == nullptr)
         return false;
     
-    std::string dictName =
-    s != nullptr ? Dictionary->GetEntry(2035, s->Language()) : Dictionary->GetEntry(2035);
-    if (b->GetName().length() > 0 && b->GetName() != dictName) // a ship
-    {
-        std::string tillerNameDict = s != nullptr
-        ? Dictionary->GetEntry(2033, s->Language())
-        : Dictionary->GetEntry(2033); // The tiller man of %s
+    std::string dictName = s != nullptr ? Dictionary->GetEntry(2035, s->Language()) : Dictionary->GetEntry(2035);
+    if (b->GetName().length() > 0 && b->GetName() != dictName) { // a ship
+        std::string tillerNameDict = s != nullptr ? Dictionary->GetEntry(2033, s->Language()) : Dictionary->GetEntry(2033); // The tiller man of %s
         auto sPos = tillerNameDict.find("%s");
         tiller->SetName(tillerNameDict.replace(sPos, 2, b->GetName()));
     }
@@ -546,8 +529,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tiller->SetTempVar(CITV_MOREX, boattype);
     tiller->SetDecayable(false);
     
-    CItem *p2 = Items->CreateItem(nullptr, mChar, 0x3EB2, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
-                                  instanceId, x, y, z); // Plank2 is on the RIGHT side of the boat
+    CItem *p2 = Items->CreateItem(nullptr, mChar, 0x3EB2, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber, instanceId, x, y, z); // Plank2 is on the RIGHT side of the boat
     if (p2 == nullptr)
         return false;
     
@@ -562,8 +544,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tagvalObject.m_StringValue = "";
     p2->SetTag("plankLocked", tagvalObject);
     
-    CItem *p1 = Items->CreateItem(nullptr, mChar, 0x3EB1, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
-                                  instanceId, x, y, z); // Plank1 is on the LEFT side of the boat
+    CItem *p1 = Items->CreateItem(nullptr, mChar, 0x3EB1, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber, instanceId, x, y, z); // Plank1 is on the LEFT side of the boat
     if (p1 == nullptr)
         return false;
     
@@ -577,8 +558,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     tagvalObject.m_StringValue = "";
     p1->SetTag("plankLocked", tagvalObject);
     
-    CItem *hold = Items->CreateItem(nullptr, mChar, 0x3EAE, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber,
-                                    instanceId, x, y, z);
+    CItem *hold = Items->CreateItem(nullptr, mChar, 0x3EAE, 1, 0, CBaseObject::OT_ITEM, false, true, worldNumber, instanceId, x, y, z);
     if (hold == nullptr)
         return false;
     
@@ -595,8 +575,7 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     b->SetPlank(1, p2->GetSerial());
     b->SetHold(hold->GetSerial());
     
-    switch (id2) // Give everything the right Z for it size boat
-    {
+    switch (id2) { // Give everything the right Z for it size boat
         case 0x00:
         case 0x04:
             tiller->SetLocation(x + 1, y + 4, z);
@@ -671,8 +650,7 @@ void moveBoat(std::uint8_t dir, CBoatObj *boat) {
     if (!ValidateObject(boat))
         return;
     
-    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
-        !ValidateObject(hold))
+    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) || !ValidateObject(hold))
         return;
     
     CPPauseResume prSend(0);
@@ -789,12 +767,10 @@ void TurnStuff(CBoatObj *b, CBaseObject *i, bool rightTurn) {
     std::int16_t dy = static_cast<std::int16_t>(i->GetY() - b->GetY()); // and distance Y
     
     if (rightTurn) {
-        i->SetLocation(static_cast<std::int16_t>(b->GetX() - dy), static_cast<std::int16_t>(b->GetY() + dx),
-                       i->GetZ());
+        i->SetLocation(static_cast<std::int16_t>(b->GetX() - dy), static_cast<std::int16_t>(b->GetY() + dx), i->GetZ());
     }
     else {
-        i->SetLocation(static_cast<std::int16_t>(b->GetX() + dy), static_cast<std::int16_t>(b->GetY() - dx),
-                       i->GetZ());
+        i->SetLocation(static_cast<std::int16_t>(b->GetX() + dy), static_cast<std::int16_t>(b->GetY() - dx), i->GetZ());
     }
 }
 
@@ -821,8 +797,7 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     CItem *p2 = CalcItemObjFromSer(b->GetPlank(1));
     CItem *hold = CalcItemObjFromSer(b->GetHold());
     
-    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
-        !ValidateObject(hold))
+    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) || !ValidateObject(hold))
         return;
     
     if (rightTurn) {
@@ -899,35 +874,27 @@ void TurnBoat(CBoatObj *b, bool rightTurn, bool disableChecks) {
     {
         case 0x00:
         case 0x04:
-            p1->IncLocation(iSmallShipOffsets[dir][PORT_PLANK][XP],
-                            iSmallShipOffsets[dir][PORT_PLANK][YP]);
-            p2->IncLocation(iSmallShipOffsets[dir][STARB_PLANK][XP],
-                            iSmallShipOffsets[dir][STARB_PLANK][YP]);
+            p1->IncLocation(iSmallShipOffsets[dir][PORT_PLANK][XP], iSmallShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iSmallShipOffsets[dir][STARB_PLANK][XP], iSmallShipOffsets[dir][STARB_PLANK][YP]);
             tiller->IncLocation(iSmallShipOffsets[dir][TILLER][XP], iSmallShipOffsets[dir][TILLER][YP]);
             hold->IncLocation(iSmallShipOffsets[dir][HOLD][XP], iSmallShipOffsets[dir][HOLD][YP]);
             break;
         case 0x08:
         case 0x0C:
-            p1->IncLocation(iMediumShipOffsets[dir][PORT_PLANK][XP],
-                            iMediumShipOffsets[dir][PORT_PLANK][YP]);
-            p2->IncLocation(iMediumShipOffsets[dir][STARB_PLANK][XP],
-                            iMediumShipOffsets[dir][STARB_PLANK][YP]);
-            tiller->IncLocation(iMediumShipOffsets[dir][TILLER][XP],
-                                iMediumShipOffsets[dir][TILLER][YP]);
+            p1->IncLocation(iMediumShipOffsets[dir][PORT_PLANK][XP], iMediumShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iMediumShipOffsets[dir][STARB_PLANK][XP],  iMediumShipOffsets[dir][STARB_PLANK][YP]);
+            tiller->IncLocation(iMediumShipOffsets[dir][TILLER][XP], iMediumShipOffsets[dir][TILLER][YP]);
             hold->IncLocation(iMediumShipOffsets[dir][HOLD][XP], iMediumShipOffsets[dir][HOLD][YP]);
             break;
         case 0x10:
         case 0x14:
-            p1->IncLocation(iLargeShipOffsets[dir][PORT_PLANK][XP],
-                            iLargeShipOffsets[dir][PORT_PLANK][YP]);
-            p2->IncLocation(iLargeShipOffsets[dir][STARB_PLANK][XP],
-                            iLargeShipOffsets[dir][STARB_PLANK][YP]);
+            p1->IncLocation(iLargeShipOffsets[dir][PORT_PLANK][XP], iLargeShipOffsets[dir][PORT_PLANK][YP]);
+            p2->IncLocation(iLargeShipOffsets[dir][STARB_PLANK][XP], iLargeShipOffsets[dir][STARB_PLANK][YP]);
             tiller->IncLocation(iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP]);
             hold->IncLocation(iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP]);
             break;
         default:
-            Console::shared().error(util::format("TurnBoat() more1 error! more1 = %c not found!",
-                                                 b->GetTempVar(CITV_MOREZ, 1)));
+            Console::shared().error(util::format("TurnBoat() more1 error! more1 = %c not found!",  b->GetTempVar(CITV_MOREZ, 1)));
     }
     
     for (auto &tSock : nearbyChars) {
@@ -966,8 +933,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
     CItem *tiller = CalcItemObjFromSer(boat->GetTiller());
     
     unicodetypes_t mLang = mSock->Language();
-    if (trigWord != TW_SETNAME && trigWord != TW_BOATANCHORRAISE && trigWord != TW_BOATANCHORDROP &&
-        boat->GetMoveType() == -1) {
+    if (trigWord != TW_SETNAME && trigWord != TW_BOATANCHORRAISE && trigWord != TW_BOATANCHORDROP && boat->GetMoveType() == -1) {
         tiller->TextMessage(mSock, 2024); // Ar, the anchor is down sir!
         mSock->SysMessage(2023);          // You must raise the anchor to pilot the ship.
         return;
@@ -1017,8 +983,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
         case TW_SETNAME: {
             // Check if player trying to rename the boat is actually the owner
             if (mChar->GetSerial() != boat->GetOwner()) {
-                tiller->TextMessage(mSock,
-                                    2034); // Arr! Only the owner of the ship may change its name!
+                tiller->TextMessage(mSock, 2034); // Arr! Only the owner of the ship may change its name!
                 return;
             }
             
@@ -1090,8 +1055,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
     
     CChar *mChar = s->CurrcharObj();
     
-    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) ||
-        !ValidateObject(hold)) {
+    if (!ValidateObject(tiller) || !ValidateObject(p1) || !ValidateObject(p2) || !ValidateObject(hold)) {
         s->SysMessage(9014); // Something is not right - unable to find tiller, planks or hold! This
         // boat might be bugged...
         return;
@@ -1111,9 +1075,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
             }
         }
         
-        if (p1->GetId(2) == 0x84 || p1->GetId(2) == 0xD5 || p1->GetId(2) == 0xD4 ||
-            p1->GetId(2) == 0x89 || p2->GetId(2) == 0x84 || p2->GetId(2) == 0xD5 ||
-            p2->GetId(2) == 0xD4 || p2->GetId(2) == 0x89) {
+        if (p1->GetId(2) == 0x84 || p1->GetId(2) == 0xD5 || p1->GetId(2) == 0xD4 || p2->GetId(2) == 0xD4 || p2->GetId(2) == 0x89) {
             s->SysMessage(9015); // Planks must be closed before you pack up your ship!
             return;
         }

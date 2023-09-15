@@ -57,8 +57,18 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
                                 if (!serverSwitch.setKeyValue(key,value)){
                                     if (!serverString.setKeyValue(key,value)){
                                         if (!ruleSets.setKeyValue(key,value)){
-                                            std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                                            rvalue = false ;
+                                            if (!timerSetting.setKeyValue(key,value)){
+                                                if (!ushortValues.setKeyValue(key,value)){
+                                                    if (!realNumbers.setKeyValue(key,value)){
+                                                        if (!uintValues.setKeyValue(key,value)){
+                                                            if (!shortValues.setKeyValue(key,value)){
+                                                                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                                                                rvalue = false ;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -109,109 +119,19 @@ auto ServerConfig::reset() -> void {
     youngLocation.reset();
     serverSwitch.reset();
     serverString.reset();
+    ruleSets.reset();
+    timerSetting.reset();
+    realNumbers.reset();
+    ushortValues.reset();
+    uintValues.reset();
+    
     // Strings
-    serverString[ServerString::SERVERIP] = "127.0.0.1";
-    serverString[ServerString::PUBLICIP] = "127.0.0.1";
-    serverString[ServerString::SERVERNAME] = "My UOX3 Shard";
-    serverString[ServerString::SHARDKEY] = "None";
-    serverString[ServerString::COMMANDPREFIX] = "\\" ;
+    // Done in reset
     // Switches
-    serverSwitch.setSetting(ServerSwitch::UNICODEMESSAGE,true);
-    serverSwitch.setSetting(ServerSwitch::YOUNGPLAYER,true);
-    serverSwitch.setSetting(ServerSwitch::CORPSELOOTDECAY,true);
-    serverSwitch.setSetting(ServerSwitch::STATIMPACTSKILL,true);
-    serverSwitch.setSetting(ServerSwitch::HUNGER,true);
-    serverSwitch.setSetting(ServerSwitch::THIRST,false);
-    serverSwitch.setSetting(ServerSwitch::ARMORIMPACTSMANA,true);
-    serverSwitch.setSetting(ServerSwitch::SNOOPISCRIME,false);
-    serverSwitch.setSetting(ServerSwitch::SNOOPAWARE,false);
-    serverSwitch.setSetting(ServerSwitch::DEATHANIMATION,true);
-    serverSwitch.setSetting(ServerSwitch::SHOWOFFLINEPCS,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYHITMSG,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYDAMAGENUMBERS,true);
-    serverSwitch.setSetting(ServerSwitch::ATTACKSPEEDFROMSTAMINA,true);
-    serverSwitch.setSetting(ServerSwitch::NPCTRAINING,true);
-    serverSwitch.setSetting(ServerSwitch::HIDEWHILEMOUNTED,true);
-    serverSwitch.setSetting(ServerSwitch::OVERLOADPACKETS,true);
-    serverSwitch.setSetting(ServerSwitch::ADVANCEDPATHFINDING,true);
-    serverSwitch.setSetting(ServerSwitch::LOOTINGISCRIME,true);
-    serverSwitch.setSetting(ServerSwitch::UOG,true);
-    serverSwitch.setSetting(ServerSwitch::FREESHARD,true);
-    serverSwitch.setSetting(ServerSwitch::CONTEXTMENU,true);
-    serverSwitch.setSetting(ServerSwitch::MONSTERSVSANIMALS,true);
-    serverSwitch.setSetting(ServerSwitch::ANIMALSGUARDED,false);
-    serverSwitch.setSetting(ServerSwitch::SHOOTONANIMALBACK,false);
-    serverSwitch.setSetting(ServerSwitch::SELLBYNAME,false);
-    serverSwitch.setSetting(ServerSwitch::RANKSYSTEM,true);
-    serverSwitch.setSetting(ServerSwitch::MAKERMARK,true);
-    serverSwitch.setSetting(ServerSwitch::ARMORCLASSBONUS,false);
-    serverSwitch.setSetting(ServerSwitch::ALCHEMYBONUS,false);
-    serverSwitch.setSetting(ServerSwitch::PETCOMBATTRAINING,true);
-    serverSwitch.setSetting(ServerSwitch::HIRELINGTRAINING,true);
-    serverSwitch.setSetting(ServerSwitch::NPCTRAINING,false);
-    serverSwitch.setSetting(ServerSwitch::PETDIFFICULTY,true);
-    serverSwitch.setSetting(ServerSwitch::INTERRUPTCASTING,true);
-    serverSwitch.setSetting(ServerSwitch::GUARDSACTIVE,true);
-    serverSwitch.setSetting(ServerSwitch::ANNOUNCESAVE,true);
-    serverSwitch.setSetting(ServerSwitch::ANNOUNCEJOINPART,true);
-    serverSwitch.setSetting(ServerSwitch::CONSOLELOG,true);
-    serverSwitch.setSetting(ServerSwitch::NETWORKLOG,false);
-    serverSwitch.setSetting(ServerSwitch::SPEECHLOG,false);
-    serverSwitch.setSetting(ServerSwitch::ROGUEENABLE,true);
-    serverSwitch.setSetting(ServerSwitch::PETHUNGEROFFLINE,true);
-    serverSwitch.setSetting(ServerSwitch::ITEMDETECTSPEECH,false);
-    serverSwitch.setSetting(ServerSwitch::FORECENEWANIMATIONPACKET,true);
-    serverSwitch.setSetting(ServerSwitch::MAPDIFF,false);
-    serverSwitch.setSetting(ServerSwitch::TRAVELBOATKEY,true);
-    serverSwitch.setSetting(ServerSwitch::TRAVELBURDEN,false);
-    serverSwitch.setSetting(ServerSwitch::RUNEMULTI,true);
-    serverSwitch.setSetting(ServerSwitch::SPELLWORLDTRAVEL,false);
-    serverSwitch.setSetting(ServerSwitch::TRAVELAGRESSOR,false);
-    serverSwitch.setSetting(ServerSwitch::SPELLMOVING,false);
-    serverSwitch.setSetting(ServerSwitch::TOOLUSE,true);
-    serverSwitch.setSetting(ServerSwitch::TOOLBREAK,true);
-    serverSwitch.setSetting(ServerSwitch::REPAIRLOSS,true);
-    serverSwitch.setSetting(ServerSwitch::MAGICSTATS,true);
-    serverSwitch.setSetting(ServerSwitch::COLORWEAPON,false);
-    serverSwitch.setSetting(ServerSwitch::SAFETELEPORT,false);
-    serverSwitch.setSetting(ServerSwitch::AWAKENPC,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYRESISTSTATS,false);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYDAMAGETYPE,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYREPUTATIONTOOLTIP,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYGUILDTOOLTIP,true);
-    serverSwitch.setSetting(ServerSwitch::GUILDDISCOUNT,true);
-    serverSwitch.setSetting(ServerSwitch::GUILDPREMIUM,true);
-    serverSwitch.setSetting(ServerSwitch::CUTSCROLLREQ,true);
-    serverSwitch.setSetting(ServerSwitch::PLAYERPERSECUTION,false);
-    serverSwitch.setSetting(ServerSwitch::ESCORTS,true);
-    serverSwitch.setSetting(ServerSwitch::BASICTOOLTIPSONLY,false);
-    serverSwitch.setSetting(ServerSwitch::NPCTOOLTIPS,true);
-    serverSwitch.setSetting(ServerSwitch::OVERHEADTITLE,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYINVUNERABLE,false);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYRACE,true);
-    serverSwitch.setSetting(ServerSwitch::DISPLAYRACEPAPERDOLL,true);
-    serverSwitch.setSetting(ServerSwitch::ITEMDECAY,true);
-    serverSwitch.setSetting(ServerSwitch::SCRIPTITEMSDECAYABLE,true);
-    serverSwitch.setSetting(ServerSwitch::BASEITEMSDECAYABLE,false);
-    serverSwitch.setSetting(ServerSwitch::AMBIENTFOOTSTEPS,false);
-    serverSwitch.setSetting(ServerSwitch::INHOUSEDECAY,true);
-    serverSwitch.setSetting(ServerSwitch::PROTECTPRIVATEHOUSES,true);
-    serverSwitch.setSetting(ServerSwitch::TRACKHOUSESPERACCOUNT,true);
-    serverSwitch.setSetting(ServerSwitch::OWNCOOWNHOUSE,true);
-    serverSwitch.setSetting(ServerSwitch::COWNHOUSEACCOUNT,true);
-    serverSwitch.setSetting(ServerSwitch::COOWNERLOGOUT,true);
-    serverSwitch.setSetting(ServerSwitch::FRIENDLOGOUT,true);
-    serverSwitch.setSetting(ServerSwitch::GUESTLOGOUT,true);
-    serverSwitch.setSetting(ServerSwitch::KEYLESSOWNER,true);
-    serverSwitch.setSetting(ServerSwitch::KEYLESSCOOWNER,true);
-    serverSwitch.setSetting(ServerSwitch::KEYLESSFRIEND,true);
-    serverSwitch.setSetting(ServerSwitch::KEYLESSGUEST,false);
-    serverSwitch.setSetting(ServerSwitch::OFFERBODSFROMITEMSALES,true);
-    serverSwitch.setSetting(ServerSwitch::OFFERBODSFROMCONTEXTMENU,false);
-    serverSwitch.setSetting(ServerSwitch::BODSFROMCRAFTEDITEMSONLY,false);
-    serverSwitch.setSetting(ServerSwitch::EXTENDEDSTATS,true);
-    serverSwitch.setSetting(ServerSwitch::EXTENDEDSKILLS,true);
-    serverSwitch.setSetting(ServerSwitch::RANDOMSTART,false);
+    // Done in reset
+    // Timers
+    // Done in reset
+
 }
 //======================================================================
 auto ServerConfig::loadConfig(const std::filesystem::path &config) ->void {
@@ -402,7 +322,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\tROGUESENABLED = " << this->enabled(ServerSwitch::ROGUEENABLE) << "\n" ;
     output << "\tPLAYERPERSECUTION = " << this->enabled(ServerSwitch::PLAYERPERSECUTION) << "\n" ;
 //    output << "\tACCOUNTFLUSH = " << AccountFlushTimer() << "\n" ;
-//    output << "\tHTMLSTATUSENABLED = " << HtmlStatsStatus() << "\n" ;
+    output << "\tHTMLSTATUSENABLED = " << this->enabled(ServerSwitch::HTMLSTAT) << "\n" ;
     output << "\tSELLBYNAME = " << this->enabled(ServerSwitch::SELLBYNAME) << "\n" ;
 //    output << "\tSELLMAXITEMS = " << SellMaxItemsStatus() << "\n" ;
 //    output << "\tGLOBALRESTOCKMULTIPLIER = " << GlobalRestockMultiplier() << "\n" ;
@@ -413,7 +333,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\tCUTSCROLLREQUIREMENTS = " << this->enabled(ServerSwitch::CUTSCROLLREQ) << "\n" ;
     output << "\tNPCTRAININGENABLED = " << this->enabled(ServerSwitch::NPCTRAINING) << "\n" ;
     output << "\tHIDEWHILEMOUNTED = " << this->enabled(ServerSwitch::HIDEWHILEMOUNTED) << "\n" ;
-//    output << "\tWEIGHTPERSTR = " << static_cast<R32>(WeightPerStr()) << "\n" ;
+    output << "\tWEIGHTPERSTR = " <<  realNumbers[RealNumberConfig::WEIGHTSTR] << "\n" ;
 //    output << "\tPOLYDURATION = " << SystemTimer(tSERVER_POLYMORPH) << "\n" ;
     output << "\tCLIENTFEATURES = " << this->clientFeature.value() << "\n" ;
     output << "\tSERVERFEATURES = " << this->serverFeature.value()  << "\n" ;
@@ -466,18 +386,18 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "}\n\n" ;
 
     output << "[speedup]\n{\n" ;
-//    output << "\tCHECKITEMS = " << CheckItemsSpeed() << "\n" ;
-//    output << "\tCHECKBOATS = " << CheckBoatSpeed() << "\n" ;
-//    output << "\tCHECKNPCAI = " << CheckNpcAISpeed() << "\n" ;
-//    output << "\tCHECKSPAWNREGIONS = " << CheckSpawnRegionSpeed() << "\n" ;
-//    output << "\tNPCMOVEMENTSPEED = " << NPCWalkingSpeed() << "\n" ;
-//    output << "\tNPCRUNNINGSPEED = " << NPCRunningSpeed() << "\n" ;
-//    output << "\tNPCFLEEINGSPEED = " << NPCFleeingSpeed() << "\n" ;
-//    output << "\tNPCMOUNTEDWALKINGSPEED = " << NPCMountedWalkingSpeed() << "\n" ;
-//    output << "\tNPCMOUNTEDRUNNINGSPEED = " << NPCMountedRunningSpeed() << "\n" ;
-//    output << "\tNPCMOUNTEDFLEEINGSPEED = " << NPCMountedFleeingSpeed() << "\n" ;
-//    output << "\tNPCSPELLCASTSPEED = " << NPCSpellCastSpeed() <<< "\n" ;
-//    output << "\tGLOBALATTACKSPEED = " << GlobalAttackSpeed() <<< "\n" ;
+    output << "\tCHECKITEMS = " << realNumbers[RealNumberConfig::CHECKITEMS] << "\n" ;
+    output << "\tCHECKBOATS = " << realNumbers[RealNumberConfig::CHECKBOATS] << "\n" ;
+    output << "\tCHECKNPCAI = " << realNumbers[RealNumberConfig::CHECKAI] << "\n" ;
+    output << "\tCHECKSPAWNREGIONS = " << realNumbers[RealNumberConfig::CHECKSPAWN] << "\n" ;
+    output << "\tNPCMOVEMENTSPEED = " << realNumbers[RealNumberConfig::NPCMOVEMENT] << "\n" ;
+    output << "\tNPCRUNNINGSPEED = " << realNumbers[RealNumberConfig::NPCRUNNING] << "\n" ;
+    output << "\tNPCFLEEINGSPEED = " << realNumbers[RealNumberConfig::NPCFLEEING] << "\n" ;
+    output << "\tNPCMOUNTEDWALKINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT] << "\n" ;
+    output << "\tNPCMOUNTEDRUNNINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTRUNNING] << "\n" ;
+    output << "\tNPCMOUNTEDFLEEINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTFLEEING] << "\n" ;
+    output << "\tNPCSPELLCASTSPEED = " << realNumbers[RealNumberConfig::NPCSPELLCAST] << "\n" ;
+    output << "\tGLOBALATTACKSPEED = " << realNumbers[RealNumberConfig::GLOBALATTACK] << "\n" ;
     
     output << "}\n\n" ;
 
@@ -564,7 +484,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
 //    output << "\tATTACKSTAMINA = " << CombatAttackStamina() << "\n" ;
     output << "\tATTACKSPEEDFROMSTAMINA = " << this->enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA) << "\n" ;
 //    output << "\tARCHERYHITBONUS = " << static_cast<std::int16_t>(CombatArcheryHitBonus()) << "\n" ;
-//    output << "\tARCHERYSHOOTDELAY = " << CombatArcheryShootDelay() <<< "\n" ;
+    output << "\tARCHERYSHOOTDELAY = " << realNumbers[RealNumberConfig::ARCHERYDELAY] << "\n" ;
     output << "\tSHOOTONANIMALBACK = " << this->enabled(ServerSwitch::SHOOTONANIMALBACK) << "\n" ;
 //    output << "\tWEAPONDAMAGECHANCE = " << static_cast<std::uint16_t>(CombatWeaponDamageChance()) << "\n" ;
 //    output << "\tWEAPONDAMAGEMIN = " << static_cast<std::uint16_t>(CombatWeaponDamageMin()) << "\n" ;
@@ -687,6 +607,11 @@ auto ServerConfig::enabled(ServerSwitch::switch_t setting) const ->bool {
 auto ServerConfig::setEnabled(ServerSwitch::switch_t setting, bool state) ->void {
     serverSwitch.setSetting(setting,state) ;
 }
+//======================================================================
+auto ServerConfig::timer(TimerSetting::timer_t timer) const -> const std::uint16_t& {
+    return timerSetting[timer];
+}
+
 //======================================================================
 auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional<AllDataType>{
     auto ukey = util::upper(key) ;

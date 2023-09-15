@@ -64,7 +64,6 @@ const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue{
     {"DEATHANIMATION"s, 27},
     {"AMBIENTSOUNDS"s, 50},
     {"ACCOUNTFLUSH"s, 56},
-    {"HTMLSTATUSENABLED"s, 57},
     {"SELLMAXITEMS"s, 59},
     {"CHECKITEMS"s, 63},
     {"CHECKBOATS"s, 64},
@@ -585,7 +584,7 @@ auto CServerData::ResetDefaults() -> void {
     CheckNpcAISpeed(1);
 //    CutScrollRequirementStatus(true);
     //PlayerPersecutionStatus(false);
-    HtmlStatsStatus(-1);
+//    HtmlStatsStatus(-1);
     
     MsgBoardPostingLevel(0);
     MsgBoardPostRemovalLevel(0);
@@ -921,14 +920,6 @@ auto CServerData::WorldAmbientSounds(std::int16_t value) -> void {
         ambientSounds = value;
     }
 }
-
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	CServerData::HtmlStatsStatus()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether html stats are enabled or disabled
-// o------------------------------------------------------------------------------------------------o
-auto CServerData::HtmlStatsStatus() const -> std::int16_t { return htmlStatusEnabled; }
-auto CServerData::HtmlStatsStatus(std::int16_t value) -> void { htmlStatusEnabled = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::GlobalRestockMultiplier()
@@ -1932,7 +1923,6 @@ auto CServerData::SaveIni(const std::string &filename) -> bool {
         ofsOutput << "ROGUESENABLED=" << ServerConfig::shared().enabled(ServerSwitch::ROGUEENABLE) << '\n';
         ofsOutput << "PLAYERPERSECUTION=" << ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION) << '\n';
         ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
-        ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
         ofsOutput << "SELLBYNAME=" << ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME) << '\n';
         ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
         ofsOutput << "GLOBALRESTOCKMULTIPLIER=" << GlobalRestockMultiplier() << '\n';
@@ -2455,9 +2445,6 @@ auto CServerData::HandleLine(const std::string &tag, const std::string &value) -
             break;
         case 56: // ACCOUNTFLUSH
             AccountFlushTimer(std::stod(value));
-            break;
-        case 57: // HTMLSTATUSENABLED
-            HtmlStatsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));
             break;
         case 59: // SELLMAXITEMS
             SellMaxItemsStatus(static_cast<std::uint16_t>(std::stoul(value, nullptr, 0)));

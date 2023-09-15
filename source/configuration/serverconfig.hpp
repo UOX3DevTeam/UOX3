@@ -20,6 +20,11 @@
 #include "serverswitch.hpp"
 #include "serverstring.hpp"
 #include "expansion.hpp"
+#include "realnumberconfig.hpp"
+#include "timersetting.hpp"
+#include "ushortvalue.hpp"
+#include "uintvalue.hpp"
+#include "shortvalue.hpp"
 
 //======================================================================
 // AllDataType
@@ -74,6 +79,8 @@ public:
     auto enabled(ServerSwitch::switch_t setting) const ->bool ;
     auto setEnabled(ServerSwitch::switch_t setting, bool state) ->void ;
     
+    auto timer(TimerSetting::timer_t timer) const -> const std::uint16_t& ;
+    
     auto dataForKeyword(const std::string &key) const -> std::optional<AllDataType>;
     
     ClientEnable enableClients ;
@@ -85,7 +92,11 @@ public:
     ServerSwitch serverSwitch;
     ServerString serverString;
     Expansion ruleSets ;
-    
+    TimerSetting timerSetting ;
+    RealNumberConfig realNumbers ;
+    UShortValue ushortValues ;
+    UIntValue uintValues;
+    ShortValue shortValues;
 };
 
 #endif /* serverconfig_hpp */
