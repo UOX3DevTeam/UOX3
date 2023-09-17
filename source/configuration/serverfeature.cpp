@@ -33,6 +33,8 @@ const std::map<std::string,ServerFeature::feature_t> ServerFeature::FEATURENAMEM
     {"SEVENCHARS",SEVENCHARS},{"UNKNOWN5",UNKNOWN5},{"NEWMOVE",NEWMOVE},{"FACTIONAREAS",FACTIONAREAS}
 };
 //======================================================================
+const std::string ServerFeature::name = "SERVERFEATURES";
+//======================================================================
 ServerFeature::ServerFeature() {
     featureSet = 0 ;
     this->set(CONTEXTMENUS,true) ;
@@ -61,7 +63,7 @@ auto ServerFeature::set(feature_t feature, bool state) -> void {
 //======================================================================
 auto ServerFeature::setKeyValue(const std::string &key, const std::string &value) ->bool {
     auto rvalue = false ;
-    if (key == "SERVERFEATURES"){
+    if (key == ServerFeature::name){
         rvalue = true ;
         featureSet = std::stoul(value,nullptr,0);
     }

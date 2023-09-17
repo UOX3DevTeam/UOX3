@@ -1,6 +1,8 @@
 //
 
 #include "timersetting.hpp"
+
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -29,6 +31,16 @@ const std::map<std::string,TimerSetting::timer_t> TimerSetting::NAMETIMERMAP{
     {"LOGSRESPAWNTIMER"s,LOG},{"FISHRESPAWNTIMER"s,FISH},
     {"POTIONDELAY",POTION}
 };
+//======================================================================
+auto TimerSetting::nameFor(timer_t setting)-> const std::string &{
+    auto iter = std::find_if(NAMETIMERMAP.begin(),NAMETIMERMAP.end(),[setting](const std::pair<std::string,timer_t> &entry){
+        return setting == entry.second;
+    });
+    if (iter == NAMETIMERMAP.end()){
+        throw std::runtime_error("No name was found for timer_t setting: "s+std::to_string(static_cast<int>(setting)));
+    }
+    return iter->first ;
+}
 //======================================================================
 TimerSetting::TimerSetting() {
     this->reset();
@@ -62,7 +74,7 @@ auto TimerSetting::reset() ->void {
     this->operator[](CRIMINAL) = 120 ;
     this->operator[](STEALINGFLAG) = 120 ;
     this->operator[](AGGRESSORFLAG) = 120 ;
-    this->operator[](PERMAGREYFLAG) = 0 ; // We dont need, reset to 0
+    this->operator[](PERMAGREYFLAG) = 0 ; // We dont need to set this, reset() made it 0
     this->operator[](COMBATIGNORE) = 20 ;
     this->operator[](PETOFFLINECHECK) = 600 ;
     this->operator[](NPCFLAGUPDATETIMER) = 10 ;

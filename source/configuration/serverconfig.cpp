@@ -47,6 +47,7 @@ ServerConfig::ServerConfig(){
 auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &value)->bool {
     auto key = util::upper(lkey) ;
     auto rvalue = true ;
+    // We should order this by most likely, but for another day
     if (!directoryLocation.setLocation(key, value)){
         if (!enableClients.setKeyValue(key,value)){
             if (!clientFeature.setKeyValue(key,value)){
@@ -62,8 +63,10 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
                                                     if (!realNumbers.setKeyValue(key,value)){
                                                         if (!uintValues.setKeyValue(key,value)){
                                                             if (!shortValues.setKeyValue(key,value)){
-                                                                std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
-                                                                rvalue = false ;
+                                                                if (!spawnFacet.setKeyValue(key,value)){
+                                                                    std::clog <<"Unhanded key/value: "<<key<<" = " << value << std::endl;
+                                                                    rvalue = false ;
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -110,28 +113,23 @@ auto ServerConfig::shared() ->ServerConfig&{
 }
 //======================================================================
 auto ServerConfig::reset() -> void {
+    
+    assistantFeature = AssistantFeature() ;
+    clientFeature = ClientFeature() ;
     directoryLocation.reset();
     enableClients.reset() ;
-    clientFeature = ClientFeature() ;
-    serverFeature = ServerFeature() ;
-    assistantFeature = AssistantFeature() ;
-    startLocation.reset();
-    youngLocation.reset();
-    serverSwitch.reset();
-    serverString.reset();
-    ruleSets.reset();
-    timerSetting.reset();
     realNumbers.reset();
+    ruleSets.reset();
+    serverFeature = ServerFeature() ;
+    serverString.reset();
+    serverSwitch.reset();
+    shortValues.reset();
+    spawnFacet.reset();
+    startLocation.reset();
+    timerSetting.reset();
     ushortValues.reset();
     uintValues.reset();
-    
-    // Strings
-    // Done in reset
-    // Switches
-    // Done in reset
-    // Timers
-    // Done in reset
-
+    youngLocation.reset();
 }
 //======================================================================
 auto ServerConfig::loadConfig(const std::filesystem::path &config) ->void {
@@ -196,41 +194,41 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << (static_cast<std::uint16_t>(1) << 8 | static_cast<std::uint16_t>(2)) <<"\n" ;
     output << "//========================================================================\n\n" ;
     output << "[system]\n{\n" ;
-    output << "\tSERVERNAME = " << serverString[ServerString::SERVERNAME] << "\n" ;
-    output << "\tEXTERNALIP = " << serverString[ServerString::PUBLICIP] << "\n" ;
-//    output << "\tPORT = " << ServerPort() <<"n" ;
-    output << "\tSECRETSHARDKEY = " << serverString[ServerString::SHARDKEY] << "\n" ;
-//    output << "\tSERVERLANGUAGE =" << ServerLanguage() << "n" ;
-//    output << "\tNETRCVTIMEOUT =" << ServerNetRcvTimeout() << "n" ;
-//    output << "\tNETSNDTIMEOUT =" << ServerNetSndTimeout() << "n" ;
-//    output << "\tNETRETRYCOUNT =" << ServerNetRetryCount() << "n" ;
-    output << "\tCONSOLELOG = " << this->enabled(ServerSwitch::CONSOLELOG) << "\n" ;
-    output << "\tNETWORKLOG = " << this->enabled(ServerSwitch::NETWORKLOG) << "\n" ;
-    output << "\tSPEECHLOG = " << this->enabled(ServerSwitch::SPEECHLOG) << "\n" ;
-    output << "\tCOMMANDPREFIX = " << serverString[ServerString::COMMANDPREFIX] << "\n" ;
-    output << "\tANNOUNCEWORLDSAVES = " << this->enabled(ServerSwitch::ANNOUNCESAVE) << "\n" ;
-    output << "\tJOINPARTMSGS = " << this->enabled(ServerSwitch::ANNOUNCEJOINPART) << "\n" ;
-    output << "\tBACKUPSENABLED = " << this->enabled(ServerSwitch::BACKUP) << "\n" ;
-    //output << "\tBACKUPSAVERATIO = " << BackupRatio() << "n" ;
-    //output << "\tSAVESTIMER = " << ServerSavesTimerStatus() << "n" ;
-//    output << "\tACCOUNTISOLATION = " << "1" << "n" ;
-    output << "\tUOGENABLED = " << this->enabled(ServerSwitch::UOG) << "\n" ;
-    output << "\tFREESHARDSERVERPOLL = " << this->enabled(ServerSwitch::FREESHARD) << "\n" ;
-    output << "\tRANDOMSTARTINGLOCATION = " << this->enabled(ServerSwitch::RANDOMSTART) << "\n" ;
-    output << "\tASSISTANTNEGOTIATION = " << this->enabled(ServerSwitch::ASSISTANTNEGOTIATION) << "\n" ;
-    output << "\tKICKONASSISTANTSILENCE = " << this->enabled(ServerSwitch::KICKONASSISTANTSILENCE) << "\n" ;
-    output << "\tCLASSICUOMAPTRACKER = " << this->enabled(ServerSwitch::CUOMAPTRACKER) << "\n" ;
-//    output << "\tJSENGINESIZE = " << static_cast<std::uint16_t>(GetJSEngineSize()) <<< "\n" ;
-    output << "\tUSEUNICODEMESSAGES = " << this->enabled(ServerSwitch::UNICODEMESSAGE) << "\n" ;
-    output << "\tCONTEXTMENUS = " << this->enabled(ServerSwitch::CONTEXTMENU) << "\n" ;
-//    output << "\tSYSMESSAGECOLOUR = " << SysMsgColour() << "\n" ;
-//    output << "\tMAXCLIENTBYTESIN = " << static_cast<std::uint32_t>(MaxClientBytesIn()) << "\n" ;
-//    output << "\tMAXCLIENTBYTESOUT = " << static_cast<std::uint32_t>(MaxClientBytesOut()) << "\n" ;
-//    output << "\tNETTRAFFICTIMEBAN = " << static_cast<std::uint32_t>(NetTrafficTimeban()) << "\n" ;
-//    output << "\tAPSPERFTHRESHOLD = " << static_cast<std::uint16_t>(APSPerfThreshold()) << "\n" ;
-//    output << "\tAPSINTERVAL = " << static_cast<std::uint16_t>(APSInterval()) << "\n" ;
-//    output << "\tAPSDELAYSTEP = " << static_cast<std::uint16_t>(APSDelayStep()) << "\n" ;
-//    output << "\tAPSDELAYMAXCAP = " << static_cast<std::uint16_t>(APSDelayMaxCap()) << "\n" ;
+    output << "\t" << ServerString::nameFor(ServerString::SERVERNAME) << " = " << serverString[ServerString::SERVERNAME] << "\n" ;
+    output << "\t" << ServerString::nameFor(ServerString::PUBLICIP) << " = " << serverString[ServerString::PUBLICIP] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::PORT) << " = " << ushortValues[UShortValue::PORT] << "\n" ;
+    output << "\t" << ServerString::nameFor(ServerString::SHARDKEY) << " = " << serverString[ServerString::SHARDKEY] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::LANGUAGE) << " = " << ushortValues[UShortValue::LANGUAGE] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::NETRCVTIMEOUT) << " = " << uintValues[UIntValue::NETRCVTIMEOUT] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::NETSNDTIMEOUT) << " = " << uintValues[UIntValue::NETSNDTIMEOUT] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::NETRETRYCOUNT) << " = " << uintValues[UIntValue::NETRETRYCOUNT] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::CONSOLELOG) << " = " << enabled(ServerSwitch::CONSOLELOG) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::NETWORKLOG) << " = " << enabled(ServerSwitch::NETWORKLOG) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SPEECHLOG) << " = " << enabled(ServerSwitch::SPEECHLOG) << "\n" ;
+    output << "\t" << ServerString::nameFor(ServerString::COMMANDPREFIX) << " = " << serverString[ServerString::COMMANDPREFIX] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ANNOUNCESAVE) << " = " << enabled(ServerSwitch::ANNOUNCESAVE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ANNOUNCEJOINPART) << " = " << enabled(ServerSwitch::ANNOUNCEJOINPART) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::BACKUP) << " = " << enabled(ServerSwitch::BACKUP) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::SAVERATIO) << " = " << shortValues[ShortValue::SAVERATIO] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::SAVESTIMER) << " = " << uintValues[UIntValue::SAVESTIMER] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::UOG) << " = " << enabled(ServerSwitch::UOG) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::FREESHARD) << " = " << enabled(ServerSwitch::FREESHARD) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::RANDOMSTART) << " = " << enabled(ServerSwitch::RANDOMSTART) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ASSISTANTNEGOTIATION) << " = " << enabled(ServerSwitch::ASSISTANTNEGOTIATION) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::KICKONASSISTANTSILENCE) << " = " << enabled(ServerSwitch::KICKONASSISTANTSILENCE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::CUOMAPTRACKER) << " = " << enabled(ServerSwitch::CUOMAPTRACKER) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::JSENGINE) << " = " << ushortValues[UShortValue::JSENGINE] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::UNICODEMESSAGE) << " = " << enabled(ServerSwitch::UNICODEMESSAGE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::CONTEXTMENU) << " = " << enabled(ServerSwitch::CONTEXTMENU) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::SYSMESSAGECOLOR) << " = " << ushortValues[UShortValue::SYSMESSAGECOLOR] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::MAXCLIENTBYTESIN) << " = " << uintValues[UIntValue::MAXCLIENTBYTESIN] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::MAXCLIENTBYTESOUT) << " = " << uintValues[UIntValue::MAXCLIENTBYTESOUT] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::NETTRAFFICTIMEBAN) << " = " << uintValues[UIntValue::NETTRAFFICTIMEBAN] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::APSPERFTHRESHOLD) << " = " << ushortValues[UShortValue::APSPERFTHRESHOLD] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::APSINTERVAL) << " = " << ushortValues[UShortValue::APSINTERVAL] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::APSDELAYSTEP) << " = " << ushortValues[UShortValue::APSDELAYSTEP] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::APSDELAYMAX) << " = " << ushortValues[UShortValue::APSDELAYMAX] << "\n" ;
+
     output << "}\n\n" ;
 
     output <<"[clientsupport]\n{\n";
@@ -251,42 +249,44 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "}\n\n" ;
     
     output <<"[skill & stats]\n{\n";
-//    output << "\tSKILLLEVEL = " << static_cast<std::uint16_t>(SkillLevel()) << "\n" ;
-//    output << "\tSKILLCAP = " << ServerSkillTotalCapStatus() << "\n" ;
-//    output << "\tSKILLDELAY = " << static_cast<std::uint16_t>(ServerSkillDelayStatus()) << "\n" ;
-//    output << "\tSTATCAP = " << ServerStatCapStatus() << "\n" ;
-    output << "\tSTATSAFFECTSKILLCHECKS = " << this->enabled(ServerSwitch::STATIMPACTSKILL) << "\n" ;
-    output << "\tEXTENDEDSTARTINGSTATS = " << this->enabled(ServerSwitch::EXTENDEDSTATS) << "\n" ;
-    output << "\tEXTENDEDSTARTINGSKILLS = " << this->enabled(ServerSwitch::EXTENDEDSKILLS) <<  "\n" ;
-//    output << "\tMAXSTEALTHMOVEMENTS = " << MaxStealthMovement() << "\n" ;
-//    output << "\tMAXSTAMINAMOVEMENTS = " << MaxStaminaMovement() << "\n" ;
-    output << "\tSNOOPISCRIME = " << this->enabled(ServerSwitch::SNOOPISCRIME) << "\n" ;
-    output << "\tSNOOPAWARENESS = " << this->enabled(ServerSwitch::SNOOPAWARE) << "\n" ;
-    output << "\tARMORAFFECTMANAREGEN = " << this->enabled(ServerSwitch::ARMORIMPACTSMANA) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::SKILLLEVEL) << " = " << ushortValues[UShortValue::SKILLLEVEL] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::SKILLCAP) << " = " << ushortValues[UShortValue::SKILLCAP] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::SKILLDELAY) << " = " << ushortValues[UShortValue::SKILLDELAY] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::STATCAP) << " = " << ushortValues[UShortValue::STATCAP] << "\n" ;
+
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::STATIMPACTSKILL) << " = " << enabled(ServerSwitch::STATIMPACTSKILL) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::EXTENDEDSTATS) << " = " << enabled(ServerSwitch::EXTENDEDSTATS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::EXTENDEDSKILLS) << " = " << enabled(ServerSwitch::EXTENDEDSKILLS) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::MAXSTEALTHMOVEMENT) << " = " << shortValues[ShortValue::MAXSTEALTHMOVEMENT] << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::MAXSTAMINAMOVEMENT) << " = " << shortValues[ShortValue::MAXSTAMINAMOVEMENT] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SNOOPISCRIME) << " = " << enabled(ServerSwitch::SNOOPISCRIME) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SNOOPAWARE) << " = " << enabled(ServerSwitch::SNOOPAWARE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ARMORIMPACTSMANA) << " = " << enabled(ServerSwitch::ARMORIMPACTSMANA) << "\n" ;
+
     output << "}\n\n" ;
 
     output << "[timers]\n{\n" ;
-//    output << "\tCORPSEDECAYTIMER = " << SystemTimer(tSERVER_CORPSEDECAY) << "\n" ;
-//    output << "\tNPCCORPSEDECAYTIMER = " << SystemTimer(tSERVER_NPCCORPSEDECAY) << "\n" ;
-//    output << "\tWEATHERTIMER = " << SystemTimer(tSERVER_WEATHER) << "\n" ;
-//    output << "\tSHOPSPAWNTIMER = " << SystemTimer(tSERVER_SHOPSPAWN) << "\n" ;
-//    output << "\tDECAYTIMER = " << SystemTimer(tSERVER_DECAY) << "\n" ;
-//    output << "\tDECAYTIMERINHOUSE = " << SystemTimer(tSERVER_DECAYINHOUSE) << "\n" ;
-//    output << "\tINVISIBILITYTIMER = " << SystemTimer(tSERVER_INVISIBILITY) << "\n" ;
-//    output << "\tOBJECTUSETIMER = " << SystemTimer(tSERVER_OBJECTUSAGE) << "\n" ;
-//    output << "\tGATETIMER = " << SystemTimer(tSERVER_GATE) << "\n" ;
-//    output << "\tPOISONTIMER = " << SystemTimer(tSERVER_POISON) << "\n" ;
-//    output << "\tLOGINTIMEOUT = " << SystemTimer(tSERVER_LOGINTIMEOUT) << "\n" ;
-//    output << "\tHITPOINTREGENTIMER = " << SystemTimer(tSERVER_HITPOINTREGEN) << "\n" ;
-//    output << "\tSTAMINAREGENTIMER = " << SystemTimer(tSERVER_STAMINAREGEN) << "\n" ;
-//    output << "\tMANAREGENTIMER = " << SystemTimer(tSERVER_MANAREGEN) <<< "\n" ;
-//    output << "\tBASEFISHINGTIMER = " << SystemTimer(tSERVER_FISHINGBASE) << "\n" ;
-//    output << "\tRANDOMFISHINGTIMER = " << SystemTimer(tSERVER_FISHINGRANDOM) << "\n" ;
-//    output << "\tSPIRITSPEAKTIMER = " << SystemTimer(tSERVER_SPIRITSPEAK) << "\n" ;
-//    output << "\tPETOFFLINECHECKTIMER = " << SystemTimer(tSERVER_PETOFFLINECHECK) << "\n" ;
-//    output << "\tNPCFLAGUPDATETIMER = " << SystemTimer(tSERVER_NPCFLAGUPDATETIMER) << "\n" ;
-//    output << "\tBLOODDECAYTIMER = " << SystemTimer(tSERVER_BLOODDECAY) << "\n" ;
-//    output << "\tBLOODDECAYCORPSETIMER = " << SystemTimer(tSERVER_BLOODDECAYCORPSE) << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::CORPSEDECAY) << " = " << timerSetting[TimerSetting::CORPSEDECAY] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::NPCCORPSEDECAY) << " = " << timerSetting[TimerSetting::NPCCORPSEDECAY] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::WEATHER) << " = " << timerSetting[TimerSetting::WEATHER] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::SHOPSPAWN) << " = " << timerSetting[TimerSetting::SHOPSPAWN] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::DECAY) << " = " << timerSetting[TimerSetting::DECAY] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::DECAYINHOUSE) << " = " << timerSetting[TimerSetting::DECAYINHOUSE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::INVISIBILITY) << " = " << timerSetting[TimerSetting::INVISIBILITY] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::OBJECTUSAGE) << " = " << timerSetting[TimerSetting::OBJECTUSAGE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::GATE) << " = " << timerSetting[TimerSetting::GATE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::POISON) << " = " << timerSetting[TimerSetting::POISON] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::LOGINTIMEOUT) << " = " << timerSetting[TimerSetting::LOGINTIMEOUT] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::HITPOINTREGEN) << " = " << timerSetting[TimerSetting::HITPOINTREGEN] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::STAMINAREGEN) << " = " << timerSetting[TimerSetting::STAMINAREGEN] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::MANAREGEN) << " = " << timerSetting[TimerSetting::MANAREGEN] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::FISHINGBASE) << " = " << timerSetting[TimerSetting::FISHINGBASE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::FISHINGRANDOM) << " = " << timerSetting[TimerSetting::FISHINGRANDOM] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::SPIRITSPEAK) << " = " << timerSetting[TimerSetting::SPIRITSPEAK] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::PETOFFLINECHECK) << " = " << timerSetting[TimerSetting::PETOFFLINECHECK] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::NPCFLAGUPDATETIMER) << " = " << timerSetting[TimerSetting::NPCFLAGUPDATETIMER] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::BLOODDECAY) << " = " << timerSetting[TimerSetting::BLOODDECAY] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::BLOODDECAYCORPSE) << " = " << timerSetting[TimerSetting::BLOODDECAYCORPSE] << "\n" ;
     output << "}\n\n" ;
 
     output << "//========================================================================\n" ;
@@ -295,228 +295,226 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "//========================================================================\n" ;
     output << "[expansion settings]\n{\n" ;
     // Becaause we care about the order"
-    output << "\tCORESHARDERA = " << ruleSets[Expansion::SHARD].describe() << "\n" ;
-    output << "\tARMORCALCULATION = " << ruleSets[Expansion::ARMOR].describe() << "\n" ;
-    output << "\tSTRENGTHDAMAGEBONUS = " << ruleSets[Expansion::STRENGTH].describe() << "\n" ;
-    output << "\tTACTICSDAMAGEBONUS = " <<ruleSets[Expansion::TATIC].describe() << "\n" ;
-    output << "\tANATOMYDAMAGEBONUS = "  << ruleSets[Expansion::DAMAGE].describe() << "\n" ;
-    output << "\tLUMBERJACKDAMAGEBONUS = " << ruleSets[Expansion::LUMBERJACK].describe() << "\n" ;
-    output << "\tRACIALDAMAGEBONUS = " << ruleSets[Expansion::RACIAL].describe() << "\n" ;
-    output << "\tDAMAGEBONUSCAP = " << ruleSets[Expansion::DAMAGE].describe() << "\n" ;
-    output << "\tSHIELDPARRY = " << ruleSets[Expansion::SHIELD].describe() << "\n" ;
-    output << "\tWEAPONPARRY ="  << ruleSets[Expansion::WEAPON].describe() << "\n" ;
-    output << "\tWRESTLINGPARRY = " << ruleSets[Expansion::WRESTLING].describe() << "\n" ;
-    output << "\tCOMBATHITCHANCE = " << ruleSets[Expansion::COMBAT].describe() << "\n" ;
+    output << "\t" << Expansion::nameFor(Expansion::SHARD) << " = " << ruleSets[Expansion::SHARD].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::ARMOR) << " = " << ruleSets[Expansion::ARMOR].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::STRENGTH) << " = " << ruleSets[Expansion::STRENGTH].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::TATIC) << " = " << ruleSets[Expansion::TATIC].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::ANATOMY) << " = " << ruleSets[Expansion::ANATOMY].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::LUMBERJACK) << " = " << ruleSets[Expansion::LUMBERJACK].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::RACIAL) << " = " << ruleSets[Expansion::RACIAL].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::DAMAGE) << " = " << ruleSets[Expansion::DAMAGE].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::SHIELD) << " = " << ruleSets[Expansion::SHIELD].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::WEAPON) << " = " << ruleSets[Expansion::WEAPON].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::WRESTLING) << " = " << ruleSets[Expansion::WRESTLING].describe() << "\n";
+    output << "\t" << Expansion::nameFor(Expansion::COMBAT) << " = " << ruleSets[Expansion::COMBAT].describe() << "\n";
     
     output << "}\n\n" ;
 
     output <<"[settings]\n{\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::CORPSELOOTDECAY) << " = " << enabled(ServerSwitch::CORPSELOOTDECAY) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUARDSACTIVE) << " = " << enabled(ServerSwitch::GUARDSACTIVE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DEATHANIMATION) << " = " << enabled(ServerSwitch::DEATHANIMATION) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::AMBIENTSOUND) << " = " << shortValues[ShortValue::AMBIENTSOUND] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::AMBIENTFOOTSTEPS) << " = " << enabled(ServerSwitch::AMBIENTFOOTSTEPS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::AUTOACCOUNT) << " = " << enabled(ServerSwitch::AUTOACCOUNT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SHOWOFFLINEPCS) << " = " << enabled(ServerSwitch::SHOWOFFLINEPCS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ROGUEENABLE) << " = " << enabled(ServerSwitch::ROGUEENABLE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PLAYERPERSECUTION) << " = " << enabled(ServerSwitch::PLAYERPERSECUTION) << "\n" ;
 
-    output << "\tLOOTDECAYSWITHCORPSE = " << this->enabled(ServerSwitch::CORPSELOOTDECAY) << "\n" ;
-    output << "\tGUARDSACTIVE = " << this->enabled(ServerSwitch::GUARDSACTIVE) << "\n" ;
-    output << "\tDEATHANIMATION = " << this->enabled(ServerSwitch::DEATHANIMATION) << "\n" ;
-//    output << "\tAMBIENTSOUNDS = " << WorldAmbientSounds() << "\n" ;
-    output << "\tAMBIENTFOOTSTEPS = " << this->enabled(ServerSwitch::AMBIENTFOOTSTEPS) << "\n" ;
-    output << "\tINTERNALACCOUNTCREATION = " << this->enabled(ServerSwitch::AUTOACCOUNT) << "\n" ;
-    output << "\tSHOWOFFLINEPCS = " << this->enabled(ServerSwitch::SHOWOFFLINEPCS) << "\n" ;
-    output << "\tROGUESENABLED = " << this->enabled(ServerSwitch::ROGUEENABLE) << "\n" ;
-    output << "\tPLAYERPERSECUTION = " << this->enabled(ServerSwitch::PLAYERPERSECUTION) << "\n" ;
-//    output << "\tACCOUNTFLUSH = " << AccountFlushTimer() << "\n" ;
-    output << "\tHTMLSTATUSENABLED = " << this->enabled(ServerSwitch::HTMLSTAT) << "\n" ;
-    output << "\tSELLBYNAME = " << this->enabled(ServerSwitch::SELLBYNAME) << "\n" ;
-//    output << "\tSELLMAXITEMS = " << SellMaxItemsStatus() << "\n" ;
-//    output << "\tGLOBALRESTOCKMULTIPLIER = " << GlobalRestockMultiplier() << "\n" ;
-//    output << "\tBANKBUYTHRESHOLD = " << BuyThreshold() << "\n" ;
-    output << "\tTRADESYSTEM = " << this->enabled(ServerSwitch::TRADESYSTEM) << "\n" ;
-    output << "\tRANKSYSTEM = " << this->enabled(ServerSwitch::RANKSYSTEM) << "\n" ;
-    output << "\tDISPLAYMAKERSMARK = " << this->enabled(ServerSwitch::MAKERMARK) << "\n" ;
-    output << "\tCUTSCROLLREQUIREMENTS = " << this->enabled(ServerSwitch::CUTSCROLLREQ) << "\n" ;
-    output << "\tNPCTRAININGENABLED = " << this->enabled(ServerSwitch::NPCTRAINING) << "\n" ;
-    output << "\tHIDEWHILEMOUNTED = " << this->enabled(ServerSwitch::HIDEWHILEMOUNTED) << "\n" ;
-    output << "\tWEIGHTPERSTR = " <<  realNumbers[RealNumberConfig::WEIGHTSTR] << "\n" ;
-//    output << "\tPOLYDURATION = " << SystemTimer(tSERVER_POLYMORPH) << "\n" ;
-    output << "\tCLIENTFEATURES = " << this->clientFeature.value() << "\n" ;
-    output << "\tSERVERFEATURES = " << this->serverFeature.value()  << "\n" ;
-//    output << "\tSPAWNREGIONSFACETS = " << getSpawnRegionsFacetStatus() << "\n" ;
-    output << "\tOVERLOADPACKETS = " << this->enabled(ServerSwitch::OVERLOADPACKETS) << "\n" ;
-    output << "\tADVANCEDPATHFINDING = " << this->enabled(ServerSwitch::ADVANCEDPATHFINDING) << "\n" ;
-    output << "\tLOOTINGISCRIME = " << this->enabled(ServerSwitch::LOOTINGISCRIME) << "\n" ;
-    output << "\tBASICTOOLTIPSONLY = " << this->enabled(ServerSwitch::BASICTOOLTIPSONLY) << "\n" ;
-    output << "\tSHOWREPUTATIONTITLEINTOOLTIP = " << this->enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP) << "\n" ;
-    output << "\tSHOWGUILDINFOINTOOLTIP = " << this->enabled(ServerSwitch::DISPLAYGUILDTOOLTIP) << "\n" ;
-    output << "\tSHOWNPCTITLESINTOOLTIPS = " << this->enabled(ServerSwitch::NPCTOOLTIPS) << "\n" ;
-    output << "\tSHOWNPCTITLESOVERHEAD = " << this->enabled(ServerSwitch::OVERHEADTITLE) << "\n" ;
-    output << "\tSHOWINVULNERABLETAGOVERHEAD = " << this->enabled(ServerSwitch::DISPLAYINVUNERABLE) << "\n" ;
-    output << "\tSHOWRACEWITHNAME = " << this->enabled(ServerSwitch::DISPLAYRACE) << "\n" ;
-    output << "\tSHOWRACEINPAPERDOLL = " << this->enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) << "\n" ;
-    output << "\tGLOBALITEMDECAY = " << this->enabled(ServerSwitch::ITEMDECAY) << "\n" ;
-    output << "\tSCRIPTITEMSDECAYABLE = " << this->enabled(ServerSwitch::SCRIPTITEMSDECAYABLE) << "\n" ;
-    output << "\tBASEITEMSDECAYABLE = " << this->enabled(ServerSwitch::BASEITEMSDECAYABLE) << "\n" ;
-    output << "\tPAPERDOLLGUILDBUTTON = " << this->enabled(ServerSwitch::DISPLAYGUILDBUTTON) << "\n" ;
-//    output << "\tFISHINGSTAMINALOSS = " << FishingStaminaLoss() << "\n" ;
-    output << "\tITEMSDETECTSPEECH = " << this->enabled(ServerSwitch::ITEMDETECTSPEECH) << "\n" ;
-//    output << "\tMAXPLAYERPACKITEMS = " << MaxPlayerPackItems() << "\n" ;
-//    output << "\tMAXPLAYERBANKITEMS = " << MaxPlayerBankItems() << "\n" ;
-//    output << "\tMAXPLAYERPACKWEIGHT = " << MaxPlayerPackWeight() << "\n" ;
-//    output << "\tMAXPLAYERBANKWEIGHT = " << MaxPlayerBankWeight() << "\n" ;
-    output << "\tFORCENEWANIMATIONPACKET = " << this->enabled(ServerSwitch::FORECENEWANIMATIONPACKET) << "\n" ;
-    output << "\tMAPDIFFSENABLED = " << this->enabled(ServerSwitch::MAPDIFF) << "\n" ;
-    output << "\tTOOLUSELIMIT = " << this->enabled(ServerSwitch::TOOLUSE) << "\n" ;
-    output << "\tTOOLUSEBREAK = " << this->enabled(ServerSwitch::TOOLBREAK) << "\n" ;
-    output << "\tITEMREPAIRDURABILITYLOSS = " << this->enabled(ServerSwitch::REPAIRLOSS) << "\n" ;
-    output << "\tCRAFTCOLOUREDWEAPONS = " << this->enabled(ServerSwitch::COLORWEAPON) << "\n" ;
-//    output << "\tMAXSAFETELEPORTSPERDAY = " << static_cast<std::uint16_t>(MaxSafeTeleportsPerDay()) << "\n" ;
-    output << "\tTELEPORTTONEARESTSAFELOCATION = " << this->enabled(ServerSwitch::SAFETELEPORT) << "\n" ;
-    output << "\tALLOWAWAKENPCS = " << this->enabled(ServerSwitch::AWAKENPC) << "\n" ;
-    output << "\tENABLENPCGUILDDISCOUNTS = " << this->enabled(ServerSwitch::GUILDDISCOUNT) << "\n" ;
-    output << "\tENABLENPCGUILDPREMIUMS = " << this->enabled(ServerSwitch::GUILDPREMIUM) << "\n" ;
-    output << "\tYOUNGPLAYERSYSTEM = " << this->enabled(ServerSwitch::YOUNGPLAYER) << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::FLUSHTIME) << " = " << realNumbers[RealNumberConfig::FLUSHTIME] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::HTMLSTAT) << " = " << enabled(ServerSwitch::HTMLSTAT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SELLBYNAME) << " = " << enabled(ServerSwitch::SELLBYNAME) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::MAXSELLITEM) << " = " << shortValues[ShortValue::MAXSELLITEM] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::RESTOCKMULTIPLER) << " = " << realNumbers[RealNumberConfig::RESTOCKMULTIPLER] << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::BANKBUYTHRESHOLD) << " = " << shortValues[ShortValue::BANKBUYTHRESHOLD] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRADESYSTEM) << " = " << enabled(ServerSwitch::TRADESYSTEM) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::RANKSYSTEM) << " = " << enabled(ServerSwitch::RANKSYSTEM) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::MAKERMARK) << " = " << enabled(ServerSwitch::MAKERMARK) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::CUTSCROLLREQ) << " = " << enabled(ServerSwitch::CUTSCROLLREQ) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::NPCTRAINING) << " = " << enabled(ServerSwitch::NPCTRAINING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::HIDEWHILEMOUNTED) << " = " << enabled(ServerSwitch::HIDEWHILEMOUNTED) << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::WEIGHTSTR) << " = " << realNumbers[RealNumberConfig::WEIGHTSTR] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::POLYMORPH) << " = " << timerSetting[TimerSetting::POLYMORPH] << "\n" ;
+    output << "\t" << ClientFeature::name << " = " << this->clientFeature.value() << "\n" ;
+    output << "\t" << ServerFeature::name << " = " << this->serverFeature.value()  << "\n" ;
+    output << "\t" << SpawnFacet::name << " = " << spawnFacet.value() <<"\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::OVERLOADPACKETS) << " = " << enabled(ServerSwitch::OVERLOADPACKETS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ADVANCEDPATHFINDING) << " = " << enabled(ServerSwitch::ADVANCEDPATHFINDING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::LOOTINGISCRIME) << " = " << enabled(ServerSwitch::LOOTINGISCRIME) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::BASICTOOLTIPSONLY) << " = " << enabled(ServerSwitch::BASICTOOLTIPSONLY) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYREPUTATIONTOOLTIP) << " = " << enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYGUILDTOOLTIP) << " = " << enabled(ServerSwitch::DISPLAYGUILDTOOLTIP) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::NPCTOOLTIPS) << " = " << enabled(ServerSwitch::NPCTOOLTIPS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::OVERHEADTITLE) << " = " << enabled(ServerSwitch::OVERHEADTITLE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYINVUNERABLE) << " = " << enabled(ServerSwitch::DISPLAYINVUNERABLE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYRACE) << " = " << enabled(ServerSwitch::DISPLAYRACE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYRACEPAPERDOLL) << " = " << enabled(ServerSwitch::DISPLAYRACEPAPERDOLL) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ITEMDECAY) << " = " << enabled(ServerSwitch::ITEMDECAY) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SCRIPTITEMSDECAYABLE) << " = " << enabled(ServerSwitch::SCRIPTITEMSDECAYABLE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::BASEITEMSDECAYABLE) << " = " << enabled(ServerSwitch::BASEITEMSDECAYABLE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYGUILDBUTTON) << " = " << enabled(ServerSwitch::DISPLAYGUILDBUTTON) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::FISHINGSTAMINALOSS) << " = " << shortValues[ShortValue::FISHINGSTAMINALOSS] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ITEMDETECTSPEECH) << " = " << enabled(ServerSwitch::ITEMDETECTSPEECH) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXPLAYERPACKITEM) << " = " << ushortValues[UShortValue::MAXPLAYERPACKITEM] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXPLAYERBANKITEM) << " = " << ushortValues[UShortValue::MAXPLAYERBANKITEM] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::MAXPLAYERPACKWEIGHT) << " = " << uintValues[UIntValue::MAXPLAYERPACKWEIGHT] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::MAXPLAYERBANKWEIGHT) << " = " << uintValues[UIntValue::MAXPLAYERBANKWEIGHT] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::FORECENEWANIMATIONPACKET) << " = " << enabled(ServerSwitch::FORECENEWANIMATIONPACKET) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::MAPDIFF) << " = " << enabled(ServerSwitch::MAPDIFF) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TOOLUSE) << " = " << enabled(ServerSwitch::TOOLUSE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TOOLBREAK) << " = " << enabled(ServerSwitch::TOOLBREAK) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::REPAIRLOSS) << " = " << enabled(ServerSwitch::REPAIRLOSS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::COLORWEAPON) << " = " << enabled(ServerSwitch::COLORWEAPON) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXSAFETELEPORT) << " = " << ushortValues[UShortValue::MAXSAFETELEPORT] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SAFETELEPORT) << " = " << enabled(ServerSwitch::SAFETELEPORT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::AWAKENPC) << " = " << enabled(ServerSwitch::AWAKENPC) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUILDDISCOUNT) << " = " << enabled(ServerSwitch::GUILDDISCOUNT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUILDPREMIUM) << " = " << enabled(ServerSwitch::GUILDPREMIUM) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::YOUNGPLAYER) << " = " << enabled(ServerSwitch::YOUNGPLAYER) << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[pets and followers]\n{\n";
-//    output << "\tMAXCONTROLSLOTS = " << static_cast<std::uint16_t>(MaxControlSlots()) << "\n" ;
-//    output << "\tMAXFOLLOWERS = " << static_cast<std::uint16_t>(MaxFollowers()) << "\n" ;
-//    output << "\tMAXPETOWNERS = " << static_cast<std::uint16_t>(MaxPetOwners()) << "\n" ;
-    output << "\tCHECKPETCONTROLDIFFICULTY = " << this->enabled(ServerSwitch::PETDIFFICULTY) << "\n" ;
-//    output << "\tPETLOYALTYGAINONSUCCESS = " << static_cast<std::uint16_t>(GetPetLoyaltyGainOnSuccess()) << "\n" ;
-//    output << "\tPETLOYALTYLOSSONFAILURE = " << static_cast<std::uint16_t>(GetPetLoyaltyLossOnFailure()) << "\n" ;
-//    output << "\tPETLOYALTYRATE =" << SystemTimer(tSERVER_LOYALTYRATE) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXCONTROLSLOT) << " = " << ushortValues[UShortValue::MAXCONTROLSLOT] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXFOLLOWER) << " = " << ushortValues[UShortValue::MAXFOLLOWER] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXPETOWNER) << " = " << ushortValues[UShortValue::MAXPETOWNER] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETDIFFICULTY) << " = " << enabled(ServerSwitch::PETDIFFICULTY) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::PETLOYALITYGAINSUCCESS) << " = " << ushortValues[UShortValue::PETLOYALITYGAINSUCCESS] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::PETLOYALITYLOSSFAILURE) << " = " << ushortValues[UShortValue::PETLOYALITYLOSSFAILURE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::LOYALTYRATE) << " = " << timerSetting[TimerSetting::LOYALTYRATE] << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[speedup]\n{\n" ;
-    output << "\tCHECKITEMS = " << realNumbers[RealNumberConfig::CHECKITEMS] << "\n" ;
-    output << "\tCHECKBOATS = " << realNumbers[RealNumberConfig::CHECKBOATS] << "\n" ;
-    output << "\tCHECKNPCAI = " << realNumbers[RealNumberConfig::CHECKAI] << "\n" ;
-    output << "\tCHECKSPAWNREGIONS = " << realNumbers[RealNumberConfig::CHECKSPAWN] << "\n" ;
-    output << "\tNPCMOVEMENTSPEED = " << realNumbers[RealNumberConfig::NPCMOVEMENT] << "\n" ;
-    output << "\tNPCRUNNINGSPEED = " << realNumbers[RealNumberConfig::NPCRUNNING] << "\n" ;
-    output << "\tNPCFLEEINGSPEED = " << realNumbers[RealNumberConfig::NPCFLEEING] << "\n" ;
-    output << "\tNPCMOUNTEDWALKINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT] << "\n" ;
-    output << "\tNPCMOUNTEDRUNNINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTRUNNING] << "\n" ;
-    output << "\tNPCMOUNTEDFLEEINGSPEED = " << realNumbers[RealNumberConfig::NPCMOUNTFLEEING] << "\n" ;
-    output << "\tNPCSPELLCASTSPEED = " << realNumbers[RealNumberConfig::NPCSPELLCAST] << "\n" ;
-    output << "\tGLOBALATTACKSPEED = " << realNumbers[RealNumberConfig::GLOBALATTACK] << "\n" ;
-    
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKITEMS) << " = " << realNumbers[RealNumberConfig::CHECKITEMS] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKBOATS) << " = " << realNumbers[RealNumberConfig::CHECKBOATS] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKAI) << " = " << realNumbers[RealNumberConfig::CHECKAI] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKSPAWN) << " = " << realNumbers[RealNumberConfig::CHECKSPAWN] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCMOVEMENT) << " = " << realNumbers[RealNumberConfig::NPCMOVEMENT] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCRUNNING) << " = " << realNumbers[RealNumberConfig::NPCRUNNING] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCFLEEING) << " = " << realNumbers[RealNumberConfig::NPCFLEEING] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCMOUNTMOVEMENT) << " = " << realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCMOUNTRUNNING) << " = " << realNumbers[RealNumberConfig::NPCMOUNTRUNNING] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCMOUNTFLEEING) << " = " << realNumbers[RealNumberConfig::NPCMOUNTFLEEING] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCSPELLCAST) << " = " << realNumbers[RealNumberConfig::NPCSPELLCAST] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::GLOBALATTACK) << " = " << realNumbers[RealNumberConfig::GLOBALATTACK] << "\n" ;
+     
     output << "}\n\n" ;
 
     output << "[message boards]\n{\n" ;
-//    output << "\tPOSTINGLEVEL = " << static_cast<std::uint16_t>(MsgBoardPostingLevel()) << "\n" ;
-//    output << "\tREMOVALLEVEL = " << static_cast<std::uint16_t>(MsgBoardPostRemovalLevel()) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::POSTINGLEVEL) << " = " << ushortValues[UShortValue::POSTINGLEVEL] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::REMOVALLEVEL) << " = " << ushortValues[UShortValue::REMOVALLEVEL] << "\n";
     
     output << "}\n\n" ;
 
     output << "[escorts]\n{\n" ;
-    output << "\tESCORTENABLED = " << this->enabled(ServerSwitch::ESCORTS) << "\n" ;
-//    output << "\tESCORTINITEXPIRE = " << SystemTimer(tSERVER_ESCORTWAIT) << "\n" ;
-//    output << "\tESCORTACTIVEEXPIRE = " << SystemTimer(tSERVER_ESCORTACTIVE) << "\n" ;
-//    output << "\tESCORTDONEEXPIRE = " << SystemTimer(tSERVER_ESCORTDONE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ESCORTS) << " = " << this->enabled(ServerSwitch::ESCORTS) << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::ESCORTWAIT) << " = " << timerSetting[TimerSetting::ESCORTWAIT] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::ESCORTACTIVE) << " = " << timerSetting[TimerSetting::ESCORTACTIVE] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::ESCORTDONE) << " = " << timerSetting[TimerSetting::ESCORTDONE] << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[worldlight]\n{\n" ;
-//    output << "\tDUNGEONLEVEL = " << static_cast<std::uint16_t>(dungeonLightLevel()) << "\n" ;
-//    output << "\tBRIGHTLEVEL = " << static_cast<std::uint16_t>(worldLightBrightLevel()) << "\n" ;
-//    output << "\tDARKLEVEL = " << static_cast<std::uint16_t>(worldLightDarkLevel()) << "\n" ;
-//    output << "\tSECONDSPERUOMINUTE = " << ServerSecondsPerUOMinute() << "\n" ;
-    
+    output << "\t" << UShortValue::nameFor(UShortValue::DUNGEONLIGHT) << " = " << ushortValues[UShortValue::DUNGEONLIGHT] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BRIGHTLEVEL) << " = " << ushortValues[UShortValue::BRIGHTLEVEL] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::DARKLEVEL) << " = " << ushortValues[UShortValue::DARKLEVEL] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::SECONDSPERUOMINUTE) << " = " << ushortValues[UShortValue::SECONDSPERUOMINUTE] << "\n";
     output << "}\n\n" ;
 
     output << "[tracking]\n{\n" ;
-//    output << "\tBASERANGE = " << TrackingBaseRange() << "\n" ;
-//    output << "\tBASETIMER = " << TrackingBaseTimer() << "\n" ;
-//    output << "\tMAXTARGETS = " << static_cast<std::uint16_t>(TrackingMaxTargets()) << "\n" ;
-//    output << "\tMSGREDISPLAYTIME = " << TrackingRedisplayTime() << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::BASERANGE) << " = " << ushortValues[UShortValue::BASERANGE] << "\n";
+    output << "\t" << TimerSetting::nameFor(TimerSetting::TRACKING) << " = " << timerSetting[TimerSetting::TRACKING] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXTARGET) << " = " << ushortValues[UShortValue::MAXTARGET] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MSGREDISPLAYTIME) << " = " << ushortValues[UShortValue::MSGREDISPLAYTIME] << "\n";
     
     output << "}\n\n" ;
 
     output << "[reputation]\n{\n" ;
-//    output << "\tMURDERDECAYTIMER = " << SystemTimer(tSERVER_MURDERDECAY) << "\n" ;
-//    output << "\tMAXKILLS = " << RepMaxKills() << "\n" ;
-//    output << "\tCRIMINALTIMER = " << SystemTimer(tSERVER_CRIMINAL) << "\n" ;
-//    output << "\tAGGRESSORFLAGTIMER = " << SystemTimer(tSERVER_AGGRESSORFLAG) << "\n" ;
-//    output << "\tPERMAGREYFLAGTIMER = " << SystemTimer(tSERVER_PERMAGREYFLAG) << "\n" ;
-//    output << "\tSTEALINGFLAGTIMER = " << SystemTimer(tSERVER_STEALINGFLAG) << "\n" ;
-    
+    output << "\t" << TimerSetting::nameFor(TimerSetting::MURDERDECAY) << " = " << timerSetting[TimerSetting::MURDERDECAY] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXKILL) << " = " << ushortValues[UShortValue::MAXKILL] << "\n";
+    output << "\t" << TimerSetting::nameFor(TimerSetting::CRIMINAL) << " = " << timerSetting[TimerSetting::CRIMINAL] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::AGGRESSORFLAG) << " = " << timerSetting[TimerSetting::AGGRESSORFLAG] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::PERMAGREYFLAG) << " = " << timerSetting[TimerSetting::PERMAGREYFLAG] << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::STEALINGFLAG) << " = " << timerSetting[TimerSetting::STEALINGFLAG] << "\n" ;
     output << "}\n\n" ;
 
     output << "[resources]\n{\n" ;
-//    output << "\tRESOURCEAREASIZE = " << ResourceAreaSize() << "\n" ;
-//    output << "\tMINECHECK = " << static_cast<std::uint16_t>(MineCheck()) << "\n" ;
-//    output << "\tOREPERAREA = " << ResOre() << "\n" ;
- //   output << "\tORERESPAWNTIMER = " << ResOreTime() << "\n" ;
-//    output << "\tLOGSPERAREA = " << ResLogs() << "\n" ;
-//    output << "\tLOGSRESPAWNTIMER = " << ResLogTime() << "\n" ;
-//    output << "\tFISHPERAREA = " << ResFish() << "\n" ;
-//    output << "\tFISHRESPAWNTIMER = " << ResFishTime() << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::RESOURCEAREASIZE) << " = " << ushortValues[UShortValue::RESOURCEAREASIZE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MINECHECK) << " = " << ushortValues[UShortValue::MINECHECK] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::OREPERAREA) << " = " << ushortValues[UShortValue::OREPERAREA] << "\n";
+    output << "\t" << TimerSetting::nameFor(TimerSetting::ORE) << " = " << timerSetting[TimerSetting::ORE] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::LOGPERAREA) << " = " << ushortValues[UShortValue::LOGPERAREA] << "\n";
+    output << "\t" << TimerSetting::nameFor(TimerSetting::LOG) << " = " << timerSetting[TimerSetting::LOG] << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::FISHPERAREA) << " = " << ushortValues[UShortValue::FISHPERAREA] << "\n";
+    output << "\t" << TimerSetting::nameFor(TimerSetting::FISH) << " = " << timerSetting[TimerSetting::FISH] << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[hunger]\n{\n" ;
-//    output << "\tHUNGERENABLED = " << this->enabled(ServerSwitch::HUNGER) << "\n" ;
-//    output << "\tHUNGERRATE = " << SystemTimer(tSERVER_HUNGERRATE) << "\n" ;
-//    output << "\tHUNGERDMGVAL = " << HungerDamage() << "\n" ;
-    output << "\tPETHUNGEROFFLINE = " << this->enabled(ServerSwitch::PETHUNGEROFFLINE) << "\n" ;
-//    output << "\tPETOFFLINETIMEOUT = " << PetOfflineTimeout() << "\n" ;
-    
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::HUNGER) << " = " << this->enabled(ServerSwitch::HUNGER) << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::HUNGERRATE) << " = " << timerSetting[TimerSetting::HUNGERRATE] << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::HUNGERDAMAGE) << " = " << shortValues[ShortValue::HUNGERDAMAGE] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETHUNGEROFFLINE) << " = " << this->enabled(ServerSwitch::PETHUNGEROFFLINE) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::PETOFFLINETIMEOUT) << " = " << ushortValues[UShortValue::PETOFFLINETIMEOUT] << "\n";
+
     output << "}\n\n" ;
 
     output << "[thirst]\n{\n" ;
-    output << "\tTHIRSTENABLED = " << this->enabled(ServerSwitch::THIRST) << "\n" ;
- //   output << "\tTHIRSTRATE = " << SystemTimer(tSERVER_THIRSTRATE) << "\n" ;
- //   output << "\tTHIRSTDRAINVAL = " << ThirstDrain() << "\n" ;
-    output << "\tPETTHIRSTOFFLINE = " << this->enabled(ServerSwitch::PETTHIRSTOFFLINE) << "\n" ;
-    
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::THIRST) << " = " << this->enabled(ServerSwitch::THIRST) << "\n" ;
+    output << "\t" << TimerSetting::nameFor(TimerSetting::THIRSTRATE) << " = " << timerSetting[TimerSetting::THIRSTRATE] << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::THIRSTDRAIN) << " = " << shortValues[ShortValue::THIRSTDRAIN] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETTHIRSTOFFLINE) << " = " << this->enabled(ServerSwitch::PETTHIRSTOFFLINE) << "\n" ;
+
     output << "}\n\n" ;
 
     output << "[combat]\n{\n" ;
-//    output << "\tMAXRANGE = " << CombatMaxRange() << "\n" ;
-//    output << "\tSPELLMAXRANGE = " << CombatMaxSpellRange() << "\n" ;
-    output << "\tDISPLAYHITMSG = " << this->enabled(ServerSwitch::DISPLAYHITMSG) << "\n" ;
-    output << "\tDISPLAYDAMAGENUMBERS = " << this->enabled(ServerSwitch::DISPLAYDAMAGENUMBERS) << "\n" ;
-    output << "\tMONSTERSVSANIMALS = " << this->enabled(ServerSwitch::MONSTERSVSANIMALS) << "\n" ;
-//    output << "\tANIMALATTACKCHANCE = " << static_cast<std::uint16_t>(CombatAnimalsAttackChance()) << "\n" ;
-    output << "\tANIMALSGUARDED = " << this->enabled(ServerSwitch::ANIMALSGUARDED) << "\n" ;
- //   output << "\tNPCDAMAGERATE = " << CombatNpcDamageRate() << "\n" ;
- //   output << "\tNPCBASEFLEEAT = " << CombatNPCBaseFleeAt() << "\n" ;
-//    output << "\tNPCBASEREATTACKAT = " << CombatNPCBaseReattackAt() << "\n" ;
-//    output << "\tATTACKSTAMINA = " << CombatAttackStamina() << "\n" ;
-    output << "\tATTACKSPEEDFROMSTAMINA = " << this->enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA) << "\n" ;
-//    output << "\tARCHERYHITBONUS = " << static_cast<std::int16_t>(CombatArcheryHitBonus()) << "\n" ;
-    output << "\tARCHERYSHOOTDELAY = " << realNumbers[RealNumberConfig::ARCHERYDELAY] << "\n" ;
-    output << "\tSHOOTONANIMALBACK = " << this->enabled(ServerSwitch::SHOOTONANIMALBACK) << "\n" ;
-//    output << "\tWEAPONDAMAGECHANCE = " << static_cast<std::uint16_t>(CombatWeaponDamageChance()) << "\n" ;
-//    output << "\tWEAPONDAMAGEMIN = " << static_cast<std::uint16_t>(CombatWeaponDamageMin()) << "\n" ;
-//    output << "\tWEAPONDAMAGEMAX = " << static_cast<std::uint16_t>(CombatWeaponDamageMax()) << "\n" ;
-//    output << "\tARMORDAMAGECHANCE = " << static_cast<std::uint16_t>(CombatArmorDamageChance()) << "\n" ;
-//    output << "\tARMORDAMAGEMIN = " << static_cast<std::uint16_t>(CombatArmorDamageMin()) << "\n" ;
-//    output << "\tARMORDAMAGEMAX=" << static_cast<std::uint16_t>(CombatArmorDamageMax()) << "\n" ;
-//    output << "\tPARRYDAMAGECHANCE = " << static_cast<std::uint16_t>(CombatParryDamageChance()) << "\n" ;
-//    output << "\tPARRYDAMAGEMIN = " << static_cast<std::uint16_t>(CombatParryDamageMin()) << "\n" ;
- //   output << "\tPARRYDAMAGEMAX = " << static_cast<std::uint16_t>(CombatParryDamageMax()) << "\n" ;
-    output << "\tARMORCLASSDAMAGEBONUS = " << this->enabled(ServerSwitch::ARMORCLASSBONUS) << "\n" ;
-    output << "\tALCHEMYBONUSENABLED = " << this->enabled(ServerSwitch::ALCHEMYBONUS) << "\n" ;
-//    output << "\tALCHEMYBONUSMODIFIER = " << static_cast<std::uint16_t>(AlchemyDamageBonusModifier()) << "\n" ;
-//    output << "\tBLOODEFFECTCHANCE = " << static_cast<std::uint16_t>(CombatBloodEffectChance()) << "\n" ;
-    output << "\tITEMSINTERRUPTCASTING = " << this->enabled(ServerSwitch::INTERRUPTCASTING) << "\n" ;
-    output << "\tPETCOMBATTRAINING = " << this->enabled(ServerSwitch::PETCOMBATTRAINING) << "\n" ;
-    output << "\tHIRELINGCOMBATTRAINING = " << this->enabled(ServerSwitch::HIRELINGTRAINING) << "\n" ;
-    output << "\tNPCCOMBATTRAINING = "  << this->enabled(ServerSwitch::NPCCOMBAT) << "\n" ;
-    output << "\tSHOWITEMRESISTSTATS = " << this->enabled(ServerSwitch::DISPLAYRESISTSTATS) << "\n" ;
-    output << "\tSHOWWEAPONDAMAGETYPES = " << this->enabled(ServerSwitch::DISPLAYDAMAGETYPE) << "\n" ;
-//    output << "\tWEAPONDAMAGEBONUSTYPE = " << static_cast<std::uint16_t>(WeaponDamageBonusType()) << "\n" ;
-    
+    output << "\t" << ShortValue::nameFor(ShortValue::MAXRANGE) << " = " << shortValues[ShortValue::MAXRANGE] << "\n";
+    output << "\t" << ShortValue::nameFor(ShortValue::MAXSPELLRANGE) << " = " << shortValues[ShortValue::MAXSPELLRANGE] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYHITMSG) << " = " << this->enabled(ServerSwitch::DISPLAYHITMSG) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYDAMAGENUMBERS) << " = " << this->enabled(ServerSwitch::DISPLAYDAMAGENUMBERS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::MONSTERSVSANIMALS) << " = " << this->enabled(ServerSwitch::MONSTERSVSANIMALS) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::ANIMALATTACKCHANCE) << " = " << ushortValues[UShortValue::ANIMALATTACKCHANCE] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ANIMALSGUARDED) << " = " << this->enabled(ServerSwitch::ANIMALSGUARDED) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::NPCDAMAGERATE) << " = " << shortValues[ShortValue::NPCDAMAGERATE] << "\n";
+    output << "\t" << ShortValue::nameFor(ShortValue::NPCBASEFLEEAT) << " = " << shortValues[ShortValue::NPCBASEFLEEAT] << "\n";
+    output << "\t" << ShortValue::nameFor(ShortValue::NPCBASEREATTACKAT) << " = " << shortValues[ShortValue::NPCBASEREATTACKAT] << "\n";
+    output << "\t" << ShortValue::nameFor(ShortValue::ATTACKSTAMINA) << " = " << shortValues[ShortValue::ATTACKSTAMINA] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ATTACKSPEEDFROMSTAMINA) << " = " << this->enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA) << "\n" ;
+    output << "\t" << ShortValue::nameFor(ShortValue::ARCHERYTHITBONUS) << " = " << shortValues[ShortValue::ARCHERYTHITBONUS] << "\n";
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::ARCHERYDELAY) << " = " << realNumbers[RealNumberConfig::ARCHERYDELAY] << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SHOOTONANIMALBACK) << " = " << this->enabled(ServerSwitch::SHOOTONANIMALBACK) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::WEAPONDAMAGECHANCE) << " = " << ushortValues[UShortValue::WEAPONDAMAGECHANCE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MINWEAPONDAMAGE) << " = " << ushortValues[UShortValue::MINWEAPONDAMAGE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXWEAPONDAMAGE) << " = " << ushortValues[UShortValue::MAXWEAPONDAMAGE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::ARMORDAMAGECHANCE) << " = " << ushortValues[UShortValue::ARMORDAMAGECHANCE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MINARMORDAMAGE) << " = " << ushortValues[UShortValue::MINARMORDAMAGE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXARMORDAMAGE) << " = " << ushortValues[UShortValue::MAXARMORDAMAGE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::PARRYDAMAGECHANCE) << " = " << ushortValues[UShortValue::PARRYDAMAGECHANCE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MINPARRYDAMAGE) << " = " << ushortValues[UShortValue::MINPARRYDAMAGE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXPARRYDAMAGE) << " = " << ushortValues[UShortValue::MAXPARRYDAMAGE] << "\n";
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ARMORCLASSBONUS) << " = " << this->enabled(ServerSwitch::ARMORCLASSBONUS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::ALCHEMYBONUS) << " = " << this->enabled(ServerSwitch::ALCHEMYBONUS) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::ALCHEMENYBONUSMODIFIER) << " = " << ushortValues[UShortValue::ALCHEMENYBONUSMODIFIER] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BLOODEFFECTCHANCE) << " = " << ushortValues[UShortValue::BLOODEFFECTCHANCE] << "\n";
+
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::INTERRUPTCASTING) << " = " << this->enabled(ServerSwitch::INTERRUPTCASTING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETCOMBATTRAINING) << " = " << this->enabled(ServerSwitch::PETCOMBATTRAINING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::HIRELINGTRAINING) << " = " << this->enabled(ServerSwitch::HIRELINGTRAINING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::NPCCOMBAT) << " = " << this->enabled(ServerSwitch::NPCCOMBAT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYRESISTSTATS) << " = " << this->enabled(ServerSwitch::DISPLAYRESISTSTATS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYDAMAGETYPE) << " = " << this->enabled(ServerSwitch::DISPLAYDAMAGETYPE) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::WEAPONDAMAGEBONUSTYPE) << " = " << ushortValues[UShortValue::WEAPONDAMAGEBONUSTYPE] << "\n";
     output << "}\n\n" ;
 
     output << "[magic]\n{\n" ;
-    output << "\tTRAVELSPELLSFROMBOATKEYS = " << this->enabled(ServerSwitch::TRAVELBOATKEY) << "\n" ;
-    output << "\tTRAVELSPELLSWHILEOVERWEIGHT = " << this->enabled(ServerSwitch::TRAVELBURDEN) << "\n" ;
-    output << "\tMARKRUNESINMULTIS = " << this->enabled(ServerSwitch::RUNEMULTI) << "\n" ;
-    output << "\tTRAVELSPELLSBETWEENWORLDS = " << this->enabled(ServerSwitch::SPELLWORLDTRAVEL) << "\n" ;
-    output << "\tTRAVELSPELLSWHILEAGGRESSOR = " << this->enabled(ServerSwitch::TRAVELAGRESSOR) << "\n" ;
-    output << "\tHIDESTATSFORUNKNOWNMAGICITEMS = " << this->enabled(ServerSwitch::MAGICSTATS) << "\n" ;
-    output << "\tCASTSPELLSWHILEMOVING = " << this->enabled(ServerSwitch::SPELLMOVING) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRAVELBOATKEY) << " = " << this->enabled(ServerSwitch::TRAVELBOATKEY) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRAVELBURDEN) << " = " << this->enabled(ServerSwitch::TRAVELBURDEN) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::RUNEMULTI) << " = " << this->enabled(ServerSwitch::RUNEMULTI) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SPELLWORLDTRAVEL) << " = " << this->enabled(ServerSwitch::SPELLWORLDTRAVEL) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRAVELAGRESSOR) << " = " << this->enabled(ServerSwitch::TRAVELAGRESSOR) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::MAGICSTATS) << " = " << this->enabled(ServerSwitch::MAGICSTATS) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::SPELLMOVING) << " = " << this->enabled(ServerSwitch::SPELLMOVING) << "\n" ;
     
     output << "}\n\n" ;
 
@@ -532,55 +530,54 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "}\n\n" ;
 
     output << "[startup]\n{\n" ;
-//    output << "\tSTARTGOLD = " << ServerStartGold() << "\n" ;
-//    output << "\tSTARTPRIVS = " << serverStartPrivs() << "\n" ;
-    
+    output << "\t" << ShortValue::nameFor(ShortValue::STARTGOLD) << " = " << shortValues[ShortValue::STARTGOLD] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::STARTPRIV) << " = " << ushortValues[UShortValue::STARTPRIV] << "\n";
     output << "}\n\n" ;
 
     output << "[gumps]\n{\n" ;
-//    output << "\tTITLECOLOUR = " << TitleColour() << "\n" ;
-//    output << "\tLEFTTEXTCOLOUR = " << LeftTextColour() << "\n" ;
-//    output << "\tRIGHTTEXTCOLOUR = " << RightTextColour() << "\n" ;
-//    output << "\tBUTTONCANCEL = " << ButtonCancel() << "\n" ;
-//    output << "\tBUTTONLEFT = " << ButtonLeft() << "\n" ;
-//    output << "\tBUTTONRIGHT = " << ButtonRight() << "\n" ;
-//    output << "\tBACKGROUNDPIC = " << BackgroundPic() << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::TITLECOLOR) << " = " << ushortValues[UShortValue::TITLECOLOR] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::LEFTTEXTCOLOR) << " = " << ushortValues[UShortValue::LEFTTEXTCOLOR] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::RIGHTTEXTCOLOR) << " = " << ushortValues[UShortValue::RIGHTTEXTCOLOR] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BUTTONCANCEL) << " = " << ushortValues[UShortValue::BUTTONCANCEL] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BUTTONLEFT) << " = " << ushortValues[UShortValue::BUTTONLEFT] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BUTTONRIGHT) << " = " << ushortValues[UShortValue::BUTTONRIGHT] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::BACKGROUNDPIC) << " = " << ushortValues[UShortValue::BACKGROUNDPIC] << "\n";
     
     output << "}\n\n" ;
 
     output << "[houses]\n{\n" ;
-    output << "\tTRACKHOUSESPERACCOUNT = " << this->enabled(ServerSwitch::TRACKHOUSESPERACCOUNT) << "\n" ;
-    output << "\tCANOWNANDCOOWNHOUSES = " << this->enabled(ServerSwitch::OWNCOOWNHOUSE) << "\n" ;
-    output << "\tCOOWNHOUSESONSAMEACCOUNT ="  << this->enabled(ServerSwitch::COWNHOUSEACCOUNT) << "\n" ;
-    output << "\tITEMDECAYINHOUSES = " << this->enabled(ServerSwitch::INHOUSEDECAY) << "\n" ;
-    output << "\tPROTECTPRIVATEHOUSES = " << this->enabled(ServerSwitch::PROTECTPRIVATEHOUSES) << "\n" ;
-//    output << "\tMAXHOUSESOWNABLE = " << MaxHousesOwnable() << "\n" ;
-//    output << "\tMAXHOUSESCOOWNABLE = " << MaxHousesCoOwnable() << "\n" ;
-    output << "\tSAFECOOWNERLOGOUT = " << this->enabled(ServerSwitch::COOWNERLOGOUT) << "\n" ;
-    output << "\tSAFEFRIENDLOGOUT = " << this->enabled(ServerSwitch::FRIENDLOGOUT) << "\n" ;
-    output << "\tSAFEGUESTLOGOUT = " << this->enabled(ServerSwitch::GUESTLOGOUT) << "\n" ;
-    output << "\tKEYLESSOWNERACCESS = " << this->enabled(ServerSwitch::KEYLESSOWNER) << "\n" ;
-    output << "\tKEYLESSCOOWNERACCESS = " << this->enabled(ServerSwitch::KEYLESSCOOWNER) << "\n" ;
-    output << "\tKEYLESSFRIENDACCESS = " << this->enabled(ServerSwitch::KEYLESSFRIEND) << "\n" ;
-    output << "\tKEYLESSGUESTACCESS = " << this->enabled(ServerSwitch::KEYLESSGUEST) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRACKHOUSESPERACCOUNT) << " = " << this->enabled(ServerSwitch::TRACKHOUSESPERACCOUNT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::OWNCOOWNHOUSE) << " = " << this->enabled(ServerSwitch::OWNCOOWNHOUSE) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::COWNHOUSEACCOUNT) << " = " << this->enabled(ServerSwitch::COWNHOUSEACCOUNT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::INHOUSEDECAY) << " = " << this->enabled(ServerSwitch::INHOUSEDECAY) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::PROTECTPRIVATEHOUSES) << " = " << this->enabled(ServerSwitch::PROTECTPRIVATEHOUSES) << "\n" ;
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXHOUSEOWNABLE) << " = " << ushortValues[UShortValue::MAXHOUSEOWNABLE] << "\n";
+    output << "\t" << UShortValue::nameFor(UShortValue::MAXHOUSECOOWNABLE) << " = " << ushortValues[UShortValue::MAXHOUSECOOWNABLE] << "\n";
+
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::COOWNERLOGOUT) << " = " << this->enabled(ServerSwitch::COOWNERLOGOUT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::FRIENDLOGOUT) << " = " << this->enabled(ServerSwitch::FRIENDLOGOUT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUESTLOGOUT) << " = " << this->enabled(ServerSwitch::GUESTLOGOUT) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::KEYLESSOWNER) << " = " << this->enabled(ServerSwitch::KEYLESSOWNER) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::KEYLESSCOOWNER) << " = " << this->enabled(ServerSwitch::KEYLESSCOOWNER) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::KEYLESSFRIEND) << " = " << this->enabled(ServerSwitch::KEYLESSFRIEND) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::KEYLESSGUEST) << " = " << this->enabled(ServerSwitch::KEYLESSGUEST) << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[bulk order deeds]\n{\n" ;
-    output << "\tOFFERBODSFROMITEMSALES = " << this->enabled(ServerSwitch::OFFERBODSFROMITEMSALES) << "\n" ;
-    output << "\tOFFERBODSFROMCONTEXTMENU = " << this->enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << "\n" ;
-    output << "\tBODSFROMCRAFTEDITEMSONLY = " << this->enabled(ServerSwitch::BODSFROMCRAFTEDITEMSONLY) << "\n" ;
-//    output << "\tBODGOLDREWARDMULTIPLIER = " << BODGoldRewardMultiplier() << "\n" ;
-//    output << "\tBODFAMEREWARDMULTIPLIER = " << BODFameRewardMultiplier() << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::OFFERBODSFROMITEMSALES) << " = " << this->enabled(ServerSwitch::OFFERBODSFROMITEMSALES) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << " = " << this->enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << "\n" ;
+    output << "\t" << ServerSwitch::nameFor(ServerSwitch::BODSFROMCRAFTEDITEMSONLY) << " = " << this->enabled(ServerSwitch::BODSFROMCRAFTEDITEMSONLY) << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::GOLDREWARDMULTIPLER) << " = " << realNumbers[RealNumberConfig::GOLDREWARDMULTIPLER] << "\n" ;
+    output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::FAMEREWARDMULTIPLER) << " = " << realNumbers[RealNumberConfig::FAMEREWARDMULTIPLER] << "\n" ;
     
     output << "}\n\n" ;
 
     output << "[towns]\n{\n" ;
-//    output << "\tPOLLTIME = " << TownNumSecsPollOpen() << "\n" ;
-//    output << "\tMAYORTIME = " << TownNumSecsAsMayor() << "\n" ;
-//    output << "\tTAXPERIOD = " << TownTaxPeriod() << "\n" ;
-//    output << "\tGUARDSPAID = " << TownGuardPayment() << "\n" ;
-    
+    output << "\t" << UIntValue::nameFor(UIntValue::POLLTIME) << " = " << uintValues[UIntValue::POLLTIME] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::MAYORTIME) << " = " << uintValues[UIntValue::MAYORTIME] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::TAXPERIOD) << " = " << uintValues[UIntValue::TAXPERIOD] << "\n" ;
+    output << "\t" << UIntValue::nameFor(UIntValue::GUARDPAID) << " = " << uintValues[UIntValue::GUARDPAID] << "\n" ;
     output << "}\n\n" ;
 
     output << "[disabled assistant features]\n{\n" ;

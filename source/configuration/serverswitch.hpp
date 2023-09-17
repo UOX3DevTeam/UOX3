@@ -10,7 +10,6 @@
 #include <optional>
 #include <ostream>
 #include <vector>
-
 //======================================================================
 struct ServerSwitch{
     enum switch_t {
@@ -43,6 +42,7 @@ struct ServerSwitch{
         HTMLSTAT
     };
     static const std::map<std::string, switch_t> NAMESWITCHMAP ;
+    static auto nameFor(switch_t setting)-> const std::string & ;
     std::vector<bool> enabledSwitch ;
     
     ServerSwitch() ;

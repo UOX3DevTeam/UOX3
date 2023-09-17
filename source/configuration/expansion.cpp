@@ -1,6 +1,8 @@
 //
 
 #include "expansion.hpp"
+
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -13,6 +15,16 @@ const std::map< std::string,Expansion::type_t> Expansion::NAMETYPEMAP{
     {"ANATOMYDAMAGEBONUS"s,ANATOMY},{"LUMBERJACKDAMAGEBONUS"s,LUMBERJACK,},{"RACIALDAMAGEBONUS"s,RACIAL},{"DAMAGEBONUSCAP"s,DAMAGE},
     {"SHIELDPARRY"s,SHIELD},{"WEAPONPARRY"s,WEAPON},{"WRESTLINGPARRY"s,WRESTLING},{"COMBATHITCHANCE"s,COMBAT}
 };
+//======================================================================
+auto Expansion::nameFor(type_t type) -> const std::string& {
+    auto iter = std::find_if(NAMETYPEMAP.begin(),NAMETYPEMAP.end(),[type](const std::pair<std::string,type_t> &entry){
+        return type == entry.second ;
+    });
+    if (iter == NAMETYPEMAP.end()){
+        throw std::runtime_error("No name was found for type_t setting: "s+ std::to_string(static_cast<int>(type)));
+    }
+    return iter->first;
+}
 //======================================================================
 const Era Expansion::defaultEra = Era("lbr");
 //======================================================================

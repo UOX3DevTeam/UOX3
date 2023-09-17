@@ -41,7 +41,7 @@ struct ClientFeature {
         ENDLESSHOUSE // 0x800000 - Enable Endless Journey account
     };
     static const std::map<std::string,feature_t> FEATURENAMEMAP;
-    
+    static const std::string name;
     std::bitset<32> featureSet ;
     
     ClientFeature(std::uint32_t value) ;

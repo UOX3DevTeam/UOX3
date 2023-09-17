@@ -32,6 +32,7 @@ struct ServerFeature {
         FACTIONAREAS  // 0x8000 - Unlock new Felucca faction-areas (map0x.mul?)
     };
     static const std::map<std::string,feature_t> FEATURENAMEMAP ;
+    static const std::string name ;
     std::bitset<16> featureSet ;
     
     ServerFeature() ;

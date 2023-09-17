@@ -1,6 +1,8 @@
 //
 
 #include "serverswitch.hpp"
+
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -32,7 +34,7 @@ const std::map<std::string, ServerSwitch::switch_t> ServerSwitch::NAMESWITCHMAP{
     {"EXTENDEDSTARTINGSKILLS"s,EXTENDEDSKILLS},             {"ASSISTANTNEGOTIATION"s,ASSISTANTNEGOTIATION},
     {"KICKONASSISTANTSILENCE"s,KICKONASSISTANTSILENCE},     {"CLASSICUOMAPTRACKER",CUOMAPTRACKER},
     {"PROTECTPRIVATEHOUSES"s,PROTECTPRIVATEHOUSES},         {"TRACKHOUSESPERACCOUNT"s,TRACKHOUSESPERACCOUNT},
-    {"CANOWNANDCOOWNHOUSES"s,OWNCOOWNHOUSE},                {"COOWNHOUSESONSAMEACCOUNT"s,OWNCOOWNHOUSE},
+    {"CANOWNANDCOOWNHOUSES"s,OWNCOOWNHOUSE},                {"COOWNHOUSESONSAMEACCOUNT"s,COWNHOUSEACCOUNT},
     {"ITEMSDETECTSPEECH"s,ITEMDETECTSPEECH},                {"FORCENEWANIMATIONPACKET"s,FORECENEWANIMATIONPACKET},
     {"MAPDIFFSENABLED"s,MAPDIFF},                           {"ARMORCLASSDAMAGEBONUS"s,ARMORCLASSBONUS},
     {"ALCHEMYBONUSENABLED",ALCHEMYBONUS},                   {"PETTHIRSTOFFLINE"s,PETTHIRSTOFFLINE},
@@ -63,6 +65,16 @@ const std::map<std::string, ServerSwitch::switch_t> ServerSwitch::NAMESWITCHMAP{
     {"HTMLSTATUSENABLED"s,HTMLSTAT}
     
 };
+//======================================================================
+auto ServerSwitch::nameFor(switch_t setting)-> const std::string &{
+    auto iter = std::find_if(NAMESWITCHMAP.begin(),NAMESWITCHMAP.end(),[setting](const std::pair<std::string,switch_t> &entry){
+        return setting == entry.second;
+    });
+    if (iter == NAMESWITCHMAP.end()){
+        throw std::runtime_error("No name was found for switch_t setting: "s+std::to_string(static_cast<int>(setting)));
+    }
+    return iter->first ;
+}
 //======================================================================
 ServerSwitch::ServerSwitch() {
     this->reset();
@@ -186,7 +198,9 @@ auto ServerSwitch::setKeyValue(const std::string &key, const std::string &value)
     auto iter = NAMESWITCHMAP.find(key) ;
     if (iter != NAMESWITCHMAP.end()){
         rvalue = true ;
-        enabledSwitch.at(iter->second) = static_cast<bool>(std::stoi(value,nullptr,0));
+        // We cant just cast, and take anything not 0 as true.  Because HTML status used -1.
+        // This should be fixed, but until then, we check for 0/-1 as false, anything else is true
+        enabledSwitch.at(iter->second) = (std::stoi(value,nullptr,0)!=0) && (std::stoi(value,nullptr,0)!= -1);
     }
     return rvalue ;
 }

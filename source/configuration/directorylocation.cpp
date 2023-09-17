@@ -167,6 +167,7 @@ auto DirectoryLocation::dumpPaths() const -> std::vector<std::pair<std::string,s
     rvalue.push_back(specialFind(dirlocation_t::BASE));
     rvalue.push_back(specialFind(dirlocation_t::UODIR));
     rvalue.push_back(specialFind(dirlocation_t::DEFINITION));
+    rvalue.push_back(specialFind(dirlocation_t::BOOK));
     rvalue.push_back(specialFind(dirlocation_t::ACCOUNT));
     rvalue.push_back(specialFind(dirlocation_t::SCRIPT));
     rvalue.push_back(specialFind(dirlocation_t::SCRIPTDATA));

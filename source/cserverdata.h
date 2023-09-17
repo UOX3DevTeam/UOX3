@@ -215,7 +215,7 @@ private:
     // WorldLight
     lightlevel_t worldDungeonLightLevel; //	Default light level for a dungeon, if not subject to a
     // weather system
-    lightlevel_t woldCurrentLightLevel; //	Default current light level if not subject to a weather system
+    lightlevel_t worldCurrentLightLevel; //	Default current light level if not subject to a weather system
     lightlevel_t worldBrightnessLightLevel; //	Default brightest light level if not subject to a weather
     // system
     lightlevel_t worldDarknessLightLevel; //	Default darkest light level if not subject to a weather system

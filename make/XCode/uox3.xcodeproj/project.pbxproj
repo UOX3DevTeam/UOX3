@@ -12,6 +12,7 @@
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
 		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		5611F3402AB1492D009438EA /* serverstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F33E2AB1492D009438EA /* serverstring.cpp */; };
+		56A261792AB645CC00DD2D84 /* servertime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A261772AB645CC00DD2D84 /* servertime.cpp */; };
 		56A6A4A92AB338AF008A5EB7 /* era.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4A72AB338AF008A5EB7 /* era.cpp */; };
 		56A6A4AE2AB34BBE008A5EB7 /* expansion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */; };
 		56A6A4B92AB38568008A5EB7 /* realnumberconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4B72AB38568008A5EB7 /* realnumberconfig.cpp */; };
@@ -19,6 +20,7 @@
 		56A6A4D72AB47E9B008A5EB7 /* timersetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4D52AB47E9B008A5EB7 /* timersetting.cpp */; };
 		56A6A4DA2AB4B3A7008A5EB7 /* uintvalue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4D82AB4B3A7008A5EB7 /* uintvalue.cpp */; };
 		56A6A4DD2AB4B7F2008A5EB7 /* shortvalue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4DB2AB4B7F2008A5EB7 /* shortvalue.cpp */; };
+		56A6A4F62AB4FE74008A5EB7 /* spawnfacet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4F42AB4FE74008A5EB7 /* spawnfacet.cpp */; };
 		56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2452AABB95300D624FC /* directorylocation.cpp */; };
 		56AAE24A2AABB95300D624FC /* serverconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE2462AABB95300D624FC /* serverconfig.cpp */; };
 		56AAE25E2AADF26B00D624FC /* clientenable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56AAE25C2AADF26B00D624FC /* clientenable.cpp */; };
@@ -148,6 +150,8 @@
 		5611F33A2AAF9FFA009438EA /* serverswitch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverswitch.hpp; sourceTree = "<group>"; };
 		5611F33E2AB1492D009438EA /* serverstring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverstring.cpp; sourceTree = "<group>"; };
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
+		56A261772AB645CC00DD2D84 /* servertime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = servertime.cpp; sourceTree = "<group>"; };
+		56A261782AB645CC00DD2D84 /* servertime.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = servertime.hpp; sourceTree = "<group>"; };
 		56A6A4A72AB338AF008A5EB7 /* era.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = era.cpp; sourceTree = "<group>"; };
 		56A6A4A82AB338AF008A5EB7 /* era.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = era.hpp; sourceTree = "<group>"; };
 		56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = expansion.cpp; sourceTree = "<group>"; };
@@ -162,6 +166,8 @@
 		56A6A4D92AB4B3A7008A5EB7 /* uintvalue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uintvalue.hpp; sourceTree = "<group>"; };
 		56A6A4DB2AB4B7F2008A5EB7 /* shortvalue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shortvalue.cpp; sourceTree = "<group>"; };
 		56A6A4DC2AB4B7F2008A5EB7 /* shortvalue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shortvalue.hpp; sourceTree = "<group>"; };
+		56A6A4F42AB4FE74008A5EB7 /* spawnfacet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = spawnfacet.cpp; sourceTree = "<group>"; };
+		56A6A4F52AB4FE74008A5EB7 /* spawnfacet.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = spawnfacet.hpp; sourceTree = "<group>"; };
 		56AADE792AABB91800D624FC /* jse_fileassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_fileassociations.scp; sourceTree = "<group>"; };
 		56AADE7A2AABB91800D624FC /* jse_typeassociations.scp */ = {isa = PBXFileReference; lastKnownFileType = text; path = jse_typeassociations.scp; sourceTree = "<group>"; };
 		56AADE7C2AABB91800D624FC /* anatomy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = anatomy.js; sourceTree = "<group>"; };
@@ -1222,36 +1228,38 @@
 		56AADE742AABB8F400D624FC /* configuration */ = {
 			isa = PBXGroup;
 			children = (
-				56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */,
-				56A6A4AD2AB34BBE008A5EB7 /* expansion.hpp */,
-				56AAE2452AABB95300D624FC /* directorylocation.cpp */,
-				56AAE2472AABB95300D624FC /* directorylocation.hpp */,
-				56AAE2462AABB95300D624FC /* serverconfig.cpp */,
-				56AAE2482AABB95300D624FC /* serverconfig.hpp */,
+				5611F3262AAF6997009438EA /* assistantfeature.cpp */,
+				5611F3272AAF6997009438EA /* assistantfeature.hpp */,
 				56AAE25C2AADF26B00D624FC /* clientenable.cpp */,
 				56AAE25D2AADF26B00D624FC /* clientenable.hpp */,
 				56AAE2672AAF280500D624FC /* clientfeature.cpp */,
 				56AAE2682AAF280500D624FC /* clientfeature.hpp */,
-				56AAE26A2AAF409C00D624FC /* serverfeature.cpp */,
-				56AAE26B2AAF409C00D624FC /* serverfeature.hpp */,
-				5611F3262AAF6997009438EA /* assistantfeature.cpp */,
-				5611F3272AAF6997009438EA /* assistantfeature.hpp */,
-				5611F3342AAF837A009438EA /* startlocconfig.cpp */,
-				5611F3352AAF837A009438EA /* startlocconfig.hpp */,
-				5611F3392AAF9FFA009438EA /* serverswitch.cpp */,
-				5611F33A2AAF9FFA009438EA /* serverswitch.hpp */,
-				5611F33E2AB1492D009438EA /* serverstring.cpp */,
-				5611F33F2AB1492D009438EA /* serverstring.hpp */,
+				56AAE2452AABB95300D624FC /* directorylocation.cpp */,
+				56AAE2472AABB95300D624FC /* directorylocation.hpp */,
+				56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */,
+				56A6A4AD2AB34BBE008A5EB7 /* expansion.hpp */,
 				56A6A4B72AB38568008A5EB7 /* realnumberconfig.cpp */,
 				56A6A4B82AB38568008A5EB7 /* realnumberconfig.hpp */,
-				56A6A4D02AB3A148008A5EB7 /* ushortvalue.cpp */,
-				56A6A4D12AB3A148008A5EB7 /* ushortvalue.hpp */,
-				56A6A4D82AB4B3A7008A5EB7 /* uintvalue.cpp */,
-				56A6A4D92AB4B3A7008A5EB7 /* uintvalue.hpp */,
+				56AAE2462AABB95300D624FC /* serverconfig.cpp */,
+				56AAE2482AABB95300D624FC /* serverconfig.hpp */,
+				56AAE26A2AAF409C00D624FC /* serverfeature.cpp */,
+				56AAE26B2AAF409C00D624FC /* serverfeature.hpp */,
+				5611F33E2AB1492D009438EA /* serverstring.cpp */,
+				5611F33F2AB1492D009438EA /* serverstring.hpp */,
+				5611F3392AAF9FFA009438EA /* serverswitch.cpp */,
+				5611F33A2AAF9FFA009438EA /* serverswitch.hpp */,
 				56A6A4DB2AB4B7F2008A5EB7 /* shortvalue.cpp */,
 				56A6A4DC2AB4B7F2008A5EB7 /* shortvalue.hpp */,
+				56A6A4F42AB4FE74008A5EB7 /* spawnfacet.cpp */,
+				56A6A4F52AB4FE74008A5EB7 /* spawnfacet.hpp */,
+				5611F3342AAF837A009438EA /* startlocconfig.cpp */,
+				5611F3352AAF837A009438EA /* startlocconfig.hpp */,
 				56A6A4D52AB47E9B008A5EB7 /* timersetting.cpp */,
 				56A6A4D62AB47E9B008A5EB7 /* timersetting.hpp */,
+				56A6A4D82AB4B3A7008A5EB7 /* uintvalue.cpp */,
+				56A6A4D92AB4B3A7008A5EB7 /* uintvalue.hpp */,
+				56A6A4D02AB3A148008A5EB7 /* ushortvalue.cpp */,
+				56A6A4D12AB3A148008A5EB7 /* ushortvalue.hpp */,
 			);
 			path = configuration;
 			sourceTree = "<group>";
@@ -2996,6 +3004,8 @@
 		56AAE2612AADF38900D624FC /* type */ = {
 			isa = PBXGroup;
 			children = (
+				56A261772AB645CC00DD2D84 /* servertime.cpp */,
+				56A261782AB645CC00DD2D84 /* servertime.hpp */,
 				56AAE2622AADF3A800D624FC /* clientversion.cpp */,
 				56AAE2632AADF3A800D624FC /* clientversion.hpp */,
 				5611F32F2AAF807D009438EA /* startlocation.cpp */,
@@ -3409,6 +3419,7 @@
 				64A90163293E3DD4009B54DA /* uox3.cpp in Sources */,
 				56AAE25E2AADF26B00D624FC /* clientenable.cpp in Sources */,
 				64A90125293E3DD4009B54DA /* cgump.cpp in Sources */,
+				56A6A4F62AB4FE74008A5EB7 /* spawnfacet.cpp in Sources */,
 				64A9014C293E3DD4009B54DA /* msgboard.cpp in Sources */,
 				64A9015F293E3DD4009B54DA /* timeutility.cpp in Sources */,
 				64A90169293E3DD4009B54DA /* worldmain.cpp in Sources */,
@@ -3461,6 +3472,7 @@
 				56AAE2642AADF3A800D624FC /* clientversion.cpp in Sources */,
 				64A90165293E3DD4009B54DA /* uoxjspropertyfuncs.cpp in Sources */,
 				64A9012C293E3DD4009B54DA /* combat.cpp in Sources */,
+				56A261792AB645CC00DD2D84 /* servertime.cpp in Sources */,
 				64A90153293E3DD4009B54DA /* pcmanage.cpp in Sources */,
 				64A90129293E3DD4009B54DA /* cjsmapping.cpp in Sources */,
 				64A90132293E3DD4009B54DA /* cresponse.cpp in Sources */,

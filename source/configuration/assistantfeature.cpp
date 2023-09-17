@@ -2,6 +2,8 @@
 
 #include "assistantfeature.hpp"
 
+
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 

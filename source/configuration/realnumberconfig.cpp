@@ -1,6 +1,8 @@
 //
 
 #include "realnumberconfig.hpp"
+
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -15,12 +17,38 @@ const std::map<std::string, RealNumberConfig::type_t> RealNumberConfig::NAMETYPE
     {"WEIGHTPERSTR"s,WEIGHTSTR},{"ARCHERYSHOOTDELAY"s,ARCHERYDELAY}
 };
 //======================================================================
+auto RealNumberConfig::nameFor(type_t setting)-> const std::string &{
+    auto iter = std::find_if(NAMETYPEMAP.begin(),NAMETYPEMAP.end(),[setting](const std::pair<std::string,type_t> &entry){
+        return setting == entry.second;
+    });
+    if (iter == NAMETYPEMAP.end()){
+        throw std::runtime_error("No name was found for type_t setting: "s+std::to_string(static_cast<int>(setting)));
+    }
+    return iter->first ;
+}
+//======================================================================
 RealNumberConfig::RealNumberConfig(){
     reset();
 }
 //======================================================================
 auto RealNumberConfig::reset()  -> void {
     values = std::vector<double>(NAMETYPEMAP.size(),0.0);
+    this->operator[](NPCMOVEMENT) = 0.6 ;
+    this->operator[](NPCRUNNING) = 0.3 ;
+    this->operator[](NPCFLEEING) = 0.4 ;
+    this->operator[](NPCMOUNTMOVEMENT) = 0.3 ;
+    this->operator[](NPCMOUNTRUNNING) = 0.12 ;
+    this->operator[](NPCMOUNTFLEEING) = 0.2 ;
+    this->operator[](NPCSPELLCAST) = 1.0 ;
+    this->operator[](GLOBALATTACK) = 1.0 ;
+    this->operator[](RESTOCKMULTIPLER) = 1.0 ;
+    this->operator[](RESTOCKMULTIPLER) = 1.0 ;
+    this->operator[](FAMEREWARDMULTIPLER) = 1.0 ;
+    this->operator[](CHECKITEMS) = 1.5 ;
+    this->operator[](CHECKBOATS) = 0.65 ;
+    this->operator[](WEIGHTSTR) = 3.5 ;
+    this->operator[](ARCHERYDELAY) = 0.5 ;
+
 }
 
 //======================================================================

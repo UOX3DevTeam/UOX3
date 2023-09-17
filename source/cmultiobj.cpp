@@ -331,9 +331,7 @@ void CMultiObj::RemoveFromMulti(CBaseObject *toRemove) {
         }
     }
     else {
-        if (static_cast<CItem *>(toRemove)->GetTempVar(CITV_MORE) !=
-            serial) // Prevent doors and signs from being accidentally removed from house!
-        {
+        if (static_cast<CItem *>(toRemove)->GetTempVar(CITV_MORE) != serial) { // Prevent doors and signs from being accidentally removed from house!
             itemInMulti.Remove(static_cast<CItem *>(toRemove));
         }
     }
@@ -390,8 +388,7 @@ std::uint16_t CMultiObj::GetMaxVendors() const { return maxVendors; }
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CMultiObj::GetFriendCount() {
     std::uint16_t friendCount = 0;
-    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
-         rIter != housePrivList.end(); ++rIter) {
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin(); rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_FRIEND) {
             friendCount++;
         }
@@ -413,8 +410,7 @@ std::uint16_t CMultiObj::GetMaxFriends() const { return maxFriends; }
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CMultiObj::GetGuestCount() {
     std::uint16_t guestCount = 0;
-    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
-         rIter != housePrivList.end(); ++rIter) {
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin(); rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_GUEST) {
             guestCount++;
         }
@@ -436,8 +432,7 @@ std::uint16_t CMultiObj::GetMaxGuests() const { return maxGuests; }
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CMultiObj::GetBanCount() {
     std::uint16_t banCount = 0;
-    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
-         rIter != housePrivList.end(); ++rIter) {
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin(); rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_BANNED) {
             banCount++;
         }
@@ -459,8 +454,7 @@ std::uint16_t CMultiObj::GetMaxBans() const { return maxBans; }
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CMultiObj::GetOwnerCount() {
     std::uint16_t ownerCount = 0;
-    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin();
-         rIter != housePrivList.end(); ++rIter) {
+    for (std::map<CChar *, std::uint8_t>::iterator rIter = housePrivList.begin(); rIter != housePrivList.end(); ++rIter) {
         if (rIter->second == HOUSEPRIV_OWNER) {
             // Don't count primary house owner as co-owner
             if (rIter->first->GetSerial() != owner) {
@@ -486,8 +480,8 @@ std::uint16_t CMultiObj::GetMaxOwners() const { return maxOwners; }
 // o------------------------------------------------------------------------------------------------o
 auto CMultiObj::LockDownItem(CItem *toLock) -> void {
     if (lockedList.size() < maxLockdowns) {
-        auto iter = std::find_if(lockedList.begin(), lockedList.end(),
-                                 [toLock](CItem *entry) { return entry == toLock; });
+        auto iter = std::find_if(lockedList.begin(), lockedList.end(), [toLock](CItem *entry) {
+            return entry == toLock; });
         if (iter == lockedList.end()) {
             toLock->LockDown(this);
             toLock->Dirty(UT_UPDATE);
@@ -503,14 +497,13 @@ auto CMultiObj::LockDownItem(CItem *toLock) -> void {
 //|	Purpose		-	Unlocks a locked down item
 // o------------------------------------------------------------------------------------------------o
 auto CMultiObj::ReleaseItem(CItem *toRemove) -> void {
-    auto iter = std::find_if(lockedList.begin(), lockedList.end(),
-                             [toRemove](const CItem *entry) { return toRemove == entry; });
+    auto iter = std::find_if(lockedList.begin(), lockedList.end(), [toRemove](const CItem *entry) {
+        return toRemove == entry; });
     if (iter != lockedList.end()) {
         toRemove->Dirty(UT_UPDATE);
         lockedList.erase(iter);
         toRemove->SetMovable(1); // Default to "always movable" for released items
-        toRemove->SetDecayTime(
-                               cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+        toRemove->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
     }
 }
 
@@ -521,8 +514,8 @@ auto CMultiObj::ReleaseItem(CItem *toRemove) -> void {
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::AddTrashContainer(CItem *toAdd) {
     if (trashContainerList.size() < maxTrashContainers) {
-        auto iter = std::find_if(trashContainerList.begin(), trashContainerList.end(),
-                                 [toAdd](CItem *entry) { return entry == toAdd; });
+        auto iter = std::find_if(trashContainerList.begin(), trashContainerList.end(),[toAdd](CItem *entry) {
+            return entry == toAdd; });
         if (iter == trashContainerList.end()) {
             trashContainerList.push_back(toAdd);
         }
@@ -535,8 +528,8 @@ void CMultiObj::AddTrashContainer(CItem *toAdd) {
 //|	Purpose		-	Unlocks a locked down item
 // o------------------------------------------------------------------------------------------------o
 auto CMultiObj::RemoveTrashContainer(CItem *toRemove) -> void {
-    auto iter = std::find_if(trashContainerList.begin(), trashContainerList.end(),
-                             [toRemove](CItem *entry) { return toRemove == entry; });
+    auto iter = std::find_if(trashContainerList.begin(), trashContainerList.end(),[toRemove](CItem *entry) {
+        return toRemove == entry; });
     if (iter != trashContainerList.end()) {
         trashContainerList.erase(iter);
     }
@@ -549,10 +542,8 @@ auto CMultiObj::RemoveTrashContainer(CItem *toRemove) -> void {
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::AddVendor(CChar *toAdd) {
     if (vendorList.size() < maxVendors) {
-        auto iter = std::find_if(vendorList.begin(), vendorList.end(),
-                                 [toAdd](CChar *entry) { return entry == toAdd; });
-        if (iter == vendorList.end()) // Wasnt found, add it
-        {
+        auto iter = std::find_if(vendorList.begin(), vendorList.end(),[toAdd](CChar *entry) { return entry == toAdd; });
+        if (iter == vendorList.end()) {// Wasnt found, add it
             toAdd->Dirty(UT_UPDATE);
             vendorList.push_back(toAdd);
         }
@@ -565,8 +556,7 @@ void CMultiObj::AddVendor(CChar *toAdd) {
 //|	Purpose		-	Removes a player vendor from the multi
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveVendor(CChar *toRemove) {
-    auto iter = std::find_if(vendorList.begin(), vendorList.end(),
-                             [toRemove](CChar *entry) { return toRemove == entry; });
+    auto iter = std::find_if(vendorList.begin(), vendorList.end(), [toRemove](CChar *entry) { return toRemove == entry; });
     if (iter != vendorList.end()) {
         toRemove->Dirty(UT_UPDATE);
         vendorList.erase(iter);
@@ -647,8 +637,7 @@ std::uint16_t CMultiObj::GetMaxSecureContainers() const { return maxSecureContai
 // o------------------------------------------------------------------------------------------------o
 auto CMultiObj::IsSecureContainer(CItem *toCheck) -> bool {
     auto rValue = false;
-    auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(),
-                             [toCheck](CItem *entry) { return toCheck == entry; });
+    auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(), [toCheck](CItem *entry) { return toCheck == entry; });
     if (iter != secureContainerList.end()) {
         rValue = true;
     }
@@ -662,12 +651,10 @@ auto CMultiObj::IsSecureContainer(CItem *toCheck) -> bool {
 // o------------------------------------------------------------------------------------------------o
 void CMultiObj::SecureContainer(CItem *toSecure) {
     if (secureContainerList.size() < maxSecureContainers) {
-        auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(),
-                                 [toSecure](CItem *entry) { return entry == toSecure; });
+        auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(), [toSecure](CItem *entry) { return entry == toSecure; });
         if (iter == secureContainerList.end()) {
             secureContainerList.push_back(toSecure);
-            if (toSecure->GetType() != 87) // Don't lock down trash containers
-            {
+            if (toSecure->GetType() != 87) { // Don't lock down trash containers
                 toSecure->LockDown();
             }
             toSecure->Dirty(UT_UPDATE);
@@ -681,16 +668,13 @@ void CMultiObj::SecureContainer(CItem *toSecure) {
 //|	Purpose		-	Unsecures a secured container
 // o------------------------------------------------------------------------------------------------o
 auto CMultiObj::UnsecureContainer(CItem *toUnsecure) -> void {
-    auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(),
-                             [toUnsecure](CItem *entry) { return toUnsecure == entry; });
+    auto iter = std::find_if(secureContainerList.begin(), secureContainerList.end(), [toUnsecure](CItem *entry) { return toUnsecure == entry; });
     if (iter != secureContainerList.end()) {
         toUnsecure->Dirty(UT_UPDATE);
         secureContainerList.erase(iter);
-        if (toUnsecure->GetType() != 87) // Trash container
-        {
+        if (toUnsecure->GetType() != 87) { // Trash container
             toUnsecure->SetMovable(1);
-            toUnsecure->SetDecayTime(
-                                     cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+            toUnsecure->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
         }
     }
 }
@@ -887,8 +871,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
         switch ((UTag.data()[0])) {
             case 'B':
                 if (UTag == "BANNED") {
-                    CChar *bList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *bList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(bList)) {
                         AddToBanList(bList);
                     }
@@ -906,8 +889,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
             case 'C':
                 if (UTag == "COOWNER") // Legacy tag for loading older data
                 {
-                    CChar *cList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *cList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(cList)) {
                         AddAsOwner(cList);
                     }
@@ -922,8 +904,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'F':
                 if (UTag == "FRIEND") {
-                    CChar *cList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *cList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(cList)) {
                         AddAsFriend(cList);
                     }
@@ -932,8 +913,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'G':
                 if (UTag == "GUEST") {
-                    CChar *cList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *cList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(cList)) {
                         AddAsGuest(cList);
                     }
@@ -942,15 +922,13 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'I':
                 if (UTag == "ISPUBLIC") {
-                    SetPublicStatus(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
-                                                                          nullptr, 0)) == 1);
+                    SetPublicStatus(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
             case 'L':
                 if (UTag == "LOCKEDITEM") {
-                    CItem *iList = CalcItemObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CItem *iList = CalcItemObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(iList)) {
                         LockDownItem(iList);
                     }
@@ -996,8 +974,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'O':
                 if (UTag == "OWNER") {
-                    CChar *cList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *cList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(cList)) {
                         AddAsOwner(cList);
                     }
@@ -1006,8 +983,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'S':
                 if (UTag == "SECURECONTAINER") {
-                    CItem *iList = CalcItemObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CItem *iList = CalcItemObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(iList)) {
                         SecureContainer(iList);
                     }
@@ -1026,8 +1002,7 @@ bool CMultiObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'V':
                 if (UTag == "VENDOR") {
-                    CChar *cList = CalcCharObjFromSer(
-                                                      static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    CChar *cList = CalcCharObjFromSer(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     if (ValidateObject(cList)) {
                         AddVendor(cList);
                     }
@@ -1250,12 +1225,9 @@ bool CBoatObj::DumpBody(std::ostream &outStream) const {
     
     // Hexadecimal Values
     outStream << std::hex;
-    outStream << "Hold="
-    << "0x" << hold << '\n';
-    outStream << "Planks="
-    << "0x" << planks[0] << ",0x" << planks[1] << '\n';
-    outStream << "Tiller="
-    << "0x" << tiller << std::dec << '\n';
+    outStream << "Hold=" << "0x" << hold << '\n';
+    outStream << "Planks=" << "0x" << planks[0] << ",0x" << planks[1] << '\n';
+    outStream << "Tiller=" << "0x" << tiller << std::dec << '\n';
     
     // Decimal / String Values
     outStream << std::dec;
@@ -1280,17 +1252,14 @@ bool CBoatObj::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'H':
                 if (UTag == "HOLD") {
-                    SetHold(
-                            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetHold(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
             case 'P':
                 if (UTag == "PLANKS") {
-                    SetPlank(0, static_cast<std::uint32_t>(
-                                                           std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetPlank(1, static_cast<std::uint32_t>(
-                                                           std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    SetPlank(0, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetPlank(1, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;

@@ -2613,6 +2613,8 @@ JSBool SE_SetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
     }
     else if (argc == 1) {
         std::uint32_t spawnRegionFacetVal = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
+        // This should be a generic function in ServerConfig, but for now
+        
         cwmWorldState->ServerData()->setSpawnRegionsFacetStatus(spawnRegionFacetVal);
     }
     else if (argc == 2) {

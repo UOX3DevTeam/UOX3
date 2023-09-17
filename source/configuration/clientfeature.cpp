@@ -16,6 +16,8 @@ const std::map<std::string,ClientFeature::feature_t> ClientFeature::FEATURENAMEM
     {"TOLHOUSE"s,TOLHOUSE},{"ENDLESSHOUSE"s,ENDLESSHOUSE}
 };
 //======================================================================
+const std::string ClientFeature::name = "CLIENTFEATURES";
+//======================================================================
 ClientFeature::ClientFeature(std::uint32_t value) {
     featureSet = value ;
 
@@ -49,7 +51,7 @@ auto ClientFeature::set(feature_t feature, bool state) ->void {
 //======================================================================
 auto ClientFeature::setKeyValue(const std::string &key, const std::string &value) ->bool {
     auto rvalue = false ;
-    if (key == "CLIENTFEATURES"){
+    if (key == ClientFeature::name){
         rvalue = true ;
         featureSet = std::stoul(value,nullptr,0) ;
     }

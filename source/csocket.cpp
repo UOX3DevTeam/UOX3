@@ -51,8 +51,7 @@ const bool LOGDEFAULT = false;
 void DumpStream(std::ostream &outStream, const char *strToDump, std::uint8_t num) {
     outStream << "  ";
     for (std::uint8_t parseBuff = 0; parseBuff < num; ++parseBuff) {
-        if (strToDump[parseBuff] && strToDump[parseBuff] != 0x0A && strToDump[parseBuff] != 0x0D &&
-            strToDump[parseBuff] != 0x09) {
+        if (strToDump[parseBuff] && strToDump[parseBuff] != 0x0A && strToDump[parseBuff] != 0x0D && strToDump[parseBuff] != 0x09) {
             outStream << strToDump[parseBuff];
         }
         else {
@@ -468,19 +467,8 @@ const bool DEFSOCK_LOGINCOMPLETE = false;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 // o------------------------------------------------------------------------------------------------o
-CSocket::CSocket(size_t sockNum)
-: currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX),
-clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE),
-outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING),
-range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum),
-walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT),
-pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG), bytesReceived(DEFSOCK_BYTESRECEIVED),
-bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr),
-tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL),
-newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET),
-loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr),
-bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT),
-bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
+CSocket::CSocket(size_t sockNum) : currCharObj(nullptr), idleTimeout(DEFSOCK_IDLETIMEOUT), clickx(DEFSOCK_CLICKX), clicky(DEFSOCK_CLICKY), clickz(DEFSOCK_CLICKZ), currentSpellType(DEFSOCK_CURSPELLTYPE), outlength(DEFSOCK_OUTLENGTH), inlength(DEFSOCK_INLENGTH), logging(DEFSOCK_LOGGING), range(DEFSOCK_RANGE), cryptclient(DEFSOCK_CRYPTCLIENT), cliSocket(sockNum), walkSequence(DEFSOCK_WALKSEQUENCE), postAckCount(DEFSOCK_POSTACKCOUNT), pSpot(DEFSOCK_PSPOT), pFrom(DEFSOCK_PFROM), pX(DEFSOCK_PX), pY(DEFSOCK_PY), pZ(DEFSOCK_PZ), lang(DEFSOCK_LANG), bytesReceived(DEFSOCK_BYTESRECEIVED), bytesSent(DEFSOCK_BYTESSENT), receivedVersion(DEFSOCK_RECEIVEDVERSION), tmpObj(nullptr), tmpObj2(nullptr), tempint(DEFSOCK_TEMPINT), dyeall(DEFSOCK_DYEALL), newClient(DEFSOCK_NEWCLIENT), firstPacket(DEFSOCK_FIRSTPACKET), loginComplete(DEFSOCK_LOGINCOMPLETE), cursorItem(nullptr), bytesRecvWarningCount(DEFSOCK_BYTESRECEIVEDWARNINGCOUNT), bytesSentWarningCount(DEFSOCK_BYTESSENTWARNINGCOUNT) {
+    
     InternalReset();
 }
 
@@ -513,8 +501,7 @@ void CSocket::InternalReset() {
     // set the socket to nonblocking
     unsigned long mode = 1;
     ioctlsocket(static_cast<uoxsocket_t>(cliSocket), FIONBIO, &mode);
-    for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT);
-         ++mTID) {
+    for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT); ++mTID) {
         pcTimers[mTID] = 0;
     }
     accountNum = AccountEntry::INVALID_ACCOUNT;
@@ -563,9 +550,7 @@ bool CSocket::FlushBuffer(bool doLog) {
             send(static_cast<uoxsocket_t>(cliSocket), (char *)xoutbuffer, len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
-                std::cerr
-                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747"
-                << std::endl;
+                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
             }
 #endif
         }
@@ -574,9 +559,7 @@ bool CSocket::FlushBuffer(bool doLog) {
             send(static_cast<uoxsocket_t>(cliSocket), (char *)&outbuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
-                std::cerr
-                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757"
-                << std::endl;
+                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
             }
 #endif
         }
@@ -622,9 +605,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             send(static_cast<uoxsocket_t>(cliSocket), (char *)&largePackBuffer[0], len, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != len) {
-                std::cerr
-                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811"
-                << std::endl;
+                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811"  << std::endl;
             }
 #endif
         }
@@ -633,9 +614,7 @@ bool CSocket::FlushLargeBuffer(bool doLog) {
             send(static_cast<uoxsocket_t>(cliSocket), (char *)&largeBuffer[0], outlength, 0);
 #if defined(UOX_DEBUG_MODE)
             if (sendResult != outlength) {
-                std::cerr
-                << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821"
-                << std::endl;
+                std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821" << std::endl;
             }
 #endif
         }
@@ -730,8 +709,7 @@ std::uint32_t DoPack(std::uint8_t *pIn, std::uint8_t *pOut, std::int32_t len) {
         value = bit_table[*pIn++][1];
         
         while (nrBits--) {
-            pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) |
-                                                           static_cast<std::uint8_t>((value >> nrBits) & 0x1));
+            pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) | static_cast<std::uint8_t>((value >> nrBits) & 0x1));
             
             bitByte = (bitByte + 1) & 0x07;
             if (!bitByte) {
@@ -744,8 +722,7 @@ std::uint32_t DoPack(std::uint8_t *pIn, std::uint8_t *pOut, std::int32_t len) {
     value = bit_table[256][1];
     
     while (nrBits--) {
-        pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) |
-                                                       static_cast<std::uint8_t>((value >> nrBits) & 0x1));
+        pOut[packedLength] = static_cast<std::uint8_t>((pOut[packedLength] << 1) |  static_cast<std::uint8_t>((value >> nrBits) & 0x1));
         
         bitByte = (bitByte + 1) & 0x07;
         if (!bitByte) {
@@ -809,8 +786,7 @@ std::int32_t GrabLastError() { return WSAGetLastError(); }
 void CSocket::FlushIncoming() {
     std::int32_t count = 0;
     do {
-        count = static_cast<int>(recv(static_cast<uoxsocket_t>(cliSocket),
-                                      (char *)&buffer[static_cast<int>(inlength)], 1, 0));
+        count = static_cast<int>(recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[static_cast<int>(inlength)], 1, 0));
     } while (count > 0);
 }
 
@@ -857,8 +833,7 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
     std::uint32_t curTime = GetClock();
     std::uint32_t nexTime = curTime;
     do {
-        count = static_cast<int>(
-                                 recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
+        count = static_cast<int>( recv(static_cast<uoxsocket_t>(cliSocket), (char *)&buffer[inlength], x - inlength, 0));
         if (count > 0) {
             inlength += count;
         }
@@ -878,8 +853,7 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
         // NETRETRYCOUNT respectively
         if (recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() ||
             (nexTime - curTime) >
-            static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout() *
-                                       1000)) { // looks like we're not going to get it!
+            static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000)) { // looks like we're not going to get it!
             // April 3, 2004 - If we have some data, then we need to return it. Some of the network
             // logic is looking at count size. this way we can also validate on the calling side so
             // we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it,
@@ -1010,8 +984,7 @@ std::uint32_t CSocket::GetDWord(size_t offset) {
         Console::shared().error(util::format("GetDWord was passed an invalid offset value 0x%X", offset));
     }
     else {
-        retVal =
-        CalcSerial(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
+        retVal = CalcSerial(buffer[offset], buffer[offset + 1], buffer[offset + 2], buffer[offset + 3]);
     }
     return retVal;
 }
@@ -1024,8 +997,7 @@ std::uint32_t CSocket::GetDWord(size_t offset) {
 std::uint16_t CSocket::GetWord(size_t offset) {
     std::uint16_t retVal = 0;
     if (offset + 1 >= MAXBUFFER) {
-        Console::shared().error(
-                                util::format("GetWord was passed an invalid offset value 0x%X", offset));
+        Console::shared().error(util::format("GetWord was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal = static_cast<std::uint16_t>((buffer[offset] << 8) + buffer[offset + 1]);
@@ -1041,8 +1013,7 @@ std::uint16_t CSocket::GetWord(size_t offset) {
 std::uint8_t CSocket::GetByte(size_t offset) {
     std::uint8_t retVal = 0;
     if (offset >= MAXBUFFER) {
-        Console::shared().error(
-                                util::format("GetByte was passed an invalid offset value 0x%X", offset));
+        Console::shared().error(util::format("GetByte was passed an invalid offset value 0x%X", offset));
     }
     else {
         retVal = buffer[offset];
@@ -1223,20 +1194,17 @@ void CSocket::Send(CPUOXBuffer *toSend) {
         send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->PackedPointer(), len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
-            std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553"
-            << std::endl;
+            std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553" << std::endl;
         }
 #endif
     }
     else {
         len = static_cast<std::uint32_t>(toSend->GetPacketStream().GetSize());
         [[maybe_unused]] auto sendResult =
-        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(),
-             len, 0);
+        send(static_cast<uoxsocket_t>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0);
 #if defined(UOX_DEBUG_MODE)
         if (sendResult != len) {
-            std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564"
-            << std::endl;
+            std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564" << std::endl;
         }
 #endif
     }
@@ -1569,8 +1537,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
                     targColour = GetFlagColour(mChar, targChar);
                 }
                 else {
-                    std::uint8_t flag = getItem->GetTempVar(
-                                                            CITV_MOREZ); // Get flag, to help determine color of corpse
+                    std::uint8_t flag = getItem->GetTempVar(CITV_MOREZ); // Get flag, to help determine color of corpse
                     switch (flag) {
                         case 0x01:
                             targColour = 0x0026;
@@ -1616,8 +1583,7 @@ void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFr
                     targColour = GetFlagColour(mChar, targChar);
                 }
                 else {
-                    std::uint8_t flag = getItem->GetTempVar(
-                                                            CITV_MOREZ); // Get flag, to help determine color of corpse
+                    std::uint8_t flag = getItem->GetTempVar(CITV_MOREZ); // Get flag, to help determine color of corpse
                     switch (flag) {
                         case 0x01:
                             targColour = 0x0026;
@@ -1668,13 +1634,10 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
             i->GetFame() >= 10000) //  only normal players have titles now
         {
             if (i->GetId(2) == 0x91) {
-                charName =
-                util::format(Dictionary->GetEntry(1740, Language()).c_str(),
-                             charName.c_str()); // Morrolan, added Lord/Lady to title overhead
+                charName = util::format(Dictionary->GetEntry(1740, Language()).c_str(), charName.c_str()); // Morrolan, added Lord/Lady to title overhead
             }
             else if (i->GetId(1) == 0x90) {
-                charName =
-                util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
+                charName = util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
             }
         }
         if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE) && i->GetRace() != 0 && i->GetRace() != 65535) {// need to check for placeholder race ( )
@@ -1683,8 +1646,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
             charName += ")";
         }
         if (i->GetTownPriv() == 2) {
-            charName =
-            util::format(Dictionary->GetEntry(1738, Language()).c_str(), charName.c_str());
+            charName = util::format(Dictionary->GetEntry(1738, Language()).c_str(), charName.c_str());
         }
         if (!IsOnline((*i))) {
             charName += " (OFF)";
@@ -1842,8 +1804,7 @@ auto CSocket::GetHtmlFlagColour(CChar *src, CChar *trg) -> std::string {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send targeting cursor to client, along with a system message
 // o------------------------------------------------------------------------------------------------o
-void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, const std::string &txt,
-                               std::uint8_t cursorType) {
+void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, const std::string &txt, std::uint8_t cursorType) {
     CPTargetCursor toSend;
     toSend.ID(CalcSerial(0, 1, targType, targId));
     toSend.Type(1);
@@ -1979,8 +1940,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
         CPStatWindow toSend((*targObj), (*this));
         
         // 9/17/01 : fixed bug of your name on your own stat window
-        toSend.NameChange(mChar != targChar &&
-                          (mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar));
+        toSend.NameChange(mChar != targChar && (mChar->GetCommandLevel() >= CL_GM || targChar->GetOwnerObj() == mChar));
         if (!targChar->IsNpc() && mChar == targChar) {
             toSend.Gold(GetItemAmount(targChar, 0x0EED));
             toSend.AC(Combat->CalcDef(targChar, 0, false));
@@ -2006,8 +1966,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
                     CPartyEntry *mEntry = (*mList)[j];
                     CChar *partyMember = mEntry->Member();
                     
-                    if (!IsOnline(*partyMember) || !IsOnline(*mChar) ||
-                        partyMember->GetSerial() == mChar->GetSerial())
+                    if (!IsOnline(*partyMember) || !IsOnline(*mChar) || partyMember->GetSerial() == mChar->GetSerial())
                         continue;
                     
                     // If partyMember is online, send their info to each other
@@ -2054,9 +2013,7 @@ void CSocket::StatWindow(CBaseObject *targObj, bool updateParty) {
             visRange += Races->VisRange(mChar->GetRace());
         }
         
-        if (mChar->GetCommandLevel() < CL_CNS &&
-            (targObj->GetVisible() != VT_VISIBLE ||
-             !ObjInRange(mChar, targObj, static_cast<std::uint16_t>(visRange))))
+        if (mChar->GetCommandLevel() < CL_CNS && (targObj->GetVisible() != VT_VISIBLE || !ObjInRange(mChar, targObj, static_cast<std::uint16_t>(visRange))))
             return;
         
         CPStatWindow toSend((*targObj), (*this));
@@ -2088,8 +2045,7 @@ void CSocket::OpenPack(CItem *i, bool isPlayerVendor) {
     CPDrawContainer contSend = (*i);
     contSend.Model(0x3C);
     
-    if (i->GetId(1) == 0x3E) // boats
-    {
+    if (i->GetId(1) == 0x3E) { // boats
         contSend.Model(0x4C);
     }
     else {
@@ -2268,8 +2224,7 @@ void CSocket::OpenBank(CChar *i) {
     }
     
     // No bankbox was found, so let's create one!
-    auto temp = oldstrutil::format(1024, Dictionary->GetEntry(1283).c_str(),
-                                   i->GetName().c_str()); // %s's bank box.
+    auto temp = oldstrutil::format(1024, Dictionary->GetEntry(1283).c_str(), i->GetName().c_str()); // %s's bank box.
     bankBox = Items->CreateItem(nullptr, i, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     bankBox->SetName(temp);
     bankBox->SetLayer(IL_BANKBOX);
@@ -2318,8 +2273,7 @@ void CSocket::SetTimer(cS_TID timerId, timerval_t value) {
 //|	Purpose		-	Resets all timers (but mutetime) to 0 used when player logs out
 // o------------------------------------------------------------------------------------------------o
 void CSocket::ClearTimers() {
-    for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT);
-         ++mTID) {
+    for (std::int32_t mTID = static_cast<std::int32_t>(tPC_SKILLDELAY); mTID < static_cast<std::int32_t>(tPC_COUNT);  ++mTID) {
         if (mTID != tPC_MUTETIME) {
             pcTimers[mTID] = 0;
         }
@@ -2347,8 +2301,7 @@ CPUOXBuffer::CPUOXBuffer() { InternalReset(); }
 CPUOXBuffer::CPUOXBuffer(CPUOXBuffer *initBuffer) {
     InternalReset();
     pStream.ReserveSize(initBuffer->GetPacketStream().GetSize());
-    pStream.WriteArray(0, initBuffer->GetPacketStream().GetBuffer(),
-                       initBuffer->GetPacketStream().GetSize());
+    pStream.WriteArray(0, initBuffer->GetPacketStream().GetBuffer(), initBuffer->GetPacketStream().GetSize());
 }
 
 CPUOXBuffer::~CPUOXBuffer() { packedBuffer.resize(0); }
@@ -2401,9 +2354,7 @@ std::uint32_t CPUOXBuffer::PackedLength() const { return packedLength; }
 // o------------------------------------------------------------------------------------------------o
 void CPUOXBuffer::log(std::ostream &outStream, bool fullHeader) {
     if (fullHeader) {
-        outStream << "[SEND]Packet: 0x" << (pStream.GetByte(0) < 16 ? "0" : "") << std::hex
-        << static_cast<std::uint16_t>(pStream.GetByte(0)) << "--> Length:" << std::dec
-        << pStream.GetSize() << TimeStamp() << std::endl;
+        outStream << "[SEND]Packet: 0x" << (pStream.GetByte(0) < 16 ? "0" : "") << std::hex << static_cast<std::uint16_t>(pStream.GetByte(0)) << "--> Length:" << std::dec  << pStream.GetSize() << TimeStamp() << std::endl;
     }
     DoPacketLogging(outStream, pStream.GetSize(), pStream.GetBuffer());
 }
@@ -2420,9 +2371,7 @@ void CPInputBuffer::log(std::ostream &outStream, bool fullHeader) {
     std::uint8_t *buffer = tSock->Buffer();
     const std::uint32_t len = tSock->InLength();
     if (fullHeader) {
-        outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10 ? "0" : "")
-        << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec << len
-        << TimeStamp() << std::endl;
+        outStream << "[RECV]Packet Class Generic: 0x" << std::hex << (buffer[0] < 10 ? "0" : "") << static_cast<std::uint16_t>(buffer[0]) << " --> Length: " << std::dec << len  << TimeStamp() << std::endl;
     }
     DoPacketLogging(outStream, len, buffer);
 }

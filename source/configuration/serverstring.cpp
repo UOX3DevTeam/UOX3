@@ -1,6 +1,8 @@
 //
 
 #include "serverstring.hpp"
+
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -11,6 +13,16 @@ const std::map<std::string,ServerString::item_t> ServerString::ITEMNAMEMAP{
     {"SERVERNAME"s,SERVERNAME},{"EXTERNALIP"s,PUBLICIP},{"COMMANDPREFIX"s,COMMANDPREFIX},{"SECRETSHARDKEY"s,SHARDKEY},
     {"SERVERIP"s,SERVERIP}
 };
+//======================================================================
+auto ServerString::nameFor(item_t setting)-> const std::string &{
+    auto iter = std::find_if(ITEMNAMEMAP.begin(),ITEMNAMEMAP.end(),[setting](const std::pair<std::string,item_t> &entry){
+        return setting == entry.second;
+    });
+    if (iter == ITEMNAMEMAP.end()){
+        throw std::runtime_error("No name was found for item_t setting: "s+std::to_string(static_cast<int>(setting)));
+    }
+    return iter->first ;
+}
 //======================================================================
 ServerString::ServerString(){
     reset();

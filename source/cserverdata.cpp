@@ -2894,8 +2894,8 @@ auto CServerData::dungeonLightLevel(lightlevel_t value) -> void { worldDungeonLi
 //|	Purpose		-	Gets/Sets the default, global current light level outside of
 // dungeons
 // o------------------------------------------------------------------------------------------------o
-auto CServerData::worldLightCurrentLevel() const -> lightlevel_t { return woldCurrentLightLevel; }
-auto CServerData::worldLightCurrentLevel(lightlevel_t value) -> void { woldCurrentLightLevel = value; }
+auto CServerData::worldLightCurrentLevel() const -> lightlevel_t { return worldCurrentLightLevel; }
+auto CServerData::worldLightCurrentLevel(lightlevel_t value) -> void { worldCurrentLightLevel = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::worldLightBrightLevel()

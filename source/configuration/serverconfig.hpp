@@ -8,23 +8,25 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <type_traits>
 #include <variant>
 #include <vector>
 
-#include "directorylocation.hpp"
+#include "assistantfeature.hpp"
 #include "clientenable.hpp"
 #include "clientfeature.hpp"
-#include "serverfeature.hpp"
-#include "assistantfeature.hpp"
-#include "startlocconfig.hpp"
-#include "serverswitch.hpp"
-#include "serverstring.hpp"
+#include "directorylocation.hpp"
 #include "expansion.hpp"
 #include "realnumberconfig.hpp"
+#include "serverfeature.hpp"
+#include "serverswitch.hpp"
+#include "serverstring.hpp"
+#include "shortvalue.hpp"
+#include "spawnfacet.hpp"
+#include "startlocconfig.hpp"
 #include "timersetting.hpp"
 #include "ushortvalue.hpp"
 #include "uintvalue.hpp"
-#include "shortvalue.hpp"
 
 //======================================================================
 // AllDataType
@@ -82,21 +84,22 @@ public:
     auto timer(TimerSetting::timer_t timer) const -> const std::uint16_t& ;
     
     auto dataForKeyword(const std::string &key) const -> std::optional<AllDataType>;
-    
+
+    AssistantFeature assistantFeature ;
     ClientEnable enableClients ;
     ClientFeature clientFeature ;
+    Expansion ruleSets ;
+    RealNumberConfig realNumbers ;
     ServerFeature serverFeature ;
-    AssistantFeature assistantFeature ;
+    ServerString serverString;
+    ServerSwitch serverSwitch;
+    ShortValue shortValues;
+    SpawnFacet spawnFacet ;
     StartLocConfig startLocation;
     StartLocConfig youngLocation;
-    ServerSwitch serverSwitch;
-    ServerString serverString;
-    Expansion ruleSets ;
     TimerSetting timerSetting ;
-    RealNumberConfig realNumbers ;
     UShortValue ushortValues ;
     UIntValue uintValues;
-    ShortValue shortValues;
 };
 
 #endif /* serverconfig_hpp */

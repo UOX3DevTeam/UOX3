@@ -63,7 +63,8 @@ struct TimerSetting {
     };
     static const std::map<std::string,timer_t> NAMETIMERMAP ;
     std::vector<std::uint16_t> timerValue;
-    
+    static auto nameFor(timer_t setting)-> const std::string & ;
+
     TimerSetting() ;
     auto reset() ->void ;
     
