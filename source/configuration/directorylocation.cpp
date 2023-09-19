@@ -30,13 +30,17 @@ auto DirectoryLocation::makePath(const std::filesystem::path &path) const -> std
 auto DirectoryLocation::checkCreatePath(const std::filesystem::path &path, const std::string &name,bool create) {
     const auto formatError = "Directory for %s does not exist: %s"s ;
     const auto formatCreate = "Directory for %s does not exist, creating: %s"s ;
-
+    if (path.empty()) {
+        std::cerr << "Path was empty: " << path.string() << std::endl;
+        exit(1);
+    }
     if (!std::filesystem::exists(path)){
         if (!create){
             throw std::runtime_error(util::format(formatError,path.string().c_str()));
         }
         else {
-            std::clog << util::format(formatCreate,path.string().c_str()) << std::endl;
+            //std::cout << "Path is: " << path.string() << std::endl;
+            std::clog << util::format(formatCreate,name.c_str(),path.string().c_str()) << std::endl;
             std::filesystem::create_directories(path);
         }
     }
