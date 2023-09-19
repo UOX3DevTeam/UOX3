@@ -55,8 +55,8 @@ auto ShortValue::reset() ->void {
     this->operator[](ATTACKSTAMINA) = -2 ;
     this->operator[](ARCHERYTHITBONUS) = 10 ;
     this->operator[](STARTGOLD) = 1000 ;
-
-
+    
+    
 }
 
 //======================================================================

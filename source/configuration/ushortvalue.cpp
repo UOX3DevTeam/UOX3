@@ -101,7 +101,7 @@ auto UShortValue::reset() ->void {
     this->operator[](MAXHOUSECOOWNABLE) = 10 ;
     this->operator[](OREPERAREA) = 10 ;
     this->operator[](FISHPERAREA) = 10 ;
-
+    
 }
 
 //======================================================================

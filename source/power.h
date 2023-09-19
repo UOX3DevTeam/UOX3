@@ -9,7 +9,7 @@
 inline std::uint32_t power(std::uint32_t base, std::uint32_t exponent) {
     if (exponent == 0)
         return 1;
-
+    
     if (exponent > 0) {
         auto total = base;
         for (std::uint32_t i = 1; i < exponent; ++i) {

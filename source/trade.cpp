@@ -15,13 +15,11 @@
 // unchecked) to both clients
 // o------------------------------------------------------------------------------------------------o
 void SendTradeStatus(CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo) {
-    CPSecureTrading cpstOne((*tradeWindowOne), (tradeWindowOne->GetTempVar(CITV_MOREZ) % 256),
-                            (tradeWindowTwo->GetTempVar(CITV_MOREZ) % 256));
+    CPSecureTrading cpstOne((*tradeWindowOne), (tradeWindowOne->GetTempVar(CITV_MOREZ) % 256), (tradeWindowTwo->GetTempVar(CITV_MOREZ) % 256));
     cpstOne.Action(2);
     mSock->Send(&cpstOne);
     
-    CPSecureTrading cpstTwo((*tradeWindowTwo), (tradeWindowTwo->GetTempVar(CITV_MOREZ) % 256),
-                            (tradeWindowOne->GetTempVar(CITV_MOREZ) % 256));
+    CPSecureTrading cpstTwo((*tradeWindowTwo), (tradeWindowTwo->GetTempVar(CITV_MOREZ) % 256), (tradeWindowOne->GetTempVar(CITV_MOREZ) % 256));
     cpstTwo.Action(2);
     nSock->Send(&cpstTwo);
 }
@@ -48,8 +46,7 @@ CItem *CreateTradeWindow(CSocket *mSock, CSocket *nSock, CChar *mChar) {
     CItem *mPack = mChar->GetPackItem();
     if (!ValidateObject(mPack)) {
         mSock->SysMessage(773); // Time to buy a backpack.
-        nSock->SysMessage(1357, mChar->GetNameRequest(nSock->CurrcharObj(), NRS_SPEECH)
-                          .c_str()); // %s doesn't have a backpack!
+        nSock->SysMessage(1357, mChar->GetNameRequest(nSock->CurrcharObj(), NRS_SPEECH).c_str()); // %s doesn't have a backpack!
         return nullptr;
     }
     
@@ -317,8 +314,7 @@ bool CPITradeMessage::Handle() {
                 if (ValidateObject(tradeWindowTwo)) {
                     tradeWindowOne->SetTempVar(CITV_MOREZ, tSock->GetByte(11));
                     SendTradeStatus(tradeWindowOne, tradeWindowTwo);
-                    if (tradeWindowOne->GetTempVar(CITV_MOREZ) &&
-                        tradeWindowTwo->GetTempVar(CITV_MOREZ)) {
+                    if (tradeWindowOne->GetTempVar(CITV_MOREZ) && tradeWindowTwo->GetTempVar(CITV_MOREZ)) {
                         CompleteTrade(tradeWindowOne, tradeWindowTwo, true);
                     }
                 }
@@ -327,8 +323,7 @@ bool CPITradeMessage::Handle() {
                 CancelTrade(tradeWindowOne);
                 break;
             default:
-                Console::shared().error(
-                                        " Fallout of switch statement without default. trade.cpp, trademsg()");
+                Console::shared().error(" Fallout of switch statement without default. trade.cpp, trademsg()");
                 break;
         }
     }

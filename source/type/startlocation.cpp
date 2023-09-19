@@ -10,7 +10,7 @@ using namespace std::string_literals ;
 //======================================================================
 //======================================================================
 StartLocation::StartLocation():xloc(0),yloc(0),zloc(0),worldNumber(0),instanceID(0),clilocID(0) {
- }
+}
 //======================================================================
 StartLocation::StartLocation(const std::string &line):StartLocation() {
     auto values = util::parse(line,",") ;

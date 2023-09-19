@@ -17,7 +17,7 @@ struct StartLocation {
     std::uint32_t clilocID ;
     std::string town ;
     std::string description ;
-  
+    
     StartLocation() ;
     StartLocation(const std::string &line) ;
     auto describe() const -> std::string ;

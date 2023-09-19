@@ -18,7 +18,7 @@ struct TimerSetting {
         SHOPSPAWN,          // Amount of time between shopkeeper restocks.
         DECAY,              // Amount of time a decayable item will remain on the ground before dissapearing.
         DECAYINHOUSE,       // Amount of time a decayable item will remain on the floor of a house
-                            // before dissapearing, if not locked down.
+        // before dissapearing, if not locked down.
         INVISIBILITY,       // Duration of the invisibility spell.
         OBJECTUSAGE,        // Amount of time a player must wait between using objects.
         GATE,               // Duration of a summoned moongate.
@@ -34,19 +34,19 @@ struct TimerSetting {
         THIRSTRATE,         // Amount of time a player has before his thirst level decreases.
         POLYMORPH,          // Duration of the polymorph spell.
         ESCORTWAIT,         // Amount of time until an escort NPC will dissapear while waiting for a
-                            // player to start his quest.
+        // player to start his quest.
         ESCORTACTIVE,       // Amount of time until an escort NPC will dissapear while a player is
-                            // escorting him.
+        // escorting him.
         ESCORTDONE,         // Amount of time until an escort NPC will dissapear when his quest is
-                            // finished.
+        // finished.
         MURDERDECAY,        // Amount of time before a permanent murder count will decay.
         CRIMINAL,           // Amount of time a character remains criminal after committing a criminal
-                            // act.
+        // act.
         STEALINGFLAG,       // Amount of time a character's stealing flag remains active
         AGGRESSORFLAG,      // Amount of time a character remains aggressor after committing an
-                            // aggressive act
+        // aggressive act
         PERMAGREYFLAG,      // Amount of time a permagrey flag remains active after player has stolen
-                            // from someone
+        // from someone
         COMBATIGNORE,       // Amount of time an NPC will ignore an unreachable target in combat
         PETOFFLINECHECK,    // Delay between checks for the PetOfflineTimeout
         NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
@@ -59,12 +59,12 @@ struct TimerSetting {
         LOG,                // Log respawn
         FISH,               // Fish respawn
         POTION             // Delay between using potions
-
+        
     };
     static const std::map<std::string,timer_t> NAMETIMERMAP ;
     std::vector<std::uint16_t> timerValue;
     static auto nameFor(timer_t setting)-> const std::string & ;
-
+    
     TimerSetting() ;
     auto reset() ->void ;
     

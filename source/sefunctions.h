@@ -37,129 +37,129 @@ SEngineFunc SE_DoStaticEffect; // Does a static effect at location			***
 // Item related functions (2)
 
 SEngineFunc
-    SE_CreateBlankItem;         // Create an item							***
+SE_CreateBlankItem;         // Create an item							***
 SEngineFunc SE_CreateDFNItem;   // Create an item							***
 SEngineFunc SE_CreateHouse;     // Create a house from houses.dfn			***
 SEngineFunc SE_CreateBaseMulti; // Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
 SEngineFunc
-    SE_BroadcastMessage; //											***
+SE_BroadcastMessage; //											***
 
 // Random functions(5)
 SEngineFunc SE_RandomNumber; // Calculates a random number				***
 SEngineFunc
-    SE_CalcCharFromSer; //											***
+SE_CalcCharFromSer; //											***
 SEngineFunc
-    SE_CalcItemFromSer; //											***
+SE_CalcItemFromSer; //											***
 SEngineFunc
-    SE_CalcMultiFromSer; //											***
+SE_CalcMultiFromSer; //											***
 
 SEngineFunc
-    SE_MakeItem; //											***
+SE_MakeItem; //											***
 
 SEngineFunc
-    SE_CommandLevelReq; //											*
+SE_CommandLevelReq; //											*
 SEngineFunc
-    SE_CommandExists; //											*
+SE_CommandExists; //											*
 SEngineFunc
-    SE_FirstCommand; //											*
+SE_FirstCommand; //											*
 SEngineFunc
-    SE_NextCommand; //											*
+SE_NextCommand; //											*
 SEngineFunc
-    SE_FinishedCommandList; //											*
+SE_FinishedCommandList; //											*
 
 SEngineFunc
-    SE_RegisterCommand; //											***
+SE_RegisterCommand; //											***
 SEngineFunc
-    SE_EnableCommand; //											***
+SE_EnableCommand; //											***
 SEngineFunc
-    SE_DisableCommand; //											***
+SE_DisableCommand; //											***
 
 SEngineFunc
-    SE_RegisterKey; //											***
+SE_RegisterKey; //											***
 SEngineFunc
-    SE_EnableKey; //											***
+SE_EnableKey; //											***
 SEngineFunc
-    SE_DisableKey; //											***
+SE_DisableKey; //											***
 
 SEngineFunc
-    SE_RegisterConsoleFunc; //											***
+SE_RegisterConsoleFunc; //											***
 SEngineFunc
-    SE_EnableConsoleFunc; //											***
+SE_EnableConsoleFunc; //											***
 SEngineFunc
-    SE_DisableConsoleFunc; //											***
+SE_DisableConsoleFunc; //											***
 
 SEngineFunc
-    SE_RegisterSpell; //											***
+SE_RegisterSpell; //											***
 SEngineFunc
-    SE_EnableSpell; //											***
+SE_EnableSpell; //											***
 SEngineFunc
-    SE_DisableSpell; //											***
+SE_DisableSpell; //											***
 
 SEngineFunc SE_RegisterSkill;
 SEngineFunc SE_RegisterPacket;
 
 SEngineFunc
-    SE_GetHour; //										***
+SE_GetHour; //										***
 SEngineFunc
-    SE_GetMinute; //										***
+SE_GetMinute; //										***
 SEngineFunc
-    SE_GetDay; //										***
+SE_GetDay; //										***
 SEngineFunc
-    SE_SecondsPerUOMinute; //										***
+SE_SecondsPerUOMinute; //										***
 
 SEngineFunc
-    SE_GetCurrentClock; //										***
+SE_GetCurrentClock; //										***
 SEngineFunc
-    SE_GetStartTime; //										***
+SE_GetStartTime; //										***
 SEngineFunc
-    SE_GetMurderThreshold; //										***
+SE_GetMurderThreshold; //										***
 SEngineFunc
-    SE_RollDice; //										***
+SE_RollDice; //										***
 SEngineFunc
-    SE_RaceCompareByRace; //										***
+SE_RaceCompareByRace; //										***
 SEngineFunc
-    SE_GetRandomSOSArea; //										***
+SE_GetRandomSOSArea; //										***
 
 SEngineFunc
-    SE_FindMulti; //										***
+SE_FindMulti; //										***
 SEngineFunc
-    SE_GetItem; //										***
+SE_GetItem; //										***
 SEngineFunc
-    SE_FindItem; //										***
+SE_FindItem; //										***
 
 SEngineFunc
-    SE_CompareGuildByGuild; //										**
+SE_CompareGuildByGuild; //										**
 
 SEngineFunc
-    SE_PossessTown; //										***
+SE_PossessTown; //										***
 
 SEngineFunc
-    SE_IsRaceWeakToWeather; //										***
+SE_IsRaceWeakToWeather; //										***
 SEngineFunc
-    SE_GetRaceSkillAdjustment; //										***
+SE_GetRaceSkillAdjustment; //										***
 
 SEngineFunc
-    SE_UseItem; //										***
+SE_UseItem; //										***
 SEngineFunc
-    SE_TriggerTrap; //										***
+SE_TriggerTrap; //										***
 
 SEngineFunc
-    SE_TriggerEvent; //										*
+SE_TriggerEvent; //										*
 SEngineFunc
-    SE_DoesEventExist; //										*
+SE_DoesEventExist; //										*
 
 SEngineFunc
-    SE_GetPackOwner; //										***
+SE_GetPackOwner; //										***
 SEngineFunc
-    SE_FindRootContainer; //										***
+SE_FindRootContainer; //										***
 SEngineFunc
-    SE_CalcTargetedItem; //										***
+SE_CalcTargetedItem; //										***
 SEngineFunc
-    SE_CalcTargetedChar; //										***
+SE_CalcTargetedChar; //										***
 SEngineFunc
-    SE_GetTileIdAtMapCoord; //										***
+SE_GetTileIdAtMapCoord; //										***
 
 SEngineFunc SE_StringToNum;    // Marked for Deletion
 SEngineFunc SE_NumToString;    // Marked for Deletion
@@ -223,26 +223,26 @@ SEngineFunc SE_DeleteFile;
 
 // Account
 SEngineFunc
-    SE_GetAccountCount; //										***
+SE_GetAccountCount; //										***
 SEngineFunc
-    SE_GetPlayerCount; //										***
+SE_GetPlayerCount; //										***
 SEngineFunc
-    SE_GetItemCount; //										***
+SE_GetItemCount; //										***
 SEngineFunc
-    SE_GetMultiCount; //										***
+SE_GetMultiCount; //										***
 SEngineFunc
-    SE_GetCharacterCount; //										***
+SE_GetCharacterCount; //										***
 SEngineFunc
-    SE_GetServerVersionString; //										***
+SE_GetServerVersionString; //										***
 
 // Server constants
 SEngineFunc
-    SE_BASEITEMSERIAL; //										***
+SE_BASEITEMSERIAL; //										***
 SEngineFunc
-    SE_INVALIDSERIAL; //										***
+SE_INVALIDSERIAL; //										***
 SEngineFunc
-    SE_INVALIDID; //										***
+SE_INVALIDID; //										***
 SEngineFunc
-    SE_INVALIDCOLOUR; //										***
+SE_INVALIDCOLOUR; //										***
 
 #endif

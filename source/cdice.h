@@ -5,19 +5,19 @@
 
 #include "typedefs.h"
 class cDice {
-  private:
+private:
     std::int32_t dice;
     std::int32_t sides;
     std::int32_t addition;
-
+    
     bool convStringToDice(std::string dieString);
-
-  public:
+    
+public:
     cDice();
     cDice(const std::string &dieString);
     cDice(std::int32_t d, std::int32_t s, std::int32_t a);
     ~cDice();
-
+    
     std::int32_t RollDice();
     void SetDice(std::int32_t newDice);
     void SetSides(std::int32_t newSides);

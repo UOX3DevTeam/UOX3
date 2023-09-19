@@ -8,18 +8,18 @@
 #include <string>
 
 namespace timeutil {
-std::string timeNow();
-
-struct Interval_st {
-  private:
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
-
-  public:
-    Interval_st();
-    void start();
-    long long Elapsed();
-    long long Stop();
-};
+    std::string timeNow();
+    
+    struct Interval_st {
+    private:
+        std::chrono::time_point<std::chrono::steady_clock> startTime;
+        
+    public:
+        Interval_st();
+        void start();
+        long long Elapsed();
+        long long Stop();
+    };
 } // namespace timeutil
 
 #endif /* TimeUtility_hpp */

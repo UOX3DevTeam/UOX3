@@ -18,7 +18,7 @@ const std::map<std::string, Era::era_t> Era::ERANAMEMAP{
     {"core"s,CORE},{"uo"s,UO},{"t2a"s,T2A},{"uor",UOR},
     {"td"s,TD},{"lbr"s,LBR},{"aos"s,AOS},{"se",SE},
     {"ml"s,ML},{"sa"s,SA},{"hs"s,HS},{"tol",TOL}
-
+    
 };
 //======================================================================
 auto Era::eraFromName(const std::string &name) -> era_t {

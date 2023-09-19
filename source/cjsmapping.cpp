@@ -45,9 +45,9 @@ CJSMapping *JSMapping = nullptr;
 // Sections
 // o------------------------------------------------------------------------------------------------o
 /*
-CJSMapping::CJSMapping()
-{
-}
+ CJSMapping::CJSMapping()
+ {
+ }
  */
 CJSMapping::~CJSMapping() {
     // Cleanup();
@@ -64,10 +64,10 @@ void CJSMapping::ResetDefaults() {
     for (size_t i= 0 ; i < CJSMappingSection::ScriptNames.size();i++){
         mapSection[i] = new CJSMappingSection(static_cast<CJSMappingSection::type_t>(i));
     }
-
+    
     envokeById = new CEnvoke("object");
     envokeByType = new CEnvoke("type");
-
+    
     Parse();
 }
 
@@ -84,7 +84,7 @@ void CJSMapping::Cleanup() {
             mapSection[i] = nullptr;
         }
     }
-
+    
     if (envokeById != nullptr) {
         delete envokeById;
         envokeById = nullptr;
@@ -104,15 +104,14 @@ void CJSMapping::Cleanup() {
 void CJSMapping::Reload(std::uint16_t scriptId) {
     if (scriptId != 0xFFFF) {
         Console::shared().print(
-            util::format("CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId));
+                                util::format("CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId));
         for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
             if (mapSection[i]->IsInMap(scriptId)) {
                 mapSection[i]->Reload(scriptId);
                 return;
             }
         }
-        Console::shared().warning(util::format(
-            "Unable to locate specified JavaScript in the map (ScriptId %u)", scriptId));
+        Console::shared().warning(util::format("Unable to locate specified JavaScript in the map (ScriptId %u)", scriptId));
     }
     else {
         Console::shared().print(util::format("CMD: Loading JSE Scripts... \n"));
@@ -130,12 +129,11 @@ void CJSMapping::Reload(std::uint16_t scriptId) {
 //|	Purpose		-	Reloads a specific section of the JS Scripts
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::Reload(CJSMappingSection::type_t sectionId) {
-    Console::shared().print(util::format("CMD: Attempting Reload of JavaScript (SectionId %u)\n",
-                                         static_cast<std::int32_t>(sectionId)));
+    Console::shared().print(util::format("CMD: Attempting Reload of JavaScript (SectionId %u)\n",static_cast<std::int32_t>(sectionId)));
     if (mapSection[sectionId] != nullptr) {
         delete mapSection[sectionId];
         mapSection[sectionId] = new CJSMappingSection(sectionId);
-
+        
         Parse(sectionId);
     }
 }
@@ -149,13 +147,13 @@ void CJSMapping::Reload(CJSMappingSection::type_t sectionId) {
 // o------------------------------------------------------------------------------------------------o
 void CJSMapping::Parse(CJSMappingSection::type_t toParse) {
     Console::shared().print("Loading JS Scripts\n");
-
+    
     auto scpFileName = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT) / std::filesystem::path("jse_fileassociations.scp");
     if (!std::filesystem::exists(scpFileName)) {
         Console::shared().error(util::format("Failed to open %s", scpFileName.string().c_str()));
         return;
     }
-
+    
     Script *fileAssocData = new Script(scpFileName, NUM_DEFS, false);
     if (fileAssocData != nullptr) {
         if (toParse != CJSMappingSection::ScriptNames.size()) {
@@ -170,7 +168,7 @@ void CJSMapping::Parse(CJSMappingSection::type_t toParse) {
                 }
             }
         }
-
+        
         delete fileAssocData;
     }
 }
@@ -196,7 +194,7 @@ const std::vector<std::string> CJSMappingSection::ScriptNames{
 CJSMappingSection *CJSMapping::GetSection(CJSMappingSection::type_t toGet) {
     if (mapSection[toGet] != nullptr)
         return mapSection[toGet];
-
+    
     return nullptr;
 }
 
@@ -208,7 +206,7 @@ CJSMappingSection *CJSMapping::GetSection(CJSMappingSection::type_t toGet) {
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CJSMapping::GetScriptId(JSObject *toFind) {
     std::uint16_t retVal = 0xFFFF;
-
+    
     for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         retVal = mapSection[i]->GetScriptId(toFind);
         if (retVal != 0xFFFF)
@@ -226,7 +224,7 @@ std::uint16_t CJSMapping::GetScriptId(JSObject *toFind) {
 cScript *CJSMapping::GetScript(JSObject *toFind) {
     cScript *retVal = nullptr;
     cScript *toCheck = nullptr;
-
+    
     for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         toCheck = mapSection[i]->GetScript(toFind);
         if (toCheck != nullptr) {
@@ -246,7 +244,7 @@ cScript *CJSMapping::GetScript(JSObject *toFind) {
 cScript *CJSMapping::GetScript(std::uint16_t toFind) {
     cScript *retVal = nullptr;
     cScript *toCheck = nullptr;
-
+    
     for (size_t i = CJSMappingSection::SCPT_NORMAL; i < CJSMappingSection::ScriptNames.size(); ++i) {
         toCheck = mapSection[i]->GetScript(toFind);
         if (toCheck != nullptr) {
@@ -280,14 +278,14 @@ CEnvoke *CJSMapping::GetEnvokeByType() { return envokeByType; }
 // o------------------------------------------------------------------------------------------------o
 CJSMappingSection::CJSMappingSection(CJSMappingSection::type_t sT) {
     scriptType = sT;
-
+    
     scriptIdMap.clear();
     scriptJSMap.clear();
-
+    
     scriptIdIter = scriptIdMap.end();
 }
 CJSMappingSection::~CJSMappingSection() {
-
+    
     for (std::map<std::uint16_t, cScript *>::const_iterator sIter = scriptIdMap.begin();
          sIter != scriptIdMap.end(); ++sIter) {
         cScript *toDelete = sIter->second;
@@ -295,7 +293,7 @@ CJSMappingSection::~CJSMappingSection() {
             delete toDelete;
         }
     }
-
+    
     scriptIdMap.clear();
     scriptJSMap.clear();
 }
@@ -311,21 +309,21 @@ auto CJSMappingSection::Parse(Script *fileAssocData) -> void {
     auto basePath = ServerConfig::shared().directoryFor(dirlocation_t::SCRIPT);
     auto mSection = fileAssocData->FindEntry(ScriptNames[scriptType]);
     std::uint8_t runTime = 0;
-
+    
     if (scriptType == SCPT_CONSOLE) {
         runTime = 1;
     }
-
+    
     if (mSection) {
         std::uint16_t scriptId = 0xFFFF;
         size_t i = 0;
         for (const auto &sec : mSection->collection()) {
             auto tag = sec->tag;
             auto data = sec->data;
-
+            
             scriptId = static_cast<std::uint16_t>(std::stoul(tag, nullptr, 0));
             auto fullPath = basePath / std::filesystem::path(data).make_preferred();
-
+            
             if (!std::filesystem::exists(fullPath)) {
                 Console::shared().error(util::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str()));
             }
@@ -368,7 +366,7 @@ auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
         Console::shared().error(util::format("Failed to open %s", scpFileName.string().c_str()));
         return;
     }
-
+    
     auto fileAssocData = std::make_unique<Script>(scpFileName, NUM_DEFS, false);
     if (fileAssocData) {
         auto mSection = fileAssocData->FindEntry(ScriptNames[scriptType]);
@@ -387,7 +385,7 @@ auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
                 if (scriptId == toLoad) {
                     data = sec->data;
                     fullPath = basePath / std::filesystem::path(data).make_preferred();
-
+                    
                     if (std::filesystem::exists(fullPath)) {
                         Console::shared().error(util::format("SE mapping of %i to %s failed, file does not exist!",scriptId, data.c_str()));
                     }
@@ -401,7 +399,7 @@ auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
                                     if (jFind != scriptJSMap.end()) {
                                         scriptJSMap.erase(jFind);
                                     }
-
+                                    
                                     delete scriptIdMap[toLoad];
                                     scriptIdMap[toLoad] = nullptr;
                                 }
@@ -435,12 +433,12 @@ auto CJSMappingSection::Reload(std::uint16_t toLoad) -> void {
 // o------------------------------------------------------------------------------------------------o
 bool CJSMappingSection::IsInMap(std::uint16_t scriptId) {
     bool retVal = false;
-
+    
     std::map<std::uint16_t, cScript *>::const_iterator sIter = scriptIdMap.find(scriptId);
     if (sIter != scriptIdMap.end()) {
         retVal = true;
     }
-
+    
     return retVal;
 }
 
@@ -452,12 +450,12 @@ bool CJSMappingSection::IsInMap(std::uint16_t scriptId) {
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t CJSMappingSection::GetScriptId(JSObject *toFind) {
     std::uint16_t retVal = 0xFFFF;
-
+    
     std::map<JSObject *, std::uint16_t>::const_iterator sIter = scriptJSMap.find(toFind);
     if (sIter != scriptJSMap.end()) {
         retVal = sIter->second;
     }
-
+    
     return retVal;
 }
 
@@ -469,12 +467,12 @@ std::uint16_t CJSMappingSection::GetScriptId(JSObject *toFind) {
 // o------------------------------------------------------------------------------------------------o
 cScript *CJSMappingSection::GetScript(std::uint16_t toFind) {
     cScript *retVal = nullptr;
-
+    
     std::map<std::uint16_t, cScript *>::const_iterator idIter = scriptIdMap.find(toFind);
     if (idIter != scriptIdMap.end()) {
         retVal = idIter->second;
     }
-
+    
     return retVal;
 }
 
@@ -499,7 +497,7 @@ cScript *CJSMappingSection::First() {
     scriptIdIter = scriptIdMap.begin();
     if (!Finished())
         return scriptIdIter->second;
-
+    
     return nullptr;
 }
 
@@ -559,7 +557,7 @@ std::uint16_t CEnvoke::GetScript(std::uint16_t envokeId) const {
     std::map<std::uint16_t, std::uint16_t>::const_iterator p = envokeList.find(envokeId);
     if (p != envokeList.end())
         return p->second;
-
+    
     return 0xFFFF;
 }
 
@@ -578,7 +576,7 @@ auto CEnvoke::Parse() -> void {
         Console::shared() << "Unable to open " << filename.string() << " for parsing" << myendl;
         return;
     }
-
+    
     auto fileAssocData = new Script(filename, NUM_DEFS, false);
     if (fileAssocData) {
         auto mSection = fileAssocData->FindEntry("ENVOKE");

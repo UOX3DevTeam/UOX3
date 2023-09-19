@@ -38,130 +38,130 @@ struct SEGumpData_st {
 
 class cScript {
 public:
-  enum event_t {
-      seOnCreateDFN = 0,
-      seOnCreateTile,
-      seOnCreatePlayer, //    *    Done for PCs on global script
-      seOnCommand,
-      seOnDelete,     //    **
-      seOnSpeech,     //    *    Missing item response at the moment
-      seInRange,      //    *    Missing character in range
-      seOnCollide,    //    **    Items only
-      seOnMoveDetect, //    ***
-      seOnSteal,      //    **
-      seOnDispel,     //    **
-      seOnSkill,
-      seOnStat,
-      seOnTooltip,
-      seOnNameRequest,
-      seOnAttack,
-      seOnDefense,
-      seOnSkillGain,   //    **
-      seOnSkillLoss,   //    **
-      seOnSkillChange, //    **
-      seOnStatGained,  //    **
-      seOnStatGain,    //    **
-      seOnStatLoss,    //    **
-      seOnStatChange,  //    **
-      seOnDrop,
-      seOnPickup,
-      seOnContRemoveItem,
-      seOnSwing,
-      seOnDecay,
-      seOnTransfer,
-      seOnEntrance,       //    **
-      seOnLeaving,        //    **
-      seOnMultiLogout,    //    **
-      seOnEquipAttempt,   //    **
-      seOnEquip,          //    **
-      seOnUnequipAttempt, //    **
-      seOnUnequip,        //    **
-      seOnUseChecked,     //    **  the event that replaces hardcoded use-stuff
-      seOnUseUnChecked,
-      seOutOfRange, //    *    Missing character out of range
-      seOnLogin,    //    **
-      seOnLogout,
-      seOnClick,
-      seOnFall,
-      seOnSell,
-      seOnSellToVendor,
-      seOnBuy,
-      seOnBuyFromVendor,
-      seOnSoldToVendor,
-      seOnBoughtFromVendor,
-      seOnAISliver, //    **
-      seOnSystemSlice,
-      seOnUnknownTrigger,
-      seOnLightChange,
-      seOnWeatherChange,
-      seOnTempChange,
-      seOnTimer,         //    **
-      seOnDeath,         //    **
-      seOnResurrect,     //    **
-      seOnFlagChange,    //    **
-      seOnLoyaltyChange, //    **
-      seOnHungerChange,  //    **
-      seOnThirstChange,  //  **
-      seOnStolenFrom,    //    **
-      seOnSnooped,       //    **
-      seOnSnoopAttempt,  //    **
-      seOnEnterRegion,   //  **
-      seOnLeaveRegion,   //    **
-      seOnSpellTarget,
-      seOnSpellTargetSelect,
-      seOnSpellCast,
-      seOnSpellSuccess,
-      seOnTalk,
-      seOnScrollCast,
-      seOnSpeechInput,
-      seOnSpellGain,
-      seOnSpellLoss,
-      seOnSkillCheck,
-      seOnDropItemOnNpc,
-      seOnStart,
-      seOnStop,
-      seOnIterate,
-      seOnIterateSpawnRegions,
-      seOnPacketReceive,
-      seOnCharDoubleClick, //    **  the event that replaces hardcoded character doubleclick-stuff
-      seOnSkillGump,       //    **    allows overriding client's request to open default skill gump
-      seOnCombatStart,     //    **    allows overriding what happens when combat is initiated
-      seOnAICombatTarget,  //    **    allows overriding target selection taking place for regular
-                           // AI behaviours
-      seOnCombatEnd,       //    **    allows overriding what happens when combat ends
-      seOnDeathBlow,
-      seOnCombatDamageCalc,
-      seOnDamage,
-      seOnDamageDeal,
-      seOnGumpPress,
-      seOnGumpInput,
-      seOnScrollingGumpPress,
-      seOnDropItemOnItem,
-      seOnVirtueGumpPress,
-      seOnUseBandageMacro, //    **    allows overriding what happens when client uses bandage
-                           // macros
-      seOnHouseCommand,    //    **    allows overriding what happens when player speaks house
-                           // commands
-      seOnMakeItem,
-      seOnPathfindEnd,
-      seOnEnterEvadeState,
-      seOnCarveCorpse,
-      seOnDyeTarget,
-      seOnQuestGump,
-      seOnHelpButton,
-      seOnWarModeToggle,
-      seOnSpecialMove,
-      seOnFacetChange
-  };
-
-  private:
+    enum event_t {
+        seOnCreateDFN = 0,
+        seOnCreateTile,
+        seOnCreatePlayer, //    *    Done for PCs on global script
+        seOnCommand,
+        seOnDelete,     //    **
+        seOnSpeech,     //    *    Missing item response at the moment
+        seInRange,      //    *    Missing character in range
+        seOnCollide,    //    **    Items only
+        seOnMoveDetect, //    ***
+        seOnSteal,      //    **
+        seOnDispel,     //    **
+        seOnSkill,
+        seOnStat,
+        seOnTooltip,
+        seOnNameRequest,
+        seOnAttack,
+        seOnDefense,
+        seOnSkillGain,   //    **
+        seOnSkillLoss,   //    **
+        seOnSkillChange, //    **
+        seOnStatGained,  //    **
+        seOnStatGain,    //    **
+        seOnStatLoss,    //    **
+        seOnStatChange,  //    **
+        seOnDrop,
+        seOnPickup,
+        seOnContRemoveItem,
+        seOnSwing,
+        seOnDecay,
+        seOnTransfer,
+        seOnEntrance,       //    **
+        seOnLeaving,        //    **
+        seOnMultiLogout,    //    **
+        seOnEquipAttempt,   //    **
+        seOnEquip,          //    **
+        seOnUnequipAttempt, //    **
+        seOnUnequip,        //    **
+        seOnUseChecked,     //    **  the event that replaces hardcoded use-stuff
+        seOnUseUnChecked,
+        seOutOfRange, //    *    Missing character out of range
+        seOnLogin,    //    **
+        seOnLogout,
+        seOnClick,
+        seOnFall,
+        seOnSell,
+        seOnSellToVendor,
+        seOnBuy,
+        seOnBuyFromVendor,
+        seOnSoldToVendor,
+        seOnBoughtFromVendor,
+        seOnAISliver, //    **
+        seOnSystemSlice,
+        seOnUnknownTrigger,
+        seOnLightChange,
+        seOnWeatherChange,
+        seOnTempChange,
+        seOnTimer,         //    **
+        seOnDeath,         //    **
+        seOnResurrect,     //    **
+        seOnFlagChange,    //    **
+        seOnLoyaltyChange, //    **
+        seOnHungerChange,  //    **
+        seOnThirstChange,  //  **
+        seOnStolenFrom,    //    **
+        seOnSnooped,       //    **
+        seOnSnoopAttempt,  //    **
+        seOnEnterRegion,   //  **
+        seOnLeaveRegion,   //    **
+        seOnSpellTarget,
+        seOnSpellTargetSelect,
+        seOnSpellCast,
+        seOnSpellSuccess,
+        seOnTalk,
+        seOnScrollCast,
+        seOnSpeechInput,
+        seOnSpellGain,
+        seOnSpellLoss,
+        seOnSkillCheck,
+        seOnDropItemOnNpc,
+        seOnStart,
+        seOnStop,
+        seOnIterate,
+        seOnIterateSpawnRegions,
+        seOnPacketReceive,
+        seOnCharDoubleClick, //    **  the event that replaces hardcoded character doubleclick-stuff
+        seOnSkillGump,       //    **    allows overriding client's request to open default skill gump
+        seOnCombatStart,     //    **    allows overriding what happens when combat is initiated
+        seOnAICombatTarget,  //    **    allows overriding target selection taking place for regular
+        // AI behaviours
+        seOnCombatEnd,       //    **    allows overriding what happens when combat ends
+        seOnDeathBlow,
+        seOnCombatDamageCalc,
+        seOnDamage,
+        seOnDamageDeal,
+        seOnGumpPress,
+        seOnGumpInput,
+        seOnScrollingGumpPress,
+        seOnDropItemOnItem,
+        seOnVirtueGumpPress,
+        seOnUseBandageMacro, //    **    allows overriding what happens when client uses bandage
+        // macros
+        seOnHouseCommand,    //    **    allows overriding what happens when player speaks house
+        // commands
+        seOnMakeItem,
+        seOnPathfindEnd,
+        seOnEnterEvadeState,
+        seOnCarveCorpse,
+        seOnDyeTarget,
+        seOnQuestGump,
+        seOnHelpButton,
+        seOnWarModeToggle,
+        seOnSpecialMove,
+        seOnFacetChange
+    };
+    
+private:
     JSScript *targScript;
     JSContext *targContext;
     JSObject *targObject;
-
+    
     bool isFiring;
     std::uint8_t runTime;
-
+    
     std::bitset<64> eventPresence[3];
     std::bitset<64> needsChecking[3];
     bool EventExists(cScript::event_t eventNum) const;
@@ -169,27 +169,27 @@ public:
     void SetEventExists(cScript::event_t eventNum, bool status);
     void SetNeedsChecking(cScript::event_t eventNum, bool status);
     bool ExistAndVerify(cScript::event_t eventNum, std::string functionName);
-
+    
     std::vector<SEGump_st *> gumpDisplays;
-
+    
     void Cleanup();
-
+    
 public:
     void CollectGarbage();
-
+    
     size_t NewGumpList();
     SEGump_st *GetGumpList(std::int32_t index);
     void RemoveGumpList(std::int32_t index);
     void SendGumpList(std::int32_t index, CSocket *toSendTo);
-
+    
     void HandleGumpPress(CPIGumpMenuSelect *packet);
     void HandleGumpInput(CPIGumpInput *pressing);
-
+    
     cScript(const std::filesystem::path &targFile, std::uint8_t runTime);
     ~cScript();
-
+    
     JSObject *Object() const; // returns object pointer
-
+    
     //|	Modification	-	08162003 - Added these event to handle any script initialization and
     //clean up as the server starts, and is shut down
     bool OnStart();
@@ -206,7 +206,7 @@ public:
     bool InRange(CBaseObject *srcObj, CBaseObject *objInRange);
     std::int8_t OnCollide(CSocket *targSock, CChar *objColliding, CBaseObject *objCollideWith);
     std::int8_t OnMoveDetect(CBaseObject *sourceObj, CChar *CharInRange, std::uint8_t rangeToChar, std::uint16_t oldCharX,
-                      std::uint16_t oldCharY);
+                             std::uint16_t oldCharY);
     std::int8_t OnSteal(CChar *thief, CItem *theft, CChar *victim);
     std::int8_t OnPathfindEnd(CChar *npc, std::int8_t pathfindResult);
     std::int8_t OnEnterEvadeState(CChar *npc, CChar *enemy);
@@ -273,7 +273,7 @@ public:
     std::int8_t OnSpellGain(CItem *book, const std::uint8_t spellNum);
     std::int8_t OnSpellLoss(CItem *book, const std::uint8_t spellNum);
     std::int8_t OnSkillCheck(CChar *myChar, const std::uint8_t skill, const std::uint16_t lowSkill, const std::uint16_t highSkill,
-                      bool isCraftSkill);
+                             bool isCraftSkill);
     std::int8_t OnDropItemOnNpc(CChar *srcChar, CChar *targChar, CItem *i);
     std::int8_t OnDropItemOnItem(CItem *item, CChar *dropper, CItem *dest);
     std::int8_t OnVirtueGumpPress(CChar *mChar, CChar *tChar, std::uint16_t buttonId);
@@ -283,15 +283,15 @@ public:
     std::int8_t OnWarModeToggle(CChar *mChar);
     std::int8_t OnSpecialMove(CChar *mChar, std::uint8_t abilityId);
     std::int8_t OnFacetChange(CChar *mChar, const std::uint8_t oldFacet, const std::uint8_t newFacet);
-
+    
     bool AreaObjFunc(char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s);
     bool CallParticularEvent(const char *eventToCall, jsval *params, std::int32_t numParams,
                              jsval *eventRetVal);
-
+    
     bool ScriptRegistration(std::string scriptType);
-
+    
     bool executeCommand(CSocket *s, std::string funcName, std::string executedString);
-
+    
     bool MagicSpellCast(CSocket *mSock, CChar *tChar, bool directCast, std::int32_t spellNum);
     std::int8_t OnCharDoubleClick(CChar *currChar, CChar *targChar);
     std::int8_t OnSkillGump(CChar *mChar);
@@ -299,25 +299,25 @@ public:
     std::int8_t OnAICombatTarget(CChar *attacker, CChar *target);
     std::int8_t OnCombatStart(CChar *attacker, CChar *defender);
     std::int8_t OnCombatEnd(CChar *attacker, CChar *defender);
-
+    
     std::int8_t OnDeathBlow(CChar *mKilled, CChar *mKiller);
-
+    
     std::int16_t OnCombatDamageCalc(CChar *attacker, CChar *defender, std::uint8_t getFightSkill, std::uint8_t hitLoc);
     std::int8_t OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, weathertype_t damageType);
     std::int8_t OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue, weathertype_t damageType);
     std::int8_t OnBuy(CSocket *targSock, CChar *objVendor);
     std::int8_t OnBuyFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
-                         std::uint16_t numItemsBuying);
+                                std::uint16_t numItemsBuying);
     std::int8_t OnSellToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
-                        std::uint16_t numItemsSelling);
+                               std::uint16_t numItemsSelling);
     std::int8_t OnSell(CSocket *targSock, CChar *objVendor);
     std::int8_t OnBoughtFromVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought,
-                            std::uint16_t numItemsBought);
+                                   std::uint16_t numItemsBought);
     std::int8_t OnSoldToVendor(CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold,
-                        std::uint16_t numItemsSold);
+                               std::uint16_t numItemsSold);
     std::int8_t OnHouseCommand(CSocket *targSock, CMultiObj *multiObj, std::uint8_t targId);
     std::int8_t OnMakeItem(CSocket *mSock, CChar *objChar, CItem *objItem, std::uint16_t createEntryId);
-
+    
     //	Critical handler type stuff
     bool IsFiring();
     void Firing();

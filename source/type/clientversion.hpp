@@ -36,17 +36,17 @@ struct ClientType {
     type_t type ;
     
     auto operator=(type_t type) -> ClientType& ;
-
+    
     auto operator==(type_t version) const -> bool ;
     auto operator!=(type_t type) const ->bool ;
-
+    
     auto operator>(type_t type) const ->bool ;
     auto operator>=(type_t type) const -> bool ;
     auto operator<(type_t type) const ->bool ;
     auto operator<=(type_t type) const -> bool ;
     
     auto describe() const -> const std::string & ;
-
+    
     ClientType() ;
     ClientType(type_t type);
 };
@@ -104,6 +104,6 @@ struct ClientVersion {
     auto operator<=(ClientVersion::version_t shortVersion) const ->bool;
     auto operator<(ClientVersion::version_t shortVersion) const ->bool;
     
-
+    
 };
 #endif /* clientversion_hpp */

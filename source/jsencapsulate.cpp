@@ -60,8 +60,8 @@ JSEncapsulate::JSEncapsulate(JSContext *jsCX, jsval *jsVP) : cx(jsCX), vp(jsVP),
     Init();
 }
 JSEncapsulate::JSEncapsulate(JSContext *jsCX, JSObject *jsVP)
-    : intVal(0), floatVal(0), boolVal(false), stringVal(""), objectVal(nullptr), cx(jsCX),
-      vp(nullptr), obj(jsVP) {
+: intVal(0), floatVal(0), boolVal(false), stringVal(""), objectVal(nullptr), cx(jsCX),
+vp(nullptr), obj(jsVP) {
     InternalReset();
     // We don't want to call Init() here, because we *know* it's an Object
     nativeType = JSOT_OBJECT;
@@ -130,10 +130,8 @@ std::string JSEncapsulate::ClassName() {
             }
             if (obj2 != nullptr) {
                 JSClass *mClass = OBJ_GET_CLASS(cx, obj2);
-                if (mClass->flags & JSCLASS_IS_EXTENDED) // extended class
-                {
-                    JSExtendedClass *mClass2 =
-                        reinterpret_cast<JSExtendedClass *>(mClass); // (JSExtendedClass *)mClass;
+                if (mClass->flags & JSCLASS_IS_EXTENDED) { // extended class
+                    JSExtendedClass *mClass2 = reinterpret_cast<JSExtendedClass *>(mClass); // (JSExtendedClass *)mClass;
                     className = mClass2->base.name;
                 }
                 else {
@@ -152,108 +150,105 @@ void JSEncapsulate::Parse(JSEncapsulate::type_t typeConvert) {
     std::string svalue;
     bool bvalue;
     switch (typeConvert) {
-    case JSOT_INT:
-        switch (nativeType) {
         case JSOT_INT:
-            intVal = JSVAL_TO_INT((*vp));
-            break;
-        case JSOT_DOUBLE:
-            JS_ValueToNumber(cx, (*vp), &fvalue);
-            intVal = static_cast<std::int32_t>(fvalue);
-            break;
-        case JSOT_BOOL:
-            intVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1 : 0);
-            break;
-        case JSOT_STRING:
-            svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
-            intVal = std::stoi(svalue, nullptr, 0);
-            break;
-        default:
-        case JSOT_COUNT:
-            break;
-        }
-        break;
-    case JSOT_DOUBLE:
-        switch (nativeType) {
-        case JSOT_INT:
-            ivalue = JSVAL_TO_INT((*vp));
-            floatVal = static_cast<R32>(ivalue);
-            break;
-        case JSOT_DOUBLE:
-            JS_ValueToNumber(cx, (*vp), &fvalue);
-            floatVal = static_cast<R32>(fvalue);
-            break;
-        case JSOT_BOOL:
-            floatVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1.0f : 0.0f);
-            break;
-        case JSOT_STRING:
-            svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
-            floatVal = std::stof(svalue);
-            break;
-        default:
-        case JSOT_COUNT:
-            break;
-        }
-        break;
-    case JSOT_BOOL:
-        switch (nativeType) {
-        case JSOT_INT:
-            ivalue = JSVAL_TO_INT((*vp));
-            boolVal = (ivalue != 0);
-            break;
-        case JSOT_DOUBLE:
-            JS_ValueToNumber(cx, (*vp), &fvalue);
-            boolVal = (fvalue != 0.0f);
-            break;
-        case JSOT_BOOL:
-            boolVal = (JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE);
-            break;
-        case JSOT_STRING:
-            svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
-            boolVal = (util::upper(svalue) == "TRUE");
-            break;
-        default:
-        case JSOT_COUNT:
-            break;
-        }
-        break;
-    case JSOT_STRING:
-        switch (nativeType) {
-        case JSOT_INT:
-            ivalue = JSVAL_TO_INT((*vp));
-            stringVal = util::ntos(ivalue);
-            break;
-        case JSOT_DOUBLE:
-            JS_ValueToNumber(cx, (*vp), &fvalue);
-            stringVal = std::to_string(fvalue);
-            break;
-        case JSOT_BOOL:
-            bvalue = (JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE);
-            if (bvalue) {
-                stringVal = "TRUE";
+            switch (nativeType) {
+                case JSOT_INT:
+                    intVal = JSVAL_TO_INT((*vp));
+                    break;
+                case JSOT_DOUBLE:
+                    JS_ValueToNumber(cx, (*vp), &fvalue);
+                    intVal = static_cast<std::int32_t>(fvalue);
+                    break;
+                case JSOT_BOOL:
+                    intVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1 : 0);
+                    break;
+                case JSOT_STRING:
+                    svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
+                    intVal = std::stoi(svalue, nullptr, 0);
+                    break;
+                default:
+                case JSOT_COUNT:
+                    break;
             }
-            else {
-                stringVal = "FALSE";
+            break;
+        case JSOT_DOUBLE:
+            switch (nativeType) {
+                case JSOT_INT:
+                    ivalue = JSVAL_TO_INT((*vp));
+                    floatVal = static_cast<R32>(ivalue);
+                    break;
+                case JSOT_DOUBLE:
+                    JS_ValueToNumber(cx, (*vp), &fvalue);
+                    floatVal = static_cast<R32>(fvalue);
+                    break;
+                case JSOT_BOOL:
+                    floatVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1.0f : 0.0f);
+                    break;
+                case JSOT_STRING:
+                    svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
+                    floatVal = std::stof(svalue);
+                    break;
+                default:
+                case JSOT_COUNT:
+                    break;
+            }
+            break;
+        case JSOT_BOOL:
+            switch (nativeType) {
+                case JSOT_INT:
+                    ivalue = JSVAL_TO_INT((*vp));
+                    boolVal = (ivalue != 0);
+                    break;
+                case JSOT_DOUBLE:
+                    JS_ValueToNumber(cx, (*vp), &fvalue);
+                    boolVal = (fvalue != 0.0f);
+                    break;
+                case JSOT_BOOL:
+                    boolVal = (JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE);
+                    break;
+                case JSOT_STRING:
+                    svalue = JS_GetStringBytes(JS_ValueToString(cx, *vp));
+                    boolVal = (util::upper(svalue) == "TRUE");
+                    break;
+                default:
+                case JSOT_COUNT:
+                    break;
             }
             break;
         case JSOT_STRING:
-            stringVal = JS_GetStringBytes(JS_ValueToString(cx, *vp));
+            switch (nativeType) {
+                case JSOT_INT:
+                    ivalue = JSVAL_TO_INT((*vp));
+                    stringVal = util::ntos(ivalue);
+                    break;
+                case JSOT_DOUBLE:
+                    JS_ValueToNumber(cx, (*vp), &fvalue);
+                    stringVal = std::to_string(fvalue);
+                    break;
+                case JSOT_BOOL:
+                    bvalue = (JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE);
+                    if (bvalue) {
+                        stringVal = "TRUE";
+                    }
+                    else {
+                        stringVal = "FALSE";
+                    }
+                    break;
+                case JSOT_STRING:
+                    stringVal = JS_GetStringBytes(JS_ValueToString(cx, *vp));
+                    break;
+                default:
+                case JSOT_COUNT:
+                    break;
+            }
+            break;
+        case JSOT_OBJECT:
+            objectVal = (void *)JS_GetPrivate(cx, JSVAL_TO_OBJECT(*vp));
             break;
         default:
         case JSOT_COUNT:
+            std::cout << '\n' << "JSOT_COUNT enum value passed to JSEncapsulate::Parse(). This should not happen!" << '\n';
             break;
-        }
-        break;
-    case JSOT_OBJECT:
-        objectVal = (void *)JS_GetPrivate(cx, JSVAL_TO_OBJECT(*vp));
-        break;
-    default:
-    case JSOT_COUNT:
-        std::cout
-            << '\n'
-            << "JSOT_COUNT enum value passed to JSEncapsulate::Parse(). This should not happen!"
-            << '\n';
-        break;
     }
     beenParsed[typeConvert] = true;
 }

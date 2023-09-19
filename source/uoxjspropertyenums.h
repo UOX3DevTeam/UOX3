@@ -106,7 +106,7 @@ enum ctimer_properties_t {
     TIMER_LOYALTYTIME,
     TIMER_IDLEANIMTIME,
     TIMER_LOGOUT,
-
+    
     // Socket timers
     TIMER_SOCK_SKILLDELAY,
     TIMER_SOCK_OBJDELAY,
@@ -489,7 +489,7 @@ enum ci_properties_t {
     CIP_SECTIONALIST,
     CIP_MININTERVAL,
     CIP_MAXINTERVAL,
-
+    
     CIP_ISNEWBIE,
     CIP_ISDISPELLABLE,
     CIP_MADEWITH,
@@ -527,7 +527,7 @@ enum ci_properties_t {
     CIP_ISITEMHELD,
     CIP_SECTIONID,
     CIP_STEALABLE,
-
+    
     CIP_LOCKDDOWNS,
     CIP_MAXLOCKDOWNS,
     CIP_TRASHCONTAINERS,
@@ -554,7 +554,7 @@ enum ci_properties_t {
 };
 
 enum caccount_properties_t {
-
+    
 };
 
 enum cscket_properties_t {

@@ -178,7 +178,7 @@ auto ServerSwitch::reset() ->void {
     this->setSetting(EXTENDEDSTATS,true);
     this->setSetting(EXTENDEDSKILLS,true);
     this->setSetting(RANDOMSTART,false);
-
+    
 }
 //======================================================================
 auto ServerSwitch::size() const ->size_t {

@@ -36,8 +36,7 @@ void cEffects::PlaySound(CSocket *mSock, std::uint16_t soundId, bool allHear) {
     
     if (allHear) {
         auto nearbyChars = FindNearbyPlayers(mChar);
-        std::for_each(nearbyChars.begin(), nearbyChars.end(),
-                      [&toSend](CSocket *entry) { entry->Send(&toSend); });
+        std::for_each(nearbyChars.begin(), nearbyChars.end(), [&toSend](CSocket *entry) { entry->Send(&toSend); });
     }
     mSock->Send(&toSend);
 }
@@ -57,8 +56,7 @@ void cEffects::PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHe
     
     if (allHear) {
         auto nearbyChars = FindPlayersInVisrange(baseObj);
-        std::for_each(nearbyChars.begin(), nearbyChars.end(),
-                      [&toSend](CSocket *entry) { entry->Send(&toSend); });
+        std::for_each(nearbyChars.begin(), nearbyChars.end(), [&toSend](CSocket *entry) { entry->Send(&toSend); });
     }
     else {
         if (baseObj->GetObjType() == CBaseObject::OT_CHAR) {
@@ -77,16 +75,13 @@ void cEffects::PlaySound(CBaseObject *baseObj, std::uint16_t soundId, bool allHe
 // o------------------------------------------------------------------------------------------------o
 void cEffects::ItemSound(CSocket *s, CItem *item, bool allHear) {
     std::uint16_t itemId = item->GetId();
-    if (itemId >= 0x0F0F && itemId <= 0x0F20) // Large Gem Stones
-    {
+    if (itemId >= 0x0F0F && itemId <= 0x0F20) { // Large Gem Stones
         PlaySound(s, 0x0034, allHear);
     }
-    else if (itemId >= 0x0F21 && itemId <= 0x0F30) // Small Gem Stones
-    {
+    else if (itemId >= 0x0F21 && itemId <= 0x0F30) { // Small Gem Stones
         PlaySound(s, 0x0033, allHear);
     }
-    else if (itemId >= 0x0EEA && itemId <= 0x0EF2) // Gold
-    {
+    else if (itemId >= 0x0EEA && itemId <= 0x0EF2) { // Gold
         GoldSound(s, item->GetAmount(), allHear);
     }
     else {
@@ -155,17 +150,11 @@ void cEffects::GoldSound(CSocket *s, std::uint32_t goldTotal, bool allHear) {
 //|	Purpose		-	Send death sound to all sockets in range
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayDeathSound(CChar *i) {
-    if (i->GetOrgId() == 0x0191 || i->GetOrgId() == 0x025E || i->GetOrgId() == 0x029B ||
-        i->GetOrgId() == 0x00B8 || i->GetOrgId() == 0x00BA ||
-        i->GetId() == 0x02EF) // Female Death (human/elf/gargoyle/savage)
-    {
+    if (i->GetOrgId() == 0x0191 || i->GetOrgId() == 0x025E || i->GetOrgId() == 0x029B || i->GetOrgId() == 0x00B8 || i->GetOrgId() == 0x00BA ||  i->GetId() == 0x02EF) { // Female Death (human/elf/gargoyle/savage)
         std::uint16_t deathSound = 0x0150 + RandomNum(0, 3);
         PlaySound(i, deathSound);
     }
-    else if (i->GetOrgId() == 0x0190 || i->GetOrgId() == 0x025D || i->GetOrgId() == 0x029A ||
-             i->GetOrgId() == 0x00B7 || i->GetOrgId() == 0x00B9 ||
-             i->GetOrgId() == 0x02EE) // Male Death (human/elf/gargoyle/savage)
-    {
+    else if (i->GetOrgId() == 0x0190 || i->GetOrgId() == 0x025D || i->GetOrgId() == 0x029A || i->GetOrgId() == 0x00B7 || i->GetOrgId() == 0x00B9 || i->GetOrgId() == 0x02EE) { // Male Death (human/elf/gargoyle/savage)
         std::uint16_t deathSound = 0x015A + RandomNum(0, 3);
         PlaySound(i, deathSound);
     }
@@ -200,10 +189,8 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
-                if (ValidateObject(tempChar) && !tempChar->IsFree() &&
-                    (tempChar->GetInstanceId() == mChar.GetInstanceId())) {
-                    if (tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() &&
-                        CharInRange((&mChar), tempChar)) {
+                if (ValidateObject(tempChar) && !tempChar->IsFree() && (tempChar->GetInstanceId() == mChar.GetInstanceId())) {
+                    if (tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && CharInRange((&mChar), tempChar)) {
                         inRange.push_back(tempChar);
                     }
                     
@@ -234,8 +221,7 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
             }
         }
     }
-    else // play random mystic-sounds also if no creature is in range
-    {
+    else { // play random mystic-sounds also if no creature is in range
         if (RandomNum(0, 3332) == 33) {
             switch (RandomNum(0, 6)) {
                 case 0:
@@ -388,8 +374,7 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
     }
     
     std::uint16_t soundId = 0;
-    switch (mChar->GetStep()) // change step info
-    {
+    switch (mChar->GetStep()) { // change step info
         case 0:
             if ((!isRunning && !onHorse) || (isRunning && onHorse)) {
                 mChar->SetStep(1); // step 2
@@ -473,13 +458,11 @@ auto cEffects::PlayTileSound(CChar *mChar, CSocket *mSock) -> void {
             break;
     }
     
-    if (soundId) // if we have a valid sound
-    {
+    if (soundId) { // if we have a valid sound
         if (mSock == nullptr && ValidateObject(mChar)) {
             // It's an NPC!
             auto nearbyChars = FindNearbyPlayers(mChar);
-            std::for_each(nearbyChars.begin(), nearbyChars.end(),
-                          [soundId, this](CSocket *entry) { PlaySound(entry, soundId, false); });
+            std::for_each(nearbyChars.begin(), nearbyChars.end(), [soundId, this](CSocket *entry) { PlaySound(entry, soundId, false); });
             return;
         }
         else {

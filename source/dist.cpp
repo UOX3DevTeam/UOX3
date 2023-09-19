@@ -23,13 +23,11 @@
 bool CheckItemRange(CChar *mChar, CItem *i) {
     if (mChar->IsGM() || mChar->IsCounselor())
         return true;
-
+    
     CBaseObject *itemOwner = i;
     bool checkRange = false;
-
-    if (i->GetCont() !=
-        nullptr) // It's inside another container, we need root container to calculate distance
-    {
+    
+    if (i->GetCont() != nullptr) { // It's inside another container, we need root container to calculate distance
         auto objType = CBaseObject::OT_CBO;
         CBaseObject *iOwner = FindItemOwner(i, objType);
         if (iOwner != nullptr) {
@@ -41,19 +39,19 @@ bool CheckItemRange(CChar *mChar, CItem *i) {
     }
     else {
         if (ValidateObject(itemOwner)) {
-            if (mChar->GetInstanceId() != itemOwner->GetInstanceId() ||
-                mChar->WorldNumber() != itemOwner->WorldNumber())
+            if (mChar->GetInstanceId() != itemOwner->GetInstanceId() || mChar->WorldNumber() != itemOwner->WorldNumber()){
                 return false;
+            }
         }
         else {
-            if (mChar->GetInstanceId() != i->GetInstanceId() ||
-                mChar->WorldNumber() != i->WorldNumber())
+            if (mChar->GetInstanceId() != i->GetInstanceId() || mChar->WorldNumber() != i->WorldNumber()) {
                 return false;
+            }
         }
-
+        
         checkRange = ObjInRange(mChar, itemOwner, DIST_NEARBY);
     }
-
+    
     return checkRange;
 }
 
@@ -85,21 +83,23 @@ bool ObjInRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
 // radius
 // o------------------------------------------------------------------------------------------------o
 bool ObjInRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
-    if (!ValidateObject(a) || !ValidateObject(b))
+    if (!ValidateObject(a) || !ValidateObject(b)) {
         return false;
-
-    if (a == b)
+    }
+    
+    if (a == b) {
         return true;
-
-    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
+    }
+    
+    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId()) {
         return false;
-
+    }
+    
     auto aX = a->GetX();
     auto aY = a->GetY();
     auto bX = b->GetX();
     auto bY = b->GetY();
-    return (aX >= (bX - distance) && aX <= (bX + distance) && aY >= (bY - distance) &&
-            aY <= (bY + distance));
+    return (aX >= (bX - distance) && aX <= (bX + distance) && aY >= (bY - distance) && aY <= (bY + distance));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -119,22 +119,25 @@ bool ObjInOldRange(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
 // radius
 // o------------------------------------------------------------------------------------------------o
 bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance) {
-    if (!ValidateObject(a) || !ValidateObject(b))
+    
+    if (!ValidateObject(a) || !ValidateObject(b)) {
         return false;
-
-    if (a == b)
+    }
+    
+    if (a == b) {
         return true;
-
-    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
+    }
+    
+    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId()) {
         return false;
-
+    }
+    
     Point3 aOldLoc = a->GetOldLocation();
     auto aX = aOldLoc.x;
     auto aY = aOldLoc.y;
     auto bX = b->GetX();
     auto bY = b->GetY();
-    return (aX >= (bX - distance) && aX <= (bX + distance) && aY >= (bY - distance) &&
-            aY <= (bY + distance));
+    return (aX >= (bX - distance) && aX <= (bX + distance) && aY >= (bY - distance) &&  aY <= (bY + distance));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -143,9 +146,11 @@ bool ObjInOldRangeSquare(CBaseObject *a, CBaseObject *b, std::uint16_t distance)
 //|	Purpose		-	Check if characters a and b are in visual range
 // o------------------------------------------------------------------------------------------------o
 bool CharInRange(CChar *a, CChar *b) {
-    if (!ValidateObject(a))
+    
+    if (!ValidateObject(a)) {
         return false;
-
+    }
+    
     std::int16_t visRange = MAX_VISRANGE;
     if (a->GetSocket() != nullptr) {
         visRange = a->GetSocket()->Range() + Races->VisRange(a->GetRace());
@@ -162,15 +167,19 @@ bool CharInRange(CChar *a, CChar *b) {
 //|	Purpose		-	Get the distance between two objects
 // o------------------------------------------------------------------------------------------------o
 std::uint16_t GetDist(CBaseObject *a, CBaseObject *b) {
-    if (!ValidateObject(a) || !ValidateObject(b))
+    
+    if (!ValidateObject(a) || !ValidateObject(b)) {
         return DIST_OUTOFRANGE;
-
-    if (a == b)
+    }
+    
+    if (a == b) {
         return DIST_SAMETILE;
-
-    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
+    }
+    
+    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId()) {
         return DIST_OUTOFRANGE;
-
+    }
+    
     return GetDist(a->GetLocation(), b->GetLocation());
 }
 
@@ -185,15 +194,19 @@ std::uint16_t GetDist3D(Point3 a, Point3 b) {
 }
 
 std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b) {
-    if (!ValidateObject(a) || !ValidateObject(b))
+    
+    if (!ValidateObject(a) || !ValidateObject(b)) {
         return DIST_OUTOFRANGE;
-
-    if (a == b)
+    }
+    
+    if (a == b) {
         return DIST_SAMETILE;
-
-    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
+    }
+    
+    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId()) {
         return DIST_OUTOFRANGE;
-
+    }
+    
     Point3 distA;
     Point3 distB;
     distA = a->GetOldLocation();
@@ -203,15 +216,19 @@ std::uint16_t GetOldDist(CBaseObject *a, CBaseObject *b) {
 }
 
 std::uint16_t GetDist3D(CBaseObject *a, CBaseObject *b) {
-    if (!ValidateObject(a) || !ValidateObject(b))
+    
+    if (!ValidateObject(a) || !ValidateObject(b)) {
         return DIST_OUTOFRANGE;
-
-    if (a == b)
+    }
+    
+    if (a == b) {
         return DIST_SAMETILE;
-
-    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId())
+    }
+    
+    if (a->WorldNumber() != b->WorldNumber() || a->GetInstanceId() != b->GetInstanceId()) {
         return DIST_OUTOFRANGE;
-
+    }
+    
     Point3 difference = a->GetLocation() - b->GetLocation();
     return static_cast<std::uint16_t>(difference.Mag3D());
 }

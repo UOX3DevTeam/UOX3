@@ -45,11 +45,9 @@ void CGump::Send(CSocket *target) {
     toSend.GumpId(Type);
     toSend.UserId(Serial);
     
-    std::for_each(TagList.begin(), TagList.end(),
-                  [&toSend](const std::string &entry) { toSend.addCommand(entry); });
+    std::for_each(TagList.begin(), TagList.end(),  [&toSend](const std::string &entry) { toSend.addCommand(entry); });
     
-    std::for_each(TextList.begin(), TextList.end(),
-                  [&toSend](const std::string &entry) { toSend.addCommand(entry); });
+    std::for_each(TextList.begin(), TextList.end(), [&toSend](const std::string &entry) { toSend.addCommand(entry); });
     
     toSend.Finalize();
     target->Send(&toSend);
@@ -106,10 +104,8 @@ void CGump::AddGump(std::uint16_t x, std::uint16_t y, std::uint16_t gumpId) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a button
 // o------------------------------------------------------------------------------------------------o
-void CGump::AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t imageUp, std::uint16_t imageDown, std::uint16_t behaviour, std::uint16_t page,
-                      std::uint32_t uniqueId) {
-    TagList.push_back(util::format("button %u %u %u %u %u %u %u", x, y, imageUp, imageDown,
-                                   behaviour, page, uniqueId));
+void CGump::AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t imageUp, std::uint16_t imageDown, std::uint16_t behaviour, std::uint16_t page, std::uint32_t uniqueId) {
+    TagList.push_back(util::format("button %u %u %u %u %u %u %u", x, y, imageUp, imageDown, behaviour, page, uniqueId));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -141,8 +137,7 @@ std::uint16_t CGump::StartPage() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Callback for gumps.cpp
 // o------------------------------------------------------------------------------------------------o
-void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, serial_t gumpSerial,
-                       [[maybe_unused]] std::uint32_t button) {
+void MultiGumpCallback([[maybe_unused]] CSocket *mySocket, serial_t gumpSerial, [[maybe_unused]] std::uint32_t button) {
     if (gumpSerial == 0) // Do nothing on close gump
         return;
     

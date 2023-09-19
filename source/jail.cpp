@@ -138,9 +138,7 @@ void CJailCell::PeriodicCheck() {
                 EraseOccupant(i);
             }
             else {
-                toRelease->SetLocation(playersInJail[i]->x, playersInJail[i]->y,
-                                       playersInJail[i]->z, playersInJail[i]->world,
-                                       playersInJail[i]->instanceId);
+                toRelease->SetLocation(playersInJail[i]->x, playersInJail[i]->y, playersInJail[i]->z, playersInJail[i]->world, playersInJail[i]->instanceId);
                 SendMapChange(toRelease->WorldNumber(), toRelease->GetSocket(), false);
                 toRelease->SetCell(-1);
                 EraseOccupant(i);
@@ -357,8 +355,7 @@ void CJailSystem::ReleasePlayer(CChar *toRelease) {
             continue;
         
         if (mOccupant->pSerial == toRelease->GetSerial()) {
-            toRelease->SetLocation(mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world,
-                                   mOccupant->instanceId);
+            toRelease->SetLocation(mOccupant->x, mOccupant->y, mOccupant->z, mOccupant->world, mOccupant->instanceId);
             SendMapChange(mOccupant->world, toRelease->GetSocket(), false);
             toRelease->SetCell(-1);
             jails[cellNum].EraseOccupant(iCounter);

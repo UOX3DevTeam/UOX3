@@ -48,7 +48,7 @@ auto RealNumberConfig::reset()  -> void {
     this->operator[](CHECKBOATS) = 0.65 ;
     this->operator[](WEIGHTSTR) = 3.5 ;
     this->operator[](ARCHERYDELAY) = 0.5 ;
-
+    
 }
 
 //======================================================================
@@ -81,5 +81,5 @@ auto RealNumberConfig::valueFor(const std::string &key) const -> std::optional<d
         return {};
     }
     return values.at(static_cast<size_t>(iter->second));
-
+    
 }

@@ -29,8 +29,7 @@
 //|	Purpose		-	Sends a cliloc message to the client, which is displayed as a system
 // message
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, speechtype_t speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum,
-                   const char *types = "", ...) {
+void ClilocMessage(CSocket *mSock, speechtype_t speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum, const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
     std::string stringVal = "";
@@ -75,8 +74,7 @@ void ClilocMessage(CSocket *mSock, speechtype_t speechType, std::uint16_t hue, s
 //|	Purpose		-	Sends a clilocmessage to the client, which will be displayed as if
 // said by srcObj
 // o------------------------------------------------------------------------------------------------o
-void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, speechtype_t speechType, std::uint16_t hue, std::uint16_t font,
-                   std::uint32_t messageNum, bool sendAll, const char *types = "", ...) {
+void ClilocMessage(CSocket *mSock, CBaseObject *srcObj, speechtype_t speechType, std::uint16_t hue, std::uint16_t font, std::uint32_t messageNum, bool sendAll, const char *types = "", ...) {
     bool multipleArgs = false;
     std::string argList = "";
     std::string stringVal = "";
@@ -173,10 +171,7 @@ unicodetypes_t FindLanguage(CSocket *s, std::uint16_t offset) {
             return p->second;
         }
         else {
-            Console::shared().error(
-                                    util::format("Unknown language type \"%s\". PLEASE report this in the Bugs section "
-                                                 "of the forums at https://www.uox3.org!",
-                                                 ulangCode.c_str()));
+            Console::shared().error(util::format("Unknown language type \"%s\". PLEASE report this in the Bugs section of the forums at https://www.uox3.org!",  ulangCode.c_str()));
         }
     }
     return cLang;
@@ -278,8 +273,7 @@ bool CPITalkRequest::Handle() {
             }
         }
         
-        if ((Type() != WHISPER && Type() != ASCIIWHISPER) &&
-            (mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE)) {
+        if ((Type() != WHISPER && Type() != ASCIIWHISPER) && (mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE)) {
             mChar->ExposeToView();
         }
         
@@ -317,16 +311,13 @@ bool CPITalkRequest::Handle() {
             }
             if (ServerConfig::shared().enabled(ServerSwitch::SPEECHLOG) && !mChar->IsNpc()) {// Logging
                 auto temp = util::format("%s.log", mChar->GetName().c_str());
-                auto temp2 =
-                util::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3), mChar->GetSerial(4), mChar->GetAccount().accountNumber, asciiText);
+                auto temp2 = util::format("%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3), mChar->GetSerial(4), mChar->GetAccount().accountNumber, asciiText);
                 Console::shared().log(temp, temp2);
             }
             
             std::string upperText = util::upper(text);
             if (upperText.find("DEVTEAM033070") != std::string::npos) {
-                std::string temp3 = "RBuild: " + UOXVersion::realBuild +
-                " PBuild: " + UOXVersion::build +
-                " --> Version: " + UOXVersion::version;
+                std::string temp3 = "RBuild: " + UOXVersion::realBuild + " PBuild: " + UOXVersion::build + " --> Version: " + UOXVersion::version;
                 tSock->SysMessage(temp3.c_str());
             }
             
@@ -389,31 +380,20 @@ bool CPITalkRequest::Handle() {
                 CChar *tChar = tSock->CurrcharObj();
                 if (mChar != tChar) {
                     // Line of Sight check!
-                    if (!tChar->IsGM() &&
-                        !LineOfSight(mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(),
-                                     mChar->GetZ() + 15,
-                                     WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false))
+                    if (!tChar->IsGM() && !LineOfSight(mChar->GetSocket(), tChar, mChar->GetX(), mChar->GetY(),  mChar->GetZ() + 15, WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false, 0, false))
                         continue;
                     
-                    if (mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS &&
-                        tSock->GetTimer(tPC_SPIRITSPEAK) ==
-                        0) // GM/Counselors can see ghosts talking always Seers?
-                    {
-                        if (mChar->IsDead() &&
-                            !tChar->IsDead()) // Ghost can talk normally to other ghosts
-                        {
+                    if (mChar->IsDead() && tChar->GetCommandLevel() < CL_CNS && tSock->GetTimer(tPC_SPIRITSPEAK) == 0) { // GM/Counselors can see ghosts talking always Seers?
+                        if (mChar->IsDead() && !tChar->IsDead()) { // Ghost can talk normally to other ghosts
                             tSock->Send(ghostedText);
                         }
                         else {
                             tSock->Send(txtToSend);
                         }
                     }
-                    else if (tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() &&
-                             !tChar->IsCounselor()) {
+                    else if (tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() && !tChar->IsCounselor()) {
                         auto raceLangMin = Races->LanguageMin(mChar->GetRace());
-                        if (raceLangMin > 0 &&
-                            Skills->CheckSkill(tChar, SPIRITSPEAK,
-                                               Races->LanguageMin(mChar->GetRace()), 1000) != 1) {
+                        if (raceLangMin > 0 && Skills->CheckSkill(tChar, SPIRITSPEAK, Races->LanguageMin(mChar->GetRace()), 1000) != 1) {
                             tSock->Send(ghostedText);
                         }
                         else {
@@ -423,18 +403,14 @@ bool CPITalkRequest::Handle() {
                     else {
                         std::string mCharName = GetNpcDictName(mChar, nullptr, NRS_SPEECH);
                         
-                        if (mChar->GetVisible() == VT_TEMPHIDDEN ||
-                            mChar->GetVisible() == VT_INVISIBLE ||
-                            mChar->GetVisible() == VT_PERMHIDDEN) {
-                            if ((tChar->IsGM() || tChar->IsCounselor()) ||
-                                (Type() == WHISPER || Type() == ASCIIWHISPER)) {
+                        if (mChar->GetVisible() == VT_TEMPHIDDEN || mChar->GetVisible() == VT_INVISIBLE ||  mChar->GetVisible() == VT_PERMHIDDEN) {
+                            if ((tChar->IsGM() || tChar->IsCounselor()) || (Type() == WHISPER || Type() == ASCIIWHISPER)) {
                                 tSock->SysMessage(1794, mCharName.c_str()); // (Whisper from %s)
                                 tSock->Send(txtToSend);
                             }
                         }
                         else {
-                            if ((Type() == YELL || Type() == ASCIIYELL) &&
-                                !ObjInRange(tChar, mChar, DIST_SAMESCREEN)) {
+                            if ((Type() == YELL || Type() == ASCIIYELL) && !ObjInRange(tChar, mChar, DIST_SAMESCREEN)) {
                                 tSock->SysMessage(1795, mCharName.c_str()); // (Yelled by %s)
                                 tSock->Send(txtToSend);
                             }
@@ -506,13 +482,11 @@ void CSpeechQueue::SayIt(CSpeechEntry &toSay) {
             }
             break;
         case SPTRG_PCNPC: // all NPCs and PCs in range
-        case SPTRG_PCS:   // all PCs in range
-        {
+        case SPTRG_PCS: {   // all PCs in range
             if (!ValidateObject(thisObj))
                 break;
             
-            if (ValidateObject(thisItem) &&
-                thisItem->GetCont() != nullptr) // not on ground, can't guarantee speech
+            if (ValidateObject(thisItem) && thisItem->GetCont() != nullptr) // not on ground, can't guarantee speech
                 break;
             
             for (auto &mSock : FindPlayersInVisrange(thisObj)) {
@@ -566,8 +540,7 @@ bool CSpeechQueue::InternalPoll() {
     while (slIter != speechList.end()) {
         toCheck = (*slIter);
         
-        if (toCheck->At() == -1 ||
-            static_cast<std::uint32_t>(toCheck->At()) <= cwmWorldState->GetUICurrentTime()) {
+        if (toCheck->At() == -1 || static_cast<std::uint32_t>(toCheck->At()) <= cwmWorldState->GetUICurrentTime()) {
             retVal = true;
             SayIt((*toCheck));
             
@@ -587,8 +560,7 @@ bool CSpeechQueue::poll() {
     if (RunAsThread()) {
         while (RunAsThread()) {
             InternalPoll();
-            std::this_thread::sleep_for(std::chrono::milliseconds(
-                                                                  pollTime)); // so that it's never 0 (and number of milliseconds)
+            std::this_thread::sleep_for(std::chrono::milliseconds(pollTime)); // so that it's never 0 (and number of milliseconds)
         }
         return true;
     }
@@ -597,8 +569,8 @@ bool CSpeechQueue::poll() {
     }
 }
 
-CSpeechEntry &CSpeechQueue::Add() // Make space in queue, and return pointer to new entry
-{
+CSpeechEntry &CSpeechQueue::Add() { // Make space in queue, and return pointer to new entry
+    
     size_t iSize = speechList.size();
     speechList.push_back(new CSpeechEntry);
     return (*speechList[iSize]);

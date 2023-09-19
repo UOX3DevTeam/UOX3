@@ -932,14 +932,14 @@ void BuildWhoGump(CSocket *s, std::uint8_t commandLevel, std::string title) {
     
     CGumpDisplay Who(s, 400, 300);
     Who.setTitle(title);
-        for (auto &iSock : Network->connClients) {
-            CChar *iChar = iSock->CurrcharObj();
-            if (iChar->GetCommandLevel() >= commandLevel) {
-                auto temp = util::format("%i) %s", j, iChar->GetName().c_str());
-                Who.AddData(temp, iChar->GetSerial(), 3);
-            }
-            ++j;
+    for (auto &iSock : Network->connClients) {
+        CChar *iChar = iSock->CurrcharObj();
+        if (iChar->GetCommandLevel() >= commandLevel) {
+            auto temp = util::format("%i) %s", j, iChar->GetName().c_str());
+            Who.AddData(temp, iChar->GetSerial(), 3);
         }
+        ++j;
+    }
     Who.Send(4, false, INVALIDSERIAL);
 }
 
@@ -992,15 +992,15 @@ void Command_ReportBug(CSocket *s) {
     
     s->SysMessage(87); // Thank you for your continuing support, your feedback is important to us
     bool x = false;
-        for (auto &iSock : Network->connClients) {
-            CChar *iChar = iSock->CurrcharObj();
-            if (ValidateObject(iChar)) {
-                if (iChar->IsGMPageable()) {
-                    x = true;
-                    iSock->SysMessage(277, mChar->GetName().c_str(),serverCommands.commandString(2).c_str()); // User %s reported a bug (%s)
-                }
+    for (auto &iSock : Network->connClients) {
+        CChar *iChar = iSock->CurrcharObj();
+        if (ValidateObject(iChar)) {
+            if (iChar->IsGMPageable()) {
+                x = true;
+                iSock->SysMessage(277, mChar->GetName().c_str(),serverCommands.commandString(2).c_str()); // User %s reported a bug (%s)
             }
         }
+    }
     if (x) {
         s->SysMessage(88); // Available Game Masters have been notified of your bug submission.
     }

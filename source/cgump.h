@@ -31,8 +31,7 @@ public:
     // Common add functions
     void AddBackground(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId, std::uint16_t width, std::uint16_t height);
     void AddGump(std::uint16_t x, std::uint16_t y, std::uint16_t GumpId);
-    void AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t ImageUp, std::uint16_t ImageDown, std::uint16_t Behaviour, std::uint16_t Page,
-                   std::uint32_t UniqueId);
+    void AddButton(std::uint16_t x, std::uint16_t y, std::uint16_t ImageUp, std::uint16_t ImageDown, std::uint16_t Behaviour, std::uint16_t Page, std::uint32_t UniqueId);
     void AddText(std::uint16_t x, std::uint16_t y, std::uint16_t hue, std::string Text);
     std::uint16_t StartPage();
     

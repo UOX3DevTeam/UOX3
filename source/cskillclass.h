@@ -8,10 +8,10 @@
 #include "typedefs.h"
 
 class cSkillClass {
-  public:
+public:
     std::uint8_t skill;
     std::uint16_t value;
-
+    
     cSkillClass(std::uint8_t nskill, std::uint16_t nvalue) : skill(nskill), value(nvalue) {}
 };
 

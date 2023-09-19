@@ -105,7 +105,7 @@ inline JSPropertySpec CTimerProperties[] = {
     {"LOYALTYTIME", TIMER_LOYALTYTIME, JSPROP_ENUMPERMRO, nullptr, nullptr},
     {"IDLEANIMTIME", TIMER_IDLEANIMTIME, JSPROP_ENUMPERMRO, nullptr, nullptr},
     {"LOGOUT", TIMER_LOGOUT, JSPROP_ENUMPERMRO, nullptr, nullptr},
-
+    
     // Socket Timers
     {"SOCK_SKILLDELAY", TIMER_SOCK_SKILLDELAY, JSPROP_ENUMPERMRO, nullptr, nullptr},
     {"SOCK_OBJDELAY", TIMER_SOCK_OBJDELAY, JSPROP_ENUMPERMRO, nullptr, nullptr},
@@ -489,7 +489,7 @@ inline JSPropertySpec CItemProps[] = {
     {"tempLastTraded", CIP_TEMPLASTTRADED, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"tempTimer", CIP_TEMPTIMER, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"shouldSave", CIP_SHOULDSAVE, JSPROP_ENUMANDPERM, nullptr, nullptr},
-
+    
     {"isNewbie", CIP_ISNEWBIE, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"isDispellable", CIP_ISDISPELLABLE, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"madeWith", CIP_MADEWITH, JSPROP_ENUMANDPERM, nullptr, nullptr},
@@ -523,13 +523,13 @@ inline JSPropertySpec CItemProps[] = {
     {"origin", CIP_ORIGIN, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"isItemHeld", CIP_ISITEMHELD, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"stealable", CIP_STEALABLE, JSPROP_ENUMANDPERM, nullptr, nullptr},
-
+    
     // The Following vars are specific to CSpawnItem objects
     {"spawnsection", CIP_SPAWNSECTION, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"sectionalist", CIP_SECTIONALIST, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"mininterval", CIP_MININTERVAL, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"maxinterval", CIP_MAXINTERVAL, JSPROP_ENUMANDPERM, nullptr, nullptr},
-
+    
     // The Following vars are specific to cMultiObj objects
     {"lockdowns", CIP_LOCKDDOWNS, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"maxLockdowns", CIP_MAXLOCKDOWNS, JSPROP_ENUMANDPERM, nullptr, nullptr},
@@ -681,7 +681,7 @@ inline JSPropertySpec caccountproperties_t[] = {
     {"character7", CACCOUNT_CHARACTER7, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"currentChar", CACCOUNT_CURRENTCHAR, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"lastIP", CACCOUNT_LASTIP, JSPROP_ENUMANDPERM, nullptr, nullptr},
-
+    
     // Flags
     {"isBanned", CACCOUNT_BANNED, JSPROP_ENUMANDPERM, nullptr, nullptr},
     {"isSuspended", CACCOUNT_SUSPENDED, JSPROP_ENUMANDPERM, nullptr, nullptr},

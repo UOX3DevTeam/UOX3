@@ -28,18 +28,18 @@ class TileInfo {
     auto ProcessTerrain(std::istream &input) -> void;
     auto ProcessArt(std::istream &input) -> void;
     bool isHsFormat;
-
-  public:
+    
+public:
     TileInfo(const std::string &filename = "");
     auto LoadTiles(const std::filesystem::path &filename) -> bool;
     auto TerrainInfo(std::uint16_t tileId) const -> const CLand &;
     auto TerrainInfo(std::uint16_t tileId) -> CLand &;
     auto ArtInfo(std::uint16_t tileId) -> CTile &;
     auto ArtInfo(std::uint16_t tileId) const -> const CTile &;
-
+    
     auto SizeTerrain() const -> size_t;
     auto SizeArt() const -> size_t;
-
+    
     auto CollectionTerrain() const -> const std::vector<CLand> &;
     auto CollectionTerrain() -> std::vector<CLand> &;
     auto CollectionArt() const -> const std::vector<CTile> &;
@@ -52,8 +52,8 @@ class TileInfo {
 // project files, we will use the existing files to include them
 class TerrainBlock {
     std::array<std::array<Tile_st, 8>, 8> _tiles;
-
-  public:
+    
+public:
     TerrainBlock(std::uint8_t *data = nullptr, const TileInfo *info = nullptr);
     auto LoadBlock(std::uint8_t *data, const TileInfo *info = nullptr) -> void;
     auto TerrainTileAt(int x, int y) -> Tile_st &;
@@ -63,8 +63,8 @@ class TerrainBlock {
 //=========================================================
 class ArtBlock {
     std::array<std::array<std::vector<Tile_st>, 8>, 8> _tiles;
-
-  public:
+    
+public:
     ArtBlock(int length = 0, std::uint8_t *data = nullptr, const TileInfo *info = nullptr);
     auto LoadArtBlock(int length, std::uint8_t *data, const TileInfo *info = nullptr) -> void;
     auto LoadArtBlock(int length, std::istream &input, const TileInfo *info = nullptr) -> void;
@@ -76,7 +76,7 @@ class ArtBlock {
 class UltimaMap : public UopFile {
     std::vector<TerrainBlock> _terrain;
     std::vector<ArtBlock> _art;
-
+    
     const TileInfo *tileInfo;
     static constexpr int _totalMaps = 6;
     static constexpr std::array<std::pair<int, int>, _totalMaps> _mapSizes{
@@ -88,12 +88,12 @@ class UltimaMap : public UopFile {
     int _diffCount;
     int _diffTerrain;
     auto virtual ProcessEntry(std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data)
-        -> bool final;
+    -> bool final;
     auto CalcBlock(int x, int y) const -> int;
     auto CalcXYOffset(int block) const -> std::pair<int, int>;
     auto LoadTerrainBlock(int blockNum, std::uint8_t *data) -> void;
-
-  public:
+    
+public:
     UltimaMap();
     UltimaMap(int mapNum, int width = 0, int height = 0, const TileInfo *info = nullptr);
     auto Width() const -> int;
@@ -108,10 +108,10 @@ class UltimaMap : public UopFile {
     auto ApplyDiff(const std::string &difflPath, const std::string &diffiPath,
                    const std::string &diffPath) -> int;
     auto ApplyTerrainDiff(const std::string &difflPath, const std::string &diffPath) -> int;
-
+    
     auto BlockAndIndexFor(int x, int y) const -> std::tuple<int, int, int>;
     auto Uop() const -> bool { return isUop; }
-
+    
     auto TerrainAt(int x, int y) const -> const Tile_st &;
     auto TerrainAt(int x, int y) -> Tile_st &;
     auto ArtAt(int x, int y) const -> const std::vector<Tile_st> &;
@@ -138,29 +138,29 @@ struct MapDfnData_st {
 // until we can replace
 //==========================================================================================
 class CMulHandler {
-  private:
+private:
     // uo eq5q
     TileInfo tileInfo;
     MultiCollection multiData;
     std::unordered_map<int, UltimaMap> uoWorlds;
-
+    
     auto LoadMapsDFN(const std::filesystem::path &uoDir) -> std::map<int, MapDfnData_st>;
     auto LoadDFNOverrides() -> void;
     auto LoadTileData(const std::filesystem::path &uoDir) -> void;
     auto LoadMultis(const std::filesystem::path &uoDir) -> void;
     auto LoadMapAndStatics(const std::map<int, MapDfnData_st> &info) -> void;
-
-  public:
+    
+public:
     CMulHandler() = default;
     auto load() -> void;
     auto ArtAt(std::int16_t x, std::int16_t y, std::uint8_t world) -> std::vector<Tile_st> &;
     auto ArtAt(std::int16_t x, std::int16_t y, std::uint8_t world) const-> const std::vector<Tile_st> &;
     auto SizeOfMap(std::uint8_t worldNumber) const -> std::pair<int, int>;
     auto DiffCountForMap(std::uint8_t worldNumber) const -> std::pair<int, int>;
-
+    
     auto MultiHeight(CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ, std::int8_t maxZ,bool checkHeight = false) -> std::int8_t;
     auto MultiTile(CItem *i, std::int16_t x, std::int16_t y, std::int8_t oldZ,bool checkVisible = true) -> std::uint16_t;
-
+    
     auto DoesStaticBlock(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,bool checkWater = false) -> bool;
     auto DoesDynamicBlock(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater, bool waterWalk,bool checkOnlyMultis, bool checkOnlyNonMultis) -> bool;
     auto DoesCharacterBlock(std::uint16_t x, std::uint16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool;
@@ -169,7 +169,7 @@ class CMulHandler {
     auto CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,tileflags_t toCheck, std::uint16_t &foundTileId, bool checkSpawnSurface = false)-> bool;
     auto CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, tileflags_t toCheck, std::uint16_t &foundTileId) -> bool;
     auto CheckTileFlag(std::uint16_t itemId, tileflags_t flagToCheck) -> bool;
-
+    
     // height functions
     auto StaticTop(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::int8_t maxZ) -> std::int8_t;
     auto DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, std::int8_t maxZ) -> std::int8_t;
@@ -188,7 +188,7 @@ class CMulHandler {
     // look at tile functions
     auto MultiArea(CMultiObj *i, std::int16_t &x1, std::int16_t &y1, std::int16_t &x2, std::int16_t &y2) -> void;
     auto MultiExists(std::uint16_t multiNum) const -> bool;
-
+    
     auto SeekMulti(std::uint16_t multiNum) const -> const CollectionItem_st &;
     auto IsValidTile(std::uint16_t tileNum) const -> bool;
     auto SeekTile(std::uint16_t tileNum) -> CTile &;
@@ -197,7 +197,7 @@ class CMulHandler {
     auto SeekLand(std::uint16_t landNum) const -> const CLand &;
     auto SeekMap(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) -> Tile_st &;
     auto SeekMap(std::int16_t x, std::int16_t y, std::uint8_t worldNumber) const -> const Tile_st &;
-
+    
     // misc functions
     auto ValidSpawnLocation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater = true) -> bool;
     auto ValidMultiLocation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,std::uint16_t instanceId, bool checkWater, bool checkOnlyOtherMultis, bool checkOnlyNonMultis, bool checkForRoads) -> std::uint8_t;

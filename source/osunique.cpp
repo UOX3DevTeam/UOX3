@@ -61,7 +61,7 @@ auto mctime(char *buffer, [[maybe_unused]] size_t size, const time_t *timer) -> 
     return ctime_r(timer, buffer);
 }
 auto mstrerror([[maybe_unused]] char *buffer, [[maybe_unused]] size_t size, int errornum)
-    -> char * {
+-> char * {
     return strerror(errornum);
 }
 auto mfopen(FILE **stream, const char *filename, const char *mode) -> FILE * {

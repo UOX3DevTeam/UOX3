@@ -26,24 +26,14 @@ public:
     // Visual Effects
     void DeathAction(CChar *s, CItem *x, std::uint8_t fallDirection);
     CItem *SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceId, std::uint16_t bloodColour, bloodtypes_t bloodType);
-    void PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,
-                             bool explode = false);
-    void PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop,
-                             bool explode);
-    void PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::uint16_t effect, std::uint8_t speed,
-                             std::uint8_t loop, bool explode, std::uint32_t dwHue = 0, std::uint32_t dwRenderMode = 0,
-                             bool playLocalMoveFX = false);
-    void PlayMovingAnimation(std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect,
-                             std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t dwHue = 0,
-                             std::uint32_t dwRenderMode = 0);
-    void PlayMovingAnimation(CBaseObject *source, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed,
-                             std::uint8_t loop, bool explode, std::uint32_t dwHue = 0, std::uint32_t dwRenderMode = 0);
-    void PlayCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint8_t frameDelay = 0,
-                                std::uint8_t frameCount = 7, bool playBackwards = false);
-    void PlayNewCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint16_t subActionId = 0,
-                                   std::uint8_t subSubActionId = 0);
-    void PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast,
-                                   bool areaCastAnim);
+    void PlayStaticAnimation(CBaseObject *target, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode = false);
+    void PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode);
+    void PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t dwHue = 0, std::uint32_t dwRenderMode = 0, bool playLocalMoveFX = false);
+    void PlayMovingAnimation(std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t dwHue = 0, std::uint32_t dwRenderMode = 0);
+    void PlayMovingAnimation(CBaseObject *source, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t dwHue = 0, std::uint32_t dwRenderMode = 0);
+    void PlayCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint8_t frameDelay = 0, std::uint8_t frameCount = 7, bool playBackwards = false);
+    void PlayNewCharacterAnimation(CChar *mChar, std::uint16_t actionId, std::uint16_t subActionId = 0, std::uint8_t subSubActionId = 0);
+    void PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, bool monsterCast, bool areaCastAnim);
     void Bolteffect(CChar *player);
     
     // Sound Effects

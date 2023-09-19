@@ -83,8 +83,7 @@ bool Party::AddMember(CChar *i) {
                             CPUpdateStat toSendStam2((*partyMember), 2, true);
                             newSock->Send(&toSendStam2);
                             
-                            s->SysMessage(9076, i->GetNameRequest(partyMember, NRS_SPEECH)
-                                          .c_str()); // %s joined the party.
+                            s->SysMessage(9076, i->GetNameRequest(partyMember, NRS_SPEECH).c_str()); // %s joined the party.
                         }
                     }
                 }
@@ -135,8 +134,7 @@ bool Party::RemoveMember(CChar *i) {
                 CPartyEntry *toFind = members[j];
                 toSend.AddMember(toFind->Member());
                 if (IsOnline(*toFind->Member()) && !toFind->IsLeader()) {
-                    toFind->Member()->GetSocket()->SysMessage(
-                                                              9075); // A player has been removed from your party.
+                    toFind->Member()->GetSocket()->SysMessage(9075); // A player has been removed from your party.
                 }
             }
             

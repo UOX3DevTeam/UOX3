@@ -47,8 +47,7 @@ private:
     void HandleNPCSpellAttack(CChar *mChar, CChar *ourTarg, std::uint16_t playerDistance);
     
     CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, weathertype_t resistType);
-    CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false,
-                       weathertype_t resistType = NONE);
+    CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false, weathertype_t resistType = NONE);
     
 public:
     bool StartAttack(CChar *mChar, CChar *ourTarg);
@@ -57,8 +56,7 @@ public:
     R32 GetCombatTimeout(CChar *mChar);
     void PlayerAttack(CSocket *s);
     void AttackTarget(CChar *mChar, CChar *ourTarg);
-    void PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guarded,
-                        CChar *petGuard = nullptr);
+    void PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard = nullptr);
     
     void CombatLoop(CSocket *mSock, CChar &mChar);
     void Kill(CChar *mChar, CChar *ourTarg);
@@ -76,16 +74,11 @@ public:
     CItem *GetShield(CChar *mChar);
     CItem *GetWeapon(CChar *mChar);
     
-    std::int16_t ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
-                                    std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
-    std::int16_t ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg,
-                                       std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage,
-                                       bool doArmorDamage);
+    std::int16_t ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
+    std::int16_t ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage, bool doArmorDamage);
     
-    std::int16_t AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc,
-                                  std::uint8_t getFightSkill);
-    std::int16_t AdjustArmorClassDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage,
-                                        std::uint8_t hitLoc);
+    std::int16_t AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc, std::uint8_t getFightSkill);
+    std::int16_t AdjustArmorClassDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc);
     void SpawnGuard(CChar *mChar, CChar *targChar, std::int16_t x, std::int16_t y, std::int8_t z);
     
     // Combat Animations & Sound Effects

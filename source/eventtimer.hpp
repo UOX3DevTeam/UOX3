@@ -7,8 +7,8 @@
 // A few instrumentation macros
 // This estabishs a timer, and state determines if on/off
 #define EVENT_TIMER(varname, state)                                                                \
-    constexpr auto TIMER_##varname = state;                                                        \
-    auto varname = EventTimer();
+constexpr auto TIMER_##varname = state;                                                        \
+auto varname = EventTimer();
 
 #if !defined(EVENT_TIMER_ON)
 #define EVENT_TIMER_ON 1
@@ -28,30 +28,30 @@
 // cant use , in the message) reset tells the timer if it should reset the time count, or continue
 // without resetting
 #define EVENT_TIMER_NOW(varname, msg, Reset)                                                       \
-    if constexpr (TIMER_##varname) {                                                               \
-        varname.Output(#msg, Reset);                                                               \
-    }
+if constexpr (TIMER_##varname) {                                                               \
+varname.Output(#msg, Reset);                                                               \
+}
 
 // This resets the timer
 #define EVENT_TIMER_RESET(varname)                                                                 \
-    if constexpr (TIMER_##varname) {                                                               \
-        varname.Elapsed(true);                                                                     \
-    }
+if constexpr (TIMER_##varname) {                                                               \
+varname.Elapsed(true);                                                                     \
+}
 
 /*
-#define EVENT_TIMER_OFF ( #varnam, #msg) \
-#if defined(TIMER_ON) \
-varname.output("msg"); \
-#endif
-
-*/
+ #define EVENT_TIMER_OFF ( #varnam, #msg) \
+ #if defined(TIMER_ON) \
+ varname.output("msg"); \
+ #endif
+ 
+ */
 
 //=========================================================
 class EventTimer {
-  private:
+private:
     std::chrono::high_resolution_clock::time_point _now;
-
-  public:
+    
+public:
     EventTimer();
     [[maybe_unused]] auto Elapsed(bool reset = true) -> long long;
     auto Output(const std::string &label, bool reset = true) -> void;

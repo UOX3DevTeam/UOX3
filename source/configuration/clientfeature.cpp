@@ -20,7 +20,7 @@ const std::string ClientFeature::name = "CLIENTFEATURES";
 //======================================================================
 ClientFeature::ClientFeature(std::uint32_t value) {
     featureSet = value ;
-
+    
 }
 //======================================================================
 ClientFeature::ClientFeature() {

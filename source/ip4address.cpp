@@ -49,7 +49,7 @@ auto trim(const std::string &value) -> std::string {
 }
 //==================================================================================================
 auto parse(const std::string &value, const std::string &separator = ".")
-    -> std::vector<std::string> {
+-> std::vector<std::string> {
     auto rValue = std::vector<std::string>();
     auto subject = trim(value);
     auto position = subject.find(separator);
@@ -76,7 +76,7 @@ auto strip(const std::string &value, const std::string &identifier = "//") -> st
 }
 //==================================================================================================
 auto split(const std::string &value, const std::string &identifier = "=")
-    -> std::pair<std::string, std::string> {
+-> std::pair<std::string, std::string> {
     auto position = value.find(identifier);
     auto pos1 = trim(value.substr(0, position));
     auto pos2 = trim(value.substr(position + identifier.size()));
@@ -154,21 +154,21 @@ IP4Addr::IP4Addr(const std::string &value) {
     components.fill("*"s);
     auto values = parse(value);
     switch (value.size()) {
-    default:
-    case 4:
-        components[3] = values[3];
-        [[fallthrough]];
-    case 3:
-        components[2] = values[2];
-        [[fallthrough]];
-    case 2:
-        components[1] = values[1];
-        [[fallthrough]];
-    case 1:
-        components[0] = values[0];
-        [[fallthrough]];
-    case 0:
-        break;
+        default:
+        case 4:
+            components[3] = values[3];
+            [[fallthrough]];
+        case 3:
+            components[2] = values[2];
+            [[fallthrough]];
+        case 2:
+            components[1] = values[1];
+            [[fallthrough]];
+        case 1:
+            components[0] = values[0];
+            [[fallthrough]];
+        case 0:
+            break;
     }
 }
 //==================================================================================================
@@ -261,8 +261,8 @@ auto ip4list_t::bestmatch(const IP4Addr &value) const -> std::pair<IP4Addr, int>
         matches.push_back(std::make_pair(addr, comp));
     }
     std::sort(matches.begin(), matches.end(), [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
-                  return lhs.second < rhs.second;
-              });
+        return lhs.second < rhs.second;
+    });
     return *matches.rbegin();
 }
 //==================================================================================================
@@ -277,8 +277,8 @@ auto ip4list_t::bestmatch(std::uint32_t value, bool bigendian) const -> std::pai
         matches.push_back(std::make_pair(addr, comp));
     }
     std::sort(matches.begin(), matches.end(),  [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
-                  return lhs.second < rhs.second;
-              });
+        return lhs.second < rhs.second;
+    });
     return *matches.rbegin();
 }
 //==================================================================================================
@@ -310,35 +310,35 @@ auto ip4list_t::load(const std::string &filename) -> bool {
                 if (!line.empty()) {
                     // look for a section
                     switch (static_cast<int>(state)) {
-                    case static_cast<int>(state_t::section): {
-                        if (line[0] == '[') {
-                            if (line[line.size() - 1] == ']') {
-                                // it is a section!
-                                line = trim(line.substr(1, line.find("]") - 1));
-                                // apparently we dont look at this?
-                                state = state_t::startsection;
+                        case static_cast<int>(state_t::section): {
+                            if (line[0] == '[') {
+                                if (line[line.size() - 1] == ']') {
+                                    // it is a section!
+                                    line = trim(line.substr(1, line.find("]") - 1));
+                                    // apparently we dont look at this?
+                                    state = state_t::startsection;
+                                }
+                            }
+                            break;
+                        }
+                            
+                        case static_cast<int>(state_t::startsection): {
+                            if (line[0] == '{') {
+                                state = state_t::data;
+                            }
+                            break;
+                        }
+                        case static_cast<int>(state_t::data): {
+                            if (line[0] != '}') {
+                                auto [key, value] = split(line, "=");
+                                if ((key == "ip") || (key == "IP") || (key == "Ip") || (key == "iP")) {
+                                    ipaddresses.push_back(IP4Addr(value));
+                                }
+                            }
+                            else {
+                                state = state_t::section;
                             }
                         }
-                        break;
-                    }
-
-                    case static_cast<int>(state_t::startsection): {
-                        if (line[0] == '{') {
-                            state = state_t::data;
-                        }
-                        break;
-                    }
-                    case static_cast<int>(state_t::data): {
-                        if (line[0] != '}') {
-                            auto [key, value] = split(line, "=");
-                            if ((key == "ip") || (key == "IP") || (key == "Ip") || (key == "iP")) {
-                                ipaddresses.push_back(IP4Addr(value));
-                            }
-                        }
-                        else {
-                            state = state_t::section;
-                        }
-                    }
                     }
                 }
             }
@@ -358,47 +358,47 @@ auto ip4list_t::ips() -> std::vector<IP4Addr> & { return ipaddresses; }
 //==================================================================================================
 auto ip4list_t::available() -> ip4list_t {
     /* Note: could also use malloc() and free() */
-
+    
     ip4list_t rValue;
     std::string device;
     IP4Addr device_address;
-
+    
     /* Declare and initialize variables */
     DWORD dwSize = 0;
     DWORD dwRetVal = 0;
-
+    
     unsigned int i = 0;
-
+    
     // Set the flags to pass to GetAdaptersAddresses
     ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
-
+    
     // default to unspecified address family (both)
     ULONG family = AF_INET;
-
+    
     LPVOID lpMsgBuf = NULL;
-
+    
     PIP_ADAPTER_ADDRESSES pAddresses = NULL;
     ULONG outBufLen = 0;
     ULONG Iterations = 0;
-
+    
     PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
     PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
     PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
     PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
     IP_ADAPTER_DNS_SERVER_ADDRESS *pDnServer = NULL;
     IP_ADAPTER_PREFIX *pPrefix = NULL;
-
+    
     // Allocate a 15 KB buffer to start with.
     outBufLen = WORKING_BUFFER_SIZE;
-
+    
     do {
         pAddresses = (IP_ADAPTER_ADDRESSES *)MALLOC(outBufLen);
         if (pAddresses == nullptr) {
             throw std::runtime_error("Memory allocation files for IP_ADAPTER_ADDRESSES");
         }
-
+        
         dwRetVal = GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
-
+        
         if (dwRetVal == ERROR_BUFFER_OVERFLOW) {
             FREE(pAddresses);
             pAddresses = NULL;
@@ -406,11 +406,11 @@ auto ip4list_t::available() -> ip4list_t {
         else {
             break;
         }
-
+        
         Iterations++;
-
+        
     } while ((dwRetVal == ERROR_BUFFER_OVERFLOW) && (Iterations < MAX_TRIES));
-
+    
     if (dwRetVal == NO_ERROR) {
         // If successful, output some information from the data we received
         pCurrAddresses = pAddresses;
@@ -420,12 +420,12 @@ auto ip4list_t::available() -> ip4list_t {
                 if (pUnicast->Address.lpSockaddr->sa_family == AF_INET) {
                     for (i = 0; pUnicast != nullptr; i++) {
                         const int friendlen = 200;
-
+                        
                         char friendly[friendlen];
                         std::memset(friendly, 0, friendlen);
                         sockaddr_in *sa_in = (sockaddr_in *)pUnicast->Address.lpSockaddr;
                         device_address = IP4Addr(sa_in->sin_addr.S_un.S_addr);
-
+                        
                         if (device_address.type() != IP4Addr::ip4type_t::apipa) {
                             // ourdevice.address = inet_ntop( AF_INET, &( sa_in->sin_addr ), buff,
                             // bufflen );
@@ -447,7 +447,7 @@ auto ip4list_t::available() -> ip4list_t {
                     }
                 }
             }
-
+            
             pCurrAddresses = pCurrAddresses->Next;
         }
     }
@@ -456,11 +456,11 @@ auto ip4list_t::available() -> ip4list_t {
             if (pAddresses) {
                 FREE(pAddresses);
             }
-
+            
             throw std::runtime_error("Unable to get address info");
         }
     }
-
+    
     if (pAddresses) {
         FREE(pAddresses);
     }
@@ -472,9 +472,9 @@ auto ip4list_t::available() -> ip4list_t {
     struct ifaddrs *ifAddrStruct = NULL;
     struct ifaddrs *ifa = NULL;
     IP4Addr device_address;
-
+    
     getifaddrs(&ifAddrStruct);
-
+    
     for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
         if (!ifa->ifa_addr) {
             continue;

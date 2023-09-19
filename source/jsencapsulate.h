@@ -15,7 +15,7 @@ struct JSObject;
 #include "typedefs.h"
 
 class JSEncapsulate {
-  public:
+public:
     enum type_t {
         JSOT_INT = 0,
         JSOT_DOUBLE,
@@ -26,7 +26,7 @@ class JSEncapsulate {
         JSOT_VOID,
         JSOT_COUNT
     };
-
+    
     JSEncapsulate(JSContext *jsCX, jsval *jsVP);
     JSEncapsulate(JSContext *jsCX, JSObject *jsVP);
     JSEncapsulate();
@@ -37,27 +37,27 @@ class JSEncapsulate {
     R32 toFloat();
     std::string toString();
     void *toObject();
-
+    
     std::string ClassName();
-
-  private:
+    
+private:
     void InternalReset();
     void Init();
     bool beenParsed[JSOT_COUNT + 1];
     JSEncapsulate::type_t nativeType;
-
+    
     std::int32_t intVal;
     R32 floatVal;
     bool boolVal;
     std::string stringVal;
     void *objectVal;
-
+    
     JSContext *cx;
     jsval *vp;
     JSObject *obj;
-
+    
     std::string className;
     bool classCached;
-
+    
     void Parse(JSEncapsulate::type_t typeConvert);
 };

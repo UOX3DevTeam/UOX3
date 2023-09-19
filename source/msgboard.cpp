@@ -230,10 +230,7 @@ void MsgBoardList(CSocket *mSock) {
                 }
                 totalSize += msgBoardPost.size;
                 file.seekg(totalSize, std::ios::beg);
-                if (totalSize > 3000 ||
-                    msgBoardPost.serial ==
-                    0) // HACCKKKK!!!1one. Without this in place, it will loop for ever :(
-                {
+                if (totalSize > 3000 || msgBoardPost.serial == 0){ // HACCKKKK!!!1one. Without this in place, it will loop for ever :(
                     file.close();
                 }
             }
@@ -327,8 +324,7 @@ void MsgBoardWritePost(std::ostream &mFile, const MsgBoardPost_st &msgBoardPost)
     // Write number of lines in post as next byte, and
     // then loop through each line
     mFile.write((const char *)&msgBoardPost.lines, 1);
-    std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(),
-                  [&mFile](const std::string &entry) {
+    std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(), [&mFile](const std::string &entry) {
         // Write length of line as next byte, and
         // then write the line as next X bytes
         auto lineSize = static_cast<std::uint8_t>(entry.size());
@@ -453,8 +449,7 @@ void MsgBoardPost(CSocket *tSock) {
     strncopy(msgBoardPost.poster, 128, tChar->GetName().c_str(), msgBoardPost.posterLen);
     
     msgBoardPost.subjectLen = internalBuffer[++offset];
-    strncopy(msgBoardPost.subject, 256, (const char *)&internalBuffer[++offset],
-             msgBoardPost.subjectLen);
+    strncopy(msgBoardPost.subject, 256, (const char *)&internalBuffer[++offset],  msgBoardPost.subjectLen);
     
     offset += msgBoardPost.subjectLen;
     
@@ -462,8 +457,7 @@ void MsgBoardPost(CSocket *tSock) {
     msgBoardPost.lines = internalBuffer[offset];
     std::vector<std::string>::iterator lIter;
     std::uint8_t j = 0;
-    for (lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end();
-         ++lIter) {
+    for (lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter) {
         (*lIter).resize(internalBuffer[++offset]);
         for (i = 0; i < (*lIter).size(); ++i) {
             (*lIter)[i] = internalBuffer[++offset];
@@ -501,8 +495,7 @@ void MsgBoardPost(CSocket *tSock) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads in a post from its specified file.
 // o------------------------------------------------------------------------------------------------o
-bool MsgBoardReadPost(std::istream &file, MsgBoardPost_st &msgBoardPost,
-                      serial_t msgSerial = INVALIDSERIAL) {
+bool MsgBoardReadPost(std::istream &file, MsgBoardPost_st &msgBoardPost, serial_t msgSerial = INVALIDSERIAL) {
     char buffer[4];
     
     // Read two first bytes of post, which contains total size
@@ -848,8 +841,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
             sect = "ESCORT "s + Escort->GrabData();
             EscortData = FileLookup->FindEntry(sect, msgboard_def);
             if (EscortData == nullptr) {
-                Console::shared().error(
-                                        util::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()));
+                Console::shared().error(util::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()));
                 return false;
             }
             for (const auto &sec : EscortData->collection()) {
@@ -877,8 +869,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
                 
                 position = fullLine.find("%r");
                 while (position != std::string::npos) {
-                    fullLine.replace(position, 2,
-                                     cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName());
+                    fullLine.replace(position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName());
                     position = fullLine.find("%r");
                 }
                 
@@ -901,8 +892,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
             msgBoardPost.toggle = QT_ITEMQUEST;
             break;
         default:
-            Console::shared().error(
-                                    util::format("MsgBoardPostQuest() Invalid questType %d", questType));
+            Console::shared().error(util::format("MsgBoardPostQuest() Invalid questType %d", questType));
             return false;
     }
     
@@ -952,8 +942,7 @@ void MsgBoardQuestEscortCreate(CChar *mNPC) {
     }
     
     // Choose an escort region at random based on non-empty collection of candidates
-    mNPC->SetQuestDestRegion(
-                             regionCandidates[RandomNum(static_cast<size_t>(0), (regionCandidates.size() - 1))]);
+    mNPC->SetQuestDestRegion(regionCandidates[RandomNum(static_cast<size_t>(0), (regionCandidates.size() - 1))]);
     
     // Set quest type to escort
     mNPC->SetQuestType(QT_ESCORTQUEST);
@@ -989,15 +978,13 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
     
     // Calculate payment for services rendered, partly based on escort's fame and partly based on a
     // percentage (25%) of the amount of gold they're carrying
-    std::uint16_t questReward = ((mNPC->GetFame() > 0 ? ((mNPC->GetFame() / 100) * 50) : 0) +
-                                 std::round(GetItemAmount(mNPC, 0x0EED) * 0.25));
+    std::uint16_t questReward = ((mNPC->GetFame() > 0 ? ((mNPC->GetFame() / 100) * 50) : 0) + std::round(GetItemAmount(mNPC, 0x0EED) * 0.25));
     
     // If they have no money, well, oops!
     if (questReward == 0) {
         // Thank you %s for thy service. We have made it safely to %s. Alas, I seem to be a little
         // short on gold. I have nothing to pay you with.
-        mNPC->TextMessage(mSock, 738, TALK, 0, mChar->GetName().c_str(),
-                          destReg->GetName().c_str());
+        mNPC->TextMessage(mSock, 738, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str());
     }
     else // Otherwise pay the poor sod for his time
     {
@@ -1005,14 +992,12 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
         Effects->GoldSound(mSock, questReward);
         
         // Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.
-        mNPC->TextMessage(mSock, 739, TALK, 0, mChar->GetName().c_str(),
-                          destReg->GetName().c_str());
+        mNPC->TextMessage(mSock, 739, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str());
     }
     
     // Inform the PC of what he has just been given as payment
     std::string mNPCTitle = GetNpcDictTitle(mNPC, mSock);
-    mSock->SysMessage(740, questReward, mNPC->GetName().c_str(),
-                      mNPCTitle.c_str()); // You have just received %d gold coins from %s %s.
+    mSock->SysMessage(740, questReward, mNPC->GetName().c_str(), mNPCTitle.c_str()); // You have just received %d gold coins from %s %s.
     
     // Take the NPC out of quest mode
     mNPC->SetNpcWander(WT_FREE); // Wander freely
@@ -1045,7 +1030,8 @@ void MsgBoardQuestEscortRemovePost(CChar *mNPC) {
     std::size_t fileSize = 0;
     try {
         fileSize = std::filesystem::file_size(fileName);
-    } catch (...) {
+    }
+    catch (...) {
         fileSize = 0;
     }
     

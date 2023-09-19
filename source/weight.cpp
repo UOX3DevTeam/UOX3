@@ -112,8 +112,7 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
         if (!ValidateObject(i))
             continue;
         
-        if (i->IsContType()) // Item is a container
-        {
+        if (i->IsContType()) { // Item is a container
             /*			// Code grabs weight of container based on tile-weight to get the "real"
              weight of the container
              // This only works if the weight gotten from the tiledata is correct, however. If it's
@@ -123,8 +122,7 @@ std::int32_t CWeight::CalcWeight(CItem *pack) {
             
             contWeight =
             i->GetBaseWeight(); // Find the base container weight, stored when item was created
-            if (contWeight == 0)    // If they have no weight grab the tiledata weight for the item
-            {
+            if (contWeight == 0) {   // If they have no weight grab the tiledata weight for the item
                 CTile &tile = Map->SeekTile(i->GetId());
                 contWeight =
                 static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
@@ -166,14 +164,12 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
             if (i->GetLayer() == IL_PACKITEM) {
                 contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item
                 // was created
-                if (contWeight == 0) // If they have no weight grab the tiledata weight for the item
-                {
+                if (contWeight == 0) { // If they have no weight grab the tiledata weight for the item
                     CTile &tile = Map->SeekTile(i->GetId());
                     contWeight =
                     static_cast<std::int32_t>(tile.Weight() * 100); // Add the weight of the container
                 }
-                contWeight +=
-                CalcWeight(i); // Find and add the weight of the items in the container
+                contWeight += CalcWeight(i); // Find and add the weight of the items in the container
                 i->SetWeight(contWeight, false); // Also update the weight property of the container
                 totalWeight += contWeight;
             }
@@ -198,8 +194,7 @@ std::int32_t CWeight::CalcCharWeight(CChar *mChar) {
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
-    if (itemWeight == 0) // If they have no weight find the weight of the tile
-    {
+    if (itemWeight == 0) { // If they have no weight find the weight of the tile
         CTile &tile = Map->SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
@@ -230,8 +225,7 @@ bool CWeight::CalcAddWeight(CItem *item, std::int32_t &totalWeight) {
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
     std::int32_t itemWeight = item->GetWeight();
-    if (itemWeight == 0) // If they have no weight find the weight of the tile
-    {
+    if (itemWeight == 0) { // If they have no weight find the weight of the tile
         CTile &tile = Map->SeekTile(item->GetId());
         itemWeight = static_cast<std::int32_t>(tile.Weight() * 100);
     }
@@ -245,8 +239,7 @@ bool CWeight::CalcSubtractWeight(CItem *item, std::int32_t &totalWeight) {
         totalWeight -= itemWeight;
     }
     
-    if (totalWeight < 0 ||
-        totalWeight > MAX_WEIGHT) // Don't let them go under 0 or over the weight limit
+    if (totalWeight < 0 || totalWeight > MAX_WEIGHT) // Don't let them go under 0 or over the weight limit
         return false;
     
     return true;
@@ -440,8 +433,7 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
     if (!ValidateObject(pack))
         return true;
     
-    if (pack->GetContSerial() <
-        BASEITEMSERIAL) // If the pack's container is a character, (it's his root pack), we don't
+    if (pack->GetContSerial() < BASEITEMSERIAL) // If the pack's container is a character, (it's his root pack), we don't
         // have a container weight limit
         return CheckCharWeight(ourChar, static_cast<CChar *>(pack->GetCont()), item);
     
@@ -452,14 +444,12 @@ bool CWeight::CheckPackWeight(CChar *ourChar, CItem *pack, CItem *item) {
         itemWeight *= item->GetAmount();
     }
     
-    if ((itemWeight + packWeight) <= packWeightMax) // <= MAX_PACKWEIGHT )
-    {
+    if ((itemWeight + packWeight) <= packWeightMax) { // <= MAX_PACKWEIGHT )
         // Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
         if (pack->GetCont() == nullptr) // No container above pack
             return true;
         
-        if (pack->GetContSerial() >=
-            BASEITEMSERIAL) // pack is in another pack, lets ensure it won't overload that pack
+        if (pack->GetContSerial() >= BASEITEMSERIAL) // pack is in another pack, lets ensure it won't overload that pack
             return CheckPackWeight(ourChar, static_cast<CItem *>(pack->GetCont()), item);
     }
     return false;
@@ -488,7 +478,7 @@ bool CWeight::CheckCharWeight(CChar *ourChar, CChar *mChar, CItem *item, std::ui
     const std::int32_t charWeight = mChar->GetWeight();
     std::int32_t itemWeight = 0;
     if (ourChar != mChar) { // Item weight has already been added to the character if we picked it up
-         itemWeight = item->GetWeight();
+        itemWeight = item->GetWeight();
     }
     
     if (amount > 0) {

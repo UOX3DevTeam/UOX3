@@ -2240,7 +2240,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 break;
             }
             case CCP_ORIGIN:
-               
+                
                 tString = JS_NewStringCopyZ(cx, ServerConfig::shared().ruleSets.normalizedEra(gPriv->GetOrigin()).c_str());
                 *vp = STRING_TO_JSVAL(tString);
                 break;

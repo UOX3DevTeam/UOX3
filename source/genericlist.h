@@ -39,35 +39,35 @@
 //  be reimpemented without storing iterators outside the working scope
 // o------------------------------------------------------------------------------------------------o
 template <typename T> class GenericList {
-
-  private:
+    
+private:
     using GENERICLIST = std::list<T>;
     using GENERICLIST_ITERATOR = typename std::list<T>::iterator;
     using GENERICLIST_CITERATOR = typename std::list<T>::const_iterator;
-
+    
     std::list<T> objData;
     typename std::list<T>::iterator objIterator;
     std::vector<GENERICLIST_ITERATOR> objIteratorBackup;
-
+    
     auto FindEntry(T toFind) -> GENERICLIST_ITERATOR {
         return std::find(objData.begin(), objData.end(), toFind);
     }
-
+    
     auto Begin() -> bool { return (objIterator == objData.begin()); }
-
-  public:
+    
+public:
     GenericList() {
         objData.resize(0);
         objIteratorBackup.resize(0);
         objIterator = objData.end();
     }
-
+    
     ~GenericList() = default;
-
+    
     auto collection() const -> const std::list<T> & { return objData; }
-
+    
     auto collection() -> std::list<T> & { return objData; }
-
+    
     auto GetCurrent() -> T {
         T rValue = nullptr;
         if (objIterator != objData.end()) {
@@ -75,12 +75,12 @@ template <typename T> class GenericList {
         }
         return rValue;
     }
-
+    
     auto First() -> T {
         objIterator = objData.end();
         return Next();
     }
-
+    
     auto Next() -> T {
         T rValue = nullptr;
         if (!Begin()) {
@@ -92,55 +92,55 @@ template <typename T> class GenericList {
         }
         return rValue;
     }
-
+    
     auto Finished() -> bool { return (objIterator == objData.end()); }
-
+    
     auto Num() const -> size_t { return objData.size(); }
-
+    
     auto Clear() -> void { objData.clear(); }
-
+    
     auto Add(T toAdd, bool checkForExisting = true) -> bool {
         if (checkForExisting && FindEntry(toAdd) != objData.end()) {
             return false;
         }
-
+        
         const bool updateCounter = (objIterator == objData.end());
         objData.push_back(toAdd);
         if (updateCounter) {
             objIterator = objData.end();
         }
-
+        
         return true;
     }
-
+    
     auto AddInFront(T toAdd, bool checkForExisting = true) -> bool {
         if (checkForExisting && FindEntry(toAdd) != objData.end()) {
             return false;
         }
-
+        
         const bool updateCounter = (objIterator == objData.end());
         objData.push_front(toAdd);
         if (updateCounter) {
             objIterator = objData.end();
         }
-
+        
         return true;
     }
-
+    
     auto Remove(T toRemove, bool handleAlloc = false) -> bool {
         GENERICLIST_ITERATOR rIter = FindEntry(toRemove);
         if (rIter != objData.end()) {
             if (objIterator != objData.end() && rIter == objIterator) {
                 ++objIterator;
             }
-
+            
             for (size_t q = 0; q < objIteratorBackup.size(); ++q) {
                 if (objIteratorBackup[q] != objData.end() && rIter == objIteratorBackup[q]) {
                     ++objIteratorBackup[q];
                 }
             }
             objData.erase(rIter);
-
+            
             if (handleAlloc) {
                 delete toRemove;
             }
@@ -148,7 +148,7 @@ template <typename T> class GenericList {
         }
         return false;
     }
-
+    
     auto Pop() -> void {
         if (!objIteratorBackup.empty()) {
             objIterator = objIteratorBackup.back();
@@ -158,13 +158,13 @@ template <typename T> class GenericList {
             objIterator = objData.end();
         }
     }
-
+    
     auto Push() -> void { objIteratorBackup.push_back(objIterator); }
-
+    
     auto Reverse() -> void { objData.reverse(); }
-
+    
     auto Sort() -> void { objData.sort(); }
-
+    
     auto Sort(bool Comparer(T one, T two)) -> void { objData.sort(Comparer); }
 };
 
@@ -172,18 +172,18 @@ template <typename T> class GenericList {
 //  RegionSerialList
 // o------------------------------------------------------------------------------------------------o
 class RegionSerialList {
-  private:
+private:
     std::unordered_set<serial_t> objSerials;
-
-  public:
+    
+public:
     RegionSerialList() = default;
     ~RegionSerialList() = default;
-
+    
     auto Add(serial_t toAdd) -> bool {
         auto insertResult = objSerials.insert(toAdd);
         return insertResult.second;
     }
-
+    
     auto Remove(serial_t toRemove) -> size_t { return objSerials.erase(toRemove); }
 };
 

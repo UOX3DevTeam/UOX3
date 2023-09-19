@@ -16,15 +16,15 @@
 #define NOTE(x) message(x)
 #define FILE_LINE message(__FILE__LINE__)
 #define TODO(x)                                                                                    \
-    message(__FILE__LINE__ "\n"                                                                    \
-                           "+------------------------------------------------\n"                   \
-                           "|  TODO :   " #x "\n"                                                  \
-                           "+-------------------------------------------------\n")
+message(__FILE__LINE__ "\n"                                                                    \
+"+------------------------------------------------\n"                   \
+"|  TODO :   " #x "\n"                                                  \
+"+-------------------------------------------------\n")
 #define FIXME(x)                                                                                   \
-    message(__FILE__LINE__ "\n"                                                                    \
-                           "+------------------------------------------------\n"                   \
-                           "|  FIXME :  " #x "\n"                                                  \
-                           "+-------------------------------------------------\n")
+message(__FILE__LINE__ "\n"                                                                    \
+"+------------------------------------------------\n"                   \
+"|  FIXME :  " #x "\n"                                                  \
+"+-------------------------------------------------\n")
 #define todo(x) message(__FILE__LINE__ " TODO :   " #x "\n")
 #define fixme(x) message(__FILE__LINE__ " FIXME:   " #x "\n")
 #define note(x) message(__FILE__LINE__ " NOTE :   " #x "\n")

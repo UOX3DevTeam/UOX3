@@ -38,25 +38,25 @@ void FileArchive() {
     char tbuffer[100];
     auto timenow = util::simplify(asciitime(tbuffer, 100, *lcltime(mytime, ttemp)));
     timenow = std::regex_replace(timenow, std::regex("[\\s:]"), std::string("-"));
-
+    
     auto backupRoot = ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).string()/std::filesystem::path(timenow);
-   
+    
     auto makeResult = std::filesystem::create_directory(std::filesystem::path(backupRoot));
-
+    
     if (makeResult) {
         Console::shared()<< "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble."<< myendl;
-
+        
         BackupFile(std::filesystem::path("house.wsc"), backupRoot);
-
+        
         // effect backups
         BackupFile(std::filesystem::path("effects.wsc"), backupRoot);
-
+        
         const std::int16_t AreaX = UpperX / 8; // we're storing 8x8 grid arrays together
         const std::int16_t AreaY = UpperY / 8;
-
-
-        for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1){ // move left->right
         
+        
+        for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1){ // move left->right
+            
             for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) {// move up->down
                 auto filename1 = std::filesystem::path(util::format("%i.%i.wsc", counter1, counter2));
                 BackupFile(filename1, backupRoot);

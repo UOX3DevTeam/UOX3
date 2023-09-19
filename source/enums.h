@@ -279,13 +279,13 @@ enum errorcodes_t {
     FATAL_UOX3_ALLOC_EFFECTS,
     FATAL_UOX3_ALLOC_HTMLTEMPLATES,
     FATAL_UOX3_ALLOC_JAILSYS,
-
+    
     FATAL_UOX3_CHARS = 150,
-
+    
     FATAL_UOX3_ITEMS = 200,
-
+    
     FATAL_UOX3_ORELIST = 250,
-
+    
     FATAL_UOX3_MAP_NOT_FOUND = 350,
     FATAL_UOX3_STATICS_INDEX_NOT_FOUND,
     FATAL_UOX3_STATICS_NOT_FOUND,
@@ -293,7 +293,7 @@ enum errorcodes_t {
     FATAL_UOX3_TILEDATA_NOT_FOUND,
     FATAL_UOX3_MULTI_DATA_NOT_FOUND,
     FATAL_UOX3_MULTI_INDEX_NOT_FOUND,
-
+    
     FATAL_UOX3_DIR_NOT_FOUND = 400,
     FATAL_UOX3_BAD_DEF_DICT
 };
@@ -358,9 +358,9 @@ enum skills_t {
     IMBUING,
     MYSTICISM,
     THROWING,
-
+    
     ALLSKILLS, // #skills+1
-
+    
     STRENGTH,  // #skills+2
     DEXTERITY, // #skills+3
     INTELLECT, // #skills+4
@@ -429,7 +429,7 @@ enum distlocs_t {
     DIST_INRANGE = 7,
     DIST_CMDRANGE = 12,
     DIST_SAMESCREEN =
-        24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
+    24, // 24 is max in clients (enhanced/classic) v7.0.55.27 and beyond, and in ClassicUO
     DIST_BUILDRANGE = 31,
     DIST_COMBATRESETRANGE = 35,
     DIST_OUTOFRANGE = 0xFFFF
@@ -704,10 +704,9 @@ enum RaceRelate { RACE_ENEMY = -1, RACE_NEUTRAL = 0, RACE_ALLY = 1 };
 enum BodyType { BT_HUMAN = 0, BT_ELF, BT_GARGOYLE, BT_OTHER, BT_COUNT };
 
 
-enum actions_t // Pre-v7.0.0.0
-{
+enum actions_t {// Pre-v7.0.0.0
     ACT_WALK_UNARMED = 0x00,
-
+    
     // Humans, elves
     ACT_WALK_ARMED = 0x01,     // Walk with items equipped, while not in war mode
     ACT_RUN_UNARMED = 0x02,    // Run without items equipped in hands
@@ -736,7 +735,7 @@ enum actions_t // Pre-v7.0.0.0
     ACT_EMOTE_BOW = 0x20,      // Bow
     ACT_EMOTE_SALUTE = 0x21,   // Salute
     ACT_EMOTE_EAT = 0x22,      // Eat or drink
-
+    
     // Mounted
     ACT_MOUNT_RIDE_WALK = 0x17, // Walking while mounted
     ACT_MOUNT_RIDE_RUN = 0x18,  // Running while mounted
@@ -788,8 +787,7 @@ enum actionsanimals_t {
     ACT_ANIMAL_DIE_2 = 0x0c
 };
 
-enum newactions_t // v7.0.0.0+
-{
+enum newactions_t { // v7.0.0.0+
     N_ACT_ATT = 0x00, // Variations listed under SubActionsAttack enum
     N_ACT_BLOCK = 0x01,
     N_ACT_BLOCK2 = 0x02,
@@ -808,8 +806,7 @@ enum newactions_t // v7.0.0.0+
     N_ACT_RISE = 0x0F      // Used for character creation in Enhanced Client
 };
 
-enum subactionsattack_t // Variations for attack animation, v7.0.0.0+
-{
+enum subactionsattack_t { // Variations for attack animation, v7.0.0.0+
     S_ACT_WRESTLE = 0x00,
     S_ACT_BOW = 0x01,
     S_ACT_XBOW = 0x02,
@@ -822,20 +819,17 @@ enum subactionsattack_t // Variations for attack animation, v7.0.0.0+
     S_ACT_THROW = 0x09
 };
 
-enum subactionsdeath_t // Variations for death animation, v7.0.0.0+
-{
+enum subactionsdeath_t{ // Variations for death animation, v7.0.0.0+
     S_ACT_DEATH_FORWARD = 0x00,
     S_ACT_DEATH_BACKWARD = 0x01
 };
 
-enum subactionsemote_t // Variations for emote animation, v7.0.0.0+
-{
+enum subactionsemote_t { // Variations for emote animation, v7.0.0.0+
     S_ACT_EMOTE_BOW = 0x00,
     S_ACT_EMOTE_SALUTE = 0x01
 };
 
-enum subactionsspells_t // Variations for spellcast animation, v7.0.0.0+
-{
+enum subactionsspells_t { // Variations for spellcast animation, v7.0.0.0+
     S_ACT_SPELL_TARGET = 0x00,
     S_ACT_SPELL_AREA = 0x01
 };

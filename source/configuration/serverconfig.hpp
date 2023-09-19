@@ -51,11 +51,11 @@ struct AllDataType {
 class ServerConfig {
     
 private:
-    // Because singleton, we hide this from others 
+    // Because singleton, we hide this from others
     ServerConfig() ;
     static const std::vector<StartLocation> fallbackStartLocation ;
     static const std::vector<StartLocation> fallbackYoungLocation ;
-
+    
     [[maybe_unused]] auto loadKeyValue(const std::string &key, const std::string &value) ->bool ;
     
     auto postCheck() ->void ;
@@ -82,7 +82,7 @@ public:
     auto timer(TimerSetting::timer_t timer) const -> const std::uint16_t& ;
     
     auto dataForKeyword(const std::string &key) const -> std::optional<AllDataType>;
-
+    
     AssistantFeature assistantFeature ;
     ClientEnable enableClients ;
     ClientFeature clientFeature ;

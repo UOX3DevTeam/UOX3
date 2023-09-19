@@ -4206,29 +4206,29 @@ void CPCharAndStartLoc::NumberOfLocations(std::uint8_t numLocations, [[maybe_unu
 }
 
 auto CPCharAndStartLoc::AddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void {
-        std::uint16_t baseOffset = 0;
-        baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
-        baseOffset += (locOffset * 63);
-        
-        pStream.WriteByte(baseOffset, locOffset); // StartLocation #
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 31);
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 31);
+    std::uint16_t baseOffset = 0;
+    baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
+    baseOffset += (locOffset * 63);
+    
+    pStream.WriteByte(baseOffset, locOffset); // StartLocation #
+    pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 31);
+    pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 31);
 }
 
 auto CPCharAndStartLoc::NewAddStartLocation(const StartLocation &sLoc, std::uint8_t locOffset) -> void {
-        std::uint16_t baseOffset = 0;
-        baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
-        baseOffset += (locOffset * 89);
-        
-        pStream.WriteByte(baseOffset, locOffset); // StartLocation #
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 32);
-        pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 32);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 65, sLoc.xloc);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 69, sLoc.yloc);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 73, sLoc.zloc);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 77, sLoc.worldNumber);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 81, sLoc.clilocID);
-        pStream.WriteLong(static_cast<size_t>(baseOffset) + 85, 0x00);
+    std::uint16_t baseOffset = 0;
+    baseOffset = static_cast<std::uint16_t>(5 + (pStream.GetByte(3) * 60));
+    baseOffset += (locOffset * 89);
+    
+    pStream.WriteByte(baseOffset, locOffset); // StartLocation #
+    pStream.WriteString(static_cast<size_t>(baseOffset) + 1, sLoc.town, 32);
+    pStream.WriteString(static_cast<size_t>(baseOffset) + 33, sLoc.description, 32);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 65, sLoc.xloc);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 69, sLoc.yloc);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 73, sLoc.zloc);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 77, sLoc.worldNumber);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 81, sLoc.clilocID);
+    pStream.WriteLong(static_cast<size_t>(baseOffset) + 85, 0x00);
 }
 
 CPCharAndStartLoc &CPCharAndStartLoc::operator=(AccountEntry &actbBlock) {
@@ -4614,7 +4614,7 @@ void CPDrawObject::CopyData(CChar &mChar) {
     
     std::bitset<8> flag(0);
     if (ServerConfig::shared().enableClients.enableClient7000() ||  ServerConfig::shared().enableClients.enableClient7090() || ServerConfig::shared().enableClients.enableClient70160() || ServerConfig::shared().enableClients.enableClient70240() || ServerConfig::shared().enableClients.enableClient70300() || ServerConfig::shared().enableClients.enableClient70331() || ServerConfig::shared().enableClients.enableClient704565() || ServerConfig::shared().enableClients.enableClient70610() ) {
-
+        
         // Clients 7.0.0.0 and later
         const std::uint8_t BIT__FROZEN = 0; //	0x01, frozen/paralyzed
         const std::uint8_t BIT__FEMALE = 1; //	0x02, female
@@ -5318,18 +5318,18 @@ void CPGameServerList::NumberOfServers(std::uint16_t numItems) {
     pStream.WriteShort(4, numItems);
 }
 /*
-void CPGameServerList::AddServer(std::uint16_t servNum, PhysicalServer *data) {
-    std::uint32_t baseOffset = 6 + servNum * 40;
-    pStream.WriteShort(baseOffset, servNum + 1);
-    pStream.WriteString(static_cast<size_t>(baseOffset) + 2, data->GetName(),
-                        data->GetName().length());
-    auto ip = std::uint32_t(0);
-    
-    inet_pton(AF_INET, data->GetIP().c_str(), &ip);
-    
-    // std::uint32_t ip = inet_addr( data->GetIP().c_str() );
-    pStream.WriteLong(static_cast<size_t>(baseOffset) + 36, ip);
-}
+ void CPGameServerList::AddServer(std::uint16_t servNum, PhysicalServer *data) {
+ std::uint32_t baseOffset = 6 + servNum * 40;
+ pStream.WriteShort(baseOffset, servNum + 1);
+ pStream.WriteString(static_cast<size_t>(baseOffset) + 2, data->GetName(),
+ data->GetName().length());
+ auto ip = std::uint32_t(0);
+ 
+ inet_pton(AF_INET, data->GetIP().c_str(), &ip);
+ 
+ // std::uint32_t ip = inet_addr( data->GetIP().c_str() );
+ pStream.WriteLong(static_cast<size_t>(baseOffset) + 36, ip);
+ }
  */
 void CPGameServerList::addEntry(const std::string &name, std::uint32_t addressBig) {
     pStream.WriteShort(1, 46);

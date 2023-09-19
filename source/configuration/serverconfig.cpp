@@ -202,9 +202,9 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << UShortValue::nameFor(UShortValue::APSINTERVAL) << " = " << ushortValues[UShortValue::APSINTERVAL] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::APSDELAYSTEP) << " = " << ushortValues[UShortValue::APSDELAYSTEP] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::APSDELAYMAX) << " = " << ushortValues[UShortValue::APSDELAYMAX] << "\n" ;
-
+    
     output << "}\n\n" ;
-
+    
     output <<"[clientsupport]\n{\n";
     enableClients.save(output) ;
     output << "}\n\n" ;
@@ -227,7 +227,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << UShortValue::nameFor(UShortValue::SKILLCAP) << " = " << ushortValues[UShortValue::SKILLCAP] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::SKILLDELAY) << " = " << ushortValues[UShortValue::SKILLDELAY] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::STATCAP) << " = " << ushortValues[UShortValue::STATCAP] << "\n" ;
-
+    
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::STATIMPACTSKILL) << " = " << enabled(ServerSwitch::STATIMPACTSKILL) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::EXTENDEDSTATS) << " = " << enabled(ServerSwitch::EXTENDEDSTATS) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::EXTENDEDSKILLS) << " = " << enabled(ServerSwitch::EXTENDEDSKILLS) << "\n" ;
@@ -236,9 +236,9 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::SNOOPISCRIME) << " = " << enabled(ServerSwitch::SNOOPISCRIME) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::SNOOPAWARE) << " = " << enabled(ServerSwitch::SNOOPAWARE) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::ARMORIMPACTSMANA) << " = " << enabled(ServerSwitch::ARMORIMPACTSMANA) << "\n" ;
-
+    
     output << "}\n\n" ;
-
+    
     output << "[timers]\n{\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::CORPSEDECAY) << " = " << timerSetting[TimerSetting::CORPSEDECAY] << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::NPCCORPSEDECAY) << " = " << timerSetting[TimerSetting::NPCCORPSEDECAY] << "\n" ;
@@ -262,7 +262,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::BLOODDECAY) << " = " << timerSetting[TimerSetting::BLOODDECAY] << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::BLOODDECAYCORPSE) << " = " << timerSetting[TimerSetting::BLOODDECAYCORPSE] << "\n" ;
     output << "}\n\n" ;
-
+    
     output << "//========================================================================\n" ;
     output << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol\n" ;
     output << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA\n";
@@ -283,7 +283,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << Expansion::nameFor(Expansion::COMBAT) << " = " << ruleSets[Expansion::COMBAT].describe() << "\n";
     
     output << "}\n\n" ;
-
+    
     output <<"[settings]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::CORPSELOOTDECAY) << " = " << enabled(ServerSwitch::CORPSELOOTDECAY) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUARDSACTIVE) << " = " << enabled(ServerSwitch::GUARDSACTIVE) << "\n" ;
@@ -294,7 +294,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::SHOWOFFLINEPCS) << " = " << enabled(ServerSwitch::SHOWOFFLINEPCS) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::ROGUEENABLE) << " = " << enabled(ServerSwitch::ROGUEENABLE) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::PLAYERPERSECUTION) << " = " << enabled(ServerSwitch::PLAYERPERSECUTION) << "\n" ;
-
+    
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::FLUSHTIME) << " = " << realNumbers[RealNumberConfig::FLUSHTIME] << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::HTMLSTAT) << " = " << enabled(ServerSwitch::HTMLSTAT) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::SELLBYNAME) << " = " << enabled(ServerSwitch::SELLBYNAME) << "\n" ;
@@ -347,7 +347,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::YOUNGPLAYER) << " = " << enabled(ServerSwitch::YOUNGPLAYER) << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[pets and followers]\n{\n";
     output << "\t" << UShortValue::nameFor(UShortValue::MAXCONTROLSLOT) << " = " << ushortValues[UShortValue::MAXCONTROLSLOT] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::MAXFOLLOWER) << " = " << ushortValues[UShortValue::MAXFOLLOWER] << "\n" ;
@@ -358,7 +358,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::LOYALTYRATE) << " = " << timerSetting[TimerSetting::LOYALTYRATE] << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[speedup]\n{\n" ;
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKITEMS) << " = " << realNumbers[RealNumberConfig::CHECKITEMS] << "\n" ;
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::CHECKBOATS) << " = " << realNumbers[RealNumberConfig::CHECKBOATS] << "\n" ;
@@ -372,15 +372,15 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCMOUNTFLEEING) << " = " << realNumbers[RealNumberConfig::NPCMOUNTFLEEING] << "\n" ;
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::NPCSPELLCAST) << " = " << realNumbers[RealNumberConfig::NPCSPELLCAST] << "\n" ;
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::GLOBALATTACK) << " = " << realNumbers[RealNumberConfig::GLOBALATTACK] << "\n" ;
-     
+    
     output << "}\n\n" ;
-
+    
     output << "[message boards]\n{\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::POSTINGLEVEL) << " = " << ushortValues[UShortValue::POSTINGLEVEL] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::REMOVALLEVEL) << " = " << ushortValues[UShortValue::REMOVALLEVEL] << "\n";
     
     output << "}\n\n" ;
-
+    
     output << "[escorts]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::ESCORTS) << " = " << this->enabled(ServerSwitch::ESCORTS) << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::ESCORTWAIT) << " = " << timerSetting[TimerSetting::ESCORTWAIT] << "\n" ;
@@ -388,14 +388,14 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::ESCORTDONE) << " = " << timerSetting[TimerSetting::ESCORTDONE] << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[worldlight]\n{\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::DUNGEONLIGHT) << " = " << ushortValues[UShortValue::DUNGEONLIGHT] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::BRIGHTLEVEL) << " = " << ushortValues[UShortValue::BRIGHTLEVEL] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::DARKLEVEL) << " = " << ushortValues[UShortValue::DARKLEVEL] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::SECONDSPERUOMINUTE) << " = " << ushortValues[UShortValue::SECONDSPERUOMINUTE] << "\n";
     output << "}\n\n" ;
-
+    
     output << "[tracking]\n{\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::BASERANGE) << " = " << ushortValues[UShortValue::BASERANGE] << "\n";
     output << "\t" << TimerSetting::nameFor(TimerSetting::TRACKING) << " = " << timerSetting[TimerSetting::TRACKING] << "\n" ;
@@ -403,7 +403,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << UShortValue::nameFor(UShortValue::MSGREDISPLAYTIME) << " = " << ushortValues[UShortValue::MSGREDISPLAYTIME] << "\n";
     
     output << "}\n\n" ;
-
+    
     output << "[reputation]\n{\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::MURDERDECAY) << " = " << timerSetting[TimerSetting::MURDERDECAY] << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::MAXKILL) << " = " << ushortValues[UShortValue::MAXKILL] << "\n";
@@ -412,7 +412,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::PERMAGREYFLAG) << " = " << timerSetting[TimerSetting::PERMAGREYFLAG] << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::STEALINGFLAG) << " = " << timerSetting[TimerSetting::STEALINGFLAG] << "\n" ;
     output << "}\n\n" ;
-
+    
     output << "[resources]\n{\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::RESOURCEAREASIZE) << " = " << ushortValues[UShortValue::RESOURCEAREASIZE] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::MINECHECK) << " = " << ushortValues[UShortValue::MINECHECK] << "\n";
@@ -424,24 +424,24 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << TimerSetting::nameFor(TimerSetting::FISH) << " = " << timerSetting[TimerSetting::FISH] << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[hunger]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::HUNGER) << " = " << this->enabled(ServerSwitch::HUNGER) << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::HUNGERRATE) << " = " << timerSetting[TimerSetting::HUNGERRATE] << "\n" ;
     output << "\t" << ShortValue::nameFor(ShortValue::HUNGERDAMAGE) << " = " << shortValues[ShortValue::HUNGERDAMAGE] << "\n";
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETHUNGEROFFLINE) << " = " << this->enabled(ServerSwitch::PETHUNGEROFFLINE) << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::PETOFFLINETIMEOUT) << " = " << ushortValues[UShortValue::PETOFFLINETIMEOUT] << "\n";
-
+    
     output << "}\n\n" ;
-
+    
     output << "[thirst]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::THIRST) << " = " << this->enabled(ServerSwitch::THIRST) << "\n" ;
     output << "\t" << TimerSetting::nameFor(TimerSetting::THIRSTRATE) << " = " << timerSetting[TimerSetting::THIRSTRATE] << "\n" ;
     output << "\t" << ShortValue::nameFor(ShortValue::THIRSTDRAIN) << " = " << shortValues[ShortValue::THIRSTDRAIN] << "\n";
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETTHIRSTOFFLINE) << " = " << this->enabled(ServerSwitch::PETTHIRSTOFFLINE) << "\n" ;
-
+    
     output << "}\n\n" ;
-
+    
     output << "[combat]\n{\n" ;
     output << "\t" << ShortValue::nameFor(ShortValue::MAXRANGE) << " = " << shortValues[ShortValue::MAXRANGE] << "\n";
     output << "\t" << ShortValue::nameFor(ShortValue::MAXSPELLRANGE) << " = " << shortValues[ShortValue::MAXSPELLRANGE] << "\n";
@@ -471,7 +471,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::ALCHEMYBONUS) << " = " << this->enabled(ServerSwitch::ALCHEMYBONUS) << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::ALCHEMENYBONUSMODIFIER) << " = " << ushortValues[UShortValue::ALCHEMENYBONUSMODIFIER] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::BLOODEFFECTCHANCE) << " = " << ushortValues[UShortValue::BLOODEFFECTCHANCE] << "\n";
-
+    
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::INTERRUPTCASTING) << " = " << this->enabled(ServerSwitch::INTERRUPTCASTING) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::PETCOMBATTRAINING) << " = " << this->enabled(ServerSwitch::PETCOMBATTRAINING) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::HIRELINGTRAINING) << " = " << this->enabled(ServerSwitch::HIRELINGTRAINING) << "\n" ;
@@ -480,7 +480,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::DISPLAYDAMAGETYPE) << " = " << this->enabled(ServerSwitch::DISPLAYDAMAGETYPE) << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::WEAPONDAMAGEBONUSTYPE) << " = " << ushortValues[UShortValue::WEAPONDAMAGEBONUSTYPE] << "\n";
     output << "}\n\n" ;
-
+    
     output << "[magic]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRAVELBOATKEY) << " = " << this->enabled(ServerSwitch::TRAVELBOATKEY) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRAVELBURDEN) << " = " << this->enabled(ServerSwitch::TRAVELBURDEN) << "\n" ;
@@ -491,23 +491,23 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::SPELLMOVING) << " = " << this->enabled(ServerSwitch::SPELLMOVING) << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[start locations]\n{\n" ;
     output<< this->startLocation.describe() << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[young start locations]\n{\n" ;
     output<< this->youngLocation.describe() << "\n" ;
-
+    
     
     output << "}\n\n" ;
-
+    
     output << "[startup]\n{\n" ;
     output << "\t" << ShortValue::nameFor(ShortValue::STARTGOLD) << " = " << shortValues[ShortValue::STARTGOLD] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::STARTPRIV) << " = " << ushortValues[UShortValue::STARTPRIV] << "\n";
     output << "}\n\n" ;
-
+    
     output << "[gumps]\n{\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::TITLECOLOR) << " = " << ushortValues[UShortValue::TITLECOLOR] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::LEFTTEXTCOLOR) << " = " << ushortValues[UShortValue::LEFTTEXTCOLOR] << "\n";
@@ -518,7 +518,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << UShortValue::nameFor(UShortValue::BACKGROUNDPIC) << " = " << ushortValues[UShortValue::BACKGROUNDPIC] << "\n";
     
     output << "}\n\n" ;
-
+    
     output << "[houses]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::TRACKHOUSESPERACCOUNT) << " = " << this->enabled(ServerSwitch::TRACKHOUSESPERACCOUNT) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::OWNCOOWNHOUSE) << " = " << this->enabled(ServerSwitch::OWNCOOWNHOUSE) << "\n" ;
@@ -527,7 +527,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::PROTECTPRIVATEHOUSES) << " = " << this->enabled(ServerSwitch::PROTECTPRIVATEHOUSES) << "\n" ;
     output << "\t" << UShortValue::nameFor(UShortValue::MAXHOUSEOWNABLE) << " = " << ushortValues[UShortValue::MAXHOUSEOWNABLE] << "\n";
     output << "\t" << UShortValue::nameFor(UShortValue::MAXHOUSECOOWNABLE) << " = " << ushortValues[UShortValue::MAXHOUSECOOWNABLE] << "\n";
-
+    
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::COOWNERLOGOUT) << " = " << this->enabled(ServerSwitch::COOWNERLOGOUT) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::FRIENDLOGOUT) << " = " << this->enabled(ServerSwitch::FRIENDLOGOUT) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::GUESTLOGOUT) << " = " << this->enabled(ServerSwitch::GUESTLOGOUT) << "\n" ;
@@ -537,7 +537,7 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::KEYLESSGUEST) << " = " << this->enabled(ServerSwitch::KEYLESSGUEST) << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[bulk order deeds]\n{\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::OFFERBODSFROMITEMSALES) << " = " << this->enabled(ServerSwitch::OFFERBODSFROMITEMSALES) << "\n" ;
     output << "\t" << ServerSwitch::nameFor(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << " = " << this->enabled(ServerSwitch::OFFERBODSFROMCONTEXTMENU) << "\n" ;
@@ -546,19 +546,19 @@ auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool
     output << "\t" << RealNumberConfig::nameFor(RealNumberConfig::FAMEREWARDMULTIPLER) << " = " << realNumbers[RealNumberConfig::FAMEREWARDMULTIPLER] << "\n" ;
     
     output << "}\n\n" ;
-
+    
     output << "[towns]\n{\n" ;
     output << "\t" << UIntValue::nameFor(UIntValue::POLLTIME) << " = " << uintValues[UIntValue::POLLTIME] << "\n" ;
     output << "\t" << UIntValue::nameFor(UIntValue::MAYORTIME) << " = " << uintValues[UIntValue::MAYORTIME] << "\n" ;
     output << "\t" << UIntValue::nameFor(UIntValue::TAXPERIOD) << " = " << uintValues[UIntValue::TAXPERIOD] << "\n" ;
     output << "\t" << UIntValue::nameFor(UIntValue::GUARDPAID) << " = " << uintValues[UIntValue::GUARDPAID] << "\n" ;
     output << "}\n\n" ;
-
+    
     output << "[disabled assistant features]\n{\n" ;
     output << this->assistantFeature.describe() << "\n" ;
     
     output << "}\n\n" ;
-
+    
     return true ;
 }
 //======================================================================
@@ -615,7 +615,7 @@ auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional
         data.value = u16value.value() ;
         return data ;
     }
-
+    
     // Check uint values
     auto u32value = uintValues.valueFor(ukey) ;
     if (u32value.has_value()){
@@ -630,7 +630,7 @@ auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional
         data.value = r64value.value() ;
         return data ;
     }
-   // check clients
+    // check clients
     bvalue = enableClients.valueFor(ukey);
     if (bvalue.has_value()){
         data.type = AllDataType::T_BOOL ;
@@ -657,7 +657,7 @@ auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional
         data.value = svalue.value() ;
         return data ;
     }
-
+    
     //check directory
     svalue = directoryLocation.valueFor(ukey) ;
     if (svalue.has_value()){

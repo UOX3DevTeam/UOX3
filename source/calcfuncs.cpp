@@ -63,12 +63,11 @@ CMultiObj *CalcMultiFromSer(serial_t targSerial) {
 // on world load, and when any of the
 //|					item's location and/or container properties change
 // o--------------------------------------------------------------------------
-CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,
-                              CBaseObject *mObj) {
+CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t worldNumber, std::uint16_t instanceId,  CBaseObject *mObj) {
     // Reset sub region of character
     if (ValidateObject(mObj)) {
         mObj->SetSubRegion(0);
-
+        
         // Check if object is an item, and if it's in a container
         if (mObj->GetObjType() == CBaseObject::OT_ITEM &&
             static_cast<CItem *>(mObj)->GetContSerial() != INVALIDSERIAL) {
@@ -83,7 +82,7 @@ CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t world
             }
         }
     }
-
+    
     const RegLocs_st *getLoc = nullptr;
     for (auto &[townId, myReg] : cwmWorldState->townRegions) {
         if (myReg != nullptr && myReg->WorldNumber() == worldNumber &&

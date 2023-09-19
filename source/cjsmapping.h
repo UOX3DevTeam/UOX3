@@ -27,76 +27,76 @@ public:
         SCPT_COUNT
     };
     static const std::vector<std::string> ScriptNames;
-
-  private:
+    
+private:
     std::map<std::uint16_t, cScript *> scriptIdMap;
     std::map<JSObject *, std::uint16_t> scriptJSMap;
-
+    
     std::map<std::uint16_t, cScript *>::iterator scriptIdIter;
-
+    
     type_t scriptType;
-
-  public:
+    
+public:
     CJSMappingSection(type_t sT);
     ~CJSMappingSection();
-
+    
     auto jsCollection() const -> const std::map<JSObject *, std::uint16_t> & { return scriptJSMap; }
     auto jsCollection() -> std::map<JSObject *, std::uint16_t> & { return scriptJSMap; }
     auto collection() const -> const std::map<std::uint16_t, cScript *> & { return scriptIdMap; }
     auto collection() -> std::map<std::uint16_t, cScript *> & { return scriptIdMap; }
-
+    
     void Reload(std::uint16_t toLoad);
     void Parse(Script *fileAssocData);
-
+    
     bool IsInMap(std::uint16_t scriptId);
-
+    
     std::uint16_t GetScriptId(JSObject *toFind);
     cScript *GetScript(std::uint16_t toFind);
     cScript *GetScript(JSObject *toFind);
-
+    
     cScript *First();
     cScript *Next();
     bool Finished();
 };
 
 class CJSMapping {
-  private:
+private:
     std::vector<CJSMappingSection *> mapSection ;
-
+    
     CEnvoke *envokeById;
     CEnvoke *envokeByType;
-
+    
     void Cleanup();
     void Parse(CJSMappingSection::type_t toParse = CJSMappingSection::SCPT_COUNT);
-
-  public:
+    
+public:
     CJSMapping(){ mapSection = std::vector<CJSMappingSection *>(CJSMappingSection::ScriptNames.size(),nullptr);}
     ~CJSMapping();
     void ResetDefaults();
-
+    
     void Reload(std::uint16_t scriptId = 0xFFFF);
     void Reload(CJSMappingSection::type_t sectionId);
-
+    
     CJSMappingSection *GetSection(CJSMappingSection::type_t toGet);
-
+    
     std::uint16_t GetScriptId(JSObject *toFind);
-
+    
     cScript *GetScript(std::uint16_t toFind);
     cScript *GetScript(JSObject *toFind);
-
+    
     CEnvoke *GetEnvokeById();
     CEnvoke *GetEnvokeByType();
 };
 
 class CEnvoke {
-  private:
+private:
     std::map<std::uint16_t, std::uint16_t> envokeList;
     std::string envokeType;
-
-  public:
+    
+public:
     CEnvoke(const std::string &envokeType);
     ~CEnvoke();
-
+    
     void Parse();
     bool Check(std::uint16_t envokeId) const;
     std::uint16_t GetScript(std::uint16_t envokeId) const;

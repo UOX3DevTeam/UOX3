@@ -41,7 +41,7 @@ struct ShortValue {
     };
     static const std::map<std::string, item_t> NAMEITEMMAP ;
     static auto nameFor(item_t setting)-> const std::string & ;
-
+    
     std::vector<std::int16_t> values ;
     
     ShortValue() ;

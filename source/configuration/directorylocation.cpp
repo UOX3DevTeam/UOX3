@@ -44,7 +44,7 @@ auto DirectoryLocation::checkCreatePath(const std::filesystem::path &path, const
             std::filesystem::create_directories(path);
         }
     }
-
+    
 }
 //======================================================================
 auto DirectoryLocation::normalizePaths() ->void {
@@ -135,7 +135,7 @@ auto DirectoryLocation::setLocation(const std::string &key, const std::string &v
 }
 //======================================================================
 auto DirectoryLocation::postLoad() ->void {
-     // First , normalize the paths
+    // First , normalize the paths
     this->normalizePaths();
     // Now check them
     this->checkPaths() ;

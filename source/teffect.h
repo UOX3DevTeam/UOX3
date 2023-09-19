@@ -23,9 +23,7 @@ private:
     std::uint16_t assocScript;
     
 public:
-    CTEffect()
-    : source(INVALIDSERIAL), dest(INVALIDSERIAL), expiretime(0), num(0), more1(0), more2(0),
-    more3(0), dispellable(false), objptr(nullptr), assocScript(0xFFFF) {}
+    CTEffect() : source(INVALIDSERIAL), dest(INVALIDSERIAL), expiretime(0), num(0), more1(0), more2(0), more3(0), dispellable(false), objptr(nullptr), assocScript(0xFFFF) {}
     
     std::uint16_t AssocScript() const { return assocScript; }
     CBaseObject *ObjPtr() const { return objptr; }

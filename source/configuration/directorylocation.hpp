@@ -38,7 +38,7 @@ public:
     //auto dumpPaths() const ->void ;
     auto unwindPath(dirlocation_t location) const -> std::filesystem::path;
     auto valueFor(const std::string &keyword) const ->std::optional<std::string> ;
-
+    
 };
 
 #endif /* directorylocation_hpp */

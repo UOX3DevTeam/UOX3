@@ -199,8 +199,7 @@ inline auto Line2D_st::CollideLines2D(Line2D_st toCollide) const -> Vector2D_st 
     t = ((((loc.x - toCollide.loc.x) * (-dir.y)) + (dir.x * (loc.y - toCollide.loc.y))) /
          ((dir.x * toCollide.dir.y) - (toCollide.dir.x * dir.y)));
     
-    return Vector2D_st((toCollide.loc.x + t * toCollide.dir.x),
-                       (toCollide.loc.y + t * toCollide.dir.y));
+    return Vector2D_st((toCollide.loc.x + t * toCollide.dir.x), (toCollide.loc.y + t * toCollide.dir.y));
 }
 
 //==================================================================================================
@@ -235,8 +234,7 @@ inline auto Line3D_st::Projection2D() const -> Line2D_st {
     if ((dir.x == 0) && (dir.y == 0)) {
         return Line2D_st(Vector2D_st(-1.0f, -1.0f), Vector2D_st(-1.0f, -1.0f));
     }
-    return Line2D_st(Vector2D_st(static_cast<R32>(loc.x), static_cast<R32>(loc.y)),
-                     Vector2D_st(static_cast<R32>(dir.x), static_cast<R32>(dir.y)));
+    return Line2D_st(Vector2D_st(static_cast<R32>(loc.x), static_cast<R32>(loc.y)), Vector2D_st(static_cast<R32>(dir.x), static_cast<R32>(dir.y)));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -244,8 +242,7 @@ inline auto Line3D_st::Projection2D() const -> Line2D_st {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 // o------------------------------------------------------------------------------------------------o
-bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, std::int16_t x1, std::int16_t y1,
-                   [[maybe_unused]] std::int8_t z, std::int16_t x2, std::int16_t y2, std::uint8_t worldNum, std::int8_t z2Top) {
+bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, std::int16_t x1, std::int16_t y1, [[maybe_unused]] std::int8_t z, std::int16_t x2, std::int16_t y2, std::uint8_t worldNum, std::int8_t z2Top) {
     // Map tile at previous coordinate along the LoS path
     auto srcMap = Map->SeekMap(x1, y1, worldNum);
     
@@ -271,15 +268,8 @@ bool MapTileBlocks([[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS
          || ( startLocZ > mz1 && ( z2Top < mz1 )) || ( startLocZ > mz2 && ( z2Top < mz2 )) ||*/
         //( z == mz1 && LoS.dir.z != 0 ) ||
         //// 2) Cuts a map "floor"
-        if ((startLocZ > mz2 && z2Top < mz2) || (startLocZ < mz2 && z2Top > mz2) ||
-            (startLocZ > mz1 && (mz1 < mz2 && (mz2 > z2Top))) ||
-            (nostatic && // Ensure there is no static item
-             ((mID1 >= 431 && mID1 <= 432) || (mID1 >= 467 && mID1 <= 474) ||
-              (mID1 >= 543 && mID1 <= 560) || (mID1 >= 1754 && mID1 <= 1757) ||
-              (mID1 >= 1787 && mID1 <= 1789) || (mID1 >= 1821 && mID1 <= 1824) ||
-              (mID1 >= 1851 && mID1 <= 1854) ||
-              (mID1 >= 1881 && mID1 <= 1884)))) // 3) Cuts a mountain
-        {
+        if ((startLocZ > mz2 && z2Top < mz2) || (startLocZ < mz2 && z2Top > mz2) || (startLocZ > mz1 && (mz1 < mz2 && (mz2 > z2Top))) || (nostatic &&  ((mID1 >= 431 && mID1 <= 432) || (mID1 >= 467 && mID1 <= 474) || (mID1 >= 543 && mID1 <= 560) || (mID1 >= 1754 && mID1 <= 1757) || (mID1 >= 1787 && mID1 <= 1789) || (mID1 >= 1821 && mID1 <= 1824) || (mID1 >= 1851 && mID1 <= 1854) || (mID1 >= 1881 && mID1 <= 1884)))) {
+            
             return true;
         }
     }
@@ -295,19 +285,14 @@ bool CheckFlags(std::uint8_t typeToCheck, Tile_st &toCheck, std::int8_t startZ, 
     switch (typeToCheck) {
         case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags
             // listed below, assume it's a tree! :P
-            if (toCheck.CheckFlag(TF_FOLIAGE) ||
-                ((toCheck.CheckFlag(TF_BLOCKING) && !toCheck.CheckFlag(TF_WALL) &&
-                  !toCheck.CheckFlag(TF_SURFACE) && !toCheck.CheckFlag(TF_WINDOW)) ||
-                 (!toCheck.CheckFlag(TF_CLIMBABLE) && !toCheck.CheckFlag(TF_WET) &&
-                  !toCheck.CheckFlag(TF_ROOF)) ||
-                 !toCheck.CheckFlag(TF_CONTAINER)))
+            if (toCheck.CheckFlag(TF_FOLIAGE) || ((toCheck.CheckFlag(TF_BLOCKING) && !toCheck.CheckFlag(TF_WALL) && !toCheck.CheckFlag(TF_SURFACE) && !toCheck.CheckFlag(TF_WINDOW)) || (!toCheck.CheckFlag(TF_CLIMBABLE) && !toCheck.CheckFlag(TF_WET) && !toCheck.CheckFlag(TF_ROOF)) || !toCheck.CheckFlag(TF_CONTAINER))) {
                 return false;
+            }
             break;
         case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-            if (toCheck.CheckFlag(TF_WALL) ||
-                (toCheck.CheckFlag(TF_NOSHOOT) && !toCheck.CheckFlag(TF_SURFACE)) ||
-                toCheck.CheckFlag(TF_WINDOW))
+            if (toCheck.CheckFlag(TF_WALL) || (toCheck.CheckFlag(TF_NOSHOOT) && !toCheck.CheckFlag(TF_SURFACE)) || toCheck.CheckFlag(TF_WINDOW)) {
                 return true;
+            }
             break;
         case DOORS: // Doors, not gates
             if (toCheck.CheckFlag(TF_DOOR))
@@ -354,21 +339,18 @@ std::int8_t GetSGN(std::int16_t startLoc, std::int16_t destLoc, std::int16_t &l1
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if dynamic item will block Line of Sight
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int32_t collisioncount, std::int16_t distX,
-                              std::int16_t distY, std::int16_t x1, std::int16_t x2, std::int16_t y1, std::int16_t y2, std::int32_t dz) {
+std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int32_t collisioncount, std::int16_t distX, std::int16_t distY, std::int16_t x1, std::int16_t x2, std::int16_t y1, std::int16_t y2, std::int32_t dz) {
     const std::int16_t curX = toCheck->GetX();
     const std::int16_t curY = toCheck->GetY();
     const std::int8_t curZ = toCheck->GetZ();
     std::int32_t i = 0;
     Vector3D_st *checkLoc = nullptr;
     if (!toCheck->CanBeObjType(CBaseObject::OT_MULTI)) {
-        if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 &&
-            curY <= y2) {
+        if (toCheck->GetVisible() == VT_VISIBLE && curX >= x1 && curX <= x2 && curY >= y1 && curY <= y2) {
             CTile &iTile = Map->SeekTile(toCheck->GetId());
             for (i = 0; i < collisioncount; ++i) {
                 checkLoc = &collisions[i];
-                if (curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ &&
-                    checkLoc->z <= (curZ + iTile.Height()))
+                if (curX == checkLoc->x && curY == checkLoc->y && checkLoc->z >= curZ && checkLoc->z <= (curZ + iTile.Height()))
                     return toCheck->GetId();
             }
         }
@@ -381,8 +363,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
             Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
             auto map1 = Map->SeekMap(curX, curY, toCheck->WorldNumber());
             
-            if (map1.CheckFlag(TF_WET)) // is it water?
-            {
+            if (map1.CheckFlag(TF_WET)) { // is it water?
                 toCheck->SetId(0x4001);
             }
             else {
@@ -400,10 +381,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
                         CTile &multiTile = Map->SeekTile(multi.tileId);
                         for (i = 0; i < collisioncount; ++i) {
                             checkLoc = &collisions[i];
-                            if (checkX == checkLoc->x && checkY == checkLoc->y &&
-                                ((checkLoc->z >= checkZ &&
-                                  checkLoc->z <= (checkZ + multiTile.Height())) ||
-                                 (multiTile.Height() <= 2 && abs(checkLoc->z - checkZ) <= dz))) {
+                            if (checkX == checkLoc->x && checkY == checkLoc->y && ((checkLoc->z >= checkZ && checkLoc->z <= (checkZ + multiTile.Height())) || (multiTile.Height() <= 2 && abs(checkLoc->z - checkZ) <= dz))) {
                                 return multi.tileId;
                             }
                         }
@@ -442,8 +420,7 @@ std::uint16_t DynamicCanBlock(CItem *toCheck, Vector3D_st *collisions, std::int3
 //|
 //|					it WAS based on the P.T., now its based on linear algebra;)
 // o------------------------------------------------------------------------------------------------o
-auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t destY, std::int8_t destZ, std::uint8_t checkfor,
-                 bool useSurfaceZ, std::int8_t destZTop, bool checkDistance) -> bool {
+auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t destY, std::int8_t destZ, std::uint8_t checkfor, bool useSurfaceZ, std::int8_t destZTop, bool checkDistance) -> bool {
     const bool blocked = false;
     const bool not_blocked = true;
     
@@ -451,9 +428,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         return not_blocked; // target canceled
     
     const std::int16_t startX = mChar->GetX(), startY = mChar->GetY();
-    const std::int8_t startZ =
-    (useSurfaceZ ? mChar->GetZ()
-     : (mChar->GetZ() + 15)); // standard eye height of most bodies if useSurfaceZ
+    const std::int8_t startZ = (useSurfaceZ ? mChar->GetZ() : (mChar->GetZ() + 15)); // standard eye height of most bodies if useSurfaceZ
     // is false, use feet height if true
     
     if ((startX == destX) && (startY == destY) && (startZ == destZ))
@@ -469,8 +444,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     Line3D_st lineofsight =
     Line3D_st(Vector3D_st(startX, startY, startZ), Vector3D_st(distX, distY, distZ));
     
-    const R64 rBlah = (static_cast<R64>(distX) * static_cast<R64>(distX)) +
-    (static_cast<R64>(distY) * static_cast<R64>(distY));
+    const R64 rBlah = (static_cast<R64>(distX) * static_cast<R64>(distX)) + (static_cast<R64>(distY) * static_cast<R64>(distY));
     const std::int32_t distance = static_cast<std::int32_t>(sqrt(rBlah));
     
     // Let's provide some leeway based on height of object
@@ -483,8 +457,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     // If target is next to us and within our field of view
     // if( distance <= 1 && destZ <= (startZ + 3) && destZ >= (startZ - 15 ))
     // return not_blocked;
-    if (distance == 0 && destZ <= (startZ + 3) &&
-        destZTop >= (useSurfaceZ ? (startZ) : (startZ - 15)))
+    if (distance == 0 && destZ <= (startZ + 3) && destZTop >= (useSurfaceZ ? (startZ) : (startZ - 15)))
         return not_blocked;
     
     // Vector3D_st *collisions = new Vector3D_st[ MAX_COLLISIONS ];
@@ -515,41 +488,31 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         dz = static_cast<std::int32_t>(floor(abs(lineofsight.dzInDirectionX())));
     }
     
-    if (sgn_x == 0 && sgn_y == 0 && sgn_z != 0) // should fix shooting through floor issues
-    {
+    if (sgn_x == 0 && sgn_y == 0 && sgn_z != 0){ // should fix shooting through floor issues
         for (i = 1; i <= abs(distZ); ++i) {
-            collisions[collisioncount] =
-            Vector3D_st(startX, startY, static_cast<std::int8_t>(startZ + (i * sgn_z)));
+            collisions[collisioncount] = Vector3D_st(startX, startY, static_cast<std::int8_t>(startZ + (i * sgn_z)));
             ++collisioncount;
         }
     }
-    else if (sgn_x == 0) // if we are on the same x-level, just push every x/y coordinate in
+    else if (sgn_x == 0) { // if we are on the same x-level, just push every x/y coordinate in
         // y-direction from src to trg into the array
-    {
         for (i = 1; i <= distY; ++i) {
-            collisions[collisioncount] =
-            Vector3D_st(startX, startY + (sgn_y * i),
-                        static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            collisions[collisioncount] = Vector3D_st(startX, startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
-    else if (sgn_y == 0) // if we are on the same y-level, just push every x/y coordinate in
+    else if (sgn_y == 0) { // if we are on the same y-level, just push every x/y coordinate in
         // x-direction from src to trg into the array
-    {
         for (i = 1; i <= distX; ++i) {
             collisions[collisioncount] =
-            Vector3D_st(startX + (sgn_x * i), startY,
-                        static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            Vector3D_st(startX + (sgn_x * i), startY, static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
-    else if (distX == distY) // if we're on a perfect diagonal, we can just go up all coords in both
+    else if (distX == distY) { // if we're on a perfect diagonal, we can just go up all coords in both
         // x and y at the same time
-    {
         for (i = 1; i <= distX; ++i) {
-            collisions[collisioncount] =
-            Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * i),
-                        static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
             ++collisioncount;
         }
     }
@@ -561,10 +524,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
                 steps = 1;
             }
             for (i = 1; i < distX; ++i) {
-                collisions[collisioncount] =
-                Vector3D_st(startX + (sgn_x * i),
-                            startY + (sgn_y * static_cast<R32>(RoundNumber(i / steps))),
-                            static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * static_cast<R32>(RoundNumber(i / steps))), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
                 ++collisioncount;
             }
         }
@@ -574,10 +534,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
                 steps = 1;
             }
             for (i = 1; i < distY; ++i) {
-                collisions[collisioncount] =
-                Vector3D_st(startX + (sgn_x * static_cast<R32>(RoundNumber(i / steps))),
-                            startY + (sgn_y * i),
-                            static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * static_cast<R32>(RoundNumber(i / steps))), startY + (sgn_y * i),  static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
                 ++collisioncount;
             }
         }
@@ -622,8 +579,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
             if (toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ)
                 continue;
             
-            const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,
-                                                           x1, x2, y1, y2, dz);
+            const std::uint16_t idToPush = DynamicCanBlock(toCheck, collisions, collisioncount, distX, distY,  x1, x2, y1, y2, dz);
             if (idToPush != INVALIDID) {
                 auto tile = Tile_st(tiletype_t::art);
                 tile.artInfo = &Map->SeekTile(idToPush);
@@ -645,17 +601,14 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         // Texture mapping
         if (checkLoc.x == destX && checkLoc.y == destY) {
             // Don't overshoot. We don't care about height of tile BEHIND our target
-            if (MapTileBlocks(mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y,
-                              checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop)) {
+            if (MapTileBlocks(mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop)) {
                 // delete[] collisions;
                 return blocked;
             }
         }
         else {
             // Check next tile along the LoS path
-            if (MapTileBlocks(mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y,
-                              checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber,
-                              destZTop)) {
+            if (MapTileBlocks(mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y,  checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber, destZTop)) {
                 // delete[] collisions;
                 return blocked;
             }
@@ -663,8 +616,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         
         // Statics
         for (auto &tile : artwork) {
-            if ((checkLoc.z >= tile.altitude && checkLoc.z <= (tile.altitude + tile.height())) ||
-                (tile.height() <= 2 && std::abs(checkLoc.z - tile.altitude) <= dz)) {
+            if ((checkLoc.z >= tile.altitude && checkLoc.z <= (tile.altitude + tile.height())) || (tile.height() <= 2 && std::abs(checkLoc.z - tile.altitude) <= dz)) {
                 losItemList.push_back(tile);
             }
             
@@ -701,9 +653,7 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
     CBaseObject *itemOwner = i;
     bool inSight = false;
     
-    if (i->GetCont() !=
-        nullptr) // It's inside another container, we need root container to calculate the lof
-    {
+    if (i->GetCont() != nullptr) { // It's inside another container, we need root container to calculate the lof
         auto objType = CBaseObject::OT_CBO;
         CBaseObject *iOwner = FindItemOwner(i, objType);
         if (iOwner != nullptr) {
@@ -718,28 +668,20 @@ bool CheckItemLineOfSight(CChar *mChar, CItem *i) {
         if (mChar->GetInstanceId() != itemOwner->GetInstanceId())
             return false;
         
-        const std::int8_t height = Map->TileHeight(
-                                                   itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
+        const std::int8_t height = Map->TileHeight(itemOwner->GetId()); // Retrieves actual height of item, unrelated to world-coordinate
         // Can we see the top or bottom of the item
-        if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(),
-                        WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
+        if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), itemOwner->GetZ(), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
             inSight = true;
         }
-        else if (height > 0) // Only bother checking for the top of the item if the item has an
+        else if (height > 0) { // Only bother checking for the top of the item if the item has an
             // actual height value, otherwise it's essentially same check twice
-        {
-            if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(),
-                            (itemOwner->GetZ() + height),
-                            WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
+            if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height),  WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 inSight = true;
             }
         }
-        if (inSight == false) // If both the previous checks failed, try checking from character's Z
+        if (inSight == false) { // If both the previous checks failed, try checking from character's Z
             // location to top of item instead
-        {
-            if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(),
-                            (itemOwner->GetZ() + height),
-                            WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true)) {
+            if (LineOfSight(nullptr, mChar, itemOwner->GetX(), itemOwner->GetY(), (itemOwner->GetZ() + height), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, true)) {
                 inSight = true;
             }
         }

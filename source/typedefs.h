@@ -23,22 +23,22 @@ class CSocket;
 
 #if defined(_DEBUG)
 #define VALIDATESOCKET(s)                                                                          \
-    if (s == nullptr) {                                                                            \
-        Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
-        return;                                                                                    \
-    }
+if (s == nullptr) {                                                                            \
+Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
+return;                                                                                    \
+}
 #define VALIDATESOCKET_WITH_RETURN(s)                                                              \
-    if (s == nullptr) {                                                                            \
-        Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
-        return false;                                                                              \
-    }
+if (s == nullptr) {                                                                            \
+Console::shared().print(util::format("Socket failure at %s", __FILE__LINE__));             \
+return false;                                                                              \
+}
 #else
 #define VALIDATESOCKET(s)                                                                          \
-    if (s == nullptr)                                                                              \
-        return;
+if (s == nullptr)                                                                              \
+return;
 #define VALIDATESOCKET_WITH_RETURN(s)                                                              \
-    if (s == nullptr)                                                                              \
-        return false;
+if (s == nullptr)                                                                              \
+return false;
 #endif
 
 #ifdef __NEED_VALIST__
@@ -99,11 +99,11 @@ constexpr auto MAX_PATH = 268;
 #endif
 
 constexpr auto MAX_NAME =
-    std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet
-                       // size to 30 characters. Higher MAX_NAME values do, however, work for items
-                       // - and are in some cases required (magic item names, for instance). Seems
-                       // to still work for regular-length names if I increase it, but we might
-                       // consider splitting this into character/item-specific somehow?
+std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet
+// size to 30 characters. Higher MAX_NAME values do, however, work for items
+// - and are in some cases required (magic item names, for instance). Seems
+// to still work for regular-length names if I increase it, but we might
+// consider splitting this into character/item-specific somehow?
 constexpr auto MAX_TITLE = std::uint8_t(60);
 constexpr auto MAX_STACK = std::uint16_t(0xFFFF);
 constexpr auto MAX_VISRANGE = std::uint8_t(18);

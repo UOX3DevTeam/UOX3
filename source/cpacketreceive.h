@@ -12,13 +12,13 @@ class CChar;
 class CMultiObj;
 
 class CPIFirstLogin : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
     std::string userId;
     std::string password;
     std::uint8_t unknown;
-
-  public:
+    
+public:
     virtual ~CPIFirstLogin() {}
     CPIFirstLogin();
     CPIFirstLogin(CSocket *s);
@@ -31,10 +31,10 @@ class CPIFirstLogin : public CPInputBuffer {
 };
 
 class CPIServerSelect : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPIServerSelect() {}
     CPIServerSelect();
     CPIServerSelect(CSocket *s);
@@ -45,13 +45,13 @@ class CPIServerSelect : public CPInputBuffer {
 };
 
 class CPISecondLogin : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
     std::uint32_t keyUsed;
     std::string sid;
     std::string password;
-
-  public:
+    
+public:
     virtual ~CPISecondLogin() {}
     CPISecondLogin();
     CPISecondLogin(CSocket *s);
@@ -64,12 +64,12 @@ class CPISecondLogin : public CPInputBuffer {
 };
 
 class CPIClientVersion : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
     char *Offset();
     std::int16_t len;
-
-  public:
+    
+public:
     virtual ~CPIClientVersion() {}
     CPIClientVersion();
     CPIClientVersion(CSocket *s);
@@ -80,7 +80,7 @@ class CPIClientVersion : public CPInputBuffer {
 };
 
 class CPINewClientVersion : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
     // char *			Offset( void );
     // std::int16_t			len;
@@ -89,8 +89,8 @@ class CPINewClientVersion : public CPInputBuffer {
     std::uint32_t minorVersion;
     std::uint32_t clientRevision;
     std::uint32_t clientPrototype;
-
-  public:
+    
+public:
     virtual ~CPINewClientVersion() {}
     CPINewClientVersion();
     CPINewClientVersion(CSocket *s);
@@ -100,10 +100,10 @@ class CPINewClientVersion : public CPInputBuffer {
 };
 
 class CPIUpdateRangeChange : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPIUpdateRangeChange() {}
     CPIUpdateRangeChange();
     CPIUpdateRangeChange(CSocket *s);
@@ -113,10 +113,10 @@ class CPIUpdateRangeChange : public CPInputBuffer {
 };
 
 class CPILogoutStatus : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPILogoutStatus() {}
     CPILogoutStatus();
     CPILogoutStatus(CSocket *s);
@@ -129,11 +129,11 @@ class CPIKrriosClientSpecial : public CPInputBuffer {
     std::uint8_t type;
     std::uint16_t blockLen;
     bool locations;
-
-  protected:
+    
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPIKrriosClientSpecial() {}
     CPIKrriosClientSpecial();
     CPIKrriosClientSpecial(CSocket *s);
@@ -143,10 +143,10 @@ class CPIKrriosClientSpecial : public CPInputBuffer {
 };
 
 class CPITips : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPITips() {}
     CPITips();
     CPITips(CSocket *s);
@@ -155,10 +155,10 @@ class CPITips : public CPInputBuffer {
 };
 
 class CPIRename : public CPInputBuffer {
-  protected:
+protected:
     virtual void InternalReset();
-
-  public:
+    
+public:
     virtual ~CPIRename() {}
     CPIRename();
     CPIRename(CSocket *s);
@@ -167,7 +167,7 @@ class CPIRename : public CPInputBuffer {
 };
 
 class CPIKeepAlive : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIKeepAlive() {}
     CPIKeepAlive();
     CPIKeepAlive(CSocket *s);
@@ -179,8 +179,8 @@ class CPIStatusRequest : public CPInputBuffer {
     std::uint32_t pattern;
     std::uint8_t getType;
     serial_t playerId;
-
-  public:
+    
+public:
     virtual ~CPIStatusRequest() {}
     CPIStatusRequest();
     CPIStatusRequest(CSocket *s);
@@ -190,7 +190,7 @@ class CPIStatusRequest : public CPInputBuffer {
 };
 
 class CPISpy : public CPInputBuffer {
-  public:
+public:
     virtual ~CPISpy() {}
     CPISpy();
     CPISpy(CSocket *s);
@@ -199,7 +199,7 @@ class CPISpy : public CPInputBuffer {
 };
 
 class CPIKRSeed : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIKRSeed() {}
     CPIKRSeed();
     CPIKRSeed(CSocket *s);
@@ -208,7 +208,7 @@ class CPIKRSeed : public CPInputBuffer {
 };
 
 class CPIKREncryptionVerification : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIKREncryptionVerification() {}
     CPIKREncryptionVerification();
     CPIKREncryptionVerification(CSocket *s);
@@ -217,7 +217,7 @@ class CPIKREncryptionVerification : public CPInputBuffer {
 };
 
 class CPIGodModeToggle : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIGodModeToggle() {}
     CPIGodModeToggle();
     CPIGodModeToggle(CSocket *s);
@@ -226,10 +226,10 @@ class CPIGodModeToggle : public CPInputBuffer {
 };
 
 class CPIDblClick : public CPInputBuffer {
-  protected:
+protected:
     serial_t objectId;
-
-  public:
+    
+public:
     virtual ~CPIDblClick() {}
     CPIDblClick();
     CPIDblClick(CSocket *s);
@@ -239,10 +239,10 @@ class CPIDblClick : public CPInputBuffer {
 };
 
 class CPISingleClick : public CPInputBuffer {
-  protected:
+protected:
     serial_t objectId;
-
-  public:
+    
+public:
     virtual ~CPISingleClick() {}
     CPISingleClick();
     CPISingleClick(CSocket *s);
@@ -252,7 +252,7 @@ class CPISingleClick : public CPInputBuffer {
 };
 
 class CPIMoveRequest : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIMoveRequest() {}
     CPIMoveRequest();
     CPIMoveRequest(CSocket *s);
@@ -262,7 +262,7 @@ class CPIMoveRequest : public CPInputBuffer {
 };
 
 class CPIResyncReq : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIResyncReq() {}
     CPIResyncReq();
     CPIResyncReq(CSocket *s);
@@ -271,7 +271,7 @@ class CPIResyncReq : public CPInputBuffer {
 };
 
 class CPIResMenuChoice : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIResMenuChoice() {}
     CPIResMenuChoice();
     CPIResMenuChoice(CSocket *s);
@@ -280,7 +280,7 @@ class CPIResMenuChoice : public CPInputBuffer {
 };
 
 class CPIAttack : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIAttack() {}
     CPIAttack();
     CPIAttack(CSocket *s);
@@ -289,7 +289,7 @@ class CPIAttack : public CPInputBuffer {
 };
 
 class CPITargetCursor : public CPInputBuffer {
-  public:
+public:
     virtual ~CPITargetCursor() {}
     CPITargetCursor();
     CPITargetCursor(CSocket *s);
@@ -299,7 +299,7 @@ class CPITargetCursor : public CPInputBuffer {
 };
 
 class CPIEquipItem : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIEquipItem() {}
     CPIEquipItem();
     CPIEquipItem(CSocket *s);
@@ -308,7 +308,7 @@ class CPIEquipItem : public CPInputBuffer {
 };
 
 class CPIGetItem : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIGetItem() {}
     CPIGetItem();
     CPIGetItem(CSocket *s);
@@ -317,13 +317,13 @@ class CPIGetItem : public CPInputBuffer {
 };
 
 class CPIDropItem : public CPInputBuffer {
-  protected:
+protected:
     bool uokrFlag;
     std::int16_t x, y;
     std::int8_t z, gridLoc;
     serial_t item, dest;
-
-  public:
+    
+public:
     virtual ~CPIDropItem() {}
     CPIDropItem();
     CPIDropItem(CSocket *s);
@@ -332,36 +332,36 @@ class CPIDropItem : public CPInputBuffer {
 };
 
 class CPIGumpMenuSelect : public CPInputBuffer {
-  public:
+public:
     CPIGumpMenuSelect();
     CPIGumpMenuSelect(CSocket *s);
     virtual ~CPIGumpMenuSelect() {}
     virtual void Receive() override;
     virtual bool Handle() override;
-
+    
     serial_t ButtonId() const;
     serial_t GumpId() const;
     serial_t ID() const;
     std::uint32_t SwitchCount() const;
     std::uint32_t TextCount() const;
     std::uint32_t SwitchValue(std::uint32_t index) const;
-
+    
     std::uint16_t GetTextId(std::uint8_t number) const;
     std::uint16_t GetTextLength(std::uint8_t number) const;
     std::string GetTextString(std::uint8_t number) const;
-
-  protected:
+    
+protected:
     serial_t id, buttonId, gumpId;
     std::uint32_t switchCount, textCount;
     std::uint32_t textOffset;
-
+    
     std::vector<std::uint16_t> textLocationOffsets;
-
+    
     void BuildTextLocations();
 };
 
 class CPITalkRequest : public CPInputBuffer {
-  protected:
+protected:
     colour_t textColour;
     std::uint16_t strLen;
     std::uint16_t fontUsed;
@@ -370,14 +370,14 @@ class CPITalkRequest : public CPInputBuffer {
     bool isUnicode;
     virtual void InternalReset();
     bool HandleCommon();
-
-  public:
+    
+public:
     CPITalkRequest();
     CPITalkRequest(CSocket *s);
     virtual ~CPITalkRequest() {}
     virtual void Receive() override = 0;
     virtual bool Handle() override;
-
+    
     colour_t TextColour() const;
     std::uint16_t Length() const;
     std::uint16_t Font() const;
@@ -388,7 +388,7 @@ class CPITalkRequest : public CPInputBuffer {
 };
 
 class CPITalkRequestAscii : public CPITalkRequest {
-  public:
+public:
     CPITalkRequestAscii();
     CPITalkRequestAscii(CSocket *s);
     virtual ~CPITalkRequestAscii() {}
@@ -396,23 +396,23 @@ class CPITalkRequestAscii : public CPITalkRequest {
 };
 
 class CPITalkRequestUnicode : public CPITalkRequest {
-  protected:
+protected:
     char unicodeTxt[8192];
     char langCode[4];
-
-  public:
+    
+public:
     CPITalkRequestUnicode();
     CPITalkRequestUnicode(CSocket *s);
     virtual ~CPITalkRequestUnicode() {}
     virtual void Receive() override;
-
+    
     virtual std::string UnicodeTextString() const;
     virtual char *UnicodeText() const;
     char *Language() const;
 };
 
 class CPIAllNames3D : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIAllNames3D() {}
     CPIAllNames3D();
     CPIAllNames3D(CSocket *s);
@@ -421,7 +421,7 @@ class CPIAllNames3D : public CPInputBuffer {
 };
 
 class CPIGumpChoice : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIGumpChoice() {}
     CPIGumpChoice();
     CPIGumpChoice(CSocket *s);
@@ -430,7 +430,7 @@ class CPIGumpChoice : public CPInputBuffer {
 };
 
 class CPIBuyItem : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIBuyItem() {}
     CPIBuyItem();
     CPIBuyItem(CSocket *s);
@@ -439,7 +439,7 @@ class CPIBuyItem : public CPInputBuffer {
 };
 
 class CPISellItem : public CPInputBuffer {
-  public:
+public:
     virtual ~CPISellItem() {}
     CPISellItem();
     CPISellItem(CSocket *s);
@@ -448,7 +448,7 @@ class CPISellItem : public CPInputBuffer {
 };
 
 class CPIDeleteCharacter : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIDeleteCharacter() {}
     CPIDeleteCharacter();
     CPIDeleteCharacter(CSocket *s);
@@ -457,7 +457,7 @@ class CPIDeleteCharacter : public CPInputBuffer {
 };
 
 class CPICreateCharacter : public CPInputBuffer {
-  protected:
+protected:
     std::uint32_t pattern1;
     std::uint32_t pattern2;
     std::uint8_t pattern3;
@@ -480,7 +480,7 @@ class CPICreateCharacter : public CPInputBuffer {
     std::uint32_t ipAddress;
     colour_t shirtColour;
     colour_t pantsColour;
-
+    
     // extra for 3DCharCreate - 0x8D
     std::uint8_t packetSize;
     std::uint8_t profession;
@@ -498,10 +498,10 @@ class CPICreateCharacter : public CPInputBuffer {
     std::uint16_t shirtId;
     colour_t faceColour;
     std::uint16_t faceId;
-
+    
     void NewbieItems(CChar *mChar);
-
-  public:
+    
+public:
     virtual ~CPICreateCharacter() {}
     CPICreateCharacter();
     CPICreateCharacter(CSocket *s);
@@ -515,14 +515,14 @@ class CPICreateCharacter : public CPInputBuffer {
 };
 
 class CPIPlayCharacter : public CPInputBuffer {
-  protected:
+protected:
     std::uint32_t pattern;
     char charName[30];
     char unknown[33];
     std::uint8_t slotChosen;
     std::uint32_t ipAddress;
-
-  public:
+    
+public:
     virtual ~CPIPlayCharacter() {}
     CPIPlayCharacter();
     CPIPlayCharacter(CSocket *s);
@@ -532,22 +532,22 @@ class CPIPlayCharacter : public CPInputBuffer {
 };
 
 class CPIGumpInput : public CPInputBuffer {
-  protected:
+protected:
     std::uint32_t id;
     std::uint8_t type;
     std::uint8_t index;
     std::uint8_t unk[3];
     std::string reply;
-
+    
     void HandleTownstoneText(std::uint8_t index);
-
-  public:
+    
+public:
     virtual ~CPIGumpInput() {}
     CPIGumpInput();
     CPIGumpInput(CSocket *s);
     virtual void Receive() override;
     virtual bool Handle() override;
-
+    
     std::uint32_t ID() const;
     std::uint8_t Type() const;
     std::uint8_t Index() const;
@@ -557,10 +557,10 @@ class CPIGumpInput : public CPInputBuffer {
 };
 
 class CPIHelpRequest : public CPInputBuffer {
-  protected:
+protected:
     std::uint16_t menuNum;
-
-  public:
+    
+public:
     virtual ~CPIHelpRequest() {}
     CPIHelpRequest(CSocket *s, std::uint16_t menuVal);
     CPIHelpRequest(CSocket *s);
@@ -569,7 +569,7 @@ class CPIHelpRequest : public CPInputBuffer {
 };
 
 class CPITradeMessage : public CPInputBuffer {
-  public:
+public:
     virtual ~CPITradeMessage() {}
     CPITradeMessage();
     CPITradeMessage(CSocket *s);
@@ -578,12 +578,12 @@ class CPITradeMessage : public CPInputBuffer {
 };
 
 class CPIDyeWindow : public CPInputBuffer {
-  protected:
+protected:
     serial_t changing;
     colour_t newValue;
     std::uint16_t modelId;
-
-  public:
+    
+public:
     virtual ~CPIDyeWindow() {}
     CPIDyeWindow();
     CPIDyeWindow(CSocket *s);
@@ -593,55 +593,55 @@ class CPIDyeWindow : public CPInputBuffer {
 };
 
 class CPIMsgBoardEvent : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIMsgBoardEvent() {}
     CPIMsgBoardEvent();
     CPIMsgBoardEvent(CSocket *s);
     CPIMsgBoardEvent(CSocket *s, bool receive);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
 };
 
 class CPINewBookHeader : public CPInputBuffer {
-  public:
+public:
     virtual ~CPINewBookHeader() {}
     CPINewBookHeader();
     CPINewBookHeader(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
 };
 
 class CPIBookPage : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIBookPage() {}
     CPIBookPage();
     CPIBookPage(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
 };
 
 class CPIMetrics : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIMetrics() {}
     CPIMetrics();
     CPIMetrics(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPISubcommands : public CPInputBuffer {
-  protected:
+protected:
     std::uint16_t subCmd;
     std::uint8_t subSubCmd;
     bool skipOver;
     CPInputBuffer *subPacket;
-
-  public:
+    
+public:
     virtual ~CPISubcommands() {}
     CPISubcommands();
     CPISubcommands(CSocket *s);
@@ -651,177 +651,177 @@ class CPISubcommands : public CPInputBuffer {
 };
 
 class CPIPartyCommand : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIPartyCommand() {}
     CPIPartyCommand();
     CPIPartyCommand(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPITrackingArrow : public CPInputBuffer {
-  public:
+public:
     virtual ~CPITrackingArrow() {}
     CPITrackingArrow();
     CPITrackingArrow(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIClientLanguage : public CPInputBuffer {
-  protected:
+protected:
     unicodetypes_t newLang;
-
-  public:
+    
+public:
     virtual ~CPIClientLanguage() {}
     CPIClientLanguage();
     CPIClientLanguage(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIUOTDActions : public CPInputBuffer {
-  protected:
+protected:
     std::uint16_t action;
-
-  public:
+    
+public:
     virtual ~CPIUOTDActions() {}
     CPIUOTDActions();
     CPIUOTDActions(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIToolTipRequestAoS : public CPInputBuffer {
-  protected:
+protected:
     serial_t getSer;
-
-  public:
+    
+public:
     virtual ~CPIToolTipRequestAoS() {}
     CPIToolTipRequestAoS();
     CPIToolTipRequestAoS(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIToolTipRequest : public CPInputBuffer {
-  protected:
+protected:
     serial_t getSer;
-
-  public:
+    
+public:
     virtual ~CPIToolTipRequest() {}
     CPIToolTipRequest();
     CPIToolTipRequest(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIPopupMenuRequest : public CPInputBuffer {
-  protected:
+protected:
     serial_t mSer;
-
-  public:
+    
+public:
     virtual ~CPIPopupMenuRequest() {}
     CPIPopupMenuRequest();
     CPIPopupMenuRequest(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIPopupMenuSelect : public CPInputBuffer {
-  protected:
+protected:
     std::uint16_t popupEntry;
     CChar *targChar;
-
-  public:
+    
+public:
     virtual ~CPIPopupMenuSelect() {}
     CPIPopupMenuSelect();
     CPIPopupMenuSelect(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIExtendedStats : public CPInputBuffer {
-  protected:
+protected:
     std::uint8_t statToSet;
     std::uint8_t value;
-
-  public:
+    
+public:
     virtual ~CPIExtendedStats() {}
     CPIExtendedStats();
     CPIExtendedStats(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIBandageMacro : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIBandageMacro() {}
     CPIBandageMacro();
     CPIBandageMacro(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIClosedStatusGump : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIClosedStatusGump() {}
     CPIClosedStatusGump();
     CPIClosedStatusGump(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIToggleFlying : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIToggleFlying() {}
     CPIToggleFlying();
     CPIToggleFlying(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPISpellbookSelect : public CPInputBuffer {
-  public:
+public:
     virtual ~CPISpellbookSelect() {}
     CPISpellbookSelect();
     CPISpellbookSelect(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;
 };
 
 class CPIAOSCommand : public CPInputBuffer {
-  public:
+public:
     virtual ~CPIAOSCommand() {}
     CPIAOSCommand();
     CPIAOSCommand(CSocket *s);
-
+    
     virtual void Receive() override;
     virtual bool Handle() override;
     virtual void log(std::ostream &outStream, bool fullHeader = true) override;

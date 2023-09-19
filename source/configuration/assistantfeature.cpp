@@ -54,7 +54,7 @@ auto AssistantFeature::setKeyValue(const std::string &key,const std::string &val
     auto iter = ININAMEFEATUREMAP.find(key) ;
     if (iter != ININAMEFEATUREMAP.end()){
         rvalue = true ;
-       this->set(iter->second,static_cast<bool>(std::stoi(value,nullptr,0)));
+        this->set(iter->second,static_cast<bool>(std::stoi(value,nullptr,0)));
     }
     return rvalue;
 }

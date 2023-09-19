@@ -34,8 +34,7 @@ MultiItem_st::MultiItem_st() : tileId(0xFFFF), altitude(0), offsetX(0), offsetY(
 auto CollectionItem_st::ItemsAt(int offsetX, int offsetY) -> std::vector<MultiItem_st> {
     std::vector<MultiItem_st> rValue;
     for (auto &item : items) {
-        if ((item.offsetX == static_cast<std::int16_t>(offsetX)) &&
-            (item.offsetY == static_cast<std::int16_t>(offsetY))) {
+        if ((item.offsetX == static_cast<std::int16_t>(offsetX)) && (item.offsetY == static_cast<std::int16_t>(offsetY))) {
             rValue.push_back(item);
         }
     }
@@ -54,7 +53,8 @@ auto CollectionItem_st::Name(int multi_id) -> std::string {
     try {
         auto name = collectionNames.at(multi_id);
         return name;
-    } catch (...) {
+    }
+    catch (...) {
         return "unknown - "s + std::to_string(multi_id);
     }
 }
@@ -96,7 +96,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {33, "Orcish Galleon [destroyed][east]"s},
     {34, "Orcish Galleon [destroyed][south]"s},
     {35, "Orcish Galleon [destroyed][west]"s},
-
+    
     {36, "Gargish Galleon [north]"s},
     {37, "Gargish Galleon [east]"s},
     {38, "Gargish Galleon [south]"s},
@@ -109,7 +109,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {45, "Gargish Galleon [destroyed][east]"s},
     {46, "Gargish Galleon [destroyed][south]"s},
     {47, "Gargish Galleon [destroyed][west]"s},
-
+    
     {48, "Tokuno Galleon [north]"s},
     {49, "Tokuno Galleon [east]"s},
     {50, "Tokuno Galleon [south]"s},
@@ -122,12 +122,12 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {57, "Tokuno Galleon [destroyed][east]"s},
     {58, "Tokuno Galleon [destroyed][south]"s},
     {59, "Tokuno Galleon [destroyed][west]"s},
-
+    
     {60, "Rowboat [north]"s},
     {61, "Rowboat [east]"s},
     {62, "Rowboat [south]"s},
     {63, "Rowboat [west]"s},
-
+    
     {64, "British Galleon [north]"s},
     {65, "British Galleon [east]"s},
     {66, "British Galleon [south]"s},
@@ -136,7 +136,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {69, "British Galleon [damaged][east]"s},
     {70, "British Galleon [damaged][south]"s},
     {71, "British Galleon [damaged][west]"s},
-
+    
     {100, "Small Stone and Plaster House"s},
     {101, "Small Stone and Plaster House"s},
     {102, "Small Fieldstone House"s},
@@ -180,12 +180,12 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {500, "Wandering Healer Camp"s},
     {501, "Wandering Mage Camp"s},
     {502, "Wandering Bank Camp"s},
-
+    
     {1000, "Treasure Pile"s},
     {1001, "Treasure Pile"s},
     {1002, "Treasure Pile"s},
     {1003, "Treasure Pile"s},
-
+    
     {2000, "Wooden Supports"s},
     {2001, "Wooden Supports"s},
     {2002, "Wooden Supports"s},
@@ -194,33 +194,33 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {2005, "Wooden Supports"s},
     {2006, "Wooden Supports"s},
     {2007, "Wooden Supports"s},
-
+    
     {3000, "Farmer's Cabin"s},
-
+    
     {4000, "Exodus Generator"s},
     {4001, "Exodus Generator"s},
     {4002, "Exodus Control Pylon"s},
-
+    
     {4003, "Nystul's Tower (stage 1)"s},
     {4004, "Nystul's Tower (stage 2)"s},
     {4005, "Nystul's Tower (stage 3)"s},
     {4006, "Nystul's Tower (stage 4)"s},
     {4007, "Nystul's Tower (stage 5)"s},
     {4008, "Nystul's Tower (stage 6)"s},
-
+    
     {4009, "Scaffold and Trailer"s},
     {4010, "Exodus Energy Tower"s},
     {4011, "Exodus Barrier"s},
     {4012, "Exodus Control Device"s},
     {5000, "Minax Stronghold"s},
-
+    
     {5100, "Foundation [7x7]"s},
     {5101, "Foundation [7x8]"s},
     {5102, "Foundation [7x9]"s},
     {5103, "Foundation [7x10]"s},
     {5104, "Foundation [7x11]"s},
     {5105, "Foundation [7x12]"s},
-
+    
     {5112, "Foundation [8x7]"s},
     {5113, "Foundation [8x8]"s},
     {5114, "Foundation [8x9]"s},
@@ -228,7 +228,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5116, "Foundation [8x11]"s},
     {5117, "Foundation [8x12]"s},
     {5118, "Foundation [8x13]"s},
-
+    
     {5124, "Foundation [9x7]"s},
     {5125, "Foundation [9x8]"s},
     {5126, "Foundation [9x9]"s},
@@ -237,7 +237,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5129, "Foundation [9x12]"s},
     {5130, "Foundation [9x13]"s},
     {5131, "Foundation [9x14]"s},
-
+    
     {5136, "Foundation [10x7]"s},
     {5137, "Foundation [10x8]"s},
     {5138, "Foundation [10x9]"s},
@@ -247,7 +247,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5142, "Foundation [10x13]"s},
     {5143, "Foundation [10x14]"s},
     {5144, "Foundation [10x15]"s},
-
+    
     {5148, "Foundation [11x7]"s},
     {5149, "Foundation [11x8]"s},
     {5150, "Foundation [11x9]"s},
@@ -258,7 +258,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5155, "Foundation [11x14]"s},
     {5156, "Foundation [11x15]"s},
     {5157, "Foundation [11x16]"s},
-
+    
     {5160, "Foundation [12x7]"s},
     {5161, "Foundation [12x8]"s},
     {5162, "Foundation [12x9]"s},
@@ -270,7 +270,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5168, "Foundation [12x15]"s},
     {5169, "Foundation [12x16]"s},
     {5170, "Foundation [12x17]"s},
-
+    
     {5173, "Foundation [13x8]"s},
     {5174, "Foundation [13x9]"s},
     {5175, "Foundation [13x10]"s},
@@ -282,7 +282,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5181, "Foundation [13x16]"s},
     {5182, "Foundation [13x17]"s},
     {5183, "Foundation [13x18]"s},
-
+    
     {5186, "Foundation [14x9]"s},
     {5187, "Foundation [14x10]"s},
     {5188, "Foundation [14x11]"s},
@@ -293,7 +293,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5193, "Foundation [14x16]"s},
     {5194, "Foundation [14x17]"s},
     {5195, "Foundation [14x18]"s},
-
+    
     {5199, "Foundation [15x10]"s},
     {5200, "Foundation [15x11]"s},
     {5201, "Foundation [15x12]"s},
@@ -303,7 +303,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5205, "Foundation [15x16]"s},
     {5206, "Foundation [15x17]"s},
     {5207, "Foundation [15x18]"s},
-
+    
     {5212, "Foundation [16x11]"s},
     {5213, "Foundation [16x12]"s},
     {5214, "Foundation [16x13]"s},
@@ -312,7 +312,7 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5217, "Foundation [16x16]"s},
     {5218, "Foundation [16x17]"s},
     {5219, "Foundation [16x18]"s},
-
+    
     {5225, "Foundation [17x12]"s},
     {5226, "Foundation [17x13]"s},
     {5227, "Foundation [17x14]"s},
@@ -320,14 +320,14 @@ const std::unordered_map<int, std::string> CollectionItem_st::collectionNames = 
     {5229, "Foundation [17x16]"s},
     {5230, "Foundation [17x17]"s},
     {5231, "Foundation [17x18]"s},
-
+    
     {5238, "Foundation [18x13]"s},
     {5239, "Foundation [18x14]"s},
     {5240, "Foundation [18x15]"s},
     {5241, "Foundation [18x16]"s},
     {5242, "Foundation [18x17]"s},
     {5243, "Foundation [18x18]"s},
-
+    
     {7500, "New Player Quest Camp"s}};
 
 // o------------------------------------------------------------------------------------------------o
@@ -345,8 +345,7 @@ MultiCollection::MultiCollection(const std::filesystem::path &uodir, TileInfo *i
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load Multi MUL data from disk
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir,
-                                          const std::string &housingbin, TileInfo *info) -> bool {
+auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, const std::string &housingbin, TileInfo *info) -> bool {
     _multis.clear();
     auto multifile = uodir / std::filesystem::path("MultiCollection.uop");
     auto hash = "build/multicollection/%.6u.bin"s;
@@ -401,21 +400,17 @@ auto MultiCollection::LoadMul(const std::filesystem::path &uodir, TileInfo *info
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load Multi UOP data from disk
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, TileInfo *info)
-    -> bool {
+auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, TileInfo *info) -> bool {
     auto rValue = false;
     // First, see if the uop exists?
     auto multifile = uodir / std::filesystem::path("MultiCollection.uop");
     if (std::filesystem::exists(multifile)) {
         // It does, so lets load the uop
-        Console::shared() << "\t" << uodir.string() << "MultiCollection.uop"
-                          << "\t\t";
+        Console::shared() << "\t" << uodir.string() << "MultiCollection.uop" << "\t\t";
         rValue = LoadMultiCollection(uodir, "", info);
     }
     else {
-        Console::shared() << "\t" << uodir.string() << "multi.mul"
-                          << " / multi.idx"
-                          << "\t\t";
+        Console::shared() << "\t" << uodir.string() << "multi.mul" << " / multi.idx" << "\t\t";
         rValue = LoadMul(uodir, info);
     }
     return rValue;
@@ -426,8 +421,7 @@ auto MultiCollection::LoadMultiCollection(const std::filesystem::path &uodir, Ti
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::ProcessHash(std::uint64_t hash, [[maybe_unused]] std::size_t entry,
-                                  std::vector<std::uint8_t> &data) -> bool {
+auto MultiCollection::ProcessHash(std::uint64_t hash, [[maybe_unused]] std::size_t entry, std::vector<std::uint8_t> &data) -> bool {
     if (hash == 0x126D1E99DDEDEE0ALL) {
         if (!_housingBin.empty()) {
             auto output = std::ofstream(_housingBin, std::ios::binary);
@@ -444,16 +438,14 @@ auto MultiCollection::ProcessHash(std::uint64_t hash, [[maybe_unused]] std::size
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 // o------------------------------------------------------------------------------------------------o
-auto MultiCollection::ProcessEntry([[maybe_unused]] std::size_t entry, std::size_t index,
-                                   std::vector<std::uint8_t> &data) -> bool {
+auto MultiCollection::ProcessEntry([[maybe_unused]] std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data) -> bool {
     if (data.size() > 8) {
         auto offset = std::uint32_t(4);
         // We skip the first 32 bit word (why offset is 4).
         // The next 32 bit word is the number of entries in this data;
-
+        
         auto count = std::int32_t(0);
-        std::copy(data.data() + offset, data.data() + offset + 4,
-                  reinterpret_cast<std::uint8_t *>(&count));
+        std::copy(data.data() + offset, data.data() + offset + 4, reinterpret_cast<std::uint8_t *>(&count));
         offset += 4;
         ;
         // we increment offfset now that we have read the count
@@ -468,41 +460,36 @@ auto MultiCollection::ProcessEntry([[maybe_unused]] std::size_t entry, std::size
         for (auto entry = 0; entry < count; ++entry) {
             auto item = MultiItem_st();
             // Get the tileId
-            std::copy(data.begin() + offset, data.begin() + offset + 2,
-                      reinterpret_cast<unsigned char *>(&item.tileId));
+            std::copy(data.begin() + offset, data.begin() + offset + 2, reinterpret_cast<unsigned char *>(&item.tileId));
             offset += 2;
             if (info) {
                 item.info = &info->ArtInfo(item.tileId);
             }
             // Now get the xoffset  --
-            std::copy(data.begin() + offset, data.begin() + offset + 2,
-                      reinterpret_cast<unsigned char *>(&flag));
+            std::copy(data.begin() + offset, data.begin() + offset + 2, reinterpret_cast<unsigned char *>(&flag));
             item.offsetX = static_cast<int>(flag);
             offset += 2;
             // Now get the yoffset
-            std::copy(data.begin() + offset, data.begin() + offset + 2,
-                      reinterpret_cast<unsigned char *>(&flag));
+            std::copy(data.begin() + offset, data.begin() + offset + 2, reinterpret_cast<unsigned char *>(&flag));
             item.offsetY = static_cast<int>(flag);
             offset += 2;
             // Now get the z
-            std::copy(data.begin() + offset, data.begin() + offset + 2,
-                      reinterpret_cast<unsigned char *>(&flag));
+            std::copy(data.begin() + offset, data.begin() + offset + 2, reinterpret_cast<unsigned char *>(&flag));
             item.altitude = static_cast<int>(flag);
             offset += 2;
             // now we need to get the flag
-            std::copy(data.begin() + offset, data.begin() + offset + 2,
-                      reinterpret_cast<unsigned char *>(&flag));
+            std::copy(data.begin() + offset, data.begin() + offset + 2, reinterpret_cast<unsigned char *>(&flag));
             offset += 2;
             switch (flag) {
-            default:
-            case 0:
-                item.flag = 1;
-                break;
-            case 1:
-                break;
-            case 257:
-                item.flag = 0x800;
-                break;
+                default:
+                case 0:
+                    item.flag = 1;
+                    break;
+                case 1:
+                    break;
+                case 257:
+                    item.flag = 0x800;
+                    break;
             }
             if (flag == 0) {
                 if (first) {
@@ -524,8 +511,7 @@ auto MultiCollection::ProcessEntry([[maybe_unused]] std::size_t entry, std::size
                 }
             }
             // we now have some clilocs to read past, have to find out how many
-            std::copy(data.begin() + offset, data.begin() + offset + 4,
-                      reinterpret_cast<unsigned char *>(&clilocs));
+            std::copy(data.begin() + offset, data.begin() + offset + 4, reinterpret_cast<unsigned char *>(&clilocs));
             offset += 4;
             // Now skip past them;
             offset += (clilocs * 4);
@@ -533,7 +519,7 @@ auto MultiCollection::ProcessEntry([[maybe_unused]] std::size_t entry, std::size
         }
         _multis.insert_or_assign(static_cast<int>(index), std::move(multi));
     }
-
+    
     return true;
 }
 
@@ -549,33 +535,27 @@ auto MultiCollection::ProcessData(bool isHS, int index, std::vector<std::uint8_t
     auto first = true;
     for (auto entry = 0; entry < count; ++entry) {
         auto item = MultiItem_st();
-
-        std::copy(data.data() + (entry * size), data.data() + (entry * size) + 2,
-                  reinterpret_cast<std::uint8_t *>(&item.tileId));
+        
+        std::copy(data.data() + (entry * size), data.data() + (entry * size) + 2, reinterpret_cast<std::uint8_t *>(&item.tileId));
         if (info) {
             item.info = &(info->ArtInfo(item.tileId));
         }
         auto value = std::int16_t(0);
-        std::copy(data.data() + (entry * size) + 2, data.data() + (entry * size) + 2 + 2,
-                  reinterpret_cast<std::uint8_t *>(&value));
+        std::copy(data.data() + (entry * size) + 2, data.data() + (entry * size) + 2 + 2, reinterpret_cast<std::uint8_t *>(&value));
         item.offsetX = value;
-        std::copy(data.data() + (entry * size) + 4, data.data() + (entry * size) + 4 + 2,
-                  reinterpret_cast<std::uint8_t *>(&value));
+        std::copy(data.data() + (entry * size) + 4, data.data() + (entry * size) + 4 + 2, reinterpret_cast<std::uint8_t *>(&value));
         item.offsetY = value;
-        std::copy(data.data() + (entry * size) + 6, data.data() + (entry * size) + 6 + 2,
-                  reinterpret_cast<std::uint8_t *>(&value));
+        std::copy(data.data() + (entry * size) + 6, data.data() + (entry * size) + 6 + 2, reinterpret_cast<std::uint8_t *>(&value));
         item.altitude = value;
-
+        
         if (isHS) {
             auto flag = std::uint64_t(0);
-            std::copy(data.data() + (entry * size) + 8, data.data() + (entry * size) + 8 + 8,
-                      reinterpret_cast<std::uint8_t *>(&flag));
+            std::copy(data.data() + (entry * size) + 8, data.data() + (entry * size) + 8 + 8, reinterpret_cast<std::uint8_t *>(&flag));
             item.flag = static_cast<std::uint16_t>(flag);
         }
         else {
             auto flag = std::uint32_t(0);
-            std::copy(data.data() + (entry * size) + 4, data.data() + (entry * size) + 4 + 4,
-                      reinterpret_cast<std::uint8_t *>(&flag));
+            std::copy(data.data() + (entry * size) + 4, data.data() + (entry * size) + 4 + 4, reinterpret_cast<std::uint8_t *>(&flag));
             item.flag = static_cast<std::uint16_t>(flag);
         }
         if (first) {
@@ -595,7 +575,7 @@ auto MultiCollection::ProcessData(bool isHS, int index, std::vector<std::uint8_t
             multi.maxAlt = std::max(item.altitude, multi.maxAlt);
             multi.minAlt = std::max(item.altitude, multi.minAlt);
         }
-
+        
         multi.items.push_back(item);
     }
     _multis.insert_or_assign(static_cast<int>(index), std::move(multi));

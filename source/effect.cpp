@@ -98,8 +98,10 @@ CItem *cEffects::SpawnBloodEffect(std::uint8_t worldNum, std::uint16_t instanceI
 // object to target object
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t hue, std::uint32_t renderMode, bool playLocalMoveFX) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
-    if (!ValidateObject(source) || !ValidateObject(dest))
+    
+    if (!ValidateObject(source) || !ValidateObject(dest)){
         return;
+    }
     
     // TODO - if enhanced client/3d client, send packet 0xC7 (CP3DGraphicalEffect) instead
     // CP3DGraphicalEffect toSend( 0, ( *source ), ( *dest ));
@@ -137,8 +139,7 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::
      toSend.Unknown( 0x0000 );*/
     
     for (auto &tSock : Network->connClients) {
-        if (ObjInRange(tSock, source, DIST_SAMESCREEN) &&
-            ObjInRange(tSock, dest, DIST_SAMESCREEN)) {
+        if (ObjInRange(tSock, source, DIST_SAMESCREEN) && ObjInRange(tSock, dest, DIST_SAMESCREEN)) {
             tSock->Send(&toSend);
         }
     }
@@ -154,8 +155,10 @@ void cEffects::PlayMovingAnimation(CBaseObject *source, CBaseObject *dest, std::
 // object to target location
 // o------------------------------------------------------------------------------------------------o
 void cEffects::PlayMovingAnimation(CBaseObject *source, std::int16_t x, std::int16_t y, std::int8_t z, std::uint16_t effect, std::uint8_t speed, std::uint8_t loop, bool explode, std::uint32_t hue, std::uint32_t renderMode) { // 0x0f 0x42 = arrow 0x1b 0xfe=bolt
-    if (!ValidateObject(source))
+
+    if (!ValidateObject(source)) {
         return;
+    }
     
     CPGraphicalEffect2 toSend(0, (*source));
     toSend.TargetSerial(INVALIDSERIAL);
@@ -242,27 +245,19 @@ void cEffects::PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, b
     if (!monsterCast && (mChar->GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET))) {
         if (mChar->GetBodyType() == BT_GARGOYLE) {
             if (actionId == 0x10) {
-                PlayNewCharacterAnimation(
-                                          mChar, N_ACT_SPELL,
-                                          S_ACT_SPELL_AREA); // Action: 0x0b, SubAction: spell variation 0x01
+                PlayNewCharacterAnimation(mChar, N_ACT_SPELL, S_ACT_SPELL_AREA); // Action: 0x0b, SubAction: spell variation 0x01
             }
             else if (actionId == 0x11) {
-                PlayNewCharacterAnimation(
-                                          mChar, N_ACT_SPELL,
-                                          S_ACT_SPELL_TARGET); // Action: 0x0b, SubAction: spell variation 0x00
+                PlayNewCharacterAnimation(mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action: 0x0b, SubAction: spell variation 0x00
             }
         }
         else {
             // Sub actions are in reverse order for humans, compared to gargoyles
             if (actionId == 0x10) {
-                PlayNewCharacterAnimation(
-                                          mChar, N_ACT_SPELL,
-                                          S_ACT_SPELL_TARGET); // Action: 0x0b, SubAction: spell variation 0x00
+                PlayNewCharacterAnimation(mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action: 0x0b, SubAction: spell variation 0x00
             }
             else if (actionId == 0x11) {
-                PlayNewCharacterAnimation(
-                                          mChar, N_ACT_SPELL,
-                                          S_ACT_SPELL_AREA); // Action: 0x0b, SubAction: spell variation 0x01
+                PlayNewCharacterAnimation(mChar, N_ACT_SPELL, S_ACT_SPELL_AREA); // Action: 0x0b, SubAction: spell variation 0x01
             }
         }
         return;
@@ -367,8 +362,10 @@ void cEffects::PlayStaticAnimation(std::int16_t x, std::int16_t y, std::int8_t z
 // specific player
 // o------------------------------------------------------------------------------------------------o
 void cEffects::Bolteffect(CChar *player) {
-    if (!ValidateObject(player))
+
+    if (!ValidateObject(player)) {
         return;
+    }
     
     CPGraphicalEffect toSend(1, (*player));
     toSend.SourceLocation((*player));
@@ -440,8 +437,10 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
             }
             auto regItems = Cell->GetItemList();
             for (const auto &tempItem : regItems->collection()) {
-                if (!ValidateObject(tempItem) || tempItem->GetInstanceId() != nItem->GetInstanceId())
+                
+                if (!ValidateObject(tempItem) || tempItem->GetInstanceId() != nItem->GetInstanceId()) {
                     continue;
+                }
                 
                 if (tempItem->GetId() == 0x0F0D && tempItem->GetType() == IT_POTION) {
                     dx = abs(nItem->GetX() - tempItem->GetX());
@@ -476,14 +475,16 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
 //|	Purpose		-	Applies maker's mark to crafted items and plays sound FX
 // o------------------------------------------------------------------------------------------------o
 void cEffects::HandleMakeItemEffect(CTEffect *tMake) {
-    if (tMake == nullptr)
+    if (tMake == nullptr) {
         return;
+    }
     
     CChar *src = CalcCharObjFromSer(tMake->Source());
     std::uint16_t iMaking = tMake->More2();
     CreateEntry_st *toMake = Skills->FindItem(iMaking);
-    if (toMake == nullptr)
+    if (toMake == nullptr) {
         return;
+    }
     
     CSocket *sock = src->GetSocket();
     std::string addItem = toMake->addItem;
@@ -982,9 +983,7 @@ auto cEffects::CheckTempeffects() -> void {
                 break;
             }
             default:
-                Console::shared().error(util::format(
-                                                     " Fallout of switch statement without default (%i). checktempeffects()",
-                                                     Effect->Number()));
+                Console::shared().error(util::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()));
                 break;
         }
         if (validChar && equipCheckNeeded) {
@@ -1674,19 +1673,15 @@ void cEffects::LoadEffects() {
                                     break;
                                 case 'D':
                                     if (UTag == "DEST") {
-                                        toLoad->Destination(static_cast<std::uint32_t>(std::stoul(
-                                                                                                  util::trim(util::strip(data, "//")), nullptr, 0)));
+                                        toLoad->Destination(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                                     }
                                     if (UTag == "DISPEL") {
-                                        toLoad->Dispellable((
-                                                             (static_cast<std::uint16_t>(std::stoul(
-                                                                                                    util::trim(util::strip(data, "//")), nullptr, 0)) == 0) ? false : true));
+                                        toLoad->Dispellable(((static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 0) ? false : true));
                                     }
                                     break;
                                 case 'E':
                                     if (UTag == "EXPIRE") {
-                                        toLoad->ExpireTime(
-                                                           static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) + cwmWorldState->GetUICurrentTime());
+                                        toLoad->ExpireTime(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) + cwmWorldState->GetUICurrentTime());
                                     }
                                     break;
                                 case 'I':

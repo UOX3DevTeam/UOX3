@@ -51,8 +51,7 @@ public:
     void SubtractHealth(CChar *s, std::int32_t health, std::int32_t spellNum);
     void MagicTrap(CChar *s, CItem *i);
     void Polymorph(CSocket *s, std::uint16_t polyId);
-    void BoxSpell(CSocket *s, CChar *caster, std::int16_t &x1, std::int16_t &x2, std::int16_t &y1, std::int16_t &y2, std::int8_t &z1,
-                  std::int8_t &z2);
+    void BoxSpell(CSocket *s, CChar *caster, std::int16_t &x1, std::int16_t &x2, std::int16_t &y1, std::int16_t &y2, std::int8_t &z1, std::int8_t &z2);
     void SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y, std::int8_t z);
     void PolymorphMenu(CSocket *s, std::uint16_t gmindex);
     

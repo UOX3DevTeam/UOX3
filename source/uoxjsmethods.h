@@ -557,13 +557,13 @@ inline JSFunctionSpec CItem_Methods[] = {
     {"ReleaseItem", CMulti_ReleaseItem, 1, 0, 0},
     {"AddTrashCont", CMulti_AddTrashCont, 1, 0, 0},
     {"RemoveTrashCont", CMulti_RemoveTrashCont, 1, 0, 0},
-
+    
     {"KillKeys", CMulti_KillKeys, 1, 0, 0},
-
+    
     {"FirstChar", CMulti_FirstChar, 1, 0, 0},
     {"NextChar", CMulti_NextChar, 1, 0, 0},
     {"FinishedChars", CMulti_FinishedChars, 1, 0, 0},
-
+    
     //{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
     {nullptr, nullptr, 0, 0, 0}};
 
@@ -614,20 +614,20 @@ inline JSFunctionSpec CSocket_Methods[] = {
     {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CGuild_Methods[] = {{"AcceptRecruit", CGuild_AcceptRecruit, 1, 0, 0},
-                                          {"IsAtPeace", CGuild_IsAtPeace, 0, 0, 0},
-                                          {nullptr, nullptr, 0, 0, 0}};
+    {"IsAtPeace", CGuild_IsAtPeace, 0, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CRace_Methods[] = {{"CanWearArmour", CRace_CanWearArmour, 1, 0, 0},
-                                         {"IsValidHairColour", CRace_IsValidHairColour, 1, 0, 0},
-                                         {"IsValidSkinColour", CRace_IsValidSkinColour, 1, 0, 0},
-                                         {"IsValidBeardColour", CRace_IsValidBeardColour, 1, 0, 0},
-                                         {nullptr, nullptr, 0, 0, 0}};
+    {"IsValidHairColour", CRace_IsValidHairColour, 1, 0, 0},
+    {"IsValidSkinColour", CRace_IsValidSkinColour, 1, 0, 0},
+    {"IsValidBeardColour", CRace_IsValidBeardColour, 1, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CGumpData_Methods[] = {{"Free", CGumpData_Free, 0, 0, 0},
-                                             {"getButton", CGumpData_GetButton, 1, 0, 0},
-                                             {"getID", CGumpData_GetId, 1, 0, 0},
-                                             {"getEdit", CGumpData_GetEdit, 1, 0, 0},
-                                             {nullptr, nullptr, 0, 0, 0}};
+    {"getButton", CGumpData_GetButton, 1, 0, 0},
+    {"getID", CGumpData_GetId, 1, 0, 0},
+    {"getEdit", CGumpData_GetEdit, 1, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CFile_Methods[] = {
     {"Free", CFile_Free, 0, 0, 0},   {"Open", CFile_Open, 2, 0, 0},
@@ -637,8 +637,8 @@ inline JSFunctionSpec CFile_Methods[] = {
     {"Pos", CFile_Pos, 1, 0, 0},     {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CAccount_Methods[] = {{"AddAccount", CAccount_AddAccount, 4, 0, 0},
-                                            {"DelAccount", CAccount_DelAccount, 1, 0, 0},
-                                            {nullptr, nullptr, 0, 0, 0}};
+    {"DelAccount", CAccount_DelAccount, 1, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CConsole_Methods[] = {
     {"Print", CConsole_Print, 1, 0, 0},
@@ -664,16 +664,16 @@ inline JSFunctionSpec CConsole_Methods[] = {
     {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CPacket_Methods[] = {{"Free", CPacket_Free, 0, 0, 0},
-                                           {"WriteByte", CPacket_WriteByte, 2, 0, 0},
-                                           {"WriteShort", CPacket_WriteShort, 2, 0, 0},
-                                           {"WriteLong", CPacket_WriteLong, 2, 0, 0},
-                                           {"WriteString", CPacket_WriteString, 3, 0, 0},
-                                           {"ReserveSize", CPacket_ReserveSize, 1, 0, 0},
-                                           {nullptr, nullptr, 0, 0, 0}};
+    {"WriteByte", CPacket_WriteByte, 2, 0, 0},
+    {"WriteShort", CPacket_WriteShort, 2, 0, 0},
+    {"WriteLong", CPacket_WriteLong, 2, 0, 0},
+    {"WriteString", CPacket_WriteString, 3, 0, 0},
+    {"ReserveSize", CPacket_ReserveSize, 1, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 inline JSFunctionSpec CParty_Methods[] = {{"GetMember", CParty_GetMember, 1, 0, 0},
-                                          {"Add", CParty_Add, 1, 0, 0},
-                                          {"Remove", CParty_Remove, 1, 0, 0},
-                                          {nullptr, nullptr, 0, 0, 0}};
+    {"Add", CParty_Add, 1, 0, 0},
+    {"Remove", CParty_Remove, 1, 0, 0},
+    {nullptr, nullptr, 0, 0, 0}};
 
 #endif

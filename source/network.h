@@ -53,7 +53,7 @@ enum class radix_t { dec = 10, oct = 8, hex = 16, bin = 2 };
 class ByteBuffer {
     // These are compatability to "look" like a the original CPacketStream
     //=============================================================================================
-  public:
+public:
     auto ReserveSize(size_t len) -> void { this->size(static_cast<int>(len), 0); }
     auto WriteByte(size_t pos, std::uint8_t toWrite) -> void {
         this->write(static_cast<int>(pos), toWrite);
@@ -106,31 +106,31 @@ class ByteBuffer {
             return 0;
         }
     }
-
+    
     auto GetBuffer() const -> const std::uint8_t * { return this->raw(); }
-
+    
     auto GetSize() const -> size_t { return this->size(); }
-
+    
     // End compatability of original CPacketStream
     // o------------------------------------------------------------------------------------------------o
-
+    
     // o------------------------------------------------------------------------------------------------o
     //  Normally part of strutil, but included here for stand alone
-  public:
+public:
     // The maximum characters in a string number for conversion sake
     static constexpr auto max_characters_in_number = 12;
-
+    
     // Dumps a byte buffer, formatted to a provided stream.
     // The entries_line indicate how many bytes to display per line.
     static auto DumpByteBuffer(std::ostream &output, const std::uint8_t *buffer, std::size_t length,
                                radix_t radix = radix_t::hex, std::size_t entries_line = 8) -> void;
-
-  private:
+    
+private:
     // Convert a bool to a string
     // the true_value/false_value are returned based on the bool
     static auto ntos(bool value, const std::string &true_value = "true",
                      const std::string &false_value = "false") -> std::string;
-
+    
     // Convert a number to a string, with options on radix, prefix, size, pad
     // Radix indicates the radix the string will represent
     // prefix indicates if the "radix" indicator will be present at the front of the string
@@ -142,7 +142,7 @@ class ByteBuffer {
         if constexpr (std::is_integral_v<T> && !std::is_same_v<T, bool>) {
             // first, thing we need to convert the value to a string
             std::array<char, max_characters_in_number> str;
-
+            
             if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(), value,
                                               static_cast<int>(radix));
                 ec == std::errc()) {
@@ -163,24 +163,24 @@ class ByteBuffer {
                 // do we need our prefix?
                 if (prefix) {
                     switch (static_cast<int>(radix)) {
-                    case static_cast<int>(radix_t::dec):
-                        // We dont add anything for decimal!
-                        break;
-                    case static_cast<int>(radix_t::hex):
-                        rValue[0] = '0';
-                        rValue[1] = 'x';
-                        break;
-                    case static_cast<int>(radix_t::oct):
-                        rValue[0] = '0';
-                        rValue[1] = 'o';
-                        break;
-                    case static_cast<int>(radix_t::bin):
-                        rValue[0] = '0';
-                        rValue[1] = 'b';
-                        break;
-
-                    default:
-                        break;
+                        case static_cast<int>(radix_t::dec):
+                            // We dont add anything for decimal!
+                            break;
+                        case static_cast<int>(radix_t::hex):
+                            rValue[0] = '0';
+                            rValue[1] = 'x';
+                            break;
+                        case static_cast<int>(radix_t::oct):
+                            rValue[0] = '0';
+                            rValue[1] = 'o';
+                            break;
+                        case static_cast<int>(radix_t::bin):
+                            rValue[0] = '0';
+                            rValue[1] = 'b';
+                            break;
+                            
+                        default:
+                            break;
                     }
                 }
                 return rValue;
@@ -193,32 +193,32 @@ class ByteBuffer {
     }
     // End of strutil inclusion
     //=============================================================================================
-
-  protected:
+    
+protected:
     mutable int _index;
     std::vector<std::uint8_t> _bytedata;
     auto Exceeds(int offset, int bytelength) const -> bool;
     auto Exceeds(int offset, int bytelength, bool expand) -> bool;
-
-  public:
+    
+public:
     ByteBuffer(int size = 0, int reserve = 0);
-
+    
     auto size() const -> size_t;
     auto size(int value, std::uint8_t fill = 0) -> void;
-
+    
     auto index() const -> int;
     auto index(int value) -> void;
-
+    
     auto raw() const -> const std::uint8_t *;
     auto raw() -> std::uint8_t *;
-
+    
     auto operator[](int index) const -> const std::uint8_t &;
     auto operator[](int index) -> std::uint8_t &;
-
+    
     auto Fill(std::uint8_t value, int offset, int length) -> void;
     auto LogByteBuffer(std::ostream &output, radix_t radix = radix_t::hex,
                        int entries_line = 8) const -> void;
-
+    
     // we need to read :integral/floating, vectors/list/strings
     template <typename T>
     auto read(int offset = -1, [[maybe_unused]] int amount = -1, bool reverse = true) const -> T {
@@ -257,12 +257,12 @@ class ByteBuffer {
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size)) {
                     throw ByteBufferBounds(offset, requested_size,
-                                              static_cast<int>(_bytedata.size()));
+                                           static_cast<int>(_bytedata.size()));
                 }
                 // we need to loop through and read a "character" at a time
                 typename T::value_type character = 0;
                 T rValue;
-
+                
                 for (auto i = 0; i < amount; ++i) {
                     std::copy(_bytedata.data() + offset + i * entry_size,
                               _bytedata.data() + offset + (i + 1) * entry_size,
@@ -289,7 +289,7 @@ class ByteBuffer {
             }
         }
     }
-
+    
     // This reads into the buffer supplied, only for integral types;
     template <typename T>
     auto read(int offset, T *value, int amount = -1, bool reverse = true) const -> void {
@@ -329,10 +329,10 @@ class ByteBuffer {
             }
         }
     }
-
+    
     template <typename T>
     auto write(int offset, const T *value, int amount = -1, bool reverse = true, bool expand = true)
-        -> ByteBuffer & {
+    -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
@@ -361,18 +361,18 @@ class ByteBuffer {
                 _index = offset + (entry_size * amount);
             }
             return *this; // we put this here, versue at the end, for we want a compile error if a
-                          // type not caught with if constexpr. So a return in each if constexpr at
-                          // the top level
+            // type not caught with if constexpr. So a return in each if constexpr at
+            // the top level
         }
     }
-
+    
     template <typename T>
     auto write(int offset, const T &value, int amount = -1, bool reverse = true, bool expand = true)
-        -> ByteBuffer & {
+    -> ByteBuffer & {
         if (offset < 0) {
             offset = _index;
         }
-
+        
         if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
             // we ignore amount for integrals and floating point
             auto size = static_cast<int>(sizeof(T));
@@ -380,7 +380,7 @@ class ByteBuffer {
                 size = 1;
             }
             if (Exceeds(offset, size, expand)) {
-
+                
                 throw ByteBufferBounds(offset, size, static_cast<int>(_bytedata.size()));
             }
             // we need to write it
@@ -391,11 +391,11 @@ class ByteBuffer {
             }
             std::copy(reinterpret_cast<std::uint8_t *>(&temp),
                       reinterpret_cast<std::uint8_t *>(&temp) + size, _bytedata.begin() + offset);
-
+            
             _index = offset + size;
             return *this; // we put this here, versue at the end, for we want a compile error if a
-                          // type not caught with if constexpr. So a return in each if constexpr at
-                          // the top level
+            // type not caught with if constexpr. So a return in each if constexpr at
+            // the top level
         }
         else if constexpr (std::is_class_v<T>) {
             if constexpr (std::is_integral_v<typename T::value_type>) {
@@ -419,7 +419,7 @@ class ByteBuffer {
                 // are we exceeding that?
                 if (Exceeds(offset, requested_size, expand)) {
                     throw ByteBufferBounds(offset, requested_size,
-                                              static_cast<int>(_bytedata.size()));
+                                           static_cast<int>(_bytedata.size()));
                 }
                 // Ok, so now we get to go and do our thing
                 for (auto i = 0; i < write_size; ++i) {
@@ -433,7 +433,7 @@ class ByteBuffer {
                               _bytedata.data() + offset + i * entry_size);
                 }
                 _index = offset + (write_size * entry_size);
-
+                
                 // Now we need to do the fill if anyway
                 if (fill_size > 0) {
                     std::fill(_bytedata.data() + _index,
@@ -452,13 +452,13 @@ class ByteBuffer {
                     amount = 1;
                 }
                 auto requested_size = amount * entry_size;
-
+                
                 if (Exceeds(offset, requested_size, expand)) {
                     throw ByteBufferBounds(offset, requested_size,
-                                              static_cast<int>(_bytedata.size()));
+                                           static_cast<int>(_bytedata.size()));
                 }
                 // We need to check and loop through if we are reversing;
-
+                
                 // we need to write it
                 for (auto i = 0; i < amount; ++i) {
                     auto input = value[i];
@@ -478,10 +478,10 @@ class ByteBuffer {
 };
 
 class socket_error : public std::runtime_error {
-  private:
+private:
     std::uint32_t errorNum;
-
-  public:
+    
+public:
     socket_error(const std::string &what_arg);
     socket_error(const std::uint32_t errorNumber);
     socket_error();
@@ -490,41 +490,41 @@ class socket_error : public std::runtime_error {
 };
 
 class CPUOXBuffer {
-  private:
+private:
     std::vector<std::uint8_t> packedBuffer;
     bool isPacked;
     std::uint32_t packedLength;
-
-  protected:
+    
+protected:
     ByteBuffer pStream;
-
+    
     virtual void InternalReset();
-
-  public:
+    
+public:
     CPUOXBuffer();
     virtual ~CPUOXBuffer();
     CPUOXBuffer(CPUOXBuffer *initBuffer);
     CPUOXBuffer &operator=(CPUOXBuffer &copyFrom);
-
+    
     std::uint32_t Pack();
     virtual bool ClientCanReceive(CSocket *mSock);
     ByteBuffer &GetPacketStream();
-
+    
     std::uint32_t PackedLength() const;
     const std::uint8_t *PackedPointer() const;
-
+    
     virtual void log(std::ostream &outStream, bool fullHeader = true);
 };
 
 class CPInputBuffer {
-  protected:
+protected:
     CSocket *tSock;
-
-  public:
+    
+public:
     CPInputBuffer();
     CPInputBuffer(CSocket *input);
     virtual ~CPInputBuffer() {}
-
+    
     virtual void Receive() = 0;
     virtual void log(std::ostream &outStream, bool fullHeader = true);
     virtual bool Handle();
@@ -533,8 +533,8 @@ class CPInputBuffer {
 };
 
 class CNetworkStuff {
-
-  public:
+    
+public:
     CNetworkStuff();
     ~CNetworkStuff();
     auto startup() -> void;
@@ -547,26 +547,26 @@ class CNetworkStuff {
     void SetLastOn(CSocket *s);
     CSocket *GetSockPtr(uoxsocket_t s);
     uoxsocket_t FindNetworkPtr(CSocket *toFind);
-
+    
     void CheckConnections();
     void CheckMessages();
-
+    
     void Transfer(CSocket *s);
-
+    
     size_t PeakConnectionCount() const;
-
+    
     // Login Specific
     void LoginDisconnect(uoxsocket_t s);
     void LoginDisconnect(CSocket *s);
-
+    
     void RegisterPacket(std::uint8_t packet, std::uint8_t subCmd, std::uint16_t scriptId);
-
+    
     // We don't want to do this, but given we have outside classes
     // we can either friend a lot of things, or just put it out here
     std::mutex internallock;
     std::vector<CSocket *> connClients, loggedInClients;
-
-  private:
+    
+private:
     struct FirewallEntry_st {
         std::int16_t b[4];
         FirewallEntry_st(std::int16_t p1, std::int16_t p2, std::int16_t p3, std::int16_t p4) {
@@ -576,24 +576,24 @@ class CNetworkStuff {
             b[3] = p4;
         }
     };
-
+    
     std::map<std::uint16_t, std::uint16_t> packetOverloads;
     std::vector<FirewallEntry_st> slEntries;
     SOCKET a_socket;
-
+    
     struct sockaddr_in client_addr;
-
+    
     size_t peakConnectionCount;
-
+    
     void LoadFirewallEntries();
     void GetMsg(uoxsocket_t s);
     void sockInit();
     void GetLoginMsg(uoxsocket_t s);
     uoxsocket_t FindLoginPtr(CSocket *s);
-
+    
     void CheckConn();
     void LogOut(CSocket *s);
-
+    
     bool IsFirewallBlocked(std::uint8_t part[4]);
 };
 

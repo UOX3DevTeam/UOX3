@@ -72,7 +72,7 @@ bool CPINewBookHeader::Handle() {
         std::fstream file(fileName.string(), std::ios::in | std::ios::out | std::ios::binary);
         
         if (file.is_open()) { // If it isn't open now, our create and open failed
-        
+            
             const size_t titleLen = tSock->GetWord(11);
             const size_t authorLen = tSock->GetWord(13 + titleLen);
             
@@ -249,7 +249,7 @@ void CBooks::OpenBook(CSocket *mSock, CItem *mBook, bool isWriteable) {
         mSock->Send(&bInfo);
         
         if (bookExists) { // dont send book contents if the file doesnt exist (yet)!
-        
+            
             mSock->Send(&cpbpToSend);
         }
     }

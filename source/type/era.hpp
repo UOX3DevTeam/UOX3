@@ -32,7 +32,7 @@ struct Era {
     static auto nameFromEra(era_t era) -> const std::string& ;
     static auto size()  -> size_t ;
     static auto latest()  -> era_t ;
-
+    
     era_t value ;
     
     Era() ;

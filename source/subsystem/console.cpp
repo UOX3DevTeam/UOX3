@@ -451,7 +451,8 @@ auto Console::error(const std::string &msg) -> void {
         (*this) << "ERROR: " << (const char *)&msg[0] << myendl;
         turnNormal();
         currentMode(oldMode);
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e) {
         std::cerr << "Error print reporting 'error'.  Error was: " << e.what() << std::endl;
         exit(1); // This seems pretty dangerous, as UOX3 starts other threads this doenst let them
         // get joined
@@ -570,8 +571,7 @@ auto Console::turnNormal() -> void {
 auto Console::turnBrightWhite() -> void {
 #if defined(_WIN32)
     auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hco, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN |
-                            FOREGROUND_INTENSITY);
+    SetConsoleTextAttribute(hco, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 #else
     std::cout << "\033[1;37m";
 #endif
@@ -805,16 +805,14 @@ auto Console::cl_getch() -> std::int32_t {
                     // Some sequences end with a ~, some dont.  So, we now get to see
                     a = ::read(0, &data, 1);
                     while (a > 0) {
-                        if ((data == 'A') || (data == 'B') || (data == 'C') || (data == 'D') ||
-                            ((data == 'H') && (data == 'F')) || (data == '~')) {
+                        if ((data == 'A') || (data == 'B') || (data == 'C') || (data == 'D') || ((data == 'H') && (data == 'F')) || (data == '~')) {
                             break;
                         }
                         a = ::read(0, &data, 1);
                     }
                     return -1;
                 }
-                else if (data == 'O') // this could be F1-F4
-                {
+                else if (data == 'O'){ // this could be F1-F4
                     a = ::read(0, &data, 1);
                     if (a > 0) {
                         if ((data == 'P') || (data == 'Q') || (data == 'R') || (data == 'S')) {
@@ -907,12 +905,10 @@ auto Console::process(std::int32_t c) -> void {
                     // All commands that execute are of the form: command_commandname (to avoid
                     // possible clashes)
 #if defined(UOX_DEBUG_MODE)
-                    print(util::format("Executing JS keystroke %c %s\n", c,
-                                       toFind->second.cmdName.c_str()));
+                    print(util::format("Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()));
 #endif
                     jsval eventRetVal;
-                    [[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent(
-                                                                                    toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal);
+                    [[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent(toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal);
                 }
                 return;
             }
@@ -967,8 +963,7 @@ auto Console::process(std::int32_t c) -> void {
                             indexcount = 0;
                             kill = true;
                             std::cout << std::endl;
-                            temp = util::format("CMD: System broadcast sent message \"%s\"",
-                                                outputline.c_str());
+                            temp = util::format("CMD: System broadcast sent message \"%s\"", outputline.c_str());
                             outputline = "";
                             messageLoop << temp;
                             break;
@@ -1109,48 +1104,15 @@ auto Console::process(std::int32_t c) -> void {
                 logEcho(true);
                 log("--- Starting Performance Dump ---", "performance.log");
                 log("\tPerformance Dump:", "performance.log");
-                log(util::format("\tNetwork code: %.2fmsec [%i samples]",
-                                 static_cast<R32>(
-                                                  static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /
-                                                  static_cast<R32>(networkTimeCount)),
-                                 networkTimeCount),
-                    "performance.log");
-                log(util::format(
-                                 "\tTimer code: %.2fmsec [%i samples]",
-                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) /
-                                                  static_cast<R32>(timerTimeCount)),
-                                 timerTimeCount),
-                    "performance.log");
-                log(util::format(
-                                 "\tAuto code: %.2fmsec [%i samples]",
-                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) /
-                                                  static_cast<R32>(autoTimeCount)),
-                                 autoTimeCount),
-                    "performance.log");
-                log(util::format(
-                                 "\tLoop Time: %.2fmsec [%i samples]",
-                                 static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /
-                                                  static_cast<R32>(loopTimeCount)),
-                                 loopTimeCount),
-                    "performance.log");
+                log(util::format("\tNetwork code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /  static_cast<R32>(networkTimeCount)), networkTimeCount), "performance.log");
+                log(util::format("\tTimer code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<R32>(timerTimeCount)), timerTimeCount), "performance.log");
+                log(util::format("\tAuto code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<R32>(autoTimeCount)), autoTimeCount), "performance.log");
+                log(util::format("\tLoop Time: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount)), loopTimeCount), "performance.log");
                 
-                log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)",
-                                 ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR),
-                                 ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR),
-                                 ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
-                                 ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)),
-                    "performance.log");
-                log(util::format("\tSimulation Cycles: %f per sec",
-                                 (1000.0 * (1.0 / static_cast<R32>(
-                                                                   static_cast<R32>(
-                                                                                    cwmWorldState->ServerProfile()->LoopTime()) /
-                                                                   static_cast<R32>(loopTimeCount))))),
-                    "performance.log");
-                log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()),
-                    "performance.log");
-                log(util::format("\tBytes Received: %i",
-                                 cwmWorldState->ServerProfile()->GlobalReceived()),
-                    "performance.log");
+                log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)), "performance.log");
+                log(util::format("\tSimulation Cycles: %f per sec", (1000.0 * (1.0 / static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount))))), "performance.log");
+                log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
+                log(util::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
                 log("--- Performance Dump Complete ---", "performance.log");
                 logEcho(false);
                 break;
@@ -1163,10 +1125,7 @@ auto Console::process(std::int32_t c) -> void {
                         ++j;
                         CChar *mChar = iSock->CurrcharObj();
                         
-                        temp =
-                        util::format("     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(),
-                                     mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3),
-                                     mChar->GetSerial(4));
+                        temp = util::format("     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial(1), mChar->GetSerial(2), mChar->GetSerial(3), mChar->GetSerial(4));
                         messageLoop << temp;
                     }
                 }
@@ -1183,18 +1142,13 @@ auto Console::process(std::int32_t c) -> void {
                 std::uint32_t m, n;
                 m = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR));
                 total += tmp = m + m * sizeof(CTEffect) + m * sizeof(std::int8_t) + m * sizeof(intptr_t) * 5;
-                temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp,
-                                    ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), m);
+                temp = util::format("     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), m);
                 messageLoop << temp;
                 n = static_cast<std::uint32_t>(ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM));
                 total += tmp = n + n * sizeof(intptr_t) * 4;
-                temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp,
-                                    ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), n);
+                temp = util::format("     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), n);
                 messageLoop << temp;
-                temp = util::format(
-                                    "        You save I: %lu & C: %lu bytes!",
-                                    m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
-                                    m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
+                temp = util::format("        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), m * sizeof(CChar) - ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
                 total += tmp = 69 * sizeof(CSpellInfo);
                 temp = util::format(temp, "     Spells: %i bytes", tmp);
                 messageLoop << "     Sizes:";
@@ -1202,8 +1156,7 @@ auto Console::process(std::int32_t c) -> void {
                 messageLoop << temp;
                 temp = util::format("        CChar  : %lu bytes", sizeof(CChar));
                 messageLoop << temp;
-                temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect),
-                                    sizeof(CTEffect) * cwmWorldState->tempEffects.Num());
+                temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect), sizeof(CTEffect) * cwmWorldState->tempEffects.Num());
                 messageLoop << temp;
                 temp = util::format("        Approximate Total: %i bytes", total);
                 messageLoop << temp;
@@ -1240,16 +1193,14 @@ auto Console::process(std::int32_t c) -> void {
             case 'z':
             case 'Z': {
                 auto loggingEnabled = false;
-                {
-                    for (auto &snSock : Network->connClients) {
-                        if (snSock) {
-                            snSock->Logging(!snSock->Logging());
-                        }
+                for (auto &snSock : Network->connClients) {
+                    if (snSock) {
+                        snSock->Logging(!snSock->Logging());
                     }
-                    auto iter = Network->connClients.begin();
-                    if (iter != Network->connClients.end()) {
-                        loggingEnabled = (*iter)->Logging();
-                    }
+                }
+                auto iter = Network->connClients.begin();
+                if (iter != Network->connClients.end()) {
+                    loggingEnabled = (*iter)->Logging();
                 }
                 if (loggingEnabled) {
                     messageLoop << "CMD: Network Logging Enabled.";
@@ -1269,8 +1220,7 @@ auto Console::process(std::int32_t c) -> void {
                 FileLookup->DisplayPriorityMap();
                 break;
             default:
-                temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c),
-                                    c);
+                temp = util::format("Key \'%c\' [%i] does not perform a function", static_cast<std::int8_t>(c), c);
                 messageLoop << temp;
                 break;
         }
@@ -1356,8 +1306,7 @@ auto Console::setKeyStatus(std::int32_t key, bool isEnabled) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console function
 // o------------------------------------------------------------------------------------------------o
-auto Console::registerFunc(const std::string &cmdFunc, const std::string &cmdName, std::uint16_t scriptId)
--> void {
+auto Console::registerFunc(const std::string &cmdFunc, const std::string &cmdName, std::uint16_t scriptId) -> void {
 #if defined(UOX_DEBUG_MODE)
     print(util::format("         Registering console func \"%s\"\n", cmdFunc.c_str()));
 #endif

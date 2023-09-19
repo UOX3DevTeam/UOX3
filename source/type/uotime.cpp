@@ -22,7 +22,7 @@ using namespace std::string_literals ;
  timeDestination << "MOON=" << serverMoon(0) << "," << serverMoon(1) << '\n';
  timeDestination << "}" << '\n' << '\n';
  
-
+ 
  */
 //======================================================================
 UOTime::UOTime(){

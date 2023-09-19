@@ -33,7 +33,8 @@ std::int32_t FileSize(std::string filename) {
     
     try {
         retVal = static_cast<std::int32_t>(std::filesystem::file_size(filename));
-    } catch (...) {
+    }
+    catch (...) {
         retVal = 0;
     }
     
@@ -81,8 +82,7 @@ void LoadItem(std::istream &readDestination) {
 void LoadMulti(std::istream &readDestination) {
     CMultiObj *ourHouse =
     static_cast<CMultiObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_MULTI));
-    if (!ourHouse->load(readDestination)) // if no load, DELETE
-    {
+    if (!ourHouse->load(readDestination)){ // if no load, DELETE
         ourHouse->Cleanup();
         ObjectFactory::shared().DestroyObject(ourHouse);
     }
@@ -96,8 +96,7 @@ void LoadMulti(std::istream &readDestination) {
 void LoadBoat(std::istream &readDestination) {
     CBoatObj *ourBoat =
     static_cast<CBoatObj *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_BOAT));
-    if (!ourBoat->load(readDestination)) // if no load, DELETE
-    {
+    if (!ourBoat->load(readDestination)) { // if no load, DELETE
         ourBoat->Cleanup();
         ObjectFactory::shared().DestroyObject(ourBoat);
     }
@@ -111,8 +110,7 @@ void LoadBoat(std::istream &readDestination) {
 void LoadSpawnItem(std::istream &readDestination) {
     CSpawnItem *ourSpawner =
     static_cast<CSpawnItem *>(ObjectFactory::shared().CreateBlankObject(CBaseObject::OT_SPAWNER));
-    if (!ourSpawner->load(readDestination)) // if no load, DELETE
-    {
+    if (!ourSpawner->load(readDestination)) { // if no load, DELETE
         ourSpawner->Cleanup();
         ObjectFactory::shared().DestroyObject(ourSpawner);
     }
@@ -141,8 +139,7 @@ void CMapRegion::SaveToDisk(std::ostream &writeDestination) {
             }
         }
     }
-    std::for_each(removeChar.begin(), removeChar.end(),
-                  [this](CChar *character) { charData.Remove(character); });
+    std::for_each(removeChar.begin(), removeChar.end(), [this](CChar *character) { charData.Remove(character); });
     
     std::vector<CItem *> removeItem;
     for (const auto &itemToWrite : itemData.collection()) {
@@ -230,8 +227,7 @@ CMapWorld::CMapWorld(std::uint8_t worldNum) {
     resourceY = static_cast<std::uint16_t>(mapHeight / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE]);
     
     size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
-    if (resourceSize < 1) // ALWAYS initialize at least one resource region.
-    {
+    if (resourceSize < 1) { // ALWAYS initialize at least one resource region.
         resourceSize = 1;
     }
     mapResources.resize(resourceSize);
@@ -252,8 +248,7 @@ CMapWorld::~CMapWorld() {
 // o------------------------------------------------------------------------------------------------o
 CMapRegion *CMapWorld::GetMapRegion(std::int16_t xOffset, std::int16_t yOffset) {
     CMapRegion *mRegion = nullptr;
-    const size_t regionIndex = (static_cast<size_t>(xOffset) * static_cast<size_t>(upperArrayY) +
-                                static_cast<size_t>(yOffset));
+    const size_t regionIndex = (static_cast<size_t>(xOffset) * static_cast<size_t>(upperArrayY) + static_cast<size_t>(yOffset));
     
     if (xOffset >= 0 && xOffset < upperArrayX && yOffset >= 0 && yOffset < upperArrayY) {
         if (regionIndex < mapRegions.size()) {
@@ -299,14 +294,11 @@ void CMapWorld::SaveResources(std::uint8_t worldNum) {
     if (output.is_open()) {
         for (auto iter = mapResources.begin(); iter != mapResources.end(); iter++) {
             buffer[0] = iter->oreAmt;
-            std::reverse(reinterpret_cast<char *>(buffer.data()),
-                         reinterpret_cast<char *>(buffer.data()) + 2); // Make it big endian
+            std::reverse(reinterpret_cast<char *>(buffer.data()), reinterpret_cast<char *>(buffer.data()) + 2); // Make it big endian
             buffer[1] = iter->logAmt;
-            std::reverse(reinterpret_cast<char *>(buffer.data()) + 2,
-                         reinterpret_cast<char *>(buffer.data()) + 4);
+            std::reverse(reinterpret_cast<char *>(buffer.data()) + 2, reinterpret_cast<char *>(buffer.data()) + 4);
             buffer[2] = iter->fishAmt;
-            std::reverse(reinterpret_cast<char *>(buffer.data()) + 4,
-                         reinterpret_cast<char *>(buffer.data()) + 6);
+            std::reverse(reinterpret_cast<char *>(buffer.data()) + 4, reinterpret_cast<char *>(buffer.data()) + 6);
             // Now write it
             output.write(reinterpret_cast<char *>(buffer.data()), buffer.size() * 2);
         }
@@ -341,11 +333,10 @@ void CMapWorld::LoadResources(std::uint8_t worldNum) {
                 // We had issues reading the full amount, break out of this
                 break;
             }
-            // For whatever reason the resources are stored in big endidan, which on int/arm
+            // For whatever reason the resources are stored in big endian, which on int/arm
             // machines , we need little endian, so reverse them
             std::for_each(buffer.begin(), buffer.end(), [](std::int16_t &value) {
-                std::reverse(reinterpret_cast<char *>(&value),
-                             reinterpret_cast<char *>(&value) + 2);
+                std::reverse(reinterpret_cast<char *>(&value), reinterpret_cast<char *>(&value) + 2);
             });
             // Now set the values
             (*iter).oreAmt = buffer[0];
@@ -394,11 +385,9 @@ bool CMapHandler::ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std
     CMapRegion *newCell = GetMapRegion(GetGridX(x), GetGridY(y), worldNum);
     
     if (curCell != newCell) {
-        if (!curCell->GetRegionSerialList()->Remove(nItem->GetSerial()) ||
-            !curCell->GetItemList()->Remove(nItem)) {
+        if (!curCell->GetRegionSerialList()->Remove(nItem->GetSerial()) || !curCell->GetItemList()->Remove(nItem)) {
 #if DEBUG_REGIONS
-            Console::shared().warning(util::format(
-                                                   "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
+            Console::shared().warning(util::format("Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
 #endif
         }
         else {
@@ -416,8 +405,7 @@ bool CMapHandler::ChangeRegion(CItem *nItem, std::int16_t x, std::int16_t y, std
         }
         else {
 #if DEBUG_REGIONS
-            Console::shared().warning(util::format(
-                                                   "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
+            Console::shared().warning(util::format("Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
 #endif
         }
     }
@@ -438,11 +426,9 @@ bool CMapHandler::ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std
     CMapRegion *newCell = GetMapRegion(GetGridX(x), GetGridY(y), worldNum);
     
     if (curCell != newCell) {
-        if (!curCell->GetRegionSerialList()->Remove(nChar->GetSerial()) ||
-            !curCell->GetCharList()->Remove(nChar)) {
+        if (!curCell->GetRegionSerialList()->Remove(nChar->GetSerial()) || !curCell->GetCharList()->Remove(nChar)) {
 #if DEBUG_REGIONS
-            Console::shared().warning(util::format(
-                                                   "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial()));
+            Console::shared().warning(util::format("Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial()));
 #endif
         }
         else {
@@ -460,8 +446,7 @@ bool CMapHandler::ChangeRegion(CChar *nChar, std::int16_t x, std::int16_t y, std
         }
         else {
 #if DEBUG_REGIONS
-            Console::shared().warning(util::format(
-                                                   "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial()));
+            Console::shared().warning(util::format("Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial()));
 #endif
         }
     }
@@ -488,8 +473,7 @@ bool CMapHandler::AddItem(CItem *nItem) {
     }
     else {
 #if DEBUG_REGIONS
-        CConsole::shared() onsole.warning(
-                                          util::format("Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
+        CConsole::shared() onsole.warning(util::format("Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial()));
 #endif
     }
     return false;
@@ -515,8 +499,7 @@ bool CMapHandler::RemoveItem(CItem *nItem) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().warning(util::format(
-                                               "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
+        Console::shared().warning(util::format("Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial()));
 #endif
         return false;
     }
@@ -543,8 +526,7 @@ bool CMapHandler::AddChar(CChar *toAdd) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().warning(util::format(
-                                               "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial()));
+        Console::shared().warning(util::format("Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial()));
 #endif
     }
     return false;
@@ -570,8 +552,7 @@ bool CMapHandler::RemoveChar(CChar *toRemove) {
     }
     else {
 #if DEBUG_REGIONS
-        Console::shared().warning(util::format(
-                                               "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial()));
+        Console::shared().warning(util::format("Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial()));
 #endif
         return false;
     }
@@ -857,10 +838,8 @@ void CMapHandler::load() {
     }
     
     std::int32_t runningDone = 0;
-    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) // move left->right
-    {
-        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) // move up->down
-        {
+    for (std::int16_t counter1 = 0; counter1 < AreaX; ++counter1) { // move left->right
+        for (std::int16_t counter2 = 0; counter2 < AreaY; ++counter2) { // move up->down
             filename = basePath / std::filesystem::path(util::ntos(counter1) + "."s + util::ntos(counter2) + ".wsc"s);         // let's name our file
             readDestination.open(filename.string()); // let's open it
             readDestination.seekg(0, std::ios::beg);
@@ -943,7 +922,7 @@ void CMapHandler::LoadFromDisk(std::istream &readDestination, std::int32_t baseV
         sLine = util::trim(sLine);
         
         if (sLine.substr(0, 1) == "["){ // in a section
-         
+            
             sLine = sLine.substr(1, sLine.size() - 2);
             sLine = util::upper(util::trim(sLine));
             if (sLine == "CHARACTER") {

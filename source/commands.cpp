@@ -58,7 +58,8 @@ std::int32_t CCommands::argument(std::uint8_t argNum) {
     if (!tempString.empty()) {
         try {
             retVal = std::stoi(tempString, nullptr, 0);
-        } catch (const std::invalid_argument &e) {
+        }
+        catch (const std::invalid_argument &e) {
             Console::shared().error(util::format("[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str()));
         }
     }
@@ -106,12 +107,10 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         if (toFind->second.isEnabled) {
             bool plClearance = false;
             if (checkSocketAccess) {
-                plClearance = (s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq ||
-                               s->CurrcharObj()->GetAccount().accountNumber == 0);
+                plClearance = (s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0);
             }
             else {
-                plClearance = (mChar->GetCommandLevel() >= toFind->second.cmdLevelReq ||
-                               mChar->GetAccount().accountNumber == 0);
+                plClearance = (mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().accountNumber == 0);
             }
             // from now on, account 0 ALWAYS has admin access, regardless of command level
             if (!plClearance) {
@@ -146,12 +145,10 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
     if (findTarg != targetMap.end()) {
         bool plClearance = false;
         if (checkSocketAccess) {
-            plClearance = (s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq ||
-                           s->CurrcharObj()->GetAccount().accountNumber == 0);
+            plClearance = (s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0);
         }
         else {
-            plClearance = (mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq ||
-                           mChar->GetAccount().accountNumber == 0);
+            plClearance = (mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().accountNumber == 0);
         }
         if (!plClearance) {
             if (checkSocketAccess) {
@@ -229,8 +226,7 @@ void CCommands::command(CSocket *s, CChar *mChar, std::string text, bool checkSo
         else {
             bool plClearance = false;
             if (checkSocketAccess) {
-                plClearance = (s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq ||
-                               s->CurrcharObj()->GetAccount().accountNumber == 0);
+                plClearance = (s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().accountNumber == 0);
             }
             else {
                 plClearance = (mChar->GetCommandLevel() >= toFind->second.cmdLevelReq ||
@@ -366,8 +362,7 @@ void CCommands::load() {
                             ourClear->stripOff.set(CommandLevel::BIT_STRIPITEMS, true);
                         }
                         else {
-                            Console::shared() << myendl << "Unknown tag in " << ourClear->name
-                            << ": " << tag << " with data of " << data << myendl;
+                            Console::shared() << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
                         }
                     }
                 }
@@ -377,8 +372,7 @@ void CCommands::load() {
     
     // Now we'll load our JS commands, what fun!
     CJSMappingSection *commandSection = JSMapping->GetSection(CJSMappingSection::SCPT_COMMAND);
-    for (cScript *ourScript = commandSection->First(); !commandSection->Finished();
-         ourScript = commandSection->Next()) {
+    for (cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next()) {
         if (ourScript != nullptr) {
             ourScript->ScriptRegistration("Command");
         }
@@ -390,8 +384,8 @@ void CCommands::load() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
 // o------------------------------------------------------------------------------------------------o
-void CCommands::log(const std::string &command, CChar *player1, CChar *player2,
-                    const std::string &extraInfo) {
+void CCommands::log(const std::string &command, CChar *player1, CChar *player2,  const std::string &extraInfo) {
+    
     auto logName = ServerConfig::shared().directoryFor(dirlocation_t::LOG) / std::filesystem::path("command.log");
     std::ofstream logDestination;
     logDestination.open(logName.string(), std::ios::out | std::ios::app);
@@ -404,8 +398,7 @@ void CCommands::log(const std::string &command, CChar *player1, CChar *player2,
     
     logDestination << "[" << dateTime << "] ";
     logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << ") ";
-    logDestination << "used command <" << command << (commandString(2) != "" ? " " : "")
-    << commandString(2) << "> ";
+    logDestination << "used command <" << command << (commandString(2) != "" ? " " : "") << commandString(2) << "> ";
     if (ValidateObject(player2)) {
         logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " )";
     }
@@ -447,9 +440,9 @@ std::uint16_t CCommands::getColourByLevel(std::uint8_t commandLevel) {
         return clearance[0]->nickColour;
     
     for (size_t counter = 0; counter < (clearanceSize - 1); ++counter) {
-        if (commandLevel <= clearance[counter]->commandLevel &&
-            commandLevel > clearance[counter + 1]->commandLevel)
+        if (commandLevel <= clearance[counter]->commandLevel && commandLevel > clearance[counter + 1]->commandLevel) {
             return clearance[counter]->nickColour;
+        }
     }
     return clearance[clearanceSize - 1]->nickColour;
 }
@@ -627,7 +620,7 @@ void CCommands::resetCommand() {
     // S
     targetMap["SHOWSKILLS"s] = TargetMapEntry(CL_GM, CMD_TARGETINT, TARGET_SHOWSKILLS, 260);
     // T
-     targetMap["TWEAK"]            = TargetMapEntry( CL_GM,CMD_TARGET,TARGET_TWEAK, 229);
+    targetMap["TWEAK"]            = TargetMapEntry( CL_GM,CMD_TARGET,TARGET_TWEAK, 229);
     // U
     // V
     // W
@@ -720,8 +713,7 @@ void CCommands::unRegisterCommand(const std::string &cmdName, [[maybe_unused]] c
     }
 #if defined(UOX_DEBUG_MODE)
     else {
-        Console::shared().print(
-            util::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
+        Console::shared().print(util::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
     }
 #endif
 }

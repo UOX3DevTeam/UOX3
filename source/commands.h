@@ -18,7 +18,7 @@ class cScript;
 struct CommandLevel {
     static constexpr auto BIT_STRIPHAIR = std::uint32_t(1);
     static constexpr auto BIT_STRIPITEMS = std::uint32_t(2);
-
+    
     std::string name;        // name of level
     std::string title;       // Title of level, displayed in front of name
     std::uint8_t commandLevel;       // upper limit of level

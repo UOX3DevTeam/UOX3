@@ -23,7 +23,7 @@ using namespace std::string_literals ;
  UNKNOWN5, // 0x2000 - added with UO:SA launch, imbuing, mysticism, throwing? (7.0.0.0)
  NEWMOVE,  // 0x4000 - new movement system (packets 0xF0, 0xF1, 0xF2))
  FACTIONAREAS  // 0x8000 - Unlock new Felucca faction-areas (map0x.mul?)
-
+ 
  */
 //======================================================================
 const std::map<std::string,ServerFeature::feature_t> ServerFeature::FEATURENAMEMAP{

@@ -37,11 +37,7 @@ struct MapResource_st {
     std::int16_t fishAmt;
     std::uint32_t fishTime;
     
-    MapResource_st(std::int16_t defOre = 0, std::int16_t defLog = 0, std::int16_t defFish = 0,
-                   std::uint32_t defOreTime = 0, std::uint32_t defLogTIme = 0,
-                   std::uint32_t defFishTIme = 0)
-    : oreAmt(defOre), oreTime(defOreTime), logAmt(defLog), logTime(defLogTIme),
-    fishAmt(defFish), fishTime(defFishTIme) {}
+    MapResource_st(std::int16_t defOre = 0, std::int16_t defLog = 0, std::int16_t defFish = 0, std::uint32_t defOreTime = 0, std::uint32_t defLogTIme = 0, std::uint32_t defFishTIme = 0) : oreAmt(defOre), oreTime(defOreTime), logAmt(defLog), logTime(defLogTIme), fishAmt(defFish), fishTime(defFishTIme) {}
 };
 
 class CMapRegion {

@@ -35,8 +35,7 @@ auto GetSubTotalItemCount(CItem *objCont) -> std::uint32_t {
 //|	Purpose		-	Get the total amount of items in a container
 // o------------------------------------------------------------------------------------------------o
 std::uint32_t GetTotalItemCount(CItem *objCont) {
-    if (!ValidateObject(objCont) ||
-        (objCont->GetType() != IT_CONTAINER && objCont->GetType() != IT_LOCKEDCONTAINER))
+    if (!ValidateObject(objCont) || (objCont->GetType() != IT_CONTAINER && objCont->GetType() != IT_LOCKEDCONTAINER))
         return 0;
     
     return GetSubTotalItemCount(objCont);
@@ -47,22 +46,16 @@ std::uint32_t GetTotalItemCount(CItem *objCont) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 // o------------------------------------------------------------------------------------------------o
-auto GetSubItemAmount(CItem *p, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal,
-                      bool colorCheck = false, bool moreCheck = false, std::string sectionId = "")
--> std::uint32_t {
+auto GetSubItemAmount(CItem *p, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "") -> std::uint32_t {
     std::uint32_t total = 0;
     auto pCont = p->GetContainsList();
     for (const auto &i : pCont->collection()) {
         if (ValidateObject(i)) {
             if (i->GetId() != realId &&
                 (i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER)) {
-                total += GetSubItemAmount(i, realId, realColour, realMoreVal, colorCheck, moreCheck,
-                                          sectionId);
+                total += GetSubItemAmount(i, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId);
             }
-            else if (i->GetId() == realId &&
-                     (!colorCheck || (colorCheck && i->GetColour() == realColour)) &&
-                     (!moreCheck || (moreCheck && i->GetTempVar(CITV_MORE) == realMoreVal)) &&
-                     (sectionId == "" || sectionId == i->GetSectionId())) {
+            else if (i->GetId() == realId && (!colorCheck || (colorCheck && i->GetColour() == realColour)) && (!moreCheck || (moreCheck && i->GetTempVar(CITV_MORE) == realMoreVal)) && (sectionId == "" || sectionId == i->GetSectionId())) {
                 if (i->GetUsesLeft() > 0) {
                     total += i->GetUsesLeft();
                 }
@@ -80,8 +73,7 @@ auto GetSubItemAmount(CItem *p, std::uint16_t realId, std::uint16_t realColour, 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item on a character
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck,
-                            bool moreCheck, std::string sectionId) {
+std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId) {
     CItem *p = s->GetPackItem();
     if (!ValidateObject(p))
         return 0;
@@ -94,8 +86,7 @@ std::uint32_t GetItemAmount(CChar *s, std::uint16_t realId, std::uint16_t realCo
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a certain amount of an item of specified color in a pack
 // o------------------------------------------------------------------------------------------------o
-auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal,
-                         bool colorCheck, bool moreCheck, std::string sectionId) -> std::uint32_t {
+auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId) -> std::uint32_t {
     if (!ValidateObject(p))
         return 0;
     
@@ -107,16 +98,11 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
         if (!ValidateObject(i))
             continue;
         
-        if (i->GetId() != realId &&
-            (i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER)) {
+        if (i->GetId() != realId && (i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER)) {
             // Is item an pack or container?
-            amtDeleted += DeleteSubItemAmount(i, total, realId, realColour, realMoreVal, colorCheck,
-                                              moreCheck, sectionId);
+            amtDeleted += DeleteSubItemAmount(i, total, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId);
         }
-        else if (i->GetId() == realId &&
-                 (!colorCheck || (colorCheck && i->GetColour() == realColour)) &&
-                 (!moreCheck || (moreCheck && i->GetTempVar(CITV_MORE) == realMoreVal)) &&
-                 (sectionId == "" || sectionId == i->GetSectionId())) {
+        else if (i->GetId() == realId && (!colorCheck || (colorCheck && i->GetColour() == realColour)) && (!moreCheck || (moreCheck && i->GetTempVar(CITV_MORE) == realMoreVal)) && (sectionId == "" || sectionId == i->GetSectionId())) {
             std::uint16_t usesLeft = i->GetUsesLeft();
             if (usesLeft > 0) {
                 // If item has uses left, but not enough to cover the total resource cost...
@@ -164,8 +150,7 @@ auto DeleteSubItemAmount(CItem *p, std::uint32_t amount, std::uint16_t realId, s
 //|
 //|	Changes		-	09/25/2002	-	Weight Fixes
 // o------------------------------------------------------------------------------------------------o
-std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal,
-                               bool colorCheck, bool moreCheck, std::string sectionId) {
+std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t realId, std::uint16_t realColour, std::uint32_t realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId) {
     if (!ValidateObject(s))
         return 0;
     
@@ -173,8 +158,7 @@ std::uint32_t DeleteItemAmount(CChar *s, std::uint32_t amount, std::uint16_t rea
     if (!ValidateObject(p))
         return 0;
     
-    return DeleteSubItemAmount(p, amount, realId, realColour, realMoreVal, colorCheck, moreCheck,
-                               sectionId);
+    return DeleteSubItemAmount(p, amount, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId);
 }
 
 // o------------------------------------------------------------------------------------------------o
