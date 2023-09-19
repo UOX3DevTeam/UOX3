@@ -4,7 +4,7 @@
 #include "citem.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
-
+#include "configuration/serverconfig.hpp"
 // o------------------------------------------------------------------------------------------------o
 //|	File		-	weight.cpp
 //|	Date		-	Pre-1999
@@ -422,8 +422,7 @@ void CWeight::SubtractItemWeight(CItem *pack, CItem *item) {
 //|	Purpose		-	Returns true if the character is overloaded based upon his strength
 // o------------------------------------------------------------------------------------------------o
 bool CWeight::IsOverloaded(CChar *mChar) const {
-    if (static_cast<R32>(mChar->GetWeight() / 100) >
-        ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 40))
+    if (static_cast<R32>(mChar->GetWeight() / 100) > ((mChar->GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR]) + 40))
         return true;
     
     return false;

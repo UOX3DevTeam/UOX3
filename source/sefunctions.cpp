@@ -877,8 +877,8 @@ JSBool SE_EnableConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //|	Purpose		-	Returns the hour of the current UO day
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    bool ampm = cwmWorldState->ServerData()->ServerTimeAMPM();
-    std::uint8_t hour = cwmWorldState->ServerData()->ServerTimeHours();
+    bool ampm =    cwmWorldState->uoTime.ampm;
+    std::uint8_t hour = cwmWorldState->uoTime.hours ;
     if (ampm) {
         *rval = INT_TO_JSVAL(static_cast<std::uint64_t>(hour) + 12);
     }
@@ -894,7 +894,7 @@ JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 //|	Purpose		-	Returns the minute of the current UO day
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    std::uint8_t minute = cwmWorldState->ServerData()->ServerTimeMinutes();
+    std::uint8_t minute = cwmWorldState->uoTime.minutes ;
     *rval = INT_TO_JSVAL(minute);
     return JS_TRUE;
 }
@@ -905,7 +905,7 @@ JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
 //|	Purpose		-	Returns the day number of the server (UO days since server start)
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetDay([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    std::int16_t day = cwmWorldState->ServerData()->ServerTimeDay();
+    std::int16_t day = cwmWorldState->uoTime.days ;
     *rval = INT_TO_JSVAL(day);
     return JS_TRUE;
 }
@@ -923,9 +923,9 @@ JSBool SE_SecondsPerUOMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
     }
     else if (argc == 1) {
         std::uint16_t secondsPerUOMinute = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->ServerSecondsPerUOMinute(secondsPerUOMinute);
+        ServerConfig::shared().ushortValues[UShortValue::SECONDSPERUOMINUTE] = secondsPerUOMinute ;
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ServerSecondsPerUOMinute());
+    *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::SECONDSPERUOMINUTE]);
     return JS_TRUE;
 }
 
@@ -1313,7 +1313,7 @@ JSBool SE_CreateBaseMulti(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Returns the max amount of kills allowed before a player turns red
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMurderThreshold([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,  [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->RepMaxKills());
+    *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::MAXKILL]);
     return JS_TRUE;
 }
 
@@ -2357,7 +2357,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
             HTMLTemplates->load();
             break;
         case 7: // Reload INI
-            cwmWorldState->ServerData()->load();
+            ServerConfig::shared().loadConfig(std::filesystem::path()) ;
             break;
         case 8: // Reload Everything
             FileLookup->Reload();
@@ -2372,7 +2372,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
             messageLoop << MSG_RELOADJS;
             HTMLTemplates->Unload();
             HTMLTemplates->load();
-            cwmWorldState->ServerData()->load();
+            ServerConfig::shared().loadConfig(std::filesystem::path()) ;
             break;
         case 9: // Reload Accounts
             Account::shared().load();
@@ -2532,9 +2532,9 @@ JSBool SE_WorldBrightLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
     }
     else if (argc == 1) {
         auto brightLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->worldLightBrightLevel(brightLevel);
+        ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL] = brightLevel;
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->worldLightBrightLevel());
+    *rval = INT_TO_JSVAL( ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL]);
     return JS_TRUE;
 }
 
@@ -2552,9 +2552,9 @@ JSBool SE_WorldDarkLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
     }
     else if (argc == 1) {
         auto darkLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->worldLightDarkLevel(darkLevel);
+        ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL] = darkLevel;
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->worldLightDarkLevel());
+    *rval = ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL];
     return JS_TRUE;
 }
 
@@ -2571,9 +2571,10 @@ JSBool SE_WorldDungeonLevel([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
     }
     else if (argc == 1) {
         auto dungeonLevel = static_cast<lightlevel_t>(JSVAL_TO_INT(argv[0]));
-        cwmWorldState->ServerData()->dungeonLightLevel(dungeonLevel);
+        ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT] = dungeonLevel;
+        
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->dungeonLightLevel());
+    *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT]);
     return JS_TRUE;
 }
 
@@ -2589,8 +2590,8 @@ JSBool SE_GetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
     }
     else if (argc == 1) {
         std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
-        bool spawnRegionFacetStatus =
-        cwmWorldState->ServerData()->getSpawnRegionsFacetStatus(spawnRegionFacet);
+       
+        bool spawnRegionFacetStatus =  ServerConfig::shared().spawnFacet.test(spawnRegionFacet);
         if (spawnRegionFacetStatus) {
             *rval = INT_TO_JSVAL(1);
         }
@@ -2614,13 +2615,12 @@ JSBool SE_SetSpawnRegionFacetStatus([[maybe_unused]] JSContext *cx, [[maybe_unus
     else if (argc == 1) {
         std::uint32_t spawnRegionFacetVal = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         // This should be a generic function in ServerConfig, but for now
-        
-        cwmWorldState->ServerData()->setSpawnRegionsFacetStatus(spawnRegionFacetVal);
+        ServerConfig::shared().spawnFacet = spawnRegionFacetVal ;
     }
     else if (argc == 2) {
         std::uint32_t spawnRegionFacet = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[0]));
         bool spawnRegionFacetStatus = (JSVAL_TO_BOOLEAN(argv[1]) == JS_TRUE);
-        cwmWorldState->ServerData()->setSpawnRegionsFacetStatus(spawnRegionFacet, spawnRegionFacetStatus);
+        ServerConfig::shared().spawnFacet.set(spawnRegionFacet, spawnRegionFacetStatus);
     }
     return JS_TRUE;
 }
@@ -2693,7 +2693,7 @@ JSBool SE_ResourceArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     auto resType = std::string(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     resType = util::upper(util::trim(util::strip(resType, "//")));
     
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResourceAreaSize());
+    *rval = INT_TO_JSVAL( ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE]);
     
     return JS_TRUE;
 }
@@ -2716,24 +2716,25 @@ JSBool SE_ResourceAmount(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     if (argc == 2) {
         std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
         if (resType == "LOGS") {
-            cwmWorldState->ServerData()->ResLogs(newVal);
+            ServerConfig::shared().ushortValues[UShortValue::LOGPERAREA] = newVal ;
         }
         else if (resType == "ORE") {
-            cwmWorldState->ServerData()->ResOre(newVal);
+            ServerConfig::shared().ushortValues[UShortValue::OREPERAREA] = newVal ;
         }
         else if (resType == "FISH") {
-            cwmWorldState->ServerData()->ResFish(newVal);
+            ServerConfig::shared().ushortValues[UShortValue::FISHPERAREA] = newVal ;
         }
     }
     
     if (resType == "LOGS") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResLogs());
+        *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::LOGPERAREA]);
     }
     else if (resType == "ORE") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResOre());
+        *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::OREPERAREA]);
     }
     else if (resType == "FISH") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResFish());
+        
+        *rval = INT_TO_JSVAL(ServerConfig::shared().ushortValues[UShortValue::FISHPERAREA]);
     }
     
     return JS_TRUE;
@@ -2756,24 +2757,24 @@ JSBool SE_ResourceTime(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
     if (argc == 2) {
         std::uint16_t newVal = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
         if (resType == "LOGS") {
-            cwmWorldState->ServerData()->ResLogTime(newVal);
+            ServerConfig::shared().timerSetting[TimerSetting::LOG] = newVal;
         }
         else if (resType == "ORE") {
-            cwmWorldState->ServerData()->ResOreTime(newVal);
+            ServerConfig::shared().timerSetting[TimerSetting::ORE] = newVal;
         }
         else if (resType == "FISH") {
-            cwmWorldState->ServerData()->ResFishTime(newVal);
+            ServerConfig::shared().timerSetting[TimerSetting::FISH] = newVal;
         }
     }
     
     if (resType == "LOGS") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResLogTime());
+        *rval = INT_TO_JSVAL(ServerConfig::shared().timerSetting[TimerSetting::LOG]);
     }
     else if (resType == "ORE") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResOreTime());
+        *rval = INT_TO_JSVAL(ServerConfig::shared().timerSetting[TimerSetting::ORE]);
     }
     else if (resType == "FISH") {
-        *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->ResFishTime());
+        *rval = INT_TO_JSVAL(ServerConfig::shared().timerSetting[TimerSetting::FISH]);
     }
     
     return JS_TRUE;
@@ -3050,10 +3051,10 @@ JSBool SE_Moon([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, u
     std::int16_t slot = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     if (argc == 2) {
         std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
-        cwmWorldState->ServerData()->serverMoon(slot, newVal);
+        cwmWorldState->uoTime.moon[slot] = newVal ;
     }
     
-    *rval = INT_TO_JSVAL(cwmWorldState->ServerData()->serverMoon(slot));
+    *rval = INT_TO_JSVAL(cwmWorldState->uoTime.moon[slot]);
     
     return JS_TRUE;
 }
@@ -3464,6 +3465,83 @@ JSBool SE_EraStringToNum(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 
 
 
+
+JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval){
+    *rval = reinterpret_cast<long>(nullptr);
+    
+    if (argc != 1) {
+        ScriptError(cx, "GetServerSetting: Invalid number of arguments (takes 1 - serverSettingName)");
+        return JS_FALSE;
+    }
+    
+    std::string settingName = util::upper(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
+    if (!settingName.empty()) {
+        auto data = ServerConfig::shared().dataForKeyword(settingName) ;
+        if (data){
+            auto vdata = data.value() ;
+            switch(vdata.type){
+                case AllDataType::T_STRING:{
+                    JSString *tString = JS_NewStringCopyZ(cx, std::get<std::string>(vdata.value).c_str());
+                    *rval = STRING_TO_JSVAL(tString);
+                    return JS_TRUE;
+                }
+                case AllDataType::T_BOOL:
+                    *rval = BOOLEAN_TO_JSVAL(std::get<bool>(vdata.value));
+                    return JS_TRUE;;
+                case AllDataType::T_UINT64:{
+                    if (INT_FITS_IN_JSVAL(std::get<std::uint64_t>(vdata.value))) {
+                        *rval = INT_TO_JSVAL(std::get<std::uint64_t>(vdata.value));
+                    }
+                    else {
+                        JS_NewNumberValue(cx, std::get<std::uint64_t>(vdata.value), rval);
+                    }
+                    return JS_TRUE ;
+                }
+                  break;
+                case AllDataType::T_INT64:{
+                    if (INT_FITS_IN_JSVAL(std::get<std::int64_t>(vdata.value))) {
+                        *rval = INT_TO_JSVAL(std::get<std::int64_t>(vdata.value));
+                    }
+                    else {
+                        JS_NewNumberValue(cx, std::get<std::int64_t>(vdata.value), rval);
+                    }
+                    return JS_TRUE ;
+                }
+                case AllDataType::T_UINT16:
+                    *rval = INT_TO_JSVAL(std::get<std::uint16_t>(vdata.value));
+                    break;
+                case AllDataType::T_INT16:
+                    *rval = INT_TO_JSVAL(std::get<std::int16_t>(vdata.value));
+                    return JS_TRUE ;
+                case AllDataType::T_UINT32:{
+                    if (INT_FITS_IN_JSVAL(std::get<std::uint32_t>(vdata.value))) {
+                        *rval = INT_TO_JSVAL(std::get<std::uint32_t>(vdata.value));
+                    }
+                    else {
+                        JS_NewNumberValue(cx, std::get<std::uint32_t>(vdata.value), rval);
+                    }
+                    return JS_TRUE ;
+                }
+                case AllDataType::T_DOUBLE:
+                    *rval = DOUBLE_TO_JSVAL(std::get<double>(vdata.value));
+                    return JS_TRUE ;
+                default:
+                    ScriptError(cx, ("GetServerSetting: Unexpected data type returned for "s+ settingName).c_str());
+                    return JS_FALSE ;
+            }
+        }
+        else {
+            ScriptError(cx, ("GetServerSetting: Invalid server setting name: "s+ settingName).c_str());
+            return false;
+        }
+    }
+    else {
+        ScriptError(cx, "GetServerSetting: Provided argument contained no valid string data");
+    }
+    return JS_FALSE;
+
+}
+#if 0
 //==================================================================================================
 // constant data
 //==================================================================================================
@@ -3813,8 +3891,6 @@ const std::map<std::string, int> UOX3INICASEMAP {
     {"SECRETSHARDKEY"s, 346}
 };
 
-
-
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetServerSetting()
 // o------------------------------------------------------------------------------------------------o
@@ -3831,6 +3907,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     JSString *tString;
     std::string settingName = util::upper(JS_GetStringBytes(JS_ValueToString(cx, argv[0])));
     if (!settingName.empty()) {
+        
         auto iter = UOX3INICASEMAP.find(settingName) ;
         auto settingId = std::numeric_limits<int>::max();
         if (iter != UOX3INICASEMAP.end()){
@@ -3868,79 +3945,79 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::BACKUP));
                 break;
             case 6: // SAVESTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerSavesTimerStatus()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(ServerConfig::shared().uintValues[UIntValue::SAVESTIMER]));
                 break;
             case 7: // SKILLCAP
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSkillTotalCapStatus()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::SKILLCAP]));
                 break;
             case 8: // SKILLDELAY
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerSkillDelayStatus()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY]));
                 break;
             case 9: // STATCAP
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerStatCapStatus()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::STATCAP]));
                 break;
             case 10: // MAXSTEALTHMOVEMENTS
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->MaxStealthMovement()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::MAXSTEALTHMOVEMENT]));
                 break;
             case 11: // MAXSTAMINAMOVEMENTS
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->MaxStaminaMovement()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::MAXSTAMINAMOVEMENT]));
                 break;
             case 12: // ARMORAFFECTMANAREGEN
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA));
                 break;
             case 13: // CORPSEDECAYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CORPSEDECAY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::CORPSEDECAY]));
                 break;
             case 14: // WEATHERTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_WEATHER)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::WEATHER]));
                 break;
             case 15: // SHOPSPAWNTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SHOPSPAWN)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::SHOPSPAWN]));
                 break;
             case 16: // DECAYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_DECAY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::DECAY]));
                 break;
             case 17: // INVISIBILITYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_INVISIBILITY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::INVISIBILITY]));
                 break;
             case 18: // OBJECTUSETIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_OBJECTUSAGE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::OBJECTUSAGE]));
                 break;
             case 19: // GATETIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_GATE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::GATE]));
                 break;
             case 20: // POISONTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POISON)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::POISON]));
                 break;
             case 21: // LOGINTIMEOUT
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOGINTIMEOUT)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::LOGINTIMEOUT]));
                 break;
             case 22: // HITPOINTREGENTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HITPOINTREGEN)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::HITPOINTREGEN]));
                 break;
             case 23: // STAMINAREGENTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STAMINAREGEN)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::STAMINAREGEN]));
                 break;
             case 37: // MANAREGENTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MANAREGEN)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN]));
                 break;
             case 24: // BASEFISHINGTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGBASE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::FISHINGBASE]));
                 break;
             case 34: // MAXPETOWNERS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxPetOwners()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXPETOWNER]));
                 break;
             case 35: // MAXFOLLOWERS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxFollowers()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXFOLLOWER]));
                 break;
             case 36: // MAXCONTROLSLOTS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxControlSlots()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXCONTROLSLOT]));
                 break;
             case 38: // RANDOMFISHINGTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_FISHINGRANDOM)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::FISHINGRANDOM]));
                 break;
             case 39: // SPIRITSPEAKTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_SPIRITSPEAK)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::SPIRITSPEAK]));
                 break;
             case 40: {// DIRECTORY
                 auto dir = ServerConfig::shared().directoryFor(dirlocation_t::LANGUAGE).string() ;
@@ -4045,7 +4122,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DEATHANIMATION));
                 break;
             case 50: // AMBIENTSOUNDS
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->WorldAmbientSounds()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::AMBIENTSOUND]));
                 break;
             case 51: // AMBIENTFOOTSTEPS
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::AMBIENTFOOTSTEPS));
@@ -4063,7 +4140,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PLAYERPERSECUTION));
                 break;
             case 56: // ACCOUNTFLUSH
-                *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->AccountFlushTimer()));
+                *rval = INT_TO_JSVAL(static_cast<R64>(ServerConfig::shared().realNumbers[RealNumberConfig::FLUSHTIME]));
                 break;
             case 57: // HTMLSTATUSENABLED
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HTMLSTAT));;
@@ -4072,7 +4149,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SELLBYNAME));
                 break;
             case 59: // SELLMAXITEMS
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->SellMaxItemsStatus()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::MAXSELLITEM] ));
                 break;
             case 60: // TRADESYSTEM
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::TRADESYSTEM));
@@ -4084,67 +4161,67 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CUTSCROLLREQ));
                 break;
             case 63: // CHECKITEMS
-                *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->CheckItemsSpeed()));
+                *rval = INT_TO_JSVAL(static_cast<R64>(ServerConfig::shared().realNumbers[RealNumberConfig::CHECKITEMS]));
                 break;
             case 64: // CHECKBOATS
-                *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->CheckBoatSpeed()));
+                *rval = INT_TO_JSVAL(static_cast<R64>(ServerConfig::shared().realNumbers[RealNumberConfig::CHECKBOATS]));
                 break;
             case 65: // CHECKNPCAI
-                *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->CheckNpcAISpeed()));
+                *rval = INT_TO_JSVAL(static_cast<R64>(ServerConfig::shared().realNumbers[RealNumberConfig::CHECKAI]));
                 break;
             case 66: // CHECKSPAWNREGIONS
-                *rval = INT_TO_JSVAL(static_cast<R64>(cwmWorldState->ServerData()->CheckSpawnRegionSpeed()));
+                *rval = INT_TO_JSVAL(static_cast<R64>(ServerConfig::shared().realNumbers[RealNumberConfig::CHECKSPAWN]));
                 break;
             case 67: // POSTINGLEVEL
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MsgBoardPostingLevel()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::POSTINGLEVEL]));
                 break;
             case 68: // REMOVALLEVEL
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MsgBoardPostRemovalLevel()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::REMOVALLEVEL]));
                 break;
             case 69: // ESCORTENABLED
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ESCORTS));
                 break;
             case 70: // ESCORTINITEXPIRE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTWAIT)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::ESCORTWAIT]));
                 break;
             case 71: // ESCORTACTIVEEXPIRE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTACTIVE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::ESCORTACTIVE]));
                 break;
             case 72: // MOON1
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->serverMoon(0)));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->uoTime.moon[0] ));
                 break;
             case 73: // MOON2
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->serverMoon(1)));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->uoTime.moon[1]));
                 break;
             case 74: // DUNGEONLEVEL
-                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(cwmWorldState->ServerData()->dungeonLightLevel()));
+                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT]));
                 break;
             case 75: // CURRENTLEVEL
-                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightCurrentLevel()));
+                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(cwmWorldState->uoTime.worldLightLevel));
                 break;
             case 76: // BRIGHTLEVEL
-                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightBrightLevel()));
+                *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL]));
                 break;
             case 77: // BASERANGE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingBaseRange()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::BASERANGE]));
                 break;
             case 78: // BASETIMER
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingBaseTimer()));
                 break;
             case 79: // MAXTARGETS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->TrackingMaxTargets()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXTARGET]));
                 break;
             case 80: // MSGREDISPLAYTIME
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->TrackingRedisplayTime()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME]));
                 break;
             case 81: // MURDERDECAYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_MURDERDECAY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::MURDERDECAY]));
                 break;
             case 82: // MAXKILLS
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->RepMaxKills()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::MAXKILL]));
                 break;
             case 83: // CRIMINALTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_CRIMINAL)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::CRIMINAL]));
                 break;
             case 84: // MINECHECK
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MineCheck()));
@@ -4168,16 +4245,16 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL));
                 break;
             case 91: // HUNGERRATE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE]));
                 break;
             case 92: // HUNGERDMGVAL
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->HungerDamage()));
                 break;
             case 93: // MAXRANGE
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatMaxRange()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::MAXRANGE]));
                 break;
             case 94: // SPELLMAXRANGE
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->CombatMaxSpellRange()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(ServerConfig::shared().shortValues[ShortValue::MAXSPELLRANGE]));
                 break;
             case 95: // DISPLAYHITMSG
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG));
@@ -4212,7 +4289,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->serverStartPrivs()));
                 break;
             case 106: // ESCORTDONEEXPIRE
-                *rval = INT_TO_JSVAL( static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTDONE)));
+                *rval = INT_TO_JSVAL( static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::ESCORTDONE]));
                 break;
             case 107: // DARKLEVEL
                 *rval = INT_TO_JSVAL(static_cast<lightlevel_t>(cwmWorldState->ServerData()->worldLightDarkLevel()));
@@ -4251,19 +4328,19 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint32_t>(cwmWorldState->ServerData()->TownGuardPayment()));
                 break;
             case 119: // DAY
-                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ServerTimeDay()));
+                *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->uoTime.days));
                 break;
             case 120: // HOURS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeHours()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->uoTime.hours));
                 break;
             case 121: // MINUTES
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeMinutes()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->uoTime.minutes));
                 break;
             case 122: // SECONDS
-                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->ServerTimeSeconds()));
+                *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->uoTime.seconds));
                 break;
             case 123: // AMPM
-                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->ServerData()->ServerTimeAMPM());
+                *rval = BOOLEAN_TO_JSVAL(cwmWorldState->uoTime.ampm);
                 break;
             case 124: // SKILLLEVEL
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->SkillLevel()));
@@ -4351,7 +4428,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<R32>(cwmWorldState->ServerData()->WeightPerStr()));
                 break;
             case 140: // POLYDURATION
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_POLYMORPH)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::POLYMORPH]));
                 break;
             case 141: // UOGENABLED
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::UOG));
@@ -4381,7 +4458,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->PetOfflineTimeout()));
                 break;
             case 150: // PETOFFLINECHECKTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_PETOFFLINECHECK))));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::PETOFFLINECHECK]));
                 break;
             case 152: // ADVANCEDPATHFINDING
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ADVANCEDPATHFINDING));
@@ -4573,7 +4650,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::CUOMAPTRACKER));
                 break;
             case 219: // DECAYTIMERINHOUSE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_DECAYINHOUSE))));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::DECAYINHOUSE]);
                 break;
             case 220: // PROTECTPRIVATEHOUSES
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PROTECTPRIVATEHOUSES));
@@ -4678,8 +4755,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMin()));
                 break;
             case 242: // PARRYDAMAGEMAX
-                *rval = INT_TO_JSVAL(
-                                     static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMax()));
+                *rval = INT_TO_JSVAL( static_cast<std::uint16_t>(cwmWorldState->ServerData()->CombatParryDamageMax()));
                 break;
             case 243: // ARMORCLASSDAMAGEBONUS
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::ARMORCLASSBONUS));
@@ -4694,7 +4770,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->AlchemyDamageBonusModifier()));
                 break;
             case 247: // NPCFLAGUPDATETIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_NPCFLAGUPDATETIMER))));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::NPCFLAGUPDATETIMER]));
                 break;
             case 248: // JSENGINESIZE
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetJSEngineSize()));
@@ -4714,7 +4790,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 break;
             }
             case 251: // THIRSTRATE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(static_cast<csd_tid_t>(tSERVER_THIRSTRATE))));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE]));
                 break;
             case 252: // THIRSTDRAINVAL
                 *rval = INT_TO_JSVAL(static_cast<std::int16_t>(cwmWorldState->ServerData()->ThirstDrain()));
@@ -4723,16 +4799,16 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::PETTHIRSTOFFLINE));
                 break;
             case 255: // BLOODDECAYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::BLOODDECAY]));
                 break;
             case 256: // BLOODDECAYCORPSETIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_BLOODDECAYCORPSE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::BLOODDECAYCORPSE]));
                 break;
             case 257: // BLOODEFFECTCHANCE
                 *rval = INT_TO_JSVAL(static_cast<std::uint8_t>(cwmWorldState->ServerData()->CombatBloodEffectChance()));
                 break;
             case 258: // NPCCORPSEDECAYTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_NPCCORPSEDECAY)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::CORPSEDECAY]));
                 break;
             case 259: // HUNGERENABLED
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::HUNGER));
@@ -4789,7 +4865,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->GetPetLoyaltyLossOnFailure()));
                 break;
             case 277: // PETLOYALTYRATE
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::LOYALTYRATE]));
                 break;
             case 278: // SHOWNPCTITLESINTOOLTIPS
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::NPCTOOLTIPS));
@@ -4976,13 +5052,13 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::GUILDPREMIUM));
                 break;
             case 336: // AGGRESSORFLAGTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_AGGRESSORFLAG)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::AGGRESSORFLAG]));
                 break;
             case 337: // PERMAGREYFLAGTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_PERMAGREYFLAG)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::PERMAGREYFLAG]));
                 break;
             case 338: // STEALINGFLAGTIMER
-                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(cwmWorldState->ServerData()->SystemTimer(tSERVER_STEALINGFLAG)));
+                *rval = INT_TO_JSVAL(static_cast<std::uint16_t>(ServerConfig::shared().timerSetting[TimerSetting::STEALINGFLAG]));
                 break;
             case 339: // SNOOPAWARENESS
                 *rval = BOOLEAN_TO_JSVAL(ServerConfig::shared().enabled(ServerSwitch::SNOOPAWARE));
@@ -5022,7 +5098,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
     return JS_TRUE;
 }
-
+#endif
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetClientFeature()
 // o------------------------------------------------------------------------------------------------o

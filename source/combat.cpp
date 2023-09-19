@@ -21,6 +21,7 @@
 #include "movement.h"
 
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "townregion.h"
 // #include "worldmain.h"
@@ -414,8 +415,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
             i->SetQuestType(0);       // Reset quest type
             i->SetQuestDestRegion(0); // Reset quest destination region
             // Set a timer to automatically delete the NPC
-            i->SetTimer(tNPC_SUMMONTIME,
-                        cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_ESCORTDONE));
+            i->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::ESCORTDONE])));
             i->SetOwner(nullptr);
             i->TextMessage(nullptr, 1797, TALK, false); // Woe is me! My escort has betrayed me!
         }
@@ -992,15 +992,14 @@ std::int16_t CHandleCombat::CalcAttackPower(CChar *p, bool doDamage) {
             }
             
             // Chance to apply damage to (player's) weapon based on ini setting
-            if (doDamage && !p->IsNpc() &&
-                (cwmWorldState->ServerData()->CombatWeaponDamageChance() >= RandomNum(1, 100))) {
+            if (doDamage && !p->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::WEAPONDAMAGECHANCE] >= RandomNum(1, 100))) {
                 std::int8_t weaponDamage = 0;
                 std::uint8_t weaponDamageMin = 0;
                 std::uint8_t weaponDamageMax = 0;
                 
                 // Fetch minimum and maximum weapon damage from ini
-                weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
-                weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
+                weaponDamageMin = ServerConfig::shared().ushortValues[UShortValue::MINWEAPONDAMAGE];
+                weaponDamageMax = ServerConfig::shared().ushortValues[UShortValue::MAXWEAPONDAMAGE];
                 
                 weaponDamage -= static_cast<std::uint8_t>(RandomNum(static_cast<std::uint16_t>(weaponDamageMin),  static_cast<std::uint16_t>(weaponDamageMax)));
                 weapon->IncHP(weaponDamage);
@@ -1298,14 +1297,14 @@ std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doD
         }
         
         // Deal damage to armor on hit, if enabled
-        if (total > 0 && doDamage && ValidateObject(defendItem) && !mChar->IsNpc() && (cwmWorldState->ServerData()->CombatArmorDamageChance() >= RandomNum(1, 100))) {
+        if (total > 0 && doDamage && ValidateObject(defendItem) && !mChar->IsNpc() && (ServerConfig::shared().ushortValues[UShortValue::ARMORDAMAGECHANCE] >= RandomNum(1, 100))) {
             std::int8_t armorDamage =
             0; // Based on OSI standards, each successful hit does 0 to 2 damage to armor hit
             std::uint8_t armorDamageMin = 0;
             std::uint8_t armorDamageMax = 0;
             
-            armorDamageMin = cwmWorldState->ServerData()->CombatArmorDamageMin();
-            armorDamageMax = cwmWorldState->ServerData()->CombatArmorDamageMax();
+            armorDamageMin = ServerConfig::shared().ushortValues[UShortValue::MINARMORDAMAGE];
+            armorDamageMax = ServerConfig::shared().ushortValues[UShortValue::MINARMORDAMAGE];
             
             armorDamage -= static_cast<std::uint8_t>(RandomNum(static_cast<std::uint16_t>(armorDamageMin), static_cast<std::uint16_t>(armorDamageMax)));
             defendItem->IncHP(armorDamage);
@@ -2241,8 +2240,8 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                     // Play shield parrying FX
                     Effects->PlayStaticAnimation(ourTarg, 0x37b9, 10, 16);
                     
-                    auto loShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMin();
-                    auto hiShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMax();
+                    auto loShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MINPARRYDAMAGE];
+                    auto hiShieldDamage = ServerConfig::shared().ushortValues[UShortValue::MAXPARRYDAMAGE];
                     std::int16_t shieldDamage = -(RandomNum(static_cast<std::int16_t>(loShieldDamage),  static_cast<std::int16_t>(hiShieldDamage)));
                     
                     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYHITMSG)) {
@@ -2269,7 +2268,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                         getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, PHYSICAL));
                         
                         // Apply damage to shield from parrying action?
-                        if (cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum(1, 100)) {// 20% chance by default
+                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) {// 20% chance by default
                             shield->IncHP(shieldDamage);
                         }
                     }
@@ -2288,9 +2287,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                         getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, PHYSICAL));
                         
                         // Apply damage to shield from parrying action?
-                        if (cwmWorldState->ServerData()->CombatParryDamageChance() >=
-                            RandomNum(1, 100)) // 20% chance by default
-                        {
+                        if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) { // 20% chance by default
                             shield->IncHP(shieldDamage);
                         }
                     }
@@ -2519,7 +2516,7 @@ std::int16_t CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_
     
     // Divide damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
     if (mChar->IsNpc() && !ourTarg->IsNpc()) {
-        damage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+        damage /= ServerConfig::shared().shortValues[ShortValue::NPCDAMAGERATE];
     }
     
     return damage;
@@ -2594,7 +2591,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
         if (getFightSkill == ARCHERY && mWeapon != nullptr) {
             // If amount of time since character last moved is less than the minimum delay for
             // shooting after coming to a halt, return
-            if ((cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime()) < static_cast<std::uint32_t>(cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000))
+            if ((cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime()) < static_cast<std::uint32_t>(ServerConfig::shared().realNumbers[RealNumberConfig::ARCHERYDELAY] * 1000))
                 return false;
             
             std::uint16_t ammoId = mWeapon->GetAmmoId();
@@ -2621,7 +2618,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
             PlaySwingAnimations(&mChar);
         }
         
-        std::int16_t staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
+        std::int16_t staminaToLose = ServerConfig::shared().shortValues[ShortValue::ATTACKSTAMINA];
         if (staminaToLose && (!mChar.IsGM() && !mChar.IsCounselor())) {
             mChar.IncStamina(staminaToLose);
         }
@@ -2651,7 +2648,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 
                 // Bonus to hit chance for archery skill since Pub 5/UOR
                 if (ServerConfig::shared().ruleSets[Expansion::SHARD].value  >= Era::UOR && getFightSkill == ARCHERY) {
-                    hitChance += cwmWorldState->ServerData()->CombatArcheryHitBonus();
+                    hitChance += ServerConfig::shared().shortValues[ShortValue::ARCHERYTHITBONUS];
                 }
                 break;
             case Era::AOS: // AoS - Age of Shadows
@@ -2789,7 +2786,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                         if (ourTarg->IsNpc() && !mChar.IsNpc()) {
                             // Divide reactive damage dealt by NPCs to players by NPCDAMAGERATE
                             // value in uox.ini
-                            retDamage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+                            retDamage /= ServerConfig::shared().shortValues[ShortValue::NPCDAMAGERATE];
                         }
                         mChar.Damage(retDamage, PHYSICAL, &mChar);
                         Effects->PlayStaticAnimation(ourTarg, 0x374A, 0, 15);
@@ -2928,7 +2925,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
         return;
     
     if (npcAttack->GetTimer(tNPC_SPATIMER) <= cwmWorldState->GetUICurrentTime()) {
-        if (playerDistance <= cwmWorldState->ServerData()->CombatMaxSpellRange()) {
+        if (playerDistance <= ServerConfig::shared().shortValues[ShortValue::MAXSPELLRANGE]) {
             std::int16_t spattacks = npcAttack->GetSpAttack();
             if (spattacks <= 0)
                 return;
@@ -3167,7 +3164,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
             }
             
             // Adjust spellDelay based on UOX.INI setting:
-            std::int8_t spellDelay = floor((npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed()) + 0.5);
+            std::int8_t spellDelay = floor((npcAttack->GetSpDelay() / ServerConfig::shared().realNumbers[RealNumberConfig::NPCSPELLCAST]) + 0.5);
             
             npcAttack->SetTimer(tNPC_SPATIMER, BuildTimeValue(spellDelay));
         }
@@ -3225,7 +3222,7 @@ R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
         }
     }
     
-    R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); // Defaults to 1.0
+    R32 globalAttackSpeed = ServerConfig::shared().realNumbers[RealNumberConfig::GLOBALATTACK]; // Defaults to 1.0
     
     getDelay = (baseValue / (getDelay * getOffset)) / globalAttackSpeed;
     return getDelay;
@@ -3536,7 +3533,7 @@ void CHandleCombat::PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guar
     }
     
     if (ValidateObject(petGuard) &&
-        ObjInRange(mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange())) {
+        ObjInRange(mChar, petGuard, ServerConfig::shared().shortValues[ShortValue::MAXRANGE] )) {
         if (mChar->GetSerial() == petGuard->GetOwner())
             return;
         

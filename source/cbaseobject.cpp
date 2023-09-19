@@ -38,6 +38,7 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "power.h"
+#include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
 #include "weight.h"
 
@@ -589,7 +590,7 @@ void CBaseObject::SetOwner(CChar *newOwner) {
     
     if (newOwner != nullptr && CanBeObjType(OT_CHAR)) {
         CChar *thisChar = static_cast<CChar *>(this);
-        std::uint8_t maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
+        std::uint8_t maxPetOwners = ServerConfig::shared().ushortValues[UShortValue::MAXPETOWNER] ;
         if (!thisChar->IsDispellable() && maxPetOwners > 0 &&
             thisChar->GetPetOwnerList()->Num() < maxPetOwners) {
             // Add new owner to list of players who have owned character

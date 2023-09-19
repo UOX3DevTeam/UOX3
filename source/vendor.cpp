@@ -7,13 +7,14 @@
 #include "cjsmapping.h"
 #include "classes.h"
 #include "commands.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "cscript.h"
+#include "configuration/serverconfig.hpp"
 #include "cserverdefinitions.h"
 #include "csocket.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
-#include "subsystem/console.hpp"
 #include "townregion.h"
 
 // o------------------------------------------------------------------------------------------------o
@@ -140,8 +141,7 @@ bool CPIBuyItem::Handle() {
     }
     
     bool didUseBank = true;
-    bool tryUsingBank =
-    (totalGoldCost >= static_cast<std::uint32_t>(cwmWorldState->ServerData()->BuyThreshold()));
+    bool tryUsingBank = (totalGoldCost >= static_cast<std::uint32_t>( ServerConfig::shared().shortValues[ShortValue::BANKBUYTHRESHOLD]));
     if (tryUsingBank) {
         // Count gold in bank if amount is higher than threshold
         totalPlayerGold = GetBankCount(mChar, 0x0EED);
@@ -154,8 +154,7 @@ bool CPIBuyItem::Handle() {
         didUseBank = false;
     }
     
-    if (mChar->IsGM() || ((tryUsingBank && totalPlayerGold >= totalGoldCost) ||
-                          (!tryUsingBank && totalPlayerGold >= totalGoldCost))) {
+    if (mChar->IsGM() || ((tryUsingBank && totalPlayerGold >= totalGoldCost) || (!tryUsingBank && totalPlayerGold >= totalGoldCost))) {
         for (i = 0; i < itemTotal; ++i) {
             if (bItems[i]->GetAmount() < amount[i]) {
                 soldout = true;
@@ -188,22 +187,18 @@ bool CPIBuyItem::Handle() {
             }
         }
         if (soldout) {
-            npc->TextMessage(tSock, 1336, TALK,
-                             false); // Alas, I no longer have all those goods in stock.  Let me
+            npc->TextMessage(tSock, 1336, TALK, false); // Alas, I no longer have all those goods in stock.  Let me
             // know if there is something else thou wouldst buy.
             clear = true;
         }
         else {
             if (mChar->IsGM()) {
-                npc->TextMessage(
-                                 nullptr, 1337, TALK, 0,
-                                 mChar->GetName().c_str()); // Here you are, %s. Someone as special as thee will
+                npc->TextMessage(nullptr, 1337, TALK, 0, mChar->GetName().c_str()); // Here you are, %s. Someone as special as thee will
                 // receive my wares for free of course.
             }
             else {
                 if (totalGoldCost == 1) {
-                    npc->TextMessage(nullptr, 1338, TALK, 0, mChar->GetName().c_str(),
-                                     totalGoldCost); // Here you are, %s. That will be %d gold coin.
+                    npc->TextMessage(nullptr, 1338, TALK, 0, mChar->GetName().c_str(), totalGoldCost); // Here you are, %s. That will be %d gold coin.
                     // I thank thee for thy business.
                 }
                 else {
@@ -253,8 +248,7 @@ bool CPIBuyItem::Handle() {
                                     std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                     if (iMadeMaxHP > iMadeHP) {
                                         // Randomize the item's HP from HP to MaxHP
-                                        iMade->SetHP(
-                                                     static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                        iMade->SetHP(static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
                                     }
                                 }
                                 iMade->SetCont(p);
@@ -288,8 +282,7 @@ bool CPIBuyItem::Handle() {
                                         std::int16_t iMadeMaxHP = static_cast<std::int16_t>(iMade->GetMaxHP());
                                         if (iMadeMaxHP > iMadeHP) {
                                             // Randomize the item's HP from HP to MaxHP
-                                            iMade->SetHP(
-                                                         static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
+                                            iMade->SetHP(static_cast<std::int16_t>(RandomNum(iMadeHP, iMadeMaxHP)));
                                         }
                                         iMade->SetCont(p);
                                         iMade->PlaceInPack();
@@ -324,8 +317,7 @@ bool CPIBuyItem::Handle() {
                             }
                             break;
                         default:
-                            Console::shared().error(
-                                                    " Fallout of switch statement without default. vendor.cpp, buyItem()");
+                            Console::shared().error(" Fallout of switch statement without default. vendor.cpp, buyItem()");
                             break;
                     }
                 }
@@ -336,8 +328,7 @@ bool CPIBuyItem::Handle() {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns 1, prevent other scripts with event from running
-                            if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i],
-                                                              boughtItemAmounts[i]) == 1) {
+                            if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i], boughtItemAmounts[i]) == 1) {
                                 break;
                             }
                         }
@@ -347,8 +338,7 @@ bool CPIBuyItem::Handle() {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
                         if (toExecute != nullptr) {
                             // If script returns 1, prevent other scripts with event from running
-                            if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i],
-                                                              boughtItemAmounts[i]) == 1) {
+                            if (toExecute->OnBoughtFromVendor(tSock, npc, boughtItems[i],  boughtItemAmounts[i]) == 1) {
                                 break;
                             }
                         }
@@ -358,8 +348,7 @@ bool CPIBuyItem::Handle() {
         }
     }
     else {
-        npc->TextMessage(nullptr, 1340, TALK,
-                         false); // Alas, thou dost not possess sufficient gold for this purchase!
+        npc->TextMessage(nullptr, 1340, TALK, false); // Alas, thou dost not possess sufficient gold for this purchase!
     }
     
     if (clear) {
@@ -398,11 +387,8 @@ bool CPISellItem::Handle() {
             maxsell += amt;
         }
         
-        if (maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus()) {
-            n->TextMessage(
-                           nullptr, 1342, TALK, 0, mChar->GetName().c_str(),
-                           cwmWorldState->ServerData()
-                           ->SellMaxItemsStatus()); // Sorry %s, but I can only buy %i items at a time!
+        if (maxsell > ServerConfig::shared().shortValues[ShortValue::MAXSELLITEM] ) {
+            n->TextMessage(nullptr, 1342, TALK, 0, mChar->GetName().c_str(), ServerConfig::shared().shortValues[ShortValue::MAXSELLITEM]); // Sorry %s, but I can only buy %i items at a time!
             return true;
         }
         
@@ -412,8 +398,7 @@ bool CPISellItem::Handle() {
             amt = tSock->GetWord(13 + (6 * static_cast<size_t>(i)));
             if (ValidateObject(j)) {
                 if (j->GetAmount() < amt || FindItemOwner(j) != mChar) {
-                    n->TextMessage(nullptr, 1343, TALK,
-                                   false); // Cheating scum! Leave now, before I call the guards!
+                    n->TextMessage(nullptr, 1343, TALK, false); // Cheating scum! Leave now, before I call the guards!
                     return true;
                 }
                 
@@ -460,8 +445,7 @@ bool CPISellItem::Handle() {
                 for (k = pCont->First(); !pCont->Finished(); k = pCont->Next()) {
                     if (ValidateObject(k)) {
                         if (k->GetId() == j->GetId() && j->GetType() == k->GetType()) {
-                            if (j->GetId() != 0x14f0 ||
-                                (j->GetTempVar(CITV_MOREX) == k->GetTempVar(CITV_MOREX))) {
+                            if (j->GetId() != 0x14f0 || (j->GetTempVar(CITV_MOREX) == k->GetTempVar(CITV_MOREX))) {
                                 join = k;
                                 break; // we found the item we're looking for already
                             }
@@ -472,8 +456,7 @@ bool CPISellItem::Handle() {
                 for (k = pCont->First(); !pCont->Finished(); k = pCont->Next()) {
                     if (ValidateObject(k)) {
                         if (k->GetId() == j->GetId() && j->GetType() == k->GetType()) {
-                            if (j->GetId() != 0x14f0 ||
-                                (j->GetTempVar(CITV_MOREX) == k->GetTempVar(CITV_MOREX))) {
+                            if (j->GetId() != 0x14f0 || (j->GetTempVar(CITV_MOREX) == k->GetTempVar(CITV_MOREX))) {
                                 value = CalcValue(j, k->GetSellValue());
                                 break; // we found the value we're looking for already
                             }

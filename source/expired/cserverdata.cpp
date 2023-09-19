@@ -3137,10 +3137,8 @@ auto CServerData::LoadTimeTags(std::istream &input) -> void {
             else if (UTag == "MOON") {
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() > 1) {
-                    serverMoon(0, static_cast<std::int16_t>(std::stoi(
-                                                                      util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    serverMoon(1, static_cast<std::int16_t>(std::stoi(
-                                                                      util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    serverMoon(0, static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    serverMoon(1, static_cast<std::int16_t>(std::stoi(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                 }
             }
         }

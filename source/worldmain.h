@@ -16,10 +16,12 @@
 #include <winsock2.h>
 #endif
 
-#include "cserverdata.h"
 #include "genericlist.h"
 #include "typedefs.h"
+#include "type/uotime.hpp"
 #include "uoxstruct.h"
+#include "ip4address.hpp"
+
 class CSpawnRegion;
 class CTownRegion;
 class CTEffect;
@@ -100,6 +102,7 @@ class CWorldMain {
 
     // Timers
     timerval_t worldTimers[tWORLD_COUNT];
+    ip4list_t availableIPs;
 
     // Console & Program Level Vars
     bool error;
@@ -128,6 +131,7 @@ class CWorldMain {
     bool classesInitialized;
 
   public:
+    UOTime uoTime ;
     struct Skill_st {
         std::uint16_t strength;
         std::uint16_t dexterity;
@@ -150,6 +154,7 @@ class CWorldMain {
         }
     };
 
+    auto matchIP(const IP4Addr &ip) const -> IP4Addr;
     // Timers
     void SetTimer(CWM_TID timerId, timerval_t newVal);
     timerval_t GetTimer(CWM_TID timerId) const;
@@ -231,15 +236,15 @@ class CWorldMain {
     void SaveNewWorld(bool x);
     auto startup() -> void;
     CWorldMain();
-    auto ServerData() -> CServerData *;
-    auto SetServerData(CServerData &server_data) -> void;
+    //auto ServerData() -> CServerData *;
+    //auto SetServerData(CServerData &server_data) -> void;
     auto ServerProfile() -> CServerProfile *;
 
   private:
     void RegionSave();
     void SaveStatistics();
 
-    CServerData *sData;
+    //CServerData *sData;
     CServerProfile sProfile;
 };
 

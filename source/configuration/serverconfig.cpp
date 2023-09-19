@@ -85,12 +85,6 @@ auto ServerConfig::loadKeyValue(const std::string &lkey, const std::string &valu
     return rvalue ;
 }
 //======================================================================
-auto ServerConfig::reloadKeyValue(const std::string &key, const std::string &value)->bool {
-    auto rvalue = true ;
-    // We dont reload the entire config file
-    return rvalue ;
-}
-//======================================================================
 auto ServerConfig::postCheck() ->void {
     directoryLocation.postLoad() ;
     if (youngLocation.empty()){
@@ -158,34 +152,14 @@ auto ServerConfig::loadConfig(const std::filesystem::path &config) ->void {
     postCheck();
 }
 //======================================================================
-auto ServerConfig::reloadConfig() ->void{
-    auto input = std::ifstream(configFile.string());
-    if (!input.is_open()){
-        throw std::runtime_error("Unable to open UOX3 configuration file: "s + configFile.string());
-    }
-    auto buffer = std::vector<char>(4096,0) ;
-    while(input.good() && !input.eof()){
-        input.getline(buffer.data(),buffer.size()-1);
-        if (input.gcount()>0){
-            buffer[input.gcount()] = 0 ;
-            std::string line = buffer.data() ;
-            line = util::trim(util::strip(line,"//"));
-            if (!line.empty()){
-                if (line[0]!='[' && line[0]!='{' && line[0]!='}'){
-                    auto [lkey,value] = util::split(line,"=");
-                    auto key = util::upper(lkey) ;
-                    reloadKeyValue(key, value);
-                }
-            }
-        }
-    }
-    postCheck();
-}
-//======================================================================
 auto ServerConfig::writeConfig(const std::filesystem::path &config) const ->bool {
-    auto output = std::ofstream(config.string()) ;
+    auto myconfig = this->configFile ;
+    if (!config.empty()){
+        myconfig = config;
+    }
+    auto output = std::ofstream(myconfig.string()) ;
     if (!output.is_open()){
-        //throw std::runtime_error("Unable to open: "s+config.string());
+        //throw std::runtime_error("Unable to open: "s+myconfig.string());
         return false ;
     }
     // Now if we stored by "type", we could automate this, but we dont
@@ -613,36 +587,78 @@ auto ServerConfig::timer(TimerSetting::timer_t timer) const -> const std::uint16
 auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional<AllDataType>{
     auto ukey = util::upper(key) ;
     auto data = AllDataType() ;
+    // Check switches
     auto bvalue = serverSwitch.valueFor(ukey);
     if (bvalue.has_value()){
         data.type = AllDataType::T_BOOL ;
         data.value = bvalue.value() ;
         return data ;
     }
+    // Check short values
+    auto s16value = shortValues.valueFor(ukey) ;
+    if (s16value.has_value()){
+        data.type = AllDataType::T_INT16 ;
+        data.value = s16value.value() ;
+        return data ;
+    }
+    // Check ushort values
+    auto u16value = ushortValues.valueFor(ukey) ;
+    if (u16value.has_value()){
+        data.type = AllDataType::T_UINT16 ;
+        data.value = u16value.value() ;
+        return data ;
+    }
+    // Check timersetting values
+    u16value = timerSetting.valueFor(ukey) ;
+    if (u16value.has_value()){
+        data.type = AllDataType::T_UINT16 ;
+        data.value = u16value.value() ;
+        return data ;
+    }
+
+    // Check uint values
+    auto u32value = uintValues.valueFor(ukey) ;
+    if (u32value.has_value()){
+        data.type = AllDataType::T_UINT16 ;
+        data.value = u16value.value() ;
+        return data ;
+    }
+    // check real values
+    auto r64value = realNumbers.valueFor(ukey) ;
+    if (r64value.has_value()){
+        data.type = AllDataType::T_DOUBLE ;
+        data.value = r64value.value() ;
+        return data ;
+    }
+   // check clients
     bvalue = enableClients.valueFor(ukey);
     if (bvalue.has_value()){
         data.type = AllDataType::T_BOOL ;
         data.value = bvalue.value() ;
         return data ;
     }
+    // check feature
     bvalue = assistantFeature.valueFor(ukey);
     if (bvalue.has_value()){
         data.type = AllDataType::T_BOOL ;
         data.value = bvalue.value() ;
         return data ;
     }
+    // check string
     auto svalue = serverString.valueFor(ukey) ;
     if (svalue.has_value()){
         data.type = AllDataType::T_STRING ;
         data.value = svalue.value() ;
         return data ;
     }
+    //check directory
     svalue = directoryLocation.valueFor(ukey) ;
     if (svalue.has_value()){
         data.type = AllDataType::T_STRING ;
         data.value = svalue.value() ;
         return data ;
     }
+    // Check execeptions (server/client fatures)
     if (ukey == "SERVERFEATURES"){
         data.type = AllDataType::T_UINT16;
         data.value = static_cast<std::uint16_t>(serverFeature.value());
@@ -651,6 +667,11 @@ auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional
     if (ukey == "CLIENTFEATURES"){
         data.type = AllDataType::T_UINT32;
         data.value = static_cast<std::uint32_t>(clientFeature.value());
+        return data ;
+    }
+    if (ukey == "SPAWNREGIONSFACETS"){
+        data.type = AllDataType::T_UINT64 ;
+        data.value = static_cast<std::uint64_t>(spawnFacet.value());
         return data ;
     }
     return {};

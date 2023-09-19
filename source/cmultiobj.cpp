@@ -30,6 +30,7 @@
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "osunique.hpp"
+#include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
 
 const std::uint16_t DEFMULTI_MAXLOCKDOWNS = 256;
@@ -503,7 +504,8 @@ auto CMultiObj::ReleaseItem(CItem *toRemove) -> void {
         toRemove->Dirty(UT_UPDATE);
         lockedList.erase(iter);
         toRemove->SetMovable(1); // Default to "always movable" for released items
-        toRemove->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+        
+        toRemove->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAYINHOUSE])));
     }
 }
 
@@ -674,7 +676,7 @@ auto CMultiObj::UnsecureContainer(CItem *toUnsecure) -> void {
         secureContainerList.erase(iter);
         if (toUnsecure->GetType() != 87) { // Trash container
             toUnsecure->SetMovable(1);
-            toUnsecure->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+            toUnsecure->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAYINHOUSE])));
         }
     }
 }

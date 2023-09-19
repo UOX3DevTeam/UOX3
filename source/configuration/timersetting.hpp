@@ -73,7 +73,7 @@ struct TimerSetting {
     auto size() const ->size_t ;
     
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
-    auto valueFor(const std::string &key) -> std::optional<std::uint16_t> ;
+    auto valueFor(const std::string &key) const -> std::optional<std::uint16_t> ;
 };
 
 #endif /* timersetting_hpp */

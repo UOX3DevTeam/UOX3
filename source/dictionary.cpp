@@ -12,6 +12,7 @@
 
 #include "funcdecl.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "speech.h"
 #include "ssection.h"
 #include "stringutility.hpp"
@@ -250,11 +251,11 @@ auto CDictionaryContainer::operator[](int message_number) -> std::string & {
 //|	Purpose		-	Retrieve a specified entry from a dictionary based on language code
 // o------------------------------------------------------------------------------------------------o
 auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) -> std::string & {
-    if (cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
+    if (ServerConfig::shared().ushortValues[UShortValue::LANGUAGE]  != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
         // If a default server language has been specified in uox.ini, force the use of that
         // language
-        if (dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid()) {
-            return dictList[cwmWorldState->ServerData()->ServerLanguage()][message_number];
+        if (dictList[ServerConfig::shared().ushortValues[UShortValue::LANGUAGE]].GetValid()) {
+            return dictList[ServerConfig::shared().ushortValues[UShortValue::LANGUAGE]][message_number];
         }
         else {
             return dictList[LanguageCodesLang[defaultLang]][message_number];
@@ -286,11 +287,11 @@ auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const uni
 }
 //==================================================================================================
 auto CDictionaryContainer::GetEntry(const std::int32_t message_number, const unicodetypes_t toDisp) const -> const std::string & {
-    if (cwmWorldState->ServerData()->ServerLanguage() != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
+    if (ServerConfig::shared().ushortValues[UShortValue::LANGUAGE] != DL_DEFAULT) { // defaultServerLang != DL_DEFAULT )
         // If a default server language has been specified in uox.ini, force the use of that
         // language
-        if (dictList[cwmWorldState->ServerData()->ServerLanguage()].GetValid()) {
-            return dictList[cwmWorldState->ServerData()->ServerLanguage()][message_number];
+        if (dictList[ServerConfig::shared().ushortValues[UShortValue::LANGUAGE]].GetValid()) {
+            return dictList[ServerConfig::shared().ushortValues[UShortValue::LANGUAGE]][message_number];
         }
         else {
             return dictList[LanguageCodesLang[defaultLang]][message_number];

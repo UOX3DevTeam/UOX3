@@ -17,9 +17,11 @@
 
 #include "typedefs.h"
 
+#include "subsystem/account.hpp"
 #include "cchar.h"
 #include "ceffects.h"
 #include "citem.h"
+#include "cjsmapping.h"
 #include "cmultiobj.h"
 #include "combat.h"
 #include "craces.h"
@@ -27,17 +29,15 @@
 #include "csocket.h"
 #include "dictionary.h"
 
-#include "cjsmapping.h"
 #include "funcdecl.h"
+#include "mapstuff.h"
 
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
+#include "stringutility.hpp"
+#include "utility/strutil.hpp"
 #include "townregion.h"
 
-#include "stringutility.hpp"
-#include "subsystem/account.hpp"
-#include "utility/strutil.hpp"
-
-#include "mapstuff.h"
 
 using namespace std::string_literals;
 
@@ -57,8 +57,7 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
             // creatures as they can't reach one another in any case
             bool targetWaterWalk = cwmWorldState->creatures[cTarget->GetId()].IsWater();
             bool attackerWaterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
-            if ((attackerWaterWalk && !targetWaterWalk) ||
-                (!attackerWaterWalk && targetWaterWalk)) {
+            if ((attackerWaterWalk && !targetWaterWalk) || (!attackerWaterWalk && targetWaterWalk)) {
                 return false;
             }
         }
@@ -69,12 +68,11 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
         }
         
         // Invulnerable, dead, hidden or evading targets are not valid
-        if (cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE ||
-            cTarget->IsEvading()) {
+        if (cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE || cTarget->IsEvading()) {
             return false;
         }
         
-        if (ObjInRange(&mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange())) {
+        if (ObjInRange(&mChar, cTarget, ServerConfig::shared().shortValues[ShortValue::MAXRANGE])) {
             if (LineOfSight(nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), (cTarget->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 // Young players are not valid targets for NPCs outside of dungeons
                 if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline((*cTarget)) && cTarget->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !cTarget->GetRegion()->IsDungeon()) {
@@ -188,11 +186,8 @@ void HandleFighterAI(CChar &mChar) {
                 }
                 if (!invalidTarget) {
                     RaceRelate raceComp = Races->Compare(tempChar, &mChar);
-                    if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer() ||
-                                                raceComp <= RACE_ENEMY)) {
-                        if (RandomNum(1, 100) <
-                            85) // 85% chance to attack current target, 15% chance to pick another
-                        {
+                    if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY)) {
+                        if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
                             Combat->AttackTarget(&mChar, tempChar);
                             return;
                         }
@@ -215,33 +210,24 @@ void HandleHealerAI(CChar &mChar) {
         CMultiObj *multiObj = realChar->GetMultiObj();
         if (realChar->IsDead() &&
             (!ValidateObject(multiObj) || multiObj->GetOwner() == realChar->GetSerial())) {
-            if (LineOfSight(mSock, realChar, mChar.GetX(), mChar.GetY(), (mChar.GetZ() + 15),
-                            WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
+            if (LineOfSight(mSock, realChar, mChar.GetX(), mChar.GetY(), (mChar.GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 if (realChar->IsMurderer()) {
-                    mChar.TextMessage(nullptr, 322, TALK,
-                                      true); // I will not give life to a scoundrel like thee!
+                    mChar.TextMessage(nullptr, 322, TALK, true); // I will not give life to a scoundrel like thee!
                 }
                 else if (realChar->IsCriminal()) {
-                    mChar.TextMessage(
-                                      nullptr, 770, TALK,
-                                      true); // I will nay give life to thee for thou art a criminal!
+                    mChar.TextMessage(nullptr, 770, TALK, true); // I will nay give life to thee for thou art a criminal!
                 }
                 else if (realChar->IsInnocent()) {
                     if (mChar.GetBodyType() == BT_GARGOYLE || ServerConfig::shared().enabled(ServerSwitch::FORECENEWANIMATIONPACKET)) {
-                        Effects->PlayNewCharacterAnimation(
-                                                           &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
+                        Effects->PlayNewCharacterAnimation(&mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        std::uint16_t castAnim = static_cast<std::uint16_t>(
-                                                                            cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        std::uint8_t castAnimLength =
-                        cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
+                        std::uint8_t castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
                         
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
-                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04),
-                                                        0,
-                                                        (castAnimLength != 0 ? castAnimLength : 4));
+                        Effects->PlayCharacterAnimation(&mChar, (castAnim != 0 ? castAnim : 0x04), 0, (castAnimLength != 0 ? castAnimLength : 4));
                     }
                     
                     NpcResurrectTarget(realChar);
@@ -254,11 +240,8 @@ void HandleHealerAI(CChar &mChar) {
             // Heal young players every X minutes
             if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
                 mChar.RemoveFromCombatIgnore(realChar->GetSerial());
-                realChar->SetTimer(tCHAR_YOUNGHEAL,
-                                   BuildTimeValue(static_cast<R32>(
-                                                                   300))); // Only heal young player max once every 5 minutes
-                mChar.TextMessage(nullptr, 18731, TALK,
-                                  false); // You look like you need some healing my child.
+                realChar->SetTimer(tCHAR_YOUNGHEAL, BuildTimeValue(static_cast<R32>(300))); // Only heal young player max once every 5 minutes
+                mChar.TextMessage(nullptr, 18731, TALK, false); // You look like you need some healing my child.
                 Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
                 realChar->SetHP(realChar->GetMaxHP());
             }
@@ -267,11 +250,9 @@ void HandleHealerAI(CChar &mChar) {
                 if (mChar.CheckCombatIgnore(realChar->GetSerial()))
                     continue;
                 
-                mChar.AddToCombatIgnore(realChar->GetSerial(),
-                                        false); // Use combat ignore to ignore the injured player
+                mChar.AddToCombatIgnore(realChar->GetSerial(),false); // Use combat ignore to ignore the injured player
                 // for a short while to avoid spamming message
-                mChar.TextMessage(nullptr, 18732, TALK,
-                                  false); // I can do no more for you at this time.
+                mChar.TextMessage(nullptr, 18732, TALK,false); // I can do no more for you at this time.
             }
         }
     }
@@ -308,8 +289,7 @@ void HandleEvilHealerAI(CChar &mChar) {
                     mChar.TextMessage(nullptr, (323 + RandomNum(0, 4)), TALK, false);
                 }
                 else {
-                    mChar.TextMessage(
-                                      nullptr, 329, TALK, true); // I despise all things good. I shall not give thee another chance!
+                    mChar.TextMessage(nullptr, 329, TALK, true); // I despise all things good. I shall not give thee another chance!
                 }
             }
         }
@@ -371,20 +351,14 @@ auto HandleEvilAI(CChar &mChar) -> void {
                         if (!ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS)) {
                             continue;
                         }
-                        else if (cwmWorldState->ServerData()->CombatAnimalsAttackChance() <
-                                 RandomNum(1, 1000)) {
+                        else if ( ServerConfig::shared().ushortValues[UShortValue::ANIMALATTACKCHANCE]  < RandomNum(1, 1000)) {
                             continue;
                         }
                     }
-                    if (!(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() &&
-                          RandomNum(1, 100) > 1)) // 1% chance of turning on own race
-                    {
+                    if (!(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum(1, 100) > 1)) { // 1% chance of turning on own race
                         RaceRelate raceComp = Races->Compare(tempChar, &mChar);
-                        if (raceComp < RACE_ALLY) // Allies
-                        {
-                            if (!((tempChar->GetNpcAiType() == AI_EVIL ||
-                                   tempChar->GetNpcAiType() == AI_EVIL_CASTER) &&
-                                  raceComp > RACE_ENEMY)) {
+                        if (raceComp < RACE_ALLY) { // Allies
+                            if (!((tempChar->GetNpcAiType() == AI_EVIL || tempChar->GetNpcAiType() == AI_EVIL_CASTER) && raceComp > RACE_ENEMY)) {
                                 if (RandomNum(1, 100) < 85) { // 85% chance to attack current
                                     // target, 15% chance to pick another
                                     Combat->AttackTarget(&mChar, tempChar);
@@ -446,9 +420,7 @@ auto HandleChaoticAI(CChar &mChar) -> void {
                     }
                 }
                 if (!invalidTarget) {
-                    if (RandomNum(1, 100) <
-                        85) // 85% chance to attack current target, 15% chance to pick another
-                    {
+                    if (RandomNum(1, 100) < 85) { // 85% chance to attack current target, 15% chance to pick another
                         Combat->AttackTarget(&mChar, tempChar);
                         return;
                     }
@@ -507,13 +479,8 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                     continue;
                 
                 auto raceComp = Races->Compare(tempChar, &mChar);
-                if (raceComp <= RACE_ENEMY ||
-                    (cwmWorldState->creatures[tempChar->GetId()].IsAnimal() &&
-                     tempChar->GetNpcAiType() == AI_NONE) ||
-                    (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL ||
-                                     cwmWorldState->creatures[tempChar->GetId()].IsHuman()))) {
-                    if (RandomNum(1, 100) > 95) // 5% chance (per AI cycle to attack tempChar)
-                    {
+                if (raceComp <= RACE_ENEMY || (cwmWorldState->creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetId()].IsHuman()))) {
+                    if (RandomNum(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
                         Combat->AttackTarget(&mChar, tempChar);
                         return;
                     }
@@ -560,8 +527,7 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                         else if (retVal == 1) {
                             // Valid target! Range check presumably happening in script
                             mChar.SetTarg(tempChar);
-                            if (mChar.GetNpcWander() != WT_SCARED &&
-                                mChar.GetNpcWander() != WT_PATHFIND) {
+                            if (mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_PATHFIND) {
                                 mChar.SetOldNpcWander(mChar.GetNpcWander());
                             }
                             mChar.SetNpcWander(WT_SCARED);
@@ -572,12 +538,10 @@ auto HandleAnimalScaredAI(CChar &mChar) -> void {
                 if (invalidTarget)
                     continue;
                 
-                if (!tempChar->IsNpc() || (ValidateObject(tempChar->GetOwnerObj()) &&
-                                           !tempChar->GetOwnerObj()->IsNpc())) {
+                if (!tempChar->IsNpc() || (ValidateObject(tempChar->GetOwnerObj()) && !tempChar->GetOwnerObj()->IsNpc())) {
                     if (ObjInRange(&mChar, tempChar, DIST_INRANGE)) {
                         mChar.SetTarg(tempChar);
-                        if (mChar.GetNpcWander() != WT_SCARED &&
-                            mChar.GetNpcWander() != WT_PATHFIND) {
+                        if (mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_PATHFIND) {
                             mChar.SetOldNpcWander(mChar.GetNpcWander());
                         }
                         mChar.SetNpcWander(WT_SCARED);

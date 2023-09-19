@@ -115,18 +115,8 @@ const std::int8_t DEFITEM_STEALABLE = 1;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor
 // o------------------------------------------------------------------------------------------------o
-CItem::CItem()
-: CBaseObject(), contObj(nullptr), glowEffect(DEFITEM_GLOWEFFECT), glow(DEFITEM_GLOW),
-glowColour(DEFITEM_GLOWCOLOUR), madeWith(DEFITEM_MADEWITH), rndValueRate(DEFITEM_RANDVALUE),
-good(DEFITEM_GOOD), rank(DEFITEM_RANK), armorClass(DEFITEM_ARMORCLASS),
-restock(DEFITEM_RESTOCK), movable(DEFITEM_MOVEABLE), tempTimer(DEFITEM_TEMPTIMER),
-decayTime(DEFITEM_DECAYTIME), spd(DEFITEM_SPEED), maxHp(DEFITEM_MAXHP),
-amount(DEFITEM_AMOUNT), layer(DEFITEM_LAYER), type(DEFITEM_TYPE), offspell(DEFITEM_OFFSPELL),
-entryMadeFrom(DEFITEM_ENTRYMADEFROM), creator(DEFITEM_CREATOR), gridLoc(DEFITEM_GRIDLOC),
-weightMax(DEFITEM_WEIGHTMAX), baseWeight(DEFITEM_BASEWEIGHT), maxItems(DEFITEM_MAXITEMS),
-maxRange(DEFITEM_MAXRANGE), baseRange(DEFITEM_BASERANGE), maxUses(DEFITEM_MAXUSES),
-usesLeft(DEFITEM_USESLEFT), regionNum(DEFITEM_REGIONNUM),
-tempLastTraded(DEFITEM_TEMPLASTTRADED), stealable(DEFITEM_STEALABLE) {
+CItem::CItem() : CBaseObject(), contObj(nullptr), glowEffect(DEFITEM_GLOWEFFECT), glow(DEFITEM_GLOW), glowColour(DEFITEM_GLOWCOLOUR), madeWith(DEFITEM_MADEWITH), rndValueRate(DEFITEM_RANDVALUE), good(DEFITEM_GOOD), rank(DEFITEM_RANK), armorClass(DEFITEM_ARMORCLASS), restock(DEFITEM_RESTOCK), movable(DEFITEM_MOVEABLE), tempTimer(DEFITEM_TEMPTIMER), decayTime(DEFITEM_DECAYTIME), spd(DEFITEM_SPEED), maxHp(DEFITEM_MAXHP), amount(DEFITEM_AMOUNT), layer(DEFITEM_LAYER), type(DEFITEM_TYPE), offspell(DEFITEM_OFFSPELL), entryMadeFrom(DEFITEM_ENTRYMADEFROM), creator(DEFITEM_CREATOR), gridLoc(DEFITEM_GRIDLOC), weightMax(DEFITEM_WEIGHTMAX), baseWeight(DEFITEM_BASEWEIGHT), maxItems(DEFITEM_MAXITEMS), maxRange(DEFITEM_MAXRANGE), baseRange(DEFITEM_BASERANGE), maxUses(DEFITEM_MAXUSES), usesLeft(DEFITEM_USESLEFT), regionNum(DEFITEM_REGIONNUM), tempLastTraded(DEFITEM_TEMPLASTTRADED), stealable(DEFITEM_STEALABLE) {
+    
     spells[0] = spells[1] = spells[2] = 0;
     value[0] = value[1] = value[2] = 0;
     ammo[0] = ammo[1] = 0;
@@ -321,8 +311,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
             
             // Update item's townregion based on parent character's location
             CTownRegion *tRegion =
-            CalcRegionFromXY(charWearing->GetX(), charWearing->GetY(),
-                             charWearing->WorldNumber(), charWearing->GetInstanceId(), this);
+            CalcRegionFromXY(charWearing->GetX(), charWearing->GetY(), charWearing->WorldNumber(), charWearing->GetInstanceId(), this);
             SetRegion((tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF));
         }
         else {
@@ -330,8 +319,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
             if (itemHolder != nullptr) {
                 contIsGround = false;
                 // ok heres what hair/beards should be handled like
-                if (((GetLayer() == IL_HAIR) || (GetLayer() == IL_FACIALHAIR)) &&
-                    !itemHolder->IsCorpse()) {
+                if (((GetLayer() == IL_HAIR) || (GetLayer() == IL_FACIALHAIR)) && !itemHolder->IsCorpse()) {
                     CChar *itemPackOwner = FindItemOwner(itemHolder);
                     if (ValidateObject(itemPackOwner)) {
                         CItem *oldItem = itemPackOwner->GetItemAtLayer(GetLayer());
@@ -368,8 +356,7 @@ auto CItem::SetCont(CBaseObject *newCont, bool removeFromView) -> bool {
                 
                 // Update item's townregion to match root container's location
                 CTownRegion *tRegion =
-                CalcRegionFromXY(itemHolder->GetX(), itemHolder->GetY(),
-                                 itemHolder->WorldNumber(), itemHolder->GetInstanceId(), this);
+                CalcRegionFromXY(itemHolder->GetX(), itemHolder->GetY(), itemHolder->WorldNumber(), itemHolder->GetInstanceId(), this);
                 SetRegion((tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF));
             }
         }
@@ -579,8 +566,7 @@ auto CItem::IncZ(std::int16_t newValue) -> void {
 //|	Purpose		-	Increases item's X and Y coordinates by specified values
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IncLocation(std::int16_t xInc, std::int16_t yInc) -> void {
-    SetLocation((GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber(),
-                GetInstanceId());
+    SetLocation((GetX() + xInc), (GetY() + yInc), GetZ(), GetGridLocation(), WorldNumber(), GetInstanceId());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -603,8 +589,7 @@ void CItem::SetOldLocation(std::int16_t newX, std::int16_t newY, std::int8_t new
 void CItem::SetLocation(const CBaseObject *toSet) {
     if (toSet == nullptr)
         return;
-    SetLocation(toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(),
-                toSet->GetInstanceId());
+    SetLocation(toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(), toSet->GetInstanceId());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -622,8 +607,7 @@ void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ) 
 //|	Purpose		-	Sets item's new location to match specified coordinates, grid
 // location, world and instance
 // o------------------------------------------------------------------------------------------------o
-void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::int8_t newLoc, std::uint8_t world,
-                        std::uint16_t instance_id) {
+void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, std::int8_t newLoc, std::uint8_t world, std::uint16_t instance_id) {
     if (GetCont() == nullptr) {
         MapRegion->ChangeRegion(this, newX, newY, world);
     }
@@ -644,8 +628,7 @@ void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, 
         if (!CanBeObjType(OT_MULTI)) {
             // If it's a sign with a more value, assume that the more value contains the serial of
             // the multi the sign belongs to
-            if (((id >= 0x0b95 && id <= 0x0c0e) || id == 0x1f28 || id == 0x1f29) &&
-                GetTempVar(CITV_MORE) != 0) {
+            if (((id >= 0x0b95 && id <= 0x0c0e) || id == 0x1f28 || id == 0x1f29) && GetTempVar(CITV_MORE) != 0) {
                 CMultiObj *mMulti = CalcMultiFromSer(GetTempVar(CITV_MORE));
                 if (ValidateObject(mMulti)) {
                     SetMulti(mMulti);
@@ -1232,9 +1215,7 @@ auto CItem::LockDown(CMultiObj *multiObj) -> void {
 //|	Purpose		-	Checks whether item is a shield
 // o------------------------------------------------------------------------------------------------o
 auto CItem::IsShieldType() const -> bool {
-    return (id >= 0x1B72 && id <= 0x1B7B) || (id >= 0x1BC3 && id <= 0x1BC7) ||
-    (id >= 0x4200 && id <= 0x420B) || (id >= 0x4228 && id <= 0x422C) ||
-    (id == 0xA649 || id == 0xA64A) || (id == 0xA831 || id == 0xA832);
+    return (id >= 0x1B72 && id <= 0x1B7B) || (id >= 0x1BC3 && id <= 0x1BC7) || (id >= 0x4200 && id <= 0x420B) || (id >= 0x4228 && id <= 0x422C) || (id == 0xA649 || id == 0xA64A) || (id == 0xA831 || id == 0xA832);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1303,8 +1284,7 @@ void CItem::AddSelfToOwner() {
 // o------------------------------------------------------------------------------------------------o
 auto CItem::RemoveSelfFromCont() -> void {
     if (contObj != nullptr) {
-        if (contObj->GetObjType() == OT_CHAR) // it's a char!
-        {
+        if (contObj->GetObjType() == OT_CHAR) { // it's a char!
             CChar *targChar = dynamic_cast<CChar *>(contObj);
             if (ValidateObject(targChar)) {
                 Weight->SubtractItemWeight(targChar, this);
@@ -1436,8 +1416,7 @@ auto CItem::CopyData(CItem *target) -> void {
     
     // Set damage types on new item
     for (std::int32_t i = 0; i < WEATHNUM; ++i) {
-        target->SetWeatherDamage(static_cast<weathertype_t>(i),
-                                 GetWeatherDamage(static_cast<weathertype_t>(i)));
+        target->SetWeatherDamage(static_cast<weathertype_t>(i), GetWeatherDamage(static_cast<weathertype_t>(i)));
     }
     
     // Add any script triggers present on object to the new object
@@ -1484,17 +1463,13 @@ bool CItem::DumpBody(std::ostream &outStream) const {
     outStream << "Cont=0x" << GetContSerial() << newLine;
     outStream << "Creator=0x" << GetCreator() << newLine;
     outStream << "More=0x" << GetTempVar(CITV_MORE) << newLine;
-    outStream << "More012=0x" << GetTempVar(CITV_MORE0) << ",0x" << GetTempVar(CITV_MORE1) << ",0x"
-    << GetTempVar(CITV_MORE2) << newLine;
-    outStream << "MoreXYZ=0x" << GetTempVar(CITV_MOREX) << ",0x" << GetTempVar(CITV_MOREY) << ",0x"
-    << GetTempVar(CITV_MOREZ) << newLine;
+    outStream << "More012=0x" << GetTempVar(CITV_MORE0) << ",0x" << GetTempVar(CITV_MORE1) << ",0x" << GetTempVar(CITV_MORE2) << newLine;
+    outStream << "MoreXYZ=0x" << GetTempVar(CITV_MOREX) << ",0x" << GetTempVar(CITV_MOREY) << ",0x" << GetTempVar(CITV_MOREZ) << newLine;
     outStream << "Glow=0x" << GetGlow() << newLine;
     outStream << "GlowBC=0x" << GetGlowColour() << newLine;
     outStream << "Ammo=0x" << GetAmmoId() << ",0x" << GetAmmoHue() << newLine;
-    outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender()
-    << newLine;
-    outStream << "Spells=0x" << GetSpell(0) << ",0x" << GetSpell(1) << ",0x" << GetSpell(2)
-    << newLine;
+    outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
+    outStream << "Spells=0x" << GetSpell(0) << ",0x" << GetSpell(1) << ",0x" << GetSpell(2) << newLine;
     
     // Decimal / String Values
     outStream << std::dec;
@@ -1511,8 +1486,7 @@ bool CItem::DumpBody(std::ostream &outStream) const {
     outStream << "Speed=" + std::to_string(GetSpeed()) + newLine;
     outStream << "Movable=" + std::to_string(GetMovable()) + newLine;
     outStream << "Priv=" + std::to_string(GetPriv()) + newLine;
-    outStream << "Value=" + std::to_string(GetBuyValue()) + "," + std::to_string(GetSellValue()) +
-    "," + std::to_string(GetVendorPrice()) + newLine;
+    outStream << "Value=" + std::to_string(GetBuyValue()) + "," + std::to_string(GetSellValue()) + "," + std::to_string(GetVendorPrice()) + newLine;
     outStream << "Restock=" + std::to_string(GetRestock()) + newLine;
     outStream << "AC=" + std::to_string(GetArmourClass()) + newLine;
     outStream << "Rank=" + std::to_string(GetRank()) + newLine;
@@ -1520,18 +1494,10 @@ bool CItem::DumpBody(std::ostream &outStream) const {
     outStream << "Bools=" + std::to_string((bools.to_ulong())) + newLine;
     outStream << "Good=" + std::to_string(GetGood()) + newLine;
     outStream << "GlowType=" + std::to_string(GetGlowEffect()) + newLine;
-    outStream << "Range=" + std::to_string(GetBaseRange()) + "," + std::to_string(GetMaxRange()) +
-    newLine;
+    outStream << "Range=" + std::to_string(GetBaseRange()) + "," + std::to_string(GetMaxRange()) + newLine;
     outStream << "MaxUses=" + std::to_string(GetMaxUses()) + newLine;
     outStream << "UsesLeft=" + std::to_string(GetUsesLeft()) + newLine;
-    outStream << "RaceDamage=" +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHT) ? 1 : 0)) + "," +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(RAIN) ? 1 : 0)) + "," +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(HEAT) ? 1 : 0)) + "," +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(COLD) ? 1 : 0)) + "," +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(SNOW) ? 1 : 0)) + "," +
-    std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHTNING) ? 1 : 0)) +
-    newLine;
+    outStream << "RaceDamage=" + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(RAIN) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(HEAT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(COLD) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(SNOW) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHTNING) ? 1 : 0)) + newLine;
     outStream << "EntryMadeFrom=" + std::to_string(EntryMadeFrom()) + newLine;
     outStream << "Stealable=" + std::to_string(GetStealable()) + newLine;
     
@@ -1550,44 +1516,34 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
         switch ((UTag.data()[0])) {
             case 'A':
                 if (UTag == "AMMO") {
-                    if (csecs.size() == 2) {
-                        SetAmmoId(static_cast<std::uint16_t>(
-                                                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                        SetAmmoHue(static_cast<std::uint16_t>(
-                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    if (csecs.size() == 2) { SetAmmoId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetAmmoHue(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                     }
                     else {
-                        SetAmmoId(static_cast<std::uint16_t>(
-                                                             std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetAmmoId(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                         SetAmmoHue((0));
                     }
                     rValue = true;
                 }
                 else if (UTag == "AMMOFX") {
                     if (csecs.size() == 2) {
-                        SetAmmoFX(static_cast<std::uint16_t>(
-                                                             std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                        SetAmmoFXHue(static_cast<std::uint16_t>(
-                                                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                        SetAmmoFXRender(static_cast<std::uint16_t>(
-                                                                   std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetAmmoFX(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetAmmoFXHue(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetAmmoFXRender(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                     }
                     else {
-                        SetAmmoFX(static_cast<std::uint16_t>(
-                                                             std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetAmmoFX(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                         SetAmmoFXHue((0));
                         SetAmmoFXRender((0));
                     }
                     rValue = true;
                 }
                 else if (UTag == "AMOUNT") {
-                    amount =
-                    static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    amount = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                     rValue = true;
                 }
                 else if (UTag == "AC") {
-                    SetArmourClass(
-                                   static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetArmourClass(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
@@ -1600,23 +1556,19 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'C':
                 if (UTag == "CONT") {
-                    tempContainerSerial = static_cast<serial_t>(
-                                                                std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    tempContainerSerial = static_cast<serial_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                     rValue = true;
                 }
                 else if (UTag == "CREATOR" || UTag == "CREATER") {
-                    SetCreator(
-                               static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetCreator(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "CORPSE") {
-                    SetCorpse(static_cast<std::uint8_t>(
-                                                        std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetCorpse(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "COLD") {
-                    SetWeatherDamage(COLD, static_cast<std::uint8_t>(std::stoul(
-                                                                                util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(COLD, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
@@ -1631,15 +1583,13 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "DYEABLE") {
-                    SetDye(static_cast<std::uint8_t>(
-                                                     std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetDye(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
             case 'E':
                 if (UTag == "ENTRYMADEFROM") {
-                    EntryMadeFrom(
-                                  static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    EntryMadeFrom(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "EVENT") {
@@ -1649,53 +1599,43 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'G':
                 if (UTag == "GRIDLOC") {
-                    SetGridLocation(
-                                    static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetGridLocation(static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "GLOWTYPE") {
-                    SetGlowEffect(
-                                  static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetGlowEffect(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "GLOWBC") {
-                    SetGlowColour(
-                                  static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetGlowColour(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "GLOW") {
-                    SetGlow(
-                            static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetGlow(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "GOOD") {
-                    SetGood(
-                            static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetGood(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
             case 'H':
                 if (UTag == "HEAT") {
-                    SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(
-                                                                                 util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
             case 'L':
                 if (UTag == "LAYER") {
-                    layer = static_cast<itemlayers_t>(
-                                                      std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                    layer = static_cast<itemlayers_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                     rValue = true;
                 }
                 else if (UTag == "LIGHT") {
-                    SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(
-                                                                                  util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "LIGHTNING") {
-                    SetWeatherDamage(LIGHTNING,
-                                     static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")),
-                                                                           nullptr, 0)) == 1);
+                    SetWeatherDamage(LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
@@ -1707,22 +1647,13 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 }
                 else if (UTag == "MORE") {
                     if (csecs.size() >= 4) {
-                        SetTempVar(CITV_MORE, 1,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MORE, 2,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MORE, 3,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MORE, 4,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
-                                                                        nullptr, 0)));
+                        SetTempVar(CITV_MORE, 1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MORE, 2, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MORE, 3, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MORE, 4, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),  nullptr, 0)));
                     }
                     else {
-                        SetTempVar(CITV_MORE, static_cast<std::uint32_t>(std::stoul(
-                                                                                    util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetTempVar(CITV_MORE, static_cast<std::uint32_t>(std::stoul( util::trim(util::strip(data, "//")), nullptr, 0)));
                     }
                     rValue = true;
                 }
@@ -1731,83 +1662,50 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "MORE012") {
-                    SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "MOREXYZ") {
-                    SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
-                                                                                 util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "MOREX") {
                     if (csecs.size() >= 4) {
-                        SetTempVar(CITV_MOREX, 1,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREX, 2,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREX, 3,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREX, 4,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
-                                                                        nullptr, 0)));
+                        SetTempVar(CITV_MOREX, 1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREX, 2, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREX, 3, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREX, 4, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0)));
                     }
                     else {
-                        SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul(
-                                                                                     util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREX, static_cast<std::uint32_t>(std::stoul( util::trim(util::strip(data, "//")), nullptr, 0)));
                     }
                     rValue = true;
                 }
                 else if (UTag == "MOREY") {
                     if (csecs.size() >= 4) {
-                        SetTempVar(CITV_MOREY, 1,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREY, 2,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREY, 3,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREY, 4,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
-                                                                        nullptr, 0)));
+                        SetTempVar(CITV_MOREY, 1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREY, 2, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREY, 3, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREY, 4, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0)));
                     }
                     else {
-                        SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul(
-                                                                                     util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREY, static_cast<std::uint32_t>(std::stoul( util::trim(util::strip(data, "//")), nullptr, 0)));
                     }
                     rValue = true;
                 }
                 else if (UTag == "MOREZ") {
                     if (csecs.size() >= 4) {
-                        SetTempVar(CITV_MOREZ, 1,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREZ, 2,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREZ, 3,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
-                                                                        nullptr, 0)));
-                        SetTempVar(CITV_MOREZ, 4,
-                                   static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
-                                                                        nullptr, 0)));
+                        SetTempVar(CITV_MOREZ, 1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),  nullptr, 0)));
+                        SetTempVar(CITV_MOREZ, 2, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREZ, 3, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREZ, 4,  static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),  nullptr, 0)));
                     }
                     else {
-                        SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul(
-                                                                                     util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetTempVar(CITV_MOREZ, static_cast<std::uint32_t>(std::stoul( util::trim(util::strip(data, "//")), nullptr, 0)));
                     }
                     rValue = true;
                 }
@@ -1815,18 +1713,15 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "MOVABLE") {
-                    SetMovable(
-                               static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetMovable(static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "MAXHP") {
-                    SetMaxHP(
-                             static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetMaxHP(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "MAXUSES") {
-                    SetMaxUses(
-                               static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetMaxUses(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
@@ -1838,48 +1733,32 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'O':
                 if (UTag == "OFFSPELL") {
-                    SetOffSpell(
-                                static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetOffSpell(static_cast<std::int8_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
             case 'P':
                 if (UTag == "PRIV") {
-                    SetPriv(
-                            static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetPriv(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "PILEABLE") {
-                    SetPileable(static_cast<std::uint16_t>(
-                                                           std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetPileable(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
             case 'R':
                 if (UTag == "RESTOCK") {
-                    SetRestock(
-                               static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetRestock(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "RACEDAMAGE") {
-                    SetWeatherDamage(
-                                     LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                                  nullptr, 0)) == 1);
-                    SetWeatherDamage(
-                                     RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                                 nullptr, 0)) == 1);
-                    SetWeatherDamage(
-                                     HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")),
-                                                                                 nullptr, 0)) == 1);
-                    SetWeatherDamage(
-                                     COLD, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")),
-                                                                                 nullptr, 0)) == 1);
-                    SetWeatherDamage(
-                                     SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")),
-                                                                                 nullptr, 0)) == 1);
-                    SetWeatherDamage(
-                                     LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[5], "//")),
-                                                                                      nullptr, 0)) == 1);
+                    SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(COLD, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[5], "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "RANK") {
@@ -1888,20 +1767,16 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "RAIN") {
-                    SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(
-                                                                                 util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "RANGE") {
                     if (csecs.size() > 1) {
-                        SetBaseRange(static_cast<std::uint8_t>(
-                                                               std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                        SetMaxRange(static_cast<std::uint8_t>(
-                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetBaseRange(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetMaxRange(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                     }
                     else {
-                        auto val = static_cast<std::uint8_t>(
-                                                             std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                        auto val = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                         SetBaseRange(val);
                         SetMaxRange(val / 2);
                     }
@@ -1913,8 +1788,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'S':
                 if (UTag == "SPEED") {
-                    SetSpeed(
-                             static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetSpeed(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "SK_MADE") {
@@ -1923,34 +1797,27 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "SNOW") {
-                    SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(
-                                                                                 util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "SPELLS") {
-                    SetSpell(0, static_cast<std::uint32_t>(
-                                                           std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                    SetSpell(1, static_cast<std::uint32_t>(
-                                                           std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                    SetSpell(2, static_cast<std::uint32_t>(
-                                                           std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                    SetSpell(0, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetSpell(1, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                    SetSpell(2, static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "STEALABLE") {
-                    SetStealable(
-                                 static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetStealable(static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
             case 'T':
                 if (UTag == "TYPE") {
                     if (csecs.size() != 1) {
-                        SetType(static_cast<itemtypes_t>(
-                                                         std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetType(static_cast<itemtypes_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
                     }
                     else {
-                        SetType(static_cast<itemtypes_t>(
-                                                         std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                        SetType(static_cast<itemtypes_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     }
                     rValue = true;
                 }
@@ -1960,30 +1827,23 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'U':
                 if (UTag == "USESLEFT") {
-                    SetUsesLeft(
-                                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetUsesLeft(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
             case 'V':
                 if (UTag == "VALUE") {
                     if (csecs.size() > 2) {
-                        SetBuyValue(static_cast<std::uint32_t>(
-                                                               std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                        SetSellValue(static_cast<std::uint32_t>(
-                                                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
-                        SetVendorPrice(static_cast<std::uint32_t>(
-                                                                  std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
+                        SetBuyValue(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetSellValue(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetVendorPrice(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)));
                     }
                     else if (csecs.size() > 1) {
-                        SetBuyValue(static_cast<std::uint32_t>(
-                                                               std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
-                        SetSellValue(static_cast<std::uint32_t>(
-                                                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
+                        SetBuyValue(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                        SetSellValue(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)));
                     }
                     else {
-                        auto val = static_cast<std::uint32_t>(
-                                                              std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                        auto val = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                         SetBuyValue(val);
                         SetSellValue(val / 2);
                     }
@@ -1992,8 +1852,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'W':
                 if (UTag == "WEIGHTMAX") {
-                    SetWeightMax(
-                                 static_cast<std::int32_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
+                    SetWeightMax(static_cast<std::int32_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)));
                     rValue = true;
                 }
                 break;
@@ -2086,49 +1945,33 @@ void CItem::PostLoadProcessing() {
 void CItem::CheckItemIntegrity() {
     auto getSerial = GetSerial();
     if (getSerial == INVALIDSERIAL) {
-        Console::shared().warning(
-                                  util::format("Item (%s, from DFN section [%s]) has an invalid serial number, Deleting",
-                                               GetName().c_str(), GetSectionId().c_str()));
+        Console::shared().warning(util::format("Item (%s, from DFN section [%s]) has an invalid serial number, Deleting", GetName().c_str(), GetSectionId().c_str()));
         Delete();
         return;
     }
     
     if (getSerial == GetContSerial()) {
-        Console::shared().warning(util::format(
-                                               "Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting",
-                                               getSerial, GetName().c_str(), GetSectionId().c_str()));
+        Console::shared().warning(util::format("Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetCont(nullptr);
     }
     if (getSerial == GetOwner()) {
-        Console::shared().warning(util::format(
-                                               "Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting",
-                                               getSerial, GetName().c_str(), GetSectionId().c_str()));
+        Console::shared().warning(util::format("Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetOwner(nullptr);
     }
     if (getSerial == GetSpawn()) {
-        Console::shared().warning(util::format(
-                                               "Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting",
-                                               getSerial, GetName().c_str(), GetSectionId().c_str()));
+        Console::shared().warning(util::format("Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str()));
         SetSpawn(INVALIDSERIAL);
     }
     
     if (type == IT_CONTAINER && GetLayer() == IL_PACKITEM &&
         (contObj != nullptr && contObj->CanBeObjType(OT_CHAR))) {
         if (GetMaxItems() == 0) {
-            SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
-            Console::shared().warning(util::format(
-                                                   "Container (%s, from DFN section [%s]) with maxItems set to 0 detected on "
-                                                   "character (%s). Resetting maxItems for container to default value.",
-                                                   std::to_string(GetSerial()).c_str(), GetSectionId().c_str(),
-                                                   std::to_string(contObj->GetSerial()).c_str()));
+            SetMaxItems(ServerConfig::shared().ushortValues[UShortValue::MAXPLAYERPACKITEM]);
+            Console::shared().warning(util::format("Container (%s, from DFN section [%s]) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string(GetSerial()).c_str(), GetSectionId().c_str(), std::to_string(contObj->GetSerial()).c_str()));
         }
         if (GetWeightMax() == 0) {
-            SetWeightMax(cwmWorldState->ServerData()->MaxPlayerPackWeight());
-            Console::shared().warning(util::format(
-                                                   "Container (%s, from DFN section [%s]) with weightMax set to 0 detected on "
-                                                   "character (%s). Resetting weightMax for container to default value.",
-                                                   std::to_string(GetSerial()).c_str(), GetSectionId().c_str(),
-                                                   std::to_string(contObj->GetSerial()).c_str()));
+            SetWeightMax(ServerConfig::shared().uintValues[UIntValue::MAXPLAYERPACKWEIGHT]);
+            Console::shared().warning(util::format("Container (%s, from DFN section [%s]) with weightMax set to 0 detected on character (%s). Resetting weightMax for container to default value.", std::to_string(GetSerial()).c_str(), GetSectionId().c_str(), std::to_string(contObj->GetSerial()).c_str()));
         }
     }
 }
@@ -2359,8 +2202,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 // o------------------------------------------------------------------------------------------------o
-void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer,
-                   [[maybe_unused]] bool sendToSelf) {
+void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGamePlayer, [[maybe_unused]] bool sendToSelf) {
     if (GetType() == IT_TRADEWINDOW)
         return;
     
@@ -2369,9 +2211,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
     //  lot of flickering issues with animated items, boats, etc.
     
     if (GetCont() == this) {
-        Console::shared().warning(
-                                  util::format("Item %s(0x%X) has a dangerous container value, auto-correcting",
-                                               GetName().c_str(), GetSerial()));
+        Console::shared().warning(util::format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial()));
         SetCont(nullptr);
     }
     
@@ -2384,8 +2224,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
         else {
             nearbyChars = FindPlayersInVisrange(this);
         }
-        std::for_each(nearbyChars.begin(), nearbyChars.end(),
-                      [this](CSocket *tSock) { SendToSocket(tSock); });
+        std::for_each(nearbyChars.begin(), nearbyChars.end(), [this](CSocket *tSock) { SendToSocket(tSock); });
         return;
     }
     else if (iCont->GetObjType() == OT_CHAR) {
@@ -2419,8 +2258,7 @@ void CItem::Update([[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawGa
             return;
         }
     }
-    Console::shared().error(
-                            util::format(" CItem::Update(0x%X): cannot determine container type!", GetSerial()));
+    Console::shared().error(util::format(" CItem::Update(0x%X): cannot determine container type!", GetSerial()));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2439,10 +2277,7 @@ void CItem::SendToSocket(CSocket *mSock, [[maybe_unused]] bool drawGamePlayer) {
             // Not the owner, nor a GM
             auto iVisible = GetVisible();
             auto ownerObj = GetOwnerObj();
-            if ((iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN) ||
-                (iVisible == VT_TEMPHIDDEN &&
-                 (!ValidateObject(ownerObj) ||
-                  (ValidateObject(ownerObj) && ownerObj->GetSerial() != mChar->GetSerial())))) {
+            if ((iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN) || (iVisible == VT_TEMPHIDDEN && (!ValidateObject(ownerObj) || (ValidateObject(ownerObj) && ownerObj->GetSerial() != mChar->GetSerial())))) {
                 return;
             }
         }
@@ -2481,8 +2316,7 @@ auto CItem::SendPackItemToSocket(CSocket *mSock) -> void {
     if (mChar != nullptr) {
         bool isGM = mChar->IsGM();
         itemlayers_t iLayer = GetLayer();
-        if (!isGM && (iLayer == IL_SELLCONTAINER || iLayer == IL_BOUGHTCONTAINER ||
-                      iLayer == IL_BUYCONTAINER))
+        if (!isGM && (iLayer == IL_SELLCONTAINER || iLayer == IL_BOUGHTCONTAINER || iLayer == IL_BUYCONTAINER))
             return;
         
         CPAddItemToCont itemSend;
@@ -2741,8 +2575,7 @@ auto CItem::SetSpell(std::uint8_t part, std::uint32_t newValue) -> void {
 //|	Purpose		-	Cleans up after item
 // o------------------------------------------------------------------------------------------------o
 void CItem::Cleanup() {
-    if (!IsFree()) // We're not the default item in the handler
-    {
+    if (!IsFree()) { // We're not the default item in the handler
         MapRegion->RemoveItem(this);
         
         JSEngine->ReleaseObject(IUE_ITEM, this);
@@ -2773,8 +2606,7 @@ void CItem::Cleanup() {
         if (IsSpawned()) {
             if (GetSpawn() < BASEITEMSERIAL) {
                 std::uint16_t spawnRegNum = static_cast<std::uint16_t>(GetSpawn());
-                if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
-                    cwmWorldState->spawnRegions.end()) {
+                if (cwmWorldState->spawnRegions.find(spawnRegNum) !=  cwmWorldState->spawnRegions.end()) {
                     CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
                     if (spawnReg != nullptr) {
                         spawnReg->DeleteSpawnedItem(this);
@@ -2988,8 +2820,7 @@ bool CSpawnItem::DumpHeader(std::ostream &outStream) const {
 // o------------------------------------------------------------------------------------------------o
 bool CSpawnItem::DumpBody(std::ostream &outStream) const {
     CItem::DumpBody(outStream);
-    outStream << "Interval=" << static_cast<std::uint16_t>(GetInterval(0)) << ","
-    << static_cast<std::uint16_t>(GetInterval(1)) << '\n';
+    outStream << "Interval=" << static_cast<std::uint16_t>(GetInterval(0)) << "," << static_cast<std::uint16_t>(GetInterval(1)) << '\n';
     outStream << "SpawnSection=" << GetSpawnSection() << '\n';
     outStream << "IsSectionAList=" << static_cast<std::uint16_t>(IsSectionAList() ? 1 : 0) << '\n';
     return true;
@@ -3008,15 +2839,12 @@ bool CSpawnItem::HandleLine(std::string &UTag, std::string &data) {
         switch ((UTag.data()[0])) {
             case 'I':
                 if (UTag == "INTERVAL") {
-                    SetInterval(0, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")),
-                                                                        nullptr, 0)));
-                    SetInterval(1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),
-                                                                        nullptr, 0)));
+                    SetInterval(0, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)));
+                    SetInterval(1, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[1], "//")),  nullptr, 0)));
                     rValue = true;
                 }
                 else if (UTag == "ISSECTIONALIST") {
-                    IsSectionAList((static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")),
-                                                                         nullptr, 0)) == 1));
+                    IsSectionAList((static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1));
                     rValue = true;
                 }
                 break;
@@ -3065,8 +2893,7 @@ auto CSpawnItem::HandleItemSpawner() -> bool {
          mObj = spawnedList.Next()) {
         if (ValidateObject(mObj) && !mObj->IsFree()) {
             if (mObj->GetSpawnObj() == this) {
-                if (mObj != this && mObj->GetX() == GetX() && mObj->GetY() == GetY() &&
-                    mObj->GetZ() == GetZ()) {
+                if (mObj != this && mObj->GetX() == GetX() && mObj->GetY() == GetY() && mObj->GetZ() == GetZ()) {
                     shouldSpawn = false;
                     break;
                 }
@@ -3101,8 +2928,7 @@ auto CSpawnItem::HandleNPCSpawner() -> bool {
             Npcs->CreateNPC(this, util::ntos(GetTempVar(CITV_MOREX)));
         }
         else {
-            Console::shared().warning("Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values "
-                                      "missing! Deleting Spawner.");
+            Console::shared().warning("Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner.");
             Delete();
             return true;
         }
@@ -3136,18 +2962,15 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                     for (size_t i = 0; i < itemListSize; i++) {
                         // listObj will either contain an itemID and amount, or an itemlist/lootlist
                         // tag
-                        auto listObj = oldstrutil::sections(
-                                                            util::trim(util::strip(itemList->moveTo(i), "//")), ",");
+                        auto listObj = oldstrutil::sections(util::trim(util::strip(itemList->moveTo(i), "//")), ",");
                         if (!listObj.empty()) {
                             std::uint16_t amountToSpawn = 1;
                             std::vector<std::string> itemListData;
-                            if (util::upper(listObj[0]) == "ITEMLIST" ||
-                                util::upper(listObj[0]) == "LOOTLIST") {
+                            if (util::upper(listObj[0]) == "ITEMLIST" || util::upper(listObj[0]) == "LOOTLIST") {
                                 bool useLootList = util::upper(listObj[0]) == "LOOTLIST";
                                 
                                 // Itemlist/Lootlist
-                                itemListData = oldstrutil::sections(
-                                                                    util::trim(util::strip(itemList->GrabData(), "//")), ",");
+                                itemListData = oldstrutil::sections(util::trim(util::strip(itemList->GrabData(), "//")), ",");
                                 listEntry = itemListData[0];
                                 
                                 if (itemListData.size() > 1) {
@@ -3155,31 +2978,24 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                     std::string amountData =
                                     util::trim(util::strip(itemListData[1], "//"));
                                     auto tsects = oldstrutil::sections(amountData, " ");
-                                    if (tsects.size() >
-                                        1) // check if the second part of the tag-data contains two
+                                    if (tsects.size() > 1) { // check if the second part of the tag-data contains two
                                         // sections separated by a space
-                                    {
-                                        auto first = static_cast<std::uint16_t>(std::stoul(
-                                                                                           util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                        auto second = static_cast<std::uint16_t>(std::stoul(
-                                                                                            util::trim(util::strip(tsects[1], "//")), nullptr, 0));
+                                        auto first = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tsects[0], "//")), nullptr, 0));
+                                        auto second = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(tsects[1], "//")), nullptr, 0));
                                         
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
                                         amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
                                     }
                                     else {
-                                        amountToSpawn =
-                                        static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
+                                        amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                                     }
                                 }
                                 
                                 // The chosen entry contained another ITEMLIST or LOOTLIST
                                 // reference! Let's dive back into it...
                                 for (int i = 0; i < amountToSpawn; i++) {
-                                    CItem *iCreated = Items->CreateRandomItem(
-                                                                              this, listEntry, this->WorldNumber(), this->GetInstanceId(),
-                                                                              false, useLootList);
+                                    CItem *iCreated = Items->CreateRandomItem(this, listEntry, this->WorldNumber(), this->GetInstanceId(), false, useLootList);
                                     if (ValidateObject(iCreated)) {
                                         // Place item in container and randomize location
                                         iCreated->SetCont(this);
@@ -3196,29 +3012,22 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                     std::string amountData =
                                     util::trim(util::strip(listObj[1], "//"));
                                     auto tsects = oldstrutil::sections(amountData, " ");
-                                    if (tsects.size() >
-                                        1) // check if the second part of the tag-data contains two
+                                    if (tsects.size() > 1) { // check if the second part of the tag-data contains two
                                         // sections separated by a space
-                                    {
-                                        auto first = static_cast<std::uint16_t>(std::stoul(
-                                                                                           util::trim(util::strip(tsects[0], "//")), nullptr, 0));
-                                        auto second = static_cast<std::uint16_t>(std::stoul(
-                                                                                            util::trim(util::strip(tsects[1], "//")), nullptr, 0));
+                                        auto first = static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(tsects[0], "//")), nullptr, 0));
+                                        auto second = static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(tsects[1], "//")), nullptr, 0));
                                         
                                         // Tag contained a minimum and maximum value for amount!
                                         // Let's randomize!
                                         amountToSpawn = static_cast<std::uint16_t>(RandomNum(first, second));
                                     }
                                     else {
-                                        amountToSpawn =
-                                        static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
+                                        amountToSpawn = static_cast<std::uint16_t>(std::stoul(amountData, nullptr, 0));
                                     }
                                 }
                                 
                                 // We have a direct item reference, it seems like. Spawn it!
-                                CItem *iCreated = Items->CreateBaseScriptItem(
-                                                                              this, listEntry, this->WorldNumber(), amountToSpawn,
-                                                                              this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
+                                CItem *iCreated = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), amountToSpawn, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
                                 if (ValidateObject(iCreated)) {
                                     // Place item in container and randomize location
                                     iCreated->SetCont(this);
@@ -3227,9 +3036,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
                                     if (amountToSpawn > 1 && !iCreated->IsPileable()) {
                                         // Eee, item cannot pile, we need to spawn individual ones
                                         for (int i = 1; i < amountToSpawn; i++) {
-                                            CItem *iCreated2 = Items->CreateBaseScriptItem(
-                                                                                           this, listEntry, this->WorldNumber(), 1,
-                                                                                           this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
+                                            CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceId(), OT_ITEM, 0xFFFF, false);
                                             if (ValidateObject(iCreated2)) {
                                                 // Place item in container and randomize location
                                                 iCreated2->SetCont(this);
@@ -3248,8 +3055,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool {
             Items->AddRespawnItem(this, util::ntos(GetTempVar(CITV_MOREX)), true, 1);
         }
         else {
-            Console::shared().warning(
-                                      "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner.");
+            Console::shared().warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner.");
             Delete();
             return true;
         }

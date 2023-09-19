@@ -10,6 +10,7 @@
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "combat.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
@@ -21,11 +22,11 @@
 #include "movement.h"
 #include "regions.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "subsystem/console.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 #include "weight.h"
 
@@ -56,10 +57,8 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
     // Calculate base chance of success at crafting based on primary skill, to use as a modifier for
     // exceptional chance later
     R32 chanceSkillSuccess = 0;
-    chanceSkillSuccess = static_cast<R32>(player->GetSkill(skillMake.skillReqs[0].skillNumber) -
-                                          skillMake.skillReqs[0].minSkill);
-    chanceSkillSuccess /= (static_cast<R32>(skillMake.skillReqs[0].maxSkill) -
-                           static_cast<R32>(skillMake.skillReqs[0].minSkill));
+    chanceSkillSuccess = static_cast<R32>(player->GetSkill(skillMake.skillReqs[0].skillNumber) - skillMake.skillReqs[0].minSkill);
+    chanceSkillSuccess /= (static_cast<R32>(skillMake.skillReqs[0].maxSkill) - static_cast<R32>(skillMake.skillReqs[0].minSkill));
     
     // Loop through all skills required to craft the item and calculate average rank value for each
     for (size_t i = 0; i < skillMake.skillReqs.size(); ++i) {
@@ -68,8 +67,7 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
         
         // Fetch range of skill we have to work with for this skill based on player's skill value
         // and minimum skill required to craft the item
-        sk_range = static_cast<R32>(player->GetSkill(skillMake.skillReqs[i].skillNumber) -
-                                    skillMake.skillReqs[i].minSkill);
+        sk_range = static_cast<R32>(player->GetSkill(skillMake.skillReqs[i].skillNumber) - skillMake.skillReqs[i].minSkill);
         if (sk_range <= 0) {
             sk_range = skillMake.minRank * 10;
         }
@@ -85,8 +83,7 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
         else {
             // ...otherwise, generate a random number modified by skill range and difficulty level
             // of rank system from uox.ini
-            randnum1 = static_cast<R32>(RandomNum(0, 999)) -
-            ((randnum - sk_range) / (11 - cwmWorldState->ServerData()->SkillLevel()));
+            randnum1 = static_cast<R32>(RandomNum(0, 999)) - ((randnum - sk_range) / (11 - ServerConfig::shared().ushortValues[UShortValue::SKILLLEVEL] ));
             
             // Modify random number based on base chance of success at crafting
             randnum1 *= chanceSkillSuccess;
@@ -149,8 +146,7 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
         {
             // Max charges for runebook stored in maxHP property, defaults to 10, ranges from 5-10
             // based on rank
-            c->SetMaxHP(static_cast<std::uint16_t>(
-                                                   std::max(static_cast<std::uint16_t>(5), static_cast<std::uint16_t>((rank * c->GetMaxHP()) / 10))));
+            c->SetMaxHP(static_cast<std::uint16_t>(std::max(static_cast<std::uint16_t>(5), static_cast<std::uint16_t>((rank * c->GetMaxHP()) / 10))));
         }
         
         // Convert item's rank to a value between 1 and 10, to fit rank system messages
@@ -176,16 +172,12 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
 // o------------------------------------------------------------------------------------------------o
 void CSkills::RegenerateOre(std::int16_t grX, std::int16_t grY, std::uint8_t worldNum) {
     MapResource_st *orePart = MapRegion->GetResource(grX, grY, worldNum);
-    std::int16_t oreCeiling = cwmWorldState->ServerData()->ResOre();
-    std::uint16_t oreTimer = cwmWorldState->ServerData()->ResOreTime();
-    if (static_cast<std::uint32_t>(orePart->oreTime) <=
-        cwmWorldState->GetUICurrentTime()) // regenerate some more?
-    {
-        for (std::int16_t counter = 0; counter < oreCeiling; ++counter) // keep regenerating ore
-        {
+    std::int16_t oreCeiling = ServerConfig::shared().ushortValues[UShortValue::OREPERAREA] ;
+    std::uint16_t oreTimer = ServerConfig::shared().timerSetting[TimerSetting::ORE] ;
+    if (static_cast<std::uint32_t>(orePart->oreTime) <= cwmWorldState->GetUICurrentTime()) { // regenerate some more?
+        for (std::int16_t counter = 0; counter < oreCeiling; ++counter) { // keep regenerating ore
             if (orePart->oreAmt < oreCeiling &&
-                static_cast<std::uint32_t>(orePart->oreAmt + counter * oreTimer * 1000) <
-                cwmWorldState->GetUICurrentTime()) {
+                static_cast<std::uint32_t>(orePart->oreAmt + counter * oreTimer * 1000) < cwmWorldState->GetUICurrentTime()) {
                 ++orePart->oreAmt;
             }
             else {
@@ -225,11 +217,8 @@ void CSkills::SmeltOre(CSocket *s) {
     {
         CItem *playerPack = chr->GetPackItem();
         if (ValidateObject(playerPack)) {
-            if (FindRootContainer(itemToSmelt) != playerPack &&
-                FindRootContainer(forge) != playerPack) {
-                if (!ObjInRange(chr, forge, DIST_NEARBY) ||
-                    !CheckItemRange(chr, itemToSmelt)) // Check if forge & item to melt are in range
-                {
+            if (FindRootContainer(itemToSmelt) != playerPack && FindRootContainer(forge) != playerPack) {
+                if (!ObjInRange(chr, forge, DIST_NEARBY) || !CheckItemRange(chr, itemToSmelt)) { // Check if forge & item to melt are in range
                     s->SysMessage(400); // That is too far away!
                     return;
                 }
@@ -262,18 +251,13 @@ void CSkills::SmeltOre(CSocket *s) {
             std::int32_t targetAmount = forge->GetAmount();
             std::uint8_t amountMultiplier = 1;
             
-            if (smeltItemId == 0x19B9 && forgeId == 0x19B7) // Large ore, targeted small ore
-            {
+            if (smeltItemId == 0x19B9 && forgeId == 0x19B7) { // Large ore, targeted small ore
                 amountMultiplier = 4;
             }
-            else if (smeltItemId == 0x19B9 &&
-                     (forgeId == 0x19B8 || forgeId == 0x19BA)) // Large ore, targeted medium ore
-            {
+            else if (smeltItemId == 0x19B9 && (forgeId == 0x19B8 || forgeId == 0x19BA)) { // Large ore, targeted medium ore
                 amountMultiplier = 2;
             }
-            else if ((smeltItemId == 0x19B8 || smeltItemId == 0x19BA) &&
-                     forgeId == 0x19B7) // Medium ore, targeted small ore
-            {
+            else if ((smeltItemId == 0x19B8 || smeltItemId == 0x19BA) && forgeId == 0x19B7) { // Medium ore, targeted small ore
                 amountMultiplier = 2;
             }
             else {
@@ -288,21 +272,16 @@ void CSkills::SmeltOre(CSocket *s) {
                 
                 std::int32_t newTargetWeight =
                 (targetAmount + (sourceAmount * amountMultiplier)) * forge->GetBaseWeight();
-                std::int32_t subtractWeight = (targetAmount * forge->GetBaseWeight()) +
-                (sourceAmount * itemToSmelt->GetBaseWeight());
+                std::int32_t subtractWeight = (targetAmount * forge->GetBaseWeight()) + (sourceAmount * itemToSmelt->GetBaseWeight());
                 
                 if (ValidateObject(forgeOwner) && forgeOwner == chr) {
-                    if ((newTargetWeight + chr->GetWeight() - subtractWeight) >
-                        200000) // 2000 stones
-                    {
+                    if ((newTargetWeight + chr->GetWeight() - subtractWeight) > 200000) { // 2000 stones
                         s->SysMessage(1743); // That person can not possibly hold more weight
                         return;
                     }
                 }
                 else if (forge->GetCont() != nullptr) {
-                    if ((newTargetWeight + forge->GetCont()->GetWeight() - subtractWeight) >
-                        200000) // 2000 stones
-                    {
+                    if ((newTargetWeight + forge->GetCont()->GetWeight() - subtractWeight) > 200000) { // 2000 stones
                         s->SysMessage(1810); // The weight is too great to combine in a container.
                         return;
                     }
@@ -333,8 +312,7 @@ void CSkills::SmeltOre(CSocket *s) {
                     std::uint16_t amountToRemove = static_cast<std::uint16_t>(floor(amountLeft / amountMultiplier));
                     itemToSmelt->SetAmount(sourceAmount - amountToRemove);
                     forge->SetAmount(MAX_STACK);
-                    s->SysMessage(
-                                  1813); // You combine a portion of your ore into the stack of smaller ore.
+                    s->SysMessage(1813); // You combine a portion of your ore into the stack of smaller ore.
                 }
             }
             else {
@@ -362,8 +340,7 @@ void CSkills::SmeltOre(CSocket *s) {
             case 0x19A6:
             case 0x19A2:
             case 0x199E:
-                if (ObjInRange(chr, forge, DIST_NEARBY)) // Check if the forge is in range
-                {
+                if (ObjInRange(chr, forge, DIST_NEARBY)) { // Check if the forge is in range
                     std::uint16_t targColour = itemToSmelt->GetColour();
                     MiningData_st *oreType = FindOre(targColour);
                     if (oreType == nullptr) {
@@ -376,21 +353,17 @@ void CSkills::SmeltOre(CSocket *s) {
                         return;
                     }
                     
-                    if (!CheckSkill(chr, MINING, oreType->minSkill,
-                                    1000)) // if we do not have minimum skill to use it
+                    if (!CheckSkill(chr, MINING, oreType->minSkill, 1000)) // if we do not have minimum skill to use it
                     {
                         if (itemToSmelt->GetAmount() > 1) // If more than 1 ore, half it
                         {
-                            s->SysMessage(
-                                          817); // Your hand slips and some of your materials are destroyed.
+                            s->SysMessage(817); // Your hand slips and some of your materials are destroyed.
                             itemToSmelt->SetAmount(itemToSmelt->GetAmount() / 2);
                         }
                         else {
-                            s->SysMessage(
-                                          816); // Your hand slips and the last of your materials are destroyed.
+                            s->SysMessage(816); // Your hand slips and the last of your materials are destroyed.
                             // Remove from multi before deleting
-                            if (itemToSmelt->IsLockedDown() &&
-                                ValidateObject(itemToSmelt->GetMultiObj())) {
+                            if (itemToSmelt->IsLockedDown() && ValidateObject(itemToSmelt->GetMultiObj())) {
                                 itemToSmelt->GetMultiObj()->ReleaseItem(itemToSmelt);
                             }
                             
@@ -413,8 +386,7 @@ void CSkills::SmeltOre(CSocket *s) {
                             break;
                     }
                     
-                    CItem *ingot = Items->CreateScriptItem(s, chr, "0x1BF2", ingotNum, CBaseObject::OT_ITEM, true,
-                                                           oreType->colour);
+                    CItem *ingot = Items->CreateScriptItem(s, chr, "0x1BF2", ingotNum, CBaseObject::OT_ITEM, true, oreType->colour);
                     if (ingot != nullptr) {
                         ingot->SetName(util::format("%s Ingot", oreType->name.c_str()));
                     }
@@ -454,8 +426,7 @@ std::uint16_t CSkills::CalculatePetControlChance(CChar *mChar, CChar *Npc) {
     
     // If difficulty to control is below a certain treshold (29.1) or it's a summoned creature, 100%
     // chance to control creature
-    if ((petOrneriness == 0 && Npc->GetTaming() <= 291) || petOrneriness <= 291 ||
-        Npc->IsDispellable())
+    if ((petOrneriness == 0 && Npc->GetTaming() <= 291) || petOrneriness <= 291 || Npc->IsDispellable())
         return static_cast<std::int16_t>(1000);
     
     // TODO: Check if NPC can be tamed via necromancer Dark Wolf Familiar
@@ -585,13 +556,9 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         if (ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL)) {
             // Modify base chance of success with bonuses from stats, if this feature is enabled in
             // ini
-            chanceSkillSuccess +=
-            static_cast<R32>(s->GetStrength() * cwmWorldState->skill[sk].strength) / 1000.0f;
-            chanceSkillSuccess +=
-            static_cast<R32>(s->GetDexterity() * cwmWorldState->skill[sk].dexterity) / 1000.0f;
-            chanceSkillSuccess +=
-            static_cast<R32>(s->GetIntelligence() * cwmWorldState->skill[sk].intelligence) /
-            1000.0f;
+            chanceSkillSuccess += static_cast<R32>(s->GetStrength() * cwmWorldState->skill[sk].strength) / 1000.0f;
+            chanceSkillSuccess += static_cast<R32>(s->GetDexterity() * cwmWorldState->skill[sk].dexterity) / 1000.0f;
+            chanceSkillSuccess += static_cast<R32>(s->GetIntelligence() * cwmWorldState->skill[sk].intelligence) / 1000.0f;
         }
         
         // If player's command-level is equal to Counselor or higher, pass the skill-check
@@ -599,8 +566,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         if (s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000) {
             if (s->GetCommandLevel() > 0 && mSock != nullptr) {
                 // Inform the counselor/gm to make it obvious why skillcheck always succeeds
-                mSock->SysMessage(
-                                  6279); // Skill check success guaranteed due to elevated command level!
+                mSock->SysMessage(6279); // Skill check success guaranteed due to elevated command level!
             }
             skillCheck = true;
         }
@@ -670,7 +636,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
     if (success) {
         amtToGain = cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
     }
-    std::uint16_t skillCap = cwmWorldState->ServerData()->ServerSkillTotalCapStatus();
+    std::uint16_t skillCap = ServerConfig::shared().ushortValues[UShortValue::SKILLCAP] ;
     
     if (c->IsNpc()) {
         // Check for existence of onSkillGain event for NPC
@@ -714,8 +680,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
         // add up skills and find the one being increased
         std::uint8_t atrSkill = c->GetAtrophy(static_cast<std::uint8_t>(counter - 1));
         
-        if (c->GetBaseSkill(atrSkill) >= amtToGain && c->GetSkillLock(atrSkill) == SKILL_DECREASE &&
-            atrSkill != sk) {
+        if (c->GetBaseSkill(atrSkill) >= amtToGain && c->GetSkillLock(atrSkill) == SKILL_DECREASE && atrSkill != sk) {
             toDec = atrSkill; // we found a skill that can be decreased, save it for later.
         }
         
@@ -734,8 +699,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
     for (counter = 0; counter < rem; ++counter) {
         c->SetAtrophy(atrop[counter], counter);
     }
-    if (rem != ALLSKILLS) // in the middle somewhere or first
-    {
+    if (rem != ALLSKILLS) { // in the middle somewhere or first
         for (counter = static_cast<std::uint8_t>(rem + 1); counter <= ALLSKILLS; ++counter) {
             c->SetAtrophy(atrop[counter], (counter - 1));
         }
@@ -817,8 +781,7 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         s->SysMessage(9054); // You cannot use skills while dead.
         return;
     }
-    if ((x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN) ||
-        mChar->GetVisible() == VT_INVISIBLE) {
+    if ((x != STEALTH && mChar->GetVisible() == VT_TEMPHIDDEN) || mChar->GetVisible() == VT_INVISIBLE) {
         mChar->ExposeToView();
     }
     mChar->BreakConcentration(s);
@@ -869,14 +832,11 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         if (s->GetTimer(tPC_SKILLDELAY) <= cwmWorldState->GetUICurrentTime()) {
             if (cwmWorldState->skill[x].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY,
-                            BuildTimeValue(static_cast<R32>(cwmWorldState->skill[x].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(cwmWorldState->skill[x].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
-                s->SetTimer(tPC_SKILLDELAY,
-                            BuildTimeValue(static_cast<R32>(
-                                                            cwmWorldState->ServerData()->ServerSkillDelayStatus())));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY])));
             }
         }
         return;
@@ -903,15 +863,10 @@ void CSkills::Tracking(CSocket *s, std::int32_t selection) {
     
     // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new
     // calc
-    s->SetTimer(
-                tPC_TRACKING,
-                BuildTimeValue(static_cast<R32>(
-                                                cwmWorldState->ServerData()->TrackingBaseTimer() * i->GetSkill(TRACKING) / 1000 + 1)));
-    s->SetTimer(tPC_TRACKINGDISPLAY, BuildTimeValue(static_cast<R32>(
-                                                                     cwmWorldState->ServerData()->TrackingRedisplayTime())));
+    s->SetTimer(tPC_TRACKING, BuildTimeValue(static_cast<R32>(ServerConfig::shared().timerSetting[TimerSetting::TRACKING] * i->GetSkill(TRACKING) / 1000 + 1)));
+    s->SetTimer(tPC_TRACKINGDISPLAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME])));
     if (ValidateObject(i->GetTrackingTarget())) {
-        std::string trackingTargetName =
-        GetNpcDictName(i->GetTrackingTarget(), nullptr, NRS_SPEECH);
+        std::string trackingTargetName = GetNpcDictName(i->GetTrackingTarget(), nullptr, NRS_SPEECH);
         s->SysMessage(1644, trackingTargetName.c_str()); // You are now tracking %s.
     }
     Track(i);
@@ -936,8 +891,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
     CreatureTypes creatureType = CT_ANIMAL;
     std::int32_t type = 887; // You see no signs of any animals.
     std::uint8_t MaxTrackingTargets = 0;
-    const std::uint16_t distance =
-    (cwmWorldState->ServerData()->TrackingBaseRange() + (mChar->GetSkill(TRACKING) / 50));
+    const std::uint16_t distance = (ServerConfig::shared().ushortValues[UShortValue::BASERANGE] + (mChar->GetSkill(TRACKING) / 50));
     unicodetypes_t mLang = s->Language();
     
     if (m == (2 + TRACKINGMENUOFFSET)) {
@@ -967,25 +921,17 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
         if (MapArea) {
             auto regChars = MapArea->GetCharList();
             for (const auto &tempChar : regChars->collection()) {
-                if (MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets()) {
-                    if (ValidateObject(tempChar) &&
-                        (tempChar->GetInstanceId() == mChar->GetInstanceId())) {
+                if (MaxTrackingTargets < ServerConfig::shared().ushortValues[UShortValue::MAXTARGET]) {
+                    if (ValidateObject(tempChar) && (tempChar->GetInstanceId() == mChar->GetInstanceId())) {
                         id = tempChar->GetId();
-                        if ((!cwmWorldState->creatures[id].IsHuman() ||
-                             creatureType == CT_PERSON) &&
-                            (!cwmWorldState->creatures[id].IsAnimal() ||
-                             creatureType == CT_ANIMAL)) {
-                            const bool cmdLevelCheck =
-                            (IsOnline((*tempChar)) &&
-                             (mChar->GetCommandLevel() >= tempChar->GetCommandLevel()));
-                            if (tempChar != mChar && ObjInRange(tempChar, mChar, distance) &&
-                                !tempChar->IsDead() && (cmdLevelCheck || tempChar->IsNpc())) {
+                        if ((!cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON) && (!cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL)) {
+                            const bool cmdLevelCheck = (IsOnline((*tempChar)) && (mChar->GetCommandLevel() >= tempChar->GetCommandLevel()));
+                            if (tempChar != mChar && ObjInRange(tempChar, mChar, distance) && !tempChar->IsDead() && (cmdLevelCheck || tempChar->IsNpc())) {
                                 mChar->SetTrackingTargets(tempChar, MaxTrackingTargets);
                                 ++MaxTrackingTargets;
                                 
                                 std::int32_t dirMessage = 898; // right next to you.
-                                switch (Movement->Direction(mChar, tempChar->GetX(),
-                                                            tempChar->GetY())) {
+                                switch (Movement->Direction(mChar, tempChar->GetX(), tempChar->GetY())) {
                                     case NORTH:
                                         dirMessage = 890;
                                         break; // to the North.
@@ -1096,10 +1042,7 @@ void CSkills::UpdateSkillLevel(CChar *c, std::uint8_t s) const {
     std::int16_t aInt = c->ActualIntelligence();
     std::uint16_t bSkill = c->GetBaseSkill(s);
     
-    std::uint16_t temp =
-    (((sStr * aStr) / 100 + (sDex * aDex) / 100 + (sInt + aInt) / 100) * (1000 - bSkill)) /
-    1000 +
-    bSkill;
+    std::uint16_t temp = (((sStr * aStr) / 100 + (sDex * aDex) / 100 + (sInt + aInt) / 100) * (1000 - bSkill)) / 1000 + bSkill;
     c->SetSkill(std::max(bSkill, temp), s);
 }
 
@@ -1132,19 +1075,15 @@ void CSkills::Persecute(CSocket *s) {
             
             if (cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(
-                                                                            cwmWorldState->skill[SPIRITSPEAK].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(cwmWorldState->skill[SPIRITSPEAK].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
-                s->SetTimer(tPC_SKILLDELAY,
-                            BuildTimeValue(static_cast<R32>(
-                                                            cwmWorldState->ServerData()->ServerSkillDelayStatus())));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY] )));
             }
             
             std::string targCharName = GetNpcDictName(targChar, nullptr, NRS_SPEECH);
-            targChar->TextMessage(nullptr, 974, EMOTE, 1,
-                                  targCharName.c_str()); // %s is persecuted by a ghost!
+            targChar->TextMessage(nullptr, 974, EMOTE, 1, targCharName.c_str()); // %s is persecuted by a ghost!
         }
         else {
             s->SysMessage(975); // Your mind is not strong enough to disturb the enemy
@@ -1195,8 +1134,7 @@ void CSkills::Smith(CSocket *s) {
                 return;
             }
             if (FindItemOwner(i) != mChar) {
-                s->SysMessage(
-                              978, oreType->name.c_str()); // You can't smith %s ingots outside your backpack.
+                s->SysMessage(978, oreType->name.c_str()); // You can't smith %s ingots outside your backpack.
             }
             else {
                 AnvilTarget(s, (*i), oreType);
@@ -1231,11 +1169,9 @@ void CSkills::AnvilTarget(CSocket *s, CItem &item, MiningData_st *oreType) {
                     (tempItem->GetInstanceId() == mChar->GetInstanceId())) {
                     if (tempItem->GetId() == 0x0FAF || tempItem->GetId() == 0x0FB0) {
                         if (ObjInRange(mChar, tempItem, DIST_NEARBY)) {
-                            std::uint32_t getAmt = GetItemAmount(mChar, item.GetId(), item.GetColour(),
-                                                                 item.GetTempVar(CITV_MORE));
+                            std::uint32_t getAmt = GetItemAmount(mChar, item.GetId(), item.GetColour(), item.GetTempVar(CITV_MORE));
                             if (getAmt == 0) {
-                                s->SysMessage(980,
-                                              oreType->name.c_str()); // You don't have enough %s
+                                s->SysMessage(980, oreType->name.c_str()); // You don't have enough %s
                                 // ingots to make anything.
                                 return;
                             }
@@ -1333,8 +1269,7 @@ bool CSkills::LoadMiningData() {
                                 }
                                 break;
                             default:
-                                Console::shared() << "Unknown mining tag " << tag << " with data "
-                                << data << " in SECTION " << oreName << myendl;
+                                Console::shared() << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
                                 break;
                         }
                     }
@@ -1444,26 +1379,20 @@ auto CSkills::LoadCreateMenus() -> void {
         
         for (const auto &[eName1, toSearch] : ourScript->collection()) {
             auto eName = eName1;
-            if ("SUBMENU" ==
-                eName.substr(
-                             0, 7)) // is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
-            {
+            if ("SUBMENU" == eName.substr(0, 7)) { // is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
                 eName = util::trim(util::strip(eName, "//"));
                 auto ssecs = oldstrutil::sections(eName, " ");
-                ourEntry = static_cast<std::uint16_t>(
-                                                      std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                ourEntry = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 for (const auto &sec : toSearch->collection()) {
                     auto tag = sec->tag;
                     auto data = sec->data;
                     auto UTag = util::upper(tag);
                     data = util::trim(util::strip(data, "//"));
                     if (UTag == "MENU") {
-                        actualMenus[ourEntry].menuEntries.push_back(
-                                                                    static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                        actualMenus[ourEntry].menuEntries.push_back(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                     }
                     else if (UTag == "ITEM") {
-                        actualMenus[ourEntry].itemEntries.push_back(
-                                                                    static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
+                        actualMenus[ourEntry].itemEntries.push_back(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                     }
                 }
             }
@@ -1471,8 +1400,7 @@ auto CSkills::LoadCreateMenus() -> void {
             {
                 auto ssecs = oldstrutil::sections(eName, " ");
                 
-                ourEntry = static_cast<std::uint16_t>(
-                                                      std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                ourEntry = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                 CreateEntry_st tmpEntry;
                 tmpEntry.minRank = 0;
                 tmpEntry.maxRank = 10;
@@ -1514,29 +1442,24 @@ auto CSkills::LoadCreateMenus() -> void {
                         auto ssecs = oldstrutil::sections(data, " ");
                         if (ssecs.size() > 1) {
                             if (ssecs.size() == 4) {
-                                tmpResource.moreVal = static_cast<std::uint32_t>(std::stoul(
-                                                                                            util::trim(util::strip(ssecs[3], "//")), nullptr, 0));
+                                tmpResource.moreVal = static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(ssecs[3], "//")), nullptr, 0));
                             }
                             if (ssecs.size() >= 3) {
-                                tmpResource.colour = static_cast<std::uint16_t>(std::stoul(
-                                                                                           util::trim(util::strip(ssecs[2], "//")), nullptr, 0));
+                                tmpResource.colour = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0));
                             }
                             if (ssecs.size() >= 2) {
-                                tmpResource.amountNeeded = static_cast<std::uint16_t>(std::stoul(
-                                                                                                 util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                                tmpResource.amountNeeded = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                             }
                         }
                         auto resType = "RESOURCE "s + util::trim(util::strip(ssecs[0], "//"));
                         auto resList = FileLookup->FindEntry(resType, create_def);
                         if (resList) {
                             for (const auto &sec : resList->collection()) {
-                                tmpResource.idList.push_back(
-                                                             static_cast<std::uint16_t>(std::stoul(sec->data, nullptr, 0)));
+                                tmpResource.idList.push_back(static_cast<std::uint16_t>(std::stoul(sec->data, nullptr, 0)));
                             }
                         }
                         else {
-                            tmpResource.idList.push_back(static_cast<std::uint16_t>(
-                                                                                    std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
+                            tmpResource.idList.push_back(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)));
                         }
                         
                         tmpEntry.resourceNeeded.push_back(tmpResource);
@@ -1553,17 +1476,13 @@ auto CSkills::LoadCreateMenus() -> void {
                         else {
                             if (ssecs.size() == 2) {
                                 tmpResource.maxSkill = 1000;
-                                tmpResource.minSkill = static_cast<std::uint16_t>(std::stoul(
-                                                                                             util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                                tmpResource.minSkill = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
                             }
                             else {
-                                tmpResource.minSkill = static_cast<std::uint16_t>(std::stoul(
-                                                                                             util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
-                                tmpResource.maxSkill = static_cast<std::uint16_t>(std::stoul(
-                                                                                             util::trim(util::strip(ssecs[2], "//")), nullptr, 0));
+                                tmpResource.minSkill = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0));
+                                tmpResource.maxSkill = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0));
                             }
-                            tmpResource.skillNumber = static_cast<std::uint16_t>(
-                                                                                 std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0));
+                            tmpResource.skillNumber = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0));
                         }
                         tmpEntry.skillReqs.push_back(tmpResource);
                     }
@@ -1674,17 +1593,15 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
     if (s->IsNpc())
         return;
     
-    std::uint32_t serverStatCap = cwmWorldState->ServerData()->ServerStatCapStatus();
+    std::uint32_t serverStatCap = ServerConfig::shared().ushortValues[UShortValue::STATCAP];
     std::uint32_t ttlStats = s->ActualStrength() + s->ActualDexterity() + s->ActualIntelligence();
     std::int16_t chanceStatGain = 0; // 16bit because of freaks that raises it > 100
     std::int32_t statCount, nCount;
     std::int32_t toDec = 255;
     std::uint16_t maxChance = 100;
     std::int16_t ActualStat[3] = {s->ActualStrength(), s->ActualDexterity(), s->ActualIntelligence()};
-    std::uint16_t StatModifier[3] = {cwmWorldState->skill[sk].strength, cwmWorldState->skill[sk].dexterity,
-        cwmWorldState->skill[sk].intelligence};
-    skilllock_t StatLocks[3] = {s->GetSkillLock(STRENGTH), s->GetSkillLock(DEXTERITY),
-        s->GetSkillLock(INTELLECT)};
+    std::uint16_t StatModifier[3] = {cwmWorldState->skill[sk].strength, cwmWorldState->skill[sk].dexterity, cwmWorldState->skill[sk].intelligence};
+    skilllock_t StatLocks[3] = {s->GetSkillLock(STRENGTH), s->GetSkillLock(DEXTERITY), s->GetSkillLock(INTELLECT)};
     
     std::vector<std::uint16_t> skillUpdTriggers = s->GetScriptTriggers();
     
@@ -1711,21 +1628,13 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
             //  special dice 2: skill failed: decrease chance by 50%
             
             //  k, first let us calculate both dices
-            std::uint8_t modifiedStatLevel = FindSkillPoint(
-                                                            statCount - 1, static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) /
-                                                                                                     static_cast<R32>(pRace->Skill(statCount)) * 100));
-            chanceStatGain = static_cast<std::int16_t>(
-                                                       (static_cast<R32>(
-                                                                         cwmWorldState->skill[statCount - 1].advancement[modifiedStatLevel].success) /
-                                                        100) *
-                                                       (static_cast<R32>(static_cast<R32>(StatModifier[nCount]) / 10) / 100) * 1000);
+            std::uint8_t modifiedStatLevel = FindSkillPoint(statCount - 1, static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) / static_cast<R32>(pRace->Skill(statCount)) * 100));
+            chanceStatGain = static_cast<std::int16_t>((static_cast<R32>(cwmWorldState->skill[statCount - 1].advancement[modifiedStatLevel].success) / 100) * (static_cast<R32>(static_cast<R32>(StatModifier[nCount]) / 10) / 100) * 1000);
             // some mathematics in it;)
             
             // now, lets implement the special dice 1 and additionally check for onStatGain
             // javascript method
-            if (StatModifier[nCount] <=
-                static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) /
-                                          static_cast<R32>(pRace->Skill(statCount)) * 100)) {
+            if (StatModifier[nCount] <= static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) / static_cast<R32>(pRace->Skill(statCount)) * 100)) {
                 chanceStatGain = 0;
             }
             
@@ -1736,8 +1645,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
             
             // if stat of char < racial statCap and chance for statgain > random number from 0 to
             // 100
-            if (ActualStat[nCount] < pRace->Skill(statCount) &&
-                chanceStatGain > RandomNum(static_cast<std::uint16_t>(0), maxChance)) {
+            if (ActualStat[nCount] < pRace->Skill(statCount) && chanceStatGain > RandomNum(static_cast<std::uint16_t>(0), maxChance)) {
                 // Check if we have to decrease a stat
                 if ((ttlStats + 1) >= RandomNum(serverStatCap - 10, serverStatCap)) {
                     for (std::int32_t i = 0; i < 3; i++) {
@@ -1889,10 +1797,10 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
     if (p == actualMenus.end())
         return;
     
-    std::uint16_t background = cwmWorldState->ServerData()->BackgroundPic();
-    std::uint16_t btnCancel = cwmWorldState->ServerData()->ButtonCancel();
-    [[maybe_unused]] std::uint16_t btnLeft = cwmWorldState->ServerData()->ButtonLeft();
-    std::uint16_t btnRight = cwmWorldState->ServerData()->ButtonRight();
+    std::uint16_t background = ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC] ;
+    std::uint16_t btnCancel = ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL];
+    [[maybe_unused]] std::uint16_t btnLeft = ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT];
+    std::uint16_t btnRight = ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT];
     
     CPSendGumpMenu toSend;
     toSend.UserId(INVALIDSERIAL);
@@ -1970,9 +1878,8 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
                 // it was not thought that way, its not logical, maxSkill should say, that you can
                 // get maxRank with maxSkill and higher
             }
-            if (iItem.spell) // Should only display the spell if character has a spellbook and the
+            if (iItem.spell) { // Should only display the spell if character has a spellbook and the
                 // spell in his book
-            {
                 CItem *spellBook = FindItemOfType(ourChar, IT_SPELLBOOK);
                 if (!ValidateObject(spellBook)) {
                     canMake = false;
@@ -1986,11 +1893,9 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
                 }
             }
             if (canMake) {
-                toSend.addCommand(util::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc,
-                                               btnRight, btnRight + 1, (*ourMenu.iIter)));
+                toSend.addCommand(util::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, (*ourMenu.iIter)));
                 if (iItem.targId) {
-                    toSend.addCommand(
-                                      util::format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targId));
+                    toSend.addCommand(util::format("tilepic %i %i %i", xLoc - 20, yLoc, iItem.targId));
                 }
                 toSend.addCommand(util::format("text %i %i 35 %i", xLoc + 20, yLoc, textCounter++));
                 toSend.addText(iItem.name);
@@ -2010,8 +1915,7 @@ void CSkills::NewMakeMenu(CSocket *s, std::int32_t menu, [[maybe_unused]] std::u
         smIter = skillMenus.find((*ourMenu.mIter));
         if (smIter != skillMenus.end()) {
             CreateMenuEntry_st iMenu = smIter->second;
-            toSend.addCommand(util::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight,
-                                           btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter)));
+            toSend.addCommand(util::format("button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + (*ourMenu.mIter)));
             if (iMenu.targId) {
                 toSend.addCommand(util::format("tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targId));
             }
@@ -2039,17 +1943,14 @@ void CSkills::HandleMakeMenu(CSocket *s, std::int32_t button, std::int32_t menu)
         return;
     
     CreateMenu_st ourMenu = p->second;
-    if (button >= CREATE_MENU_OFFSET) // menu pressed
-    {
-        std::map<std::uint16_t, CreateMenuEntry_st>::const_iterator q =
-        skillMenus.find(button - CREATE_MENU_OFFSET);
+    if (button >= CREATE_MENU_OFFSET) {// menu pressed
+        std::map<std::uint16_t, CreateMenuEntry_st>::const_iterator q = skillMenus.find(button - CREATE_MENU_OFFSET);
         if (q == skillMenus.end())
             return;
         
         NewMakeMenu(s, q->second.subMenu, 0);
     }
-    else // item to make
-    {
+    else {// item to make
         std::map<std::uint16_t, CreateEntry_st>::iterator r = itemsForMenus.find(button);
         if (r == itemsForMenus.end())
             return;
@@ -2076,8 +1977,7 @@ CreateEntry_st *CSkills::FindItem(std::uint16_t itemNum) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes an item selected in the new make menu system
 // o------------------------------------------------------------------------------------------------o
-void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std::uint16_t itemEntry,
-                       std::uint16_t resourceColour) {
+void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std::uint16_t itemEntry, std::uint16_t resourceColour) {
     VALIDATESOCKET(sock);
     
     if (!ValidateObject(player))
@@ -2101,8 +2001,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
     
     // Moved resource-check to top of file to disallow gaining skill by attempting to
     // craft items without having enough resources to do so :P
-    for (resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end();
-         ++resCounter) {
+    for (resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter) {
         resEntry = (*resCounter);
         toDelete = resEntry.amountNeeded;
         targColour = resEntry.colour;
@@ -2113,20 +2012,16 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
             // material, use a material of that colour
             targColour = resourceColour;
         }
-        for (std::vector<std::uint16_t>::const_iterator idCounter = resEntry.idList.begin();
-             idCounter != resEntry.idList.end(); ++idCounter) {
+        for (std::vector<std::uint16_t>::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter) {
             targId = (*idCounter);
             if (targetedSubResourceId == 0 || resCounter == toMake.resourceNeeded.begin()) {
                 // Primary resource, or generic subresource
-                toDelete -= std::min(GetItemAmount(player, targId, targColour, targMoreVal, true),
-                                     static_cast<std::uint32_t>(toDelete));
+                toDelete -= std::min(GetItemAmount(player, targId, targColour, targMoreVal, true), static_cast<std::uint32_t>(toDelete));
             }
             else {
                 if (targetedSubResourceId > 0 && targId == targetedSubResourceId) {
                     // Player specifically targeted a secondary resource
-                    toDelete -=
-                    std::min(GetItemAmount(player, targId, targColour, targMoreVal, true),
-                             static_cast<std::uint32_t>(toDelete));
+                    toDelete -= std::min(GetItemAmount(player, targId, targColour, targMoreVal, true), static_cast<std::uint32_t>(toDelete));
                 }
             }
             
@@ -2153,8 +2048,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
         
         if (sCounter == toMake.skillReqs.begin()) {
             // Only perform skill check for first and main skill in skill requirement
-            if (!CheckSkill(player, (*sCounter).skillNumber, (*sCounter).minSkill,
-                            (*sCounter).maxSkill, true)) {
+            if (!CheckSkill(player, (*sCounter).skillNumber, (*sCounter).minSkill, (*sCounter).maxSkill, true)) {
                 canMake = false;
                 break;
             }
@@ -2210,8 +2104,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
             }
         }
     }
-    for (resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end();
-         ++resCounter) {
+    for (resCounter = toMake.resourceNeeded.begin(); resCounter != toMake.resourceNeeded.end(); ++resCounter) {
         resEntry = (*resCounter);
         toDelete = resEntry.amountNeeded;
         if (!canMake) {
@@ -2225,8 +2118,7 @@ void CSkills::MakeItem(CreateEntry_st &toMake, CChar *player, CSocket *sock, std
             // material, use a material of that colour
             targColour = resourceColour;
         }
-        for (std::vector<std::uint16_t>::const_iterator idCounter = resEntry.idList.begin();
-             idCounter != resEntry.idList.end(); ++idCounter) {
+        for (std::vector<std::uint16_t>::const_iterator idCounter = resEntry.idList.begin(); idCounter != resEntry.idList.end(); ++idCounter) {
             targId = (*idCounter);
             if (targetedSubResourceId == 0 || resCounter == toMake.resourceNeeded.begin()) {
                 // Primary resource, or generic subresource
@@ -2357,10 +2249,8 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
     CItem *iItem = nullptr;
     CChar *iCharId = nSocket->CurrcharObj();
     
-    if (itemId >= 0x1B11 && itemId <= 0x1B1C) // Make bone powder.
-    {
-        iCharId->TextMessage(nullptr, 741, EMOTE, 1,
-                             iCharId->GetName().c_str()); // %s is grinding some bone into powder
+    if (itemId >= 0x1B11 && itemId <= 0x1B1C) {// Make bone powder.
+        iCharId->TextMessage(nullptr, 741, EMOTE, 1, iCharId->GetName().c_str()); // %s is grinding some bone into powder
         Effects->TempEffect(iCharId, iCharId, 9, 0, 0, 0);
         Effects->TempEffect(iCharId, iCharId, 9, 0, 3, 0);
         Effects->TempEffect(iCharId, iCharId, 9, 0, 6, 0);
@@ -2371,13 +2261,10 @@ void CSkills::MakeNecroReg(CSocket *nSocket, CItem *nItem, std::uint16_t itemId)
         
         iItem->SetName("bone powder");
         iItem->SetTempVar(CITV_MOREX, 666);
-        iItem->SetTempVar(
-                          CITV_MORE, 1,
-                          1); // this will fill more with info to tell difference between ash and bone
+        iItem->SetTempVar(CITV_MORE, 1, 1); // this will fill more with info to tell difference between ash and bone
         nItem->Delete();
     }
-    if (itemId == 0x0E24) // Make vial of blood.
-    {
+    if (itemId == 0x0E24) { // Make vial of blood.
         if (nItem->GetTempVar(CITV_MORE, 1) == 1) {
             iItem = Items->CreateItem(nSocket, iCharId, 0x0F82, 1, 0, CBaseObject::OT_ITEM, true);
             if (iItem == nullptr)

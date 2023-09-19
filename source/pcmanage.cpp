@@ -1,6 +1,7 @@
 
 #include <algorithm>
 
+#include "subsystem/account.hpp"
 #include "cbaseobject.h"
 #include "cchar.h"
 #include "ceffects.h"
@@ -10,8 +11,7 @@
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cscript.h"
-#include "configuration/serverconfig.hpp"
-#include "cserverdata.h"
+//#include "cserverdata.h"
 #include "cserverdefinitions.h"
 #include "cskillclass.h"
 #include "csocket.h"
@@ -20,10 +20,10 @@
 #include "objectfactory.h"
 #include "ostype.h"
 #include "partysystem.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "subsystem/account.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
@@ -612,8 +612,8 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     CreatedItems[PACK] = Items->CreateItem(tSock, mChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
     if (CreatedItems[PACK] != nullptr) {
         mChar->SetPackItem(CreatedItems[PACK]);
-        CreatedItems[PACK]->SetWeightMax(cwmWorldState->ServerData()->MaxPlayerPackWeight());
-        CreatedItems[PACK]->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
+        CreatedItems[PACK]->SetWeightMax(ServerConfig::shared().uintValues[UIntValue::MAXPLAYERPACKWEIGHT]);
+        CreatedItems[PACK]->SetMaxItems(ServerConfig::shared().ushortValues[UShortValue::MAXPLAYERPACKITEM]);
         CreatedItems[PACK]->SetDecayable(false);
         CreatedItems[PACK]->SetLayer(IL_PACKITEM);
         CreatedItems[PACK]->SetCont(mChar);
@@ -622,14 +622,13 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     }
     CreatedItems[BANK] = Items->CreateItem(tSock, mChar, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     if (CreatedItems[BANK] != nullptr) {
-        CreatedItems[BANK]->SetName(
-                                    oldstrutil::format(1024, Dictionary->GetEntry(1283), mChar->GetName().c_str()));
+        CreatedItems[BANK]->SetName(oldstrutil::format(1024, Dictionary->GetEntry(1283), mChar->GetName().c_str()));
         CreatedItems[BANK]->SetDecayable(false);
         CreatedItems[BANK]->SetLayer(IL_BANKBOX);
         CreatedItems[BANK]->SetType(IT_CONTAINER);
         CreatedItems[BANK]->SetTempVar(CITV_MOREX, 1);
-        CreatedItems[BANK]->SetWeightMax(cwmWorldState->ServerData()->MaxPlayerPackWeight());
-        CreatedItems[BANK]->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerBankItems());
+        CreatedItems[BANK]->SetWeightMax(ServerConfig::shared().uintValues[UIntValue::MAXPLAYERBANKWEIGHT]);
+        CreatedItems[BANK]->SetMaxItems(ServerConfig::shared().ushortValues[UShortValue::MAXPLAYERBANKITEM]);
         CreatedItems[BANK]->SetOwner(mChar);
         CreatedItems[BANK]->SetCont(mChar);
     }
@@ -679,9 +678,8 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     }
     
     // Give the character some gold
-    if (cwmWorldState->ServerData()->ServerStartGold() > 0) {
-        CreatedItems[GOLD] = Items->CreateScriptItem(
-                                                     tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), CBaseObject::OT_ITEM, true);
+    if (ServerConfig::shared().shortValues[ShortValue::STARTGOLD] > 0) {
+        CreatedItems[GOLD] = Items->CreateScriptItem(tSock, mChar, "0x0EED", ServerConfig::shared().shortValues[ShortValue::STARTGOLD] , CBaseObject::OT_ITEM, true);
     }
     else {
         CreatedItems[GOLD] = 0;
@@ -726,7 +724,7 @@ bool CPICreateCharacter::Handle() {
             
             SetNewCharGenderAndRace(mChar);
             
-            mChar->SetPriv(cwmWorldState->ServerData()->serverStartPrivs());
+            mChar->SetPriv( ServerConfig::shared().ushortValues[UShortValue::STARTPRIV]);
             
             AccountEntry &actbTemp2 = mChar->GetAccount();
             if (actbTemp2.accountNumber != AccountEntry::INVALID_ACCOUNT &&
@@ -1287,9 +1285,9 @@ void StartChar(CSocket *mSock, bool onCreate) {
             mSock->Send(&lc);
             Network->SetLastOn(mSock);
             
-            std::uint8_t currentHour = cwmWorldState->ServerData()->ServerTimeHours();
-            std::uint8_t currentMins = cwmWorldState->ServerData()->ServerTimeMinutes();
-            std::uint8_t currentSecs = cwmWorldState->ServerData()->ServerTimeSeconds();
+            std::uint8_t currentHour = cwmWorldState->uoTime.hours ;
+            std::uint8_t currentMins = cwmWorldState->uoTime.minutes;
+            std::uint8_t currentSecs = cwmWorldState->uoTime.seconds;
             
             CPTime tmPckt(currentHour, currentMins, currentSecs);
             mSock->Send(&tmPckt);
@@ -1404,8 +1402,7 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     if (!ValidateObject(iCorpse))
         return nullptr;
     
-    iCorpse->SetName(
-                     oldstrutil::format(512, Dictionary->GetEntry(1612), corpseName.c_str())); // Corpse of %s
+    iCorpse->SetName(oldstrutil::format(512, Dictionary->GetEntry(1612), corpseName.c_str())); // Corpse of %s
     iCorpse->SetCarve(mChar.GetCarve());
     iCorpse->SetMovable(2); // non-movable
     if (fallDirection) {
@@ -1417,15 +1414,11 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     
     iCorpse->SetAmount(mChar.GetId());
     iCorpse->SetWeightMax(50000); // 500 stones
-    iCorpse->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems() + 25);
+    iCorpse->SetMaxItems( ServerConfig::shared().ushortValues[UShortValue::MAXPLAYERPACKITEM] + 25);
     iCorpse->SetCorpse(true);
     
     std::uint8_t canCarve = 0;
-    if (mChar.GetId(1) == 0x00 &&
-        (mChar.GetId(2) == 0x0C ||
-         (mChar.GetId(2) >= 0x3B &&
-          mChar.GetId(2) <= 0x3D))) // If it's a dragon, 50/50 chance you can carve it
-    {
+    if (mChar.GetId(1) == 0x00 && (mChar.GetId(2) == 0x0C || (mChar.GetId(2) >= 0x3B &&  mChar.GetId(2) <= 0x3D))) { // If it's a dragon, 50/50 chance you can carve it
         canCarve = static_cast<std::uint8_t>(RandomNum(0, 1));
     }
     
@@ -1439,13 +1432,11 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     if (!mChar.IsNpc()) {
         iCorpse->SetOwner(&mChar);
         mChar.AddCorpse(iCorpse); // Add to list that tracks player's corpses
-        iCorpse->SetDecayTime(
-                              BuildTimeValue(cwmWorldState->ServerData()->SystemTimer(tSERVER_CORPSEDECAY)));
+        iCorpse->SetDecayTime( BuildTimeValue( static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::CORPSEDECAY])) );
     }
     else {
         iCorpse->SetSectionId(mChar.GetSectionId()); // Store NPC section ID on corpse
-        iCorpse->SetDecayTime(
-                              BuildTimeValue(cwmWorldState->ServerData()->SystemTimer(tSERVER_NPCCORPSEDECAY)));
+        iCorpse->SetDecayTime(BuildTimeValue( static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::NPCCORPSEDECAY])) );
     }
     
     if (!ValidateObject(killer)) {
@@ -1485,9 +1476,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
                 continue;
             case IL_HAIR:
             case IL_FACIALHAIR:
-                if (mChar.GetBodyType() !=
-                    BT_GARGOYLE) // Ignore if gargoyle - doesn't seem to display properly on corpses
-                {
+                if (mChar.GetBodyType() != BT_GARGOYLE){ // Ignore if gargoyle - doesn't seem to display properly on corpses
                     dupeItem = j->Dupe();
                     dupeItem->SetCont(iCorpse);
                     dupeItem->SetName("Hair/Beard");
@@ -1507,9 +1496,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
                         if (ValidateObject(k)) {
                             // If the character dying is a pack animal, drop everything they're carrying
                             // - including newbie items and spellbooks
-                            if ((mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 ||
-                                 mChar.GetId() == 0x0317) ||
-                                (!k->IsNewbie() && k->GetType() != IT_SPELLBOOK)) {
+                            if ((mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 || mChar.GetId() == 0x0317) || (!k->IsNewbie() && k->GetType() != IT_SPELLBOOK)) {
                                 // Store a reference to the item we want to move...
                                 moveItems.push_back(k);
                             }
@@ -1534,8 +1521,7 @@ auto MoveItemsToCorpse(CChar &mChar, CItem *iCorpse) -> void {
             default:
                 // Move equipped items from character to pack if newbie, or if player is on a Young
                 // account
-                if (packIsValid &&
-                    (j->IsNewbie() || (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) &&  mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)))) {
+                if (packIsValid && (j->IsNewbie() || (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) &&  mChar.GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)))) {
                     j->SetCont(packItem);
                 }
                 else {
@@ -1558,8 +1544,7 @@ void KillTrades(CChar *i);
 //|                  to it, take out of war mode, does animation and sound, etc.
 // o------------------------------------------------------------------------------------------------o
 void HandleDeath(CChar *mChar, CChar *attacker) {
-    if (!ValidateObject(mChar) || mChar->IsDead() ||
-        mChar->IsInvulnerable()) // don't kill them if they are dead or invulnerable!
+    if (!ValidateObject(mChar) || mChar->IsDead() || mChar->IsInvulnerable()) // don't kill them if they are dead or invulnerable!
         return;
     
     CSocket *pSock = nullptr;
@@ -1594,8 +1579,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         auto mFollowerList = mChar->GetFollowerList();
         for (const auto &tempChar : mFollowerList->collection()) {
             if (ValidateObject(tempChar)) {
-                if (!tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW &&
-                    tempChar->GetFTarg() == mChar) {
+                if (!tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar) {
                     tempChar->SetFTarg(nullptr);
                     tempChar->SetOldNpcWander(WT_NONE);
                     tempChar->SetNpcWander(WT_NONE);
@@ -1612,8 +1596,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
             // If blood colour is 0xffff in the race setup, inherit color of NPC instead!
             bloodColour = mChar->GetSkin();
         }
-        CItem *bloodEffect = Effects->SpawnBloodEffect(
-                                                       iCorpse->WorldNumber(), iCorpse->GetInstanceId(), bloodColour, BLOOD_DEATH);
+        CItem *bloodEffect = Effects->SpawnBloodEffect(iCorpse->WorldNumber(), iCorpse->GetInstanceId(), bloodColour, BLOOD_DEATH);
         if (ValidateObject(bloodEffect)) {
             // Set a timestamp for when the bloodeffect was created, and match it to the corpse!
             bloodEffect->SetTempTimer(iCorpse->GetTempTimer());

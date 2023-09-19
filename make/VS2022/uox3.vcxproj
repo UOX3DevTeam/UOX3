@@ -92,22 +92,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\configuration\expansion.cpp" />
-    <ClCompile Include="..\..\source\configuration\serverstring.cpp" />
-    <ClCompile Include="..\..\source\type\era.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
     <ClCompile Include="..\..\source\type\startlocation.cpp" />
+    <ClCompile Include="..\..\source\type\era.cpp" />
+    <ClCompile Include="..\..\source\type\uotime.cpp" />
     <!-- configuration group -->
     <ClCompile Include="..\..\source\configuration\assistantfeature.cpp" />
     <ClCompile Include="..\..\source\configuration\clientenable.cpp" />
     <ClCompile Include="..\..\source\configuration\clientfeature.cpp" />
     <ClCompile Include="..\..\source\configuration\directorylocation.cpp" />
+    <ClCompile Include="..\..\source\configuration\expansion.cpp" />
+    <ClCompile Include="..\..\source\configuration\realnumberconfig.cpp" />
     <ClCompile Include="..\..\source\configuration\serverconfig.cpp" />
     <ClCompile Include="..\..\source\configuration\serverfeature.cpp" />
+    <ClCompile Include="..\..\source\configuration\serverstring.cpp" />
     <ClCompile Include="..\..\source\configuration\serverswitch.cpp" />
+    <ClCompile Include="..\..\source\configuration\shortvalue.cpp" />
+    <ClCompile Include="..\..\source\configuration\spawnfacet.cpp" />
     <ClCompile Include="..\..\source\configuration\startlocconfig.cpp" />
+    <ClCompile Include="..\..\source\configuration\timersetting.cpp" />
+    <ClCompile Include="..\..\source\configuration\uintvalue.cpp" />
+    <ClCompile Include="..\..\source\configuration\ushortvalue.cpp" />
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdata.cpp" />
     <ClCompile Include="..\..\source\cserverdefinitions.cpp" />
@@ -196,23 +203,30 @@
     <ClCompile Include="..\..\source\uopdata.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\configuration\expansion.hpp" />
-    <ClInclude Include="..\..\source\configuration\serverstring.hpp" />
     <ClInclude Include="..\..\source\ostype.h" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <!-- type group -->
     <ClInclude Include="..\..\source\type\clientversion.hpp" />
     <ClInclude Include="..\..\source\type\era.hpp" />
     <ClInclude Include="..\..\source\type\startlocation.hpp" />
+    <ClInclude Include="..\..\source\type\uotime.hpp" />
     <!-- configuration group -->
     <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
     <ClInclude Include="..\..\source\configuration\clientenable.hpp" />
     <ClInclude Include="..\..\source\configuration\clientfeature.hpp" />
     <ClInclude Include="..\..\source\configuration\directorylocation.hpp" />
+    <ClInclude Include="..\..\source\configuration\expansion.hpp" />
+    <ClInclude Include="..\..\source\configuration\realnumberconfig.hpp" />
     <ClInclude Include="..\..\source\configuration\serverconfig.hpp" />
     <ClInclude Include="..\..\source\configuration\serverfeature.hpp" />
+    <ClInclude Include="..\..\source\configuration\serverstring.hpp" />
     <ClInclude Include="..\..\source\configuration\serverswitch.hpp" />
+    <ClInclude Include="..\..\source\configuration\shortvalue.hpp" />
+    <ClInclude Include="..\..\source\configuration\spawnfacet.hpp" />
     <ClInclude Include="..\..\source\configuration\startlocconfig.hpp" />
+    <ClInclude Include="..\..\source\configuration\timersetting.hpp" />
+    <ClInclude Include="..\..\source\configuration\uintvalue.hpp" />
+    <ClInclude Include="..\..\source\configuration\ushortvalue.hpp" />
     <!-- Script group -->
     <ClInclude Include="..\..\source\cserverdata.h" />
     <ClInclude Include="..\..\source\cserverdefinitions.h" />

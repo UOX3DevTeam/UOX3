@@ -391,8 +391,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
         if (actbAccount.accountNumber != AccountEntry::INVALID_ACCOUNT) {
             actbAccount.inGame = p->GetSerial();
         }
-        p->SetTimer(tPC_LOGOUT,
-                    BuildTimeValue(cwmWorldState->ServerData()->SystemTimer(tSERVER_LOGINTIMEOUT)));
+        p->SetTimer(tPC_LOGOUT, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::LOGINTIMEOUT]) ));
     }
     
     s->LoginComplete(false);
@@ -437,7 +436,7 @@ void CNetworkStuff::sockInit() {
     memset((char *)&connection, 0, len_connection_addr);
     connection.sin_family = AF_INET;
     connection.sin_addr.s_addr = htonl(INADDR_ANY);
-    connection.sin_port = htons(cwmWorldState->ServerData()->ServerPort());
+    connection.sin_port = htons(ServerConfig::shared().ushortValues[UShortValue::PORT]);
     bcode = bind(a_socket, (struct sockaddr *)&connection, len_connection_addr);
     
     if (bcode < 0) {
@@ -733,11 +732,9 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
             Console::shared().print(util::format("Packet ID: 0x%x\n", packetId));
 #endif
             if (packetId != 0x73 && packetId != 0xA4 && packetId != 0x80 && packetId != 0x91) {
-                if (!mSock->ForceOffline()) // Don't refresh idle-timer if character is being forced
+                if (!mSock->ForceOffline()) { // Don't refresh idle-timer if character is being forced
                     // offline
-                {
-                    mSock->IdleTimeout(
-                                       cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_LOGINTIMEOUT));
+                    mSock->IdleTimeout(BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::LOGINTIMEOUT] ));
                 }
             }
             

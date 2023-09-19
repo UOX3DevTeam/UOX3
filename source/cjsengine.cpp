@@ -18,7 +18,7 @@
 
 #include "funcdecl.h"
 #include "subsystem/console.hpp"
-
+#include "configuration/serverconfig.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjsmethods.h"
 #include "uoxjspropertyspecs.h"
@@ -38,8 +38,7 @@ auto CJSEngine::startup() -> void {
     const std::uint32_t maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
     // 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
-    auto maxBytesSize =
-        std::max(static_cast<std::uint16_t>(16), cwmWorldState->ServerData()->GetJSEngineSize()); // from INI
+    auto maxBytesSize = std::max(static_cast<std::uint16_t>(16), ServerConfig::shared().ushortValues[UShortValue::JSENGINE]); // from INI
 
     // Use minimum of INI-provided value and hard-defined maximum
     // maxBytes definition: "Maximum nominal heap before last ditch GC"

@@ -20,6 +20,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/type/startlocation.hpp
     ${PROJECT_SOURCE_DIR}/../../source/type/era.cpp
     ${PROJECT_SOURCE_DIR}/../../source/type/era.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/uotime.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/uotime.hpp
 
 # configuration
     ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
@@ -30,18 +32,30 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/clientfeature.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/directorylocation.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/realnumberconfig.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/realnumberconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverfeature.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.cpp
     ${PROJECT_SOURCE_DIR}/../../source/configuration/serverstring.hpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.cpp
-    ${PROJECT_SOURCE_DIR}/../../source/configuration/expansion.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/serverswitch.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/shortvalue.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/shortvalue.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/spawnfacet.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/spawnfacet.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/startlocconfig.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/timersetting.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/timersetting.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/uintvalue.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/uintvalue.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/ushortvalue.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/configuration/ushortvalue.hpp
 
 # Script Group
 	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  

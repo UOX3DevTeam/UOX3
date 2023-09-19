@@ -219,7 +219,7 @@ void CPacketSpeech::CopyData(CSpeechEntry &toCopy) {
             SpeakerName("System");
             SpeakerModel(INVALIDID);
             if (toCopy.Colour() == 0) {
-                Colour(cwmWorldState->ServerData()->SysMsgColour()); // 0x0048 by default
+                Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]); // 0x0048 by default
             }
             break;
         case SPK_CHARACTER:
@@ -602,7 +602,7 @@ void CPUpdIndSkill::CopyData(CChar &i, std::uint8_t sNum) {
     Skill(i.GetSkill(sNum));
     BaseSkill(i.GetBaseSkill(sNum));
     Lock(static_cast<skilllock_t>(i.GetSkillLock(sNum)));
-    Cap(static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSkillCapStatus()));
+    Cap(static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::SKILLCAP]));
 }
 CPUpdIndSkill::CPUpdIndSkill() { InternalReset(); }
 CPUpdIndSkill::CPUpdIndSkill(CChar &i, std::uint8_t sNum) {
@@ -1874,7 +1874,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
         
         Weight(static_cast<std::uint16_t>(toCopy.GetWeight() / 100));
         if (extended5) {
-            MaxWeight(toCopy.GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40);
+            MaxWeight(toCopy.GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR] + 40);
             std::uint16_t bodyId = toCopy.GetId();
             switch (bodyId) {
                 case 0x0190:
@@ -1901,18 +1901,18 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
             }
         }
         if (extended3) {
-            StatCap(cwmWorldState->ServerData()->ServerStatCapStatus());
-            if (cwmWorldState->ServerData()->MaxControlSlots() > 0) {
+            StatCap(ServerConfig::shared().ushortValues[UShortValue::STATCAP] );
+            if (ServerConfig::shared().ushortValues[UShortValue::MAXCONTROLSLOT] > 0) {
                 // If pet control slots are enabled, send amount of pet slots used, and max value
                 // specified in ini (higher than 0 is enabled)
                 CurrentPets(static_cast<std::uint8_t>(toCopy.GetControlSlotsUsed()));
-                MaxPets(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxControlSlots()));
+                MaxPets(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXCONTROLSLOT]));
             }
             else {
                 // If pet control slots are disabled, send count of followers and maxFollowers value
                 // specified in ini instead
                 CurrentPets(static_cast<std::uint8_t>(toCopy.GetFollowerList()->Num()));
-                MaxPets(static_cast<std::uint8_t>(cwmWorldState->ServerData()->MaxFollowers()));
+                MaxPets(static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXFOLLOWER]));
             }
         }
         if (extended4) {
@@ -2852,15 +2852,13 @@ CPSkillsValues::CPSkillsValues(CChar &toCopy) {
     CopyData(toCopy);
 }
 
-void CPSkillsValues::SkillEntry(std::int16_t skillId, std::int16_t skillVal, std::int16_t baseSkillVal,
-                                skilllock_t skillLock) {
+void CPSkillsValues::SkillEntry(std::int16_t skillId, std::int16_t skillVal, std::int16_t baseSkillVal, skilllock_t skillLock) {
     std::int32_t offset = (skillId * 9) + 4;
     pStream.WriteShort(offset, skillId + 1);
     pStream.WriteShort(static_cast<size_t>(offset) + 2, skillVal);
     pStream.WriteShort(static_cast<size_t>(offset) + 4, baseSkillVal);
     pStream.WriteByte(static_cast<size_t>(offset) + 6, skillLock);
-    pStream.WriteShort(static_cast<size_t>(offset) + 7,
-                       static_cast<std::uint16_t>(cwmWorldState->ServerData()->ServerSkillCapStatus()));
+    pStream.WriteShort(static_cast<size_t>(offset) + 7, static_cast<std::uint16_t>(ServerConfig::shared().ushortValues[UShortValue::SKILLCAP]));
 }
 CPSkillsValues &CPSkillsValues::operator=(CChar &toCopy) {
     CopyData(toCopy);

@@ -1,6 +1,7 @@
 
 #include "wholist.h"
 
+#include "subsystem/account.hpp"
 #include "cchar.h"
 #include "commands.h"
 #include "cpacketsend.h"
@@ -9,7 +10,7 @@
 #include "funcdecl.h"
 #include "jail.h"
 #include "network.h"
-#include "subsystem/account.hpp"
+#include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
 
 CWhoList *WhoList;
@@ -302,19 +303,14 @@ void CWhoList::command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     toSend.GumpId(type);
     
     unicodetypes_t sLang = toSendTo->Language();
-    std::uint16_t lColour = cwmWorldState->ServerData()->LeftTextColour();
-    std::uint16_t tColour = cwmWorldState->ServerData()->TitleColour();
-    std::uint16_t butRight = cwmWorldState->ServerData()->ButtonRight();
+    auto lColour = ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR];
+    auto tColour = ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR];
+    auto butRight = ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT];
     //--static pages
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 30 300 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 30 40 %u 0",
-                                   tColour)); // text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+    toSend.addCommand(util::format("resizepic 0 0 %u 260 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 30 300 %u %i 1 0 1", ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL], ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 30 40 %u 0",tColour)); // text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
     toSend.addCommand(util::format("text 30 60 %u 1", tColour));
     toSend.addCommand("page 1");
     
@@ -327,25 +323,16 @@ void CWhoList::command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     toSend.addCommand(util::format("text 50 210 %u 8", lColour));
     toSend.addCommand(util::format("text 50 230 %u 9", lColour));
     toSend.addCommand(util::format("text 50 270 %u 10", lColour));
-    toSend.addCommand(
-                      util::format("button 20 90 %u %i 1 0 200", butRight, butRight + 1)); // goto button
-    toSend.addCommand(
-                      util::format("button 20 110 %u %i 1 0 201", butRight, butRight + 1)); // get button
-    toSend.addCommand(
-                      util::format("button 20 130 %u %i 1 0 202", butRight, butRight + 1)); // Jail button
-    toSend.addCommand(
-                      util::format("button 20 150 %u %i 1 0 203", butRight, butRight + 1)); // Release button
-    toSend.addCommand(
-                      util::format("button 20 170 %u %i 1 0 204", butRight, butRight + 1)); // kick button
-    toSend.addCommand(
-                      util::format("button 20 190 %u %i 1 0 205", butRight, butRight + 1)); // Where button
-    toSend.addCommand(
-                      util::format("button 20 210 %u %i 1 0 206", butRight, butRight + 1)); // Cstats button
-    toSend.addCommand(
-                      util::format("button 20 230 %u %i 1 0 207", butRight, butRight + 1)); // Tweak button
+    toSend.addCommand(util::format("button 20 90 %u %i 1 0 200", butRight, butRight + 1)); // goto button
+    toSend.addCommand(util::format("button 20 110 %u %i 1 0 201", butRight, butRight + 1)); // get button
+    toSend.addCommand(util::format("button 20 130 %u %i 1 0 202", butRight, butRight + 1)); // Jail button
+    toSend.addCommand(util::format("button 20 150 %u %i 1 0 203", butRight, butRight + 1)); // Release button
+    toSend.addCommand(util::format("button 20 170 %u %i 1 0 204", butRight, butRight + 1)); // kick button
+    toSend.addCommand(util::format("button 20 190 %u %i 1 0 205", butRight, butRight + 1)); // Where button
+    toSend.addCommand(util::format("button 20 210 %u %i 1 0 206", butRight, butRight + 1)); // Cstats button
+    toSend.addCommand(util::format("button 20 230 %u %i 1 0 207", butRight, butRight + 1)); // Tweak button
     
-    toSend.addText(util::format("User %u selected (account %u)", buttonPressed,
-                                targetChar->GetAccount().accountNumber));
+    toSend.addText(util::format("User %u selected (account %u)", buttonPressed,targetChar->GetAccount().accountNumber));
     toSend.addText(util::format("Name: %s", targetChar->GetName().c_str()));
     toSend.addText(Dictionary->GetEntry(1400, sLang));
     toSend.addText(Dictionary->GetEntry(1401, sLang));
@@ -355,9 +342,7 @@ void CWhoList::command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     toSend.addText(Dictionary->GetEntry(1405, sLang));
     toSend.addText(Dictionary->GetEntry(1406, sLang));
     toSend.addText(Dictionary->GetEntry(1407, sLang));
-    toSend.addText(util::format("Serial#[%x %x %x %x]", targetChar->GetSerial(1),
-                                targetChar->GetSerial(2), targetChar->GetSerial(3),
-                                targetChar->GetSerial(4)));
+    toSend.addText(util::format("Serial#[%x %x %x %x]", targetChar->GetSerial(1),targetChar->GetSerial(2), targetChar->GetSerial(3),targetChar->GetSerial(4)));
     
     toSend.Finalize();
     toSendTo->Send(&toSend);
@@ -398,13 +383,9 @@ void CWhoList::Update() {
     
     //--static pages
     one.push_back("page 0");
-    one.push_back(oldstrutil::format(maxsize, "resizepic 0 0 %u 320 340",
-                                     cwmWorldState->ServerData()->BackgroundPic()));
-    one.push_back(oldstrutil::format(maxsize, "button 250 15 %u %i 1 0 1",
-                                     cwmWorldState->ServerData()->ButtonCancel(),
-                                     cwmWorldState->ServerData()->ButtonCancel() + 1));
-    one.push_back(
-                  oldstrutil::format(maxsize, "text 45 15 %u 0", cwmWorldState->ServerData()->TitleColour()));
+    one.push_back(oldstrutil::format(maxsize, "resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    one.push_back(oldstrutil::format(maxsize, "button 250 15 %u %i 1 0 1", ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL], ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1));
+    one.push_back(oldstrutil::format(maxsize, "text 45 15 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR]));
     one.push_back(oldstrutil::format(maxsize, "page %u", pagenum));
     two.push_back("Wholist");
     
@@ -423,13 +404,8 @@ void CWhoList::Update() {
                 one.push_back(oldstrutil::format(maxsize, "page %u", pagenum));
             }
             
-            one.push_back(oldstrutil::format(maxsize, "text 50 %u %u %u", position,
-                                             cwmWorldState->ServerData()->LeftTextColour(),
-                                             linenum));
-            one.push_back(oldstrutil::format(maxsize, "button 20 %u %u %i %u 0 %u", position,
-                                             cwmWorldState->ServerData()->ButtonRight(),
-                                             cwmWorldState->ServerData()->ButtonRight() + 1,
-                                             pagenum, buttonnum));
+            one.push_back(oldstrutil::format(maxsize, "text 50 %u %u %u", position,ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], linenum));
+            one.push_back(oldstrutil::format(maxsize, "button 20 %u %u %i %u 0 %u", position,ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT],ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, pagenum, buttonnum));
             two.push_back(oldstrutil::format(maxsize, " %s", tChar->GetName().c_str()));
             AddSerial(tChar->GetSerial());
             
@@ -447,15 +423,10 @@ void CWhoList::Update() {
             one.push_back(oldstrutil::format(maxsize, "page %u", pagenum));
             if (i >= numPerPage) {
                 // back button
-                one.push_back(oldstrutil::format(
-                                                 maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(),
-                                                 cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1));
+                one.push_back(oldstrutil::format(maxsize, "button 50 300 %u %i 0 %i", ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT], ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT] + 1, pagenum - 1));
             }
             if ((k > numPerPage) && ((i + numPerPage) < k)) {
-                one.push_back(oldstrutil::format(maxsize, "button 260 300 %u %i 0 %i",
-                                                 cwmWorldState->ServerData()->ButtonRight(),
-                                                 cwmWorldState->ServerData()->ButtonRight() + 1,
-                                                 pagenum + 1));
+                one.push_back(oldstrutil::format(maxsize, "button 260 300 %u %i 0 %i", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, pagenum + 1));
             }
             ++pagenum;
         }
@@ -474,16 +445,9 @@ void CWhoList::Update() {
                             one.push_back(oldstrutil::format(maxsize, "page %u", pagenum));
                         }
                         
-                        one.push_back(oldstrutil::format(
-                                                         maxsize, "text 50 %u %u %u", position,
-                                                         cwmWorldState->ServerData()->LeftTextColour(), linenum));
-                        one.push_back(oldstrutil::format(
-                                                         maxsize, "button 20 %u %u %i %u 0 %u", position,
-                                                         cwmWorldState->ServerData()->ButtonRight(),
-                                                         cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, buttonnum));
-                        two.push_back(oldstrutil::format(maxsize, " %s (%s)",
-                                                         ourChar->GetName().c_str(),
-                                                         ourChar->GetLastOn().c_str()));
+                        one.push_back(oldstrutil::format(maxsize, "text 50 %u %u %u", position, ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], linenum));
+                        one.push_back(oldstrutil::format(maxsize, "button 20 %u %u %i %u 0 %u", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, pagenum, buttonnum));
+                        two.push_back(oldstrutil::format(maxsize, " %s (%s)",ourChar->GetName().c_str(),ourChar->GetLastOn().c_str()));
                         AddSerial(ourChar->GetSerial());
                         
                         position += 20;
@@ -503,15 +467,10 @@ void CWhoList::Update() {
             one.push_back(oldstrutil::format(maxsize, "page %u", pagenum));
             if (i >= numPerPage) {
                 // back button
-                one.push_back(oldstrutil::format(
-                                                 maxsize, "button 50 300 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(),
-                                                 cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1));
+                one.push_back(oldstrutil::format(maxsize, "button 50 300 %u %i 0 %i", ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT], ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT] + 1, pagenum - 1));
             }
             if ((k > numPerPage) && ((i + numPerPage) < k)) {
-                one.push_back(oldstrutil::format(maxsize, "button 260 300 %u %i 0 %i",
-                                                 cwmWorldState->ServerData()->ButtonRight(),
-                                                 cwmWorldState->ServerData()->ButtonRight() + 1,
-                                                 pagenum + 1));
+                one.push_back(oldstrutil::format(maxsize, "button 260 300 %u %i 0 %i", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, pagenum + 1));
             }
             ++pagenum;
         }

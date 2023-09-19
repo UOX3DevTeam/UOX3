@@ -351,7 +351,7 @@ bool CPIGetItem::Handle() {
     }
     
     if (i->IsDecayable()) {
-        i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+        i->SetDecayTime( BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::DECAY]) );
     }
     if (i->IsGuarded()) {
         // Only care about guarded state if outside of a guarded/safezone region
@@ -1232,16 +1232,16 @@ void Drop(CSocket *mSock, serial_t item, serial_t dest, std::int16_t x, std::int
             CMultiObj *multi = FindMulti(i);
             if (ValidateObject(multi)) {
                 if (i->IsDecayable()) {
-                    i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAYINHOUSE));
+                    i->SetDecayTime(BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::DECAYINHOUSE]));
                 }
                 i->SetMulti(multi);
             }
             else if (i->IsDecayable()) {
-                i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+                i->SetDecayTime(BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::DECAY]));
             }
         }
         else if (i->IsDecayable()) {
-            i->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+            i->SetDecayTime(BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::DECAY]));
         }
         
         i->SetHeldOnCursor(false);
@@ -1742,7 +1742,7 @@ bool CPIDropItem::Handle() {
     
     // Display overloaded message if character is overloaded as a result of the above
     if (Weight->IsOverloaded(ourChar)) {
-        std::int32_t maxWeight = ourChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+        std::int32_t maxWeight = ourChar->GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR] + 40;
         std::int32_t currentWeight = ourChar->GetWeight() / 100;
         tSock->SysMessage(1784, currentWeight,  maxWeight); // You are overloaded. Current / Max: %i / %i
     }
@@ -1986,7 +1986,7 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
         
         if (f >= 10000) // bugfix for repsys
         {
-            if (p->GetKills() > cwmWorldState->ServerData()->RepMaxKills()) {
+            if (p->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL] ) {
                 if (p->GetId(2) == 0x91) {
                     fameTitle = util::format(Dictionary->GetEntry(1177), Races->Name(p->GetRace()).c_str()) + std::string(" ");
                 }
@@ -2002,7 +2002,7 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
             }
         }
         else {
-            if (p->GetKills() > cwmWorldState->ServerData()->RepMaxKills()) {
+            if (p->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL]) {
                 fameTitle = Dictionary->GetEntry(1181) + std::string(" ");
             }
             else if (!(theTitle = util::strip(theTitle, "//")).empty()) {
@@ -2081,7 +2081,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         tempstr = pdoll->GetNameRequest(myChar, NRS_PAPERDOLL);
     }
     // Murder tags now scriptable in SECTION MURDERER - Titles.dfn
-    else if (pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills()) {
+    else if (pdoll->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL]) {
         if (cwmWorldState->murdererTags.empty()) {
             tempstr = util::format(Dictionary->GetEntry(374, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
         }
@@ -3009,7 +3009,7 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
             }
             return false;
         }
-        tSock->SetTimer(tPC_OBJDELAY, cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_OBJECTUSAGE));
+        tSock->SetTimer(tPC_OBJDELAY, BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::OBJECTUSAGE]));
         tSock->ObjDelayMsgShown(false);
         
         CChar *iChar = nullptr;

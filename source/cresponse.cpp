@@ -55,6 +55,7 @@
 #include "funcdecl.h"
 #include "msgboard.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "townregion.h"
 
 bool BuyShop(CSocket *s, CChar *c);
@@ -76,8 +77,7 @@ auto FindNearbyNPCs(CChar *mChar, distlocs_t distance) -> std::vector<CChar *> {
         if (CellResponse) {
             auto regChars = CellResponse->GetCharList();
             for (auto &nearbyNpc : regChars->collection()) {
-                if (ValidateObject(nearbyNpc) && (nearbyNpc != mChar) && nearbyNpc->IsNpc() &&
-                    (nearbyNpc->GetInstanceId() == mChar->GetInstanceId())) {
+                if (ValidateObject(nearbyNpc) && (nearbyNpc != mChar) && nearbyNpc->IsNpc() && (nearbyNpc->GetInstanceId() == mChar->GetInstanceId())) {
                     if (ObjInRange(mChar, nearbyNpc, distance)) {
                         ourNpcs.push_back(nearbyNpc);
                     }
@@ -87,8 +87,7 @@ auto FindNearbyNPCs(CChar *mChar, distlocs_t distance) -> std::vector<CChar *> {
     }
     
     // Sort NPCs by their distance to the player
-    std::sort(ourNpcs.begin(), ourNpcs.end(),
-              [&](CChar *a, CChar *b) { return GetDist(a, mChar) < GetDist(b, mChar); });
+    std::sort(ourNpcs.begin(), ourNpcs.end(), [&](CChar *a, CChar *b) { return GetDist(a, mChar) < GetDist(b, mChar); });
     return ourNpcs;
 }
 
@@ -427,9 +426,8 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
                 [[fallthrough]];
             case TW_STOP2:
                 [[fallthrough]];
-            case TW_BOATFURL: // tResp = new CBoatMultiResponse( BOAT_STOP );
+            case TW_BOATFURL: { // tResp = new CBoatMultiResponse( BOAT_STOP );
                 // break;
-            {
                 tResp = new CBoatMultiResponse(BOAT_STOP);
                 tResp->Handle(mSock, mChar);
                 delete tResp;
@@ -458,8 +456,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
                 break;
             default:
                 // This is to handle the "train <skill>" keywords
-                if ((trigWord >= 0x006D && trigWord <= 0x009C) || trigWord == 0x154 ||
-                    trigWord == 0x115 || trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E) {
+                if ((trigWord >= 0x006D && trigWord <= 0x009C) || trigWord == 0x154 || trigWord == 0x115 || trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E) {
                     tResp = new CTrainingResponse(trigWord, tChar);
                     tResp->Handle(mSock, mChar);
                     delete tResp;
@@ -468,8 +465,7 @@ bool WhichResponse(CSocket *mSock, CChar *mChar, std::string text, CChar *tChar 
                     break;
                 }
 #if defined(UOX_DEBUG_MODE)
-                Console::shared().print(util::format("Unhandled trigger [%s] sent by the client 0x%X\n",
-                                                     text.c_str(), trigWord));
+                Console::shared().print(util::format("Unhandled trigger [%s] sent by the client 0x%X\n", text.c_str(), trigWord));
 #endif
                 break;
         }
@@ -506,17 +502,11 @@ void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
                     nearbyNpc->SetOwner(mChar);
                     nearbyNpc->SetFTarg(mChar); // Set the NPC to follow the PC
                     nearbyNpc->SetNpcWander(WT_FOLLOW);
-                    nearbyNpc->SetTimer(tNPC_SUMMONTIME,
-                                        cwmWorldState->ServerData()->BuildSystemTimeValue(
-                                                                                          tSERVER_ESCORTACTIVE)); // Set the expire time if nobody
+                    nearbyNpc->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::ESCORTACTIVE] )) ); // Set the expire time if nobody
                     // excepts the quest
                     
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(
-                                           nullptr, 1294, TALK, 0,
-                                           cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]
-                                           ->GetName()
-                                           .c_str());
+                    nearbyNpc->TextMessage(nullptr, 1294, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                     
                     // Remove post from message board (Mark for deletion only - will be cleaned
                     // during cleanup)
@@ -535,31 +525,16 @@ void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
             if (findDest) {
                 if (nearbyNpc->GetFTarg() == mChar) {
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(
-                                           nullptr, 1295, TALK, 0,
-                                           cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]
-                                           ->GetName()
-                                           .c_str());
+                    nearbyNpc->TextMessage(nullptr, 1295, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                 }
-                else if (!ValidateObject(nearbyNpc->GetFTarg())) // If nobody has been accepted for
+                else if (!ValidateObject(nearbyNpc->GetFTarg())) { // If nobody has been accepted for
                     // the quest yet
-                {
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(
-                                           nullptr, 1296, TALK, 0,
-                                           cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]
-                                           ->GetName()
-                                           .c_str());
+                    nearbyNpc->TextMessage(nullptr, 1296, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                 }
-                else // The must be enroute
-                {
+                else { // The must be enroute
                     // Send out a message saying we are already being escorted
-                    nearbyNpc->TextMessage(
-                                           nullptr, 1297, TALK, 0,
-                                           cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]
-                                           ->GetName()
-                                           .c_str(),
-                                           nearbyNpc->GetFTarg()->GetNameRequest(mChar, NRS_SPEECH).c_str());
+                    nearbyNpc->TextMessage(nullptr, 1297, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()] ->GetName().c_str(), nearbyNpc->GetFTarg()->GetNameRequest(mChar, NRS_SPEECH).c_str());
                 }
                 return;
             }
@@ -579,7 +554,7 @@ void CKillsResponse::Handle(CSocket *mSock, CChar *mChar) {
         if (i == 0) {
             mSock->SysMessage(1288); // You are an upstanding Citizen... no kills.
         }
-        else if (i > cwmWorldState->ServerData()->RepMaxKills()) {
+        else if (i > ServerConfig::shared().ushortValues[UShortValue::MAXKILL] ) {
             mSock->SysMessage(1289, i); // You are a very evil person... %i kills.
         }
         else {
@@ -783,16 +758,12 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         break;
                 }
                 
-                if (skill == -1) // Didn't ask to be trained in a specific skill - Leviathan fix
-                {
+                if (skill == -1) { // Didn't ask to be trained in a specific skill - Leviathan fix
                     if (!nearbyNpc->CanTrain()) {
-                        nearbyNpc->TextMessage(
-                                               mSock, 1302, TALK,
-                                               false); // I am sorry, but I have nothing to teach thee.
+                        nearbyNpc->TextMessage(mSock, 1302, TALK, false); // I am sorry, but I have nothing to teach thee.
                         continue;
                     }
-                    nearbyNpc->SetTrainingPlayerIn(
-                                                   255); // Like above, this is to prevent  errors when a player says "train
+                    nearbyNpc->SetTrainingPlayerIn(255); // Like above, this is to prevent  errors when a player says "train
                     // <skill>" then doesn't pay the npc
                     temp = Dictionary->GetEntry(1303); // I can teach thee the following skills:
                     std::uint8_t skillsToTrainIn = 0;
@@ -811,10 +782,8 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                                 lastCommaPos = static_cast<std::uint8_t>(temp.size()) + 1;
                                 temp += (", " + temp2);
                             }
-                            else if (skillsToTrainIn >
-                                     10) // to stop UOX3 from crashing/sentence being cut off if NPC
+                            else if (skillsToTrainIn > 10) {// to stop UOX3 from crashing/sentence being cut off if NPC
                                 // is too knowledgable!
-                            {
                                 temp += std::string(" and possibly more");
                                 break;
                             }
@@ -830,45 +799,30 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         nearbyNpc->TextMessage(mSock, temp, TALK, false);
                     }
                     else {
-                        nearbyNpc->TextMessage(
-                                               mSock, 1302, TALK,
-                                               false); // I am sorry, but I have nothing to teach thee.
+                        nearbyNpc->TextMessage(mSock, 1302, TALK, false); // I am sorry, but I have nothing to teach thee.
                     }
                 }
                 else // They do want to learn a specific skill
                 {
                     if (!nearbyNpc->CanTrain()) {
-                        nearbyNpc->TextMessage(
-                                               mSock, 1302, TALK,
-                                               false); // I am sorry, but I have nothing to teach thee.
+                        nearbyNpc->TextMessage(mSock, 1302, TALK, false); // I am sorry, but I have nothing to teach thee.
                         continue;
                     }
                     if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) > 10) {
-                        temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),
-                                                  util::lower(cwmWorldState->skill[skill].name)
-                                                  .c_str()); // Thou wishest to learn of  %s?
+                        temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),  util::lower(cwmWorldState->skill[skill].name).c_str()); // Thou wishest to learn of  %s?
                         if (mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)) >= 250) {
-                            temp += Dictionary->GetEntry(
-                                                         1305); // I can teach thee no more than thou already knowest!
+                            temp += Dictionary->GetEntry(1305); // I can teach thee no more than thou already knowest!
                         }
                         else {
                             if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) <= 250) {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
-                                temp2 = oldstrutil::format(
-                                                           maxsize, Dictionary->GetEntry(1306),
-                                                           static_cast<std::int32_t>(
-                                                                                     nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2 / 10),
-                                                           static_cast<std::int32_t>(
-                                                                                     nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2) -
-                                                           mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
+                                temp2 = oldstrutil::format(maxsize, Dictionary->GetEntry(1306), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2 / 10), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2) - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             else {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
-                                temp2 = oldstrutil::format(
-                                                           maxsize, Dictionary->GetEntry(1306), 25,
-                                                           250 - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
+                                temp2 = oldstrutil::format(maxsize, Dictionary->GetEntry(1306), 25, 250 - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             temp += " " + temp2;
                             mSock->TempObj(nearbyNpc);
@@ -877,9 +831,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         nearbyNpc->TextMessage(mSock, temp, TALK, false);
                     }
                     else {
-                        nearbyNpc->TextMessage(
-                                               mSock, 1307, TALK,
-                                               false); // I am sorry but I cannot train thee in that skill.
+                        nearbyNpc->TextMessage(mSock, 1307, TALK, false); // I am sorry but I cannot train thee in that skill.
                     }
                 }
                 break;
@@ -912,9 +864,7 @@ void CBasePetResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-CPetMultiResponse::CPetMultiResponse(const std::string &text, bool restrictVal, targetids_t targVal,
-                                     std::int32_t dictVal, bool saidAll, bool checkControlDifficulty)
-: CBasePetResponse(text) {
+CPetMultiResponse::CPetMultiResponse(const std::string &text, bool restrictVal, targetids_t targVal, std::int32_t dictVal, bool saidAll, bool checkControlDifficulty) : CBasePetResponse(text) {
     isRestricted = restrictVal;
     targId = targVal;
     dictEntry = dictVal;
@@ -927,8 +877,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
             if (ValidateObject(nearbyNpc) && nearbyNpc->GetOwnerObj() == mChar) {
                 if (Npcs->CanControlPet(mChar, nearbyNpc, isRestricted, checkDifficulty)) {
                     std::uint8_t cursorType = 0;
-                    if (targId == 25) // Guard
-                    {
+                    if (targId == 25) { // Guard
                         cursorType = 2; // helpful
                     }
                     mSock->TempObj(nearbyNpc);
@@ -951,8 +900,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
             if (Npcs->CanControlPet(mChar, petNpc, isRestricted, checkDifficulty)) {
                 mSock->TempObj(petNpc);
                 std::uint8_t cursorType = 0;
-                if (targId == 25) // Guard
-                {
+                if (targId == 25) { // Guard
                     cursorType = 2; // helpful
                 }
                 mSock->SendTargetCursor(0, targId, cursorType, dictEntry);
@@ -974,8 +922,7 @@ bool CPetReleaseResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
     if (FindString(ourText, util::upper(npcName))) {
         if (Npcs->CanControlPet(mChar, petNpc, true, false)) {
             // Reduce player's control slot usage by the amount of control slots taken up by the pet
-            mChar->SetControlSlotsUsed(
-                                       std::max(0, mChar->GetControlSlotsUsed() - petNpc->GetControlSlots()));
+            mChar->SetControlSlotsUsed(std::max(0, mChar->GetControlSlotsUsed() - petNpc->GetControlSlots()));
             
             // Release the pet
             Npcs->ReleasePet(petNpc);
@@ -1103,9 +1050,7 @@ CBaseVendorResponse::CBaseVendorResponse(bool vendVal, const std::string &text) 
 void CBaseVendorResponse::Handle(CSocket *mSock, CChar *mChar) {
     for (auto &nearbyNpc : FindNearbyNPCs(mChar, DIST_INRANGE)) {
         if (nearbyNpc->IsShop() || nearbyNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
-            if (!LineOfSight(mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(),
-                             (nearbyNpc->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING,
-                             false))
+            if (!LineOfSight(mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), (nearbyNpc->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false))
                 continue;
             
             std::string npcName = GetNpcDictName(nearbyNpc, mSock, NRS_SYSTEM);
@@ -1117,8 +1062,7 @@ void CBaseVendorResponse::Handle(CSocket *mSock, CChar *mChar) {
     }
 }
 
-CVendorBuyResponse::CVendorBuyResponse(bool vendVal, const std::string &text)
-: CBaseVendorResponse(vendVal, text) {}
+CVendorBuyResponse::CVendorBuyResponse(bool vendVal, const std::string &text) : CBaseVendorResponse(vendVal, text) {}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CVendorBuyResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
@@ -1154,8 +1098,7 @@ bool CVendorSellResponse::Handle(CSocket *mSock, CChar *mChar, CChar *vendorNpc)
             // -1 == script doesn't exist, or returned -1
             // 0 == script returned false, 0, or nothing - don't execute hard code
             // 1 == script returned true or 1
-            if (toExecute->OnSell(mSock, vendorNpc) == 0) // if script returns false, don't continue
-            {
+            if (toExecute->OnSell(mSock, vendorNpc) == 0) { // if script returns false, don't continue
                 return false;
             }
         }
@@ -1167,8 +1110,7 @@ bool CVendorSellResponse::Handle(CSocket *mSock, CChar *mChar, CChar *vendorNpc)
         mSock->Send(&toSend);
     }
     else {
-        vendorNpc->TextMessage(mSock, 1341, TALK,
-                               false); // Thou doth posses nothing of interest to me.
+        vendorNpc->TextMessage(mSock, 1341, TALK, false); // Thou doth posses nothing of interest to me.
     }
     
     return false;
@@ -1197,8 +1139,7 @@ bool CVendorViewResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
     return true;
 }
 
-CVendorGoldResponse::CVendorGoldResponse(bool vendVal, const std::string &text)
-: CBaseVendorResponse(vendVal, text) {}
+CVendorGoldResponse::CVendorGoldResponse(bool vendVal, const std::string &text) : CBaseVendorResponse(vendVal, text) {}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CVendorGoldResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
@@ -1229,14 +1170,12 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
                 vendorNpc->SetHoldG(0);
             }
             else {
-                std::uint32_t t =
-                vendorNpc->GetHoldG() - MAX_STACK; // yank of 65 grand, then do calculations
+                std::uint32_t t = vendorNpc->GetHoldG() - MAX_STACK; // yank of 65 grand, then do calculations
                 vendorNpc->SetHoldG(t);
                 pay = 6554;
                 give = 58981;
                 if (t > 0) {
-                    vendorNpc->TextMessage(mSock, 1327, TALK,
-                                           false); // You still have money left to claim.
+                    vendorNpc->TextMessage(mSock, 1327, TALK, false); // You still have money left to claim.
                 }
             }
             if (give) {
@@ -1257,16 +1196,14 @@ bool CVendorGoldResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, 
     return true;
 }
 
-CVendorStatusResponse::CVendorStatusResponse(bool vendVal, const std::string &text)
-: CBaseVendorResponse(vendVal, text) {}
+CVendorStatusResponse::CVendorStatusResponse(bool vendVal, const std::string &text) : CBaseVendorResponse(vendVal, text) {}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CVendorStatusResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to see the status of their
 // vendor
 // o------------------------------------------------------------------------------------------------o
-bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar,
-                                   CChar *vendorNpc) {
+bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc) {
     if (vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
         CChar *mChar = mSock->CurrcharObj();
         if (mChar == vendorNpc->GetOwnerObj()) {
@@ -1281,9 +1218,7 @@ bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar
                 else {
                     pay = vendorNpc->GetHoldG();
                 }
-                vendorNpc->TextMessage(
-                                       mSock, 1782, TALK, 0, vendorNpc->GetHoldG(),
-                                       pay); // Today's purchases total %i gold. I am keeping %i gold for my self.
+                vendorNpc->TextMessage(mSock, 1782, TALK, 0, vendorNpc->GetHoldG(), pay); // Today's purchases total %i gold. I am keeping %i gold for my self.
             }
         }
         else {
@@ -1296,15 +1231,13 @@ bool CVendorStatusResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar
     return true;
 }
 
-CVendorDismissResponse::CVendorDismissResponse(bool vendVal, const std::string &text)
-: CBaseVendorResponse(vendVal, text) {}
+CVendorDismissResponse::CVendorDismissResponse(bool vendVal, const std::string &text) : CBaseVendorResponse(vendVal, text) {}
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CVendorDismissResponse::Handle()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to dismiss their vendor
 // o------------------------------------------------------------------------------------------------o
-bool CVendorDismissResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar,
-                                    CChar *vendorNpc) {
+bool CVendorDismissResponse::Handle(CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc) {
     if (vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR) {
         CChar *mChar = mSock->CurrcharObj();
         if (mChar == vendorNpc->GetOwnerObj()) {
@@ -1340,9 +1273,7 @@ void CHouseMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
                     //-1 == event not found
                     // 0 == script returned false/0
                     // 1 == script returned true/1
-                    if (toExecute->OnHouseCommand(mSock, realHouse, targId) ==
-                        1) // if script returns true, don't continue
-                    {
+                    if (toExecute->OnHouseCommand(mSock, realHouse, targId) == 1) { // if script returns true, don't continue
                         return;
                     }
                 }
@@ -1375,8 +1306,7 @@ void CBoatMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
         return;
     }
     else {
-        mChar->SetTimer(tCHAR_ANTISPAM, BuildTimeValue(static_cast<R32>(
-                                                                        cwmWorldState->ServerData()->CheckBoatSpeed())));
+        mChar->SetTimer(tCHAR_ANTISPAM, BuildTimeValue(static_cast<float>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKBOATS] )));
     }
     
     CBoatObj *boat = GetBoat(mSock);

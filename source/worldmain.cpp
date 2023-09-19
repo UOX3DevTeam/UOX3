@@ -63,15 +63,7 @@ const savestatus_t DEFWORLD_SAVEPROGRESS = SS_NOTSAVING;
 const bool DEFWORLD_RELOADINGSCRIPTS = false;
 const bool DEFWORLD_CLASSESINITIALIZED = false;
 
-CWorldMain::CWorldMain()
-: error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), secure(DEFWORLD_SECURE),
-hasLoaded(DEFWORLD_LOADED), uoTickCount(DEFWORLD_UOTICKCOUNT), startTime(DEFWORLD_STARTTIME),
-endTime(DEFWORLD_ENDTIME), lClock(DEFWORLD_LCLOCK), overflow(DEFWORLD_OVERFLOW),
-uiCurrentTime(DEFWORLD_UICURRENTTIME), oldTime(DEFWORLD_OLDTIME), newTime(DEFWORLD_NEWTIME),
-autoSaved(DEFWORLD_AUTOSAVED), worldSaveProgress(DEFWORLD_SAVEPROGRESS),
-playersOnline(DEFWORLD_PLAYERSONLINE), reloadingScripts(DEFWORLD_RELOADINGSCRIPTS),
-classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
-    sData = nullptr;
+CWorldMain::CWorldMain() : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), secure(DEFWORLD_SECURE), hasLoaded(DEFWORLD_LOADED), uoTickCount(DEFWORLD_UOTICKCOUNT), startTime(DEFWORLD_STARTTIME), endTime(DEFWORLD_ENDTIME), lClock(DEFWORLD_LCLOCK), overflow(DEFWORLD_OVERFLOW), uiCurrentTime(DEFWORLD_UICURRENTTIME), oldTime(DEFWORLD_OLDTIME), newTime(DEFWORLD_NEWTIME), autoSaved(DEFWORLD_AUTOSAVED), worldSaveProgress(DEFWORLD_SAVEPROGRESS), playersOnline(DEFWORLD_PLAYERSONLINE), reloadingScripts(DEFWORLD_RELOADINGSCRIPTS), classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
     
     for (std::int32_t mTID = static_cast<std::int32_t>(tWORLD_NEXTFIELDEFFECT);
          mTID < static_cast<std::int32_t>(tWORLD_COUNT); ++mTID) {
@@ -90,12 +82,11 @@ classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
     spawnRegions.clear();
     uoxTimeout.tv_sec = 0;
     uoxTimeout.tv_usec = 0;
+    
 }
 //==================================================================================================
 auto CWorldMain::startup() -> void {}
 
-//==================================================================================================
-auto CWorldMain::SetServerData(CServerData &server_data) -> void { sData = &server_data; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWorldMain::GetTimer()
@@ -348,24 +339,22 @@ void CWorldMain::ClassesInitialized(bool newVal) { classesInitialized = newVal; 
 //|	Purpose		-	Set world light level based on time of day and script settings
 // o------------------------------------------------------------------------------------------------o
 void CWorldMain::DoWorldLight() {
-    std::uint8_t worlddarklevel = ServerData()->worldLightDarkLevel();
-    std::uint8_t worldbrightlevel = ServerData()->worldLightBrightLevel();
-    bool ampm = ServerData()->ServerTimeAMPM();
-    std::uint8_t currentHour = ServerData()->ServerTimeHours();
-    std::uint8_t currentMinute = ServerData()->ServerTimeMinutes();
+    
+    std::uint8_t worlddarklevel = static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL]);
+    std::uint8_t worldbrightlevel = static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL]);
+    bool ampm = uoTime.ampm ;
+    std::uint8_t currentHour = uoTime.hours ;
+    std::uint8_t currentMinute = uoTime.minutes;
     
     R32 currentTime = R32(currentHour + (currentMinute / 60.0f));
-    R32 hourIncrement = R32(fabs((worlddarklevel - worldbrightlevel) /
-                                 12.0f)); // we want the amount to subtract from LightMax in the
+    R32 hourIncrement = R32(fabs((worlddarklevel - worldbrightlevel) / 12.0f)); // we want the amount to subtract from LightMax in the
     // morning / add to LightMin in evening
     
     if (ampm) {
-        ServerData()->worldLightCurrentLevel(
-                                             static_cast<std::uint8_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime))));
+        uoTime.worldLightLevel = static_cast<std::uint16_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime)));
     }
     else {
-        ServerData()->worldLightCurrentLevel(
-                                             static_cast<std::uint8_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime))));
+        uoTime.worldLightLevel = static_cast<std::uint16_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime)));
     }
 }
 
@@ -384,8 +373,7 @@ void sysBroadcast(const std::string &txt);
 void CWorldMain::SaveNewWorld(bool x) {
     static std::uint32_t save_counter = 0;
     
-    std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(),
-                  [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+    std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
         if (entry.second) {
             entry.second->CheckSpawned();
         }
@@ -410,13 +398,13 @@ void CWorldMain::SaveNewWorld(bool x) {
         
         if (ServerConfig::shared().enabled(ServerSwitch::BACKUP) && !ServerConfig::shared().directoryFor(dirlocation_t::BACKUP).empty()) {
             ++save_counter;
-            if ((save_counter % ServerData()->BackupRatio()) == 0) {
+            if ((save_counter % ServerConfig::shared().shortValues[ShortValue::SAVERATIO])  == 0) {
                 Console::shared() << "Archiving world files." << myendl;
                 FileArchive();
             }
         }
         Console::shared() << "Saving Misc. data... ";
-        ServerData()->SaveIni();
+        ServerConfig::shared().writeConfig(std::filesystem::path()) ;
         Console::shared().log("Server data save", "server.log");
         RegionSave();
         Console::shared().printDone();
@@ -424,7 +412,7 @@ void CWorldMain::SaveNewWorld(bool x) {
         GuildSys->Save();
         JailSys->WriteData();
         Effects->SaveEffects();
-        ServerData()->SaveTime();
+        uoTime.save(ServerConfig::shared().directoryFor(dirlocation_t::SAVE));
         SaveStatistics();
         
         if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE)) {
@@ -472,8 +460,6 @@ void CWorldMain::RegionSave() {
     regionsDestination.close();
 }
 
-//==================================================================================================
-auto CWorldMain::ServerData() -> CServerData * { return sData; }
 
 //==================================================================================================
 auto CWorldMain::ServerProfile() -> CServerProfile * { return &sProfile; }
@@ -504,6 +490,28 @@ void CWorldMain::SaveStatistics() {
     
     statsDestination.close();
 }
+
+auto CWorldMain::matchIP(const IP4Addr &ip) const -> IP4Addr {
+    auto [candidate, match] = availableIPs.bestmatch(ip);
+    if (match == 0) {
+        if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
+            candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
+        }
+    }
+    else {
+        // We got some kind of match, see if on same network type?
+        if (candidate.type() != ip.type()) {
+            if (ip.type() == IP4Addr::ip4type_t::wan) {
+                if (!ServerConfig::shared().serverString[ServerString::PUBLICIP].empty()) {
+                    candidate = IP4Addr(ServerConfig::shared().serverString[ServerString::PUBLICIP]);
+                }
+            }
+        }
+    }
+    return candidate;
+}
+
+
 
 // o------------------------------------------------------------------------------------------------o
 //|	Class		-	CWorldMain::CServerProfile()
@@ -620,3 +628,4 @@ void CServerProfile::GlobalReceived(std::int32_t newVal) { globalRecv = newVal; 
 // o------------------------------------------------------------------------------------------------o
 std::int32_t CServerProfile::GlobalSent() const { return globalSent; }
 void CServerProfile::GlobalSent(std::int32_t newVal) { globalSent = newVal; }
+

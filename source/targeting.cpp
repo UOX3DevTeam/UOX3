@@ -23,11 +23,12 @@
 #include "objectfactory.h"
 #include "partysystem.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 
 using namespace std::string_literals;
 
@@ -108,8 +109,7 @@ void HandleGuildTarget(CSocket *s) {
         case 0: // recruit character
             trgChar = CalcCharObjFromSer(s->GetDWord(7));
             if (ValidateObject(trgChar)) {
-                if (trgChar->GetGuildNumber() == -1) // no existing guild
-                {
+                if (trgChar->GetGuildNumber() == -1) { // no existing guild
                     mGuild = GuildSys->Guild(mChar->GetGuildNumber());
                     if (mGuild != nullptr) {
                         auto trgSock = trgChar->GetSocket();
@@ -121,26 +121,17 @@ void HandleGuildTarget(CSocket *s) {
                             if (mGuild->Type() != GT_STANDARD) {
                                 trgChar->SetGuildToggle(true);
                             }
-                            s->SysMessage(1687,
-                                          trgChar->GetName()
-                                          .c_str()); // You have recruited %s as a new guild member!
+                            s->SysMessage(1687, trgChar->GetName().c_str()); // You have recruited %s as a new guild member!
                             if (trgSock) {
-                                trgSock->SysMessage(
-                                                    1688,
-                                                    mGuild->Name()
-                                                    .c_str()); // You have been recruited to join the guild %s!
+                                trgSock->SysMessage(1688, mGuild->Name().c_str()); // You have been recruited to join the guild %s!
                             }
                         }
                         else {
                             mGuild->NewRecruit((*trgChar));
-                            s->SysMessage(1985,
-                                          trgChar->GetName().c_str()); // You have sponsored %s as a
+                            s->SysMessage(1985, trgChar->GetName().c_str()); // You have sponsored %s as a
                             // candidate to join the guild!
                             if (trgSock) {
-                                trgSock->SysMessage(
-                                                    1986, mChar->GetName().c_str(),
-                                                    mGuild->Name()
-                                                    .c_str()); // You have been invited by %s to join the guild: %s
+                                trgSock->SysMessage(1986, mChar->GetName().c_str(), mGuild->Name().c_str()); // You have been invited by %s to join the guild: %s
                             }
                         }
                         trgChar->Dirty(UT_UPDATE);
@@ -154,14 +145,12 @@ void HandleGuildTarget(CSocket *s) {
         case 1: // declare fealty
             trgChar = CalcCharObjFromSer(s->GetDWord(7));
             if (ValidateObject(trgChar)) {
-                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // same guild
-                {
+                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) { // same guild
                     mChar->SetGuildFealty(trgChar->GetSerial());
                     s->SysMessage(1987, trgChar->GetName().c_str()); // You have declared fealty to %s!
                     auto trgSock = trgChar->GetSocket();
                     if (trgSock != nullptr) {
-                        trgSock->SysMessage(1988,
-                                            mChar->GetName().c_str()); // %s has declared fealty to you!
+                        trgSock->SysMessage(1988, mChar->GetName().c_str()); // %s has declared fealty to you!
                     }
                 }
                 else {
@@ -182,12 +171,8 @@ void HandleGuildTarget(CSocket *s) {
                             mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_WAR);
                             tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
                             if (tGuild != nullptr) {
-                                mGuild->TellMembers(
-                                                    1989, tGuild->Name()
-                                                    .c_str()); // Your guild has declared war on the guild %s!
-                                tGuild->TellMembers(
-                                                    1005,
-                                                    mGuild->Name().c_str()); // The guild %s has declared war upon you!
+                                mGuild->TellMembers(1989, tGuild->Name().c_str()); // Your guild has declared war on the guild %s!
+                                tGuild->TellMembers(1005, mGuild->Name().c_str()); // The guild %s has declared war upon you!
                             }
                         }
                     }
@@ -210,13 +195,8 @@ void HandleGuildTarget(CSocket *s) {
                             mGuild->SetGuildRelation(trgChar->GetGuildNumber(), GR_ALLY);
                             tGuild = GuildSys->Guild(trgChar->GetGuildNumber());
                             if (tGuild != nullptr) {
-                                mGuild->TellMembers(
-                                                    1990,
-                                                    tGuild->Name()
-                                                    .c_str()); // Your guild has declared the guild %s as an ally!
-                                tGuild->TellMembers(
-                                                    1007, mGuild->Name()
-                                                    .c_str()); // The guild %s has declared you to be an ally!
+                                mGuild->TellMembers(1990,  tGuild->Name().c_str()); // Your guild has declared the guild %s as an ally!
+                                tGuild->TellMembers(1007, mGuild->Name() .c_str()); // The guild %s has declared you to be an ally!
                             }
                         }
                     }
@@ -229,8 +209,7 @@ void HandleGuildTarget(CSocket *s) {
         case 4: // select member to grant title to
             trgChar = CalcCharObjFromSer(s->GetDWord(7));
             if (ValidateObject(trgChar)) {
-                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) // In same guild
-                {
+                if (trgChar->GetGuildNumber() == mChar->GetGuildNumber()) { // In same guild
                     mGuild = GuildSys->Guild(mChar->GetGuildNumber());
                     if (mGuild != nullptr) {
                         s->TempInt2(trgChar->GetSerial());
@@ -248,8 +227,7 @@ void HandleGuildTarget(CSocket *s) {
     }
 }
 
-CMultiObj *BuildHouse(CSocket *s, std::uint16_t houseEntry, bool checkLocation = true, std::int16_t xLoc = -1,
-                      std::int16_t yLoc = -1, std::int8_t zLoc = 127, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0);
+CMultiObj *BuildHouse(CSocket *s, std::uint16_t houseEntry, bool checkLocation = true, std::int16_t xLoc = -1, std::int16_t yLoc = -1, std::int8_t zLoc = 127, std::uint8_t worldNumber = 0, std::uint16_t instanceId = 0);
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	BuildHouseTarget()
 // o------------------------------------------------------------------------------------------------o
@@ -271,8 +249,7 @@ void BuildHouseTarget(CSocket *s) {
         }
     }
     
-    [[maybe_unused]] CMultiObj *newMulti = BuildHouse(
-                                                      s, static_cast<std::uint16_t>(s->AddId())); // If its a valid house, send it to buildhouse!
+    [[maybe_unused]] CMultiObj *newMulti = BuildHouse(s, static_cast<std::uint16_t>(s->AddId())); // If its a valid house, send it to buildhouse!
     
     s->AddId(0);
 }
@@ -295,8 +272,7 @@ void AddScriptNpc(CSocket *s) {
     const std::int16_t coreX = s->GetWord(11);
     const std::int16_t coreY = s->GetWord(13);
     const std::int8_t coreZ = static_cast<std::int8_t>(s->GetByte(16) + Map->TileHeight(s->GetWord(17)));
-    Npcs->CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(),
-                       mChar->GetInstanceId());
+    Npcs->CreateNPCxyz(s->XText(), coreX, coreY, coreZ, mChar->WorldNumber(), mChar->GetInstanceId());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -333,13 +309,10 @@ void TeleTarget(CSocket *s) {
     }
     CChar *mChar = s->CurrcharObj();
     
-    if (mChar->IsGM() || LineOfSight(s, mChar, targX, targY, targZ,
-                                     WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false)) {
-        if (s->CurrentSpellType() != 2) // not a wand cast
-        {
+    if (mChar->IsGM() || LineOfSight(s, mChar, targX, targY, targZ, WALLS_CHIMNEYS + DOORS + ROOFING_SLANTED, false)) {
+        if (s->CurrentSpellType() != 2) { // not a wand cast
             Magic->SubtractMana(mChar, 3);  // subtract mana on scroll or spell
-            if (s->CurrentSpellType() == 0) // del regs on normal spell
-            {
+            if (s->CurrentSpellType() == 0) { // del regs on normal spell
                 Reag_st toDel;
                 toDel.drake = 1;
                 toDel.moss = 1;
@@ -423,8 +396,7 @@ void DyeTarget(CSocket *s) {
                 // semi-trasnparency.
             }
             
-            if (k != 0x8000) // 0x8000 also crashes client ...
-            {
+            if (k != 0x8000) { // 0x8000 also crashes client ...
                 c->SetSkin(k);
                 c->SetOrgSkin(k);
             }
@@ -493,8 +465,7 @@ void ColorsTarget(CSocket *s) {
         return;
     }
     
-    if (i->GetId() == 0x0FAB || i->GetId() == 0x0EFF || i->GetId() == 0x0E27) // dye vat, hair dye
-    {
+    if (i->GetId() == 0x0FAB || i->GetId() == 0x0EFF || i->GetId() == 0x0E27) { // dye vat, hair dye
         CPDyeVat toSend = (*i);
         s->Send(&toSend);
     }
@@ -538,8 +509,7 @@ void DVatTarget(CSocket *s) {
     for (auto scriptTrig : scriptTriggers) {
         cScript *toExecute = JSMapping->GetScript(scriptTrig);
         if (toExecute != nullptr) {
-            if (toExecute->OnDyeTarget(mChar, tempObj, i) == 0) // return false
-            {
+            if (toExecute->OnDyeTarget(mChar, tempObj, i) == 0) { // return false
                 // Don't continue with hard-coded dyeing
                 return;
             }
@@ -652,9 +622,7 @@ void InfoTarget(CSocket *s) {
         statTile.AddData("--> Wearable", tile.CheckFlag(TF_WEARABLE));
         statTile.AddData("--> Light", tile.CheckFlag(TF_LIGHT));
         statTile.AddData("--> Animated", tile.CheckFlag(TF_ANIMATED));
-        statTile.AddData(
-                         "--> NoDiagonal",
-                         tile.CheckFlag(TF_NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
+        statTile.AddData("--> NoDiagonal", tile.CheckFlag(TF_NODIAGONAL)); // HOVEROVER in SA clients and later, to determine if
         // tiles can be moved on by flying gargoyle
         statTile.AddData("--> Unknown3", tile.CheckFlag(TF_UNKNOWN3));
         statTile.AddData("--> Armor", tile.CheckFlag(TF_ARMOR));
@@ -741,11 +709,10 @@ bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_
     if (!ValidateObject(toCreate))
         return false;
     
-    toCreate->SetName(
-                      util::format(Dictionary->GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
+    toCreate->SetName(util::format(Dictionary->GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
     toCreate->SetLocation(corpse);
     toCreate->SetOwner(corpse->GetOwnerObj());
-    toCreate->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+    toCreate->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAY])));
     return true;
 }
 
@@ -801,7 +768,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
     // Place blood on ground
     c->SetLocation(i);
     c->SetMovable(2);
-    c->SetDecayTime(cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+    c->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAY])));
     
     // if it's a human corpse
     // Sept 22, 2002 - Corrected the alignment of body parts that are carved.
@@ -815,12 +782,9 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     data = util::trim(util::strip(data, "//"));
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
-                        if (!CreateBodyPart(
-                                            mChar, i, util::trim(util::strip(csecs[0], "//")),
-                                            static_cast<std::uint16_t>(std::stoul(
-                                                                                  util::trim(util::strip(csecs[1], "//")), nullptr, 0)))) {
-                                                                                      return false;
-                                                                                  }
+                        if (!CreateBodyPart(mChar, i, util::trim(util::strip(csecs[0], "//")), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)))) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -842,8 +806,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
             std::for_each(corpseItems.begin(), corpseItems.end(), [i](CItem *corpseItem) {
                 corpseItem->SetCont(nullptr);
                 corpseItem->SetLocation(i);
-                corpseItem->SetDecayTime(
-                                         cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_DECAY));
+                corpseItem->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAY])));
             });
             
             i->Delete();
@@ -860,11 +823,7 @@ auto NewCarveTarget(CSocket *s, CItem *i) -> bool {
                     data = util::trim(util::strip(data, "//"));
                     auto csecs = oldstrutil::sections(data, ",");
                     if (csecs.size() > 1) {
-                        Items->CreateScriptItem(
-                                                s, mChar, util::trim(util::strip(csecs[0], "//")),
-                                                static_cast<std::uint16_t>(
-                                                                           std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                                                CBaseObject::OT_ITEM, true);
+                        Items->CreateScriptItem(s, mChar, util::trim(util::strip(csecs[0], "//")), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)), CBaseObject::OT_ITEM, true);
                     }
                     else {
                         Items->CreateScriptItem(s, mChar, data, 0, CBaseObject::OT_ITEM, true);
@@ -908,8 +867,7 @@ void AttackTarget(CSocket *s) {
         
         if (!targOwner->IsNpc()) {
             auto mPetOwner = mPet->GetOwnerObj();
-            if (ValidateObject(mPetOwner) &&
-                mPetOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+            if (ValidateObject(mPetOwner) && mPetOwner->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
                 s->SysMessage(18708); // As a Young player, you cannot harm other players, or their followers.
                 return;
             }
@@ -921,8 +879,7 @@ void AttackTarget(CSocket *s) {
     }
     
     // Check if combat is disallowed in attacker's OR mPet's regions
-    if (mChar->GetRegion()->IsSafeZone() || mPet->GetRegion()->IsSafeZone() ||
-        target->GetRegion()->IsSafeZone()) {
+    if (mChar->GetRegion()->IsSafeZone() || mPet->GetRegion()->IsSafeZone() || target->GetRegion()->IsSafeZone()) {
         // Target is in a safe zone where all aggressive actions are forbidden, disallow
         s->SysMessage(1799); // Hostile actions are not permitted in this safe area.
         return;
@@ -1125,8 +1082,7 @@ void TransferTarget(CSocket *s) {
     }
     
     if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER)) {
-        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) &&
-            !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
+        if (!mChar->IsNpc() && mChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !targChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             s->SysMessage(18725); // As a young player, you may not transfer pets to older players.
             return;
         }
@@ -1153,8 +1109,8 @@ void TransferTarget(CSocket *s) {
         return;
     }
     
-    std::uint8_t maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
-    std::uint8_t maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
+    std::uint8_t maxControlSlots = static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXCONTROLSLOT]) ;
+    std::uint8_t maxFollowers = static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXFOLLOWER]);
     if (maxControlSlots > 0) {
         if (targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots) {
             s->SysMessage(2391); // That would exceed the other player's maximum pet control slots.
@@ -1164,8 +1120,7 @@ void TransferTarget(CSocket *s) {
             return;
         }
     }
-    else if (maxFollowers > 0 &&
-             static_cast<std::uint8_t>(targChar->GetFollowerList()->Num()) >= maxFollowers) {
+    else if (maxFollowers > 0 && static_cast<std::uint8_t>(targChar->GetFollowerList()->Num()) >= maxFollowers) {
         s->SysMessage(2779); // That would exceed the other player's maximum follower count.
         if (targChar->GetSocket() != nullptr) {
             targChar->GetSocket()->SysMessage(2780); // That would exceed your maximum follower count.
@@ -1173,9 +1128,8 @@ void TransferTarget(CSocket *s) {
         return;
     }
     
-    std::uint8_t maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
-    if (petChar->IsOnPetOwnerList(targChar) && maxPetOwners > 0 &&
-        (petChar->GetPetOwnerList()->Num() >= maxPetOwners)) {
+    std::uint8_t maxPetOwners = static_cast<std::uint8_t>(ServerConfig::shared().ushortValues[UShortValue::MAXPETOWNER]);
+    if (petChar->IsOnPetOwnerList(targChar) && maxPetOwners > 0 && (petChar->GetPetOwnerList()->Num() >= maxPetOwners)) {
         s->SysMessage(2402); // The creature has had too many masters and is not willing to do the
         // bidding of another one!
         if (targChar->GetSocket() != nullptr) {
@@ -1598,8 +1552,7 @@ void GuardTarget(CSocket *s) {
     if (ValidateObject(charToGuard)) {
         if (charToGuard != petGuarding->GetOwnerObj() &&
             !Npcs->CheckPetFriend(charToGuard, petGuarding)) {
-            s->SysMessage(
-                          1628); // Your pet may only guard you, his friends, and items in your house!
+            s->SysMessage(1628); // Your pet may only guard you, his friends, and items in your house!
             return;
         }
         petGuarding->SetNPCAiType(AI_PET_GUARD); // 32 is guard mode
@@ -1614,8 +1567,7 @@ void GuardTarget(CSocket *s) {
         }
         else {
             if (charToGuard->GetSocket() != nullptr) {
-                std::string petName =
-                GetNpcDictName(petGuarding, charToGuard->GetSocket(), NRS_SPEECH);
+                std::string petName = GetNpcDictName(petGuarding, charToGuard->GetSocket(), NRS_SPEECH);
                 charToGuard->GetSocket()->SysMessage(2374, petName.c_str()); // ~1_PETNAME~ is now guarding you.
             }
         }
@@ -1766,8 +1718,7 @@ void MakeStatusTarget(CSocket *sock) {
                                 mypack = targetChar->GetPackItem();
                             }
                             if (!ValidateObject(mypack)) {
-                                CItem *iMade =
-                                Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
+                                CItem *iMade = Items->CreateItem(nullptr, targetChar, 0x0E75, 1, 0, CBaseObject::OT_ITEM);
                                 if (!ValidateObject(iMade))
                                     return;
                                 
@@ -1892,8 +1843,7 @@ void VialTarget(CSocket *mSock) {
         }
         
         nVialId->SetTempVar(CITV_MORE, 1, 0);
-        if (targSerial >= BASEITEMSERIAL) // it's an item
-        {
+        if (targSerial >= BASEITEMSERIAL) { // it's an item
             CItem *targItem = CalcItemObjFromSer(targSerial);
             if (!targItem->IsCorpse()) {
                 mSock->SysMessage(749); // That is not a corpse!
@@ -1917,8 +1867,7 @@ void VialTarget(CSocket *mSock) {
                 }
             }
         }
-        else // it's a char
-        {
+        else { // it's a char
             CChar *targChar = CalcCharObjFromSer(targSerial);
             if (targChar == mChar) {
                 if (targChar->GetHP() <= 10) {
@@ -1930,9 +1879,7 @@ void VialTarget(CSocket *mSock) {
             }
             else if (ObjInRange(mChar, targChar, DIST_NEARBY)) {
                 if (targChar->IsNpc()) {
-                    if (targChar->GetId(1) == 0x00 &&
-                        (targChar->GetId(2) == 0x0C ||
-                         (targChar->GetId(2) >= 0x3B && targChar->GetId(2) <= 0x3D))) {
+                    if (targChar->GetId(1) == 0x00 && (targChar->GetId(2) == 0x0C || (targChar->GetId(2) >= 0x3B && targChar->GetId(2) <= 0x3D))) {
                         nVialId->SetTempVar(CITV_MORE, 1, 1);
                     }
                 }
@@ -1967,8 +1914,7 @@ bool CPITargetCursor::Handle() {
     CChar *mChar = tSock->CurrcharObj();
     if (tSock->TargetOK()) {
         if (!tSock->GetByte(1) && !tSock->GetDWord(7) && tSock->GetDWord(11) == INVALIDSERIAL) {
-            if (mChar->GetSpellCast() != -1) // need to stop casting if we don't target right
-            {
+            if (mChar->GetSpellCast() != -1) { // need to stop casting if we don't target right
                 mChar->StopSpell();
             }
             return true; // do nothing if user cancels, avoids CRASH!
@@ -1985,20 +1931,17 @@ bool CPITargetCursor::Handle() {
         tSock->TargetOK(false);
         if (mChar->IsDead() && !mChar->IsGM() && mChar->GetAccount().accountNumber != 0) {
             tSock->SysMessage(1008);         // Invalid item!
-            if (mChar->GetSpellCast() != -1) // need to stop casting if we don't target right
-            {
+            if (mChar->GetSpellCast() != -1) { // need to stop casting if we don't target right
                 mChar->StopSpell();
             }
             return true;
         }
         if (a1 == 0 && a2 == 1) {
-            if (a3 == 2) // Guilds
-            {
+            if (a3 == 2) { // Guilds
                 HandleGuildTarget(tSock);
                 return true;
             }
-            else if (a3 == 1) // CustomTarget
-            {
+            else if (a3 == 1) { // CustomTarget
                 // not a great fix, but better then assuming a ptr size.
                 cScript *tScript = tSock->scriptForCallBack;
                 // cScript *tScript	= reinterpret_cast<cScript *>( tSock->TempInt() );

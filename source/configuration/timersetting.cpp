@@ -113,7 +113,7 @@ auto TimerSetting::setKeyValue(const std::string &key, const std::string &value)
     return rvalue ;
 }
 //======================================================================
-auto TimerSetting::valueFor(const std::string &key) -> std::optional<std::uint16_t> {
+auto TimerSetting::valueFor(const std::string &key) const -> std::optional<std::uint16_t> {
     auto iter = NAMETIMERMAP.find(key) ;
     if (iter == NAMETIMERMAP.end()){
         return {};

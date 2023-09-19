@@ -946,8 +946,7 @@ void MsgBoardQuestEscortCreate(CChar *mNPC) {
     
     // Abort out if there are no valid escort region candidates
     if (regionCandidates.empty()) {
-        Console::shared().error(
-                                util::format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests"));
+        Console::shared().error(util::format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests"));
         mNPC->Delete();
         return;
     }
@@ -964,15 +963,12 @@ void MsgBoardQuestEscortCreate(CChar *mNPC) {
     mNPC->SetNPCAiType(AI_NONE);
     mNPC->SetQuestOrigRegion(npcRegion);
     
-    if (cwmWorldState->ServerData()->SystemTimer(tSERVER_ESCORTWAIT)) {
-        mNPC->SetTimer(tNPC_SUMMONTIME,
-                       cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_ESCORTWAIT));
+    if (ServerConfig::shared().timerSetting[TimerSetting::ESCORTWAIT]) {
+        mNPC->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::ESCORTWAIT] ) );
     }
     
     if (!MsgBoardPostQuest(mNPC, QT_ESCORTQUEST)) {
-        Console::shared().error(
-                                util::format("MsgBoardQuestEscortCreate() Failed to add quest post for %s",
-                                             mNPC->GetName().c_str()));
+        Console::shared().error(util::format("MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str()));
         mNPC->Delete();
     }
 }
@@ -1025,8 +1021,7 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
     mNPC->SetQuestDestRegion(0); // Reset quest destination region
     
     // Set a timer to automatically delete the NPC
-    mNPC->SetTimer(tNPC_SUMMONTIME,
-                   cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_ESCORTDONE));
+    mNPC->SetTimer(tNPC_SUMMONTIME,  BuildTimeValue(ServerConfig::shared().timerSetting[TimerSetting::ESCORTDONE]));
     mNPC->SetOwner(nullptr);
     
     // Mark NPC as always awake, to ensure they'll still get checked and removed by server when

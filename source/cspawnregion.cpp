@@ -12,7 +12,7 @@
 #include "dictionary.h"
 #include "funcdecl.h"
 #include "mapstuff.h"
-
+#include "configuration/serverconfig.hpp"
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
@@ -483,40 +483,16 @@ void CSpawnRegion::load(CScriptSection *toScan) {
                 data = util::simplify(data);
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
-                    validLandPos.push_back(Point3(
-                                                     static_cast<std::uint16_t>(
-                                                                                std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
-                                                     static_cast<std::uint16_t>(
-                                                                                std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                                                     static_cast<std::uint8_t>(
-                                                                               std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
-                    validLandPosCheck[static_cast<std::uint16_t>(std::stoul(
-                                                                            util::trim(util::strip(csecs[1], "//")), nullptr, 0)) +
-                                      (static_cast<std::uint16_t>(std::stoul(
-                                                                             util::trim(util::strip(csecs[0], "//")), nullptr, 0))
-                                       << 16)] =
-                    static_cast<std::uint8_t>(
-                                              std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                    validLandPos.push_back(Point3(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)), static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
+                    validLandPosCheck[static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)) + (static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)) << 16)] = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                 }
             }
             else if (UTag == "VALIDWATERPOS") {
                 data = util::simplify(data);
                 auto csecs = oldstrutil::sections(data, ",");
                 if (csecs.size() == 3) {
-                    validWaterPos.push_back(Point3(
-                                                      static_cast<std::uint16_t>(
-                                                                                 std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)),
-                                                      static_cast<std::uint16_t>(
-                                                                                 std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)),
-                                                      static_cast<std::uint8_t>(
-                                                                                std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
-                    validWaterPosCheck[static_cast<std::uint16_t>(std::stoul(
-                                                                             util::trim(util::strip(csecs[1], "//")), nullptr, 0)) +
-                                       (static_cast<std::uint16_t>(std::stoul(
-                                                                              util::trim(util::strip(csecs[0], "//")), nullptr, 0))
-                                        << 16)] =
-                    static_cast<std::uint8_t>(
-                                              std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
+                    validWaterPos.push_back(Point3(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)), static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)), static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0))));
+                    validWaterPosCheck[static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)) + (static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)) << 16)] = static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0));
                 }
             }
         }
@@ -530,7 +506,8 @@ void CSpawnRegion::load(CScriptSection *toScan) {
 // o------------------------------------------------------------------------------------------------o
 void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npcsSpawned) {
     // Only perform the region spawn if the spawn region in question is active
-    if (!cwmWorldState->ServerData()->getSpawnRegionsFacetStatus(static_cast<std::uint32_t>(WorldNumber())))
+    
+    if (!ServerConfig::shared().spawnFacet.test(static_cast<std::uint32_t>(WorldNumber())))
         return;
     
     if (sNpcs.empty()) {
@@ -571,8 +548,7 @@ void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npc
         }
     }
     
-    SetNextTime(BuildTimeValue(static_cast<R32>(
-                                                RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
+    SetNextTime(BuildTimeValue(static_cast<R32>(RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -657,8 +633,7 @@ foundNpcId:
         }
     }
     else {
-        Console::shared().warning(util::format(
-                                               "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum()));
+        Console::shared().warning(util::format("Unable to find valid location to spawn NPC in region %i", this->GetRegionNum()));
     }
     return nullptr;
 }
@@ -678,9 +653,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
             objType = CBaseObject::OT_SPAWNER;
         }
         
-        ISpawn = Items->CreateBaseScriptItem(
-                                             nullptr, sItems[RandomNum(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1,
-                                             instanceId, objType, 0xFFFF, false);
+        ISpawn = Items->CreateBaseScriptItem(nullptr, sItems[RandomNum(static_cast<size_t>(0), sItems.size() - 1)], worldNumber, 1, instanceId, objType, 0xFFFF, false);
         if (ISpawn != nullptr) {
             ISpawn->SetLocation(x, y, z);
             ISpawn->SetSpawn(static_cast<std::uint32_t>(regionNum));
@@ -697,8 +670,7 @@ auto CSpawnRegion::RegionSpawnItem() -> CItem * {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find a random spot within a region valid for dropping an item
 // o------------------------------------------------------------------------------------------------o
-bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z, bool &waterCreature,
-                                       bool &amphiCreature) {
+bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::int8_t &z, bool &waterCreature, bool &amphiCreature) {
     bool rValue = false;
     Point3 currLoc;
     std::map<std::uint32_t, std::int8_t>::const_iterator checkValid;
@@ -712,15 +684,11 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     // However, if we have found some valid spawn points already, reduce the amount of attempts to
     // find MORE valid spawn points, and increase the chance of using those valid spots instead!
     // Always make some attempts to find new spots, though
-    if (!waterCreature && landPosSize > 0) // land creature
-    {
-        maxSpawnAttempts = std::max(static_cast<std::uint8_t>(25),
-                                    static_cast<std::uint8_t>(maxSpawnAttempts - landPosSize));
+    if (!waterCreature && landPosSize > 0) { // land creature
+        maxSpawnAttempts = std::max(static_cast<std::uint8_t>(25), static_cast<std::uint8_t>(maxSpawnAttempts - landPosSize));
     }
-    else if ((waterCreature || amphiCreature) && waterPosSize > 0) // water or amphibian creature
-    {
-        maxSpawnAttempts =
-        std::max(static_cast<std::int16_t>(25), static_cast<std::int16_t>(maxSpawnAttempts - waterPosSize));
+    else if ((waterCreature || amphiCreature) && waterPosSize > 0) { // water or amphibian creature
+        maxSpawnAttempts = std::max(static_cast<std::int16_t>(25), static_cast<std::int16_t>(maxSpawnAttempts - waterPosSize));
     }
     
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
@@ -798,8 +766,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
         }
         
         // Otherwise, validate it with a water-based creature in mind instead
-        if ((waterCreature || amphiCreature) &&
-            Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
+        if ((waterCreature || amphiCreature) && Map->ValidSpawnLocation(x, y, z, worldNumber, instanceId, false)) {
             if (onlyOutside == false || !Map->InBuilding(x, y, z, worldNumber, instanceId)) {
                 rValue = true;
                 validWaterPos.push_back(Point3(x, y, z));
@@ -832,8 +799,7 @@ bool CSpawnRegion::FindCharSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
             rValue = true;
         }
     }
-    else if (!rValue && (waterCreature || amphiCreature) && !validWaterPos.empty() &&
-             waterPosSize > 0) {
+    else if (!rValue && (waterCreature || amphiCreature) && !validWaterPos.empty() && waterPosSize > 0) {
         currLoc = validWaterPos[RandomNum(static_cast<size_t>(0), (waterPosSize - 1))];
         x = static_cast<std::int16_t>(currLoc.x);
         y = static_cast<std::int16_t>(currLoc.y);
@@ -876,8 +842,7 @@ bool CSpawnRegion::FindItemSpotToSpawn(std::int16_t &x, std::int16_t &y, std::in
     // However, if we have found some valid spawn points already, reduce the amount of attempts to
     // find MORE valid spawn points, and increase the chance of using those valid spots instead!
     if (landPosSize > 0) {
-        maxSpawnAttempts = std::max(static_cast<std::uint8_t>(25),
-                                    static_cast<std::uint8_t>(maxSpawnAttempts - landPosSize));
+        maxSpawnAttempts = std::max(static_cast<std::uint8_t>(25), static_cast<std::uint8_t>(maxSpawnAttempts - landPosSize));
     }
     
     for (std::uint8_t a = 0; a < maxSpawnAttempts; ++a) {
@@ -969,8 +934,7 @@ void CSpawnRegion::CheckSpawned() {
             }
         }
         else {
-            Console::shared().warning(
-                                      "Invalid Object found in CSpawnRegion character list, AutoCorrecting.");
+            Console::shared().warning("Invalid Object found in CSpawnRegion character list, AutoCorrecting.");
             spawnedChars.Remove(cCheck);
         }
     }
@@ -984,8 +948,7 @@ void CSpawnRegion::CheckSpawned() {
             }
         }
         else {
-            Console::shared().warning(
-                                      "Invalid Object found in CSpawnRegion item list, AutoCorrecting.");
+            Console::shared().warning("Invalid Object found in CSpawnRegion item list, AutoCorrecting.");
             spawnedItems.Remove(iCheck);
         }
     }

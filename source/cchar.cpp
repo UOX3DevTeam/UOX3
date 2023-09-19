@@ -180,7 +180,7 @@ CChar::PlayerValues::PlayerValues() : callNum(DEFPLAYER_CALLNUM), playerCallNum(
     }
     
     if (cwmWorldState != nullptr) {
-        trackingTargets.resize(cwmWorldState->ServerData()->TrackingMaxTargets());
+        trackingTargets.resize( ServerConfig::shared().ushortValues[UShortValue::MAXTARGET] );
     }
 }
 
@@ -483,8 +483,8 @@ void CChar::DoHunger(CSocket *mSock) {
                         hungerDamage = Races->GetHungerDamage(GetRace());
                     }
                     else { // use the global values if there is no race setting
-                        hungerRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE);
-                        hungerDamage = cwmWorldState->ServerData()->HungerDamage();
+                        hungerRate = ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] ;
+                        hungerDamage = ServerConfig::shared().shortValues[ShortValue::HUNGERDAMAGE];
                     }
                     
                     if (GetHunger() > 0) {
@@ -642,8 +642,8 @@ void CChar::DoThirst(CSocket *mSock) {
                         thirstDrain = Races->GetThirstDrain(GetRace());
                     }
                     else { // use the global values if there is no race setting
-                        thirstRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE);
-                        thirstDrain = cwmWorldState->ServerData()->ThirstDrain();
+                        thirstRate = ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE];
+                        thirstDrain = ServerConfig::shared().shortValues[ShortValue::THIRSTDRAIN] ;
                     }
                     
                     if (GetThirst() > 0) {
@@ -751,7 +751,7 @@ void CChar::CheckPetOfflineTimeout() {
                 return; // The owner is still online, so leave it alone
             
             time_t currTime, lastOnTime;
-            const std::uint32_t offlineTimeout = static_cast<std::uint32_t>(cwmWorldState->ServerData()->PetOfflineTimeout() * 3600 * 24);
+            const std::uint32_t offlineTimeout = static_cast<std::uint32_t>(ServerConfig::shared().ushortValues[UShortValue::PETOFFLINETIMEOUT] * 3600 * 24);
             
             time(&currTime);
             lastOnTime = static_cast<time_t>(GetLastOnSecs());
@@ -2764,7 +2764,7 @@ auto CChar::AddAggressorFlag(serial_t toAdd) -> void {
     if (aggressorFlags.count(toAdd) == 0) {
         // Not found in list already, add to list
         aggressorFlags[toAdd] = {
-            cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_AGGRESSORFLAG), IsNpc()};
+            BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::AGGRESSORFLAG]) ), IsNpc()};
     }
 }
 
@@ -2842,7 +2842,7 @@ auto CChar::IsAggressor(bool checkForPlayersOnly) -> bool {
 auto CChar::UpdateAggressorFlagTimestamp(serial_t toUpdate) -> void {
     auto it = aggressorFlags.find(toUpdate);
     if (it != aggressorFlags.end()) {
-        it->second.timestamp = cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_AGGRESSORFLAG);
+        it->second.timestamp = BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::AGGRESSORFLAG]) );
     }
 }
 
@@ -2896,7 +2896,7 @@ auto CChar::GetPermaGreyFlags() const -> const std::unordered_map<serial_t, Targ
 auto CChar::AddPermaGreyFlag(serial_t toAdd) -> void {
     if (permaGreyFlags.count(toAdd) == 0) {
         // Not found in list already, add to list
-        permaGreyFlags[toAdd] = { cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_PERMAGREYFLAG), IsNpc()};
+        permaGreyFlags[toAdd] = { BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::PERMAGREYFLAG] )), IsNpc()};
     }
 }
 
@@ -2974,7 +2974,7 @@ auto CChar::IsPermaGrey(bool checkForPlayersOnly) -> bool {
 auto CChar::UpdatePermaGreyFlagTimestamp(serial_t toUpdate) -> void {
     auto it = permaGreyFlags.find(toUpdate);
     if (it != permaGreyFlags.end()) {
-        it->second.timestamp = cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_PERMAGREYFLAG);
+        it->second.timestamp = BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::PERMAGREYFLAG] ) ) ;
     }
 }
 
@@ -4166,7 +4166,7 @@ void CChar::PostLoadProcessing() {
         SetPackItem(nullptr);
     }
     
-    std::int32_t maxWeight = GetStrength() * cwmWorldState->ServerData()->WeightPerStr() + 40;
+    std::int32_t maxWeight = GetStrength() * ServerConfig::shared().realNumbers[RealNumberConfig::WEIGHTSTR] + 40;
     if (GetWeight() <= 0 || GetWeight() > MAX_WEIGHT || GetWeight() > maxWeight) {
         SetWeight(Weight->CalcCharWeight(this));
     }
@@ -5736,7 +5736,7 @@ void CChar::DoLoyaltyUpdate() {
     
     if (GetTimer(tNPC_LOYALTYTIME) <= cwmWorldState->GetUICurrentTime() ||
         cwmWorldState->GetOverflow()) {
-        std::uint16_t loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
+        std::uint16_t loyaltyRate = ServerConfig::shared().timerSetting[TimerSetting::LOYALTYRATE];
         if (GetLoyalty() > 0) {
             // Reduce loyalty by 1, reset timer
             SetLoyalty(std::max(0, GetLoyalty() - 1));
@@ -6632,7 +6632,7 @@ auto CChar::AddToCombatIgnore(serial_t toAdd, bool isNpc) -> void {
     if (mNPC->combatIgnore.count(toAdd) == 0) {
         // Not found in list already, add to list
         mNPC->combatIgnore[toAdd] = {
-            cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_COMBATIGNORE), isNpc};
+            BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::COMBATIGNORE]) ), isNpc};
     }
 }
 
@@ -6942,7 +6942,7 @@ void CChar::SetNPCFlag(cnpc_flag_t flagType) {
 //| Purpose		-	Gets/Sets the NPC's walking speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetWalkingSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCWalkingSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOVEMENT];
     
     if (IsValidNPC()) {
         if (mNPC->walkingSpeed > 0) {
@@ -6974,7 +6974,7 @@ void CChar::SetWalkingSpeed(R32 newValue) {
 //| Purpose		-	Gets/Sets the NPC's running speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetRunningSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCRunningSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCRUNNING];
     
     if (IsValidNPC()) {
         if (mNPC->runningSpeed > 0) {
@@ -7006,7 +7006,7 @@ void CChar::SetRunningSpeed(R32 newValue) {
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetFleeingSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCFleeingSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCFLEEING];
     
     if (IsValidNPC()) {
         if (mNPC->fleeingSpeed > 0) {
@@ -7037,7 +7037,7 @@ void CChar::SetFleeingSpeed(R32 newValue) {
 //| Purpose		-	Gets/Sets the NPC's mounted walking speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedWalkingSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCMountedWalkingSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT];
     
     if (IsValidNPC()) {
         if (mNPC->mountedWalkingSpeed > 0) {
@@ -7068,7 +7068,7 @@ void CChar::SetMountedWalkingSpeed(R32 newValue) {
 //| Purpose		-	Gets/Sets the NPC's mounted running speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedRunningSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCMountedRunningSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTRUNNING];
     
     if (IsValidNPC()) {
         if (mNPC->mountedRunningSpeed > 0) {
@@ -7099,7 +7099,7 @@ void CChar::SetMountedRunningSpeed(R32 newValue) {
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
 R32 CChar::GetMountedFleeingSpeed() const {
-    R32 retVal = cwmWorldState->ServerData()->NPCMountedFleeingSpeed();
+    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTFLEEING];
     
     if (IsValidNPC()) {
         if (mNPC->mountedFleeingSpeed > 0) {
@@ -7275,7 +7275,7 @@ bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *at
     // Spawn blood effects
     if (damageValue >= std::max(static_cast<std::int16_t>(1), static_cast<std::int16_t>(floor(GetMaxHP() * 0.01)))){ // Only display blood effects if damage done is higher
         // than 1, or 1% of max health - whichever is higher
-        std::uint8_t bloodEffectChance = cwmWorldState->ServerData()->CombatBloodEffectChance();
+        std::uint8_t bloodEffectChance = ServerConfig::shared().ushortValues[UShortValue::BLOODEFFECTCHANCE];
         bool spawnBlood = (bloodEffectChance >= static_cast<std::uint8_t>(RandomNum(0, 99)));
         if (spawnBlood) {
             auto bloodType = BLOOD_BLEED;
@@ -7401,11 +7401,11 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
                 WillResultInCriminal(attacker, this)) {
                 attacker->UpdateAggressorFlagTimestamp(this->GetSerial());
                 attacker->SetKills(attacker->GetKills() + 1);
-                attacker->SetTimer(tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue(tSERVER_MURDERDECAY));
+                attacker->SetTimer(tCHAR_MURDERRATE, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::MURDERDECAY] )) );
                 if (!attacker->IsNpc()) {
                     if (attSock != nullptr) {
                         attSock->SysMessage(314, attacker->GetKills()); // You have killed %i innocent people.
-                        if (attacker->GetKills() == cwmWorldState->ServerData()->RepMaxKills() + 1) {
+                        if (attacker->GetKills() == ServerConfig::shared().ushortValues[UShortValue::MAXKILL] + 1) {
                             attSock->SysMessage(315); // You are now a murderer!
                         }
                     }

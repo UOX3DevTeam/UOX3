@@ -12,6 +12,7 @@
 #include "classes.h"
 #include "cmagic.h"
 #include "commands.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "cscript.h"
 #include "cserverdefinitions.h"
@@ -21,16 +22,16 @@
 #include "objectfactory.h"
 #include "ostype.h"
 #include "osunique.hpp"
-#include "other/uoxversion.hpp"
 #include "pagevector.h"
 #include "regions.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "subsystem/console.hpp"
-#include "townregion.h"
 #include "utility/strutil.hpp"
+#include "townregion.h"
 #include "wholist.h"
+#include "other/uoxversion.hpp"
 
 using namespace std::string_literals;
 
@@ -181,13 +182,11 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             // safe to assume we want to remove ourselves from our only town!
             result = ourRegion->RemoveTownMember((*mChar));
             if (!result) {
-                s->SysMessage(
-                              540); // There was an error removing you from your town, contact a GM promptly!
+                s->SysMessage(540); // There was an error removing you from your town, contact a GM promptly!
             }
             break;
         case 3: // view taxes
-            targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
-                                            mChar->GetInstanceId());
+            targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId());
             if (targetRegion != nullptr) {
                 targetRegion->ViewTaxes(s);
             }
@@ -240,38 +239,29 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             ourRegion->DisplayTownMenu(nullptr, s);
             break; // we can't return from mayor menu if we weren't mayor!
         case 41:   // join town!
-            if (!(CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
-                                   mChar->GetInstanceId())
-                  ->AddAsTownMember((*mChar)))) {
-                s->SysMessage(
-                              548); // You were unable to be added, contact a GM for further information.
+            if (!(CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId())->AddAsTownMember((*mChar)))) {
+                s->SysMessage(548); // You were unable to be added, contact a GM for further information.
             }
             break;
         case 61:                                                 // seize townstone!
-            if (!Skills->CheckSkill(mChar, STEALING, 950, 1000)) // minimum 95.0 stealing
-            {
-                targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
-                                                mChar->GetInstanceId());
+            if (!Skills->CheckSkill(mChar, STEALING, 950, 1000)) {// minimum 95.0 stealing
+                targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceId());
                 if (targetRegion != nullptr) {
                     std::int32_t chanceToSteal = RandomNum(0, targetRegion->GetHealth() / 2);
-                    std::int32_t fudgedStealing = RandomNum(mChar->GetSkill(STEALING),
-                                                            static_cast<std::uint16_t>(mChar->GetSkill(STEALING) * 2));
+                    std::int32_t fudgedStealing = RandomNum(mChar->GetSkill(STEALING),  static_cast<std::uint16_t>(mChar->GetSkill(STEALING) * 2));
                     if (fudgedStealing >= chanceToSteal) {
                         // redo stealing code here
-                        s->SysMessage(549,
-                                      targetRegion->GetName()
+                        s->SysMessage(549, targetRegion->GetName()
                                       .c_str()); // Congrats go to you, for you have successfully
                         // dealt %s a nasty blow this day!
-                        targetRegion->DoDamage(targetRegion->GetHealth() /
-                                               2); // we reduce the region's health by half
+                        targetRegion->DoDamage(targetRegion->GetHealth() / 2); // we reduce the region's health by half
                         for (auto &toCheck : MapRegion->PopulateList(mChar)) {
                             if (toCheck) {
                                 CItem *iTownStone = nullptr;
                                 auto regItems = toCheck->GetItemList();
                                 for (const auto &itemCheck : regItems->collection()) {
                                     if (ValidateObject(itemCheck)) {
-                                        if (itemCheck->GetType() == IT_TOWNSTONE &&
-                                            itemCheck->GetId() != 0x14F0) {
+                                        if (itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetId() != 0x14F0) {
                                             // found our townstone
                                             iTownStone = itemCheck;
                                             break;
@@ -283,13 +273,10 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
                                     auto charPack = mChar->GetPackItem();
                                     if (ValidateObject(charPack)) {
                                         iTownStone->SetCont(charPack);
-                                        iTownStone->SetTempVar(CITV_MOREX,
-                                                               targetRegion->GetRegionNum());
-                                        s->SysMessage(
-                                                      550); // Quick, make it back to your town with the stone to
+                                        iTownStone->SetTempVar(CITV_MOREX, targetRegion->GetRegionNum());
+                                        s->SysMessage(550); // Quick, make it back to your town with the stone to
                                         // deal the death blow to this region!
-                                        targetRegion->TellMembers(
-                                                                  551, mChar->GetName().c_str()); // Quickly, %s has stolen
+                                        targetRegion->TellMembers(551, mChar->GetName().c_str()); // Quickly, %s has stolen
                                         // your treasured townstone!
                                         return;                             // dump out
                                     }
@@ -298,8 +285,7 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
                         }
                     }
                     else {
-                        s->SysMessage(
-                                      552); // Try as you might, you have not the ability to seize the day.
+                        s->SysMessage(552); // Try as you might, you have not the ability to seize the day.
                     }
                 }
                 else {
@@ -314,15 +300,10 @@ void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t t
             targetRegion = CalcRegionFromXY(mChar->GetX(), mChar->GetY(), mChar->WorldNumber(),
                                             mChar->GetInstanceId());
             for (std::uint8_t counter = 0; counter < RandomNum(5, 10); ++counter) {
-                Effects->PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6),
-                                             mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4,
-                                             17, 0, (RandomNum(0, 1) == 1));
-                Effects->PlayStaticAnimation(mChar->GetX() + RandomNum(-6, 6),
-                                             mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(),
-                                             0x373A + RandomNum(0, 4) * 0x10, 0x09, 0, 0);
+                Effects->PlayMovingAnimation(mChar, mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x36E4, 17, 0, (RandomNum(0, 1) == 1));
+                Effects->PlayStaticAnimation(mChar->GetX() + RandomNum(-6, 6), mChar->GetY() + RandomNum(-6, 6), mChar->GetZ(), 0x373A + RandomNum(0, 4) * 0x10, 0x09, 0, 0);
             }
-            targetRegion->DoDamage(
-                                   RandomNum(0, targetRegion->GetHealth() / 8)); // we reduce the region's health by half
+            targetRegion->DoDamage(RandomNum(0, targetRegion->GetHealth() / 8)); // we reduce the region's health by half
             break;
     }
 }
@@ -352,8 +333,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
                 emailAddy = packet->GetTextString(i);
                 break;
             default:
-                Console::shared().warning(util::format("Unknown textId %i with string %s", textId,
-                                                       packet->GetTextString(i).c_str()));
+                Console::shared().warning(util::format("Unknown textId %i with string %s", textId, packet->GetTextString(i).c_str()));
         }
     }
     
@@ -362,9 +342,7 @@ void HandleAccountModButton(CPIGumpMenuSelect *packet) {
         s->SysMessage(555); // An account by that name already exists!
         return;
     }
-    Console::shared().print(
-                            util::format("Attempting to add username %s with password %s at emailaddy %s",
-                                         username.c_str(), password.c_str(), emailAddy.c_str()));
+    Console::shared().print(util::format("Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str()));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -385,8 +363,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     std::uint8_t i = 0;
     CChar *mChar = s->CurrcharObj();
     
-    if (!mChar->IsGM() && m > 990 && m < 999) // 990 - 999 reserved for online help system
-    {
+    if (!mChar->IsGM() && m > 990 && m < 999) { // 990 - 999 reserved for online help system
         s->SysMessage(337); // Unrecognized command.
         return;
     }
@@ -416,13 +393,11 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     std::uint16_t xStart = 0, xWidth = 680;
     std::uint16_t yStart = 0, yWidth = 420;
     
-    std::uint32_t bgImage = cwmWorldState->ServerData()->BackgroundPic();
+    std::uint32_t bgImage = static_cast<std::uint32_t>(ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]) ;
     
     // Set and resize the gumps background image.
-    toSend.addCommand(
-                      util::format("resizepic %u %u %u %u %u", xStart, yStart, bgImage, xWidth, yWidth));
-    toSend.addCommand(
-                      util::format("checkertrans %u %u %u %u", xStart + 5, yStart + 5, xWidth - 10, yWidth - 11));
+    toSend.addCommand(util::format("resizepic %u %u %u %u %u", xStart, yStart, bgImage, xWidth, yWidth));
+    toSend.addCommand(util::format("checkertrans %u %u %u %u", xStart + 5, yStart + 5, xWidth - 10, yWidth - 11));
     
     // Grab the first tag/value pair from the gump itemmenu respectivly
     std::string tag = ItemMenu->First();
@@ -432,8 +407,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // from page to page.
     
     // Next we create and position the close window button as well set its Down, and Up states.
-    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", xWidth - 32, yStart + 10, 0xA51,
-                                   0xA50, 1, 0, 1));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", xWidth - 32, yStart + 10, 0xA51, 0xA50, 1, 0, 1));
     
     linenum = 0;
     toSend.addCommand(util::format("text %u %u %u %u", 30, yStart + 13, 39, linenum++));
@@ -468,39 +442,32 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     }
     // Draw the current date to the gump
     char tbuffer[100];
-    szBuffer = util::format("%s %.8s%s", tmpBuffer, asciitime(tbuffer, 100, *today) + 11,
-                            ((isAM) ? "Am" : "Pm"));
+    szBuffer = util::format("%s %.8s%s", tmpBuffer, asciitime(tbuffer, 100, *today) + 11, ((isAM) ? "Am" : "Pm"));
     toSend.addCommand(util::format("text %u %u %u %u", 280, yStart + 13, 25, linenum++));
     toSend.addText(szBuffer);
     
     // add the next gump portion. New server level services, in the form of a gump Configuration,
     // and Accounts tabs to start. These are default tabs
-    toSend.addCommand(
-                      util::format("resizepic %u %u %u %u %u", xStart + 10, yStart + 62, 5054, 190, 340));
+    toSend.addCommand(util::format("resizepic %u %u %u %u %u", xStart + 10, yStart + 62, 5054, 190, 340));
     std::uint32_t tabNumber = 1;
     
     // Do the shard tab
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 17, yStart + 47, 0x138E, 0x138F, 0, 1, 0));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 17, yStart + 47, 0x138E, 0x138F, 0, 1, 0));
     szBuffer = "Objects";
     toSend.addCommand(util::format("text %u %u %u %u", 42, yStart + 46, 47, linenum++));
     toSend.addText(szBuffer);
     // Do the server tab
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 105, yStart + 47, 0x138E, 0x138F, 0, 30, 1));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 105, yStart + 47, 0x138E, 0x138F, 0, 30, 1));
     toSend.addCommand(util::format("text %u %u %u %u", 132, yStart + 46, 47, linenum++));
     toSend.addText("Settings");
     
     // Need a seperator
-    toSend.addCommand(
-                      util::format("gumppictiled %u %u %u %u %u", xStart + 22, yWidth - 50, 165, 5, 0x2393));
+    toSend.addCommand(util::format("gumppictiled %u %u %u %u %u", xStart + 22, yWidth - 50, 165, 5, 0x2393));
     
     // Ok, now the job of pulling the rest of the first itemmenu information and making tabs for
     // them
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 65, yWidth - 40, 0x4B9, 0x4BA, 1, 0, 50002));
-    toSend.addCommand(
-                      util::format("croppedtext %u %u %u %u %u %u", 85, yWidth - 42, 150, 20, 94, linenum++));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 65, yWidth - 40, 0x4B9, 0x4BA, 1, 0, 50002));
+    toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 85, yWidth - 42, 150, 20, 94, linenum++));
     toSend.addText("Home");
     
     // Ok here we have some conditions that we need to filter. First being the menu called.
@@ -520,10 +487,8 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
         toSend.addCommand(util::format("text %u %u %u %u", 42, yStart + 46, 70, linenum++));
         toSend.addText(szBuffer);
         
-        toSend.addCommand(
-                          util::format("htmlgump %i %i %i %i %u %i %i", 245, 70, 220, 30, linenum++, 0, 0));
-        toSend.addText("<CENTER><BIG><BASEFONT color=#F64040>Ultima Offline eXperiment "
-                       "3</BASEFONT></BIG></CENTER>");
+        toSend.addCommand(util::format("htmlgump %i %i %i %i %u %i %i", 245, 70, 220, 30, linenum++, 0, 0));
+        toSend.addText("<CENTER><BIG><BASEFONT color=#F64040>Ultima Offline eXperiment 3</BASEFONT></BIG></CENTER>");
         
         // Shard Menu Version
         szBuffer = "v"s + UOXVersion::version + "."s + UOXVersion::build;
@@ -563,8 +528,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
         toSend.addCommand(util::format("text %u %u %u %u", 225, 260, 27, linenum++));
         toSend.addText(szBuffer);
         
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
         
         // here we hunt tags to make sure that we get them all from the itemmenus etc.
         std::uint8_t numCounter = 0;
@@ -596,14 +560,10 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
                 tag.data()[0] != ' ') // it actually has a picture, well bugger me! :>
             {
                 // Draw a frame for the item to make it stand out a touch more.
-                toSend.addCommand(
-                                  util::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100));
-                toSend.addCommand(
-                                  util::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82));
-                toSend.addCommand(util::format("tilepic %u %u %i", xOffset + 5, yOffset + 10,
-                                               std::stoi(tag, nullptr, 0)));
-                toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset,
-                                               yOffset + 65, 65, 20, 55, linenum++));
+                toSend.addCommand(util::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100));
+                toSend.addCommand(util::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82));
+                toSend.addCommand(util::format("tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0)));
+                toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++));
                 toSend.addText(data);
                 xOffset += XOFFSET;
                 if (xOffset > 480) {
@@ -622,12 +582,10 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
         for (i = 0; i < numCounter; i += 12) {
             toSend.addCommand(util::format("page %i", currentPage));
             if (i >= 10) {
-                toSend.addCommand(util::format("button %u %u %u %u %u %u", xStart + 240,
-                                               yWidth - 25, 0x25EB, 0x25EA, 0, currentPage - 1));
+                toSend.addCommand(util::format("button %u %u %u %u %u %u", xStart + 240,  yWidth - 25, 0x25EB, 0x25EA, 0, currentPage - 1));
             }
             if ((numCounter > 12) && ((i + 12) < numCounter)) {
-                toSend.addCommand(util::format("button %u %u %u %u %u %u", xWidth - 60, yWidth - 25,
-                                               0x25E7, 0x25E6, 0, currentPage + 1));
+                toSend.addCommand(util::format("button %u %u %u %u %u %u", xWidth - 60, yWidth - 25, 0x25E7, 0x25E6, 0, currentPage + 1));
             }
             currentPage++;
         }
@@ -651,8 +609,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
         // Drop in the page number text area image
         toSend.addCommand(util::format("gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E));
         // Add the page number text to the text area for display
-        toSend.addCommand(
-                          util::format("text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++));
+        toSend.addCommand(util::format("text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++));
         szBuffer = util::format("Menu %i - Page %i", m, pagenum - 1);
         toSend.addText(szBuffer);
         
@@ -666,11 +623,9 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
                 yOffset = SYOFFSET;
                 
                 // Drop in the page number text area image
-                toSend.addCommand(
-                                  util::format("gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E));
+                toSend.addCommand(util::format("gumppic %u %u %u", xStart + 300, yWidth - 28, 0x98E));
                 // Add the page number text to the text area for display
-                toSend.addCommand(
-                                  util::format("text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++));
+                toSend.addCommand(util::format("text %u %u %u %u", xStart + 335, yWidth - 27, 39, linenum++));
                 szBuffer = util::format("Menu %i - Page %i", m, pagenum - 1);
                 toSend.addText(szBuffer);
             }
@@ -684,23 +639,17 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
                 auto pairRange =
                 g_mmapAddMenuMap.equal_range(m);
                 for (auto CI = pairRange.first; CI != pairRange.second; CI++) {
-                    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 15, position,
-                                                   0x4B9, 0x4BA, 1, 0, buttonnum));
-                    toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 35,
-                                                   position - 3, 150, 20, 40, linenum));
+                    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 15, position,0x4B9, 0x4BA, 1, 0, buttonnum));
+                    toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 35,position - 3, 150, 20, 40, linenum));
                     toSend.addText(CI->second.itemName);
                     // check to make sure that we have an image now, seeing as we might not have one
                     // with the new changes in 0.98.01.2+
                     if (CI->second.tileId != 0) {
                         // Draw a frame for the item to make it stand out a touch more.
-                        toSend.addCommand(util::format("resizepic %u %u %u %u %u", xOffset, yOffset,
-                                                       0x53, 65, 100));
-                        toSend.addCommand(util::format("checkertrans %u %u %u %u", xOffset + 7,
-                                                       yOffset + 9, 52, 82));
-                        toSend.addCommand(util::format("tilepic %u %u %i", xOffset + 5,
-                                                       yOffset + 10, CI->second.tileId));
-                        toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset,
-                                                       yOffset + 65, 65, 20, 55, linenum++));
+                        toSend.addCommand(util::format("resizepic %u %u %u %u %u", xOffset, yOffset,0x53, 65, 100));
+                        toSend.addCommand(util::format("checkertrans %u %u %u %u", xOffset + 7,yOffset + 9, 52, 82));
+                        toSend.addCommand(util::format("tilepic %u %u %i", xOffset + 5,yOffset + 10, CI->second.tileId));
+                        toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset,yOffset + 65, 65, 20, 55, linenum++));
                         toSend.addText(CI->second.itemName);
                         toSend.addText(CI->second.itemName.c_str());
                         xOffset += XOFFSET;
@@ -716,23 +665,17 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
                 }
                 continue;
             }
-            toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 15, position, 0x4B9,
-                                           0x4BA, 1, 0, buttonnum));
-            toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 35, position - 3, 150,
-                                           20, 50, linenum++));
+            toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 15, position, 0x4B9,0x4BA, 1, 0, buttonnum));
+            toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", 35, position - 3, 150,20, 50, linenum++));
             toSend.addText(data);
             if (tag.data()[0] != '<' &&
                 tag.data()[0] != ' ') // it actually has a picture, well bugger me! :>
             {
                 // Draw a frame for the item to make it stand out a touch more.
-                toSend.addCommand(
-                                  util::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 110, 110));
-                toSend.addCommand(
-                                  util::format("buttontileart %u %u 0x0a9f 0x0aa1 %u %u %u %u %u %u %u", xOffset,
-                                               yOffset, 1, 0, buttonnum, std::stoi(tag, nullptr, 0), 0, 25, 25));
+                toSend.addCommand(util::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 110, 110));
+                toSend.addCommand(util::format("buttontileart %u %u 0x0a9f 0x0aa1 %u %u %u %u %u %u %u", xOffset,yOffset, 1, 0, buttonnum, std::stoi(tag, nullptr, 0), 0, 25, 25));
                 toSend.addCommand(util::format("tooltip 1042971 @%s@", data.c_str()));
-                toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset + 15,
-                                               yOffset + 85, 100, 20, 50, linenum++));
+                toSend.addCommand(util::format("croppedtext %u %u %u %u %u %u", xOffset + 15,yOffset + 85, 100, 20, 50, linenum++));
                 toSend.addText(data);
                 xOffset += XOFFSET;
                 if (xOffset > 640) {
@@ -751,13 +694,10 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
         for (i = 0; i < numCounter; i += 12) {
             toSend.addCommand(util::format("page %i", currentPage));
             if (i >= 10) {
-                toSend.addCommand(util::format("button %u %u %u %u %u %u", xStart + 240,
-                                               yWidth - 25, 0x25EB, 0x25EA, 0,
-                                               currentPage - 1)); // back button
+                toSend.addCommand(util::format("button %u %u %u %u %u %u", xStart + 240,yWidth - 25, 0x25EB, 0x25EA, 0,currentPage - 1)); // back button
             }
             if ((numCounter > 12) && ((i + 12) < numCounter)) {
-                toSend.addCommand(util::format("button %u %u %u %u %u %u", xWidth - 60, yWidth - 25,
-                                               0x25E7, 0x25E6, 0, currentPage + 1));
+                toSend.addCommand(util::format("button %u %u %u %u %u %u", xWidth - 60, yWidth - 25,0x25E7, 0x25E6, 0, currentPage + 1));
             }
             ++currentPage;
         }
@@ -775,37 +715,31 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addText("Quick-Access");
     
     // Need a seperator
-    toSend.addCommand(
-                      util::format("gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393));
+    toSend.addCommand(util::format("gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393));
     
     // Create the Commandlist button
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 45, yStart + 125, 0x2A30, 0x2A44, 1, 4, 50008));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 125, 0x2A30, 0x2A44, 1, 4, 50008));
     toSend.addCommand(util::format("text %u %u %u %u", 65, yStart + 129, 52, linenum++));
     toSend.addText("Commandlist");
     
     // Create the Wholist Online button
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 45, yStart + 155, 0x2A30, 0x2A44, 1, 4, 50009));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 155, 0x2A30, 0x2A44, 1, 4, 50009));
     toSend.addCommand(util::format("text %u %u %u %u", 62, yStart + 159, 52, linenum++));
     toSend.addText("Who is Online");
     
     // Create the Wholist Offline button
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 45, yStart + 185, 0x2A30, 0x2A44, 1, 4, 50010));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 185, 0x2A30, 0x2A44, 1, 4, 50010));
     toSend.addCommand(util::format("text %u %u %u %u", 60, yStart + 189, 52, linenum++));
     toSend.addText("Who is Offline");
     
     // Create the Reload DFNs button
-    toSend.addCommand(
-                      util::format("button %u %u %u %u %u %u %u", 45, yStart + 215, 0x2A30, 0x2A44, 1, 4, 50011));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 215, 0x2A30, 0x2A44, 1, 4, 50011));
     toSend.addCommand(util::format("text %u %u %u %u", 60, yStart + 219, 52, linenum++));
     toSend.addText("Reload DFNs");
     
     // Create the Server Shutdown button
     if (mChar->GetCommandLevel() >= CL_ADMIN) {
-        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 275, 0x2A58,
-                                       0x2A44, 1, 4, 50012));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 45, yStart + 275, 0x2A58,0x2A44, 1, 4, 50012));
         toSend.addCommand(util::format("text %u %u %u %u", 73, yStart + 279, 52, linenum++));
         toSend.addText("Shutdown");
     }
@@ -815,25 +749,21 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addCommand(util::format("resizepic %u %u %u %u %u", 210, 205, 5120, 250, 150));
     
     // Settings Header 1
-    toSend.addCommand(
-                      util::format("htmlgump %i %i %i %i %u %i %i", 235, 60, 200, 60, linenum++, 0, 0));
+    toSend.addCommand(util::format("htmlgump %i %i %i %i %u %i %i", 235, 60, 200, 60, linenum++, 0, 0));
     toSend.addText("<CENTER><BIG><BASEFONT color=#EECD8B>Menu Settings</BASEFONT></BIG></CENTER>");
     
     // Settings Header 2
-    toSend.addCommand(
-                      util::format("htmlgump %i %i %i %i %u %i %i", 235, 220, 200, 60, linenum++, 0, 0));
+    toSend.addCommand(util::format("htmlgump %i %i %i %i %u %i %i", 235, 220, 200, 60, linenum++, 0, 0));
     toSend.addText("<CENTER><BIG><BASEFONT color=#EECD8B>Item Settings</BASEFONT></BIG></CENTER>");
     
     // Settings Options START
     // Add at Location
     auto addAtLoc = mChar->GetTag("addAtLoc");
     if (addAtLoc.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
     }
     szBuffer = "Add item at specific location";
     toSend.addCommand(util::format("text %u %u %u %u", 255, 80, 94, linenum++));
@@ -846,12 +776,10 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // Repeat Add Object
     auto repeatAdd = mChar->GetTag("repeatAdd");
     if (repeatAdd.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
     }
     szBuffer = "Add item repeatedly";
     toSend.addCommand(util::format("text %u %u %u %u", 280, 120, 94, linenum++));
@@ -864,12 +792,10 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // Auto-reopen Menu
     auto reopenMenu = mChar->GetTag("reopenMenu");
     if (reopenMenu.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
     }
     szBuffer = "Automatically reopen menu";
     toSend.addCommand(util::format("text %u %u %u %u", 255, 160, 94, linenum++));
@@ -882,22 +808,18 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // Force-Decayable Off
     auto forceDecayOff = mChar->GetTag("forceDecayOff");
     if (forceDecayOff.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
     }
     // Force-Decayable On
     auto forceDecayOn = mChar->GetTag("forceDecayOn");
     if (forceDecayOn.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005));
     }
     szBuffer = "Default Decayable Status of Items";
     toSend.addCommand(util::format("text %u %u %u %u", 230, 240, 94, linenum++));
@@ -912,22 +834,18 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // Force-Movable Off
     auto forceMovableOff = mChar->GetTag("forceMovableOff");
     if (forceMovableOff.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
     }
     // Force-Movable On
     auto forceMovableOn = mChar->GetTag("forceMovableOn");
     if (forceMovableOn.m_IntValue == 1) {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
     }
     else {
-        toSend.addCommand(
-                          util::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007));
+        toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007));
     }
     szBuffer = "Default Movable State of Items";
     toSend.addCommand(util::format("text %u %u %u %u", 230, 300, 94, linenum++));
@@ -943,8 +861,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     // Reserved pages 900-999 for the online help system. (comming soon)
     toSend.addCommand("page 31");
     // Ok display the scroll that we use to display our help information
-    toSend.addCommand(
-                      util::format("resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200));
+    toSend.addCommand(util::format("resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200));
     // Write out what page were on (Mainly for debug purposes
     szBuffer = util::format("%5u", 31);
     toSend.addCommand(util::format("text %u %u %u %u", xWidth - 58, yWidth - 25, 110, linenum++));
@@ -954,8 +871,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     szBuffer = "Page 31";
     toSend.addCommand(util::format("text %u %u %u %u", 30, yStart + 200, 87, linenum++));
     toSend.addText(szBuffer);
-    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 104, yStart + 300, 0x138E, 0x138E,
-                                   0, 1, tabNumber++));
+    toSend.addCommand(util::format("button %u %u %u %u %u %u %u", 104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++));
     
 #if defined(UOX_DEBUG_MODE)
     Console::shared() << "==============================" << myendl;
@@ -1042,16 +958,11 @@ void CPage(CSocket *s, const std::string &reason) {
         }
         else {
             bool x = false;
-            
-            {
-                for (auto &iSock : Network->connClients) {
-                    CChar *iChar = iSock->CurrcharObj();
-                    if (iChar->IsGMPageable() || iChar->IsCounselor()) {
-                        x = true;
-                        iSock->SysMessage(oldstrutil::format(
-                                                             1024, "Counselor Page from %s [%x %x %x %x]: %s",
-                                                             mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str()));
-                    }
+            for (auto &iSock : Network->connClients) {
+                CChar *iChar = iSock->CurrcharObj();
+                if (iChar->IsGMPageable() || iChar->IsCounselor()) {
+                    x = true;
+                    iSock->SysMessage(oldstrutil::format(1024, "Counselor Page from %s [%x %x %x %x]: %s",mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str()));
                 }
             }
             if (x) {
@@ -1092,16 +1003,12 @@ void GMPage(CSocket *s, const std::string &reason) {
         }
         else {
             bool x = false;
-            {
-                for (auto &iSock : Network->connClients) {
-                    CChar *iChar = iSock->CurrcharObj();
-                    if (ValidateObject(iChar)) {
-                        if (iChar->IsGMPageable()) {
-                            x = true;
-                            iSock->SysMessage(oldstrutil::format(
-                                                                 1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(),
-                                                                 a1, a2, a3, a4, reason.c_str()));
-                        }
+            for (auto &iSock : Network->connClients) {
+                CChar *iChar = iSock->CurrcharObj();
+                if (ValidateObject(iChar)) {
+                    if (iChar->IsGMPageable()) {
+                        x = true;
+                        iSock->SysMessage(oldstrutil::format(1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(),a1, a2, a3, a4, reason.c_str()));
                     }
                 }
             }
@@ -1283,8 +1190,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 if (data.empty())
                     return;
                 
-                CPIHelpRequest toHandle(
-                                        s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                CPIHelpRequest toHandle(s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
                 toHandle.Handle();
             }
             else if (cmd == "GMPAGE") {
@@ -1300,23 +1206,20 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 if (data.empty())
                     return;
                 
-                std::uint16_t placeNum =
-                static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
+                std::uint16_t placeNum = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
                 if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
                     GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
                     
                     if (toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1) {
                         // Stay in same world if already in world 0 or 1
-                        mChar->SetLocation(toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(),
-                                           mChar->GetInstanceId());
+                        mChar->SetLocation(toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceId());
                         
                         // Additional update required for regular UO client
                         mChar->Update();
                     }
                     else if (toGoTo.worldNum != mChar->WorldNumber()) {
                         // Change map!
-                        mChar->SetLocation(toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum,
-                                           mChar->GetInstanceId());
+                        mChar->SetLocation(toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceId());
                         SendMapChange(toGoTo.worldNum, s);
                         
                         // Additional update required for regular UO client
@@ -1329,14 +1232,13 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 guiInfo.setTitle(UOXVersion::productName + " Status"s);
                 builtString = GetUptime();
                 guiInfo.AddData("Version",  UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s);
-//                guiInfo.AddData("Compiled By", UOXVersion::name);
+                //                guiInfo.AddData("Compiled By", UOXVersion::name);
                 guiInfo.AddData("Compiled By", "punt");
                 guiInfo.AddData("Uptime", builtString);
                 guiInfo.AddData("Accounts", static_cast<std::uint32_t>(Account::shared().size()));
                 guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
                 guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
-                guiInfo.AddData("Players in world",
-                                static_cast<std::uint32_t>(cwmWorldState->GetPlayersOnline()));
+                guiInfo.AddData("Players in world", static_cast<std::uint32_t>(cwmWorldState->GetPlayersOnline()));
                 guiInfo.Send(0, false, INVALIDSERIAL);
             }
             break;
@@ -1345,15 +1247,11 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 if (data.empty())
                     return;
                 
-                BuildAddMenuGump(
-                                 s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
+                BuildAddMenuGump(s, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)));
             }
             else if (cmd == "INFORMATION") {
                 builtString = GetUptime();
-                s->SysMessage(1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(),
-                              Account::shared().size(),
-                              ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM),
-                              ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
+                s->SysMessage(1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(), Account::shared().size(), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
             }
             break;
         case 'M':
@@ -1361,8 +1259,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 if (data.empty())
                     return;
                 
-                Skills->NewMakeMenu(s, std::stoi(util::trim(util::strip(data, "//")), nullptr, 0),
-                                    static_cast<std::uint8_t>(s->AddId()));
+                Skills->NewMakeMenu(s, std::stoi(util::trim(util::strip(data, "//")), nullptr, 0), static_cast<std::uint8_t>(s->AddId()));
             }
             break;
         case 'N':
@@ -1380,8 +1277,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 }
                 else {
                     s->XText(data);
-                    s->SendTargetCursor(0, TARGET_ADDSCRIPTNPC, 0, 1212,
-                                        data.c_str()); // Select location for NPC. [Number: %s]
+                    s->SendTargetCursor(0, TARGET_ADDSCRIPTNPC, 0, 1212, data.c_str()); // Select location for NPC. [Number: %s]
                 }
             }
             break;
@@ -1413,7 +1309,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             break;
         case 'V':
             if (cmd == "VERSION") {
-//                s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,  UOXVersion::name.c_str());
+                //                s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,  UOXVersion::name.c_str());
                 s->SysMessage("%s v%s(%s) [%s] Compiled by %s ", "UOXVersion::productName.c_str()", UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR,  "punt");
             }
             break;
@@ -1451,8 +1347,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
         std::int32_t tagVal = 0;
         TagMap customTag;
         std::map<std::string, TagMap> customTagMap;
-        if (button == 50000) // Add item at specific location
-        {
+        if (button == 50000) { // Add item at specific location
             tagName = "addAtLoc";
             auto addAtLoc = mChar->GetTag("addAtLoc");
             if (addAtLoc.m_IntValue == 1) {
@@ -1462,16 +1357,14 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 0;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("repeatAdd", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("repeatAdd", customTag));
                 }
             }
             else {
                 tagVal = 1;
             }
         }
-        else if (button == 50001) // Repeatedly add items until cancelled
-        {
+        else if (button == 50001) { // Repeatedly add items until cancelled
             tagName = "repeatAdd";
             auto addAtLoc = mChar->GetTag("repeatAdd");
             if (addAtLoc.m_IntValue == 1) {
@@ -1484,8 +1377,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 1;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("addAtLoc", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("addAtLoc", customTag));
                 }
             }
         }
@@ -1494,8 +1386,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
             serverCommands.command(s, mChar, "add");
             return;
         }
-        else if (button == 50003) // Automatically reopen menu after adding objects
-        {
+        else if (button == 50003) { // Automatically reopen menu after adding objects
             tagName = "reopenMenu";
             auto reopenMenu = mChar->GetTag("reopenMenu");
             if (reopenMenu.m_IntValue == 1) {
@@ -1508,13 +1399,11 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 1;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("reopenMenu", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("reopenMenu", customTag));
                 }
             }
         }
-        else if (button == 50004) // Toggle Force Decay state for items on/off
-        {
+        else if (button == 50004) { // Toggle Force Decay state for items on/off
             tagName = "forceDecayOff";
             auto forceDecayOff = mChar->GetTag("forceDecayOff");
             if (forceDecayOff.m_IntValue == 1) {
@@ -1527,13 +1416,11 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 0;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("forceDecayOn", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("forceDecayOn", customTag));
                 }
             }
         }
-        else if (button == 50005) // Toggle Force Decay state for items on/off
-        {
+        else if (button == 50005) { // Toggle Force Decay state for items on/off
             tagName = "forceDecayOn";
             auto forceDecayOn = mChar->GetTag("forceDecayOn");
             if (forceDecayOn.m_IntValue == 1) {
@@ -1546,13 +1433,11 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 0;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("forceDecayOff", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("forceDecayOff", customTag));
                 }
             }
         }
-        else if (button == 50006) // Toggle Force OFF Movable state for items
-        {
+        else if (button == 50006) { // Toggle Force OFF Movable state for items
             tagName = "forceMovableOff";
             auto forceMovableOff = mChar->GetTag("forceMovableOff");
             if (forceMovableOff.m_IntValue == 1) {
@@ -1565,13 +1450,11 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 0;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("forceMovableOn", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("forceMovableOn", customTag));
                 }
             }
         }
-        else if (button == 50007) // Toggle Force ON Movable state for items
-        {
+        else if (button == 50007) { // Toggle Force ON Movable state for items
             tagName = "forceMovableOn";
             auto forceMovableOn = mChar->GetTag("forceMovableOn");
             if (forceMovableOn.m_IntValue == 1) {
@@ -1584,8 +1467,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
                     customTag.m_IntValue = 0;
                     customTag.m_ObjectType = TagMap::TAGMAP_TYPE_INT;
                     customTag.m_StringValue = "";
-                    customTagMap.insert(
-                                        std::pair<std::string, TagMap>("forceMovableOff", customTag));
+                    customTagMap.insert(std::pair<std::string, TagMap>("forceMovableOff", customTag));
                 }
             }
         }
@@ -1646,8 +1528,7 @@ void HandleAddMenuButton(CSocket *s, std::uint32_t button) {
     // If we get here we have to check to see if there are any other entryies added via the
     // auto-addmenu code. Each item == 2 entries IE: IDNUM=Text name of Item, and ADDITEM=itemID to
     // add
-    auto pairRange =
-    g_mmapAddMenuMap.equal_range(addMenuLoc);
+    auto pairRange = g_mmapAddMenuMap.equal_range(addMenuLoc);
     std::uint32_t autoAddMenuItemCount = 0;
     for (auto CI = pairRange.first; CI != pairRange.second; ++CI) {
         autoAddMenuItemCount += 2; // Need to inicrement by 2 because each entry is measured in the
@@ -1785,16 +1666,13 @@ bool CPIGumpMenuSelect::Handle() {
     Console::shared() << "   SwitchCount : " << switchCount << myendl;
 #endif
     
-    if (gumpId == 461) // Virtue gump
-    {
+    if (gumpId == 461) { // Virtue gump
         CChar *targChar = nullptr;
-        if (buttonId == 1 && switchCount > 0) // Clicked on a players Virtue Gump icon
-        {
+        if (buttonId == 1 && switchCount > 0) { // Clicked on a players Virtue Gump icon
             serial_t targSer = tSock->GetDWord(19);
             targChar = CalcCharObjFromSer(targSer);
         }
-        else // Clicked an item on the virtue gump
-        {
+        else { // Clicked an item on the virtue gump
             targChar = CalcCharObjFromSer(id);
         }
         
@@ -1836,15 +1714,13 @@ bool CPIGumpMenuSelect::Handle() {
         // guild collection call goes here
         return true;
     }
-    else if (gumpId >= 0xFFFF) // script gump
-    {
+    else if (gumpId >= 0xFFFF) { // script gump
         cScript *toExecute = JSMapping->GetScript((gumpId - 0xFFFF));
         if (toExecute != nullptr) {
             toExecute->HandleGumpPress(this);
         }
     }
-    else if (gumpId == 21) // Multi functional gump
-    {
+    else if (gumpId == 21) { // Multi functional gump
         MultiGumpCallback(tSock, id, buttonId);
         return true;
     }
@@ -1925,8 +1801,7 @@ void CPIGumpInput::HandleTownstoneText(std::uint8_t index) {
     std::uint16_t resourceId;
     std::uint32_t amountToDonate;
     switch (index) {
-        case 6: // it's our donate resource button
-        {
+        case 6: { // it's our donate resource button
             CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
             amountToDonate = static_cast<std::uint32_t>(std::stoul(reply, nullptr, 0));
             if (amountToDonate == 0) {
@@ -2011,8 +1886,7 @@ bool CPIGumpChoice::Handle() {
     std::uint16_t sub = tSock->GetWord(7);
     CChar *mChar = tSock->CurrcharObj();
     
-    if (main >= JSGUMPMENUOFFSET) // Between 0x4000 and 0xFFFF
-    {
+    if (main >= JSGUMPMENUOFFSET) { // Between 0x4000 and 0xFFFF
         // Handle button presses via global JS script
         cScript *toExecute = JSMapping->GetScript(static_cast<std::uint16_t>(0));
         if (toExecute != nullptr) {
@@ -2154,8 +2028,7 @@ CGumpDisplay::CGumpDisplay(CSocket *target) : toSendTo(target) {
 //|	Purpose		-	Begin CGumpDisplay stuff by setting the target, clearing any
 // existing data, and setting the w / h
 // o------------------------------------------------------------------------------------------------o
-CGumpDisplay::CGumpDisplay(CSocket *target, std::uint16_t gumpWidth, std::uint16_t gumpHeight)
-: width(gumpWidth), height(gumpHeight), toSendTo(target) {
+CGumpDisplay::CGumpDisplay(CSocket *target, std::uint16_t gumpWidth, std::uint16_t gumpHeight) : width(gumpWidth), height(gumpHeight), toSendTo(target) {
     gumpData.resize(0);
 }
 
@@ -2195,8 +2068,7 @@ void CGumpDisplay::setTitle(const std::string &newTitle) { title = newTitle; }
 //|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two
 // is data
 // o------------------------------------------------------------------------------------------------o
-void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two,
-                    std::uint32_t type, serial_t serial) {
+void SendVecsAsGump(CSocket *sock, std::vector<std::string> &one, std::vector<std::string> &two, std::uint32_t type, serial_t serial) {
     CPSendGumpMenu toSend;
     toSend.GumpId(type);
     toSend.UserId(serial);
@@ -2233,15 +2105,11 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
     std::uint8_t ser1, ser2, ser3, ser4;
     //--static pages
     one.push_back("page 0");
-    temp = oldstrutil::format(maxsize, "resizepic 0 0 %i %i %i",
-                              cwmWorldState->ServerData()->BackgroundPic(), width, height);
+    temp = oldstrutil::format(maxsize, "resizepic 0 0 %i %i %i", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC], width, height);
     one.push_back(temp);
-    temp = oldstrutil::format(maxsize, "button %i 15 %i %i 1 0 1", width - 40,
-                              cwmWorldState->ServerData()->ButtonCancel(),
-                              cwmWorldState->ServerData()->ButtonCancel() + 1);
+    temp = oldstrutil::format(maxsize, "button %i 15 %i %i 1 0 1", width - 40, ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL], ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1);
     one.push_back(temp);
-    temp =
-    oldstrutil::format(maxsize, "text 45 15 %i 0", cwmWorldState->ServerData()->TitleColour());
+    temp = oldstrutil::format(maxsize, "text 45 15 %i 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR]);
     one.push_back(temp);
     
     temp = oldstrutil::format(maxsize, "page %u", pagenum);
@@ -2266,24 +2134,19 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
             one.push_back(temp);
         }
         if (gumpData[i]->type != 7) {
-            temp = oldstrutil::format(maxsize, "text 50 %u %i %u", position,
-                                      cwmWorldState->ServerData()->LeftTextColour(), linenum++);
+            temp = oldstrutil::format(maxsize, "text 50 %u %i %u", position, ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], linenum++);
             one.push_back(temp);
             if (isMenu) {
                 temp =
-                oldstrutil::format(maxsize, "button 20 %u %i %i 1 0 %u", position,
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1, buttonnum);
+                oldstrutil::format(maxsize, "button 20 %u %i %i 1 0 %u", position, ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, buttonnum);
                 one.push_back(temp);
             }
-            temp = oldstrutil::format(maxsize, "text %i %u %i %u", (width / 2) + 10, position,
-                                      cwmWorldState->ServerData()->RightTextColour(), linenum++);
+            temp = oldstrutil::format(maxsize, "text %i %u %i %u", (width / 2) + 10, position, ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR], linenum++);
             one.push_back(temp);
             two.push_back(gumpData[i]->name);
         }
         else {
-            temp = oldstrutil::format(maxsize, "text 30 %u %i %u", position,
-                                      cwmWorldState->ServerData()->LeftTextColour(), linenum++);
+            temp = oldstrutil::format(maxsize, "text 30 %u %i %u", position, ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], linenum++);
             one.push_back(temp);
         }
         
@@ -2316,8 +2179,7 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
                 else {
                     temp = gumpData[i]->stringValue;
                 }
-                if (temp.size() > stringWidth) // too wide for one line, CRAP!
-                {
+                if (temp.size() > stringWidth) { // too wide for one line, CRAP!
                     std::string temp2;
                     std::string temp3;
                     
@@ -2325,24 +2187,15 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
                     temp2 = temp.substr(0, stringWidth);
                     
                     two.push_back(temp2);
-                    for (std::uint32_t tempCounter = 0;
-                         tempCounter < tempWidth / (static_cast<size_t>(stringWidth) * 2) + 1;
-                         ++tempCounter) {
+                    for (std::uint32_t tempCounter = 0; tempCounter < tempWidth / (static_cast<size_t>(stringWidth) * 2) + 1; ++tempCounter) {
                         // LOOKATME
                         position += 20;
                         ++lineForButton;
-                        temp3 = util::format("text %i %u %i %u", 30, position,
-                                             cwmWorldState->ServerData()->RightTextColour(), linenum++);
+                        temp3 = util::format("text %i %u %i %u", 30, position, ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR], linenum++);
                         one.push_back(temp3);
-                        auto remaining = std::min<std::size_t>(
-                                                               (temp.size() - (static_cast<size_t>(tempCounter) + 1) *
-                                                                static_cast<size_t>(stringWidth) * 2),
-                                                               static_cast<size_t>(stringWidth) * 2);
+                        auto remaining = std::min<std::size_t>((temp.size() - (static_cast<size_t>(tempCounter) + 1) * static_cast<size_t>(stringWidth) * 2), static_cast<size_t>(stringWidth) * 2);
                         
-                        temp2 = temp.substr(static_cast<size_t>(stringWidth) +
-                                            static_cast<size_t>(tempCounter) *
-                                            static_cast<size_t>(stringWidth) * 2,
-                                            remaining);
+                        temp2 = temp.substr(static_cast<size_t>(stringWidth) + static_cast<size_t>(tempCounter) * static_cast<size_t>(stringWidth) * 2, remaining);
                         two.push_back(temp2);
                     }
                     // be stupid for the moment and do no text wrapping over pages
@@ -2381,18 +2234,12 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
                     for (std::uint32_t tempCounter = 0; tempCounter < tempWidth / sWidth + 1; ++tempCounter) {
                         position += 20;
                         ++lineForButton;
-                        temp3 = oldstrutil::format(512, "text %i %u %i %u", 30, position,
-                                                   cwmWorldState->ServerData()->LeftTextColour(),
-                                                   linenum++);
+                        temp3 = oldstrutil::format(512, "text %i %u %i %u", 30, position, ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], linenum++);
                         one.push_back(temp3);
                         auto remaining =
-                        std::min<std::size_t>(temp.size() - (static_cast<size_t>(tempCounter) + 1) *
-                                              static_cast<size_t>(sWidth),
-                                              static_cast<std::size_t>(sWidth));
+                        std::min<std::size_t>(temp.size() - (static_cast<size_t>(tempCounter) + 1) * static_cast<size_t>(sWidth), static_cast<std::size_t>(sWidth));
                         
-                        temp2 = temp.substr((static_cast<size_t>(tempCounter) + 1) *
-                                            static_cast<size_t>(sWidth),
-                                            remaining);
+                        temp2 = temp.substr((static_cast<size_t>(tempCounter) + 1) * static_cast<size_t>(sWidth), remaining);
                         
                         two.push_back(temp2);
                     }
@@ -2427,16 +2274,11 @@ void CGumpDisplay::Send(std::uint32_t gumpNum, bool isMenu, serial_t serial) {
         temp = "page " + std::to_string(pagenum);
         one.push_back(temp);
         if (i >= 10) {
-            temp = util::format(
-                                "button 10 %i %i %i 0 %u", height - 40, cwmWorldState->ServerData()->ButtonLeft(),
-                                cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1); // back button
+            temp = util::format("button 10 %i %i %i 0 %u", height - 40, ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT], ServerConfig::shared().ushortValues[UShortValue::BUTTONLEFT] + 1, pagenum - 1); // back button
             one.push_back(temp);
         }
         if (lineForButton > numToPage && static_cast<std::uint32_t>((i + numToPage)) < lineForButton) {
-            temp = util::format("button %i %i %i %i 0 %u", width - 40, height - 40,
-                                cwmWorldState->ServerData()->ButtonRight(),
-                                cwmWorldState->ServerData()->ButtonRight() + 1,
-                                pagenum + 1); // forward button
+            temp = util::format("button %i %i %i %i 0 %u", width - 40, height - 40, ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, pagenum + 1); // forward button
             one.push_back(temp);
         }
         ++pagenum;

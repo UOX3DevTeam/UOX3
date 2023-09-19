@@ -892,9 +892,9 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
     toSend.UserId(INVALIDSERIAL);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(util::format("resizepic 0 0 %u 600 400", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 560 10 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format("text 120 10 %u 0", cwmWorldState->ServerData()->TitleColour()));
+    toSend.addCommand(util::format("resizepic 0 0 %u 600 400", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 560 10 %u %i 1 0 1", ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL], ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 120 10 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR]));
     toSend.addCommand("page 1");
     
     auto gMaster = gList[trgGuild]->Master();
@@ -1170,16 +1170,16 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
     }
     
     for (std::uint16_t iCtr = 0; iCtr < numButtons; ++iCtr) {
-        toSend.addCommand(util::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, iCtr + 2));
-        toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * iCtr, cwmWorldState->ServerData()->LeftTextColour(), iCtr + 1));
+        toSend.addCommand(util::format("button 20 %i %i %i 1 0 %i", 30 + 20 * iCtr, ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1, iCtr + 2));
+        toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * iCtr, ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], iCtr + 1));
     }
     if (numText != 0) {
         for (std::uint16_t iCtr = 0; iCtr < numText; ++iCtr) {
             if (numColumns == 1) {
-                toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * (iCtr + numButtons), cwmWorldState->ServerData()->LeftTextColour(),  iCtr + numButtons + 1));
+                toSend.addCommand(util::format("text 50 %i %i %i", 30 + 20 * (iCtr + numButtons), ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR],  iCtr + numButtons + 1));
             }
             else {
-                toSend.addCommand(util::format("text %i %i %i %i", 50 + (iCtr % numColumns) * 100,  30 + 20 * ((iCtr / 2) + numButtons),  cwmWorldState->ServerData()->LeftTextColour(), iCtr + numButtons + 1));
+                toSend.addCommand(util::format("text %i %i %i %i", 50 + (iCtr % numColumns) * 100,  30 + 20 * ((iCtr / 2) + numButtons),  ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR], iCtr + numButtons + 1));
             }
         }
     }

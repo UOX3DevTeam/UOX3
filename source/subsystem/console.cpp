@@ -1032,7 +1032,7 @@ auto Console::process(std::int32_t c) -> void {
                     cwmWorldState->SetReloadingScripts(true);
                     // Reload all the files. If there are issues with these files change the order
                     // reloaded from here first.
-                    cwmWorldState->ServerData()->load();
+                    ServerConfig::shared().loadConfig(std::filesystem::path());
                     messageLoop << "CMD: Loading All";
                     messageLoop << "     Server INI... ";
                     // Reload accounts, and update Access.adm if new accounts available.

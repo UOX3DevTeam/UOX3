@@ -18,6 +18,7 @@
 #include "cmagic.h"
 #include "cmultiobj.h"
 #include "combat.h"
+#include "subsystem/console.hpp"
 #include "craces.h"
 #include "cscript.h"
 #include "csocket.h"
@@ -32,15 +33,16 @@
 #include "partysystem.h"
 #include "regions.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "spidermonkey.h"
 #include "ssection.h"
-#include "subsystem/console.hpp"
+#include "utility/strutil.hpp"
+
 #include "townregion.h"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyenums.h"
 #include "uoxjspropertyspecs.h"
-#include "utility/strutil.hpp"
 
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -2111,7 +2113,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 
                 // If hungerRate from Race is zero, use the global hunger rate from UOX.INI instead
                 if (hungerRate == 0) {
-                    hungerRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_HUNGERRATE);
+                    hungerRate = ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] ;
                 }
                 
                 *vp = INT_TO_JSVAL(hungerRate);
@@ -2132,7 +2134,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 
                 // If thirstRate from Race is zero, use the global thirst rate from UOX.INI instead
                 if (thirstRate == 0) {
-                    thirstRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_THIRSTRATE);
+                    thirstRate = ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE];
                 }
                 
                 *vp = INT_TO_JSVAL(thirstRate);
@@ -2632,7 +2634,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 // Use global loyalty rate from UOX.INI
                 std::uint16_t loyaltyRate = 0;
                 if (loyaltyRate == 0) {
-                    loyaltyRate = cwmWorldState->ServerData()->SystemTimer(tSERVER_LOYALTYRATE);
+                    loyaltyRate = ServerConfig::shared().timerSetting[TimerSetting::LOYALTYRATE];
                 }
                 
                 *vp = INT_TO_JSVAL(loyaltyRate);
@@ -3077,7 +3079,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->SetFixedLight(static_cast<std::uint8_t>(encaps.toInt()));
                 if (gPriv->GetSocket() != nullptr) {
                     if (static_cast<std::uint8_t>(encaps.toInt()) == 255) {
-                        DoLight(gPriv->GetSocket(), cwmWorldState->ServerData()->worldLightCurrentLevel());
+                        DoLight(gPriv->GetSocket(), cwmWorldState->uoTime.worldLightLevel);
                     }
                     else {
                         DoLight(gPriv->GetSocket(), static_cast<std::uint8_t>(encaps.toInt()));

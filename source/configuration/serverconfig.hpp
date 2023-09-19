@@ -57,7 +57,6 @@ private:
     static const std::vector<StartLocation> fallbackYoungLocation ;
 
     [[maybe_unused]] auto loadKeyValue(const std::string &key, const std::string &value) ->bool ;
-    [[maybe_unused]] auto reloadKeyValue(const std::string &key, const std::string &value) ->bool ;
     
     auto postCheck() ->void ;
     
@@ -72,7 +71,6 @@ public:
     static auto shared() ->ServerConfig& ;
     
     auto loadConfig(const std::filesystem::path &config) ->void ;
-    auto reloadConfig() ->void;
     auto writeConfig(const std::filesystem::path &config) const ->bool ;
     auto reset() ->void ;
     

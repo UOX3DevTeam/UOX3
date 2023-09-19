@@ -5,6 +5,7 @@
 #include "cjsengine.h"
 #include "cjsmapping.h"
 #include "classes.h"
+#include "subsystem/console.hpp"
 #include "cpacketsend.h"
 #include "craces.h"
 #include "cserverdefinitions.h"
@@ -15,11 +16,11 @@
 #include "jail.h"
 #include "mapstuff.h"
 #include "scriptc.h"
+#include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
 #include "stringutility.hpp"
-#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 // Implementation of town regions
@@ -66,17 +67,8 @@ const std::uint16_t DEFTOWN_PARENTREGION = 0;
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for CTownRegion class
 // o------------------------------------------------------------------------------------------------o
-CTownRegion::CTownRegion(std::uint16_t region)
-: regionNum(region), numGuards(DEFTOWN_NUMGUARDS), parentRegion(DEFTOWN_PARENTREGION),
-musicList(DEFTOWN_MUSICLIST), worldNumber(DEFTOWN_WORLDNUMBER),
-instanceId(DEFTOWN_INSTANCEID), mayorSerial(DEFTOWN_MAYOR), race(DEFTOWN_RACE),
-weather(DEFTOWN_WEATHER), goldReserved(DEFTOWN_GOLDRESERVED),
-visualAppearance(DEFTOWN_VISUALAPPEARANCE), timeSinceGuardsPaid(DEFTOWN_GUARDSPAID),
-timeSinceTaxedMembers(DEFTOWN_TAXEDMEMBERS), timeToElectionClose(DEFTOWN_ELECTIONCLOSE),
-timeToNextPoll(DEFTOWN_NEXTPOLL), guardsPurchased(DEFTOWN_GUARDSPURCHASED),
-resourceCollected(DEFTOWN_RESOURCECOLLECTED), taxedResource(DEFTOWN_TAXEDRESOURCE),
-taxedAmount(DEFTOWN_TAXEDAMOUNT), health(DEFTOWN_HEALTH),
-chanceFindBigOre(DEFTOWN_FINDBIGORE), jsScript(DEFTOWN_JSSCRIPT) {
+CTownRegion::CTownRegion(std::uint16_t region) : regionNum(region), numGuards(DEFTOWN_NUMGUARDS), parentRegion(DEFTOWN_PARENTREGION), musicList(DEFTOWN_MUSICLIST), worldNumber(DEFTOWN_WORLDNUMBER), instanceId(DEFTOWN_INSTANCEID), mayorSerial(DEFTOWN_MAYOR), race(DEFTOWN_RACE), weather(DEFTOWN_WEATHER), goldReserved(DEFTOWN_GOLDRESERVED), visualAppearance(DEFTOWN_VISUALAPPEARANCE), timeSinceGuardsPaid(DEFTOWN_GUARDSPAID), timeSinceTaxedMembers(DEFTOWN_TAXEDMEMBERS), timeToElectionClose(DEFTOWN_ELECTIONCLOSE), timeToNextPoll(DEFTOWN_NEXTPOLL), guardsPurchased(DEFTOWN_GUARDSPURCHASED), resourceCollected(DEFTOWN_RESOURCECOLLECTED), taxedResource(DEFTOWN_TAXEDRESOURCE), taxedAmount(DEFTOWN_TAXEDAMOUNT), health(DEFTOWN_HEALTH), chanceFindBigOre(DEFTOWN_FINDBIGORE), jsScript(DEFTOWN_JSSCRIPT) {
+    
     priv.reset();
     townMember.resize(0);
     alliedTowns.resize(0);
@@ -128,7 +120,8 @@ bool CTownRegion::load(Script *ss) {
         std::uint32_t duint;
         try {
             duint = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
-        } catch (...) {
+        }
+        catch (...) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
@@ -374,8 +367,7 @@ bool CTownRegion::AddAsTownMember(CChar &toAdd) {
     if (Races->CompareByRace(toAdd.GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false; // we can't have a racial enemy in the town!
     
-    for (std::uint32_t counter = 0; counter < townMember.size(); ++counter) // exhaustive error checking
-    {
+    for (std::uint32_t counter = 0; counter < townMember.size(); ++counter) { // exhaustive error checking
         if (townMember[counter].townMember == toAdd.GetSerial())
             return false; // already exists in our town!
     }
@@ -450,7 +442,8 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
         std::uint32_t duint;
         try {
             duint = static_cast<std::uint32_t>(std::stoul(data, nullptr, 0));
-        } catch (...) {
+        }
+        catch (...) {
             duint = 0;
         }
         switch ((UTag.data()[0])) {
@@ -478,8 +471,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         goodList[actgood].buyVal = static_cast<std::int32_t>(duint);
                     }
                     else {
-                        Console::shared().error(
-                                                "regions dfn -> You must write BUYABLE after GOOD <num>!");
+                        Console::shared().error("regions dfn -> You must write BUYABLE after GOOD <num>!");
                     }
                 }
                 break;
@@ -560,8 +552,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         auto csecs = oldstrutil::sections(data, ",");
                         if (csecs.size() > 1) {
                             // Use chance specified in orepref
-                            toPush.percentChance = static_cast<std::uint16_t>(
-                                                                              std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
+                            toPush.percentChance = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0));
                         }
                         else if (toPush.oreIndex->oreChance > 0) {
                             // No chance specified in orepref, use default chance of ore type
@@ -576,8 +567,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         orePrefLoaded = true;
                     }
                     else {
-                        Console::shared().error(util::format(
-                                                             "Invalid ore preference in region %i as %s", regionNum, oreName.c_str()));
+                        Console::shared().error(util::format("Invalid ore preference in region %i as %s", regionNum, oreName.c_str()));
                     }
                 }
                 break;
@@ -598,26 +588,20 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     if (actgood > -1) {
                         auto ssecs = oldstrutil::sections(data, " ");
                         if (ssecs.size() > 1) {
-                            goodList[actgood].rand1 =
-                            std::stoi(util::trim(util::strip(ssecs[0], "//")), nullptr, 0);
-                            goodList[actgood].rand2 =
-                            std::stoi(util::trim(util::strip(ssecs[1], "//")), nullptr, 0);
+                            goodList[actgood].rand1 = std::stoi(util::trim(util::strip(ssecs[0], "//")), nullptr, 0);
+                            goodList[actgood].rand2 = std::stoi(util::trim(util::strip(ssecs[1], "//")), nullptr, 0);
                         }
                         else {
                             goodList[actgood].rand1 = static_cast<std::int32_t>(duint);
                             goodList[actgood].rand2 = goodList[actgood].rand1;
                         }
                         if (goodList[actgood].rand2 < goodList[actgood].rand1) {
-                            Console::shared().error(
-                                                    util::format(" regions dfn -> You must write RANDOMVALUE NUM2[%i] "
-                                                                 "greater than NUM1[%i].",
-                                                                 goodList[actgood].rand2, goodList[actgood].rand1));
+                            Console::shared().error(util::format(" regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1));
                             goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
                         }
                     }
                     else {
-                        Console::shared().error(
-                                                " regions dfn -> You must write RANDOMVALUE after GOOD <num>!");
+                        Console::shared().error(" regions dfn -> You must write RANDOMVALUE after GOOD <num>!");
                     }
                 }
                 else if (UTag == "RACE") {
@@ -633,17 +617,14 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                         goodList[actgood].sellVal = static_cast<std::int32_t>(duint);
                     }
                     else {
-                        Console::shared().error(
-                                                " regions dfn -> You must write SELLABLE after GOOD <num>!");
+                        Console::shared().error(" regions dfn -> You must write SELLABLE after GOOD <num>!");
                     }
                 }
                 else if (UTag == "SPAWN") {
                     std::string sect = "PREDEFINED_SPAWN " + data;
                     CScriptSection *predefSpawn = FileLookup->FindEntry(sect, spawn_def);
                     if (predefSpawn == nullptr) {
-                        Console::shared().warning(util::format(
-                                                               "Undefined region spawn %s, check your regions.dfn and spawn.dfn files",
-                                                               data.c_str()));
+                        Console::shared().warning(util::format("Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str()));
                     }
                     else {
                         for (std::uint16_t i = 0xFFFF; i > 0; --i) {
@@ -668,10 +649,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     if (scriptId != 0) {
                         cScript *toExecute = JSMapping->GetScript(scriptId);
                         if (toExecute == nullptr) {
-                            Console::shared().warning(
-                                                      util::format("SCRIPT tag found with invalid script ID (%s) when "
-                                                                   "loading region data!",
-                                                                   util::ntos(scriptId).c_str()));
+                            Console::shared().warning(util::format("SCRIPT tag found with invalid script ID (%s) when loading region data!", util::ntos(scriptId).c_str()));
                         }
                         else {
                             this->AddScriptTrigger(scriptId);
@@ -906,8 +884,7 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
     }
     CChar *tChar = sock->CurrcharObj();
     if (!IsMemberOfTown(tChar)) {
-        if (Races->CompareByRace(tChar->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
-        {
+        if (Races->CompareByRace(tChar->GetRace(), race) <= RACE_ENEMY) { // if we're racial enemies
             if (tChar->GetTown() != 255) {
                 SendEnemyGump(sock);
             }
@@ -915,11 +892,8 @@ bool CTownRegion::DisplayTownMenu(CItem *used, CSocket *sock, std::int8_t flag) 
                 sock->SysMessage(1125); // ou can not join this town!
             }
         }
-        else if (tChar->GetTown() != 255) // another town person
-        {
-            if (tChar->GetTown() == regionNum ||
-                tChar->GetTown() == 0) // they think we're in this region!!!
-            {
+        else if (tChar->GetTown() != 255) { // another town person
+            if (tChar->GetTown() == regionNum || tChar->GetTown() == 0) { // they think we're in this region!!!
                 if (!AddAsTownMember((*tChar))) {
                     sock->SysMessage(1126); // An error occurred joining you to your rightful town,
                     // please call a GM!
@@ -971,34 +945,21 @@ void CTownRegion::SendEnemyGump(CSocket *sock) {
     toSend.GumpId(3);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 70 10 %u 0",
-                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    toSend.addCommand(util::format("resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC] ));
+    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",  ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL], ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 70 10 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR])); // text <Spaces from Left> <Space from top>
     // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
     
     toSend.addText("Enemy");
     toSend.addCommand("gumppic 25 50 1141"); // town name
-    toSend.addCommand(util::format("text 35 51 %u 1",
-                                   cwmWorldState->ServerData()->RightTextColour())); // town name
-    toSend.addCommand(util::format("text 25 71 %u 2",
-                                   cwmWorldState->ServerData()->RightTextColour())); // population
-    toSend.addCommand(util::format(
-                                   "text 55 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // Seize townstone
-    toSend.addCommand(util::format(
-                                   "text 55 131 %u 4", cwmWorldState->ServerData()->RightTextColour())); // Destroy townstone
+    toSend.addCommand(util::format("text 35 51 %u 1", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // town name
+    toSend.addCommand(util::format("text 25 71 %u 2", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // population
+    toSend.addCommand(util::format("text 55 111 %u 3", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // Seize townstone
+    toSend.addCommand(util::format("text 55 131 %u 4", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // Destroy townstone
     
-    toSend.addCommand(
-                      util::format("button 25 111 %u %i 1 0 61", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // seize townstone
-    toSend.addCommand(
-                      util::format("button 25 131 %u %i 1 0 62", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // destroy townstone
+    toSend.addCommand(util::format("button 25 111 %u %i 1 0 61", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // seize townstone
+    toSend.addCommand(util::format("button 25 131 %u %i 1 0 62", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // destroy townstone
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format("Population %i", GetPopulation()));
     toSend.addText("Seize Townstone");
@@ -1031,36 +992,21 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
     toSend.GumpId(3);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 70 10 %u 0",
-                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    toSend.addCommand(util::format("resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL],ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 70 10 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR])); // text <Spaces from Left> <Space from top>
     // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
     
     toSend.addText("Outsider");              // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
-    toSend.addCommand(util::format("text 35 51 %u 1",
-                                   cwmWorldState->ServerData()->RightTextColour())); // town name
-    toSend.addCommand(util::format("text 25 71 %u 2",
-                                   cwmWorldState->ServerData()->RightTextColour())); // population
-    toSend.addCommand(util::format("text 55 91 %u 3",
-                                   cwmWorldState->ServerData()->RightTextColour())); // join town
-    toSend.addCommand(util::format(
-                                   "text 55 111 %u 4",
-                                   cwmWorldState->ServerData()
-                                   ->RightTextColour())); // view taxes (to help make decisions about joining?)
+    toSend.addCommand(util::format("text 35 51 %u 1", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // town name
+    toSend.addCommand(util::format("text 25 71 %u 2", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // population
+    toSend.addCommand(util::format("text 55 91 %u 3", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // join town
+    toSend.addCommand(util::format("text 55 111 %u 4", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // view taxes (to help make decisions about joining?)
     
-    toSend.addCommand(util::format("button 25 91 %u %i 1 0 41",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // leave town
-    toSend.addCommand(util::format("button 25 111 %u %i 1 0 3",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view taxes
+    toSend.addCommand(util::format("button 25 91 %u %i 1 0 41", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // leave town
+    toSend.addCommand(util::format("button 25 111 %u %i 1 0 3", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view taxes
     
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     
@@ -1084,14 +1030,9 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     toSend.GumpId(3);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 70 10 %u 0",
-                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    toSend.addCommand(util::format("resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1", ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL],ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 70 10 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR])); // text <Spaces from Left> <Space from top>
     // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
     
@@ -1099,50 +1040,24 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     
     toSend.addCommand("gumppic 25 50 1141"); // town name
     toSend.addCommand("gumppic 25 260 1141");
-    toSend.addCommand(util::format("text 35 51 %u 1",
-                                   cwmWorldState->ServerData()->RightTextColour())); // town name
-    toSend.addCommand(util::format("text 25 71 %u 2",
-                                   cwmWorldState->ServerData()->RightTextColour())); // population
-    toSend.addCommand(util::format("text 55 91 %u 3",
-                                   cwmWorldState->ServerData()->RightTextColour())); // set taxes
-    toSend.addCommand(util::format(
-                                   "text 55 280 %u 4", cwmWorldState->ServerData()->RightTextColour())); // return to main menu
-    toSend.addCommand(util::format(
-                                   "text 55 111 %u 5", cwmWorldState->ServerData()->RightTextColour())); // list town members
-    toSend.addCommand(
-                      util::format("text 55 131 %u 6",
-                                   cwmWorldState->ServerData()->RightTextColour())); // force early election
-    toSend.addCommand(
-                      util::format("text 55 151 %u 7",
-                                   cwmWorldState->ServerData()->RightTextColour())); // purchase more guards
-    toSend.addCommand(util::format("text 55 171 %u 8",
-                                   cwmWorldState->ServerData()->RightTextColour())); // fire a guard
-    toSend.addCommand(util::format(
-                                   "text 55 261 %u 9", cwmWorldState->ServerData()->RightTextColour())); // treasury amount
-    toSend.addCommand(util::format("text 55 191 %u 10",
-                                   cwmWorldState->ServerData()->RightTextColour())); // make ally
+    toSend.addCommand(util::format("text 35 51 %u 1", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // town name
+    toSend.addCommand(util::format("text 25 71 %u 2", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // population
+    toSend.addCommand(util::format("text 55 91 %u 3", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // set taxes
+    toSend.addCommand(util::format("text 55 280 %u 4", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // return to main menu
+    toSend.addCommand(util::format("text 55 111 %u 5", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // list town members
+    toSend.addCommand(util::format("text 55 131 %u 6", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // force early election
+    toSend.addCommand(util::format("text 55 151 %u 7", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // purchase more guards
+    toSend.addCommand(util::format("text 55 171 %u 8", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // fire a guard
+    toSend.addCommand(util::format("text 55 261 %u 9", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // treasury amount
+    toSend.addCommand(util::format("text 55 191 %u 10", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // make ally
     
-    toSend.addCommand(util::format("button 25 91 %u %i 1 0 21",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // set taxes
-    toSend.addCommand(
-                      util::format("button 25 111 %u %i 1 0 22", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // list town members
-    toSend.addCommand(
-                      util::format("button 25 131 %u %i 1 0 23", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // force early election
-    toSend.addCommand(
-                      util::format("button 25 151 %u %i 1 0 24", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // purchase more guards
-    toSend.addCommand(util::format("button 25 171 %u %i 1 0 25",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // fire a guard
-    toSend.addCommand(
-                      util::format("button 25 280 %u %i 1 0 40", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // return to main menu
-    toSend.addCommand(
-                      util::format("button 25 191 %u %i 1 0 26", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // make ally of other town
+    toSend.addCommand(util::format("button 25 91 %u %i 1 0 21", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // set taxes
+    toSend.addCommand(util::format("button 25 111 %u %i 1 0 22", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // list town members
+    toSend.addCommand(util::format("button 25 131 %u %i 1 0 23", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // force early election
+    toSend.addCommand(util::format("button 25 151 %u %i 1 0 24", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // purchase more guards
+    toSend.addCommand(util::format("button 25 171 %u %i 1 0 25", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT],  ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // fire a guard
+    toSend.addCommand(util::format("button 25 280 %u %i 1 0 40", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT],  ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // return to main menu
+    toSend.addCommand(util::format("button 25 191 %u %i 1 0 26", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // make ally of other town
     
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     toSend.addText(util::format(Dictionary->GetEntry(1130, sLang), GetPopulation()));
@@ -1170,67 +1085,34 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     toSend.GumpId(3);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 70 10 %u 0",
-                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    toSend.addCommand(util::format("resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1", ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL],ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 70 10 %u 0",ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR])); // text <Spaces from Left> <Space from top>
     // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
     
     toSend.addText("Generic View");          // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
-    toSend.addCommand(util::format("text 35 51 %u 1",
-                                   cwmWorldState->ServerData()->RightTextColour())); // town name
-    toSend.addCommand(util::format("text 25 71 %u 2",
-                                   cwmWorldState->ServerData()->RightTextColour())); // population
-    toSend.addCommand(util::format("text 55 91 %u 3",
-                                   cwmWorldState->ServerData()->RightTextColour())); // leave town
-    toSend.addCommand(util::format("text 55 111 %u 4",
-                                   cwmWorldState->ServerData()->RightTextColour())); // view taxes
-    toSend.addCommand(
-                      util::format("text 55 131 %u 5",
-                                   cwmWorldState->ServerData()->RightTextColour())); // toggle town title on/off
-    toSend.addCommand(util::format(
-                                   "text 55 151 %u 6", cwmWorldState->ServerData()->RightTextColour())); // vote for mayor
-    toSend.addCommand(util::format(
-                                   "text 55 171 %u 7", cwmWorldState->ServerData()->RightTextColour())); // donate resource
-    toSend.addCommand(
-                      util::format("tilepic 205 171 %u", GetResourceId())); // picture of the resource
-    toSend.addCommand(util::format("text 55 191 %u 8",
-                                   cwmWorldState->ServerData()->RightTextColour())); // view budget
-    toSend.addCommand(util::format(
-                                   "text 55 211 %u 9", cwmWorldState->ServerData()->RightTextColour())); // view allied towns
-    toSend.addCommand(util::format(
-                                   "text 55 231 %u 10", cwmWorldState->ServerData()->RightTextColour())); // view enemy towns
+    toSend.addCommand(util::format("text 35 51 %u 1",ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // town name
+    toSend.addCommand(util::format("text 25 71 %u 2", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // population
+    toSend.addCommand(util::format("text 55 91 %u 3",ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // leave town
+    toSend.addCommand(util::format("text 55 111 %u 4",ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // view taxes
+    toSend.addCommand(util::format("text 55 131 %u 5",ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // toggle town title on/off
+    toSend.addCommand(util::format("text 55 151 %u 6", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // vote for mayor
+    toSend.addCommand(util::format("text 55 171 %u 7", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // donate resource
+    toSend.addCommand(util::format("tilepic 205 171 %u", GetResourceId())); // picture of the resource
+    toSend.addCommand(util::format("text 55 191 %u 8", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // view budget
+    toSend.addCommand(util::format("text 55 211 %u 9", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // view allied towns
+    toSend.addCommand(util::format("text 55 231 %u 10", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // view enemy towns
     
-    toSend.addCommand(util::format("button 25 91 %u %i 1 0 2",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // leave town
-    toSend.addCommand(util::format("button 25 111 %u %i 1 0 3",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view taxes
-    toSend.addCommand(util::format("button 25 131 %u %i 1 0 4",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // toggle title
-    toSend.addCommand(
-                      util::format("button 25 151 %u %i 1 0 5", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // vote for mayor
-    toSend.addCommand(util::format("button 25 171 %u %i 1 0 6",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // donate gold
-    toSend.addCommand(util::format("button 25 191 %u %i 1 0 7",
-                                   cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view budget
-    toSend.addCommand(
-                      util::format("button 25 211 %u %i 1 0 8", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view allied towns
-    toSend.addCommand(
-                      util::format("button 25 231 %u %i 1 0 9", cwmWorldState->ServerData()->ButtonRight(),
-                                   cwmWorldState->ServerData()->ButtonRight() + 1)); // view enemy towns
+    toSend.addCommand(util::format("button 25 91 %u %i 1 0 2", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // leave town
+    toSend.addCommand(util::format("button 25 111 %u %i 1 0 3", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT],  ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view taxes
+    toSend.addCommand(util::format("button 25 131 %u %i 1 0 4", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // toggle title
+    toSend.addCommand(util::format("button 25 151 %u %i 1 0 5", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // vote for mayor
+    toSend.addCommand(util::format("button 25 171 %u %i 1 0 6", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // donate gold
+    toSend.addCommand(util::format("button 25 191 %u %i 1 0 7", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view budget
+    toSend.addCommand(util::format("button 25 211 %u %i 1 0 8", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view allied towns
+    toSend.addCommand(util::format("button 25 231 %u %i 1 0 9", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // view enemy towns
     
     CChar *mChar = sock->CurrcharObj();
     unicodetypes_t sLang = sock->Language();
@@ -1238,21 +1120,16 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     toSend.addText(util::format(Dictionary->GetEntry(1139, sLang), GetPopulation()));
     toSend.addText(Dictionary->GetEntry(1140, sLang));
     toSend.addText(Dictionary->GetEntry(1141, sLang));
-    toSend.addText(
-                   util::format(Dictionary->GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
+    toSend.addText(util::format(Dictionary->GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
     toSend.addText(Dictionary->GetEntry(1143, sLang));
     toSend.addText(Dictionary->GetEntry(1144, sLang));
     toSend.addText(Dictionary->GetEntry(1145, sLang));
     toSend.addText(Dictionary->GetEntry(1146, sLang));
     toSend.addText(Dictionary->GetEntry(1147, sLang));
     
-    if (mChar->GetTownPriv() == 2 || mChar->IsGM()) // if we've got a mayor (remove isGM check!)
-    {
-        toSend.addCommand(util::format("button 25 281 %u %i 1 0 20",
-                                       cwmWorldState->ServerData()->ButtonRight(),
-                                       cwmWorldState->ServerData()->ButtonRight() + 1));
-        toSend.addCommand(
-                          util::format("text 55 281 %u 11", cwmWorldState->ServerData()->LeftTextColour()));
+    if (mChar->GetTownPriv() == 2 || mChar->IsGM()) { // if we've got a mayor (remove isGM check!)
+        toSend.addCommand(util::format("button 25 281 %u %i 1 0 20", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1));
+        toSend.addCommand(util::format("text 55 281 %u 11", ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR]));
         toSend.addText(Dictionary->GetEntry(1148, sLang));
     }
     toSend.Finalize();
@@ -1332,8 +1209,7 @@ bool CTownRegion::VoteForMayor(CSocket *sock) {
     CChar *srcChar = sock->CurrcharObj();
     CChar *target = CalcCharObjFromSer(serial);
     if (ValidateObject(target)) {
-        if (!IsMemberOfTown(target)) // he's not in our town!
-        {
+        if (!IsMemberOfTown(target)) { // he's not in our town!
             sock->SysMessage(1150); // The person you have voted for is not of your town.
             return false;
         }
@@ -1387,13 +1263,10 @@ bool CTownRegion::DonateResource(CSocket *s, std::int32_t amount) {
     goldReserved += amount;
     CChar *tChar = s->CurrcharObj();
     if (amount > 1000) {
-        s->SysMessage(
-                      1155,
-                      tChar->GetName().c_str()); // Thank you most kindly %s for your most generous donation!
+        s->SysMessage(1155, tChar->GetName().c_str()); // Thank you most kindly %s for your most generous donation!
     }
     else if (amount > 750) {
-        s->SysMessage(1156,
-                      tChar->GetName().c_str()); // Thank you %s for your significant contribution!
+        s->SysMessage(1156, tChar->GetName().c_str()); // Thank you %s for your significant contribution!
     }
     else if (amount > 500) {
         s->SysMessage(1157, tChar->GetName().c_str()); // Thank you %s for a generous donation!
@@ -1413,8 +1286,7 @@ bool CTownRegion::DonateResource(CSocket *s, std::int32_t amount) {
 //|	Purpose		-	Purchase a new town guard for the townregion
 // o------------------------------------------------------------------------------------------------o
 bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
-    if (number * 10000 < goldReserved) // if we don't have the cash
-    {
+    if (number * 10000 < goldReserved) { // if we don't have the cash
         sock->SysMessage(1160); // You cannot afford that many guards!
         return false;
     }
@@ -1451,7 +1323,7 @@ bool CTownRegion::ViewBudget(CSocket *sock) {
 bool CTownRegion::PeriodicCheck() {
     time_t now;
     time(&now);
-    if (difftime(now, timeSinceTaxedMembers) >= cwmWorldState->ServerData()->TownTaxPeriod()) {
+    if (difftime(now, timeSinceTaxedMembers) >= ServerConfig::shared().uintValues[UIntValue::TAXPERIOD]) {
         for (size_t memberCounter = 0; memberCounter < townMember.size(); ++memberCounter) {
             CChar *townMem = CalcCharObjFromSer(townMember[memberCounter].townMember);
             if (ValidateObject(townMem)) {
@@ -1476,9 +1348,7 @@ bool CTownRegion::PeriodicCheck() {
         }
         timeSinceTaxedMembers = static_cast<std::int32_t>(now);
     }
-    if (difftime(now, timeSinceGuardsPaid) >=
-        cwmWorldState->ServerData()->TownGuardPayment()) // init to 1000 seconds
-    {
+    if (difftime(now, timeSinceGuardsPaid) >= ServerConfig::shared().uintValues[UIntValue::GUARDPAID]) { // init to 1000 seconds
         if (goldReserved < static_cast<std::int32_t>((20 * numGuards))) {
             // insufficient resources
             bool enoughGuards = false;
@@ -1492,18 +1362,13 @@ bool CTownRegion::PeriodicCheck() {
     }
     
     if (now > timeToNextPoll && !townMember.empty()) {
-        TellMembers(
-                    1165); // Time to head to the polling booths again folks, vote for your mayor today!
+        TellMembers(1165); // Time to head to the polling booths again folks, vote for your mayor today!
         for (size_t counter = 0; counter < townMember.size(); ++counter) {
             townMember[counter].targVote = INVALIDSERIAL;
         }
         timeToElectionClose =
-        static_cast<std::int32_t>(now) +
-        cwmWorldState->ServerData()->TownNumSecsPollOpen(); // 2 days polls are open
-        timeToNextPoll =
-        timeToElectionClose +
-        cwmWorldState->ServerData()
-        ->TownNumSecsAsMayor(); // secs as mayor over the top of the end of the poll
+        static_cast<std::int32_t>(now) + ServerConfig::shared().uintValues[UIntValue::POLLTIME]; // 2 days polls are open
+        timeToNextPoll = timeToElectionClose + ServerConfig::shared().uintValues[UIntValue::MAYORTIME] ; // secs as mayor over the top of the end of the poll
         CChar *mayor = GetMayor();
         if (ValidateObject(mayor)) {
             mayor->SetTownpriv(1); // mayor becomes a basic member again, so he can't do anything
@@ -1511,8 +1376,7 @@ bool CTownRegion::PeriodicCheck() {
         }
     }
     
-    if (now > timeToElectionClose && !townMember.empty()) // election finished
-    {
+    if (now > timeToElectionClose && !townMember.empty()) { // election finished
         TellMembers(1166); // The voting has finished, thank you for your participation!
         CalcNewMayor();
         timeToElectionClose = timeToNextPoll + 1000; // just so long as it's after the next election
@@ -1540,25 +1404,17 @@ void CTownRegion::ViewTaxes(CSocket *sock) {
     toSend.GumpId(3);
     
     toSend.addCommand("page 0");
-    toSend.addCommand(
-                      util::format("resizepic 0 0 %u 320 340", cwmWorldState->ServerData()->BackgroundPic()));
-    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",
-                                   cwmWorldState->ServerData()->ButtonCancel(),
-                                   cwmWorldState->ServerData()->ButtonCancel() + 1)); // OKAY
-    toSend.addCommand(util::format(
-                                   "text 70 10 %u 0",
-                                   cwmWorldState->ServerData()->TitleColour())); // text <Spaces from Left> <Space from top>
+    toSend.addCommand(util::format("resizepic 0 0 %u 320 340", ServerConfig::shared().ushortValues[UShortValue::BACKGROUNDPIC]));
+    toSend.addCommand(util::format("button 280 10 %u %i 1 0 1",ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL],ServerConfig::shared().ushortValues[UShortValue::BUTTONCANCEL] + 1)); // OKAY
+    toSend.addCommand(util::format("text 70 10 %u 0", ServerConfig::shared().ushortValues[UShortValue::TITLECOLOR])); // text <Spaces from Left> <Space from top>
     // <Length, Color?> <# in order>
     toSend.addCommand("page 1");
     
     toSend.addText("Taxes");                 // our title
     toSend.addCommand("gumppic 25 50 1141"); // town name
-    toSend.addCommand(util::format("text 35 51 %u 1",
-                                   cwmWorldState->ServerData()->RightTextColour())); // town name
-    toSend.addCommand(util::format("text 35 71 %u 2",
-                                   cwmWorldState->ServerData()->RightTextColour())); // population
-    toSend.addCommand(util::format(
-                                   "text 35 111 %u 3", cwmWorldState->ServerData()->RightTextColour())); // # of resources
+    toSend.addCommand(util::format("text 35 51 %u 1", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // town name
+    toSend.addCommand(util::format("text 35 71 %u 2", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // population
+    toSend.addCommand(util::format( "text 35 111 %u 3", ServerConfig::shared().ushortValues[UShortValue::RIGHTTEXTCOLOR])); // # of resources
     toSend.addCommand(util::format("tilepic 5 111 %u", GetResourceId())); // picture of the resource
     
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
@@ -1626,22 +1482,17 @@ bool CTownRegion::MakeAlliedTown(std::uint16_t townToMake) {
     if (regionNum == townToMake)
         return false;
     
-    if (IsAlliedTown(townToMake)) // already allied
-    {
+    if (IsAlliedTown(townToMake)) { // already allied
         TellMembers(1171); // The mayor attempted to ally you with a town you already belong to.
         return false;
     }
     
-    if (Races->CompareByRace(cwmWorldState->townRegions[townToMake]->GetRace(), race) <=
-        RACE_ENEMY) // if we're racial enemies
+    if (Races->CompareByRace(cwmWorldState->townRegions[townToMake]->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false;
     
     // let's ally ourselves
     alliedTowns.push_back(townToMake);
-    TellMembers(1172, name.c_str(),
-                cwmWorldState->townRegions[townToMake]
-                ->GetName()
-                .c_str()); // Your town of %s has now allied itself with %s.
+    TellMembers(1172, name.c_str(), cwmWorldState->townRegions[townToMake]->GetName().c_str()); // Your town of %s has now allied itself with %s.
     return true;
 }
 
@@ -1709,8 +1560,7 @@ void CTownRegion::SetRace(raceid_t newRace) { race = newRace; }
 void CTownRegion::SendAlliedTowns(CSocket *sock) {
     CGumpDisplay Ally(sock, 300, 300);
     
-    auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(),
-                             alliedTowns.size()); // Allied Towns (%i)
+    auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(), alliedTowns.size()); // Allied Towns (%i)
     Ally.setTitle(temp);
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
         Ally.AddData(cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " ");
@@ -1747,13 +1597,10 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
     auto Enemy = CGumpDisplay(sock, 300, 300);
     
     std::uint8_t enemyCount = 0;
-    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
-                  [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
-        if ((entry.first != regionNum) &&
-            (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
+    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
+        if ((entry.first != regionNum) && (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
             ++enemyCount;
-            Enemy.AddData(entry.second->GetName(),
-                          Races->Name(entry.second->GetRace()));
+            Enemy.AddData(entry.second->GetName(), Races->Name(entry.second->GetRace()));
         }
     });
     
@@ -1769,8 +1616,7 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::Possess(CTownRegion *possessorTown) {
     possessorTown->SetRace(race);
-    possessorTown->TellMembers(
-                               1175); // There has been an influx of money due to theft of another town's stone!
+    possessorTown->TellMembers(1175); // There has been an influx of money due to theft of another town's stone!
     possessorTown->SetReserves(possessorTown->GetReserves() + GetReserves() / 3 * 2);
     possessorTown->SetTaxesLeft(possessorTown->GetTaxes() + GetTaxes() / 3 * 2);
     TellMembers(1176); // The town has been destroyed, beware the guards!
@@ -1938,8 +1784,7 @@ void CTownRegion::AddScriptTrigger(std::uint16_t newValue) {
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::RemoveScriptTrigger(std::uint16_t newValue) {
     // Remove all elements containing specified script trigger from vector
-    scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue),
-                         scriptTriggers.end());
+    scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue),scriptTriggers.end());
 }
 
 // o------------------------------------------------------------------------------------------------o

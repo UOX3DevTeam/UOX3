@@ -851,9 +851,7 @@ std::int32_t CSocket::Receive(std::int32_t x, bool doLog) {
         nexTime = GetClock();
         // You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and
         // NETRETRYCOUNT respectively
-        if (recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() ||
-            (nexTime - curTime) >
-            static_cast<std::uint32_t>(cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000)) { // looks like we're not going to get it!
+        if (recvAttempts == ServerConfig::shared().uintValues[UIntValue::NETRETRYCOUNT] || (nexTime - curTime) > static_cast<std::uint32_t>(ServerConfig::shared().uintValues[UIntValue::NETRCVTIMEOUT] * 1000)) { // looks like we're not going to get it!
             // April 3, 2004 - If we have some data, then we need to return it. Some of the network
             // logic is looking at count size. this way we can also validate on the calling side so
             // we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it,
@@ -1360,7 +1358,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
-        unicodeMessage.Colour(cwmWorldState->ServerData()->SysMsgColour());
+        unicodeMessage.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         unicodeMessage.Type(SYSTEM);
         unicodeMessage.Language("ENG");
         unicodeMessage.Name("System");
@@ -1375,7 +1373,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(INVALIDSERIAL);
         toAdd.SpokenTo(mChar->GetSerial());
-        toAdd.Colour(cwmWorldState->ServerData()->SysMsgColour());
+        toAdd.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         toAdd.Type(SYSTEM);
         toAdd.At(cwmWorldState->GetUICurrentTime());
         toAdd.TargType(SPTRG_INDIVIDUAL);
@@ -1399,7 +1397,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
     }
     
     if (txtColor == 0) {
-        txtColor = cwmWorldState->ServerData()->SysMsgColour();
+        txtColor = ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR];
     }
     
     if (ServerConfig::shared().enabled(ServerSwitch::UNICODEMESSAGE)) {
@@ -1454,7 +1452,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         CPUnicodeMessage unicodeMessage;
         unicodeMessage.Message(msg);
         unicodeMessage.Font(4);
-        unicodeMessage.Colour(cwmWorldState->ServerData()->SysMsgColour());
+        unicodeMessage.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         unicodeMessage.Type(SYSTEM);
         unicodeMessage.Language("ENG");
         unicodeMessage.Name("System");
@@ -1470,7 +1468,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         toAdd.Font(FNT_NORMAL);
         toAdd.Speaker(INVALIDSERIAL);
         toAdd.SpokenTo(mChar->GetSerial());
-        toAdd.Colour(cwmWorldState->ServerData()->SysMsgColour());
+        toAdd.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         toAdd.Type(SYSTEM);
         toAdd.At(cwmWorldState->GetUICurrentTime());
         toAdd.TargType(SPTRG_INDIVIDUAL);
@@ -2230,7 +2228,7 @@ void CSocket::OpenBank(CChar *i) {
     bankBox->SetLayer(IL_BANKBOX);
     bankBox->SetOwner(i);
     bankBox->SetDecayable(false);
-    bankBox->SetMaxItems(cwmWorldState->ServerData()->MaxPlayerBankItems());
+    bankBox->SetMaxItems(ServerConfig::shared().ushortValues[UShortValue::MAXPLAYERBANKITEM]);
     if (!bankBox->SetCont(i))
         return;
     

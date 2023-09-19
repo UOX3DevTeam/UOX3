@@ -686,9 +686,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().warning(
-                                              util::format("Invalid data found in RESISTCOLD tag inside Item script [%s]",
-                                                           sectionId.c_str()));
+                    Console::shared().warning(util::format("Invalid data found in RESISTCOLD tag inside Item script [%s]",sectionId.c_str()));
                 }
                 break;
             case DFNTAG_RESISTLIGHTNING:
@@ -701,9 +699,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().warning(util::format(
-                                                           "Invalid data found in RESISTLIGHTNING tag inside Item script [%s]",
-                                                           sectionId.c_str()));
+                    Console::shared().warning(util::format("Invalid data found in RESISTLIGHTNING tag inside Item script [%s]",sectionId.c_str()));
                 }
                 break;
             case DFNTAG_RESISTPOISON:
@@ -716,16 +712,13 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                     }
                 }
                 else {
-                    Console::shared().warning(
-                                              util::format("Invalid data found in RESISTPOISON tag inside Item script [%s]",
-                                                           sectionId.c_str()));
+                    Console::shared().warning(util::format("Invalid data found in RESISTPOISON tag inside Item script [%s]",sectionId.c_str()));
                 }
                 break;
             case DFNTAG_RESTOCK: {
                 // Apply global restock multiplier from INI to item's restock property
-                auto restockMultiplier = cwmWorldState->ServerData()->GlobalRestockMultiplier();
-                applyTo->SetRestock(
-                                    static_cast<std::uint16_t>(floor(static_cast<std::uint16_t>(ndata) * restockMultiplier)));
+                auto restockMultiplier = ServerConfig::shared().realNumbers[RealNumberConfig::RESTOCKMULTIPLER] ;
+                applyTo->SetRestock(static_cast<std::uint16_t>(floor(static_cast<std::uint16_t>(ndata) * restockMultiplier)));
                 break;
             }
             case DFNTAG_RAIN:

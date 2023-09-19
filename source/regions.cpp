@@ -226,8 +226,8 @@ CMapWorld::CMapWorld(std::uint8_t worldNum) {
     auto [mapWidth, mapHeight] = Map->SizeOfMap(worldNum);
     upperArrayX = static_cast<std::int16_t>(mapWidth / MapColSize);
     upperArrayY = static_cast<std::int16_t>(mapHeight / MapRowSize);
-    resourceX = static_cast<std::uint16_t>(mapWidth / cwmWorldState->ServerData()->ResourceAreaSize());
-    resourceY = static_cast<std::uint16_t>(mapHeight / cwmWorldState->ServerData()->ResourceAreaSize());
+    resourceX = static_cast<std::uint16_t>(mapWidth / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE] );
+    resourceY = static_cast<std::uint16_t>(mapHeight / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE]);
     
     size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
     if (resourceSize < 1) // ALWAYS initialize at least one resource region.
@@ -273,11 +273,10 @@ std::vector<CMapRegion> *CMapWorld::GetMapRegions() { return &mapRegions; }
 //|	Purpose		-	Returns the Resource region x and y is.
 // o------------------------------------------------------------------------------------------------o
 MapResource_st &CMapWorld::GetResource(std::int16_t x, std::int16_t y) {
-    const std::uint16_t gridX = (x / cwmWorldState->ServerData()->ResourceAreaSize());
-    const std::uint16_t gridY = (y / cwmWorldState->ServerData()->ResourceAreaSize());
+    const std::uint16_t gridX = (x / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE]);
+    const std::uint16_t gridY = (y / ServerConfig::shared().ushortValues[UShortValue::RESOURCEAREASIZE]);
     
-    size_t resIndex = ((static_cast<size_t>(gridX) * static_cast<size_t>(resourceY)) +
-                       static_cast<size_t>(gridY));
+    size_t resIndex = ((static_cast<size_t>(gridX) * static_cast<size_t>(resourceY)) + static_cast<size_t>(gridY));
     
     if (gridX >= resourceX || gridY >= resourceY || resIndex > mapResources.size()) {
         resIndex = 0;
@@ -325,8 +324,7 @@ void CMapWorld::SaveResources(std::uint8_t worldNum) {
 //|	Purpose		-	Loads the Resource data from the disk
 // o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources(std::uint8_t worldNum) {
-    mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(cwmWorldState->ServerData()->ResOre(), cwmWorldState->ServerData()->ResLogs(),cwmWorldState->ServerData()->ResFish(),BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResOreTime())),
-                                                                                  BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResLogTime())),BuildTimeValue(static_cast<R32>(cwmWorldState->ServerData()->ResFishTime()))));
+    mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(ServerConfig::shared().ushortValues[UShortValue::OREPERAREA], ServerConfig::shared().ushortValues[UShortValue::LOGPERAREA],ServerConfig::shared().ushortValues[UShortValue::FISHPERAREA],BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::ORE])), BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::LOG])),BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::FISH]))));
     
     auto resourceFile = ServerConfig::shared().directoryFor(dirlocation_t::SAVE)/std::filesystem::path("resource["s + util::ntos(worldNum) + "].bin"s);
     
