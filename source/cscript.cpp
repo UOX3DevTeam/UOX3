@@ -293,6 +293,7 @@ std::int32_t TryParseJSVal(jsval toParse) {
 }
 
 cScript::cScript(const std::filesystem::path &targFile, std::uint8_t rT) : isFiring(false), runTime(rT) {
+//    std::cout <<"Script name is: "<<targFile.string() << std::endl;
     for (std::int32_t i = 0; i < 3; ++i) {
         eventPresence[i].set();
         needsChecking[i].set();

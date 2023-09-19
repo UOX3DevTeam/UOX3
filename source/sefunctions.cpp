@@ -3509,7 +3509,7 @@ JSBool SE_GetServerSetting(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
                 }
                 case AllDataType::T_UINT16:
                     *rval = INT_TO_JSVAL(std::get<std::uint16_t>(vdata.value));
-                    break;
+                    return JS_TRUE ;
                 case AllDataType::T_INT16:
                     *rval = INT_TO_JSVAL(std::get<std::int16_t>(vdata.value));
                     return JS_TRUE ;

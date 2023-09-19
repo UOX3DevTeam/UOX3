@@ -651,6 +651,13 @@ auto ServerConfig::dataForKeyword(const std::string &key) const -> std::optional
         data.value = svalue.value() ;
         return data ;
     }
+    svalue = ruleSets.valueFor(ukey) ;
+    if (svalue.has_value()){
+        data.type = AllDataType::T_STRING ;
+        data.value = svalue.value() ;
+        return data ;
+    }
+
     //check directory
     svalue = directoryLocation.valueFor(ukey) ;
     if (svalue.has_value()){

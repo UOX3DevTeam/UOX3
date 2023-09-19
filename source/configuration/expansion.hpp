@@ -40,7 +40,7 @@ struct Expansion {
     auto operator[](type_t type) const -> const Era& ;
     auto operator[](type_t type)  ->  Era& ;
     auto setKeyValue(const std::string &key, const std::string &value) ->bool ;
-    auto valueFor(const std::string &key) const -> std::optional<Era> ;
+    auto valueFor(const std::string &key) const -> std::optional<std::string> ;
     auto normalizedEraString(const std::string &eraString, bool useDefault=true, bool inheritCore=true) const -> Era ;
     auto normalizedEra(const Era &era, bool coreEnum=false) const -> const std::string & ;
 };

@@ -55,12 +55,12 @@ auto Expansion::setKeyValue(const std::string &key, const std::string &value) ->
     return rvalue ;
 }
 //======================================================================
-auto Expansion::valueFor(const std::string &key) const -> std::optional<Era> {
+auto Expansion::valueFor(const std::string &key) const -> std::optional<std::string> {
     auto iter = NAMETYPEMAP.find(key) ;
     if (iter == NAMETYPEMAP.end()){
         return {};
     }
-    return values.at(iter->second);
+    return values.at(iter->second).describe();
 }
 //EraStringToEnum
 //======================================================================

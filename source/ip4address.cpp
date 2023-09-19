@@ -260,8 +260,7 @@ auto ip4list_t::bestmatch(const IP4Addr &value) const -> std::pair<IP4Addr, int>
         auto comp = addr.match(value);
         matches.push_back(std::make_pair(addr, comp));
     }
-    std::sort(matches.begin(), matches.end(),
-              [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
+    std::sort(matches.begin(), matches.end(), [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
                   return lhs.second < rhs.second;
               });
     return *matches.rbegin();
@@ -277,8 +276,7 @@ auto ip4list_t::bestmatch(std::uint32_t value, bool bigendian) const -> std::pai
         auto comp = addr.match(value);
         matches.push_back(std::make_pair(addr, comp));
     }
-    std::sort(matches.begin(), matches.end(),
-              [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
+    std::sort(matches.begin(), matches.end(),  [](const std::pair<IP4Addr, int> &lhs, const std::pair<IP4Addr, int> &rhs) {
                   return lhs.second < rhs.second;
               });
     return *matches.rbegin();
@@ -287,8 +285,7 @@ auto ip4list_t::bestmatch(std::uint32_t value, bool bigendian) const -> std::pai
 auto ip4list_t::add(const IP4Addr &value) -> void { ipaddresses.push_back(value); }
 //==================================================================================================
 auto ip4list_t::remove(const IP4Addr &value) -> void {
-    auto iter = std::find_if(ipaddresses.begin(), ipaddresses.end(),
-                             [value](const IP4Addr &entry) { return value.exact(entry); });
+    auto iter = std::find_if(ipaddresses.begin(), ipaddresses.end(), [value](const IP4Addr &entry) { return value.exact(entry); });
     if (iter != ipaddresses.end()) {
         ipaddresses.erase(iter);
     }

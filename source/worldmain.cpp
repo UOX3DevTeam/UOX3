@@ -39,6 +39,7 @@
 #include "skills.h"
 #include "speech.h"
 #include "townregion.h"
+
 CWorldMain *cwmWorldState = nullptr;
 
 // o------------------------------------------------------------------------------------------------o
@@ -82,6 +83,7 @@ CWorldMain::CWorldMain() : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), sec
     spawnRegions.clear();
     uoxTimeout.tv_sec = 0;
     uoxTimeout.tv_usec = 0;
+    availableIPs = ip4list_t::available();
     
 }
 //==================================================================================================
