@@ -58,8 +58,6 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/configuration/ushortvalue.hpp
 
 # Script Group
-	${PROJECT_SOURCE_DIR}/../../source/cserverdata.cpp  
-	${PROJECT_SOURCE_DIR}/../../source/cserverdata.h
 	${PROJECT_SOURCE_DIR}/../../source/cserverdefinitions.cpp
 	${PROJECT_SOURCE_DIR}/../../source/cserverdefinitions.h
 	${PROJECT_SOURCE_DIR}/../../source/dictionary.cpp

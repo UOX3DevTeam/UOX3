@@ -45,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <!-- Script group -->
-    <ClCompile Include="..\..\source\cserverdata.cpp">
-      <Filter>Source Files\Script</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\cserverdefinitions.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
@@ -325,6 +322,27 @@
     <ClCompile Include="..\..\source\type\era.cpp">
       <Filter>Source Files\type</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\configuration\realnumberconfig.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\shortvalue.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\spawnfacet.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\timersetting.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\uintvalue.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\type\uotime.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\configuration\ushortvalue.cpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -412,9 +430,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\network.h">
       <Filter>Source Files\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cserverdata.h">
-      <Filter>Source Files\Script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cserverdefinitions.h">
       <Filter>Source Files\Script</Filter>
@@ -604,6 +619,27 @@
     </ClInclude>
     <ClInclude Include="..\..\source\type\era.hpp">
       <Filter>Source Files\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\realnumberconfig.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\shortvalue.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\spawnfacet.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\timersetting.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\uintvalue.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\type\uotime.hpp">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\configuration\ushortvalue.hpp">
+      <Filter>Source Files\configuration</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

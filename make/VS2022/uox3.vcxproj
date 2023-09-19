@@ -116,7 +116,6 @@
     <ClCompile Include="..\..\source\configuration\uintvalue.cpp" />
     <ClCompile Include="..\..\source\configuration\ushortvalue.cpp" />
     <!-- Script group -->
-    <ClCompile Include="..\..\source\cserverdata.cpp" />
     <ClCompile Include="..\..\source\cserverdefinitions.cpp" />
     <ClCompile Include="..\..\source\dictionary.cpp" />
     <ClCompile Include="..\..\source\scriptc.cpp" />
@@ -228,7 +227,6 @@
     <ClInclude Include="..\..\source\configuration\uintvalue.hpp" />
     <ClInclude Include="..\..\source\configuration\ushortvalue.hpp" />
     <!-- Script group -->
-    <ClInclude Include="..\..\source\cserverdata.h" />
     <ClInclude Include="..\..\source\cserverdefinitions.h" />
     <ClInclude Include="..\..\source\dictionary.h" />
     <ClInclude Include="..\..\source\scriptc.h" />
