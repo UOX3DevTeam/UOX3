@@ -572,7 +572,7 @@
     <ClInclude Include="..\..\source\stringutility.hpp">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\strutil.hpp">
+    <ClInclude Include="..\..\source\utility\strutil.hpp">
       <Filter>Source Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\timeutility.hpp">

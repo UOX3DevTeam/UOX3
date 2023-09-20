@@ -13,6 +13,7 @@
 		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		5611F3402AB1492D009438EA /* serverstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F33E2AB1492D009438EA /* serverstring.cpp */; };
 		56A2617D2AB7866100DD2D84 /* uotime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A2617B2AB7866100DD2D84 /* uotime.cpp */; };
+		56A2625D2ABB2CA000DD2D84 /* weather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A2625B2ABB2CA000DD2D84 /* weather.cpp */; };
 		56A6A4A92AB338AF008A5EB7 /* era.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4A72AB338AF008A5EB7 /* era.cpp */; };
 		56A6A4AE2AB34BBE008A5EB7 /* expansion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */; };
 		56A6A4B92AB38568008A5EB7 /* realnumberconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4B72AB38568008A5EB7 /* realnumberconfig.cpp */; };
@@ -55,7 +56,6 @@
 		64A90131293E3DD4009B54DA /* craces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900A3293E3DD4009B54DA /* craces.cpp */; };
 		64A90132293E3DD4009B54DA /* cresponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900A5293E3DD4009B54DA /* cresponse.cpp */; };
 		64A90133293E3DD4009B54DA /* cscript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900A7293E3DD4009B54DA /* cscript.cpp */; };
-		64A90134293E3DD4009B54DA /* cserverdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900A9293E3DD4009B54DA /* cserverdata.cpp */; };
 		64A90135293E3DD4009B54DA /* cserverdefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900AB293E3DD4009B54DA /* cserverdefinitions.cpp */; };
 		64A90136293E3DD4009B54DA /* csocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900AE293E3DD4009B54DA /* csocket.cpp */; };
 		64A90137293E3DD4009B54DA /* cspawnregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B0293E3DD4009B54DA /* cspawnregion.cpp */; };
@@ -152,6 +152,10 @@
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
 		56A2617B2AB7866100DD2D84 /* uotime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uotime.cpp; sourceTree = "<group>"; };
 		56A2617C2AB7866100DD2D84 /* uotime.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uotime.hpp; sourceTree = "<group>"; };
+		56A2625A2ABB11D300DD2D84 /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
+		56A2625B2ABB2CA000DD2D84 /* weather.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = weather.cpp; sourceTree = "<group>"; };
+		56A2625C2ABB2CA000DD2D84 /* weather.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = weather.hpp; sourceTree = "<group>"; };
+		56A2625E2ABB3FB200DD2D84 /* random.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = random.hpp; sourceTree = "<group>"; };
 		56A6A4A72AB338AF008A5EB7 /* era.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = era.cpp; sourceTree = "<group>"; };
 		56A6A4A82AB338AF008A5EB7 /* era.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = era.hpp; sourceTree = "<group>"; };
 		56A6A4AC2AB34BBE008A5EB7 /* expansion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = expansion.cpp; sourceTree = "<group>"; };
@@ -1078,7 +1082,7 @@
 		64A90086293E3DD4009B54DA /* cguild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cguild.cpp; sourceTree = "<group>"; };
 		64A90087293E3DD4009B54DA /* cguild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cguild.h; sourceTree = "<group>"; };
 		64A90088293E3DD4009B54DA /* cgump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cgump.cpp; sourceTree = "<group>"; };
-		64A90089293E3DD4009B54DA /* Changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
+		64A90089293E3DD4009B54DA /* changelogbase.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changelogbase.txt; sourceTree = "<group>"; };
 		64A9008A293E3DD4009B54DA /* chtmlsystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chtmlsystem.cpp; sourceTree = "<group>"; };
 		64A9008B293E3DD4009B54DA /* chtmlsystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chtmlsystem.h; sourceTree = "<group>"; };
 		64A9008C293E3DD4009B54DA /* citem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = citem.cpp; sourceTree = "<group>"; };
@@ -3021,6 +3025,8 @@
 				56A6A4A82AB338AF008A5EB7 /* era.hpp */,
 				56A2617B2AB7866100DD2D84 /* uotime.cpp */,
 				56A2617C2AB7866100DD2D84 /* uotime.hpp */,
+				56A2625B2ABB2CA000DD2D84 /* weather.cpp */,
+				56A2625C2ABB2CA000DD2D84 /* weather.hpp */,
 			);
 			path = type;
 			sourceTree = "<group>";
@@ -3056,6 +3062,7 @@
 		56D6EEC22A9F76DD005355FA /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				56A2625E2ABB3FB200DD2D84 /* random.hpp */,
 				56D6EEC32A9F7707005355FA /* strutil.hpp */,
 			);
 			path = utility;
@@ -3117,7 +3124,8 @@
 				64E2F794293FCE6C00546A08 /* Network */,
 				64E2F797293FCE8C00546A08 /* OldUtility */,
 				64E2F796293FCE8400546A08 /* UOData */,
-				64A90089293E3DD4009B54DA /* Changelog.txt */,
+				64A90089293E3DD4009B54DA /* changelogbase.txt */,
+				56A2625A2ABB11D300DD2D84 /* changelog.txt */,
 				64A90103293E3DD4009B54DA /* uox3.cpp */,
 			);
 			name = source;
@@ -3364,6 +3372,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1430;
+				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					64A90069293E3DA3009B54DA = {
 						CreatedOnToolsVersion = 14.1;
@@ -3447,6 +3456,7 @@
 				64A9012E293E3DD4009B54DA /* cpacketreceive.cpp in Sources */,
 				64A9012A293E3DD4009B54DA /* cmdtable.cpp in Sources */,
 				56D6EEF82AA13174005355FA /* account.cpp in Sources */,
+				56A2625D2ABB2CA000DD2D84 /* weather.cpp in Sources */,
 				64A90120293E3DD4009B54DA /* cbaseobject.cpp in Sources */,
 				64A90135293E3DD4009B54DA /* cserverdefinitions.cpp in Sources */,
 				56AAE26C2AAF409C00D624FC /* serverfeature.cpp in Sources */,
@@ -3462,7 +3472,6 @@
 				64A90156293E3DD4009B54DA /* regions.cpp in Sources */,
 				64A90131293E3DD4009B54DA /* craces.cpp in Sources */,
 				56AAE2492AABB95300D624FC /* directorylocation.cpp in Sources */,
-				64A90134293E3DD4009B54DA /* cserverdata.cpp in Sources */,
 				64A90143293E3DD4009B54DA /* ip4address.cpp in Sources */,
 				64A90144293E3DD4009B54DA /* items.cpp in Sources */,
 				64A90138293E3DD4009B54DA /* cthreadqueue.cpp in Sources */,
@@ -3636,6 +3645,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
@@ -3664,6 +3674,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;

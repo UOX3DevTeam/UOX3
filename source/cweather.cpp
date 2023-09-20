@@ -184,15 +184,13 @@ void CWeather::NewDay() {
     
     if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= HeatChance()) {
         isHeatWave = true;
-        currentTemp =
-        RandomNum(static_cast<std::int32_t>(effTempMax), static_cast<std::int32_t>(HeatIntensityHigh()));
+        currentTemp = RandomNum(static_cast<std::int32_t>(effTempMax), static_cast<std::int32_t>(HeatIntensityHigh()));
         effTempMax = currentTemp;
         effTempMin = currentTemp;
     }
     else if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= ColdChance()) {
         isColdDay = true;
-        currentTemp =
-        RandomNum(static_cast<std::int32_t>(ColdIntensityHigh()), static_cast<std::int32_t>(effTempMin));
+        currentTemp = RandomNum(static_cast<std::int32_t>(ColdIntensityHigh()), static_cast<std::int32_t>(effTempMin));
         effTempMax = currentTemp;
         effTempMin = currentTemp;
     }

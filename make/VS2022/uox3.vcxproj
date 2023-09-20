@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\source\type\startlocation.cpp" />
     <ClCompile Include="..\..\source\type\era.cpp" />
     <ClCompile Include="..\..\source\type\uotime.cpp" />
+    <ClCompile Include="..\..\source\type\weather.cpp" />
     <!-- configuration group -->
     <ClCompile Include="..\..\source\configuration\assistantfeature.cpp" />
     <ClCompile Include="..\..\source\configuration\clientenable.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="..\..\source\type\era.hpp" />
     <ClInclude Include="..\..\source\type\startlocation.hpp" />
     <ClInclude Include="..\..\source\type\uotime.hpp" />
+    <ClInclude Include="..\..\source\type\weather.hpp" />
     <!-- configuration group -->
     <ClInclude Include="..\..\source\configuration\assistantfeature.hpp" />
     <ClInclude Include="..\..\source\configuration\clientenable.hpp" />
@@ -302,7 +304,8 @@
     <ClInclude Include="..\..\source\stringutility.hpp" />
     <ClInclude Include="..\..\source\timeutility.hpp" />
     <ClInclude Include="..\..\source\eventtimer.hpp" />
-    <ClInclude Include="..\..\source\strutil.hpp" />
+    <ClInclude Include="..\..\source\utility\strutil.hpp" />
+    <ClInclude Include="..\..\source\utility\random.hpp" />
     <!-- UOData group -->
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />

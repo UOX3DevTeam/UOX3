@@ -231,24 +231,6 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     Console::shared().printSectionBegin();
     Console::shared() << "UOX Server start up!" << myendl << "Welcome to " << UOXVersion::productName << " v" << UOXVersion::version << "." << UOXVersion::build << " (" << OS_STR << ")" << myendl;
     Console::shared().printSectionBegin();
-    /*
-    // We are going to load some of our basic data, if that goes ok, we then initialize classes,
-    // data, network and the classes
-    Console::shared() << "Processing INI Settings  ";
-    if (!std::filesystem::exists(configFile)) {
-        Console::shared().error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format("Cannot find UOX3 ini file: %s", configFile.string().c_str()));
-        return EXIT_FAILURE;
-    }
-    auto serverdata = CServerData();
-    if (!serverdata.load(configFile.string())) {
-        Console::shared().error(configFile.empty() ? "Error loading UOX3 ini file." : util::format("Error loading UOX3 ini file: %s", configFile.string().c_str()));
-        return EXIT_FAILURE;
-    }
-    Console::shared().printDone();
-    */
-    
-    // Start/Initalize classes, data, network
-//    startInitialize(serverdata);
     startInitialize();
     // Main Loop
     Console::shared().printSectionBegin();
@@ -488,7 +470,6 @@ auto startInitialize() -> void {
     auto startupStartTime = std::chrono::high_resolution_clock::now();
     
     cwmWorldState = &aWorld;
-//    cwmWorldState->SetServerData(serverdata);
     
     Console::shared() << "Initializing and creating class pointers... " << myendl;
     initClasses();

@@ -22,6 +22,8 @@ add_executable(uox3
     ${PROJECT_SOURCE_DIR}/../../source/type/era.hpp
     ${PROJECT_SOURCE_DIR}/../../source/type/uotime.cpp
     ${PROJECT_SOURCE_DIR}/../../source/type/uotime.hpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/weather.cpp
+    ${PROJECT_SOURCE_DIR}/../../source/type/weather.hpp
 
 # configuration
     ${PROJECT_SOURCE_DIR}/../../source/configuration/assistantfeature.cpp
@@ -211,8 +213,9 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.cpp
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/strutil.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/random.hpp
 # UOData group
-    ${PROJECT_SOURCE_DIR}/../../source/mapclasses.h  
+    ${PROJECT_SOURCE_DIR}/../../source/mapclasses.h
     ${PROJECT_SOURCE_DIR}/../../source/mapstuff.cpp
     ${PROJECT_SOURCE_DIR}/../../source/mapstuff.h
     ${PROJECT_SOURCE_DIR}/../../source/multimul.cpp

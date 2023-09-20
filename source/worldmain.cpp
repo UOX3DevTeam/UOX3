@@ -66,8 +66,8 @@ const bool DEFWORLD_CLASSESINITIALIZED = false;
 
 CWorldMain::CWorldMain() : error(DEFWORLD_ERROR), keepRun(DEFWORLD_KEEPRUN), secure(DEFWORLD_SECURE), hasLoaded(DEFWORLD_LOADED), uoTickCount(DEFWORLD_UOTICKCOUNT), startTime(DEFWORLD_STARTTIME), endTime(DEFWORLD_ENDTIME), lClock(DEFWORLD_LCLOCK), overflow(DEFWORLD_OVERFLOW), uiCurrentTime(DEFWORLD_UICURRENTTIME), oldTime(DEFWORLD_OLDTIME), newTime(DEFWORLD_NEWTIME), autoSaved(DEFWORLD_AUTOSAVED), worldSaveProgress(DEFWORLD_SAVEPROGRESS), playersOnline(DEFWORLD_PLAYERSONLINE), reloadingScripts(DEFWORLD_RELOADINGSCRIPTS), classesInitialized(DEFWORLD_CLASSESINITIALIZED) {
     
-    for (std::int32_t mTID = static_cast<std::int32_t>(tWORLD_NEXTFIELDEFFECT);
-         mTID < static_cast<std::int32_t>(tWORLD_COUNT); ++mTID) {
+    for (std::int32_t mTID = static_cast<std::int32_t>(tWORLD_NEXTFIELDEFFECT); mTID < static_cast<std::int32_t>(tWORLD_COUNT); ++mTID) {
+        
         worldTimers[mTID] = 0;
     }
     creatures.clear();

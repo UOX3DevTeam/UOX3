@@ -1,0 +1,11 @@
+
+
+
+09/1-20/2023 - It begins (based of "Official" UOX3 RC6)
+    Lowercased all files
+    removed global headers, included what was needed
+    redid accounts and resource loading methods
+    made console a singleton
+    replace cserverdata with serverconfig, made singleton, and entry processing
+    reformated
+    
