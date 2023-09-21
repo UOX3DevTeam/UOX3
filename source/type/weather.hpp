@@ -7,12 +7,23 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <iostream>
+#include <istream>
 #include <map>
 #include <string>
+#include <vector>
+
+#include "typedefs.h"
 
 struct UOTime ;
+class CChar ;
+class CBaseObject ;
+class CSocket ;
+class CItem ;
 
+//======================================================================
+// Weather (the weather attributes )
 //======================================================================
 struct Weather {
     enum type_t {
@@ -20,6 +31,7 @@ struct Weather {
         COLD, HEAT, LIGHTNING, POISON,
         SNOW, STORM, STORMBREW
     };
+    static constexpr auto numberweather = 11 ;  // This is for backward compatiblity, we should eliminate the need
     enum state_t {
         MAX=0,MIN,CURRENT
     };
@@ -35,10 +47,10 @@ struct Weather {
     struct State {
         std::array<float,3> value ;
         auto operator[](state_t state) const -> const float&{
-            return this->value[state] ;
+            return this->value.at(state) ;
         }
         auto operator[](state_t state)  -> float&{
-            return this->value[state] ;
+            return this->value.at(state) ;
         }
         State() {
             std::fill(value.begin(),value.end(),0.0) ;
@@ -50,10 +62,10 @@ struct Weather {
         std::array<State,4> impact ;
         Impact() {std::fill(impact.begin(),impact.end(),State());};
         auto operator[](impact_t impact) const -> const State& {
-            return this->impact[impact];
+            return this->impact.at(impact);
         }
         auto operator[](impact_t impact)  -> State& {
-            return this->impact[impact];
+            return this->impact.at(impact);
         }
     };
     //============================================================
@@ -70,10 +82,10 @@ struct Weather {
             std::fill(intensity.begin(),intensity.end(),0);
         }
         auto operator[](state_t state) const ->const std::int16_t&{
-            return this->intensity[state];
+            return this->intensity.at(state);
         }
         auto operator[](state_t state) -> std::int16_t& {
-            return this->intensity[state];
+            return this->intensity.at(state);
         }
     };
 
@@ -91,6 +103,46 @@ struct Weather {
     auto update(const UOTime &uotime) ->void ;
     auto newDay() ->void ;
     auto newHour() ->void ;
+    auto setValue(const std::string &line) ->void ;
+    
+private:
+    auto setWeatherRange(type_t weathertype,  const std::string &value) ->void ;
+    // This should not be needed, if we did the data organization correct
+    auto setWeatherRange(type_t weathertype,state_t state,  const std::string &value) ->void ;
+    auto setChance(type_t weathertype, const std::string &value) ->void ;
+    // This should be a low,high as well, then no state_t is required. for future
+    auto setImpact(impact_t impact,state_t state, const std::string &value) ;
 };
 
+//=====================================================================
+// WorldWeather (the weather for all the regions of the world
+//======================================================================
+class WorldWeather {
+    std::vector<Weather> region ;
+    
+public:
+    WorldWeather() ;
+    auto size() const -> size_t ;
+    auto operator[](weathid_t id) const ->const Weather& {
+        return region.at(id) ;
+    }
+    auto operator[](weathid_t id) -> Weather& {
+        return region.at(id) ;
+    }
+    
+    auto newDay() ->void ;
+    auto newHour() ->void ;
+    auto update(const UOTime &uotime) ->void ;
+
+    auto load(const std::filesystem::path &path) ->bool ;
+
+    bool doPlayerStuff(CSocket *mSock, CChar *p);
+    void DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval);
+    bool doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t element);
+    bool DoLightEffect(CSocket *mSock, CChar &mChar);
+    bool DoNPCStuff(CChar *p);
+    bool DoItemStuff(CItem *p);
+    void SendJSWeather(CBaseObject *mObj, Weather::type_t weathType, std::int8_t currentTemp);
+
+};
 #endif /* weather_hpp */

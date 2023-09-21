@@ -3,20 +3,28 @@
 #include "weather.hpp"
 
 #include <cmath>
+#include <fstream>
 #include <stdexcept>
 
+#include "cbaseobject.h"
+#include "cchar.h"
+#include "citem.h"
+#include "cpacketsend.h"
+#include "csocket.h"
+#include "funcdecl.h"
 #include "utility/random.hpp"
+#include "utility/strutil.hpp"
+#include "townregion.h"
+
 #include "uotime.hpp"
 
 using namespace std::string_literals ;
 using Random = effolkronium::random_static ;
 
 //======================================================================
-enum type_t {
-    NONE = 0, PHYSICAL, LIGHT, RAIN,
-    COLD, HEAT, LIGHTNING, POISON,
-    SNOW, STORM, STORMBREW
-};
+// Weather (the weather attributes )
+//======================================================================
+
 //======================================================================
 const std::map<std::string, Weather::type_t> Weather::NAMETYPEMAP {
     {"NONE"s,NONE},{"PHYSICAL"s,PHYSICAL},{"LIGHT"s,LIGHT},{"RAIN"s,RAIN},
@@ -180,3 +188,230 @@ auto Weather::newHour() ->void {
     weather[STORM][CURRENT] = Random::get(weather[STORM][MAX],weather[STORM][MIN]);
     weather[STORMBREW].active =  isStorm ;
 }
+
+//======================================================================
+auto Weather::setWeatherRange(type_t weathertype, const std::string &value) ->void {
+    auto [low,high] = util::split(value,",") ;
+    if (high.empty()){
+        weather.at(weathertype)[MAX] = std::stoi(low,nullptr,0);
+    }
+    else {
+        weather.at(weathertype)[MAX] = std::stoi(high,nullptr,0);
+        weather.at(weathertype)[MIN] = std::stoi(low,nullptr,0);
+    }
+}
+//======================================================================
+auto Weather::setWeatherRange(type_t weathertype, state_t state, const std::string &value) ->void {
+        weather.at(weathertype)[state] = std::stoi(value,nullptr,0);
+}
+
+//======================================================================
+auto Weather::setChance(type_t weathertype, const std::string &value) ->void {
+    weather.at(weathertype).chance = std::stoi(value,nullptr,0);
+}
+//======================================================================
+auto Weather::setImpact(impact_t impact,state_t state, const std::string &value) {
+    this->impact[impact][state] = std::stof(value) ;
+}
+
+//======================================================================
+auto Weather::setValue(const std::string &line) ->void {
+    auto [key,value] = util::split(line,"=");
+    auto ukey = util::upper(key);
+    switch(ukey[0]){
+        case 'C': {
+            if (ukey == "COLDCHANCE"){
+                setChance(COLD, value) ;
+            }
+            else if (ukey == "COLDINTENSITY") {
+                // Why isn't cold the same as all the other(low,high), who knows
+                // Just to be sure, we will parse it and check
+                setWeatherRange(COLD, value);
+            }
+            break;
+        }
+        case 'H': {
+            if (ukey == "HEATCHANCE") {
+                setChance(HEAT, value) ;
+            }
+            else if (ukey == "HEATINTENSITY") {
+                // Why isn't cold the same as all the other(low,high), who knows
+                // Just to be sure, we will parse it and check
+                setWeatherRange(HEAT, value);
+            }
+            break;
+        }
+        case 'L':{
+            if (ukey == "LIGHTMIN"){
+                setImpact(BRIGHTNESS, MIN, value);
+            }
+            else if (ukey == "LIGHTMAX"){
+                setImpact(BRIGHTNESS, MAX, value);
+            }
+            break;
+        }
+        case 'M': {
+            if (ukey == "MAXTEMP") {
+                setImpact(TEMP, MAX, value);
+            }
+            else if (ukey == "MINTEMP") {
+                setImpact(TEMP, MIN, value);
+
+            }
+            else if (ukey == "MAXWIND") {
+                setImpact(WIND, MAX, value);
+            }
+            else if (ukey == "MINWIND") {
+                setImpact(WIND, MIN, value);
+            }
+            break;
+        }
+        case 'R': {
+            if (ukey == "RAINCHANCE") {
+                setChance(RAIN, value);
+            }
+            else if (ukey == "RAININTENSITY") {
+                setWeatherRange(RAIN, value);
+
+            }
+            else if (ukey == "RAINTEMPDROP") {
+                rainTempDrop = std::stof(value);
+            }
+            break;
+        }
+        case 'S': {
+            if (ukey == "SNOWCHANCE") {
+                setChance(SNOW, value);
+            }
+            else if (ukey == "SNOWINTENSITY") {
+                setWeatherRange(SNOW, value);
+
+            }
+            else if (ukey == "SNOWTHRESHOLD") {
+                snowThreshold = std::stof(value);
+            }
+            else if (ukey == "STORMCHANCE") {
+                setChance(STORM, value);
+            }
+            else if (ukey == "STORMINTENSITY") {
+                setWeatherRange(STORM, value);
+            }
+            else if (ukey == "STORMTEMPDROP") {
+                stormTempDrop = std::stof(value);
+            }
+            break;
+        }
+   }
+    
+}
+//=====================================================================
+// WorldWeather (the weather for all the regions of the world
+//======================================================================
+WorldWeather::WorldWeather() {
+    region = std::vector<Weather>() ;
+}
+//======================================================================
+auto WorldWeather::newDay() ->void {
+    std::for_each(region.begin(),region.end(),[](Weather &entry){
+        entry.newDay();
+    });
+}
+//======================================================================
+auto WorldWeather::newHour() ->void {
+    std::for_each(region.begin(),region.end(),[](Weather &entry){
+        entry.newHour();
+    });
+}
+//======================================================================
+auto WorldWeather::update(const UOTime &uotime) ->void {
+    std::for_each(region.begin(),region.end(),[&uotime](Weather &entry){
+        entry.update(uotime);
+    });
+
+}
+
+//======================================================================
+auto WorldWeather::load(const std::filesystem::path &path) ->bool {
+    region.clear();
+    auto input = std::ifstream(path.string());
+    if (!input.is_open()){
+        return false ;
+    }
+    auto buffer = std::vector<char>(4096,0) ;
+    auto regNumber = -1  ;
+    while(input.good() && !input.eof()){
+        input.getline(buffer.data(), buffer.size()-1);
+        if (input.gcount()>0){
+            buffer[input.gcount()] = 0 ;
+            std::string line = buffer.data();
+            line = util::trim(util::strip(line,"//"));
+            if (!line.empty()){
+                if (line[0] == '}' && regNumber != -1){
+                     regNumber = -1 ;
+                 }
+                else if(line[0] == '[') {
+                    auto contents = util::simplify(util::contentsOf(line, "[", "]"));
+                    auto [key,num] = util::split(contents," ") ;
+                    if (util::upper(key) == "WEATHERAB"){
+                        regNumber = std::stoi(num,nullptr,0);
+                        if (regNumber >= region.size()){
+                            region.resize(regNumber+1);
+                        }
+                    }
+                }
+                else if( regNumber!= -1) {
+                    // We only care if we are in a region we care about.
+                    region.at(regNumber).setValue(line);
+                }
+            }
+        }
+    }
+    return true ;
+}
+/*
+//======================================================================
+//Updates weather effects for players when light levels change,or depending on whether player is inside or outside of
+auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
+    auto rvalue = true ;
+    if (!ValidateObject(p) || p->IsNpc()){
+        return true ;
+    }
+    auto defaultTemp = 20 ;
+    auto curregion = p->GetRegion()->GetWeather() ;
+    if (curregion > this->region.size() || region.empty() || p->InBuilding()){
+        // If in a building, invalid regino, or no regions loaded weather wise
+        if (mSock != nullptr){
+            CPWeather dry(0xFF,0x00,defaultTemp) ;
+            mSock->Send(&dry) ;
+            if (p->GetWeathDamage(Weather::SNOW) != 0) {
+                p->SetWeathDamage(0, Weather::SNOW);
+            }
+            if (p->GetWeathDamage(Weather::RAIN) != 0) {
+                p->SetWeathDamage(0, Weather::RAIN);
+            }
+            if (p->GetWeathDamage(Weather::COLD) != 0) {
+                p->SetWeathDamage(0, Weather::COLD);
+            }
+            if (p->GetWeathDamage(Weather::HEAT) != 0) {
+                p->SetWeathDamage(0, Weather::HEAT);
+            }
+            SendJSWeather(p, Weather::LIGHT, defaultTemp);
+        }
+        rvalue = false ;
+    }
+    else {
+        auto isStorm = (this->region.at(curregion))[Weather::STORM].active ;
+        auto brewStorm = (this->region.at(curregion))[Weather::STORMBREW].active;
+        auto isSnowing = (this->region.at(curregion))[Weather::SNOW].active;
+        auto isRaining = (this->region.at(curregion))[Weather::RAIN].active;
+        auto temperature = (this->region.at(curregion)).impact[Weather::TEMP][Weather::CURRENT] ;
+        if (isStorm) {
+            DoPlayerWeather(mSock, 5, static_cast<std::int8_t>(temperature), curregion);
+            if (p->GetWeathDamage(Weather::STORM) != 0) {
+                //p->SetWeathDamage(<#timerval_t newValue#>, <#std::uint8_t part#>)
+            }
+        }
+    }
+    return rvalue ;
+}
+*/
