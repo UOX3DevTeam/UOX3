@@ -12,7 +12,7 @@
 		5611F3362AAF837A009438EA /* startlocconfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3342AAF837A009438EA /* startlocconfig.cpp */; };
 		5611F33B2AAF9FFA009438EA /* serverswitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F3392AAF9FFA009438EA /* serverswitch.cpp */; };
 		5611F3402AB1492D009438EA /* serverstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5611F33E2AB1492D009438EA /* serverstring.cpp */; };
-		568517842ABC9E8C0052C574 /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 568517822ABC9E8C0052C574 /* global.cpp */; };
+		568517842ABC9E8C0052C574 /* uoxglobal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 568517822ABC9E8C0052C574 /* uoxglobal.cpp */; };
 		56A2617D2AB7866100DD2D84 /* uotime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A2617B2AB7866100DD2D84 /* uotime.cpp */; };
 		56A2625D2ABB2CA000DD2D84 /* weather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A2625B2ABB2CA000DD2D84 /* weather.cpp */; };
 		56A6A4A92AB338AF008A5EB7 /* era.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56A6A4A72AB338AF008A5EB7 /* era.cpp */; };
@@ -151,8 +151,8 @@
 		5611F33A2AAF9FFA009438EA /* serverswitch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverswitch.hpp; sourceTree = "<group>"; };
 		5611F33E2AB1492D009438EA /* serverstring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverstring.cpp; sourceTree = "<group>"; };
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
-		568517822ABC9E8C0052C574 /* global.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
-		568517832ABC9E8C0052C574 /* global.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = global.hpp; sourceTree = "<group>"; };
+		568517822ABC9E8C0052C574 /* uoxglobal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uoxglobal.cpp; sourceTree = "<group>"; };
+		568517832ABC9E8C0052C574 /* uoxglobal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxglobal.hpp; sourceTree = "<group>"; };
 		56A2617B2AB7866100DD2D84 /* uotime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uotime.cpp; sourceTree = "<group>"; };
 		56A2617C2AB7866100DD2D84 /* uotime.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uotime.hpp; sourceTree = "<group>"; };
 		56A2625A2ABB11D300DD2D84 /* changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changelog.txt; sourceTree = "<group>"; };
@@ -3072,8 +3072,8 @@
 			children = (
 				56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */,
 				56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */,
-				568517822ABC9E8C0052C574 /* global.cpp */,
-				568517832ABC9E8C0052C574 /* global.hpp */,
+				568517822ABC9E8C0052C574 /* uoxglobal.cpp */,
+				568517832ABC9E8C0052C574 /* uoxglobal.hpp */,
 			);
 			path = other;
 			sourceTree = "<group>";
@@ -3458,7 +3458,7 @@
 				64A9012A293E3DD4009B54DA /* cmdtable.cpp in Sources */,
 				56D6EEF82AA13174005355FA /* account.cpp in Sources */,
 				56A2625D2ABB2CA000DD2D84 /* weather.cpp in Sources */,
-				568517842ABC9E8C0052C574 /* global.cpp in Sources */,
+				568517842ABC9E8C0052C574 /* uoxglobal.cpp in Sources */,
 				64A90120293E3DD4009B54DA /* cbaseobject.cpp in Sources */,
 				64A90135293E3DD4009B54DA /* cserverdefinitions.cpp in Sources */,
 				56AAE26C2AAF409C00D624FC /* serverfeature.cpp in Sources */,

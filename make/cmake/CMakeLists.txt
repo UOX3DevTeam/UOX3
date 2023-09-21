@@ -150,8 +150,8 @@ add_executable(uox3
 # other group
    ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.cpp
    ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.hpp
-   ${PROJECT_SOURCE_DIR}/../../source/other/global.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/other/global.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/other/uoxglobal.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/other/uoxglobal.hpp
 
 # Other group
    ${PROJECT_SOURCE_DIR}/../../source/ai.cpp 
