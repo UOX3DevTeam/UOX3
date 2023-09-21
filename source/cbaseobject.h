@@ -113,7 +113,7 @@ protected:
     
     std::bitset<8> objSettings;
     
-    std::uint16_t resistances[WEATHNUM];
+    std::uint16_t resistances[Weather::numberweather];
     
     serial_t tempContainerSerial;
     

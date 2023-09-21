@@ -1733,7 +1733,7 @@ std::int16_t CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem
     }
     CRace *rPtr = Races->Race(defend->GetRace());
     if (rPtr != nullptr) {
-        for (std::int32_t i = LIGHT; i < WEATHNUM; ++i) {
+        for (std::int32_t i = LIGHT; i < Weather::numberweather; ++i) {
             if (weapon->GetWeatherDamage(static_cast<Weather::type_t>(i)) && rPtr->AffectedBy(static_cast<Weather::type_t>(i))) {
                 amount += ApplyDefenseModifiers(static_cast<Weather::type_t>(i), attack, defend, getFightSkill, hitLoc, bDamage, false);
             }

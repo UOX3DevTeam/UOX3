@@ -124,7 +124,7 @@ CBaseObject::CBaseObject() : objType(DEFBASE_OBJTYPE), race(DEFBASE_RACE), x(DEF
         SetPostLoaded(true);
     }
     ShouldSave(true);
-    memset(&resistances[0], DEFBASE_RESIST, sizeof(std::uint16_t) * WEATHNUM);
+    memset(&resistances[0], DEFBASE_RESIST, sizeof(std::uint16_t) * Weather::numberweather);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -686,7 +686,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     outStream << "Damageable=" << (IsDamageable() ? "1" : "0") << newLine;
     
     outStream << "Defense=";
-    for (std::uint8_t resist = 1; resist < WEATHNUM; ++resist) {
+    for (std::uint8_t resist = 1; resist < Weather::numberweather; ++resist) {
         outStream << GetResist(static_cast<Weather::type_t>(resist)) << ",";
     }
     outStream << "[END]" << newLine;
@@ -2048,7 +2048,7 @@ void CBaseObject::CopyData(CBaseObject *target) {
     target->SetColour(GetColour());
     target->SetHiDamage(GetHiDamage());
     target->SetLoDamage(GetLoDamage());
-    for (std::uint8_t resist = 0; resist < WEATHNUM; ++resist) {
+    for (std::uint8_t resist = 0; resist < Weather::numberweather; ++resist) {
         target->SetResist(GetResist(static_cast<Weather::type_t>(resist)),static_cast<Weather::type_t>(resist));
     }
     target->SetStrength2(GetStrength2());

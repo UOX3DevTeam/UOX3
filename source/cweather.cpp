@@ -41,7 +41,7 @@ cWeatherAb *Weather = nullptr;
 //			Replaced a new'd array with a vector of CWeather
 
 CWeather::CWeather() {
-    memset(weather, 0, sizeof(WeathPart_st) * WEATHNUM);
+    memset(weather, 0, sizeof(WeathPart_st) * Weather::numberweather);
     ColdChance(5);
     RainChance(10);
     SnowChance(1);

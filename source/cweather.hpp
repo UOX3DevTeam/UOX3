@@ -23,7 +23,7 @@ private:
     };
     
     [[maybe_unused]] weathid_t ID;
-    WeathPart_st weather[WEATHNUM];
+    WeathPart_st weather[Weather::numberweather];
     float assortVals[3][3];
     float snowThreshold;
     float light[3];

@@ -147,6 +147,12 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/wholist.h
    ${PROJECT_SOURCE_DIR}/../../source/worldmain.cpp
    ${PROJECT_SOURCE_DIR}/../../source/worldmain.h
+# other group
+   ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/other/global.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/other/global.hpp
+
 # Other group
    ${PROJECT_SOURCE_DIR}/../../source/ai.cpp 
    ${PROJECT_SOURCE_DIR}/../../source/archive.cpp
@@ -160,8 +166,6 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/cresponse.cpp
    ${PROJECT_SOURCE_DIR}/../../source/cresponse.h
    ${PROJECT_SOURCE_DIR}/../../source/cskillclass.h
-   ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/other/uoxversion.hpp 
    ${PROJECT_SOURCE_DIR}/../../source/dist.cpp
    ${PROJECT_SOURCE_DIR}/../../source/effect.cpp
    ${PROJECT_SOURCE_DIR}/../../source/enums.h

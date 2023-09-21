@@ -1415,7 +1415,7 @@ auto CItem::CopyData(CItem *target) -> void {
     target->SetStealable(GetStealable());
     
     // Set damage types on new item
-    for (std::int32_t i = 0; i < WEATHNUM; ++i) {
+    for (std::int32_t i = 0; i < Weather::numberweather; ++i) {
         target->SetWeatherDamage(static_cast<Weather::type_t>(i), GetWeatherDamage(static_cast<Weather::type_t>(i)));
     }
     

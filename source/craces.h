@@ -59,11 +59,11 @@ private:
     ALLOWEQUIPLIST allowedEquipment;
     BANEQUIPLIST bannedEquipment;
     
-    std::bitset<WEATHNUM> weatherAffected;
-    std::array<seconds_t, WEATHNUM> weathSecs;
-    // SECONDS					weathSecs[WEATHNUM];
-    std::array<std::int8_t, WEATHNUM> weathDamage;
-    // std::int8_t					weathDamage[WEATHNUM];
+    std::bitset<Weather::numberweather> weatherAffected;
+    std::array<seconds_t, Weather::numberweather> weathSecs;
+    // SECONDS					weathSecs[Weather::numberweather];
+    std::array<std::int8_t, Weather::numberweather> weathDamage;
+    // std::int8_t					weathDamage[Weather::numberweather];
     
     bool doesHunger;
     bool doesThirst;

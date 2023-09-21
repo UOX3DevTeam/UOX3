@@ -9,10 +9,16 @@
 #include "cbaseobject.h"
 #include "cchar.h"
 #include "citem.h"
+#include "combat.h"
 #include "cpacketsend.h"
+#include "craces.h"
+#include "cscript.h"
 #include "csocket.h"
+#include "ceffects.h"
 #include "funcdecl.h"
+#include "cjsmapping.h"
 #include "utility/random.hpp"
+#include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
@@ -56,7 +62,7 @@ auto Weather::size() -> size_t {
 
 //======================================================================
 Weather::Weather():snowThreshold(0.0),rainTempDrop(0.0),stormTempDrop(0.0),stormDelay(false) {
- 
+    
     weather = std::vector<Characteristic>(Weather::size()) ;
     // Chances
     weather[COLD].chance = 5 ;
@@ -107,7 +113,7 @@ auto Weather::update(const UOTime &uotime) ->void {
         }
         else {
             impact[BRIGHTNESS][CURRENT] = impact[BRIGHTNESS][MAX] - tempLight;
-
+            
         }
     }
     // Now figure out the effective temp
@@ -119,7 +125,7 @@ auto Weather::update(const UOTime &uotime) ->void {
     }
     else {
         impact[TEMP][CURRENT] =  impact[EFFECTIVETEMP][MIN] + tempLightChange ;
-
+        
     }
     
     if (weather[STORM].active){
@@ -160,7 +166,7 @@ auto Weather::newDay() ->void {
     weather[COLD].active = isColdDay ;
     impact[EFFECTIVETEMP][MAX] = effMax ;
     impact[EFFECTIVETEMP][MIN] = effMax ;
-
+    
 }
 //======================================================================
 auto Weather::newHour() ->void {
@@ -179,7 +185,7 @@ auto Weather::newHour() ->void {
     if (!isStorm){
         stormDelay = false ;
         weather[STORM].chance = false ;
-
+        
     }
     weather[RAIN].chance = isRaining ;
     weather[SNOW].chance = isSnowing ;
@@ -202,7 +208,7 @@ auto Weather::setWeatherRange(type_t weathertype, const std::string &value) ->vo
 }
 //======================================================================
 auto Weather::setWeatherRange(type_t weathertype, state_t state, const std::string &value) ->void {
-        weather.at(weathertype)[state] = std::stoi(value,nullptr,0);
+    weather.at(weathertype)[state] = std::stoi(value,nullptr,0);
 }
 
 //======================================================================
@@ -256,7 +262,7 @@ auto Weather::setValue(const std::string &line) ->void {
             }
             else if (ukey == "MINTEMP") {
                 setImpact(TEMP, MIN, value);
-
+                
             }
             else if (ukey == "MAXWIND") {
                 setImpact(WIND, MAX, value);
@@ -272,7 +278,7 @@ auto Weather::setValue(const std::string &line) ->void {
             }
             else if (ukey == "RAININTENSITY") {
                 setWeatherRange(RAIN, value);
-
+                
             }
             else if (ukey == "RAINTEMPDROP") {
                 rainTempDrop = std::stof(value);
@@ -300,7 +306,7 @@ auto Weather::setValue(const std::string &line) ->void {
             }
             break;
         }
-   }
+    }
     
 }
 //=====================================================================
@@ -326,7 +332,7 @@ auto WorldWeather::update(const UOTime &uotime) ->void {
     std::for_each(region.begin(),region.end(),[&uotime](Weather &entry){
         entry.update(uotime);
     });
-
+    
 }
 
 //======================================================================
@@ -346,8 +352,8 @@ auto WorldWeather::load(const std::filesystem::path &path) ->bool {
             line = util::trim(util::strip(line,"//"));
             if (!line.empty()){
                 if (line[0] == '}' && regNumber != -1){
-                     regNumber = -1 ;
-                 }
+                    regNumber = -1 ;
+                }
                 else if(line[0] == '[') {
                     auto contents = util::simplify(util::contentsOf(line, "[", "]"));
                     auto [key,num] = util::split(contents," ") ;
@@ -367,13 +373,13 @@ auto WorldWeather::load(const std::filesystem::path &path) ->bool {
     }
     return true ;
 }
-/*
+
 //======================================================================
 //Updates weather effects for players when light levels change,or depending on whether player is inside or outside of
 auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
     auto rvalue = true ;
     if (!ValidateObject(p) || p->IsNpc()){
-        return true ;
+        return rvalue ;
     }
     auto defaultTemp = 20 ;
     auto curregion = p->GetRegion()->GetWeather() ;
@@ -394,7 +400,7 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
             if (p->GetWeathDamage(Weather::HEAT) != 0) {
                 p->SetWeathDamage(0, Weather::HEAT);
             }
-            SendJSWeather(p, Weather::LIGHT, defaultTemp);
+            sendJSWeather(p, Weather::LIGHT, defaultTemp);
         }
         rvalue = false ;
     }
@@ -405,12 +411,473 @@ auto WorldWeather::doPlayerStuff(CSocket *mSock, CChar *p)->bool {
         auto isRaining = (this->region.at(curregion))[Weather::RAIN].active;
         auto temperature = (this->region.at(curregion)).impact[Weather::TEMP][Weather::CURRENT] ;
         if (isStorm) {
-            DoPlayerWeather(mSock, 5, static_cast<std::int8_t>(temperature), curregion);
-            if (p->GetWeathDamage(Weather::STORM) != 0) {
-                //p->SetWeathDamage(<#timerval_t newValue#>, <#std::uint8_t part#>)
+            doPlayerWeather(mSock, 5, static_cast<std::int8_t>(temperature), curregion);
+            if (p->GetWeathDamage(Weather::STORM) == 0) {
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
             }
+            if (p->GetWeathDamage(Weather::SNOW) != 0) {
+                p->SetWeathDamage(0, Weather::SNOW);
+            }
+            if (p->GetWeathDamage(Weather::RAIN) != 0) {
+                p->SetWeathDamage(0, Weather::RAIN);
+            }
+            sendJSWeather(p, Weather::STORM, temperature);
+        }
+        else if (brewStorm) {
+            doPlayerWeather(mSock, 4, temperature, curregion);
+        }
+        else if (isSnowing &&  region.at(curregion).snowThreshold > region.at(curregion).impact[Weather::TEMP][Weather::CURRENT]) {
+            doPlayerWeather(mSock, 2, temperature, curregion);
+            if (p->GetWeathDamage(Weather::SNOW) == 0) {
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+            }
+            if (p->GetWeathDamage(Weather::STORM) != 0) {
+                p->SetWeathDamage(0, Weather::STORM);
+            }
+            if (p->GetWeathDamage(Weather::RAIN) != 0) {
+                p->SetWeathDamage(0, Weather::RAIN);
+            }
+            sendJSWeather(p, Weather::STORM, temperature);
+        }
+        else if (isRaining) {
+            doPlayerWeather(mSock, 1, temperature, curregion);
+            if (p->GetWeathDamage(Weather::RAIN) == 0) {
+                p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+            }
+            if (p->GetWeathDamage(Weather::SNOW) != 0) {
+                p->SetWeathDamage(0, Weather::SNOW);
+            }
+            if (p->GetWeathDamage(Weather::STORM) != 0) {
+                p->SetWeathDamage(0, Weather::STORM);
+            }
+            sendJSWeather(p, Weather::STORM, temperature);
+        }
+        else {
+            doPlayerWeather(mSock, 0, temperature, curregion);
+            if (p->GetWeathDamage(Weather::SNOW) != 0) {
+                p->SetWeathDamage(0, Weather::SNOW);
+            }
+            if (p->GetWeathDamage(Weather::STORM) != 0) {
+                p->SetWeathDamage(0, Weather::STORM);
+            }
+            if (p->GetWeathDamage(Weather::RAIN) != 0) {
+                p->SetWeathDamage(0, Weather::RAIN);
+            }
+            sendJSWeather(p, Weather::STORM, temperature);
+        }
+        if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+        }
+        
+        if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
         }
     }
     return rvalue ;
 }
-*/
+
+//======================================================================
+auto WorldWeather::doPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval) ->void{
+    // Weather Types
+    // 0 - dry
+    // 1 - rain
+    // 2 - snow
+    // 3 - rain and snow
+    // 4 - storm is brewing
+    // 5 - storm
+    //    Byte 1 - 0x65 (Weather)
+    //    Byte 2 - Weather Type(  0, rain, 1, fierce storm, 2, snow, 3 a storm is brewing, and 0xFF
+    // none )     Byte 3 - Particle count (upper limit of 70)     Byte 4 - Temperature
+    
+    if (s == nullptr)
+        return;
+    
+    CPWeather dry(0xFF, 0x00, currentTemp);
+    CPWeather rain(0x00, static_cast<std::uint8_t>(this->region.at(currval)[Weather::RAIN][Weather::CURRENT]), currentTemp);
+    CPWeather storm(0x01, static_cast<std::uint8_t>(this->region.at(currval)[Weather::STORM][Weather::CURRENT]), currentTemp);
+    CPWeather snow(0x02, static_cast<std::uint8_t>(this->region.at(currval)[Weather::SNOW][Weather::CURRENT]), currentTemp);
+    CPWeather strmbrw(0x03, static_cast<std::uint8_t>((this->region.at(currval)[Weather::STORMBREW][Weather::CURRENT] / 2)), currentTemp);
+    
+    CChar *mChar = s->CurrcharObj();
+    s->Send(&dry);
+    
+    switch (weathType) {
+        case 0:
+            break;
+        case 1:
+            s->Send(&rain);
+            break;
+        case 2:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&snow);
+            break;
+        case 3:
+            s->Send(&rain);
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&snow);
+            break;
+        case 4:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&strmbrw);
+            break;
+        case 5:
+            Effects->PlaySound(mChar, 0x14 + RandomNum(0, 1));
+            s->Send(&storm);
+            break;
+        default:
+            break;
+    }
+    
+}
+//======================================================================
+// Handles effects of weather on characters affected by weather
+auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t element) ->bool{
+    auto resistElement = element;
+    
+    if (element == Weather::NONE || element == Weather::LIGHT || static_cast<int>(element) >= Weather::numberweather)
+        return false;
+    
+    if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), element) || mChar.InBuilding())
+        return false;
+    
+    bool didDamage = false;
+    auto weatherSys = mChar.GetRegion()->GetWeather();
+    if (!(weatherSys > region.size() || region.empty()) && mChar.GetWeathDamage(element) != 0 && mChar.GetWeathDamage(element) <= cwmWorldState->GetUICurrentTime()) {
+        auto tempCurrent = (this->region.at(weatherSys)).impact[Weather::TEMP][Weather::CURRENT] ;
+        // const float tempMax        = MaxTemp( weatherSys );
+        // const float tempMin        = MinTemp( weatherSys );
+        // const float tempSnowMax    = SnowThreshold( weatherSys );
+        const float tempEffMax = (this->region.at(weatherSys)).impact[Weather::EFFECTIVETEMP][Weather::Weather::MAX];
+        const float tempEffMin = (this->region.at(weatherSys)).impact[Weather::EFFECTIVETEMP][Weather::Weather::MIN];
+        
+        float damageModifier = 0;
+        std::int32_t damage = 0;
+        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), element));
+        float heatLevel = static_cast<float>(Races->HeatLevel(mChar.GetRace()));
+        float coldLevel = static_cast<float>(Races->ColdLevel(mChar.GetRace()));
+        
+        std::int32_t damageMessage = 0;
+        std::uint16_t damageAnim = 0x373A;
+        
+        if (element == Weather::RAIN) {
+            damageModifier = static_cast<float>((this->region.at(weatherSys))[Weather::RAIN][Weather::CURRENT]);
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
+            damageMessage = 1219;
+            resistElement = Weather::NONE;
+        }
+        
+        if (element == Weather::SNOW) {
+            damageModifier = static_cast<float>((this->region.at(weatherSys))[Weather::SNOW][Weather::CURRENT]);
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
+            damageMessage = 1220;
+            // Snow is also cold damage when it comes to resistance values
+            resistElement = Weather::COLD;
+        }
+        
+        if (element == Weather::STORM) {
+            damageModifier = static_cast<float>((this->region.at(weatherSys))[Weather::STORM][Weather::CURRENT]);
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
+            damageMessage = 1775;
+            resistElement = Weather::NONE;
+            
+            if (Races->Affect(mChar.GetRace(), Weather::LIGHTNING)) {
+                if (static_cast<std::uint8_t>(RandomNum(1, 100)) <=  Races->Secs(mChar.GetRace(), Weather::LIGHTNING)) {
+                    damage = static_cast<std::int32_t>(Races->Damage(mChar.GetRace(), Weather::LIGHTNING));
+                    Effects->Bolteffect(&mChar);
+                    damageMessage = 1777;
+                    damageAnim = 0x0;
+                    resistElement = Weather::LIGHTNING;
+                }
+            }
+        }
+        
+        if (element == Weather::COLD && tempCurrent <= coldLevel) {
+            if ((coldLevel - tempEffMin) != 0) {
+                damageModifier = ((tempCurrent - tempEffMin) / (coldLevel - tempEffMin));
+            }
+            else {
+                damageModifier = 0;
+            }
+            
+            damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
+            damageMessage = 1776; // The freezing cold hurts you!
+        }
+        
+        if (element == Weather::HEAT && tempCurrent >= heatLevel) {
+            if ((tempEffMax - heatLevel) != 0) {
+                damageModifier = ((tempCurrent - heatLevel) / (tempEffMax - heatLevel));
+            }
+            else {
+                damageModifier = 0;
+            }
+            
+            damage = static_cast<std::int32_t>(std::round(baseDamage * damageModifier));
+            damageMessage = 1221; // The sheer heat sucks at your body, draining it of moisture!
+            damageAnim = 0x3709;
+        }
+        
+        damage = Combat->ApplyDefenseModifiers(resistElement, nullptr, &mChar, 0, 0, damage, true);
+        
+        if (damage > 0) {
+            if (mChar.Damage(damage, element)) {
+                mChar.SetStamina(mChar.GetStamina() - 2);
+                if (mSock != nullptr) {
+                    mSock->SysMessage(damageMessage);
+                }
+                if (damageAnim != 0x0) {
+                    Effects->PlayStaticAnimation((&mChar), damageAnim, 0x09, 0x19);
+                }
+                Effects->PlaySound((&mChar), 0x0208);
+                didDamage = true;
+            }
+        }
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(mChar.GetRace(), element)))), element);
+    }
+    return didDamage;
+    
+}
+//======================================================================
+// Handles effects of light levels on characters affected by light
+auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
+    auto didDamage = false;
+    
+    if (mChar.IsInvulnerable() || mChar.IsDead() || !Races->Affect(mChar.GetRace(), Weather::LIGHT) || mChar.InBuilding()) {
+        return false;
+    }
+    
+    if (mChar.GetWeathDamage(LIGHT) != 0 && mChar.GetWeathDamage(LIGHT) <= cwmWorldState->GetUICurrentTime()) {
+        float damageModifier = 0;
+        std::int32_t damage = 0;
+        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), Weather::LIGHT));
+        float lightLevel = static_cast<float>(Races->LightLevel(mChar.GetRace()));
+        float currentLight = 255;
+        float lightMin = 255;
+        float lightMax = 255;
+        std::int32_t message = 0;
+        bool ampm = cwmWorldState->uoTime.ampm;
+        
+        weathid_t weatherSys = mChar.GetRegion()->GetWeather();
+        if (!region.empty() && weatherSys < region.size()) {
+            lightMin = region.at(weatherSys).impact[Weather::BRIGHTNESS][Weather::MIN];
+            lightMax = region.at(weatherSys).impact[Weather::BRIGHTNESS][Weather::MAX];
+            
+            if (lightMin < 300 && lightMax < 300) {
+                currentLight = region.at(weatherSys).impact[Weather::BRIGHTNESS][Weather::CURRENT];
+            }
+            else {
+                currentLight = cwmWorldState->uoTime.worldLightLevel ;
+                lightMin = ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL] ;
+                lightMax = ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL] ;
+            }
+        }
+        else {
+            currentLight = cwmWorldState->uoTime.worldLightLevel;
+            lightMin = ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL] ;
+            lightMax = ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL] ;
+        }
+        
+        if (mChar.InDungeon()) {
+            float dungeonLight = 255;
+            dungeonLight = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT] ;
+            
+            if (lightLevel > dungeonLight) {
+                if (lightLevel > 0) {
+                    damageModifier = (dungeonLight / lightLevel);
+                }
+                else {
+                    damageModifier = 0;
+                }
+                
+                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                
+                if (RoundNumber(damageModifier) > 0) {
+                    message = 1216; // You are scalded by the fury of the light!
+                }
+                else {
+                    message = 1217; // You are burnt by the light's fury!
+                }
+            }
+            else if (lightLevel == currentLight) {
+                if (ampm) {
+                    message = 1218; // The sun will set soon!
+                }
+                else {
+                    message = 1215; // The sun will rise soon!
+                }
+            }
+        }
+        else {
+            if (lightLevel > currentLight) {
+                if (lightLevel > 0) {
+                    damageModifier = (currentLight / lightLevel);
+                }
+                else {
+                    damageModifier = 0;
+                }
+                
+                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                
+                if (RoundNumber(damageModifier) > 0) {
+                    message = 1216; // You are scalded by the fury of the light!
+                }
+                else {
+                    message = 1217; // You are burnt by the light's fury!
+                }
+            }
+            else if (lightLevel == currentLight) {
+                if (ampm) {
+                    message = 1218; // The sun will set soon!
+                }
+                else {
+                    message = 1215; // The sun will rise soon!
+                }
+            }
+        }
+        
+        damage = Combat->ApplyDefenseModifiers(Weather::LIGHT, nullptr, &mChar, 0, 0, damage, true);
+        
+        if (damage > 0) {
+            if (mChar.Damage(damage, Weather::LIGHT)) {
+                Effects->PlayStaticAnimation((&mChar), 0x3709, 0x09, 0x19);
+                Effects->PlaySound((&mChar), 0x0208);
+                didDamage = true;
+                
+                if (message != 0 && mSock != nullptr) {
+                    mSock->SysMessage(message);
+                }
+            }
+        }
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(Races->Secs(mChar.GetRace(), Weather::LIGHT)))), Weather::LIGHT);
+    }
+    return didDamage;
+    
+}
+//======================================================================
+// Updates weather effects for NPCs when light levels change, or depending on whether NPC is inside or outside of buildings
+auto WorldWeather::doNPCStuff(CChar *p)->bool{
+    if (!ValidateObject(p))
+        return true;
+    
+    auto currval = p->GetRegion()->GetWeather();
+    if (currval > region.size() || region.empty() || p->InBuilding()) {
+        sendJSWeather(p, Weather::LIGHT, 0);
+        return false;
+    }
+    auto isStorm = this->region.at(currval)[Weather::STORM].active ;
+    auto isSnowing = this->region.at(currval)[Weather::SNOW].active ;
+    auto isRaining = this->region.at(currval)[Weather::RAIN].active ;
+    auto temp = static_cast<std::int8_t>(this->region.at(currval).impact[Weather::TEMP][Weather::CURRENT]) ;
+    
+    if (isStorm) {
+        sendJSWeather(p, Weather::STORM, temp);
+        if (p->GetWeathDamage(Weather::STORM) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
+        }
+        if (p->GetWeathDamage(Weather::SNOW) != 0) {
+            p->SetWeathDamage(0, Weather::SNOW);
+        }
+        if (p->GetWeathDamage(Weather::RAIN) != 0) {
+            p->SetWeathDamage(0, Weather::RAIN);
+        }
+    }
+    else if (isSnowing && region.at(currval).snowThreshold > this->region.at(currval).impact[Weather::TEMP][Weather::CURRENT]) {
+        sendJSWeather(p, Weather::SNOW, temp);
+        if (p->GetWeathDamage(Weather::SNOW) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+        }
+        if (p->GetWeathDamage(Weather::STORM) != 0) {
+            p->SetWeathDamage(0, Weather::STORM);
+        }
+        if (p->GetWeathDamage(Weather::RAIN) != 0) {
+            p->SetWeathDamage(0, Weather::RAIN);
+        }
+    }
+    else if (isRaining) {
+        sendJSWeather(p, Weather::RAIN, temp);
+        if (p->GetWeathDamage(Weather::RAIN) == 0) {
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+        }
+        if (p->GetWeathDamage(Weather::SNOW) != 0) {
+            p->SetWeathDamage(0, Weather::SNOW);
+        }
+        if (p->GetWeathDamage(Weather::STORM) != 0) {
+            p->SetWeathDamage(0, Weather::STORM);
+        }
+    }
+    else {
+        sendJSWeather(p, Weather::LIGHT, temp);
+        if (p->GetWeathDamage(Weather::SNOW) != 0) {
+            p->SetWeathDamage(0, Weather::SNOW);
+        }
+        if (p->GetWeathDamage(Weather::STORM) != 0) {
+            p->SetWeathDamage(0, Weather::STORM);
+        }
+        if (p->GetWeathDamage(Weather::RAIN) != 0) {
+            p->SetWeathDamage(0, Weather::RAIN);
+        }
+    }
+    
+    if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+    }
+    
+    if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
+    }
+    
+    return true;
+    
+}
+//======================================================================
+// Updates weather effects for items when light levels change
+auto WorldWeather::doItemStuff(CItem *mItem)->bool{
+    if (!ValidateObject(mItem))
+        return true;
+    
+    auto currval = mItem->GetRegion()->GetWeather();
+    if (currval > region.size() || region.empty()) {
+        sendJSWeather(mItem, Weather::LIGHT, 0);
+        return true;
+    }
+    
+    auto isStorm = this->region.at(currval)[Weather::STORM].active ;
+    auto isSnowing = this->region.at(currval)[Weather::SNOW].active ;
+    auto isRaining = this->region.at(currval)[Weather::RAIN].active ;
+    auto temp = static_cast<std::int8_t>(this->region.at(currval).impact[Weather::TEMP][Weather::CURRENT]) ;
+    
+    if (isStorm) {
+        sendJSWeather(mItem, Weather::STORM, temp);
+    }
+    else if (isSnowing && region.at(currval).snowThreshold > this->region.at(currval).impact[Weather::TEMP][Weather::CURRENT]) {
+        sendJSWeather(mItem, Weather::SNOW, temp);
+    }
+    else if (isRaining) {
+        sendJSWeather(mItem, Weather::RAIN, temp);
+    }
+    else {
+        sendJSWeather(mItem, Weather::LIGHT, temp);
+    }
+    
+    return true;
+    
+}
+//======================================================================
+auto WorldWeather::sendJSWeather(CBaseObject *mObj, Weather::type_t weathType, std::int8_t currentTemp)->void{
+    // Check for events in specific scripts attached to object
+    auto scriptTriggers = mObj->GetScriptTriggers();
+    for (auto scriptTrig : scriptTriggers) {
+        cScript *toExecute = JSMapping->GetScript(scriptTrig);
+        if (toExecute != nullptr) {
+            toExecute->OnWeatherChange(mObj, weathType);
+            toExecute->OnTempChange(mObj, currentTemp);
+        }
+    }
+    
+    // Check global script as well
+    auto toExecuteGlobal = JSMapping->GetScript(static_cast<std::uint16_t>(0));
+    if (toExecuteGlobal != nullptr) {
+        toExecuteGlobal->OnWeatherChange(mObj, weathType);
+        toExecuteGlobal->OnTempChange(mObj, currentTemp);
+    }
+    
+}

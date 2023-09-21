@@ -21,7 +21,11 @@ class CChar ;
 class CBaseObject ;
 class CSocket ;
 class CItem ;
-
+//============================================================================================================
+// For whatever reason, damage and weather seem to have been intermixed
+// we need to separate these two, into their proper entities.
+// For future, but not too far future
+//===========================================================================================================
 //======================================================================
 // Weather (the weather attributes )
 //======================================================================
@@ -97,8 +101,12 @@ struct Weather {
     bool stormDelay ;
     
     Weather() ;
-    auto operator[](type_t weathertype) const -> const Characteristic& ;
-    auto operator[](type_t weathertype) ->Characteristic& ;
+    auto operator[](type_t weathertype) const -> const Characteristic& {
+        return weather.at(static_cast<int>(weathertype));
+    }
+    auto operator[](type_t weathertype) ->Characteristic& {
+        return weather.at(static_cast<int>(weathertype));
+    }
     
     auto update(const UOTime &uotime) ->void ;
     auto newDay() ->void ;
@@ -136,13 +144,13 @@ public:
 
     auto load(const std::filesystem::path &path) ->bool ;
 
-    bool doPlayerStuff(CSocket *mSock, CChar *p);
-    void DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval);
-    bool doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t element);
-    bool DoLightEffect(CSocket *mSock, CChar &mChar);
-    bool DoNPCStuff(CChar *p);
-    bool DoItemStuff(CItem *p);
-    void SendJSWeather(CBaseObject *mObj, Weather::type_t weathType, std::int8_t currentTemp);
+    auto doPlayerStuff(CSocket *mSock, CChar *p) ->bool;
+    auto doPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t currentTemp, weathid_t currval) ->void;
+    auto doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t element) ->bool;
+    auto doLightEffect(CSocket *mSock, CChar &mChar)->bool;
+    auto doNPCStuff(CChar *p)->bool;
+    auto doItemStuff(CItem *mItem)->bool;
+    auto sendJSWeather(CBaseObject *mObj, Weather::type_t weathType, std::int8_t currentTemp)->void;
 
 };
 #endif /* weather_hpp */

@@ -286,7 +286,7 @@ CChar::CChar() : CBaseObject(), bools(DEFCHAR_BOOLS), fontType(DEFCHAR_FONTTYPE)
     sectionId = "UNKNOWN";
     
     memset(&regen[0], 0, sizeof(timerval_t) * 3);
-    memset(&weathDamage[0], 0, sizeof(timerval_t) * WEATHNUM);
+    memset(&weathDamage[0], 0, sizeof(timerval_t) * Weather::numberweather);
     memset(&charTimers[0], 0, sizeof(timerval_t) * tCHAR_COUNT);
     memset(&baseskill[0], 0, sizeof(skillval_t) * ALLSKILLS);
     memset(&skill[0], 0, sizeof(skillval_t) * (INTELLECT + 1));
@@ -1941,7 +1941,7 @@ void CChar::CopyData(CChar *target) {
     target->SetCarve(carve);
     target->SetNPCGuild(npcGuild);
     target->SetNPCGuildJoined(npcGuild);
-    for (std::uint8_t counter2 = 0; counter2 < WEATHNUM; ++counter2) {
+    for (std::uint8_t counter2 = 0; counter2 < Weather::numberweather; ++counter2) {
         target->SetWeathDamage(weathDamage[counter2], counter2);
     }
     if (IsValidNPC()) {

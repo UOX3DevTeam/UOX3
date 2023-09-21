@@ -1526,7 +1526,7 @@ JSBool SE_IsRaceWeakToWeather([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     auto race = static_cast<raceid_t>(JSVAL_TO_INT(argv[0]));
     auto toCheck = static_cast<weathid_t>(JSVAL_TO_INT(argv[1]));
     CRace *tRace = Races->Race(race);
-    if (tRace == nullptr || toCheck >= WEATHNUM) {
+    if (tRace == nullptr || toCheck >= Weather::numberweather) {
         return JS_FALSE;
     }
     *rval = BOOLEAN_TO_JSVAL(tRace->AffectedBy(static_cast<Weather::type_t>(toCheck)));

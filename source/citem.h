@@ -86,7 +86,7 @@ protected:
     std::uint16_t ammo[2];   // Ammo ID and Hue
     std::uint16_t ammoFX[3]; // Ammo-effect ID, Hue and rendermode
     
-    std::bitset<WEATHNUM> weatherBools; // For elemental weaponry.  So a Heat weapon would be a fire
+    std::bitset<Weather::numberweather> weatherBools; // For elemental weaponry.  So a Heat weapon would be a fire
     // weapon, and does elemental damage to Heat weak races
     
     auto RemoveSelfFromCont() -> void;

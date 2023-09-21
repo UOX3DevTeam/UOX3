@@ -241,7 +241,7 @@ protected:
     timerval_t charTimers[tCHAR_COUNT];
     
     timerval_t regen[3];
-    timerval_t weathDamage[WEATHNUM]; // Light Damage timer
+    timerval_t weathDamage[Weather::numberweather]; // Light Damage timer
     
     std::uint8_t PoisonStrength;
     BodyType bodyType;

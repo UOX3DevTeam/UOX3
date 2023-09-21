@@ -1189,8 +1189,8 @@ CRace::CRace() : bools(4), visDistance(0), nightVision(0), armourRestrict(0), li
     weathDamage.fill(0);
     weathSecs.fill(60);
     // memset( &iSkills[0], 0, sizeof( skillval_t ) * SKILLS );
-    // memset( &weathDamage[0], 0, sizeof( std::int8_t ) * WEATHNUM );
-    // memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
+    // memset( &weathDamage[0], 0, sizeof( std::int8_t ) * Weather::numberweather );
+    // memset( &weathSecs[0], 60, sizeof( SECONDS ) * Weather::numberweather );
     
     Skill(100, STRENGTH);
     Skill(100, DEXTERITY);
@@ -1810,8 +1810,8 @@ CRace &CRace::operator=(CRace &trgRace) {
     armourRestrict = trgRace.armourRestrict;
     weathSecs = trgRace.weathSecs;
     weathDamage = trgRace.weathDamage;
-    // memcpy( weathSecs, trgRace.weatSec, sizeof( SECONDS ) * WEATHNUM );
-    // memcpy( weathSecs, trgRace.weathDamage, sizeof( std::int8_t ) * WEATHNUM );
+    // memcpy( weathSecs, trgRace.weatSec, sizeof( SECONDS ) * Weather::numberweather );
+    // memcpy( weathSecs, trgRace.weathDamage, sizeof( std::int8_t ) * Weather::numberweather );
     
     languageMin = trgRace.languageMin;
     visDistance = trgRace.visDistance;
