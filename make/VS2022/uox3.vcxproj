@@ -164,6 +164,12 @@
     <ClCompile Include="..\..\source\weight.cpp" />
     <ClCompile Include="..\..\source\wholist.cpp" />
     <ClCompile Include="..\..\source\worldmain.cpp" />
+
+    <!-- other group -->
+    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
+    <ClCompile Include="..\..\source\other\global.cpp" />
+
+
     <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp" />
     <ClCompile Include="..\..\source\archive.cpp" />
@@ -172,7 +178,6 @@
     <ClCompile Include="..\..\source\cplayeraction.cpp" />
     <ClCompile Include="..\..\source\cmdtable.cpp" />
     <ClCompile Include="..\..\source\cresponse.cpp" />
-    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
     <ClCompile Include="..\..\source\dist.cpp" />
     <ClCompile Include="..\..\source\effect.cpp" />
     <ClCompile Include="..\..\source\fileio.cpp" />
@@ -272,13 +277,15 @@
     <ClInclude Include="..\..\source\weight.h" />
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
+    <!-- other group -->
+    <ClCompile Include="..\..\source\other\uoxversion.hpp" />
+    <ClCompile Include="..\..\source\other\global.hpp" />
     <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />
     <ClInclude Include="..\..\source\cmdtable.h" />
     <ClInclude Include="..\..\source\cresponse.h" />
     <ClInclude Include="..\..\source\cskillclass.h" />
-    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <ClInclude Include="..\..\source\enums.h" />
     <ClInclude Include="..\..\source\genericlist.h" />
     <ClInclude Include="..\..\source\osunique.hpp" />
