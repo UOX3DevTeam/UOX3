@@ -23,9 +23,6 @@
     <Filter Include="Source Files\UOData">
       <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Utility">
-      <UniqueIdentifier>{6a0862ae-8f52-4d2e-bac1-51e13e865632}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -38,6 +35,9 @@
     </Filter>
     <Filter Include="Source Files\type">
       <UniqueIdentifier>{2c486189-a83f-452c-99c9-2ca988ecf300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utility">
+      <UniqueIdentifier>{6a0862ae-8f52-4d2e-bac1-51e13e865632}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -259,13 +259,13 @@
     </ClCompile>
     <!-- Utility group -->
     <ClCompile Include="..\..\source\stringutility.cpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\timeutility.cpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\eventtimer.cpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClCompile>
     <!-- UOData group -->
     <ClCompile Include="..\..\source\mapstuff.cpp">
@@ -342,6 +342,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\ushortvalue.cpp">
       <Filter>Source Files\configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\type\weather.cpp">
+      <Filter>Source Files\type</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -567,16 +570,16 @@
       <Filter>Source Files\UOData</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\eventtimer.hpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\stringutility.hpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\utility\strutil.hpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\timeutility.hpp">
-      <Filter>Source Files\Utility</Filter>
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjspropertyspecs.h">
       <Filter>Source Files\JS Engine</Filter>
@@ -640,6 +643,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\ushortvalue.hpp">
       <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\utility\random.hpp">
+      <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\type\weather.hpp">
+      <Filter>Source Files\type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
