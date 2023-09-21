@@ -27,7 +27,6 @@
 #include "csocket.h"
 #include "cspawnregion.h"
 #include "cthreadqueue.h"
-#include "cweather.hpp"
 #include "dictionary.h"
 #include "type/era.hpp"
 #include "funcdecl.h"
