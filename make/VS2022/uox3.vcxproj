@@ -164,12 +164,9 @@
     <ClCompile Include="..\..\source\weight.cpp" />
     <ClCompile Include="..\..\source\wholist.cpp" />
     <ClCompile Include="..\..\source\worldmain.cpp" />
-
     <!-- other group -->
     <ClCompile Include="..\..\source\other\uoxversion.cpp" />
-    <ClCompile Include="..\..\source\other\global.cpp" />
-
-
+    <ClCompile Include="..\..\source\other\uoxglobal.cpp" />
     <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp" />
     <ClCompile Include="..\..\source\archive.cpp" />
@@ -279,7 +276,7 @@
     <ClInclude Include="..\..\source\worldmain.h" />
     <!-- other group -->
     <ClCompile Include="..\..\source\other\uoxversion.hpp" />
-    <ClCompile Include="..\..\source\other\global.hpp" />
+    <ClCompile Include="..\..\source\other\uoxglobal.hpp" />
     <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />

@@ -1,6 +1,6 @@
 //
 
-#include "global.hpp"
+#include "uoxglobal.hpp"
 
 #include <algorithm>
 #include <stdexcept>

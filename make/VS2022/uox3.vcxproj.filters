@@ -1,350 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Base Objects">
-      <UniqueIdentifier>{cd40ad04-825d-48bb-9a86-ff3ee1b2925e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Subsystem">
-      <UniqueIdentifier>{f1c80722-7193-47b7-8c33-b900a0063ae4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Other">
-      <UniqueIdentifier>{803b199d-3be5-4df0-a1a3-606c8ee008df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\JS Engine">
-      <UniqueIdentifier>{9070ad2d-6668-48f5-a867-d62bf7e1c2ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Network">
-      <UniqueIdentifier>{5dc0e64e-1161-4bdd-b7a9-08309a58eb14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\UOData">
-      <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Script">
+    <Filter Include="source files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="source files\world objects">
+      <UniqueIdentifier>{cd40ad04-825d-48bb-9a86-ff3ee1b2925e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\subsystem">
+      <UniqueIdentifier>{f1c80722-7193-47b7-8c33-b900a0063ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\other">
+      <UniqueIdentifier>{803b199d-3be5-4df0-a1a3-606c8ee008df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\js engine">
+      <UniqueIdentifier>{9070ad2d-6668-48f5-a867-d62bf7e1c2ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\network">
+      <UniqueIdentifier>{5dc0e64e-1161-4bdd-b7a9-08309a58eb14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\uodata">
+      <UniqueIdentifier>{5fcfac04-c4f0-4c48-804a-8b4f49e615c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files\script">
       <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\configuration">
+    <Filter Include="source files\configuration">
       <UniqueIdentifier>{31f27eb9-4e9c-4f76-8fa2-0dac25da970f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\type">
+    <Filter Include="source files\type">
       <UniqueIdentifier>{2c486189-a83f-452c-99c9-2ca988ecf300}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\utility">
+    <Filter Include="source files\utility">
       <UniqueIdentifier>{6a0862ae-8f52-4d2e-bac1-51e13e865632}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>source files</Filter>
     </ClCompile>
     <!-- Script group -->
     <ClCompile Include="..\..\source\cserverdefinitions.cpp">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\dictionary.cpp">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\scriptc.cpp">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\ssection.cpp">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClCompile>
     <!-- Base Objects group -->
     <ClCompile Include="..\..\source\boats.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cbaseobject.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cchar.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cguild.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\citem.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cmultiobj.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\csocket.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cspawnregion.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cthreadqueue.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\objectfactory.cpp">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClCompile>
     <!-- Subsystem group -->
     <ClCompile Include="..\..\source\books.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cgump.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\chtmlsystem.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\combat.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\commands.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\craces.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cweather.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\gumps.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\house.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\items.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\jail.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\lineofsight.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\magic.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\movement.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\msgboard.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\partysystem.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\quantityfuncs.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\queue.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\regions.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\skills.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\sound.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\speech.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\targeting.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\townregion.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\trade.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\vendor.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\weight.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\wholist.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\worldmain.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\archive.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\calcfuncs.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cdice.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cmdtable.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cplayeraction.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cresponse.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\other\uoxversion.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\dist.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\effect.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\fileio.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\findfuncs.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\npcs.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\osunique.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\pcmanage.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClCompile>
     <!-- JS Engine group -->
     <ClCompile Include="..\..\source\cjsengine.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cjsmapping.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cscript.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\jsencapsulate.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\sefunctions.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\uoxjsmethods.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\uoxjspropertyfuncs.cpp">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClCompile>
     <!-- Network group -->
     <ClCompile Include="..\..\source\cpacketreceive.cpp">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cpacketsend.cpp">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\network.cpp">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\ip4address.cpp">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClCompile>
     <!-- Utility group -->
     <ClCompile Include="..\..\source\stringutility.cpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\timeutility.cpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\eventtimer.cpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClCompile>
     <!-- UOData group -->
     <ClCompile Include="..\..\source\mapstuff.cpp">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\multimul.cpp">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\uopdata.cpp">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\subsystem\console.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\subsystem\account.cpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\directorylocation.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\serverconfig.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\clientenable.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\clientfeature.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\serverfeature.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\startlocation.cpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\clientversion.cpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\assistantfeature.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\startlocconfig.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\serverswitch.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\serverstring.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\expansion.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\era.cpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\realnumberconfig.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\shortvalue.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\spawnfacet.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\timersetting.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\uintvalue.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\uotime.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\configuration\ushortvalue.cpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\type\weather.cpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\other\uoxversion.hpp" />
+    <ClCompile Include="..\..\source\other\uoxglobal.cpp">
+      <Filter>source files\other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\other\uoxglobal.hpp">
+      <Filter>source files\other</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,298 +364,295 @@
     <!-- Utility group -->
     <!-- UOData group -->
     <ClInclude Include="..\..\source\cbaseobject.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cchar.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cguild.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\citem.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cmultiobj.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\csocket.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cspawnregion.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cthreadqueue.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\funcdecl.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\objectfactory.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\pagevector.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxstruct.h">
-      <Filter>Source Files\Base Objects</Filter>
+      <Filter>source files\world objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cjsengine.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cjsmapping.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cscript.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jsencapsulate.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\sefunctions.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\spidermonkey.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjsclasses.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjsmethods.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjspropertyenums.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjspropertyfuncs.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpacketreceive.h">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpacketsend.h">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ip4address.hpp">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\network.h">
-      <Filter>Source Files\Network</Filter>
+      <Filter>source files\network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cserverdefinitions.h">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\dictionary.h">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\scriptc.h">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ssection.h">
-      <Filter>Source Files\Script</Filter>
+      <Filter>source files\script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cdice.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\classes.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cmdtable.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cresponse.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cskillclass.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\enums.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\genericlist.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ostype.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\osunique.hpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\power.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\townregion.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\typedefs.h">
-      <Filter>Source Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\other\uoxversion.hpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\useful.h">
-      <Filter>Source Files\Other</Filter>
+      <Filter>source files\other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\subsystem\account.hpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\books.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ceffects.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cgump.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\chtmlsystem.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cmagic.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\combat.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\commands.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\subsystem\console.hpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\craces.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cweather.hpp">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jail.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\magic.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\movement.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\msgboard.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\partysystem.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\regions.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\skills.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\speech.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\teffect.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\weight.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\wholist.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\worldmain.h">
-      <Filter>Source Files\Subsystem</Filter>
+      <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\mapclasses.h">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\mapstuff.h">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\multimul.hpp">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uopdata.hpp">
-      <Filter>Source Files\UOData</Filter>
+      <Filter>source files\uodata</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\eventtimer.hpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\stringutility.hpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\utility\strutil.hpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\timeutility.hpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\uoxjspropertyspecs.h">
-      <Filter>Source Files\JS Engine</Filter>
+      <Filter>source files\js engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\directorylocation.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverconfig.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\clientenable.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\clientfeature.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverfeature.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\startlocation.hpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\clientversion.hpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\assistantfeature.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverswitch.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\startlocconfig.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\serverstring.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\expansion.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\era.hpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\realnumberconfig.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\shortvalue.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\spawnfacet.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\timersetting.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\uintvalue.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\uotime.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configuration\ushortvalue.hpp">
-      <Filter>Source Files\configuration</Filter>
+      <Filter>source files\configuration</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\utility\random.hpp">
-      <Filter>Source Files\utility</Filter>
+      <Filter>source files\utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\type\weather.hpp">
-      <Filter>Source Files\type</Filter>
+      <Filter>source files\type</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
