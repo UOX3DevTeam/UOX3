@@ -198,9 +198,6 @@
     <ClCompile Include="..\..\source\cresponse.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\other\uoxversion.cpp">
-      <Filter>source files\other</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\dist.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
@@ -346,11 +343,10 @@
     <ClCompile Include="..\..\source\type\weather.cpp">
       <Filter>source files\type</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\other\uoxversion.hpp" />
     <ClCompile Include="..\..\source\other\uoxglobal.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\other\uoxglobal.hpp">
+    <ClCompile Include="..\..\source\other\uoxversion.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
   </ItemGroup>
@@ -653,6 +649,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\type\weather.hpp">
       <Filter>source files\type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\other\uoxglobal.hpp">
+      <Filter>source files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\other\uoxversion.hpp">
+      <Filter>source files\other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -92,6 +92,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\other\uoxglobal.cpp" />
+    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
@@ -165,8 +167,6 @@
     <ClCompile Include="..\..\source\wholist.cpp" />
     <ClCompile Include="..\..\source\worldmain.cpp" />
     <!-- other group -->
-    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
-    <ClCompile Include="..\..\source\other\uoxglobal.cpp" />
     <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp" />
     <ClCompile Include="..\..\source\archive.cpp" />
@@ -206,6 +206,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
+    <ClInclude Include="..\..\source\other\uoxglobal.hpp" />
+    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <!-- type group -->
     <ClInclude Include="..\..\source\type\clientversion.hpp" />
@@ -275,8 +277,6 @@
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
     <!-- other group -->
-    <ClCompile Include="..\..\source\other\uoxversion.hpp" />
-    <ClCompile Include="..\..\source\other\uoxglobal.hpp" />
     <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />
