@@ -110,8 +110,6 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/commands.h
    ${PROJECT_SOURCE_DIR}/../../source/craces.cpp
    ${PROJECT_SOURCE_DIR}/../../source/craces.h
-   ${PROJECT_SOURCE_DIR}/../../source/cweather.cpp
-   ${PROJECT_SOURCE_DIR}/../../source/cweather.hpp
    ${PROJECT_SOURCE_DIR}/../../source/gumps.cpp
    ${PROJECT_SOURCE_DIR}/../../source/house.cpp
    ${PROJECT_SOURCE_DIR}/../../source/items.cpp

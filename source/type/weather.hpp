@@ -130,7 +130,9 @@ class WorldWeather {
     
 public:
     WorldWeather() ;
-    auto size() const -> size_t ;
+    auto size() const -> size_t {
+        return region.size();
+    }
     auto operator[](weathid_t id) const ->const Weather& {
         return region.at(id) ;
     }
@@ -151,6 +153,12 @@ public:
     auto doNPCStuff(CChar *p)->bool;
     auto doItemStuff(CItem *mItem)->bool;
     auto sendJSWeather(CBaseObject *mObj, Weather::type_t weathType, std::int8_t currentTemp)->void;
+    auto pointerForRegion(weathid_t id) -> Weather * {
+        if (id < region.size()){
+            return &region.at(id) ;
+        }
+        return nullptr ;
+    }
 
 };
 #endif /* weather_hpp */

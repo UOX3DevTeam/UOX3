@@ -107,9 +107,6 @@
     <ClCompile Include="..\..\source\craces.cpp">
       <Filter>source files\subsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cweather.cpp">
-      <Filter>source files\subsystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\gumps.cpp">
       <Filter>source files\subsystem</Filter>
     </ClCompile>
@@ -516,9 +513,6 @@
       <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\craces.h">
-      <Filter>source files\subsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cweather.hpp">
       <Filter>source files\subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jail.h">

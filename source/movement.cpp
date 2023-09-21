@@ -54,7 +54,6 @@
 #include "cscript.h"
 #include "cserverdefinitions.h"
 #include "csocket.h"
-#include "cweather.hpp"
 #include "funcdecl.h"
 #include "mapstuff.h"
 #include "msgboard.h"
@@ -62,6 +61,7 @@
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "type/weather.hpp"
 #include "weight.h"
 
 using namespace std::string_literals;

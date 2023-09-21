@@ -24,9 +24,10 @@
 #include "craces.h"
 #include "csocket.h"
 #include "cspawnregion.h"
-#include "cweather.hpp"
 #include "dictionary.h"
 #include "funcdecl.h"
+#include "other/uoxglobal.hpp"
+
 #include "magic.h"
 #include "msgboard.h"
 #include "objectfactory.h"
@@ -39,6 +40,7 @@
 #include "townregion.h"
 #include "useful.h"
 #include "utility/strutil.hpp"
+#include "type/weather.hpp"
 #include "wholist.h"
 #include "worldmain.h"
 
@@ -219,12 +221,12 @@ void Command_GetLight(CSocket *s) {
     
     CTownRegion *tRegion = mChar->GetRegion();
     std::uint16_t weatherId = tRegion->GetWeather();
-    CWeather *sys = Weather->Weather(weatherId);
+    auto sys = worldWeather.pointerForRegion(weatherId);
     if (sys != nullptr) {
-        const float lightMin = sys->LightMin();
-        const float lightMax = sys->LightMax();
+        auto lightMin = (*sys).impact[Weather::BRIGHTNESS][Weather::MIN] ;
+        auto lightMax = (*sys).impact[Weather::BRIGHTNESS][Weather::MAX] ;
         if (lightMin < 300 && lightMax < 300) {
-            float i = sys->CurrentLight();
+            auto i = (*sys).impact[Weather::BRIGHTNESS][Weather::CURRENT] ;
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 s->SysMessage(1632, 0); // Current light level is %i
             }
@@ -1206,10 +1208,9 @@ void Command_Temp(CSocket *s) {
     if (!ValidateObject(mChar))
         return;
     
-    CTownRegion *reg = mChar->GetRegion();
-    auto toGrab = reg->GetWeather();
+    auto toGrab = mChar->GetRegion()->GetWeather();
     if (toGrab != 0xFF) {
-        float curTemp = Weather->Temp(toGrab);
+        auto curTemp = worldWeather[toGrab].impact[Weather::TEMP][Weather::CURRENT];
         s->SysMessage(1751, curTemp); // It is currently %f degrees
     }
 }

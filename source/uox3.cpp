@@ -71,10 +71,10 @@
 #include "csocket.h"
 #include "cspawnregion.h"
 #include "cthreadqueue.h"
-#include "cweather.hpp"
 #include "dictionary.h"
 #include "eventtimer.hpp"
 #include "funcdecl.h"
+#include "other/uoxglobal.hpp"
 #include "jail.h"
 #include "configuration/serverconfig.hpp"
 #include "subsystem/account.hpp"
@@ -133,7 +133,7 @@ auto aWeight = CWeight();                  // no dependency, no startup
 auto aMagic = CMagic();                    // No dependent, no startup
 auto aRaces = cRaces();                    // no dependent, no startup
 
-auto aWeather = cWeatherAb();                         // no dependent, no startup
+//auto aWeather = cWeatherAb();                         // no dependent, no startup
 auto aMovement = CMovement();                         // No dependent, no startup
 auto aWhoList = CWhoList();                           // no dependent, no startup
 auto aOffList = CWhoList(false);                      // no dependent, no startup
@@ -519,9 +519,9 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     
     Console::shared() << "Loading Weather                ";
-    Weather->load();
-    Weather->NewDay();
-    Weather->NewHour();
+    worldWeather.load(ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION)/std::filesystem::path("weather")/std::filesystem::path("weatherab.dfn"));
+    worldWeather.newDay();
+    worldWeather.newHour();
     Console::shared().printDone();
     
     Console::shared() << "Loading serverCommands               " << myendl;
@@ -1466,13 +1466,12 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 DoLight(mSock, toShow);
             }
         }
-        
-        Weather->DoLightEffect(mSock, mChar);
-        Weather->doWeatherEffect(mSock, mChar, Weather::RAIN);
-        Weather->doWeatherEffect(mSock, mChar, Weather::SNOW);
-        Weather->doWeatherEffect(mSock, mChar, Weather::HEAT);
-        Weather->doWeatherEffect(mSock, mChar, Weather::COLD);
-        Weather->doWeatherEffect(mSock, mChar, Weather::STORM);
+        worldWeather.doLightEffect(mSock, mChar);
+        worldWeather.doWeatherEffect(mSock, mChar, Weather::RAIN);
+        worldWeather.doWeatherEffect(mSock, mChar, Weather::SNOW);
+        worldWeather.doWeatherEffect(mSock, mChar, Weather::HEAT);
+        worldWeather.doWeatherEffect(mSock, mChar, Weather::COLD);
+        worldWeather.doWeatherEffect(mSock, mChar, Weather::STORM);
         
         if (checkFieldEffects) {
             Magic->CheckFieldEffects(mChar);
@@ -2245,17 +2244,17 @@ auto CWorldMain::CheckAutoTimers() -> void {
     if ((GetUOTickCount() <= GetUICurrentTime()) || (GetOverflow())) {
         std::uint8_t oldHour = aWorld.uoTime.hours;
         if (aWorld.uoTime.incrementMinute()) {
-            Weather->NewDay();
+            worldWeather.newDay();
         }
         if (oldHour != aWorld.uoTime.hours ) {
-            Weather->NewHour();
+            worldWeather.newHour();
         }
         SetUOTickCount(BuildTimeValue(ServerConfig::shared().ushortValues[UShortValue::SECONDSPERUOMINUTE]));
     }
     
     if ((GetTimer(tWORLD_LIGHTTIME) <= GetUICurrentTime()) || GetOverflow()) {
         DoWorldLight();     // Changes lighting, if it is currently time to.
-        Weather->DoStuff(); // updates the weather types
+        worldWeather.update(aWorld.uoTime); // updates the weather types
         SetTimer(tWORLD_LIGHTTIME, BuildTimeValue(static_cast<float>( ServerConfig::shared().timerSetting[TimerSetting::WEATHER])));
         doWeather = true;
     }
@@ -2484,7 +2483,6 @@ auto initClasses() -> void {
     Network = &aNetwork;
     Magic = &aMagic;
     Races = &aRaces;
-    Weather = &aWeather;
     Movement = &aMovement;
     GuildSys = &aGuildSys;
     WhoList = &aWhoList;
@@ -3034,21 +3032,21 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     if (mChar->GetFixedLight() != 255) {
         toSend.Level(mChar->GetFixedLight());
         s->Send(&toSend);
-        Weather->DoPlayerStuff(s, mChar);
+        worldWeather.doPlayerStuff(s, mChar);
         return;
     }
     
     auto curRegion = mChar->GetRegion();
-    auto wSys = Weather->Weather(curRegion->GetWeather());
     auto toShow = cwmWorldState->uoTime.worldLightLevel;
     
     auto dunLevel = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT];
     // we have a valid weather system
-    if (wSys) {
-        const float lightMin = wSys->LightMin();
-        const float lightMax = wSys->LightMax();
+    if (curRegion->GetWeather() < worldWeather.size()) {
+        
+        const float lightMin = worldWeather[curRegion->GetWeather()].impact[Weather::BRIGHTNESS][Weather::MIN] ;
+        const float lightMax = worldWeather[curRegion->GetWeather()].impact[Weather::BRIGHTNESS][Weather::MAX] ;
         if (lightMin < 300 && lightMax < 300) {
-            float i = wSys->CurrentLight();
+            auto i = worldWeather[curRegion->GetWeather()].impact[Weather::BRIGHTNESS][Weather::CURRENT];
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
@@ -3095,7 +3093,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
         }
     }
     
-    Weather->DoPlayerStuff(s, mChar);
+    worldWeather.doPlayerStuff(s, mChar);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3109,17 +3107,17 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     }
     
     auto curRegion = mChar->GetRegion();
-    auto wSys = Weather->Weather(curRegion->GetWeather());
+    auto wSys = worldWeather.pointerForRegion( curRegion->GetWeather());
     
     lightlevel_t toShow = level;
     lightlevel_t dunLevel = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT] ;
     
     // we have a valid weather system
     if (wSys) {
-        const float lightMin = wSys->LightMin();
-        const float lightMax = wSys->LightMax();
+        auto lightMin = (*wSys).impact[Weather::BRIGHTNESS][Weather::MIN];
+        auto lightMax = (*wSys).impact[Weather::BRIGHTNESS][Weather::MAX];
         if (lightMin < 300 && lightMax < 300) {
-            float i = wSys->CurrentLight();
+            auto i = (*wSys).impact[Weather::BRIGHTNESS][Weather::CURRENT];
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
@@ -3160,7 +3158,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
         }
     }
     
-    Weather->DoNPCStuff(mChar);
+    worldWeather.doNPCStuff(mChar);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3170,17 +3168,17 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     auto curRegion = mItem->GetRegion();
-    auto wSys = Weather->Weather(curRegion->GetWeather());
+    auto wSys = worldWeather.pointerForRegion( curRegion->GetWeather());
     
     lightlevel_t toShow = level;
     lightlevel_t dunLevel = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT] ;
     
     // we have a valid weather system
     if (wSys) {
-        const float lightMin = wSys->LightMin();
-        const float lightMax = wSys->LightMax();
+        auto lightMin = (*wSys).impact[Weather::BRIGHTNESS][Weather::MIN];
+        auto lightMax = (*wSys).impact[Weather::BRIGHTNESS][Weather::MAX];
         if ((lightMin < 300) && (lightMax < 300)) {
-            toShow = static_cast<lightlevel_t>(wSys->CurrentLight());
+            toShow = static_cast<lightlevel_t>((*wSys).impact[Weather::BRIGHTNESS][Weather::CURRENT]);
         }
     }
     else {
@@ -3210,7 +3208,7 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
         }
     }
     
-    Weather->DoItemStuff(mItem);
+    worldWeather.doItemStuff(mItem);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -3537,10 +3535,10 @@ auto CheckCharInsideBuilding(CChar *c, CSocket *mSock, bool doWeatherStuff) -> v
             c->SetInBuilding(isInBuilding);
             if (doWeatherStuff) {
                 if (c->IsNpc()) {
-                    Weather->DoNPCStuff(c);
+                    worldWeather.doNPCStuff(c);
                 }
                 else {
-                    Weather->DoPlayerStuff(mSock, c);
+                    worldWeather.doPlayerStuff(mSock, c);
                 }
             }
         }

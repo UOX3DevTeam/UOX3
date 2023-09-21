@@ -61,7 +61,6 @@
 		64A90136293E3DD4009B54DA /* csocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900AE293E3DD4009B54DA /* csocket.cpp */; };
 		64A90137293E3DD4009B54DA /* cspawnregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B0293E3DD4009B54DA /* cspawnregion.cpp */; };
 		64A90138293E3DD4009B54DA /* cthreadqueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B2293E3DD4009B54DA /* cthreadqueue.cpp */; };
-		64A9013A293E3DD4009B54DA /* cweather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B6293E3DD4009B54DA /* cweather.cpp */; };
 		64A9013B293E3DD4009B54DA /* dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B8293E3DD4009B54DA /* dictionary.cpp */; };
 		64A9013C293E3DD4009B54DA /* dist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900BA293E3DD4009B54DA /* dist.cpp */; };
 		64A9013D293E3DD4009B54DA /* effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900BB293E3DD4009B54DA /* effect.cpp */; };
@@ -1233,6 +1232,8 @@
 		56A2617A2AB7241E00DD2D84 /* expired */ = {
 			isa = PBXGroup;
 			children = (
+				64A900B6293E3DD4009B54DA /* cweather.cpp */,
+				64A900B7293E3DD4009B54DA /* cweather.hpp */,
 			);
 			path = expired;
 			sourceTree = "<group>";
@@ -3190,8 +3191,6 @@
 				64A9009A293E3DD4009B54DA /* combat.h */,
 				64A900A3293E3DD4009B54DA /* craces.cpp */,
 				64A900A4293E3DD4009B54DA /* craces.h */,
-				64A900B6293E3DD4009B54DA /* cweather.cpp */,
-				64A900B7293E3DD4009B54DA /* cweather.hpp */,
 				64A900C4293E3DD4009B54DA /* gumps.cpp */,
 				64A900C5293E3DD4009B54DA /* house.cpp */,
 				64A900C8293E3DD4009B54DA /* items.cpp */,
@@ -3513,7 +3512,6 @@
 				64A9011A293E3DD4009B54DA /* ai.cpp in Sources */,
 				56A6A4B92AB38568008A5EB7 /* realnumberconfig.cpp in Sources */,
 				56A6A4D22AB3A148008A5EB7 /* ushortvalue.cpp in Sources */,
-				64A9013A293E3DD4009B54DA /* cweather.cpp in Sources */,
 				64A90140293E3DD4009B54DA /* findfuncs.cpp in Sources */,
 				64A9011C293E3DD4009B54DA /* boats.cpp in Sources */,
 				5611F3402AB1492D009438EA /* serverstring.cpp in Sources */,

@@ -92,8 +92,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\other\uoxglobal.cpp" />
-    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <!-- type group -->
     <ClCompile Include="..\..\source\type\clientversion.cpp" />
@@ -143,7 +141,6 @@
     <ClCompile Include="..\..\source\combat.cpp" />
     <ClCompile Include="..\..\source\commands.cpp" />
     <ClCompile Include="..\..\source\craces.cpp" />
-    <ClCompile Include="..\..\source\cweather.cpp" />
     <ClCompile Include="..\..\source\gumps.cpp" />
     <ClCompile Include="..\..\source\house.cpp" />
     <ClCompile Include="..\..\source\items.cpp" />
@@ -167,6 +164,8 @@
     <ClCompile Include="..\..\source\wholist.cpp" />
     <ClCompile Include="..\..\source\worldmain.cpp" />
     <!-- other group -->
+    <ClCompile Include="..\..\source\other\uoxglobal.cpp" />
+    <ClCompile Include="..\..\source\other\uoxversion.cpp" />
     <!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp" />
     <ClCompile Include="..\..\source\archive.cpp" />
@@ -206,8 +205,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ostype.h" />
-    <ClInclude Include="..\..\source\other\uoxglobal.hpp" />
-    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <ClInclude Include="..\..\source\spidermonkey.h" />
     <!-- type group -->
     <ClInclude Include="..\..\source\type\clientversion.hpp" />
@@ -261,7 +258,6 @@
     <ClInclude Include="..\..\source\combat.h" />
     <ClInclude Include="..\..\source\commands.h" />
     <ClInclude Include="..\..\source\craces.h" />
-    <ClInclude Include="..\..\source\cweather.hpp" />
     <ClInclude Include="..\..\source\jail.h" />
     <ClInclude Include="..\..\source\magic.h" />
     <ClInclude Include="..\..\source\movement.h" />
@@ -277,6 +273,8 @@
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
     <!-- other group -->
+    <ClInclude Include="..\..\source\other\uoxglobal.hpp" />
+    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\classes.h" />
