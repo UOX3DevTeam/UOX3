@@ -1896,7 +1896,7 @@ void VialTarget(CSocket *mSock) {
                 mSock->SysMessage(747); // That individual is not anywhere near you.
                 return;
             }
-            if (targChar->Damage(RandomNum(0, 5) + 2, PHYSICAL)) {
+            if (targChar->Damage(RandomNum(0, 5) + 2, Weather::PHYSICAL)) {
                 Skills->MakeNecroReg(mSock, nVialId, 0x0E24);
             }
         }

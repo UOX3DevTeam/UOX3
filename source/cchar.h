@@ -11,6 +11,7 @@
 #include "genericlist.h"
 #include "subsystem/account.hpp"
 #include "typedefs.h"
+#include "type/weather.hpp"
 
 class cScript;
 class CItem;
@@ -60,14 +61,12 @@ struct TargetInfo {
 };
 
 struct DamageTrackEntry {
-    DamageTrackEntry()
-    : damager(INVALIDSERIAL), damageDone(0), lastDamageType(PHYSICAL),
-    lastDamageDone(INVALIDSERIAL) {}
-    DamageTrackEntry(serial_t dmgr, std::int32_t dmgDn, weathertype_t dmgType, timerval_t lstDmgDn)
+    DamageTrackEntry() : damager(INVALIDSERIAL), damageDone(0), lastDamageType(Weather::PHYSICAL), lastDamageDone(INVALIDSERIAL) {}
+    DamageTrackEntry(serial_t dmgr, std::int32_t dmgDn, Weather::type_t dmgType, timerval_t lstDmgDn)
     : damager(dmgr), damageDone(dmgDn), lastDamageType(dmgType), lastDamageDone(lstDmgDn) {}
     serial_t damager;             // who did the damage?
     std::int32_t damageDone;            // how much damage has been accumulated?
-    weathertype_t lastDamageType; // what type of damage was dealt most recently?
+    Weather::type_t lastDamageType; // what type of damage was dealt most recently?
     timerval_t lastDamageDone;    // when was the last time that damage was done?
 };
 
@@ -659,10 +658,10 @@ public:
     
     flagcolors_t FlagColour(CChar *toCompare);
     void Heal(std::int16_t healValue, CChar *healer = nullptr);
-    bool Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker = nullptr,
+    bool Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *attacker = nullptr,
                 bool doRepsys = false);
     std::int16_t GetKarma() const;
-    void ReactOnDamage(weathertype_t damageType, CChar *attacker = nullptr);
+    void ReactOnDamage(Weather::type_t damageType, CChar *attacker = nullptr);
     void Die(CChar *attacker, bool doRepsys);
     
     // Values determining if the character is in a party or not, save us shortcutting in a few

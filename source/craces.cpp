@@ -795,14 +795,14 @@ void cRaces::SetThirstDrain(raceid_t race, std::int16_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set whether race is affected by a particular element
 // o------------------------------------------------------------------------------------------------o
-bool cRaces::Affect(raceid_t race, weathertype_t element) const {
+bool cRaces::Affect(raceid_t race, Weather::type_t element) const {
     bool rValue = false;
     if (!InvalidRace(race)) {
         rValue = races[race]->AffectedBy(element);
     }
     return rValue;
 }
-void cRaces::Affect(raceid_t race, weathertype_t element, bool value) {
+void cRaces::Affect(raceid_t race, Weather::type_t element, bool value) {
     if (!InvalidRace(race)) {
         races[race]->AffectedBy(value, element);
     }
@@ -813,14 +813,14 @@ void cRaces::Affect(raceid_t race, weathertype_t element, bool value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set number of seconds between burns for race from element
 // o------------------------------------------------------------------------------------------------o
-seconds_t cRaces::Secs(raceid_t race, weathertype_t element) const {
+seconds_t cRaces::Secs(raceid_t race, Weather::type_t element) const {
     if (InvalidRace(race))
         return 1;
     
     return races[race]->WeatherSeconds(element);
 }
 
-void cRaces::Secs(raceid_t race, weathertype_t element, seconds_t value) {
+void cRaces::Secs(raceid_t race, Weather::type_t element, seconds_t value) {
     if (InvalidRace(race))
         return;
     
@@ -832,13 +832,13 @@ void cRaces::Secs(raceid_t race, weathertype_t element, seconds_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get/Set damage incurred by race from element when they burn
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cRaces::Damage(raceid_t race, weathertype_t element) const {
+std::int8_t cRaces::Damage(raceid_t race, Weather::type_t element) const {
     if (InvalidRace(race))
         return 1;
     
     return races[race]->WeatherDamage(element);
 }
-void cRaces::Damage(raceid_t race, weathertype_t element, std::int8_t damage) {
+void cRaces::Damage(raceid_t race, Weather::type_t element, std::int8_t damage) {
     if (InvalidRace(race))
         return;
     
@@ -1071,8 +1071,8 @@ void CRace::ArmourClassRestriction(armorclass_t newValue) { armourRestrict = new
 //|	Purpose		-	Gets/Sets interval at which members of a race burn from a given
 // weather type
 // o------------------------------------------------------------------------------------------------o
-seconds_t CRace::WeatherSeconds(weathertype_t iNum) const { return weathSecs[iNum]; }
-void CRace::WeatherSeconds(seconds_t newValue, weathertype_t iNum) { weathSecs[iNum] = newValue; }
+seconds_t CRace::WeatherSeconds(Weather::type_t iNum) const { return weathSecs[iNum]; }
+void CRace::WeatherSeconds(seconds_t newValue, Weather::type_t iNum) { weathSecs[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::WeatherDamage()
@@ -1080,8 +1080,8 @@ void CRace::WeatherSeconds(seconds_t newValue, weathertype_t iNum) { weathSecs[i
 //|	Purpose		-	Gets/Sets how much damage members of race take from a given weather
 // type when they burn
 // o------------------------------------------------------------------------------------------------o
-std::int8_t CRace::WeatherDamage(weathertype_t iNum) const { return weathDamage[iNum]; }
-void CRace::WeatherDamage(std::int8_t newValue, weathertype_t iNum) { weathDamage[iNum] = newValue; }
+std::int8_t CRace::WeatherDamage(Weather::type_t iNum) const { return weathDamage[iNum]; }
+void CRace::WeatherDamage(std::int8_t newValue, Weather::type_t iNum) { weathDamage[iNum] = newValue; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::LanguageMin()
@@ -1106,8 +1106,8 @@ void CRace::VisibilityRange(range_t newValue) { visDistance = newValue; }
 //|	Purpose		-	Gets/Sets whether members of race are affected by a given weather
 // type
 // o------------------------------------------------------------------------------------------------o
-bool CRace::AffectedBy(weathertype_t iNum) const { return weatherAffected.test(iNum); }
-void CRace::AffectedBy(bool value, weathertype_t iNum) { weatherAffected.set(iNum, value); }
+bool CRace::AffectedBy(Weather::type_t iNum) const { return weatherAffected.test(iNum); }
+void CRace::AffectedBy(bool value, Weather::type_t iNum) { weatherAffected.set(iNum, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cRace::GetHungerRate()
@@ -1474,16 +1474,16 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
             case 'c':
             case 'C':
                 if (UTag == "COLDAFFECT"){ // are we affected by cold?
-                    AffectedBy(true, COLD);
+                    AffectedBy(true, Weather::COLD);
                 }
                 else if (UTag == "COLDLEVEL") { // cold level at which to take damage
                     ColdLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                 }
                 else if (UTag == "COLDDAMAGE") { // how much damage to take from cold
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), COLD);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::COLD);
                 }
                 else if (UTag == "COLDSECS"){ // how often cold affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), COLD);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::COLD);
                 }
                 break;
                 
@@ -1520,18 +1520,18 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                 }
                 else if (UTag == "HEATAFFECT") {
                     // are we affected by light?
-                    AffectedBy(true, HEAT);
+                    AffectedBy(true, Weather::HEAT);
                 }
                 else if (UTag == "HEATDAMAGE") {
                     // how much damage to take from light
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), HEAT);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::HEAT);
                 }
                 else if (UTag == "HEATLEVEL") {
                     // heat level at which to take damage
                     HeatLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                 }
                 else if (UTag == "HEATSECS") { // how often light affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), HEAT);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::HEAT);
                 }
                 else if (UTag == "HPMOD") {
                     // how high percentage of strength is added as bonus hitpoints
@@ -1567,26 +1567,26 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
             case 'l':
             case 'L':
                 if (UTag == "LIGHTAFFECT") { // are we affected by light?
-                    AffectedBy(true, LIGHT);
+                    AffectedBy(true, Weather::LIGHT);
                 }
                 else if (UTag == "LIGHTDAMAGE") { // how much damage to take from light
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), LIGHT);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::LIGHT);
                 }
                 else if (UTag == "LIGHTLEVEL") { // light level at which to take damage
                     LightLevel(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
                 }
                 else if (UTag == "LIGHTSECS"){ // how often light affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), LIGHT);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::LIGHT);
                 }
                 
                 else if (UTag == "LIGHTNINGAFFECT") { // are we affected by light?
-                    AffectedBy(true, LIGHTNING);
+                    AffectedBy(true, Weather::LIGHTNING);
                 }
                 else if (UTag == "LIGHTNINGDAMAGE") { // how much damage to take from light
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), LIGHTNING);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::LIGHTNING);
                 }
                 else if (UTag == "LIGHTNINGCHANCE") { // how big is the chance to get hit by a lightning
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), LIGHTNING);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::LIGHTNING);
                 }
                 else if (UTag == "LANGUAGEMIN") { // set language min
                     LanguageMin(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)));
@@ -1642,13 +1642,13 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                     RequiresBeard(true);
                 }
                 else if (UTag == "RAINAFFECT") { // are we affected by light?
-                    AffectedBy(true, RAIN);
+                    AffectedBy(true, Weather::RAIN);
                 }
                 else if (UTag == "RAINDAMAGE"){ // how much damage to take from light
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), RAIN);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::RAIN);
                 }
                 else if (UTag == "RAINSECS"){ // how often light affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), RAIN);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::RAIN);
                 }
                 else if (UTag == "RACERELATION") {
                     auto ssecs = oldstrutil::sections(data, " ");
@@ -1688,22 +1688,22 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
                     skinColours.push_back(ColourPair(skinMin, static_cast<std::uint16_t>(std::stoul(data, nullptr, 0))));
                 }
                 else if (UTag == "SNOWAFFECT") { // are we affected by light?
-                    AffectedBy(true, SNOW);
+                    AffectedBy(true, Weather::SNOW);
                 }
                 else if (UTag == "SNOWDAMAGE"){ // how much damage to take from light
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), SNOW);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::SNOW);
                 }
                 else if (UTag == "SNOWSECS"){ // how often light affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), SNOW);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::SNOW);
                 }
                 else if (UTag == "STORMAFFECT"){ // are we affected by storm?
-                    AffectedBy(true, STORM);
+                    AffectedBy(true, Weather::STORM);
                 }
                 else if (UTag == "STORMDAMAGE"){ // how much damage to take from storm
-                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), STORM);
+                    WeatherDamage(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::STORM);
                 }
                 else if (UTag == "STORMSECS"){ // how often storm affects in secs
-                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), STORM);
+                    WeatherSeconds(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), Weather::STORM);
                 }
                 else if (UTag == "STAMMOD"){ // how high percentage of dex is added as bonus stamina
                     StamModifier(static_cast<std::int16_t>(std::stoi(data, nullptr, 0)));

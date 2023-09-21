@@ -2047,7 +2047,7 @@ void EarthquakeStub(CChar *caster, CChar *target, std::int8_t curSpell, [[maybe_
     // Apply bonus damage based on target distance from center of earthquake
     spellDamage += dmgmod;
     
-    if (target->Damage(spellDamage, LIGHTNING, caster, true)) {
+    if (target->Damage(spellDamage, Weather::LIGHTNING, caster, true)) {
         // If this killed the target, don't continue
         if (target->IsDead())
             return;
@@ -3099,7 +3099,7 @@ std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spell
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate and inflict magic damage.
 // o------------------------------------------------------------------------------------------------o
-void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, weathertype_t element) {
+void CMagic::MagicDamage(CChar *p, std::int16_t amount, CChar *attacker, Weather::type_t element) {
     if (!ValidateObject(p))
         return;
     
@@ -3201,10 +3201,10 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
                 
                 // Apply magic damage
                 if (!CheckResist(nullptr, mChar, 4)) {
-                    MagicDamage(mChar, spellDamage, caster, HEAT);
+                    MagicDamage(mChar, spellDamage, caster, Weather::HEAT);
                 }
                 else {
-                    MagicDamage(mChar, spellDamage / 2, caster, HEAT);
+                    MagicDamage(mChar, spellDamage / 2, caster, Weather::HEAT);
                 }
                 Effects->PlaySound(mChar, 520);
             }
@@ -3264,10 +3264,10 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
         if (ValidateObject(caster)) {
             if (RandomNum(0, 2) == 1) {
                 if (!CheckResist(nullptr, mChar, 4)) {
-                    MagicDamage(mChar, fieldItem->GetTempVar(CITV_MOREX) / 50, caster, LIGHTNING);
+                    MagicDamage(mChar, fieldItem->GetTempVar(CITV_MOREX) / 50, caster, Weather::LIGHTNING);
                 }
                 else {
-                    MagicDamage(mChar, fieldItem->GetTempVar(CITV_MOREX) / 100, caster, LIGHTNING);
+                    MagicDamage(mChar, fieldItem->GetTempVar(CITV_MOREX) / 100, caster, Weather::LIGHTNING);
                 }
                 Effects->PlaySound(mChar, 520);
             }
@@ -3322,10 +3322,10 @@ auto CMagic::MagicTrap(CChar *s, CItem *i) -> void {
             Effects->PlayStaticAnimation(s, 0x36B0, 0x09, 0x09);
             Effects->PlaySound(s, 0x0207);
             if (CheckResist(nullptr, s, 4)) {
-                MagicDamage(s, i->GetTempVar(CITV_MOREZ, 2) / 2, nullptr, HEAT);
+                MagicDamage(s, i->GetTempVar(CITV_MOREZ, 2) / 2, nullptr, Weather::HEAT);
             }
             else {
-                MagicDamage(s, i->GetTempVar(CITV_MOREZ, 2), nullptr, HEAT);
+                MagicDamage(s, i->GetTempVar(CITV_MOREZ, 2), nullptr, Weather::HEAT);
             }
         }
         else {
@@ -3348,10 +3348,10 @@ auto CMagic::MagicTrap(CChar *s, CItem *i) -> void {
                     
                     if (ObjInRange(tempChar, i, DIST_NEARBY)) {
                         if (CheckResist(nullptr, tempChar, 4)) {
-                            MagicDamage(tempChar, i->GetTempVar(CITV_MOREZ, 2) / 2, s, HEAT);
+                            MagicDamage(tempChar, i->GetTempVar(CITV_MOREZ, 2) / 2, s, Weather::HEAT);
                         }
                         else {
-                            MagicDamage(tempChar, i->GetTempVar(CITV_MOREZ, 2), s, HEAT);
+                            MagicDamage(tempChar, i->GetTempVar(CITV_MOREZ, 2), s, Weather::HEAT);
                         }
                         
                         // Reveal hidden players impacted by the explosion

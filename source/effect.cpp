@@ -429,8 +429,8 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
                     if (dx <= len && dy <= len && dz <= len) {
                         if (!tempChar->IsGM() && !tempChar->IsInvulnerable() && (tempChar->IsNpc() || IsOnline((*tempChar)))) {
                             // std::uint8_t hitLoc = Combat->CalculateHitLoc();
-                            damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, (static_cast<std::int32_t>(damage) + (2 - std::min(dx, dy))), true);
-                            [[maybe_unused]] bool retVal = tempChar->Damage(static_cast<std::int16_t>(damage), HEAT, c, true);
+                            damage = Combat->ApplyDefenseModifiers( Weather::HEAT, c, tempChar, ALCHEMY, 0, (static_cast<std::int32_t>(damage) + (2 - std::min(dx, dy))), true);
+                            [[maybe_unused]] bool retVal = tempChar->Damage(static_cast<std::int16_t>(damage), Weather::HEAT, c, true);
                         }
                     }
                 }
@@ -462,8 +462,8 @@ auto ExplodeItem(CSocket *mSock, CItem *nItem, std::uint32_t damage = 0, [[maybe
     else {
         // Only affect character associated with item
         if (!c->IsGM() && !c->IsInvulnerable() && (c->IsNpc() || IsOnline((*c)))) {
-            damage = Combat->ApplyDefenseModifiers(HEAT, c, c, ALCHEMY, 0, static_cast<std::int32_t>(damage), true);
-            [[maybe_unused]] bool retVal = c->Damage(static_cast<std::int16_t>(damage), HEAT, c, true);
+            damage = Combat->ApplyDefenseModifiers(Weather::HEAT, c, c, ALCHEMY, 0, static_cast<std::int32_t>(damage), true);
+            [[maybe_unused]] bool retVal = c->Damage(static_cast<std::int16_t>(damage), Weather::HEAT, c, true);
         }
     }
     nItem->Delete();
@@ -769,7 +769,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(src, 43);
                     Magic->DoMoveEffect(43, s, src);
                     Magic->DoStaticEffect(s, 43);
-                    Magic->MagicDamage(s, Effect->More1(), src, HEAT);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -780,7 +780,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->DoMoveEffect(5, s, src);
                     //  Caster.MovingParticles(d, 0x36E4, 5, 0, false, false, 3006, 0, 0);
                     Magic->DoStaticEffect(s, 5);
-                    Magic->MagicDamage(s, Effect->More1(), src, HEAT);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -790,7 +790,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(src, 12);
                     Magic->DoMoveEffect(12, s, src);
                     Magic->DoStaticEffect(s, 12);
-                    Magic->MagicDamage(s, Effect->More1(), src, COLD);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::COLD);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -800,7 +800,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(src, 18);
                     Magic->DoMoveEffect(18, s, src);
                     Magic->DoStaticEffect(s, 18);
-                    Magic->MagicDamage(s, Effect->More1(), src, HEAT);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -811,7 +811,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(src, 30);
                     Magic->DoMoveEffect(30, s, src);
                     Magic->DoStaticEffect(s, 30);
-                    Magic->MagicDamage(s, Effect->More1(), src, LIGHTNING);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -821,7 +821,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(src, 37);
                     Magic->DoMoveEffect(37, s, src);
                     Magic->DoStaticEffect(s, 37);
-                    Magic->MagicDamage(s, Effect->More1(), src, COLD);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::COLD);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -831,7 +831,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(s, 42);
                     Magic->DoMoveEffect(42, s, src);
                     Magic->DoStaticEffect(s, 42);
-                    Magic->MagicDamage(s, Effect->More1(), src, LIGHTNING);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -842,7 +842,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(s, 49);
                     Magic->DoMoveEffect(49, s, src);
                     Magic->DoStaticEffect(s, 49);
-                    Magic->MagicDamage(s, Effect->More1(), src, LIGHTNING);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::LIGHTNING);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -852,7 +852,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->PlaySound(s, 51);
                     Magic->DoMoveEffect(51, s, src);
                     Magic->DoStaticEffect(s, 51);
-                    Magic->MagicDamage(s, Effect->More1(), src, HEAT);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;
@@ -866,7 +866,7 @@ auto cEffects::CheckTempeffects() -> void {
                     Magic->DoStaticEffect(s, 55);
                     // Effects->PlaySound( target, 0x160 );
                     // Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
-                    Magic->MagicDamage(s, Effect->More1(), src, HEAT);
+                    Magic->MagicDamage(s, Effect->More1(), src, Weather::HEAT);
                     equipCheckNeeded = true;
                 }
                 break;

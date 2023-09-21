@@ -1678,7 +1678,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         mChar->SetRobe(c->GetSerial());
         c->SetLayer(IL_ROBE);
         if (c->SetCont(mChar)) {
-            c->SetResist(1, PHYSICAL);
+            c->SetResist(1, Weather::PHYSICAL);
         }
         
         if (mChar->GetAccount().accountNumber != AccountEntry::INVALID_ACCOUNT) {

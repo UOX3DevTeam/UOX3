@@ -14,6 +14,8 @@
 #include "type/era.hpp"
 #include "typedefs.h"
 #include "uoxstruct.h"
+#include "type/weather.hpp"
+
 class CMultiObj;
 class CSpawnItem;
 class CChar;
@@ -135,8 +137,8 @@ public:
     TagMap GetTempTag(std::string tempTagName) const;
     void SetTempTag(std::string tempTagName, TagMap tagVal);
     
-    void SetResist(std::uint16_t newValue, weathertype_t damage);
-    std::uint16_t GetResist(weathertype_t damage) const;
+    void SetResist(std::uint16_t newValue, Weather::type_t damage);
+    std::uint16_t GetResist(Weather::type_t damage) const;
     
     void setTitle(std::string newtitle);
     std::string GetTitle() const;

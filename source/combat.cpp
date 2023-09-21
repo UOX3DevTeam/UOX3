@@ -1178,7 +1178,7 @@ std::int16_t CHandleCombat::CalcHighDamage(CChar *p) {
 //|							the item with the greater Def and its def
 // value
 // o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, weathertype_t resistType) {
+CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, Weather::type_t resistType) {
     if (ValidateObject(checkItem) && checkItem->GetResist(resistType) > currDef) {
         currDef = checkItem->GetResist(resistType);
         return checkItem;
@@ -1193,7 +1193,7 @@ CItem *CHandleCombat::CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR
 // and |							returns it along with its def value
 // o------------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal,  weathertype_t resistType) {
+CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal,  Weather::type_t resistType) {
     std::int32_t armorDef = 0;
     CItem *currItem = nullptr;
     switch (bodyLoc) {
@@ -1276,7 +1276,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
 //|	Purpose		-	Finds the defense value of a specific location or the entire
 // character based on hitLoc
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage, weathertype_t resistType) {
+std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage, Weather::type_t resistType) {
     if (!ValidateObject(mChar))
         return 0;
     
@@ -1734,8 +1734,8 @@ std::int16_t CHandleCombat::AdjustRaceDamage(CChar *attack, CChar *defend, CItem
     CRace *rPtr = Races->Race(defend->GetRace());
     if (rPtr != nullptr) {
         for (std::int32_t i = LIGHT; i < WEATHNUM; ++i) {
-            if (weapon->GetWeatherDamage(static_cast<weathertype_t>(i)) && rPtr->AffectedBy(static_cast<weathertype_t>(i))) {
-                amount += ApplyDefenseModifiers(static_cast<weathertype_t>(i), attack, defend, getFightSkill, hitLoc, bDamage, false);
+            if (weapon->GetWeatherDamage(static_cast<Weather::type_t>(i)) && rPtr->AffectedBy(static_cast<Weather::type_t>(i))) {
+                amount += ApplyDefenseModifiers(static_cast<Weather::type_t>(i), attack, defend, getFightSkill, hitLoc, bDamage, false);
             }
         }
     }
@@ -1757,7 +1757,7 @@ std::int16_t CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defen
     CItem *defenderItem = NULL;
     if (hitLoc != 0) {
         // If hit location system is enabled, check armor class of item at specified hit location
-        defenderItem = GetArmorDef(attacker, bonusDamage, hitLoc, false, PHYSICAL);
+        defenderItem = GetArmorDef(attacker, bonusDamage, hitLoc, false, Weather::PHYSICAL);
         
         if (ValidateObject(defenderItem) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass()) {
             // Add bonus damage equal to half of the armor's physical resist/armor rating
@@ -1768,7 +1768,7 @@ std::int16_t CHandleCombat::AdjustArmorClassDamage(CChar *attacker, CChar *defen
         // Hit location system not enabled. Rely on average AC/physical resist instead
         std::int32_t bonusPotential = 0;
         for (std::uint8_t getLoc = 1; getLoc < 7; ++getLoc) {
-            defenderItem = GetArmorDef(attacker, bonusPotential, getLoc, false, PHYSICAL);
+            defenderItem = GetArmorDef(attacker, bonusPotential, getLoc, false, Weather::PHYSICAL);
             
             if (ValidateObject(defenderItem) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass()) {
                 bonusDamage += bonusPotential;
@@ -1933,7 +1933,7 @@ std::int8_t CHandleCombat::CalculateHitLoc() {
 //|	Purpose		-	Applies damage bonuses based on race/weather weakness and character
 // skills
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CHandleCombat::ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage) {
+std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage) {
     if (!ValidateObject(ourTarg) || !ValidateObject(mChar))
         return baseDamage;
     
@@ -1944,10 +1944,10 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(weathertype_t damageType, CChar *
     CRace *rPtr = Races->Race(ourTarg->GetRace());
     
     switch (damageType) {
-        case NONE:
+        case Weather::NONE:
             damage = static_cast<R32>(baseDamage);
             break;
-        case PHYSICAL:
+        case Weather::PHYSICAL:
             // Race Dmg Modification: Bonus percentage.
             RaceDamage = Races->DamageFromSkill(getFightSkill, mChar->GetRace());
             if (RaceDamage != 0) {
@@ -2158,7 +2158,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(weathertype_t damageType, CChar *
 //|	Purpose		-	Applies defense modifiers based on shields/parrying, armor values
 // and elemental damage
 // o------------------------------------------------------------------------------------------------o
-std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage, bool doArmorDamage) {
+std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage, bool doArmorDamage) {
     if (!ValidateObject(ourTarg))
         return baseDamage;
     
@@ -2174,9 +2174,9 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
     CItem *shield = GetShield(ourTarg);
     
     switch (damageType) {
-        case NONE:
+        case Weather::NONE:
             break;     //	No Armor protection
-        case PHYSICAL: { //	Physical damage
+        case Weather::PHYSICAL: { //	Physical damage
             // Check Shield Defense
             bool parrySuccess = false;
             if (ValidateObject(shield)) {
@@ -2203,7 +2203,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                     // absorbed upon blocking The lower a shield's AR, the higher the chance to block,
                     // but the less damage is absorbed upon blocking parryChance = parrySkill - (shield
                     // AR * 2)
-                    R32 parryChance = (defendParry / 10) - (shield->GetResist(PHYSICAL) * 2); // or is it 1.33?
+                    R32 parryChance = (defendParry / 10) - (shield->GetResist(Weather::PHYSICAL) * 2); // or is it 1.33?
                     if (RandomNum(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
@@ -2258,14 +2258,14 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                         // FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage
                         // Absorbed = AR of Shield
                         if (getFightSkill == ARCHERY) {
-                            damage -= static_cast<R32>(shield->GetResist(PHYSICAL));
+                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL));
                         }
                         else {
-                            damage -= static_cast<R32>(shield->GetResist(PHYSICAL) / 2);
+                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL) / 2);
                         }
                         
                         // Calculate defense given by armor
-                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, PHYSICAL));
+                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
                         
                         // Apply damage to shield from parrying action?
                         if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) {// 20% chance by default
@@ -2277,14 +2277,14 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
                         // FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage
                         // Absorbed = AR of Shield
                         if (getFightSkill == ARCHERY) {
-                            damage -= static_cast<R32>(shield->GetResist(PHYSICAL));
+                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL));
                         }
                         else {
-                            damage -= static_cast<R32>(shield->GetResist(PHYSICAL) / 2);
+                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL) / 2);
                         }
                         
                         // Calculate defense given by armor
-                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, PHYSICAL));
+                        getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
                         
                         // Apply damage to shield from parrying action?
                         if (ServerConfig::shared().ushortValues[UShortValue::PARRYDAMAGECHANCE] >= RandomNum(1, 100)) { // 20% chance by default
@@ -2447,11 +2447,11 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(weathertype_t damageType, CCha
             
             // No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
             if (damage > 0 && getDef == 0) {
-                getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, PHYSICAL));
+                getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, Weather::PHYSICAL));
             }
             break;
         }
-        case POISON: //	POISON Damage
+        case Weather::POISON: //	POISON Damage
             damageModifier = (CalcDef(ourTarg, hitLoc, doArmorDamage, damageType) / 100);
             damage = static_cast<std::int16_t>(RoundNumber((static_cast<R32>(baseDamage) - (static_cast<R32>(baseDamage) * damageModifier))));
             break;
@@ -2498,12 +2498,12 @@ std::int16_t CHandleCombat::CalcDamage(CChar *mChar, CChar *ourTarg, std::uint8_
     if (baseDamage == -1) // No damage if weapon breaks
         return 0;
     
-    damage = ApplyDamageBonuses(PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage);
+    damage = ApplyDamageBonuses(Weather::PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, baseDamage);
     
     if (damage < 1)
         return 0;
     
-    damage = ApplyDefenseModifiers(PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true);
+    damage = ApplyDefenseModifiers(Weather::PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true);
     
     if (damage <= 0) {
         damage = RandomNum(0, 4);
@@ -2782,18 +2782,18 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 // Reactive Armor
                 if (ourTarg->GetReactiveArmour()) {
                     std::int32_t retDamage = static_cast<std::int32_t>(ourDamage * (ourTarg->GetSkill(MAGERY) / 2000.0));
-                    if (ourTarg->Damage(ourDamage - retDamage, PHYSICAL, &mChar)) {
+                    if (ourTarg->Damage(ourDamage - retDamage, Weather::PHYSICAL, &mChar)) {
                         if (ourTarg->IsNpc() && !mChar.IsNpc()) {
                             // Divide reactive damage dealt by NPCs to players by NPCDAMAGERATE
                             // value in uox.ini
                             retDamage /= ServerConfig::shared().shortValues[ShortValue::NPCDAMAGERATE];
                         }
-                        mChar.Damage(retDamage, PHYSICAL, &mChar);
+                        mChar.Damage(retDamage, Weather::PHYSICAL, &mChar);
                         Effects->PlayStaticAnimation(ourTarg, 0x374A, 0, 15);
                     }
                 }
                 else {
-                    [[maybe_unused]] bool retVal = ourTarg->Damage(ourDamage, PHYSICAL, &mChar, true);
+                    [[maybe_unused]] bool retVal = ourTarg->Damage(ourDamage, Weather::PHYSICAL, &mChar, true);
                 }
             }
             if (cwmWorldState->creatures[mChar.GetId()].IsHuman()) {

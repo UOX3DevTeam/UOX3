@@ -795,49 +795,49 @@ JSBool CItemProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 *vp = INT_TO_JSVAL(gPriv->GetArmourClass());
                 break;
             case CIP_DEF:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(PHYSICAL));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::PHYSICAL));
                 break;
             case CIP_RESISTCOLD:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(COLD));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::COLD));
                 break;
             case CIP_RESISTHEAT:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(HEAT));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::HEAT));
                 break;
             case CIP_RESISTLIGHT:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(LIGHT));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::LIGHT));
                 break;
             case CIP_RESISTLIGHTNING:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(LIGHTNING));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::LIGHTNING));
                 break;
             case CIP_RESISTPOISON:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(POISON));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::POISON));
                 break;
             case CIP_RESISTRAIN:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(RAIN));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::RAIN));
                 break;
             case CIP_RESISTSNOW:
-                *vp = INT_TO_JSVAL(gPriv->GetResist(SNOW));
+                *vp = INT_TO_JSVAL(gPriv->GetResist(Weather::SNOW));
                 break;
             case CIP_DAMAGECOLD:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(COLD));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::COLD));
                 break;
             case CIP_DAMAGEHEAT:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(HEAT));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::HEAT));
                 break;
             case CIP_DAMAGELIGHT:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(LIGHT));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::LIGHT));
                 break;
             case CIP_DAMAGELIGHTNING:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(LIGHTNING));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::LIGHTNING));
                 break;
             case CIP_DAMAGEPOISON:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(POISON));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::POISON));
                 break;
             case CIP_DAMAGERAIN:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(RAIN));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::RAIN));
                 break;
             case CIP_DAMAGESNOW:
-                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(SNOW));
+                *vp = BOOLEAN_TO_JSVAL(gPriv->GetWeatherDamage(Weather::SNOW));
                 break;
             case CIP_SPEED:
                 *vp = INT_TO_JSVAL(gPriv->GetSpeed());
@@ -1526,49 +1526,49 @@ JSBool CItemProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp)
                 gPriv->SetArmourClass(static_cast<std::uint8_t>(encaps.toInt()));
                 break;
             case CIP_DEF:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), PHYSICAL);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::PHYSICAL);
                 break;
             case CIP_RESISTCOLD:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), COLD);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::COLD);
                 break;
             case CIP_RESISTHEAT:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), HEAT);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::HEAT);
                 break;
             case CIP_RESISTLIGHT:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), LIGHT);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::LIGHT);
                 break;
             case CIP_RESISTLIGHTNING:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), LIGHTNING);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::LIGHTNING);
                 break;
             case CIP_RESISTPOISON:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), POISON);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::POISON);
                 break;
             case CIP_RESISTRAIN:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), RAIN);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::RAIN);
                 break;
             case CIP_RESISTSNOW:
-                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), SNOW);
+                gPriv->SetResist(static_cast<std::uint16_t>(encaps.toInt()), Weather::SNOW);
                 break;
             case CIP_DAMAGECOLD:
-                gPriv->SetWeatherDamage(COLD, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::COLD, encaps.toBool());
                 break;
             case CIP_DAMAGEHEAT:
-                gPriv->SetWeatherDamage(HEAT, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::HEAT, encaps.toBool());
                 break;
             case CIP_DAMAGELIGHT:
-                gPriv->SetWeatherDamage(LIGHT, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::LIGHT, encaps.toBool());
                 break;
             case CIP_DAMAGELIGHTNING:
-                gPriv->SetWeatherDamage(LIGHTNING, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::LIGHTNING, encaps.toBool());
                 break;
             case CIP_DAMAGEPOISON:
-                gPriv->SetWeatherDamage(POISON, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::POISON, encaps.toBool());
                 break;
             case CIP_DAMAGERAIN:
-                gPriv->SetWeatherDamage(RAIN, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::RAIN, encaps.toBool());
                 break;
             case CIP_DAMAGESNOW:
-                gPriv->SetWeatherDamage(SNOW, encaps.toBool());
+                gPriv->SetWeatherDamage(Weather::SNOW, encaps.toBool());
                 break;
             case CIP_SPEED:
                 gPriv->SetSpeed(static_cast<std::uint8_t>(encaps.toInt()));

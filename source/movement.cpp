@@ -1127,7 +1127,7 @@ void HandleObjectCollisions(CSocket *mSock, CChar *mChar, CItem *itemCheck, item
             break;
         case IT_DAMAGEOBJECT: // damage objects
             if (!mChar->IsInvulnerable()) {
-                [[maybe_unused]] bool retVal = mChar->Damage(itemCheck->GetTempVar(CITV_MOREX) + RandomNum(itemCheck->GetTempVar(CITV_MOREY), itemCheck->GetTempVar(CITV_MOREZ)), PHYSICAL, nullptr);
+                [[maybe_unused]] bool retVal = mChar->Damage(itemCheck->GetTempVar(CITV_MOREX) + RandomNum(itemCheck->GetTempVar(CITV_MOREY), itemCheck->GetTempVar(CITV_MOREZ)), Weather::PHYSICAL, nullptr);
             }
             break;
         case IT_SOUNDOBJECT: // sound objects

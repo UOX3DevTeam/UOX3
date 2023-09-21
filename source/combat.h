@@ -5,6 +5,7 @@
 #include <string>
 
 #include "typedefs.h"
+#include "type/weather.hpp"
 
 class CSocket;
 class CChar;
@@ -46,8 +47,8 @@ private:
     
     void HandleNPCSpellAttack(CChar *mChar, CChar *ourTarg, std::uint16_t playerDistance);
     
-    CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, weathertype_t resistType);
-    CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false, weathertype_t resistType = NONE);
+    CItem *CheckDef(CItem *checkItem, CItem *currItem, std::int32_t &currDef, Weather::type_t resistType);
+    CItem *GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uint8_t bodyLoc, bool findTotal = false, Weather::type_t resistType = Weather::NONE);
     
 public:
     bool StartAttack(CChar *mChar, CChar *ourTarg);
@@ -63,7 +64,7 @@ public:
     
     void DoHitMessage(CChar *mChar, CChar *ourTarg, std::int8_t hitLoc, std::int16_t damage);
     std::int8_t CalculateHitLoc();
-    std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, weathertype_t element = PHYSICAL);
+    std::uint16_t CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doDamage = false, Weather::type_t element = Weather::PHYSICAL);
     std::int16_t CalcAttackPower(CChar *mChar, bool doDamage = false);
     std::int16_t CalcLowDamage(CChar *p);
     std::int16_t CalcHighDamage(CChar *p);
@@ -74,8 +75,8 @@ public:
     CItem *GetShield(CChar *mChar);
     CItem *GetWeapon(CChar *mChar);
     
-    std::int16_t ApplyDamageBonuses(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
-    std::int16_t ApplyDefenseModifiers(weathertype_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage, bool doArmorDamage);
+    std::int16_t ApplyDamageBonuses(Weather::type_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage);
+    std::int16_t ApplyDefenseModifiers(Weather::type_t damageType, CChar *mChar, CChar *ourTarg, std::uint8_t getFightSkill, std::uint8_t hitLoc, std::int16_t baseDamage, bool doArmorDamage);
     
     std::int16_t AdjustRaceDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc, std::uint8_t getFightSkill);
     std::int16_t AdjustArmorClassDamage(CChar *attack, CChar *defend, CItem *weapon, std::int16_t bDamage, std::uint8_t hitLoc);

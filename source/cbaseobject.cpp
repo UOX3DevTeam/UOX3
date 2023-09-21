@@ -385,8 +385,8 @@ void CBaseObject::WalkXY(std::int16_t newX, std::int16_t newY) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets object's resistances versus different damage types
 // o------------------------------------------------------------------------------------------------o
-std::uint16_t CBaseObject::GetResist(weathertype_t damage) const { return resistances[damage]; }
-void CBaseObject::SetResist(std::uint16_t newValue, weathertype_t damage) {
+std::uint16_t CBaseObject::GetResist(Weather::type_t damage) const { return resistances[damage]; }
+void CBaseObject::SetResist(std::uint16_t newValue, Weather::type_t damage) {
     resistances[damage] = newValue;
     
     if (CanBeObjType(OT_ITEM)) {
@@ -687,7 +687,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
     
     outStream << "Defense=";
     for (std::uint8_t resist = 1; resist < WEATHNUM; ++resist) {
-        outStream << GetResist(static_cast<weathertype_t>(resist)) << ",";
+        outStream << GetResist(static_cast<Weather::type_t>(resist)) << ",";
     }
     outStream << "[END]" << newLine;
     
@@ -1486,13 +1486,13 @@ bool CBaseObject::HandleLine(std::string &UTag, std::string &data) {
                                 break;
                             }
                             auto value = static_cast<std::int16_t>(std::stoi(temp, nullptr, 0));
-                            SetResist(value, static_cast<weathertype_t>(count));
+                            SetResist(value, static_cast<Weather::type_t>(count));
                             count++;
                         }
                     }
                 }
                 else {
-                    SetResist(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)), PHYSICAL);
+                    SetResist(static_cast<std::int16_t>(std::stoi(util::trim(util::strip(data, "//")), nullptr, 0)), Weather::PHYSICAL);
                 }
             }
             else if (UTag == "DISABLED") {
@@ -2049,7 +2049,7 @@ void CBaseObject::CopyData(CBaseObject *target) {
     target->SetHiDamage(GetHiDamage());
     target->SetLoDamage(GetLoDamage());
     for (std::uint8_t resist = 0; resist < WEATHNUM; ++resist) {
-        target->SetResist(GetResist(static_cast<weathertype_t>(resist)),static_cast<weathertype_t>(resist));
+        target->SetResist(GetResist(static_cast<Weather::type_t>(resist)),static_cast<Weather::type_t>(resist));
     }
     target->SetStrength2(GetStrength2());
     target->SetDexterity2(GetDexterity2());

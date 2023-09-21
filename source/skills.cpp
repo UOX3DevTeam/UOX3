@@ -127,8 +127,8 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
         if (c->GetHiDamage() > 0) {
             c->SetHiDamage(static_cast<std::int16_t>((rank * c->GetHiDamage()) / 10));
         }
-        if (c->GetResist(PHYSICAL) > 0) {
-            c->SetResist(static_cast<std::uint16_t>((rank * c->GetResist(PHYSICAL)) / 10), PHYSICAL);
+        if (c->GetResist(Weather::PHYSICAL) > 0) {
+            c->SetResist(static_cast<std::uint16_t>((rank * c->GetResist(Weather::PHYSICAL)) / 10), Weather::PHYSICAL);
         }
         if (c->GetHP() > 0) {
             c->SetHP(static_cast<std::int16_t>((rank * c->GetHP()) / 10));
@@ -2170,13 +2170,13 @@ void CSkills::RepairMetal(CSocket *s) {
     }
     
     if (j->GetHP() < j->GetMaxHP()) {
-        if (j->GetResist(PHYSICAL) > 0) {
+        if (j->GetResist(Weather::PHYSICAL) > 0) {
             // Items with > 12 def would have impossible skill req's, with this equation
-            if (j->GetResist(PHYSICAL) <= 12) {
+            if (j->GetResist(Weather::PHYSICAL) <= 12) {
                 // Minimum Skill = 61.0 + Defense - 1 / 3 * 100 (0-3 = 61.0, 4-6 = 71.0, ect)
-                minSkill = (610 + static_cast<std::int32_t>((j->GetResist(PHYSICAL) - 1) / 3) * 100);
+                minSkill = (610 + static_cast<std::int32_t>((j->GetResist(Weather::PHYSICAL) - 1) / 3) * 100);
                 // Maximum Skill = 84.9 + Defense - 1 / 3 * 50 (0-3 = 84.9, 4-6 = 89.9, ect)
-                maxSkill = (849 + static_cast<std::int32_t>((j->GetResist(PHYSICAL) - 1) / 3) * 50);
+                maxSkill = (849 + static_cast<std::int32_t>((j->GetResist(Weather::PHYSICAL) - 1) / 3) * 50);
             }
         }
         else if (j->GetHiDamage() > 0) {

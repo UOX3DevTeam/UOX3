@@ -129,7 +129,7 @@ CChar *CCharStuff::CreateBaseNPC(std::string ourNPC, bool shouldSave) {
         cCreated->SetNpc(true);
         cCreated->SetLoDamage(1);
         cCreated->SetHiDamage(1);
-        cCreated->SetResist(1, PHYSICAL);
+        cCreated->SetResist(1, Weather::PHYSICAL);
         cCreated->SetSpawn(INVALIDSERIAL);
         
         if (!ApplyNpcSection(cCreated, npcCreate, ourNPC)) {
@@ -907,10 +907,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_DEF:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
-                        applyTo->SetResist(static_cast<std::uint16_t>(ndata), PHYSICAL);
+                        applyTo->SetResist(static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
                     }
                 }
                 else {
@@ -920,10 +920,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_DEFBONUS:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)),  PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)),  Weather::PHYSICAL);
                     }
                     else {
-                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata), PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
                     }
                 }
                 else {
@@ -990,18 +990,18 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
                 break;
             case DFNTAG_ELEMENTRESIST:
                 if (ssects.size() >= 4) {
-                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[0], "//")), nullptr, 0))), HEAT);
-                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[1], "//")), nullptr, 0))), COLD);
-                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[2], "//")), nullptr, 0))), LIGHTNING);
-                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[3], "//")), nullptr, 0))), POISON);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[0], "//")), nullptr, 0))), Weather::HEAT);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[1], "//")), nullptr, 0))), Weather::COLD);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[2], "//")), nullptr, 0))), Weather::LIGHTNING);
+                    applyTo->SetResist((static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[3], "//")), nullptr, 0))), Weather::POISON);
                 }
                 break;
             case DFNTAG_ERBONUS:
                 if (ssects.size() >= 4) {
-                    applyTo->SetResist(applyTo->GetResist(HEAT) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[0], "//")), nullptr, 0)), HEAT);
-                    applyTo->SetResist(applyTo->GetResist(COLD) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[1], "//")), nullptr, 0)), COLD);
-                    applyTo->SetResist(applyTo->GetResist(LIGHTNING) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[2], "//")), nullptr, 0)), LIGHTNING);
-                    applyTo->SetResist(applyTo->GetResist(POISON) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[3], "//")), nullptr, 0)), POISON);
+                    applyTo->SetResist(applyTo->GetResist(Weather::HEAT) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[0], "//")), nullptr, 0)), Weather::HEAT);
+                    applyTo->SetResist(applyTo->GetResist(Weather::COLD) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[1], "//")), nullptr, 0)), Weather::COLD);
+                    applyTo->SetResist(applyTo->GetResist(Weather::LIGHTNING) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[2], "//")), nullptr, 0)), Weather::LIGHTNING);
+                    applyTo->SetResist(applyTo->GetResist(Weather::POISON) + static_cast<std::uint16_t>(std::stoul( util::trim(util::strip(ssects[3], "//")), nullptr, 0)), Weather::POISON);
                 }
                 break;
             case DFNTAG_EMOTECOLOUR:
@@ -1534,10 +1534,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTFIRE:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::HEAT);
                     }
                     else {
-                        applyTo->SetResist(ndata, HEAT);
+                        applyTo->SetResist(ndata, Weather::HEAT);
                     }
                 }
                 else {
@@ -1547,10 +1547,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTCOLD:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::COLD);
                     }
                     else {
-                        applyTo->SetResist(ndata, COLD);
+                        applyTo->SetResist(ndata, Weather::COLD);
                     }
                 }
                 else {
@@ -1560,10 +1560,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTLIGHTNING:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::LIGHTNING);
                     }
                     else {
-                        applyTo->SetResist(ndata, LIGHTNING);
+                        applyTo->SetResist(ndata, Weather::LIGHTNING);
                     }
                 }
                 else {
@@ -1573,10 +1573,10 @@ auto CCharStuff::ApplyNpcSection(CChar *applyTo, CScriptSection *NpcCreation, st
             case DFNTAG_RESISTPOISON:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::POISON);
                     }
                     else {
-                        applyTo->SetResist(ndata, POISON);
+                        applyTo->SetResist(ndata, Weather::POISON);
                     }
                 }
                 else {

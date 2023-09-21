@@ -109,8 +109,8 @@ public:
     auto EntryMadeFrom() const -> std::uint16_t;
     auto EntryMadeFrom(std::uint16_t newValue) -> void;
     
-    auto GetWeatherDamage(weathertype_t effectNum) const -> bool;
-    auto SetWeatherDamage(weathertype_t effectNum, bool value) -> void;
+    auto GetWeatherDamage(Weather::type_t effectNum) const -> bool;
+    auto SetWeatherDamage(Weather::type_t effectNum, bool value) -> void;
     
     auto Dupe(CBaseObject::type_t itemType = CBaseObject::OT_ITEM) -> CItem *;
     

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "typedefs.h"
+#include "type/weather.hpp"
 
 class CItem;
 class CSocket;
@@ -13,6 +14,8 @@ class CChar;
 class CSpellInfo;
 
 struct Reag_st;
+
+
 
 class CMagic {
 public:
@@ -44,7 +47,7 @@ public:
     bool CheckHealth(CChar *s, std::int32_t num);
     bool CheckMagicReflect(CChar *i);
     
-    void MagicDamage(CChar *p, std::int16_t amount, CChar *attacker = nullptr, weathertype_t element = NONE);
+    void MagicDamage(CChar *p, std::int16_t amount, CChar *attacker = nullptr, Weather::type_t element = Weather::NONE);
     void SpellFail(CSocket *s);
     void SubtractMana(CChar *s, std::int32_t mana);
     void SubtractStamina(CChar *s, std::int32_t stamina);

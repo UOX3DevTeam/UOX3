@@ -1529,7 +1529,7 @@ JSBool SE_IsRaceWeakToWeather([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
     if (tRace == nullptr || toCheck >= WEATHNUM) {
         return JS_FALSE;
     }
-    *rval = BOOLEAN_TO_JSVAL(tRace->AffectedBy(static_cast<weathertype_t>(toCheck)));
+    *rval = BOOLEAN_TO_JSVAL(tRace->AffectedBy(static_cast<Weather::type_t>(toCheck)));
     return JS_TRUE;
 }
 
@@ -2890,7 +2890,7 @@ JSBool SE_ApplyDamageBonuses(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
         }
     }
     
-    damage = Combat->ApplyDamageBonuses(static_cast<weathertype_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()));
+    damage = Combat->ApplyDamageBonuses(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()));
     
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;
@@ -2950,7 +2950,7 @@ JSBool SE_ApplyDefenseModifiers(JSContext *cx, [[maybe_unused]] JSObject *obj, u
         }
     }
     
-    damage = Combat->ApplyDefenseModifiers(static_cast<weathertype_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
+    damage = Combat->ApplyDefenseModifiers(static_cast<Weather::type_t>(damageType.toInt()), attacker, defender, static_cast<std::uint8_t>(getFightSkill.toInt()), static_cast<std::uint8_t>(hitLoc.toInt()), static_cast<std::int16_t>(baseDamage.toInt()), doArmorDamage.toBool());
     
     *rval = INT_TO_JSVAL(damage);
     return JS_TRUE;

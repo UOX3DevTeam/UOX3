@@ -149,22 +149,22 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetCorpse(ndata != 0);
                 break;
             case DFNTAG_COLD:
-                applyTo->SetWeatherDamage(COLD, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::COLD, ndata != 0);
                 break;
             case DFNTAG_ELEMENTRESIST:
                 if (ssecs.size() >= 4) {
-                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)), HEAT);
-                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)), COLD);
-                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0)), LIGHTNING);
-                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[3], "//")), nullptr, 0)), POISON);
+                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)), Weather::HEAT);
+                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)), Weather::COLD);
+                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0)), Weather::LIGHTNING);
+                    applyTo->SetResist(static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[3], "//")), nullptr, 0)), Weather::POISON);
                 }
                 break;
             case DFNTAG_ERBONUS:
                 if (ssecs.size() >= 4) {
-                    applyTo->SetResist(applyTo->GetResist(HEAT) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)), HEAT);
-                    applyTo->SetResist(applyTo->GetResist(COLD) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)), COLD);
-                    applyTo->SetResist(applyTo->GetResist(LIGHTNING) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0)), LIGHTNING);
-                    applyTo->SetResist(applyTo->GetResist(POISON) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[3], "//")), nullptr, 0)), POISON);
+                    applyTo->SetResist(applyTo->GetResist(Weather::HEAT) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[0], "//")), nullptr, 0)), Weather::HEAT);
+                    applyTo->SetResist(applyTo->GetResist(Weather::COLD) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[1], "//")), nullptr, 0)), Weather::COLD);
+                    applyTo->SetResist(applyTo->GetResist(Weather::LIGHTNING) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[2], "//")), nullptr, 0)), Weather::LIGHTNING);
+                    applyTo->SetResist(applyTo->GetResist(Weather::POISON) + static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(ssecs[3], "//")), nullptr, 0)), Weather::POISON);
                 }
                 break;
             case DFNTAG_EVENT:
@@ -176,10 +176,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_DEF:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
-                        applyTo->SetResist(ndata, PHYSICAL);
+                        applyTo->SetResist(ndata, Weather::PHYSICAL);
                     }
                 }
                 else
@@ -188,10 +188,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_DEFBONUS:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)), PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::PHYSICAL);
                     }
                     else {
-                        applyTo->SetResist(applyTo->GetResist(PHYSICAL) + static_cast<std::uint16_t>(ndata), PHYSICAL);
+                        applyTo->SetResist(applyTo->GetResist(Weather::PHYSICAL) + static_cast<std::uint16_t>(ndata), Weather::PHYSICAL);
                     }
                 }
                 else {
@@ -388,7 +388,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetHiDamage(static_cast<std::int16_t>(ndata));
                 break;
             case DFNTAG_HEAT:
-                applyTo->SetWeatherDamage(HEAT, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::HEAT, ndata != 0);
                 break;
             case DFNTAG_ID: // applyTo->SetId( static_cast<std::uint16_t>( ndata )); break;
                 if (ssecs.size() == 1) {
@@ -412,10 +412,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetLayer(static_cast<itemlayers_t>(ndata));
                 break;
             case DFNTAG_LIGHT:
-                applyTo->SetWeatherDamage(LIGHT, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::LIGHT, ndata != 0);
                 break;
             case DFNTAG_LIGHTNING:
-                applyTo->SetWeatherDamage(LIGHTNING, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::LIGHTNING, ndata != 0);
                 break;
             case DFNTAG_MAXHP:
                 applyTo->SetMaxHP(static_cast<std::uint16_t>(ndata));
@@ -525,7 +525,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetOrigin( ServerConfig::shared().ruleSets.normalizedEraString(util::lower(cdata)));
                 break;
             case DFNTAG_POISONDAMAGE:
-                applyTo->SetWeatherDamage(POISON, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::POISON, ndata != 0);
                 break;
             case DFNTAG_POISONED:
                 applyTo->SetPoisoned(static_cast<std::uint8_t>(ndata));
@@ -548,10 +548,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTFIRE:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), HEAT);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::HEAT);
                     }
                     else {
-                        applyTo->SetResist(ndata, HEAT);
+                        applyTo->SetResist(ndata, Weather::HEAT);
                     }
                 }
                 else {
@@ -561,10 +561,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTCOLD:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), COLD);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::COLD);
                     }
                     else {
-                        applyTo->SetResist(ndata, COLD);
+                        applyTo->SetResist(ndata, Weather::COLD);
                     }
                 }
                 else {
@@ -574,10 +574,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTLIGHTNING:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), LIGHTNING);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::LIGHTNING);
                     }
                     else {
-                        applyTo->SetResist(ndata, LIGHTNING);
+                        applyTo->SetResist(ndata, Weather::LIGHTNING);
                     }
                 }
                 else {
@@ -587,10 +587,10 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
             case DFNTAG_RESISTPOISON:
                 if (ndata >= 0) {
                     if (odata && odata > ndata) {
-                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), POISON);
+                        applyTo->SetResist(static_cast<std::uint16_t>(RandomNum(ndata, odata)), Weather::POISON);
                     }
                     else {
-                        applyTo->SetResist(ndata, POISON);
+                        applyTo->SetResist(ndata, Weather::POISON);
                     }
                 }
                 else {
@@ -604,7 +604,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 break;
             }
             case DFNTAG_RAIN:
-                applyTo->SetWeatherDamage(RAIN, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::RAIN, ndata != 0);
                 break;
             case DFNTAG_SECTIONID:
                 applyTo->SetSectionId(cdata);
@@ -625,7 +625,7 @@ auto ApplyItemSection(CItem *applyTo, CScriptSection *toApply, std::string secti
                 applyTo->SetStealable(static_cast<std::uint8_t>(ndata));
                 break;
             case DFNTAG_SNOW:
-                applyTo->SetWeatherDamage(SNOW, ndata != 0);
+                applyTo->SetWeatherDamage(Weather::SNOW, ndata != 0);
                 break;
             case DFNTAG_SCRIPT:
                 applyTo->AddScriptTrigger(static_cast<std::uint16_t>(ndata));

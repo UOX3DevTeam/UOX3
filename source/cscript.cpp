@@ -1968,7 +1968,7 @@ std::int8_t cScript::OnLightChange(CBaseObject *tObject, std::uint8_t lightLevel
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when weather changes
 // o------------------------------------------------------------------------------------------------o
-bool cScript::OnWeatherChange(CBaseObject *tObject, weathertype_t element) {
+bool cScript::OnWeatherChange(CBaseObject *tObject, Weather::type_t element) {
     if (!ValidateObject(tObject))
         return false;
     
@@ -3664,7 +3664,7 @@ std::int16_t cScript::OnCombatDamageCalc(CChar *attacker, CChar *defender, std::
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached takes damage
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cScript::OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, weathertype_t damageType) {
+std::int8_t cScript::OnDamage(CChar *damaged, CChar *attacker, std::int16_t damageValue, Weather::type_t damageType) {
     const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(damaged))
         return RV_NOFUNC;
@@ -3701,8 +3701,7 @@ std::int8_t cScript::OnDamage(CChar *damaged, CChar *attacker, std::int16_t dama
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached deals damage
 // o------------------------------------------------------------------------------------------------o
-std::int8_t cScript::OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue,
-                                  weathertype_t damageType) {
+std::int8_t cScript::OnDamageDeal(CChar *attacker, CChar *damaged, std::int16_t damageValue, Weather::type_t damageType) {
     const std::int8_t RV_NOFUNC = -1;
     if (!ValidateObject(damaged))
         return RV_NOFUNC;

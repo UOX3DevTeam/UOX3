@@ -9020,13 +9020,9 @@ JSBool CSocket_DisplayDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Lets character react to damage taken
 // o------------------------------------------------------------------------------------------------o
-JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
-                           [[maybe_unused]] jsval *rval) {
+JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval) {
     if (argc != 1 && argc != 2) {
-        ScriptError(cx,
-                    "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) "
-                    "or 2 (damageType and attacker)",
-                    argc);
+        ScriptError(cx, "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc);
         return JS_TRUE;
     }
     
@@ -9040,8 +9036,7 @@ JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
     
     if (argc >= 2) {
         JSEncapsulate attackerClass(cx, &(argv[1]));
-        if (attackerClass.ClassName() != "UOXChar") // It must be a character!
-        {
+        if (attackerClass.ClassName() != "UOXChar") { // It must be a character!
             ScriptError(cx, "CChar_ReactOnDamage: Passed an invalid Character");
             return JS_FALSE;
         }
@@ -9057,7 +9052,7 @@ JSBool CChar_ReactOnDamage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv
             }
         }
     }
-    mChar->ReactOnDamage(static_cast<weathertype_t>(damage.toInt()), attacker);
+    mChar->ReactOnDamage(static_cast<Weather::type_t>(damage.toInt()), attacker);
     return JS_TRUE;
 }
 
@@ -9091,9 +9086,9 @@ JSBool CChar_Damage(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     }
     JSEncapsulate damage(cx, &(argv[0]));
     
-    weathertype_t element = PHYSICAL;
+    Weather::type_t element = Weather::PHYSICAL;
     if (argc >= 2) {
-        element = static_cast<weathertype_t>(JSVAL_TO_INT(argv[1]));
+        element = static_cast<Weather::type_t>(JSVAL_TO_INT(argv[1]));
     }
     
     if (argc >= 3) {
@@ -9677,10 +9672,10 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
     
     if (argc == 1) {
         if (ValidateObject(mChar)) {
-            *rval = INT_TO_JSVAL(mChar->GetResist(static_cast<weathertype_t>(resistType.toInt())));
+            *rval = INT_TO_JSVAL(mChar->GetResist(static_cast<Weather::type_t>(resistType.toInt())));
         }
         else if (ValidateObject(mItem)) {
-            *rval = INT_TO_JSVAL(mItem->GetResist(static_cast<weathertype_t>(resistType.toInt())));
+            *rval = INT_TO_JSVAL(mItem->GetResist(static_cast<Weather::type_t>(resistType.toInt())));
         }
         else {
             *rval = JS_FALSE;
@@ -9690,12 +9685,10 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
         *rval = JS_TRUE;
         JSEncapsulate value(cx, &(argv[1]));
         if (ValidateObject(mChar)) {
-            mChar->SetResist(static_cast<std::uint16_t>(value.toInt()),
-                             static_cast<weathertype_t>(resistType.toInt()));
+            mChar->SetResist(static_cast<std::uint16_t>(value.toInt()), static_cast<Weather::type_t>(resistType.toInt()));
         }
         else if (ValidateObject(mItem)) {
-            mItem->SetResist(static_cast<std::uint16_t>(value.toInt()),
-                             static_cast<weathertype_t>(resistType.toInt()));
+            mItem->SetResist(static_cast<std::uint16_t>(value.toInt()), static_cast<Weather::type_t>(resistType.toInt()));
         }
         else {
             *rval = JS_FALSE;
@@ -9722,8 +9715,7 @@ JSBool CBase_Resist(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 // o------------------------------------------------------------------------------------------------o
 JSBool CChar_Defense(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval) {
     if (argc != 3) {
-        ScriptError(cx, "Defense: Invalid number of arguments (takes 3, the hit location, the "
-                    "resist type and if the armor should get damaged)");
+        ScriptError(cx, "Defense: Invalid number of arguments (takes 3, the hit location, the resist type and if the armor should get damaged)");
         return JS_FALSE;
     }
     
@@ -9747,9 +9739,7 @@ JSBool CChar_Defense(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
     JSEncapsulate resistType(cx, &(argv[1]));
     JSEncapsulate doArmorDamage(cx, &(argv[2]));
     
-    *rval = INT_TO_JSVAL(Combat->CalcDef(mChar, static_cast<std::uint8_t>(hitLoc.toInt()),
-                                         doArmorDamage.toBool(),
-                                         static_cast<weathertype_t>(resistType.toInt())));
+    *rval = INT_TO_JSVAL(Combat->CalcDef(mChar, static_cast<std::uint8_t>(hitLoc.toInt()), doArmorDamage.toBool(), static_cast<Weather::type_t>(resistType.toInt())));
     return JS_TRUE;
 }
 

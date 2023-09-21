@@ -1308,7 +1308,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             }
                             std::int16_t poisonDmgPercent =RandomNum(3, 6); // 3% to 6% of current health per tick
                             std::int16_t poisonDmg =static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
-                            [[maybe_unused]] bool retVal =mChar.Damage(std::max(static_cast<std::int16_t>(3), poisonDmg),POISON); // Minimum 3 damage per tick
+                            [[maybe_unused]] bool retVal =mChar.Damage(std::max(static_cast<std::int16_t>(3), poisonDmg),Weather::POISON); // Minimum 3 damage per tick
                             break;
                         }
                         case 2:  { // Normal Poison
@@ -1320,7 +1320,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             }
                             std::int16_t poisonDmgPercent = RandomNum(4, 8); // 4% to 8% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
-                            [[maybe_unused]] bool retVal =  mChar.Damage(std::max(static_cast<std::int16_t>(5), poisonDmg), POISON); // Minimum 5 damage per tick
+                            [[maybe_unused]] bool retVal =  mChar.Damage(std::max(static_cast<std::int16_t>(5), poisonDmg), Weather::POISON); // Minimum 5 damage per tick
                             break;
                         }
                         case 3: { // Greater Poison
@@ -1332,7 +1332,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             }
                             std::int16_t poisonDmgPercent =  RandomNum(8, 12); // 8% to 12% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
-                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(8), poisonDmg), POISON); // Minimum 8 damage per tick
+                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(8), poisonDmg), Weather::POISON); // Minimum 8 damage per tick
                             break;
                         }
                         case 4: { // Deadly Poison
@@ -1345,7 +1345,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             }
                             std::int16_t poisonDmgPercent = RandomNum(12, 25); // 12% to 25% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
-                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(14), poisonDmg), POISON); // Minimum 14 damage per tick
+                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(14), poisonDmg), Weather::POISON); // Minimum 14 damage per tick
                             break;
                         }
                         case 5: {// Lethal Poison - Used by monsters only
@@ -1358,7 +1358,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                             }
                             std::int16_t poisonDmgPercent = RandomNum(25, 50); // 25% to 50% of current health per tick
                             std::int16_t poisonDmg = static_cast<std::int16_t>((mChar.GetHP() * poisonDmgPercent) / 100);
-                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(17), poisonDmg),  POISON); // Minimum 14 damage per tick
+                            [[maybe_unused]] bool retVal = mChar.Damage(std::max(static_cast<std::int16_t>(17), poisonDmg),  Weather::POISON); // Minimum 14 damage per tick
                             break;
                         }
                         default:
@@ -1468,11 +1468,11 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         }
         
         Weather->DoLightEffect(mSock, mChar);
-        Weather->doWeatherEffect(mSock, mChar, RAIN);
-        Weather->doWeatherEffect(mSock, mChar, SNOW);
-        Weather->doWeatherEffect(mSock, mChar, HEAT);
-        Weather->doWeatherEffect(mSock, mChar, COLD);
-        Weather->doWeatherEffect(mSock, mChar, STORM);
+        Weather->doWeatherEffect(mSock, mChar, Weather::RAIN);
+        Weather->doWeatherEffect(mSock, mChar, Weather::SNOW);
+        Weather->doWeatherEffect(mSock, mChar, Weather::HEAT);
+        Weather->doWeatherEffect(mSock, mChar, Weather::COLD);
+        Weather->doWeatherEffect(mSock, mChar, Weather::STORM);
         
         if (checkFieldEffects) {
             Magic->CheckFieldEffects(mChar);
@@ -3027,8 +3027,8 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     auto mChar = s->CurrcharObj();
     CPLightLevel toSend(level);
     
-    if ((Races->Affect(mChar->GetRace(), LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(mChar->GetRace(), LIGHT)))),LIGHT);
+    if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))),Weather::LIGHT);
     }
     
     if (mChar->GetFixedLight() != 255) {
@@ -3104,8 +3104,8 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
 //|	Purpose		-	Sets light level for character and applies relevant effects
 // o------------------------------------------------------------------------------------------------o
 auto DoLight(CChar *mChar, std::uint8_t level) -> void {
-    if ((Races->Affect(mChar->GetRace(), LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<R32>(Races->Secs(mChar->GetRace(), LIGHT)))), LIGHT);
+    if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<R32>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))), Weather::LIGHT);
     }
     
     auto curRegion = mChar->GetRegion();

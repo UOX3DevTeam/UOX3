@@ -517,7 +517,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     }
                     else if (GetHP() > 0 && hungerDamage > 0) {
                         mSock->SysMessage(1228); // You are starving!
-                        if (Damage(hungerDamage, PHYSICAL)) {
+                        if (Damage(hungerDamage, Weather::PHYSICAL)) {
                             if (GetHP() <= 0) {
                                 mSock->SysMessage(1229); // You have died of starvation.
                             }
@@ -540,7 +540,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     DecHunger();
                 }
                 else if (GetHP() > 0 && hungerDamage > 0) {
-                    [[maybe_unused]] bool retVal = Damage(hungerDamage, PHYSICAL);
+                    [[maybe_unused]] bool retVal = Damage(hungerDamage, Weather::PHYSICAL);
                 }
                 SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
             }
@@ -1900,7 +1900,7 @@ void CChar::CopyData(CChar *target) {
     target->SetCell(cell);
     target->SetPackItem(packItem);
     target->SetWeight(weight);
-    target->SetResist(GetResist(PHYSICAL), PHYSICAL);
+    target->SetResist(GetResist(Weather::PHYSICAL), Weather::PHYSICAL);
     target->SetTarg(GetTarg());
     target->SetRegen(regen[0], 0);
     target->SetRegen(regen[1], 1);
@@ -7152,14 +7152,14 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
              i = damageHealed.Next()) {
             if (i->damager == healerSerial) {
                 i->damageDone += healValue;
-                i->lastDamageType = NONE;
+                i->lastDamageType = Weather::NONE;
                 i->lastDamageDone = cwmWorldState->GetUICurrentTime();
                 persFound = true;
                 break;
             }
         }
         if (!persFound) {
-            damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, NONE, cwmWorldState->GetUICurrentTime()));
+            damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, Weather::NONE, cwmWorldState->GetUICurrentTime()));
         }
         damageHealed.Sort(DTEgreater);
     }
@@ -7170,7 +7170,7 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Lets character react to damage dealt to them
 // o------------------------------------------------------------------------------------------------o
-void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *attacker) {
+void CChar::ReactOnDamage([[maybe_unused]] Weather::type_t damageType, CChar *attacker) {
     CSocket *mSock = GetSocket();
     
     if (ValidateObject(attacker)) {
@@ -7221,7 +7221,7 @@ void CChar::ReactOnDamage([[maybe_unused]] weathertype_t damageType, CChar *atta
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Damage character, and keep track of attacker and damage amount
 // o------------------------------------------------------------------------------------------------o
-bool CChar::Damage(std::int16_t damageValue, weathertype_t damageType, CChar *attacker, bool doRepsys) {
+bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *attacker, bool doRepsys) {
     CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
     
     if (ValidateObject(attacker)) {

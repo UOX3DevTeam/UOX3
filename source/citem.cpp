@@ -1342,7 +1342,7 @@ auto CItem::CopyData(CItem *target) -> void {
     target->SetEvent(GetEvent());
     target->SetDexterity(GetDexterity());
     target->SetDexterity2(GetDexterity2());
-    target->SetResist(GetResist(PHYSICAL), PHYSICAL);
+    target->SetResist(GetResist(Weather::PHYSICAL), Weather::PHYSICAL);
     target->SetDir(GetDir());
     target->SetDisabled(IsDisabled());
     target->SetDoorOpen(IsDoorOpen());
@@ -1416,7 +1416,7 @@ auto CItem::CopyData(CItem *target) -> void {
     
     // Set damage types on new item
     for (std::int32_t i = 0; i < WEATHNUM; ++i) {
-        target->SetWeatherDamage(static_cast<weathertype_t>(i), GetWeatherDamage(static_cast<weathertype_t>(i)));
+        target->SetWeatherDamage(static_cast<Weather::type_t>(i), GetWeatherDamage(static_cast<Weather::type_t>(i)));
     }
     
     // Add any script triggers present on object to the new object
@@ -1429,10 +1429,10 @@ auto CItem::CopyData(CItem *target) -> void {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets weather damage of item - primarily used by weapons
 // o------------------------------------------------------------------------------------------------o
-auto CItem::GetWeatherDamage(weathertype_t effectNum) const -> bool {
+auto CItem::GetWeatherDamage(Weather::type_t effectNum) const -> bool {
     return weatherBools.test(effectNum);
 }
-auto CItem::SetWeatherDamage(weathertype_t effectNum, bool value) -> void {
+auto CItem::SetWeatherDamage(Weather::type_t effectNum, bool value) -> void {
     weatherBools.set(effectNum, value);
     UpdateRegion();
 }
@@ -1497,7 +1497,7 @@ bool CItem::DumpBody(std::ostream &outStream) const {
     outStream << "Range=" + std::to_string(GetBaseRange()) + "," + std::to_string(GetMaxRange()) + newLine;
     outStream << "MaxUses=" + std::to_string(GetMaxUses()) + newLine;
     outStream << "UsesLeft=" + std::to_string(GetUsesLeft()) + newLine;
-    outStream << "RaceDamage=" + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(RAIN) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(HEAT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(COLD) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(SNOW) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(LIGHTNING) ? 1 : 0)) + newLine;
+    outStream << "RaceDamage=" + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::LIGHT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::RAIN) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::HEAT) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::COLD) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::SNOW) ? 1 : 0)) + "," + std::to_string(static_cast<std::int16_t>(GetWeatherDamage(Weather::LIGHTNING) ? 1 : 0)) + newLine;
     outStream << "EntryMadeFrom=" + std::to_string(EntryMadeFrom()) + newLine;
     outStream << "Stealable=" + std::to_string(GetStealable()) + newLine;
     
@@ -1568,7 +1568,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "COLD") {
-                    SetWeatherDamage(COLD, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::COLD, static_cast<std::uint8_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
@@ -1621,7 +1621,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                 break;
             case 'H':
                 if (UTag == "HEAT") {
-                    SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
@@ -1631,11 +1631,11 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "LIGHT") {
-                    SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "LIGHTNING") {
-                    SetWeatherDamage(LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 break;
@@ -1753,12 +1753,12 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "RACEDAMAGE") {
-                    SetWeatherDamage(LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)) == 1);
-                    SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)) == 1);
-                    SetWeatherDamage(HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)) == 1);
-                    SetWeatherDamage(COLD, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0)) == 1);
-                    SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0)) == 1);
-                    SetWeatherDamage(LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[5], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::LIGHT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[0], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[1], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::HEAT, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[2], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::COLD, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[3], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[4], "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::LIGHTNING, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(csecs[5], "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "RANK") {
@@ -1767,7 +1767,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "RAIN") {
-                    SetWeatherDamage(RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::RAIN, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "RANGE") {
@@ -1797,7 +1797,7 @@ bool CItem::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "SNOW") {
-                    SetWeatherDamage(SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
+                    SetWeatherDamage(Weather::SNOW, static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) == 1);
                     rValue = true;
                 }
                 else if (UTag == "SPELLS") {

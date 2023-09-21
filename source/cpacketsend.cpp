@@ -1916,10 +1916,10 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
             }
         }
         if (extended4) {
-            FireResist(Combat->CalcDef(&toCopy, 0, false, HEAT));
-            ColdResist(Combat->CalcDef(&toCopy, 0, false, COLD));
-            PoisonResist(Combat->CalcDef(&toCopy, 0, false, POISON));
-            EnergyResist(Combat->CalcDef(&toCopy, 0, false, LIGHTNING));
+            FireResist(Combat->CalcDef(&toCopy, 0, false, Weather::HEAT));
+            ColdResist(Combat->CalcDef(&toCopy, 0, false, Weather::COLD));
+            PoisonResist(Combat->CalcDef(&toCopy, 0, false, Weather::POISON));
+            EnergyResist(Combat->CalcDef(&toCopy, 0, false, Weather::LIGHTNING));
             Luck(0);
             DamageMin(Combat->CalcLowDamage(&toCopy));
             DamageMax(Combat->CalcHighDamage(&toCopy));
@@ -6194,47 +6194,47 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         if (cItem.GetLayer() != IL_NONE) {
             if (cItem.GetHiDamage() > 0) {
                 if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYDAMAGETYPE)) {
-                    if (cItem.GetWeatherDamage(PHYSICAL)) {
+                    if (cItem.GetWeatherDamage(Weather::PHYSICAL)) {
                         tempEntry.stringNum = 1060403; // physical damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(LIGHT)) {
+                    else if (cItem.GetWeatherDamage(Weather::LIGHT)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("light damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(RAIN)) {
+                    else if (cItem.GetWeatherDamage(Weather::RAIN)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("rain damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(COLD)) {
+                    else if (cItem.GetWeatherDamage(Weather::COLD)) {
                         tempEntry.stringNum = 1060403; // cold damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(HEAT)) {
+                    else if (cItem.GetWeatherDamage(Weather::HEAT)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("fire damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(LIGHTNING)) {
+                    else if (cItem.GetWeatherDamage(Weather::LIGHTNING)) {
                         tempEntry.stringNum = 1060407; // energy damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(POISON)) {
+                    else if (cItem.GetWeatherDamage(Weather::POISON)) {
                         tempEntry.stringNum = 1060406; // energy damage ~1_val~%
                         tempEntry.ourText = util::ntos(100);
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(SNOW)) {
+                    else if (cItem.GetWeatherDamage(Weather::SNOW)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("snow damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
                     }
-                    else if (cItem.GetWeatherDamage(STORM)) {
+                    else if (cItem.GetWeatherDamage(Weather::STORM)) {
                         tempEntry.stringNum = 1042971; // ~1_NOTHING~
                         tempEntry.ourText = util::format("storm damage: 100%");
                         FinalizeData(tempEntry, totalStringLen);
@@ -6285,41 +6285,40 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
             }
             
             if ( ServerConfig::shared().enabled(ServerSwitch::DISPLAYRESISTSTATS)) {
-                if (cItem.GetResist(PHYSICAL) > 0) {
+                if (cItem.GetResist(Weather::PHYSICAL) > 0) {
                     tempEntry.stringNum = 1060448; // physical resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(PHYSICAL));
+                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::PHYSICAL));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(HEAT) > 0) {
+                if (cItem.GetResist(Weather::HEAT) > 0) {
                     tempEntry.stringNum = 1060447; // fire resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(HEAT));
+                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::HEAT));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(COLD) > 0) {
+                if (cItem.GetResist(Weather::COLD) > 0) {
                     tempEntry.stringNum = 1060445; // cold resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(COLD));
+                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::COLD));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(POISON) > 0) {
+                if (cItem.GetResist(Weather::POISON) > 0) {
                     tempEntry.stringNum = 1060449; // poison resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(POISON));
+                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::POISON));
                     FinalizeData(tempEntry, totalStringLen);
                 }
                 
-                if (cItem.GetResist(LIGHTNING) > 0) {
+                if (cItem.GetResist(Weather::LIGHTNING) > 0) {
                     tempEntry.stringNum = 1060446; // energy/electrical resist ~1_val~%
-                    tempEntry.ourText = util::ntos(cItem.GetResist(LIGHTNING));
+                    tempEntry.ourText = util::ntos(cItem.GetResist(Weather::LIGHTNING));
                     FinalizeData(tempEntry, totalStringLen);
                 }
             }
             else {
-                if (cItem.GetResist(PHYSICAL) > 0) {
+                if (cItem.GetResist(Weather::PHYSICAL) > 0) {
                     tempEntry.stringNum = 1042971; // ~1_NOTHING~
-                    tempEntry.ourText = util::format("Armor Rating: %s",
-                                                     util::ntos(cItem.GetResist(PHYSICAL)).c_str());
+                    tempEntry.ourText = util::format("Armor Rating: %s", util::ntos(cItem.GetResist(Weather::PHYSICAL)).c_str());
                     FinalizeData(tempEntry, totalStringLen);
                 }
             }
