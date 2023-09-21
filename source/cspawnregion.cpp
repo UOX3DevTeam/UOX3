@@ -548,7 +548,7 @@ void CSpawnRegion::DoRegionSpawn(std::uint32_t &itemsSpawned, std::uint32_t &npc
         }
     }
     
-    SetNextTime(BuildTimeValue(static_cast<R32>(RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
+    SetNextTime(BuildTimeValue(static_cast<float>(RandomNum(static_cast<std::uint16_t>(GetMinTime() * 60), static_cast<std::uint16_t>(GetMaxTime() * 60)))));
 }
 
 // o------------------------------------------------------------------------------------------------o

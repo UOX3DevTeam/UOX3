@@ -43,8 +43,8 @@ private:
     lightlevel_t lightLevel;
     gender_t restrictGender;
     skillval_t languageMin;
-    R32 poisonResistance; // % of poison to cancel
-    R32 magicResistance;  // % of magic to cancel
+    float poisonResistance; // % of poison to cancel
+    float magicResistance;  // % of magic to cancel
     
     COLOURLIST beardColours;
     COLOURLIST hairColours;
@@ -95,8 +95,8 @@ public:
     armorclass_t ArmourClassRestriction() const;
     seconds_t WeatherSeconds(Weather::type_t iNum) const;
     std::int8_t WeatherDamage(Weather::type_t iNum) const;
-    R32 MagicResistance() const;
-    R32 PoisonResistance() const;
+    float MagicResistance() const;
+    float PoisonResistance() const;
     
     skillval_t LanguageMin() const;
     range_t VisibilityRange() const;
@@ -130,8 +130,8 @@ public:
     std::int16_t StamModifier() const;
     void StamModifier(std::int16_t value);
     
-    void MagicResistance(R32 value);
-    void PoisonResistance(R32 value);
+    void MagicResistance(float value);
+    void PoisonResistance(float value);
     
     void GenderRestriction(gender_t newValue);
     void LightLevel(lightlevel_t newValue);

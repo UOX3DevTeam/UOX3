@@ -1320,7 +1320,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
             if (normalizeStats) {
                 MaxVal(100);
                 CurVal(static_cast<std::int16_t>(
-                                                 ceil(100 * (static_cast<R32>(toUpdate.GetHP()) / static_cast<R32>(maxHP)))));
+                                                 ceil(100 * (static_cast<float>(toUpdate.GetHP()) / static_cast<float>(maxHP)))));
             }
             else {
                 MaxVal(maxHP);
@@ -1332,7 +1332,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
                 if (maxStam > 0) {
                     MaxVal(100);
                     CurVal(static_cast<std::int16_t>(ceil(
-                                                          100 * (static_cast<R32>(toUpdate.GetStamina()) / static_cast<R32>(maxStam)))));
+                                                          100 * (static_cast<float>(toUpdate.GetStamina()) / static_cast<float>(maxStam)))));
                 }
                 else {
                     MaxVal(0);
@@ -1349,7 +1349,7 @@ CPUpdateStat::CPUpdateStat(CBaseObject &toUpdate, std::uint8_t statNum, bool nor
                 if (maxMana > 0) {
                     MaxVal(100);
                     CurVal(static_cast<std::int16_t>(ceil(
-                                                          100 * (static_cast<R32>(toUpdate.GetMana()) / static_cast<R32>(maxMana)))));
+                                                          100 * (static_cast<float>(toUpdate.GetMana()) / static_cast<float>(maxMana)))));
                 }
                 else {
                     MaxVal(0);
@@ -1799,7 +1799,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
         std::int16_t percentHP = 0;
         if (currentHP > 0) {
             percentHP = static_cast<std::int16_t>(
-                                                  ceil(100 * (static_cast<R32>(currentHP) / static_cast<R32>(maxHP))));
+                                                  ceil(100 * (static_cast<float>(currentHP) / static_cast<float>(maxHP))));
         }
         CurrentHP(percentHP);
         MaxHP(100);
@@ -1958,7 +1958,7 @@ CPStatWindow::CPStatWindow(CBaseObject &toCopy, CSocket &target) {
         std::int16_t percentHP = 0;
         if (currentHP > 0) {
             percentHP = static_cast<std::int16_t>(
-                                                  ceil(100 * (static_cast<R32>(currentHP) / static_cast<R32>(maxHP))));
+                                                  ceil(100 * (static_cast<float>(currentHP) / static_cast<float>(maxHP))));
         }
         CurrentHP(percentHP);
         MaxHP(100);

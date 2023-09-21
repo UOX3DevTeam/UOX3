@@ -109,9 +109,9 @@ private:
         std::uint16_t tamedThirstRate;  // The rate at which thirst decreases when char is tamed
         std::uint8_t hungerWildChance; // The chance that the char goes wild when hungry
         std::uint8_t thirstWildChance; // The chance that the char goes wild when thirsty
-        R32 walkingSpeed;
-        R32 runningSpeed;
-        R32 fleeingSpeed;
+        float walkingSpeed;
+        float runningSpeed;
+        float fleeingSpeed;
         std::int8_t pathFail;
         std::int8_t pathResult;
         std::uint16_t pathTargX;
@@ -130,9 +130,9 @@ private:
         
         std::string foodList;
         
-        R32 mountedWalkingSpeed;
-        R32 mountedRunningSpeed;
-        R32 mountedFleeingSpeed;
+        float mountedWalkingSpeed;
+        float mountedRunningSpeed;
+        float mountedFleeingSpeed;
     };
     
     struct PlayerValues {
@@ -779,23 +779,23 @@ public:
     cnpc_flag_t GetNPCFlag() const;
     void SetNPCFlag(cnpc_flag_t flagType);
     
-    R32 GetWalkingSpeed() const;
-    void SetWalkingSpeed(R32 newValue);
+    float GetWalkingSpeed() const;
+    void SetWalkingSpeed(float newValue);
     
-    R32 GetRunningSpeed() const;
-    void SetRunningSpeed(R32 newValue);
+    float GetRunningSpeed() const;
+    void SetRunningSpeed(float newValue);
     
-    R32 GetFleeingSpeed() const;
-    void SetFleeingSpeed(R32 newValue);
+    float GetFleeingSpeed() const;
+    void SetFleeingSpeed(float newValue);
     
-    R32 GetMountedWalkingSpeed() const;
-    void SetMountedWalkingSpeed(R32 newValue);
+    float GetMountedWalkingSpeed() const;
+    void SetMountedWalkingSpeed(float newValue);
     
-    R32 GetMountedRunningSpeed() const;
-    void SetMountedRunningSpeed(R32 newValue);
+    float GetMountedRunningSpeed() const;
+    void SetMountedRunningSpeed(float newValue);
     
-    R32 GetMountedFleeingSpeed() const;
-    void SetMountedFleeingSpeed(R32 newValue);
+    float GetMountedFleeingSpeed() const;
+    void SetMountedFleeingSpeed(float newValue);
     
     // Player Characters
 public:

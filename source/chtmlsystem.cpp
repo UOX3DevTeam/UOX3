@@ -445,7 +445,7 @@ void cHTMLTemplate::process() {
     }
     
     // Performance Dump
-    R64 eps = 0.00000000001;
+    double eps = 0.00000000001;
     Pos = ParsedContent.find("%performance");
     while (Pos != std::string::npos) {
         std::string performance;
@@ -455,12 +455,12 @@ void cHTMLTemplate::process() {
             std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
             std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
             std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
-            myStream << "Network code: "  << static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<R32>(networkTimeCount)) << "msec [" << networkTimeCount << " samples] <BR>";
-            myStream << "Timer code: " << static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<R32>(timerTimeCount)) << "msec [" << timerTimeCount << " samples] <BR>";
-            myStream << "Auto code: " << static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<R32>(autoTimeCount)) << "msec [" << autoTimeCount << " samples] <BR>";
-            myStream << "Loop Time: " << static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount)) << "msec [" << loopTimeCount << " samples] <BR>";
+            myStream << "Network code: "  << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)) << "msec [" << networkTimeCount << " samples] <BR>";
+            myStream << "Timer code: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)) << "msec [" << timerTimeCount << " samples] <BR>";
+            myStream << "Auto code: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)) << "msec [" << autoTimeCount << " samples] <BR>";
+            myStream << "Loop Time: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)) << "msec [" << loopTimeCount << " samples] <BR>";
             if (!(cwmWorldState->ServerProfile()->LoopTime() < eps || loopTimeCount < eps)) {
-                myStream << "Simulation Cycles: " << (1000.0 * (1.0 / static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount)))) << " per sec <BR>";
+                myStream << "Simulation Cycles: " << (1000.0 * (1.0 / static_cast<float>( static_cast<float>( cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))) << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -498,7 +498,7 @@ void cHTMLTemplate::process() {
         if (cwmWorldState->GetKeepRun()) {
             if (!(cwmWorldState->ServerProfile()->LoopTime() < eps || cwmWorldState->ServerProfile()->LoopTimeCount() < eps)) {
                 myStream << "Simulation Cycles: " << (1000.0 *
-                                                      (1.0 / static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>( cwmWorldState->ServerProfile()->LoopTimeCount())))) << " per sec <BR>";
+                                                      (1.0 / static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>( cwmWorldState->ServerProfile()->LoopTimeCount())))) << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -542,7 +542,7 @@ void cHTMLTemplate::process() {
 void cHTMLTemplate::poll() {
     if (scheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun()) {
         process();
-        scheduledUpdate = BuildTimeValue(static_cast<R32>(updateTimer));
+        scheduledUpdate = BuildTimeValue(static_cast<float>(updateTimer));
     }
 }
 

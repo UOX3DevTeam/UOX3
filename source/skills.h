@@ -51,15 +51,15 @@ struct CreateEntry_st {
         resourceNeeded.resize(0);
         skillReqs.resize(0);
     }
-    R32 AverageMinSkill() {
-        R32 sum = 0;
+    float AverageMinSkill() {
+        float sum = 0;
         for (size_t i = 0; i < skillReqs.size(); ++i) {
             sum += skillReqs[i].minSkill;
         }
         return sum / skillReqs.size();
     }
-    R32 AverageMaxSkill() {
-        R32 sum = 0;
+    float AverageMaxSkill() {
+        float sum = 0;
         for (size_t i = 0; i < skillReqs.size(); ++i) {
             sum += skillReqs[i].maxSkill;
         }

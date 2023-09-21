@@ -2141,7 +2141,7 @@ inline bool operator>(const CItem &x, const CItem &y) { return (x.GetSerial() > 
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display "speech" over an item
 // o------------------------------------------------------------------------------------------------o
-auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow, std::uint16_t Colour) -> void {
+auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, float secsFromNow, std::uint16_t Colour) -> void {
     unicodetypes_t dictLang = ZERO;
     auto speakTo = INVALIDSERIAL;
     SpeechTarget target = SPTRG_PCNPC;

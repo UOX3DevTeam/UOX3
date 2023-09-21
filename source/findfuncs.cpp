@@ -408,7 +408,7 @@ CMultiObj *FindMulti(CBaseObject *i) {
 
 template <class T> inline T hypotenuse(T sideA, T sideB) {
     T sumSquares = (sideA * sideA) + (sideB * sideB);
-    T retVal = static_cast<T>(sqrt(static_cast<R64>(sumSquares)));
+    T retVal = static_cast<T>(sqrt(static_cast<double>(sumSquares)));
     return retVal;
 }
 

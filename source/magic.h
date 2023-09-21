@@ -62,10 +62,10 @@ private:
     std::int16_t mana;
     std::int16_t stamina;
     std::int16_t health;
-    R32 delay;         // Casting time of spell
-    R32 damageDelay;   // Minimum delay between targeting of a damage spell and the application of
+    float delay;         // Casting time of spell
+    float damageDelay;   // Minimum delay between targeting of a damage spell and the application of
     // damage
-    R32 recoveryDelay; // Minimum delay between the end of one spellcast and the start of another
+    float recoveryDelay; // Minimum delay between the end of one spellcast and the start of another
     std::uint16_t action;
     Reag_st reags;
     std::string mantra;
@@ -90,17 +90,17 @@ public:
     hiskill(0), loskill(0), sclo(0), schi(0), jsScript(0), baseDmg(0) {}
     
     std::uint16_t Action() const { return action; }
-    R32 Delay() const { return delay; }
-    R32 DamageDelay() const { return damageDelay; }
-    R32 RecoveryDelay() const { return recoveryDelay; }
+    float Delay() const { return delay; }
+    float DamageDelay() const { return damageDelay; }
+    float RecoveryDelay() const { return recoveryDelay; }
     std::int16_t Health() const { return health; }
     std::int16_t Stamina() const { return stamina; }
     std::int16_t Mana() const { return mana; }
     
     void Action(std::uint16_t newVal) { action = newVal; }
-    void Delay(R32 newVal) { delay = newVal; }
-    void DamageDelay(R32 newVal) { damageDelay = newVal; }
-    void RecoveryDelay(R32 newVal) { recoveryDelay = newVal; }
+    void Delay(float newVal) { delay = newVal; }
+    void DamageDelay(float newVal) { damageDelay = newVal; }
+    void RecoveryDelay(float newVal) { recoveryDelay = newVal; }
     void Health(std::int16_t newVal) { health = newVal; }
     void Stamina(std::int16_t newVal) { stamina = newVal; }
     void Mana(std::int16_t newVal) { mana = newVal; }

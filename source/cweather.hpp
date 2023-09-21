@@ -24,11 +24,11 @@ private:
     
     [[maybe_unused]] weathid_t ID;
     WeathPart_st weather[WEATHNUM];
-    R32 assortVals[3][3];
-    R32 snowThreshold;
-    R32 light[3];
-    R32 rainTempDrop;
-    R32 stormTempDrop;
+    float assortVals[3][3];
+    float snowThreshold;
+    float light[3];
+    float rainTempDrop;
+    float stormTempDrop;
     bool stormDelay;
     
 public:
@@ -45,8 +45,8 @@ public:
     std::int8_t Chance(std::uint8_t weathType) const;
     void Chance(std::uint8_t weathType, std::int8_t value);
     
-    R32 Value(std::uint8_t valType, std::uint8_t valOff) const;
-    void Value(std::uint8_t valType, std::uint8_t valOff, R32 value);
+    float Value(std::uint8_t valType, std::uint8_t valOff) const;
+    void Value(std::uint8_t valType, std::uint8_t valOff, float value);
     
     std::int8_t SnowIntensityHigh() const;
     std::int8_t SnowIntensityLow() const;
@@ -60,14 +60,14 @@ public:
     std::int8_t StormIntensityLow() const;
     std::int8_t StormIntensity() const;
     
-    R32 MaxTemp() const;
-    R32 MinTemp() const;
-    R32 Temp() const;
-    R32 MaxWindSpeed() const;
-    R32 MinWindSpeed() const;
-    R32 WindSpeed() const;
-    R32 RainTempDrop() const;
-    R32 StormTempDrop() const;
+    float MaxTemp() const;
+    float MinTemp() const;
+    float Temp() const;
+    float MaxWindSpeed() const;
+    float MinWindSpeed() const;
+    float WindSpeed() const;
+    float RainTempDrop() const;
+    float StormTempDrop() const;
     
     std::int8_t RainChance() const;
     std::int8_t SnowChance() const;
@@ -75,9 +75,9 @@ public:
     std::int8_t HeatChance() const;
     std::int8_t ColdChance() const;
     
-    R32 LightMin() const;
-    R32 LightMax() const;
-    R32 CurrentLight() const;
+    float LightMin() const;
+    float LightMax() const;
+    float CurrentLight() const;
     
     bool RainActive() const;
     bool SnowActive() const;
@@ -87,16 +87,16 @@ public:
     bool ColdActive() const;
     bool StormDelay() const;
     
-    R32 SnowThreshold() const;
+    float SnowThreshold() const;
     
-    void WindSpeed(R32 value);
-    void MaxWindSpeed(R32 value);
-    void MinWindSpeed(R32 value);
-    void MaxTemp(R32 value);
-    void MinTemp(R32 value);
-    void Temp(R32 value);
-    void RainTempDrop(R32 value);
-    void StormTempDrop(R32 value);
+    void WindSpeed(float value);
+    void MaxWindSpeed(float value);
+    void MinWindSpeed(float value);
+    void MaxTemp(float value);
+    void MinTemp(float value);
+    void Temp(float value);
+    void RainTempDrop(float value);
+    void StormTempDrop(float value);
     void SnowIntensityHigh(std::int8_t value);
     void SnowIntensityLow(std::int8_t value);
     void SnowIntensity(std::int8_t value);
@@ -113,15 +113,15 @@ public:
     void StormChance(std::int8_t value);
     void HeatChance(std::int8_t value);
     void ColdChance(std::int8_t value);
-    void SnowThreshold(R32 value);
-    void LightMin(R32 value);
-    void LightMax(R32 value);
-    void CurrentLight(R32 value);
+    void SnowThreshold(float value);
+    void LightMin(float value);
+    void LightMax(float value);
+    void CurrentLight(float value);
     
-    R32 EffectiveMaxTemp() const;
-    R32 EffectiveMinTemp() const;
-    void EffectiveMaxTemp(R32 value);
-    void EffectiveMinTemp(R32 value);
+    float EffectiveMaxTemp() const;
+    float EffectiveMinTemp() const;
+    void EffectiveMaxTemp(float value);
+    void EffectiveMinTemp(float value);
     
     void RainActive(bool value);
     void SnowActive(bool value);
@@ -147,8 +147,8 @@ private:
     void Intensity(weathid_t toCheck, std::uint8_t weathType, std::int8_t value);
     std::int8_t Chance(weathid_t toCheck, std::uint8_t weathType);
     void Chance(weathid_t toCheck, std::uint8_t weathType, std::int8_t value);
-    R32 Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff);
-    void Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value);
+    float Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff);
+    void Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, float value);
     
 public:
     cWeatherAb();
@@ -169,22 +169,22 @@ public:
     std::int8_t StormIntensityHigh(weathid_t toCheck);
     std::int8_t StormIntensityLow(weathid_t toCheck);
     std::int8_t StormIntensity(weathid_t toCheck);
-    R32 MaxTemp(weathid_t toCheck);
-    R32 MinTemp(weathid_t toCheck);
-    R32 Temp(weathid_t toCheck);
-    R32 RainTempDrop(weathid_t toCheck);
-    R32 StormTempDrop(weathid_t toCheck);
-    R32 MaxWindSpeed(weathid_t toCheck);
-    R32 MinWindSpeed(weathid_t toCheck);
-    R32 WindSpeed(weathid_t toCheck);
+    float MaxTemp(weathid_t toCheck);
+    float MinTemp(weathid_t toCheck);
+    float Temp(weathid_t toCheck);
+    float RainTempDrop(weathid_t toCheck);
+    float StormTempDrop(weathid_t toCheck);
+    float MaxWindSpeed(weathid_t toCheck);
+    float MinWindSpeed(weathid_t toCheck);
+    float WindSpeed(weathid_t toCheck);
     std::int8_t RainChance(weathid_t toCheck);
     std::int8_t SnowChance(weathid_t toCheck);
     std::int8_t HeatChance(weathid_t toCheck);
     std::int8_t ColdChance(weathid_t toCheck);
     std::int8_t StormChance(weathid_t toCheck);
-    R32 LightMin(weathid_t toCheck);
-    R32 LightMax(weathid_t toCheck);
-    R32 CurrentLight(weathid_t toCheck);
+    float LightMin(weathid_t toCheck);
+    float LightMax(weathid_t toCheck);
+    float CurrentLight(weathid_t toCheck);
     bool RainActive(weathid_t toCheck);
     bool SnowActive(weathid_t toCheck);
     bool StormBrewing(weathid_t toCheck);
@@ -192,16 +192,16 @@ public:
     bool HeatActive(weathid_t toCheck);
     bool ColdActive(weathid_t toCheck);
     
-    R32 SnowThreshold(weathid_t toCheck);
+    float SnowThreshold(weathid_t toCheck);
     
-    void WindSpeed(weathid_t toCheck, R32 value);
-    void MaxWindSpeed(weathid_t toCheck, R32 value);
-    void MinWindSpeed(weathid_t toCheck, R32 value);
-    void MaxTemp(weathid_t toCheck, R32 value);
-    void MinTemp(weathid_t toCheck, R32 value);
-    void Temp(weathid_t toCheck, R32 value);
-    void RainTempDrop(weathid_t toCheck, R32 value);
-    void StormTempDrop(weathid_t toCheck, R32 value);
+    void WindSpeed(weathid_t toCheck, float value);
+    void MaxWindSpeed(weathid_t toCheck, float value);
+    void MinWindSpeed(weathid_t toCheck, float value);
+    void MaxTemp(weathid_t toCheck, float value);
+    void MinTemp(weathid_t toCheck, float value);
+    void Temp(weathid_t toCheck, float value);
+    void RainTempDrop(weathid_t toCheck, float value);
+    void StormTempDrop(weathid_t toCheck, float value);
     void SnowIntensityHigh(weathid_t toCheck, std::int8_t value);
     void SnowIntensityLow(weathid_t toCheck, std::int8_t value);
     void SnowIntensity(weathid_t toCheck, std::int8_t value);
@@ -218,15 +218,15 @@ public:
     void HeatChance(weathid_t toCheck, std::int8_t value);
     void ColdChance(weathid_t toCheck, std::int8_t value);
     void StormChance(weathid_t toCheck, std::int8_t value);
-    void SnowThreshold(weathid_t toCheck, R32 value);
-    void LightMin(weathid_t toCheck, R32 newValue);
-    void LightMax(weathid_t toCheck, R32 newValue);
-    void CurrentLight(weathid_t toCheck, R32 newValue);
+    void SnowThreshold(weathid_t toCheck, float value);
+    void LightMin(weathid_t toCheck, float newValue);
+    void LightMax(weathid_t toCheck, float newValue);
+    void CurrentLight(weathid_t toCheck, float newValue);
     
-    R32 EffectiveMaxTemp(weathid_t toCheck);
-    R32 EffectiveMinTemp(weathid_t toCheck);
-    void EffectiveMaxTemp(weathid_t toCheck, R32 value);
-    void EffectiveMinTemp(weathid_t toCheck, R32 value);
+    float EffectiveMaxTemp(weathid_t toCheck);
+    float EffectiveMinTemp(weathid_t toCheck);
+    void EffectiveMaxTemp(weathid_t toCheck, float value);
+    void EffectiveMinTemp(weathid_t toCheck, float value);
     void RainActive(weathid_t toCheck, bool value);
     void SnowActive(weathid_t toCheck, bool value);
     void StormBrewing(weathid_t toCheck, bool value);

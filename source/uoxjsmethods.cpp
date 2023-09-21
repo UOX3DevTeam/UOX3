@@ -4485,7 +4485,7 @@ JSBool CChar_SetPoisoned(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
                 newVal = myChar->GetPoisoned();
             }
         }
-        myChar->SetTimer(tCHAR_POISONWEAROFF, BuildTimeValue(static_cast<R32>(wearOff) / 1000.0f));
+        myChar->SetTimer(tCHAR_POISONWEAROFF, BuildTimeValue(static_cast<float>(wearOff) / 1000.0f));
     }
     
     // myChar->SetPoisonStrength( newVal );
@@ -4547,7 +4547,7 @@ JSBool CChar_SetInvisible(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     myChar->SetVisible(static_cast<visibletypes_t>(newVal));
     if (argc == 2) {
         std::uint32_t TimeOut = static_cast<std::uint32_t>(JSVAL_TO_INT(argv[1]));
-        myChar->SetTimer(tCHAR_INVIS, BuildTimeValue(static_cast<R32>(TimeOut) / 1000.0f));
+        myChar->SetTimer(tCHAR_INVIS, BuildTimeValue(static_cast<float>(TimeOut) / 1000.0f));
     }
     return JS_TRUE;
 }
@@ -6998,7 +6998,7 @@ JSBool CMisc_SetTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     JSEncapsulate encaps2(cx, &(argv[1]));
     JSEncapsulate myClass(cx, obj);
     
-    R32 timerVal = encaps2.toFloat();
+    float timerVal = encaps2.toFloat();
     if (timerVal != 0) {
         timerVal = BuildTimeValue(timerVal / 1000.0f);
     }

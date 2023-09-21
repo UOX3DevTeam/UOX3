@@ -287,9 +287,9 @@ public:
     void SysMessage(const std::string txt, ...);
     void SysMessageJS(const std::string &uformat, std::uint16_t txtColor, const std::string &data);
     void SysMessage(std::int32_t dictEntry, ...);
-    void ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFromNow = 0.0f,
+    void ObjMessage(const std::string &txt, CBaseObject *getObj, float secsFromNow = 0.0f,
                     std::uint16_t Color = 0x03B2);
-    void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f,
+    void ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, float secsFromNow = 0.0f,
                     std::uint32_t Color = 0x03B2, ...);
     
     void ShowCharName(CChar *i, bool showSer);

@@ -54,7 +54,7 @@ public:
     bool StartAttack(CChar *mChar, CChar *ourTarg);
     void InvalidateAttacker(CChar *mChar);
     
-    R32 GetCombatTimeout(CChar *mChar);
+    float GetCombatTimeout(CChar *mChar);
     void PlayerAttack(CSocket *s);
     void AttackTarget(CChar *mChar, CChar *ourTarg);
     void PetGuardAttack(CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard = nullptr);

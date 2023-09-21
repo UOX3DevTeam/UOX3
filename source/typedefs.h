@@ -55,10 +55,6 @@ typedef void *va_list;
 // o------------------------------------------------------------------------------------------------o
 //  Setting up types used
 // o------------------------------------------------------------------------------------------------o
-
-using R32 = float;
-using R64 = double;
-
 using serial_t = std::uint32_t;
 using gender_t = std::uint8_t;
 using lightlevel_t = std::uint8_t;
@@ -98,8 +94,7 @@ constexpr auto BASEITEMSERIAL = serial_t(0x40000000);
 constexpr auto MAX_PATH = 268;
 #endif
 
-constexpr auto MAX_NAME =
-std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet
+constexpr auto MAX_NAME = std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet
 // size to 30 characters. Higher MAX_NAME values do, however, work for items
 // - and are in some cases required (magic item names, for instance). Seems
 // to still work for regular-length names if I increase it, but we might

@@ -1482,7 +1482,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for
 // players
 // o------------------------------------------------------------------------------------------------o
-void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFromNow, std::uint32_t Colour, ...) {
+void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, float secsFromNow, std::uint32_t Colour, ...) {
     if (!ValidateObject(getObj))
         return;
     
@@ -1503,7 +1503,7 @@ void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, R32 secsFr
 //|	Purpose		-	Shows information on items when clicked or guild info (if any) for
 // players
 // o------------------------------------------------------------------------------------------------o
-void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, R32 secsFromNow,
+void CSocket::ObjMessage(const std::string &txt, CBaseObject *getObj, float secsFromNow,
                          std::uint16_t Colour) {
     std::uint16_t targColour = Colour;
     

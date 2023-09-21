@@ -1368,7 +1368,7 @@ void ShowSkillTarget(CSocket *s) {
         }
         
         if (skillVal > 0 || dispType % 2 == 0) {
-            showSkills.AddData(cwmWorldState->skill[i].name, std::to_string(static_cast<R32>(skillVal) / 10), 8);
+            showSkills.AddData(cwmWorldState->skill[i].name, std::to_string(static_cast<float>(skillVal) / 10), 8);
         }
     }
     showSkills.Send(4, false, INVALIDSERIAL);
@@ -1783,12 +1783,12 @@ void SmeltTarget(CSocket *s) {
         return;
     }
     
-    R32 avgMin = ourCreateEntry->AverageMinSkill();
+    float avgMin = ourCreateEntry->AverageMinSkill();
     if (mChar->GetSkill(MINING) < avgMin) {
         s->SysMessage(1115); // You aren't skilled enough to melt this.
         return;
     }
-    R32 avgMax = ourCreateEntry->AverageMaxSkill();
+    float avgMax = ourCreateEntry->AverageMaxSkill();
     
     Skills->CheckSkill(mChar, MINING, static_cast<std::int16_t>(avgMin), static_cast<std::int16_t>(avgMax));
     

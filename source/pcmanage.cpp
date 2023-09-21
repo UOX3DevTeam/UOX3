@@ -842,7 +842,7 @@ bool CPICreateCharacter::Handle() {
 void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
     std::int32_t totalstats, totalskills;
     std::uint8_t i;
-    R32 percheck;
+    float percheck;
     
     if (profession != 0) // player picked a character profession during character creation
     {
@@ -966,11 +966,11 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
             if (totalstats > 80) {
                 // If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
                 Console::shared().error(util::format("Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()));
-                percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetStrength() / static_cast<float>(totalstats));
                 mChar->SetStrength(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
-                percheck = (mChar->GetDexterity() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetDexterity() / static_cast<float>(totalstats));
                 mChar->SetDexterity(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
-                percheck = (mChar->GetIntelligence() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetIntelligence() / static_cast<float>(totalstats));
                 mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 80, 10.0f, 60.0f)));
             }
             else {
@@ -981,11 +981,11 @@ void CPICreateCharacter::SetNewCharSkillsStats(CChar *mChar) {
             if (totalstats > 90) {
                 // If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
                 Console::shared().error(util::format("Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()));
-                percheck = (mChar->GetStrength() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetStrength() / static_cast<float>(totalstats));
                 mChar->SetStrength(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
-                percheck = (mChar->GetDexterity() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetDexterity() / static_cast<float>(totalstats));
                 mChar->SetDexterity(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
-                percheck = (mChar->GetIntelligence() / static_cast<R32>(totalstats));
+                percheck = (mChar->GetIntelligence() / static_cast<float>(totalstats));
                 mChar->SetIntelligence(static_cast<std::uint8_t>(Capped(percheck * 90, 10.0f, 60.0f)));
             }
             else {

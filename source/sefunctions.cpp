@@ -2099,7 +2099,7 @@ JSBool SE_AreaCharacterFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, u
         ScriptError(cx, "AreaCharacterFunction: Argument 1 not a valid object");
         return JS_FALSE;
     }
-    R32 distance = static_cast<R32>(JSVAL_TO_INT(argv[2]));
+    float distance = static_cast<float>(JSVAL_TO_INT(argv[2]));
     if (argc == 4 && argv[3] != JSVAL_NULL) {
         srcSocketObj = JSVAL_TO_OBJECT(argv[3]);
         srcSocket = static_cast<CSocket *>(JS_GetPrivate(cx, srcSocketObj));
@@ -2169,7 +2169,7 @@ JSBool SE_AreaItemFunction(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
         ScriptError(cx, "AreaItemFunction: Argument 1 not a valid object");
         return JS_FALSE;
     }
-    R32 distance = static_cast<R32>(JSVAL_TO_INT(argv[2]));
+    float distance = static_cast<float>(JSVAL_TO_INT(argv[2]));
     if (argc == 4 && argv[3] != JSVAL_NULL) {
         srcSocketObj = JSVAL_TO_OBJECT(argv[3]);
         if (srcSocketObj != nullptr) {

@@ -314,7 +314,7 @@ public:
     auto IsContType() const -> bool;
     auto UpdateRegion() -> void;
     
-    auto TextMessage(CSocket *s, std::int32_t dictEntry, R32 secsFromNow = 0.0f, std::uint16_t Colour = 0x005A)
+    auto TextMessage(CSocket *s, std::int32_t dictEntry, float secsFromNow = 0.0f, std::uint16_t Colour = 0x005A)
     -> void;
     virtual void Update(CSocket *mSock = nullptr, bool drawGamePlayer = false,
                         bool sendToSelf = true) override;

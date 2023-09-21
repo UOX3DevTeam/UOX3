@@ -554,10 +554,10 @@ std::int32_t cRaces::FightPercent(std::int32_t skill, raceid_t x) const {
         return 100;
     
     if (modifier >= static_cast<std::int32_t>(combat.size())) {
-        return -static_cast<std::int32_t>(100 / static_cast<R32>(divValue));
+        return -static_cast<std::int32_t>(100 / static_cast<float>(divValue));
     }
     else {
-        return static_cast<std::int32_t>(100 / static_cast<R32>(divValue));
+        return static_cast<std::int32_t>(100 / static_cast<float>(divValue));
     }
     return 100;
 }
@@ -1763,16 +1763,16 @@ CRace::~CRace() {}
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets race's magic resistance
 // o------------------------------------------------------------------------------------------------o
-R32 CRace::MagicResistance() const { return magicResistance; }
-void CRace::MagicResistance(R32 value) { magicResistance = value; }
+float CRace::MagicResistance() const { return magicResistance; }
+void CRace::MagicResistance(float value) { magicResistance = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CRace::PoisonResistance()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets race's posion resistance
 // o------------------------------------------------------------------------------------------------o
-R32 CRace::PoisonResistance() const { return poisonResistance; }
-void CRace::PoisonResistance(R32 value) { poisonResistance = value; }
+float CRace::PoisonResistance() const { return poisonResistance; }
+void CRace::PoisonResistance(float value) { poisonResistance = value; }
 
 CRace &CRace::operator=(CRace &trgRace) {
     iSkills = trgRace.iSkills;

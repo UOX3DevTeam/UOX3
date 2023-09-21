@@ -1205,7 +1205,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_ROBE), currItem, armorDef, resistType); // Torso (Outer - Robe)
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value < Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 2.8));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 2.8));
                 }
             }
             break;
@@ -1213,7 +1213,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_ARMS), currItem, armorDef, resistType); // Arms
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value < Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 6.8));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 6.8));
                 }
             }
             break;
@@ -1221,7 +1221,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_HELM), currItem, armorDef, resistType); // Head
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value < Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 7.3));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 7.3));
                 }
             }
             break;
@@ -1235,7 +1235,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_INNERLEGGINGS), currItem, armorDef, resistType); // Legs (Inner - Leg Armor)
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value < Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 4.5));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 4.5));
                 }
             }
             break;
@@ -1243,7 +1243,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_NECK), currItem, armorDef, resistType); // Neck
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value< Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 14.5));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 14.5));
                 }
             }
             break;
@@ -1251,7 +1251,7 @@ CItem *CHandleCombat::GetArmorDef(CChar *mChar, std::int32_t &totalDef, std::uin
             currItem = CheckDef(mChar->GetItemAtLayer(IL_GLOVES), currItem, armorDef, resistType); // Gloves
             if (findTotal) {
                 if (ServerConfig::shared().ruleSets[Expansion::ARMOR].value < Era::AOS) {
-                    armorDef = static_cast<std::int32_t>(100 * static_cast<R32>(armorDef / 14.5));
+                    armorDef = static_cast<std::int32_t>(100 * static_cast<float>(armorDef / 14.5));
                 }
             }
             break;
@@ -1937,21 +1937,21 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
     if (!ValidateObject(ourTarg) || !ValidateObject(mChar))
         return baseDamage;
     
-    R32 multiplier = 1;
-    R32 damage = 0;
+    float multiplier = 1;
+    float damage = 0;
     std::int32_t RaceDamage = 0;
     CItem *mWeapon = GetWeapon(mChar);
     CRace *rPtr = Races->Race(ourTarg->GetRace());
     
     switch (damageType) {
         case Weather::NONE:
-            damage = static_cast<R32>(baseDamage);
+            damage = static_cast<float>(baseDamage);
             break;
         case Weather::PHYSICAL:
             // Race Dmg Modification: Bonus percentage.
             RaceDamage = Races->DamageFromSkill(getFightSkill, mChar->GetRace());
             if (RaceDamage != 0) {
-                baseDamage += static_cast<std::int16_t>(static_cast<R32>(baseDamage) * (static_cast<R32>(RaceDamage) / 1000));
+                baseDamage += static_cast<std::int16_t>(static_cast<float>(baseDamage) * (static_cast<float>(RaceDamage) / 1000));
             }
             
             // Adjust race and weather weakness
@@ -2015,44 +2015,44 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
             if (ServerConfig::shared().ruleSets[Expansion::STRENGTH].value >= Era::TD) {
                 // Third Dawn expansion and later
                 if (mChar->GetStrength() >= 100) {
-                    multiplier = static_cast<R32>(mChar->GetStrength() * 0.3) + 5;
+                    multiplier = static_cast<float>(mChar->GetStrength() * 0.3) + 5;
                 }
                 else {
-                    multiplier = static_cast<R32>(mChar->GetStrength() * 0.3);
+                    multiplier = static_cast<float>(mChar->GetStrength() * 0.3);
                 }
             }
             else {
                 // Pre-publish 13 (T2A, UOR, early TD)
                 // Capped at 200 strength
                 auto strBonusPercent = 20;
-                multiplier = static_cast<R32>(((std::min(mChar->GetStrength(), static_cast<std::int16_t>(200)) * strBonusPercent) / 100) / 100) + 1;
+                multiplier = static_cast<float>(((std::min(mChar->GetStrength(), static_cast<std::int16_t>(200)) * strBonusPercent) / 100) / 100) + 1;
             }
             
             // Tactics Damage Bonus
             if (ServerConfig::shared().ruleSets[Expansion::TATIC].value>= Era::AOS) {
                 // Age of Shadows expansion and later
                 if (mChar->GetSkill(TACTICS) >= 1000) {
-                    multiplier += static_cast<R32>(((mChar->GetSkill(TACTICS) / 10) / 1.6) + 6.25);
+                    multiplier += static_cast<float>(((mChar->GetSkill(TACTICS) / 10) / 1.6) + 6.25);
                 }
                 else {
-                    multiplier += static_cast<R32>((mChar->GetSkill(TACTICS) / 10) / 1.6);
+                    multiplier += static_cast<float>((mChar->GetSkill(TACTICS) / 10) / 1.6);
                 }
             }
             else {
                 // Pre-AoS (pre-publish 13 (T2A, UOR, early TD))
                 // Tactics Damage Bonus (% = ( Tactics + 50 ))
-                multiplier += static_cast<R32>((mChar->GetSkill(TACTICS) + 500) / 10);
+                multiplier += static_cast<float>((mChar->GetSkill(TACTICS) + 500) / 10);
             }
             
             // Anatomy Damage Bonus
             if (ServerConfig::shared().ruleSets[Expansion::ANATOMY].value >= Era::ML) {
                 // Mondain's Legacy expansion and later
                 if (mChar->GetSkill(ANATOMY) >= 1000) {
-                    multiplier += static_cast<R32>(((mChar->GetSkill(ANATOMY) / 2) / 10) + 5); // 50% + 5 bonus damage at GM Skill or above,
+                    multiplier += static_cast<float>(((mChar->GetSkill(ANATOMY) / 2) / 10) + 5); // 50% + 5 bonus damage at GM Skill or above,
                 }
                 else {
                     multiplier +=
-                    static_cast<R32>((mChar->GetSkill(ANATOMY) / 2) / 10); // Up to 50% bonus damage at 99.9 skillpoints or below
+                    static_cast<float>((mChar->GetSkill(ANATOMY) / 2) / 10); // Up to 50% bonus damage at 99.9 skillpoints or below
                 }
             }
             else if (ServerConfig::shared().ruleSets[Expansion::ANATOMY].value >= Era::TD) {
@@ -2061,18 +2061,18 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
                     multiplier += 30; // 30% Damage at GM Skill or above,
                 }
                 else {
-                    multiplier += static_cast<R32>(((mChar->GetSkill(ANATOMY) / 10) / 5)); // Up to 20% Damage at 99.9 skillpoints or below
+                    multiplier += static_cast<float>(((mChar->GetSkill(ANATOMY) / 10) / 5)); // Up to 20% Damage at 99.9 skillpoints or below
                 }
             }
             else {
                 // Prior to Publish 13, Anatomy bonus was double against players (bug, not a feature)
                 if (ourTarg->IsNpc()) // Anatomy PvM damage Bonus, % = ( Anat / 5 )
                 {
-                    multiplier += static_cast<R32>(((mChar->GetSkill(ANATOMY) / 10) / 5));
+                    multiplier += static_cast<float>(((mChar->GetSkill(ANATOMY) / 10) / 5));
                 }
                 else // Anatomy PvP damage Bonus, % = ( Anat / 2.5 )
                 {
-                    multiplier += static_cast<R32>(((mChar->GetSkill(ANATOMY) / 10) / 2.5));
+                    multiplier += static_cast<float>(((mChar->GetSkill(ANATOMY) / 10) / 2.5));
                 }
             }
             
@@ -2091,7 +2091,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
                         multiplier += 30; // 30% Damage at GM Skill or above,
                     }
                     else {
-                        multiplier += static_cast<R32>(((mChar->GetSkill(LUMBERJACKING) / 10) / 5)); // up to 20% Damage at 99.9 skillpoints or below
+                        multiplier += static_cast<float>(((mChar->GetSkill(LUMBERJACKING) / 10) / 5)); // up to 20% Damage at 99.9 skillpoints or below
                     }
                 }
             }
@@ -2102,7 +2102,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
                         multiplier += 35; // At GM skill the damage bonus is 35%.
                     }
                     else {
-                        multiplier += static_cast<R32>(((mChar->GetSkill(LUMBERJACKING) / 10) / 4)); // up to 25% bonus damage at 99.9 skillpoints or below
+                        multiplier += static_cast<float>(((mChar->GetSkill(LUMBERJACKING) / 10) / 4)); // up to 25% bonus damage at 99.9 skillpoints or below
                     }
                 }
             }
@@ -2114,21 +2114,21 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
                     auto hpDifference = ((mChar->GetMaxHP() - mChar->GetHP()) / mChar->GetMaxHP()) * 100;
                     if (hpDifference > 20) {
                         // Add 15% damage bonus for each 20% HP lost
-                        multiplier += std::min(static_cast<R32>(floor(static_cast<R32>(hpDifference / 20)) * static_cast<R32>(15)), static_cast<R32>(60));
+                        multiplier += std::min(static_cast<float>(floor(static_cast<float>(hpDifference / 20)) * static_cast<float>(15)), static_cast<float>(60));
                     }
                 }
             }
             
             // Where does this come from??
             // Defender Tactics Damage Modifier, -20% Damage
-            // multiplier += static_cast<R32>(1.0 - ((( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) /
+            // multiplier += static_cast<float>(1.0 - ((( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) /
             // 100 ));
             
             multiplier /= 100;
-            damage = baseDamage + static_cast<R32>(baseDamage * multiplier);
+            damage = baseDamage + static_cast<float>(baseDamage * multiplier);
             break;
         default:
-            damage = static_cast<R32>(baseDamage);
+            damage = static_cast<float>(baseDamage);
             
             // If the attack is magic and the target a NPC but not a human, double the damage
             if (getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman()) {
@@ -2146,7 +2146,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
     
     if (ServerConfig::shared().ruleSets[Expansion::DAMAGE].value >= Era::AOS) {
         // Cap damage at 300% higher than base damage
-        damage = std::min(damage, static_cast<R32>(baseDamage * 4));
+        damage = std::min(damage, static_cast<float>(baseDamage * 4));
     }
     
     return static_cast<std::int16_t>(RoundNumber(damage));
@@ -2163,8 +2163,8 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
         return baseDamage;
     
     std::uint16_t getDef = 0, attSkill = 1000;
-    R32 damageModifier = 0;
-    R32 damage = static_cast<R32>(baseDamage);
+    float damageModifier = 0;
+    float damage = static_cast<float>(baseDamage);
     
     if (ValidateObject(mChar)) {
         attSkill = mChar->GetSkill(getFightSkill);
@@ -2191,7 +2191,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // AR of shield is then used to absorb a portion of the potential damage dealt; 8 AR
                     // shield absorbs 8 damage Source
                     // https://forums.uosecondage.com/viewtopic.php?t=13478
-                    R32 parryChance = static_cast<R32>((defendParry / 2) / 10);
+                    float parryChance = static_cast<float>((defendParry / 2) / 10);
                     if (RandomNum(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
@@ -2203,7 +2203,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // absorbed upon blocking The lower a shield's AR, the higher the chance to block,
                     // but the less damage is absorbed upon blocking parryChance = parrySkill - (shield
                     // AR * 2)
-                    R32 parryChance = (defendParry / 10) - (shield->GetResist(Weather::PHYSICAL) * 2); // or is it 1.33?
+                    float parryChance = (defendParry / 10) - (shield->GetResist(Weather::PHYSICAL) * 2); // or is it 1.33?
                     if (RandomNum(1, 100) < parryChance) {
                         parrySuccess = true;
                     }
@@ -2213,7 +2213,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     std::uint16_t defendBushido = ourTarg->GetSkill(BUSHIDO);
                     
                     // % Chance = (Parrying - Bushido) / 4 (If less than 0, the chance is 0)
-                    R32 parryChance = ((defendParry - defendBushido) / 4) / 10;
+                    float parryChance = ((defendParry - defendBushido) / 4) / 10;
                     if (defendParry >= 1000 || defendBushido >= 1000) {
                         parryChance += 5.0;
                     }
@@ -2221,7 +2221,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity
                     // is higher than 80, the modifier is 0) Final % Chance of blocking = Base Chance *
                     // (1 - Dexterity Modifier)
-                    R32 dexModifier =
+                    float dexModifier =
                     (ourTarg->GetDexterity() > 80 ? 0 : (80 - ourTarg->GetDexterity()) / 100);
                     parryChance *= (1 - dexModifier);
                     
@@ -2258,10 +2258,10 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         // FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage
                         // Absorbed = AR of Shield
                         if (getFightSkill == ARCHERY) {
-                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL));
+                            damage -= static_cast<float>(shield->GetResist(Weather::PHYSICAL));
                         }
                         else {
-                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL) / 2);
+                            damage -= static_cast<float>(shield->GetResist(Weather::PHYSICAL) / 2);
                         }
                         
                         // Calculate defense given by armor
@@ -2277,10 +2277,10 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         // FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage
                         // Absorbed = AR of Shield
                         if (getFightSkill == ARCHERY) {
-                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL));
+                            damage -= static_cast<float>(shield->GetResist(Weather::PHYSICAL));
                         }
                         else {
-                            damage -= static_cast<R32>(shield->GetResist(Weather::PHYSICAL) / 2);
+                            damage -= static_cast<float>(shield->GetResist(Weather::PHYSICAL) / 2);
                         }
                         
                         // Calculate defense given by armor
@@ -2346,8 +2346,8 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // Fetch relevant skill values
                     std::uint16_t defendParry = ourTarg->GetSkill(PARRYING);
                     std::uint16_t defendBushido = ourTarg->GetSkill(BUSHIDO);
-                    R32 parryChance = 0;
-                    R32 dividerValue = 48000; // default for 1H weapon
+                    float parryChance = 0;
+                    float dividerValue = 48000; // default for 1H weapon
                     
                     if (mWeapon->GetLayer() == IL_LEFTHAND) {
                         dividerValue = 41140;
@@ -2355,13 +2355,13 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     
                     // New = (Parrying * 10) * (Bushido * 10) / dividerValue (Add 5% if Parrying or
                     // Bushido skill is 100 or above)
-                    R32 parryChanceNew = (defendParry * defendBushido) / dividerValue;
+                    float parryChanceNew = (defendParry * defendBushido) / dividerValue;
                     if (defendParry >= 1000 || defendBushido >= 1000) {
                         parryChanceNew += 50;
                     }
                     
                     // Legacy = (Parrying * 10) / 80 (Add 5% if Parrying skill if 100 or above)
-                    R32 parryChanceLegacy = static_cast<R32>(defendParry / 80);
+                    float parryChanceLegacy = static_cast<float>(defendParry / 80);
                     if (defendParry >= 1000) {
                         parryChanceLegacy += 50;
                     }
@@ -2372,7 +2372,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                     // Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity
                     // is higher than 80, the modifier is 0) Final % Chance of blocking = Base Chance *
                     // (1 - Dexterity Modifier)
-                    R32 dexModifier =
+                    float dexModifier =
                     (ourTarg->GetDexterity() > 80 ? 0 : (80 - ourTarg->GetDexterity()) / 100);
                     parryChance *= (1 - dexModifier);
                     
@@ -2426,7 +2426,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                 else if (ServerConfig::shared().ruleSets[Expansion::WRESTLING].value  >= Era::TOL && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman()) {
                     // In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were
                     // given a chance to parry attacks https://www.uoguide.com/Publish_97
-                    R32 parryChance = 0;
+                    float parryChance = 0;
                     std::uint16_t defendWrestling = ourTarg->GetSkill(WRESTLING);
                     
                     if (defendWrestling >= 1000) {
@@ -2453,7 +2453,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
         }
         case Weather::POISON: //	POISON Damage
             damageModifier = (CalcDef(ourTarg, hitLoc, doArmorDamage, damageType) / 100);
-            damage = static_cast<std::int16_t>(RoundNumber((static_cast<R32>(baseDamage) - (static_cast<R32>(baseDamage) * damageModifier))));
+            damage = static_cast<std::int16_t>(RoundNumber((static_cast<float>(baseDamage) - (static_cast<float>(baseDamage) * damageModifier))));
             break;
         default: //	Elemental damage
             getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, damageType));
@@ -2461,7 +2461,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
     }
     
     if (getDef > 0) {
-        damage -= static_cast<R32>((static_cast<R32>(getDef) * static_cast<R32>(attSkill)) / 750);
+        damage -= static_cast<float>((static_cast<float>(getDef) * static_cast<float>(attSkill)) / 750);
     }
     
     return static_cast<std::int16_t>(RoundNumber(damage));
@@ -2631,7 +2631,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                            std::min(1000, static_cast<std::int32_t>((getDefTactics * 1.25) + 100)));
         
         // Calculate Hit Chance
-        R32 hitChance = 0;
+        float hitChance = 0;
         switch (ServerConfig::shared().ruleSets[Expansion::COMBAT].value ) {
             case Era::T2A: // T2A - The Second Age
             case Era::UOR: // UOR - Renaissance
@@ -2663,9 +2663,9 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 //	 ( [Defender's Combat Ability + 20] * [100% + Defender's Defense Chance Increase] *
                 // 2 )) * 100
                 // For AoS and higher, always give attacker at least 2% chance to hit
-                R32 attHitChanceBonus = 0;
-                R32 defDefenseChanceBonus = 0;
-                R32 maxAttHitChanceBonus = 45;
+                float attHitChanceBonus = 0;
+                float defDefenseChanceBonus = 0;
+                float maxAttHitChanceBonus = 45;
                 if (ServerConfig::shared().ruleSets[Expansion::COMBAT].value  >= Era::SA && mChar.GetBodyType() == BT_GARGOYLE) {
                     // If attacker is a Gargoyle player, and ExpansionCombatHitChance is ER_SA or
                     // higher, use 50 as hitchance bonus cap instead of 45
@@ -2676,8 +2676,8 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                 // attHitChanceBonus = GetAttackerHitChanceBonus();
                 // defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
                 
-                R32 attackerHitChance = (static_cast<R32>(attackSkill / 10) + 20) * (100 + std::min(attHitChanceBonus, static_cast<R32>(maxAttHitChanceBonus)));
-                R32 defenderDefenseChance = (static_cast<R32>(defendSkill / 10) + 20) * (100 + std::min(defDefenseChanceBonus, static_cast<R32>(45)));
+                float attackerHitChance = (static_cast<float>(attackSkill / 10) + 20) * (100 + std::min(attHitChanceBonus, static_cast<float>(maxAttHitChanceBonus)));
+                float defenderDefenseChance = (static_cast<float>(defendSkill / 10) + 20) * (100 + std::min(defDefenseChanceBonus, static_cast<float>(45)));
                 hitChance = (attackerHitChance / (defenderDefenseChance * 2)) * 100;
                 
                 // Always leave at least 2% chance to hit
@@ -2752,7 +2752,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                         ourTarg->SetPoisoned(poisonStrength);
                         
                         // Set time until next time poison "ticks"
-                        ourTarg->SetTimer(tCHAR_POISONTIME, BuildTimeValue(static_cast<R32>(GetPoisonTickTime(poisonStrength))));
+                        ourTarg->SetTimer(tCHAR_POISONTIME, BuildTimeValue(static_cast<float>(GetPoisonTickTime(poisonStrength))));
                         
                         // Set time until poison wears off completely
                         ourTarg->SetTimer(tCHAR_POISONWEAROFF, ourTarg->GetTimer(tCHAR_POISONTIME) + (1000 * GetPoisonDuration(poisonStrength))); // wear off starts after poison takes effect
@@ -3176,7 +3176,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate delay between attacks in combat
 // o------------------------------------------------------------------------------------------------o
-R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
+float CHandleCombat::GetCombatTimeout(CChar *mChar) {
     std::int16_t statOffset = 0;
     if (ServerConfig::shared().enabled(ServerSwitch::ATTACKSPEEDFROMSTAMINA)) {
         statOffset = mChar->GetStamina();
@@ -3185,13 +3185,13 @@ R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
         statOffset = mChar->GetDexterity();
     }
     
-    R32 getDelay = 0;
+    float getDelay = 0;
     if (mChar->IsNpc()) // Allow NPCs more speed based off of available stamina than players
     {
-        getDelay = static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<std::int16_t>(300))) + 100);
+        getDelay = static_cast<float>(static_cast<float>(std::min(statOffset, static_cast<std::int16_t>(300))) + 100);
     }
     else {
-        getDelay = static_cast<R32>(static_cast<R32>(std::min(statOffset, static_cast<std::int16_t>(100))) + 100);
+        getDelay = static_cast<float>(static_cast<float>(std::min(statOffset, static_cast<std::int16_t>(100))) + 100);
     }
     
     std::int32_t getOffset = 0;
@@ -3222,7 +3222,7 @@ R32 CHandleCombat::GetCombatTimeout(CChar *mChar) {
         }
     }
     
-    R32 globalAttackSpeed = ServerConfig::shared().realNumbers[RealNumberConfig::GLOBALATTACK]; // Defaults to 1.0
+    float globalAttackSpeed = ServerConfig::shared().realNumbers[RealNumberConfig::GLOBALATTACK]; // Defaults to 1.0
     
     getDelay = (baseValue / (getDelay * getOffset)) / globalAttackSpeed;
     return getDelay;

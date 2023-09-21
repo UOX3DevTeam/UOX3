@@ -139,8 +139,8 @@ void CallGuards(CChar *mChar);
 // o------------------------------------------------------------------------------------------------o
 //  Time Functions
 // o------------------------------------------------------------------------------------------------o
-inline timerval_t BuildTimeValue(R32 timeFromNow) {
-    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() + (static_cast<R32>(1000) * timeFromNow));
+inline timerval_t BuildTimeValue(float timeFromNow) {
+    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() + (static_cast<float>(1000) * timeFromNow));
 }
 
 std::uint32_t GetClock();
@@ -211,7 +211,7 @@ inline std::uint32_t GetMinutesSinceEpoch() {
 // o------------------------------------------------------------------------------------------------o
 //  Misc Functions
 // o------------------------------------------------------------------------------------------------o
-R32 RoundNumber(R32 toRound);
+float RoundNumber(float toRound);
 bool IsNumber(const std::string &str);
 void DismountCreature(CChar *s);
 size_t GetTileName(CItem &mItem, std::string &itemname);

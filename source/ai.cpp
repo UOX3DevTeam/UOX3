@@ -77,7 +77,7 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
                 // Young players are not valid targets for NPCs outside of dungeons
                 if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline((*cTarget)) && cTarget->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !cTarget->GetRegion()->IsDungeon()) {
                     if (cTarget->GetSocket() && (cTarget->GetTimer(tCHAR_YOUNGMESSAGE) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
-                        cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue(static_cast<R32>(120))); // Only send them the warning message once couple of minutes
+                        cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue(static_cast<float>(120))); // Only send them the warning message once couple of minutes
                         cTarget->GetSocket()->SysMessage(18734); // A monster looks at you menacingly but does not attack.  You
                         // would be under attack now if not for your status as a new
                         // citizen of Britannia.
@@ -240,7 +240,7 @@ void HandleHealerAI(CChar &mChar) {
             // Heal young players every X minutes
             if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
                 mChar.RemoveFromCombatIgnore(realChar->GetSerial());
-                realChar->SetTimer(tCHAR_YOUNGHEAL, BuildTimeValue(static_cast<R32>(300))); // Only heal young player max once every 5 minutes
+                realChar->SetTimer(tCHAR_YOUNGHEAL, BuildTimeValue(static_cast<float>(300))); // Only heal young player max once every 5 minutes
                 mChar.TextMessage(nullptr, 18731, TALK, false); // You look like you need some healing my child.
                 Effects->PlayStaticAnimation(realChar, 0x376A, 0x09, 0x06);
                 realChar->SetHP(realChar->GetMaxHP());

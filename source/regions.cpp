@@ -783,7 +783,7 @@ void CMapHandler::Save() {
     Console::shared().printDone();
     
     const std::uint32_t e_t = GetClock();
-    Console::shared().print(util::format("World saved in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
+    Console::shared().print(util::format("World saved in %.02fsec\n", (static_cast<float>(e_t - s_t)) / 1000.0f));
     
     i = 0;
     for (WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter) {
@@ -854,7 +854,7 @@ void CMapHandler::load() {
             LoadFromDisk(readDestination, runningDone, fileSizes[counter1][counter2], runningCount);
             
             runningDone += fileSizes[counter1][counter2];
-            float tempVal = static_cast<R32>(runningDone) / static_cast<R32>(runningCount) * 100.0f;
+            float tempVal = static_cast<float>(runningDone) / static_cast<float>(runningCount) * 100.0f;
             if (tempVal <= 10) {
                 Console::shared() << "\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
             }
@@ -892,7 +892,7 @@ void CMapHandler::load() {
     houseDestination.close();
     
     std::uint32_t e_t = GetClock();
-    Console::shared().print(util::format("ASCII world loaded in %.02fsec\n", (static_cast<R32>(e_t - s_t)) / 1000.0f));
+    Console::shared().print(util::format("ASCII world loaded in %.02fsec\n", (static_cast<float>(e_t - s_t)) / 1000.0f));
     
     std::uint8_t i = 0;
     for (WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter) {
@@ -910,9 +910,9 @@ void CMapHandler::load() {
 void CMapHandler::LoadFromDisk(std::istream &readDestination, std::int32_t baseValue, std::int32_t fileSize,
                                std::uint32_t maxSize) {
     char line[1024];
-    R32 basePercent = static_cast<R32>(baseValue) / static_cast<R32>(maxSize) * 100.0f;
-    R32 targPercent = static_cast<R32>(baseValue + fileSize) / static_cast<R32>(maxSize) * 100.0f;
-    R32 diffValue = targPercent - basePercent;
+    float basePercent = static_cast<float>(baseValue) / static_cast<float>(maxSize) * 100.0f;
+    float targPercent = static_cast<float>(baseValue + fileSize) / static_cast<float>(maxSize) * 100.0f;
+    float diffValue = targPercent - basePercent;
     
     std::int32_t updateCount = 0;
     while (!readDestination.eof() && !readDestination.fail()) {
@@ -942,8 +942,8 @@ void CMapHandler::LoadFromDisk(std::istream &readDestination, std::int32_t baseV
             }
             
             if (fileSize != -1 && (++updateCount) % 200 == 0) {
-                R32 curPos = readDestination.tellg();
-                R32 tempVal = basePercent + (curPos / fileSize * diffValue);
+                float curPos = readDestination.tellg();
+                float tempVal = basePercent + (curPos / fileSize * diffValue);
                 if (tempVal <= 10) {
                     Console::shared() << "\b\b" << static_cast<std::uint32_t>(tempVal) << "%";
                 }

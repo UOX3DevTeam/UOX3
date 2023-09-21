@@ -34,7 +34,7 @@ public:
     bool isType(JSEncapsulate::type_t toCheck);
     std::int32_t toInt();
     bool toBool();
-    R32 toFloat();
+    float toFloat();
     std::string toString();
     void *toObject();
     
@@ -47,7 +47,7 @@ private:
     JSEncapsulate::type_t nativeType;
     
     std::int32_t intVal;
-    R32 floatVal;
+    float floatVal;
     bool boolVal;
     std::string stringVal;
     void *objectVal;

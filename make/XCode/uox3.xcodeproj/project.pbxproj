@@ -1112,8 +1112,6 @@
 		64A900A6293E3DD4009B54DA /* cresponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cresponse.h; sourceTree = "<group>"; };
 		64A900A7293E3DD4009B54DA /* cscript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cscript.cpp; sourceTree = "<group>"; };
 		64A900A8293E3DD4009B54DA /* cscript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cscript.h; sourceTree = "<group>"; };
-		64A900A9293E3DD4009B54DA /* cserverdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cserverdata.cpp; sourceTree = "<group>"; };
-		64A900AA293E3DD4009B54DA /* cserverdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cserverdata.h; sourceTree = "<group>"; };
 		64A900AB293E3DD4009B54DA /* cserverdefinitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cserverdefinitions.cpp; sourceTree = "<group>"; };
 		64A900AC293E3DD4009B54DA /* cserverdefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cserverdefinitions.h; sourceTree = "<group>"; };
 		64A900AD293E3DD4009B54DA /* cskillclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cskillclass.h; sourceTree = "<group>"; };
@@ -1232,8 +1230,6 @@
 		56A2617A2AB7241E00DD2D84 /* expired */ = {
 			isa = PBXGroup;
 			children = (
-				64A900A9293E3DD4009B54DA /* cserverdata.cpp */,
-				64A900AA293E3DD4009B54DA /* cserverdata.h */,
 			);
 			path = expired;
 			sourceTree = "<group>";

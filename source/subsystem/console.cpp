@@ -1104,13 +1104,13 @@ auto Console::process(std::int32_t c) -> void {
                 logEcho(true);
                 log("--- Starting Performance Dump ---", "performance.log");
                 log("\tPerformance Dump:", "performance.log");
-                log(util::format("\tNetwork code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) /  static_cast<R32>(networkTimeCount)), networkTimeCount), "performance.log");
-                log(util::format("\tTimer code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<R32>(timerTimeCount)), timerTimeCount), "performance.log");
-                log(util::format("\tAuto code: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<R32>(autoTimeCount)), autoTimeCount), "performance.log");
-                log(util::format("\tLoop Time: %.2fmsec [%i samples]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount)), loopTimeCount), "performance.log");
+                log(util::format("\tNetwork code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) /  static_cast<float>(networkTimeCount)), networkTimeCount), "performance.log");
+                log(util::format("\tTimer code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount), "performance.log");
+                log(util::format("\tAuto code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount), "performance.log");
+                log(util::format("\tLoop Time: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)), loopTimeCount), "performance.log");
                 
                 log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)), "performance.log");
-                log(util::format("\tSimulation Cycles: %f per sec", (1000.0 * (1.0 / static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount))))), "performance.log");
+                log(util::format("\tSimulation Cycles: %f per sec", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount))))), "performance.log");
                 log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
                 log(util::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
                 log("--- Performance Dump Complete ---", "performance.log");

@@ -175,11 +175,11 @@ void JSEncapsulate::Parse(JSEncapsulate::type_t typeConvert) {
             switch (nativeType) {
                 case JSOT_INT:
                     ivalue = JSVAL_TO_INT((*vp));
-                    floatVal = static_cast<R32>(ivalue);
+                    floatVal = static_cast<float>(ivalue);
                     break;
                 case JSOT_DOUBLE:
                     JS_ValueToNumber(cx, (*vp), &fvalue);
-                    floatVal = static_cast<R32>(fvalue);
+                    floatVal = static_cast<float>(fvalue);
                     break;
                 case JSOT_BOOL:
                     floatVal = ((JSVAL_TO_BOOLEAN((*vp)) == JS_TRUE) ? 1.0f : 0.0f);

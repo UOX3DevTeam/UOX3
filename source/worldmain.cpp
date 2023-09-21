@@ -348,8 +348,8 @@ void CWorldMain::DoWorldLight() {
     std::uint8_t currentHour = uoTime.hours ;
     std::uint8_t currentMinute = uoTime.minutes;
     
-    R32 currentTime = R32(currentHour + (currentMinute / 60.0f));
-    R32 hourIncrement = R32(fabs((worlddarklevel - worldbrightlevel) / 12.0f)); // we want the amount to subtract from LightMax in the
+    float currentTime = float(currentHour + (currentMinute / 60.0f));
+    float hourIncrement = float(fabs((worlddarklevel - worldbrightlevel) / 12.0f)); // we want the amount to subtract from LightMax in the
     // morning / add to LightMin in evening
     
     if (ampm) {

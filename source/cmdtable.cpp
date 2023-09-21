@@ -221,10 +221,10 @@ void Command_GetLight(CSocket *s) {
     std::uint16_t weatherId = tRegion->GetWeather();
     CWeather *sys = Weather->Weather(weatherId);
     if (sys != nullptr) {
-        const R32 lightMin = sys->LightMin();
-        const R32 lightMax = sys->LightMax();
+        const float lightMin = sys->LightMin();
+        const float lightMax = sys->LightMax();
         if (lightMin < 300 && lightMax < 300) {
-            R32 i = sys->CurrentLight();
+            float i = sys->CurrentLight();
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 s->SysMessage(1632, 0); // Current light level is %i
             }
@@ -485,7 +485,7 @@ void Command_SetTime() {
 // o------------------------------------------------------------------------------------------------o
 void Command_Shutdown() {
     if (serverCommands.numArguments() == 2) {
-        cwmWorldState->SetEndTime(BuildTimeValue(static_cast<R32>(serverCommands.argument(1))));
+        cwmWorldState->SetEndTime(BuildTimeValue(static_cast<float>(serverCommands.argument(1))));
         if (serverCommands.argument(1) == 0) {
             cwmWorldState->SetEndTime(0);
             sysBroadcast(Dictionary->GetEntry(36));
@@ -658,7 +658,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
             if (i->GetObjType() == CBaseObject::OT_SPAWNER) {
                 CSpawnItem *spawnItem = static_cast<CSpawnItem *>(i);
                 if (!spawnItem->DoRespawn()) {
-                    spawnItem->SetTempTimer(BuildTimeValue(static_cast<R32>(RandomNum( spawnItem->GetInterval(0) * 60, spawnItem->GetInterval(1) * 60))));
+                    spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(RandomNum( spawnItem->GetInterval(0) * 60, spawnItem->GetInterval(1) * 60))));
                 }
             }
             else {
@@ -874,11 +874,11 @@ void Command_PDump(CSocket *s) {
     std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
     
     s->SysMessage("Performance Dump:");
-    s->SysMessage("Network code: %fmsec [%i]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<R32>(networkTimeCount)), networkTimeCount);
-    s->SysMessage("Timer code: %fmsec [%i]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<R32>(timerTimeCount)), timerTimeCount);
-    s->SysMessage("Auto code: %fmsec [%i]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<R32>(autoTimeCount)), autoTimeCount);
-    s->SysMessage("Loop Time: %fmsec [%i]", static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) /  static_cast<R32>(loopTimeCount)),  loopTimeCount);
-    s->SysMessage("Simulation Cycles/Sec: %f", (1000.0 * (1.0 / static_cast<R32>(static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(loopTimeCount)))));
+    s->SysMessage("Network code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)), networkTimeCount);
+    s->SysMessage("Timer code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount);
+    s->SysMessage("Auto code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount);
+    s->SysMessage("Loop Time: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) /  static_cast<float>(loopTimeCount)),  loopTimeCount);
+    s->SysMessage("Simulation Cycles/Sec: %f", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))));
 }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	Command_SpawnKill()
@@ -1209,7 +1209,7 @@ void Command_Temp(CSocket *s) {
     CTownRegion *reg = mChar->GetRegion();
     auto toGrab = reg->GetWeather();
     if (toGrab != 0xFF) {
-        R32 curTemp = Weather->Temp(toGrab);
+        float curTemp = Weather->Temp(toGrab);
         s->SysMessage(1751, curTemp); // It is currently %f degrees
     }
 }

@@ -99,8 +99,8 @@ void CWeather::ColdActive(bool value) { weather[COLD].Active = value; }
 //|	Purpose		-	Gets/Sets the current light level of the system, IF
 //|					 LightMin and LightMax are less than 300
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::CurrentLight() const { return light[CURRVAL]; }
-void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
+float CWeather::CurrentLight() const { return light[CURRVAL]; }
+void CWeather::CurrentLight(float value) { light[CURRVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::PeriodicUpdate()
@@ -110,7 +110,7 @@ void CWeather::CurrentLight(R32 value) { light[CURRVAL] = value; }
 // temperature of |					 the system. Wind is not currently updated
 // o------------------------------------------------------------------------------------------------o
 bool CWeather::PeriodicUpdate() {
-    R32 currTemp;
+    float currTemp;
     
     std::uint8_t hour = cwmWorldState->uoTime.hours   ;
     std::uint8_t minute = cwmWorldState->uoTime.minutes ;
@@ -124,11 +124,11 @@ bool CWeather::PeriodicUpdate() {
     }
     
     if (LightMin() < 300 && LightMax() < 300) {
-        R32 hourIncrement = static_cast<R32>(fabs((LightMax() - LightMin()) / 12.0f)); // we want the amount to subtract from LightMax in
+        float hourIncrement = static_cast<float>(fabs((LightMax() - LightMin()) / 12.0f)); // we want the amount to subtract from LightMax in
         // the morning / add to LightMin in evening
-        R32 minuteIncrement = hourIncrement / 60.0f;
-        R32 tempLight =
-        hourIncrement * static_cast<R32>(hour) + minuteIncrement * static_cast<R32>(minute);
+        float minuteIncrement = hourIncrement / 60.0f;
+        float tempLight =
+        hourIncrement * static_cast<float>(hour) + minuteIncrement * static_cast<float>(minute);
         if (ampm) {
             CurrentLight(LightMin() + tempLight);
         }
@@ -137,13 +137,13 @@ bool CWeather::PeriodicUpdate() {
         }
     }
     
-    R32 effTempMax = EffectiveMaxTemp();
-    R32 effTempMin = EffectiveMinTemp();
-    R32 tempHourIncrement = static_cast<R32>(fabs((effTempMax - effTempMin) / 12.0f));
-    R32 tempMinuteIncrement = tempHourIncrement / 60.0f;
+    float effTempMax = EffectiveMaxTemp();
+    float effTempMin = EffectiveMinTemp();
+    float tempHourIncrement = static_cast<float>(fabs((effTempMax - effTempMin) / 12.0f));
+    float tempMinuteIncrement = tempHourIncrement / 60.0f;
     
-    R32 tempLightChange =
-    tempHourIncrement * static_cast<R32>(hour) + tempMinuteIncrement * static_cast<R32>(minute);
+    float tempLightChange =
+    tempHourIncrement * static_cast<float>(hour) + tempMinuteIncrement * static_cast<float>(minute);
     
     if (ampm) {
         currTemp = effTempMax - tempLightChange; // maximum temperature minus time
@@ -178,9 +178,9 @@ bool CWeather::PeriodicUpdate() {
 void CWeather::NewDay() {
     bool isHeatWave = false, isColdDay = false;
     
-    R32 effTempMax = MaxTemp();
-    R32 effTempMin = MinTemp();
-    R32 currentTemp;
+    float effTempMax = MaxTemp();
+    float effTempMin = MinTemp();
+    float currentTemp;
     
     if (static_cast<std::uint8_t>(RandomNum(1, 100)) <= HeatChance()) {
         isHeatWave = true;
@@ -279,8 +279,8 @@ void CWeather::Chance(std::uint8_t weathType, std::int8_t value) { weather[weath
 //|					 valType is either MAXVAL, MINVAL, or CURRVAL
 //|					 valOff is either WIND, TEMP or EFFECTIVE
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::Value(std::uint8_t valType, std::uint8_t valOff) const { return assortVals[valType][valOff]; }
-void CWeather::Value(std::uint8_t valType, std::uint8_t valOff, R32 value) { assortVals[valType][valOff] = value; }
+float CWeather::Value(std::uint8_t valType, std::uint8_t valOff) const { return assortVals[valType][valOff]; }
+void CWeather::Value(std::uint8_t valType, std::uint8_t valOff, float value) { assortVals[valType][valOff] = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::SnowIntensityHigh()
@@ -387,8 +387,8 @@ void CWeather::ColdIntensityHigh(std::int8_t value) { weather[COLD].IntensityHig
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum temperature of the day (non effective)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MaxTemp() const { return Value(MAXVAL, TEMP); }
-void CWeather::MaxTemp(R32 value) { Value(MAXVAL, TEMP, value); }
+float CWeather::MaxTemp() const { return Value(MAXVAL, TEMP); }
+void CWeather::MaxTemp(float value) { Value(MAXVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::MinTemp()
@@ -396,8 +396,8 @@ void CWeather::MaxTemp(R32 value) { Value(MAXVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum temperature of the day (non effective)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MinTemp() const { return Value(MINVAL, TEMP); }
-void CWeather::MinTemp(R32 value) { Value(MINVAL, TEMP, value); }
+float CWeather::MinTemp() const { return Value(MINVAL, TEMP); }
+void CWeather::MinTemp(float value) { Value(MINVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::Temp()
@@ -405,8 +405,8 @@ void CWeather::MinTemp(R32 value) { Value(MINVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the current temperature of the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::Temp() const { return Value(CURRVAL, TEMP); }
-void CWeather::Temp(R32 value) { Value(CURRVAL, TEMP, value); }
+float CWeather::Temp() const { return Value(CURRVAL, TEMP); }
+void CWeather::Temp(float value) { Value(CURRVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::RainTempDrop()
@@ -414,8 +414,8 @@ void CWeather::Temp(R32 value) { Value(CURRVAL, TEMP, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount the temperature drops when it rains
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::RainTempDrop() const { return rainTempDrop; }
-void CWeather::RainTempDrop(R32 value) { rainTempDrop = value; }
+float CWeather::RainTempDrop() const { return rainTempDrop; }
+void CWeather::RainTempDrop(float value) { rainTempDrop = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::StormTempDrop()
@@ -423,8 +423,8 @@ void CWeather::RainTempDrop(R32 value) { rainTempDrop = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount the temperature drops when it storms
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::StormTempDrop() const { return stormTempDrop; }
-void CWeather::StormTempDrop(R32 value) { stormTempDrop = value; }
+float CWeather::StormTempDrop() const { return stormTempDrop; }
+void CWeather::StormTempDrop(float value) { stormTempDrop = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::MaxWindSpeed()
@@ -432,8 +432,8 @@ void CWeather::StormTempDrop(R32 value) { stormTempDrop = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum wind speed for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MaxWindSpeed() const { return Value(MAXVAL, WIND); }
-void CWeather::MaxWindSpeed(R32 value) { Value(MAXVAL, WIND, value); }
+float CWeather::MaxWindSpeed() const { return Value(MAXVAL, WIND); }
+void CWeather::MaxWindSpeed(float value) { Value(MAXVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	MinWindSpeed()
@@ -441,8 +441,8 @@ void CWeather::MaxWindSpeed(R32 value) { Value(MAXVAL, WIND, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum wind speed for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::MinWindSpeed() const { return Value(MINVAL, WIND); }
-void CWeather::MinWindSpeed(R32 value) { Value(MINVAL, WIND, value); }
+float CWeather::MinWindSpeed() const { return Value(MINVAL, WIND); }
+void CWeather::MinWindSpeed(float value) { Value(MINVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::WindSpeed()
@@ -450,8 +450,8 @@ void CWeather::MinWindSpeed(R32 value) { Value(MINVAL, WIND, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the current wind speed
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::WindSpeed() const { return Value(CURRVAL, WIND); }
-void CWeather::WindSpeed(R32 value) { Value(CURRVAL, WIND, value); }
+float CWeather::WindSpeed() const { return Value(CURRVAL, WIND); }
+void CWeather::WindSpeed(float value) { Value(CURRVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::RainChance()
@@ -504,8 +504,8 @@ void CWeather::ColdChance(std::int8_t value) { weather[COLD].Chance = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum light level for the day (brightest)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::LightMin() const { return light[MINVAL]; }
-void CWeather::LightMin(R32 value) { light[MINVAL] = value; }
+float CWeather::LightMin() const { return light[MINVAL]; }
+void CWeather::LightMin(float value) { light[MINVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::LightMax()
@@ -513,8 +513,8 @@ void CWeather::LightMin(R32 value) { light[MINVAL] = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum light level for the day (darkest)
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::LightMax() const { return light[MAXVAL]; }
-void CWeather::LightMax(R32 value) { light[MAXVAL] = value; }
+float CWeather::LightMax() const { return light[MAXVAL]; }
+void CWeather::LightMax(float value) { light[MAXVAL] = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::RainActive()
@@ -567,8 +567,8 @@ void CWeather::StormDelay(bool value) { stormDelay = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temperature below which snow kicks in
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::SnowThreshold() const { return snowThreshold; }
-void CWeather::SnowThreshold(R32 value) { snowThreshold = value; }
+float CWeather::SnowThreshold() const { return snowThreshold; }
+void CWeather::SnowThreshold(float value) { snowThreshold = value; }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::EffectiveMaxTemp()
@@ -576,8 +576,8 @@ void CWeather::SnowThreshold(R32 value) { snowThreshold = value; }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective maximum temperature for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::EffectiveMaxTemp() const { return Value(MAXVAL, EFFECTIVE); }
-void CWeather::EffectiveMaxTemp(R32 value) { Value(MAXVAL, EFFECTIVE, value); }
+float CWeather::EffectiveMaxTemp() const { return Value(MAXVAL, EFFECTIVE); }
+void CWeather::EffectiveMaxTemp(float value) { Value(MAXVAL, EFFECTIVE, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CWeather::EffectiveMinTemp()
@@ -585,8 +585,8 @@ void CWeather::EffectiveMaxTemp(R32 value) { Value(MAXVAL, EFFECTIVE, value); }
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective minimum temperature for the day
 // o------------------------------------------------------------------------------------------------o
-R32 CWeather::EffectiveMinTemp() const { return Value(MINVAL, EFFECTIVE); }
-void CWeather::EffectiveMinTemp(R32 value) { Value(MINVAL, EFFECTIVE, value); }
+float CWeather::EffectiveMinTemp() const { return Value(MINVAL, EFFECTIVE); }
+void CWeather::EffectiveMinTemp(float value) { Value(MINVAL, EFFECTIVE, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb()
@@ -804,7 +804,7 @@ void cWeatherAb::Chance(weathid_t toCheck, std::uint8_t weathType, std::int8_t v
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to return value of some weather types
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff)
+float cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff)
 // PRE:		toCheck is valid, valType is valid, valOff is valid
 // POST:	returns value of valType and valOff in toCheck
 {
@@ -812,12 +812,12 @@ R32 cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valO
 }
 
 // o------------------------------------------------------------------------------------------------o
-//|	Function	-	cWeatherAb::Value( weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32
+//|	Function	-	cWeatherAb::Value( weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, float
 // value )
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper func to set the value of a particular weather type
 // o------------------------------------------------------------------------------------------------o
-void cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, R32 value)
+void cWeatherAb::Value(weathid_t toCheck, std::uint8_t valType, std::uint8_t valOff, float value)
 // PRE:		toCheck is valid, valType and valOff is valid, value is valid
 // POST:	value of valType and valOff in toCheck is value
 {
@@ -936,24 +936,24 @@ void cWeatherAb::ColdIntensityHigh(weathid_t toCheck, std::int8_t value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, TEMP); }
-void cWeatherAb::MaxTemp(weathid_t toCheck, R32 value) { Value(toCheck, MAXVAL, TEMP, value); }
+float cWeatherAb::MaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, TEMP); }
+void cWeatherAb::MaxTemp(weathid_t toCheck, float value) { Value(toCheck, MAXVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::MinTemp()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, TEMP); }
-void cWeatherAb::MinTemp(weathid_t toCheck, R32 value) { Value(toCheck, MINVAL, TEMP, value); }
+float cWeatherAb::MinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, TEMP); }
+void cWeatherAb::MinTemp(weathid_t toCheck, float value) { Value(toCheck, MINVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::Temp()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temperature of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::Temp(weathid_t toCheck) { return Value(toCheck, CURRVAL, TEMP); }
-void cWeatherAb::Temp(weathid_t toCheck, R32 value) { Value(toCheck, CURRVAL, TEMP, value); }
+float cWeatherAb::Temp(weathid_t toCheck) { return Value(toCheck, CURRVAL, TEMP); }
+void cWeatherAb::Temp(weathid_t toCheck, float value) { Value(toCheck, CURRVAL, TEMP, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainTempDrop()
@@ -961,8 +961,8 @@ void cWeatherAb::Temp(weathid_t toCheck, R32 value) { Value(toCheck, CURRVAL, TE
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the rain temperature drop of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::RainTempDrop(weathid_t toCheck) { return weather[toCheck].RainTempDrop(); }
-void cWeatherAb::RainTempDrop(weathid_t toCheck, R32 value) { weather[toCheck].RainTempDrop(value); }
+float cWeatherAb::RainTempDrop(weathid_t toCheck) { return weather[toCheck].RainTempDrop(); }
+void cWeatherAb::RainTempDrop(weathid_t toCheck, float value) { weather[toCheck].RainTempDrop(value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::StormTempDrop()
@@ -970,8 +970,8 @@ void cWeatherAb::RainTempDrop(weathid_t toCheck, R32 value) { weather[toCheck].R
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the storm temperature drop of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::StormTempDrop(weathid_t toCheck) { return weather[toCheck].StormTempDrop(); }
-void cWeatherAb::StormTempDrop(weathid_t toCheck, R32 value) {
+float cWeatherAb::StormTempDrop(weathid_t toCheck) { return weather[toCheck].StormTempDrop(); }
+void cWeatherAb::StormTempDrop(weathid_t toCheck, float value) {
     weather[toCheck].StormTempDrop(value);
 }
 
@@ -980,24 +980,24 @@ void cWeatherAb::StormTempDrop(weathid_t toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MaxWindSpeed(weathid_t toCheck) { return Value(toCheck, MAXVAL, WIND); }
-void cWeatherAb::MaxWindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, MAXVAL, WIND, value); }
+float cWeatherAb::MaxWindSpeed(weathid_t toCheck) { return Value(toCheck, MAXVAL, WIND); }
+void cWeatherAb::MaxWindSpeed(weathid_t toCheck, float value) { Value(toCheck, MAXVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::MinWindSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the minimum wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::MinWindSpeed(weathid_t toCheck) { return Value(toCheck, MINVAL, WIND); }
-void cWeatherAb::MinWindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, MINVAL, WIND, value); }
+float cWeatherAb::MinWindSpeed(weathid_t toCheck) { return Value(toCheck, MINVAL, WIND); }
+void cWeatherAb::MinWindSpeed(weathid_t toCheck, float value) { Value(toCheck, MINVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::WindSpeed()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the wind speed of toCheck
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::WindSpeed(weathid_t toCheck) { return Value(toCheck, CURRVAL, WIND); }
-void cWeatherAb::WindSpeed(weathid_t toCheck, R32 value) { Value(toCheck, CURRVAL, WIND, value); }
+float cWeatherAb::WindSpeed(weathid_t toCheck) { return Value(toCheck, CURRVAL, WIND); }
+void cWeatherAb::WindSpeed(weathid_t toCheck, float value) { Value(toCheck, CURRVAL, WIND, value); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::RainChance()
@@ -1044,8 +1044,8 @@ void cWeatherAb::ColdChance(weathid_t toCheck, std::int8_t value) { Chance(toChe
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets toCheck's snow threshold
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::SnowThreshold(weathid_t toCheck) { return weather[toCheck].SnowThreshold(); }
-void cWeatherAb::SnowThreshold(weathid_t toCheck, R32 value) {
+float cWeatherAb::SnowThreshold(weathid_t toCheck) { return weather[toCheck].SnowThreshold(); }
+void cWeatherAb::SnowThreshold(weathid_t toCheck, float value) {
     weather[toCheck].SnowThreshold(value);
 }
 
@@ -1080,8 +1080,8 @@ bool cWeatherAb::NewHour() {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective min temperature of a weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::EffectiveMinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, EFFECTIVE); }
-void cWeatherAb::EffectiveMinTemp(weathid_t toCheck, R32 value) {
+float cWeatherAb::EffectiveMinTemp(weathid_t toCheck) { return Value(toCheck, MINVAL, EFFECTIVE); }
+void cWeatherAb::EffectiveMinTemp(weathid_t toCheck, float value) {
     Value(toCheck, MINVAL, EFFECTIVE, value);
 }
 
@@ -1090,8 +1090,8 @@ void cWeatherAb::EffectiveMinTemp(weathid_t toCheck, R32 value) {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the effective max temperature of a weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::EffectiveMaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, EFFECTIVE); }
-void cWeatherAb::EffectiveMaxTemp(weathid_t toCheck, R32 value) {
+float cWeatherAb::EffectiveMaxTemp(weathid_t toCheck) { return Value(toCheck, MAXVAL, EFFECTIVE); }
+void cWeatherAb::EffectiveMaxTemp(weathid_t toCheck, float value) {
     Value(toCheck, MAXVAL, EFFECTIVE, value);
 }
 
@@ -1202,7 +1202,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     if (isStorm) {
         DoPlayerWeather(s, 5, temp, currval);
         if (p->GetWeathDamage(Weather::STORM) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -1218,7 +1218,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     else if (isSnowing && SnowThreshold(currval) > Temp(currval)) {
         DoPlayerWeather(s, 2, temp, currval);
         if (p->GetWeathDamage(Weather::SNOW) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
         }
         if (p->GetWeathDamage(Weather::STORM) != 0) {
             p->SetWeathDamage(0, Weather::STORM);
@@ -1231,7 +1231,7 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     else if (isRaining) {
         DoPlayerWeather(s, 1, temp, currval);
         if (p->GetWeathDamage(Weather::RAIN) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -1256,11 +1256,11 @@ bool cWeatherAb::DoPlayerStuff(CSocket *s, CChar *p) {
     }
     
     if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
     }
     
     if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
     }
     
     return true;
@@ -1291,7 +1291,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
     if (isStorm) {
         SendJSWeather(p, Weather::STORM, temp);
         if (p->GetWeathDamage(Weather::STORM) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::STORM)))),Weather::STORM);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -1303,7 +1303,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
     else if (isSnowing && SnowThreshold(currval) > Temp(currval)) {
         SendJSWeather(p, Weather::SNOW, temp);
         if (p->GetWeathDamage(Weather::SNOW) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::SNOW)))),Weather::SNOW);
         }
         if (p->GetWeathDamage(Weather::STORM) != 0) {
             p->SetWeathDamage(0, Weather::STORM);
@@ -1315,7 +1315,7 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
     else if (isRaining) {
         SendJSWeather(p, Weather::RAIN, temp);
         if (p->GetWeathDamage(Weather::RAIN) == 0) {
-            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
+            p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::RAIN)))),Weather::RAIN);
         }
         if (p->GetWeathDamage(Weather::SNOW) != 0) {
             p->SetWeathDamage(0, Weather::SNOW);
@@ -1338,11 +1338,11 @@ bool cWeatherAb::DoNPCStuff(CChar *p) {
     }
     
     if ((Races->Affect(p->GetRace(), Weather::HEAT)) && p->GetWeathDamage(Weather::HEAT) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::HEAT)))),Weather::HEAT);
     }
     
     if ((Races->Affect(p->GetRace(), Weather::COLD)) && p->GetWeathDamage(Weather::COLD) == 0) {
-        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
+        p->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(p->GetRace(), Weather::COLD)))),Weather::COLD);
     }
     
     return true;
@@ -1471,24 +1471,24 @@ void cWeatherAb::DoPlayerWeather(CSocket *s, std::uint8_t weathType, std::int8_t
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (min) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::LightMin(weathid_t toCheck) { return weather[toCheck].LightMin(); }
-void cWeatherAb::LightMin(weathid_t toCheck, R32 newValue) { weather[toCheck].LightMin(newValue); }
+float cWeatherAb::LightMin(weathid_t toCheck) { return weather[toCheck].LightMin(); }
+void cWeatherAb::LightMin(weathid_t toCheck, float newValue) { weather[toCheck].LightMin(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::LightMax()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (max) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::LightMax(weathid_t toCheck) { return weather[toCheck].LightMax(); }
-void cWeatherAb::LightMax(weathid_t toCheck, R32 newValue) { weather[toCheck].LightMax(newValue); }
+float cWeatherAb::LightMax(weathid_t toCheck) { return weather[toCheck].LightMax(); }
+void cWeatherAb::LightMax(weathid_t toCheck, float newValue) { weather[toCheck].LightMax(newValue); }
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cWeatherAb::CurrentLight()
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the light (current) value of specified weather system
 // o------------------------------------------------------------------------------------------------o
-R32 cWeatherAb::CurrentLight(weathid_t toCheck) { return weather[toCheck].CurrentLight(); }
-void cWeatherAb::CurrentLight(weathid_t toCheck, R32 newValue) {
+float cWeatherAb::CurrentLight(weathid_t toCheck) { return weather[toCheck].CurrentLight(); }
+void cWeatherAb::CurrentLight(weathid_t toCheck, float newValue) {
     weather[toCheck].CurrentLight(newValue);
 }
 
@@ -1514,13 +1514,13 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
         return false;
     
     if (mChar.GetWeathDamage(LIGHT) != 0 && mChar.GetWeathDamage(LIGHT) <= cwmWorldState->GetUICurrentTime()) {
-        R32 damageModifier = 0;
+        float damageModifier = 0;
         std::int32_t damage = 0;
-        R32 baseDamage = static_cast<R32>(Races->Damage(mChar.GetRace(), Weather::LIGHT));
-        R32 lightLevel = static_cast<R32>(Races->LightLevel(mChar.GetRace()));
-        R32 currentLight = 255;
-        R32 lightMin = 255;
-        R32 lightMax = 255;
+        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), Weather::LIGHT));
+        float lightLevel = static_cast<float>(Races->LightLevel(mChar.GetRace()));
+        float currentLight = 255;
+        float lightMin = 255;
+        float lightMax = 255;
         std::int32_t message = 0;
         bool ampm = cwmWorldState->uoTime.ampm;
         
@@ -1545,7 +1545,7 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
         }
         
         if (mChar.InDungeon()) {
-            R32 dungeonLight = 255;
+            float dungeonLight = 255;
             dungeonLight = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT] ;
             
             if (lightLevel > dungeonLight) {
@@ -1615,7 +1615,7 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                 }
             }
         }
-        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<R32>(Races->Secs(mChar.GetRace(), Weather::LIGHT)))), Weather::LIGHT);
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(Races->Secs(mChar.GetRace(), Weather::LIGHT)))), Weather::LIGHT);
     }
     return didDamage;
 }
@@ -1637,31 +1637,31 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
     bool didDamage = false;
     weathid_t weatherSys = mChar.GetRegion()->GetWeather();
     if (!(weatherSys > weather.size() || weather.empty()) && mChar.GetWeathDamage(element) != 0 && mChar.GetWeathDamage(element) <= cwmWorldState->GetUICurrentTime()) {
-        const R32 tempCurrent = Temp(weatherSys);
-        // const R32 tempMax		= MaxTemp( weatherSys );
-        // const R32 tempMin		= MinTemp( weatherSys );
-        // const R32 tempSnowMax	= SnowThreshold( weatherSys );
-        const R32 tempEffMax = EffectiveMaxTemp(weatherSys);
-        const R32 tempEffMin = EffectiveMinTemp(weatherSys);
+        const float tempCurrent = Temp(weatherSys);
+        // const float tempMax		= MaxTemp( weatherSys );
+        // const float tempMin		= MinTemp( weatherSys );
+        // const float tempSnowMax	= SnowThreshold( weatherSys );
+        const float tempEffMax = EffectiveMaxTemp(weatherSys);
+        const float tempEffMin = EffectiveMinTemp(weatherSys);
         
-        R32 damageModifier = 0;
+        float damageModifier = 0;
         std::int32_t damage = 0;
-        R32 baseDamage = static_cast<R32>(Races->Damage(mChar.GetRace(), element));
-        R32 heatLevel = static_cast<R32>(Races->HeatLevel(mChar.GetRace()));
-        R32 coldLevel = static_cast<R32>(Races->ColdLevel(mChar.GetRace()));
+        float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), element));
+        float heatLevel = static_cast<float>(Races->HeatLevel(mChar.GetRace()));
+        float coldLevel = static_cast<float>(Races->ColdLevel(mChar.GetRace()));
         
         std::int32_t damageMessage = 0;
         std::uint16_t damageAnim = 0x373A;
         
         if (element == Weather::RAIN) {
-            damageModifier = static_cast<R32>(RainIntensity(weatherSys));
+            damageModifier = static_cast<float>(RainIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
             damageMessage = 1219;
             resistElement = Weather::NONE;
         }
         
         if (element == Weather::SNOW) {
-            damageModifier = static_cast<R32>(SnowIntensity(weatherSys));
+            damageModifier = static_cast<float>(SnowIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
             damageMessage = 1220;
             // Snow is also cold damage when it comes to resistance values
@@ -1669,7 +1669,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
         }
         
         if (element == Weather::STORM) {
-            damageModifier = static_cast<R32>(StormIntensity(weatherSys));
+            damageModifier = static_cast<float>(StormIntensity(weatherSys));
             damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
             damageMessage = 1775;
             resistElement = Weather::NONE;
@@ -1725,7 +1725,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
                 didDamage = true;
             }
         }
-        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(mChar.GetRace(), element)))), element);
+        mChar.SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(mChar.GetRace(), element)))), element);
     }
     return didDamage;
 }

@@ -182,7 +182,7 @@ bool FieldSpell(CChar *caster, std::uint16_t id, std::int16_t x, std::int16_t y,
                 i->SetDecayable(true);
                 
                 // Duration of field item based on caster's Magery skill
-                i->SetDecayTime(BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 15)));
+                i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
                 
                 // If Poison Field, use average of caster's Magery and Poisoning skills
                 if (spellNum == 39) {// Poison Field
@@ -2280,7 +2280,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
         if (i != nullptr) {
             i->SetDispellable(true);
             i->SetDecayable(true);
-            i->SetDecayTime(BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 15)));
+            i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
             i->SetTempVar(CITV_MOREX, caster->GetSkill(MAGERY)); // remember casters magery skill for damage
             i->SetTempVar(CITV_MOREY, caster->GetSerial());
             i->SetLocation(x + fx[j], y + fy[j], Map->Height(x + fx[j], y + fy[j], z, worldNumber, instanceId));
@@ -2295,7 +2295,7 @@ bool DiamondSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t i
                 if (i != nullptr) {
                     i->SetDispellable(true);
                     i->SetDecayable(true);
-                    i->SetDecayTime(BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 15)));
+                    i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
                     i->SetTempVar( CITV_MOREX,  caster->GetSkill(MAGERY)); // remember casters magery skill for damage
                     i->SetTempVar(CITV_MOREY, caster->GetSerial());
                     const std::int16_t newX = x + counter2 * counter3;
@@ -2338,7 +2338,7 @@ bool SquareSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
-                i->SetDecayTime(BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 15)));
+                i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
                 i->SetTempVar(CITV_MOREX, caster->GetSkill(MAGERY)); // remember casters magery skill for damage
                 i->SetTempVar(CITV_MOREY, caster->GetSerial());
                 switch (j) {
@@ -2381,7 +2381,7 @@ bool FloodSpell([[maybe_unused]] CSocket *sock, CChar *caster, std::uint16_t id,
             if (i != nullptr) {
                 i->SetDispellable(true);
                 i->SetDecayable(true);
-                i->SetDecayTime(BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 15)));
+                i->SetDecayTime(BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 15)));
                 i->SetTempVar(CITV_MOREX, caster->GetSkill(MAGERY)); // remember casters magery skill for damage
                 i->SetTempVar(CITV_MOREY, caster->GetSerial());
                 i->SetLocation(counter1, counter2, Map->Height(counter1, counter2, z, worldNumber, instanceId));
@@ -2698,7 +2698,7 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
             
             newChar->SetOwner(caster);
             caster->SetControlSlotsUsed(std::clamp(controlSlotsUsed + newChar->GetControlSlots(), 0, 255));
-            newChar->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 5)));
+            newChar->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 5)));
             newChar->SetLocation(caster);
             Effects->PlayCharacterAnimation(newChar, ACT_SPELL_AREA, 0, 7); // 0x11, used to be 0x0C
             newChar->SetFTarg(caster);
@@ -2793,7 +2793,7 @@ void CMagic::SummonMonster(CSocket *s, CChar *caster, std::uint16_t id, std::int
     }
     
     newChar->SetSpDelay(10);
-    newChar->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<R32>(caster->GetSkill(MAGERY) / 5)));
+    newChar->SetTimer(tNPC_SUMMONTIME, BuildTimeValue(static_cast<float>(caster->GetSkill(MAGERY) / 5)));
     Effects->PlayCharacterAnimation(newChar, ACT_SPELL_AREA, 0, 7); // 0x11, used to be 0x0C
     // (9/99) - added the chance to make the monster attack
     // the person you targeted ( if you targeted a char, naturally :) )
@@ -3194,7 +3194,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
             if (mChar->GetTimer(tCHAR_FIREFIELDTICK) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
                 // Set a timer, so another field spell cannot "tick" for this character for a short
                 // while
-                mChar->SetTimer(tCHAR_FIREFIELDTICK, BuildTimeValue(static_cast<R32>(Magic->spells[28].DamageDelay())));
+                mChar->SetTimer(tCHAR_FIREFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[28].DamageDelay())));
                 
                 // Fetch spell damage from Fire Field spell
                 auto spellDamage = Magic->spells[28].BaseDmg();
@@ -3223,7 +3223,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
             cwmWorldState->GetOverflow()) {
             // Set a timer, so another field spell cannot "tick" for this character for a short
             // while
-            mChar->SetTimer(tCHAR_POISONFIELDTICK, BuildTimeValue(static_cast<R32>(Magic->spells[39].DamageDelay())));
+            mChar->SetTimer(tCHAR_POISONFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[39].DamageDelay())));
             
             // Calculate strength of poison, but disregard range check
             std::uint8_t poisonStrength = 1;
@@ -3250,7 +3250,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
         if (mChar->GetTimer(tCHAR_PARAFIELDTICK) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
             // Set a timer, so another field spell cannot "tick" for this character for a short
             // while
-            mChar->SetTimer(tCHAR_PARAFIELDTICK, BuildTimeValue(static_cast<R32>(Magic->spells[39].DamageDelay())));
+            mChar->SetTimer(tCHAR_PARAFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[39].DamageDelay())));
             
             if (!CheckResist(nullptr, mChar, 6)) {
                 Effects->TempEffect(caster, mChar, 1, 0, 0, 0);
@@ -3704,14 +3704,14 @@ bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     
     // Delay measurement...
     if (castDelay >= 0) {
-        mChar->SetTimer(tCHAR_SPELLTIME, BuildTimeValue(static_cast<R32>(castDelay / 1000)));
+        mChar->SetTimer(tCHAR_SPELLTIME, BuildTimeValue(static_cast<float>(castDelay / 1000)));
         if (!ServerConfig::shared().enabled(ServerSwitch::SPELLMOVING)) {
             mChar->SetFrozen(true);
             mChar->Dirty(UT_UPDATE);
         }
     }
     else if (type == 0 && mChar->GetCommandLevel() < 2){ // if they are a gm they don't have a delay :-)
-        mChar->SetTimer(tCHAR_SPELLTIME, BuildTimeValue(static_cast<R32>(curSpellCasting.Delay())));
+        mChar->SetTimer(tCHAR_SPELLTIME, BuildTimeValue(static_cast<float>(curSpellCasting.Delay())));
         if (!ServerConfig::shared().enabled(ServerSwitch::SPELLMOVING)) {
             mChar->SetFrozen(true);
             mChar->Dirty(UT_UPDATE);
@@ -4462,10 +4462,10 @@ void CMagic::LoadScript() {
                                 break;
                             case 'D':
                                 if (UTag == "DAMAGEDELAY") {
-                                    spells[i].DamageDelay(static_cast<R32>(std::stof(data)));
+                                    spells[i].DamageDelay(static_cast<float>(std::stof(data)));
                                 }
                                 else if (UTag == "DELAY") {
-                                    spells[i].Delay(static_cast<R32>(std::stof(data)));
+                                    spells[i].Delay(static_cast<float>(std::stof(data)));
                                 }
                                 else if (UTag == "DRAKE") {
                                     mRegs->drake = static_cast<std::uint8_t>(std::stoul(data, nullptr, 0));
@@ -4538,7 +4538,7 @@ void CMagic::LoadScript() {
                                 break;
                             case 'R':
                                 if (UTag == "RECOVERYDELAY") {
-                                    spells[i].RecoveryDelay(static_cast<R32>(std::stof(data)));
+                                    spells[i].RecoveryDelay(static_cast<float>(std::stof(data)));
                                 }
                                 break;
                             case 'S':

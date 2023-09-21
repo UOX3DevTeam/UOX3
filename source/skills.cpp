@@ -50,15 +50,15 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
     if (!ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM))
         return 10;
     
-    R32 rankSum = 0;
+    float rankSum = 0;
     std::int32_t rk_range, rank;
-    R32 sk_range, randnum, randnum1;
+    float sk_range, randnum, randnum1;
     
     // Calculate base chance of success at crafting based on primary skill, to use as a modifier for
     // exceptional chance later
-    R32 chanceSkillSuccess = 0;
-    chanceSkillSuccess = static_cast<R32>(player->GetSkill(skillMake.skillReqs[0].skillNumber) - skillMake.skillReqs[0].minSkill);
-    chanceSkillSuccess /= (static_cast<R32>(skillMake.skillReqs[0].maxSkill) - static_cast<R32>(skillMake.skillReqs[0].minSkill));
+    float chanceSkillSuccess = 0;
+    chanceSkillSuccess = static_cast<float>(player->GetSkill(skillMake.skillReqs[0].skillNumber) - skillMake.skillReqs[0].minSkill);
+    chanceSkillSuccess /= (static_cast<float>(skillMake.skillReqs[0].maxSkill) - static_cast<float>(skillMake.skillReqs[0].minSkill));
     
     // Loop through all skills required to craft the item and calculate average rank value for each
     for (size_t i = 0; i < skillMake.skillReqs.size(); ++i) {
@@ -67,7 +67,7 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
         
         // Fetch range of skill we have to work with for this skill based on player's skill value
         // and minimum skill required to craft the item
-        sk_range = static_cast<R32>(player->GetSkill(skillMake.skillReqs[i].skillNumber) - skillMake.skillReqs[i].minSkill);
+        sk_range = static_cast<float>(player->GetSkill(skillMake.skillReqs[i].skillNumber) - skillMake.skillReqs[i].minSkill);
         if (sk_range <= 0) {
             sk_range = skillMake.minRank * 10;
         }
@@ -76,14 +76,14 @@ std::int32_t CSkills::CalcRankAvg(CChar *player, CreateEntry_st &skillMake) {
         }
         
         // If generated number is under skill range value...
-        randnum = static_cast<R32>(RandomNum(0, 999));
+        randnum = static_cast<float>(RandomNum(0, 999));
         if (randnum <= sk_range) {
             rank = skillMake.maxRank; // ...assume perfectly crafted item!
         }
         else {
             // ...otherwise, generate a random number modified by skill range and difficulty level
             // of rank system from uox.ini
-            randnum1 = static_cast<R32>(RandomNum(0, 999)) - ((randnum - sk_range) / (11 - ServerConfig::shared().ushortValues[UShortValue::SKILLLEVEL] ));
+            randnum1 = static_cast<float>(RandomNum(0, 999)) - ((randnum - sk_range) / (11 - ServerConfig::shared().ushortValues[UShortValue::SKILLLEVEL] ));
             
             // Modify random number based on base chance of success at crafting
             randnum1 *= chanceSkillSuccess;
@@ -150,7 +150,7 @@ void CSkills::ApplyRank(CSocket *s, CItem *c, std::uint8_t rank, std::uint8_t ma
         }
         
         // Convert item's rank to a value between 1 and 10, to fit rank system messages
-        std::uint8_t tempRank = floor(static_cast<R32>(((rank * 100) / maxrank) / 10));
+        std::uint8_t tempRank = floor(static_cast<float>(((rank * 100) / maxrank) / 10));
         
         if (tempRank >= 1 && tempRank <= 10) {
             s->SysMessage(783 + tempRank); // =You cannot use that material for carpentry.
@@ -184,7 +184,7 @@ void CSkills::RegenerateOre(std::int16_t grX, std::int16_t grY, std::uint8_t wor
                 break;
             }
         }
-        orePart->oreTime = BuildTimeValue(static_cast<R32>(oreTimer));
+        orePart->oreTime = BuildTimeValue(static_cast<float>(oreTimer));
     }
     if (orePart->oreAmt > oreCeiling) {
         orePart->oreAmt = oreCeiling;
@@ -522,7 +522,7 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
     
     if (!exists) {
         CSocket *mSock = s->GetSocket();
-        R32 chanceSkillSuccess = 0;
+        float chanceSkillSuccess = 0;
         
         if ((highSkill - lowSkill) <= 0 || !ValidateObject(s) || s->GetSkill(sk) < lowSkill)
             return false;
@@ -536,10 +536,10 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
             return true;
         
         // Calculate base chance of success at using a skill
-        chanceSkillSuccess = (static_cast<R32>(s->GetSkill(sk)) - static_cast<R32>(lowSkill));
+        chanceSkillSuccess = (static_cast<float>(s->GetSkill(sk)) - static_cast<float>(lowSkill));
         
         // Modify chance based on the range of highSkill vs lowSkill
-        chanceSkillSuccess /= (static_cast<R32>(highSkill) - static_cast<R32>(lowSkill));
+        chanceSkillSuccess /= (static_cast<float>(highSkill) - static_cast<float>(lowSkill));
         
         // Let's work with whole numbers again
         chanceSkillSuccess *= 1000;
@@ -547,18 +547,18 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         if (isCraftSkill) {
             // Give players at least 50% chance at success if this is a crafting skill and their
             // skill is above minimum requirement
-            chanceSkillSuccess = std::max(static_cast<R32>(500), chanceSkillSuccess);
+            chanceSkillSuccess = std::max(static_cast<float>(500), chanceSkillSuccess);
         }
         
         // Cap chance of success at 1000 (100.0%)
-        chanceSkillSuccess = std::min(static_cast<R32>(1000), chanceSkillSuccess);
+        chanceSkillSuccess = std::min(static_cast<float>(1000), chanceSkillSuccess);
         
         if (ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL)) {
             // Modify base chance of success with bonuses from stats, if this feature is enabled in
             // ini
-            chanceSkillSuccess += static_cast<R32>(s->GetStrength() * cwmWorldState->skill[sk].strength) / 1000.0f;
-            chanceSkillSuccess += static_cast<R32>(s->GetDexterity() * cwmWorldState->skill[sk].dexterity) / 1000.0f;
-            chanceSkillSuccess += static_cast<R32>(s->GetIntelligence() * cwmWorldState->skill[sk].intelligence) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetStrength() * cwmWorldState->skill[sk].strength) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetDexterity() * cwmWorldState->skill[sk].dexterity) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetIntelligence() * cwmWorldState->skill[sk].intelligence) / 1000.0f;
         }
         
         // If player's command-level is equal to Counselor or higher, pass the skill-check
@@ -832,11 +832,11 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         if (s->GetTimer(tPC_SKILLDELAY) <= cwmWorldState->GetUICurrentTime()) {
             if (cwmWorldState->skill[x].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(cwmWorldState->skill[x].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(cwmWorldState->skill[x].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY])));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY])));
             }
         }
         return;
@@ -863,8 +863,8 @@ void CSkills::Tracking(CSocket *s, std::int32_t selection) {
     
     // tracking time in seconds ... gm tracker -> basetimer + 1 seconds, 0 tracking -> 1 sec, new
     // calc
-    s->SetTimer(tPC_TRACKING, BuildTimeValue(static_cast<R32>(ServerConfig::shared().timerSetting[TimerSetting::TRACKING] * i->GetSkill(TRACKING) / 1000 + 1)));
-    s->SetTimer(tPC_TRACKINGDISPLAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME])));
+    s->SetTimer(tPC_TRACKING, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::TRACKING] * i->GetSkill(TRACKING) / 1000 + 1)));
+    s->SetTimer(tPC_TRACKINGDISPLAY, BuildTimeValue(static_cast<float>(ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME])));
     if (ValidateObject(i->GetTrackingTarget())) {
         std::string trackingTargetName = GetNpcDictName(i->GetTrackingTarget(), nullptr, NRS_SPEECH);
         s->SysMessage(1644, trackingTargetName.c_str()); // You are now tracking %s.
@@ -1075,11 +1075,11 @@ void CSkills::Persecute(CSocket *s) {
             
             if (cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(cwmWorldState->skill[SPIRITSPEAK].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(cwmWorldState->skill[SPIRITSPEAK].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<R32>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY] )));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(ServerConfig::shared().ushortValues[UShortValue::SKILLDELAY] )));
             }
             
             std::string targCharName = GetNpcDictName(targChar, nullptr, NRS_SPEECH);
@@ -1628,13 +1628,13 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
             //  special dice 2: skill failed: decrease chance by 50%
             
             //  k, first let us calculate both dices
-            std::uint8_t modifiedStatLevel = FindSkillPoint(statCount - 1, static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) / static_cast<R32>(pRace->Skill(statCount)) * 100));
-            chanceStatGain = static_cast<std::int16_t>((static_cast<R32>(cwmWorldState->skill[statCount - 1].advancement[modifiedStatLevel].success) / 100) * (static_cast<R32>(static_cast<R32>(StatModifier[nCount]) / 10) / 100) * 1000);
+            std::uint8_t modifiedStatLevel = FindSkillPoint(statCount - 1, static_cast<std::int32_t>(static_cast<float>(ActualStat[nCount]) / static_cast<float>(pRace->Skill(statCount)) * 100));
+            chanceStatGain = static_cast<std::int16_t>((static_cast<float>(cwmWorldState->skill[statCount - 1].advancement[modifiedStatLevel].success) / 100) * (static_cast<float>(static_cast<float>(StatModifier[nCount]) / 10) / 100) * 1000);
             // some mathematics in it;)
             
             // now, lets implement the special dice 1 and additionally check for onStatGain
             // javascript method
-            if (StatModifier[nCount] <= static_cast<std::int32_t>(static_cast<R32>(ActualStat[nCount]) / static_cast<R32>(pRace->Skill(statCount)) * 100)) {
+            if (StatModifier[nCount] <= static_cast<std::int32_t>(static_cast<float>(ActualStat[nCount]) / static_cast<float>(pRace->Skill(statCount)) * 100)) {
                 chanceStatGain = 0;
             }
             

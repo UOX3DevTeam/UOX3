@@ -135,16 +135,16 @@ public:
 };
 
 struct Point3 {
-    R32 x, y, z;
+    float x, y, z;
     Point3() : x(0), y(0), z(0) {}
     Point3(std::uint16_t X, std::uint16_t Y, std::int8_t Z) : x(X), y(Y), z(Z) {}
-    Point3(R32 X, R32 Y, R32 Z) : x(X), y(Y), z(Z) {}
+    Point3(float X, float Y, float Z) : x(X), y(Y), z(Z) {}
     void Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z);
-    void Assign(R32 X, R32 Y, R32 Z);
-    R64 Mag() const;
-    R32 MagSquared() const;
-    R64 Mag3D() const;
-    R32 MagSquared3D() const;
+    void Assign(float X, float Y, float Z);
+    double Mag() const;
+    float MagSquared() const;
+    double Mag3D() const;
+    float MagSquared3D() const;
     void Normalize();
 };
 
@@ -158,14 +158,14 @@ inline Point3 operator+(Point3 const &a, Point3 const &b) {
 inline Point3 operator-(Point3 const &a, Point3 const &b) {
     return (Point3(a.x - b.x, a.y - b.y, a.z - b.z));
 }
-inline Point3 operator*(Point3 const &a, R32 const &b) {
+inline Point3 operator*(Point3 const &a, float const &b) {
     return Point3(a.x * b, a.y * b, a.z * b);
 }
-inline Point3 operator*(R32 const &a, Point3 const &b) {
+inline Point3 operator*(float const &a, Point3 const &b) {
     return Point3(a * b.x, a * b.y, a * b.z);
 }
-inline Point3 operator/(Point3 const &a, R32 const &b) {
-    R32 inv = 1.f / b;
+inline Point3 operator/(Point3 const &a, float const &b) {
+    float inv = 1.f / b;
     return Point3(a.x * inv, a.y * inv, a.z * inv);
 }
 inline void Point3::Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z) {
@@ -173,19 +173,19 @@ inline void Point3::Assign(std::uint16_t X, std::uint16_t Y, std::int8_t Z) {
     y = Y;
     z = Z;
 }
-inline void Point3::Assign(R32 X, R32 Y, R32 Z) {
+inline void Point3::Assign(float X, float Y, float Z) {
     x = X;
     y = Y;
     z = Z;
 }
-inline R64 Point3::Mag3D() const { return static_cast<R32>(sqrt(x * x + y * y + z * z)); }
-inline R32 Point3::MagSquared3D() const { return (x * x + y * y + z * z); }
+inline double Point3::Mag3D() const { return static_cast<float>(sqrt(x * x + y * y + z * z)); }
+inline float Point3::MagSquared3D() const { return (x * x + y * y + z * z); }
 
-inline R64 Point3::Mag() const { return static_cast<R32>(sqrt(x * x + y * y)); }
-inline R32 Point3::MagSquared() const { return (x * x + y * y); }
+inline double Point3::Mag() const { return static_cast<float>(sqrt(x * x + y * y)); }
+inline float Point3::MagSquared() const { return (x * x + y * y); }
 
 inline void Point3::Normalize() {
-    R32 foo = static_cast<R32>(1 / Mag3D());
+    float foo = static_cast<float>(1 / Mag3D());
     x *= foo;
     y *= foo;
     z *= foo;

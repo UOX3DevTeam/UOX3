@@ -285,7 +285,6 @@ auto Weather::setValue(const std::string &line) ->void {
             }
             else if (ukey == "SNOWINTENSITY") {
                 setWeatherRange(SNOW, value);
-
             }
             else if (ukey == "SNOWTHRESHOLD") {
                 snowThreshold = std::stof(value);

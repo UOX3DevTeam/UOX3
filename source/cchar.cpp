@@ -211,7 +211,7 @@ const std::uint16_t DEFNPC_TAMEDHUNGERRATE = 0;
 const std::uint16_t DEFNPC_TAMEDTHIRSTRATE = 0;
 const std::uint8_t DEFNPC_HUNGERWILDCHANCE = 0;
 const std::uint8_t DEFNPC_THIRSTWILDCHANCE = 0;
-const R32 DEFNPC_MOVEMENTSPEED = -1;
+const float DEFNPC_MOVEMENTSPEED = -1;
 const std::int8_t DEFNPC_PATHFAIL = -1;
 const std::uint16_t DEFNPC_CONTROLSLOTS = 0;
 const std::uint16_t DEFNPC_MAXLOYALTY = 100;
@@ -523,7 +523,7 @@ void CChar::DoHunger(CSocket *mSock) {
                             }
                         }
                     }
-                    SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
+                    SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<float>(hungerRate)));
                 }
             }
         }
@@ -542,7 +542,7 @@ void CChar::DoHunger(CSocket *mSock) {
                 else if (GetHP() > 0 && hungerDamage > 0) {
                     [[maybe_unused]] bool retVal = Damage(hungerDamage, Weather::PHYSICAL);
                 }
-                SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
+                SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<float>(hungerRate)));
             }
         }
         else if (IsTamed() && GetTamedHungerRate() > 0) {
@@ -587,7 +587,7 @@ void CChar::DoHunger(CSocket *mSock) {
                 }
                 
                 // Set timer for next time pet should grow more hungry
-                SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<R32>(hungerRate)));
+                SetTimer(tCHAR_HUNGER, BuildTimeValue(static_cast<float>(hungerRate)));
             }
         }
     }
@@ -682,7 +682,7 @@ void CChar::DoThirst(CSocket *mSock) {
                             mSock->SysMessage(2052); // You have no stamina because of dehydration.
                         }
                     }
-                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<float>(thirstRate)));
                 }
             }
         }
@@ -698,7 +698,7 @@ void CChar::DoThirst(CSocket *mSock) {
                     else if (GetStamina() > 1 && thirstDrain > 0) {
                         SetStamina(std::max(static_cast<std::int16_t>(1), static_cast<std::int16_t>(GetStamina() - thirstDrain)));
                     }
-                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<float>(thirstRate)));
                 }
             }
         }
@@ -723,7 +723,7 @@ void CChar::DoThirst(CSocket *mSock) {
                         SetOwner(nullptr);
                         SetThirst(6);
                     }
-                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<R32>(thirstRate)));
+                    SetTimer(tCHAR_THIRST, BuildTimeValue(static_cast<float>(thirstRate)));
                 }
             }
         }
@@ -1637,7 +1637,7 @@ skillval_t CChar::GetSkill(std::uint8_t skillToGet) const {
         std::int32_t modifier = Races->DamageFromSkill(skillToGet, race);
         if (modifier != 0) {
             auto toAdd =
-            static_cast<skillval_t>(static_cast<R32>(skill[skillToGet]) * (static_cast<R32>(modifier) / 1000)); // percentage to add
+            static_cast<skillval_t>(static_cast<float>(skill[skillToGet]) * (static_cast<float>(modifier) / 1000)); // percentage to add
             rVal += toAdd;                                                  // return the bonus
         }
     }
@@ -3122,7 +3122,7 @@ std::uint16_t CChar::GetMaxHP() {
             pRace = Races->Race(0);
         }
         
-        maxHP = static_cast<std::uint16_t>(GetStrength() +  static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) * (static_cast<R32>(pRace->HPModifier())) / 100));
+        maxHP = static_cast<std::uint16_t>(GetStrength() +  static_cast<std::uint16_t>((static_cast<float>(GetStrength())) * (static_cast<float>(pRace->HPModifier())) / 100));
         // set max. hitpoints to strength + hpmodifier% of strength
         
         maxHP_oldstr = GetStrength();
@@ -3148,7 +3148,7 @@ void CChar::SetFixedMaxHP(std::int16_t newmaxhp) {
             pRace = Races->Race(0);
         }
         
-        maxHP = static_cast<std::uint16_t>(GetStrength() + static_cast<std::uint16_t>((static_cast<R32>(GetStrength())) * (static_cast<R32>(pRace->HPModifier())) / 100));
+        maxHP = static_cast<std::uint16_t>(GetStrength() + static_cast<std::uint16_t>((static_cast<float>(GetStrength())) * (static_cast<float>(pRace->HPModifier())) / 100));
         
         maxHP_oldstr = GetStrength();
         oldRace = GetRace();
@@ -3173,7 +3173,7 @@ std::int16_t CChar::GetMaxMana() {
             pRace = Races->Race(0);
         }
         
-        maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) * (static_cast<R32>(pRace->ManaModifier())) / 100));
+        maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<float>(GetIntelligence())) * (static_cast<float>(pRace->ManaModifier())) / 100));
         // set max. mana to int + manamodifier% of int
         
         maxMana_oldint = GetIntelligence();
@@ -3199,7 +3199,7 @@ void CChar::SetFixedMaxMana(std::int16_t newmaxmana) {
             pRace = Races->Race(0);
         }
         
-        maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<R32>(GetIntelligence())) * (static_cast<R32>(pRace->ManaModifier())) / 100));
+        maxMana = static_cast<std::int16_t>(GetIntelligence() + static_cast<std::int16_t>((static_cast<float>(GetIntelligence())) * (static_cast<float>(pRace->ManaModifier())) / 100));
         
         maxMana_oldint = GetIntelligence();
         oldRace = GetRace();
@@ -3225,7 +3225,7 @@ std::int16_t CChar::GetMaxStam() {
         }
         
         // Set max. stamina to dex + stammodifier% of dex
-        maxStam = static_cast<std::int16_t>(GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) * (static_cast<R32>(pRace->StamModifier())) / 100));
+        maxStam = static_cast<std::int16_t>(GetDexterity() + static_cast<std::int16_t>((static_cast<float>(GetDexterity())) * (static_cast<float>(pRace->StamModifier())) / 100));
         
         maxStam_olddex = GetDexterity();
         oldRace = GetRace();
@@ -3250,7 +3250,7 @@ void CChar::SetFixedMaxStam(std::int16_t newmaxstam) {
             pRace = Races->Race(0);
         }
         
-        maxStam = static_cast<std::int16_t>(GetDexterity() + static_cast<std::int16_t>((static_cast<R32>(GetDexterity())) *  (static_cast<R32>(pRace->StamModifier())) / 100));
+        maxStam = static_cast<std::int16_t>(GetDexterity() + static_cast<std::int16_t>((static_cast<float>(GetDexterity())) *  (static_cast<float>(pRace->StamModifier())) / 100));
         
         maxStam_olddex = GetDexterity();
         oldRace = GetRace();
@@ -3649,11 +3649,11 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "FLEEINGSPEED") {
-                    SetFleeingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetFleeingSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 else if (UTag == "FLEEINGSPEEDMOUNTED") {
-                    SetMountedFleeingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetMountedFleeingSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 break;
@@ -3732,7 +3732,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "MURDERTIMER") {
-                    SetTimer(tCHAR_MURDERRATE, BuildTimeValue(static_cast<R32>(std::stof(util::trim(util::strip(data, "//"))))));
+                    SetTimer(tCHAR_MURDERRATE, BuildTimeValue(static_cast<float>(std::stof(util::trim(util::strip(data, "//"))))));
                     rValue = true;
                 }
                 else if (UTag == "MAXHP") {
@@ -3841,7 +3841,7 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "PEACETIMER") {
-                    SetTimer(tCHAR_PEACETIMER, BuildTimeValue(static_cast<R32>(std::stof(util::trim(util::strip(data, "//"))))));
+                    SetTimer(tCHAR_PEACETIMER, BuildTimeValue(static_cast<float>(std::stof(util::trim(util::strip(data, "//"))))));
                     rValue = true;
                 }
                 else if (UTag == "PLAYTIME") {
@@ -3889,11 +3889,11 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "RUNNINGSPEED") {
-                    SetRunningSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetRunningSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 else if (UTag == "RUNNINGSPEEDMOUNTED") {
-                    SetMountedRunningSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetMountedRunningSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 break;
@@ -4034,11 +4034,11 @@ bool CChar::HandleLine(std::string &UTag, std::string &data) {
                     rValue = true;
                 }
                 else if (UTag == "WALKINGSPEED") {
-                    SetWalkingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetWalkingSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 else if (UTag == "WALKINGSPEEDMOUNTED") {
-                    SetMountedWalkingSpeed(static_cast<R32>(std::stof(util::trim(util::strip(data, "//")))));
+                    SetMountedWalkingSpeed(static_cast<float>(std::stof(util::trim(util::strip(data, "//")))));
                     rValue = true;
                 }
                 break;
@@ -5740,7 +5740,7 @@ void CChar::DoLoyaltyUpdate() {
         if (GetLoyalty() > 0) {
             // Reduce loyalty by 1, reset timer
             SetLoyalty(std::max(0, GetLoyalty() - 1));
-            SetTimer(tNPC_LOYALTYTIME, BuildTimeValue(static_cast<R32>(loyaltyRate)));
+            SetTimer(tNPC_LOYALTYTIME, BuildTimeValue(static_cast<float>(loyaltyRate)));
             
             // Provide some feedback to the player, if they're online
             CSocket *mSock = GetOwnerObj()->GetSocket();
@@ -6941,8 +6941,8 @@ void CChar::SetNPCFlag(cnpc_flag_t flagType) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's walking speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetWalkingSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOVEMENT];
+float CChar::GetWalkingSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOVEMENT];
     
     if (IsValidNPC()) {
         if (mNPC->walkingSpeed > 0) {
@@ -6955,7 +6955,7 @@ R32 CChar::GetWalkingSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetWalkingSpeed(R32 newValue) {
+void CChar::SetWalkingSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -6973,8 +6973,8 @@ void CChar::SetWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's running speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetRunningSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCRUNNING];
+float CChar::GetRunningSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCRUNNING];
     
     if (IsValidNPC()) {
         if (mNPC->runningSpeed > 0) {
@@ -6987,7 +6987,7 @@ R32 CChar::GetRunningSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetRunningSpeed(R32 newValue) {
+void CChar::SetRunningSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7005,8 +7005,8 @@ void CChar::SetRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetFleeingSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCFLEEING];
+float CChar::GetFleeingSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCFLEEING];
     
     if (IsValidNPC()) {
         if (mNPC->fleeingSpeed > 0) {
@@ -7019,7 +7019,7 @@ R32 CChar::GetFleeingSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetFleeingSpeed(R32 newValue) {
+void CChar::SetFleeingSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7036,8 +7036,8 @@ void CChar::SetFleeingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted walking speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedWalkingSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT];
+float CChar::GetMountedWalkingSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTMOVEMENT];
     
     if (IsValidNPC()) {
         if (mNPC->mountedWalkingSpeed > 0) {
@@ -7050,7 +7050,7 @@ R32 CChar::GetMountedWalkingSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetMountedWalkingSpeed(R32 newValue) {
+void CChar::SetMountedWalkingSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7067,8 +7067,8 @@ void CChar::SetMountedWalkingSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's mounted running speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedRunningSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTRUNNING];
+float CChar::GetMountedRunningSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTRUNNING];
     
     if (IsValidNPC()) {
         if (mNPC->mountedRunningSpeed > 0) {
@@ -7081,7 +7081,7 @@ R32 CChar::GetMountedRunningSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetMountedRunningSpeed(R32 newValue) {
+void CChar::SetMountedRunningSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }
@@ -7098,8 +7098,8 @@ void CChar::SetMountedRunningSpeed(R32 newValue) {
 // o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the NPC's fleeing speed
 // o------------------------------------------------------------------------------------------------o
-R32 CChar::GetMountedFleeingSpeed() const {
-    R32 retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTFLEEING];
+float CChar::GetMountedFleeingSpeed() const {
+    float retVal = ServerConfig::shared().realNumbers[RealNumberConfig::NPCMOUNTFLEEING];
     
     if (IsValidNPC()) {
         if (mNPC->mountedFleeingSpeed > 0) {
@@ -7112,7 +7112,7 @@ R32 CChar::GetMountedFleeingSpeed() const {
 #endif
     return retVal;
 }
-void CChar::SetMountedFleeingSpeed(R32 newValue) {
+void CChar::SetMountedFleeingSpeed(float newValue) {
     if (!IsValidNPC()) {
         CreateNPC();
     }

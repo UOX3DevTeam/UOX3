@@ -152,10 +152,10 @@ constexpr auto LOSXYMAX = 256; // Maximum items UOX3 can handle on one X/Y squar
 //==================================================================================================
 // Structures used
 struct Vector2D_st {
-    R32 x;
-    R32 y;
+    float x;
+    float y;
     Vector2D_st() : x(0.0), y(0.0) {}
-    Vector2D_st(R32 X, R32 Y) : x(X), y(Y) {}
+    Vector2D_st(float X, float Y) : x(X), y(Y) {}
 };
 
 //==================================================================================================
@@ -194,7 +194,7 @@ inline auto Line2D_st::CollideLines2D(Line2D_st toCollide) const -> Vector2D_st 
     if (((dir.x * toCollide.dir.y) - (toCollide.dir.x * dir.y)) == 0)
         return Vector2D_st(-1.0f, -1.0f); // error, parallel lines
     
-    R32 t = 0.0f; // parameter of toCollide-line
+    float t = 0.0f; // parameter of toCollide-line
     // linear evaluation of extended 2x2 matrix
     t = ((((loc.x - toCollide.loc.x) * (-dir.y)) + (dir.x * (loc.y - toCollide.loc.y))) /
          ((dir.x * toCollide.dir.y) - (toCollide.dir.x * dir.y)));
@@ -208,25 +208,25 @@ struct Line3D_st {
     Vector3D_st dir;
     Line3D_st() = default;
     Line3D_st(Vector3D_st LOC, Vector3D_st DIR) : loc(LOC), dir(DIR) {}
-    auto dzInDirectionX() const -> R32;
-    auto dzInDirectionY() const -> R32;
+    auto dzInDirectionX() const -> float;
+    auto dzInDirectionY() const -> float;
     auto Projection2D() const -> Line2D_st;
 };
 
 //==================================================================================================
-inline auto Line3D_st::dzInDirectionX() const -> R32 {
+inline auto Line3D_st::dzInDirectionX() const -> float {
     if (dir.x == 0) {
-        return static_cast<R32>(dir.z);
+        return static_cast<float>(dir.z);
     }
-    return static_cast<R32>(dir.z) / static_cast<R32>(dir.x);
+    return static_cast<float>(dir.z) / static_cast<float>(dir.x);
 }
 
 //==================================================================================================
-inline auto Line3D_st::dzInDirectionY() const -> R32 {
+inline auto Line3D_st::dzInDirectionY() const -> float {
     if (dir.y == 0) {
-        return static_cast<R32>(dir.z);
+        return static_cast<float>(dir.z);
     }
-    return static_cast<R32>(dir.z) / static_cast<R32>(dir.y);
+    return static_cast<float>(dir.z) / static_cast<float>(dir.y);
 }
 
 //==================================================================================================
@@ -234,7 +234,7 @@ inline auto Line3D_st::Projection2D() const -> Line2D_st {
     if ((dir.x == 0) && (dir.y == 0)) {
         return Line2D_st(Vector2D_st(-1.0f, -1.0f), Vector2D_st(-1.0f, -1.0f));
     }
-    return Line2D_st(Vector2D_st(static_cast<R32>(loc.x), static_cast<R32>(loc.y)), Vector2D_st(static_cast<R32>(dir.x), static_cast<R32>(dir.y)));
+    return Line2D_st(Vector2D_st(static_cast<float>(loc.x), static_cast<float>(loc.y)), Vector2D_st(static_cast<float>(dir.x), static_cast<float>(dir.y)));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -444,7 +444,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     Line3D_st lineofsight =
     Line3D_st(Vector3D_st(startX, startY, startZ), Vector3D_st(distX, distY, distZ));
     
-    const R64 rBlah = (static_cast<R64>(distX) * static_cast<R64>(distX)) + (static_cast<R64>(distY) * static_cast<R64>(distY));
+    const double rBlah = (static_cast<double>(distX) * static_cast<double>(distX)) + (static_cast<double>(distY) * static_cast<double>(distY));
     const std::int32_t distance = static_cast<std::int32_t>(sqrt(rBlah));
     
     // Let's provide some leeway based on height of object
@@ -497,7 +497,7 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
     else if (sgn_x == 0) { // if we are on the same x-level, just push every x/y coordinate in
         // y-direction from src to trg into the array
         for (i = 1; i <= distY; ++i) {
-            collisions[collisioncount] = Vector3D_st(startX, startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            collisions[collisioncount] = Vector3D_st(startX, startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<float>(i) * sgn_z)));
             ++collisioncount;
         }
     }
@@ -505,36 +505,36 @@ auto LineOfSight(CSocket *mSock, CChar *mChar, std::int16_t destX, std::int16_t 
         // x-direction from src to trg into the array
         for (i = 1; i <= distX; ++i) {
             collisions[collisioncount] =
-            Vector3D_st(startX + (sgn_x * i), startY, static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            Vector3D_st(startX + (sgn_x * i), startY, static_cast<std::int8_t>(startZ + (dz * static_cast<float>(i) * sgn_z)));
             ++collisioncount;
         }
     }
     else if (distX == distY) { // if we're on a perfect diagonal, we can just go up all coords in both
         // x and y at the same time
         for (i = 1; i <= distX; ++i) {
-            collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+            collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * i), static_cast<std::int8_t>(startZ + (dz * static_cast<float>(i) * sgn_z)));
             ++collisioncount;
         }
     }
     else {
-        R32 steps = 0;
+        float steps = 0;
         if (distX > distY) {
-            steps = (R32)distX / (R32)distY;
+            steps = (float)distX / (float)distY;
             if (steps == 0) {
                 steps = 1;
             }
             for (i = 1; i < distX; ++i) {
-                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * static_cast<R32>(RoundNumber(i / steps))), static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * i), startY + (sgn_y * static_cast<float>(RoundNumber(i / steps))), static_cast<std::int8_t>(startZ + (dz * static_cast<float>(i) * sgn_z)));
                 ++collisioncount;
             }
         }
         else if (distY > distX) {
-            steps = static_cast<R32>(distY) / static_cast<R32>(distX);
+            steps = static_cast<float>(distY) / static_cast<float>(distX);
             if (steps == 0) {
                 steps = 1;
             }
             for (i = 1; i < distY; ++i) {
-                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * static_cast<R32>(RoundNumber(i / steps))), startY + (sgn_y * i),  static_cast<std::int8_t>(startZ + (dz * static_cast<R32>(i) * sgn_z)));
+                collisions[collisioncount] = Vector3D_st(startX + (sgn_x * static_cast<float>(RoundNumber(i / steps))), startY + (sgn_y * i),  static_cast<std::int8_t>(startZ + (dz * static_cast<float>(i) * sgn_z)));
                 ++collisioncount;
             }
         }

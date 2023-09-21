@@ -351,7 +351,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         std::chrono::system_clock::now();
         if (apsPerfThreshold > static_cast<std::uint16_t>(0) && currentTime >= nextEvaluationTime) {
             // Get simulation cycles count
-            auto simCycles = (1000.0 * (1.0 / static_cast<R32>( static_cast<R32>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<R32>(cwmWorldState->ServerProfile()->LoopTimeCount()))));
+            auto simCycles = (1000.0 * (1.0 / static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(cwmWorldState->ServerProfile()->LoopTimeCount()))));
             
             // Store last X simCycle samples
             simCycleSamples.push_back(simCycles);
@@ -572,7 +572,7 @@ auto startInitialize() -> void {
     Console::shared() << "Starting World Timers          ";
     cwmWorldState->SetTimer(tWORLD_LIGHTTIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::WEATHER])) );
     
-    cwmWorldState->SetTimer(tWORLD_NEXTNPCAI, BuildTimeValue(static_cast<R32>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKAI])));
+    cwmWorldState->SetTimer(tWORLD_NEXTNPCAI, BuildTimeValue(static_cast<float>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKAI])));
     cwmWorldState->SetTimer(tWORLD_NEXTFIELDEFFECT, BuildTimeValue(0.5f));
     cwmWorldState->SetTimer(tWORLD_SHOPRESTOCK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::SHOPSPAWN])));
     cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::PETOFFLINECHECK])));
@@ -629,7 +629,7 @@ auto startInitialize() -> void {
     // Calculate startup time in milliseconds
     auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>(startupEndTime - startupStartTime) .count();
     Console::shared().turnGreen();
-    Console::shared() << "UOX: Startup Completed in " << static_cast<R32>(startupDuration) / 1000 << " seconds." << myendl;
+    Console::shared() << "UOX: Startup Completed in " << static_cast<float>(startupDuration) / 1000 << " seconds." << myendl;
     Console::shared().turnNormal();
 }
 
@@ -1252,10 +1252,10 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                     }
                 }
             }
-            const R32 MeditationBonus = (.00075f * mChar.GetSkill(MEDITATION)); // Bonus for Meditation
+            const float MeditationBonus = (.00075f * mChar.GetSkill(MEDITATION)); // Bonus for Meditation
             std::int32_t NextManaRegen = static_cast<std::int32_t>(ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN] * (1 - MeditationBonus) * 1000);
             if (ServerConfig::shared().enabled(ServerSwitch::ARMORIMPACTSMANA)){ // If armor effects mana regeneration...
-                R32 ArmorPenalty = Combat->CalcDef((&mChar), 0, false); // Penalty taken due to high def
+                float ArmorPenalty = Combat->CalcDef((&mChar), 0, false); // Penalty taken due to high def
                 if (ArmorPenalty > 100){// For def higher then 100, penalty is the same...just in case
                     ArmorPenalty = 100;
                 }
@@ -1530,7 +1530,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         if (mChar.GetTimer(tCHAR_SPELLTIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) // Spell is complete target it.
         {
             // Set the recovery time before another spell can be cast
-            mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue(static_cast<R32>(Magic->spells[spellNum].RecoveryDelay())));
+            mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue(static_cast<float>(Magic->spells[spellNum].RecoveryDelay())));
             
             if (Magic->spells[spellNum].RequireTarget()) {
                 mChar.SetCasting(false);
@@ -1800,7 +1800,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                             if (spawnItem->DoRespawn()) {
                                 continue;
                             }
-                            spawnItem->SetTempTimer(BuildTimeValue(static_cast<R32>(RandomNum(spawnItem->GetInterval(0) * 60,spawnItem->GetInterval(1) * 60))));
+                            spawnItem->SetTempTimer(BuildTimeValue(static_cast<float>(RandomNum(spawnItem->GetInterval(0) * 60,spawnItem->GetInterval(1) * 60))));
                         }
                         else if (itemCheck->GetObjType() == CBaseObject::OT_ITEM &&
                                  itemCheck->GetType() == IT_PLANK) {
@@ -2102,7 +2102,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 // Reset amount of bytes received and sent, and restart timer
                 tSock->BytesReceived(0);
                 tSock->BytesSent(0);
-                tSock->SetTimer(tPC_TRAFFICWARDEN, BuildTimeValue(static_cast<R32>(10)));
+                tSock->SetTimer(tPC_TRAFFICWARDEN, BuildTimeValue(static_cast<float>(10)));
             }
         }
     }
@@ -2164,7 +2164,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
         // being at their defined max capacity, the less frequently UOX3 will check spawn
         // regions again. Similarly, the more room there is to spawn additional stuff, the
         // more frequently UOX3 will check spawn regions
-        auto checkSpawnRegionSpeed = static_cast<R32>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKSPAWN] );
+        auto checkSpawnRegionSpeed = static_cast<float>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKSPAWN] );
         std::uint16_t itemSpawnCompletionRatio = (maxItemsSpawned > 0 ? ((totalItemsSpawned * 100.0) / maxItemsSpawned) : 100);
         std::uint16_t npcSpawnCompletionRatio = (maxNpcsSpawned > 0 ? ((totalNpcsSpawned * 100.0) / maxNpcsSpawned) : 100);
         
@@ -2291,7 +2291,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                     // player from always 9 to varying between 3 to 6. Only regions on
                     // yOffset are considered, because the xOffset ones are too narrow
                     auto yOffsetUnrounded =
-                    static_cast<R32>(mChar->GetY()) / static_cast<R32>(MapRowSize);
+                    static_cast<float>(mChar->GetY()) / static_cast<float>(MapRowSize);
                     std::int8_t counter2Start = 0, counter2End = 0;
                     if (yOffsetUnrounded < yOffset + 0.25) {
                         counter2Start = -1;
@@ -2998,8 +2998,8 @@ auto GetClock() -> std::uint32_t {
 // o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	rounds a number up or down depending on it's value
 // o------------------------------------------------------------------------------------------------o
-auto RoundNumber(R32 toRound) -> R32 {
-    R32 flVal = floor(toRound);
+auto RoundNumber(float toRound) -> float {
+    float flVal = floor(toRound);
     if (flVal < floor(toRound + 0.5)) {
         return ceil(toRound);
     }
@@ -3028,7 +3028,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     CPLightLevel toSend(level);
     
     if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && mChar->GetWeathDamage(LIGHT) == 0) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<R32>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))),Weather::LIGHT);
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue(static_cast<float>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))),Weather::LIGHT);
     }
     
     if (mChar->GetFixedLight() != 255) {
@@ -3045,10 +3045,10 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     auto dunLevel = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT];
     // we have a valid weather system
     if (wSys) {
-        const R32 lightMin = wSys->LightMin();
-        const R32 lightMax = wSys->LightMax();
+        const float lightMin = wSys->LightMin();
+        const float lightMax = wSys->LightMax();
         if (lightMin < 300 && lightMax < 300) {
-            R32 i = wSys->CurrentLight();
+            float i = wSys->CurrentLight();
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
@@ -3105,7 +3105,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     if ((Races->Affect(mChar->GetRace(), Weather::LIGHT)) && (mChar->GetWeathDamage(LIGHT) == 0)) {
-        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<R32>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))), Weather::LIGHT);
+        mChar->SetWeathDamage(static_cast<std::uint32_t>(BuildTimeValue( static_cast<float>(Races->Secs(mChar->GetRace(), Weather::LIGHT)))), Weather::LIGHT);
     }
     
     auto curRegion = mChar->GetRegion();
@@ -3116,10 +3116,10 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
     
     // we have a valid weather system
     if (wSys) {
-        const R32 lightMin = wSys->LightMin();
-        const R32 lightMax = wSys->LightMax();
+        const float lightMin = wSys->LightMin();
+        const float lightMax = wSys->LightMax();
         if (lightMin < 300 && lightMax < 300) {
-            R32 i = wSys->CurrentLight();
+            float i = wSys->CurrentLight();
             if (Races->VisLevel(mChar->GetRace()) > i) {
                 toShow = 0;
             }
@@ -3177,8 +3177,8 @@ auto DoLight(CItem *mItem, std::uint8_t level) -> void {
     
     // we have a valid weather system
     if (wSys) {
-        const R32 lightMin = wSys->LightMin();
-        const R32 lightMax = wSys->LightMax();
+        const float lightMin = wSys->LightMin();
+        const float lightMax = wSys->LightMax();
         if ((lightMin < 300) && (lightMax < 300)) {
             toShow = static_cast<lightlevel_t>(wSys->CurrentLight());
         }
