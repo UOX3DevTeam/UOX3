@@ -276,7 +276,6 @@
     <ClInclude Include="..\..\source\wholist.h" />
     <ClInclude Include="..\..\source\worldmain.h" />
     <!-- other group -->
-    <ClInclude Include="..\..\source\other\uoxglobal.hpp" />
     <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h" />

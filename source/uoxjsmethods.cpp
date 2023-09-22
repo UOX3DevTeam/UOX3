@@ -58,9 +58,10 @@
 #include "utility/strutil.hpp"
 #include "wholist.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 void BuildAddMenuGump(CSocket *s, std::uint16_t m); // Menus for item creation
-void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY,
-               std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId = 0);
+void SpawnGate(CChar *caster, std::int16_t srcX, std::int16_t srcY, std::int8_t srcZ, std::uint8_t srcWorld, std::int16_t trgX, std::int16_t trgY, std::int8_t trgZ, std::uint8_t trgWorld, std::uint16_t trgInstanceId = 0);
 bool BuyShop(CSocket *s, CChar *c);
 void InitializeWanderArea(CChar *c, std::int16_t xAway, std::int16_t yAway);
 void ScriptError(JSContext *cx, const char *txt, ...);
@@ -7344,11 +7345,10 @@ JSBool CChar_Mark(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     mItem->SetTempVar(CITV_MORE, mChar->GetInstanceId());
     
     if (mChar->GetRegion()->GetName()[0] != 0) {
-        mItem->SetName(
-                       util::format(Dictionary->GetEntry(684), mChar->GetRegion()->GetName().c_str()));
+        mItem->SetName(util::format(worldDictionary.GetEntry(684), mChar->GetRegion()->GetName().c_str()));
     }
     else {
-        mItem->SetName(Dictionary->GetEntry(685));
+        mItem->SetName(worldDictionary.GetEntry(685));
     }
     
     return JS_TRUE;

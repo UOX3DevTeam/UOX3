@@ -64,6 +64,8 @@
 #include "type/weather.hpp"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 CMovement *Movement;
@@ -1815,7 +1817,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
                                     // If NPC following fails to follow, make it stop
                                     mChar.SetOldTargLocX(0);
                                     mChar.SetOldTargLocY(0);
-                                    mChar.TextMessage(nullptr, Dictionary->GetEntry(9048), SYSTEM, false); // [Stops following]
+                                    mChar.TextMessage(nullptr, worldDictionary.GetEntry(9048), SYSTEM, false); // [Stops following]
                                     mChar.SetNpcWander(WT_NONE);
                                 }
                             }
@@ -2062,7 +2064,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                         mChar.SetOldTargLocX(0);
                         mChar.SetOldTargLocY(0);
                         mChar.SetTimer(tNPC_EVADETIME, BuildTimeValue(10));
-                        mChar.TextMessage(nullptr, Dictionary->GetEntry(9049), SYSTEM, false); // [Evading]
+                        mChar.TextMessage(nullptr, worldDictionary.GetEntry(9049), SYSTEM, false); // [Evading]
                         mChar.SetHP(mChar.GetMaxHP());
                         mChar.SetEvadeState(true);
                         Combat->InvalidateAttacker(&mChar);
@@ -2180,7 +2182,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 mChar.SetOldTargLocX(0);
                                 mChar.SetOldTargLocY(0);
                                 mChar.SetTimer(tNPC_EVADETIME, BuildTimeValue(10));
-                                mChar.TextMessage(nullptr, Dictionary->GetEntry(9049), SYSTEM, false); // [Evading]
+                                mChar.TextMessage(nullptr, worldDictionary.GetEntry(9049), SYSTEM, false); // [Evading]
                                 mChar.SetHP(mChar.GetMaxHP());
                                 mChar.SetEvadeState(true);
                                 IgnoreAndEvadeTarget(&mChar);
@@ -3080,7 +3082,7 @@ auto CMovement::IgnoreAndEvadeTarget(CChar *mChar) -> void {
         
         // If target attacked mChar within last 10 seconds, also enter evade state
         if (!mChar->IsEvading() && mChar->CheckDamageTrack(mTarget->GetSerial(), 10)) {
-            mChar->TextMessage(nullptr, Dictionary->GetEntry(9049), SYSTEM, false); // [Evading]
+            mChar->TextMessage(nullptr, worldDictionary.GetEntry(9049), SYSTEM, false); // [Evading]
             mChar->SetTimer(tNPC_EVADETIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::COMBATIGNORE])));
             mChar->SetEvadeState(true);
             mChar->SetHP(mChar->GetMaxHP());

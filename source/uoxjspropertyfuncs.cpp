@@ -44,6 +44,8 @@
 #include "uoxjspropertyenums.h"
 #include "uoxjspropertyspecs.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 void MakeShop(CChar *c);
 void ScriptError(JSContext *cx, const char *txt, ...);
 
@@ -135,7 +137,7 @@ JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
             case CSP_NAME:
                 for (i = 0; i < Magic->spells.size() && !bDone; ++i) {
                     if (&Magic->spells[i] == gPriv - 1) {
-                        spellName = Dictionary->GetEntry(magic_table[i].spell_name);
+                        spellName = worldDictionary.GetEntry(magic_table[i].spell_name);
                         tString = JS_NewStringCopyZ(cx, spellName.c_str());
                         *vp = STRING_TO_JSVAL(tString);
                         bDone = true;

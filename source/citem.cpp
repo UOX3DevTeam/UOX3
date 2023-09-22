@@ -69,6 +69,8 @@
 #include "townregion.h"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 const std::uint32_t BIT_MAKERSMARK = 0;
 const std::uint32_t BIT_DOOROPEN = 1;
 const std::uint32_t BIT_PILEABLE = 2;
@@ -2153,7 +2155,7 @@ auto CItem::TextMessage(CSocket *s, std::int32_t dictEntry, float secsFromNow, s
         target = SPTRG_INDIVIDUAL;
     }
     
-    std::string txt = Dictionary->GetEntry(dictEntry, dictLang);
+    std::string txt = worldDictionary.GetEntry(dictEntry, dictLang);
     if (txt.empty())
         return;
     

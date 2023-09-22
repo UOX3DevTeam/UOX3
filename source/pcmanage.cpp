@@ -30,6 +30,8 @@
 #include "other/uoxversion.hpp"
 #include "wholist.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 template <class T> T Capped(const T value, const T minimum, const T maximum) {
@@ -622,7 +624,7 @@ void CPICreateCharacter::NewbieItems(CChar *mChar) {
     }
     CreatedItems[BANK] = Items->CreateItem(tSock, mChar, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     if (CreatedItems[BANK] != nullptr) {
-        CreatedItems[BANK]->SetName(oldstrutil::format(1024, Dictionary->GetEntry(1283), mChar->GetName().c_str()));
+        CreatedItems[BANK]->SetName(oldstrutil::format(1024, worldDictionary.GetEntry(1283), mChar->GetName().c_str()));
         CreatedItems[BANK]->SetDecayable(false);
         CreatedItems[BANK]->SetLayer(IL_BANKBOX);
         CreatedItems[BANK]->SetType(IT_CONTAINER);
@@ -1296,7 +1298,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
             
             if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART)) {
                 // message upon entering a server
-                sysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry(1208), mChar->GetName().c_str())); // message upon entering a server
+                sysBroadcast( oldstrutil::format(1024, worldDictionary.GetEntry(1208), mChar->GetName().c_str())); // message upon entering a server
             }
             ShowMessageOfTheDay(mSock);
             if (onCreate) {
@@ -1402,7 +1404,7 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     if (!ValidateObject(iCorpse))
         return nullptr;
     
-    iCorpse->SetName(oldstrutil::format(512, Dictionary->GetEntry(1612), corpseName.c_str())); // Corpse of %s
+    iCorpse->SetName(oldstrutil::format(512, worldDictionary.GetEntry(1612), corpseName.c_str())); // Corpse of %s
     iCorpse->SetCarve(mChar.GetCarve());
     iCorpse->SetMovable(2); // non-movable
     if (fallDirection) {
@@ -1674,7 +1676,7 @@ void HandleDeath(CChar *mChar, CChar *attacker) {
         if (c == nullptr)
             return;
         
-        c->SetName(Dictionary->GetEntry(1610)); // A Death Shroud
+        c->SetName(worldDictionary.GetEntry(1610)); // A Death Shroud
         mChar->SetRobe(c->GetSerial());
         c->SetLayer(IL_ROBE);
         if (c->SetCont(mChar)) {

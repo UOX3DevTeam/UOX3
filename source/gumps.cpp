@@ -33,6 +33,8 @@
 #include "wholist.h"
 #include "other/uoxversion.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 void CollectGarbage();
@@ -48,7 +50,7 @@ void TextEntryGump(CSocket *s, serial_t ser, std::uint8_t type, std::uint8_t ind
     if (s == nullptr)
         return;
     
-    std::string txt = Dictionary->GetEntry(dictEntry, s->Language());
+    std::string txt = worldDictionary.GetEntry(dictEntry, s->Language());
     if (txt.empty()) {
         Console::shared().error("Invalid text in TextEntryGump()");
         return;

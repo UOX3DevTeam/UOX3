@@ -42,6 +42,8 @@
 #include "utility/strutil.hpp"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 const std::uint32_t BIT_FREE = 0;
 const std::uint32_t BIT_DELETED = 1;
 const std::uint32_t BIT_POSTLOADED = 2;
@@ -637,7 +639,7 @@ bool CBaseObject::DumpBody(std::ostream &outStream) const {
         if (objName == "#") {
             // If character name is #, use default name from dictionary files instead - using base
             // entry 3000 + character's ID
-            objName = "#//" + Dictionary->GetEntry(3000 + id);
+            objName = "#//" + worldDictionary.GetEntry(3000 + id);
         }
     }
     

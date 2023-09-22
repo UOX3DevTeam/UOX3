@@ -30,6 +30,8 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 void OpenPlank(CItem *p);
@@ -709,7 +711,7 @@ bool CreateBodyPart(CChar *mChar, CItem *corpse, std::string partId, std::int32_
     if (!ValidateObject(toCreate))
         return false;
     
-    toCreate->SetName(util::format(Dictionary->GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
+    toCreate->SetName(util::format(worldDictionary.GetEntry(dictEntry).c_str(), corpse->GetName2().c_str()));
     toCreate->SetLocation(corpse);
     toCreate->SetOwner(corpse->GetOwnerObj());
     toCreate->SetDecayTime(BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::DECAY])));
@@ -1164,7 +1166,7 @@ void TransferTarget(CSocket *s) {
         CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
-            petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // worldMain.creatures[petChar->GetId()].CreatureType().c_str()
+            petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), worldDictionary.GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // worldMain.creatures[petChar->GetId()].CreatureType().c_str()
             // ));
             petTransferDeed->SetTempVar(CITV_MORE, petChar->GetSerial());
             petTransferDeed->SetMovable(2); // Disallow moving the deed out of the trade window
@@ -1257,7 +1259,7 @@ void NpcResurrectTarget(CChar *i) {
         return;
     
     if (i->IsNpc()) {
-        Console::shared().error(util::format(Dictionary->GetEntry(1079), i)); // Resurrect attempted on character %i.
+        Console::shared().error(util::format(worldDictionary.GetEntry(1079), i)); // Resurrect attempted on character %i.
         return;
     }
     CSocket *mSock = i->GetSocket();

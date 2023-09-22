@@ -29,6 +29,8 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 //	1.0		29th November, 2000
@@ -1438,7 +1440,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         return;
     
     va_list argptr;
-    std::string txt = Dictionary->GetEntry(dictEntry, Language());
+    std::string txt = worldDictionary.GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
     
@@ -1486,7 +1488,7 @@ void CSocket::ObjMessage(std::int32_t dictEntry, CBaseObject *getObj, float secs
     if (!ValidateObject(getObj))
         return;
     
-    std::string txt = Dictionary->GetEntry(dictEntry, Language());
+    std::string txt = worldDictionary.GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
     
@@ -1632,10 +1634,10 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
             i->GetFame() >= 10000) //  only normal players have titles now
         {
             if (i->GetId(2) == 0x91) {
-                charName = util::format(Dictionary->GetEntry(1740, Language()).c_str(), charName.c_str()); // Morrolan, added Lord/Lady to title overhead
+                charName = util::format(worldDictionary.GetEntry(1740, Language()).c_str(), charName.c_str()); // Morrolan, added Lord/Lady to title overhead
             }
             else if (i->GetId(1) == 0x90) {
-                charName = util::format(Dictionary->GetEntry(1739, Language()).c_str(), charName.c_str());
+                charName = util::format(worldDictionary.GetEntry(1739, Language()).c_str(), charName.c_str());
             }
         }
         if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE) && i->GetRace() != 0 && i->GetRace() != 65535) {// need to check for placeholder race ( )
@@ -1644,7 +1646,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
             charName += ")";
         }
         if (i->GetTownPriv() == 2) {
-            charName = util::format(Dictionary->GetEntry(1738, Language()).c_str(), charName.c_str());
+            charName = util::format(worldDictionary.GetEntry(1738, Language()).c_str(), charName.c_str());
         }
         if (!IsOnline((*i))) {
             charName += " (OFF)";
@@ -1819,7 +1821,7 @@ void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, const
 // system message
 // o------------------------------------------------------------------------------------------------o
 void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, std::uint8_t cursorType, std::int32_t dictEntry, ...) {
-    std::string txt = Dictionary->GetEntry(dictEntry, Language());
+    std::string txt = worldDictionary.GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
     
@@ -1839,7 +1841,7 @@ void CSocket::SendTargetCursor(std::uint8_t targType, std::uint8_t targId, std::
 // placement of multi
 // o------------------------------------------------------------------------------------------------o
 void CSocket::mtarget(std::uint16_t itemId, std::int32_t dictEntry) {
-    std::string txt = Dictionary->GetEntry(dictEntry, Language());
+    std::string txt = worldDictionary.GetEntry(dictEntry, Language());
     if (txt.empty())
         return;
     
@@ -2222,7 +2224,7 @@ void CSocket::OpenBank(CChar *i) {
     }
     
     // No bankbox was found, so let's create one!
-    auto temp = oldstrutil::format(1024, Dictionary->GetEntry(1283).c_str(), i->GetName().c_str()); // %s's bank box.
+    auto temp = oldstrutil::format(1024, worldDictionary.GetEntry(1283).c_str(), i->GetName().c_str()); // %s's bank box.
     bankBox = Items->CreateItem(nullptr, i, 0x09AB, 1, 0, CBaseObject::OT_ITEM);
     bankBox->SetName(temp);
     bankBox->SetLayer(IL_BANKBOX);

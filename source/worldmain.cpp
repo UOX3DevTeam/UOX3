@@ -40,7 +40,7 @@
 #include "speech.h"
 #include "townregion.h"
 
-
+extern CDictionaryContainer worldDictionary ;
 // o------------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
 // o------------------------------------------------------------------------------------------------o
@@ -384,7 +384,7 @@ void CWorldMain::SaveNewWorld(bool x) {
         SetWorldSaveProgress(SS_SAVING);
         Console::shared().printSectionBegin();
         if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCESAVE)) {
-            sysBroadcast(Dictionary->GetEntry(1615)); // World data saving, you may experience some
+            sysBroadcast(worldDictionary.GetEntry(1615)); // World data saving, you may experience some
             // lag for the next several minutes.
             SpeechSys->poll();
         }

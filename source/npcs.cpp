@@ -27,7 +27,6 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 

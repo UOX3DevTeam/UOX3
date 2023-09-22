@@ -46,6 +46,8 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	GetMsgBoardFile()
@@ -825,7 +827,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
     switch (questType) {
         case QT_ESCORTQUEST:
             msgBoardPost.toggle = QT_ESCORTQUEST;
-            tmpSubject = Dictionary->GetEntry(735); // Escort: Needed!
+            tmpSubject = worldDictionary.GetEntry(735); // Escort: Needed!
             Escort = FileLookup->FindEntry("ESCORTS", msgboard_def);
             if (Escort == nullptr) {
                 return false;
@@ -884,11 +886,11 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
             }
             break;
         case QT_BOUNTYQUEST:
-            tmpSubject = Dictionary->GetEntry(736); //  Bounty: Reward!
+            tmpSubject = worldDictionary.GetEntry(736); //  Bounty: Reward!
             msgBoardPost.toggle = QT_BOUNTYQUEST;
             break;
         case QT_ITEMQUEST:
-            tmpSubject = Dictionary->GetEntry(737); //  Lost valuable item.
+            tmpSubject = worldDictionary.GetEntry(737); //  Lost valuable item.
             msgBoardPost.toggle = QT_ITEMQUEST;
             break;
         default:

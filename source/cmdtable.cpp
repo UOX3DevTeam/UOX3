@@ -43,7 +43,9 @@
 #include "wholist.h"
 #include "worldmain.h"
 
+
 extern WorldWeather worldWeather;
+extern CDictionaryContainer worldDictionary ;
 
 using namespace std::string_literals ;
 
@@ -491,7 +493,7 @@ void Command_Shutdown() {
         worldMain.SetEndTime(BuildTimeValue(static_cast<float>(serverCommands.argument(1))));
         if (serverCommands.argument(1) == 0) {
             worldMain.SetEndTime(0);
-            sysBroadcast(Dictionary->GetEntry(36));
+            sysBroadcast(worldDictionary.GetEntry(36));
         }
         else {
             endMessage(0);
@@ -840,11 +842,11 @@ void Command_MineCheck() {
 void Command_Guards() {
     if (util::upper(serverCommands.commandString(2, 2)) == "ON") {
         ServerConfig::shared().setEnabled(ServerSwitch::GUARDSACTIVE, true);
-        sysBroadcast(Dictionary->GetEntry(61)); // Guards have been reactivated.
+        sysBroadcast(worldDictionary.GetEntry(61)); // Guards have been reactivated.
     }
     else if (util::upper(serverCommands.commandString(2, 2)) == "OFF") {
         ServerConfig::shared().setEnabled(ServerSwitch::GUARDSACTIVE, false);
-        sysBroadcast(Dictionary->GetEntry(62)); // Warning: Guards have been deactivated globally.
+        sysBroadcast(worldDictionary.GetEntry(62)); // Warning: Guards have been deactivated globally.
     }
 }
 
@@ -856,11 +858,11 @@ void Command_Guards() {
 void Command_Announce() {
     if (util::upper(serverCommands.commandString(2, 2)) == "ON") {
         ServerConfig::shared().setEnabled(ServerSwitch::ANNOUNCESAVE, true) ;
-        sysBroadcast(Dictionary->GetEntry(63)); // WorldStat Saves will be displayed.
+        sysBroadcast(worldDictionary.GetEntry(63)); // WorldStat Saves will be displayed.
     }
     else if (util::upper(serverCommands.commandString(2, 2)) == "OFF") {
         ServerConfig::shared().setEnabled(ServerSwitch::ANNOUNCESAVE, false);
-        sysBroadcast(Dictionary->GetEntry(64)); // WorldStat Saves will not be displayed.
+        sysBroadcast(worldDictionary.GetEntry(64)); // WorldStat Saves will not be displayed.
     }
 }
 
@@ -963,7 +965,7 @@ void Command_Who(CSocket *s) {
 // o------------------------------------------------------------------------------------------------o
 void Command_GMs(CSocket *s) {
     VALIDATESOCKET(s);
-    BuildWhoGump(s, CL_CNS, Dictionary->GetEntry(77, s->Language())); // Current Staff online
+    BuildWhoGump(s, CL_CNS, worldDictionary.GetEntry(77, s->Language())); // Current Staff online
 }
 
 // o------------------------------------------------------------------------------------------------o

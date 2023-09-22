@@ -49,6 +49,8 @@
 #include "uoxjspropertyspecs.h"
 #include "other/uoxversion.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 void loadTeleportLocations();
@@ -2223,7 +2225,7 @@ JSBool SE_GetDictionaryEntry(JSContext *cx, [[maybe_unused]] JSObject *obj, uint
     if (argc == 2) {
         language = static_cast<unicodetypes_t>(JSVAL_TO_INT(argv[1]));
     }
-    std::string txt = Dictionary->GetEntry(dictEntry, language);
+    std::string txt = worldDictionary.GetEntry(dictEntry, language);
     txt = oldstrutil::stringToWstringToString(txt);
     
     JSString *strTxt = nullptr;
@@ -2376,7 +2378,7 @@ JSBool SE_Reload([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj,
             Account::shared().load();
             break;
         case 10: // Reload Dictionaries
-            Dictionary->LoadDictionaries();
+            worldDictionary.LoadDictionaries();
             break;
         default:
             break;

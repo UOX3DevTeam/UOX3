@@ -103,6 +103,7 @@
 #include "wholist.h"
 
 extern WorldWeather worldWeather;
+extern CDictionaryContainer worldDictionary ;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -126,7 +127,6 @@ auto saveOnShutdown = false;
 //  Classes we will use
 // o------------------------------------------------------------------------------------------------o
 //  Non depdendent class
-auto aDictionary = CDictionaryContainer(); // no startup
 auto aCombat = CHandleCombat();            // No dependency, startup
 auto aItems = cItem();                     // No startup, no dependency
 auto aNpcs = CCharStuff();                 // nodependency, no startup
@@ -477,7 +477,7 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     // Moved BulkStartup here, dunno why that function was there...
     Console::shared() << "Loading dictionaries...        " << myendl;
-    Console::shared().printBasedOnVal( Dictionary->LoadDictionaries(ServerConfig::shared().directoryFor(dirlocation_t::LANGUAGE)) >= 0);
+    Console::shared().printBasedOnVal( worldDictionary.LoadDictionaries(ServerConfig::shared().directoryFor(dirlocation_t::LANGUAGE)) >= 0);
     
     Console::shared() << "Loading teleport               ";
     loadTeleportLocations();
@@ -1060,7 +1060,7 @@ auto endMessage([[maybe_unused]] std::int32_t x) -> void {
     if (worldMain.GetEndTime() < iGetClock) {
         worldMain.SetEndTime(iGetClock);
     }
-    sysBroadcast(util::format(Dictionary->GetEntry(1209), ((worldMain.GetEndTime() - iGetClock) / 1000) /  60)); // Server going down in %i minutes!
+    sysBroadcast(util::format(worldDictionary.GetEntry(1209), ((worldMain.GetEndTime() - iGetClock) / 1000) /  60)); // Server going down in %i minutes!
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2042,7 +2042,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 if (tSock->BytesReceived() > ServerConfig::shared().uintValues[UIntValue::MAXCLIENTBYTESIN] ) {
                     // Player has exceeded the cap! Send one warning - next time kick
                     // player
-                    tSock->SysMessage(Dictionary->GetEntry(9082, tSock->Language())); // Excessive data usage detected!
+                    tSock->SysMessage(worldDictionary.GetEntry(9082, tSock->Language())); // Excessive data usage detected!
                     // Sending too many requests to the
                     // server in a short amount of time
                     // will get you banned.
@@ -2057,7 +2057,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                 if (tSock->BytesSent() > ServerConfig::shared().uintValues[UIntValue::MAXCLIENTBYTESOUT]) {
                     // This is data sent from server, so should be more lenient before a
                     // kick (though could still be initiated by player somehow)
-                    tSock->SysMessage(Dictionary->GetEntry( 9082, tSock->Language())); // Excessive data usage detected!
+                    tSock->SysMessage(worldDictionary.GetEntry( 9082, tSock->Language())); // Excessive data usage detected!
                     // Sending too many requests to the
                     // server in a short amount of time
                     // will get you banned.
@@ -2361,7 +2361,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
                             
                             // Announce that player has logged out (if enabled)
                             if (ServerConfig::shared().enabled(ServerSwitch::ANNOUNCEJOINPART)) {
-                                sysBroadcast(oldstrutil::format(1024, Dictionary->GetEntry(752),charCheck->GetName().c_str())); // %s has left the realm.
+                                sysBroadcast(oldstrutil::format(1024, worldDictionary.GetEntry(752),charCheck->GetName().c_str())); // %s has left the realm.
                             }
                         }
                     }
@@ -2471,7 +2471,6 @@ auto initClasses() -> void {
     OffList = &aOffList;
     Books = &aBooks;
     GMQueue = &aGMQueue;
-    Dictionary = &aDictionary;
     MapRegion = &aMapRegion;
     SpeechSys = &aSpeechSys;
     CounselorQueue = &aCounselorQueue;
@@ -3307,10 +3306,10 @@ auto GetNpcDictName(CChar *mChar, CSocket *tSock, std::uint8_t requestSource) ->
         // creature names (3000) plus character's ID
         dictEntryId = static_cast<std::int32_t>(3000 + mChar->GetId());
         if (tSock) {
-            dictName = Dictionary->GetEntry(dictEntryId, tSock->Language());
+            dictName = worldDictionary.GetEntry(dictEntryId, tSock->Language());
         }
         else {
-            dictName = Dictionary->GetEntry(dictEntryId);
+            dictName = worldDictionary.GetEntry(dictEntryId);
         }
     }
     else if (IsNumber(dictName)) {
@@ -3318,10 +3317,10 @@ auto GetNpcDictName(CChar *mChar, CSocket *tSock, std::uint8_t requestSource) ->
         // that
         dictEntryId = static_cast<std::int32_t>(util::ston<std::int32_t>(dictName));
         if (tSock) {
-            dictName = Dictionary->GetEntry(dictEntryId, tSock->Language());
+            dictName = worldDictionary.GetEntry(dictEntryId, tSock->Language());
         }
         else {
-            dictName = Dictionary->GetEntry(dictEntryId);
+            dictName = worldDictionary.GetEntry(dictEntryId);
         }
     }
     
@@ -3343,10 +3342,10 @@ auto GetNpcDictTitle(CChar *mChar, CSocket *tSock) -> std::string {
         // that
         dictEntryId = static_cast<std::int32_t>(util::ston<std::int32_t>(dictTitle));
         if (tSock) {
-            dictTitle = Dictionary->GetEntry(dictEntryId, tSock->Language());
+            dictTitle = worldDictionary.GetEntry(dictEntryId, tSock->Language());
         }
         else {
-            dictTitle = Dictionary->GetEntry(dictEntryId);
+            dictTitle = worldDictionary.GetEntry(dictEntryId);
         }
     }
     

@@ -38,6 +38,8 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 // Unknown bytes
 // 5->8
@@ -5127,7 +5129,7 @@ void CPUnicodeSpeech::CopyData(CBaseObject &toCopy) {
     if (charName == "#") {
         // If character name is #, display default name from dictionary files instead - using base
         // entry 3000 + character's ID
-        charName = Dictionary->GetEntry(3000 + toCopy.GetId());
+        charName = worldDictionary.GetEntry(3000 + toCopy.GetId());
     }
     Name(charName);
 }
@@ -5219,7 +5221,7 @@ void CPUnicodeMessage::CopyData(CBaseObject &toCopy) {
     if (charName == "#") {
         // If character name is #, display default name from dictionary files instead - using base
         // entry 3000 + character's ID
-        charName = Dictionary->GetEntry(3000 + toCopy.GetId());
+        charName = worldDictionary.GetEntry(3000 + toCopy.GetId());
     }
     Name(charName);
 }
@@ -5940,7 +5942,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         }
         else {
             if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && cItem.GetRank() == 10) {
-                tempEntry.ourText = util::format(" \t%s %s\t ", cItemName.c_str(),Dictionary->GetEntry(9140, tSock->Language()).c_str()); // %s of exceptional quality
+                tempEntry.ourText = util::format(" \t%s %s\t ", cItemName.c_str(),worldDictionary.GetEntry(9140, tSock->Language()).c_str()); // %s of exceptional quality
             }
             else {
                 if (cItem.IsCorpse()) {
@@ -5990,7 +5992,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         if (ValidateObject(cItemCreator)) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             tempEntry.ourText = util::format("%s by %s", worldMain.skill[cItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
-            // tempEntry.ourText = util::format( "%s %s", Dictionary->GetEntry(
+            // tempEntry.ourText = util::format( "%s %s", worldDictionary.GetEntry(
             // 9141, tSock->Language() ).c_str(), cItemCreator->GetName().c_str()
             // ); // Crafted by %s
             FinalizeData(tempEntry, totalStringLen);
@@ -6015,20 +6017,20 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             tempEntry.ourText = util::format(
-                                             "%s", Dictionary->GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
+                                             "%s", worldDictionary.GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
             FinalizeData(tempEntry, totalStringLen);
         }
     }
     if (cItem.IsNewbie()) {
         tempEntry.stringNum = 1042971; // ~1_NOTHING~
         tempEntry.ourText =
-        util::format("%s", Dictionary->GetEntry(9055, tSock->Language()).c_str()); // [Blessed]
+        util::format("%s", worldDictionary.GetEntry(9055, tSock->Language()).c_str()); // [Blessed]
         FinalizeData(tempEntry, totalStringLen);
     }
     if (cItem.GetType() == IT_LOCKEDDOOR) {
         tempEntry.stringNum = 1042971; // ~1_NOTHING~
         tempEntry.ourText =
-        util::format("%s", Dictionary->GetEntry(9050, tSock->Language()).c_str()); // [Locked]
+        util::format("%s", worldDictionary.GetEntry(9050, tSock->Language()).c_str()); // [Locked]
         FinalizeData(tempEntry, totalStringLen);
     }
     
@@ -6082,7 +6084,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     if (cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER) {
         if (cItem.GetType() == IT_LOCKEDCONTAINER) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format("%s", Dictionary->GetEntry(9050).c_str(),
+            tempEntry.ourText = util::format("%s", worldDictionary.GetEntry(9050).c_str(),
                                              tSock->Language()); // [Locked]
             FinalizeData(tempEntry, totalStringLen);
         }
@@ -6106,7 +6108,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
     }
     else if (cItem.GetType() == IT_LOCKEDSPAWNCONT) {
         tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-        tempEntry.ourText = util::format(" \t%s\t ", Dictionary->GetEntry(9050).c_str(),
+        tempEntry.ourText = util::format(" \t%s\t ", worldDictionary.GetEntry(9050).c_str(),
                                          tSock->Language()); // [Locked]
         FinalizeData(tempEntry, totalStringLen);
     }
@@ -6125,7 +6127,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
              cItem.GetSectionId() != "potionkeg" && cItem.GetName2() != "#" &&
              cItem.GetName2() != "") {
         tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-        tempEntry.ourText = util::format(" \t%s\t ", Dictionary->GetEntry(9402).c_str(),
+        tempEntry.ourText = util::format(" \t%s\t ", worldDictionary.GetEntry(9402).c_str(),
                                          tSock->Language()); // [Unidentified]
         FinalizeData(tempEntry, totalStringLen);
     }
@@ -6446,7 +6448,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
         CTownRegion *charTownRegion = CalcRegionFromXY(mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceId());
         if (!charTownRegion->IsGuarded() && !charTownRegion->IsSafeZone()) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format("%s", Dictionary->GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
+            tempEntry.ourText = util::format("%s", worldDictionary.GetEntry(9051, tSock->Language()).c_str()); // [Guarded]
             FinalizeData(tempEntry, totalStringLen);
         }
     }

@@ -153,7 +153,6 @@
 		5611F33E2AB1492D009438EA /* serverstring.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = serverstring.cpp; sourceTree = "<group>"; };
 		5611F33F2AB1492D009438EA /* serverstring.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = serverstring.hpp; sourceTree = "<group>"; };
 		568517822ABC9E8C0052C574 /* uoxglobal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uoxglobal.cpp; sourceTree = "<group>"; };
-		568517832ABC9E8C0052C574 /* uoxglobal.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxglobal.hpp; sourceTree = "<group>"; };
 		568517A12ABDA7DB0052C574 /* ip4util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ip4util.hpp; sourceTree = "<group>"; };
 		568517A42ABDA7DB0052C574 /* ip4util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ip4util.cpp; sourceTree = "<group>"; };
 		568517A62ABDA8A20052C574 /* netutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = netutil.cpp; sourceTree = "<group>"; };
@@ -3080,7 +3079,6 @@
 				56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */,
 				56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */,
 				568517822ABC9E8C0052C574 /* uoxglobal.cpp */,
-				568517832ABC9E8C0052C574 /* uoxglobal.hpp */,
 			);
 			path = other;
 			sourceTree = "<group>";

@@ -17,6 +17,8 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 const timerval_t DEFSPAWN_NEXTTIME = 0;
@@ -51,7 +53,7 @@ onlyOutside(DEFSPAWN_ONLYOUTSIDE), isSpawner(DEFSPAWN_ISSPAWNER), call(DEFSPAWN_
 worldNumber(DEFSPAWN_WORLDNUM) {
     sItems.resize(0);
     sNpcs.resize(0);
-    name = Dictionary->GetEntry(1117);
+    name = worldDictionary.GetEntry(1117);
     // note: doesn't go here, but i'll see it here.  when an item is spawned, as soon as it's moved
     // it needs to lose it's spawn setting.  If not, then when people pick up spawned items, they
     // will disappear (on region spawns)

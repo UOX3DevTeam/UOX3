@@ -34,6 +34,8 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()
 // o------------------------------------------------------------------------------------------------o
@@ -3613,7 +3615,7 @@ bool CPIPartyCommand::Handle() {
             else {
                 tSock->SendTargetCursor(
                                         0, TARGET_PARTYADD,
-                                        Dictionary->GetEntry(
+                                        worldDictionary.GetEntry(
                                                              9003, tSock->Language())); // Select the character to add to the party
             }
             break;
@@ -3629,9 +3631,7 @@ bool CPIPartyCommand::Handle() {
                         PartyFactory::shared().Kick(tSock);
                     }
                     else { // Crap crap crap, what do we do here?
-                        tSock->SendTargetCursor(
-                                                0, TARGET_PARTYREMOVE,
-                                                Dictionary->GetEntry(9004,tSock->Language())); // Select the character to remove from the party
+                        tSock->SendTargetCursor(0, TARGET_PARTYREMOVE, worldDictionary.GetEntry(9004,tSock->Language())); // Select the character to remove from the party
                     }
                 }
                 else {

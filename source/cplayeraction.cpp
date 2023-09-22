@@ -31,6 +31,8 @@
 #include "useful.h"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 void SendTradeStatus(CItem *cont1, CItem *cont2);
@@ -208,7 +210,7 @@ bool CPIGetItem::Handle() {
     
     // In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
     if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) && ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING)) {
-        tSock->SendTargetCursor(0, 0x00000000, Dictionary->GetEntry(2862, tSock->Language()), 3); // Your hands must be free to cast spells or meditate.
+        tSock->SendTargetCursor(0, 0x00000000, worldDictionary.GetEntry(2862, tSock->Language()), 3); // Your hands must be free to cast spells or meditate.
         ourChar->StopSpell();
         if (ourChar->IsFrozen()) {
             ourChar->SetFrozen(false);
@@ -695,7 +697,7 @@ bool CPIEquipItem::Handle() {
     
     // In case player is casting a spell, cancel their targeting cursor (if enabled in INI)
     if ((ourChar->IsCasting() || ourChar->GetSpellCast() != -1) && ServerConfig::shared().enabled(ServerSwitch::INTERRUPTCASTING)) {
-        tSock->SendTargetCursor(0, 0x00000000, Dictionary->GetEntry(2862, tSock->Language()), 3); // Your hands must be free to cast spells or meditate.
+        tSock->SendTargetCursor(0, 0x00000000, worldDictionary.GetEntry(2862, tSock->Language()), 3); // Your hands must be free to cast spells or meditate.
         ourChar->StopSpell();
         if (ourChar->IsFrozen()) {
             ourChar->SetFrozen(false);
@@ -1335,7 +1337,7 @@ void DropOnSpellBook(CSocket &mSock, CChar &mChar, CItem &spellBook, CItem &iDro
         return;
     }
     
-    if (name == Dictionary->GetEntry(1605)) { // All-Spell Scroll
+    if (name == worldDictionary.GetEntry(1605)) { // All-Spell Scroll
         if (spellBook.GetSpell(0) == INVALIDSERIAL && spellBook.GetSpell(1) == INVALIDSERIAL && spellBook.GetSpell(2) == INVALIDSERIAL) {
             mSock.SysMessage(1205); // You already have a full book!
             Bounce(&mSock, &iDropped);
@@ -1988,25 +1990,25 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
         {
             if (p->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL] ) {
                 if (p->GetId(2) == 0x91) {
-                    fameTitle = util::format(Dictionary->GetEntry(1177), Races->Name(p->GetRace()).c_str()) + std::string(" ");
+                    fameTitle = util::format(worldDictionary.GetEntry(1177), Races->Name(p->GetRace()).c_str()) + std::string(" ");
                 }
                 else {
-                    fameTitle = util::format(Dictionary->GetEntry(1178), Races->Name(p->GetRace()).c_str()) + std::string(" ");
+                    fameTitle = util::format(worldDictionary.GetEntry(1178), Races->Name(p->GetRace()).c_str()) + std::string(" ");
                 }
             }
             else if (p->GetId(2) == 0x91) {
-                fameTitle = util::format(Dictionary->GetEntry(1179), theTitle.c_str()) + std::string(" ");
+                fameTitle = util::format(worldDictionary.GetEntry(1179), theTitle.c_str()) + std::string(" ");
             }
             else {
-                fameTitle =  util::format(Dictionary->GetEntry(1180), theTitle.c_str()) + std::string(" ");
+                fameTitle =  util::format(worldDictionary.GetEntry(1180), theTitle.c_str()) + std::string(" ");
             }
         }
         else {
             if (p->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL]) {
-                fameTitle = Dictionary->GetEntry(1181) + std::string(" ");
+                fameTitle = worldDictionary.GetEntry(1181) + std::string(" ");
             }
             else if (!(theTitle = util::strip(theTitle, "//")).empty()) {
-                fameTitle = util::format(Dictionary->GetEntry(1182), theTitle.c_str());
+                fameTitle = util::format(worldDictionary.GetEntry(1182), theTitle.c_str());
             }
         }
     }
@@ -2083,7 +2085,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     // Murder tags now scriptable in SECTION MURDERER - Titles.dfn
     else if (pdoll->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL]) {
         if (worldMain.murdererTags.empty()) {
-            tempstr = util::format(Dictionary->GetEntry(374, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
+            tempstr = util::format(worldDictionary.GetEntry(374, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
         }
         else if (pdoll->GetKills() < worldMain.murdererTags[0].lowBound) { // not a real murderer
             bContinue = true;
@@ -2104,7 +2106,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         }
     }
     else if (pdoll->IsCriminal()) {
-        tempstr = util::format(Dictionary->GetEntry(373, sLang),  pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
+        tempstr = util::format(worldDictionary.GetEntry(373, sLang),  pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
     }
     else {
         bContinue = true;
@@ -2120,7 +2122,7 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         if (pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2) {// TownTitle
             if (pdoll->GetTownPriv() == 2) { // is Mayor
                 tempstr =
-                util::format(Dictionary->GetEntry(379, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(), worldMain.townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str());
+                util::format(worldDictionary.GetEntry(379, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(), worldMain.townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str());
             }
             else { // is Resident
                 tempstr = pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + " of " + worldMain.townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
@@ -3222,10 +3224,10 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
         case IT_LOCKEDCONTAINER: // containers
         case IT_LOCKEDSPAWNCONT: // spawn containers
             dataToAdd = std::string(" (") + util::ntos(static_cast<std::int32_t>(i->GetContainsList()->Num())) + std::string(" items, ");
-            dataToAdd += util::ntos((i->GetWeight() / 100)) + std::string(" stones) " + Dictionary->GetEntry(9050, s->Language())); // [Locked]
+            dataToAdd += util::ntos((i->GetWeight() / 100)) + std::string(" stones) " + worldDictionary.GetEntry(9050, s->Language())); // [Locked]
             break;
         case IT_LOCKEDDOOR:
-            dataToAdd = " " + Dictionary->GetEntry(9050); // [Locked]
+            dataToAdd = " " + worldDictionary.GetEntry(9050); // [Locked]
             break;
         case IT_RECALLRUNE:
         case IT_GATE:
@@ -3241,25 +3243,25 @@ const char *AppendData(CSocket *s, CItem *i, std::string &currentName) {
     if (i->IsLockedDown()) {
         auto iMultiObj = i->GetMultiObj();
         if (ValidateObject(iMultiObj) && iMultiObj->IsSecureContainer(i)) {
-            dataToAdd += Dictionary->GetEntry(9052, s->Language()); // [locked down & secure]
+            dataToAdd += worldDictionary.GetEntry(9052, s->Language()); // [locked down & secure]
         }
         else {
-            dataToAdd += Dictionary->GetEntry(9053, s->Language()); // [locked down]
+            dataToAdd += worldDictionary.GetEntry(9053, s->Language()); // [locked down]
         }
     }
     if (i->IsGuarded()) {
         CTownRegion *itemTownRegion = i->GetRegion();
         if (!itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone()) {
-            dataToAdd += " " + Dictionary->GetEntry(9051, s->Language()); // [Guarded]
+            dataToAdd += " " + worldDictionary.GetEntry(9051, s->Language()); // [Guarded]
         }
     }
     if (i->IsNewbie()) {
-        dataToAdd += " " + Dictionary->GetEntry(9055, s->Language()); // [Blessed]
+        dataToAdd += " " + worldDictionary.GetEntry(9055, s->Language()); // [Blessed]
     }
     
     // Is the item a magical item, and unidentified?
     if (!i->IsCorpse() && i->GetName2() != "#" && i->GetName2() != "") {
-        s->ObjMessage(Dictionary->GetEntry(9402, s->Language()), i); // [Unidentified]
+        s->ObjMessage(worldDictionary.GetEntry(9402, s->Language()), i); // [Unidentified]
     }
     
     currentName += dataToAdd;
@@ -3345,7 +3347,7 @@ bool CPISingleClick::Handle() {
     // todo( "We need to update this to use GetTileName almost exclusively, for plurality" );
     if (i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK)[0] != '#') {
         if (i->GetId() == 0x0ED5) { // guildstone
-            realname = util::format(Dictionary->GetEntry(101, tSock->Language()).c_str(), i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
+            realname = util::format(worldDictionary.GetEntry(101, tSock->Language()).c_str(), i->GetNameRequest(tSock->CurrcharObj(), NRS_SINGLECLICK).c_str());
         }
         if (!i->IsPileable() || getAmount == 1) {
             if (mChar->IsGM() && !i->IsCorpse() && getAmount > 1) {
@@ -3367,7 +3369,7 @@ bool CPISingleClick::Handle() {
     
     if (i->GetType() == IT_MAGICWAND) {
         if (i->GetName2() == "#" || i->GetName2() == "") {
-            realname += util::format(Dictionary->GetEntry(9404, tSock->Language()), i->GetTempVar(CITV_MOREZ)); // with %d charges
+            realname += util::format(worldDictionary.GetEntry(9404, tSock->Language()), i->GetTempVar(CITV_MOREZ)); // with %d charges
         }
         else {
             realname += " (unidentified)";
@@ -3392,7 +3394,7 @@ bool CPISingleClick::Handle() {
         if (ValidateObject(mCreator)) {
             if (ServerConfig::shared().enabled(ServerSwitch::RANKSYSTEM) && i->GetRank() == 10) {
                 std::string creatorName = GetNpcDictName(mCreator, tSock, NRS_SINGLECLICK);
-                temp2 += util::format(" %s", Dictionary->GetEntry(9140, tSock->Language()).c_str()); // of exceptional quality
+                temp2 += util::format(" %s", worldDictionary.GetEntry(9140, tSock->Language()).c_str()); // of exceptional quality
                 
                 if (ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && i->IsMarkedByMaker()) {
                     temp2 += util::format(" %s by %s", worldMain.skill[i->GetMadeWith() - 1].madeWord.c_str(), creatorName.c_str()); //  [crafted] by %s

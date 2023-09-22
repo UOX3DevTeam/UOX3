@@ -58,6 +58,8 @@
 #include "configuration/serverconfig.hpp"
 #include "townregion.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 bool BuyShop(CSocket *s, CChar *c);
 void CallGuards(CChar *mChar);
 
@@ -765,7 +767,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                     }
                     nearbyNpc->SetTrainingPlayerIn(255); // Like above, this is to prevent  errors when a player says "train
                     // <skill>" then doesn't pay the npc
-                    temp = Dictionary->GetEntry(1303); // I can teach thee the following skills:
+                    temp = worldDictionary.GetEntry(1303); // I can teach thee the following skills:
                     std::uint8_t skillsToTrainIn = 0;
                     std::uint8_t lastCommaPos = 0;
                     for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
@@ -809,20 +811,20 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         continue;
                     }
                     if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) > 10) {
-                        temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),  util::lower(worldMain.skill[skill].name).c_str()); // Thou wishest to learn of  %s?
+                        temp = oldstrutil::format(maxsize, worldDictionary.GetEntry(1304),  util::lower(worldMain.skill[skill].name).c_str()); // Thou wishest to learn of  %s?
                         if (mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)) >= 250) {
-                            temp += Dictionary->GetEntry(1305); // I can teach thee no more than thou already knowest!
+                            temp += worldDictionary.GetEntry(1305); // I can teach thee no more than thou already knowest!
                         }
                         else {
                             if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) <= 250) {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
-                                temp2 = oldstrutil::format(maxsize, Dictionary->GetEntry(1306), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2 / 10), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2) - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
+                                temp2 = oldstrutil::format(maxsize, worldDictionary.GetEntry(1306), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2 / 10), static_cast<std::int32_t>(nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) / 2) - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             else {
                                 // Very well I, can train thee up to the level of %i percent for %i
                                 // gold. Pay for less and I shall teach thee less.
-                                temp2 = oldstrutil::format(maxsize, Dictionary->GetEntry(1306), 25, 250 - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
+                                temp2 = oldstrutil::format(maxsize, worldDictionary.GetEntry(1306), 25, 250 - mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)));
                             }
                             temp += " " + temp2;
                             mSock->TempObj(nearbyNpc);
@@ -893,7 +895,7 @@ bool CPetMultiResponse::Handle(CSocket *mSock, CChar *mChar, CChar *petNpc) {
         if (npcName == "#") {
             // If character name is #, use default name from dictionary files instead - using base
             // entry 3000 + character's ID
-            npcName = Dictionary->GetEntry(3000 + petNpc->GetId());
+            npcName = worldDictionary.GetEntry(3000 + petNpc->GetId());
         }
         
         if (FindString(ourText, util::upper(npcName))) {

@@ -35,6 +35,8 @@
 #include "utility/strutil.hpp"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 CMagic *Magic = nullptr;
@@ -1448,7 +1450,7 @@ bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_
             i->SetTag("multiSerial", tagObject);
             markedInMulti = true;
             
-            std::string tempRuneName = util::format(Dictionary->GetEntry(684),  multi->GetNameRequest(caster, NRS_SYSTEM).c_str()); // A recall rune for %s.
+            std::string tempRuneName = util::format(worldDictionary.GetEntry(684),  multi->GetNameRequest(caster, NRS_SYSTEM).c_str()); // A recall rune for %s.
             if (tempRuneName.length() > 0) {
                 i->SetName(tempRuneName);
             }
@@ -1465,10 +1467,10 @@ bool splMark(CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] std::int8_
         std::string tempitemname;
         
         if (caster->GetRegion()->GetName()[0] != 0) {
-            tempitemname = util::format(Dictionary->GetEntry(684), caster->GetRegion()->GetName().c_str()); // A recall rune for %s.
+            tempitemname = util::format(worldDictionary.GetEntry(684), caster->GetRegion()->GetName().c_str()); // A recall rune for %s.
         }
         else {
-            tempitemname = Dictionary->GetEntry(685); // A recall rune for An Unknown Location.
+            tempitemname = worldDictionary.GetEntry(685); // A recall rune for An Unknown Location.
         }
         i->SetName(tempitemname);
         
@@ -3421,7 +3423,7 @@ bool CMagic::RegMsg(CChar *s, Reag_st failmsg) {
     char message[100] = {0,};
     
     // Copy dictionary message into char array
-    strcopy(message, 100, Dictionary->GetEntry(702).c_str()); // You do not have enough reagents to cast that spell.
+    strcopy(message, 100, worldDictionary.GetEntry(702).c_str()); // You do not have enough reagents to cast that spell.
     
     // Create temporary string to hold info on our missing reagents
     std::string tempString;
@@ -3552,7 +3554,7 @@ bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     
     if (mSock->GetCursorItem() != nullptr) {
         // Player is holding an item, disallow casting while holding items on the cursor
-        mSock->SysMessage(Dictionary->GetEntry(2862, mSock->Language())); // Your hands must be free to cast spells or meditate.
+        mSock->SysMessage(worldDictionary.GetEntry(2862, mSock->Language())); // Your hands must be free to cast spells or meditate.
         return false;
     }
     
@@ -3582,7 +3584,7 @@ bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     
     mChar->SetSpellCast(static_cast<std::int8_t>(num));
     if (num > 63 && num <= static_cast<std::int32_t>(spellCount) && spellCount <= 70) {
-        LogSpell(Dictionary->GetEntry(magic_table[num].spell_name), mChar, nullptr, "(Attempted)");
+        LogSpell(worldDictionary.GetEntry(magic_table[num].spell_name), mChar, nullptr, "(Attempted)");
     }
     if (mChar->IsJailed() && !mChar->IsGM()) {
         mSock->SysMessage(704); // You are in jail and cannot cast spells!
@@ -3935,7 +3937,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
     }
     
     if (curSpell > 63 && static_cast<std::uint32_t>(curSpell) <= spellCount && spellCount <= 70) {
-        LogSpell(Dictionary->GetEntry(magic_table[curSpell].spell_name), caster, nullptr, "(Succeeded)");
+        LogSpell(worldDictionary.GetEntry(magic_table[curSpell].spell_name), caster, nullptr, "(Succeeded)");
     }
     
     if (spells[curSpell].RequireTarget()) {// target spells if true

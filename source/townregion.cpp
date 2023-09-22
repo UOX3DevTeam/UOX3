@@ -23,6 +23,8 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 // Implementation of town regions
 
 const std::int8_t MAYOR = 0x01;
@@ -74,8 +76,8 @@ CTownRegion::CTownRegion(std::uint16_t region) : regionNum(region), numGuards(DE
     alliedTowns.resize(0);
     orePreferences.resize(0);
     locations.resize(0);
-    name = Dictionary->GetEntry(1117);
-    guardowner = Dictionary->GetEntry(1118);
+    name = worldDictionary.GetEntry(1117);
+    guardowner = worldDictionary.GetEntry(1118);
     guardList = "guard";
     goodList.clear();
 }
@@ -1010,9 +1012,9 @@ void CTownRegion::SendPotentialMember(CSocket *sock) {
     
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
     
-    toSend.addText(util::format(Dictionary->GetEntry(1127, sLang), GetPopulation()));
-    toSend.addText(Dictionary->GetEntry(1128, sLang));
-    toSend.addText(Dictionary->GetEntry(1129, sLang));
+    toSend.addText(util::format(worldDictionary.GetEntry(1127, sLang), GetPopulation()));
+    toSend.addText(worldDictionary.GetEntry(1128, sLang));
+    toSend.addText(worldDictionary.GetEntry(1129, sLang));
     
     toSend.Finalize();
     sock->Send(&toSend);
@@ -1060,15 +1062,15 @@ void CTownRegion::SendMayorGump(CSocket *sock) {
     toSend.addCommand(util::format("button 25 191 %u %i 1 0 26", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1)); // make ally of other town
     
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
-    toSend.addText(util::format(Dictionary->GetEntry(1130, sLang), GetPopulation()));
-    toSend.addText(Dictionary->GetEntry(1131, sLang));
-    toSend.addText(Dictionary->GetEntry(1132, sLang));
-    toSend.addText(Dictionary->GetEntry(1133, sLang));
-    toSend.addText(Dictionary->GetEntry(1134, sLang));
-    toSend.addText(Dictionary->GetEntry(1135, sLang));
-    toSend.addText(Dictionary->GetEntry(1136, sLang));
-    toSend.addText(util::format(Dictionary->GetEntry(1137, sLang), goldReserved));
-    toSend.addText(Dictionary->GetEntry(1138, sLang));
+    toSend.addText(util::format(worldDictionary.GetEntry(1130, sLang), GetPopulation()));
+    toSend.addText(worldDictionary.GetEntry(1131, sLang));
+    toSend.addText(worldDictionary.GetEntry(1132, sLang));
+    toSend.addText(worldDictionary.GetEntry(1133, sLang));
+    toSend.addText(worldDictionary.GetEntry(1134, sLang));
+    toSend.addText(worldDictionary.GetEntry(1135, sLang));
+    toSend.addText(worldDictionary.GetEntry(1136, sLang));
+    toSend.addText(util::format(worldDictionary.GetEntry(1137, sLang), goldReserved));
+    toSend.addText(worldDictionary.GetEntry(1138, sLang));
     
     toSend.Finalize();
     sock->Send(&toSend);
@@ -1117,20 +1119,20 @@ void CTownRegion::SendDefaultGump(CSocket *sock) {
     CChar *mChar = sock->CurrcharObj();
     unicodetypes_t sLang = sock->Language();
     toSend.addText(util::format("%s (%s)", name.c_str(), Races->Name(race).c_str()));
-    toSend.addText(util::format(Dictionary->GetEntry(1139, sLang), GetPopulation()));
-    toSend.addText(Dictionary->GetEntry(1140, sLang));
-    toSend.addText(Dictionary->GetEntry(1141, sLang));
-    toSend.addText(util::format(Dictionary->GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
-    toSend.addText(Dictionary->GetEntry(1143, sLang));
-    toSend.addText(Dictionary->GetEntry(1144, sLang));
-    toSend.addText(Dictionary->GetEntry(1145, sLang));
-    toSend.addText(Dictionary->GetEntry(1146, sLang));
-    toSend.addText(Dictionary->GetEntry(1147, sLang));
+    toSend.addText(util::format(worldDictionary.GetEntry(1139, sLang), GetPopulation()));
+    toSend.addText(worldDictionary.GetEntry(1140, sLang));
+    toSend.addText(worldDictionary.GetEntry(1141, sLang));
+    toSend.addText(util::format(worldDictionary.GetEntry(1142, sLang), mChar->GetTownTitle() ? "Off" : "On"));
+    toSend.addText(worldDictionary.GetEntry(1143, sLang));
+    toSend.addText(worldDictionary.GetEntry(1144, sLang));
+    toSend.addText(worldDictionary.GetEntry(1145, sLang));
+    toSend.addText(worldDictionary.GetEntry(1146, sLang));
+    toSend.addText(worldDictionary.GetEntry(1147, sLang));
     
     if (mChar->GetTownPriv() == 2 || mChar->IsGM()) { // if we've got a mayor (remove isGM check!)
         toSend.addCommand(util::format("button 25 281 %u %i 1 0 20", ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT], ServerConfig::shared().ushortValues[UShortValue::BUTTONRIGHT] + 1));
         toSend.addCommand(util::format("text 55 281 %u 11", ServerConfig::shared().ushortValues[UShortValue::LEFTTEXTCOLOR]));
-        toSend.addText(Dictionary->GetEntry(1148, sLang));
+        toSend.addText(worldDictionary.GetEntry(1148, sLang));
     }
     toSend.Finalize();
     sock->Send(&toSend);
@@ -1150,7 +1152,7 @@ size_t CTownRegion::GetPopulation() const { return townMember.size(); }
 // o------------------------------------------------------------------------------------------------o
 void CTownRegion::DisplayTownMembers(CSocket *sock) {
     CGumpDisplay townListing(sock, 300, 300);
-    townListing.setTitle(Dictionary->GetEntry(1149, sock->Language()));
+    townListing.setTitle(worldDictionary.GetEntry(1149, sock->Language()));
     CChar *sChar = sock->CurrcharObj();
     for (size_t counter = 0; counter < townMember.size(); ++counter) {
         CChar *townChar = CalcCharObjFromSer(townMember[counter].townMember);
@@ -1306,10 +1308,10 @@ bool CTownRegion::PurchaseGuard(CSocket *sock, std::uint8_t number) {
 bool CTownRegion::ViewBudget(CSocket *sock) {
     unicodetypes_t sLang = sock->Language();
     CGumpDisplay Budget(sock, 300, 300);
-    Budget.setTitle(Dictionary->GetEntry(1161, sLang));                 // Budget
-    Budget.AddData(Dictionary->GetEntry(1162, sLang), guardsPurchased); // Guards Bought
-    Budget.AddData(Dictionary->GetEntry(1163, sLang), numGuards);       // Guards Total
-    Budget.AddData(Dictionary->GetEntry(1164, sLang), numGuards * 20);  // Guard Upkeep
+    Budget.setTitle(worldDictionary.GetEntry(1161, sLang));                 // Budget
+    Budget.AddData(worldDictionary.GetEntry(1162, sLang), guardsPurchased); // Guards Bought
+    Budget.AddData(worldDictionary.GetEntry(1163, sLang), numGuards);       // Guards Total
+    Budget.AddData(worldDictionary.GetEntry(1164, sLang), numGuards * 20);  // Guard Upkeep
     Budget.Send(4, false, INVALIDSERIAL);
     
     return true;
@@ -1509,7 +1511,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
         
         CSocket *targetSock = targetChar->GetSocket();
         if (targetSock != nullptr) {
-            std::string txt = Dictionary->GetEntry(dictEntry, targetSock->Language());
+            std::string txt = worldDictionary.GetEntry(dictEntry, targetSock->Language());
             std::string msg = "TOWN: ";
             va_list argptr;
             va_start(argptr, dictEntry);
@@ -1560,7 +1562,7 @@ void CTownRegion::SetRace(raceid_t newRace) { race = newRace; }
 void CTownRegion::SendAlliedTowns(CSocket *sock) {
     CGumpDisplay Ally(sock, 300, 300);
     
-    auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(), alliedTowns.size()); // Allied Towns (%i)
+    auto temp = util::format(worldDictionary.GetEntry(1173, sock->Language()).c_str(), alliedTowns.size()); // Allied Towns (%i)
     Ally.setTitle(temp);
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
         Ally.AddData(worldMain.townRegions[alliedTowns[counter]]->GetName(), " ");

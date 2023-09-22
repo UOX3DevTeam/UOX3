@@ -61,6 +61,5 @@ public:
     auto GetEntry(int message_number, const unicodetypes_t toDisp = ZERO) -> std::string &;
 };
 
-extern CDictionaryContainer *Dictionary;
 
 #endif

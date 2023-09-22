@@ -1,9 +1,9 @@
 //
 
-#include "uoxglobal.hpp"
 
-#include <algorithm>
-#include <stdexcept>
+#include "dictionary.h"
+#include "type/weather.hpp"
+#include "worldmain.h"
 
 
 using namespace std::string_literals ;
@@ -21,3 +21,4 @@ using namespace std::string_literals ;
 
 WorldWeather worldWeather ;
 CWorldMain worldMain ;
+CDictionaryContainer worldDictionary;

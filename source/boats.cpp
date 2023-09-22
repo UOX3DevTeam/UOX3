@@ -21,6 +21,8 @@
 #include "utility/strutil.hpp"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 #define XP 0
 #define YP 1
 
@@ -516,14 +518,14 @@ bool CreateBoat(CSocket *s, CBoatObj *b, std::uint8_t id2, std::uint8_t boattype
     if (tiller == nullptr)
         return false;
     
-    std::string dictName = s != nullptr ? Dictionary->GetEntry(2035, s->Language()) : Dictionary->GetEntry(2035);
+    std::string dictName = s != nullptr ? worldDictionary.GetEntry(2035, s->Language()) : worldDictionary.GetEntry(2035);
     if (b->GetName().length() > 0 && b->GetName() != dictName) { // a ship
-        std::string tillerNameDict = s != nullptr ? Dictionary->GetEntry(2033, s->Language()) : Dictionary->GetEntry(2033); // The tiller man of %s
+        std::string tillerNameDict = s != nullptr ? worldDictionary.GetEntry(2033, s->Language()) : worldDictionary.GetEntry(2033); // The tiller man of %s
         auto sPos = tillerNameDict.find("%s");
         tiller->SetName(tillerNameDict.replace(sPos, 2, b->GetName()));
     }
     else {
-        tiller->SetName(Dictionary->GetEntry(1409)); // a tiller man
+        tiller->SetName(worldDictionary.GetEntry(1409)); // a tiller man
     }
     tiller->SetType(IT_TILLER);
     tiller->SetTempVar(CITV_MOREX, boattype);
@@ -988,7 +990,7 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
             }
             
             // Check if player provided anything after the actual set name command
-            std::string cmdString = util::upper(Dictionary->GetEntry(1425, mLang)); // SET NAME
+            std::string cmdString = util::upper(worldDictionary.GetEntry(1425, mLang)); // SET NAME
             if (util::upper(ourText).size() == cmdString.size()) {
                 tiller->TextMessage(mSock, 12); // Can ya say that again with an actual name, sir?
                 return;
@@ -1013,13 +1015,13 @@ void CBoatResponse::Handle(CSocket *mSock, CChar *mChar) {
             // name there and not just empty spaces!
             ourText = util::trim(ourText);
             if (ourText.size() == 0) {
-                boat->SetName(Dictionary->GetEntry(2035, mLang));   // a ship
-                tiller->SetName(Dictionary->GetEntry(1409, mLang)); // a tiller man
+                boat->SetName(worldDictionary.GetEntry(2035, mLang));   // a ship
+                tiller->SetName(worldDictionary.GetEntry(1409, mLang)); // a tiller man
                 tiller->TextMessage(mSock, 2030);                   // This ship now has no name.
                 return;
             }
             
-            std::string tillerNameDict = Dictionary->GetEntry(2033, mLang); // The tiller man of %s
+            std::string tillerNameDict = worldDictionary.GetEntry(2033, mLang); // The tiller man of %s
             if (tillerNameDict.size() + ourText.size() > MAX_NAME - 1) {
                 mSock->SysMessage(1944); // That name is too long.
                 return;
@@ -1104,7 +1106,7 @@ void ModelBoat(CSocket *s, CBoatObj *i) {
         if (i->GetName().length() > 0) {
             // Apply boat's name to the ship model
             std::string shipModelNameDict =
-            Dictionary->GetEntry(2037, s->Language()); // %s [Dry Docked]
+            worldDictionary.GetEntry(2037, s->Language()); // %s [Dry Docked]
             auto sPos = shipModelNameDict.find("%s");
             model->SetName(shipModelNameDict.replace(sPos, 2, i->GetName()));
             

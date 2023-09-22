@@ -80,6 +80,8 @@
 #include "townregion.h"
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 #define DEBUGMOVEMULTIPLIER 1.75
 
 // Bitmask bits
@@ -4320,7 +4322,7 @@ void CChar::TextMessage(CSocket *s, std::int32_t dictEntry, speechtype_t msgType
         dictLang = s->Language();
     }
     
-    std::string txt = Dictionary->GetEntry(dictEntry, dictLang);
+    std::string txt = worldDictionary.GetEntry(dictEntry, dictLang);
     if (!txt.empty()) {
         va_list argptr;
         va_start(argptr, spamTimer);
@@ -7414,7 +7416,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
             Fame(attacker, GetFame());
         }
         if ((!attacker->IsNpc()) && (!IsNpc())) {
-            Console::shared().log(util::format(Dictionary->GetEntry(1617), GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
+            Console::shared().log(util::format(worldDictionary.GetEntry(1617), GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
         }
         
         Combat->Kill(attacker, this);

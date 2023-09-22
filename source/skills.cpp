@@ -30,6 +30,8 @@
 
 #include "weight.h"
 
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 bool CheckItemRange(CChar *mChar, CItem *i);
@@ -961,7 +963,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
                                         break; // right next to you.
                                 }
                                 auto tempName = GetNpcDictName(tempChar, nullptr, NRS_SYSTEM);
-                                line = tempName + " "s + Dictionary->GetEntry(dirMessage, mLang);
+                                line = tempName + " "s + worldDictionary.GetEntry(dirMessage, mLang);
                                 toSend.AddResponse(worldMain.creatures[id].Icon(), 0, line);
                             }
                         }

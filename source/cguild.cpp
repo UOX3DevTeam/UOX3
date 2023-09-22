@@ -23,6 +23,9 @@
 #include "townregion.h"
 #include "osunique.hpp"
 #include "useful.h"
+
+extern CDictionaryContainer worldDictionary ;
+
 using namespace std::string_literals;
 
 CGuildCollection *GuildSys;
@@ -686,7 +689,7 @@ void CGuild::TellMembers(std::int32_t dictEntry, ...) {
         CSocket *targetSock = targetChar->GetSocket();
         if (targetSock != nullptr) {
             std::string txt = "GUILD: ";
-            txt += Dictionary->GetEntry(dictEntry, targetSock->Language());
+            txt += worldDictionary.GetEntry(dictEntry, targetSock->Language());
             
             va_list argptr;
             va_start(argptr, dictEntry);
@@ -949,108 +952,108 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
             break;
         case BasePage + 1:
             numButtons = 10; // Main menu
-            toSend.addText(Dictionary->GetEntry(102, sLang));
-            toSend.addText(Dictionary->GetEntry(103, sLang));
-            toSend.addText(Dictionary->GetEntry(104, sLang));
-            toSend.addText(Dictionary->GetEntry(105, sLang));
-            toSend.addText(util::format(Dictionary->GetEntry(106, sLang), guildFealty.c_str()));
-            toSend.addText(util::format(Dictionary->GetEntry(107, sLang), toggle.c_str()));
-            toSend.addText(Dictionary->GetEntry(108, sLang));
-            toSend.addText(Dictionary->GetEntry(109, sLang));
-            toSend.addText(util::format(Dictionary->GetEntry(110, sLang), gName.c_str()));
-            toSend.addText(util::format(Dictionary->GetEntry(111, sLang), gName.c_str()));
-            toSend.addText(Dictionary->GetEntry(112, sLang));
+            toSend.addText(worldDictionary.GetEntry(102, sLang));
+            toSend.addText(worldDictionary.GetEntry(103, sLang));
+            toSend.addText(worldDictionary.GetEntry(104, sLang));
+            toSend.addText(worldDictionary.GetEntry(105, sLang));
+            toSend.addText(util::format(worldDictionary.GetEntry(106, sLang), guildFealty.c_str()));
+            toSend.addText(util::format(worldDictionary.GetEntry(107, sLang), toggle.c_str()));
+            toSend.addText(worldDictionary.GetEntry(108, sLang));
+            toSend.addText(worldDictionary.GetEntry(109, sLang));
+            toSend.addText(util::format(worldDictionary.GetEntry(110, sLang), gName.c_str()));
+            toSend.addText(util::format(worldDictionary.GetEntry(111, sLang), gName.c_str()));
+            toSend.addText(worldDictionary.GetEntry(112, sLang));
             
             if (mChar->GetSerial() == gMaster || mChar->IsGM()) // Guildmaster Access?
             {
                 ++numButtons;
-                toSend.addText(util::format(Dictionary->GetEntry(113, sLang), gMstr->GetGuildTitle().c_str()));
+                toSend.addText(util::format(worldDictionary.GetEntry(113, sLang), gMstr->GetGuildTitle().c_str()));
             }
             break;
         case BasePage + 2:
             numButtons = 16; // Guildmaster menu
-            toSend.addText(Dictionary->GetEntry(114, sLang));
-            toSend.addText(Dictionary->GetEntry(115, sLang));
-            toSend.addText(Dictionary->GetEntry(116, sLang));
-            toSend.addText(util::format(Dictionary->GetEntry(117, sLang), guildt.c_str()));
+            toSend.addText(worldDictionary.GetEntry(114, sLang));
+            toSend.addText(worldDictionary.GetEntry(115, sLang));
+            toSend.addText(worldDictionary.GetEntry(116, sLang));
+            toSend.addText(util::format(worldDictionary.GetEntry(117, sLang), guildt.c_str()));
             for (tCounter = 118; tCounter <= 130; ++tCounter) {
-                toSend.addText(Dictionary->GetEntry(tCounter, sLang));
+                toSend.addText(worldDictionary.GetEntry(tCounter, sLang));
             }
             break;
         case BasePage + 3:
             numButtons = 4; // Guild type
-            toSend.addText(Dictionary->GetEntry(131, sLang));
-            toSend.addText(Dictionary->GetEntry(133, sLang));
-            toSend.addText(Dictionary->GetEntry(134, sLang));
-            toSend.addText(Dictionary->GetEntry(135, sLang));
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(131, sLang));
+            toSend.addText(worldDictionary.GetEntry(133, sLang));
+            toSend.addText(worldDictionary.GetEntry(134, sLang));
+            toSend.addText(worldDictionary.GetEntry(135, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             break;
         case BasePage + 4:
             numButtons = 3; // Set charter
-            toSend.addText(Dictionary->GetEntry(136, sLang));
-            toSend.addText(Dictionary->GetEntry(138, sLang));
-            toSend.addText(Dictionary->GetEntry(139, sLang));
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(136, sLang));
+            toSend.addText(worldDictionary.GetEntry(138, sLang));
+            toSend.addText(worldDictionary.GetEntry(139, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             break;
         case BasePage + 5:
             numButtons = 3; // View charter
-            toSend.addText(Dictionary->GetEntry(140, sLang));
+            toSend.addText(worldDictionary.GetEntry(140, sLang));
             toSend.addText(gList[trgGuild]->Charter());
-            toSend.addText(util::format(Dictionary->GetEntry(142, sLang), gList[trgGuild]->Webpage().c_str()));
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(util::format(worldDictionary.GetEntry(142, sLang), gList[trgGuild]->Webpage().c_str()));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             break;
         case BasePage + 6: // List of recruits
-            toSend.addText(Dictionary->GetEntry(143, sLang));
+            toSend.addText(worldDictionary.GetEntry(143, sLang));
             tCtr = 0;
             for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 7: // List of members
-            toSend.addText(Dictionary->GetEntry(144, sLang));
+            toSend.addText(worldDictionary.GetEntry(144, sLang));
             tCtr = 0;
             for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 8: // Member dismiss
-            toSend.addText(Dictionary->GetEntry(145, sLang));
+            toSend.addText(worldDictionary.GetEntry(145, sLang));
             tCtr = 0;
             for (tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 9: // Dismiss recruit
-            toSend.addText(Dictionary->GetEntry(146, sLang));
+            toSend.addText(worldDictionary.GetEntry(146, sLang));
             tCtr = 0;
             for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 10: // Accept recruit
-            toSend.addText(Dictionary->GetEntry(147, sLang));
+            toSend.addText(worldDictionary.GetEntry(147, sLang));
             tCtr = 0;
             for (tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit()) {
                 toSend.addText(CalcCharObjFromSer(tChar)->GetNameRequest(mChar, NRS_GUILD));
                 ++tCtr;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 11: // War list
-            toSend.addText(Dictionary->GetEntry(148, sLang));
+            toSend.addText(worldDictionary.GetEntry(148, sLang));
             tCtr = 0;
             ourList = gList[trgGuild]->GuildRelationList();
             toCheck = ourList->begin();
@@ -1061,11 +1064,11 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 }
                 ++toCheck;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 13: // Declare war list
-            toSend.addText(Dictionary->GetEntry(149, sLang));
+            toSend.addText(worldDictionary.GetEntry(149, sLang));
             tCtr = 0;
             ourList = gList[trgGuild]->GuildRelationList();
             toCheck = ourList->begin();
@@ -1076,11 +1079,11 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 }
                 ++toCheck;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 14: // Declare peace list
-            toSend.addText(Dictionary->GetEntry(150, sLang));
+            toSend.addText(worldDictionary.GetEntry(150, sLang));
             tCtr = 0;
             ourList = gList[trgGuild]->GuildRelationList();
             toCheck = ourList->begin();
@@ -1091,14 +1094,14 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 }
                 ++toCheck;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 15: // List of guilds warring on us
         case BasePage + 16: // Display recruit information
             numButtons = 1;
             toSend.addText("Unfilled functionality");
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             break;
         case BasePage + 17: // Display member information
             CChar *kChar;
@@ -1135,10 +1138,10 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 numButtons = 1;
                 toSend.addText("Unknown player");
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             break;
         case BasePage + 18: // Ally list
-            toSend.addText(Dictionary->GetEntry(151, sLang));
+            toSend.addText(worldDictionary.GetEntry(151, sLang));
             tCtr = 0;
             ourList = gList[trgGuild]->GuildRelationList();
             toCheck = ourList->begin();
@@ -1149,11 +1152,11 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 }
                 ++toCheck;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
         case BasePage + 19: // Declare Ally list
-            toSend.addText(Dictionary->GetEntry(152, sLang));
+            toSend.addText(worldDictionary.GetEntry(152, sLang));
             tCtr = 0;
             ourList = gList[trgGuild]->GuildRelationList();
             toCheck = ourList->begin();
@@ -1164,7 +1167,7 @@ void CGuildCollection::Menu(CSocket *s, std::int16_t menu, guildid_t trgGuild, s
                 }
                 ++toCheck;
             }
-            toSend.addText(Dictionary->GetEntry(130, sLang));
+            toSend.addText(worldDictionary.GetEntry(130, sLang));
             numButtons = ++tCtr;
             break;
     }
@@ -1274,7 +1277,7 @@ void CGuildCollection::TransportGuildStone(CSocket *s, guildid_t guildId) {
             gTransportStone->SetNewbie(true);
             gTransportStone->SetWeight(1, true);
             gTransportStone->SetType(IT_GUILDSTONE);
-            gTransportStone->SetName(util::format(Dictionary->GetEntry(101), gList[guildId]->Name().c_str()));
+            gTransportStone->SetName(util::format(worldDictionary.GetEntry(101), gList[guildId]->Name().c_str()));
             CItem *gStone = CalcItemObjFromSer(gList[guildId]->Stone());
             gStone->Delete();
             
@@ -1714,7 +1717,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
             Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial()));
             return;
         }
-        stone->SetName(Dictionary->GetEntry(175)); // Guildstone for an unnamed guild
+        stone->SetName(worldDictionary.GetEntry(175)); // Guildstone for an unnamed guild
         if (mChar->GetId() == 0x0191 || mChar->GetId() == 0x0193 || mChar->GetId() == 0x025E ||
             mChar->GetId() == 0x0260) {
             mChar->SetGuildTitle("Guildmistress");
@@ -1753,7 +1756,7 @@ void CGuildCollection::PlaceStone(CSocket *s, CItem *deed) {
             Console::shared().error(util::format("Critical error spawning guildstone, no stone made.  Attempted by player 0x%X",mChar->GetSerial()));
             return;
         }
-        stone->SetName(util::format(Dictionary->GetEntry(101), nGuild->Name().c_str()));
+        stone->SetName(util::format(worldDictionary.GetEntry(101), nGuild->Name().c_str()));
         stone->SetLocation(mChar);
         stone->SetType(IT_GUILDSTONE);
         stone->SetTempVar(CITV_MORE, gNum);

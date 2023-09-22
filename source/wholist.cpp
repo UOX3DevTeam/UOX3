@@ -13,6 +13,8 @@
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
 
+extern CDictionaryContainer worldDictionary ;
+
 CWhoList *WhoList;
 CWhoList *OffList;
 
@@ -334,14 +336,14 @@ void CWhoList::command(CSocket *toSendTo, std::uint8_t type, std::uint16_t butto
     
     toSend.addText(util::format("User %u selected (account %u)", buttonPressed,targetChar->GetAccount().accountNumber));
     toSend.addText(util::format("Name: %s", targetChar->GetName().c_str()));
-    toSend.addText(Dictionary->GetEntry(1400, sLang));
-    toSend.addText(Dictionary->GetEntry(1401, sLang));
-    toSend.addText(Dictionary->GetEntry(1402, sLang));
-    toSend.addText(Dictionary->GetEntry(1403, sLang));
-    toSend.addText(Dictionary->GetEntry(1404, sLang));
-    toSend.addText(Dictionary->GetEntry(1405, sLang));
-    toSend.addText(Dictionary->GetEntry(1406, sLang));
-    toSend.addText(Dictionary->GetEntry(1407, sLang));
+    toSend.addText(worldDictionary.GetEntry(1400, sLang));
+    toSend.addText(worldDictionary.GetEntry(1401, sLang));
+    toSend.addText(worldDictionary.GetEntry(1402, sLang));
+    toSend.addText(worldDictionary.GetEntry(1403, sLang));
+    toSend.addText(worldDictionary.GetEntry(1404, sLang));
+    toSend.addText(worldDictionary.GetEntry(1405, sLang));
+    toSend.addText(worldDictionary.GetEntry(1406, sLang));
+    toSend.addText(worldDictionary.GetEntry(1407, sLang));
     toSend.addText(util::format("Serial#[%x %x %x %x]", targetChar->GetSerial(1),targetChar->GetSerial(2), targetChar->GetSerial(3),targetChar->GetSerial(4)));
     
     toSend.Finalize();
