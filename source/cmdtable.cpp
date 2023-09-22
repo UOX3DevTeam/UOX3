@@ -231,7 +231,7 @@ void Command_GetLight(CSocket *s) {
                 s->SysMessage(1632, 0); // Current light level is %i
             }
             else {
-                s->SysMessage( 1632, static_cast<lightlevel_t>(RoundNumber( i - Races->VisLevel(mChar->GetRace())))); // Current light level is %i
+                s->SysMessage( 1632, static_cast<lightlevel_t>(std::round( i - Races->VisLevel(mChar->GetRace())))); // Current light level is %i
             }
         }
         else {

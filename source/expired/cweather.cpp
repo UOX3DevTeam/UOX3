@@ -1556,9 +1556,9 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                     damageModifier = 0;
                 }
                 
-                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
                 
-                if (RoundNumber(damageModifier) > 0) {
+                if (std::round(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
                 else {
@@ -1583,9 +1583,9 @@ bool cWeatherAb::DoLightEffect(CSocket *mSock, CChar &mChar) {
                     damageModifier = 0;
                 }
                 
-                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
                 
-                if (RoundNumber(damageModifier) > 0) {
+                if (std::round(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
                 else {
@@ -1655,14 +1655,14 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
         
         if (element == Weather::RAIN) {
             damageModifier = static_cast<float>(RainIntensity(weatherSys));
-            damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
             damageMessage = 1219;
             resistElement = Weather::NONE;
         }
         
         if (element == Weather::SNOW) {
             damageModifier = static_cast<float>(SnowIntensity(weatherSys));
-            damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
             damageMessage = 1220;
             // Snow is also cold damage when it comes to resistance values
             resistElement = Weather::COLD;
@@ -1670,7 +1670,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
         
         if (element == Weather::STORM) {
             damageModifier = static_cast<float>(StormIntensity(weatherSys));
-            damage = static_cast<std::int32_t>(RoundNumber((baseDamage / 100) * damageModifier));
+            damage = static_cast<std::int32_t>(std::round((baseDamage / 100) * damageModifier));
             damageMessage = 1775;
             resistElement = Weather::NONE;
             
@@ -1693,7 +1693,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
                 damageModifier = 0;
             }
             
-            damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+            damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
             damageMessage = 1776; // The freezing cold hurts you!
         }
         
@@ -1705,7 +1705,7 @@ bool cWeatherAb::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t e
                 damageModifier = 0;
             }
             
-            damage = static_cast<std::int32_t>(RoundNumber(baseDamage * damageModifier));
+            damage = static_cast<std::int32_t>(std::round(baseDamage * damageModifier));
             damageMessage = 1221; // The sheer heat sucks at your body, draining it of moisture!
             damageAnim = 0x3709;
         }

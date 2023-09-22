@@ -211,7 +211,6 @@ inline std::uint32_t GetMinutesSinceEpoch() {
 // o------------------------------------------------------------------------------------------------o
 //  Misc Functions
 // o------------------------------------------------------------------------------------------------o
-float RoundNumber(float toRound);
 bool IsNumber(const std::string &str);
 void DismountCreature(CChar *s);
 size_t GetTileName(CItem &mItem, std::string &itemname);

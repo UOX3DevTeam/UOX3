@@ -688,9 +688,9 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
                     damageModifier = 0;
                 }
                 
-                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
                 
-                if (RoundNumber(damageModifier) > 0) {
+                if (std::round(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
                 else {
@@ -715,9 +715,9 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
                     damageModifier = 0;
                 }
                 
-                damage = static_cast<std::int32_t>(RoundNumber(baseDamage - (baseDamage * damageModifier)));
+                damage = static_cast<std::int32_t>(std::round(baseDamage - (baseDamage * damageModifier)));
                 
-                if (RoundNumber(damageModifier) > 0) {
+                if (std::round(damageModifier) > 0) {
                     message = 1216; // You are scalded by the fury of the light!
                 }
                 else {

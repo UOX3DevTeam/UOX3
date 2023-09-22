@@ -353,10 +353,10 @@ void CWorldMain::DoWorldLight() {
     // morning / add to LightMin in evening
     
     if (ampm) {
-        uoTime.worldLightLevel = static_cast<std::uint16_t>(RoundNumber(worldbrightlevel + (hourIncrement * currentTime)));
+        uoTime.worldLightLevel = static_cast<std::uint16_t>(std::round(worldbrightlevel + (hourIncrement * currentTime)));
     }
     else {
-        uoTime.worldLightLevel = static_cast<std::uint16_t>(RoundNumber(worlddarklevel - (hourIncrement * currentTime)));
+        uoTime.worldLightLevel = static_cast<std::uint16_t>(std::round(worlddarklevel - (hourIncrement * currentTime)));
     }
 }
 

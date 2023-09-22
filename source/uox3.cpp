@@ -2991,18 +2991,6 @@ auto GetClock() -> std::uint32_t {
     return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - current).count());
 }
 
-// o------------------------------------------------------------------------------------------------o
-//|	Function	-	RoundNumber()
-// o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	rounds a number up or down depending on it's value
-// o------------------------------------------------------------------------------------------------o
-auto RoundNumber(float toRound) -> float {
-    float flVal = floor(toRound);
-    if (flVal < floor(toRound + 0.5)) {
-        return ceil(toRound);
-    }
-    return flVal;
-}
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	IsNumber()
@@ -3051,7 +3039,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>(RoundNumber(i - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>(std::round(i - Races->VisLevel(mChar->GetRace())));
             }
             toSend.Level(toShow);
         }
@@ -3065,7 +3053,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>(RoundNumber(dunLevel - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>(std::round(dunLevel - Races->VisLevel(mChar->GetRace())));
             }
             toSend.Level(toShow);
         }
@@ -3122,7 +3110,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>( RoundNumber(i - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>( std::round(i - Races->VisLevel(mChar->GetRace())));
             }
         }
     }
@@ -3132,7 +3120,7 @@ auto DoLight(CChar *mChar, std::uint8_t level) -> void {
                 toShow = 0;
             }
             else {
-                toShow = static_cast<lightlevel_t>( RoundNumber(dunLevel - Races->VisLevel(mChar->GetRace())));
+                toShow = static_cast<lightlevel_t>( std::round(dunLevel - Races->VisLevel(mChar->GetRace())));
             }
         }
     }

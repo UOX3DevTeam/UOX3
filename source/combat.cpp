@@ -2149,7 +2149,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
         damage = std::min(damage, static_cast<float>(baseDamage * 4));
     }
     
-    return static_cast<std::int16_t>(RoundNumber(damage));
+    return static_cast<std::int16_t>(std::round(damage));
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2453,7 +2453,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
         }
         case Weather::POISON: //	POISON Damage
             damageModifier = (CalcDef(ourTarg, hitLoc, doArmorDamage, damageType) / 100);
-            damage = static_cast<std::int16_t>(RoundNumber((static_cast<float>(baseDamage) - (static_cast<float>(baseDamage) * damageModifier))));
+            damage = static_cast<std::int16_t>(std::round((static_cast<float>(baseDamage) - (static_cast<float>(baseDamage) * damageModifier))));
             break;
         default: //	Elemental damage
             getDef = HalfRandomNum(CalcDef(ourTarg, hitLoc, doArmorDamage, damageType));
@@ -2464,7 +2464,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
         damage -= static_cast<float>((static_cast<float>(getDef) * static_cast<float>(attSkill)) / 750);
     }
     
-    return static_cast<std::int16_t>(RoundNumber(damage));
+    return static_cast<std::int16_t>(std::round(damage));
 }
 
 // o------------------------------------------------------------------------------------------------o

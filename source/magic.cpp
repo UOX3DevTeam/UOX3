@@ -1245,7 +1245,7 @@ bool splMindBlast(CChar *caster, CChar *target, CChar *src, std::int8_t curSpell
     
     // Damage should not exceed 60% of target maxHp
     if (spellDamage > (target->GetMaxHP() * 0.6)) {
-        spellDamage = static_cast<std::int16_t>(RoundNumber(target->GetMaxHP() * 0.6));
+        spellDamage = static_cast<std::int16_t>(std::round(target->GetMaxHP() * 0.6));
     }
     
     // Damage should not exceed basedamage from DFN + 20%
@@ -3066,7 +3066,7 @@ std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spell
     
     // If spell was resisted, halve damage
     if (spellResisted) {
-        spellDamage = static_cast<std::int16_t>(RoundNumber(spellDamage / 2));
+        spellDamage = static_cast<std::int16_t>(std::round(spellDamage / 2));
     }
     
     // Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
@@ -3082,13 +3082,13 @@ std::int16_t CalcSpellDamageMod(CChar *caster, CChar *target, std::int16_t spell
     // Randomize some more to get broader min/max damage values
     std::int32_t i = RandomNum(0, 4);
     if (i <= 2) {
-        spellDamage = RoundNumber(RandomNum(static_cast<std::int16_t>(HalfRandomNum(spellDamage) / 2), spellDamage));
+        spellDamage = std::round(RandomNum(static_cast<std::int16_t>(HalfRandomNum(spellDamage) / 2), spellDamage));
     }
     else if (i == 3) {
-        spellDamage = RoundNumber(HalfRandomNum(spellDamage));
+        spellDamage = std::round(HalfRandomNum(spellDamage));
     }
     else {// keep current spellDamage
-        spellDamage = RoundNumber(spellDamage);
+        spellDamage = std::round(spellDamage);
     }
     
     return spellDamage;
