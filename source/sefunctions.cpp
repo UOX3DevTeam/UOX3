@@ -37,17 +37,18 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "ostype.h"
-#include "other/uoxversion.hpp"
 #include "partysystem.h"
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
+#include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
-#include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
 
 using namespace std::string_literals;
 
@@ -643,7 +644,7 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 #endif
         // If skill is not enabled, unset scriptId from skill data
         if (!isEnabled) {
-            cwmWorldState->skill[skillNumber].jsScript = 0;
+            worldMain.skill[skillNumber].jsScript = 0;
             return JS_FALSE;
         }
         
@@ -652,7 +653,7 @@ JSBool SE_RegisterSkill(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
             return JS_TRUE;
         
         // Both scriptId and skillNumber seem valid; assign scriptId to this skill
-        cwmWorldState->skill[skillNumber].jsScript = scriptId;
+        worldMain.skill[skillNumber].jsScript = scriptId;
     }
     return JS_TRUE;
 }
@@ -875,8 +876,8 @@ JSBool SE_EnableConsoleFunc(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //|	Purpose		-	Returns the hour of the current UO day
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    bool ampm =    cwmWorldState->uoTime.ampm;
-    std::uint8_t hour = cwmWorldState->uoTime.hours ;
+    bool ampm =    worldMain.uoTime.ampm;
+    std::uint8_t hour = worldMain.uoTime.hours ;
     if (ampm) {
         *rval = INT_TO_JSVAL(static_cast<std::uint64_t>(hour) + 12);
     }
@@ -892,7 +893,7 @@ JSBool SE_GetHour([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj
 //|	Purpose		-	Returns the minute of the current UO day
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    std::uint8_t minute = cwmWorldState->uoTime.minutes ;
+    std::uint8_t minute = worldMain.uoTime.minutes ;
     *rval = INT_TO_JSVAL(minute);
     return JS_TRUE;
 }
@@ -903,7 +904,7 @@ JSBool SE_GetMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *o
 //|	Purpose		-	Returns the day number of the server (UO days since server start)
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetDay([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    std::int16_t day = cwmWorldState->uoTime.days ;
+    std::int16_t day = worldMain.uoTime.days ;
     *rval = INT_TO_JSVAL(day);
     return JS_TRUE;
 }
@@ -933,7 +934,7 @@ JSBool SE_SecondsPerUOMinute([[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //|	Purpose		-	Gets timestamp for current server clock
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetCurrentClock(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    JS_NewNumberValue(cx, cwmWorldState->GetUICurrentTime(), rval);
+    JS_NewNumberValue(cx, worldMain.GetUICurrentTime(), rval);
     
     return JS_TRUE;
 }
@@ -944,7 +945,7 @@ JSBool SE_GetCurrentClock(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe
 //|	Purpose		-	Gets timestamp for server startup time
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetStartTime(JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    JS_NewNumberValue(cx, cwmWorldState->GetStartTime(), rval);
+    JS_NewNumberValue(cx, worldMain.GetStartTime(), rval);
     
     return JS_TRUE;
 }
@@ -973,7 +974,7 @@ JSBool SE_GetRandomSOSArea(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
     }
     
     // Fetch vector of SOS locations
-    auto sosLocs = cwmWorldState->sosLocs;
+    auto sosLocs = worldMain.sosLocs;
     if (sosLocs.size() == 0) {
         ScriptError(cx, "GetRandomSOSArea: No valid SOS areas found. Is the [SOSAREAS] section of regions.dfn setup correctly?");
         return JS_FALSE;
@@ -1509,7 +1510,7 @@ JSBool SE_PossessTown([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
     }
     std::uint16_t town = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
     std::uint16_t sTown = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
-    cwmWorldState->townRegions[town]->Possess(cwmWorldState->townRegions[sTown]);
+    worldMain.townRegions[town]->Possess(worldMain.townRegions[sTown]);
     return JS_TRUE;
 }
 
@@ -2304,7 +2305,7 @@ JSBool SE_Yell(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval 
             toAdd.Colour(mySock->GetWord(4));
         }
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_BROADCASTALL);
         toAdd.CmdLevel(commandLevel);
     }
@@ -2503,7 +2504,7 @@ JSBool SE_IterateOverSpawnRegions(JSContext *cx, [[maybe_unused]] JSObject *obj,
     cScript *myScript = JSMapping->GetScript(JS_GetGlobalObject(cx));
     
     if (myScript != nullptr) {
-        std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&myScript, &b](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+        std::for_each(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&myScript, &b](std::pair<std::uint16_t, CSpawnRegion *> entry) {
             if (entry.second) {
                 SE_IterateSpawnRegionsFunctor(entry.second, b, myScript);
             }
@@ -3049,10 +3050,10 @@ JSBool SE_Moon([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, u
     std::int16_t slot = static_cast<std::int16_t>(JSVAL_TO_INT(argv[0]));
     if (argc == 2) {
         std::int16_t newVal = static_cast<std::int16_t>(JSVAL_TO_INT(argv[1]));
-        cwmWorldState->uoTime.moon[slot] = newVal ;
+        worldMain.uoTime.moon[slot] = newVal ;
     }
     
-    *rval = INT_TO_JSVAL(cwmWorldState->uoTime.moon[slot]);
+    *rval = INT_TO_JSVAL(worldMain.uoTime.moon[slot]);
     
     return JS_TRUE;
 }
@@ -3069,8 +3070,8 @@ JSBool SE_GetTownRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
     }
     
     std::uint16_t regNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-    if (cwmWorldState->townRegions.find(regNum) != cwmWorldState->townRegions.end()) {
-        CTownRegion *townReg = cwmWorldState->townRegions[regNum];
+    if (worldMain.townRegions.find(regNum) != worldMain.townRegions.end()) {
+        CTownRegion *townReg = worldMain.townRegions[regNum];
         if (townReg != nullptr) {
             JSObject *myObj = JSEngine->AcquireObject(IUE_REGION, townReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
             *rval = OBJECT_TO_JSVAL(myObj);
@@ -3100,8 +3101,8 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
     if (argc == 1) {
         // Assume spawn region number was provided
         std::uint16_t spawnRegNum = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[0]));
-        if (cwmWorldState->spawnRegions.find(spawnRegNum) != cwmWorldState->spawnRegions.end()) {
-            CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+        if (worldMain.spawnRegions.find(spawnRegNum) != worldMain.spawnRegions.end()) {
+            CSpawnRegion *spawnReg = worldMain.spawnRegions[spawnRegNum];
             if (spawnReg != nullptr) {
                 JSObject *myObj = JSEngine->AcquireObject(IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
                 *rval = OBJECT_TO_JSVAL(myObj);
@@ -3122,7 +3123,7 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
         std::uint16_t instanceID = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[3]));
         
         // Iterate over each spawn region to find the right one
-        auto iter = std::find_if(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+        auto iter = std::find_if(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval](std::pair<std::uint16_t, CSpawnRegion *> entry) {
             if (entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1() && y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum) {
                 JSObject *myObj = JSEngine->AcquireObject(IUE_SPAWNREGION, entry.second, JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
                 *rval = OBJECT_TO_JSVAL(myObj);
@@ -3131,7 +3132,7 @@ JSBool SE_GetSpawnRegion(JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
             return false;
         });
         
-        if (iter == cwmWorldState->spawnRegions.end()) {
+        if (iter == worldMain.spawnRegions.end()) {
             *rval = JSVAL_NULL;
         }
     }
@@ -3150,7 +3151,7 @@ JSBool SE_GetSpawnRegionCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] J
         ScriptError(cx, "GetSpawnRegionCount: Invalid number of arguments (takes 0)");
         return JS_FALSE;
     }
-    *rval = INT_TO_JSVAL(cwmWorldState->spawnRegions.size());
+    *rval = INT_TO_JSVAL(worldMain.spawnRegions.size());
     return JS_TRUE;
 }
 
@@ -3586,7 +3587,7 @@ JSBool SE_GetAccountCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //|	Purpose		-	Gets number of players online on server
 // o------------------------------------------------------------------------------------------------o
 JSBool SE_GetPlayerCount([[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval) {
-    *rval = INT_TO_JSVAL(cwmWorldState->GetPlayersOnline());
+    *rval = INT_TO_JSVAL(worldMain.GetPlayersOnline());
     return JS_TRUE;
 }
 

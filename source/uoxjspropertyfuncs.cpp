@@ -40,6 +40,7 @@
 #include "utility/strutil.hpp"
 
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyenums.h"
 #include "uoxjspropertyspecs.h"
@@ -234,7 +235,7 @@ JSBool CGlobalSkillsProps_getProperty(JSContext *cx, JSObject *obj, jsval id, js
         return JS_FALSE;
     }
     
-    CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
+    CWorldMain::Skill_st *mySkill = &worldMain.skill[skillId];
     if (mySkill == nullptr) {
         ScriptError(cx, util::format("Invalid Skill").c_str());
         *vp = JSVAL_NULL;
@@ -2256,7 +2257,7 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 else {
                     // Should build the town here
                     JSObject *myTown =
-                    JSEngine->AcquireObject(IUE_REGION, cwmWorldState->townRegions[tempTownId], JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
+                    JSEngine->AcquireObject(IUE_REGION, worldMain.townRegions[tempTownId], JSEngine->FindActiveRuntime(JS_GetRuntime(cx)));
                     *vp = OBJECT_TO_JSVAL(myTown);
                 }
                 break;
@@ -2604,10 +2605,10 @@ JSBool CCharacterProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 *vp = BOOLEAN_TO_JSVAL(gPriv->NoNeedReags());
                 break;
             case CCP_ISANIMAL:
-                *vp = BOOLEAN_TO_JSVAL(cwmWorldState->creatures[gPriv->GetId()].IsAnimal());
+                *vp = BOOLEAN_TO_JSVAL(worldMain.creatures[gPriv->GetId()].IsAnimal());
                 break;
             case CCP_ISHUMAN:
-                *vp = BOOLEAN_TO_JSVAL(cwmWorldState->creatures[gPriv->GetId()].IsHuman());
+                *vp = BOOLEAN_TO_JSVAL(worldMain.creatures[gPriv->GetId()].IsHuman());
                 break;
             case CCP_ORGID:
                 *vp = INT_TO_JSVAL(gPriv->GetOrgId());
@@ -3030,9 +3031,9 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->SetOrigin(ServerConfig::shared().ruleSets.normalizedEraString(encaps.toString()));
                 break;
             case CCP_TOWN:
-                cwmWorldState->townRegions[gPriv->GetTown()]->RemoveTownMember(*gPriv);
+                worldMain.townRegions[gPriv->GetTown()]->RemoveTownMember(*gPriv);
                 if (*vp != JSVAL_NULL) {
-                    cwmWorldState->townRegions[encaps.toInt()]->AddAsTownMember(*gPriv);
+                    worldMain.townRegions[encaps.toInt()]->AddAsTownMember(*gPriv);
                 }
                 break;
             case CCP_GUILD:
@@ -3079,7 +3080,7 @@ JSBool CCharacterProps_setProperty(JSContext *cx, JSObject *obj, jsval id, jsval
                 gPriv->SetFixedLight(static_cast<std::uint8_t>(encaps.toInt()));
                 if (gPriv->GetSocket() != nullptr) {
                     if (static_cast<std::uint8_t>(encaps.toInt()) == 255) {
-                        DoLight(gPriv->GetSocket(), cwmWorldState->uoTime.worldLightLevel);
+                        DoLight(gPriv->GetSocket(), worldMain.uoTime.worldLightLevel);
                     }
                     else {
                         DoLight(gPriv->GetSocket(), static_cast<std::uint8_t>(encaps.toInt()));

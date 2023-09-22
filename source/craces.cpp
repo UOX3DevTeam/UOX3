@@ -18,7 +18,7 @@
 
 #include "ssection.h"
 #include "utility/strutil.hpp"
-
+#include "other/uoxglobal.hpp"
 #include "worldmain.h"
 
 cRaces *Races = nullptr;
@@ -1740,13 +1740,13 @@ void CRace::load(size_t sectNum, std::int32_t modCount) {
         }
         
         for (std::int32_t iCountA = 0; iCountA < ALLSKILLS; ++iCountA) {
-            std::string skillthing = cwmWorldState->skill[iCountA].name;
+            std::string skillthing = worldMain.skill[iCountA].name;
             skillthing += "G";
             if (skillthing == tag) {
                 Skill(static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), iCountA);
             }
             else {
-                skillthing = cwmWorldState->skill[iCountA].name;
+                skillthing = worldMain.skill[iCountA].name;
                 skillthing += "L";
                 if (skillthing == tag) {
                     Skill(modCount + static_cast<std::uint16_t>(std::stoul(data, nullptr, 0)), iCountA);

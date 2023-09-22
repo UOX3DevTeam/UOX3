@@ -12,6 +12,7 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcCharObjFromSer()
@@ -84,7 +85,7 @@ CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t world
     }
     
     const RegLocs_st *getLoc = nullptr;
-    for (auto &[townId, myReg] : cwmWorldState->townRegions) {
+    for (auto &[townId, myReg] : worldMain.townRegions) {
         if (myReg != nullptr && myReg->WorldNumber() == worldNumber &&
             myReg->GetInstanceId() == instanceId) {
             for (size_t j = 0; j < myReg->GetNumLocations(); ++j) {
@@ -103,5 +104,5 @@ CTownRegion *CalcRegionFromXY(std::int16_t x, std::int16_t y, std::uint8_t world
             }
         }
     }
-    return cwmWorldState->townRegions[0xFF];
+    return worldMain.townRegions[0xFF];
 }

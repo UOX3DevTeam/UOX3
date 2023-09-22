@@ -27,6 +27,7 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 
@@ -551,10 +552,10 @@ void CCharStuff::FindSpotForNPC(CChar *cCreated, const std::int16_t originX, con
         
         if (xos >= 1 && yos >= 1) {
             targZ = Map->Height(xos, yos, z, worldNumber, instanceId);
-            if (!cwmWorldState->creatures[cCreated->GetId()].IsWater()) {
+            if (!worldMain.creatures[cCreated->GetId()].IsWater()) {
                 foundSpot = Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId);
             }
-            else if (cwmWorldState->creatures[cCreated->GetId()].IsWater() || (!foundSpot && cwmWorldState->creatures[cCreated->GetId()].IsAmphibian())) {
+            else if (worldMain.creatures[cCreated->GetId()].IsWater() || (!foundSpot && worldMain.creatures[cCreated->GetId()].IsAmphibian())) {
                 foundSpot =  Map->ValidSpawnLocation(xos, yos, targZ, worldNumber, instanceId, false);
             }
         }
@@ -1952,7 +1953,7 @@ bool CCharStuff::CanControlPet(CChar *mChar, CChar *Npc, bool isRestricted, bool
                 if (!ignoreLoyaltyChanges) {
                     Npc->SetLoyalty(std::max(0, Npc->GetLoyalty() - loyaltyLossOnFailure));
                     std::uint16_t soundToPlay =
-                    cwmWorldState->creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
+                    worldMain.creatures[Npc->GetId()].GetSound(SND_STARTATTACK);
                     Effects->PlaySound(Npc, soundToPlay);
                     
                     if (Npc->GetLoyalty() == 0) {

@@ -12,6 +12,7 @@
 #include "network.h"
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 CWhoList *WhoList;
 CWhoList *OffList;
@@ -378,7 +379,7 @@ void CWhoList::Update() {
     const std::uint32_t numPerPage = 13;
     std::uint32_t pagenum = 1, position = 40, linenum = 1, buttonnum = 7;
     
-    size_t k = cwmWorldState->GetPlayersOnline();
+    size_t k = worldMain.GetPlayersOnline();
     std::int32_t realCount = 1;
     
     //--static pages

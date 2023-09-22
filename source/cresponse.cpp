@@ -57,6 +57,7 @@
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 bool BuyShop(CSocket *s, CChar *c);
 void CallGuards(CChar *mChar);
@@ -506,7 +507,7 @@ void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
                     // excepts the quest
                     
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(nullptr, 1294, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
+                    nearbyNpc->TextMessage(nullptr, 1294, TALK, 0, worldMain.townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                     
                     // Remove post from message board (Mark for deletion only - will be cleaned
                     // during cleanup)
@@ -525,16 +526,16 @@ void CEscortResponse::Handle([[maybe_unused]] CSocket *mSock, CChar *mChar) {
             if (findDest) {
                 if (nearbyNpc->GetFTarg() == mChar) {
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(nullptr, 1295, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
+                    nearbyNpc->TextMessage(nullptr, 1295, TALK, 0, worldMain.townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                 }
                 else if (!ValidateObject(nearbyNpc->GetFTarg())) { // If nobody has been accepted for
                     // the quest yet
                     // Send out the rant about accepting the escort
-                    nearbyNpc->TextMessage(nullptr, 1296, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
+                    nearbyNpc->TextMessage(nullptr, 1296, TALK, 0, worldMain.townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str());
                 }
                 else { // The must be enroute
                     // Send out a message saying we are already being escorted
-                    nearbyNpc->TextMessage(nullptr, 1297, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()] ->GetName().c_str(), nearbyNpc->GetFTarg()->GetNameRequest(mChar, NRS_SPEECH).c_str());
+                    nearbyNpc->TextMessage(nullptr, 1297, TALK, 0, worldMain.townRegions[nearbyNpc->GetQuestDestRegion()] ->GetName().c_str(), nearbyNpc->GetFTarg()->GetNameRequest(mChar, NRS_SPEECH).c_str());
                 }
                 return;
             }
@@ -589,7 +590,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
             if (ValidateObject(trigChar)) {
                 nearbyNpc = trigChar;
             }
-            if (cwmWorldState->creatures[nearbyNpc->GetId()].IsHuman()) {
+            if (worldMain.creatures[nearbyNpc->GetId()].IsHuman()) {
                 // Stop the NPC from moving for a minute while talking with the player
                 nearbyNpc->SetTimer(tNPC_MOVETIME, BuildTimeValue(60));
                 mSock->TempObj(nullptr); // this is to prevent errors when a player says "train
@@ -770,7 +771,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                     std::uint8_t lastCommaPos = 0;
                     for (std::uint8_t j = 0; j < ALLSKILLS; ++j) {
                         if (nearbyNpc->GetBaseSkill(j) > 10) {
-                            temp2 = util::lower(cwmWorldState->skill[j].name);
+                            temp2 = util::lower(worldMain.skill[j].name);
                             if (!skillsToTrainIn) {
                                 temp2[0] =
                                 std::toupper(temp2[0]); // If it's the first skill,  capitalize
@@ -809,7 +810,7 @@ void CTrainingResponse::Handle(CSocket *mSock, CChar *mChar) {
                         continue;
                     }
                     if (nearbyNpc->GetBaseSkill(static_cast<std::uint8_t>(skill)) > 10) {
-                        temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),  util::lower(cwmWorldState->skill[skill].name).c_str()); // Thou wishest to learn of  %s?
+                        temp = oldstrutil::format(maxsize, Dictionary->GetEntry(1304),  util::lower(worldMain.skill[skill].name).c_str()); // Thou wishest to learn of  %s?
                         if (mChar->GetBaseSkill(static_cast<std::uint8_t>(skill)) >= 250) {
                             temp += Dictionary->GetEntry(1305); // I can teach thee no more than thou already knowest!
                         }
@@ -1302,7 +1303,7 @@ CBoatObj *GetBoat(CSocket *s);
 // o------------------------------------------------------------------------------------------------o
 void CBoatMultiResponse::Handle(CSocket *mSock, CChar *mChar) {
     // Let's do some spam-prevention here
-    if (mChar->GetTimer(tCHAR_ANTISPAM) > cwmWorldState->GetUICurrentTime()) {
+    if (mChar->GetTimer(tCHAR_ANTISPAM) > worldMain.GetUICurrentTime()) {
         return;
     }
     else {

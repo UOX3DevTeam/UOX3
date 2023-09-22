@@ -53,6 +53,7 @@
 #include "speech.h"
 #include "teffect.h"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
 #include "utility/strutil.hpp"
@@ -149,7 +150,7 @@ void MethodSpeech(CBaseObject &speaker, char *message, speechtype_t sType, colou
             toAdd.Colour(0x0058);
         }
         
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
     }
 }
 
@@ -1827,7 +1828,7 @@ JSBool CBase_KillTimers(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     auto mySer = myObj->GetSerial();
     std::vector<CTEffect *> removeEffect;
     
-    for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
+    for (const auto &Effect : worldMain.tempEffects.collection()) {
         if (triggerNum != -1) {
             if (mySer == Effect->Destination() && Effect->More1() == triggerNum) {
                 removeEffect.push_back(Effect);
@@ -1838,7 +1839,7 @@ JSBool CBase_KillTimers(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
     }
     for (const auto &Effect : removeEffect) {
-        cwmWorldState->tempEffects.Remove(Effect, true);
+        worldMain.tempEffects.Remove(Effect, true);
     }
     return JS_TRUE;
 }
@@ -1868,7 +1869,7 @@ JSBool CBase_GetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[1]));
     
     auto myObjSerial = myObj->GetSerial();
-    for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
+    for (const auto &Effect : worldMain.tempEffects.collection()) {
         // We only want results that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
@@ -1922,7 +1923,7 @@ JSBool CBase_SetJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
     std::uint16_t scriptId = static_cast<std::uint16_t>(JSVAL_TO_INT(argv[2]));
     
     auto myObjSerial = myObj->GetSerial();
-    for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
+    for (const auto &Effect : worldMain.tempEffects.collection()) {
         // We only want to modify the Effect that have same object serial and timerId as specified
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
@@ -1974,7 +1975,7 @@ JSBool CBase_KillJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     auto myObjSerial = myObj->GetSerial();
     CTEffect *removeEffect = nullptr;
     
-    for (auto &Effect : cwmWorldState->tempEffects.collection()) {
+    for (auto &Effect : worldMain.tempEffects.collection()) {
         if (myObjSerial == Effect->Destination() && Effect->More1() == timerId) {
             // Check for a valid script associated with Effect
             cScript *tScript = JSMapping->GetScript(Effect->AssocScript());
@@ -1996,7 +1997,7 @@ JSBool CBase_KillJSTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
     }
     
     if (removeEffect != nullptr) {
-        cwmWorldState->tempEffects.Remove(removeEffect, true);
+        worldMain.tempEffects.Remove(removeEffect, true);
         *rval = INT_TO_JSVAL(1); // Return 1 indicating timer was found and removed
     }
     
@@ -2422,8 +2423,8 @@ JSBool CBase_Teleport(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
             }
             else if (JSVAL_IS_INT(argv[0])) {
                 std::uint16_t placeNum = JSVAL_TO_INT(argv[0]);
-                if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                    GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
+                if (worldMain.goPlaces.find(placeNum) != worldMain.goPlaces.end()) {
+                    GoPlaces toGoTo = worldMain.goPlaces[placeNum];
                     x = toGoTo.x;
                     y = toGoTo.y;
                     z = toGoTo.z;
@@ -2643,7 +2644,7 @@ JSBool CMisc_SoundEffect(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         if (ValidateObject(myObj)) {
             if (myClass.ClassName() == "UOXChar" && tmpMonsterSound > -1) {
                 CChar *myChar = static_cast<CChar *>(myClass.toObject());
-                std::uint16_t monsterSoundToPlay = cwmWorldState->creatures[myChar->GetId()].GetSound(
+                std::uint16_t monsterSoundToPlay = worldMain.creatures[myChar->GetId()].GetSound(
                                                                                                       static_cast<monstersound_t>(tmpMonsterSound));
                 if (monsterSoundToPlay != 0) {
                     Effects->PlaySound(myChar, monsterSoundToPlay, allHear);
@@ -4057,7 +4058,7 @@ JSBool CBase_StartTimer(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
     Effect->Number(40);
     Effect->More1(TriggerNum);
     
-    cwmWorldState->tempEffects.Add(Effect);
+    worldMain.tempEffects.Add(Effect);
     
     return JS_TRUE;
 }
@@ -7222,8 +7223,8 @@ JSBool CChar_Gate(JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
         }
         else {
             std::uint16_t placeNum = JSVAL_TO_INT(argv[0]);
-            if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
+            if (worldMain.goPlaces.find(placeNum) != worldMain.goPlaces.end()) {
+                GoPlaces toGoTo = worldMain.goPlaces[placeNum];
                 destX = toGoTo.x;
                 destY = toGoTo.y;
                 destZ = toGoTo.z;
@@ -7402,7 +7403,7 @@ JSBool CChar_SetSkillByName(JSContext *cx, JSObject *obj, uintN argc, jsval *arg
         mSock = mChar->GetSocket();
     }
     for (std::uint8_t i = 0; i < ALLSKILLS; ++i) {
-        if (skillName == cwmWorldState->skill[i].name) {
+        if (skillName == worldMain.skill[i].name) {
             mChar->SetBaseSkill(value, i);
             Skills->UpdateSkillLevel(mChar, i);
             

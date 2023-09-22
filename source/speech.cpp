@@ -20,6 +20,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
+#include "other/uoxglobal.hpp"
 
 
 
@@ -195,7 +196,7 @@ void sysBroadcast(const std::string &txt) {
         toAdd.Speaker(INVALIDSERIAL);
         toAdd.SpokenTo(INVALIDSERIAL);
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_BROADCASTPC);
         toAdd.Colour(0x084D);
         toAdd.Font(FNT_BOLD);
@@ -284,7 +285,7 @@ bool CPITalkRequest::Handle() {
             toAdd.Speaker(mChar->GetSerial());
             toAdd.SpokenTo(INVALIDSERIAL);
             toAdd.Type(PROMPT);
-            toAdd.At(cwmWorldState->GetUICurrentTime());
+            toAdd.At(worldMain.GetUICurrentTime());
             toAdd.TargType(SPTRG_BROADCASTPC);
             if (mChar->GetSayColour() == 0x1700) {
                 toAdd.Colour(0x5A);
@@ -540,7 +541,7 @@ bool CSpeechQueue::InternalPoll() {
     while (slIter != speechList.end()) {
         toCheck = (*slIter);
         
-        if (toCheck->At() == -1 || static_cast<std::uint32_t>(toCheck->At()) <= cwmWorldState->GetUICurrentTime()) {
+        if (toCheck->At() == -1 || static_cast<std::uint32_t>(toCheck->At()) <= worldMain.GetUICurrentTime()) {
             retVal = true;
             SayIt((*toCheck));
             

@@ -32,6 +32,7 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 #include "wholist.h"
 
 using namespace std::string_literals;
@@ -254,8 +255,7 @@ void CNetworkStuff::SetLastOn(CSocket *s) {
 void CNetworkStuff::Disconnect(uoxsocket_t s) {
     SetLastOn(connClients[s]);
     CChar *currChar = connClients[s]->CurrcharObj();
-    Console::shared() << "Client " << static_cast<std::uint32_t>(s) << " disconnected. [Total:"
-    << static_cast<std::int32_t>(cwmWorldState->GetPlayersOnline() - 1) << "]" << myendl;
+    Console::shared() << "Client " << static_cast<std::uint32_t>(s) << " disconnected. [Total:" << static_cast<std::int32_t>(worldMain.GetPlayersOnline() - 1) << "]" << myendl;
     
     if (connClients[s]->AcctNo() != AccountEntry::INVALID_ACCOUNT) {
         AccountEntry &actbAccount = connClients[s]->GetAccount();
@@ -300,7 +300,7 @@ void CNetworkStuff::Disconnect(uoxsocket_t s) {
     } catch (...) {
         Console::shared() << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
     }
-    cwmWorldState->DecPlayersOnline();
+    worldMain.DecPlayersOnline();
     WhoList->FlagUpdate();
     OffList->FlagUpdate();
 }
@@ -326,7 +326,7 @@ void CNetworkStuff::LogOut(CSocket *s) {
         valid = true;
     }
     else {
-        auto logoutLocs = cwmWorldState->logoutLocs;
+        auto logoutLocs = worldMain.logoutLocs;
         for (size_t a = 0; a < logoutLocs.size(); ++a) {
             if (logoutLocs[a].x1 <= x && logoutLocs[a].y1 <= y && logoutLocs[a].x2 >= x &&
                 logoutLocs[a].y2 >= y && logoutLocs[a].worldNum == world &&
@@ -407,8 +407,8 @@ void CNetworkStuff::LogOut(CSocket *s) {
 void CNetworkStuff::sockInit() {
     std::int32_t bcode;
     
-    cwmWorldState->SetKeepRun(true);
-    cwmWorldState->SetError(false);
+    worldMain.SetKeepRun(true);
+    worldMain.SetError(false);
     
 #if !defined(_WIN32)
     std::int32_t on = 1;
@@ -422,8 +422,8 @@ void CNetworkStuff::sockInit() {
 #else
         Console::shared() << myendl;
 #endif
-        cwmWorldState->SetKeepRun(false);
-        cwmWorldState->SetError(true);
+        worldMain.SetKeepRun(false);
+        worldMain.SetError(true);
         Shutdown(FATAL_UOX3_ALLOC_NETWORK);
         return;
     }
@@ -441,8 +441,8 @@ void CNetworkStuff::sockInit() {
     
     if (bcode < 0) {
         Console::shared().error(util::format(" Unable to bind socket 1 - Error code: %i", bcode));
-        cwmWorldState->SetKeepRun(false);
-        cwmWorldState->SetError(true);
+        worldMain.SetKeepRun(false);
+        worldMain.SetError(true);
         Shutdown(FATAL_UOX3_ALLOC_NETWORK);
         return;
     }
@@ -485,7 +485,7 @@ void CNetworkStuff::CheckConn() {
     FD_ZERO(&conn);
     FD_SET(a_socket, &conn);
     std::int32_t nfds = a_socket + 1;
-    std::int32_t s = select(nfds, &conn, nullptr, nullptr, &cwmWorldState->uoxTimeout);
+    std::int32_t s = select(nfds, &conn, nullptr, nullptr, &worldMain.uoxTimeout);
     if (s > 0) {
         std::int32_t len = sizeof(struct sockaddr_in);
         SOCKET newClient;
@@ -516,8 +516,8 @@ void CNetworkStuff::CheckConn() {
                 return;
             }
             Console::shared().error("Error at client connection!");
-            cwmWorldState->SetKeepRun(true);
-            cwmWorldState->SetError(true);
+            worldMain.SetKeepRun(true);
+            worldMain.SetError(true);
             delete toMake;
             return;
         }
@@ -535,8 +535,7 @@ void CNetworkStuff::CheckConn() {
         part[3] = static_cast<std::uint8_t>((client_addr.sin_addr.s_addr & 0xFF000000) >> 24);
         
         if (IsFirewallBlocked(part)) {
-            messageLoop << util::format("FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!",
-                                        part[0], part[1], part[2], part[3]);
+            messageLoop << util::format("FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!", part[0], part[1], part[2], part[3]);
             closesocket(static_cast<uoxsocket_t>(newClient));
             delete toMake;
             return;
@@ -544,17 +543,15 @@ void CNetworkStuff::CheckConn() {
         // Firewall-messages are really only needed when firewall blocks, not when it lets someone
         // through. Leads to information overload in console. Commenting out.
         
-        messageLoop << util::format("Client %zu [%i.%i.%i.%i] connected [Total:%lu]",
-                                    cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2],
-                                    part[3], cwmWorldState->GetPlayersOnline() + 1);
+        messageLoop << util::format("Client %zu [%i.%i.%i.%i] connected [Total:%lu]", worldMain.GetPlayersOnline(), part[0], part[1], part[2], part[3], worldMain.GetPlayersOnline() + 1);
         loggedInClients.push_back(toMake);
         toMake->ClientIP(client_addr.sin_addr.s_addr);
         return;
     }
     if (s < 0) {
         Console::shared().error(" Select (Conn) failed!");
-        cwmWorldState->SetKeepRun(false);
-        cwmWorldState->SetError(true);
+        worldMain.SetKeepRun(false);
+        worldMain.SetError(true);
         return;
     }
 }
@@ -620,15 +617,15 @@ void CNetworkStuff::CheckMessage() {
             nfds = clientSock + 1;
         }
     }
-    std::int32_t s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
+    std::int32_t s = select(nfds, &all, nullptr, &errsock, &worldMain.uoxTimeout);
     if (s > 0) {
-        size_t oldnow = cwmWorldState->GetPlayersOnline();
-        for (size_t i = 0; i < cwmWorldState->GetPlayersOnline(); ++i) {
+        size_t oldnow = worldMain.GetPlayersOnline();
+        for (size_t i = 0; i < worldMain.GetPlayersOnline(); ++i) {
             if (FD_ISSET(connClients[i]->CliSocket(), &errsock)) {
                 Disconnect(static_cast<uoxsocket_t>(i));
             }
             if ((FD_ISSET(connClients[i]->CliSocket(), &all)) &&
-                (oldnow == cwmWorldState->GetPlayersOnline())) {
+                (oldnow == worldMain.GetPlayersOnline())) {
                 try {
                     GetMsg(static_cast<uoxsocket_t>(i));
                 } catch (socket_error &blah) {
@@ -688,7 +685,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
         if (mSock->Buffer()[0] == 0x21 && count < 4) // UOMon
         {
             std::int32_t ho, mi, se, total;
-            total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
+            total = (worldMain.GetUICurrentTime() - worldMain.GetStartTime()) / 1000;
             ho = total / 3600;
             total -= ho * 3600;
             mi = total / 60;
@@ -722,8 +719,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                     Console::shared() << "UOG Stats request completed. Disconnecting client. [" << static_cast<std::int32_t>(mSock->ClientIP4()) << "." << static_cast<std::int32_t>(mSock->ClientIP3()) << "." << static_cast<std::int32_t>(mSock->ClientIP2()) << "." << static_cast<std::int32_t>(mSock->ClientIP1()) << "]" << myendl;
                 }
                 else {
-                    Console::shared()
-                    << "Encrypted client attempting to cut in, disconnecting them: IP " << static_cast<std::int32_t>(mSock->ClientIP1()) << "." << static_cast<std::int32_t>(mSock->ClientIP2()) << "." << static_cast<std::int32_t>(mSock->ClientIP3()) << "." << static_cast<std::int32_t>(mSock->ClientIP4()) << myendl;
+                    Console::shared() << "Encrypted client attempting to cut in, disconnecting them: IP " << static_cast<std::int32_t>(mSock->ClientIP1()) << "." << static_cast<std::int32_t>(mSock->ClientIP2()) << "." << static_cast<std::int32_t>(mSock->ClientIP3()) << "." << static_cast<std::int32_t>(mSock->ClientIP4()) << myendl;
                 }
                 Disconnect(s);
                 return;
@@ -764,8 +760,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                     case 0x01: // Main Menu on the character select screen
                         Disconnect(s);
                         break;
-                    case 0x72: // Combat Mode
-                    {
+                    case 0x72: { // Combat Mode
                         mSock->Receive(5);
                         
                         std::vector<std::uint16_t> scriptTriggers = ourChar->GetScriptTriggers();
@@ -788,10 +783,9 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         }
                         
                         ourChar->SetWar(buffer[1] != 0);
-                        ourChar->SetPassive(buffer[1] ==
-                                            0); // Set player as passive if they tab out of combat
+                        ourChar->SetPassive(buffer[1] == 0); // Set player as passive if they tab out of combat
                         
-                        if (ourChar->GetTimer(tCHAR_TIMEOUT) <= cwmWorldState->GetUICurrentTime()) {
+                        if (ourChar->GetTimer(tCHAR_TIMEOUT) <= worldMain.GetUICurrentTime()) {
                             ourChar->SetTimer(tCHAR_TIMEOUT, BuildTimeValue(1));
                         }
                         else {
@@ -808,8 +802,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         mSock->Receive(3);
                         mSock->Receive(mSock->GetWord(1));
                         ourChar->BreakConcentration(mSock);
-                        if (buffer[3] == 0xC7) // Action
-                        {
+                        if (buffer[3] == 0xC7) { // Action
                             if (ourChar->IsOnHorse() || ourChar->IsFlying())
                                 return; // can't bow or salute on horse or while flying
                             
@@ -847,19 +840,16 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                             DoorMacro(mSock);
                             break;
                         }
-                        else if (buffer[3] == 0x24) // Skill
-                        {
+                        else if (buffer[3] == 0x24) { // Skill
                             j = 4;
                             while (buffer[j] != ' ') {
                                 ++j;
                             }
                             buffer[j] = 0;
-                            Skills->SkillUse(
-                                             mSock, static_cast<std::uint8_t>(std::stoul(std::string((char *)&buffer[4]))));
+                            Skills->SkillUse(mSock, static_cast<std::uint8_t>(std::stoul(std::string((char *)&buffer[4]))));
                             break;
                         }
-                        else if (buffer[3] == 0x27 || buffer[3] == 0x56) // Spell
-                        {
+                        else if (buffer[3] == 0x27 || buffer[3] == 0x56) { // Spell
                             // This'll find our spellbook for us
                             CItem *sBook = FindItemOfType(ourChar, IT_SPELLBOOK);
                             CItem *p = ourChar->GetPackItem();
@@ -880,12 +870,10 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                                     if (Magic->CheckBook(((book - 1) / 8) + 1, (book - 1) % 8, sBook)) {
                                         if (ourChar->IsFrozen()) {
                                             if (ourChar->IsCasting()) {
-                                                mSock->SysMessage(
-                                                                  762); // You are already casting a spell.
+                                                mSock->SysMessage(762); // You are already casting a spell.
                                             }
                                             else {
-                                                mSock->SysMessage(
-                                                                  763); // You cannot cast spells while frozen.
+                                                mSock->SysMessage(763); // You cannot cast spells while frozen.
                                             }
                                         }
                                         else {
@@ -898,15 +886,13 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                                     }
                                 }
                                 else {
-                                    mSock->SysMessage(
-                                                      765); // To cast spells, your spellbook must be in your hands or
+                                    mSock->SysMessage(765); // To cast spells, your spellbook must be in your hands or
                                     // in the first layer of your pack.
                                 }
                             }
                         }
                         else {
-                            if (buffer[2] == 0x05 && buffer[3] == 0x43) // Open spell book
-                            {
+                            if (buffer[2] == 0x05 && buffer[3] == 0x43){ // Open spell book
                                 Magic->SpellBook(mSock);
                             }
                             break;
@@ -933,8 +919,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         mSock->Receive(3);
                         mSock->Receive(mSock->GetWord(1)); // this is how it's really done
                         
-                        if (buffer[3] == 1) // Set profile, not feasible yet
-                        {
+                        if (buffer[3] == 1) { // Set profile, not feasible yet
                             mSock->SysMessage(768); // You cannot set your profile currently.
                         }
                         else {
@@ -1003,12 +988,10 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         mSock->Receive(9);
                         break;
                     case 0x3A: // skills management packet
-                        mSock->Receive(
-                                       6); // it's always 6 so Westy tells me... let's not be intelligent =)
+                        mSock->Receive(6); // it's always 6 so Westy tells me... let's not be intelligent =)
                         std::uint16_t skillNum;
                         skillNum = mSock->GetWord(3);
-                        ourChar->SetSkillLock(static_cast<skilllock_t>(buffer[5]),
-                                              static_cast<std::uint8_t>(skillNum));
+                        ourChar->SetSkillLock(static_cast<skilllock_t>(buffer[5]),static_cast<std::uint8_t>(skillNum));
                         break;
                     case 0x56:
                         Console::shared() << "'Plot Course' button on a map clicked." << myendl;
@@ -1031,7 +1014,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                         FD_SET(mSock->CliSocket(), &all);
                         std::int32_t nfds;
                         nfds = static_cast<int>(mSock->CliSocket()) + 1;
-                        if (select(nfds, &all, nullptr, nullptr, &cwmWorldState->uoxTimeout) > 0) {
+                        if (select(nfds, &all, nullptr, nullptr, &worldMain.uoxTimeout) > 0) {
                             mSock->Receive(MAXBUFFER);
                         }
                         
@@ -1042,8 +1025,7 @@ void CNetworkStuff::GetMsg(uoxsocket_t s) {
                 }
             }
         }
-        else // Sortta error type thing, they disconnected already
-        {
+        else{ // Sortta error type thing, they disconnected already
             Disconnect(s);
         }
     }
@@ -1059,8 +1041,8 @@ void CNetworkStuff::CheckLoginMessage() {
     // fd_set errsock; // This is already defined globally?
     size_t i;
     
-    // cwmWorldState->uoxTimeout.tv_sec = 0;
-    // cwmWorldState->uoxTimeout.tv_usec = 1; // This causes Windows to wait 1 extra milliseconds
+    // worldMain.uoxTimeout.tv_sec = 0;
+    // worldMain.uoxTimeout.tv_usec = 1; // This causes Windows to wait 1 extra milliseconds
     // per loop, while Linux waits 1 microseconds, causing performance difference
     
     FD_ZERO(&all);
@@ -1076,7 +1058,7 @@ void CNetworkStuff::CheckLoginMessage() {
         }
     }
     
-    std::int32_t s = select(nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout);
+    std::int32_t s = select(nfds, &all, nullptr, &errsock, &worldMain.uoxTimeout);
     if (s > 0) {
         size_t oldnow = loggedInClients.size();
         for (i = 0; i < loggedInClients.size(); ++i) {
@@ -1084,11 +1066,11 @@ void CNetworkStuff::CheckLoginMessage() {
                 LoginDisconnect(static_cast<uoxsocket_t>(i));
                 continue;
             }
-            if ((FD_ISSET(loggedInClients[i]->CliSocket(), &all)) &&
-                (oldnow == loggedInClients.size())) {
+            if ((FD_ISSET(loggedInClients[i]->CliSocket(), &all)) && (oldnow == loggedInClients.size())) {
                 try {
                     GetLoginMsg(static_cast<uoxsocket_t>(i));
-                } catch (socket_error &blah) {
+                }
+                catch (socket_error &blah) {
 #if !defined(_WIN32)
                     messageLoop << "Client disconnected";
 #else
@@ -1136,14 +1118,12 @@ void CNetworkStuff::LoginDisconnect(uoxsocket_t s) {
     loggedInClients.erase(loggedInClients.begin() + s);
 }
 
-void CNetworkStuff::LoginDisconnect(CSocket *s) // Force disconnection of player //Instalog
-{
+void CNetworkStuff::LoginDisconnect(CSocket *s) { // Force disconnection of player //Instalog
     uoxsocket_t i = FindLoginPtr(s);
     LoginDisconnect(i);
 }
 
-void CNetworkStuff::Disconnect(CSocket *s) // Force disconnection of player //Instalog
-{
+void CNetworkStuff::Disconnect(CSocket *s) { // Force disconnection of player //Instalog
     uoxsocket_t i = FindNetworkPtr(s);
     Disconnect(i);
 }
@@ -1172,9 +1152,9 @@ void CNetworkStuff::Transfer(CSocket *mSock) {
     // std::scoped_lock lock(internallock);
     connClients.push_back(loggedInClients[s]);
     loggedInClients.erase(loggedInClients.begin() + s);
-    cwmWorldState->SetPlayersOnline(connClients.size());
-    if (cwmWorldState->GetPlayersOnline() > peakConnectionCount) {
-        peakConnectionCount = cwmWorldState->GetPlayersOnline();
+    worldMain.SetPlayersOnline(connClients.size());
+    if (worldMain.GetPlayersOnline() > peakConnectionCount) {
+        peakConnectionCount = worldMain.GetPlayersOnline();
     }
     return;
 }
@@ -1252,7 +1232,8 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                 CPInputBuffer *test = nullptr;
                 try {
                     test = WhichLoginPacket(packetId, mSock);
-                } catch (socket_error &) {
+                }
+                catch (socket_error &) {
                     Console::shared().warning(util::format("Bad packet request thrown! [packet ID: 0x%x]", packetId));
                     mSock->FlushIncoming();
                     return;
@@ -1299,7 +1280,7 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                         FD_ZERO(&all);
                         FD_SET(mSock->CliSocket(), &all);
                         nfds = static_cast<uoxsocket_t>(mSock->CliSocket()) + 1;
-                        if (select(nfds, &all, nullptr, nullptr, &cwmWorldState->uoxTimeout) > 0) {
+                        if (select(nfds, &all, nullptr, nullptr, &worldMain.uoxTimeout) > 0) {
                             mSock->Receive(MAXBUFFER);
                         }
                         messageLoop << util::format("Unknown message from client: 0x%02X - Ignored", packetId);
@@ -1307,8 +1288,7 @@ void CNetworkStuff::GetLoginMsg(uoxsocket_t s) {
                 }
             }
         }
-        else // Sortta error type thing, they disconnected already
-        {
+        else { // Sortta error type thing, they disconnected already
             LoginDisconnect(s);
         }
     }

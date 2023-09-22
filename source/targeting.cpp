@@ -29,6 +29,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 
@@ -1164,7 +1165,7 @@ void TransferTarget(CSocket *s) {
         CItem *petTransferDeed = Items->CreateScriptItem(s, mChar, "0x14F0", 1, CBaseObject::OT_ITEM, false, 0);
         if (ValidateObject(petTransferDeed)) {
             std::string petName = GetNpcDictName(petChar, nullptr, NRS_SYSTEM);
-            petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // cwmWorldState->creatures[petChar->GetId()].CreatureType().c_str()
+            petTransferDeed->SetName(util::format("a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry(3000 + petChar->GetId(), targChar->GetSocket()->Language()).c_str())); // worldMain.creatures[petChar->GetId()].CreatureType().c_str()
             // ));
             petTransferDeed->SetTempVar(CITV_MORE, petChar->GetSerial());
             petTransferDeed->SetMovable(2); // Disallow moving the deed out of the trade window
@@ -1368,7 +1369,7 @@ void ShowSkillTarget(CSocket *s) {
         }
         
         if (skillVal > 0 || dispType % 2 == 0) {
-            showSkills.AddData(cwmWorldState->skill[i].name, std::to_string(static_cast<float>(skillVal) / 10), 8);
+            showSkills.AddData(worldMain.skill[i].name, std::to_string(static_cast<float>(skillVal) / 10), 8);
         }
     }
     showSkills.Send(4, false, INVALIDSERIAL);
@@ -1613,7 +1614,7 @@ void MakeTownAlly(CSocket *s) {
         return;
     }
     
-    if (!cwmWorldState->townRegions[srcTown]->MakeAlliedTown(trgTown)) {
+    if (!worldMain.townRegions[srcTown]->MakeAlliedTown(trgTown)) {
         s->SysMessage(1111); // You were unable to do that.
     }
 }
@@ -2000,7 +2001,7 @@ bool CPITargetCursor::Handle() {
                         MakeTownAlly(tSock);
                         break;
                     case TARGET_VOTEFORMAYOR:
-                        cwmWorldState->townRegions[mChar->GetTown()]->VoteForMayor(tSock);
+                        worldMain.townRegions[mChar->GetTown()]->VoteForMayor(tSock);
                         break;
                         // Pets
                     case TARGET_FOLLOW:

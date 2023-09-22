@@ -61,6 +61,7 @@
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 
@@ -127,9 +128,9 @@ auto HandleTeleporters(CChar *s) -> void {
     std::uint8_t charWorld = s->WorldNumber();
     CTeleLocationEntry *getTeleLoc = nullptr;
     bool isOnTeleporter;
-    for (size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i) {
+    for (size_t i = 0; i < worldMain.teleLocs.size(); ++i) {
         isOnTeleporter = false;
-        getTeleLoc = &cwmWorldState->teleLocs[i];
+        getTeleLoc = &worldMain.teleLocs[i];
         if (getTeleLoc) {
             if ((getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1) ||
                 getTeleLoc->SourceWorld() == charWorld) {
@@ -426,7 +427,7 @@ void CMovement::Walking(CSocket *mSock, CChar *c, std::uint8_t dir, std::int16_t
     SendWalkToOtherPlayers(c, dir, oldx, oldy);
     
     // Update timestamp for when character last moved
-    c->LastMoveTime(cwmWorldState->GetUICurrentTime());
+    c->LastMoveTime(worldMain.GetUICurrentTime());
     
     // i'm going ahead and optimizing this, if you haven't really moved, should be
     // no need to check for teleporters and the weather shouldn't change
@@ -1464,7 +1465,7 @@ void CMovement::NpcWalk(CChar *i, std::uint8_t j, std::int8_t getWander) {
             // If still within bounding box, keep walking - and also keep walking if a valid target is
             // still nearby, or if there's a delay on pathfinding
             auto iTarg = i->GetTarg();
-            if (CheckBoundingBox(newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId) || (ValidateObject(iTarg) && ObjInRange(i, iTarg, DIST_SAMESCREEN)) || (i->GetTimer(tNPC_PATHFINDDELAY) > cwmWorldState->GetUICurrentTime())) {
+            if (CheckBoundingBox(newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId) || (ValidateObject(iTarg) && ObjInRange(i, iTarg, DIST_SAMESCREEN)) || (i->GetTimer(tNPC_PATHFINDDELAY) > worldMain.GetUICurrentTime())) {
                 Walking(nullptr, i, jMod, 256);
             }
             else if (!CheckBoundingBox(i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId)) {
@@ -1493,7 +1494,7 @@ void CMovement::NpcWalk(CChar *i, std::uint8_t j, std::int8_t getWander) {
             // If still within bounding box, keep walking - and also keep walking if a valid target is
             // still nearby, or if there's a delay on pathfinding
             auto iTarg = i->GetTarg();
-            if (CheckBoundingCircle(newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId) || (ValidateObject(iTarg) && ObjInRange(i, iTarg, DIST_SAMESCREEN)) || (i->GetTimer(tNPC_PATHFINDDELAY) > cwmWorldState->GetUICurrentTime())) {
+            if (CheckBoundingCircle(newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId) || (ValidateObject(iTarg) && ObjInRange(i, iTarg, DIST_SAMESCREEN)) || (i->GetTimer(tNPC_PATHFINDDELAY) > worldMain.GetUICurrentTime())) {
                 Walking(nullptr, i, jMod, 256);
             }
             // The NPC is outside it's area, send it back
@@ -1563,8 +1564,8 @@ void CMovement::BoundingBoxTeleport(CChar *nChar, std::uint16_t fx2Actual, std::
     
     if (checkSuccess == false) {
         bool boundingBoxTeleport = false;
-        bool waterWalk = cwmWorldState->creatures[nChar->GetId()].IsWater();
-        bool amphibWalk = cwmWorldState->creatures[nChar->GetId()].IsAmphibian();
+        bool waterWalk = worldMain.creatures[nChar->GetId()].IsWater();
+        bool amphibWalk = worldMain.creatures[nChar->GetId()].IsAmphibian();
         for (std::uint16_t m = fx1; m < fx2Actual; m++) {
             for (std::uint16_t n = fy1; n < fy2Actual; n++) {
                 if ((!waterWalk || amphibWalk) && Map->ValidSpawnLocation(m, n, fz1, worldNumber, false)) {
@@ -1769,7 +1770,7 @@ bool CMovement::HandleNPCWander(CChar &mChar) {
     std::int8_t npcWanderType = mChar.GetNpcWander();
     switch (npcWanderType) {
         case WT_NONE: // No movement
-            if (mChar.GetOldNpcWander() != WT_NONE && mChar.GetTimer(tNPC_MOVETIME) <= cwmWorldState->GetUICurrentTime()) {
+            if (mChar.GetOldNpcWander() != WT_NONE && mChar.GetTimer(tNPC_MOVETIME) <= worldMain.GetUICurrentTime()) {
                 mChar.SetNpcWander(mChar.GetOldNpcWander());
             }
             break;
@@ -2025,8 +2026,8 @@ void CMovement::NpcMovement(CChar &mChar) {
     
     bool canRun = ((mChar.GetStamina() > 0) && mChar.CanRun());
     
-    if (mChar.GetTimer(tNPC_MOVETIME) <= cwmWorldState->GetUICurrentTime() ||
-        cwmWorldState->GetOverflow()) {
+    if (mChar.GetTimer(tNPC_MOVETIME) <= worldMain.GetUICurrentTime() ||
+        worldMain.GetOverflow()) {
 #if DEBUG_NPCWALK
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
         Console::shared().print(util::format("DEBUG: ENTER (%s): %d AI %d WAR %d J\n", charName, mChar.GetNpcWander(), mChar.IsAtWar(), j));
@@ -2273,7 +2274,7 @@ void CMovement::NpcMovement(CChar &mChar) {
         if (!mChar.IsAtWar() && !ValidateObject(mChar.GetTarg()) &&
             mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED &&
             mChar.GetNpcWander() != WT_FROZEN) {
-            if (mChar.GetTimer(tNPC_IDLEANIMTIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+            if (mChar.GetTimer(tNPC_IDLEANIMTIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 mChar.SetTimer(tNPC_MOVETIME, BuildTimeValue(3));
                 mChar.SetTimer(tNPC_IDLEANIMTIME, BuildTimeValue(RandomNum(5, 20)));
                 
@@ -2314,7 +2315,7 @@ void CMovement::NpcMovement(CChar &mChar) {
                     }
                 }
                 else {
-                    if (cwmWorldState->creatures[mChar.GetId()].IsHuman()) {
+                    if (worldMain.creatures[mChar.GetId()].IsHuman()) {
                         Effects->PlayCharacterAnimation(&mChar, RandomNum(static_cast<std::uint16_t>(ACT_IDLE_LOOK), static_cast<std::uint16_t>(ACT_IDLE_YAWN)), 0, 5);
                     }
                     else {
@@ -2347,8 +2348,8 @@ void CMovement::NpcMovement(CChar &mChar) {
                                 // No idle variation/fidget
                                 break;
                             default:
-                                if (cwmWorldState->creatures[mChar.GetId()].IsAnimal() &&
-                                    !cwmWorldState->creatures[mChar.GetId()].CanFly()) {
+                                if (worldMain.creatures[mChar.GetId()].IsAnimal() &&
+                                    !worldMain.creatures[mChar.GetId()].CanFly()) {
                                     // Animal, excluding birds, which have animation setups like
                                     // monsters
                                     auto rndVal = static_cast<std::uint16_t>(RandomNum(9, 10));
@@ -2737,18 +2738,18 @@ std::int8_t CMovement::CalcWalk(CChar *c, std::int16_t x, std::int16_t y, std::i
 // o------------------------------------------------------------------------------------------------o
 bool CMovement::CalcMove(CChar *c, std::int16_t x, std::int16_t y, std::int8_t &z, std::uint8_t dir) {
     // NPCs that walk on land
-    if (!cwmWorldState->creatures[c->GetId()].IsWater()) {
+    if (!worldMain.creatures[c->GetId()].IsWater()) {
         // Is the character moving diagonally (NW, NE, SE, SW)? If so, we should check the nearby
         // directions for blocking items too
         if ((dir & 0x07) % 2) {
             // Check direction counter-clockwise to actual direction
             std::uint8_t ndir = TurnCounterClockWise(dir);
-            if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetId()].IsAmphibian())
+            if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true) == ILLEGAL_Z && !worldMain.creatures[c->GetId()].IsAmphibian())
                 return false;
             
             // Check direction clockwise to actual direction
             ndir = TurnClockWise(dir);
-            if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true) == ILLEGAL_Z && !cwmWorldState->creatures[c->GetId()].IsAmphibian())
+            if (CalcWalk(c, GetXfromDir(ndir, x), GetYfromDir(ndir, y), x, y, c->GetZ(), true) == ILLEGAL_Z && !worldMain.creatures[c->GetId()].IsAmphibian())
                 return false;
         }
         
@@ -2757,7 +2758,7 @@ bool CMovement::CalcMove(CChar *c, std::int16_t x, std::int16_t y, std::int8_t &
     }
     
     // NPCs that can swim
-    if (cwmWorldState->creatures[c->GetId()].IsWater() || (cwmWorldState->creatures[c->GetId()].IsAmphibian() && z == ILLEGAL_Z)) {
+    if (worldMain.creatures[c->GetId()].IsWater() || (worldMain.creatures[c->GetId()].IsAmphibian() && z == ILLEGAL_Z)) {
         // Is the character moving diagonally (NW, NE, SE, SW)? If so, we should check the nearby
         // directions for blocking items too
         if ((dir & 0x07) % 2) {
@@ -2815,8 +2816,8 @@ bool CMovement::PFGrabNodes(CChar *mChar, std::uint16_t targX, std::uint16_t tar
     std::map<std::uint32_t, bool> blockList;
     blockList.clear();
     
-    bool waterWalk = cwmWorldState->creatures[mChar->GetId()].IsWater();
-    bool amphibianWalk = cwmWorldState->creatures[mChar->GetId()].IsAmphibian();
+    bool waterWalk = worldMain.creatures[mChar->GetId()].IsWater();
+    bool amphibianWalk = worldMain.creatures[mChar->GetId()].IsAmphibian();
     
     std::int8_t newZ = ILLEGAL_Z;
     for (std::int8_t xOff = -1; xOff < 2; ++xOff) {
@@ -3017,7 +3018,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
         std::string charName = GetNpcDictName(mChar, nullptr, NRS_SYSTEM);
         Console::shared().warning(util::format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n", charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps));
 #endif
-        if (!cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
+        if (!worldMain.creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
             IgnoreAndEvadeTarget(mChar);
         }
         mChar->SetPathResult(-1); // Pathfinding failed
@@ -3028,7 +3029,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
 #if defined(UOX_DEBUG_MODE)
         Console::shared().warning("AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n");
 #endif
-        if (!cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
+        if (!worldMain.creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
             IgnoreAndEvadeTarget(mChar);
         }
         mChar->SetPathResult(-1); // Pathfinding failed
@@ -3037,7 +3038,7 @@ bool CMovement::AdvancedPathfinding(CChar *mChar, std::uint16_t targX, std::uint
     }
     else if (mChar->GetX() == startX && mChar->GetY() == startY && GetDist(mChar->GetLocation(), Point3(targX, targY, curZ)) > 1) {
         // NPC never moved, and target location is not nearby
-        if (!cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
+        if (!worldMain.creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20) {
             IgnoreAndEvadeTarget(mChar);
         }
         mChar->SetPathResult(-1); // Pathfinding failed

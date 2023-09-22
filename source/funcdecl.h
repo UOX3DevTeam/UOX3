@@ -24,11 +24,11 @@
 
 #include "cbaseobject.h"
 #include "osunique.hpp"
+#include "other/uoxglobal.hpp"
 #include "worldmain.h"
 class CItem;
 class CTownRegion;
 
-extern CWorldMain *cwmWorldState;
 extern std::mt19937 generator;
 
 // o------------------------------------------------------------------------------------------------o
@@ -140,7 +140,7 @@ void CallGuards(CChar *mChar);
 //  Time Functions
 // o------------------------------------------------------------------------------------------------o
 inline timerval_t BuildTimeValue(float timeFromNow) {
-    return static_cast<timerval_t>(cwmWorldState->GetUICurrentTime() + (static_cast<float>(1000) * timeFromNow));
+    return static_cast<timerval_t>(worldMain.GetUICurrentTime() + (static_cast<float>(1000) * timeFromNow));
 }
 
 std::uint32_t GetClock();

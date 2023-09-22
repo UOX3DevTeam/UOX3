@@ -40,6 +40,7 @@
 #include "power.h"
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 const std::uint32_t BIT_FREE = 0;
@@ -120,7 +121,7 @@ CBaseObject::CBaseObject() : objType(DEFBASE_OBJTYPE), race(DEFBASE_RACE), x(DEF
     name.reserve(MAX_NAME);
     title.reserve(MAX_TITLE);
     sectionId.reserve(MAX_NAME);
-    if (cwmWorldState != nullptr && cwmWorldState->GetLoaded()) {
+    if (worldMain.GetLoaded()) {
         SetPostLoaded(true);
     }
     ShouldSave(true);
@@ -1982,9 +1983,9 @@ void CBaseObject::Cleanup() {
         }
     }
     
-    auto toFind = cwmWorldState->refreshQueue.find(this);
-    if (toFind != cwmWorldState->refreshQueue.end()) {
-        cwmWorldState->refreshQueue.erase(toFind);
+    auto toFind = worldMain.refreshQueue.find(this);
+    if (toFind != worldMain.refreshQueue.end()) {
+        worldMain.refreshQueue.erase(toFind);
     }
     
     if (ValidateObject(multis)) {
@@ -2013,7 +2014,7 @@ void CBaseObject::Dirty([[maybe_unused]] updatetypes_t updateType) {
         Console::shared().error(util::format("Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial()));
     }
     else if (IsPostLoaded()) {
-        ++(cwmWorldState->refreshQueue[this]);
+        ++(worldMain.refreshQueue[this]);
     }
 }
 
@@ -2023,9 +2024,9 @@ void CBaseObject::Dirty([[maybe_unused]] updatetypes_t updateType) {
 //|	Purpose		-	Removes the object from the global refresh queue
 // o------------------------------------------------------------------------------------------------o
 void CBaseObject::RemoveFromRefreshQueue() {
-    auto toFind = cwmWorldState->refreshQueue.find(this);
-    if (toFind != cwmWorldState->refreshQueue.end()) {
-        cwmWorldState->refreshQueue.erase(toFind);
+    auto toFind = worldMain.refreshQueue.find(this);
+    if (toFind != worldMain.refreshQueue.end()) {
+        worldMain.refreshQueue.erase(toFind);
     }
 }
 

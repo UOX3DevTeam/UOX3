@@ -28,6 +28,7 @@
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "useful.h"
 #include "weight.h"
 
@@ -857,7 +858,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
         if (targNPC->WillHunger() && IsOnFoodList(targNPC->GetFood(), i->GetId())) {
             if (targNPC->GetHunger() < 6) {
                 Effects->PlaySound(mSock, static_cast<std::uint16_t>(0x003A + RandomNum(0, 2)), true);
-                if (cwmWorldState->creatures[targNPC->GetId()].IsAnimal()) {
+                if (worldMain.creatures[targNPC->GetId()].IsAnimal()) {
                     Effects->PlayCharacterAnimation(targNPC, ACT_ANIMAL_EAT, 0, 5);
                 }
                 
@@ -911,7 +912,7 @@ bool DropOnNPC(CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i) {
             dropResult = 2;
         }
     }
-    else if (cwmWorldState->creatures[targNPC->GetId()].IsHuman()) {
+    else if (worldMain.creatures[targNPC->GetId()].IsHuman()) {
         if (static_cast<CChar *>(mSock->TempObj()) != targNPC) {
             if (isGM) {
                 dropResult = 2;
@@ -1787,23 +1788,23 @@ std::uint8_t BestSkill(CChar *mChar, skillval_t &skillLevel) {
 // titles.dfn |                 entries and characters best skill
 // o------------------------------------------------------------------------------------------------o
 void GetSkillProwessTitle(CChar *mChar, std::string &SkillProwessTitle) {
-    if (cwmWorldState->prowessTitles.empty())
+    if (worldMain.prowessTitles.empty())
         return;
     
     skillval_t skillLevel = 0;
     std::uint8_t bestSkill = BestSkill(mChar, skillLevel);
-    if (skillLevel <= cwmWorldState->prowessTitles[0].lowBound) {
-        SkillProwessTitle = cwmWorldState->prowessTitles[0].toDisplay;
+    if (skillLevel <= worldMain.prowessTitles[0].lowBound) {
+        SkillProwessTitle = worldMain.prowessTitles[0].toDisplay;
     }
     else {
         size_t pEntry = 0;
-        for (pEntry = 0; pEntry < cwmWorldState->prowessTitles.size() - 1; ++pEntry) {
-            if (skillLevel >= cwmWorldState->prowessTitles[pEntry].lowBound && skillLevel < cwmWorldState->prowessTitles[pEntry + 1].lowBound)
+        for (pEntry = 0; pEntry < worldMain.prowessTitles.size() - 1; ++pEntry) {
+            if (skillLevel >= worldMain.prowessTitles[pEntry].lowBound && skillLevel < worldMain.prowessTitles[pEntry + 1].lowBound)
                 break;
         }
-        SkillProwessTitle = cwmWorldState->prowessTitles[pEntry].toDisplay;
+        SkillProwessTitle = worldMain.prowessTitles[pEntry].toDisplay;
     }
-    SkillProwessTitle += " " + cwmWorldState->title[static_cast<std::uint8_t>(bestSkill + 1)].skill;
+    SkillProwessTitle += " " + worldMain.title[static_cast<std::uint8_t>(bestSkill + 1)].skill;
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1979,8 +1980,8 @@ void GetFameTitle(CChar *p, std::string &fameTitle) {
                 titleNum = 42;
             }
         }
-        if (!cwmWorldState->title[titleNum].fame.empty()) {
-            theTitle = cwmWorldState->title[titleNum].fame + " ";
+        if (!worldMain.title[titleNum].fame.empty()) {
+            theTitle = worldMain.title[titleNum].fame + " ";
         }
         
         
@@ -2082,24 +2083,24 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
     }
     // Murder tags now scriptable in SECTION MURDERER - Titles.dfn
     else if (pdoll->GetKills() > ServerConfig::shared().ushortValues[UShortValue::MAXKILL]) {
-        if (cwmWorldState->murdererTags.empty()) {
+        if (worldMain.murdererTags.empty()) {
             tempstr = util::format(Dictionary->GetEntry(374, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(),  pdoll->GetTitle().c_str(), skillProwessTitle.c_str());
         }
-        else if (pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound) { // not a real murderer
+        else if (pdoll->GetKills() < worldMain.murdererTags[0].lowBound) { // not a real murderer
             bContinue = true;
         }
         else {
             std::int16_t mKills = pdoll->GetKills();
             size_t kCtr;
-            for (kCtr = 0; kCtr < cwmWorldState->murdererTags.size() - 1; ++kCtr) {
-                if (mKills >= cwmWorldState->murdererTags[kCtr].lowBound &&  mKills < cwmWorldState->murdererTags[kCtr + 1].lowBound)
+            for (kCtr = 0; kCtr < worldMain.murdererTags.size() - 1; ++kCtr) {
+                if (mKills >= worldMain.murdererTags[kCtr].lowBound &&  mKills < worldMain.murdererTags[kCtr + 1].lowBound)
                     break;
             }
-            if (kCtr >= cwmWorldState->murdererTags.size()) {
+            if (kCtr >= worldMain.murdererTags.size()) {
                 bContinue = true;
             }
             else {
-                tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " +  pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + ", " + pdoll->GetTitle() + skillProwessTitle;
+                tempstr = worldMain.murdererTags[kCtr].toDisplay + " " +  pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + ", " + pdoll->GetTitle() + skillProwessTitle;
             }
         }
     }
@@ -2120,10 +2121,10 @@ void PaperDoll(CSocket *s, CChar *pdoll) {
         if (pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2) {// TownTitle
             if (pdoll->GetTownPriv() == 2) { // is Mayor
                 tempstr =
-                util::format(Dictionary->GetEntry(379, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str());
+                util::format(Dictionary->GetEntry(379, sLang), pdoll->GetNameRequest(myChar, NRS_PAPERDOLL).c_str(), worldMain.townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str());
             }
             else { // is Resident
-                tempstr = pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
+                tempstr = pdoll->GetNameRequest(myChar, NRS_PAPERDOLL) + " of " + worldMain.townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
             }
         }
         else {// No Town Title
@@ -2193,7 +2194,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
     
     if (c->IsNpc()) {
         CItem *pack = nullptr;
-        if (cwmWorldState->creatures[c->GetId()].MountId() != 0) {// Is a mount
+        if (worldMain.creatures[c->GetId()].MountId() != 0) {// Is a mount
             if ((c->IsTamed() && (c->GetOwnerObj() == mChar || Npcs->CheckPetFriend(mChar, c))) ||
                 mChar->GetCommandLevel() >= CL_GM) {
                 if (ObjInRange(mChar, c, DIST_NEXTTILE)) {
@@ -2216,7 +2217,7 @@ void handleCharDoubleClick(CSocket *mSock, serial_t serial, bool keyboard) {
             }
             return;
         }
-        else if (!cwmWorldState->creatures[c->GetId()].IsHuman() && !c->IsDead()) {
+        else if (!worldMain.creatures[c->GetId()].IsHuman() && !c->IsDead()) {
             if (c->GetId() == 0x0123 || c->GetId() == 0x0124 || c->GetId() == 0x0317) { // Is a pack animal
                 if (mChar->IsDead()) {
                     mSock->SysMessage(392); // You are dead and cannot do that.
@@ -3002,7 +3003,7 @@ bool ItemIsUsable(CSocket *tSock, CChar *ourChar, CItem *iUsed, itemtypes_t iTyp
         }
     }
     if (ourChar->GetCommandLevel() < CL_CNS) {
-        if ((tSock->GetTimer(tPC_OBJDELAY) >= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+        if ((tSock->GetTimer(tPC_OBJDELAY) >= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
             if (!tSock->ObjDelayMsgShown()) {
                 tSock->SysMessage(386); // You must wait to perform another action.
                 tSock->ObjDelayMsgShown(true);
@@ -3395,7 +3396,7 @@ bool CPISingleClick::Handle() {
                 temp2 += util::format(" %s", Dictionary->GetEntry(9140, tSock->Language()).c_str()); // of exceptional quality
                 
                 if (ServerConfig::shared().enabled(ServerSwitch::MAKERMARK) && i->IsMarkedByMaker()) {
-                    temp2 += util::format(" %s by %s", cwmWorldState->skill[i->GetMadeWith() - 1].madeWord.c_str(), creatorName.c_str()); //  [crafted] by %s
+                    temp2 += util::format(" %s by %s", worldMain.skill[i->GetMadeWith() - 1].madeWord.c_str(), creatorName.c_str()); //  [crafted] by %s
                 }
             }
         }

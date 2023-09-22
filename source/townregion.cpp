@@ -22,6 +22,7 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 // Implementation of town regions
 
@@ -489,7 +490,7 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                 if (UTag == "ESCORTS") {
                     // Load the region number in the global array of valid escortable regions
                     if (duint == 1) {
-                        cwmWorldState->escortRegions.push_back(regionNum);
+                        worldMain.escortRegions.push_back(regionNum);
                     }
                 }
                 break;
@@ -628,10 +629,10 @@ bool CTownRegion::InitFromScript(CScriptSection *toScan) {
                     }
                     else {
                         for (std::uint16_t i = 0xFFFF; i > 0; --i) {
-                            if (cwmWorldState->spawnRegions.find(i) !=
-                                cwmWorldState->spawnRegions.end()) {
+                            if (worldMain.spawnRegions.find(i) !=
+                                worldMain.spawnRegions.end()) {
                                 CSpawnRegion *spawnReg = new CSpawnRegion(i);
-                                cwmWorldState->spawnRegions[i] = spawnReg;
+                                worldMain.spawnRegions[i] = spawnReg;
                                 if (spawnReg != nullptr) {
                                     spawnReg->SetX1(locations[locations.size() - 1].x1);
                                     spawnReg->SetY1(locations[locations.size() - 1].y1);
@@ -1487,12 +1488,12 @@ bool CTownRegion::MakeAlliedTown(std::uint16_t townToMake) {
         return false;
     }
     
-    if (Races->CompareByRace(cwmWorldState->townRegions[townToMake]->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
+    if (Races->CompareByRace(worldMain.townRegions[townToMake]->GetRace(), race) <= RACE_ENEMY) // if we're racial enemies
         return false;
     
     // let's ally ourselves
     alliedTowns.push_back(townToMake);
-    TellMembers(1172, name.c_str(), cwmWorldState->townRegions[townToMake]->GetName().c_str()); // Your town of %s has now allied itself with %s.
+    TellMembers(1172, name.c_str(), worldMain.townRegions[townToMake]->GetName().c_str()); // Your town of %s has now allied itself with %s.
     return true;
 }
 
@@ -1535,7 +1536,7 @@ void CTownRegion::TellMembers(std::int32_t dictEntry, ...) {
                 toAdd.SpokenTo(townMember[memberCounter].townMember);
                 toAdd.Colour(0x000B);
                 toAdd.Type(SYSTEM);
-                toAdd.At(cwmWorldState->GetUICurrentTime());
+                toAdd.At(worldMain.GetUICurrentTime());
                 toAdd.TargType(SPTRG_INDIVIDUAL);
             }
             va_end(argptr);
@@ -1563,7 +1564,7 @@ void CTownRegion::SendAlliedTowns(CSocket *sock) {
     auto temp = util::format(Dictionary->GetEntry(1173, sock->Language()).c_str(), alliedTowns.size()); // Allied Towns (%i)
     Ally.setTitle(temp);
     for (size_t counter = 0; counter < alliedTowns.size(); ++counter) {
-        Ally.AddData(cwmWorldState->townRegions[alliedTowns[counter]]->GetName(), " ");
+        Ally.AddData(worldMain.townRegions[alliedTowns[counter]]->GetName(), " ");
     }
     
     Ally.Send(4, false, INVALIDSERIAL);
@@ -1597,7 +1598,7 @@ auto CTownRegion::SendEnemyTowns(CSocket *sock) -> void {
     auto Enemy = CGumpDisplay(sock, 300, 300);
     
     std::uint8_t enemyCount = 0;
-    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
+    std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(), [this, &enemyCount, &Enemy](const std::pair<std::uint16_t, CTownRegion *> &entry) {
         if ((entry.first != regionNum) && (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
             ++enemyCount;
             Enemy.AddData(entry.second->GetName(), Races->Name(entry.second->GetRace()));

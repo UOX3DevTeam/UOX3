@@ -542,7 +542,7 @@ auto WorldWeather::doWeatherEffect(CSocket *mSock, CChar &mChar, Weather::type_t
     
     bool didDamage = false;
     auto weatherSys = mChar.GetRegion()->GetWeather();
-    if (!(weatherSys > region.size() || region.empty()) && mChar.GetWeathDamage(element) != 0 && mChar.GetWeathDamage(element) <= cwmWorldState->GetUICurrentTime()) {
+    if (!(weatherSys > region.size() || region.empty()) && mChar.GetWeathDamage(element) != 0 && mChar.GetWeathDamage(element) <= worldMain.GetUICurrentTime()) {
         auto tempCurrent = (this->region.at(weatherSys)).impact[Weather::TEMP][Weather::CURRENT] ;
         // const float tempMax        = MaxTemp( weatherSys );
         // const float tempMin        = MinTemp( weatherSys );
@@ -645,7 +645,7 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
         return false;
     }
     
-    if (mChar.GetWeathDamage(LIGHT) != 0 && mChar.GetWeathDamage(LIGHT) <= cwmWorldState->GetUICurrentTime()) {
+    if (mChar.GetWeathDamage(LIGHT) != 0 && mChar.GetWeathDamage(LIGHT) <= worldMain.GetUICurrentTime()) {
         float damageModifier = 0;
         std::int32_t damage = 0;
         float baseDamage = static_cast<float>(Races->Damage(mChar.GetRace(), Weather::LIGHT));
@@ -654,7 +654,7 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
         float lightMin = 255;
         float lightMax = 255;
         std::int32_t message = 0;
-        bool ampm = cwmWorldState->uoTime.ampm;
+        bool ampm = worldMain.uoTime.ampm;
         
         weathid_t weatherSys = mChar.GetRegion()->GetWeather();
         if (!region.empty() && weatherSys < region.size()) {
@@ -665,13 +665,13 @@ auto WorldWeather::doLightEffect(CSocket *mSock, CChar &mChar)->bool{
                 currentLight = region.at(weatherSys).impact[Weather::BRIGHTNESS][Weather::CURRENT];
             }
             else {
-                currentLight = cwmWorldState->uoTime.worldLightLevel ;
+                currentLight = worldMain.uoTime.worldLightLevel ;
                 lightMin = ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL] ;
                 lightMax = ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL] ;
             }
         }
         else {
-            currentLight = cwmWorldState->uoTime.worldLightLevel;
+            currentLight = worldMain.uoTime.worldLightLevel;
             lightMin = ServerConfig::shared().ushortValues[UShortValue::DARKLEVEL] ;
             lightMax = ServerConfig::shared().ushortValues[UShortValue::BRIGHTLEVEL] ;
         }

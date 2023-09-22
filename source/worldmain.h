@@ -248,6 +248,6 @@ private:
     CServerProfile sProfile;
 };
 
-extern CWorldMain *cwmWorldState;
+//extern CWorldMain *cwmWorldState;
 
 #endif

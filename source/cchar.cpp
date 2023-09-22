@@ -78,6 +78,7 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 #define DEBUGMOVEMULTIPLIER 1.75
@@ -179,9 +180,7 @@ CChar::PlayerValues::PlayerValues() : callNum(DEFPLAYER_CALLNUM), playerCallNum(
         atrophy[j] = j;
     }
     
-    if (cwmWorldState != nullptr) {
-        trackingTargets.resize( ServerConfig::shared().ushortValues[UShortValue::MAXTARGET] );
-    }
+    trackingTargets.resize( ServerConfig::shared().ushortValues[UShortValue::MAXTARGET] );
 }
 
 const std::int8_t DEFNPC_WANDER = 0;
@@ -477,7 +476,7 @@ void CChar::DoHunger(CSocket *mSock) {
         std::int16_t hungerDamage;
         if (!IsNpc() && mSock != nullptr) { // Do Hunger for player chars
             if (WillHunger() && GetCommandLevel() == CL_PLAYER) {
-                if (GetTimer(tCHAR_HUNGER) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                if (GetTimer(tCHAR_HUNGER) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                     if (Races->DoesHunger(GetRace())) { // prefer the hunger settings frome the race
                         hungerRate = Races->GetHungerRate(GetRace());
                         hungerDamage = Races->GetHungerDamage(GetRace());
@@ -532,7 +531,7 @@ void CChar::DoHunger(CSocket *mSock) {
             if (!WillHunger() || GetMounted() || GetStabled())
                 return;
             
-            if (GetTimer(tCHAR_HUNGER) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+            if (GetTimer(tCHAR_HUNGER) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 hungerRate = Races->GetHungerRate(GetRace());
                 hungerDamage = Races->GetHungerDamage(GetRace());
                 
@@ -560,7 +559,7 @@ void CChar::DoHunger(CSocket *mSock) {
                     return;
             }
             
-            if (GetTimer(tCHAR_HUNGER) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+            if (GetTimer(tCHAR_HUNGER) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 // Get hungerrate for tamed creatures
                 hungerRate = GetTamedHungerRate();
                 
@@ -636,7 +635,7 @@ void CChar::DoThirst(CSocket *mSock) {
         std::int16_t thirstDrain;
         if (!IsNpc() && mSock != nullptr) { // Do Thirst for player chars
             if (WillThirst() && GetCommandLevel() == CL_PLAYER) {
-                if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                if (GetTimer(tCHAR_THIRST) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                     if (Races->DoesThirst(GetRace())) { // prefer the thirst settings frome the race
                         thirstRate = Races->GetThirstRate(GetRace());
                         thirstDrain = Races->GetThirstDrain(GetRace());
@@ -688,7 +687,7 @@ void CChar::DoThirst(CSocket *mSock) {
         }
         else if (IsNpc() && !IsTamed() && Races->DoesThirst(GetRace())) {
             if (WillThirst() && !GetMounted() && !GetStabled()) {
-                if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                if (GetTimer(tCHAR_THIRST) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                     thirstRate = Races->GetThirstRate(GetRace());
                     thirstDrain = Races->GetThirstDrain(GetRace());
                     
@@ -713,7 +712,7 @@ void CChar::DoThirst(CSocket *mSock) {
                         return;
                 }
                 
-                if (GetTimer(tCHAR_THIRST) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                if (GetTimer(tCHAR_THIRST) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                     thirstRate = GetTamedThirstRate();
                     
                     if (GetThirst() > 0) {
@@ -1447,10 +1446,10 @@ void CChar::SetStep(std::uint8_t newValue) { step = newValue; }
 //| Purpose		-	Gets/Sets the town region the character is in
 // o------------------------------------------------------------------------------------------------o
 CTownRegion *CChar::GetRegion() const {
-    if (cwmWorldState->townRegions.find(regionNum) == cwmWorldState->townRegions.end()) {
-        return cwmWorldState->townRegions[0xFF];
+    if (worldMain.townRegions.find(regionNum) == worldMain.townRegions.end()) {
+        return worldMain.townRegions[0xFF];
     }
-    return cwmWorldState->townRegions[regionNum];
+    return worldMain.townRegions[regionNum];
 }
 void CChar::SetRegion(std::uint16_t newValue) {
     regionNum = newValue;
@@ -2571,20 +2570,20 @@ bool CChar::DumpBody(std::ostream &outStream) const {
     
     timerval_t mTime = GetTimer(tCHAR_MURDERRATE);
     outStream << "MurderTimer=";
-    if (mTime == 0 || mTime < cwmWorldState->GetUICurrentTime()) {
+    if (mTime == 0 || mTime < worldMain.GetUICurrentTime()) {
         outStream << std::to_string(0) + newLine;
     }
     else {
-        outStream << std::to_string(mTime - cwmWorldState->GetUICurrentTime()) + newLine;
+        outStream << std::to_string(mTime - worldMain.GetUICurrentTime()) + newLine;
     }
     
     timerval_t pTime = GetTimer(tCHAR_PEACETIMER);
     outStream << "PeaceTimer=";
-    if (pTime == 0 || pTime < cwmWorldState->GetUICurrentTime()) {
+    if (pTime == 0 || pTime < worldMain.GetUICurrentTime()) {
         outStream << std::to_string(0) + newLine;
     }
     else {
-        outStream << std::to_string(pTime - cwmWorldState->GetUICurrentTime()) + newLine;
+        outStream << std::to_string(pTime - worldMain.GetUICurrentTime()) + newLine;
     }
     
     if (IsValidPlayer()) {
@@ -2798,7 +2797,7 @@ auto CChar::CheckAggressorFlag(serial_t toCheck) -> bool {
     auto it = aggressorFlags.find(toCheck);
     if (it != aggressorFlags.end()) {
         // Serial found, but timestamp might be out of date!
-        if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp > worldMain.GetUICurrentTime()) {
             // timestamp is still valid, still aggressor
             return true;
         }
@@ -2825,7 +2824,7 @@ auto CChar::IsAggressor(bool checkForPlayersOnly) -> bool {
                 continue;
             
             // Check if any of the entries has a non-expired aggressor timer
-            if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
+            if (it->second.timestamp > worldMain.GetUICurrentTime()) {
                 isAggressor = true;
                 break;
             }
@@ -2856,7 +2855,7 @@ auto CChar::AggressorFlagMaintenance() -> void {
     // Loop through list of aggressor flags and add any serials with expired timers to a vector
     std::vector<serial_t> serialsToRemove;
     for (auto it = aggressorFlags.begin(); it != aggressorFlags.end(); ++it) {
-        if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp <= worldMain.GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
         }
     }
@@ -2930,7 +2929,7 @@ auto CChar::CheckPermaGreyFlag(serial_t toCheck) -> bool {
     auto it = permaGreyFlags.find(toCheck);
     if (it != permaGreyFlags.end()) {
         // Serial found, but timestamp might be out of date!
-        if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp > worldMain.GetUICurrentTime()) {
             // timestamp is still valid, permagrey flag still active
             return true;
         }
@@ -2957,7 +2956,7 @@ auto CChar::IsPermaGrey(bool checkForPlayersOnly) -> bool {
                 continue;
             
             // Check if any of the entries has a non-expired permagrey flag timer
-            if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
+            if (it->second.timestamp > worldMain.GetUICurrentTime()) {
                 isPermaGrey = true;
                 break;
             }
@@ -2988,7 +2987,7 @@ auto CChar::PermaGreyFlagMaintenance() -> void {
     // Loop through list of permagrey flags and add any serials with expired timers to a vector
     std::vector<serial_t> serialsToRemove;
     for (auto it = permaGreyFlags.begin(); it != permaGreyFlags.end(); ++it) {
-        if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp <= worldMain.GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
         }
     }
@@ -4212,7 +4211,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
     bool canSpeak = !spamTimer;
     if (!toSay.empty()) {
         if (spamTimer) {
-            if (GetTimer(tCHAR_ANTISPAM) < cwmWorldState->GetUICurrentTime()) {
+            if (GetTimer(tCHAR_ANTISPAM) < worldMain.GetUICurrentTime()) {
                 SetTimer(tCHAR_ANTISPAM, BuildTimeValue(10));
                 canSpeak = true;
             }
@@ -4303,7 +4302,7 @@ void CChar::TextMessage(CSocket *s, std::string toSay, speechtype_t msgType, boo
                 toAdd.Speaker(GetSerial());
                 toAdd.SpokenTo(speakTo);
                 toAdd.Type(msgType);
-                toAdd.At(cwmWorldState->GetUICurrentTime());
+                toAdd.At(worldMain.GetUICurrentTime());
                 toAdd.TargType(target);
                 toAdd.Colour(txtColor);
             }
@@ -4461,7 +4460,7 @@ void CChar::Cleanup() {
         
         // If we delete a NPC we should delete his tempeffects as well
         std::vector<CTEffect *> removedEffect;
-        for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
+        for (const auto &Effect : worldMain.tempEffects.collection()) {
             if (Effect->Destination() == GetSerial()) {
                 removedEffect.push_back(Effect);
             }
@@ -4471,16 +4470,16 @@ void CChar::Cleanup() {
             }
         }
         std::for_each(removedEffect.begin(), removedEffect.end(),[](CTEffect *effect) {
-            cwmWorldState->tempEffects.Remove(effect, true); });
+            worldMain.tempEffects.Remove(effect, true); });
         
         // if we delete a NPC we should delete him from spawnregions
         // this will fix several crashes
         if (IsNpc() && IsSpawned()) {
             if (GetSpawn() < BASEITEMSERIAL) {
                 std::uint16_t spawnRegNum = static_cast<std::uint16_t>(GetSpawn());
-                if (cwmWorldState->spawnRegions.find(spawnRegNum) !=
-                    cwmWorldState->spawnRegions.end()) {
-                    CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+                if (worldMain.spawnRegions.find(spawnRegNum) !=
+                    worldMain.spawnRegions.end()) {
+                    CSpawnRegion *spawnReg = worldMain.spawnRegions[spawnRegNum];
                     if (spawnReg != nullptr) {
                         spawnReg->DeleteSpawnedChar(this);
                     }
@@ -4680,8 +4679,8 @@ bool CChar::CanBeObjType(CBaseObject::type_t toCompare) const {
 //| Purpose		-	Adds character to deletion queue
 // o------------------------------------------------------------------------------------------------o
 void CChar::Delete() {
-    if (cwmWorldState->deletionQueue.count(this) == 0) {
-        ++(cwmWorldState->deletionQueue[this]);
+    if (worldMain.deletionQueue.count(this) == 0) {
+        ++(worldMain.deletionQueue[this]);
         Cleanup();
         SetDeleted(true);
         ShouldSave(false);
@@ -4962,7 +4961,7 @@ void CChar::SetFlying(bool newValue) {
 bool CChar::ToggleFlying() {
     CSocket *tSock = GetSocket();
     if (MayLevitate()) {
-        if (GetTimer(tCHAR_FLYINGTOGGLE) <= cwmWorldState->GetUICurrentTime()) {
+        if (GetTimer(tCHAR_FLYINGTOGGLE) <= worldMain.GetUICurrentTime()) {
             if (IsFrozen()) {
                 tSock->SysMessage(9000); // You cannot use this ability while frozen.
             }
@@ -5734,8 +5733,8 @@ void CChar::DoLoyaltyUpdate() {
     if (!ValidateObject(GetOwnerObj()))
         return;
     
-    if (GetTimer(tNPC_LOYALTYTIME) <= cwmWorldState->GetUICurrentTime() ||
-        cwmWorldState->GetOverflow()) {
+    if (GetTimer(tNPC_LOYALTYTIME) <= worldMain.GetUICurrentTime() ||
+        worldMain.GetOverflow()) {
         std::uint16_t loyaltyRate = ServerConfig::shared().timerSetting[TimerSetting::LOYALTYRATE];
         if (GetLoyalty() > 0) {
             // Reduce loyalty by 1, reset timer
@@ -6656,7 +6655,7 @@ auto CChar::CheckCombatIgnore(serial_t toCheck) -> bool {
     auto it = mNPC->combatIgnore.find(toCheck);
     if (it != mNPC->combatIgnore.end()) {
         // Serial found, but timestamp might be out of date!
-        if (it->second.timestamp > cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp > worldMain.GetUICurrentTime()) {
             // timestamp is still valid, still ignoring target in combat
             return true;
         }
@@ -6680,7 +6679,7 @@ auto CChar::CombatIgnoreMaintenance() -> void {
     // vector
     std::vector<serial_t> serialsToRemove;
     for (auto it = mNPC->combatIgnore.begin(); it != mNPC->combatIgnore.end(); ++it) {
-        if (it->second.timestamp <= cwmWorldState->GetUICurrentTime()) {
+        if (it->second.timestamp <= worldMain.GetUICurrentTime()) {
             serialsToRemove.push_back(it->first);
         }
     }
@@ -7153,13 +7152,13 @@ void CChar::Heal(std::int16_t healValue, CChar *healer) {
             if (i->damager == healerSerial) {
                 i->damageDone += healValue;
                 i->lastDamageType = Weather::NONE;
-                i->lastDamageDone = cwmWorldState->GetUICurrentTime();
+                i->lastDamageDone = worldMain.GetUICurrentTime();
                 persFound = true;
                 break;
             }
         }
         if (!persFound) {
-            damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, Weather::NONE, cwmWorldState->GetUICurrentTime()));
+            damageHealed.Add(new DamageTrackEntry(healerSerial, healValue, Weather::NONE, worldMain.GetUICurrentTime()));
         }
         damageHealed.Sort(DTEgreater);
     }
@@ -7323,7 +7322,7 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
                 // Flag attacker as criminal
                 MakeCriminal(attacker);
                 bool regionGuarded = (GetRegion()->IsGuarded());
-                if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && IsNpc() &&  GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[this->GetId()].IsHuman()) {
+                if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && IsNpc() &&  GetNpcAiType() != AI_GUARD && worldMain.creatures[this->GetId()].IsHuman()) {
                     TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
                     CallGuards(this, attacker);
                 }
@@ -7341,13 +7340,13 @@ bool CChar::Damage(std::int16_t damageValue, Weather::type_t damageType, CChar *
             if (i->damager == attackerSerial) {
                 i->damageDone += damageValue;
                 i->lastDamageType = damageType;
-                i->lastDamageDone = cwmWorldState->GetUICurrentTime();
+                i->lastDamageDone = worldMain.GetUICurrentTime();
                 persFound = true;
                 break;
             }
         }
         if (!persFound) {
-            damageDealt.Add(new DamageTrackEntry(attackerSerial, damageValue, damageType, cwmWorldState->GetUICurrentTime()));
+            damageDealt.Add(new DamageTrackEntry(attackerSerial, damageValue, damageType, worldMain.GetUICurrentTime()));
         }
         damageDealt.Sort(DTEgreater);
     }
@@ -7433,7 +7432,7 @@ void CChar::Die(CChar *attacker, bool doRepsys) {
 // last X secs
 // o------------------------------------------------------------------------------------------------o
 auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) -> bool {
-    timerval_t currentTime = cwmWorldState->GetUICurrentTime();
+    timerval_t currentTime = worldMain.GetUICurrentTime();
     for (DamageTrackEntry *i = damageDealt.First(); !damageDealt.Finished();
          i = damageDealt.Next()) {
         if (i->damager == serialToCheck) {
@@ -7453,7 +7452,7 @@ auto CChar::CheckDamageTrack(serial_t serialToCheck, timerval_t lastXSeconds) ->
 //| Purpose		-	Keeps track of damage dealt and healing done to character over time
 // o------------------------------------------------------------------------------------------------o
 void CChar::UpdateDamageTrack() {
-    timerval_t currentTime = cwmWorldState->GetUICurrentTime();
+    timerval_t currentTime = worldMain.GetUICurrentTime();
     DamageTrackEntry *i = nullptr;
     // Update the damage stuff
     for (i = damageDealt.First(); !damageDealt.Finished(); i = damageDealt.Next()) {

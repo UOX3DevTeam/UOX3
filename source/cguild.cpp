@@ -22,6 +22,7 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "osunique.hpp"
+#include "other/uoxglobal.hpp"
 #include "useful.h"
 using namespace std::string_literals;
 
@@ -714,7 +715,7 @@ void CGuild::TellMembers(std::int32_t dictEntry, ...) {
                 toAdd.SpokenTo(member);
                 toAdd.Colour(0x000B);
                 toAdd.Type(SYSTEM);
-                toAdd.At(cwmWorldState->GetUICurrentTime());
+                toAdd.At(worldMain.GetUICurrentTime());
                 toAdd.TargType(SPTRG_INDIVIDUAL);
             }
             va_end(argptr);

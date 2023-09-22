@@ -37,6 +37,7 @@
 #include "speech.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 // Unknown bytes
@@ -1745,7 +1746,7 @@ void CPStatWindow::SetCharacter(CChar &toCopy, CSocket &target) {
         else {
             // We haven't received any client details yet.. let's use default server settings
             
-            /*if( cwmWorldState->ServerData()->getClientFeature( CF_BIT_HS ))
+            /*if( worldMain.ServerData()->getClientFeature( CF_BIT_HS ))
              {
              // Extended stats not implemented yet
              extended3 = true;
@@ -5989,7 +5990,7 @@ void CPToolTip::CopyItemData(CItem &cItem, size_t &totalStringLen, bool addAmoun
         CChar *cItemCreator = CalcCharObjFromSer(cItem.GetCreator());
         if (ValidateObject(cItemCreator)) {
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
-            tempEntry.ourText = util::format("%s by %s", cwmWorldState->skill[cItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
+            tempEntry.ourText = util::format("%s by %s", worldMain.skill[cItem.GetMadeWith() - 1].madeWord.c_str(),cItemCreator->GetName().c_str()); // tailored/tinkered/forged by %s
             // tempEntry.ourText = util::format( "%s %s", Dictionary->GetEntry(
             // 9141, tSock->Language() ).c_str(), cItemCreator->GetName().c_str()
             // ); // Crafted by %s
@@ -6398,7 +6399,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     // Fame prefix
     std::string fameTitle = "";
     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYREPUTATIONTOOLTIP)) {
-        if (cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised()) {
+        if (worldMain.creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised()) {
             GetFameTitle(&mChar, fameTitle);
             fameTitle = util::trim(fameTitle);
         }
@@ -6433,7 +6434,7 @@ void CPToolTip::CopyCharData(CChar &mChar, size_t &totalStringLen) {
     
     // Show Race in character tooltip?
     if (ServerConfig::shared().enabled(ServerSwitch::DISPLAYRACE)) {
-        if (mChar.GetRace() != 0 && mChar.GetRace() != 65535 && cwmWorldState->creatures[mChar.GetId()].IsHuman()) { // need to check for placeholder race
+        if (mChar.GetRace() != 0 && mChar.GetRace() != 65535 && worldMain.creatures[mChar.GetId()].IsHuman()) { // need to check for placeholder race
             tempEntry.stringNum = 1042971; // ~1_NOTHING~
             auto raceName = Races->Name(mChar.GetRace());
             tempEntry.ourText = util::format("%s", ("("s + raceName + ")"s).c_str());
@@ -7318,7 +7319,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
     }
     
     // Open Paperdoll
-    if (cwmWorldState->creatures[toCopy.GetId()].IsHuman()) {
+    if (worldMain.creatures[toCopy.GetId()].IsHuman()) {
         numEntries++;
         pStream.WriteShort(offset, 0x000A); // Unique ID
         pStream.WriteShort(offset += 2, 6123);
@@ -7534,7 +7535,7 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
     }
     
     // Tame
-    if (toCopy.IsNpc() && cwmWorldState->creatures[toCopy.GetId()].IsAnimal() &&
+    if (toCopy.IsNpc() && worldMain.creatures[toCopy.GetId()].IsAnimal() &&
         !ValidateObject(toCopy.GetOwnerObj())) {
         auto skillToTame = toCopy.GetTaming();
         if (skillToTame > 0) {
@@ -7707,8 +7708,8 @@ void CPPopupMenu::CopyData(CChar &toCopy, CSocket &tSock) {
     
     // Skill training - IDs 0x006D to 0x009C
     if (toCopy.IsNpc() && !toCopy.IsTamed() &&
-        !cwmWorldState->creatures[toCopy.GetId()].IsAnimal() && toCopy.CanTrain() &&
-        cwmWorldState->creatures[toCopy.GetId()].IsHuman()) {
+        !worldMain.creatures[toCopy.GetId()].IsAnimal() && toCopy.CanTrain() &&
+        worldMain.creatures[toCopy.GetId()].IsHuman()) {
         auto idTracker = 0x0071;
         auto clilocTracker = 6000;
         auto skillEntries = 0;

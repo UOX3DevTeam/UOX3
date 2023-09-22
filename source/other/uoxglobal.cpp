@@ -20,4 +20,4 @@ using namespace std::string_literals ;
 //======================================================================
 
 WorldWeather worldWeather ;
-
+CWorldMain worldMain ;

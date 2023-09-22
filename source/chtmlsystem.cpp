@@ -19,7 +19,7 @@
 #include "subsystem/console.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-
+#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 
 using namespace std::string_literals;
@@ -34,7 +34,7 @@ cHTMLTemplate::cHTMLTemplate() : updateTimer(60), loaded(false), type(ETT_INVALI
 cHTMLTemplate::~cHTMLTemplate() {}
 
 std::string GetUptime() {
-    std::uint32_t total = (cwmWorldState->GetUICurrentTime() - cwmWorldState->GetStartTime()) / 1000;
+    std::uint32_t total = (worldMain.GetUICurrentTime() - worldMain.GetStartTime()) / 1000;
     std::uint32_t ho = total / 3600;
     total -= ho * 3600;
     std::uint32_t mi = total / 60;
@@ -82,7 +82,7 @@ bool CountNPCFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void *ex
 void cHTMLTemplate::process() {
     // Need to check to see if the server is actually running, of so we do not want to process the
     // offline template.
-    if (cwmWorldState->GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE)
+    if (worldMain.GetKeepRun() && this->GetTemplateType() == ETT_OFFLINE)
         return;
     
     // Only read the Status Page if it's not already loaded
@@ -158,7 +158,7 @@ void cHTMLTemplate::process() {
     std::string GMCount = util::ntos(gm);
     Pos = ParsedContent.find("%online_gms");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, GMCount) : ParsedContent.replace(Pos, 11, "0");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, GMCount) : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%online_gms");
     }
     
@@ -166,7 +166,7 @@ void cHTMLTemplate::process() {
     std::string CounsiCount = util::ntos(cns);
     Pos = ParsedContent.find("%online_couns");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 13, CounsiCount) : ParsedContent.replace(Pos, 13, "0");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 13, CounsiCount) : ParsedContent.replace(Pos, 13, "0");
         Pos = ParsedContent.find("%online_couns");
     }
     
@@ -174,7 +174,7 @@ void cHTMLTemplate::process() {
     std::string PlayerCount = util::ntos(ccount);
     Pos = ParsedContent.find("%online_player");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 14, PlayerCount) : ParsedContent.replace(Pos, 14, "0");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 14, PlayerCount) : ParsedContent.replace(Pos, 14, "0");
         Pos = ParsedContent.find("%online_player");
     }
     
@@ -182,7 +182,7 @@ void cHTMLTemplate::process() {
     std::string AllCount = util::ntos((ccount + gm + cns));
     Pos = ParsedContent.find("%online_all");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, AllCount) : ParsedContent.replace(Pos, 11, "0");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, AllCount) : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%online_all");
     }
     
@@ -191,7 +191,7 @@ void cHTMLTemplate::process() {
     RealTime(time_str);
     Pos = ParsedContent.find("%time");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 5, time_str) : ParsedContent.replace(Pos, 5, "Down");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 5, time_str) : ParsedContent.replace(Pos, 5, "Down");
         Pos = ParsedContent.find("%time");
     }
     
@@ -199,7 +199,7 @@ void cHTMLTemplate::process() {
     RealTime24(time_str);
     Pos = ParsedContent.find("%24time");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 7, time_str) : ParsedContent.replace(Pos, 7, "Down");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 7, time_str) : ParsedContent.replace(Pos, 7, "Down");
         Pos = ParsedContent.find("%24time");
     }
     
@@ -211,7 +211,7 @@ void cHTMLTemplate::process() {
     std::string timestamp = util::ntos(currTime);
     Pos = ParsedContent.find("%tstamp");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 7, timestamp) : ParsedContent.replace(Pos, 7, "Down");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 7, timestamp) : ParsedContent.replace(Pos, 7, "Down");
         Pos = ParsedContent.find("%tstamp");
     }
     
@@ -219,7 +219,7 @@ void cHTMLTemplate::process() {
     auto serverName = ServerConfig::shared().serverString[ServerString::SERVERNAME];
     Pos = ParsedContent.find("%servername");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, serverName) : ParsedContent.replace(Pos, 11, "Unnamed UOX3 Server");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, serverName) : ParsedContent.replace(Pos, 11, "Unnamed UOX3 Server");
         Pos = ParsedContent.find("%servername");
     }
     
@@ -227,7 +227,7 @@ void cHTMLTemplate::process() {
     auto serverIP = ServerConfig::shared().serverString[ServerString::PUBLICIP];
     Pos = ParsedContent.find("%serverip");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 9, serverIP) : ParsedContent.replace(Pos, 9, "127.0.0.1");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 9, serverIP) : ParsedContent.replace(Pos, 9, "127.0.0.1");
         Pos = ParsedContent.find("%serverip");
     }
     
@@ -235,7 +235,7 @@ void cHTMLTemplate::process() {
     auto serverPort = ServerConfig::shared().ushortValues[UShortValue::PORT];
     Pos = ParsedContent.find("%serverport");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, util::ntos(serverPort)) : ParsedContent.replace(Pos, 11, "127.0.0.1");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, util::ntos(serverPort)) : ParsedContent.replace(Pos, 11, "127.0.0.1");
         Pos = ParsedContent.find("%serverport");
     }
     
@@ -277,7 +277,7 @@ void cHTMLTemplate::process() {
                             // PlayerName
                             size_t sPos = parsedInline.find("%playername");
                             while (sPos != std::string::npos) {
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 11, tChar->GetName()) : parsedInline.replace(sPos, 11, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 11, tChar->GetName()) : parsedInline.replace(sPos, 11, "");
                                 sPos = parsedInline.find("%playername");
                             }
                             
@@ -288,7 +288,7 @@ void cHTMLTemplate::process() {
                             }
                             sPos = parsedInline.find("%playertitle");
                             while (sPos != std::string::npos) {
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 12, tChar->GetTitle()) : parsedInline.replace(sPos, 12, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 12, tChar->GetTitle()) : parsedInline.replace(sPos, 12, "");
                                 sPos = parsedInline.find("%playertitle");
                             }
                             
@@ -298,7 +298,7 @@ void cHTMLTemplate::process() {
                                 CSocket *mySock = tChar->GetSocket();
                                 
                                 auto ClientIP = util::format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1());
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 9, ClientIP) : parsedInline.replace(sPos, 9, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 9, ClientIP) : parsedInline.replace(sPos, 9, "");
                                 sPos = parsedInline.find("%playerip");
                             }
                             
@@ -307,7 +307,7 @@ void cHTMLTemplate::process() {
                             while (sPos != std::string::npos) {
                                 AccountEntry &toScan = tChar->GetAccount();
                                 if (toScan.accountNumber != AccountEntry::INVALID_ACCOUNT) {
-                                    (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 14, toScan.username) : parsedInline.replace(sPos, 14, "");
+                                    (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 14, toScan.username) : parsedInline.replace(sPos, 14, "");
                                 }
                                 sPos = parsedInline.find("%playeraccount");
                             }
@@ -316,7 +316,7 @@ void cHTMLTemplate::process() {
                             sPos = parsedInline.find("%playerx");
                             while (sPos != std::string::npos) {
                                 std::string myX = util::ntos(tChar->GetX());
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myX) : parsedInline.replace(sPos, 8, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 8, myX) : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playerx");
                             }
                             
@@ -324,7 +324,7 @@ void cHTMLTemplate::process() {
                             sPos = parsedInline.find("%playery");
                             while (sPos != std::string::npos) {
                                 std::string myY = util::ntos(tChar->GetY());
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myY) : parsedInline.replace(sPos, 8, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 8, myY) : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playery");
                             }
                             
@@ -332,7 +332,7 @@ void cHTMLTemplate::process() {
                             sPos = parsedInline.find("%playerz");
                             while (sPos != std::string::npos) {
                                 std::string myZ = util::ntos(tChar->GetZ());
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, myZ) : parsedInline.replace(sPos, 8, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 8, myZ) : parsedInline.replace(sPos, 8, "");
                                 sPos = parsedInline.find("%playerz");
                             }
                             
@@ -344,7 +344,7 @@ void cHTMLTemplate::process() {
                                 size_t raceLenName = rName.length();
                                 
                                 if (raceLenName > 0) {
-                                    (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 11, rName) : parsedInline.replace(sPos, 11, "");
+                                    (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 11, rName) : parsedInline.replace(sPos, 11, "");
                                 }
                                 sPos = parsedInline.find("%playerrace");
                             }
@@ -352,7 +352,7 @@ void cHTMLTemplate::process() {
                             // PlayerRegion
                             sPos = parsedInline.find("%playerregion");
                             while (sPos != std::string::npos) {
-                                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 13, tChar->GetRegion()->GetName()) : parsedInline.replace(sPos, 13, "");
+                                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 13, tChar->GetRegion()->GetName()) : parsedInline.replace(sPos, 13, "");
                                 sPos = parsedInline.find("%playerregion");
                             }
                             
@@ -366,7 +366,7 @@ void cHTMLTemplate::process() {
             }
         }
         
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), PlayerList) : ParsedContent.replace(Pos, myInline.length(), "");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), PlayerList) : ParsedContent.replace(Pos, myInline.length(), "");
         Pos = ParsedContent.find("%playerlist%");
     }
     
@@ -374,7 +374,7 @@ void cHTMLTemplate::process() {
     std::string GuildCount = util::ntos(static_cast<std::int32_t>(GuildSys->NumGuilds()));
     Pos = ParsedContent.find("%guildcount");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, GuildCount) : ParsedContent.replace(Pos, 11, "");
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, GuildCount) : ParsedContent.replace(Pos, 11, "");
         Pos = ParsedContent.find("%guildcount");
     }
     
@@ -404,28 +404,28 @@ void cHTMLTemplate::process() {
             std::string GuildId = util::ntos(i);
             sPos = parsedInline.find("%guildid");
             while (sPos != std::string::npos) {
-                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 8, GuildId) : parsedInline.replace(sPos, 8, "");
+                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 8, GuildId) : parsedInline.replace(sPos, 8, "");
                 sPos = parsedInline.find("%guildid");
             }
             
             // GuildName
             sPos = parsedInline.find("%guildname");
             while (sPos != std::string::npos) {
-                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 10, myGuild->Name()) : parsedInline.replace(sPos, 10, "");
+                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 10, myGuild->Name()) : parsedInline.replace(sPos, 10, "");
                 sPos = parsedInline.find("%guildname");
             }
             
             // Guild Member Count
             sPos = parsedInline.find("%guildmembercount");
             while (sPos != std::string::npos) {
-                (cwmWorldState->GetKeepRun()) ? parsedInline.replace(sPos, 17, util::ntos(myGuild->NumMembers())) : parsedInline.replace(sPos, 10, "");
+                (worldMain.GetKeepRun()) ? parsedInline.replace(sPos, 17, util::ntos(myGuild->NumMembers())) : parsedInline.replace(sPos, 10, "");
                 sPos = parsedInline.find("%guildmembercount");
             }
             
             GuildList += parsedInline;
         }
         
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), GuildList)
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, myInline.length(), GuildList)
         : ParsedContent.replace(Pos, myInline.length(), "");
         Pos = ParsedContent.find("%guildlist%");
     }
@@ -439,7 +439,7 @@ void cHTMLTemplate::process() {
     std::string npcs = util::ntos(npccount);
     Pos = ParsedContent.find("%npcs");
     while (Pos != std::string::npos) {
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 5, npcs)
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 5, npcs)
         : ParsedContent.replace(Pos, 5, "0");
         Pos = ParsedContent.find("%npcs");
     }
@@ -450,17 +450,17 @@ void cHTMLTemplate::process() {
     while (Pos != std::string::npos) {
         std::string performance;
         std::ostringstream myStream(performance);
-        if (cwmWorldState->GetKeepRun()) {
-            std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-            std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-            std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-            std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
-            myStream << "Network code: "  << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)) << "msec [" << networkTimeCount << " samples] <BR>";
-            myStream << "Timer code: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)) << "msec [" << timerTimeCount << " samples] <BR>";
-            myStream << "Auto code: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)) << "msec [" << autoTimeCount << " samples] <BR>";
-            myStream << "Loop Time: " << static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)) << "msec [" << loopTimeCount << " samples] <BR>";
-            if (!(cwmWorldState->ServerProfile()->LoopTime() < eps || loopTimeCount < eps)) {
-                myStream << "Simulation Cycles: " << (1000.0 * (1.0 / static_cast<float>( static_cast<float>( cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))) << " per sec <BR>";
+        if (worldMain.GetKeepRun()) {
+            std::uint32_t networkTimeCount = worldMain.ServerProfile()->NetworkTimeCount();
+            std::uint32_t timerTimeCount = worldMain.ServerProfile()->TimerTimeCount();
+            std::uint32_t autoTimeCount = worldMain.ServerProfile()->AutoTimeCount();
+            std::uint32_t loopTimeCount = worldMain.ServerProfile()->LoopTimeCount();
+            myStream << "Network code: "  << static_cast<float>( static_cast<float>(worldMain.ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)) << "msec [" << networkTimeCount << " samples] <BR>";
+            myStream << "Timer code: " << static_cast<float>( static_cast<float>(worldMain.ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)) << "msec [" << timerTimeCount << " samples] <BR>";
+            myStream << "Auto code: " << static_cast<float>( static_cast<float>(worldMain.ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)) << "msec [" << autoTimeCount << " samples] <BR>";
+            myStream << "Loop Time: " << static_cast<float>( static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)) << "msec [" << loopTimeCount << " samples] <BR>";
+            if (!(worldMain.ServerProfile()->LoopTime() < eps || loopTimeCount < eps)) {
+                myStream << "Simulation Cycles: " << (1000.0 * (1.0 / static_cast<float>( static_cast<float>( worldMain.ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))) << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -495,10 +495,10 @@ void cHTMLTemplate::process() {
         std::string simcycles;
         std::ostringstream myStream(simcycles);
         
-        if (cwmWorldState->GetKeepRun()) {
-            if (!(cwmWorldState->ServerProfile()->LoopTime() < eps || cwmWorldState->ServerProfile()->LoopTimeCount() < eps)) {
+        if (worldMain.GetKeepRun()) {
+            if (!(worldMain.ServerProfile()->LoopTime() < eps || worldMain.ServerProfile()->LoopTimeCount() < eps)) {
                 myStream << "Simulation Cycles: " << (1000.0 *
-                                                      (1.0 / static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>( cwmWorldState->ServerProfile()->LoopTimeCount())))) << " per sec <BR>";
+                                                      (1.0 / static_cast<float>( static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>( worldMain.ServerProfile()->LoopTimeCount())))) << " per sec <BR>";
             }
             else {
                 myStream << "Simulation Cycles: Greater than 10000 <BR> ";
@@ -515,7 +515,7 @@ void cHTMLTemplate::process() {
     Pos = ParsedContent.find("%updatetime");
     while (Pos != std::string::npos) {
         std::string strUpdateTimer = util::ntos(updateTimer);
-        (cwmWorldState->GetKeepRun()) ? ParsedContent.replace(Pos, 11, strUpdateTimer)
+        (worldMain.GetKeepRun()) ? ParsedContent.replace(Pos, 11, strUpdateTimer)
         : ParsedContent.replace(Pos, 11, "0");
         Pos = ParsedContent.find("%updatetime");
     }
@@ -540,7 +540,7 @@ void cHTMLTemplate::process() {
 //|	Purpose		-	Updates the page if needed
 // o------------------------------------------------------------------------------------------------o
 void cHTMLTemplate::poll() {
-    if (scheduledUpdate < cwmWorldState->GetUICurrentTime() || !cwmWorldState->GetKeepRun()) {
+    if (scheduledUpdate < worldMain.GetUICurrentTime() || !worldMain.GetKeepRun()) {
         process();
         scheduledUpdate = BuildTimeValue(static_cast<float>(updateTimer));
     }

@@ -31,6 +31,7 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "wholist.h"
+#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 
 using namespace std::string_literals;
@@ -171,7 +172,7 @@ void HandleAccountButton(CSocket *s, std::uint32_t button, CChar *j) {
 void HandleTownstoneButton(CSocket *s, serial_t button, serial_t ser, serial_t type) {
     CChar *mChar = s->CurrcharObj();
     CTownRegion *targetRegion;
-    CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
+    CTownRegion *ourRegion = worldMain.townRegions[mChar->GetTown()];
     switch (button) {
             // buttons 2-20 are for generic town members
             // buttons 21-40 are for mayoral functions
@@ -413,7 +414,7 @@ void BuildAddMenuGump(CSocket *s, std::uint16_t m) {
     toSend.addCommand(util::format("text %u %u %u %u", 30, yStart + 13, 39, linenum++));
     toSend.addText("Players: ");
     // Player count
-    auto szBuffer = util::format("%4i ", cwmWorldState->GetPlayersOnline());
+    auto szBuffer = util::format("%4i ", worldMain.GetPlayersOnline());
     toSend.addCommand(util::format("text %u %u %u %u", 80, yStart + 13, 25, linenum++));
     toSend.addText(szBuffer);
     // Gm Pages
@@ -1207,8 +1208,8 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                     return;
                 
                 std::uint16_t placeNum = static_cast<std::uint16_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0));
-                if (cwmWorldState->goPlaces.find(placeNum) != cwmWorldState->goPlaces.end()) {
-                    GoPlaces toGoTo = cwmWorldState->goPlaces[placeNum];
+                if (worldMain.goPlaces.find(placeNum) != worldMain.goPlaces.end()) {
+                    GoPlaces toGoTo = worldMain.goPlaces[placeNum];
                     
                     if (toGoTo.worldNum == 0 && mChar->WorldNumber() <= 1) {
                         // Stay in same world if already in world 0 or 1
@@ -1238,7 +1239,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
                 guiInfo.AddData("Accounts", static_cast<std::uint32_t>(Account::shared().size()));
                 guiInfo.AddData("Items", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM));
                 guiInfo.AddData("Chars", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
-                guiInfo.AddData("Players in world", static_cast<std::uint32_t>(cwmWorldState->GetPlayersOnline()));
+                guiInfo.AddData("Players in world", static_cast<std::uint32_t>(worldMain.GetPlayersOnline()));
                 guiInfo.Send(0, false, INVALIDSERIAL);
             }
             break;
@@ -1251,7 +1252,7 @@ void HandleGumpCommand(CSocket *s, std::string cmd, std::string data) {
             }
             else if (cmd == "INFORMATION") {
                 builtString = GetUptime();
-                s->SysMessage(1211, builtString.c_str(), cwmWorldState->GetPlayersOnline(), Account::shared().size(), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
+                s->SysMessage(1211, builtString.c_str(), worldMain.GetPlayersOnline(), Account::shared().size(), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR));
             }
             break;
         case 'M':
@@ -1802,7 +1803,7 @@ void CPIGumpInput::HandleTownstoneText(std::uint8_t index) {
     std::uint32_t amountToDonate;
     switch (index) {
         case 6: { // it's our donate resource button
-            CTownRegion *ourRegion = cwmWorldState->townRegions[mChar->GetTown()];
+            CTownRegion *ourRegion = worldMain.townRegions[mChar->GetTown()];
             amountToDonate = static_cast<std::uint32_t>(std::stoul(reply, nullptr, 0));
             if (amountToDonate == 0) {
                 tSock->SysMessage(562); // You are donating nothing!

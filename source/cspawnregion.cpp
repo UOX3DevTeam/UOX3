@@ -16,6 +16,7 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 
@@ -606,8 +607,8 @@ foundNpcId:
     bool waterCreature = false;
     bool amphiCreature = false;
     if (npcId > 0) {
-        waterCreature = cwmWorldState->creatures[npcId].IsWater();
-        amphiCreature = cwmWorldState->creatures[npcId].IsAmphibian();
+        waterCreature = worldMain.creatures[npcId].IsWater();
+        amphiCreature = worldMain.creatures[npcId].IsAmphibian();
     }
     
     std::int16_t x, y;

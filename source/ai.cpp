@@ -37,6 +37,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 
 using namespace std::string_literals;
@@ -55,8 +56,8 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
         if (mChar.IsNpc() && cTarget->IsNpc()) {
             // We don't want NPCs to attack one another if either of them are water-walking
             // creatures as they can't reach one another in any case
-            bool targetWaterWalk = cwmWorldState->creatures[cTarget->GetId()].IsWater();
-            bool attackerWaterWalk = cwmWorldState->creatures[mChar.GetId()].IsWater();
+            bool targetWaterWalk = worldMain.creatures[cTarget->GetId()].IsWater();
+            bool attackerWaterWalk = worldMain.creatures[mChar.GetId()].IsWater();
             if ((attackerWaterWalk && !targetWaterWalk) || (!attackerWaterWalk && targetWaterWalk)) {
                 return false;
             }
@@ -76,7 +77,7 @@ bool IsValidAttackTarget(CChar &mChar, CChar *cTarget) {
             if (LineOfSight(nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), (cTarget->GetZ() + 15), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false)) {
                 // Young players are not valid targets for NPCs outside of dungeons
                 if (ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline((*cTarget)) && cTarget->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG) && !cTarget->GetRegion()->IsDungeon()) {
-                    if (cTarget->GetSocket() && (cTarget->GetTimer(tCHAR_YOUNGMESSAGE) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+                    if (cTarget->GetSocket() && (cTarget->GetTimer(tCHAR_YOUNGMESSAGE) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
                         cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue(static_cast<float>(120))); // Only send them the warning message once couple of minutes
                         cTarget->GetSocket()->SysMessage(18734); // A monster looks at you menacingly but does not attack.  You
                         // would be under attack now if not for your status as a new
@@ -222,8 +223,8 @@ void HandleHealerAI(CChar &mChar) {
                         Effects->PlayNewCharacterAnimation(&mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        std::uint8_t castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar.GetId()].CastAnimTargetId());
+                        std::uint8_t castAnimLength = worldMain.creatures[mChar.GetId()].CastAnimTargetLength();
                         
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
@@ -238,7 +239,7 @@ void HandleHealerAI(CChar &mChar) {
         }
         else if (realChar->GetHP() < realChar->GetMaxHP() && ServerConfig::shared().enabled(ServerSwitch::YOUNGPLAYER) &&  realChar->GetAccount().flag.test(AccountEntry::attributeflag_t::YOUNG)) {
             // Heal young players every X minutes
-            if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+            if (realChar->GetTimer(tCHAR_YOUNGHEAL) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 mChar.RemoveFromCombatIgnore(realChar->GetSerial());
                 realChar->SetTimer(tCHAR_YOUNGHEAL, BuildTimeValue(static_cast<float>(300))); // Only heal young player max once every 5 minutes
                 mChar.TextMessage(nullptr, 18731, TALK, false); // You look like you need some healing my child.
@@ -275,8 +276,8 @@ void HandleEvilHealerAI(CChar &mChar) {
                         Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                     }
                     else {
-                        std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId());
-                        std::uint8_t castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+                        std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar.GetId()].CastAnimTargetId());
+                        std::uint8_t castAnimLength = worldMain.creatures[mChar.GetId()].CastAnimTargetLength();
                         
                         // Play cast anim, but fallback to default attack anim (0x04) with anim
                         // length of 4 frames if no cast anim was defined in creatures.dfn
@@ -347,7 +348,7 @@ auto HandleEvilAI(CChar &mChar) -> void {
                     continue;
                 
                 if (tempChar->GetNpcAiType() != AI_HEALER_G) {
-                    if (cwmWorldState->creatures[tempChar->GetId()].IsAnimal()) {
+                    if (worldMain.creatures[tempChar->GetId()].IsAnimal()) {
                         if (!ServerConfig::shared().enabled(ServerSwitch::MONSTERSVSANIMALS)) {
                             continue;
                         }
@@ -479,7 +480,7 @@ auto HandleAnimalAI(CChar &mChar) -> void {
                     continue;
                 
                 auto raceComp = Races->Compare(tempChar, &mChar);
-                if (raceComp <= RACE_ENEMY || (cwmWorldState->creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetId()].IsHuman()))) {
+                if (raceComp <= RACE_ENEMY || (worldMain.creatures[tempChar->GetId()].IsAnimal() && tempChar->GetNpcAiType() == AI_NONE) || (hunger <= 1 && (tempChar->GetNpcAiType() == AI_ANIMAL || worldMain.creatures[tempChar->GetId()].IsHuman()))) {
                     if (RandomNum(1, 100) > 95) { // 5% chance (per AI cycle to attack tempChar)
                         Combat->AttackTarget(&mChar, tempChar);
                         return;

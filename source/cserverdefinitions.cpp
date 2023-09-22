@@ -370,7 +370,7 @@ auto CServerDefinitions::GetPriority(const char *file) -> std::int16_t {
 //==================================================================================================
 auto CDirectoryListing::PushDir(definitioncategories_t toMove) -> bool {
     auto filePath = ServerConfig::shared().directoryFor(dirlocation_t::DEFINITION).string();
-    //auto filePath = cwmWorldState->ServerData()->Directory(CSDDP_DEFS);
+    //auto filePath = worldMain.ServerData()->Directory(CSDDP_DEFS);
     //    std::cout <<"Filepath is : " << filePath << " and will append: " << dirNames[toMove] << std::endl;
     filePath += dirNames[toMove];
     //    std::cout <<"The new file path is: " << filePath << std::endl;

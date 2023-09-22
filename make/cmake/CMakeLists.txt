@@ -216,6 +216,10 @@ add_executable(uox3
    ${PROJECT_SOURCE_DIR}/../../source/eventtimer.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/strutil.hpp
    ${PROJECT_SOURCE_DIR}/../../source/utility/random.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/ip4util.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/ip4util.hpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/netutil.cpp
+   ${PROJECT_SOURCE_DIR}/../../source/utility/netutil.hpp
 # UOData group
     ${PROJECT_SOURCE_DIR}/../../source/mapclasses.h
     ${PROJECT_SOURCE_DIR}/../../source/mapstuff.cpp

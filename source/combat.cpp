@@ -24,7 +24,7 @@
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "townregion.h"
-// #include "worldmain.h"
+#include "other/uoxglobal.hpp"
 
 #undef DBGFILE
 #define DBGFILE "combat.cpp"
@@ -80,7 +80,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
     // both are pets)
     if (cAttack->IsNpc() && cTarget->IsNpc() && (cAttack->GetOwner() == INVALIDSERIAL && cTarget->GetOwner() == INVALIDSERIAL)) {
         // Are both the NPCs non-human?
-        if (!cwmWorldState->creatures[cAttack->GetId()].IsHuman() && !cwmWorldState->creatures[cTarget->GetId()].IsHuman()) {
+        if (!worldMain.creatures[cAttack->GetId()].IsHuman() && !worldMain.creatures[cTarget->GetId()].IsHuman()) {
             if (cAttack->GetNpcAiType() == AI_ANIMAL && cTarget->GetNpcAiType() == AI_ANIMAL) {
                 // Don't allow combat if both attacker and target have AI_ANIMAL, same body type and
                 // belong to same race
@@ -163,7 +163,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
     if (WillResultInCriminal(cAttack, cTarget)) {// REPSYS    {
         MakeCriminal(cAttack);
         bool regionGuarded = (cTarget->GetRegion()->IsGuarded());
-        if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetId()].IsHuman()) {
+        if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && worldMain.creatures[cTarget->GetId()].IsHuman()) {
             cTarget->TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
             CallGuards(cTarget, cAttack);
         }
@@ -177,7 +177,7 @@ bool CHandleCombat::StartAttack(CChar *cAttack, CChar *cTarget) {
         cAttack->BreakConcentration(cAttack->GetSocket());
     }
     else {
-        std::uint16_t toPlay = cwmWorldState->creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
+        std::uint16_t toPlay = worldMain.creatures[cAttack->GetId()].GetSound(SND_STARTATTACK);
         if (toPlay != 0x00 && RandomNum(1, 3)) {// 33% chance to play the sound
             Effects->PlaySound(cAttack, toPlay);
         }
@@ -272,8 +272,8 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     Effects->PlayNewCharacterAnimation(i, N_ACT_SPELL, S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
-                                    std::uint16_t castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                    std::uint8_t castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+                                    std::uint16_t castAnim = static_cast<std::uint16_t>(worldMain.creatures[i->GetId()].CastAnimTargetId());
+                                    std::uint8_t castAnimLength = worldMain.creatures[i->GetId()].CastAnimTargetLength();
                                     
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
@@ -305,8 +305,8 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
                                     Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL,  S_ACT_SPELL_TARGET); // Action 0x0b, subAction 0x00
                                 }
                                 else {
-                                    std::uint16_t castAnim = static_cast<std::uint16_t>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId());
-                                    std::uint8_t castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+                                    std::uint16_t castAnim = static_cast<std::uint16_t>( worldMain.creatures[i->GetId()].CastAnimTargetId());
+                                    std::uint8_t castAnimLength = worldMain.creatures[i->GetId()].CastAnimTargetLength();
                                     
                                     // Play cast anim, but fallback to default attack anim (0x04) with
                                     // anim length of 4 frames if no cast anim was defined in
@@ -424,7 +424,7 @@ void CHandleCombat::PlayerAttack(CSocket *s) {
         if (WillResultInCriminal(ourChar, i)) {// REPSYS
             MakeCriminal(ourChar);
             bool regionGuarded = (i->GetRegion()->IsGuarded());
-            if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && i->IsNpc() && i->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[i->GetId()].IsHuman()) {
+            if (ServerConfig::shared().enabled(ServerSwitch::GUARDSACTIVE) && regionGuarded && i->IsNpc() && i->GetNpcAiType() != AI_GUARD && worldMain.creatures[i->GetId()].IsHuman()) {
                 i->TextMessage(nullptr, 335, TALK, true); // Help! Guards! I've been attacked!
                 CallGuards(i, ourChar);
             }
@@ -1282,7 +1282,7 @@ std::uint16_t CHandleCombat::CalcDef(CChar *mChar, std::uint8_t hitLoc, bool doD
     
     std::int32_t total = mChar->GetResist(resistType);
     
-    if (!mChar->IsNpc() || cwmWorldState->creatures[mChar->GetId()].IsHuman()) {// Polymorphed Characters and GM's can still wear armor
+    if (!mChar->IsNpc() || worldMain.creatures[mChar->GetId()].IsHuman()) {// Polymorphed Characters and GM's can still wear armor
         CItem *defendItem = nullptr;
         if (hitLoc == 0) {
             for (std::uint8_t getLoc = 1; getLoc < 7; ++getLoc) {
@@ -1535,17 +1535,17 @@ void CHandleCombat::CombatOnFoot(CChar *i) {
 // o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
     std::uint16_t charId = mChar->GetId();
-    if (!cwmWorldState->creatures[charId].IsHuman()) {
+    if (!worldMain.creatures[charId].IsHuman()) {
         std::uint8_t attackAnim = 0;
         std::uint8_t attackAnimLength = 0;
         
         // Get available attack animations for creature
-        std::uint16_t attackAnim1 = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim1Id());
-        std::uint16_t attackAnim2 = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim2Id());
-        std::uint16_t attackAnim3 = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].AttackAnim3Id());
-        std::uint8_t attackAnim1Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim1Length();
-        std::uint8_t attackAnim2Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim2Length();
-        std::uint8_t attackAnim3Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim3Length();
+        std::uint16_t attackAnim1 = static_cast<std::uint16_t>(worldMain.creatures[mChar->GetId()].AttackAnim1Id());
+        std::uint16_t attackAnim2 = static_cast<std::uint16_t>(worldMain.creatures[mChar->GetId()].AttackAnim2Id());
+        std::uint16_t attackAnim3 = static_cast<std::uint16_t>(worldMain.creatures[mChar->GetId()].AttackAnim3Id());
+        std::uint8_t attackAnim1Length = worldMain.creatures[mChar->GetId()].AttackAnim1Length();
+        std::uint8_t attackAnim2Length = worldMain.creatures[mChar->GetId()].AttackAnim2Length();
+        std::uint8_t attackAnim3Length = worldMain.creatures[mChar->GetId()].AttackAnim3Length();
         
         if (charId == 0x2d8) {// Special case for Medusa, which has 1 ranged attack anim and 1 melee
             CItem *equippedWeapon = GetWeapon(mChar);
@@ -1603,7 +1603,7 @@ void CHandleCombat::PlaySwingAnimations(CChar *mChar) {
         
         // Play attack sound effect
         if (RandomNum(0, 4)) {// 20% chance of playing SFX when attacking
-            std::uint16_t toPlay = cwmWorldState->creatures[charId].GetSound(SND_ATTACK);
+            std::uint16_t toPlay = worldMain.creatures[charId].GetSound(SND_ATTACK);
             if (toPlay != 0x00) {
                 Effects->PlaySound(mChar, toPlay);
             }
@@ -2131,7 +2131,7 @@ std::int16_t CHandleCombat::ApplyDamageBonuses(Weather::type_t damageType, CChar
             damage = static_cast<float>(baseDamage);
             
             // If the attack is magic and the target a NPC but not a human, double the damage
-            if (getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman()) {
+            if (getFightSkill == MAGERY && ourTarg->IsNpc() && !worldMain.creatures[ourTarg->GetId()].IsHuman()) {
                 damage *= 2;
             }
             break;
@@ -2321,7 +2321,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                      ));
                      
                      // Apply damage to shield from parrying action?
-                     if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1,
+                     if( worldMain.ServerData()->CombatParryDamageChance() >= RandomNum( 1,
                      100 )) // 20% chance by default
                      {
                      shield->IncHP( shieldDamage );
@@ -2423,7 +2423,7 @@ std::int16_t CHandleCombat::ApplyDefenseModifiers(Weather::type_t damageType, CC
                         }
                     }
                 }
-                else if (ServerConfig::shared().ruleSets[Expansion::WRESTLING].value  >= Era::TOL && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman()) {
+                else if (ServerConfig::shared().ruleSets[Expansion::WRESTLING].value  >= Era::TOL && !worldMain.creatures[ourTarg->GetId()].IsHuman()) {
                     // In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were
                     // given a chance to parry attacks https://www.uoguide.com/Publish_97
                     float parryChance = 0;
@@ -2591,7 +2591,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
         if (getFightSkill == ARCHERY && mWeapon != nullptr) {
             // If amount of time since character last moved is less than the minimum delay for
             // shooting after coming to a halt, return
-            if ((cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime()) < static_cast<std::uint32_t>(ServerConfig::shared().realNumbers[RealNumberConfig::ARCHERYDELAY] * 1000))
+            if ((worldMain.GetUICurrentTime() - mChar.LastMoveTime()) < static_cast<std::uint32_t>(ServerConfig::shared().realNumbers[RealNumberConfig::ARCHERYDELAY] * 1000))
                 return false;
             
             std::uint16_t ammoId = mWeapon->GetAmmoId();
@@ -2721,7 +2721,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                     Effects->PlaySound(ourTarg, RandomNum(0x0155, 0x0158));
                     break;
                 default: {
-                    std::uint16_t toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
+                    std::uint16_t toPlay = worldMain.creatures[ourTarg->GetId()].GetSound(SND_DEFEND);
                     if (toPlay != 0x00) {
                         Effects->PlaySound(ourTarg, toPlay);
                     }
@@ -2796,7 +2796,7 @@ bool CHandleCombat::HandleCombat(CSocket *mSock, CChar &mChar, CChar *ourTarg) {
                     [[maybe_unused]] bool retVal = ourTarg->Damage(ourDamage, Weather::PHYSICAL, &mChar, true);
                 }
             }
-            if (cwmWorldState->creatures[mChar.GetId()].IsHuman()) {
+            if (worldMain.creatures[mChar.GetId()].IsHuman()) {
                 PlayHitSoundEffect(&mChar, mWeapon);
             }
             
@@ -2924,7 +2924,7 @@ void CHandleCombat::HandleNPCSpellAttack(CChar *npcAttack, CChar *cDefend, std::
     if (!npcAttack->GetCanAttack() || npcAttack->IsEvading())
         return;
     
-    if (npcAttack->GetTimer(tNPC_SPATIMER) <= cwmWorldState->GetUICurrentTime()) {
+    if (npcAttack->GetTimer(tNPC_SPATIMER) <= worldMain.GetUICurrentTime()) {
         if (playerDistance <= ServerConfig::shared().shortValues[ShortValue::MAXSPELLRANGE]) {
             std::int16_t spattacks = npcAttack->GetSpAttack();
             if (spattacks <= 0)
@@ -3370,7 +3370,7 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
     if (ourTarg == nullptr)
         return;
     
-    if (mChar.IsNpc() && mChar.GetTimer(tNPC_EVADETIME) > cwmWorldState->GetUICurrentTime()) {
+    if (mChar.IsNpc() && mChar.GetTimer(tNPC_EVADETIME) > worldMain.GetUICurrentTime()) {
 #if defined(UOX_DEBUG_MODE) && defined(DEBUG_COMBAT)
         Console::shared().warning("DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n");
 #endif
@@ -3378,7 +3378,7 @@ void CHandleCombat::CombatLoop(CSocket *mSock, CChar &mChar) {
     }
     
     bool combatHandled = false;
-    if (mChar.GetTimer(tCHAR_TIMEOUT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+    if (mChar.GetTimer(tCHAR_TIMEOUT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
         bool validTarg = false;
         if (!mChar.IsDead() && ValidateObject(ourTarg) && !ourTarg->IsFree() && (ourTarg->IsNpc() || IsOnline((*ourTarg)))) {
             if (!ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNpcAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE && !ourTarg->IsEvading()) {

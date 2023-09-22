@@ -40,7 +40,6 @@
 #include "speech.h"
 #include "townregion.h"
 
-CWorldMain *cwmWorldState = nullptr;
 
 // o------------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -375,7 +374,7 @@ void sysBroadcast(const std::string &txt);
 void CWorldMain::SaveNewWorld(bool x) {
     static std::uint32_t save_counter = 0;
     
-    std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+    std::for_each(this->spawnRegions.begin(), this->spawnRegions.end(), [](std::pair<std::uint16_t, CSpawnRegion *> entry) {
         if (entry.second) {
             entry.second->CheckSpawned();
         }
@@ -454,7 +453,7 @@ void CWorldMain::RegionSave() {
         Console::shared().error(util::format("Failed to open %s for writing", regionsFile.string().c_str()));
         return;
     }
-    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[&regionsDestination](const std::pair<std::uint16_t, CTownRegion *> &town) {
+    std::for_each(this->townRegions.begin(), this->townRegions.end(),[&regionsDestination](const std::pair<std::uint16_t, CTownRegion *> &town) {
         if (town.second) {
             town.second->Save(regionsDestination);
         }

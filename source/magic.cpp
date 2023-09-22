@@ -33,6 +33,7 @@
 #include "stringutility.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 using namespace std::string_literals;
@@ -299,7 +300,7 @@ bool splCunning(CChar *caster, CChar *target, CChar *src, [[maybe_unused]] std::
 // o------------------------------------------------------------------------------------------------o
 bool splCure(CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] std::int8_t curSpell) {
     target->SetPoisoned(0);
-    target->SetTimer(tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime());
+    target->SetTimer(tCHAR_POISONWEAROFF, worldMain.GetUICurrentTime());
     if (target->IsMurderer()) {
         MakeCriminal(caster);
     }
@@ -781,7 +782,7 @@ bool splWallOfStone([[maybe_unused]] CSocket *sock, CChar *caster, std::uint8_t 
 // o------------------------------------------------------------------------------------------------o
 void ArchCureStub([[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] std::int8_t curSpell, [[maybe_unused]] std::int8_t targCount) {
     target->SetPoisoned(0);
-    target->SetTimer(tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime());
+    target->SetTimer(tCHAR_POISONWEAROFF, worldMain.GetUICurrentTime());
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2059,7 +2060,7 @@ void EarthquakeStub(CChar *caster, CChar *target, std::int8_t curSpell, [[maybe_
         target->SetStamina(0);
     }
     
-    if ((!target->IsNpc() && IsOnline((*target))) || (target->IsNpc() && cwmWorldState->creatures[target->GetId()].IsHuman())) {
+    if ((!target->IsNpc() && IsOnline((*target))) || (target->IsNpc() && worldMain.creatures[target->GetId()].IsHuman())) {
         if (!target->IsOnHorse() && !target->IsFlying()) {
             if (target->GetBodyType() == BT_GARGOYLE) {
                 Effects->PlayNewCharacterAnimation(target, N_ACT_IMPACT); // Impact anim (0x04) - can't seem to trigger death anim
@@ -3191,7 +3192,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
     if (id >= 0x398C && id <= 0x399F){ // fire field
         caster = CalcCharObjFromSer(fieldItem->GetTempVar(CITV_MOREY)); // store caster in morey
         if (ValidateObject(caster)) {
-            if (mChar->GetTimer(tCHAR_FIREFIELDTICK) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+            if (mChar->GetTimer(tCHAR_FIREFIELDTICK) < worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 // Set a timer, so another field spell cannot "tick" for this character for a short
                 // while
                 mChar->SetTimer(tCHAR_FIREFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[28].DamageDelay())));
@@ -3219,8 +3220,8 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
                 MakeCriminal(caster);
             }
         }
-        if (mChar->GetTimer(tCHAR_POISONFIELDTICK) < cwmWorldState->GetUICurrentTime() ||
-            cwmWorldState->GetOverflow()) {
+        if (mChar->GetTimer(tCHAR_POISONFIELDTICK) < worldMain.GetUICurrentTime() ||
+            worldMain.GetOverflow()) {
             // Set a timer, so another field spell cannot "tick" for this character for a short
             // while
             mChar->SetTimer(tCHAR_POISONFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[39].DamageDelay())));
@@ -3247,7 +3248,7 @@ bool CMagic::HandleFieldEffects(CChar *mChar, CItem *fieldItem, std::uint16_t id
                 MakeCriminal(caster);
             }
         }
-        if (mChar->GetTimer(tCHAR_PARAFIELDTICK) < cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar->GetTimer(tCHAR_PARAFIELDTICK) < worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             // Set a timer, so another field spell cannot "tick" for this character for a short
             // while
             mChar->SetTimer(tCHAR_PARAFIELDTICK, BuildTimeValue(static_cast<float>(Magic->spells[39].DamageDelay())));
@@ -3562,7 +3563,7 @@ bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
     // Spell recovery time active? This timer stars as soon as targeting cursor is ready, and
     // defaults to 1.0 seconds unless set otherwise in spells.dfn
     if (mChar->GetTimer(tCHAR_SPELLRECOVERYTIME) != 0) {
-        if (mChar->GetTimer(tCHAR_SPELLRECOVERYTIME) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar->GetTimer(tCHAR_SPELLRECOVERYTIME) > worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             mSock->SysMessage(1638); // You must wait a little while before casting
             return false;
         }
@@ -3574,7 +3575,7 @@ bool CMagic::SelectSpell(CSocket *mSock, std::int32_t num) {
             mSock->SysMessage(762); // You are already casting a spell.
             return false;
         }
-        else if (mChar->GetTimer(tCHAR_SPELLTIME) > cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        else if (mChar->GetTimer(tCHAR_SPELLTIME) > worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             mSock->SysMessage(1638); // You must wait a little while before casting
             return false;
         }
@@ -3882,7 +3883,7 @@ void CMagic::CastSpell(CSocket *s, CChar *caster) {
     }
     
     // Let human NPC casters say the magic words as they cast spells
-    if (caster->IsNpc() && cwmWorldState->creatures[caster->GetId()].IsHuman()) {
+    if (caster->IsNpc() && worldMain.creatures[caster->GetId()].IsHuman()) {
         std::string temp;
         if (spells[curSpell].FieldSpell()) {
             if (caster->GetSkill(MAGERY) > 600) {

@@ -27,6 +27,7 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
+#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 #include "wholist.h"
 
@@ -1285,9 +1286,9 @@ void StartChar(CSocket *mSock, bool onCreate) {
             mSock->Send(&lc);
             Network->SetLastOn(mSock);
             
-            std::uint8_t currentHour = cwmWorldState->uoTime.hours ;
-            std::uint8_t currentMins = cwmWorldState->uoTime.minutes;
-            std::uint8_t currentSecs = cwmWorldState->uoTime.seconds;
+            std::uint8_t currentHour = worldMain.uoTime.hours ;
+            std::uint8_t currentMins = worldMain.uoTime.minutes;
+            std::uint8_t currentSecs = worldMain.uoTime.seconds;
             
             CPTime tmPckt(currentHour, currentMins, currentSecs);
             mSock->Send(&tmPckt);
@@ -1360,7 +1361,7 @@ void StartChar(CSocket *mSock, bool onCreate) {
                                       9013); // This server requires use of an assistant tool that supports
                     // feature negotiation. Enable the tool's option for negotiating
                     // features with server, or get kicked in 30 seconds.
-                    mSock->NegotiateTimeout(cwmWorldState->GetUICurrentTime() + (30 * 1000));
+                    mSock->NegotiateTimeout(worldMain.GetUICurrentTime() + (30 * 1000));
                 }
             }
             
@@ -1426,9 +1427,9 @@ CItem *CreateCorpseItem(CChar &mChar, CChar *killer, std::uint8_t fallDirection)
     iCorpse->SetName2(corpseName);
     iCorpse->SetType(IT_CONTAINER);
     iCorpse->SetTempVar(CITV_MOREY, 1, canCarve);
-    iCorpse->SetTempVar(CITV_MOREY, 2, cwmWorldState->creatures[mChar.GetId()].IsHuman());
+    iCorpse->SetTempVar(CITV_MOREY, 2, worldMain.creatures[mChar.GetId()].IsHuman());
     iCorpse->SetTempVar(CITV_MOREZ, mChar.GetFlag());
-    iCorpse->SetTempTimer(cwmWorldState->GetUICurrentTime());
+    iCorpse->SetTempTimer(worldMain.GetUICurrentTime());
     if (!mChar.IsNpc()) {
         iCorpse->SetOwner(&mChar);
         mChar.AddCorpse(iCorpse); // Add to list that tracks player's corpses

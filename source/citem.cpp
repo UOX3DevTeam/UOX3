@@ -67,6 +67,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 const std::uint32_t BIT_MAKERSMARK = 0;
@@ -664,10 +665,10 @@ void CItem::SetLocation(std::int16_t newX, std::int16_t newY, std::int8_t newZ, 
 //| Purpose		-	Gets/Sets the town region the item is in
 // o------------------------------------------------------------------------------------------------o
 auto CItem::GetRegion() const -> CTownRegion * {
-    if (cwmWorldState->townRegions.find(regionNum) == cwmWorldState->townRegions.end())
-        return cwmWorldState->townRegions[0xFF];
+    if (worldMain.townRegions.find(regionNum) == worldMain.townRegions.end())
+        return worldMain.townRegions[0xFF];
     
-    return cwmWorldState->townRegions[regionNum];
+    return worldMain.townRegions[regionNum];
 }
 auto CItem::SetRegion(std::uint16_t newValue) -> void {
     regionNum = newValue;
@@ -2606,8 +2607,8 @@ void CItem::Cleanup() {
         if (IsSpawned()) {
             if (GetSpawn() < BASEITEMSERIAL) {
                 std::uint16_t spawnRegNum = static_cast<std::uint16_t>(GetSpawn());
-                if (cwmWorldState->spawnRegions.find(spawnRegNum) !=  cwmWorldState->spawnRegions.end()) {
-                    CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+                if (worldMain.spawnRegions.find(spawnRegNum) !=  worldMain.spawnRegions.end()) {
+                    CSpawnRegion *spawnReg = worldMain.spawnRegions[spawnRegNum];
                     if (spawnReg != nullptr) {
                         spawnReg->DeleteSpawnedItem(this);
                     }
@@ -2722,8 +2723,8 @@ bool CItem::CanBeObjType(CBaseObject::type_t toCompare) const {
 //|	Purpose		-	Adds item to deletion queue
 // o------------------------------------------------------------------------------------------------o
 void CItem::Delete() {
-    if (cwmWorldState->deletionQueue.count(this) == 0) {
-        ++(cwmWorldState->deletionQueue[this]);
+    if (worldMain.deletionQueue.count(this) == 0) {
+        ++(worldMain.deletionQueue[this]);
         Cleanup();
         SetDeleted(true);
         ShouldSave(false);

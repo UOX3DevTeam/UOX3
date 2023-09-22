@@ -27,6 +27,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 #include "weight.h"
 
@@ -174,10 +175,10 @@ void CSkills::RegenerateOre(std::int16_t grX, std::int16_t grY, std::uint8_t wor
     MapResource_st *orePart = MapRegion->GetResource(grX, grY, worldNum);
     std::int16_t oreCeiling = ServerConfig::shared().ushortValues[UShortValue::OREPERAREA] ;
     std::uint16_t oreTimer = ServerConfig::shared().timerSetting[TimerSetting::ORE] ;
-    if (static_cast<std::uint32_t>(orePart->oreTime) <= cwmWorldState->GetUICurrentTime()) { // regenerate some more?
+    if (static_cast<std::uint32_t>(orePart->oreTime) <= worldMain.GetUICurrentTime()) { // regenerate some more?
         for (std::int16_t counter = 0; counter < oreCeiling; ++counter) { // keep regenerating ore
             if (orePart->oreAmt < oreCeiling &&
-                static_cast<std::uint32_t>(orePart->oreAmt + counter * oreTimer * 1000) < cwmWorldState->GetUICurrentTime()) {
+                static_cast<std::uint32_t>(orePart->oreAmt + counter * oreTimer * 1000) < worldMain.GetUICurrentTime()) {
                 ++orePart->oreAmt;
             }
             else {
@@ -556,9 +557,9 @@ bool CSkills::CheckSkill(CChar *s, std::uint8_t sk, std::int16_t lowSkill, std::
         if (ServerConfig::shared().enabled(ServerSwitch::STATIMPACTSKILL)) {
             // Modify base chance of success with bonuses from stats, if this feature is enabled in
             // ini
-            chanceSkillSuccess += static_cast<float>(s->GetStrength() * cwmWorldState->skill[sk].strength) / 1000.0f;
-            chanceSkillSuccess += static_cast<float>(s->GetDexterity() * cwmWorldState->skill[sk].dexterity) / 1000.0f;
-            chanceSkillSuccess += static_cast<float>(s->GetIntelligence() * cwmWorldState->skill[sk].intelligence) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetStrength() * worldMain.skill[sk].strength) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetDexterity() * worldMain.skill[sk].dexterity) / 1000.0f;
+            chanceSkillSuccess += static_cast<float>(s->GetIntelligence() * worldMain.skill[sk].intelligence) / 1000.0f;
         }
         
         // If player's command-level is equal to Counselor or higher, pass the skill-check
@@ -634,7 +635,7 @@ void CSkills::HandleSkillChange(CChar *c, std::uint8_t sk, std::int8_t skillAdva
     
     std::uint8_t amtToGain = 1;
     if (success) {
-        amtToGain = cwmWorldState->skill[sk].advancement[skillAdvance].amtToGain;
+        amtToGain = worldMain.skill[sk].advancement[skillAdvance].amtToGain;
     }
     std::uint16_t skillCap = ServerConfig::shared().ushortValues[UShortValue::SKILLCAP] ;
     
@@ -776,7 +777,7 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
     VALIDATESOCKET(s);
     CChar *mChar = s->CurrcharObj();
     if (mChar->IsDead()) {
-        // ClilocMessage( s, SYSTEM, cwmWorldState->ServerData()->SysMsgColour(), FNT_NORMAL, 500012
+        // ClilocMessage( s, SYSTEM, worldMain.ServerData()->SysMsgColour(), FNT_NORMAL, 500012
         // );
         s->SysMessage(9054); // You cannot use skills while dead.
         return;
@@ -789,7 +790,7 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         s->SysMessage(854); // You can't do that while you are casting!
         return;
     }
-    if (s->GetTimer(tPC_SKILLDELAY) <= cwmWorldState->GetUICurrentTime() || mChar->IsGM()) {
+    if (s->GetTimer(tPC_SKILLDELAY) <= worldMain.GetUICurrentTime() || mChar->IsGM()) {
         s->SkillDelayMsgShown(false);
         bool doSwitch = true;
         std::vector<std::uint16_t> scriptTriggers = mChar->GetScriptTriggers();
@@ -806,8 +807,8 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         
         // If no onSkill event was found in a script already, check if skill has a script
         // attached directly, with onSkill event
-        if (doSwitch && cwmWorldState->skill[x].jsScript != 0xFFFF) {
-            cScript *toExecute = JSMapping->GetScript(cwmWorldState->skill[x].jsScript);
+        if (doSwitch && worldMain.skill[x].jsScript != 0xFFFF) {
+            cScript *toExecute = JSMapping->GetScript(worldMain.skill[x].jsScript);
             if (toExecute != nullptr) {
                 if (toExecute->OnSkill(mChar, x)) {
                     doSwitch = false;
@@ -829,10 +830,10 @@ void CSkills::SkillUse(CSocket *s, std::uint8_t x) {
         
         // If skillDelay timer is still below currenttimer, it wasn't modified in onSkill event. So
         // let's update it now!
-        if (s->GetTimer(tPC_SKILLDELAY) <= cwmWorldState->GetUICurrentTime()) {
-            if (cwmWorldState->skill[x].skillDelay != -1) {
+        if (s->GetTimer(tPC_SKILLDELAY) <= worldMain.GetUICurrentTime()) {
+            if (worldMain.skill[x].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(cwmWorldState->skill[x].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(worldMain.skill[x].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
@@ -924,7 +925,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
                 if (MaxTrackingTargets < ServerConfig::shared().ushortValues[UShortValue::MAXTARGET]) {
                     if (ValidateObject(tempChar) && (tempChar->GetInstanceId() == mChar->GetInstanceId())) {
                         id = tempChar->GetId();
-                        if ((!cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON) && (!cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL)) {
+                        if ((!worldMain.creatures[id].IsHuman() || creatureType == CT_PERSON) && (!worldMain.creatures[id].IsAnimal() || creatureType == CT_ANIMAL)) {
                             const bool cmdLevelCheck = (IsOnline((*tempChar)) && (mChar->GetCommandLevel() >= tempChar->GetCommandLevel()));
                             if (tempChar != mChar && ObjInRange(tempChar, mChar, distance) && !tempChar->IsDead() && (cmdLevelCheck || tempChar->IsNpc())) {
                                 mChar->SetTrackingTargets(tempChar, MaxTrackingTargets);
@@ -962,7 +963,7 @@ void CSkills::CreateTrackingMenu(CSocket *s, std::uint16_t m) {
                                 }
                                 auto tempName = GetNpcDictName(tempChar, nullptr, NRS_SYSTEM);
                                 line = tempName + " "s + Dictionary->GetEntry(dirMessage, mLang);
-                                toSend.AddResponse(cwmWorldState->creatures[id].Icon(), 0, line);
+                                toSend.AddResponse(worldMain.creatures[id].Icon(), 0, line);
                             }
                         }
                     }
@@ -1034,11 +1035,11 @@ void CSkills::Track(CChar *i) {
 // baseskill and stats
 // o------------------------------------------------------------------------------------------------o
 void CSkills::UpdateSkillLevel(CChar *c, std::uint8_t s) const {
-    std::uint16_t sStr = cwmWorldState->skill[s].strength;
+    std::uint16_t sStr = worldMain.skill[s].strength;
     std::int16_t aStr = c->ActualStrength();
-    std::uint16_t sDex = cwmWorldState->skill[s].dexterity;
+    std::uint16_t sDex = worldMain.skill[s].dexterity;
     std::int16_t aDex = c->ActualDexterity();
-    std::uint16_t sInt = cwmWorldState->skill[s].intelligence;
+    std::uint16_t sInt = worldMain.skill[s].intelligence;
     std::int16_t aInt = c->ActualIntelligence();
     std::uint16_t bSkill = c->GetBaseSkill(s);
     
@@ -1063,7 +1064,7 @@ void CSkills::Persecute(CSocket *s) {
     std::int32_t decrease =
     static_cast<std::int32_t>((c->GetSkill(SPIRITSPEAK) / 100) + (c->GetIntelligence() / 20)) + 3;
     
-    if (s->GetTimer(tPC_SKILLDELAY) <= cwmWorldState->GetUICurrentTime() || c->IsGM()) {
+    if (s->GetTimer(tPC_SKILLDELAY) <= worldMain.GetUICurrentTime() || c->IsGM()) {
         if ((RandomNum(0, 19) + c->GetIntelligence()) > 45) // not always
         {
             CSocket *tSock = targChar->GetSocket();
@@ -1073,9 +1074,9 @@ void CSkills::Persecute(CSocket *s) {
                 tSock->SysMessage(973); // A damned soul is disturbing your mind!
             }
             
-            if (cwmWorldState->skill[SPIRITSPEAK].skillDelay != -1) {
+            if (worldMain.skill[SPIRITSPEAK].skillDelay != -1) {
                 // Use skill-specific skill delay if one has been set
-                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(cwmWorldState->skill[SPIRITSPEAK].skillDelay)));
+                s->SetTimer(tPC_SKILLDELAY, BuildTimeValue(static_cast<float>(worldMain.skill[SPIRITSPEAK].skillDelay)));
             }
             else {
                 // Otherwise use global skill delay from uox.ini
@@ -1534,10 +1535,10 @@ bool CSkills::AdvanceSkill(CChar *s, std::uint8_t sk, bool skillUsed) {
     std::int8_t skillAdvance = FindSkillPoint(sk, s->GetBaseSkill(sk));
     
     if (skillUsed) {
-        skillGain = (cwmWorldState->skill[sk].advancement[skillAdvance].success);
+        skillGain = (worldMain.skill[sk].advancement[skillAdvance].success);
     }
     else {
-        skillGain = (cwmWorldState->skill[sk].advancement[skillAdvance].failure);
+        skillGain = (worldMain.skill[sk].advancement[skillAdvance].failure);
     }
     
     if (skillGain > RandomNum(1, 100)) {
@@ -1562,16 +1563,16 @@ bool CSkills::AdvanceSkill(CChar *s, std::uint8_t sk, bool skillUsed) {
 // o------------------------------------------------------------------------------------------------o
 std::int8_t CSkills::FindSkillPoint(std::uint8_t sk, std::int32_t value) {
     std::int8_t retVal = -1;
-    for (size_t iCounter = 0; iCounter < cwmWorldState->skill[sk].advancement.size() - 1;
+    for (size_t iCounter = 0; iCounter < worldMain.skill[sk].advancement.size() - 1;
          ++iCounter) {
-        if (cwmWorldState->skill[sk].advancement[iCounter].base <= value &&
-            value < cwmWorldState->skill[sk].advancement[iCounter + 1].base) {
+        if (worldMain.skill[sk].advancement[iCounter].base <= value &&
+            value < worldMain.skill[sk].advancement[iCounter + 1].base) {
             retVal = static_cast<std::int8_t>(iCounter);
             break;
         }
     }
     if (retVal == -1) {
-        retVal = static_cast<std::int8_t>(cwmWorldState->skill[sk].advancement.size() - 1);
+        retVal = static_cast<std::int8_t>(worldMain.skill[sk].advancement.size() - 1);
     }
     return retVal;
 }
@@ -1600,7 +1601,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
     std::int32_t toDec = 255;
     std::uint16_t maxChance = 100;
     std::int16_t ActualStat[3] = {s->ActualStrength(), s->ActualDexterity(), s->ActualIntelligence()};
-    std::uint16_t StatModifier[3] = {cwmWorldState->skill[sk].strength, cwmWorldState->skill[sk].dexterity, cwmWorldState->skill[sk].intelligence};
+    std::uint16_t StatModifier[3] = {worldMain.skill[sk].strength, worldMain.skill[sk].dexterity, worldMain.skill[sk].intelligence};
     skilllock_t StatLocks[3] = {s->GetSkillLock(STRENGTH), s->GetSkillLock(DEXTERITY), s->GetSkillLock(INTELLECT)};
     
     std::vector<std::uint16_t> skillUpdTriggers = s->GetScriptTriggers();
@@ -1629,7 +1630,7 @@ void CSkills::AdvanceStats(CChar *s, std::uint8_t sk, bool skillsuccess) {
             
             //  k, first let us calculate both dices
             std::uint8_t modifiedStatLevel = FindSkillPoint(statCount - 1, static_cast<std::int32_t>(static_cast<float>(ActualStat[nCount]) / static_cast<float>(pRace->Skill(statCount)) * 100));
-            chanceStatGain = static_cast<std::int16_t>((static_cast<float>(cwmWorldState->skill[statCount - 1].advancement[modifiedStatLevel].success) / 100) * (static_cast<float>(static_cast<float>(StatModifier[nCount]) / 10) / 100) * 1000);
+            chanceStatGain = static_cast<std::int16_t>((static_cast<float>(worldMain.skill[statCount - 1].advancement[modifiedStatLevel].success) / 100) * (static_cast<float>(static_cast<float>(StatModifier[nCount]) / 10) / 100) * 1000);
             // some mathematics in it;)
             
             // now, lets implement the special dice 1 and additionally check for onStatGain

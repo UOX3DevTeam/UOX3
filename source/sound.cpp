@@ -12,6 +12,7 @@
 #include "ssection.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 
@@ -159,7 +160,7 @@ void cEffects::PlayDeathSound(CChar *i) {
         PlaySound(i, deathSound);
     }
     else {
-        const std::uint16_t toPlay = cwmWorldState->creatures[i->GetOrgId()].GetSound(SND_DIE);
+        const std::uint16_t toPlay = worldMain.creatures[i->GetOrgId()].GetSound(SND_DIE);
         if (toPlay != 0x00) {
             Effects->PlaySound(i, toPlay);
         }
@@ -206,14 +207,14 @@ void cEffects::PlayBGSound(CSocket &mSock, CChar &mChar) {
     if (!inRange.empty()) {
         CChar *soundSrc = inRange[RandomNum(static_cast<size_t>(0), inRange.size() - 1)];
         std::uint16_t xx = soundSrc->GetId();
-        if (cwmWorldState->creatures.find(xx) == cwmWorldState->creatures.end())
+        if (worldMain.creatures.find(xx) == worldMain.creatures.end())
             return;
         
         // Play creature sounds, but add a small chance that they won't, to give players a break
         // every now and then
         std::uint8_t soundChance = static_cast<std::uint8_t>(RandomNum(static_cast<size_t>(0), inRange.size() + 9));
         if (soundChance > 5) {
-            basesound = cwmWorldState->creatures[xx].GetSound(SND_IDLE);
+            basesound = worldMain.creatures[xx].GetSound(SND_IDLE);
             if (basesound != 0x00) {
                 CPPlaySoundEffect toSend = (*soundSrc);
                 toSend.Model(basesound);
@@ -278,8 +279,8 @@ auto cEffects::DoSocketMusic(CSocket *s) -> void {
     // Fetch subregion player is in, if any
     auto subRegionNum = mChar->GetSubRegion();
     if (subRegionNum != 0) {
-        if (cwmWorldState->townRegions.find(subRegionNum) != cwmWorldState->townRegions.end()) {
-            mReg = cwmWorldState->townRegions[subRegionNum];
+        if (worldMain.townRegions.find(subRegionNum) != worldMain.townRegions.end()) {
+            mReg = worldMain.townRegions[subRegionNum];
         }
     }
     

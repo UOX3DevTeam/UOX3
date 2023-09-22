@@ -33,6 +33,7 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()
@@ -415,7 +416,7 @@ bool CPIFirstLogin::Handle() {
         }
         
         // change for IP4Address
-        auto address = cwmWorldState->matchIP(tSock->ipaddress);
+        auto address = worldMain.matchIP(tSock->ipaddress);
         
         CPGameServerList toSend(1);
         toSend.addEntry(ServerConfig::shared().serverString[ServerString::SERVERNAME], address.ipaddr(true));
@@ -507,7 +508,7 @@ std::int16_t CPIServerSelect::ServerNum() {
 }
 
 bool CPIServerSelect::Handle() {
-    auto ip = cwmWorldState->matchIP(tSock->ipaddress);
+    auto ip = worldMain.matchIP(tSock->ipaddress);
     
     auto name = ServerConfig::shared().serverString[ServerString::SERVERNAME];
     auto port = ServerConfig::shared().ushortValues[UShortValue::PORT] ;
@@ -940,7 +941,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             }
             if (!ServerConfig::shared().enableClients.enableClient4000()) {
                 tSock->ForceOffline(true);
-                tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
+                tSock->IdleTimeout(worldMain.GetUICurrentTime() + 200);
                 tSock->SysMessage(1796, verString); // Your current client-version (%s) is not supported
                 // by this shard. You will be disconnected.
                 Console::shared() << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
@@ -959,7 +960,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             }
             if (!ServerConfig::shared().enableClients.enableClient6050()) {
                 tSock->ForceOffline(true);
-                tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
+                tSock->IdleTimeout(worldMain.GetUICurrentTime() + 200);
                 tSock->SysMessage(1796,verString); // Your current client-version (%s) is not supported
                 // by this shard. You will be disconnected.
                 Console::shared()<< "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..."<< myendl;
@@ -980,7 +981,7 @@ void CPIClientVersion::SetClientVersionShortAndType(CSocket *tSock, char *verStr
             }
             if (!ServerConfig::shared().enableClients.enableClient6000()) {
                 tSock->ForceOffline(true);
-                tSock->IdleTimeout(cwmWorldState->GetUICurrentTime() + 200);
+                tSock->IdleTimeout(worldMain.GetUICurrentTime() + 200);
                 tSock->SysMessage(1796, verString); // Your current client-version (%s) is not supported
                 // by this shard. You will be disconnected.
                 Console::shared() << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
@@ -4083,13 +4084,13 @@ bool CPIPopupMenuSelect::Handle() {
     
     switch (popupEntry) {
         case 0x000A: // Open Paperdoll
-            if (cwmWorldState->creatures[targChar->GetId()].IsHuman()) {
+            if (worldMain.creatures[targChar->GetId()].IsHuman()) {
                 PaperDoll(tSock, targChar);
             }
             break;
         case 0x000B: // Open Backpack
             if (mChar->GetCommandLevel() >= CL_CNS ||
-                cwmWorldState->creatures[targChar->GetId()].IsHuman() || targChar->GetId() == 0x0123 ||
+                worldMain.creatures[targChar->GetId()].IsHuman() || targChar->GetId() == 0x0123 ||
                 targChar->GetId() == 0x0124 ||
                 targChar->GetId() == 0x0317) // Only Humans and Pack Animals have Packs
             {
@@ -4168,7 +4169,7 @@ bool CPIPopupMenuSelect::Handle() {
             }
             break;
         case 0x000F: // Tame
-            if (cwmWorldState->creatures[targChar->GetId()].IsAnimal()) {
+            if (worldMain.creatures[targChar->GetId()].IsAnimal()) {
                 if (ObjInRange(mChar, targChar, 8)) {
                     // Set a tag on the player to reference the animal they're about to tame
                     TagMap targCharSerial;

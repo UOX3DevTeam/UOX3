@@ -6,6 +6,7 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
+#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SendTradeStatus()
@@ -148,7 +149,7 @@ bool ClearTradesFunctor(CBaseObject *a, std::uint32_t &b, [[maybe_unused]] void 
                                 
                                 // Store a timestamp indicating when item last left secure trade
                                 // window
-                                j->SetTempLastTraded(cwmWorldState->GetUICurrentTime());
+                                j->SetTempLastTraded(worldMain.GetUICurrentTime());
                             }
                         }
                     }
@@ -236,7 +237,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                 i->PlaceInPack();
                 
                 // Store a timestamp indicating when item last left secure trade window
-                i->SetTempLastTraded(cwmWorldState->GetUICurrentTime());
+                i->SetTempLastTraded(worldMain.GetUICurrentTime());
             }
         }
         GenericList<CItem *> *c2Cont = tradeWindowTwo->GetContainsList();
@@ -275,7 +276,7 @@ void CompleteTrade(CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucce
                 i->PlaceInPack();
                 
                 // Store a timestamp indicating when item last left secure trade window
-                i->SetTempLastTraded(cwmWorldState->GetUICurrentTime());
+                i->SetTempLastTraded(worldMain.GetUICurrentTime());
             }
         }
     }

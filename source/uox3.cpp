@@ -84,6 +84,7 @@
 #include "mapstuff.h"
 #include "movement.h"
 #include "msgboard.h"
+#include "utility/netutil.hpp"
 #include "objectfactory.h"
 #include "ostype.h"
 #include "other/uoxversion.hpp"
@@ -123,7 +124,6 @@ auto saveOnShutdown = false;
 //  Classes we will use
 // o------------------------------------------------------------------------------------------------o
 //  Non depdendent class
-auto aWorld = CWorldMain();
 auto aDictionary = CDictionaryContainer(); // no startup
 auto aCombat = CHandleCombat();            // No dependency, startup
 auto aItems = cItem();                     // No startup, no dependency
@@ -133,7 +133,6 @@ auto aWeight = CWeight();                  // no dependency, no startup
 auto aMagic = CMagic();                    // No dependent, no startup
 auto aRaces = cRaces();                    // no dependent, no startup
 
-//auto aWeather = cWeatherAb();                         // no dependent, no startup
 auto aMovement = CMovement();                         // No dependent, no startup
 auto aWhoList = CWhoList();                           // no dependent, no startup
 auto aOffList = CWhoList(false);                      // no dependent, no startup
@@ -190,7 +189,7 @@ auto checkConsoleKeyThread() -> void;
 auto doMessageLoop() -> void;
 //auto startInitialize(CServerData &server_data) -> void;
 auto startInitialize() -> void;
-auto initOperatingSystem() -> std::optional<std::string>;
+auto initOperatingSystem() -> void;
 auto adjustInterval(std::chrono::milliseconds interval, std::chrono::milliseconds maxTimer)-> std::chrono::milliseconds;
 
 // o------------------------------------------------------------------------------------------------o
@@ -212,17 +211,15 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     try{
         // If we cant read the config file, should we even do anything else ?
         ServerConfig::shared().loadConfig(configFile);
+        // just go ahead and startup up winsock for windows
+        // We also need to look at the signal handlers, for another day
+        initOperatingSystem() ;
     }
     catch( const std::exception &e){
         std::cerr <<e.what() << std::endl;
         return EXIT_FAILURE ;
     }
     
-    auto status = initOperatingSystem();
-    if (status.has_value()) {
-        std::cerr << status.value() << std::endl;
-        return EXIT_FAILURE;
-    }
     
     // Ok, we probably want the Console now
     Console::shared().Initialize();
@@ -263,25 +260,25 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;
     
     // Core server loop
-    while (cwmWorldState->GetKeepRun()) {
-        std::this_thread::sleep_for( std::chrono::milliseconds(cwmWorldState->GetPlayersOnline() ? 5 : 90));
-        if (cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000) {
-            cwmWorldState->ServerProfile()->LoopTimeCount(0);
-            cwmWorldState->ServerProfile()->LoopTime(0);
+    while (worldMain.GetKeepRun()) {
+        std::this_thread::sleep_for( std::chrono::milliseconds(worldMain.GetPlayersOnline() ? 5 : 90));
+        if (worldMain.ServerProfile()->LoopTimeCount() >= 1000) {
+            worldMain.ServerProfile()->LoopTimeCount(0);
+            worldMain.ServerProfile()->LoopTime(0);
         }
-        cwmWorldState->ServerProfile()->IncLoopTimeCount();
+        worldMain.ServerProfile()->IncLoopTimeCount();
         
         StartMilliTimer(loopSecs, loopMilli);
         
-        if (cwmWorldState->ServerProfile()->NetworkTimeCount() >= 1000) {
-            cwmWorldState->ServerProfile()->NetworkTimeCount(0);
-            cwmWorldState->ServerProfile()->NetworkTime(0);
+        if (worldMain.ServerProfile()->NetworkTimeCount() >= 1000) {
+            worldMain.ServerProfile()->NetworkTimeCount(0);
+            worldMain.ServerProfile()->NetworkTime(0);
         }
         
         StartMilliTimer(tempSecs, tempMilli);
         EVENT_TIMER_RESET(stopwatch);
         
-        if (uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (uiNextCheckConn <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             // Cut lag on CheckConn by not doing it EVERY loop.
             Network->CheckConnections();
             uiNextCheckConn = BuildTimeValue(1.0f);
@@ -289,30 +286,30 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         Network->CheckMessages();
         EVENT_TIMER_NOW(stopwatch, Complete net checkmessages, EVENT_TIMER_KEEP);
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
-        cwmWorldState->ServerProfile()->IncNetworkTime(tempTime);
-        cwmWorldState->ServerProfile()->IncNetworkTimeCount();
+        worldMain.ServerProfile()->IncNetworkTime(tempTime);
+        worldMain.ServerProfile()->IncNetworkTimeCount();
         
-        if (cwmWorldState->ServerProfile()->TimerTimeCount() >= 1000) {
-            cwmWorldState->ServerProfile()->TimerTimeCount(0);
-            cwmWorldState->ServerProfile()->TimerTime(0);
+        if (worldMain.ServerProfile()->TimerTimeCount() >= 1000) {
+            worldMain.ServerProfile()->TimerTimeCount(0);
+            worldMain.ServerProfile()->TimerTime(0);
         }
         
         StartMilliTimer(tempSecs, tempMilli);
         
-        cwmWorldState->CheckTimers();
+        worldMain.CheckTimers();
         // stopwatch.output( "Delta for CheckTimers" );
-        cwmWorldState->SetUICurrentTime(GetClock());
+        worldMain.SetUICurrentTime(GetClock());
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
-        cwmWorldState->ServerProfile()->IncTimerTime(tempTime);
-        cwmWorldState->ServerProfile()->IncTimerTimeCount();
+        worldMain.ServerProfile()->IncTimerTime(tempTime);
+        worldMain.ServerProfile()->IncTimerTimeCount();
         
-        if (cwmWorldState->ServerProfile()->AutoTimeCount() >= 1000) {
-            cwmWorldState->ServerProfile()->AutoTimeCount(0);
-            cwmWorldState->ServerProfile()->AutoTime(0);
+        if (worldMain.ServerProfile()->AutoTimeCount() >= 1000) {
+            worldMain.ServerProfile()->AutoTimeCount(0);
+            worldMain.ServerProfile()->AutoTime(0);
         }
         StartMilliTimer(tempSecs, tempMilli);
         
-        if (!cwmWorldState->GetReloadingScripts()) {
+        if (!worldMain.GetReloadingScripts()) {
             // auto stopauto = EventTimer();
             EVENT_TIMER(stopauto, EVENT_TIMER_OFF);
             
@@ -320,7 +317,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
             if (apsPerfThreshold == static_cast<std::uint16_t>(0) || apsDelay == std::chrono::milliseconds(0) || currentTime >= adaptivePerfTimer) {
                 // Check autotimers if the APS feature is disabled, if there's no delay, or if timer
                 // has expired
-                cwmWorldState->CheckAutoTimers();
+                worldMain.CheckAutoTimers();
                 
                 // Set timer for next update, if apsDelay is higher than 0
                 if (apsDelay > std::chrono::milliseconds(0)) {
@@ -332,16 +329,16 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         }
         
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
-        cwmWorldState->ServerProfile()->IncAutoTime(tempTime);
-        cwmWorldState->ServerProfile()->IncAutoTimeCount();
+        worldMain.ServerProfile()->IncAutoTime(tempTime);
+        worldMain.ServerProfile()->IncAutoTimeCount();
         StartMilliTimer(tempSecs, tempMilli);
         EVENT_TIMER_RESET(stopwatch);
         Network->ClearBuffers();
         EVENT_TIMER_NOW( stopwatch, Delta for ClearBuffers, EVENT_TIMER_CLEAR );
         tempTime = CheckMilliTimer(tempSecs, tempMilli);
-        cwmWorldState->ServerProfile()->IncNetworkTime(tempTime);
+        worldMain.ServerProfile()->IncNetworkTime(tempTime);
         tempTime = CheckMilliTimer(loopSecs, loopMilli);
-        cwmWorldState->ServerProfile()->IncLoopTime(tempTime);
+        worldMain.ServerProfile()->IncLoopTime(tempTime);
         EVENT_TIMER_RESET(stopwatch);
         doMessageLoop();
         EVENT_TIMER_NOW( stopwatch, Delta for doMessageLoop, EVENT_TIMER_CLEAR );
@@ -351,7 +348,7 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         std::chrono::system_clock::now();
         if (apsPerfThreshold > static_cast<std::uint16_t>(0) && currentTime >= nextEvaluationTime) {
             // Get simulation cycles count
-            auto simCycles = (1000.0 * (1.0 / static_cast<float>( static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(cwmWorldState->ServerProfile()->LoopTimeCount()))));
+            auto simCycles = (1000.0 * (1.0 / static_cast<float>( static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>(worldMain.ServerProfile()->LoopTimeCount()))));
             
             // Store last X simCycle samples
             simCycleSamples.push_back(simCycles);
@@ -404,19 +401,20 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     /// HERE
     Network->SockClose();
     Console::shared().printDone();
+    util::net::shutdown() ;
     
 #if defined(_WIN32)
     SetConsoleCtrlHandler(exit_handler, true);
 #endif
-    if (cwmWorldState->GetWorldSaveProgress() != SS_SAVING) {
+    if (worldMain.GetWorldSaveProgress() != SS_SAVING) {
         isWorldSaving = true;
         do {
-            cwmWorldState->SaveNewWorld(true);
+            worldMain.SaveNewWorld(true);
         }
-        while (cwmWorldState->GetWorldSaveProgress() == SS_SAVING);
+        while (worldMain.GetWorldSaveProgress() == SS_SAVING);
         isWorldSaving = false;
     }
-    //cwmWorldState->ServerData()->SaveIni();
+    //worldMain.ServerData()->SaveIni();
     ServerConfig::shared().writeConfig(std::filesystem::path());
 #if defined(_WIN32)
     SetConsoleCtrlHandler(exit_handler, false);
@@ -443,22 +441,15 @@ auto adjustInterval(std::chrono::milliseconds interval, std::chrono::millisecond
 // o------------------------------------------------------------------------------------------------o
 //  Initialize the network
 // o------------------------------------------------------------------------------------------------o
-auto initOperatingSystem() -> std::optional<std::string> {
+auto initOperatingSystem() -> void {
     // Startup Winsock2(windows) or signal handers (unix)
-#if defined(_WIN32)
-    WSADATA wsaData;
-    WORD wVersionRequested = MAKEWORD(2, 2);
-    std::int32_t err = WSAStartup(wVersionRequested, &wsaData);
-    if (err) {
-        return "Winsock 2.2 not found on your system!"s;
-    }
-#else
+    util::net::startup() ;
+#if !defined(_WIN32)
     // Protection from server-shutdown during mid-worldsave
     signal(SIGINT, app_stopped);
     signal(SIGPIPE, SIG_IGN); // This appears when we try to write to a broken network connection
     
 #endif
-    return {};
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -469,15 +460,15 @@ auto startInitialize() -> void {
     // Let's measure startup time
     auto startupStartTime = std::chrono::high_resolution_clock::now();
     
-    cwmWorldState = &aWorld;
+//    cwmWorldState = &aWorld;
     
     Console::shared() << "Initializing and creating class pointers... " << myendl;
     initClasses();
-    cwmWorldState->SetUICurrentTime(GetClock());
+    worldMain.SetUICurrentTime(GetClock());
     
     Console::shared().printSectionBegin();
     
-    cwmWorldState->uoTime.load(ServerConfig::shared().directoryFor(dirlocation_t::SAVE));
+    worldMain.uoTime.load(ServerConfig::shared().directoryFor(dirlocation_t::SAVE));
     
     Console::shared() << "Loading skill advancement      ";
     loadSkills();
@@ -542,10 +533,10 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     initMultis();
     
-    cwmWorldState->SetStartTime(cwmWorldState->GetUICurrentTime());
+    worldMain.SetStartTime(worldMain.GetUICurrentTime());
     
-    cwmWorldState->SetEndTime(0);
-    cwmWorldState->SetLClock(0);
+    worldMain.SetEndTime(0);
+    worldMain.SetLClock(0);
     
     // no longer Que, because that's taken care of by PageVector
     Console::shared() << "Initializing Jail system       ";
@@ -570,12 +561,12 @@ auto startInitialize() -> void {
     Console::shared().printDone();
     
     Console::shared() << "Starting World Timers          ";
-    cwmWorldState->SetTimer(tWORLD_LIGHTTIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::WEATHER])) );
+    worldMain.SetTimer(tWORLD_LIGHTTIME, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::WEATHER])) );
     
-    cwmWorldState->SetTimer(tWORLD_NEXTNPCAI, BuildTimeValue(static_cast<float>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKAI])));
-    cwmWorldState->SetTimer(tWORLD_NEXTFIELDEFFECT, BuildTimeValue(0.5f));
-    cwmWorldState->SetTimer(tWORLD_SHOPRESTOCK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::SHOPSPAWN])));
-    cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::PETOFFLINECHECK])));
+    worldMain.SetTimer(tWORLD_NEXTNPCAI, BuildTimeValue(static_cast<float>( ServerConfig::shared().realNumbers[RealNumberConfig::CHECKAI])));
+    worldMain.SetTimer(tWORLD_NEXTFIELDEFFECT, BuildTimeValue(0.5f));
+    worldMain.SetTimer(tWORLD_SHOPRESTOCK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::SHOPSPAWN])));
+    worldMain.SetTimer( tWORLD_PETOFFLINECHECK, BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::PETOFFLINECHECK])));
     
     Console::shared().printDone();
     
@@ -621,7 +612,7 @@ auto startInitialize() -> void {
     Console::shared().turnNormal();
     
     // we've really finished loading here
-    cwmWorldState->SetLoaded(true);
+    worldMain.SetLoaded(true);
     
     // Get a second timestamp for startup time
     auto startupEndTime = std::chrono::high_resolution_clock::now();
@@ -665,21 +656,10 @@ BOOL WINAPI exit_handler(DWORD dwCtrlType) {
     }
 }
 #else
-// o------------------------------------------------------------------------------------------------o
-//  These first two, should be removed.  We should fix the error
-// o------------------------------------------------------------------------------------------------o
-auto illinst(std::int32_t x = 0) -> void {
-    sysBroadcast("Fatal Server Error! Bailing out - Have a nice day!");
-    Console::shared().error("Illegal Instruction Signal caught - attempting shutdown");
-    endMessage(x);
-}
-auto aus([[maybe_unused]] std::int32_t signal) -> void {
-    Console::shared().error("Server crash averted! Floating point exception caught.");
-}
 void app_stopped([[maybe_unused]] int sig) {
     // function called when signal is received.
     if (isWorldSaving == false) {
-        cwmWorldState->SetKeepRun(false);
+        worldMain.SetKeepRun(false);
     }
 }
 #endif
@@ -695,7 +675,7 @@ void app_stopped([[maybe_unused]] int sig) {
 // regions
 // o------------------------------------------------------------------------------------------------o
 auto UnloadSpawnRegions() -> void {
-    for (auto &[regionnum, spawnregion] : cwmWorldState->spawnRegions) {
+    for (auto &[regionnum, spawnregion] : worldMain.spawnRegions) {
         if (spawnregion) {
             // Iterate over list of spawned characters and delete them if no player has
             // tamed them/hired them
@@ -728,7 +708,7 @@ auto UnloadSpawnRegions() -> void {
             delete spawnregion;
         }
     }
-    cwmWorldState->spawnRegions.clear();
+    worldMain.spawnRegions.clear();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -738,13 +718,13 @@ auto UnloadSpawnRegions() -> void {
 // regions
 // o------------------------------------------------------------------------------------------------o
 auto UnloadRegions() -> void {
-    std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),
+    std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(),
                   [](const std::pair<std::uint16_t, CTownRegion *> &entry) {
         if (entry.second) {
             delete entry.second;
         }
     });
-    cwmWorldState->townRegions.clear();
+    worldMain.townRegions.clear();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -760,12 +740,12 @@ auto doMessageLoop() -> void {
         messages.pop();
         switch (tVal.actualMessage) {
             case MSG_SHUTDOWN:
-                cwmWorldState->SetKeepRun(false);
+                worldMain.SetKeepRun(false);
                 break;
             case MSG_COUNT:
                 break;
             case MSG_WORLDSAVE:
-                cwmWorldState->SetOldTime(0);
+                worldMain.SetOldTime(0);
                 break;
             case MSG_PRINT:
                 Console::shared() << tVal.data << myendl;
@@ -789,8 +769,8 @@ auto doMessageLoop() -> void {
                 Console::shared().printSectionBegin();
                 break;
             case MSG_RELOAD:
-                if (!cwmWorldState->GetReloadingScripts()) {
-                    cwmWorldState->SetReloadingScripts(true);
+                if (!worldMain.GetReloadingScripts()) {
+                    worldMain.SetReloadingScripts(true);
                     switch (tVal.data[0]) {
                         case '0':
                             ServerConfig::shared().loadConfig(std::filesystem::path());
@@ -835,7 +815,7 @@ auto doMessageLoop() -> void {
                             HTMLTemplates->load();
                             break;
                     }
-                    cwmWorldState->SetReloadingScripts(false);
+                    worldMain.SetReloadingScripts(false);
                 }
                 break;
             case MSG_UNKNOWN:
@@ -943,7 +923,7 @@ auto UpdateStats(CBaseObject *mObj, std::uint8_t x) -> void {
 auto CollectGarbage() -> void {
     Console::shared() << "Performing Garbage Collection...";
     auto objectsDeleted = std::uint32_t(0);
-    std::for_each(cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(),
+    std::for_each(worldMain.deletionQueue.begin(), worldMain.deletionQueue.end(),
                   [&objectsDeleted](std::pair<CBaseObject *, std::uint32_t> entry) {
         if (entry.first) {
             if (entry.first->IsFree() && entry.first->IsDeleted()) {
@@ -956,7 +936,7 @@ auto CollectGarbage() -> void {
         }
     });
     
-    cwmWorldState->deletionQueue.clear();
+    worldMain.deletionQueue.clear();
     
     Console::shared() << " Removed " << objectsDeleted << " objects";
     
@@ -997,8 +977,8 @@ auto MountCreature(CSocket *sockPtr, CChar *s, CChar *x) -> void {
         c->SetDecayable(false);
         c->SetLayer(IL_MOUNT);
         
-        if (cwmWorldState->creatures[x->GetId()].MountId() != 0) {
-            c->SetId(cwmWorldState->creatures[x->GetId()].MountId());
+        if (worldMain.creatures[x->GetId()].MountId() != 0) {
+            c->SetId(worldMain.creatures[x->GetId()].MountId());
         }
         else {
             c->SetId(0x3E00);
@@ -1074,11 +1054,11 @@ auto DismountCreature(CChar *s) -> void {
 // o------------------------------------------------------------------------------------------------o
 auto endMessage([[maybe_unused]] std::int32_t x) -> void {
     x = 0; // Really, then why take a parameter?
-    const std::uint32_t iGetClock = cwmWorldState->GetUICurrentTime();
-    if (cwmWorldState->GetEndTime() < iGetClock) {
-        cwmWorldState->SetEndTime(iGetClock);
+    const std::uint32_t iGetClock = worldMain.GetUICurrentTime();
+    if (worldMain.GetEndTime() < iGetClock) {
+        worldMain.SetEndTime(iGetClock);
     }
-    sysBroadcast(util::format(Dictionary->GetEntry(1209), ((cwmWorldState->GetEndTime() - iGetClock) / 1000) /  60)); // Server going down in %i minutes!
+    sysBroadcast(util::format(Dictionary->GetEntry(1209), ((worldMain.GetEndTime() - iGetClock) / 1000) /  60)); // Server going down in %i minutes!
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1097,7 +1077,7 @@ auto CallGuards(CChar *mChar) -> void {
             if (!attacker->IsDead() && (attacker->IsCriminal() || attacker->IsMurderer())) {
                 // Can only be called on criminals for the first 10 seconds of receiving the
                 // criminal flag
-                if (!attacker->IsMurderer() && attacker->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - cwmWorldState->GetUICurrentTime() <= 10) {
+                if (!attacker->IsMurderer() && attacker->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - worldMain.GetUICurrentTime() <= 10) {
                     // Too late!
                     return;
                 }
@@ -1117,7 +1097,7 @@ auto CallGuards(CChar *mChar) -> void {
                     if (!tempChar->IsDead() && (tempChar->IsCriminal() || tempChar->IsMurderer())) {
                         // Can only be called on criminals for the first 10 seconds of
                         // receiving the criminal flag
-                        if (!tempChar->IsMurderer() && tempChar->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - cwmWorldState->GetUICurrentTime() <= 10) {
+                        if (!tempChar->IsMurderer() && tempChar->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - worldMain.GetUICurrentTime() <= 10) {
                             // Too late!
                             return;
                         }
@@ -1147,7 +1127,7 @@ auto CallGuards(CChar *mChar, CChar *targChar) -> void {
             if (!targChar->IsDead() && (targChar->IsCriminal() || targChar->IsMurderer())) {
                 // Can only be called on criminals for the first 10 seconds of receiving the
                 // criminal flag
-                if (!targChar->IsMurderer() && targChar->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - cwmWorldState->GetUICurrentTime() <= 10) {
+                if (!targChar->IsMurderer() && targChar->IsCriminal() && mChar->GetTimer(tCHAR_CRIMFLAG) - worldMain.GetUICurrentTime() <= 10) {
                     // Too late!
                     return;
                 }
@@ -1182,11 +1162,11 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             mChar.SetMana(maxMana);
         }
         
-        if (mChar.GetRegen(0) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar.GetRegen(0) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             if (mChar.GetHP() < maxHP) {
                 if (!ServerConfig::shared().enabled(ServerSwitch::HUNGER) || (mChar.GetHunger() > 0) || (!Races->DoesHunger(mChar.GetRace()) && ((ServerConfig::shared().timerSetting[TimerSetting::HUNGERRATE] == 0) || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxHP; ++c) {
-                        if (mChar.GetHP() <= maxHP && (mChar.GetRegen(0) + (c * ServerConfig::shared().timerSetting[TimerSetting::HITPOINTREGEN] * 1000)) <= cwmWorldState->GetUICurrentTime()) {
+                        if (mChar.GetHP() <= maxHP && (mChar.GetRegen(0) + (c * ServerConfig::shared().timerSetting[TimerSetting::HITPOINTREGEN] * 1000)) <= worldMain.GetUICurrentTime()) {
                             if (mChar.GetSkill(HEALING) < 500) {
                                 mChar.IncHP(1);
                             }
@@ -1209,7 +1189,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             }
             mChar.SetRegen( BuildTimeValue(static_cast<float>(ServerConfig::shared().timerSetting[TimerSetting::HITPOINTREGEN])), 0);
         }
-        if (mChar.GetRegen(1) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar.GetRegen(1) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             auto mStamina = mChar.GetStamina();
             if (mStamina < maxStam) {
                 // Continue with stamina regen if  character is not yet fully parched, or if
@@ -1217,7 +1197,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 // race that does not thirst
                 if (!ServerConfig::shared().enabled(ServerSwitch::THIRST)|| (mChar.GetThirst() > 0) || ((mChar.GetThirst() == 0) && (mStamina < static_cast<std::int16_t>(maxStam * 0.25))) || (!Races->DoesThirst(mChar.GetRace()) && ( ServerConfig::shared().timerSetting[TimerSetting::THIRSTRATE] == 0 || mChar.IsNpc()))) {
                     for (auto c = 0; c <= maxStam; ++c) {
-                        if ((mChar.GetRegen(1) + (c * ServerConfig::shared().timerSetting[TimerSetting::STAMINAREGEN] * 1000)) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam) {
+                        if ((mChar.GetRegen(1) + (c * ServerConfig::shared().timerSetting[TimerSetting::STAMINAREGEN] * 1000)) <= worldMain.GetUICurrentTime() && mChar.GetStamina() <= maxStam) {
                             mChar.IncStamina(1);
                             if (mChar.GetStamina() >= maxStam) {
                                 mChar.SetStamina(maxStam);
@@ -1234,10 +1214,10 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         }
         
         // MANA REGENERATION:Rewrite of passive and active meditation code
-        if (mChar.GetRegen(2) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar.GetRegen(2) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             if (mChar.GetMana() < maxMana) {
                 for (c = 0; c < maxMana + 1; ++c) {
-                    if (mChar.GetRegen(2) + (c * ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN] * 1000) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana) {
+                    if (mChar.GetRegen(2) + (c * ServerConfig::shared().timerSetting[TimerSetting::MANAREGEN] * 1000) <= worldMain.GetUICurrentTime() && mChar.GetMana() <= maxMana) {
                         Skills->CheckSkill((&mChar), MEDITATION, 0, 1000); // Check Meditation for skill gain ala OSI
                         mChar.IncMana(1);         // Gain a mana point
                         if (mChar.GetMana() == maxMana) {
@@ -1263,21 +1243,21 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                 NextManaRegen = static_cast<std::int32_t>(NextManaRegen * ArmorPenalty);
             }
             if (mChar.IsMeditating()) {// If player is meditation...
-                mChar.SetRegen((cwmWorldState->GetUICurrentTime() + (NextManaRegen / 2)),2);
+                mChar.SetRegen((worldMain.GetUICurrentTime() + (NextManaRegen / 2)),2);
             }
             else {
-                mChar.SetRegen((cwmWorldState->GetUICurrentTime() + NextManaRegen), 2);
+                mChar.SetRegen((worldMain.GetUICurrentTime() + NextManaRegen), 2);
             }
         }
     }
     
-    if (mChar.GetVisible() == VT_INVISIBLE && (mChar.GetTimer(tCHAR_INVIS) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+    if (mChar.GetVisible() == VT_INVISIBLE && (mChar.GetTimer(tCHAR_INVIS) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
         mChar.ExposeToView();
     }
     
     // Take NPC out of EvadeState
     if (mChar.IsNpc() && mChar.IsEvading() &&
-        mChar.GetTimer(tNPC_EVADETIME) <= cwmWorldState->GetUICurrentTime()) {
+        mChar.GetTimer(tNPC_EVADETIME) <= worldMain.GetUICurrentTime()) {
         mChar.SetEvadeState(false);
 #if defined(UOX_DEBUG_MODE) && defined(DEBUG_COMBAT)
         std::string mCharName = GetNpcDictName(&mChar, nullptr, NRS_SYSTEM);
@@ -1294,15 +1274,15 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         mChar.DoLoyaltyUpdate();
         
         if (!mChar.IsInvulnerable() && mChar.GetPoisoned() > 0) {
-            if (mChar.GetTimer(tCHAR_POISONTIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
-                if (mChar.GetTimer(tCHAR_POISONWEAROFF) > cwmWorldState->GetUICurrentTime()) {
+            if (mChar.GetTimer(tCHAR_POISONTIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
+                if (mChar.GetTimer(tCHAR_POISONWEAROFF) > worldMain.GetUICurrentTime()) {
                     std::string mCharName = GetNpcDictName(&mChar, nullptr, NRS_SPEECH);
                     
                     switch (mChar.GetPoisoned()) {
                         case 1:{ // Lesser Poison
                             
                             mChar.SetTimer(tCHAR_POISONTIME, BuildTimeValue(2));
-                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(6));
                                 mChar.TextMessage(nullptr, 1240, EMOTE, 1, mCharName.c_str()); // * %s looks a bit nauseous *
                             }
@@ -1314,7 +1294,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                         case 2:  { // Normal Poison
                             
                             mChar.SetTimer(tCHAR_POISONTIME, BuildTimeValue(3));
-                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage(nullptr, 1241, EMOTE, 1,mCharName.c_str()); // * %s looks disoriented and nauseous! *
                             }
@@ -1326,7 +1306,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                         case 3: { // Greater Poison
                             
                             mChar.SetTimer(tCHAR_POISONTIME, BuildTimeValue(4));
-                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage( nullptr, 1242, EMOTE, 1,  mCharName.c_str()); // * %s is in severe pain! *
                             }
@@ -1338,7 +1318,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                         case 4: { // Deadly Poison
                             
                             mChar.SetTimer(tCHAR_POISONTIME, BuildTimeValue(5));
-                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str()); // * %s looks extremely weak and is
                                 // wrecked in pain! *
@@ -1351,7 +1331,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
                         case 5: {// Lethal Poison - Used by monsters only
                             
                             mChar.SetTimer(tCHAR_POISONTIME, BuildTimeValue(5));
-                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+                            if (mChar.GetTimer(tCHAR_POISONTEXT) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                                 mChar.SetTimer(tCHAR_POISONTEXT, BuildTimeValue(10));
                                 mChar.TextMessage( nullptr, 1243, EMOTE, 1,  mCharName.c_str()); // * %s looks extremely weak and is
                                 // wrecked in pain! *
@@ -1391,7 +1371,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
             }
         }
         
-        if (mChar.GetTimer(tCHAR_POISONWEAROFF) <= cwmWorldState->GetUICurrentTime()) {
+        if (mChar.GetTimer(tCHAR_POISONWEAROFF) <= worldMain.GetUICurrentTime()) {
             if (mChar.GetPoisoned() > 0) {
                 mChar.SetPoisoned(0);
                 if (mSock != nullptr) {
@@ -1401,7 +1381,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         }
     }
     
-    if (!mChar.GetCanAttack() && mChar.GetTimer(tCHAR_PEACETIMER) <= cwmWorldState->GetUICurrentTime()) {
+    if (!mChar.GetCanAttack() && mChar.GetTimer(tCHAR_PEACETIMER) <= worldMain.GetUICurrentTime()) {
         mChar.SetCanAttack(true);
         if (mSock != nullptr) {
             mSock->SysMessage(1779); // You are no longer affected by peace!
@@ -1422,19 +1402,19 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
         mChar.PermaGreyFlagMaintenance();
     }
     
-    if (mChar.IsCriminal() && mChar.GetTimer(tCHAR_CRIMFLAG) && (mChar.GetTimer(tCHAR_CRIMFLAG) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+    if (mChar.IsCriminal() && mChar.GetTimer(tCHAR_CRIMFLAG) && (mChar.GetTimer(tCHAR_CRIMFLAG) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
         if (mSock != nullptr) {
             mSock->SysMessage(1238); // You are no longer a criminal.
         }
         mChar.SetTimer(tCHAR_CRIMFLAG, 0);
         UpdateFlag(&mChar);
     }
-    if (mChar.HasStolen() && mChar.GetTimer(tCHAR_STEALFLAG) && (mChar.GetTimer(tCHAR_STEALFLAG) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+    if (mChar.HasStolen() && mChar.GetTimer(tCHAR_STEALFLAG) && (mChar.GetTimer(tCHAR_STEALFLAG) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
         mChar.SetTimer(tCHAR_STEALFLAG, 0);
         mChar.HasStolen(false);
         UpdateFlag(&mChar);
     }
-    if (mChar.GetKills() && (mChar.GetTimer(tCHAR_MURDERRATE) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+    if (mChar.GetKills() && (mChar.GetTimer(tCHAR_MURDERRATE) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
         mChar.SetKills(static_cast<std::int16_t>(mChar.GetKills() - 1));
         
         if (mChar.GetKills()) {
@@ -1451,7 +1431,7 @@ auto GenericCheck(CSocket *mSock, CChar &mChar, bool checkFieldEffects, bool doW
     
     if (!mChar.IsDead()) {
         if (doWeather) {
-            const std::uint8_t curLevel = cwmWorldState->uoTime.worldLightLevel ;
+            const std::uint8_t curLevel = worldMain.uoTime.worldLightLevel ;
             lightlevel_t toShow;
             if (Races->VisLevel(mChar.GetRace()) > curLevel) {
                 toShow = 0;
@@ -1515,7 +1495,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
     
     if (mChar.GetSquelched() == 2) {
         if (mSock->GetTimer(tPC_MUTETIME) != 0 &&
-            (mSock->GetTimer(tPC_MUTETIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+            (mSock->GetTimer(tPC_MUTETIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
             mChar.SetSquelched(0);
             mSock->SetTimer(tPC_MUTETIME, 0);
             mSock->SysMessage(1237); // You are no longer squelched!
@@ -1526,7 +1506,7 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         // Casting a spell
         auto spellNum = mChar.GetSpellCast();
         mChar.SetNextAct(mChar.GetNextAct() - 1);
-        if (mChar.GetTimer(tCHAR_SPELLTIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) // Spell is complete target it.
+        if (mChar.GetTimer(tCHAR_SPELLTIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) // Spell is complete target it.
         {
             // Set the recovery time before another spell can be cast
             mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue(static_cast<float>(Magic->spells[spellNum].RecoveryDelay())));
@@ -1571,18 +1551,18 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         }
     }
     
-    if (mSock->GetTimer(tPC_SPIRITSPEAK) > 0 && mSock->GetTimer(tPC_SPIRITSPEAK) < cwmWorldState->GetUICurrentTime()) {
+    if (mSock->GetTimer(tPC_SPIRITSPEAK) > 0 && mSock->GetTimer(tPC_SPIRITSPEAK) < worldMain.GetUICurrentTime()) {
         mSock->SetTimer(tPC_SPIRITSPEAK, 0);
     }
     
-    if (mSock->GetTimer(tPC_TRACKING) > cwmWorldState->GetUICurrentTime()) {
-        if (mSock->GetTimer(tPC_TRACKINGDISPLAY) <= cwmWorldState->GetUICurrentTime()) {
+    if (mSock->GetTimer(tPC_TRACKING) > worldMain.GetUICurrentTime()) {
+        if (mSock->GetTimer(tPC_TRACKINGDISPLAY) <= worldMain.GetUICurrentTime()) {
             mSock->SetTimer(tPC_TRACKINGDISPLAY,BuildTimeValue(static_cast<float>( ServerConfig::shared().ushortValues[UShortValue::MSGREDISPLAYTIME] )));
             Skills->Track(&mChar);
         }
     }
     else {
-        if (mSock->GetTimer(tPC_TRACKING) > (cwmWorldState->GetUICurrentTime() / 10)) {
+        if (mSock->GetTimer(tPC_TRACKING) > (worldMain.GetUICurrentTime() / 10)) {
             // dont send arrow-away packet all the time
             mSock->SetTimer(tPC_TRACKING, 0);
             if (ValidateObject(mChar.GetTrackingTarget())) {
@@ -1601,13 +1581,13 @@ auto CheckPC(CSocket *mSock, CChar &mChar) -> void {
         if (!ValidateObject(horseItem)) {
             mChar.SetOnHorse(false); // turn it off, we aren't on one because there's no item!
         }
-        else if (horseItem->GetDecayTime() != 0 && (horseItem->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow())) {
+        else if (horseItem->GetDecayTime() != 0 && (horseItem->GetDecayTime() <= worldMain.GetUICurrentTime() || worldMain.GetOverflow())) {
             mChar.SetOnHorse(false);
             horseItem->Delete();
         }
     }
     
-    if (mChar.GetTimer(tCHAR_FLYINGTOGGLE) > 0 && mChar.GetTimer(tCHAR_FLYINGTOGGLE) < cwmWorldState->GetUICurrentTime()) {
+    if (mChar.GetTimer(tCHAR_FLYINGTOGGLE) > 0 && mChar.GetTimer(tCHAR_FLYINGTOGGLE) < worldMain.GetUICurrentTime()) {
         mChar.SetTimer(tCHAR_FLYINGTOGGLE, 0);
         mChar.SetFrozen(false);
         mChar.Teleport();
@@ -1646,7 +1626,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
     }
     
     if (mChar.GetTimer(tNPC_SUMMONTIME)) {
-        if ((mChar.GetTimer(tNPC_SUMMONTIME) <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow()) {
+        if ((mChar.GetTimer(tNPC_SUMMONTIME) <= worldMain.GetUICurrentTime()) || worldMain.GetOverflow()) {
             // Added Dec 20, 1999
             // QUEST expire check - after an Escort quest is created a timer is set
             // so that the NPC will be deleted and removed from the game if it hangs around
@@ -1679,8 +1659,8 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
     
     auto mNpcWander = mChar.GetNpcWander();
     if (mNpcWander == WT_SCARED) {
-        if (mChar.GetTimer(tNPC_FLEECOOLDOWN) <= cwmWorldState->GetUICurrentTime() ||  cwmWorldState->GetOverflow()) {
-            if (mChar.GetTimer(tNPC_MOVETIME) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar.GetTimer(tNPC_FLEECOOLDOWN) <= worldMain.GetUICurrentTime() ||  worldMain.GetOverflow()) {
+            if (mChar.GetTimer(tNPC_MOVETIME) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
                 mChar.SetFleeDistance(static_cast<std::uint8_t>(0));
                 CChar *mTarget = mChar.GetTarg();
                 if (ValidateObject(mTarget) && !mTarget->IsDead() && ObjInRange(&mChar, mTarget, DIST_INRANGE)) {
@@ -1709,7 +1689,7 @@ auto CheckNPC(CChar &mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck
         }
     }
     else if (mNpcWander != WT_FLEE && mNpcWander != WT_FROZEN && (mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100)) {
-        if (mChar.GetTimer(tNPC_FLEECOOLDOWN) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) {
+        if (mChar.GetTimer(tNPC_FLEECOOLDOWN) <= worldMain.GetUICurrentTime() || worldMain.GetOverflow()) {
             // Make NPC try to flee away from their opponent, if still within range
             CChar *mTarget = mChar.GetTarg();
             if (ValidateObject(mTarget) && !mTarget->IsDead() && ObjInRange(&mChar, mTarget, DIST_SAMESCREEN)) {
@@ -1759,7 +1739,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                     // Don't decay signs that belong to houses
                     itemCheck->SetDecayable(false);
                 }
-                if ((itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow()) {
+                if ((itemCheck->GetDecayTime() <= worldMain.GetUICurrentTime()) || worldMain.GetOverflow()) {
                     auto scriptTriggers = itemCheck->GetScriptTriggers();
                     for (auto scriptTrig : scriptTriggers) {
                         cScript *toExecute = JSMapping->GetScript(scriptTrig);
@@ -1793,7 +1773,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
                 case IT_AREASPAWNER:
                 case IT_ESCORTNPCSPAWNER:
                 case IT_PLANK: {
-                    if ((itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow()) {
+                    if ((itemCheck->GetTempTimer() <= worldMain.GetUICurrentTime()) || worldMain.GetOverflow()) {
                         if (itemCheck->GetObjType() == CBaseObject::OT_SPAWNER) {
                             CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
                             if (spawnItem->DoRespawn()) {
@@ -1852,8 +1832,8 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
             CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
             std::int8_t boatMoveType = mBoat->GetMoveType();
             if (ValidateObject(mBoat) && boatMoveType &&
-                ((mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime()) ||
-                 cwmWorldState->GetOverflow())) {
+                ((mBoat->GetMoveTime() <= worldMain.GetUICurrentTime()) ||
+                 worldMain.GetOverflow())) {
                 if (boatMoveType != BOAT_ANCHORED) {
                     switch (boatMoveType) {
                             // case BOAT_ANCHORED:
@@ -1961,7 +1941,7 @@ auto CheckItem(CMapRegion *toCheck, bool checkItems, std::uint32_t nextDecayItem
         
         // Do JS Weather for item
         if (doWeather) {
-            DoLight(itemCheck, cwmWorldState->uoTime.worldLightLevel);
+            DoLight(itemCheck, worldMain.uoTime.worldLightLevel);
         }
     }
 }
@@ -2127,7 +2107,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
         SetWorldSaveProgress(SS_NOTSAVING);
     }
     if ((nextCheckTownRegions <= GetUICurrentTime()) || GetOverflow()) {
-        std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [](std::pair<const std::uint16_t, CTownRegion *> &town) {
+        std::for_each(worldMain.townRegions.begin(), worldMain.townRegions.end(), [](std::pair<const std::uint16_t, CTownRegion *> &town) {
             if (town.second != nullptr) {
                 town.second->PeriodicCheck();
             }
@@ -2145,7 +2125,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
         std::uint32_t maxItemsSpawned = 0;
         std::uint32_t maxNpcsSpawned = 0;
         
-        for (auto &[regnum, spawnReg] : cwmWorldState->spawnRegions) {
+        for (auto &[regnum, spawnReg] : worldMain.spawnRegions) {
             if (spawnReg) {
                 if (spawnReg->GetNextTime() <= GetUICurrentTime()) {
                     spawnReg->DoRegionSpawn(itemsSpawned, npcsSpawned);
@@ -2242,11 +2222,11 @@ auto CWorldMain::CheckAutoTimers() -> void {
     
     // Time functions
     if ((GetUOTickCount() <= GetUICurrentTime()) || (GetOverflow())) {
-        std::uint8_t oldHour = aWorld.uoTime.hours;
-        if (aWorld.uoTime.incrementMinute()) {
+        std::uint8_t oldHour = worldMain.uoTime.hours;
+        if (worldMain.uoTime.incrementMinute()) {
             worldWeather.newDay();
         }
-        if (oldHour != aWorld.uoTime.hours ) {
+        if (oldHour != worldMain.uoTime.hours ) {
             worldWeather.newHour();
         }
         SetUOTickCount(BuildTimeValue(ServerConfig::shared().ushortValues[UShortValue::SECONDSPERUOMINUTE]));
@@ -2254,7 +2234,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     
     if ((GetTimer(tWORLD_LIGHTTIME) <= GetUICurrentTime()) || GetOverflow()) {
         DoWorldLight();     // Changes lighting, if it is currently time to.
-        worldWeather.update(aWorld.uoTime); // updates the weather types
+        worldWeather.update(worldMain.uoTime); // updates the weather types
         SetTimer(tWORLD_LIGHTTIME, BuildTimeValue(static_cast<float>( ServerConfig::shared().timerSetting[TimerSetting::WEATHER])));
         doWeather = true;
     }
@@ -2418,7 +2398,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
     SpeechSys->poll();
     
     // Implement RefreshItem() / StatWindow() queue here
-    std::for_each(cwmWorldState->refreshQueue.begin(), cwmWorldState->refreshQueue.end(), [](std::pair<CBaseObject *, std::uint32_t> entry) {
+    std::for_each(worldMain.refreshQueue.begin(), worldMain.refreshQueue.end(), [](std::pair<CBaseObject *, std::uint32_t> entry) {
         if (ValidateObject(entry.first)) {
             if (entry.first->CanBeObjType(CBaseObject::OT_CHAR)) {
                 auto uChar = static_cast<CChar *>(entry.first);
@@ -2460,7 +2440,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
             }
         }
     });
-    cwmWorldState->refreshQueue.clear();
+    worldMain.refreshQueue.clear();
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -2469,7 +2449,7 @@ auto CWorldMain::CheckAutoTimers() -> void {
 //|	Purpose		-	Initialize UOX classes
 // o------------------------------------------------------------------------------------------------o
 auto initClasses() -> void {
-    cwmWorldState->ClassesInitialized(true);
+    worldMain.ClassesInitialized(true);
     JSEngine = &aJSEngine;
     JSMapping = &aJSMapping;
     Effects = &aEffects;
@@ -2610,15 +2590,15 @@ auto Shutdown(std::int32_t retCode) -> void {
 #endif
         isWorldSaving = true;
         do {
-            cwmWorldState->SaveNewWorld(true);
-        } while (cwmWorldState->GetWorldSaveProgress() == SS_SAVING);
+            worldMain.SaveNewWorld(true);
+        } while (worldMain.GetWorldSaveProgress() == SS_SAVING);
         isWorldSaving = false;
 #if defined(_WIN32)
         SetConsoleCtrlHandler(exit_handler, false);
 #endif
     }
     
-    if (cwmWorldState && cwmWorldState->ClassesInitialized()) {
+    if (worldMain.ClassesInitialized()) {
         if (HTMLTemplates) {
             Console::shared() << "HTMLTemplates object detected. Writing Offline HTML Now...";
             HTMLTemplates->poll(ETT_OFFLINE);
@@ -3025,7 +3005,7 @@ auto DoLight(CSocket *s, std::uint8_t level) -> void {
     }
     
     auto curRegion = mChar->GetRegion();
-    auto toShow = cwmWorldState->uoTime.worldLightLevel;
+    auto toShow = worldMain.uoTime.worldLightLevel;
     
     auto dunLevel = ServerConfig::shared().ushortValues[UShortValue::DUNGEONLIGHT];
     // we have a valid weather system
@@ -3431,7 +3411,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
                     CPWorldChange wrldChange(calcReg->GetAppearance(), 1);
                     mSock->Send(&wrldChange);
                 }
-                if (calcReg == cwmWorldState->townRegions[mChar.GetTown()])  { // enter our home town
+                if (calcReg == worldMain.townRegions[mChar.GetTown()])  { // enter our home town
                     
                     mSock->SysMessage(1364); // You feel loved and cherished under the
                     // protection of your home town.
@@ -3441,7 +3421,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
                         for (const auto &toScan : piCont->collection()) {
                             if (ValidateObject(toScan)) {
                                 if (toScan->GetType() == IT_TOWNSTONE) {
-                                    CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<std::uint16_t>(toScan->GetTempVar(CITV_MOREX))];
+                                    CTownRegion *targRegion = worldMain.townRegions[static_cast<std::uint16_t>(toScan->GetTempVar(CITV_MOREX))];
                                     mSock->SysMessage(1365,targRegion->GetName().c_str()); // You have successfully returned the
                                     // townstone of %s to your home town.
                                     targRegion->DoDamage(targRegion->GetHealth()); // finish it off
@@ -3493,7 +3473,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
         }
         if (mSock) {
             Effects->DoSocketMusic(mSock);
-            DoLight(mSock, cwmWorldState->uoTime.worldLightLevel );
+            DoLight(mSock, worldMain.uoTime.worldLightLevel );
         }
     }
     else {
@@ -3504,7 +3484,7 @@ auto CheckRegion(CSocket *mSock, CChar &mChar, bool forceUpdateLight) -> void {
         
         // Update lighting
         if (forceUpdateLight && mSock != nullptr) {
-            DoLight(mSock, cwmWorldState->uoTime.worldLightLevel);
+            DoLight(mSock, worldMain.uoTime.worldLightLevel);
         }
     }
 }
@@ -3635,7 +3615,7 @@ auto UpdateFlag(CChar *mChar) -> void {
         else {
             if (mChar->IsNpc()) {
                 auto doSwitch = true;
-                if (cwmWorldState->creatures[mChar->GetId()].IsAnimal() && (mChar->GetNpcAiType() != AI_EVIL && mChar->GetNpcAiType() != AI_EVIL_CASTER)) {
+                if (worldMain.creatures[mChar->GetId()].IsAnimal() && (mChar->GetNpcAiType() != AI_EVIL && mChar->GetNpcAiType() != AI_EVIL_CASTER)) {
                     if (ServerConfig::shared().enabled(ServerSwitch::ANIMALSGUARDED) && mChar->GetRegion()->IsGuarded()) {
                         mChar->SetFlagBlue();
                         doSwitch = false;

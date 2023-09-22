@@ -28,6 +28,7 @@
 #include "speech.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 
@@ -1375,7 +1376,7 @@ void CSocket::SysMessage(const std::string txt, ...) {
         toAdd.SpokenTo(mChar->GetSerial());
         toAdd.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_INDIVIDUAL);
     }
 }
@@ -1422,7 +1423,7 @@ void CSocket::SysMessageJS(const std::string &uformat, std::uint16_t txtColor, c
         toAdd.SpokenTo(mChar->GetSerial());
         toAdd.Colour(txtColor);
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_INDIVIDUAL);
     }
 }
@@ -1470,7 +1471,7 @@ void CSocket::SysMessage(std::int32_t dictEntry, ...) {
         toAdd.SpokenTo(mChar->GetSerial());
         toAdd.Colour(ServerConfig::shared().ushortValues[UShortValue::SYSMESSAGECOLOR]);
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_INDIVIDUAL);
     }
 }
@@ -1651,7 +1652,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         }
     }
     else {
-        if (i->IsTamed() && ValidateObject(i->GetOwnerObj()) && !cwmWorldState->creatures[i->GetId()].IsHuman()) {
+        if (i->IsTamed() && ValidateObject(i->GetOwnerObj()) && !worldMain.creatures[i->GetId()].IsHuman()) {
             charName += " (tame) ";
         }
         
@@ -1696,7 +1697,7 @@ void CSocket::ShowCharName(CChar *i, bool showSer) {
         toAdd.SpokenTo(mChar->GetSerial());
         toAdd.Colour(GetFlagColour(mChar, i));
         toAdd.Type(SYSTEM);
-        toAdd.At(cwmWorldState->GetUICurrentTime());
+        toAdd.At(worldMain.GetUICurrentTime());
         toAdd.TargType(SPTRG_ONLYRECEIVER);
     }
 }

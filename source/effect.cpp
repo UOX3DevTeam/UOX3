@@ -22,6 +22,7 @@
 #include "teffect.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
+#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
@@ -284,12 +285,12 @@ void cEffects::PlaySpellCastingAnimation(CChar *mChar, std::uint16_t actionId, b
             std::uint16_t castAnim = 0;
             std::uint8_t castAnimLength = 0;
             if (monsterAreaCastAnim) {
-                castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].CastAnimAreaId());
-                castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimAreaLength();
+                castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar->GetId()].CastAnimAreaId());
+                castAnimLength = worldMain.creatures[mChar->GetId()].CastAnimAreaLength();
             }
             else {
-                castAnim = static_cast<std::uint16_t>(cwmWorldState->creatures[mChar->GetId()].CastAnimTargetId());
-                castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimTargetLength();
+                castAnim = static_cast<std::uint16_t>(worldMain.creatures[mChar->GetId()].CastAnimTargetId());
+                castAnimLength = worldMain.creatures[mChar->GetId()].CastAnimTargetLength();
             }
             
             // Play cast anim, but fallback to default attack anim (0x04) with anim length of 4
@@ -575,9 +576,9 @@ auto cEffects::CheckTempeffects() -> void {
     CSocket *tSock = nullptr;
     CBaseObject *myObj = nullptr;
     
-    const std::uint32_t j = cwmWorldState->GetUICurrentTime();
+    const std::uint32_t j = worldMain.GetUICurrentTime();
     std::vector<CTEffect *> removeEffects;
-    auto collection = cwmWorldState->tempEffects.collection();
+    auto collection = worldMain.tempEffects.collection();
     for (auto &Effect : collection) {
         if (Effect == nullptr) {
             // removeEffects.push_back( Effect );
@@ -594,7 +595,7 @@ auto cEffects::CheckTempeffects() -> void {
             s = CalcCharObjFromSer(Effect->Destination());
             if (!ValidateObject(s)) {
                 removeEffects.push_back(Effect);
-                // cwmWorldState->tempEffects.Remove( Effect, true );
+                // worldMain.tempEffects.Remove( Effect, true );
                 continue;
             }
             tSock = s->GetSocket();
@@ -617,7 +618,7 @@ auto cEffects::CheckTempeffects() -> void {
             case 2: // Nightsight Potion (JS) and Spell (code)
                 if (validChar) {
                     s->SetFixedLight(255);
-                    DoLight(tSock, cwmWorldState->uoTime.worldLightLevel);
+                    DoLight(tSock, worldMain.uoTime.worldLightLevel);
                 }
                 break;
             case 3: // Clumsy spell (JS)
@@ -700,7 +701,7 @@ auto cEffects::CheckTempeffects() -> void {
                 break;
             case 16: // Explosion potion messages (JS)
                 src = CalcCharObjFromSer(Effect->Source());
-                if (src->GetTimer(tCHAR_ANTISPAM) < cwmWorldState->GetUICurrentTime()) {
+                if (src->GetTimer(tCHAR_ANTISPAM) < worldMain.GetUICurrentTime()) {
                     src->SetTimer(tCHAR_ANTISPAM, BuildTimeValue(1));
                     std::string mTemp = util::ntos(Effect->More3());
                     if (tSock) {
@@ -991,7 +992,7 @@ auto cEffects::CheckTempeffects() -> void {
         }
         removeEffects.push_back(Effect);
     }
-    std::for_each(removeEffects.begin(), removeEffects.end(), [](CTEffect *effect) { cwmWorldState->tempEffects.Remove(effect, true); });
+    std::for_each(removeEffects.begin(), removeEffects.end(), [](CTEffect *effect) { worldMain.tempEffects.Remove(effect, true); });
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1104,7 +1105,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
     toAdd->Source(sourceSerial);
     toAdd->Destination(targSer);
     std::vector<CTEffect *> removeEffect;
-    for (const auto &Effect : cwmWorldState->tempEffects.collection()) {
+    for (const auto &Effect : worldMain.tempEffects.collection()) {
         if (Effect->Destination() == targSer) {
             if (Effect->Number() == num) {
                 switch (Effect->Number()) {
@@ -1128,7 +1129,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
             }
         }
     }
-    std::for_each(removeEffect.begin(), removeEffect.end(), [](CTEffect *effect) { cwmWorldState->tempEffects.Remove(effect, true); });
+    std::for_each(removeEffect.begin(), removeEffect.end(), [](CTEffect *effect) { worldMain.tempEffects.Remove(effect, true); });
     CSocket *tSock = dest->GetSocket();
     toAdd->Number(num);
     switch (num) {
@@ -1527,7 +1528,7 @@ void cEffects::TempEffect(CChar *source, CChar *dest, std::uint8_t num, std::uin
             delete toAdd;
             return;
     }
-    cwmWorldState->tempEffects.Add(toAdd);
+    worldMain.tempEffects.Add(toAdd);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1590,7 +1591,7 @@ void cEffects::TempEffect(CChar *source, CItem *dest, std::uint8_t num, std::uin
             delete toAdd;
             return;
     }
-    cwmWorldState->tempEffects.Add(toAdd);
+    worldMain.tempEffects.Add(toAdd);
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -1614,7 +1615,7 @@ void cEffects::SaveEffects() {
         return;
     }
     
-    for (const auto &currEffect : cwmWorldState->tempEffects.collection()) {
+    for (const auto &currEffect : worldMain.tempEffects.collection()) {
         if (currEffect) {
             currEffect->Save(effectDestination);
             effectDestination << blockDiscriminator;
@@ -1681,7 +1682,7 @@ void cEffects::LoadEffects() {
                                     break;
                                 case 'E':
                                     if (UTag == "EXPIRE") {
-                                        toLoad->ExpireTime(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) + cwmWorldState->GetUICurrentTime());
+                                        toLoad->ExpireTime(static_cast<std::uint32_t>(std::stoul(util::trim(util::strip(data, "//")), nullptr, 0)) + worldMain.GetUICurrentTime());
                                     }
                                     break;
                                 case 'I':
@@ -1743,7 +1744,7 @@ void cEffects::LoadEffects() {
                             }
                         }
                     }
-                    cwmWorldState->tempEffects.Add(toLoad);
+                    worldMain.tempEffects.Add(toLoad);
                     tag = "";
                 }
             }
@@ -1781,7 +1782,7 @@ bool CTEffect::Save(std::ostream &effectDestination) const {
     
     // Decimal / String Values
     effectDestination << std::dec;
-    effectDestination << "Expire=" + std::to_string(ExpireTime() - cwmWorldState->GetUICurrentTime()) + newLine;
+    effectDestination << "Expire=" + std::to_string(ExpireTime() - worldMain.GetUICurrentTime()) + newLine;
     effectDestination << "Number=" + std::to_string(Number()) + newLine;
     effectDestination << "More1=" + std::to_string(More1()) + newLine;
     effectDestination << "More2=" + std::to_string(More2()) + newLine;

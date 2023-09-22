@@ -52,6 +52,7 @@ DWORD initial_terminal_state;
 #include "utility/strutil.hpp"
 
 #include "teffect.h"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 CEndL myendl;
@@ -402,7 +403,6 @@ auto Console::print(const std::string &msg) -> void {
 //| Purpose		-	Writes to the logfile
 // o------------------------------------------------------------------------------------------------o
 auto Console::log(const std::string &msg, const std::string &filename) -> void {
-    if (cwmWorldState) {
         if (ServerConfig::shared().enabled(ServerSwitch::CONSOLELOG)) {
             std::ofstream toWrite;
             auto realFileName = std::filesystem::path() ;
@@ -420,7 +420,6 @@ auto Console::log(const std::string &msg, const std::string &filename) -> void {
                 print(util::format("%s%s\n", timeStr, msg.c_str()));
             }
         }
-    }
 }
 
 // o------------------------------------------------------------------------------------------------o
@@ -882,17 +881,17 @@ auto Console::poll() -> void {
 // o------------------------------------------------------------------------------------------------o
 auto Console::process(std::int32_t c) -> void {
     if (c == '*') {
-        if (cwmWorldState->GetSecure()) {
+        if (worldMain.GetSecure()) {
             messageLoop << "Secure mode disabled. Press ? for a commands list";
         }
         else {
             messageLoop << "Secure mode re-enabled";
         }
-        cwmWorldState->SetSecure(!cwmWorldState->GetSecure());
+        worldMain.SetSecure(!worldMain.GetSecure());
         return;
     }
     else {
-        if (cwmWorldState->GetSecure()) {
+        if (worldMain.GetSecure()) {
             messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
             return;
         }
@@ -1023,8 +1022,8 @@ auto Console::process(std::int32_t c) -> void {
                 messageLoop << MSG_SHUTDOWN;
                 break;
             case '0':
-                if (!cwmWorldState->GetReloadingScripts()) {
-                    cwmWorldState->SetReloadingScripts(true);
+                if (!worldMain.GetReloadingScripts()) {
+                    worldMain.SetReloadingScripts(true);
                     // Reload all the files. If there are issues with these files change the order
                     // reloaded from here first.
                     ServerConfig::shared().loadConfig(std::filesystem::path());
@@ -1067,7 +1066,7 @@ auto Console::process(std::int32_t c) -> void {
                     messageLoop << "     Loading HTML Templates... ";
                     HTMLTemplates->Unload();
                     HTMLTemplates->load();
-                    cwmWorldState->SetReloadingScripts(false);
+                    worldMain.SetReloadingScripts(false);
                     messageLoop << MSG_PRINTDONE;
                 }
                 else {
@@ -1077,7 +1076,7 @@ auto Console::process(std::int32_t c) -> void {
             case 'T':
                 // Timed shut down(10 minutes)
                 messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-                cwmWorldState->SetEndTime(BuildTimeValue(600));
+                worldMain.SetEndTime(BuildTimeValue(600));
                 endMessage(0);
                 break;
             case 'D':
@@ -1096,23 +1095,23 @@ auto Console::process(std::int32_t c) -> void {
                 messageLoop << "CMD: All Connections Closed.";
             } break;
             case 'P': {
-                std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-                std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-                std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-                std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+                std::uint32_t networkTimeCount = worldMain.ServerProfile()->NetworkTimeCount();
+                std::uint32_t timerTimeCount = worldMain.ServerProfile()->TimerTimeCount();
+                std::uint32_t autoTimeCount = worldMain.ServerProfile()->AutoTimeCount();
+                std::uint32_t loopTimeCount = worldMain.ServerProfile()->LoopTimeCount();
                 // 1/13/2003 - Dreoth - Log Performance Information enhancements
                 logEcho(true);
                 log("--- Starting Performance Dump ---", "performance.log");
                 log("\tPerformance Dump:", "performance.log");
-                log(util::format("\tNetwork code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) /  static_cast<float>(networkTimeCount)), networkTimeCount), "performance.log");
-                log(util::format("\tTimer code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount), "performance.log");
-                log(util::format("\tAuto code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount), "performance.log");
-                log(util::format("\tLoop Time: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)), loopTimeCount), "performance.log");
+                log(util::format("\tNetwork code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->NetworkTime()) /  static_cast<float>(networkTimeCount)), networkTimeCount), "performance.log");
+                log(util::format("\tTimer code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount), "performance.log");
+                log(util::format("\tAuto code: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount), "performance.log");
+                log(util::format("\tLoop Time: %.2fmsec [%i samples]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)), loopTimeCount), "performance.log");
                 
                 log(util::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::shared().CountOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR), ObjectFactory::shared().CountOfObjects(CBaseObject::OT_ITEM), ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM)), "performance.log");
-                log(util::format("\tSimulation Cycles: %f per sec", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount))))), "performance.log");
-                log(util::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
-                log(util::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
+                log(util::format("\tSimulation Cycles: %f per sec", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount))))), "performance.log");
+                log(util::format("\tBytes sent: %i", worldMain.ServerProfile()->GlobalSent()), "performance.log");
+                log(util::format("\tBytes Received: %i", worldMain.ServerProfile()->GlobalReceived()), "performance.log");
                 log("--- Performance Dump Complete ---", "performance.log");
                 logEcho(false);
                 break;
@@ -1156,7 +1155,7 @@ auto Console::process(std::int32_t c) -> void {
                 messageLoop << temp;
                 temp = util::format("        CChar  : %lu bytes", sizeof(CChar));
                 messageLoop << temp;
-                temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect), sizeof(CTEffect) * cwmWorldState->tempEffects.Num());
+                temp = util::format("        TEffect: %lu bytes %lui total)", sizeof(CTEffect), sizeof(CTEffect) * worldMain.tempEffects.Num());
                 messageLoop << temp;
                 temp = util::format("        Approximate Total: %i bytes", total);
                 messageLoop << temp;

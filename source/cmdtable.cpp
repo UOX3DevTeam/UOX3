@@ -41,6 +41,7 @@
 #include "useful.h"
 #include "utility/strutil.hpp"
 #include "type/weather.hpp"
+#include "other/uoxglobal.hpp"
 #include "wholist.h"
 #include "worldmain.h"
 
@@ -235,11 +236,11 @@ void Command_GetLight(CSocket *s) {
             }
         }
         else {
-            s->SysMessage( 1632, cwmWorldState->uoTime.worldLightLevel ); // Current light level is %i
+            s->SysMessage( 1632, worldMain.uoTime.worldLightLevel ); // Current light level is %i
         }
     }
     else {
-        s->SysMessage( 1632, cwmWorldState->uoTime.worldLightLevel); // Current light level is %i
+        s->SysMessage( 1632, worldMain.uoTime.worldLightLevel); // Current light level is %i
     }
 }
 
@@ -427,8 +428,8 @@ void Command_Tile(CSocket *s) {
 //|	Purpose		-	Saves the current world data into .WSC files
 // o------------------------------------------------------------------------------------------------o
 void Command_Save() {
-    if (cwmWorldState->GetWorldSaveProgress() != SS_SAVING) {
-        cwmWorldState->SaveNewWorld(true);
+    if (worldMain.GetWorldSaveProgress() != SS_SAVING) {
+        worldMain.SaveNewWorld(true);
     }
 }
 
@@ -467,14 +468,14 @@ void Command_SetTime() {
         std::uint8_t newhours = static_cast<std::uint8_t>(serverCommands.argument(1));
         std::uint8_t newminutes = static_cast<std::uint8_t>(serverCommands.argument(2));
         if ((newhours < 25) && (newhours > 0) && (newminutes < 60)) {
-            cwmWorldState->uoTime.ampm = newhours > 12;
+            worldMain.uoTime.ampm = newhours > 12;
             if (newhours > 12) {
-                cwmWorldState->uoTime.hours = newhours - 12;
+                worldMain.uoTime.hours = newhours - 12;
             }
             else {
-                cwmWorldState->uoTime.hours = newhours;
+                worldMain.uoTime.hours = newhours;
             }
-            cwmWorldState->uoTime.minutes = newminutes;
+            worldMain.uoTime.minutes = newminutes;
         }
     }
 }
@@ -487,9 +488,9 @@ void Command_SetTime() {
 // o------------------------------------------------------------------------------------------------o
 void Command_Shutdown() {
     if (serverCommands.numArguments() == 2) {
-        cwmWorldState->SetEndTime(BuildTimeValue(static_cast<float>(serverCommands.argument(1))));
+        worldMain.SetEndTime(BuildTimeValue(static_cast<float>(serverCommands.argument(1))));
         if (serverCommands.argument(1) == 0) {
-            cwmWorldState->SetEndTime(0);
+            worldMain.SetEndTime(0);
             sysBroadcast(Dictionary->GetEntry(36));
         }
         else {
@@ -543,7 +544,7 @@ void Command_Tell(CSocket *s) {
             toAdd.Speaker(mChar->GetSerial());
             toAdd.SpokenTo(tChar->GetSerial());
             toAdd.Type(TALK);
-            toAdd.At(cwmWorldState->GetUICurrentTime());
+            toAdd.At(worldMain.GetUICurrentTime());
             toAdd.TargType(SPTRG_INDIVIDUAL);
             if (mChar->GetSayColour() == 0x1700) {
                 toAdd.Colour(0x5A);
@@ -593,9 +594,9 @@ void Command_MemStats(CSocket *s) {
     size_t charsSize = ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_CHAR);
     size_t itemsSize = ObjectFactory::shared().SizeOfObjects(CBaseObject::OT_ITEM);
     size_t spellsSize = 69 * sizeof(CSpellInfo);
-    size_t teffectsSize = sizeof(CTEffect) * cwmWorldState->tempEffects.Num();
-    size_t regionsSize = sizeof(CTownRegion) * cwmWorldState->townRegions.size();
-    size_t spawnregionsSize = sizeof(CSpawnRegion) * cwmWorldState->spawnRegions.size();
+    size_t teffectsSize = sizeof(CTEffect) * worldMain.tempEffects.Num();
+    size_t regionsSize = sizeof(CTownRegion) * worldMain.townRegions.size();
+    size_t spawnregionsSize = sizeof(CSpawnRegion) * worldMain.spawnRegions.size();
     size_t total = charsSize + itemsSize + spellsSize + regionsSize + spawnregionsSize + teffectsSize;
     CGumpDisplay cacheStats(s, 350, 345);
     cacheStats.setTitle("UOX Memory Information (sizes in bytes)");
@@ -607,13 +608,13 @@ void Command_MemStats(CSocket *s) {
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(itemsSize));
     cacheStats.AddData("  CItem: ", sizeof(CItem));
     cacheStats.AddData(" Spells Size: ", static_cast<std::uint32_t>(spellsSize));
-    cacheStats.AddData(" TEffects: ", static_cast<std::uint32_t>(cwmWorldState->tempEffects.Num()));
+    cacheStats.AddData(" TEffects: ", static_cast<std::uint32_t>(worldMain.tempEffects.Num()));
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(teffectsSize));
     cacheStats.AddData("  TEffect: ", sizeof(CTEffect));
-    cacheStats.AddData(" Regions Size: ", static_cast<std::uint32_t>(cwmWorldState->townRegions.size()));
+    cacheStats.AddData(" Regions Size: ", static_cast<std::uint32_t>(worldMain.townRegions.size()));
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(regionsSize));
     cacheStats.AddData("  CTownRegion: ", sizeof(CTownRegion));
-    cacheStats.AddData(" SpawnRegions ", static_cast<std::uint32_t>(cwmWorldState->spawnRegions.size()));
+    cacheStats.AddData(" SpawnRegions ", static_cast<std::uint32_t>(worldMain.spawnRegions.size()));
     cacheStats.AddData("  Allocated Memory: ", static_cast<std::uint32_t>(spawnregionsSize));
     cacheStats.AddData("  CSpawnRegion: ", sizeof(CSpawnRegion));
     cacheStats.Send(0, false, INVALIDSERIAL);
@@ -679,7 +680,7 @@ bool RespawnFunctor(CBaseObject *a, [[maybe_unused]] std::uint32_t &b, [[maybe_u
 void Command_Respawn() {
     std::uint32_t spawnedItems = 0;
     std::uint32_t spawnedNpcs = 0;
-    std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&spawnedItems, &spawnedNpcs](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+    std::for_each(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&spawnedItems, &spawnedNpcs](std::pair<std::uint16_t, CSpawnRegion *> entry) {
         if (entry.second) {
             entry.second->DoRegionSpawn(spawnedItems, spawnedNpcs);
         }
@@ -703,22 +704,22 @@ void Command_RegSpawn(CSocket *s) {
         std::uint32_t npcsSpawned = 0;
         
         if (util::upper(serverCommands.commandString(2, 2)) == "ALL") {
-            std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned](std::pair<std::uint16_t, CSpawnRegion *> entry) {
+            std::for_each(worldMain.spawnRegions.begin(), worldMain.spawnRegions.end(), [&itemsSpawned, &npcsSpawned](std::pair<std::uint16_t, CSpawnRegion *> entry) {
                 if (entry.second) {
                     entry.second->DoRegionSpawn(itemsSpawned, npcsSpawned);
                 }
             });
             if (itemsSpawned || npcsSpawned) {
-                s->SysMessage(9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size()); // Spawned %u items and %u npcs in %u SpawnRegions
+                s->SysMessage(9021, itemsSpawned, npcsSpawned, worldMain.spawnRegions.size()); // Spawned %u items and %u npcs in %u SpawnRegions
             }
             else {
-                s->SysMessage(9022, cwmWorldState->spawnRegions.size()); // Failed to spawn any new items or npcs in %u SpawnRegions
+                s->SysMessage(9022, worldMain.spawnRegions.size()); // Failed to spawn any new items or npcs in %u SpawnRegions
             }
         }
         else {
             std::uint16_t spawnRegNum = static_cast<std::uint16_t>(serverCommands.argument(1));
-            if (cwmWorldState->spawnRegions.find(spawnRegNum) != cwmWorldState->spawnRegions.end()) {
-                CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+            if (worldMain.spawnRegions.find(spawnRegNum) != worldMain.spawnRegions.end()) {
+                CSpawnRegion *spawnReg = worldMain.spawnRegions[spawnRegNum];
                 if (spawnReg != nullptr) {
                     spawnReg->DoRegionSpawn(itemsSpawned, npcsSpawned);
                     if (itemsSpawned || npcsSpawned) {
@@ -870,17 +871,17 @@ void Command_Announce() {
 // o------------------------------------------------------------------------------------------------o
 void Command_PDump(CSocket *s) {
     VALIDATESOCKET(s);
-    std::uint32_t networkTimeCount = cwmWorldState->ServerProfile()->NetworkTimeCount();
-    std::uint32_t timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
-    std::uint32_t autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
-    std::uint32_t loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+    std::uint32_t networkTimeCount = worldMain.ServerProfile()->NetworkTimeCount();
+    std::uint32_t timerTimeCount = worldMain.ServerProfile()->TimerTimeCount();
+    std::uint32_t autoTimeCount = worldMain.ServerProfile()->AutoTimeCount();
+    std::uint32_t loopTimeCount = worldMain.ServerProfile()->LoopTimeCount();
     
     s->SysMessage("Performance Dump:");
-    s->SysMessage("Network code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)), networkTimeCount);
-    s->SysMessage("Timer code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount);
-    s->SysMessage("Auto code: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount);
-    s->SysMessage("Loop Time: %fmsec [%i]", static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) /  static_cast<float>(loopTimeCount)),  loopTimeCount);
-    s->SysMessage("Simulation Cycles/Sec: %f", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(cwmWorldState->ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))));
+    s->SysMessage("Network code: %fmsec [%i]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->NetworkTime()) / static_cast<float>(networkTimeCount)), networkTimeCount);
+    s->SysMessage("Timer code: %fmsec [%i]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->TimerTime()) / static_cast<float>(timerTimeCount)), timerTimeCount);
+    s->SysMessage("Auto code: %fmsec [%i]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->AutoTime()) / static_cast<float>(autoTimeCount)), autoTimeCount);
+    s->SysMessage("Loop Time: %fmsec [%i]", static_cast<float>(static_cast<float>(worldMain.ServerProfile()->LoopTime()) /  static_cast<float>(loopTimeCount)),  loopTimeCount);
+    s->SysMessage("Simulation Cycles/Sec: %f", (1000.0 * (1.0 / static_cast<float>(static_cast<float>(worldMain.ServerProfile()->LoopTime()) / static_cast<float>(loopTimeCount)))));
 }
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	Command_SpawnKill()
@@ -891,8 +892,8 @@ auto Command_SpawnKill(CSocket *s) -> void {
     VALIDATESOCKET(s);
     if (serverCommands.numArguments() == 2) {
         std::uint16_t regNum = static_cast<std::uint16_t>(serverCommands.argument(1));
-        if (cwmWorldState->spawnRegions.find(regNum) != cwmWorldState->spawnRegions.end()) {
-            auto spawnReg = cwmWorldState->spawnRegions[regNum];
+        if (worldMain.spawnRegions.find(regNum) != worldMain.spawnRegions.end()) {
+            auto spawnReg = worldMain.spawnRegions[regNum];
             if (spawnReg) {
                 std::int32_t killed = 0;
                 

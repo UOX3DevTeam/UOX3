@@ -45,6 +45,7 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
+#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o
@@ -869,7 +870,7 @@ auto MsgBoardPostQuest(CChar *mNPC, const QuestTypes questType) -> bool {
                 
                 position = fullLine.find("%r");
                 while (position != std::string::npos) {
-                    fullLine.replace(position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName());
+                    fullLine.replace(position, 2, worldMain.townRegions[mNPC->GetQuestDestRegion()]->GetName());
                     position = fullLine.find("%r");
                 }
                 
@@ -925,9 +926,9 @@ void MsgBoardQuestEscortCreate(CChar *mNPC) {
     // Loop through all escort regions in the server and pick out all the ones in the same world as
     // NPC
     std::vector<std::uint16_t> regionCandidates;
-    for (const auto escortRegion : cwmWorldState->escortRegions) {
+    for (const auto escortRegion : worldMain.escortRegions) {
         if (escortRegion != npcRegion) {
-            CTownRegion *tempRegion = cwmWorldState->townRegions[escortRegion];
+            CTownRegion *tempRegion = worldMain.townRegions[escortRegion];
             if (tempRegion->WorldNumber() == mNPC->WorldNumber()) {
                 regionCandidates.push_back(escortRegion);
             }
@@ -974,7 +975,7 @@ void MsgBoardQuestEscortArrive(CSocket *mSock, CChar *mNPC) {
         return;
     }
     
-    CTownRegion *destReg = cwmWorldState->townRegions[mNPC->GetQuestDestRegion()];
+    CTownRegion *destReg = worldMain.townRegions[mNPC->GetQuestDestRegion()];
     
     // Calculate payment for services rendered, partly based on escort's fame and partly based on a
     // percentage (25%) of the amount of gold they're carrying

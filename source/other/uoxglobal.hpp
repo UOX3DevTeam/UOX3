@@ -8,7 +8,7 @@
 #include <string>
 
 #include "type/weather.hpp"
-
+#include "worldmain.h"
 //======================================================================
 //
 //  We will keep our global classes here for now, until we figure out what to do.
@@ -21,4 +21,5 @@
 //======================================================================
 
 extern WorldWeather worldWeather ;
+extern CWorldMain worldMain ;
 #endif /* global_hpp */
