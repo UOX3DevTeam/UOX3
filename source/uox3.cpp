@@ -200,7 +200,6 @@ auto main(std::int32_t argc, char *argv[]) -> int {
     std::uint32_t tempSecs, tempMilli, tempTime;
     std::uint32_t loopSecs, loopMilli;
     timerval_t uiNextCheckConn = 0;
-    
     // We are going to do some fundmental checks, that if fail, we will bail out before
     // setting up
     auto configFile = std::filesystem::path("uox.ini");
@@ -218,7 +217,6 @@ auto main(std::int32_t argc, char *argv[]) -> int {
         std::cerr <<e.what() << std::endl;
         return EXIT_FAILURE ;
     }
-    
     
     // Ok, we probably want the Console now
     Console::shared().Initialize();

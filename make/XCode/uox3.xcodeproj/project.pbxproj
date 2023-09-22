@@ -142,6 +142,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5605D6432ABE339E004BA321 /* netsocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = netsocket.cpp; sourceTree = "<group>"; };
+		5605D6442ABE339E004BA321 /* netsocket.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = netsocket.hpp; sourceTree = "<group>"; };
 		5611F3262AAF6997009438EA /* assistantfeature.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = assistantfeature.cpp; sourceTree = "<group>"; };
 		5611F3272AAF6997009438EA /* assistantfeature.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = assistantfeature.hpp; sourceTree = "<group>"; };
 		5611F32F2AAF807D009438EA /* startlocation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = startlocation.cpp; sourceTree = "<group>"; };
@@ -3069,6 +3071,8 @@
 				568517A12ABDA7DB0052C574 /* ip4util.hpp */,
 				56A2625E2ABB3FB200DD2D84 /* random.hpp */,
 				56D6EEC32A9F7707005355FA /* strutil.hpp */,
+				5605D6432ABE339E004BA321 /* netsocket.cpp */,
+				5605D6442ABE339E004BA321 /* netsocket.hpp */,
 			);
 			path = utility;
 			sourceTree = "<group>";
