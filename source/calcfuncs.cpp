@@ -12,7 +12,6 @@
 #include "network.h"
 #include "objectfactory.h"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	CalcCharObjFromSer()

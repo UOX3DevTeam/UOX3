@@ -22,7 +22,6 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "osunique.hpp"
-#include "other/uoxglobal.hpp"
 #include "useful.h"
 using namespace std::string_literals;
 

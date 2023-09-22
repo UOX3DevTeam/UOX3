@@ -28,7 +28,6 @@
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "useful.h"
 #include "weight.h"
 

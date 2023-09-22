@@ -53,7 +53,6 @@
 #include "speech.h"
 #include "teffect.h"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
 #include "utility/strutil.hpp"

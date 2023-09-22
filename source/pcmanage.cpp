@@ -27,7 +27,6 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 
-#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 #include "wholist.h"
 

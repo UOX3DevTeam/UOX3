@@ -12,7 +12,6 @@
 #include "ssection.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 

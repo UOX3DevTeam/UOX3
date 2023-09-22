@@ -74,7 +74,6 @@
 #include "dictionary.h"
 #include "eventtimer.hpp"
 #include "funcdecl.h"
-#include "other/uoxglobal.hpp"
 #include "jail.h"
 #include "configuration/serverconfig.hpp"
 #include "subsystem/account.hpp"
@@ -99,8 +98,11 @@
 #include "townregion.h"
 #include "typedefs.h"
 #include "utility/strutil.hpp"
+#include "type/weather.hpp"
 #include "weight.h"
 #include "wholist.h"
+
+extern WorldWeather worldWeather;
 
 using namespace std::string_literals;
 // o------------------------------------------------------------------------------------------------o

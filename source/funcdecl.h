@@ -24,12 +24,12 @@
 
 #include "cbaseobject.h"
 #include "osunique.hpp"
-#include "other/uoxglobal.hpp"
 #include "worldmain.h"
 class CItem;
 class CTownRegion;
 
 extern std::mt19937 generator;
+extern CWorldMain worldMain;
 
 // o------------------------------------------------------------------------------------------------o
 //  Range check functions

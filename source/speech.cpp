@@ -20,7 +20,6 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "other/uoxversion.hpp"
-#include "other/uoxglobal.hpp"
 
 
 

@@ -18,7 +18,6 @@
 
 #include "ssection.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 #include "worldmain.h"
 
 cRaces *Races = nullptr;

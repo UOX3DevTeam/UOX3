@@ -26,7 +26,6 @@
 #include "cspawnregion.h"
 #include "dictionary.h"
 #include "funcdecl.h"
-#include "other/uoxglobal.hpp"
 
 #include "magic.h"
 #include "msgboard.h"
@@ -41,9 +40,10 @@
 #include "useful.h"
 #include "utility/strutil.hpp"
 #include "type/weather.hpp"
-#include "other/uoxglobal.hpp"
 #include "wholist.h"
 #include "worldmain.h"
+
+extern WorldWeather worldWeather;
 
 using namespace std::string_literals ;
 

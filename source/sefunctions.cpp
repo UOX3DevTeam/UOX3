@@ -45,7 +45,6 @@
 #include "ssection.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyspecs.h"
 #include "other/uoxversion.hpp"

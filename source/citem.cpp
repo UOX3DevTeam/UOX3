@@ -67,7 +67,6 @@
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 const std::uint32_t BIT_MAKERSMARK = 0;

@@ -40,7 +40,6 @@
 #include "utility/strutil.hpp"
 
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "uoxjsclasses.h"
 #include "uoxjspropertyenums.h"
 #include "uoxjspropertyspecs.h"

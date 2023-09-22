@@ -346,6 +346,12 @@
     <ClCompile Include="..\..\source\other\uoxversion.cpp">
       <Filter>source files\other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\utility\ip4util.cpp">
+      <Filter>source files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\utility\netutil.cpp">
+      <Filter>source files\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Script group -->
@@ -649,6 +655,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\other\uoxversion.hpp">
       <Filter>source files\other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\utility\ip4util.hpp">
+      <Filter>source files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\utility\netutil.hpp">
+      <Filter>source files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

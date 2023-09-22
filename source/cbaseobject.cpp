@@ -40,7 +40,6 @@
 #include "power.h"
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 const std::uint32_t BIT_FREE = 0;

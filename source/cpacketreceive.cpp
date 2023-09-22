@@ -33,7 +33,6 @@
 #include "ssection.h"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //| Function	-	pSplit()

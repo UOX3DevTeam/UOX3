@@ -22,7 +22,6 @@
 #include "teffect.h"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()

@@ -6,7 +6,6 @@
 #include "csocket.h"
 #include "funcdecl.h"
 #include "objectfactory.h"
-#include "other/uoxglobal.hpp"
 
 // o------------------------------------------------------------------------------------------------o
 //|	Function	-	SendTradeStatus()

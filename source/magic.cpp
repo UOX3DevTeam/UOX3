@@ -33,7 +33,6 @@
 #include "stringutility.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 using namespace std::string_literals;

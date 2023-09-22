@@ -24,7 +24,6 @@
 #include "configuration/serverconfig.hpp"
 #include "skills.h"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 
 #undef DBGFILE
 #define DBGFILE "combat.cpp"

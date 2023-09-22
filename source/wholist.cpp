@@ -12,7 +12,6 @@
 #include "network.h"
 #include "configuration/serverconfig.hpp"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 
 CWhoList *WhoList;
 CWhoList *OffList;

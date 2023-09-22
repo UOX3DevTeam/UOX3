@@ -78,7 +78,6 @@
 #include "utility/strutil.hpp"
 #include "teffect.h"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 #include "weight.h"
 
 #define DEBUGMOVEMULTIPLIER 1.75

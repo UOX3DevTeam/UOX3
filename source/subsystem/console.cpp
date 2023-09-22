@@ -52,7 +52,6 @@ DWORD initial_terminal_state;
 #include "utility/strutil.hpp"
 
 #include "teffect.h"
-#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 CEndL myendl;

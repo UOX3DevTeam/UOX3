@@ -57,7 +57,6 @@
 #include "regions.h"
 #include "configuration/serverconfig.hpp"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 
 bool BuyShop(CSocket *s, CChar *c);
 void CallGuards(CChar *mChar);

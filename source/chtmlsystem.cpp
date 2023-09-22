@@ -19,7 +19,6 @@
 #include "subsystem/console.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 
 using namespace std::string_literals;

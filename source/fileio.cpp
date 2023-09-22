@@ -25,7 +25,6 @@
 #include "stringutility.hpp"
 #include "townregion.h"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 
 
 // o------------------------------------------------------------------------------------------------o

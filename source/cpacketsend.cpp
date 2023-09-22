@@ -37,7 +37,6 @@
 #include "speech.h"
 #include "utility/strutil.hpp"
 #include "townregion.h"
-#include "other/uoxglobal.hpp"
 
 using namespace std::string_literals;
 // Unknown bytes

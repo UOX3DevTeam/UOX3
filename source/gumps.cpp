@@ -31,7 +31,6 @@
 #include "utility/strutil.hpp"
 #include "townregion.h"
 #include "wholist.h"
-#include "other/uoxglobal.hpp"
 #include "other/uoxversion.hpp"
 
 using namespace std::string_literals;

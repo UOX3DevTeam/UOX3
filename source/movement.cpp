@@ -61,7 +61,6 @@
 #include "configuration/serverconfig.hpp"
 #include "stringutility.hpp"
 #include "utility/strutil.hpp"
-#include "other/uoxglobal.hpp"
 #include "type/weather.hpp"
 #include "weight.h"
 
